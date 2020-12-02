@@ -40,7 +40,7 @@ lint:
     - cd js
     - yarn install
     #- yarn run lint || export EXITVALUE=1
-    - yarn run prettier --ignore-path="src/i18n/*" -c . || export EXITVALUE=1
+    - yarn run prettier -c . || export EXITVALUE=1
     - yarn run build
     - cd ../
     - exit $EXITVALUE
@@ -78,6 +78,21 @@ exunit:
     - lint
   script:
     - mix coveralls
+
+jest:
+  stage: test
+  before_script:
+    - cd js
+    - yarn install
+  dependencies:
+    - lint
+  script:
+    - yarn run test:unit --no-color
+  artifacts:
+    when: always
+    paths:
+      - js/coverage
+    expire_in: 30 days
 # cypress:
 #   stage: test
 #   services:

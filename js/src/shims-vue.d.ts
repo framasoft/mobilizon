@@ -5,3 +5,10 @@ declare module "*.vue" {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+declare module "*.svg" {
+  import Vue, { VueConstructor } from "vue";
+
+  const content: VueConstructor<Vue>;
+  export default content;
+}
