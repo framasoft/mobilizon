@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App component renders a Vue component 1`] = `<b-navbar-stub type="is-secondary" wrapperclass="container" closeonclick="true" mobileburger="true"><template></template> <template></template> <template></template></b-navbar-stub>`;

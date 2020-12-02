@@ -17,4 +17,5 @@ export interface IPost {
   author?: IActor;
   attributedTo?: IActor;
   publishAt?: Date;
+  insertedAt?: Date;
 }

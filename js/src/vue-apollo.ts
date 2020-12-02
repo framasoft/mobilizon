@@ -18,6 +18,7 @@ import { Socket as PhoenixSocket } from "phoenix";
 import * as AbsintheSocket from "@absinthe/socket";
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import { getMainDefinition } from "apollo-utilities";
+import fetch from "unfetch";
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from "./api/_entrypoint";
 import { fragmentMatcher, refreshAccessToken } from "./apollo/utils";
 
@@ -56,6 +57,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const uploadLink = createLink({
   uri: httpEndpoint,
+  fetch,
 });
 
 const phoenixSocket = new PhoenixSocket(wsEndpoint, {
