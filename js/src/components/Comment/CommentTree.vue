@@ -26,9 +26,12 @@
             </p>
           </div>
           <div class="send-comment">
-            <b-button native-type="submit" type="is-primary">{{
-              $t("Post a comment")
-            }}</b-button>
+            <b-button
+              native-type="submit"
+              type="is-primary"
+              class="comment-button-submit"
+              >{{ $t("Post a comment") }}</b-button
+            >
           </div>
         </div>
       </article>
@@ -37,6 +40,9 @@
       $t("The organiser has chosen to close comments.")
     }}</b-notification>
     <transition name="comment-empty-list" mode="out-in">
+      <p v-if="$apollo.queries.comments.loading" class="loading">
+        {{ $t("Loading…") }}
+      </p>
       <transition-group
         name="comment-list"
         v-if="comments.length"
@@ -326,7 +332,7 @@ export default class CommentTree extends Vue {
   }
 
   get isAbleToComment(): boolean {
-    if (this.currentActor.id) {
+    if (this.currentActor && this.currentActor.id) {
       return this.areCommentsClosed || this.isEventOrganiser;
     }
     return false;
