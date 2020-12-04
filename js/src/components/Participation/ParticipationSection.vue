@@ -24,16 +24,13 @@
       >
       <small v-if="!actorIsParticipant && anonymousParticipation">
         {{ $t("You are participating in this event anonymously") }}
-        <b-tooltip
-          :label="
-            $t(
-              'This information is saved only on your computer. Click for details'
-            )
-          "
-        >
-          <router-link :to="{ name: RouteName.TERMS }">
-            <b-icon size="is-small" icon="help-circle-outline" />
-          </router-link>
+        <b-tooltip :label="$t('Click for more information')">
+          <span
+            class="is-clickable"
+            @click="isAnonymousParticipationModalOpen = true"
+          >
+            <b-icon size="is-small" icon="information-outline" />
+          </span>
         </b-tooltip>
       </small>
       <small
@@ -65,10 +62,62 @@
         <b-icon icon="menu-down" />
       </button>
     </div>
+    <b-modal
+      :active.sync="isAnonymousParticipationModalOpen"
+      has-modal-card
+      ref="anonymous-participation-modal"
+    >
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">
+            {{ $t("About anonymous participation") }}
+          </p>
+        </header>
+
+        <section class="modal-card-body">
+          <b-notification
+            type="is-primary"
+            :closable="false"
+            v-if="event.joinOptions === EventJoinOptions.RESTRICTED"
+          >
+            {{
+              $t(
+                "As the event organiser has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
+              )
+            }}
+          </b-notification>
+          <p>
+            {{
+              $t(
+                "Your participation status is saved only on this device and will be deleted one month after the event's passed."
+              )
+            }}
+          </p>
+          <p v-if="isSecureContext">
+            {{
+              $t(
+                "You may clear all participation information for this device with the buttons below."
+              )
+            }}
+          </p>
+          <div class="buttons" v-if="isSecureContext">
+            <b-button
+              type="is-danger is-outlined"
+              @click="clearEventParticipationData"
+            >
+              {{ $t("Clear participation data for this event") }}
+            </b-button>
+            <b-button type="is-danger" @click="clearAllParticipationData">
+              {{ $t("Clear participation data for all events") }}
+            </b-button>
+          </div>
+        </section>
+      </div>
+    </b-modal>
   </div>
 </template>
 <script lang="ts">
-import { EventStatus, ParticipantRole } from "@/types/enums";
+import { EventJoinOptions, EventStatus, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "@/types/participant.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import RouteName from "@/router/name";
@@ -77,6 +126,10 @@ import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { IPerson } from "@/types/actor";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
+import {
+  removeAllAnonymousParticipations,
+  removeAnonymousParticipation,
+} from "@/services/AnonymousParticipationStorage";
 import ParticipationButton from "../Event/ParticipationButton.vue";
 
 @Component({
@@ -102,6 +155,10 @@ export default class ParticipationSection extends Vue {
   config!: IConfig;
 
   RouteName = RouteName;
+
+  EventJoinOptions = EventJoinOptions;
+
+  isAnonymousParticipationModalOpen = false;
 
   get actorIsParticipant(): boolean {
     if (this.actorIsOrganizer) return true;
@@ -162,6 +219,22 @@ export default class ParticipationSection extends Vue {
     return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
       ? this.event.endsOn
       : this.event.beginsOn;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get isSecureContext(): boolean {
+    return window.isSecureContext;
+  }
+
+  async clearEventParticipationData(): Promise<void> {
+    await removeAnonymousParticipation(this.event.uuid);
+    window.location.reload();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  clearAllParticipationData(): void {
+    removeAllAnonymousParticipations();
+    window.location.reload();
   }
 }
 </script>

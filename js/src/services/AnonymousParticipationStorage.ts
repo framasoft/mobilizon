@@ -160,11 +160,16 @@ async function removeAnonymousParticipation(eventUUID: string): Promise<void> {
   );
 }
 
+function removeAllAnonymousParticipations(): void {
+  localStorage.removeItem(ANONYMOUS_PARTICIPATIONS_LOCALSTORAGE_KEY);
+}
+
 export {
   addLocalUnconfirmedAnonymousParticipation,
   confirmLocalAnonymousParticipation,
   getLeaveTokenForParticipation,
   isParticipatingInThisEvent,
   removeAnonymousParticipation,
+  removeAllAnonymousParticipations,
   AnonymousParticipationNotFoundError,
 };

@@ -3,7 +3,7 @@ import ParticipationSection from "@/components/Participation/ParticipationSectio
 import Buefy from "buefy";
 import VueRouter from "vue-router";
 import { routes } from "@/router";
-import { CommentModeration } from "@/types/enums";
+import { CommentModeration, EventJoinOptions } from "@/types/enums";
 import {
   createMockClient,
   MockApolloClient,
@@ -112,6 +112,50 @@ describe("ParticipationSection", () => {
     expect(cancelAnonymousParticipationButton.text()).toBe(
       "Cancel anonymous participation"
     );
+
+    wrapper.find(".event-participation small .is-clickable").trigger("click");
+    expect(
+      wrapper
+        .findComponent({ ref: "anonymous-participation-modal" })
+        .isVisible()
+    ).toBeTruthy();
+
+    cancelAnonymousParticipationButton.trigger("click");
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted("cancel-anonymous-participation")).toBeTruthy();
+  });
+
+  it("renders the participation section with existing confimed anonymous participation but event moderation", async () => {
+    generateWrapper(
+      {},
+      {
+        anonymousParticipation: true,
+        event: { ...eventData, joinOptions: EventJoinOptions.RESTRICTED },
+      }
+    );
+
+    expect(wrapper.find(".event-participation > small").text()).toContain(
+      "You are participating in this event anonymously"
+    );
+
+    const cancelAnonymousParticipationButton = wrapper.find(
+      ".event-participation > button.button.is-text"
+    );
+    expect(cancelAnonymousParticipationButton.text()).toBe(
+      "Cancel anonymous participation"
+    );
+
+    wrapper.find(".event-participation small .is-clickable").trigger("click");
+
+    await wrapper.vm.$nextTick();
+    const modal = wrapper.findComponent({
+      ref: "anonymous-participation-modal",
+    });
+    expect(modal.isVisible()).toBeTruthy();
+    expect(modal.find("article.notification.is-primary").text()).toBe(
+      "As the event organiser has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
+    );
+
     cancelAnonymousParticipationButton.trigger("click");
     await wrapper.vm.$nextTick();
     expect(wrapper.emitted("cancel-anonymous-participation")).toBeTruthy();
