@@ -82,7 +82,7 @@
           >
             {{
               $t(
-                "As the event organiser has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
+                "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
               )
             }}
           </b-notification>
