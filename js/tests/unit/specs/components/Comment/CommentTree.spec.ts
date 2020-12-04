@@ -91,7 +91,7 @@ describe("CommentTree", () => {
     expect(wrapper.findComponent({ name: "b-notification" }).text()).toBe(
       "The organiser has chosen to close comments."
     );
-    expect(wrapper.find(".loading").text()).toBe("Loading…");
+    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
     expect(wrapper.html()).toMatchSnapshot();
   });
 

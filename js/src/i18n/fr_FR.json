@@ -888,5 +888,15 @@
   "Mobilizon is a federated software, meaning you can interact - depending on your admin's federation settings - with content from other instances, such as joining groups or events that were created elsewhere.": "Mobilizon est un logiciel fédéré, ce qui signifie que vous pouvez interagir - en fonction des paramètres de fédération de votre administrateur·ice - avec du contenu d'autres instances, comme par exemple rejoindre des groupes ou des événements ayant été créés ailleurs.",
   "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.": "Cette instance, <b>{instanceName} ({domain})</b>, héberge votre profil, donc notez bien son nom.",
   "If you are being asked for your federated indentity, it's composed of your username and your instance. For instance, the federated identity for your first profile is:": "Si l'on vous demande votre identité fédérée, elle est composée de votre nom d'utilisateur·ice et de votre instance. Par exemple, l'identité fédérée de votre premier profil est :",
-  "Uploaded media size": "Taille des médias téléversés"
+  "Uploaded media size": "Taille des médias téléversés",
+  "Loading comments…": "Chargement des commentaires…",
+  "Tentative": "Provisoire",
+  "Cancelled": "Annulé",
+  "Click for more information": "Cliquez pour plus d'informations",
+  "About anonymous participation": "À propos de la participation anonyme",
+  "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted.": "L'organisateur de l'événement ayant choisi de valider manuellement les demandes de participation, votre participation ne sera réellement confirmée que lorsque vous recevrez un courriel indiquant qu'elle est acceptée.",
+  "Your participation status is saved only on this device and will be deleted one month after the event's passed.": "Le statut de votre participation est enregistré uniquement sur cet appareil et sera supprimé un mois après la fin de l'événement.",
+  "You may clear all participation information for this device with the buttons below.": "Vous pouvez effacer toutes les informations de participation pour cet appareil avec les boutons ci-dessous.",
+  "Clear participation data for this event": "Effacer mes données de participation pour cet événement",
+  "Clear participation data for all events": "Effacer mes données de participation pour tous les événements"
 }

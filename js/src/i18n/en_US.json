@@ -800,5 +800,15 @@
   "Mobilizon is a federated software, meaning you can interact - depending on your admin's federation settings - with content from other instances, such as joining groups or events that were created elsewhere.": "Mobilizon is a federated software, meaning you can interact - depending on your admin federation settings - with content from other instances, such as joining groups or events that were created elsewhere.",
   "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.": "This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.",
   "If you are being asked for your federated indentity, it's composed of your username and your instance. For instance, the federated identity for your first profile is:": "If you are being asked for your federated indentity, it's composed of your username and your instance. For instance, the federated identity for your first profile is:",
-  "Uploaded media size": "Uploaded media size"
+  "Uploaded media size": "Uploaded media size",
+  "Loading comments…": "Loading comments…",
+  "Tentative": "Tentative",
+  "Cancelled": "Cancelled",
+  "Click for more information": "Click for more information",
+  "About anonymous participation": "About anonymous participation",
+  "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted.": "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted.",
+  "Your participation status is saved only on this device and will be deleted one month after the event's passed.": "Your participation status is saved only on this device and will be deleted one month after the event's passed.",
+  "You may clear all participation information for this device with the buttons below.": "You may clear all participation information for this device with the buttons below.",
+  "Clear participation data for this event": "Clear participation data for this event",
+  "Clear participation data for all events": "Clear participation data for all events"
 }

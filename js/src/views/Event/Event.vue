@@ -104,80 +104,16 @@
               </span>
             </div>
             <div class="column is-3-tablet">
-              <div>
-                <div
-                  class="event-participation has-text-right"
-                  v-if="new Date(endDate) > new Date()"
-                >
-                  <participation-button
-                    v-if="shouldShowParticipationButton"
-                    :participation="participations[0]"
-                    :event="event"
-                    :current-actor="currentActor"
-                    @join-event="joinEvent"
-                    @join-modal="isJoinModalActive = true"
-                    @join-event-with-confirmation="joinEventWithConfirmation"
-                    @confirm-leave="confirmLeave"
-                  />
-                  <b-button
-                    type="is-text"
-                    v-if="
-                      !actorIsParticipant && anonymousParticipation !== null
-                    "
-                    @click="cancelAnonymousParticipation"
-                    >{{ $t("Cancel anonymous participation") }}</b-button
-                  >
-                  <small v-if="!actorIsParticipant && anonymousParticipation">
-                    {{ $t("You are participating in this event anonymously") }}
-                    <b-tooltip
-                      :label="
-                        $t(
-                          'This information is saved only on your computer. Click for details'
-                        )
-                      "
-                    >
-                      <router-link :to="{ name: RouteName.TERMS }">
-                        <b-icon size="is-small" icon="help-circle-outline" />
-                      </router-link>
-                    </b-tooltip>
-                  </small>
-                  <small
-                    v-else-if="
-                      !actorIsParticipant && anonymousParticipation === false
-                    "
-                  >
-                    {{
-                      $t(
-                        "You are participating in this event anonymously but didn't confirm participation"
-                      )
-                    }}
-                    <b-tooltip
-                      :label="
-                        $t(
-                          'This information is saved only on your computer. Click for details'
-                        )
-                      "
-                    >
-                      <router-link :to="{ name: RouteName.TERMS }">
-                        <b-icon size="is-small" icon="help-circle-outline" />
-                      </router-link>
-                    </b-tooltip>
-                  </small>
-                </div>
-                <div v-else>
-                  <button
-                    class="button is-primary"
-                    type="button"
-                    slot="trigger"
-                    disabled
-                  >
-                    <template>
-                      <span>{{ $t("Event already passed") }}</span>
-                    </template>
-                    <b-icon icon="menu-down" />
-                  </button>
-                </div>
-              </div>
+              <participation-section
+                :participation="participations[0]"
+                :event="event"
+                :anonymousParticipation="anonymousParticipation"
+                @join-event="joinEvent"
+                @join-modal="isJoinModalActive = true"
+                @join-event-with-confirmation="joinEventWithConfirmation"
+                @confirm-leave="confirmLeave"
+                @cancel-anonymous-participation="cancelAnonymousParticipation"
+              />
               <div class="has-text-right">
                 <template class="visibility" v-if="!event.draft">
                   <p v-if="event.visibility === EventVisibility.PUBLIC">
@@ -646,7 +582,7 @@ import { IReport } from "../../types/report.model";
 import { CREATE_REPORT } from "../../graphql/report";
 import EventMixin from "../../mixins/event";
 import IdentityPicker from "../Account/IdentityPicker.vue";
-import ParticipationButton from "../../components/Event/ParticipationButton.vue";
+import ParticipationSection from "../../components/Participation/ParticipationSection.vue";
 import RouteName from "../../router/name";
 import { Address } from "../../types/address.model";
 import CommentTree from "../../components/Comment/CommentTree.vue";
@@ -676,7 +612,7 @@ import { IParticipant } from "../../types/participant.model";
     DateCalendarIcon,
     ReportModal,
     IdentityPicker,
-    ParticipationButton,
+    ParticipationSection,
     CommentTree,
     Tag,
     ActorCard,

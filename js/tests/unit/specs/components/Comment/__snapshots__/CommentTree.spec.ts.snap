@@ -3,12 +3,9 @@
 exports[`CommentTree renders a comment tree 1`] = `
 <div>
   <b-notification-stub active="true" duration="2000" animation="fade">The organiser has chosen to close comments.</b-notification-stub>
-  <transition-stub name="comment-empty-list" mode="out-in">
-    <p class="loading">
-      Loading…
-    </p>
-    <!---->
-  </transition-stub>
+  <p class="loading has-text-centered">
+    Loading comments…
+  </p>
 </div>
 `;
 
@@ -16,7 +13,6 @@ exports[`CommentTree renders a comment tree 2`] = `
 <div>
   <b-notification-stub active="true" duration="2000" animation="fade">The organiser has chosen to close comments.</b-notification-stub>
   <transition-stub name="comment-empty-list" mode="out-in">
-    <!---->
     <transition-group-stub tag="ul" name="comment-list" class="comment-list">
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>

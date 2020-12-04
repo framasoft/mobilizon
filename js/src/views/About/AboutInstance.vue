@@ -47,7 +47,7 @@
       <table class="table is-fullwidth">
         <tr>
           <td>{{ $t("Instance languages") }}</td>
-          <td :title="this.config.languages.join(', ')">
+          <td :title="this.config ? this.config.languages.join(', ') : ''">
             {{ formattedLanguageList }}
           </td>
         </tr>
@@ -105,7 +105,7 @@ import langs from "../../i18n/langs.json";
         };
       },
       skip() {
-        return !this.config.languages;
+        return !this.config || !this.config.languages;
       },
     },
   },
@@ -126,8 +126,11 @@ export default class AboutInstance extends Vue {
   }
 
   get formattedLanguageList(): string {
-    const list = this.languages.map(({ name }) => name);
-    return formatList(list);
+    if (this.languages) {
+      const list = this.languages.map(({ name }) => name);
+      return formatList(list);
+    }
+    return "";
   }
 
   // eslint-disable-next-line class-methods-use-this
