@@ -149,6 +149,7 @@ export default class ParticipationWithoutAccount extends Vue {
         mutation: JOIN_EVENT,
         variables: {
           eventId: this.event.id,
+          actorId: this.config.anonymous.actorId,
           email: this.anonymousParticipation.email,
           message: this.anonymousParticipation.message,
           locale: this.$i18n.locale,
