@@ -39,10 +39,13 @@
     <b-notification v-else :closable="false">{{
       $t("The organiser has chosen to close comments.")
     }}</b-notification>
-    <transition name="comment-empty-list" mode="out-in">
-      <p v-if="$apollo.queries.comments.loading" class="loading">
-        {{ $t("Loading…") }}
-      </p>
+    <p
+      v-if="$apollo.queries.comments.loading"
+      class="loading has-text-centered"
+    >
+      {{ $t("Loading comments…") }}
+    </p>
+    <transition name="comment-empty-list" mode="out-in" v-else>
       <transition-group
         name="comment-list"
         v-if="comments.length"
