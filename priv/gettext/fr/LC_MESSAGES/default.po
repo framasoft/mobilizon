@@ -731,7 +731,7 @@ msgstr "Confirmez votre adresse email"
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
-msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « %{title} ». Merci de confirmer l'adresse email que vous avez fourni :"
+msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « %{title} ». Merci de confirmer l'adresse email que vous avez fournie :"
 
 #, elixir-format
 #: lib/web/templates/email/email.html.eex:114
@@ -1341,7 +1341,7 @@ msgstr "Note : le fait que %{name} (%{domain}) vous suive n'implique pas néces
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
-msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « <b>%{title}</b> ». Merci de confirmer l'adresse email que vous avez fourni :"
+msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « <b>%{title}</b> ». Merci de confirmer l'adresse email que vous avez fournie :"
 
 #, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
