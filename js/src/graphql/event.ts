@@ -176,6 +176,22 @@ export const FETCH_EVENT = gql`
   }
 `;
 
+export const FETCH_EVENT_BASIC = gql`
+  query($uuid: UUID!) {
+    event(uuid: $uuid) {
+      id
+      uuid
+      joinOptions
+      participantStats {
+        going
+        notApproved
+        notConfirmed
+        participant
+      }
+    }
+  }
+`;
+
 export const FETCH_EVENTS = gql`
   query {
     events {
