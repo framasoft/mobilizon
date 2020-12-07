@@ -102,7 +102,9 @@ describe("CommentTree", () => {
     await wrapper.vm.$nextTick(); // because of the <transition>
 
     expect(wrapper.exists()).toBe(true);
-    expect(requestHandlers.eventCommentThreadsQueryHandler).toHaveBeenCalled();
+    expect(
+      requestHandlers.eventCommentThreadsQueryHandler
+    ).toHaveBeenCalledWith({ eventUUID: eventData.uuid });
     expect(wrapper.vm.$apollo.queries.comments).toBeTruthy();
     expect(wrapper.find(".loading").exists()).toBe(false);
     expect(wrapper.findAll(".comment-list .root-comment").length).toBe(2);

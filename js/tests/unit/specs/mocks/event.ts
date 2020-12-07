@@ -1,3 +1,59 @@
+import { EventJoinOptions, ParticipantRole } from "@/types/enums";
+
+type DataMock = {
+  data: Record<string, unknown>;
+};
+
+export const fetchEventBasicMock = {
+  data: {
+    event: {
+      __typename: "Event",
+      id: "1",
+      uuid: "f37910ea-fd5a-4756-9679-00971f3f4106",
+      joinOptions: EventJoinOptions.FREE,
+      participantStats: {
+        notApproved: 0,
+        notConfirmed: 0,
+        rejected: 0,
+        participant: 0,
+        creator: 1,
+        moderator: 0,
+        administrator: 0,
+        going: 1,
+      },
+    },
+  },
+};
+
+export const joinEventResponseMock = {
+  data: {
+    joinEvent: {
+      id: "5",
+      role: ParticipantRole.NOT_APPROVED,
+      insertedAt: "2020-12-07T09:33:41Z",
+      metadata: {
+        cancellationToken: "some token",
+        message: "a message long enough",
+      },
+      event: {
+        id: "1",
+        uuid: "f37910ea-fd5a-4756-9679-00971f3f4106",
+      },
+      actor: {
+        id: "1",
+      },
+    },
+  },
+};
+
+export const joinEventMock = {
+  eventId: "1",
+  actorId: "1",
+  email: "some@email.tld",
+  message: "a message long enough",
+  locale: "en_US",
+};
+
 export const eventCommentThreadsMock = {
   data: {
     event: {
@@ -64,7 +120,7 @@ export const newCommentForEventMock = {
   inReplyToCommentId: null,
 };
 
-export const newCommentForEventResponse = {
+export const newCommentForEventResponse: DataMock = {
   data: {
     createComment: {
       id: "79",

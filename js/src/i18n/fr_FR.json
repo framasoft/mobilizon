@@ -794,7 +794,6 @@
   "You have one event today.": "Vous n'avez pas d'évenement aujourd'hui | Vous avez un évènement aujourd'hui. | Vous avez {count} évènements aujourd'hui",
   "You have one event tomorrow.": "Vous n'avez pas d'évènement demain | Vous avez un évènement demain. | Vous avez {count} évènements demain",
   "You may also ask to {resend_confirmation_email}.": "Vous pouvez aussi demander à {resend_confirmation_email}.",
-  "You may now close this window.": "Vous pouvez maintenant fermer cette fenêtre.",
   "You need to create the group before you create an event.": "Vous devez créer le groupe avant de créer l'événement.",
   "You need to login.": "Vous devez vous connecter.",
   "You will be able to add an avatar and set other options in your account settings.": "Vous pourrez ajouter un avatar et définir d'autres options dans les paramètres de votre compte.",
@@ -898,5 +897,11 @@
   "Your participation status is saved only on this device and will be deleted one month after the event's passed.": "Le statut de votre participation est enregistré uniquement sur cet appareil et sera supprimé un mois après la fin de l'événement.",
   "You may clear all participation information for this device with the buttons below.": "Vous pouvez effacer toutes les informations de participation pour cet appareil avec les boutons ci-dessous.",
   "Clear participation data for this event": "Effacer mes données de participation pour cet événement",
-  "Clear participation data for all events": "Effacer mes données de participation pour tous les événements"
+  "Clear participation data for all events": "Effacer mes données de participation pour tous les événements",
+  "Your participation will be validated once you click the confirmation link into the email, and after the organizer manually validates your participation.": "Votre participation sera validée une fois que vous aurez cliqué sur le lien de confirmation contenu dans le courriel, et après que l'organisateur·ice valide votre participation.",
+  "Your participation will be validated once you click the confirmation link into the email.": "Votre participation sera validée une fois que vous aurez cliqué sur le lien de confirmation contenu dans le courriel.",
+  "Unable to load event for participation. The error details are provided below:": "Impossible de charger l'événement pour la participation. Les détails de l'erreur sont disponibles ci-dessous :",
+  "Unable to save your participation in this browser.": "Échec de la sauvegarde de votre participation dans ce navigateur.",
+  "return to the event's page": "retourner sur la page de l'événement",
+  "You may now close this window, or {return_to_event}.": "Vous pouvez maintenant fermer cette fenêtre, ou bien {return_to_event}."
 }

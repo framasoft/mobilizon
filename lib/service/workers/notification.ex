@@ -100,6 +100,8 @@ defmodule Mobilizon.Service.Workers.Notification do
       user
       |> Notification.pending_participation_notification(event, total)
       |> Mailer.deliver_later()
+
+      :ok
     else
       err ->
         require Logger

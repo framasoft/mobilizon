@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ParticipationWithoutAccount handles being already a participant 1`] = `
+<section class="container section hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <form>
+        <p>
+          This Mobilizon instance and this event organizer allows anonymous participations, but requires validation through email confirmation.
+        </p>
+        <transition-stub name="fade">
+          <article class="message is-info">
+            <!---->
+            <section class="message-body">
+              <div class="media">
+                <!---->
+                <div class="media-content">
+                  Your email will only be used to confirm that you're a real person and send you eventual updates for this event. It will NOT be transmitted to other instances or to the event organizer.
+                </div>
+              </div>
+            </section>
+          </article>
+        </transition-stub>
+        <transition-stub name="fade">
+          <article class="message is-danger">
+            <!---->
+            <section class="message-body">
+              <div class="media">
+                <!---->
+                <div class="media-content">You are already a participant of this event</div>
+              </div>
+            </section>
+          </article>
+        </transition-stub>
+        <div class="field"><label class="label">Email address</label>
+          <div class="control is-clearfix"><input type="email" autocomplete="on" placeholder="Your email" required="required" class="input">
+            <!---->
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <p>
+          If you want, you may send a message to the event organizer here.
+        </p>
+        <div class="field"><label class="label">Message</label>
+          <div class="control is-clearfix"><textarea minlength="10" class="textarea"></textarea>
+            <!---->
+            <!---->
+            <!---->
+          </div>
+          <!---->
+        </div>
+        <div class="field">
+          <!----><label class="b-checkbox checkbox"><input type="checkbox" true-value="true" value="false"><span class="check"></span><span class="control-label"><b>Remember my participation in this browser</b> <p>
+              Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.
+            </p></span></label>
+          <!---->
+        </div> <button type="submit" class="button is-primary">
+          <!----><span>Send email</span>
+          <!---->
+        </button>
+        <div class="has-text-centered"><a type="button" class="button is-text">
+            <!----><span>Back to previous page</span>
+            <!---->
+          </a></div>
+      </form>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ParticipationWithoutAccount renders the participation without account view with minimal data 1`] = `
+<section class="container section hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div>
+        <h1 class="title">
+          Request for participation confirmation sent
+        </h1>
+        <p class="content"><span>Check your inbox (and your junk mail folder).</span> <span class="details">Your participation will be validated once you click the confirmation link into the email.</span></p>
+        <transition-stub name="fade">
+          <article class="message is-warning">
+            <!---->
+            <section class="message-body">
+              <div class="media">
+                <!---->
+                <div class="media-content">Unable to save your participation in this browser.</div>
+              </div>
+            </section>
+          </article>
+        </transition-stub>
+        <p class="content"><span>You may now close this window, or <a href="/events/f37910ea-fd5a-4756-9679-00971f3f4106" class="">return to the event's page</a>.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ParticipationWithoutAccount renders the warning if the event participation is restricted 1`] = `
+<section class="container section hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div>
+        <h1 class="title">
+          Request for participation confirmation sent
+        </h1>
+        <p class="content"><span>Check your inbox (and your junk mail folder).</span> <span class="details">
+            Your participation will be validated once you click the confirmation link into the email, and after the organizer manually validates your participation. </span></p>
+        <transition-stub name="fade">
+          <article class="message is-warning">
+            <!---->
+            <section class="message-body">
+              <div class="media">
+                <!---->
+                <div class="media-content">Unable to save your participation in this browser.</div>
+              </div>
+            </section>
+          </article>
+        </transition-stub>
+        <p class="content"><span>You may now close this window, or <a href="/events/f37910ea-fd5a-4756-9679-00971f3f4106" class="">return to the event's page</a>.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+`;

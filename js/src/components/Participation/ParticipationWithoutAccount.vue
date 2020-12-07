@@ -81,32 +81,71 @@
             {{ $t("Request for participation confirmation sent") }}
           </h1>
           <p class="content">
-            {{ $t("Check your inbox (and your junk mail folder).") }}
+            <span>{{
+              $t("Check your inbox (and your junk mail folder).")
+            }}</span>
+            <span
+              class="details"
+              v-if="event.joinOptions === EventJoinOptions.RESTRICTED"
+            >
+              {{
+                $t(
+                  "Your participation will be validated once you click the confirmation link into the email, and after the organizer manually validates your participation."
+                )
+              }} </span
+            ><span class="details" v-else>{{
+              $t(
+                "Your participation will be validated once you click the confirmation link into the email."
+              )
+            }}</span>
           </p>
-          <p class="content">{{ $t("You may now close this window.") }}</p>
+          <b-message type="is-warning" v-if="error">{{ error }}</b-message>
+          <p class="content">
+            <i18n path="You may now close this window, or {return_to_event}.">
+              <router-link
+                slot="return_to_event"
+                :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
+                >{{ $t("return to the event's page") }}</router-link
+              >
+            </i18n>
+          </p>
         </div>
       </div>
     </div>
+    <b-message type="is-danger" v-else-if="!$apollo.loading"
+      >{{
+        $t(
+          "Unable to load event for participation. The error details are provided below:"
+        )
+      }}
+      <details>
+        <pre>{{ error }}</pre>
+      </details>
+    </b-message>
   </section>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { EventModel, IEvent } from "@/types/event.model";
-import { FETCH_EVENT, JOIN_EVENT } from "@/graphql/event";
+import { FETCH_EVENT_BASIC, JOIN_EVENT } from "@/graphql/event";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
 import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
+import RouteName from "@/router/name";
 import { IParticipant } from "../../types/participant.model";
 
 @Component({
   apollo: {
     event: {
-      query: FETCH_EVENT,
+      query: FETCH_EVENT_BASIC,
       variables() {
         return {
           uuid: this.uuid,
         };
+      },
+      error(e) {
+        this.error = e;
       },
       skip() {
         return !this.uuid;
@@ -141,6 +180,8 @@ export default class ParticipationWithoutAccount extends Vue {
 
   EventJoinOptions = EventJoinOptions;
 
+  RouteName = RouteName;
+
   async joinEvent(): Promise<void> {
     this.error = false;
     this.sendingForm = true;
@@ -163,7 +204,7 @@ export default class ParticipationWithoutAccount extends Vue {
           }
 
           const cachedData = store.readQuery<{ event: IEvent }>({
-            query: FETCH_EVENT,
+            query: FETCH_EVENT_BASIC,
             variables: { uuid: this.event.uuid },
           });
           if (cachedData == null) {
@@ -186,16 +227,15 @@ export default class ParticipationWithoutAccount extends Vue {
             event.participantStats.going += 1;
             event.participantStats.participant += 1;
           }
-          console.log("just before writequery");
 
           store.writeQuery({
-            query: FETCH_EVENT,
+            query: FETCH_EVENT_BASIC,
             variables: { uuid: this.event.uuid },
             data: { event },
           });
         },
       });
-      console.log("finished with store", data);
+      this.formSent = true;
       if (
         data &&
         data.joinEvent.metadata.cancellationToken &&
@@ -205,13 +245,28 @@ export default class ParticipationWithoutAccount extends Vue {
           this.event,
           data.joinEvent.metadata.cancellationToken
         );
-        console.log("done with crypto stuff");
       }
     } catch (e) {
-      this.error = e.message;
+      if (
+        ["TextEncoder is not defined", "crypto.subtle is undefined"].includes(
+          e.message
+        )
+      ) {
+        this.error = this.$t(
+          "Unable to save your participation in this browser."
+        ) as string;
+      } else if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+        this.error = e.graphQLErrors[0].message;
+      } else if (e.networkError) {
+        this.error = e.networkError.message;
+      }
     }
     this.sendingForm = false;
-    this.formSent = true;
   }
 }
 </script>
+<style lang="scss" scoped>
+section.container.section {
+  background: $white;
+}
+</style>
