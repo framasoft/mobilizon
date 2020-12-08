@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:02+0000\n"
-"PO-Revision-Date: 2020-11-26 17:10+0000\n"
+"PO-Revision-Date: 2020-12-09 08:52+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend-errors/nn/>\n"
@@ -660,213 +660,218 @@ msgstr ""
 #, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
+"Du må vera innlogga og ha ei administratorrolle for å lagra admin-"
+"innstillingar"
 
 #: lib/graphql/resolvers/discussion.ex:75
 #, elixir-format
 msgid "You need to be logged-in to access discussions"
-msgstr ""
+msgstr "Du må vera innlogga for å sjå ordskifte"
 
 #: lib/graphql/resolvers/resource.ex:93
 #, elixir-format
 msgid "You need to be logged-in to access resources"
-msgstr ""
+msgstr "Du må vera innlogga for å sjå ressursane"
 
 #: lib/graphql/resolvers/event.ex:210
 #, elixir-format
 msgid "You need to be logged-in to create events"
-msgstr ""
+msgstr "Du må vera innlogga for å laga hendingar"
 
 #: lib/graphql/resolvers/post.ex:139
 #, elixir-format
 msgid "You need to be logged-in to create posts"
-msgstr ""
+msgstr "Du må vera innlogga for å skriva innlegg"
 
 #: lib/graphql/resolvers/report.ex:74
 #, elixir-format
 msgid "You need to be logged-in to create reports"
-msgstr ""
+msgstr "Du må vera innlogga for å rapportera"
 
 #: lib/graphql/resolvers/resource.ex:129
 #, elixir-format
 msgid "You need to be logged-in to create resources"
-msgstr ""
+msgstr "Du må vera innlogga for å laga ressursar"
 
 #: lib/graphql/resolvers/event.ex:284
 #, elixir-format
 msgid "You need to be logged-in to delete an event"
-msgstr ""
+msgstr "Du må vera innlogga for å sletta ei hending"
 
 #: lib/graphql/resolvers/post.ex:209
 #, elixir-format
 msgid "You need to be logged-in to delete posts"
-msgstr ""
+msgstr "Du må vera innlogga for å sletta innlegg"
 
 #: lib/graphql/resolvers/resource.ex:187
 #, elixir-format
 msgid "You need to be logged-in to delete resources"
-msgstr ""
+msgstr "Du må vera innlogga for å sletta ressursar"
 
 #: lib/graphql/resolvers/participant.ex:105
 #, elixir-format
 msgid "You need to be logged-in to join an event"
-msgstr ""
+msgstr "Du må vera innlogga for å bli med på ei hending"
 
 #: lib/graphql/resolvers/participant.ex:204
 #, elixir-format
 msgid "You need to be logged-in to leave an event"
-msgstr ""
+msgstr "Du må vera innlogga for å melda deg av ei hending"
 
 #: lib/graphql/resolvers/event.ex:249
 #, elixir-format
 msgid "You need to be logged-in to update an event"
-msgstr ""
+msgstr "Du må vera innlogga for å oppdatera hendingar"
 
 #: lib/graphql/resolvers/post.ex:176
 #, elixir-format
 msgid "You need to be logged-in to update posts"
-msgstr ""
+msgstr "Du må vera innlogga for å oppdatera innlegg"
 
 #: lib/graphql/resolvers/resource.ex:158
 #, elixir-format
 msgid "You need to be logged-in to update resources"
-msgstr ""
+msgstr "Du må vera innlogga for å oppdatera ressursar"
 
 #: lib/graphql/resolvers/resource.ex:210
 #, elixir-format
 msgid "You need to be logged-in to view a resource preview"
-msgstr ""
+msgstr "Du må vera innlogga for å førehandsvisa ressursar"
 
 #: lib/graphql/resolvers/picture.ex:79
 #, elixir-format
 msgid "You need to login to upload a picture"
-msgstr ""
+msgstr "Du må vera innlogga for å lasta opp bilete"
 
 #: lib/graphql/resolvers/resource.ex:121
 #, elixir-format
 msgid "Parent resource doesn't belong to this group"
-msgstr ""
+msgstr "Opphavsressursen høyrer ikkje til denne gruppa"
 
 #: lib/mobilizon/users/user.ex:109
 #, elixir-format
 msgid "The chosen password is too short."
-msgstr ""
+msgstr "Dette passordet er for kort."
 
 #: lib/mobilizon/users/user.ex:138
 #, elixir-format
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr ""
+"Registreringsteiknet er allereie i bruk, dette ser ut som ein feil frå vår "
+"side."
 
 #: lib/mobilizon/users/user.ex:104
 #, elixir-format
 msgid "This email is already used."
-msgstr ""
+msgstr "Denne eposten er allereie i bruk."
 
 #: lib/graphql/error.ex:88
 #, elixir-format
 msgid "Post not found"
-msgstr ""
+msgstr "Fann ikkje innlegget"
 
 #: lib/graphql/error.ex:75
 #, elixir-format
 msgid "Invalid arguments passed"
-msgstr ""
+msgstr "Ugyldige argument"
 
 #: lib/graphql/error.ex:81
 #, elixir-format
 msgid "Invalid credentials"
-msgstr ""
+msgstr "Ugyldig innlogging"
 
 #: lib/graphql/error.ex:79
 #, elixir-format
 msgid "Reset your password to login"
-msgstr ""
+msgstr "Nullstill passordet for å logga inn"
 
 #: lib/graphql/error.ex:86 lib/graphql/error.ex:91
 #, elixir-format
 msgid "Resource not found"
-msgstr ""
+msgstr "Fann ikkje ressursen"
 
 #: lib/graphql/error.ex:92
 #, elixir-format
 msgid "Something went wrong"
-msgstr ""
+msgstr "Noko gjekk gale"
 
 #: lib/graphql/error.ex:74
 #, elixir-format
 msgid "Unknown Resource"
-msgstr ""
+msgstr "Ukjend ressurs"
 
 #: lib/graphql/error.ex:84
 #, elixir-format
 msgid "You don't have permission to do this"
-msgstr ""
+msgstr "Du har ikkje løyve til å gjera detet"
 
 #: lib/graphql/error.ex:76
 #, elixir-format
 msgid "You need to be logged in"
-msgstr ""
+msgstr "Du må vera innlogga"
 
 #: lib/graphql/resolvers/member.ex:116
 #, elixir-format
 msgid "You can't accept this invitation with this profile."
-msgstr ""
+msgstr "Du kan ikkje ta imot invitasjonar med denne profilen."
 
 #: lib/graphql/resolvers/member.ex:134
 #, elixir-format
 msgid "You can't reject this invitation with this profile."
-msgstr ""
+msgstr "Du kan ikkje avslå invitasjonen med denne profilen."
 
 #: lib/graphql/resolvers/picture.ex:71
 #, elixir-format
 msgid "File doesn't have an allowed MIME type."
-msgstr ""
+msgstr "Fila har ingen tillaten MIME-type."
 
 #: lib/graphql/resolvers/group.ex:167
 #, elixir-format
 msgid "Profile is not administrator for the group"
-msgstr ""
+msgstr "Profilen er ikkje administrator for gruppa"
 
 #: lib/graphql/resolvers/event.ex:238
 #, elixir-format
 msgid "You can't edit this event."
-msgstr ""
+msgstr "Du kan ikkje endra denne hendinga."
 
 #: lib/graphql/resolvers/event.ex:241
 #, elixir-format
 msgid "You can't attribute this event to this profile."
-msgstr ""
+msgstr "Du kan ikkje kopla denne hendinga til denne profilen."
 
 #: lib/graphql/resolvers/member.ex:137
 #, elixir-format
 msgid "This invitation doesn't exist."
-msgstr ""
+msgstr "Invitasjonen finst ikkje."
 
 #: lib/graphql/resolvers/member.ex:179
 #, elixir-format
 msgid "This member already has been rejected."
-msgstr ""
+msgstr "Denne medlemen har allereie fått avslag."
 
 #: lib/graphql/resolvers/member.ex:186
 #, elixir-format
 msgid "You don't have the right to remove this member."
-msgstr ""
+msgstr "Du har ikkje løyve til å fjerna denne medlemen."
 
 #: lib/mobilizon/actors/actor.ex:344
 #, elixir-format
 msgid "This username is already taken."
-msgstr ""
+msgstr "Dette brukarnamnet er oppteke."
 
 #: lib/graphql/resolvers/discussion.ex:72
 #, elixir-format
 msgid "You must provide either an ID or a slug to access a discussion"
 msgstr ""
+"Du må gje anten ein ID eller ei stuttadresse for å få tilgang til ordskiftet"
 
 #: lib/graphql/resolvers/event.ex:199
 #, elixir-format
 msgid "Organizer profile is not owned by the user"
-msgstr ""
+msgstr "Brukaren eig ikkje arrangørprofilen"
 
 #: lib/graphql/resolvers/participant.ex:90
 #, elixir-format
 msgid "Profile ID provided is not the anonymous profile one"
-msgstr ""
+msgstr "Denne profil-IDen er ikkje den anonyme profilen"
