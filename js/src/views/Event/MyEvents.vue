@@ -86,6 +86,16 @@
       type="is-danger"
     >
       {{ $t("No events found") }}
+
+      <div class="suggest-create-event">
+        <b-button
+          tag="router-link"
+          :to="{ name: RouteName.CREATE_EVENT }"
+          type="is-primary"
+        >
+          {{ $t("Create") }}
+        </b-button>
+      </div>
     </b-message>
   </section>
 </template>
