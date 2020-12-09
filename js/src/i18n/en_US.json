@@ -810,5 +810,15 @@
   "Unable to load event for participation. The error details are provided below:": "Unable to load event for participation. The error details are provided below:",
   "Unable to save your participation in this browser.": "Unable to save your participation in this browser.",
   "return to the event's page": "return to the event's page",
-  "View all events": "View all events"
+  "View all events": "View all events",
+  "You will find here all the events you have created or of which you are a participant.": "You will find here all the events you have created or of which you are a participant.",
+  "Create event": "Create event",
+  "You didn't create or join any event yet": "You didn't create or join any event yet",
+  "create an event": "create an event",
+  "explore the events": "explore the events",
+  "Do you wish to {create_event} or {explore_events}?": "Do you wish to {create_event} or {explore_events}?",
+  "You are not part of any group": "You are not part of any group",
+  "create a group": "create a group",
+  "explore the groups": "explore the groups",
+  "Do you wish to {create_group} or {explore_groups}?": "Do you wish to {create_group} or {explore_groups}?"
 }

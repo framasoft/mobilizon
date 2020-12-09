@@ -1,8 +1,22 @@
 <template>
-  <section class="section container">
+  <div class="section container">
     <h1 class="title">
       {{ $t("My events") }}
     </h1>
+    <p>
+      {{
+        $t(
+          "You will find here all the events you have created or of which you are a participant."
+        )
+      }}
+    </p>
+    <div class="buttons">
+      <router-link
+        class="button is-primary"
+        :to="{ name: RouteName.CREATE_EVENT }"
+        >{{ $t("Create event") }}</router-link
+      >
+    </div>
     <b-loading :active.sync="$apollo.loading"></b-loading>
     <section v-if="futureParticipations.length > 0">
       <subtitle>
@@ -77,22 +91,44 @@
         >
       </div>
     </section>
-    <b-message
+    <section
+      class="has-text-centered not-found"
       v-if="
         futureParticipations.length === 0 &&
         pastParticipations.length === 0 &&
-        $apollo.loading === false
+        !$apollo.loading
       "
-      type="is-danger"
     >
-      {{ $t("No events found") }}
-    </b-message>
-  </section>
+      <div class="columns is-vertical is-centered">
+        <div class="column is-three-quarters">
+          <div class="img-container" />
+          <div class="content has-text-centered">
+            <p>
+              {{ $t("You didn't create or join any event yet.") }}
+              <i18n path="Do you wish to {create_event} or {explore_events}?">
+                <router-link
+                  :to="{ name: RouteName.CREATE_EVENT }"
+                  slot="create_event"
+                  >{{ $t("create an event") }}</router-link
+                >
+                <router-link
+                  :to="{ name: RouteName.SEARCH }"
+                  slot="explore_events"
+                  >{{ $t("explore the events") }}</router-link
+                >
+              </i18n>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
+import RouteName from "@/router/name";
 import { IParticipant, Participant } from "../../types/participant.model";
 import {
   LOGGED_USER_PARTICIPATIONS,
@@ -172,6 +208,8 @@ export default class MyEvents extends Vue {
   hasMorePastParticipations = true;
 
   drafts: IEvent[] = [];
+
+  RouteName = RouteName;
 
   static monthlyParticipations(
     participations: IParticipant[],
@@ -299,6 +337,10 @@ export default class MyEvents extends Vue {
 <style lang="scss" scoped>
 main > .container {
   background: $white;
+
+  & > h1 {
+    margin: 10px auto 5px;
+  }
 }
 
 .participation {
@@ -308,6 +350,18 @@ main > .container {
 section {
   .upcoming-month {
     text-transform: capitalize;
+  }
+}
+
+.not-found {
+  .img-container {
+    background-image: url("/img/pics/2020-10-06-mobilizon-illustration-B_creation-evenement.jpg");
+    max-width: 450px;
+    height: 300px;
+    box-shadow: 0 0 8px 8px white inset;
+    background-size: cover;
+    border-radius: 10px;
+    margin: auto auto 1rem;
   }
 }
 </style>
