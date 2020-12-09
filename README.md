@@ -52,7 +52,7 @@ We appreciate any contribution to Mobilizon. Check our [CONTRIBUTING](CONTRIBUTI
   * 📜 Documentation [https://docs.joinmobilizon.org](https://docs.joinmobilizon.org)
   
 ### Discuss
-  * 💬 Riot/Matrix: [https://riot.im/app/#/room/#Mobilizon:matrix.org](https://riot.im/app/#/room/#Mobilizon:matrix.org)
+  * 💬 Element/Matrix: [https://matrix.to/#/#Mobilizon:matrix.org](https://matrix.to/#/#Mobilizon:matrix.org)
   * 🗣️ Forum: [https://framacolibri.org/c/mobilizon](https://framacolibri.org/c/mobilizon)
 
 ### Follow
