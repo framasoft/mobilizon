@@ -161,7 +161,7 @@ export default class Followings extends Mixins(RelayMixin) {
       await this.$apollo.mutate({
         mutation: ADD_RELAY,
         variables: {
-          address: this.newRelayAddress,
+          address: this.newRelayAddress.trim(), // trim to fix copy and paste domain name spaces and tabs
         },
       });
       await this.$apollo.queries.relayFollowings.refetch();
