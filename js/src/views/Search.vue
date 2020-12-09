@@ -46,7 +46,7 @@
                 <option
                   v-for="(option, index) in options"
                   :key="index"
-                  :value="option"
+                  :value="index"
                 >
                   {{ option.label }}
                 </option>
@@ -56,20 +56,23 @@
         </form>
       </div>
     </section>
-    <section class="events-featured" v-if="!tag && searchEvents.initial">
+    <section
+      class="events-featured"
+      v-if="!tag && !(search || location.geom || when !== 'any')"
+    >
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
-      <div v-if="events.length > 0" class="columns is-multiline">
+      <div v-if="events.elements.length > 0" class="columns is-multiline">
         <div
           class="column is-one-third-desktop"
-          v-for="event in events"
+          v-for="event in events.elements"
           :key="event.uuid"
         >
           <EventCard :event="event" />
         </div>
       </div>
       <b-message
-        v-else-if="events.length === 0 && $apollo.loading === false"
+        v-else-if="events.elements.length === 0 && $apollo.loading === false"
         type="is-danger"
         >{{ $t("No events found") }}</b-message
       >
@@ -109,15 +112,24 @@
         <b-message v-else-if="$apollo.loading === false" type="is-danger">{{
           $t("No events found")
         }}</b-message>
+        <b-loading
+          v-else-if="$apollo.loading"
+          :is-full-page="false"
+          v-model="$apollo.loading"
+          :can-cancel="false"
+        />
       </b-tab-item>
-      <b-tab-item v-if="config && config.features.groups">
+      <b-tab-item v-if="!tag">
         <template slot="header">
           <b-icon icon="account-multiple"></b-icon>
           <span>
             {{ $t("Groups") }} <b-tag rounded>{{ searchGroups.total }}</b-tag>
           </span>
         </template>
-        <div v-if="searchGroups.total > 0">
+        <b-message v-if="config && !config.features.groups" type="is-danger">
+          {{ $t("Groups are not enabled on your server.") }}
+        </b-message>
+        <div v-else-if="searchGroups.total > 0">
           <div class="columns is-multiline">
             <div
               class="column is-one-third-desktop"
@@ -143,13 +155,19 @@
         <b-message v-else-if="$apollo.loading === false" type="is-danger">
           {{ $t("No groups found") }}
         </b-message>
+        <b-loading
+          v-else-if="$apollo.loading"
+          :is-full-page="false"
+          v-model="$apollo.loading"
+          :can-cancel="false"
+        />
       </b-tab-item>
     </b-tabs>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import ngeohash from "ngeohash";
 import {
   endOfToday,
@@ -165,6 +183,7 @@ import {
   eachWeekendOfInterval,
 } from "date-fns";
 import { SearchTabs } from "@/types/enums";
+import { RawLocation } from "vue-router";
 import EventCard from "../components/Event/EventCard.vue";
 import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
@@ -182,11 +201,6 @@ interface ISearchTimeOption {
   start?: Date;
   end?: Date | null;
 }
-
-const tabsName: { events: number; groups: number } = {
-  events: SearchTabs.EVENTS,
-  groups: SearchTabs.GROUPS,
-};
 
 const EVENT_PAGE_LIMIT = 10;
 
@@ -218,7 +232,7 @@ const GROUP_PAGE_LIMIT = 10;
       },
       debounce: 300,
       skip() {
-        return !this.search && !this.tag && !this.geohash && this.end === null;
+        return !this.tag && !this.geohash && this.end === null;
       },
     },
     searchGroups: {
@@ -250,12 +264,14 @@ const GROUP_PAGE_LIMIT = 10;
 export default class Search extends Vue {
   @Prop({ type: String, required: false }) tag!: string;
 
-  events: IEvent[] = [];
-
-  searchEvents: Paginate<IEvent> & { initial: boolean } = {
+  events: Paginate<IEvent> = {
     total: 0,
     elements: [],
-    initial: true,
+  };
+
+  searchEvents: Paginate<IEvent> = {
+    total: 0,
+    elements: [],
   };
 
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
@@ -264,62 +280,51 @@ export default class Search extends Vue {
 
   groupPage = 1;
 
-  search: string = (this.$route.query.term as string) || "";
-
-  activeTab: SearchTabs =
-    tabsName[this.$route.query.searchType as "events" | "groups"] || 0;
-
   location: IAddress = new Address();
 
-  options: ISearchTimeOption[] = [
-    {
+  options: Record<string, ISearchTimeOption> = {
+    today: {
       label: this.$t("Today") as string,
       start: new Date(),
       end: endOfToday(),
     },
-    {
+    tomorrow: {
       label: this.$t("Tomorrow") as string,
       start: startOfDay(addDays(new Date(), 1)),
       end: endOfDay(addDays(new Date(), 1)),
     },
-    {
+    weekend: {
       label: this.$t("This weekend") as string,
       start: this.weekend.start,
       end: this.weekend.end,
     },
-    {
+    week: {
       label: this.$t("This week") as string,
       start: new Date(),
       end: endOfWeek(new Date(), { locale: this.$dateFnsLocale }),
     },
-    {
+    next_week: {
       label: this.$t("Next week") as string,
       start: startOfWeek(addWeeks(new Date(), 1), {
         locale: this.$dateFnsLocale,
       }),
       end: endOfWeek(addWeeks(new Date(), 1), { locale: this.$dateFnsLocale }),
     },
-    {
+    month: {
       label: this.$t("This month") as string,
       start: new Date(),
       end: endOfMonth(new Date()),
     },
-    {
+    next_month: {
       label: this.$t("Next month") as string,
       start: startOfMonth(addMonths(new Date(), 1)),
       end: endOfMonth(addMonths(new Date(), 1)),
     },
-    {
+    any: {
       label: this.$t("Any day") as string,
       start: undefined,
       end: undefined,
     },
-  ];
-
-  when: ISearchTimeOption = {
-    label: this.$t("Any day") as string,
-    start: undefined,
-    end: null,
   };
 
   EVENT_PAGE_LIMIT = EVENT_PAGE_LIMIT;
@@ -335,26 +340,60 @@ export default class Search extends Vue {
 
   radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
 
-  radius = 50;
-
   submit(): void {
     this.$apollo.queries.searchEvents.refetch();
   }
 
-  @Watch("search")
-  updateSearchTerm(): void {
-    this.$router.push({
+  get search(): string | undefined {
+    return this.$route.query.term as string;
+  }
+
+  set search(term: string | undefined) {
+    const route: RawLocation = {
       name: RouteName.SEARCH,
-      query: { ...this.$route.query, term: this.search },
+    };
+    if (term !== "") {
+      route.query = { ...this.$route.query, term };
+    }
+    this.$router.replace(route);
+  }
+
+  get activeTab(): SearchTabs {
+    return (
+      parseInt(this.$route.query.searchType as string, 10) || SearchTabs.EVENTS
+    );
+  }
+
+  set activeTab(value: SearchTabs) {
+    this.$router.replace({
+      name: RouteName.SEARCH,
+      query: { ...this.$route.query, searchType: value.toString() },
     });
   }
 
-  @Watch("activeTab")
-  updateActiveTab(): void {
-    const searchType = this.activeTab === tabsName.events ? "events" : "groups";
-    this.$router.push({
+  get radius(): number | null {
+    if (this.$route.query.radius === "any") {
+      return null;
+    }
+    return parseInt(this.$route.query.radius as string, 10) || null;
+  }
+
+  set radius(value: number | null) {
+    const radius = value === null ? "any" : value.toString();
+    this.$router.replace({
       name: RouteName.SEARCH,
-      query: { ...this.$route.query, searchType },
+      query: { ...this.$route.query, radius },
+    });
+  }
+
+  get when(): string {
+    return (this.$route.query.when as string) || "any";
+  }
+
+  set when(value: string) {
+    this.$router.replace({
+      name: RouteName.SEARCH,
+      query: { ...this.$route.query, when: value },
     });
   }
 
@@ -378,11 +417,17 @@ export default class Search extends Vue {
   }
 
   get start(): Date | undefined {
-    return this.when.start;
+    if (this.options[this.when]) {
+      return this.options[this.when].start;
+    }
+    return undefined;
   }
 
   get end(): Date | undefined | null {
-    return this.when.end;
+    if (this.options[this.when]) {
+      return this.options[this.when].end;
+    }
+    return undefined;
   }
 }
 </script>

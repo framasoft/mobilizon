@@ -19,12 +19,15 @@ defmodule Mobilizon.Storage.Page do
 
   @doc """
   Returns a Page struct for a query.
+
+  `field` is use to define the field that will be used for the count aggregate, which should be the same as the field used for order_by
+    See https://stackoverflow.com/q/12693089/10204399
   """
-  @spec build_page(Ecto.Query.t(), integer | nil, integer | nil) :: t
-  def build_page(query, page, limit) do
+  @spec build_page(Ecto.Query.t(), integer | nil, integer | nil, atom()) :: t
+  def build_page(query, page, limit, field \\ :id) do
     [total, elements] =
       [
-        fn -> Repo.aggregate(query, :count, :id) end,
+        fn -> Repo.aggregate(query, :count, field) end,
         fn -> Repo.all(paginate(query, page, limit)) end
       ]
       |> Enum.map(&Task.async/1)

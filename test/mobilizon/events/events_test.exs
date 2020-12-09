@@ -29,12 +29,12 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "list_events/0 returns all events", %{event: event} do
-      assert event.title == hd(Events.list_events()).title
+      assert event.title == hd(Events.list_events().elements).title
     end
 
     test "list_events/5 returns events from other instances if we follow them",
          %{event: _event} do
-      events = Events.list_events()
+      events = Events.list_events().elements
       assert length(events) == 1
 
       %Actor{id: remote_instance_actor_id} = remote_instance_actor = insert(:instance_actor)
@@ -46,7 +46,7 @@ defmodule Mobilizon.EventsTest do
 
       insert(:follower, target_actor: remote_instance_actor, actor: own_instance_actor)
 
-      events = Events.list_events()
+      events = Events.list_events().elements
       assert length(events) == 2
       assert events |> Enum.any?(fn event -> event.title == "My Remote event" end)
     end
@@ -58,7 +58,7 @@ defmodule Mobilizon.EventsTest do
       %Event{url: remote_event_url} = insert(:event, local: false, title: "My Remote event")
       Mobilizon.Share.create(remote_event_url, remote_instance_actor_id, remote_actor_id)
 
-      events = Events.list_events()
+      events = Events.list_events().elements
       assert length(events) == 1
       assert events |> Enum.all?(fn event -> event.title != "My Remote event" end)
     end

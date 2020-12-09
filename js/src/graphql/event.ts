@@ -196,54 +196,54 @@ export const FETCH_EVENT_BASIC = gql`
 export const FETCH_EVENTS = gql`
   query {
     events {
-      id,
-      uuid,
-      url,
-      local,
-      title,
-      description,
-      beginsOn,
-      endsOn,
-      status,
-      visibility,
-      picture {
+      total
+      elements {
         id
+        uuid
         url
-      },
-      publishAt,
-      # online_address,
-      # phone_address,
-      physicalAddress {
-        id,
-        description,
-        locality
-      },
-      organizerActor {
-        id,
-        avatar {
+        local
+        title
+        description
+        beginsOn
+        endsOn
+        status
+        visibility
+        picture {
           id
           url
-        },
-        preferredUsername,
-        domain,
-        name,
-      },
-#      attributedTo {
-#        avatar {
-#          id
-#          url
-#        },
-#        preferredUsername,
-#        name,
-#      },
-      category,
-      participants {
-        ${participantsQuery}
-      },
-      tags {
-        slug,
-        title
-      },
+        }
+        publishAt
+        # online_address,
+        # phone_address,
+        physicalAddress {
+          id
+          description
+          locality
+        }
+        organizerActor {
+          id
+          avatar {
+            id
+            url
+          }
+          preferredUsername
+          domain
+          name
+        }
+        #      attributedTo {
+        #        avatar {
+        #          id
+        #          url
+        #        },
+        #        preferredUsername,
+        #        name,
+        #      },
+        category
+        tags {
+          slug
+          title
+        }
+      }
     }
   }
 `;
