@@ -40,12 +40,33 @@
       >
       </b-pagination>
     </section>
-    <b-message
-      v-if="$apollo.loading === false && memberships.length === 0"
-      type="is-danger"
+    <section
+      class="has-text-centered not-found"
+      v-if="memberships.length === 0 && !$apollo.loading"
     >
-      {{ $t("No groups found") }}
-    </b-message>
+      <div class="columns is-vertical is-centered">
+        <div class="column is-three-quarters">
+          <div class="img-container" />
+          <div class="content has-text-centered">
+            <p>
+              {{ $t("You are not part of any group.") }}
+              <i18n path="Do you wish to {create_group} or {explore_groups}?">
+                <router-link
+                  :to="{ name: RouteName.CREATE_GROUP }"
+                  slot="create_group"
+                  >{{ $t("create a group") }}</router-link
+                >
+                <router-link
+                  :to="{ name: RouteName.SEARCH }"
+                  slot="explore_groups"
+                  >{{ $t("explore the groups") }}</router-link
+                >
+              </i18n>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   </section>
 </template>
 
@@ -156,6 +177,10 @@ export default class MyGroups extends Vue {
 <style lang="scss" scoped>
 main > .container {
   background: $white;
+
+  & > h1 {
+    margin: 10px auto 5px;
+  }
 }
 
 .participation {
@@ -170,5 +195,17 @@ section {
 
 .group-member-card {
   margin-bottom: 1rem;
+}
+
+.not-found {
+  .img-container {
+    background-image: url("/img/pics/2020-10-06-mobilizon-illustration-C_groupe.jpg");
+    max-width: 450px;
+    height: 300px;
+    box-shadow: 0 0 8px 8px white inset;
+    background-size: cover;
+    border-radius: 10px;
+    margin: auto auto 1rem;
+  }
 }
 </style>

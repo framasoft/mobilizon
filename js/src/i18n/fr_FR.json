@@ -904,5 +904,15 @@
   "Unable to save your participation in this browser.": "Échec de la sauvegarde de votre participation dans ce navigateur.",
   "return to the event's page": "retourner sur la page de l'événement",
   "You may now close this window, or {return_to_event}.": "Vous pouvez maintenant fermer cette fenêtre, ou bien {return_to_event}.",
-  "View all events": "Voir tous les événements"
+  "View all events": "Voir tous les événements",
+  "You will find here all the events you have created or of which you are a participant.": "Vous trouverez ici tous les événements que vous avez créé ou dont vous êtes un·e participant·e.",
+  "Create event": "Créer un événement",
+  "You didn't create or join any event yet.": "Vous n'avez pas encore créé ou rejoint d'événement.",
+  "create an event": "créer un événement",
+  "explore the events": "explorer les événements",
+  "Do you wish to {create_event} or {explore_events}?": "Voulez-vous {create_event} ou {explore_events} ?",
+  "You are not part of any group.": "Vous ne faites partie d'aucun groupe.",
+  "create a group": "créer un groupe",
+  "explore the groups": "explorer les groupes",
+  "Do you wish to {create_group} or {explore_groups}?": "Voulez-vous {create_group} ou {explore_groups} ?"
 }
