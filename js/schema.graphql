@@ -44,7 +44,7 @@ type RefreshedToken {
 }
 
 "Represents an application"
-type Application {
+type Application implements Actor {
   "Internal ID for this application"
   id: ID
 
@@ -336,7 +336,7 @@ type PaginatedPostList {
 }
 
 "A comment"
-type Comment {
+type Comment implements ActionLogObject {
   "Internal ID for this comment"
   id: ID
 
@@ -893,7 +893,7 @@ enum EventCommentModeration {
 }
 
 "Represents a person identity"
-type Person {
+type Person implements ActionLogObject & Actor {
   "Internal ID for this person"
   id: ID
 
@@ -2219,7 +2219,7 @@ input EventOptionsInput {
 }
 
 "A report object"
-type Report {
+type Report implements ActionLogObject {
   "The internal ID of the report"
   id: ID
 
@@ -2285,7 +2285,7 @@ type PaginatedTodoListList {
 }
 
 "An event"
-type Event {
+type Event implements Interactable & ActionLogObject {
   "Internal ID for this event"
   id: ID
 
@@ -2737,7 +2737,7 @@ type Geocoding {
 }
 
 "A report note object"
-type ReportNote {
+type ReportNote implements ActionLogObject {
   "The internal ID of the report note"
   id: ID
 
@@ -3052,7 +3052,7 @@ type Member {
 }
 
 "A local user of Mobilizon"
-type User {
+type User implements ActionLogObject {
   "The user's ID"
   id: ID
 
@@ -3157,7 +3157,7 @@ type User {
 }
 
 "Represents a group of actors"
-type Group {
+type Group implements Interactable & Actor {
   "Internal ID for this group"
   id: ID
 
