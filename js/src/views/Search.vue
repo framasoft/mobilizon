@@ -59,17 +59,17 @@
     <section class="events-featured" v-if="!tag && searchEvents.initial">
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
-      <div v-if="events.length > 0" class="columns is-multiline">
+      <div v-if="events.elements.length > 0" class="columns is-multiline">
         <div
           class="column is-one-third-desktop"
-          v-for="event in events"
+          v-for="event in events.elements"
           :key="event.uuid"
         >
           <EventCard :event="event" />
         </div>
       </div>
       <b-message
-        v-else-if="events.length === 0 && $apollo.loading === false"
+        v-else-if="events.elements.length === 0 && $apollo.loading === false"
         type="is-danger"
         >{{ $t("No events found") }}</b-message
       >
@@ -250,7 +250,10 @@ const GROUP_PAGE_LIMIT = 10;
 export default class Search extends Vue {
   @Prop({ type: String, required: false }) tag!: string;
 
-  events: IEvent[] = [];
+  events: Paginate<IEvent> = {
+    total: 0,
+    elements: [],
+  };
 
   searchEvents: Paginate<IEvent> & { initial: boolean } = {
     total: 0,

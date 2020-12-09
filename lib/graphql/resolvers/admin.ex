@@ -190,7 +190,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       when is_admin(role) do
     last_public_event_published =
       case Events.list_events(1, 1, :inserted_at, :desc) do
-        [event | _] -> event
+        %Page{elements: [event | _]} -> event
         _ -> nil
       end
 

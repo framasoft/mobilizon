@@ -161,7 +161,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     events =
       if @number_of_related_events - length(events) > 0 do
         events
-        |> Enum.concat(Events.list_events(1, @number_of_related_events, :begins_on, :asc, true))
+        |> Enum.concat(
+          Events.list_events(1, @number_of_related_events, :begins_on, :asc, true).elements
+        )
         |> uniq_events()
       else
         events

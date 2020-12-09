@@ -299,7 +299,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
   object :event_queries do
     @desc "Get all events"
-    field :events, list_of(:event) do
+    field :events, :paginated_event_list do
       arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
       arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
       resolve(&Event.list_events/3)

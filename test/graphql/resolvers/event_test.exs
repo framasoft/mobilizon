@@ -1144,120 +1144,89 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
              ]
     end
 
-    test "list_events/3 returns events", context do
-      event = insert(:event)
-
-      query = """
-      {
-        events {
-          uuid,
+    @fetch_events_query """
+    query Events($page: Int, $limit: Int) {
+      events(page: $page, limit: $limit) {
+        total
+        elements {
+          uuid
         }
       }
-      """
+    }
+    """
+
+    test "list_events/3 returns events", %{conn: conn} do
+      event = insert(:event)
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_events_query)
 
-      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == [event.uuid]
+      assert res["data"]["events"]["elements"] |> Enum.map(& &1["uuid"]) == [
+               event.uuid
+             ]
 
       Enum.each(0..15, fn _ ->
         insert(:event)
       end)
 
-      query = """
-      {
-        events {
-          uuid,
-        }
-      }
-      """
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_events_query)
+
+      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["elements"] |> length == 10
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_events_query, variables: %{page: 2})
 
-      assert json_response(res, 200)["data"]["events"] |> length == 10
-
-      query = """
-      {
-        events(page: 2) {
-          uuid,
-        }
-      }
-      """
+      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["elements"] |> length == 7
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_events_query,
+          variables: %{page: 2, limit: 15}
+        )
 
-      assert json_response(res, 200)["data"]["events"] |> length == 7
-
-      query = """
-      {
-        events(page: 2, limit: 15) {
-          uuid,
-        }
-      }
-      """
+      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["elements"] |> length == 2
 
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_events_query,
+          variables: %{page: 3, limit: 15}
+        )
 
-      assert json_response(res, 200)["data"]["events"] |> length == 2
-
-      query = """
-      {
-        events(page: 3, limit: 15) {
-          uuid,
-        }
-      }
-      """
-
-      res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
-
-      assert json_response(res, 200)["data"]["events"] |> length == 0
+      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["elements"] |> length == 0
     end
 
-    test "list_events/3 doesn't list private events", context do
+    test "list_events/3 doesn't list private events", %{conn: conn} do
       insert(:event, visibility: :private)
       insert(:event, visibility: :unlisted)
       insert(:event, visibility: :restricted)
 
-      query = """
-      {
-        events {
-          uuid,
-        }
-      }
-      """
-
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_events_query)
 
-      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == []
+      assert res["data"]["events"]["total"] == 0
+      assert res["data"]["events"]["elements"] |> Enum.map(& &1["uuid"]) == []
     end
 
-    test "list_events/3 doesn't list draft events", context do
+    test "list_events/3 doesn't list draft events", %{conn: conn} do
       insert(:event, visibility: :public, draft: true)
 
-      query = """
-      {
-        events {
-          uuid,
-        }
-      }
-      """
-
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_events_query)
 
-      assert json_response(res, 200)["data"]["events"] |> Enum.map(& &1["uuid"]) == []
+      assert res["data"]["events"]["total"] == 0
+      assert res["data"]["events"]["elements"] |> Enum.map(& &1["uuid"]) == []
     end
 
     test "find_event/3 returns an unlisted event", context do

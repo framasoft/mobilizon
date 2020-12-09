@@ -1949,7 +1949,7 @@ type RootQueryType {
 
     "The limit of events per page"
     limit: Int
-  ): [Event]
+  ): PaginatedEventList
 
   "Get an event by uuid"
   event("The event's UUID" uuid: UUID!): Event

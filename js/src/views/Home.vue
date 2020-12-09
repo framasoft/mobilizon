@@ -220,6 +220,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
+import { Paginate } from "@/types/paginate";
 import { IParticipant, Participant } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
@@ -295,7 +296,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
   },
 })
 export default class Home extends Vue {
-  events: IEvent[] = [];
+  events!: Paginate<IEvent>;
 
   locations = [];
 
@@ -437,7 +438,7 @@ export default class Home extends Vue {
    * Return all events from server excluding the ones shown as participating
    */
   get filteredFeaturedEvents(): IEvent[] {
-    return this.events.filter(
+    return this.events.elements.filter(
       ({ id }) =>
         !this.currentUserParticipations
           .filter(
