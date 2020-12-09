@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GroupSection renders group section with basic informations 1`] = `
+<section>
+  <div class="group-section-title privateSection">
+    <h2><span class="icon"><i class="mdi mdi-bullhorn mdi-24px"></i></span> <span>My group section</span></h2> <a href="/@my_group@remotedomain.net/p" class="">View all</a>
+  </div>
+  <div class="main-slot">
+    <div>A list of elements</div>
+  </div>
+  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Post a public message</a></div>
+</section>
+`;
+
+exports[`GroupSection renders public group section 1`] = `
+<section>
+  <div class="group-section-title">
+    <h2><span class="icon"><i class="mdi mdi-bullhorn mdi-24px"></i></span> <span>My group section</span></h2> <a href="/@my_group@remotedomain.net/p" class="">View all</a>
+  </div>
+  <div class="main-slot">
+    <div>A list of elements</div>
+  </div>
+  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Post a public message</a></div>
+</section>
+`;
