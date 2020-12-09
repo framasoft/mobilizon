@@ -442,7 +442,6 @@
   "Actor": "Actor",
   "Text": "Text",
   "Upcoming events": "Upcoming events",
-  "View all upcoming events": "View all upcoming events",
   "Resources": "Resources",
   "Public page": "Public page",
   "Discussions": "Discussions",
@@ -810,5 +809,6 @@
   "Your participation will be validated once you click the confirmation link into the email.": "Your participation will be validated once you click the confirmation link into the email.",
   "Unable to load event for participation. The error details are provided below:": "Unable to load event for participation. The error details are provided below:",
   "Unable to save your participation in this browser.": "Unable to save your participation in this browser.",
-  "return to the event's page": "return to the event's page"
+  "return to the event's page": "return to the event's page",
+  "View all events": "View all events"
 }

@@ -362,18 +362,26 @@
             :key="event.uuid"
             class="organized-event"
           />
-          <router-link
-            :to="{
-              name: RouteName.GROUP_EVENTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("View all upcoming events") }}</router-link
-          >
+        </div>
+        <div
+          v-else-if="group && group.organizedEvents.elements.length == 0"
+          class="content has-text-grey has-text-centered"
+        >
+          <p>{{ $t("No public upcoming events") }}</p>
         </div>
         <div v-else-if="group" class="content has-text-grey has-text-centered">
           <p>{{ $t("No public upcoming events") }}</p>
         </div>
-        <b-skeleton animated v-else></b-skeleton>
+        <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
+        <router-link
+          v-if="group.organizedEvents.total > 0"
+          :to="{
+            name: RouteName.GROUP_EVENTS,
+            params: { preferredUsername: usernameWithDomain(group) },
+            query: { future: group.organizedEvents.elements.length > 0 },
+          }"
+          >{{ $t("View all events") }}</router-link
+        >
       </section>
       <section>
         <subtitle>{{ $t("Latest posts") }}</subtitle>
@@ -383,18 +391,19 @@
             :key="post.id"
             :post="post"
           />
-          <router-link
-            :to="{
-              name: RouteName.POSTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("View all posts") }}</router-link
-          >
         </div>
         <div v-else-if="group" class="content has-text-grey has-text-centered">
           <p>{{ $t("No posts yet") }}</p>
         </div>
-        <b-skeleton animated v-else></b-skeleton>
+        <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
+        <router-link
+          v-if="group.posts.total > 0"
+          :to="{
+            name: RouteName.POSTS,
+            params: { preferredUsername: usernameWithDomain(group) },
+          }"
+          >{{ $t("View all posts") }}</router-link
+        >
       </section>
       <b-modal
         v-if="physicalAddress && physicalAddress.geom"
@@ -607,7 +616,6 @@ export default class Group extends mixins(GroupMixin) {
 
   @Watch("isCurrentActorAGroupMember")
   refetchGroupData(): void {
-    console.log("refetchGroupData");
     this.$apollo.queries.group.refetch();
   }
 

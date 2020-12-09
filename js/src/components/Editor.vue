@@ -384,7 +384,7 @@ export default class EditorComponent extends Vue {
                 searchText: query,
               },
             });
-            // TODO: TipTap doesn't handle async for onFilter, hence the following line.
+            // TipTap doesn't handle async for onFilter, hence the following line.
             this.filteredActors = result.data.searchPersons.elements;
             return this.filteredActors;
           },
