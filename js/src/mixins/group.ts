@@ -14,6 +14,8 @@ import { Component, Vue } from "vue-property-decorator";
       variables() {
         return {
           name: this.$route.params.preferredUsername,
+          beforeDateTime: null,
+          afterDateTime: new Date(),
         };
       },
       skip() {

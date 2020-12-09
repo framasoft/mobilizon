@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { GROUP_FIELDS_FRAGMENTS } from "./group";
 
 const participantQuery = `
   role,
@@ -618,6 +619,57 @@ export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
           insertedAt
           updatedAt
         }
+      }
+    }
+  }
+`;
+
+export const FETCH_GROUP_EVENTS = gql`
+  query(
+    $name: String!
+    $afterDateTime: DateTime
+    $beforeDateTime: DateTime
+    $organisedEventsPage: Int
+    $organisedEventslimit: Int
+  ) {
+    group(preferredUsername: $name) {
+      id
+      preferredUsername
+      domain
+      name
+      organizedEvents(
+        afterDatetime: $afterDateTime
+        beforeDatetime: $beforeDateTime
+        page: $organisedEventsPage
+        limit: $organisedEventslimit
+      ) {
+        elements {
+          id
+          uuid
+          title
+          beginsOn
+          draft
+          options {
+            maximumAttendeeCapacity
+          }
+          participantStats {
+            participant
+            notApproved
+          }
+          attributedTo {
+            id
+            preferredUsername
+            name
+            domain
+          }
+          organizerActor {
+            id
+            preferredUsername
+            name
+            domain
+          }
+        }
+        total
       }
     }
   }

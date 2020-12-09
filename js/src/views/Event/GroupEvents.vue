@@ -51,7 +51,7 @@
           {{ showPassedEvents ? $t("Past events") : $t("Upcoming events") }}
         </subtitle>
         <b-switch v-model="showPassedEvents">{{ $t("Past events") }}</b-switch>
-        <transition-group name="list" tag="p">
+        <transition-group name="list" tag="div" class="event-list">
           <EventListViewCard
             v-for="event in group.organizedEvents.elements"
             :key="event.id"
@@ -68,6 +68,16 @@
         >
           {{ $t("No events found") }}
         </b-message>
+        <b-pagination
+          :total="group.organizedEvents.total"
+          v-model="eventsPage"
+          :per-page="EVENTS_PAGE_LIMIT"
+          :aria-next-label="$t('Next page')"
+          :aria-previous-label="$t('Previous page')"
+          :aria-page-label="$t('Page')"
+          :aria-current-label="$t('Current page')"
+        >
+        </b-pagination>
       </section>
     </section>
   </div>
@@ -75,14 +85,16 @@
 <script lang="ts">
 import { Component } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
+import { FETCH_GROUP_EVENTS } from "@/graphql/event";
 import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
+
+const EVENTS_PAGE_LIMIT = 10;
 
 @Component({
   apollo: {
@@ -101,12 +113,14 @@ import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
       },
     },
     group: {
-      query: FETCH_GROUP,
+      query: FETCH_GROUP_EVENTS,
       variables() {
         return {
           name: this.$route.params.preferredUsername,
           beforeDateTime: this.showPassedEvents ? new Date() : null,
           afterDateTime: this.showPassedEvents ? null : new Date(),
+          organisedEventsPage: this.eventsPage,
+          organisedEventslimit: EVENTS_PAGE_LIMIT,
         };
       },
     },
@@ -123,11 +137,13 @@ export default class GroupEvents extends mixins(GroupMixin) {
 
   currentActor!: IPerson;
 
+  eventsPage = 1;
+
   usernameWithDomain = usernameWithDomain;
 
   RouteName = RouteName;
 
-  showPassedEvents = false;
+  EVENTS_PAGE_LIMIT = EVENTS_PAGE_LIMIT;
 
   get isCurrentActorMember(): boolean {
     if (!this.group || !this.memberships) return false;
@@ -135,10 +151,25 @@ export default class GroupEvents extends mixins(GroupMixin) {
       .map(({ parent: { id } }) => id)
       .includes(this.group.id);
   }
+
+  get showPassedEvents(): boolean {
+    return (
+      this.$route.query.future !== undefined &&
+      this.$route.query.future.toString() === "false"
+    );
+  }
+
+  set showPassedEvents(value: boolean) {
+    this.$router.push({ query: { future: this.showPassedEvents.toString() } });
+  }
 }
 </script>
 <style lang="scss" scoped>
 .container.section {
   background: $white;
+}
+
+div.event-list {
+  margin-bottom: 1rem;
 }
 </style>

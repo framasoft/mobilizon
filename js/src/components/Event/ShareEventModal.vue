@@ -72,7 +72,6 @@
           <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="email" size="is-large" type="is-primary"
           /></a>
-          <!--     TODO: mailto: links are not used anymore, we should provide a popup to redact a message instead    -->
         </div>
       </div>
     </section>

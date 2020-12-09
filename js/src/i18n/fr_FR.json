@@ -903,5 +903,6 @@
   "Unable to load event for participation. The error details are provided below:": "Impossible de charger l'événement pour la participation. Les détails de l'erreur sont disponibles ci-dessous :",
   "Unable to save your participation in this browser.": "Échec de la sauvegarde de votre participation dans ce navigateur.",
   "return to the event's page": "retourner sur la page de l'événement",
-  "You may now close this window, or {return_to_event}.": "Vous pouvez maintenant fermer cette fenêtre, ou bien {return_to_event}."
+  "You may now close this window, or {return_to_event}.": "Vous pouvez maintenant fermer cette fenêtre, ou bien {return_to_event}.",
+  "View all events": "Voir tous les événements"
 }
