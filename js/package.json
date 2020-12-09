@@ -53,7 +53,7 @@
     "vuedraggable": "2.23.2"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.19",
+    "@types/jest": "^26.0.18",
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/lodash": "^4.14.141",
@@ -78,7 +78,7 @@
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "^1.1.0",
     "eslint": "^7.7.0",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-vue": "^7.0.0",
