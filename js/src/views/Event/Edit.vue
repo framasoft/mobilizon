@@ -31,12 +31,31 @@
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
 
-        <date-time-picker v-model="event.beginsOn" :label="$t('Starts on…')" />
-        <date-time-picker
-          :min-datetime="event.beginsOn"
-          v-model="event.endsOn"
-          :label="$t('Ends on…')"
-        />
+        <b-field horizontal :label="$t('Starts on…')" class="begins-on-field">
+          <b-datetimepicker
+            :placeholder="$t('Type or select a date…')"
+            icon="calendar-today"
+            :locale="$i18n.locale"
+            v-model="event.beginsOn"
+            horizontal-time-picker
+            editable
+          >
+          </b-datetimepicker>
+        </b-field>
+
+        <b-field horizontal :label="$t('Ends on…')">
+          <b-datetimepicker
+            :placeholder="$t('Type or select a date…')"
+            icon="calendar-today"
+            :locale="$i18n.locale"
+            v-model="event.endsOn"
+            horizontal-time-picker
+            :min-datetime="event.beginsOn"
+            editable
+          >
+          </b-datetimepicker>
+        </b-field>
+
         <!--          <b-switch v-model="endsOnNull">{{ $t('No end date') }}</b-switch>-->
         <b-button type="is-text" @click="dateSettingsIsOpen = true">
           {{ $t("Date parameters") }}
@@ -367,6 +386,10 @@ section {
     padding: 2rem 1.5rem;
   }
 
+  .begins-on-field {
+    margin-top: 22px;
+  }
+
   nav.navbar {
     min-height: 2rem !important;
     background: lighten($secondary, 10%);
@@ -394,7 +417,6 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
-import DateTimePicker from "@/components/Event/DateTimePicker.vue";
 import TagInput from "@/components/Event/TagInput.vue";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
@@ -443,7 +465,6 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
     IdentityPickerWrapper,
     FullAddressAutoComplete,
     TagInput,
-    DateTimePicker,
     PictureUpload,
     Editor: EditorComponent,
   },
@@ -532,14 +553,16 @@ export default class EditEvent extends Vue {
   }
 
   private initializeEvent() {
-    // TODO : Check me
-    // const roundUpTo = (roundTo) => (x: number) => new Date(Math.ceil(x / roundTo) * roundTo);
-    // const roundUpTo15Minutes = roundUpTo(1000 * 60 * 15);
+    const roundUpTo15Minutes = (time: Date) => {
+      time.setMilliseconds(Math.round(time.getMilliseconds() / 1000) * 1000);
+      time.setSeconds(Math.round(time.getSeconds() / 60) * 60);
+      time.setMinutes(Math.round(time.getMinutes() / 15) * 15);
+      return time;
+    };
 
-    // const now = roundUpTo15Minutes(new Date());
-    // const end = roundUpTo15Minutes(new Date());
-    const now = new Date();
-    const end = new Date();
+    const now = roundUpTo15Minutes(new Date());
+    const end = new Date(now.valueOf());
+
     end.setUTCHours(now.getUTCHours() + 3);
 
     this.event.beginsOn = now;
