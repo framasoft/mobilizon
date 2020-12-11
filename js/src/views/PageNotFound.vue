@@ -2,10 +2,24 @@
   <section class="section container has-text-centered not-found">
     <div class="columns is-vertical is-centered">
       <div class="column is-half">
-        <img
-          src="/img/pics/2020-10-06-mobilizon-illustration-E_realisation.jpg"
-          alt=""
-        />
+        <picture>
+          <source
+            srcset="/img/pics/error-480w.webp 1x, /img/pics/error-1024w.webp 2x"
+            type="image/webp"
+          />
+          <source
+            srcset="/img/pics/error-480w.jpg 1x, /img/pics/error-1024w.jpg 2x"
+            type="image/jpeg"
+          />
+
+          <img
+            :src="`/img/pics/error-480w.jpg`"
+            alt=""
+            width="2616"
+            height="1698"
+            loading="lazy"
+          />
+        </picture>
         <h1 class="title">
           {{ $t("The page you're looking for doesn't exist.") }}
         </h1>
