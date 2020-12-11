@@ -46,7 +46,7 @@
     >
       <div class="columns is-vertical is-centered">
         <div class="column is-three-quarters">
-          <div class="img-container" />
+          <div class="img-container" :class="{ webp: supportsWebPFormat }" />
           <div class="content has-text-centered">
             <p>
               {{ $t("You are not part of any group.") }}
@@ -81,6 +81,7 @@ import { IGroup, usernameWithDomain } from "@/types/actor";
 import { Route } from "vue-router";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
+import { supportsWebPFormat } from "@/utils/support";
 import RouteName from "../../router/name";
 
 @Component({
@@ -118,6 +119,8 @@ export default class MyGroups extends Vue {
   page = 1;
 
   limit = 10;
+
+  supportsWebPFormat = supportsWebPFormat;
 
   acceptInvitation(member: IMember): Promise<Route> {
     return this.$router.push({
@@ -199,7 +202,22 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("/img/pics/2020-10-06-mobilizon-illustration-C_groupe.jpg");
+    background-image: url("/img/pics/group-480w.jpg");
+
+    @media (min-resolution: 2dppx) {
+      & {
+        background-image: url("/img/pics/group-1024w.jpg");
+      }
+    }
+    &.webp {
+      background-image: url("/img/pics/group-480w.webp");
+      @media (min-resolution: 2dppx) {
+        & {
+          background-image: url("/img/pics/group-1024w.webp");
+        }
+      }
+    }
+
     max-width: 450px;
     height: 300px;
     box-shadow: 0 0 8px 8px white inset;

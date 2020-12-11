@@ -1,6 +1,22 @@
 <template>
   <footer class="footer" ref="footer">
-    <img :src="`/img/pics/footer_${random}.jpg`" alt="" />
+    <picture>
+      <source
+        :srcset="`/img/pics/footer_${random}-1024w.webp 1x, /img/pics/footer_${random}-1920w.webp 2x`"
+        type="image/webp"
+      />
+      <source
+        :srcset="`/img/pics/footer_${random}-1024w.jpg 1x, /img/pics/footer_${random}-1920w.jpg 2x`"
+        type="image/jpeg"
+      />
+      <img
+        :src="`/img/pics/footer_${random}-1024w.jpg`"
+        alt=""
+        width="5234"
+        height="2189"
+        loading="lazy"
+      />
+    </picture>
     <ul>
       <li>
         <b-select

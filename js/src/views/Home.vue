@@ -2,6 +2,7 @@
   <div id="homepage">
     <section
       class="hero"
+      :class="{ webp: supportsWebPFormat }"
       v-if="config && (!currentUser.id || !currentActor.id)"
     >
       <div class="hero-body">
@@ -72,10 +73,59 @@
     </div>
     <div id="picture" v-if="config && (!currentUser.id || !currentActor.id)">
       <div class="picture-container">
-        <img
-          src="/img/pics/2020-10-06-mobilizon-illustration-A_homepage.jpg"
-          alt=""
-        />
+        <picture>
+          <source
+            media="(max-width: 799px)"
+            srcset="/img/pics/homepage-480w.webp"
+            type="image/webp"
+          />
+          <source
+            media="(max-width: 799px)"
+            srcset="/img/pics/homepage-480w.jpg"
+            type="image/jpeg"
+          />
+
+          <source
+            media="(max-width: 1024px)"
+            srcset="/img/pics/homepage-1024w.webp"
+            type="image/webp"
+          />
+          <source
+            media="(max-width: 1024px)"
+            srcset="/img/pics/homepage-1024w.jpg"
+            type="image/jpeg"
+          />
+
+          <source
+            media="(max-width: 1920px)"
+            srcset="/img/pics/homepage-1920w.webp"
+            type="image/webp"
+          />
+          <source
+            media="(max-width: 1920px)"
+            srcset="/img/pics/homepage-1920w.jpg"
+            type="image/jpeg"
+          />
+
+          <source
+            media="(min-width: 1921px)"
+            srcset="/img/pics/homepage.webp"
+            type="image/webp"
+          />
+          <source
+            media="(min-width: 1921px)"
+            srcset="/img/pics/homepage.jpg"
+            type="image/jpeg"
+          />
+
+          <img
+            src="/img/pics/homepage-1024w.jpg"
+            width="3840"
+            height="2719"
+            alt=""
+            loading="lazy"
+          />
+        </picture>
       </div>
       <div class="container section">
         <div class="columns">
@@ -221,6 +271,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
+import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
@@ -296,7 +347,10 @@ import Subtitle from "../components/Utils/Subtitle.vue";
   },
 })
 export default class Home extends Vue {
-  events!: Paginate<IEvent>;
+  events: Paginate<IEvent> = {
+    elements: [],
+    total: 0,
+  };
 
   locations = [];
 
@@ -315,6 +369,8 @@ export default class Home extends Vue {
   RouteName = RouteName;
 
   currentUserParticipations: IParticipant[] = [];
+
+  supportsWebPFormat = supportsWebPFormat;
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
@@ -531,7 +587,11 @@ section.hero {
     height: 100%;
     opacity: 0.3;
     z-index: -1;
-    background: url("/img/pics/homepage_background.png");
+    background: url("/img/pics/homepage_background-1024w.png");
+    background-size: cover;
+  }
+  &.webp::before {
+    background-image: url("/img/pics/homepage_background-1024w.webp");
   }
 
   & > .hero-body {

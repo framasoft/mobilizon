@@ -101,7 +101,7 @@
     >
       <div class="columns is-vertical is-centered">
         <div class="column is-three-quarters">
-          <div class="img-container" />
+          <div class="img-container" :class="{ webp: supportsWebPFormat }" />
           <div class="content has-text-centered">
             <p>
               {{ $t("You didn't create or join any event yet.") }}
@@ -129,6 +129,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
+import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../../types/participant.model";
 import {
   LOGGED_USER_PARTICIPATIONS,
@@ -210,6 +211,8 @@ export default class MyEvents extends Vue {
   drafts: IEvent[] = [];
 
   RouteName = RouteName;
+
+  supportsWebPFormat = supportsWebPFormat;
 
   static monthlyParticipations(
     participations: IParticipant[],
@@ -355,7 +358,21 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("/img/pics/2020-10-06-mobilizon-illustration-B_creation-evenement.jpg");
+    background-image: url("/img/pics/event_creation-480w.jpg");
+    @media (min-resolution: 2dppx) {
+      & {
+        background-image: url("/img/pics/event_creation-1024w.jpg");
+      }
+    }
+
+    &.webp {
+      background-image: url("/img/pics/event_creation-480w.webp");
+      @media (min-resolution: 2dppx) {
+        & {
+          background-image: url("/img/pics/event_creation-1024w.webp");
+        }
+      }
+    }
     max-width: 450px;
     height: 300px;
     box-shadow: 0 0 8px 8px white inset;
