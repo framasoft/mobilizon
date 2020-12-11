@@ -41,7 +41,7 @@ lint:
     - yarn install
     #- yarn run lint || export EXITVALUE=1
     - yarn run prettier -c . || export EXITVALUE=1
-    - yarn run build
+    - yarn run build:assets
     - cd ../
     - exit $EXITVALUE
   artifacts:
@@ -69,7 +69,7 @@ exunit:
   before_script:
     - cd js
     - yarn install
-    - yarn run build
+    - yarn run build:assets
     - cd ../
     - mix deps.get
     - MIX_ENV=test mix ecto.create
