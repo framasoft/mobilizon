@@ -2,11 +2,7 @@ const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
-  devServer: {
-    proxy: "http://mobilizon1.com",
-  },
   runtimeCompiler: true,
-  lintOnSave: process.env.NODE_ENV !== "production",
   filenameHashing: true,
   productionSourceMap: false,
   outputDir: path.resolve(__dirname, "../priv/static"),

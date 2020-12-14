@@ -6,10 +6,4 @@ module.exports = {
     expect: true,
     sinon: true,
   },
-  rules: {
-    "import/no-extraneous-dependencies": [
-      "error",
-      { devDependencies: ["**/*.test.js", "**/*.spec.js"] },
-    ],
-  },
 };

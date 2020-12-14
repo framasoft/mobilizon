@@ -33,7 +33,6 @@ describe("Registration", () => {
     cy.get("form").contains("button.button.is-primary", "Register").click();
 
     cy.url().should("include", "/register/profile");
-    cy.wait(1000);
     cy.get("form > .field")
       .eq(1)
       .contains("label", "Username")

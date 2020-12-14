@@ -8,7 +8,6 @@ describe("Events", () => {
 
     cy.loginUser();
     cy.visit("/events/me");
-    cy.wait(1000);
     cy.contains(".message.is-danger", "No events found");
     cy.contains(".navbar-item", "Create").click();
 
@@ -29,7 +28,6 @@ describe("Events", () => {
       .last()
       .find(".select select")
       .select("2021");
-    cy.wait(1000);
     cy.get(".field").eq(3).contains(".datepicker-cell", "15").click();
 
     cy.contains(".button.is-primary", "Create my event").click();

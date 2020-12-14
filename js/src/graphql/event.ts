@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import { GROUP_FIELDS_FRAGMENTS } from "./group";
 
 const participantQuery = `
   role,
