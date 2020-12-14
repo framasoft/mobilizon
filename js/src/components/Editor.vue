@@ -407,6 +407,7 @@ export default class EditorComponent extends Vue {
         new Image(),
         new MaxSize({ maxSize: this.maxSize }),
       ],
+      // eslint-disable-next-line @typescript-eslint/ban-types
       onUpdate: ({ getHTML }: { getHTML: Function }) => {
         this.$emit("input", getHTML());
       },
@@ -422,6 +423,7 @@ export default class EditorComponent extends Vue {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   showLinkMenu(command: Function, active: boolean): Function | undefined {
     if (!this.editor) return undefined;
     if (active) return command({ href: null });
@@ -536,6 +538,7 @@ export default class EditorComponent extends Vue {
    * Show a file prompt, upload picture and insert it into editor
    * @param command
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   async showImagePrompt(command: Function): Promise<void> {
     const image = await listenFileUpload();
     try {

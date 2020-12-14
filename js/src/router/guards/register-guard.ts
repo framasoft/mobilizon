@@ -3,7 +3,6 @@ import { NavigationGuard } from "vue-router";
 import { CONFIG } from "../../graphql/config";
 import apolloProvider from "../../vue-apollo";
 
-// eslint-disable-next-line import/prefer-default-export
 export const beforeRegisterGuard: NavigationGuard = async (to, from, next) => {
   const { data } = await apolloProvider.defaultClient.query({
     query: CONFIG,

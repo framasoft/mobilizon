@@ -7,13 +7,9 @@ module.exports = {
 
   extends: [
     "plugin:vue/essential",
-    "@vue/airbnb",
-    "@vue/typescript/recommended",
-    "plugin:cypress/recommended",
-    "plugin:prettier/recommended",
-    "prettier",
     "eslint:recommended",
     "@vue/prettier",
+    "@vue/typescript/recommended",
     "@vue/prettier/@typescript-eslint",
   ],
 
@@ -21,6 +17,7 @@ module.exports = {
 
   parserOptions: {
     ecmaVersion: 2020,
+    parser: "@typescript-eslint/parser",
   },
 
   rules: {
@@ -35,7 +32,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "off",
     "cypress/no-unnecessary-waiting": "off",
     "vue/max-len": [
-      "error",
+      "off",
       {
         ignoreStrings: true,
         ignoreHTMLTextContents: true,
@@ -48,7 +45,6 @@ module.exports = {
     "prettier/prettier": "error",
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    "import/prefer-default-export": "off",
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "no-shadow": "off",
@@ -56,25 +52,4 @@ module.exports = {
   },
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],
-
-  overrides: [
-    {
-      files: [
-        "**/__tests__/*.{j,t}s?(x)",
-        "**/tests/unit/**/*.spec.{j,t}s?(x)",
-      ],
-      env: {
-        mocha: true,
-      },
-    },
-    {
-      files: [
-        "**/__tests__/*.{j,t}s?(x)",
-        "**/tests/unit/**/*.spec.{j,t}s?(x)",
-      ],
-      env: {
-        jest: true,
-      },
-    },
-  ],
 };

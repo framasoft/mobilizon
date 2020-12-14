@@ -138,7 +138,7 @@ Cypress.Commands.add("waitForFetches", () => {
     return;
   }
 
-  cy.wait(100).then(() => cy.waitForFetches());
+  cy.waitForFetches();
 });
 
 Cypress.Commands.add("iframeLoaded", { prevSubject: "element" }, ($iframe) => {

@@ -86,6 +86,7 @@ export default class AddressAutoComplete extends Vue {
 
   private gettingLocation = false;
 
+  // eslint-disable-next-line no-undef
   private location!: GeolocationPosition;
 
   private gettingLocationError: any;
@@ -219,6 +220,7 @@ export default class AddressAutoComplete extends Vue {
     this.gettingLocation = false;
   }
 
+  // eslint-disable-next-line no-undef
   static async getLocation(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       if (!("geolocation" in navigator)) {

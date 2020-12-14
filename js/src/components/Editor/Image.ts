@@ -13,6 +13,7 @@ import { EditorView } from "prosemirror-view";
 /* eslint-disable class-methods-use-this */
 
 export default class Image extends Node {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   get name() {
     return "image";
   }
@@ -62,6 +63,7 @@ export default class Image extends Node {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   get plugins() {
     return [
       new Plugin({

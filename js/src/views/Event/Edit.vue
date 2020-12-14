@@ -929,7 +929,7 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoElsewhere(callback: (value?: string) => any): void {
+  confirmGoElsewhere(callback: () => any): void {
     if (!this.isEventModified) {
       callback();
     }

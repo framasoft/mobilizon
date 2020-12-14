@@ -4,17 +4,20 @@ import { Extension, Plugin } from "tiptap";
 
 export default class MaxSize extends Extension {
   // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   get name() {
     return "maxSize";
   }
 
   // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   get defaultOptions() {
     return {
       maxSize: null,
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   get plugins() {
     return [
       new Plugin({

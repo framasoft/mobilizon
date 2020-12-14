@@ -17,7 +17,6 @@ describe("Login", () => {
     cy.url().should("include", "/password-reset/send");
     cy.go("back");
 
-    cy.wait(1000);
     cy.get("form").contains(".control a.button", "Register").click();
     cy.url().should("include", "/register/user");
 
@@ -55,7 +54,6 @@ describe("Login", () => {
     cy.get("input[type=email]").type("user@email.com");
     cy.get("input[type=password]").type("some password");
     cy.get("form").submit();
-    cy.wait(1000);
     cy.get(".navbar-end .navbar-link span.icon i").should(
       "have.class",
       "mdi-account-circle"
@@ -113,7 +111,6 @@ describe("Login", () => {
     cy.get("form .field input").eq(1).type("Not");
     cy.get("form .field textarea").clear().type("This will now work");
     cy.get("form").submit();
-    cy.wait(1000);
 
     cy.get(".navbar-link span.icon i").should(
       "have.class",

@@ -3,7 +3,6 @@ import { UserRouteName } from "@/router/user";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
 import { LoginErrorCode } from "@/types/enums";
 
-// eslint-disable-next-line import/prefer-default-export
 export const authGuardIfNeeded: NavigationGuard = async (to, from, next) => {
   if (to.meta.requiredAuth !== true) return next();
 

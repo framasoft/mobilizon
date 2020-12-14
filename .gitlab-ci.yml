@@ -39,7 +39,7 @@ lint:
     - mix format --check-formatted --dry-run || export EXITVALUE=1
     - cd js
     - yarn install
-    #- yarn run lint || export EXITVALUE=1
+    - yarn run lint || export EXITVALUE=1
     - yarn run prettier -c . || export EXITVALUE=1
     - yarn run build:assets
     - cd ../
