@@ -7,13 +7,9 @@ module.exports = {
 
   extends: [
     "plugin:vue/essential",
-    "@vue/airbnb",
-    "@vue/typescript/recommended",
-    "plugin:cypress/recommended",
-    "plugin:prettier/recommended",
-    "prettier",
     "eslint:recommended",
     "@vue/prettier",
+    "@vue/typescript/recommended",
     "@vue/prettier/@typescript-eslint",
   ],
 
@@ -21,6 +17,7 @@ module.exports = {
 
   parserOptions: {
     ecmaVersion: 2020,
+    parser: "@typescript-eslint/parser",
   },
 
   rules: {
