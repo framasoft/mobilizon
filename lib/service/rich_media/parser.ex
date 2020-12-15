@@ -47,6 +47,14 @@ defmodule Mobilizon.Service.RichMedia.Parser do
       {:error, "Cachex error: #{inspect(e)}"}
   end
 
+  @doc """
+  Get a filename for the fetched data, using the response header or the last part of the URL
+  """
+  @spec get_filename_from_response(Enum.t(), String.t()) :: String.t() | nil
+  def get_filename_from_response(response_headers, url) do
+    get_filename_from_headers(response_headers) || get_filename_from_url(url)
+  end
+
   @spec parse_url(String.t(), Enum.t()) :: {:ok, map()} | {:error, any()}
   defp parse_url(url, options \\ []) do
     user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())

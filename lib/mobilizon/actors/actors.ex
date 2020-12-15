@@ -13,11 +13,13 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Crypto, Events}
+  alias Mobilizon.Events.FeedToken
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Medias.File
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
+  alias Mobilizon.Users.User
   alias Mobilizon.Web.Email.Group
   alias Mobilizon.Web.Upload
 
@@ -215,18 +217,35 @@ defmodule Mobilizon.Actors do
   def new_person(args, default_actor \\ false) do
     args = Map.put(args, :keys, Crypto.generate_rsa_2048_private_key())
 
-    with {:ok, %Actor{id: person_id} = person} <-
-           %Actor{}
-           |> Actor.registration_changeset(args)
-           |> Repo.insert() do
-      Events.create_feed_token(%{user_id: args.user_id, actor_id: person.id})
+    multi =
+      Multi.new()
+      |> Multi.insert(:person, Actor.registration_changeset(%Actor{}, args))
+      |> Multi.insert(:token, fn %{person: person} ->
+        FeedToken.changeset(%FeedToken{}, %{
+          user_id: args.user_id,
+          actor_id: person.id,
+          token: Ecto.UUID.generate()
+        })
+      end)
 
+    multi =
       if default_actor do
         user = Users.get_user!(args.user_id)
-        Users.update_user(user, %{default_actor_id: person_id})
+
+        Multi.update(multi, :user, fn %{person: person} ->
+          User.changeset(user, %{default_actor_id: person.id})
+        end)
+      else
+        multi
       end
 
-      {:ok, person}
+    case Repo.transaction(multi) do
+      {:ok, %{person: %Actor{} = person}} ->
+        {:ok, person}
+
+      {:error, _step, err, _} ->
+        Logger.error("Error while creating a new person")
+        {:error, err}
     end
   end
 

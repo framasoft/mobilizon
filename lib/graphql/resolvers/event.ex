@@ -10,7 +10,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.API
-  alias Mobilizon.GraphQL.Resolvers.Person
 
   alias Mobilizon.Federation.ActivityPub.Activity
   import Mobilizon.Web.Gettext
@@ -35,7 +34,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
        ) do
     case {:has_event, Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
       {:has_event, %Event{} = event} ->
-        {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+        {:ok, event}
 
       {:has_event, _} ->
         {:error, :event_not_found}
@@ -51,7 +50,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
          {:access_valid, true} <-
            {:access_valid, Map.has_key?(context, :current_user) || check_event_access(event)} do
-      {:ok, Map.put(event, :organizer_actor, Person.proxify_pictures(event.organizer_actor))}
+      {:ok, event}
     else
       {:has_event, _} ->
         find_private_event(parent, args, resolution)

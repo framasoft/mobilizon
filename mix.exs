@@ -264,7 +264,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Web.Plugs.UploadedMedia,
         Mobilizon.Web.FallbackController,
         Mobilizon.Web.FeedController,
-        Mobilizon.Web.MediaProxyController,
         Mobilizon.Web.PageController,
         Mobilizon.Web.ChangesetView,
         Mobilizon.Web.JsonLD.ObjectView,
@@ -295,7 +294,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Web.Upload.MIME,
         Mobilizon.Web.Upload.Uploader,
         Mobilizon.Web.Upload.Uploader.Local,
-        Mobilizon.Web.MediaProxy,
         Mobilizon.Web.ReverseProxy
       ],
       Geospatial: [

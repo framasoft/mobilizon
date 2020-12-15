@@ -39,7 +39,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
           Transmogrifier.handle_incoming(data)
 
         assert data["id"] ==
-                 "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0/activity"
+                 "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93/activity"
 
         assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
 
@@ -49,12 +49,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         #               "http://localtesting.pleroma.lol/users/lain"
         #             ]
 
-        assert data["actor"] == "https://test.mobilizon.org/@Alicia"
+        assert data["actor"] == "https://mobilizon.fr/@metacartes"
 
         object = data["object"]
 
         assert object["id"] ==
-                 "https://test.mobilizon.org/events/39026210-0c69-4238-b3cc-986f33f98ed0"
+                 "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93"
 
         assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
 
@@ -63,9 +63,9 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         #               "http://localtesting.pleroma.lol/users/lain"
         #             ]
 
-        assert object["actor"] == "https://test.mobilizon.org/@Alicia"
+        assert object["actor"] == "https://mobilizon.fr/@metacartes"
         assert object["location"]["name"] == "Locaux de Framasoft"
-        # assert object["attributedTo"] == "https://test.mobilizon.org/@Alicia"
+        # assert object["attributedTo"] == "https://mobilizon.fr/@metacartes"
 
         assert event.physical_address.street == "10 Rue Jangot"
 
@@ -84,8 +84,8 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       %Actor{url: actor_url, id: actor_id} =
         actor =
         insert(:actor,
-          domain: "test.mobilizon.org",
-          url: "https://test.mobilizon.org/@member",
+          domain: "mobilizon.fr",
+          url: "https://mobilizon.fr/@member",
           preferred_username: "member"
         )
 

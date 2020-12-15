@@ -15,21 +15,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   alias Mobilizon.Federation.ActivityPub
   require Logger
 
-  alias Mobilizon.Web.{MediaProxy, Upload}
+  alias Mobilizon.Web.Upload
 
   @doc """
   Get a person
   """
   def get_person(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}}) do
     with %Actor{suspended: suspended} = actor <- Actors.get_actor_with_preload(id, true),
-         true <- suspended == false or is_moderator(role),
-         actor <- proxify_pictures(actor) do
+         true <- suspended == false or is_moderator(role) do
       {:ok, actor}
     else
       _ ->
         {:error, dgettext("errors", "Person with ID %{id} not found", id: id)}
     end
   end
+
+  def get_person(_parent, _args, _resolution), do: {:error, :unauthorized}
 
   @doc """
   Find a person
@@ -39,8 +40,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       }) do
     with {:ok, %Actor{id: actor_id} = actor} <-
            ActivityPub.find_or_make_actor_from_nickname(preferred_username),
-         {:own, {:is_owned, _}} <- {:own, User.owns_actor(user, actor_id)},
-         actor <- proxify_pictures(actor) do
+         {:own, {:is_owned, _}} <- {:own, User.owns_actor(user, actor_id)} do
       {:ok, actor}
     else
       {:own, nil} ->
@@ -120,9 +120,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     args = Map.put(args, :user_id, user.id)
 
     with args <- Map.update(args, :preferred_username, "", &String.downcase/1),
-         args <- save_attached_pictures(args),
+         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
+    else
+      {:picture, {:error, :file_too_large}} ->
+        {:error, dgettext("errors", "The provided picture is too heavy")}
     end
   end
 
@@ -144,10 +147,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     with {:find_actor, %Actor{} = actor} <-
            {:find_actor, Actors.get_actor(id)},
          {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
-         args <- save_attached_pictures(args),
+         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, _activity, %Actor{} = actor} <- ActivityPub.update(actor, args, true) do
       {:ok, actor}
     else
+      {:picture, {:error, :file_too_large}} ->
+        {:error, dgettext("errors", "The provided picture is too heavy")}
+
       {:find_actor, nil} ->
         {:error, dgettext("errors", "Profile not found")}
 
@@ -199,18 +205,27 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   defp save_attached_pictures(args) do
-    Enum.reduce([:avatar, :banner], args, fn key, args ->
-      if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
-        media = args[key][:media]
+    with args when is_map(args) <- save_attached_picture(args, :avatar),
+         args when is_map(args) <- save_attached_picture(args, :banner) do
+      args
+    end
+  end
 
-        with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
-               Upload.store(media.file, type: key, description: media.alt) do
-          Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
-        end
-      else
-        args
+  defp save_attached_picture(args, key) do
+    if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
+      with media when is_map(media) <- save_picture(args[key][:media], key) do
+        Map.put(args, key, media)
       end
-    end)
+    else
+      args
+    end
+  end
+
+  defp save_picture(media, key) do
+    with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
+           Upload.store(media.file, type: key, description: media.alt) do
+      %{"name" => name, "url" => url, "mediaType" => content_type}
+    end
   end
 
   @doc """
@@ -223,10 +238,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          {:no_actor, true} <- {:no_actor, no_actor},
          args <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args <- Map.put(args, :user_id, user.id),
-         args <- save_attached_pictures(args),
+         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, %Actor{} = new_person} <- Actors.new_person(args, true) do
       {:ok, new_person}
     else
+      {:picture, {:error, :file_too_large}} ->
+        {:error, dgettext("errors", "The provided picture is too heavy")}
+
       {:error, :user_not_found} ->
         {:error, dgettext("errors", "No user with this email was found")}
 
@@ -298,12 +316,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
-  def proxify_pictures(%Actor{} = actor) do
-    actor
-    |> proxify_avatar
-    |> proxify_banner
-  end
-
   def user_for_person(%Actor{type: :Person, user_id: user_id}, _args, %{
         context: %{current_user: %User{role: role}}
       })
@@ -343,20 +355,4 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   defp last_admin_of_a_group?(actor_id) do
     length(Actors.list_group_ids_where_last_administrator(actor_id)) > 0
   end
-
-  @spec proxify_avatar(Actor.t()) :: Actor.t()
-  defp proxify_avatar(%Actor{avatar: %{url: avatar_url} = avatar} = actor) do
-    actor |> Map.put(:avatar, avatar |> Map.put(:url, MediaProxy.url(avatar_url)))
-  end
-
-  @spec proxify_avatar(Actor.t()) :: Actor.t()
-  defp proxify_avatar(%Actor{} = actor), do: actor
-
-  @spec proxify_banner(Actor.t()) :: Actor.t()
-  defp proxify_banner(%Actor{banner: %{url: banner_url} = banner} = actor) do
-    actor |> Map.put(:banner, banner |> Map.put(:url, MediaProxy.url(banner_url)))
-  end
-
-  @spec proxify_banner(Actor.t()) :: Actor.t()
-  defp proxify_banner(%Actor{} = actor), do: actor
 end

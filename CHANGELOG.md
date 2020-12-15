@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Docker
     `docker-compose exec mobilizon mobilizon_ctl maintenance.fix_unattached_media_in_body`
 
+* **Refresh remote profiles to save avatars locally**
+  Profile avatars and banners were previously only proxified and cached. Now we save them locally. Refreshing all remote actors will save profile media locally instead.
+
+  * Source install
+    `MIX_ENV=prod mix mobilizon.actors.refresh --all`
+  * Docker
+    `docker-compose exec mobilizon mobilizon_ctl actors.refresh --all`
+
 ### Added
 
 - **Add a command to clean orphan media files**. There's a `--dry-run` option to see what files would have been deleted.  

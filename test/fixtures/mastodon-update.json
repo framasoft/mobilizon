@@ -20,15 +20,15 @@
     "endpoints": {
       "sharedInbox": "https://framapiaf.org/inbox"
     },
-    "icon":{
-      "type":"Image",
-      "mediaType":"image/png",
-      "url":"https://files.mastodon.social/accounts/avatars/000/000/001/original/a285c086605e4182.png"
+    "icon": {
+      "type": "Image",
+      "mediaType": "image/png",
+      "url": "https://files.mastodon.social/accounts/avatars/000/000/001/original/d96d39a0abb45b92.jpg"
     },
-    "image":{
-      "type":"Image",
-      "mediaType":"image/png",
-      "url":"https://files.mastodon.social/accounts/headers/000/000/001/original/c91b871f294ea63e.png"
+    "image": {
+      "type": "Image",
+      "mediaType": "image/png",
+      "url": "https://files.mastodon.social/accounts/headers/000/000/001/original/c91b871f294ea63e.png"
     }
   },
   "id": "https://framapiaf.org/users/gargron#updates/1519563538",
