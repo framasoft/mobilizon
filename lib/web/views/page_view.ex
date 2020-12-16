@@ -8,6 +8,7 @@ defmodule Mobilizon.Web.PageView do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Tombstone
 
@@ -50,6 +51,12 @@ defmodule Mobilizon.Web.PageView do
 
   def render("resource.activity-json", %{conn: %{assigns: %{object: %Resource{} = resource}}}) do
     resource
+    |> Convertible.model_to_as()
+    |> Map.merge(Utils.make_json_ld_header())
+  end
+
+  def render("post.activity-json", %{conn: %{assigns: %{object: %Post{} = post}}}) do
+    post
     |> Convertible.model_to_as()
     |> Map.merge(Utils.make_json_ld_header())
   end

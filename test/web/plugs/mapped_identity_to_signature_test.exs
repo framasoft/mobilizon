@@ -52,7 +52,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
     use_cassette "activity_pub/signature/invalid_not_found" do
       conn =
         build_conn(:post, "/doesntmattter", %{"actor" => "https://framapiaf.org/users/admin"})
-        |> set_signature("http://niu.moe/users/rye")
+        |> set_signature("https://mastodon.social/users/gargron")
         |> MappedSignatureToIdentity.call(%{})
 
       assert %{valid_signature: false} == conn.assigns

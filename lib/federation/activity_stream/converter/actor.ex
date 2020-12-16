@@ -11,7 +11,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
 
-  alias Mobilizon.Web.MediaProxy
+  alias Mobilizon.Service.HTTP.RemoteMediaDownloaderClient
+  alias Mobilizon.Service.RichMedia.Parser
+  alias Mobilizon.Web.Upload
 
   @behaviour Converter
 
@@ -30,18 +32,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   @spec as_to_model_data(map()) :: {:ok, map()}
   def as_to_model_data(%{"type" => type} = data) when type in @allowed_types do
     avatar =
-      data["icon"]["url"] &&
-        %{
-          "name" => data["icon"]["name"] || "avatar",
-          "url" => MediaProxy.url(data["icon"]["url"])
-        }
+      download_picture(get_in(data, ["icon", "url"]), get_in(data, ["icon", "name"]), "avatar")
 
     banner =
-      data["image"]["url"] &&
-        %{
-          "name" => data["image"]["name"] || "banner",
-          "url" => MediaProxy.url(data["image"]["url"])
-        }
+      download_picture(get_in(data, ["image", "url"]), get_in(data, ["image", "name"]), "banner")
 
     %{
       url: data["id"],
@@ -138,6 +132,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
         "mediaType" => actor.banner.content_type,
         "url" => actor.banner.url
       })
+    end
+  end
+
+  @spec download_picture(String.t() | nil, String.t(), String.t()) :: map()
+  defp download_picture(nil, _name, _default_name), do: nil
+
+  defp download_picture(url, name, default_name) do
+    with {:ok, %{body: body, status: code, headers: response_headers}}
+         when code in 200..299 <- RemoteMediaDownloaderClient.get(url),
+         name <- name || Parser.get_filename_from_response(response_headers, url) || default_name,
+         {:ok, file} <- Upload.store(%{body: body, name: name}) do
+      file
     end
   end
 end

@@ -108,7 +108,7 @@ defmodule Mobilizon.ActorsTest do
            avatar: %FileModel{name: picture_name} = _picture
          } = _actor} = ActivityPub.get_or_fetch_actor_by_url(@remote_account_url)
 
-        assert picture_name == "avatar"
+        assert picture_name == "a28c50ce5f2b13fd.jpg"
 
         %Actor{
           id: actor_found_id,
@@ -116,7 +116,7 @@ defmodule Mobilizon.ActorsTest do
         } = Actors.get_actor_by_name("#{preferred_username}@#{domain}")
 
         assert actor_found_id == actor_id
-        assert picture_name == "avatar"
+        assert picture_name == "a28c50ce5f2b13fd.jpg"
       end
     end
 

@@ -61,7 +61,8 @@ defmodule Mobilizon.Service.Formatter.DefaultScrubbler do
     "height",
     "class",
     "title",
-    "alt"
+    "alt",
+    "data-media-id"
   ])
 
   Meta.allow_tag_with_this_attribute_values(:span, "class", ["h-card", "mention"])

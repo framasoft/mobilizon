@@ -13,7 +13,7 @@ defmodule Mobilizon.Service.Export.Feed do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.{Endpoint, MediaProxy}
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   require Logger
@@ -85,14 +85,14 @@ defmodule Mobilizon.Service.Export.Feed do
 
     feed =
       if actor.avatar do
-        feed |> Feed.icon(actor.avatar.url |> MediaProxy.url())
+        feed |> Feed.icon(actor.avatar.url)
       else
         feed
       end
 
     feed =
       if actor.banner do
-        feed |> Feed.logo(actor.banner.url |> MediaProxy.url())
+        feed |> Feed.logo(actor.banner.url)
       else
         feed
       end

@@ -8,7 +8,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.GraphQL.API
-  alias Mobilizon.GraphQL.Resolvers.Person
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Upload
   import Mobilizon.Web.Gettext
@@ -30,8 +29,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     with {:ok, %Actor{id: group_id} = group} <-
            ActivityPub.find_or_make_group_from_nickname(name),
          {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         group <- Person.proxify_pictures(group) do
+         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
       {:ok, group}
     else
       {:member, false} ->
@@ -44,7 +42,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   def find_group(_parent, %{preferred_username: name}, _resolution) do
     with {:ok, actor} <- ActivityPub.find_or_make_group_from_nickname(name),
-         %Actor{} = actor <- Person.proxify_pictures(actor),
          %Actor{} = actor <- restrict_fields_for_non_member_request(actor) do
       {:ok, actor}
     else

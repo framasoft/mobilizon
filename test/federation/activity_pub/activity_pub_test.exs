@@ -45,13 +45,13 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       use_cassette "activity_pub/fetch_tcit@framapiaf.org" do
         assert {:ok,
                 %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :public} =
-                  actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+                  _actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
       end
 
       use_cassette "activity_pub/fetch_tcit@framapiaf.org_not_discoverable" do
         assert {:ok,
                 %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :unlisted} =
-                  actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
+                  _actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
       end
     end
 

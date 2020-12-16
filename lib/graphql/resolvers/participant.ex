@@ -6,7 +6,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.API.Participations
-  alias Mobilizon.GraphQL.Resolvers.Person
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
   alias Mobilizon.Web.Email.Checker
@@ -114,7 +113,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
          %Participant{} = participant <-
            participant
            |> Map.put(:event, event)
-           |> Map.put(:actor, Person.proxify_pictures(actor)) do
+           |> Map.put(:actor, actor) do
       {:ok, participant}
     else
       {:maximum_attendee_capacity, _} ->

@@ -766,7 +766,10 @@ defmodule Mobilizon.Federation.ActivityPub do
 
     res =
       with {:ok, %{status: 200, body: body}} <-
-             Tesla.get(url, headers: [{"Accept", "application/activity+json"}]),
+             Tesla.get(url,
+               headers: [{"Accept", "application/activity+json"}],
+               follow_redirect: true
+             ),
            :ok <- Logger.debug("response okay, now decoding json"),
            {:ok, data} <- Jason.decode(body) do
         Logger.debug("Got activity+json response at actor's endpoint, now converting data")

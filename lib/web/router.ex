@@ -162,13 +162,6 @@ defmodule Mobilizon.Web.Router do
     post("/auth/:provider/callback", AuthController, :callback)
   end
 
-  scope "/proxy/", Mobilizon.Web do
-    pipe_through(:remote_media)
-
-    get("/:sig/:url", MediaProxyController, :remote)
-    get("/:sig/:url/:filename", MediaProxyController, :remote)
-  end
-
   if Application.fetch_env!(:mobilizon, :env) in [:dev, :e2e] do
     # If using Phoenix
     forward("/sent_emails", Bamboo.SentEmailViewerPlug)

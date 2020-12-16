@@ -382,7 +382,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_actor}
     else
       e ->
-        Logger.debug(inspect(e))
+        Logger.error(inspect(e))
         :error
     end
   end

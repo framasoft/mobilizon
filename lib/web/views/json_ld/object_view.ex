@@ -5,7 +5,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Web.{Endpoint, MediaProxy}
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
 
   def render("group.json", %{group: %Actor{} = group}) do
@@ -41,7 +41,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "image" =>
         if(event.picture,
           do: [
-            event.picture.file.url |> MediaProxy.url()
+            event.picture.file.url
           ],
           else: ["#{Endpoint.url()}/img/mobilizon_default_card.png"]
         )

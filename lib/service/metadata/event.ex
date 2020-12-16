@@ -3,7 +3,6 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Events.Event
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.MediaProxy
   import Mobilizon.Service.Metadata.Utils, only: [process_description: 2, strip_tags: 1]
 
   def build_tags(%Event{} = event, locale \\ "en") do
@@ -28,7 +27,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
           [
             Tag.tag(:meta,
               property: "og:image",
-              content: event.picture.file.url |> MediaProxy.url()
+              content: event.picture.file.url
             )
           ]
       end

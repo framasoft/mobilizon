@@ -10,7 +10,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
-  alias Mobilizon.Medias.Media
 
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
@@ -21,7 +20,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       fetch_tags: 1,
       fetch_mentions: 1,
       build_tags: 1,
-      maybe_fetch_actor_and_attributed_to_id: 1
+      maybe_fetch_actor_and_attributed_to_id: 1,
+      process_pictures: 2
     ]
 
   require Logger
@@ -33,6 +33,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
     defdelegate model_to_as(event), to: EventConverter
   end
+
+  @online_address_name "Website"
+  @banner_picture_name "Banner"
 
   @doc """
   Converts an AP object data to our internal data structure.
@@ -47,30 +50,16 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
          {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
          {:mentions, mentions} <- {:mentions, fetch_mentions(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
-         {:options, options} <- {:options, get_options(object)} do
-      attachments =
-        object
-        |> Map.get("attachment", [])
-        |> Enum.filter(fn attachment -> Map.get(attachment, "type", "Document") == "Document" end)
-
-      picture_id =
-        with true <- length(attachments) > 0,
-             {:ok, %Media{id: picture_id}} <-
-               attachments
-               |> hd()
-               |> MediaConverter.find_or_create_media(actor_id) do
-          picture_id
-        else
-          _err ->
-            nil
-        end
-
+         {:options, options} <- {:options, get_options(object)},
+         [description: description, picture_id: picture_id, medias: medias] <-
+           process_pictures(object, actor_id) do
       %{
         title: object["name"],
-        description: object["content"],
+        description: description,
         organizer_actor_id: actor_id,
         attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
         picture_id: picture_id,
+        medias: medias,
         begins_on: object["startTime"],
         ends_on: object["endTime"],
         category: object["category"],
@@ -143,6 +132,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
     |> maybe_add_online_address(event)
+    |> maybe_add_inline_media(event)
   end
 
   # Get only elements that we have in EventOptions
@@ -213,7 +203,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           "type" => "Link",
           "href" => url,
           "mediaType" => "text/html",
-          "name" => "Website"
+          "name" => @online_address_name
         } ->
           url
 
@@ -239,7 +229,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           res,
           "attachment",
           [],
-          &(&1 ++ [MediaConverter.model_to_as(event.picture)])
+          &(&1 ++
+              [
+                event.picture
+                |> MediaConverter.model_to_as()
+                |> Map.put("name", @banner_picture_name)
+              ])
         )
   end
 
@@ -258,9 +253,21 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
                   "type" => "Link",
                   "href" => event.online_address,
                   "mediaType" => "text/html",
-                  "name" => "Website"
+                  "name" => @online_address_name
                 }
               ])
         )
+  end
+
+  @spec maybe_add_inline_media(map(), Event.t()) :: map()
+  defp maybe_add_inline_media(res, event) do
+    medias = Enum.map(event.media, &MediaConverter.model_to_as/1)
+
+    Map.update(
+      res,
+      "attachment",
+      [],
+      &(&1 ++ medias)
+    )
   end
 end

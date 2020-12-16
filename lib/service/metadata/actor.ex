@@ -3,7 +3,6 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Phoenix.HTML.Tag
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.MediaProxy
   import Mobilizon.Service.Metadata.Utils, only: [process_description: 2, default_description: 1]
 
   def build_tags(_actor, _locale \\ "en")
@@ -36,7 +35,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
       tags
     else
       tags ++
-        [Tag.tag(:meta, property: "og:image", content: actor.avatar.url |> MediaProxy.url())]
+        [Tag.tag(:meta, property: "og:image", content: actor.avatar.url)]
     end
   end
 
