@@ -111,117 +111,110 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
 
   describe "handle incoming updates activities for group posts" do
     test "it works for incoming update activities on group posts when remote actor is a moderator" do
-      use_cassette "activity_pub/group_post_update_activities" do
-        %Actor{url: remote_actor_url} =
-          remote_actor =
-          insert(:actor,
-            domain: "remote.domain",
-            url: "https://remote.domain/@remote",
-            preferred_username: "remote"
-          )
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "https://remote.domain/@remote",
+          preferred_username: "remote"
+        )
 
-        group = insert(:group)
-        %Member{} = member = insert(:member, actor: remote_actor, parent: group, role: :moderator)
-        %Post{} = post = insert(:post, attributed_to: group)
+      group = insert(:group)
+      %Member{} = member = insert(:member, actor: remote_actor, parent: group, role: :moderator)
+      %Post{} = post = insert(:post, attributed_to: group)
 
-        data = Convertible.model_to_as(post)
-        refute is_nil(Posts.get_post_by_url(data["id"]))
+      data = Convertible.model_to_as(post)
+      refute is_nil(Posts.get_post_by_url(data["id"]))
 
-        update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
-        object =
-          data
-          |> Map.put("name", "My updated post")
-          |> Map.put("type", "Article")
+      object =
+        data
+        |> Map.put("name", "My updated post")
+        |> Map.put("type", "Article")
 
-        update_data =
-          update_data
-          |> Map.put("actor", remote_actor_url)
-          |> Map.put("object", object)
+      update_data =
+        update_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
 
-        {:ok, %Activity{data: data, local: false}, _} =
-          Transmogrifier.handle_incoming(update_data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
 
-        %Post{id: updated_post_id, title: updated_post_title} =
-          Posts.get_post_by_url(data["object"]["id"])
+      %Post{id: updated_post_id, title: updated_post_title} =
+        Posts.get_post_by_url(data["object"]["id"])
 
-        assert updated_post_id == post.id
-        assert updated_post_title == "My updated post"
-      end
+      assert updated_post_id == post.id
+      assert updated_post_title == "My updated post"
     end
 
     test "it works for incoming update activities on group posts" do
-      use_cassette "activity_pub/group_post_update_activities" do
-        %Actor{url: remote_actor_url} =
-          remote_actor =
-          insert(:actor,
-            domain: "remote.domain",
-            url: "https://remote.domain/@remote",
-            preferred_username: "remote"
-          )
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "https://remote.domain/@remote",
+          preferred_username: "remote"
+        )
 
-        group = insert(:group)
-        %Member{} = member = insert(:member, actor: remote_actor, parent: group)
-        %Post{} = post = insert(:post, attributed_to: group)
+      group = insert(:group)
+      %Member{} = member = insert(:member, actor: remote_actor, parent: group)
+      %Post{} = post = insert(:post, attributed_to: group)
 
-        data = Convertible.model_to_as(post)
-        refute is_nil(Posts.get_post_by_url(data["id"]))
+      data = Convertible.model_to_as(post)
+      refute is_nil(Posts.get_post_by_url(data["id"]))
 
-        update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
-        object =
-          data
-          |> Map.put("name", "My updated post")
-          |> Map.put("type", "Article")
+      object =
+        data
+        |> Map.put("name", "My updated post")
+        |> Map.put("type", "Article")
 
-        update_data =
-          update_data
-          |> Map.put("actor", remote_actor_url)
-          |> Map.put("object", object)
+      update_data =
+        update_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
 
-        :error = Transmogrifier.handle_incoming(update_data)
+      :error = Transmogrifier.handle_incoming(update_data)
 
-        %Post{id: updated_post_id, title: updated_post_title} = Posts.get_post_by_url(data["id"])
+      %Post{id: updated_post_id, title: updated_post_title} = Posts.get_post_by_url(data["id"])
 
-        assert updated_post_id == post.id
-        refute updated_post_title == "My updated post"
-      end
+      assert updated_post_id == post.id
+      refute updated_post_title == "My updated post"
     end
 
     test "it fails for incoming update activities on group posts when the actor is not a member from the group" do
-      use_cassette "activity_pub/group_post_update_activities" do
-        %Actor{url: remote_actor_url} =
-          insert(:actor,
-            domain: "remote.domain",
-            url: "https://remote.domain/@remote",
-            preferred_username: "remote"
-          )
+      %Actor{url: remote_actor_url} =
+        insert(:actor,
+          domain: "remote.domain",
+          url: "https://remote.domain/@remote",
+          preferred_username: "remote"
+        )
 
-        group = insert(:group)
-        %Post{} = post = insert(:post, attributed_to: group)
+      group = insert(:group)
+      %Post{} = post = insert(:post, attributed_to: group)
 
-        data = Convertible.model_to_as(post)
-        refute is_nil(Posts.get_post_by_url(data["id"]))
+      data = Convertible.model_to_as(post)
+      refute is_nil(Posts.get_post_by_url(data["id"]))
 
-        update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
-        object =
-          data
-          |> Map.put("name", "My updated post")
-          |> Map.put("type", "Article")
+      object =
+        data
+        |> Map.put("name", "My updated post")
+        |> Map.put("type", "Article")
 
-        update_data =
-          update_data
-          |> Map.put("actor", remote_actor_url)
-          |> Map.put("object", object)
+      update_data =
+        update_data
+        |> Map.put("actor", remote_actor_url)
+        |> Map.put("object", object)
 
-        :error = Transmogrifier.handle_incoming(update_data)
+      :error = Transmogrifier.handle_incoming(update_data)
 
-        %Post{id: updated_post_id, title: updated_post_title} = Posts.get_post_by_url(data["id"])
+      %Post{id: updated_post_id, title: updated_post_title} = Posts.get_post_by_url(data["id"])
 
-        assert updated_post_id == post.id
-        refute updated_post_title == "My updated post"
-      end
+      assert updated_post_id == post.id
+      refute updated_post_title == "My updated post"
     end
   end
 end
