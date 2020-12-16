@@ -109,10 +109,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
 import { FETCH_GROUP } from "@/graphql/group";
-import { buildFileFromIMedia, readFileAsync } from "@/utils/image";
+import {
+  buildFileFromIMedia,
+  buildFileVariable,
+  readFileAsync,
+} from "@/utils/image";
 import GroupMixin from "@/mixins/group";
 import { PostVisibility } from "@/types/enums";
 import { TAGS } from "../../graphql/tags";
@@ -206,6 +210,13 @@ export default class EditPost extends mixins(GroupMixin) {
     this.pictureFile = await buildFileFromIMedia(this.post.picture);
   }
 
+  @Watch("post")
+  async updatePostPicture(oldPost: IPost, newPost: IPost): Promise<void> {
+    if (oldPost.picture !== newPost.picture) {
+      this.pictureFile = await buildFileFromIMedia(this.post.picture);
+    }
+  }
+
   // eslint-disable-next-line consistent-return
   async publish(draft: boolean): Promise<void> {
     this.errors = {};
@@ -292,19 +303,11 @@ export default class EditPost extends mixins(GroupMixin) {
   async buildPicture(): Promise<Record<string, unknown>> {
     let obj: { picture?: any } = {};
     if (this.pictureFile) {
-      const pictureObj = {
-        picture: {
-          picture: {
-            name: this.pictureFile.name,
-            alt: `${this.actualGroup.preferredUsername}'s avatar`,
-            file: this.pictureFile,
-          },
-        },
-      };
-      obj = { ...pictureObj };
+      const pictureObj = buildFileVariable(this.pictureFile, "picture");
+      obj = { ...obj, ...pictureObj };
     }
     try {
-      if (this.post.picture) {
+      if (this.post.picture && this.pictureFile) {
         const oldPictureFile = (await buildFileFromIMedia(
           this.post.picture
         )) as File;
@@ -333,6 +336,7 @@ export default class EditPost extends mixins(GroupMixin) {
     const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
     return (
       this.person &&
+      this.actualGroup &&
       this.person.memberships.elements.some(
         ({ parent: { id }, role }) =>
           id === this.actualGroup.id && roles.includes(role)
