@@ -10,7 +10,7 @@ defmodule Mobilizon.Posts do
   import Ecto.Query
   require Logger
 
-  @post_preloads [:author, :attributed_to, :picture]
+  @post_preloads [:author, :attributed_to, :picture, :media]
 
   import EctoEnum
 

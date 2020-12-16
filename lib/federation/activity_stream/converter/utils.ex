@@ -6,14 +6,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   alias Mobilizon.{Actors, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Tag
+  alias Mobilizon.Medias.Media
   alias Mobilizon.Mention
   alias Mobilizon.Storage.Repo
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
 
   alias Mobilizon.Web.Endpoint
 
   require Logger
+
+  @banner_picture_name "Banner"
 
   @spec fetch_tags([String.t()]) :: [Tag.t()]
   def fetch_tags(tags) when is_list(tags) do
@@ -168,5 +172,63 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
            ActivityPub.get_or_fetch_actor_by_url(actor_url) do
       actor
     end
+  end
+
+  @spec process_pictures(map(), integer()) :: Keyword.t()
+  def process_pictures(object, actor_id) do
+    attachements = Map.get(object, "attachment", [])
+
+    media_attachements = get_medias(attachements)
+
+    media_attachements_map =
+      media_attachements
+      |> Enum.map(fn media_attachement ->
+        {media_attachement["url"],
+         MediaConverter.find_or_create_media(media_attachement, actor_id)}
+      end)
+      |> Enum.reduce(%{}, fn {old_url, media}, acc ->
+        case media do
+          {:ok, %Media{} = media} ->
+            Map.put(acc, old_url, media)
+
+          _ ->
+            acc
+        end
+      end)
+
+    media_attachements_map_urls =
+      media_attachements_map
+      |> Enum.map(fn {old_url, new_media} -> {old_url, new_media.file.url} end)
+      |> Map.new()
+
+    picture_id =
+      with banner when is_map(banner) <- get_banner_picture(attachements),
+           {:ok, %Media{id: picture_id}} <-
+             MediaConverter.find_or_create_media(banner, actor_id) do
+        picture_id
+      else
+        _err ->
+          nil
+      end
+
+    description = replace_media_urls_in_body(object["content"], media_attachements_map_urls)
+    [description: description, picture_id: picture_id, medias: Map.values(media_attachements_map)]
+  end
+
+  defp replace_media_urls_in_body(body, media_urls),
+    do:
+      Enum.reduce(media_urls, body, fn media_url, body ->
+        replace_media_url_in_body(body, media_url)
+      end)
+
+  defp replace_media_url_in_body(body, {old_url, new_url}),
+    do: String.replace(body, old_url, new_url)
+
+  defp get_medias(attachments) do
+    Enum.filter(attachments, &(&1["type"] == "Document" && &1["name"] != @banner_picture_name))
+  end
+
+  defp get_banner_picture(attachments) do
+    Enum.find(attachments, &(&1["type"] == "Document" && &1["name"] == @banner_picture_name))
   end
 end
