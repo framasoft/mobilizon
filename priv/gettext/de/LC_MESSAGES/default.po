@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2020-12-16 13:29+0000\n"
+"PO-Revision-Date: 2020-12-17 10:26+0000\n"
 "Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -35,7 +35,7 @@ msgstr "%{title} von %{creator}"
 #: lib/web/templates/email/registration_confirmation.html.eex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr "Aktiviere meinen Account"
+msgstr "Mein Konto aktivieren"
 
 #: lib/web/templates/email/email.html.eex:117
 #: lib/web/templates/email/email.text.eex:9
@@ -176,8 +176,8 @@ msgstr "Ein interne Benutzer ID"
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
 msgstr ""
-"Jede dieser Informationen, die wir von dir sammeln kann für die folgenden "
-"Dinge genutzt werden:"
+"Alle Informationen, die wir über Sie sammeln, können wie folgt verwendet "
+"werden:"
 
 #: lib/web/templates/api/privacy.html.eex:9
 #, elixir-format
