@@ -40,8 +40,13 @@ defmodule Mobilizon.GraphQL.API.Search do
       true ->
         page =
           Actors.build_actors_by_username_or_name_page(
-            Map.put(args, :term, term),
-            [result_type],
+            term,
+            [
+              actor_type: [result_type],
+              radius: Map.get(args, :radius),
+              location: Map.get(args, :location),
+              minimum_visibility: :public
+            ],
             page,
             limit
           )

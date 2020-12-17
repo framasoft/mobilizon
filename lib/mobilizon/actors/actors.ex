@@ -512,21 +512,22 @@ defmodule Mobilizon.Actors do
   Builds a page struct for actors by their name or displayed name.
   """
   @spec build_actors_by_username_or_name_page(
-          map(),
-          [ActorType.t()],
+          String.t(),
+          Keyword.t(),
           integer | nil,
           integer | nil
         ) :: Page.t()
   def build_actors_by_username_or_name_page(
-        %{term: term} = args,
-        types,
+        term,
+        options \\ [],
         page \\ nil,
         limit \\ nil
       ) do
     Actor
     |> actor_by_username_or_name_query(term)
-    |> actors_for_location(args)
-    |> filter_by_types(types)
+    |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
+    |> filter_by_types(Keyword.get(options, :actor_type, :Group))
+    |> filter_by_minimum_visibility(Keyword.get(options, :minimum_visibility, :public))
     |> filter_suspended(false)
     |> Page.build_page(page, limit)
   end
@@ -1395,11 +1396,8 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @spec actors_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
-  defp actors_for_location(query, %{radius: radius}) when is_nil(radius),
-    do: query
-
-  defp actors_for_location(query, %{location: location, radius: radius})
+  @spec actors_for_location(Ecto.Query.t(), String.t(), integer()) :: Ecto.Query.t()
+  defp actors_for_location(query, location, radius)
        when is_valid_string?(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
@@ -1414,7 +1412,7 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  defp actors_for_location(query, _args), do: query
+  defp actors_for_location(query, _location, _radius), do: query
 
   @spec person_query :: Ecto.Query.t()
   defp person_query do
@@ -1658,6 +1656,21 @@ defmodule Mobilizon.Actors do
   @spec filter_by_types(Ecto.Query.t(), [ActorType.t()]) :: Ecto.Query.t()
   defp filter_by_types(query, types) do
     from(a in query, where: a.type in ^types)
+  end
+
+  @spec filter_by_minimum_visibility(Ecto.Query.t(), atom()) :: Ecto.Query.t()
+  defp filter_by_minimum_visibility(query, :private), do: query
+
+  defp filter_by_minimum_visibility(query, :restricted) do
+    from(a in query, where: a.visibility in ^[:public, :unlisted, :restricted])
+  end
+
+  defp filter_by_minimum_visibility(query, :unlisted) do
+    from(a in query, where: a.visibility in ^[:public, :unlisted])
+  end
+
+  defp filter_by_minimum_visibility(query, :public) do
+    from(a in query, where: a.visibility == ^:public)
   end
 
   @spec filter_by_name(Ecto.Query.t(), [String.t()]) :: Ecto.Query.t()

@@ -24,6 +24,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
   - `--dbname DBNAME` - the name of the database to use
   - `--dbuser DBUSER` - the user (aka role) to use for the database connection
   - `--dbpass DBPASS` - the password to use for the database connection
+  - `--dbport DBPORT` - the database port
   - `--listen-port PORT` - the port the app should listen to, defaults to 4000
   """
 

@@ -188,7 +188,10 @@ defmodule Mobilizon.ActorsTest do
         with {:ok, %Actor{id: actor2_id}} <-
                ActivityPub.get_or_fetch_actor_by_url(@remote_account_url) do
           %Page{total: 2, elements: actors} =
-            Actors.build_actors_by_username_or_name_page(%{term: "tcit"}, [:Person])
+            Actors.build_actors_by_username_or_name_page("tcit",
+              actor_type: [:Person],
+              minimum_visibility: :private
+            )
 
           actors_ids = actors |> Enum.map(& &1.id)
 
@@ -199,7 +202,7 @@ defmodule Mobilizon.ActorsTest do
 
     test "test build_actors_by_username_or_name_page/4 returns actors with similar names" do
       %{total: 0, elements: actors} =
-        Actors.build_actors_by_username_or_name_page(%{term: "ohno"}, [:Person])
+        Actors.build_actors_by_username_or_name_page("ohno", actor_type: [:Person])
 
       assert actors == []
     end

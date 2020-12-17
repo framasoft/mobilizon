@@ -172,3 +172,9 @@ export enum RoutingTransportationType {
   TRANSIT = "TRANSIT",
   CAR = "CAR",
 }
+
+export enum GroupVisibility {
+  PUBLIC = "PUBLIC",
+  UNLISTED = "UNLISTED",
+  PRIVATE = "PRIVATE",
+}
