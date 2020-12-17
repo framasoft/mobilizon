@@ -51,6 +51,9 @@ export const CONFIG = gql`
           endpoint
           attribution
         }
+        routing {
+          type
+        }
       }
       geocoding {
         provider

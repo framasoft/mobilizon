@@ -15,6 +15,12 @@ export interface IAddress {
   originId?: string;
 }
 
+export interface IPoiInfo {
+  name: string;
+  alternativeName: string;
+  poiIcon: IPOIIcon;
+}
+
 export class Address implements IAddress {
   country = "";
 
@@ -54,7 +60,7 @@ export class Address implements IAddress {
     this.originId = hash.originId;
   }
 
-  get poiInfos(): { name: string; alternativeName: string; poiIcon: IPOIIcon } {
+  get poiInfos(): IPoiInfo {
     /* generate name corresponding to poi type */
     let name = "";
     let alternativeName = "";

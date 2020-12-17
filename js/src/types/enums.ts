@@ -160,3 +160,15 @@ export enum Openness {
   MODERATED = "MODERATED",
   OPEN = "OPEN",
 }
+
+export enum RoutingType {
+  OPENSTREETMAP = "OPENSTREETMAP",
+  GOOGLE_MAPS = "GOOGLE_MAPS",
+}
+
+export enum RoutingTransportationType {
+  FOOT = "FOOT",
+  BIKE = "BIKE",
+  TRANSIT = "TRANSIT",
+  CAR = "CAR",
+}

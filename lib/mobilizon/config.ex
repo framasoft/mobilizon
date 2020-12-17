@@ -151,6 +151,10 @@ defmodule Mobilizon.Config do
   def instance_maps_tiles_attribution,
     do: Application.get_env(:mobilizon, :maps)[:tiles][:attribution]
 
+  @spec instance_maps_routing_type :: atom()
+  def instance_maps_routing_type,
+    do: Application.get_env(:mobilizon, :maps)[:routing][:type]
+
   @spec anonymous_participation? :: boolean
   def anonymous_participation?,
     do: Application.get_env(:mobilizon, :anonymous)[:participation][:allowed]

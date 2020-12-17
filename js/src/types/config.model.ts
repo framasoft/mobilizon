@@ -1,4 +1,4 @@
-import { InstancePrivacyType, InstanceTermsType } from "./enums";
+import { InstancePrivacyType, InstanceTermsType, RoutingType } from "./enums";
 import type { IProvider } from "./resource";
 
 export interface IOAuthProvider {
@@ -57,6 +57,9 @@ export interface IConfig {
     tiles: {
       endpoint: string;
       attribution: string | null;
+    };
+    routing: {
+      type: RoutingType;
     };
   };
   geocoding: {

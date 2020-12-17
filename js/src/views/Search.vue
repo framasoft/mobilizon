@@ -127,7 +127,7 @@
           </span>
         </template>
         <b-message v-if="config && !config.features.groups" type="is-danger">
-          {{ $t("Groups are not enabled on your server.") }}
+          {{ $t("Groups are not enabled on this instance.") }}
         </b-message>
         <div v-else-if="searchGroups.total > 0">
           <div class="columns is-multiline">

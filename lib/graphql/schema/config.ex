@@ -106,14 +106,27 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   """
   object :maps do
     field(:tiles, :tiles, description: "The instance's maps tiles configuration")
+    field(:routing, :routing, description: "The instance's maps routing configuration")
   end
 
   @desc """
-  Instance tiles configuration
+  Instance map tiles configuration
   """
   object :tiles do
     field(:endpoint, :string, description: "The instance's tiles endpoint")
     field(:attribution, :string, description: "The instance's tiles attribution text")
+  end
+
+  @desc """
+  Instance map routing configuration
+  """
+  object :routing do
+    field(:type, :routing_type, description: "The instance's routing type")
+  end
+
+  enum :routing_type do
+    value(:openstreetmap, description: "Redirect to openstreetmap.org's direction endpoint")
+    value(:google_maps, description: "Redirect to Google Maps's direction endpoint")
   end
 
   @desc """

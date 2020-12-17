@@ -84,9 +84,9 @@
                   <tag>{{ tag.title }}</tag>
                 </router-link>
               </p>
-              <b-tag type="is-warning" size="is-medium" v-if="event.draft">{{
-                $t("Draft")
-              }}</b-tag>
+              <b-tag type="is-warning" size="is-medium" v-if="event.draft"
+                >{{ $t("Draft") }}
+              </b-tag>
               <span
                 class="event-status"
                 v-if="event.status !== EventStatus.CONFIRMED"
@@ -325,7 +325,7 @@
                     <span
                       class="map-show-button"
                       @click="showMap = !showMap"
-                      v-if="physicalAddress && physicalAddress.geom"
+                      v-if="physicalAddress.geom"
                       >{{ $t("Show map") }}</span
                     >
                   </div>
@@ -526,8 +526,8 @@
                     class="button"
                     ref="cancelButton"
                     @click="isJoinConfirmationModalActive = false"
-                    >{{ $t("Cancel") }}</b-button
-                  >
+                    >{{ $t("Cancel") }}
+                  </b-button>
                   <b-button type="is-primary" native-type="submit">
                     {{ $t("Confirm my participation") }}
                   </b-button>
@@ -537,17 +537,77 @@
           </div>
         </b-modal>
         <b-modal
+          class="map-modal"
           v-if="physicalAddress && physicalAddress.geom"
           :active.sync="showMap"
+          has-modal-card
+          full-screen
         >
-          <div class="map">
-            <map-leaflet
-              :coords="physicalAddress.geom"
-              :marker="{
-                text: physicalAddress.fullName,
-                icon: physicalAddress.poiInfos.poiIcon.icon,
-              }"
-            />
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <button type="button" class="delete" @click="showMap = false" />
+            </header>
+            <div class="modal-card-body">
+              <section class="map">
+                <map-leaflet
+                  :coords="physicalAddress.geom"
+                  :marker="{
+                    text: physicalAddress.fullName,
+                    icon: physicalAddress.poiInfos.poiIcon.icon,
+                  }"
+                />
+              </section>
+              <section class="columns is-centered map-footer">
+                <div class="column is-half has-text-centered">
+                  <p class="address">
+                    <i class="mdi mdi-map-marker"></i>
+                    {{ physicalAddress.fullName }}
+                  </p>
+                  <p class="getting-there">{{ $t("Getting there") }}</p>
+                  <div
+                    class="buttons"
+                    v-if="
+                      addressLinkToRouteByCar ||
+                      addressLinkToRouteByBike ||
+                      addressLinkToRouteByFeet
+                    "
+                  >
+                    <a
+                      class="button"
+                      target="_blank"
+                      v-if="addressLinkToRouteByFeet"
+                      :href="addressLinkToRouteByFeet"
+                    >
+                      <i class="mdi mdi-walk"></i
+                    ></a>
+                    <a
+                      class="button"
+                      target="_blank"
+                      v-if="addressLinkToRouteByBike"
+                      :href="addressLinkToRouteByBike"
+                    >
+                      <i class="mdi mdi-bike"></i
+                    ></a>
+                    <a
+                      class="button"
+                      target="_blank"
+                      v-if="addressLinkToRouteByTransit"
+                      :href="addressLinkToRouteByTransit"
+                    >
+                      <i class="mdi mdi-bus"></i
+                    ></a>
+                    <a
+                      class="button"
+                      target="_blank"
+                      v-if="addressLinkToRouteByCar"
+                      :href="addressLinkToRouteByCar"
+                    >
+                      <i class="mdi mdi-car"></i>
+                    </a>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
         </b-modal>
       </div>
@@ -563,6 +623,8 @@ import {
   EventStatus,
   EventVisibility,
   ParticipantRole,
+  RoutingTransportationType,
+  RoutingType,
 } from "@/types/enums";
 import {
   EVENT_PERSON_PARTICIPATION,
@@ -602,6 +664,7 @@ import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
 
+// noinspection TypeScriptValidateTypes
 @Component({
   components: {
     EventMetadataBlock,
@@ -733,6 +796,65 @@ export default class Event extends EventMixin {
   actorForConfirmation!: IPerson;
 
   messageForConfirmation = "";
+
+  RoutingParamType = {
+    [RoutingType.OPENSTREETMAP]: {
+      [RoutingTransportationType.FOOT]: "engine=fossgis_osrm_foot",
+      [RoutingTransportationType.BIKE]: "engine=fossgis_osrm_bike",
+      [RoutingTransportationType.TRANSIT]: null,
+      [RoutingTransportationType.CAR]: "engine=fossgis_osrm_car",
+    },
+    [RoutingType.GOOGLE_MAPS]: {
+      [RoutingTransportationType.FOOT]: "dirflg=w",
+      [RoutingTransportationType.BIKE]: "dirflg=b",
+      [RoutingTransportationType.TRANSIT]: "dirflg=r",
+      [RoutingTransportationType.CAR]: "driving",
+    },
+  };
+
+  makeNavigationPath(
+    transportationType: RoutingTransportationType
+  ): string | undefined {
+    const geometry = this.physicalAddress?.geom;
+    if (geometry) {
+      const routingType = this.config.maps.routing.type;
+      /**
+       * build urls to routing map
+       */
+      if (!this.RoutingParamType[routingType][transportationType]) {
+        return;
+      }
+
+      const urlGeometry = geometry.split(";").reverse().join(",");
+
+      switch (routingType) {
+        case RoutingType.GOOGLE_MAPS:
+          return `https://maps.google.com/?saddr=Current+Location&daddr=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}`;
+        case RoutingType.OPENSTREETMAP:
+        default: {
+          const bboxX = geometry.split(";").reverse()[0];
+          const bboxY = geometry.split(";").reverse()[1];
+          return `https://www.openstreetmap.org/directions?from=&to=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}#map=14/${bboxX}/${bboxY}`;
+        }
+      }
+    }
+  }
+
+  get addressLinkToRouteByCar(): undefined | string {
+    return this.makeNavigationPath(RoutingTransportationType.CAR);
+  }
+
+  get addressLinkToRouteByBike(): undefined | string {
+    return this.makeNavigationPath(RoutingTransportationType.BIKE);
+  }
+
+  get addressLinkToRouteByFeet(): undefined | string {
+    return this.makeNavigationPath(RoutingTransportationType.FOOT);
+  }
+
+  get addressLinkToRouteByTransit(): undefined | string {
+    return this.makeNavigationPath(RoutingTransportationType.TRANSIT);
+  }
 
   get eventTitle(): undefined | string {
     if (!this.event) return undefined;
@@ -1096,6 +1218,7 @@ export default class Event extends EventMixin {
 
   get physicalAddress(): Address | null {
     if (!this.event.physicalAddress) return null;
+
     return new Address(this.event.physicalAddress);
   }
 
@@ -1225,6 +1348,7 @@ div.sidebar {
     a {
       text-decoration: none;
     }
+
     span {
       &.tag {
         margin: 0 2px;
@@ -1389,9 +1513,31 @@ a.participations-link {
   font-size: 1rem;
 }
 
-div.map {
-  height: 900px;
-  width: 100%;
-  padding: 25px 5px 0;
+.map-modal {
+  .modal-card-head {
+    justify-content: flex-end;
+    button.delete {
+      margin-right: 1rem;
+    }
+  }
+
+  section.map {
+    height: calc(100% - 8rem);
+    width: calc(100% - 20px);
+  }
+
+  section.map-footer {
+    p.address {
+      margin: 1rem auto;
+    }
+    div.buttons {
+      justify-content: center;
+    }
+  }
+}
+
+.no-border {
+  border: 0;
+  cursor: auto;
 }
 </style>
