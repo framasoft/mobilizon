@@ -210,6 +210,9 @@ config :mobilizon, :maps,
   tiles: [
     endpoint: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "© The OpenStreetMap Contributors"
+  ],
+  routing: [
+    type: :openstreetmap
   ]
 
 config :mobilizon, :anonymous,

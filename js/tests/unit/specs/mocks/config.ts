@@ -56,6 +56,9 @@ export const configMock = {
           attribution: "© The OpenStreetMap Contributors",
           endpoint: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         },
+        routing: {
+          type: "OPENSTREETMAP",
+        },
       },
       name: "Mobilizon",
       registrationsAllowlist: false,

@@ -117,6 +117,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         tiles: %{
           endpoint: Config.instance_maps_tiles_endpoint(),
           attribution: Config.instance_maps_tiles_attribution()
+        },
+        routing: %{
+          type: Config.instance_maps_routing_type()
         }
       },
       resource_providers: Config.instance_resource_providers(),

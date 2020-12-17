@@ -238,6 +238,12 @@ type Tag {
   related: [Tag]
 }
 
+"Instance map routing configuration"
+type Routing {
+  "The instance's routing type"
+  type: RoutingType
+}
+
 "Language information"
 type Language {
   "The iso-639-3 language code"
@@ -420,6 +426,9 @@ type Events {
 type Maps {
   "The instance's maps tiles configuration"
   tiles: Tiles
+
+  "The instance's maps routing configuration"
+  routing: Routing
 }
 
 "Search groups result"
@@ -657,6 +666,14 @@ enum InstanceTermsType {
 interface Interactable {
   "A public URL for the entity"
   url: String
+}
+
+enum RoutingType {
+  "Redirect to openstreetmap.org's direction endpoint"
+  OPENSTREETMAP
+
+  "Redirect to Google Maps's direction endpoint"
+  GOOGLE_MAPS
 }
 
 "A struct containing the id of the deleted object"
@@ -2856,7 +2873,7 @@ type PaginatedGroupList {
   total: Int
 }
 
-"Instance tiles configuration"
+"Instance map tiles configuration"
 type Tiles {
   "The instance's tiles endpoint"
   endpoint: String

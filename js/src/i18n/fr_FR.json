@@ -914,5 +914,8 @@
   "You are not part of any group.": "Vous ne faites partie d'aucun groupe.",
   "create a group": "créer un groupe",
   "explore the groups": "explorer les groupes",
-  "Do you wish to {create_group} or {explore_groups}?": "Voulez-vous {create_group} ou {explore_groups} ?"
+  "Do you wish to {create_group} or {explore_groups}?": "Voulez-vous {create_group} ou {explore_groups} ?",
+  "Type or select a date…": "Entrez ou sélectionnez une date…",
+  "Getting there": "S'y rendre",
+  "Groups are not enabled on this instance.": "Les groupes ne sont pas activés sur cette instance."
 }
