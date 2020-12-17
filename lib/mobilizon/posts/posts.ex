@@ -145,6 +145,6 @@ defmodule Mobilizon.Posts do
     Post
     |> where(attributed_to_id: ^group_id)
     |> order_by(desc: :inserted_at)
-    |> preload([p], [:author, :attributed_to, :picture])
+    |> preload([p], [:author, :attributed_to, :picture, :media])
   end
 end
