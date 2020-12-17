@@ -80,7 +80,7 @@ import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { CREATE_GROUP } from "@/graphql/group";
 import { mixins } from "vue-class-component";
 import IdentityEditionMixin from "@/mixins/identityEdition";
-import { MemberRole, Openness } from "@/types/enums";
+import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
