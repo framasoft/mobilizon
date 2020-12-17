@@ -521,7 +521,7 @@ msgstr "Ce jeton n'est pas un UUID valide"
 #, elixir-format
 #: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:317
 msgid "User not found"
-msgstr "Membre non trouvé"
+msgstr "Utilisateur·ice non trouvé·e"
 
 #, elixir-format
 #: lib/graphql/resolvers/person.ex:232
