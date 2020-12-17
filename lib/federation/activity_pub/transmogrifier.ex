@@ -974,7 +974,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       # Conversation
       object_data
       |> Map.put(:creator_id, object_data.actor_id)
-      |> Map.put(:actor_id, object_data.attributed_to_id)
+      |> Map.put(:actor_id, object_data.attributed_to_id || object_data.actor_id)
     end
   end
 

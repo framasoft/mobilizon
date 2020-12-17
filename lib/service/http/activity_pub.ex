@@ -20,7 +20,8 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
        [{"User-Agent", @user_agent}, {"Accept", "application/activity+json"}] ++ headers},
       Tesla.Middleware.FollowRedirects,
       {Tesla.Middleware.Timeout, timeout: 10_000},
-      {Tesla.Middleware.JSON, decode_content_types: ["application/activity+json"]}
+      {Tesla.Middleware.JSON,
+       decode_content_types: ["application/activity+json", "application/ld+json"]}
     ]
 
     adapter = {@adapter, opts}
