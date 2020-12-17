@@ -149,6 +149,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   enum :group_visibility do
     value(:public, description: "Publicly listed and federated")
     value(:unlisted, description: "Visible only to people with the link - or invited")
+    value(:private, description: "Visible only to people with the link - or invited")
   end
 
   object :group_queries do
@@ -196,6 +197,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:visibility, :group_visibility,
         description: "The visibility for the group",
         default_value: :public
+      )
+
+      arg(:openness, :openness,
+        default_value: :invite_only,
+        description: "Whether the group can be join freely, with approval or is invite-only."
       )
 
       arg(:avatar, :media_input,

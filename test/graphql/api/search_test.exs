@@ -35,14 +35,19 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
 
   test "search actors" do
     with_mock Actors,
-      build_actors_by_username_or_name_page: fn %{term: "toto"}, _type, 1, 10 ->
+      build_actors_by_username_or_name_page: fn "toto", _options, 1, 10 ->
         %Page{total: 1, elements: [%Actor{id: 42}]}
       end do
       assert {:ok, %{total: 1, elements: [%Actor{id: 42}]}} =
                Search.search_actors(%{term: "toto"}, 1, 10, :Person)
 
       assert_called(
-        Actors.build_actors_by_username_or_name_page(%{term: "toto"}, [:Person], 1, 10)
+        Actors.build_actors_by_username_or_name_page(
+          "toto",
+          [actor_type: [:Person], radius: nil, location: nil, minimum_visibility: :public],
+          1,
+          10
+        )
       )
     end
   end

@@ -76,7 +76,7 @@
           <b-radio
             v-model="group.visibility"
             name="groupVisibility"
-            :native-value="GroupVisibility.UNLISTED"
+            :native-value="GroupVisibility.PRIVATE"
             >{{ $t("Only accessible through link") }}<br />
             <small>{{
               $t(
@@ -163,7 +163,7 @@ import { Route } from "vue-router";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
-import { Openness } from "@/types/enums";
+import { GroupVisibility, Openness } from "@/types/enums";
 import RouteName from "../../router/name";
 import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
@@ -189,10 +189,7 @@ export default class GroupSettings extends mixins(GroupMixin) {
 
   usernameWithDomain = usernameWithDomain;
 
-  GroupVisibility = {
-    PUBLIC: "PUBLIC",
-    UNLISTED: "UNLISTED",
-  };
+  GroupVisibility = GroupVisibility;
 
   Openness = Openness;
 

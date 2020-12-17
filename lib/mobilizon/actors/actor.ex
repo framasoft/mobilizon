@@ -135,7 +135,14 @@ defmodule Mobilizon.Actors.Actor do
     :preferred_username,
     :members_url
   ]
-  @group_creation_optional_attrs [:shared_inbox_url, :name, :domain, :summary, :visibility]
+  @group_creation_optional_attrs [
+    :shared_inbox_url,
+    :name,
+    :domain,
+    :summary,
+    :visibility,
+    :openness
+  ]
   @group_creation_attrs @group_creation_required_attrs ++ @group_creation_optional_attrs
 
   schema "actors" do
