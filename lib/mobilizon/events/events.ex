@@ -365,7 +365,7 @@ defmodule Mobilizon.Events do
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
-    |> Page.build_page(page, limit, :begins_on)
+    |> Page.build_page(page, limit, sort)
   end
 
   @spec stream_events_for_sitemap :: Enum.t()
