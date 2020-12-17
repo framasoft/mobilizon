@@ -349,7 +349,7 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of events.
   """
-  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: [Event.t()]
+  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: Page.t()
   def list_events(
         page \\ nil,
         limit \\ nil,
@@ -357,7 +357,7 @@ defmodule Mobilizon.Events do
         direction \\ :asc,
         is_future \\ true
       ) do
-    query = from(e in Event, preload: [:organizer_actor, :participants])
+    query = from(e in Event, distinct: true, preload: [:organizer_actor, :participants])
 
     query
     |> sort(sort, direction)
@@ -365,7 +365,7 @@ defmodule Mobilizon.Events do
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
-    |> Page.build_page(page, limit)
+    |> Page.build_page(page, limit, :begins_on)
   end
 
   @spec stream_events_for_sitemap :: Enum.t()
