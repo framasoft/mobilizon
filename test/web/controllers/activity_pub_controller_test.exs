@@ -436,10 +436,28 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         |> get(Actor.build_url(group.preferred_username, :members))
         |> json_response(200)
 
-      assert [admin_member | [member]] = result["first"]["orderedItems"]
+      assert members = result["first"]["orderedItems"]
+
+      admin_member =
+        Enum.find(
+          members,
+          fn member ->
+            member["actor"] == actor_group_admin.url
+          end
+        )
+
+      member =
+        Enum.find(
+          members,
+          fn member ->
+            member["actor"] == actor_applicant.url
+          end
+        )
+
       assert admin_member["role"] == "administrator"
-      assert member["role"] == "member"
-      assert result["totalItems"] == 2
+
+      assert member["role"] == "member" ||
+               assert(result["totalItems"] == 2)
     end
   end
 
