@@ -1167,7 +1167,6 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
              ]
 
       insert(:event)
-      # Process.sleep(1000)
       insert(:event)
 
       res =
