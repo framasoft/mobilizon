@@ -364,6 +364,7 @@ defmodule Mobilizon.Events do
     |> filter_future_events(is_future)
     |> filter_public_visibility()
     |> filter_draft()
+    |> filter_cancelled_events()
     |> filter_local_or_from_followed_instances_events()
     |> Page.build_page(page, limit)
   end
@@ -1653,6 +1654,15 @@ defmodule Mobilizon.Events do
   @spec filter_draft(Ecto.Query.t(), boolean) :: Ecto.Query.t()
   defp filter_draft(query, is_draft \\ false) do
     from(e in query, where: e.draft == ^is_draft)
+  end
+
+  @spec filter_cancelled_events(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  defp filter_cancelled_events(query, hide_cancelled \\ true)
+
+  defp filter_cancelled_events(query, false), do: query
+
+  defp filter_cancelled_events(query, true) do
+    from(e in query, where: e.status != ^:cancelled)
   end
 
   @spec filter_future_events(Ecto.Query.t(), boolean) :: Ecto.Query.t()
