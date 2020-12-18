@@ -357,15 +357,15 @@ defmodule Mobilizon.Events do
         direction \\ :asc,
         is_future \\ true
       ) do
-    query = from(e in Event, distinct: true, preload: [:organizer_actor, :participants])
-
-    query
+    Event
+    |> distinct([e], [{^direction, ^sort}, asc: e.id])
+    |> preload([:organizer_actor, :participants])
     |> sort(sort, direction)
     |> filter_future_events(is_future)
     |> filter_public_visibility()
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
-    |> Page.build_page(page, limit, sort)
+    |> Page.build_page(page, limit)
   end
 
   @spec stream_events_for_sitemap :: Enum.t()

@@ -1166,42 +1166,38 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                event.uuid
              ]
 
-      Enum.each(0..15, fn _ ->
-        insert(:event)
-      end)
-
-      res =
-        conn
-        |> AbsintheHelpers.graphql_query(query: @fetch_events_query)
-
-      assert res["data"]["events"]["total"] == 17
-      assert res["data"]["events"]["elements"] |> length == 10
-
-      res =
-        conn
-        |> AbsintheHelpers.graphql_query(query: @fetch_events_query, variables: %{page: 2})
-
-      assert res["data"]["events"]["total"] == 17
-      assert res["data"]["events"]["elements"] |> length == 7
+      insert(:event)
+      # Process.sleep(1000)
+      insert(:event)
 
       res =
         conn
         |> AbsintheHelpers.graphql_query(
           query: @fetch_events_query,
-          variables: %{page: 2, limit: 15}
+          variables: %{page: 1, limit: 2}
         )
 
-      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["total"] == 3
       assert res["data"]["events"]["elements"] |> length == 2
 
       res =
         conn
         |> AbsintheHelpers.graphql_query(
           query: @fetch_events_query,
-          variables: %{page: 3, limit: 15}
+          variables: %{page: 2, limit: 2}
         )
 
-      assert res["data"]["events"]["total"] == 17
+      assert res["data"]["events"]["total"] == 3
+      assert res["data"]["events"]["elements"] |> length == 1
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @fetch_events_query,
+          variables: %{page: 3, limit: 2}
+        )
+
+      assert res["data"]["events"]["total"] == 3
       assert res["data"]["events"]["elements"] |> length == 0
     end
 
