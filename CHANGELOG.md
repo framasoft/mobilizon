@@ -4,11 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 1.0.3 - 18-12-2020
 
 **This release adds new migrations, be sure to run them before restarting Mobilizon**
 
-**This release has a repair step, be sure to run the command right after restarting Mobilizon**
+**This release has repair steps, be sure to execute them right after restarting Mobilizon**
 
 ### Special operations
 
@@ -28,15 +28,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Docker
     `docker-compose exec mobilizon mobilizon_ctl actors.refresh --all`
 
+* **imagemagick and webp are now a required dependency** to build Mobilizon.
+  Optimized versions of Mobilizon's pictures are now produced during front-end build.
+  See [the documentation](https://docs.joinmobilizon.org/administration/dependencies/#misc) to make sure these dependencies are installed.
+
 ### Added
 
 - **Add a command to clean orphan media files**. There's a `--dry-run` option to see what files would have been deleted.  
   **Make sure all media files have been reattached properly (see above) before running this command.**  
   In 1.1.0 a scheduled job will be enabled to clear orphan media files automatically after a while.
+- Added user and actors media usage information in administration
+- Added a scheduled job to clean unconfirmed users (and their eventual initial profile) after a 48 hour grace period
+- Added a mix task to manually clean unconfirmed users
+- Added OpenStreetMap (OSRM) or GoogleMaps routing pages on the event map modal
+- Added PWA support, Mobilizon can now be installed on Android (Firefox and Chrome), iOS (Safari) and desktop (Chrome)
+- Added possibility to pick language through a setting on the footer for unlogged users
+
+### Changed
+
+- Save remote avatars and banners instead of proxifying them
+- Forbid creating usernames with uppercase characters
+- Allow LDAP admin to use a fully qualified DN (different than the one for the users)
+- Allow LDAP users to be filtered by LDAP attribute `memberOf`.
+- Improve the "My events" and "My groups" page when there's nothing here yet
+- Show identity concerned when listing event participations (in "My events") and group membership (in "My groups")
+- The datetime picker on the event's edition page has been changed and allows directly editing the text
+- Allow to clear and remove pictures from events and posts
 
 ### Fixed
 
-- Fix inline media that weren't being tracked, so that they are not considered orphans media files.
+- Fixed inline media that weren't being tracked, so that they are not considered orphans media files.
+- Fixed permissions on the Docker volume
+- Fixed emails not using user timezone
+- Fixed draft status not being shown on group events & posts inside admin section
+- Fixed cancelled status not being shown on cancelled events cards
+- Fixed membership notification emails not being sent with the user's language
+- Fixed group posts ActivityPub endpoint
+- Fixed unlisted groups being available in search
+- Fixed inline media pictures being unattached when editing an event or a post
+- Fixed adding an instance to follow with spaces
+- Fixed past groups showing up on group's page
+- Fixed error message not showing up when you are already an anonymous participant for an event
+- Fixed error message not showing up when you pick an username already in user for a new profile or a group
+- Fixed translations not fallbacking properly to english when not found
+- 
+
+### Security
+
+- Stop logging user JWT tokens in Websocket Mobilizon logs
+
+### Translations
+
+Updated translations:
+- Catalan
+- Dutch
+- English
+- Finnish
+- French
+- Galician
+- German
+- Hungarian
+- Italian
+- Norwegian
+- Occitan
+- Polish
+- Spanish
+- Swedish
 
 ## 1.0.2 - 2020-11-15
 
