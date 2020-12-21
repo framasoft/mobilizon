@@ -1,10 +1,10 @@
-version: '3'
+version: "3"
 
 services:
   postgres:
     container_name: mobilizon_db
     restart: unless-stopped
-    image: mdillon/postgis:11
+    image: postgis/postgis:13-3.0
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mobilizon_dev
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     build: .
     volumes:
-      - '.:/app'
+      - ".:/app"
     ports:
       - "4000:4000"
     depends_on:
