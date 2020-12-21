@@ -30,6 +30,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:locale, locale)
     |> assign(:participant, participant)
     |> assign(:subject, subject)
+    |> Email.add_event_attachment(event)
     |> render(:before_event_notification)
   end
 

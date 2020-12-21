@@ -6,7 +6,9 @@ defmodule Mobilizon.Web.Email do
   use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
 
   alias Ecto.UUID
-  alias Mobilizon.Config
+  alias Mobilizon.{Config, Events}
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Service.Export.ICalendar
   alias Mobilizon.Web.EmailView
 
   @spec base_email(keyword()) :: Bamboo.Email.t()
@@ -38,6 +40,20 @@ defmodule Mobilizon.Web.Email do
       "REMOVED FOR TESTING"
     else
       Timex.format!(DateTime.utc_now(), "{WDshort}, {D} {Mshort} {YYYY} {h24}:{m}:{s} {Z}")
+    end
+  end
+
+  def add_event_attachment(%Bamboo.Email{} = email, %Event{id: event_id}) do
+    with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
+         {:ok, event_ics_data} <- ICalendar.export_event(event) do
+      put_attachment(email, %Bamboo.Attachment{
+        filename: Slugger.slugify_downcase(event.title),
+        content_type: "text/calendar",
+        data: event_ics_data
+      })
+    else
+      _ ->
+        email
     end
   end
 end

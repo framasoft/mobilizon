@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.ICalendarTest do
       BEGIN:VCALENDAR
       CALSCALE:GREGORIAN
       VERSION:2.0
-      PRODID:-//ICalendar//Mobilizon//EN
+      PRODID:-//ICalendar//Mobilizon #{Mobilizon.Config.instance_version()}//EN
       BEGIN:VEVENT
       CATEGORIES:#{event.tags |> Enum.map(& &1.title) |> Enum.join(",")}
       DESCRIPTION:Ceci est une description avec une première phrase assez longue\\,\\n      puis sur une seconde ligne

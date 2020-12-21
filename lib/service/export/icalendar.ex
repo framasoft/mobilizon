@@ -3,13 +3,15 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Export an event to iCalendar format.
   """
 
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+
+  @vendor "Mobilizon #{Config.instance_version()}"
 
   @doc """
   Export a public event to iCalendar format.
@@ -19,11 +21,18 @@ defmodule Mobilizon.Service.Export.ICalendar do
   @spec export_public_event(Event.t()) :: {:ok, String.t()}
   def export_public_event(%Event{visibility: visibility} = event)
       when visibility in [:public, :unlisted] do
-    {:ok, %ICalendar{events: [do_export_event(event)]} |> ICalendar.to_ics(vendor: "Mobilizon")}
+    export_event(event)
   end
 
   @spec export_public_event(Event.t()) :: {:error, :event_not_public}
   def export_public_event(%Event{}), do: {:error, :event_not_public}
+
+  @doc """
+  Export an event to iCalendar format
+  """
+  def export_event(%Event{} = event) do
+    {:ok, %ICalendar{events: [do_export_event(event)]} |> ICalendar.to_ics(vendor: @vendor)}
+  end
 
   @spec do_export_event(Event.t()) :: ICalendar.Event.t()
   defp do_export_event(%Event{} = event) do
