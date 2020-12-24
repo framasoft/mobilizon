@@ -77,7 +77,7 @@ defmodule Mobilizon.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
-      {:guardian_db, "~> 2.0.2"},
+      {:guardian_db, "~> 2.1.0"},
       {:guardian_phoenix, "~> 2.0"},
       {:argon2_elixir, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
