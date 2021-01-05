@@ -42,7 +42,7 @@
     "tiptap": "^1.26.0",
     "tiptap-extensions": "^1.29.1",
     "unfetch": "^4.2.0",
-    "v-tooltip": "2.0.2",
+    "v-tooltip": "2.1.2",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.3",
     "vue-class-component": "^7.2.3",
