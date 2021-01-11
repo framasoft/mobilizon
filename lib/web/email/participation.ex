@@ -118,6 +118,7 @@ defmodule Mobilizon.Web.Email.Participation do
     |> assign(:locale, locale)
     |> assign(:event, event)
     |> assign(:subject, subject)
+    |> Email.add_event_attachment(event)
     |> render(:event_participation_approved)
   end
 

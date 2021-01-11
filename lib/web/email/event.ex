@@ -46,6 +46,7 @@ defmodule Mobilizon.Web.Email.Event do
     |> assign(:changes, changes)
     |> assign(:subject, subject)
     |> assign(:timezone, timezone)
+    |> Email.add_event_attachment(event)
     |> render(:event_updated)
   end
 
