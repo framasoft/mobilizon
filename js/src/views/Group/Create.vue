@@ -166,7 +166,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
     if (this.avatarFile) {
       avatarObj = {
         avatar: {
-          picture: {
+          media: {
             name: this.avatarFile.name,
             alt: `${this.group.preferredUsername}'s avatar`,
             file: this.avatarFile,
@@ -178,7 +178,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
     if (this.bannerFile) {
       bannerObj = {
         banner: {
-          picture: {
+          media: {
             name: this.bannerFile.name,
             alt: `${this.group.preferredUsername}'s banner`,
             file: this.bannerFile,
