@@ -30,19 +30,26 @@ cache:
     - js/node_modules
     - cache/Cypress
 
-lint:
+lint-elixir:
   stage: check
   script:
     - export EXITVALUE=0
     - mix deps.get
     - mix credo --strict -a || export EXITVALUE=1
     - mix format --check-formatted --dry-run || export EXITVALUE=1
+    - exit $EXITVALUE
+
+lint-front:
+  image: node:14
+  stage: check
+  before_script:
+    - export EXITVALUE=0
     - cd js
+  script:
     - yarn install
     - yarn run lint || export EXITVALUE=1
     - yarn run prettier -c . || export EXITVALUE=1
-    - yarn run build:assets
-    - cd ../
+    - yarn run build:assets || export EXITVALUE=1
     - exit $EXITVALUE
   artifacts:
     expire_in: 1 day
@@ -75,7 +82,7 @@ exunit:
     - MIX_ENV=test mix ecto.create
     - MIX_ENV=test mix ecto.migrate
   dependencies:
-    - lint
+    - lint-elixir
   script:
     - mix coveralls
 
@@ -85,7 +92,7 @@ jest:
     - cd js
     - yarn install
   dependencies:
-    - lint
+    - lint-front
   script:
     - yarn run test:unit --no-color
   artifacts:
