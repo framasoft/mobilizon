@@ -1276,7 +1276,7 @@ defmodule Mobilizon.Events do
     from(
       e in Event,
       where: e.attributed_to_id == ^group_id,
-      order_by: [desc: :id]
+      order_by: [asc: :begins_on]
     )
   end
 
