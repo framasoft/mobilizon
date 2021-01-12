@@ -153,9 +153,19 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
       "orderedItems" => Enum.map(collection, &item/1)
     }
 
-    if offset < total do
-      Map.put(map, "next", Actor.build_url(preferred_username, endpoint, page: page + 1))
-    end
+    map =
+      if offset < total do
+        Map.put(map, "next", Actor.build_url(preferred_username, endpoint, page: page + 1))
+      else
+        map
+      end
+
+    map =
+      if offset > total do
+        Map.put(map, "prev", Actor.build_url(preferred_username, endpoint, page: page - 1))
+      else
+        map
+      end
 
     map
   end
