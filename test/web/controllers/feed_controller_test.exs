@@ -95,8 +95,23 @@ defmodule Mobilizon.Web.FeedControllerTest do
       group = insert(:group, visibility: :public)
       tag1 = insert(:tag, title: "iCalendar", slug: "icalendar")
       tag2 = insert(:tag, title: "Apple", slug: "apple")
-      event1 = insert(:event, organizer_actor: actor, attributed_to: group, tags: [tag1])
-      event2 = insert(:event, organizer_actor: actor, attributed_to: group, tags: [tag1, tag2])
+
+      event1 =
+        insert(:event,
+          organizer_actor: actor,
+          attributed_to: group,
+          tags: [tag1],
+          title: "Event One"
+        )
+
+      event2 =
+        insert(:event,
+          organizer_actor: actor,
+          attributed_to: group,
+          tags: [tag1, tag2],
+          title: "Event Two",
+          begins_on: DateTime.add(DateTime.utc_now(), 3_600 * 12 * 4)
+        )
 
       conn =
         conn
@@ -110,7 +125,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       assert res =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
 
-      [entry1, entry2] = entries = ExIcal.parse(res)
+      [entry2, entry1] = entries = ExIcal.parse(res)
 
       Enum.each(entries, fn entry ->
         assert entry.summary in [event1.title, event2.title]
