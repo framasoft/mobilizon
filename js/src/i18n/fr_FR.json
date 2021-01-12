@@ -917,5 +917,6 @@
   "Do you wish to {create_group} or {explore_groups}?": "Voulez-vous {create_group} ou {explore_groups} ?",
   "Type or select a date…": "Entrez ou sélectionnez une date…",
   "Getting there": "S'y rendre",
-  "Groups are not enabled on this instance.": "Les groupes ne sont pas activés sur cette instance."
+  "Groups are not enabled on this instance.": "Les groupes ne sont pas activés sur cette instance.",
+  "The events you created are not shown here.": "Les événements que vous avez créé ne s'affichent pas ici."
 }

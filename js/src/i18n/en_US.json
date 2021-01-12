@@ -823,5 +823,6 @@
   "Do you wish to {create_group} or {explore_groups}?": "Do you wish to {create_group} or {explore_groups}?",
   "Type or select a date…": "Type or select a date…",
   "Getting there": "Getting there",
-  "Groups are not enabled on this instance.": "Groups are not enabled on this instance."
+  "Groups are not enabled on this instance.": "Groups are not enabled on this instance.",
+  "The events you created are not shown here.": "The events you created are not shown here."
 }

@@ -259,9 +259,13 @@
             <EventCard :event="event" />
           </div>
         </div>
-        <b-message v-else type="is-danger">{{
-          $t("No events found")
-        }}</b-message>
+        <b-message v-else type="is-danger"
+          >{{ $t("No events found") }}<br />
+          <b-icon size="is-small" icon="information-outline" />
+          <small v-if="goingToEvents.size > 0 || lastWeekEvents.length > 0">{{
+            $t("The events you created are not shown here.")
+          }}</small>
+        </b-message>
       </section>
     </div>
   </div>
@@ -444,7 +448,7 @@ export default class Home extends Vue {
     );
   }
 
-  get goingToEvents(): Map<string, Map<string, IParticipant>> {
+  get thisWeekGoingToEvents(): IParticipant[] {
     const res = this.currentUserParticipations.filter(
       ({ event, role }) =>
         event.beginsOn != null &&
@@ -456,8 +460,11 @@ export default class Home extends Vue {
       (a: IParticipant, b: IParticipant) =>
         a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
     );
+    return res;
+  }
 
-    return res.reduce(
+  get goingToEvents(): Map<string, Map<string, IParticipant>> {
+    return this.thisWeekGoingToEvents.reduce(
       (
         acc: Map<string, Map<string, IParticipant>>,
         participation: IParticipant
@@ -496,7 +503,7 @@ export default class Home extends Vue {
   get filteredFeaturedEvents(): IEvent[] {
     return this.events.elements.filter(
       ({ id }) =>
-        !this.currentUserParticipations
+        !this.thisWeekGoingToEvents
           .filter(
             (participation) => participation.role === ParticipantRole.CREATOR
           )
