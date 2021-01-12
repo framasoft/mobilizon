@@ -28,7 +28,6 @@ variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}"
   ARCH: "amd64"
 
-
 cache:
   key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   paths:
@@ -45,9 +44,9 @@ cache:
 install:
   stage: install
   script:
-  - yarn --cwd "js" install --frozen-lockfile
-  - mix deps.get
-  - mix compile
+    - yarn --cwd "js" install --frozen-lockfile
+    - mix deps.get
+    - mix compile
 
 lint-elixir:
   stage: check
@@ -70,16 +69,16 @@ lint-front:
 build-frontend:
   stage: build
   before_script:
-  - apt update
-  - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
+    - apt update
+    - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
   script:
-  - yarn --cwd "js" run build
+    - yarn --cwd "js" run build
   artifacts:
     expire_in: 5 days
     paths:
-    - priv/static
+      - priv/static
   needs:
-  - lint-front
+    - lint-front
 
 deps:
   stage: check
@@ -109,8 +108,6 @@ jest:
   stage: test
   needs:
     - lint-front
-  before_script:
-    - yarn add --dev jest-junit
   script:
     - yarn --cwd "js" run test:unit --no-color --ci --reporters=default --reporters=jest-junit
   artifacts:
@@ -119,7 +116,7 @@ jest:
       - js/coverage
     reports:
       junit:
-      - js/junit.xml
+        - js/junit.xml
     expire_in: 30 days
 
 # cypress:
@@ -193,20 +190,20 @@ build-docker-tag:
 package-app:
   stage: package
   before_script:
-  - apt update
-  - apt install -y --no-install-recommends build-essential git cmake
+    - apt update
+    - apt install -y --no-install-recommends build-essential git cmake
   variables:
     MIX_ENV: "prod"
   script:
-  - mix local.hex --force
-  - mix local.rebar --force
-  - cp docker/production/releases.exs ./config/
-  - mix phx.digest
-  - mix release
+    - mix local.hex --force
+    - mix local.rebar --force
+    - cp docker/production/releases.exs ./config/
+    - mix phx.digest
+    - mix release
   artifacts:
     expire_in: 2 days
     paths:
-    - _build/prod/rel
+      - _build/prod/rel
 
 release-upload:
   stage: upload
@@ -242,4 +239,3 @@ release-create:
     release-cli create  --name "$CI_PROJECT_TITLE v$CI_COMMIT_TAG" \
                         --tag-name "$CI_COMMIT_TAG" \
                         --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}\"}"
-

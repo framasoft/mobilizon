@@ -7,6 +7,7 @@ module.exports = {
     "!get_union_json.ts",
   ],
   coverageReporters: ["html", "text", "text-summary"],
+  reporters: ["default", "jest-junit"],
   // The following should fix the issue with svgs and ?inline loader (see Logo.vue), but doesn't work
   //
   // transform: {
