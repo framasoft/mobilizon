@@ -103,6 +103,12 @@ exunit:
     - mix ecto.migrate
   script:
     - mix coveralls
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - test-junit-report.xml
+    expire_in: 30 days
 
 jest:
   stage: test

@@ -59,6 +59,8 @@ config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
 
 config :mobilizon, :activitypub, sign_object_fetches: false
 
+config :junit_formatter, report_dir: "."
+
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
   import_config "test.secret.exs"
 end
