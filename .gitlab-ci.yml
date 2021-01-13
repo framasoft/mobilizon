@@ -1,13 +1,17 @@
 image: tcitworld/mobilizon-ci
 
 stages:
+  - install
   - check
+  - build
   - test
+  - package
+  - upload
   - deploy
-  - docker
 
 variables:
   MIX_ENV: "test"
+  YARN_CACHE_FOLDER: "js/.yarn"
   # DB Variables for Postgres / Postgis
   POSTGRES_DB: mobilizon_test
   POSTGRES_USER: postgres
@@ -20,102 +24,116 @@ variables:
   MOBILIZON_DATABASE_HOST: $POSTGRES_HOST
   GEOLITE_CITIES_PATH: "/usr/share/GeoIP/GeoLite2-City.mmdb"
   MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
+  # Release elements
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}"
+  ARCH: "amd64"
+
 
 cache:
-  key: ${CI_COMMIT_REF_SLUG}
+  key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   paths:
     - ~/.cache/Cypress
-    - _build/
-    - deps/
-    - js/node_modules
     - cache/Cypress
+    - deps/
+    - _build/
+    - js/node_modules
+    - js/.yarn
+
+# Installed dependencies are cached across the pipeline
+# So there is no need to reinstall them all the time
+# It saves minutes during a pipeline build time
+install:
+  stage: install
+  script:
+  - yarn --cwd "js" install --frozen-lockfile
+  - mix deps.get
+  - mix compile
 
 lint-elixir:
   stage: check
   script:
     - export EXITVALUE=0
-    - mix deps.get
     - mix credo --strict -a || export EXITVALUE=1
     - mix format --check-formatted --dry-run || export EXITVALUE=1
     - exit $EXITVALUE
 
 lint-front:
-  image: node:14
   stage: check
   before_script:
     - export EXITVALUE=0
     - cd js
   script:
-    - yarn install
     - yarn run lint || export EXITVALUE=1
     - yarn run prettier -c . || export EXITVALUE=1
-    - yarn run build:assets || export EXITVALUE=1
     - exit $EXITVALUE
+
+build-frontend:
+  stage: build
+  before_script:
+  - apt update
+  - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
+  script:
+  - yarn --cwd "js" run build
   artifacts:
-    expire_in: 1 day
-    when: on_success
+    expire_in: 5 days
     paths:
-      - priv/static
+    - priv/static
+  needs:
+  - lint-front
 
 deps:
   stage: check
   script:
     - export EXITVALUE=0
-    - mix deps.get
     - mix hex.outdated || export EXITVALUE=1
-    - cd js
-    - yarn outdated || export EXITVALUE=1
+    - yarn --cwd "js" outdated || export EXITVALUE=1
     - exit $EXITVALUE
   allow_failure: true
+  needs:
+    - install
 
 exunit:
   stage: test
   services:
     - name: mdillon/postgis:11
       alias: postgres
+  variables:
+    MIX_ENV: test
   before_script:
-    - cd js
-    - yarn install
-    - yarn run build:assets
-    - cd ../
-    - mix deps.get
-    - MIX_ENV=test mix ecto.create
-    - MIX_ENV=test mix ecto.migrate
-  dependencies:
-    - lint-elixir
+    - mix ecto.create
+    - mix ecto.migrate
   script:
     - mix coveralls
 
 jest:
   stage: test
-  before_script:
-    - cd js
-    - yarn install
-  dependencies:
+  needs:
     - lint-front
+  before_script:
+    - yarn add --dev jest-junit
   script:
-    - yarn run test:unit --no-color
+    - yarn --cwd "js" run test:unit --no-color --ci --reporters=default --reporters=jest-junit
   artifacts:
     when: always
     paths:
       - js/coverage
+    reports:
+      junit:
+      - js/junit.xml
     expire_in: 30 days
+
 # cypress:
 #   stage: test
 #   services:
 #     - name: mdillon/postgis:11
 #       alias: postgres
+#   variables:
+#     MIX_ENV=e2e
 #   script:
-#     - mix deps.get
-#     - cd js
-#     - yarn install
-#     - npx cypress install # just to be sure
-#     - yarn run build
-#     - cd ../
-#     - MIX_ENV=e2e mix ecto.create
-#     - MIX_ENV=e2e mix ecto.migrate
-#     - MIX_ENV=e2e mix run priv/repo/e2e.seed.exs
-#     - MIX_ENV=e2e mix phx.server &
+#     - mix ecto.create
+#     - mix ecto.migrate
+#     - mix run priv/repo/e2e.seed.exs
+#     - mix phx.server &
 #     - cd js
 #     - npx wait-on http://localhost:4000
 #     - if [ -z "$CYPRESS_KEY" ]; then npx cypress run; else npx cypress run --record --parallel --key $CYPRESS_KEY; fi
@@ -131,22 +149,19 @@ jest:
 #     # - mkdir public
 #     # Mobilizon documentation is now on https://framagit.org/framasoft/joinmobilizon/documentation
 #     # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
-#     # - mix deps.get
 #     # - mix docs
 #     # - mv doc public/backend
-#     #- cd js
-#     #- yarn install
-#     #- yarn run styleguide:build
-#     #- mv styleguide ../public/frontend
-#   only:
-#     - master
+#     #- yarn run --cwd "js" styleguide:build
+#     #- mv js/styleguide public/frontend
+#   rules:
+#     - if: '$CI_COMMIT_BRANCH == "master"'
 #   artifacts:
 #     expire_in: 1 hour
 #     paths:
 #       - public
 
 .docker: &docker
-  stage: docker
+  stage: build
   cache: {}
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -159,14 +174,72 @@ jest:
 
 build-docker-master:
   <<: *docker
-  only:
-    - schedules
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
   variables:
     DOCKER_IMAGE_NAME: framasoft/mobilizon:master
 
 build-docker-tag:
   <<: *docker
-  only:
-    - tags
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: $CI_COMMIT_TAG
   variables:
     DOCKER_IMAGE_NAME: framasoft/mobilizon:$CI_COMMIT_TAG
+
+package-app:
+  stage: package
+  before_script:
+  - apt update
+  - apt install -y --no-install-recommends build-essential git cmake
+  variables:
+    MIX_ENV: "prod"
+  script:
+  - mix local.hex --force
+  - mix local.rebar --force
+  - cp docker/production/releases.exs ./config/
+  - mix phx.digest
+  - mix release
+  artifacts:
+    expire_in: 2 days
+    paths:
+    - _build/prod/rel
+
+release-upload:
+  stage: upload
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  script: |
+    APP_VERSION="${CI_COMMIT_TAG}"
+    APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
+
+    echo "Artifact: ${APP_ASSET}"
+    tar czf ${APP_ASSET} -C _build/prod/rel mobilizon
+    ls -al ${APP_ASSET}
+
+    curl --silent --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${APP_ASSET}" ${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}
+  artifacts:
+    expire_in: 1 day
+    when: on_success
+    paths:
+      - mobilizon_*.tar.gz
+
+release-create:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  dependencies: []
+  cache: {}
+  script: |
+    APP_VERSION="${CI_COMMIT_TAG}"
+    APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
+
+    release-cli create  --name "$CI_PROJECT_TITLE v$CI_COMMIT_TAG" \
+                        --tag-name "$CI_COMMIT_TAG" \
+                        --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}\"}"
+
