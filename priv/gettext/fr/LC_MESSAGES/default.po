@@ -394,8 +394,8 @@ msgstr "Vous avez été invité par %{inviter} à rejoindre le groupe %{group}"
 #: lib/web/email/notification.ex:70
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
-msgstr[0] "Un événement prévu aujourd'hui"
-msgstr[1] "%{nb_events} événements prévus aujourd'hui"
+msgstr[0] "Un événement prévu cette semaine"
+msgstr[1] "%{nb_events} événements prévus cette semaine"
 
 #, elixir-format
 #: lib/web/email/notification.ex:92
