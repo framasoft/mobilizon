@@ -146,7 +146,8 @@ defmodule Mobilizon.Mixfile do
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test},
-      {:mox, "~> 1.0", only: :test}
+      {:mox, "~> 1.0", only: :test},
+      {:junit_formatter, "~> 3.1", only: [:test]}
     ] ++ oauth_deps()
   end
 
