@@ -156,14 +156,12 @@ jest:
 #       - js/tests/e2e/screenshots/**/*.png
 #       - js/tests/e2e/videos/**/*.mp4
 
-# pages:
-#   stage: deploy
-#   script:
-#     # - mkdir public
-#     # Mobilizon documentation is now on https://framagit.org/framasoft/joinmobilizon/documentation
-#     # Mix docs disabled because of https://github.com/elixir-lang/ex_doc/issues/1172
-#     # - mix docs
-#     # - mv doc public/backend
+pages:
+  stage: deploy
+  script:
+    - mkdir public
+    - mix docs
+    - mv doc public/backend
 #     #- yarn run --cwd "js" styleguide:build
 #     #- mv js/styleguide public/frontend
 #   rules:
