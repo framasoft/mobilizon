@@ -3,8 +3,9 @@ image: tcitworld/mobilizon-ci
 stages:
   - install
   - check
-  - build
+  - build-js
   - test
+  - docker
   - package
   - upload
   - deploy
@@ -70,7 +71,7 @@ lint-front:
     - exit $EXITVALUE
 
 build-frontend:
-  stage: build
+  stage: build-js
   image: node:14
   before_script:
     - apt update
@@ -172,7 +173,7 @@ pages:
 #       - public
 
 .docker: &docker
-  stage: build
+  stage: docker
   cache: {}
   image:
     name: gcr.io/kaniko-project/executor:debug
