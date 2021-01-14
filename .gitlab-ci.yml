@@ -50,6 +50,8 @@ install:
 
 lint-elixir:
   stage: check
+  before_script:
+    - mix deps.get
   script:
     - export EXITVALUE=0
     - mix credo --strict -a || export EXITVALUE=1
@@ -57,9 +59,11 @@ lint-elixir:
     - exit $EXITVALUE
 
 lint-front:
+  image: node:14
   stage: check
   before_script:
     - export EXITVALUE=0
+    - yarn --cwd "js" install --frozen-lockfile
     - cd js
   script:
     - yarn run lint || export EXITVALUE=1
@@ -68,10 +72,12 @@ lint-front:
 
 build-frontend:
   stage: build
+  image: node:14
   before_script:
     - apt update
     - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
   script:
+    - yarn --cwd "js" install --frozen-lockfile
     - yarn --cwd "js" run build
   artifacts:
     expire_in: 5 days
@@ -82,6 +88,8 @@ build-frontend:
 
 deps:
   stage: check
+  before_script:
+    - mix deps.get
   script:
     - export EXITVALUE=0
     - mix hex.outdated || export EXITVALUE=1
@@ -99,6 +107,7 @@ exunit:
   variables:
     MIX_ENV: test
   before_script:
+    - mix deps.get
     - mix ecto.create
     - mix ecto.migrate
   script:
@@ -114,6 +123,8 @@ jest:
   stage: test
   needs:
     - lint-front
+  before_script:
+    - yarn --cwd "js" install --frozen-lockfile
   script:
     - yarn --cwd "js" run test:unit --no-color --ci --reporters=default --reporters=jest-junit
   artifacts:
