@@ -261,10 +261,12 @@
         </div>
         <b-message v-else type="is-danger"
           >{{ $t("No events found") }}<br />
-          <b-icon size="is-small" icon="information-outline" />
-          <small v-if="goingToEvents.size > 0 || lastWeekEvents.length > 0">{{
-            $t("The events you created are not shown here.")
-          }}</small>
+          <div v-if="goingToEvents.size > 0 || lastWeekEvents.length > 0">
+            <b-icon size="is-small" icon="information-outline" />
+            <small>{{
+              $t("The events you created are not shown here.")
+            }}</small>
+          </div>
         </b-message>
       </section>
     </div>
