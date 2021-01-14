@@ -64,10 +64,9 @@ lint-front:
   before_script:
     - export EXITVALUE=0
     - yarn --cwd "js" install --frozen-lockfile
-    - cd js
   script:
-    - yarn run lint || export EXITVALUE=1
-    - yarn run prettier -c . || export EXITVALUE=1
+    - yarn --cwd "js" run lint || export EXITVALUE=1
+    - yarn --cwd "js" run prettier -c . || export EXITVALUE=1
     - exit $EXITVALUE
 
 build-frontend:
