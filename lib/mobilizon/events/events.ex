@@ -520,8 +520,7 @@ defmodule Mobilizon.Events do
     |> events_for_tags(args)
     |> events_for_location(args)
     |> filter_local_or_from_followed_instances_events()
-    |> filter_public_visibility()
-    |> event_order_begins_on_asc()
+    |> order_by([q], asc: q.id)
     |> Page.build_page(page, limit)
   end
 
@@ -1342,6 +1341,8 @@ defmodule Mobilizon.Events do
   @spec events_for_search_query(String.t()) :: Ecto.Query.t()
   defp events_for_search_query(search_string) do
     Event
+    |> where([e], e.visibility == ^:public)
+    |> distinct([e], e.id)
     |> do_event_for_search_query(search_string)
   end
 
