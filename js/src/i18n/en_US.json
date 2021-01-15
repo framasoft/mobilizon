@@ -824,5 +824,9 @@
   "Type or select a date…": "Type or select a date…",
   "Getting there": "Getting there",
   "Groups are not enabled on this instance.": "Groups are not enabled on this instance.",
-  "The events you created are not shown here.": "The events you created are not shown here."
+  "The events you created are not shown here.": "The events you created are not shown here.",
+  "There's no discussions yet": "There's no discussions yet",
+  "Only group members can access discussions": "Only group members can access discussions",
+  "Return to the group page": "Return to the group page",
+  "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content."
 }
