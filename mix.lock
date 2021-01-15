@@ -77,7 +77,7 @@
   "http_sign": {:hex, :http_sign, "0.1.1", "b16edb83aa282892f3271f9a048c155e772bf36e15700ab93901484c55f8dd10", [:mix], [{:plug, "~> 1.0", [hex: :plug, repo: "hexpm", optional: false]}], "hexpm", "2d4b1c2579d85534035f12c9e1260abdf6d03a9ad4f515b2ee53b50e68c8b787"},
   "http_signatures": {:hex, :http_signatures, "0.1.0", "4e4b501a936dbf4cb5222597038a89ea10781776770d2e185849fa829686b34c", [:mix], [], "hexpm", "f8a7b3731e3fd17d38fa6e343fcad7b03d6874a3b0a108c8568a71ed9c2cf824"},
   "httpoison": {:hex, :httpoison, "1.7.0", "abba7d086233c2d8574726227b6c2c4f6e53c4deae7fe5f6de531162ce9929a0", [:mix], [{:hackney, "~> 1.16", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm", "975cc87c845a103d3d1ea1ccfd68a2700c211a434d8428b10c323dc95dc5b980"},
-  "icalendar": {:git, "https://github.com/tcitworld/icalendar.git", "bd08e872c125f70a87c3ac7d87ea2f22a5577059", []},
+  "icalendar": {:git, "https://github.com/tcitworld/icalendar.git", "e16a3a0b74e07ba79044361fbf5014bed344f2da", []},
   "idna": {:hex, :idna, "6.1.1", "8a63070e9f7d0c62eb9d9fcb360a7de382448200fbbd1b106cc96d3d8099df8d", [:rebar3], [{:unicode_util_compat, "~>0.7.0", [hex: :unicode_util_compat, repo: "hexpm", optional: false]}], "hexpm", "92376eb7894412ed19ac475e4a86f7b413c1b9fbb5bd16dccd57934157944cea"},
   "inet_cidr": {:hex, :inet_cidr, "1.0.4", "a05744ab7c221ca8e395c926c3919a821eb512e8f36547c062f62c4ca0cf3d6e", [:mix], [], "hexpm", "64a2d30189704ae41ca7dbdd587f5291db5d1dda1414e0774c29ffc81088c1bc"},
   "ip_reserved": {:hex, :ip_reserved, "0.1.0", "5c3b6df25eb875618e489db47e00fb8dac53bc2b0dc2d546b713e6141210fe9f", [:mix], [{:inet_cidr, "~> 1.0.0", [hex: :inet_cidr, repo: "hexpm", optional: false]}], "hexpm", "88b0e96f40048f214b9e90e64eaebbf18acfec066008d7ef993b08282b2fe484"},
