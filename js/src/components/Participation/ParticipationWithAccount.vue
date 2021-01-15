@@ -1,5 +1,6 @@
 <template>
   <redirect-with-account
+    v-if="uri"
     :uri="uri"
     :pathAfterLogin="`/events/${uuid}`"
     :sentence="sentence"
@@ -8,21 +9,33 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import RedirectWithAccount from "@/components/Utils/RedirectWithAccount.vue";
-import RouteName from "../../router/name";
+import { FETCH_EVENT } from "@/graphql/event";
+import { IEvent } from "@/types/event.model";
 
 @Component({
   components: { RedirectWithAccount },
+  apollo: {
+    event: {
+      query: FETCH_EVENT,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          uuid: this.uuid,
+        };
+      },
+      skip() {
+        return !this.uuid;
+      },
+    },
+  },
 })
 export default class ParticipationWithAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;
 
-  get uri(): string {
-    return `${window.location.origin}${
-      this.$router.resolve({
-        name: RouteName.EVENT,
-        params: { uuid: this.uuid },
-      }).href
-    }`;
+  event!: IEvent;
+
+  get uri(): string | undefined {
+    return this.event?.url;
   }
 
   sentence = this.$t(

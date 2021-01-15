@@ -918,5 +918,9 @@
   "Type or select a date…": "Entrez ou sélectionnez une date…",
   "Getting there": "S'y rendre",
   "Groups are not enabled on this instance.": "Les groupes ne sont pas activés sur cette instance.",
-  "The events you created are not shown here.": "Les événements que vous avez créé ne s'affichent pas ici."
+  "The events you created are not shown here.": "Les événements que vous avez créé ne s'affichent pas ici.",
+  "There's no discussions yet": "Il n'y a pas encore de discussions",
+  "Only group members can access discussions": "Seul⋅es les membres du groupes peuvent accéder aux discussions",
+  "Return to the group page": "Retourner à la page du groupe",
+  "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "Il est possible que le contenu ne soit pas accessible depuis cette instance, car cette instance a bloqué le profil ou le groupe derrière ce contenu."
 }
