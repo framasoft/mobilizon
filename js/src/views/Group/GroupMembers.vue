@@ -218,11 +218,9 @@
           </div>
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("No member matches the filters") }}</p>
-            </div>
-          </section>
+          <empty-content icon="account" inline>
+            {{ $t("No member matches the filters") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -247,6 +245,7 @@ import {
   UPDATE_MEMBER,
 } from "../../graphql/member";
 import { usernameWithDomain } from "../../types/actor";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 @Component({
   apollo: {
@@ -262,6 +261,9 @@ import { usernameWithDomain } from "../../types/actor";
       },
       update: (data) => data.group.members,
     },
+  },
+  components: {
+    EmptyContent,
   },
 })
 export default class GroupMembers extends mixins(GroupMixin) {

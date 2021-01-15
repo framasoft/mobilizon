@@ -136,10 +136,13 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
     """
 
     test "find_group/3 returns a group by its username", %{conn: conn, actor: actor, user: user} do
+      user2 = insert(:user)
+      insert(:actor, user: user2)
       group = insert(:group)
       insert(:member, parent: group, actor: actor, role: :administrator)
       insert(:member, parent: group, role: :member)
 
+      # Unlogged
       res =
         conn
         |> AbsintheHelpers.graphql_query(
@@ -157,6 +160,26 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       assert res["data"]["group"]["members"]["total"] == 2
       assert res["data"]["group"]["members"]["elements"] == []
 
+      # Login with non-member
+      res =
+        conn
+        |> auth_conn(user2)
+        |> AbsintheHelpers.graphql_query(
+          query: @group_query,
+          variables: %{
+            preferredUsername: group.preferred_username
+          }
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["group"]["preferredUsername"] ==
+               group.preferred_username
+
+      assert res["data"]["group"]["members"]["total"] == 2
+      assert res["data"]["group"]["members"]["elements"] == []
+
+      # Login with member
       res =
         conn
         |> auth_conn(user)
@@ -179,6 +202,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       assert admin["actor"]["preferredUsername"] ==
                actor.preferred_username
 
+      # Non existent username
       res =
         conn
         |> AbsintheHelpers.graphql_query(

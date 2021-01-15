@@ -163,14 +163,14 @@ pages:
     - mkdir public
     - mix docs
     - mv doc public/backend
-#     #- yarn run --cwd "js" styleguide:build
-#     #- mv js/styleguide public/frontend
-#   rules:
-#     - if: '$CI_COMMIT_BRANCH == "master"'
-#   artifacts:
-#     expire_in: 1 hour
-#     paths:
-#       - public
+  #     #- yarn run --cwd "js" styleguide:build
+  #     #- mv js/styleguide public/frontend
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - public
 
 .docker: &docker
   stage: docker
