@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 11:48+0000\n"
-"PO-Revision-Date: 2020-11-09 09:12+0000\n"
+"PO-Revision-Date: 2021-01-17 09:14+0000\n"
 "Last-Translator: fadelkon <fadelkon@posteo.net>\n"
 "Language-Team: Catalan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ca/>\n"
@@ -12,272 +12,272 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1\n"
+"X-Generator: Weblate 4.4\n"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:48
+#, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
 "Si no ho has demanat tu, ignora aquest email. La teva contrasenya només "
 "canviarà si cliques l'enllaç de sota i n'escrius una altra."
 
-#, elixir-format
 #: lib/service/export/feed.ex:170
+#, elixir-format
 msgid "Feed for %{email} on Mobilizon"
 msgstr "Flux per %{email} a Mobilizon"
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:74
+#, elixir-format
 msgid "%{title} by %{creator}"
 msgstr "%{title} de %{creator}"
 
-#, elixir-format
 #: lib/web/templates/email/registration_confirmation.html.eex:58
+#, elixir-format
 msgid "Activate my account"
 msgstr "Activa el meu compte"
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:117
 #: lib/web/templates/email/email.text.eex:9
+#, elixir-format
 msgid "Ask the community on Framacolibri"
 msgstr "Pregunta a la comunitat a Framacolibri"
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:15
+#, elixir-format
 msgid "Comments"
 msgstr "Comentaris"
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:72
 #: lib/web/templates/email/report.text.eex:11
+#, elixir-format
 msgid "Event"
 msgstr "Activitat"
 
-#, elixir-format
 #: lib/web/email/user.ex:48
+#, elixir-format
 msgid "Instructions to reset your password on %{instance}"
 msgstr "Instruccions per canviar la contrasenya a %{instance}"
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:21
+#, elixir-format
 msgid "Reason"
 msgstr "Raó"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:61
+#, elixir-format
 msgid "Reset Password"
 msgstr "Canvia la contrasenya"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:41
+#, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
 "Restablir la teva contrasenya és fàcil. Prem el botó de sota i segueix les "
 "instruccions. Acabarem de seguida."
 
-#, elixir-format
 #: lib/web/email/user.ex:28
+#, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Instruccions per confirmar el teu compte de Mobilizon a %{instance}"
 
-#, elixir-format
 #: lib/web/email/admin.ex:24
+#, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "S'ha denunciat una activitat al servidor de Mobilizon %{instance}"
 
-#, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:51
 #: lib/web/templates/email/before_event_notification.text.eex:4
+#, elixir-format
 msgid "Go to event page"
 msgstr "Ves a la pàgina de l'activitat"
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:1
+#, elixir-format
 msgid "New report from %{reporter} on %{instance}"
 msgstr "S'ha denunciat una activitat a %{instance}"
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.text.eex:1
+#, elixir-format
 msgid "Participation approved"
 msgstr "S'ha aprovat la participació"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:13
 #: lib/web/templates/email/password_reset.text.eex:1
+#, elixir-format
 msgid "Password reset"
 msgstr "Reinicia la contrasenya"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.text.eex:7
+#, elixir-format
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
 "Restablir la contrasenya és fàcil. Segueix l'enllaç de sota i segueix les "
 "instruccions. Serà un no-res."
 
-#, elixir-format
 #: lib/web/templates/email/registration_confirmation.text.eex:5
+#, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
 "Has creat un compte a %{host} amb aquesta adreça de mail. Estàs a un clic d"
 "'activar-lo. Si no l'has creat tu, ignora aquest mail."
 
-#, elixir-format
 #: lib/web/email/participation.ex:112
+#, elixir-format
 msgid "Your participation to event %{title} has been approved"
 msgstr "T'han aprovat la participació a %{title}"
 
-#, elixir-format
 #: lib/web/email/participation.ex:70
+#, elixir-format
 msgid "Your participation to event %{title} has been rejected"
 msgstr "T'han denegat la participació a %{title}"
 
-#, elixir-format
 #: lib/web/email/event.ex:37
+#, elixir-format
 msgid "Event %{title} has been updated"
 msgstr "S'ha actualitzat {%title}"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:15
+#, elixir-format
 msgid "New title: %{title}"
 msgstr "Nou títol: %{title}"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.text.eex:5
+#, elixir-format
 msgid "You requested a new password for your account on %{instance}."
 msgstr "Algú ha soŀlicitat a %{instance} una contrasenya nova."
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:85
+#, elixir-format
 msgid "Warning"
 msgstr "Alerta"
 
-#, elixir-format
 #: lib/web/email/participation.ex:134
+#, elixir-format
 msgid "Confirm your participation to event %{title}"
 msgstr "Confirma que participaràs a l'activitat %{title}"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:75
+#, elixir-format
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
 msgstr "Un identificador intern per la teva identitat actual"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:74
+#, elixir-format
 msgctxt "terms"
 msgid "An internal user ID"
 msgstr "Un identificador intern"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:37
+#, elixir-format
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
 msgstr ""
 "Qualsevol informació que recollim de tu la podrem fer servir d'aquestes "
 "maneres:"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:9
+#, elixir-format
 msgctxt "terms"
 msgid "Basic account information"
 msgstr "Informació bàsica del compte"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:25
+#, elixir-format
 msgctxt "terms"
 msgid "Do not share any dangerous information over Mobilizon."
 msgstr "No comparteixis informació perillosa a través de Mobilizon."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:90
+#, elixir-format
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
 msgstr "Revelem algun tipus d'informació a altri?"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:68
+#, elixir-format
 msgctxt "terms"
 msgid "Do we use cookies?"
 msgstr "Fem servir cookies?"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:51
+#, elixir-format
 msgctxt "terms"
 msgid "How do we protect your information?"
 msgstr "Com protegim la teva informació?"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:29
+#, elixir-format
 msgctxt "terms"
 msgid "IPs and other metadata"
 msgstr "Adreces IP i altres metadades"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:17
+#, elixir-format
 msgctxt "terms"
 msgid "Published events and comments"
 msgstr "Activitats i comentaris publicats"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:64
+#, elixir-format
 msgctxt "terms"
 msgid "Retain the IP addresses associated with registered users no more than 12 months."
 msgstr ""
 "Mantingues les adreces IP associades a usuàries registrades no més de 12 "
 "mesos."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:76
+#, elixir-format
 msgctxt "terms"
 msgid "Tokens to authenticate you"
 msgstr "Claus per autenticar-te"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:31
+#, elixir-format
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
 "També podem guardar registres del funcionament del servidor, que poden "
 "incloure l'adreça IP de cada petició que rep."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:70
+#, elixir-format
 msgctxt "terms"
 msgid "We store the following information on your device when you connect:"
 msgstr "Desem aquesta informació al teu dispositiu quan et connectes:"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:58
+#, elixir-format
 msgctxt "terms"
 msgid "We will make a good faith effort to:"
 msgstr "Ens esforçarem de bona fe per a:"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:35
+#, elixir-format
 msgctxt "terms"
 msgid "What do we use your information for?"
 msgstr "Per a què fem servir la teva informació?"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:57
+#, elixir-format
 msgctxt "terms"
 msgid "What is our data retention policy?"
 msgstr "Quina és la nostra política de retenció de dades?"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:67
+#, elixir-format
 msgctxt "terms"
 msgid "You may irreversibly delete your account at any time."
 msgstr "Pots esborrar el teu compte irreversiblement en qualsevol moment."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:115
+#, elixir-format
 msgctxt "terms"
 msgid "Changes to our Privacy Policy"
 msgstr "Canvis a la nostra política de privacitat"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:106
+#, elixir-format
 msgctxt "terms"
 msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
 msgstr ""
@@ -288,8 +288,8 @@ msgstr ""
 "wikipedia.org/wiki/Reglament_General_de_Protecci%C3%B3_de_Dades\">Reglament "
 "General de Protecció de Dades</a>), si us plau, no facis servir aquest lloc."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:109
+#, elixir-format
 msgctxt "terms"
 msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
 msgstr ""
@@ -300,30 +300,30 @@ msgstr ""
 "la privacitat online dels infants</a>), si us plau, no facis servir aquest "
 "lloc."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:117
+#, elixir-format
 msgctxt "terms"
 msgid "If we decide to change our privacy policy, we will post those changes on this page."
 msgstr ""
 "Si decidim canviar la nostra política de privacitat publicarem els canvis en "
 "aquesta pàgina."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:112
+#, elixir-format
 msgctxt "terms"
 msgid "Law requirements can be different if this server is in another jurisdiction."
 msgstr ""
 "Els requisits legals poden diferir si aquest servidor cau dins d'una altra "
 "jurisdicció."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:103
+#, elixir-format
 msgctxt "terms"
 msgid "Site usage by children"
 msgstr "Ús del lloc per part d'infants"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:47
+#, elixir-format
 msgctxt "terms"
 msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
 msgstr ""
@@ -333,8 +333,8 @@ msgstr ""
 "contingut, i per respondre a consultes o\n"
 "    soŀlicituds o preguntes."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:45
+#, elixir-format
 msgctxt "terms"
 msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
 msgstr ""
@@ -342,8 +342,8 @@ msgstr ""
 "amb d'altres conegudes per determinar\n"
 "    evasió d'un bloqueig o altres violacions de les condicions."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:43
+#, elixir-format
 msgctxt "terms"
 msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
 msgstr ""
@@ -352,89 +352,89 @@ msgstr ""
 "    poguessis interaccionar amb continguts i publicacions teus i d'altres, "
 "amb una sessió iniciada."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:6
+#, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
 msgstr "Quina informació recollim?"
 
-#, elixir-format
 #: lib/web/email/user.ex:176
+#, elixir-format
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon a %{instance}: confirma la teva adreça de correu"
 
-#, elixir-format
 #: lib/web/email/user.ex:152
+#, elixir-format
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon a %{instance}: s'ha canviat l'adreça de correu"
 
-#, elixir-format
 #: lib/web/email/notification.ex:46
+#, elixir-format
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Una activitat planificada per avui"
 msgstr[1] "%{nb_events} activitats planificades avui"
 
-#, elixir-format
 #: lib/web/templates/email/on_day_notification.html.eex:38
 #: lib/web/templates/email/on_day_notification.text.eex:4
+#, elixir-format
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Tens una activitat avui:"
 msgstr[1] "Tens %{total} activitats avui:"
 
-#, elixir-format
 #: lib/web/templates/email/group_invite.text.eex:3
+#, elixir-format
 msgid "%{inviter} just invited you to join their group %{group}"
 msgstr "%{inviter} t'acaba de convidar al seu grup %{group}"
 
-#, elixir-format
 #: lib/web/templates/email/group_invite.html.eex:13
 #: lib/web/templates/email/group_invite.text.eex:1
+#, elixir-format
 msgid "Come along!"
 msgstr "Vine!"
 
-#, elixir-format
 #: lib/web/email/notification.ex:24
+#, elixir-format
 msgid "Don't forget to go to %{title}"
 msgstr "No t'oblidis d'anar a %{title}"
 
-#, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:38
 #: lib/web/templates/email/before_event_notification.text.eex:3
+#, elixir-format
 msgid "Get ready for %{title}"
 msgstr "Prepara't per %{title}"
 
-#, elixir-format
 #: lib/web/templates/email/group_invite.html.eex:59
+#, elixir-format
 msgid "See my groups"
 msgstr "Mostra els meus grups"
 
-#, elixir-format
 #: lib/web/templates/email/group_invite.html.eex:45
 #: lib/web/templates/email/group_invite.text.eex:5
+#, elixir-format
 msgid "To accept this invitation, head over to your groups."
 msgstr "Per acceptar la invitació, ves als teus grups."
 
-#, elixir-format
 #: lib/web/templates/email/before_event_notification.text.eex:5
+#, elixir-format
 msgid "View the event on: %{link}"
 msgstr "Vés a l'activitat actualitzada a %{link}"
 
-#, elixir-format
 #: lib/web/email/group.ex:32
+#, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} t'ha convidat al grup %{group}"
 
-#, elixir-format
 #: lib/web/email/notification.ex:70
+#, elixir-format
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Una activitat planificada per aquesta setmana"
 msgstr[1] "%{nb_events} planificades per aquesta setmana"
 
-#, elixir-format
 #: lib/web/email/notification.ex:92
+#, elixir-format
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Hi ha una soŀlicitud de participar a %{title} pendent de resoldre"
@@ -442,21 +442,21 @@ msgstr[1] ""
 "Hi ha %{number_participation_requests} soŀlicituds de participar a %{title} "
 "pendents de resoldre"
 
-#, elixir-format
 #: lib/web/templates/email/notification_each_week.html.eex:38
 #: lib/web/templates/email/notification_each_week.text.eex:3
+#, elixir-format
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
 msgstr[0] "Tens una activitat aquesta setmana:"
 msgstr[1] "Tens %{total} activitats aquesta setmana:"
 
-#, elixir-format
 #: lib/service/metadata/utils.ex:52
+#, elixir-format
 msgid "The event organizer didn't add any description."
 msgstr "L'organitzadora no hi ha posat cap descripció."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:54
+#, elixir-format
 msgctxt "terms"
 msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way algorithm."
 msgstr ""
@@ -466,8 +466,8 @@ msgstr ""
 "aplicacions client i l'API del servidor, i desem les contrasenyes "
 "transformades amb una funció de hash forta, unidireccional."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:94
+#, elixir-format
 msgctxt "terms"
 msgid "No. We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety."
 msgstr ""
@@ -479,20 +479,20 @@ msgstr ""
 "fer-ho per complir amb la llei, per fer complir la política del lloc, per "
 "protegir el nostres drets o d'altres, la propietat, o la seguretat."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:23
+#, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
 msgstr "Acceptar aquestes condicions"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:27
+#, elixir-format
 msgctxt "terms"
 msgid "Changes to these Terms"
 msgstr "Canvis an aquestes condicions"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:85
+#, elixir-format
 msgctxt "terms"
 msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
 msgstr ""
@@ -503,16 +503,16 @@ msgstr ""
 "Assumeixes el risc i responsabilitat derivats de l'ús o confiança en "
 "qualsevol contingut."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:60
+#, elixir-format
 msgctxt "terms"
 msgid "Also, you agree that you will not do any of the following in connection with the Service or other users:"
 msgstr ""
 "També et compromets a no fer res del següent en relació amb el Servei o "
 "altres usuari/es:"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:65
+#, elixir-format
 msgctxt "terms"
 msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
 msgstr ""
@@ -520,22 +520,22 @@ msgstr ""
 "freqüència d'ús, o altres funcions dissenyades per protegir el Servei, "
 "usuàries del Servei, o d'altri."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:64
+#, elixir-format
 msgctxt "terms"
 msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
 msgstr ""
 "Recopilar informació personal d'altres usuàries, intimidar, amenaçar, espiar "
 "o assetjar altres usuàries del Servei;"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:55
+#, elixir-format
 msgctxt "terms"
 msgid "Content that is illegal or unlawful, that would otherwise create liability;"
 msgstr "Continguts iŀlegals, que poguessin comportar responsabilitats;"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:56
+#, elixir-format
 msgctxt "terms"
 msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
 msgstr ""
@@ -543,48 +543,48 @@ msgstr ""
 "secret comercial, drets d'autoria, dret a la privacitat, dret de publicitat "
 "o qualsevol altres drets inteŀlectuals o drets de qualsevol part;"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:42
+#, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
 msgstr "Creació dels comptes"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:89
+#, elixir-format
 msgctxt "terms"
 msgid "Entire Agreement"
 msgstr "Acord complet"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:92
+#, elixir-format
 msgctxt "terms"
 msgid "Feedback"
 msgstr "Valoracions"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:83
+#, elixir-format
 msgctxt "terms"
 msgid "Hyperlinks and Third Party Content"
 msgstr "Enllaços i continguts de tercers"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:88
+#, elixir-format
 msgctxt "terms"
 msgid "If you breach any of these Terms, we have the right to suspend or disable your access to or use of the Service."
 msgstr ""
 "Si incompleixes qualsevol d'aquestes condicions, ens reservem el dret de "
 "suspendre o desactivar el teu accés al Servei."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:63
+#, elixir-format
 msgctxt "terms"
 msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
 msgstr ""
 "Suplantar la identitat o publicar en nom d'una persona o entitat, o "
 "tergiversar la teva afiliació amb una persona o entitat;"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:48
+#, elixir-format
 msgctxt "terms"
 msgid "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness."
 msgstr ""
@@ -592,26 +592,26 @@ msgstr ""
 "continguts a disposició del públic. Ets responsable del contingut que "
 "publiques al Servei, incloent-ne la legalitat, fiabilitat i adequació."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:39
+#, elixir-format
 msgctxt "terms"
 msgid "Privacy Policy"
 msgstr "Política de privacitat"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:95
+#, elixir-format
 msgctxt "terms"
 msgid "Questions & Contact Information"
 msgstr "Preguntes i informació de contacte"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:87
+#, elixir-format
 msgctxt "terms"
 msgid "Termination"
 msgstr "Finalització"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:62
+#, elixir-format
 msgctxt "terms"
 msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
 msgstr ""
@@ -620,238 +620,320 @@ msgstr ""
 "plenament del Servei, que pugui malmetre, deshabilitar, sobrecarregar o "
 "perjudicar el funcionament del Servei;"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:47
+#, elixir-format
 msgctxt "terms"
 msgid "Your Content & Conduct"
 msgstr "El teu contingut i conducta"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:84
+#, elixir-format
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> makes no claim or representation regarding, and accepts no responsibility for third party websites accessible by hyperlink from the Service or websites linking to the Service. When you leave the Service, you should be aware that these Terms and our policies no longer govern. The inclusion of any link does not imply endorsement by <b>%{instance_name}</b> of the site. Use of any such linked website is at the user's own risk."
 msgstr ""
+"<b>%{instance_name}</b> no reivindica, representa ni accepta responsabilitat "
+"de llocs webs de tercers accessibles amb hiperenllaços des del Servei o "
+"llocs webs que enllacin al Servei. Heu de ser conscients que les Condicions "
+"del Servei només apliquen al domini del Servei. La inclusió d'enllaços "
+"externs no implica el suport per part de <b>%{instance_name}</b> per al lloc "
+"destí. L'ús de tals enllaços són responsabilitat de cada persona usuària."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:68
+#, elixir-format
 msgctxt "terms"
 msgid "Finally, your use of the Service is also subject to acceptance of <a href=\"/rules\">the instance's own specific rules</a> regarding the code of conduct and moderation rules. Breaking those rules may also result in your account being disabled or suspended."
 msgstr ""
+"Finalment, el vostre ús del Servei també està subjecte a l'acceptació de <a "
+"href=\"/rules\">les normes pròpies de la instància</a> relatives al codi de "
+"conducta i normes de moderació. Trencar aquestes normes pot implicar la "
+"suspensió o retirada del vostre compte."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:81
+#, elixir-format
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
+"Vegeu <a href=\"https://joinmobilizon.org\">detalls complets sobre el "
+"software Mobilizon</a>."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:18
+#, elixir-format
 msgctxt "terms"
 msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
 msgstr ""
+"Aquestes són les coses importants que heu de saber sobre l'accés i l'ús del "
+"web i servei <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\""
+">%{instance_url}</a>) (coŀlectivament, \"Servei\"). Aquests són les nostres "
+"condicions del servei, (\"Condicions del Servei\" o \"Condicions\"). Llegiu-"
+"les amb atenció."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:33
+#, elixir-format
 msgctxt "terms"
 msgid "If we make major changes, we will notify our users in a clear and prominent manner. Minor changes may only be highlighted in the footer of our website. It is your responsibility to check the website regularly for changes to these Terms."
 msgstr ""
+"Si fem canvis importants els notificarem a totes les usuàries de forma clara "
+"i visible. Els canvis menors pot ser que només apareguin destacats al peu de "
+"pàgina. És la vostra responsabilitat comprovar el web regularment per "
+"assabentar-vos dels canvis de les Condicions."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:53
+#, elixir-format
 msgctxt "terms"
 msgid "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:"
 msgstr ""
+"Per tal de fer <b>%{instance_name}</b> un lloc agradable per a tothom, "
+"absteniu-vos de publicar, enllaçar, o fer disponible de qualsevol altra "
+"manera al Servei o a través d'ell:"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:57
+#, elixir-format
 msgctxt "terms"
 msgid "Private information of any third party (e.g., addresses, phone numbers, email addresses, Social Security numbers and credit card numbers); and"
 msgstr ""
+"Informació privada d'altri (ex.: adreces postals o de correu, números de "
+"telèfon, números d'identitat o de targetes bancàries, etc.); ni"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:52
+#, elixir-format
 msgctxt "terms"
 msgid "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible."
 msgstr ""
+"Com que Mobilizon és una xarxa distribuïda, és possible que les regles de "
+"visibilitat del vostre contingut hagi estat distribuït cap a altres "
+"instàncies de Mobilizon. Quan esborreu un contingut, demanem a aquestes "
+"altres instàncies que també l'esborrin, però no hi podem fer més. Si per "
+"qualsevol motiu alguna instància no respecta aquesta petició, no ens en "
+"podem fer responsables."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:90
+#, elixir-format
 msgctxt "terms"
 msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
 msgstr ""
+"Aquestes Condicions constitueixen l'acord íntegre relatiu a l'ús del Servei "
+"entre entre vós i <b>%{instance_name}</b>, i substitueix qualsevol altre "
+"acord previ."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:80
+#, elixir-format
 msgctxt "terms"
 msgid "This Service runs on a Mobilizon instance. This source code is licensed under an <a href=\"https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)\">AGPLv3 license</a> which means you are allowed to and even encouraged to take the source code, modify it and use it."
 msgstr ""
+"Aquest Servei executa una instància de Mobilizon. El seu codi font està "
+"llicenciat amb <a href=\"https://tldrlegal.com/license/gnu-affero-general-"
+"public-license-v3-(agpl-3.0)\">la llicència AGPLv3</a>, que vol dir que "
+"teniu dret i se us anima a usar, consultar, modificar i distribuir-ne el "
+"codi font."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:58
+#, elixir-format
 msgctxt "terms"
 msgid "Viruses, corrupted data or other harmful, disruptive or destructive files or code."
 msgstr ""
+"Virus, dades corrompudes o qualsevol altre tipus de malware o arxius "
+"destructius o nocius."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:51
+#, elixir-format
 msgctxt "terms"
 msgid "You can remove the content that you posted by deleting it. Once you delete your content, it will not appear on the Service, but copies of your deleted content may remain in our system or backups for some period of time. Web server access logs might also be stored for some time in the system."
 msgstr ""
+"Podeu esborrar el contingut que hàgiu publicat. Un cop fet, ja no apareixerà "
+"al Servei, però pot ser que en quedin còpies actives dins del propi sistema "
+"o de seguretat, durant un temps limitat. Els registres d'accés al servidor "
+"de correu també son subjectes de ser conservats dins el sistema durant un "
+"temps."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:96
+#, elixir-format
 msgctxt "terms"
 msgid "Questions or comments about the Service may be directed to us at %{contact}"
 msgstr ""
+"Podeu dirigir-vos a %{contact} per qualsevol pregunta o comentari sobre el "
+"Servei"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:79
+#, elixir-format
 msgctxt "terms"
 msgid "Source code"
 msgstr "Codi font"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:93
+#, elixir-format
 msgctxt "terms"
 msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
+"Ens encanten les valoracions i els comentaris. Feu-nos saber què en penseu "
+"del Servei, aquestes Condicions, i, en general, de <b>%{instance_name}</b>."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:74
+#, elixir-format
 msgctxt "terms"
 msgid "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful."
 msgstr ""
+"Les persones que administren la instància, juntament amb les que hagin estat "
+"atorgades privilegis de moderació de la comunitat, són responsables de "
+"vigilar i actuar sobre contingut denunciat per les persones usuàries, "
+"revisar altres informes o denúncies, i tenen el dret i la responsaiblitat "
+"d'esborrar o modificar el contingut que no s'aliniï amb el conjunt de normes "
+"d'aquesta instància, així com suspendre, bloquejar o prohibir (temporalment "
+"o permanent) qualsevol compte, comunitat o instància que trenqui aquestes "
+"condicions, com també altres comportaments no descrits però que siguin "
+"considerats inapropiats, amenaçadors, ofensius o nocius."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:6
+#, elixir-format
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> will not use or transmit or resell your personal data"
-msgstr ""
+msgstr "<b>%{instance_name}</b> no fa profit de les vostres dades personals"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:44
+#, elixir-format
 msgctxt "terms"
 msgid "If you discover or suspect any Service security breaches, please let us know as soon as possible. For security holes in the Mobilizon software itself, please contact <a href=\"https://framagit.org/framasoft/mobilizon/\">its contributors</a> directly."
 msgstr ""
+"Si sospiteu o descobriu errors de seguretat al Servei, feu-nos-ho saber el "
+"més aviat possible. Si el forat de seguretat és del software Mobilizon en si "
+"i no de la instància, contacteu-ne <a href=\"https://framagit.org/framasoft/"
+"mobilizon/\">la comunitat de contribuïdores</a> directament."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:77
+#, elixir-format
 msgctxt "terms"
 msgid "Instance administrators should ensure that every community hosted on the instance is properly moderated according to the defined rules."
 msgstr ""
+"Les persones administradores de la instància han d'assegurar-se que les "
+"comunitats allotjades són moderades segons les normes definides."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:98
+#, elixir-format
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://joindiaspora.com/terms\">Diaspora*</a> and <a href=\"https://github.com/appdotnet/terms-of-service\">App.net</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
+"Adaptades originalment de <a href=\"https://joindiaspora.com/terms\">les "
+"polítiques de privacitat de Diaspora*</a> i <a href=\"https://github.com/"
+"appdotnet/terms-of-service\">les de App.net</a> llicenciades també amb <a "
+"href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:119
+#, elixir-format
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://mastodon.social/terms\">Mastodon</a> and <a href=\"https://github.com/discourse/discourse\">Discourse</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
+"Adaptades originalment de les <a href=\"https://mastodon.social/terms\""
+">polítiques de privacitat de Mastodon</a> i <a href=\"https://github.com/"
+"discourse/discourse\">les de Discourse</a>, llicenciades també amb <a href="
+"\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:3
+#, elixir-format
 msgctxt "terms"
 msgid "Short version"
 msgstr "Versió curta"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:9
+#, elixir-format
 msgctxt "terms"
 msgid "The service is provided without warranties and these terms may change in the future"
 msgstr ""
 "El servei s'ofereix sense garanties i les condicions poden canviar en el "
 "futur"
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:118
+#, elixir-format
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 18, 2020."
 msgstr ""
+"Aquest document està llicenciat amb <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>. Va ser actualitzat per darrer cop del 18 "
+"de juny de 2020."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:97
+#, elixir-format
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 22, 2020."
 msgstr ""
+"Aquest document està llicenciat amb <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>. Va ser actualitzat per darrer cop del 22 "
+"de juny de 2020."
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:8
+#, elixir-format
 msgctxt "terms"
 msgid "You must respect other people and <b>%{instance_name}</b>'s rules when using the service"
 msgstr ""
+"Quan useu el servei heu de respectar les altres persones i les normes de "
+"<b>%{instance_name}</b>"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:7
+#, elixir-format
 msgctxt "terms"
 msgid "You must respect the law when using <b>%{instance_name}</b>"
-msgstr ""
+msgstr "Quan feu servir <b>%{instance_name}</b> heu de respectar la llei"
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:5
+#, elixir-format
 msgctxt "terms"
 msgid "Your content is yours"
 msgstr "El teu contingut et pertany"
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:51
+#, elixir-format
 msgid "Confirm my e-mail address"
 msgstr "Confirma la meva adreça de correu"
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:13
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:1
+#, elixir-format
 msgid "Confirm your e-mail"
 msgstr "Confirma l'adreça de correu"
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
+#, elixir-format
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr ""
 "Hola! Acabes d'apuntar-te a aquesta activitat: « %{title} ». Si us plau, "
 "confirma l'adreça de correu que has introduït:"
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:114
 #: lib/web/templates/email/email.text.eex:8
+#, elixir-format
 msgid "Need help? Is something not working as expected?"
 msgstr "Necessites ajuda? Alguna cosa no funciona?"
 
-#, elixir-format
 #: lib/web/templates/email/registration_confirmation.html.eex:38
+#, elixir-format
 msgid "You created an account on <b>%{host}</b> with this email address. You are one click away from activating it."
 msgstr ""
 "Has creat un compte a %{host} amb aquest mail. Estàs a un clic d'activar-lo."
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:13
+#, elixir-format
 msgid "New report on <b>%{instance}</b>"
 msgstr "Nova denúncia a %{instance}"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:38
+#, elixir-format
 msgid "The email address for your account on <b>%{host}</b> is being changed to:"
 msgstr "L'adreça de correu pel teu compte a <b>%{host}</b> s'està canviant a:"
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.html.eex:38
+#, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr "Algú ha soŀlicitat a %{instance} una contrasenya nova."
 
-#, elixir-format
 #: lib/web/templates/email/email.text.eex:5
+#, elixir-format
 msgid "Please do not use it for real purposes."
 msgstr "No ho facis servir més que proves, sisplau"
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.eex:133
 #: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.eex:70
 #: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.eex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
+#, elixir-format
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -861,9 +943,9 @@ msgstr[1] ""
 "Si has de canceŀlar la teva participació, accedeix a l'activitat per "
 "l'enllaç de dalt i clica al botó de participació."
 
-#, elixir-format
 #: lib/web/templates/email/pending_participation_notification.html.eex:38
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
+#, elixir-format
 msgid "You have one pending attendance request to process:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process:"
 msgstr[0] "Tens una soŀlicitud de participació pendent de resoldre:"
@@ -871,598 +953,617 @@ msgstr[1] ""
 "Tens %{number_participation_requests} soŀlicituds de participació pendents "
 "de resoldre:"
 
-#, elixir-format
 #: lib/web/templates/email/email.text.eex:11
+#, elixir-format
 msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} és un servidor de Mobilizon."
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:142
+#, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "%{instance} és un servidor de Mobilizon."
 
-#, elixir-format
 #: lib/web/templates/email/pending_participation_notification.html.eex:13
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
+#, elixir-format
 msgid "A request is pending!"
 msgstr "Una soŀlicitud pendent!"
 
-#, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:13
 #: lib/web/templates/email/before_event_notification.text.eex:1
+#, elixir-format
 msgid "An event is upcoming!"
 msgstr "S'apropa una activitat!"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_new.html.eex:13
 #: lib/web/templates/email/email_changed_new.text.eex:1
+#, elixir-format
 msgid "Confirm new email"
 msgstr "Confirma la nova adreça"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:84
+#, elixir-format
 msgid "End"
 msgstr "Final"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:21
+#, elixir-format
 msgid "End %{ends_on}"
 msgstr "Final %{ends_on}"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:13
 #: lib/web/templates/email/event_updated.text.eex:1
+#, elixir-format
 msgid "Event update!"
 msgstr "S'ha actualitzat l'activitat!"
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:88
+#, elixir-format
 msgid "Flagged comments"
 msgstr "Comentaris denunciats"
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:45
 #: lib/web/templates/email/event_participation_approved.text.eex:7
+#, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Bones notícies: alguna de les organitzadores de l'activitat t'ha aprovat la "
+"soŀlicitud de participar-hi. Ja t'ho pots apuntar a l'agenda, estàs a la "
+"llista d'assistents!"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_new.html.eex:38
 #: lib/web/templates/email/email_changed_new.text.eex:3
+#, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
+"Ei hola! Sembla que vols canviar l'adreça de correu vinculada al teu compte "
+"de  <b>%{instance}</b>. Si és així, fes clic al botó de sota per confirmar "
+"el canvi. Un cop fet, podràs iniciar sessió a %{instance} amb aquesta nova "
+"adreça."
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_old.text.eex:3
+#, elixir-format
 msgid "Hi there! Just a quick note to confirm that the email address linked to your account on %{host} has been changed from this one to:"
 msgstr ""
+"Ep! Només confirmar que ha canviat el correu vinculat al teu compte a %{host}"
+". Ara és:"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:41
 #: lib/web/templates/email/email_changed_old.html.eex:65 lib/web/templates/email/email_changed_old.text.eex:5
+#, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
+"Si no has fet aquest canvi tu mateix/a, és possible que algú hagi aconseguit "
+"accés al teu compte de %{host}. Si us plau, entra-hi i canvia la teva "
+"contrasenya de seguida. Si no pots entrar, contacta amb les admins de "
+"%{host}."
 
-#, elixir-format
 #: lib/web/templates/email/password_reset.text.eex:12
+#, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message. Your password won't be changed until you click the link above."
 msgstr ""
+"Si no has fet aquest canvi, pots ignorar aquest missatge. La teva "
+"contrasenya es mantindrà si no cliques l'enllaç de sobre."
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:70
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4 lib/web/templates/email/registration_confirmation.html.eex:45
+#, elixir-format
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Si no has demanat això, sisplau ignora aquest correu."
 
-#, elixir-format
 #: lib/web/templates/email/before_event_notification.html.eex:63
 #: lib/web/templates/email/before_event_notification.text.eex:6
+#, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgstr ""
 "Si has de canceŀlar la teva participació, accedeix a l'activitat per "
 "l'enllaç de dalt i clica al botó de participació."
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:143
 #: lib/web/templates/email/email.text.eex:11
+#, elixir-format
 msgid "Learn more about Mobilizon here!"
 msgstr "Per aprendre més de Mobilizon."
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:94
+#, elixir-format
 msgid "Location"
-msgstr ""
+msgstr "Ubicació"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:104
-msgid "Location address was removed"
-msgstr ""
-
 #, elixir-format
+msgid "Location address was removed"
+msgstr "L'adreça postal ha estat esborrada"
+
 #: lib/web/templates/email/pending_participation_notification.html.eex:51
 #: lib/web/templates/email/pending_participation_notification.text.eex:6
-msgid "Manage pending requests"
-msgstr ""
-
 #, elixir-format
+msgid "Manage pending requests"
+msgstr "Gestiona les soŀlicituds pendents"
+
 #: lib/web/templates/email/registration_confirmation.html.eex:13
 #: lib/web/templates/email/registration_confirmation.text.eex:1
+#, elixir-format
 msgid "Nearly there!"
 msgstr "Hi ets a prop!"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
+#, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Nova confirmació de correu"
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:106
-msgid "Reasons for report"
-msgstr ""
-
 #, elixir-format
+msgid "Reasons for report"
+msgstr "Motius de l'informe"
+
 #: lib/web/templates/email/report.html.eex:39
+#, elixir-format
 msgid "Someone on <b>%{instance}</b> reported the following content for you to analyze:"
 msgstr "Algú a %{instance} ha denunciat el contingut següent."
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:13
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
+#, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "Ho sentim! No hi podràs anar."
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:74
+#, elixir-format
 msgid "Start"
-msgstr ""
+msgstr "Inici"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:18
+#, elixir-format
 msgid "Start %{begins_on}"
-msgstr ""
+msgstr "Inici %{starts_on}"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:3
-msgid "There have been changes for %{title} so we'd thought we'd let you know."
-msgstr ""
-
 #, elixir-format
+msgid "There have been changes for %{title} so we'd thought we'd let you know."
+msgstr "Hi ha hagut canvis a %{title} i et volíem avisar."
+
 #: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
-msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
-
 #, elixir-format
+msgid "This event has been cancelled by its organizers. Sorry!"
+msgstr "Les organitzadores d'aquesta activitat l'han canceŀlada. Ho sentim!"
+
 #: lib/web/templates/email/event_updated.html.eex:51
 #: lib/web/templates/email/event_updated.text.eex:7
+#, elixir-format
 msgid "This event has been confirmed"
 msgstr "S'ha confirmat l'activitat"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:53
 #: lib/web/templates/email/event_updated.text.eex:9
+#, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
+"Aquesta activitat encara no està confirmada: l'organització t'ho farà saber "
+"si la confirmen."
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
+#, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
 msgstr "Malauradament, les organitzadores han rebutjat la teva participació."
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_new.html.eex:51
-msgid "Verify your email address"
-msgstr ""
-
 #, elixir-format
+msgid "Verify your email address"
+msgstr "Verifica l'adreça de correu"
+
 #: lib/web/templates/email/report.html.eex:126
+#, elixir-format
 msgid "View report"
 msgstr "Mostra la denúncia"
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:24
+#, elixir-format
 msgid "View report:"
 msgstr "Mostra la denúncia"
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
+#, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Vés a la pàgina d'activitat"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:121
-msgid "Visit the updated event page"
-msgstr ""
-
 #, elixir-format
+msgid "Visit the updated event page"
+msgstr "Vés a la pàgina d'activitat actualitzada"
+
 #: lib/web/templates/email/event_updated.text.eex:23
+#, elixir-format
 msgid "Visit the updated event page: %{link}"
 msgstr "Vés a l'activitat actualitzada a %{link}"
 
-#, elixir-format
 #: lib/web/templates/email/notification_each_week.html.eex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
-msgid "What's up this week?"
-msgstr ""
-
 #, elixir-format
+msgid "What's up this week?"
+msgstr "Què hi ha aquesta setmana?"
+
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
-msgid "What's up today?"
-msgstr ""
-
 #, elixir-format
+msgid "What's up today?"
+msgstr "Què fan avui?"
+
 #: lib/web/templates/email/event_participation_approved.html.eex:70
 #: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
 #: lib/web/templates/email/event_participation_confirmed.text.eex:6
+#, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Si desitges actualitzar o canceŀlar la teva assistència , entra a la pàgina "
+"de l'activitat amb l'enllaç d'amunt i clica al botó de participació."
 
-#, elixir-format
 #: lib/web/templates/email/pending_participation_notification.html.eex:64
 #: lib/web/templates/email/pending_participation_notification.text.eex:8
+#, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
+#, elixir-format
 msgid "You issued a request to attend %{title}."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.text.eex:5
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
+#, elixir-format
 msgid "You recently requested to attend %{title}."
 msgstr "Has soŀlicitat participar a l'activitat %{title}."
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:13
 #: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
-msgid "You're going!"
-msgstr ""
-
 #, elixir-format
+msgid "You're going!"
+msgstr "T'han acceptat!"
+
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:5
+#, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:89
+#, elixir-format
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "No ho facis servir més que proves, sisplau"
 
-#, elixir-format
 #: lib/web/templates/email/group_member_removal.html.eex:45
 #: lib/web/templates/email/group_member_removal.text.eex:5
+#, elixir-format
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_member_removal.html.eex:13
 #: lib/web/templates/email/group_member_removal.text.eex:1
+#, elixir-format
 msgid "So long, and thanks for the fish!"
 msgstr ""
 
-#, elixir-format
 #: lib/web/email/group.ex:62
+#, elixir-format
 msgid "You have been removed from group %{group}"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_member_removal.text.eex:3
+#, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_invite.html.eex:38
+#, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_member_removal.html.eex:38
+#, elixir-format
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:54
 #: lib/web/templates/email/group_suspension.text.eex:7
+#, elixir-format
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:46
 #: lib/web/templates/email/group_suspension.text.eex:5
+#, elixir-format
 msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_deletion.html.eex:38
 #: lib/web/templates/email/group_deletion.text.eex:3
+#, elixir-format
 msgid "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:13
 #: lib/web/templates/email/group_suspension.text.eex:1
+#, elixir-format
 msgid "The group %{group} has been suspended on %{instance}!"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_deletion.html.eex:13
 #: lib/web/templates/email/group_deletion.text.eex:1
+#, elixir-format
 msgid "The group %{group} was deleted on %{instance}!"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:38
 #: lib/web/templates/email/group_suspension.text.eex:3
+#, elixir-format
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
 
-#, elixir-format
 #: lib/web/email/group.ex:135
+#, elixir-format
 msgid "The group %{group} has been deleted on %{instance}"
 msgstr ""
 
-#, elixir-format
 #: lib/web/email/group.ex:96
+#, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:24
+#, elixir-format
 msgctxt "terms"
 msgid "By accessing or using the Service, this means you agree to be bound by all the terms below. If these terms are in any way unclear, please let us know by contacting %{contact}."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:40
+#, elixir-format
 msgctxt "terms"
 msgid "For information about how we collect and use information about users of the Service, please check our <a href=\"/privacy\">privacy policy</a>."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:36
+#, elixir-format
 msgctxt "terms"
 msgid "If you continue to use the Service after the revised Terms go into effect, you accept the revised Terms."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:78
+#, elixir-format
 msgctxt "terms"
 msgid "If you delete this information, you need to login again."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:80
+#, elixir-format
 msgctxt "terms"
 msgid "If you're not connected, we don't store any information on your device, unless you participate in an event anonymously. In this specific case we store the hash of an unique identifier for the event and participation status in your browser so that we may display participation status. Deleting this information will only stop displaying participation status in your browser."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:87
+#, elixir-format
 msgctxt "terms"
 msgid "Note: This information is stored in your localStorage and not your cookies."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:71
+#, elixir-format
 msgctxt "terms"
 msgid "Our responsibility"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:61
+#, elixir-format
 msgctxt "terms"
 msgid "Retain server logs containing the IP address of all requests to this server, insofar as such logs are kept, no more than 90 days."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:3
 #: lib/web/templates/api/terms.html.eex:15
+#, elixir-format
 msgctxt "terms"
 msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:45
+#, elixir-format
 msgctxt "terms"
 msgid "We are not liable for any loss you may incur as a result of someone else using your email or password, either with or without your knowledge."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:50
+#, elixir-format
 msgctxt "terms"
 msgid "We cannot be held responsible should a programming or administrative error make your content visible to a larger audience than intended. Aside from our limited right to your content, you retain all of your rights to the content you post, link and otherwise make available on or through the Service."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:10
+#, elixir-format
 msgctxt "terms"
 msgid "We collect information from you when you register on this instance and gather data when you participate in the platform by reading, writing, and interacting with content shared here. If you register on this instance, you will be asked to enter <b>an email address, a password</b> (hashed) and at least <b>an username</b>. Your email address will be verified by an email containing a unique link. Once the link is activated, we know you control that email address. You may also enter additional profile information such as <b>a display name and biography, and upload a profile picture and header image</b>. The username, display name, biography, profile picture and header image <b>are always listed publicly</b>. <b>You may however visit this instance without registering</b>."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:30
+#, elixir-format
 msgctxt "terms"
 msgid "We reserve the right to modify these Terms at any time. For instance, we may need to change these Terms if we come out with a new feature."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:20
+#, elixir-format
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:43
+#, elixir-format
 msgctxt "terms"
 msgid "When you create an account you agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/terms.html.eex:49
+#, elixir-format
 msgctxt "terms"
 msgid "When you post, link or otherwise make available content to the Service, you grant us the right and license to display and distribute your content on or through the Service (including via applications). We may format your content for display throughout the Service, but we will not edit or revise the substance of your content itself. The displaying and distribution of your content happens only according to the visibility rules you have set for the content. We will not modify the visibility of the content you have set."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:19
+#, elixir-format
 msgctxt "terms"
 msgid "Your <b>events</b> and <b>comments</b> are delivered to other instances that follow your own, meaning they are delivered to different instances and copies are stored there. When you delete events or comments, this is likewise delivered to these other instances. All interactions related to event features - such as joining an event - or group features - such as managing resources - are federated as well. Please keep in mind that the operators of the instance and any receiving instances may view such messages and information, and that recipients may screenshot, copy or otherwise re-share them."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/api/privacy.html.eex:99
+#, elixir-format
 msgctxt "terms"
 msgid "Your content may be downloaded by other instances in the network. Your public events and comments are delivered to the instances following your own instance. Content created through a group is forwarded to all the instances of all the members of the group, insofar as these members reside on a different instance than this one."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_confirmed.text.eex:4
+#, elixir-format
 msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_approved.html.eex:38
 #: lib/web/templates/email/event_participation_confirmed.html.eex:38
+#, elixir-format
 msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Has soŀlicitat participar a l'activitat %{title}."
 
-#, elixir-format
 #: lib/web/email/participation.ex:91
+#, elixir-format
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "T'han aprovat la participació a %{title}"
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:41
+#, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
 msgstr "%{reporter_name} (%{reporter_username}) ha denunciat aquest contingut."
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:5
+#, elixir-format
 msgid "Group %{group} was reported"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:51
+#, elixir-format
 msgid "Group reported"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/report.text.eex:7
+#, elixir-format
 msgid "Profile %{profile} was reported"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:56
+#, elixir-format
 msgid "Profile reported"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_confirmed.html.eex:45
+#, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/posts/post.ex:91
+#, elixir-format
 msgid "A text is required for the post"
 msgstr ""
 
-#, elixir-format
 #: lib/mobilizon/posts/post.ex:90
+#, elixir-format
 msgid "A title is required for the post"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.text.eex:3
+#, elixir-format
 msgid "%{name} (%{domain}) just requested to follow your instance."
 msgstr ""
 
-#, elixir-format
 #: lib/web/email/follow.ex:54
+#, elixir-format
 msgid "%{name} requests to follow your instance"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:38
+#, elixir-format
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.text.eex:4
+#, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
 
-#, elixir-format
 #: lib/web/email/follow.ex:48
+#, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:66
+#, elixir-format
 msgid "See the federation settings"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:52
 #: lib/web/templates/email/instance_follow.text.eex:6
+#, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:13
 #: lib/web/templates/email/instance_follow.text.eex:1
+#, elixir-format
 msgid "Want to connect?"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/instance_follow.html.eex:45
 #: lib/web/templates/email/instance_follow.text.eex:5
+#, elixir-format
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
+#, elixir-format
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
+#, elixir-format
 msgid "You issued a request to attend <b>%{title}</b>."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:64
+#, elixir-format
 msgid "Event title"
 msgstr "Activitat"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.html.eex:38
+#, elixir-format
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/error/500_page.html.eex:46
+#, elixir-format
 msgid "The Mobilizon server seems to be temporarily down."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/error/500_page.html.eex:7
+#, elixir-format
 msgid "This page is not correct"
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/error/500_page.html.eex:45
+#, elixir-format
 msgid "We're sorry, but something went wrong on our end."
 msgstr ""
 
-#, elixir-format
 #: lib/web/templates/email/email.html.eex:88
 #: lib/web/templates/email/email.text.eex:4
+#, elixir-format
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Aquesta és una web de proves per provar la beta de Mobilizon."
