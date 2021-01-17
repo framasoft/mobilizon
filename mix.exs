@@ -38,7 +38,7 @@ defmodule Mobilizon.Mixfile do
   def application do
     [
       mod: {Mobilizon, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
+      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex, :eldap]
     ]
   end
 
