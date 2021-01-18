@@ -480,7 +480,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            "to" => [group_members_url],
            "type" => "Remove",
            "actor" => moderator_url,
-           "object" => member.actor.url,
+           "object" => member.url,
            "origin" => group_url
          },
          {:ok, activity} <- create_activity(remove_data, local),

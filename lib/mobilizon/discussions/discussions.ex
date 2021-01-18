@@ -55,6 +55,10 @@ defmodule Mobilizon.Discussions do
 
   @public_visibility [:public, :unlisted]
 
+  @doc """
+  Callback for Absinthe Ecto Dataloader
+  """
+  @spec data :: Dataloader.Ecto.t()
   def data do
     Dataloader.Ecto.new(Repo, query: &query/2)
   end
@@ -65,6 +69,7 @@ defmodule Mobilizon.Discussions do
   We only get first comment of thread, and count replies.
   Read: https://hexdocs.pm/absinthe/ecto.html#dataloader
   """
+  @spec query(atom(), map()) :: Ecto.Queryable.t()
   def query(Comment, _params) do
     Comment
     |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
@@ -94,6 +99,9 @@ defmodule Mobilizon.Discussions do
   @spec get_comment!(integer | String.t()) :: Comment.t()
   def get_comment!(id), do: Repo.get!(Comment, id)
 
+  @doc """
+  Get a single comment by it's ID and all associations preloaded
+  """
   @spec get_comment_with_preload(String.t() | integer() | nil) :: Comment.t() | nil
   def get_comment_with_preload(nil), do: nil
 
@@ -160,6 +168,10 @@ defmodule Mobilizon.Discussions do
     |> Repo.preload(@comment_preloads)
   end
 
+  @doc """
+  Get all comment threads under an event
+  """
+  @spec get_threads(String.t() | integer()) :: [Comment.t()]
   def get_threads(event_id) do
     Comment
     |> where([c, _], c.event_id == ^event_id and is_nil(c.origin_comment_id))
@@ -179,6 +191,10 @@ defmodule Mobilizon.Discussions do
     |> Repo.all()
   end
 
+  @doc """
+  Get a comment or create it
+  """
+  @spec get_or_create_comment(map()) :: {:ok, Comment.t()}
   def get_or_create_comment(%{"url" => url} = attrs) do
     case Repo.get_by(Comment, url: url) do
       %Comment{} = comment -> {:ok, Repo.preload(comment, @comment_preloads)}
@@ -239,6 +255,9 @@ defmodule Mobilizon.Discussions do
     Repo.all(from(c in Comment, where: c.visibility == ^:public))
   end
 
+  @doc """
+  Returns a paginated list of local comments
+  """
   @spec list_local_comments(integer | nil, integer | nil) :: Page.t()
   def list_local_comments(page \\ nil, limit \\ nil) do
     Comment
@@ -274,6 +293,9 @@ defmodule Mobilizon.Discussions do
     |> Repo.all()
   end
 
+  @doc """
+  Get all the comments contained into a discussion
+  """
   @spec get_comments_for_discussion(integer, integer | nil, integer | nil) :: Page.t()
   def get_comments_for_discussion(discussion_id, page \\ nil, limit \\ nil) do
     Comment
@@ -302,12 +324,19 @@ defmodule Mobilizon.Discussions do
     |> Repo.one()
   end
 
+  @doc """
+  Get a discussion by it's ID
+  """
+  @spec get_discussion(String.t() | integer()) :: Discussion.t()
   def get_discussion(discussion_id) do
     Discussion
     |> Repo.get(discussion_id)
     |> Repo.preload(@discussion_preloads)
   end
 
+  @doc """
+  Get a discussion by it's URL
+  """
   @spec get_discussion_by_url(String.t() | nil) :: Discussion.t() | nil
   def get_discussion_by_url(nil), do: nil
 
@@ -317,12 +346,19 @@ defmodule Mobilizon.Discussions do
     |> Repo.preload(@discussion_preloads)
   end
 
+  @doc """
+  Get a discussion by it's slug
+  """
+  @spec get_discussion_by_slug(String.t()) :: Discussion.t()
   def get_discussion_by_slug(discussion_slug) do
     Discussion
     |> Repo.get_by(slug: discussion_slug)
     |> Repo.preload(@discussion_preloads)
   end
 
+  @doc """
+  Get a paginated list of discussions for a group actor
+  """
   @spec find_discussions_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def find_discussions_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     Discussion
@@ -366,6 +402,10 @@ defmodule Mobilizon.Discussions do
     end
   end
 
+  @doc """
+  Create a response to a discussion
+  """
+  @spec reply_to_discussion(Discussion.t(), map()) :: {:ok, Discussion.t()}
   def reply_to_discussion(%Discussion{id: discussion_id} = discussion, attrs \\ %{}) do
     with {:ok, %{comment: %Comment{} = comment, discussion: %Discussion{} = discussion}} <-
            Multi.new()
@@ -415,6 +455,7 @@ defmodule Mobilizon.Discussions do
     |> Repo.transaction()
   end
 
+  @spec public_comments_for_actor_query(String.t() | integer()) :: [Comment.t()]
   defp public_comments_for_actor_query(actor_id) do
     Comment
     |> where([c], c.actor_id == ^actor_id and c.visibility in ^@public_visibility)
@@ -422,6 +463,7 @@ defmodule Mobilizon.Discussions do
     |> preload_for_comment()
   end
 
+  @spec public_replies_for_thread_query(String.t() | integer()) :: [Comment.t()]
   defp public_replies_for_thread_query(comment_id) do
     Comment
     |> where([c], c.origin_comment_id == ^comment_id and c.visibility in ^@public_visibility)
@@ -444,6 +486,7 @@ defmodule Mobilizon.Discussions do
     )
   end
 
+  @spec filter_comments_under_events(Ecto.Query.t()) :: Ecto.Query.t()
   defp filter_comments_under_events(query) do
     where(query, [c], is_nil(c.discussion_id) and not is_nil(c.event_id))
   end
