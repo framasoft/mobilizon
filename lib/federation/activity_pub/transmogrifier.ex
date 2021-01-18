@@ -686,8 +686,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with {:ok, %Actor{id: moderator_id} = moderator} <-
            data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
-         {:ok, %Actor{id: person_id}} <-
-           object |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+         {:ok, person_id} <- get_remove_object(object),
          {:ok, %Actor{type: :Group, id: group_id} = group} <-
            origin |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
          {:is_admin, {:ok, %Member{role: role}}}
@@ -1082,6 +1081,18 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       err ->
         err
+    end
+  end
+
+  # Before 1.0.4 the object of a "Remove" activity was an actor's URL
+  # instead of the member's URL.
+  # TODO: Remove in 1.2
+  @spec get_remove_object(map() | String.t()) :: {:ok, String.t() | integer()}
+  defp get_remove_object(object) do
+    case object |> Utils.get_url() |> ActivityPub.fetch_object_from_url() do
+      {:ok, %Member{actor: %Actor{id: person_id}}} -> {:ok, person_id}
+      {:ok, %Actor{id: person_id}} -> {:ok, person_id}
+      _ -> {:error, :remove_object_not_found}
     end
   end
 end

@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.{Relay, Utils}
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
@@ -124,6 +124,11 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         assert_called(Actors.needs_update?(:_))
         assert_called(ActivityPub.make_actor_from_url(@actor_url, false))
       end
+    end
+
+    @public_url "https://www.w3.org/ns/activitystreams#Public"
+    test "activitystreams#Public uri returns Relay actor" do
+      assert ActivityPub.get_or_fetch_actor_by_url(@public_url) == {:ok, Relay.get_actor()}
     end
   end
 
@@ -298,6 +303,19 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       assert update.data["object"]["id"] == event.url
       assert update.data["object"]["type"] == "Event"
       assert update.data["object"]["startTime"] == DateTime.to_iso8601(@updated_start_time)
+    end
+  end
+
+  describe "remove a member" do
+    test "it creates an remove activity" do
+      group = insert(:group)
+      member = insert(:member, parent: group)
+      moderator = insert(:actor)
+      {:ok, activity, _member} = ActivityPub.remove(member, group, moderator, true)
+      assert activity.data["type"] == "Remove"
+      assert activity.data["actor"] == moderator.url
+      assert activity.data["to"] == [group.members_url]
+      assert activity.data["object"] == member.url
     end
   end
 
