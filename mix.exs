@@ -28,7 +28,12 @@ defmodule Mobilizon.Mixfile do
       name: "Mobilizon",
       source_url: "https://framagit.org/framasoft/mobilizon",
       homepage_url: "https://joinmobilizon.org",
-      docs: docs()
+      docs: docs(),
+      releases: [
+        mobilizon: [
+          applications: [eldap: :transient]
+        ]
+      ]
     ]
   end
 
@@ -38,7 +43,7 @@ defmodule Mobilizon.Mixfile do
   def application do
     [
       mod: {Mobilizon, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex, :eldap]
+      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
     ]
   end
 
