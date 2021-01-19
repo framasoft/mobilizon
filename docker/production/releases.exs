@@ -5,7 +5,7 @@ import Config
 config :mobilizon, Mobilizon.Web.Endpoint,
    server: true,
    url: [host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.lan")],
-   http: [port: System.get_env("MOBILIZON_INSTANCE_PORT", 4000)],
+   http: [port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000")],
    secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis")
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian,
