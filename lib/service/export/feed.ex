@@ -7,9 +7,10 @@ defmodule Mobilizon.Service.Export.Feed do
 
   alias Atomex.{Entry, Feed}
 
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Config, Events, Posts, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
@@ -18,8 +19,7 @@ defmodule Mobilizon.Service.Export.Feed do
 
   require Logger
 
-  @version Mix.Project.config()[:version]
-  def version, do: @version
+  def version, do: Config.instance_version()
 
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
   def create_cache("actor_" <> name) do
@@ -47,17 +47,18 @@ defmodule Mobilizon.Service.Export.Feed do
   defp fetch_actor_event_feed(name) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name(name),
          {:visibility, true} <- {:visibility, Actor.is_public_visibility?(actor)},
-         %Page{elements: events} <- Events.list_public_events_for_actor(actor) do
-      {:ok, build_actor_feed(actor, events)}
+         %Page{elements: events} <- Events.list_public_events_for_actor(actor),
+         %Page{elements: posts} <- Posts.get_public_posts_for_group(actor) do
+      {:ok, build_actor_feed(actor, events, posts)}
     else
       err ->
         {:error, err}
     end
   end
 
-  # Build an atom feed from actor and its public events
-  @spec build_actor_feed(Actor.t(), list(), boolean()) :: String.t()
-  defp build_actor_feed(%Actor{} = actor, events, public \\ true) do
+  # Build an atom feed from actor and its public events and posts
+  @spec build_actor_feed(Actor.t(), list(), list(), boolean()) :: String.t()
+  defp build_actor_feed(%Actor{} = actor, events, posts, public \\ true) do
     display_name = Actor.display_name(actor)
 
     self_url =
@@ -67,21 +68,29 @@ defmodule Mobilizon.Service.Export.Feed do
 
     title =
       if public,
-        do: "%{actor}'s public events feed on Mobilizon",
-        else: "%{actor}'s private events feed on Mobilizon"
+        do:
+          gettext("%{actor}'s public events feed on %{instance}",
+            actor: display_name,
+            instance: Config.instance_name()
+          ),
+        else:
+          gettext("%{actor}'s private events feed on %{instance}",
+            actor: display_name,
+            instance: Config.instance_name()
+          )
 
     # Title uses default instance language
     feed =
       self_url
       |> Feed.new(
         DateTime.utc_now(),
-        Gettext.gettext(Mobilizon.Web.Gettext, title, actor: display_name)
+        title
       )
       |> Feed.author(display_name, uri: actor.url)
       |> Feed.link(self_url, rel: "self")
       |> Feed.link(actor.url, rel: "alternate")
-      |> Feed.generator("Mobilizon", uri: "https://joinmobilizon.org", version: version())
-      |> Feed.entries(Enum.map(events, &get_entry/1))
+      |> Feed.generator(Config.instance_name(), uri: Endpoint.url(), version: version())
+      |> Feed.entries(Enum.map(events ++ posts, &get_entry/1))
 
     feed =
       if actor.avatar do
@@ -123,6 +132,28 @@ defmodule Mobilizon.Service.Export.Feed do
     Entry.build(entry)
   end
 
+  @spec get_entry(Post.t()) :: any()
+  defp get_entry(%Post{} = post) do
+    body = post.body || ""
+
+    entry =
+      post.url
+      |> Entry.new(post.publish_at || post.inserted_at, post.title)
+      |> Entry.link(post.url, rel: "alternate", type: "text/html")
+      |> Entry.content({:cdata, body}, type: "html")
+      |> Entry.published(post.publish_at || post.inserted_at)
+      |> Entry.author(post.author.name || post.author.preferred_username)
+
+    # Add tags
+    entry =
+      post.tags
+      |> Enum.uniq()
+      |> Enum.reduce(entry, fn tag, acc -> Entry.category(acc, tag.slug, label: tag.title) end)
+
+    Entry.build(entry)
+  end
+
+  # Only events, not posts
   @spec fetch_events_from_token(String.t()) :: String.t()
   defp fetch_events_from_token(token) do
     with {:ok, _uuid} <- Ecto.UUID.cast(token),
@@ -130,7 +161,7 @@ defmodule Mobilizon.Service.Export.Feed do
       case actor do
         %Actor{} = actor ->
           events = actor |> fetch_identity_participations() |> participations_to_events()
-          {:ok, build_actor_feed(actor, events, false)}
+          {:ok, build_actor_feed(actor, events, [], false)}
 
         nil ->
           with actors <- Users.get_actors_for_user(user),
@@ -167,9 +198,15 @@ defmodule Mobilizon.Service.Export.Feed do
 
     # Title uses default instance language
     self_url
-    |> Feed.new(DateTime.utc_now(), gettext("Feed for %{email} on Mobilizon", email: email))
+    |> Feed.new(
+      DateTime.utc_now(),
+      gettext("Feed for %{email} on %{instance}",
+        email: email,
+        instance: Config.instance_name()
+      )
+    )
     |> Feed.link(self_url, rel: "self")
-    |> Feed.generator("Mobilizon", uri: "https://joinmobilizon.org", version: version())
+    |> Feed.generator(Config.instance_name(), uri: Endpoint.url(), version: version())
     |> Feed.entries(Enum.map(events, &get_entry/1))
     |> Feed.build()
     |> Atomex.generate_document()

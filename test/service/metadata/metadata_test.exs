@@ -5,6 +5,8 @@ defmodule Mobilizon.Service.MetadataTest do
   alias Mobilizon.Posts.Post
   alias Mobilizon.Service.Metadata
   alias Mobilizon.Tombstone
+  alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
   use Mobilizon.DataCase
   import Mobilizon.Factory
 
@@ -21,7 +23,11 @@ defmodule Mobilizon.Service.MetadataTest do
                  group.avatar.url
                }\" property=\"og:image\"><script type=\"application/ld+json\">{\"@context\":\"http://schema.org\",\"@type\":\"Organization\",\"address\":null,\"name\":\"#{
                  group.name
-               }\",\"url\":\"#{group.url}\"}</script>"
+               }\",\"url\":\"#{group.url}\"}</script><link href=\"#{
+                 Routes.feed_url(Endpoint, :actor, group.preferred_username, "atom")
+               }\" rel=\"alternate\" title=\"#{group.name}'s feed\" type=\"application/atom+xml\"><link href=\"#{
+                 Routes.feed_url(Endpoint, :actor, group.preferred_username, "ics")
+               }\" rel=\"alternate\" title=\"#{group.name}'s feed\" type=\"text/calendar\">"
 
       assert group
              |> Map.put(:avatar, nil)
@@ -33,7 +39,11 @@ defmodule Mobilizon.Service.MetadataTest do
                  group.preferred_username
                }\" property=\"profile:username\"><meta content=\"summary\" property=\"twitter:card\"><script type=\"application/ld+json\">{\"@context\":\"http://schema.org\",\"@type\":\"Organization\",\"address\":null,\"name\":\"#{
                  group.name
-               }\",\"url\":\"#{group.url}\"}</script>"
+               }\",\"url\":\"#{group.url}\"}</script><link href=\"#{
+                 Routes.feed_url(Endpoint, :actor, group.preferred_username, "atom")
+               }\" rel=\"alternate\" title=\"#{group.name}'s feed\" type=\"application/atom+xml\"><link href=\"#{
+                 Routes.feed_url(Endpoint, :actor, group.preferred_username, "ics")
+               }\" rel=\"alternate\" title=\"#{group.name}'s feed\" type=\"text/calendar\">"
     end
 
     test "that is not a group doesn't give anything" do

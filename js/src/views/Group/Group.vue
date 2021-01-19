@@ -145,7 +145,11 @@
               type="is-primary"
               >{{ $t("Join group") }}</b-button
             >
-            <b-dropdown aria-role="list" position="is-bottom-left">
+            <b-dropdown
+              class="menu-dropdown"
+              aria-role="list"
+              position="is-bottom-left"
+            >
               <b-button
                 slot="trigger"
                 role="button"
@@ -161,6 +165,25 @@
                   {{ $t("Report") }}
                   <b-icon icon="flag" />
                 </span>
+              </b-dropdown-item>
+              <hr class="dropdown-divider" />
+              <b-dropdown-item has-link aria-role="listitem">
+                <a
+                  :href="`@${preferredUsername}/feed/atom`"
+                  :title="$t('Atom feed for events and posts')"
+                >
+                  {{ $t("RSS/Atom Feed") }}
+                  <b-icon icon="rss" />
+                </a>
+              </b-dropdown-item>
+              <b-dropdown-item has-link aria-role="listitem">
+                <a
+                  :href="`@${preferredUsername}/feed/ics`"
+                  :title="$t('ICS feed for events')"
+                >
+                  {{ $t("ICS/WebCal Feed") }}
+                  <b-icon icon="calendar-sync" />
+                </a>
               </b-dropdown-item>
             </b-dropdown>
           </p>
@@ -833,6 +856,13 @@ div.container {
   .public-container {
     section {
       margin-top: 2rem;
+    }
+  }
+
+  .menu-dropdown {
+    ::v-deep .dropdown-item,
+    ::v-deep .has-link a {
+      padding-right: 1rem;
     }
   }
 }

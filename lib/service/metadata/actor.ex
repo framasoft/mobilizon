@@ -2,8 +2,11 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
+  alias Mobilizon.Web.Router.Helpers, as: Routes
   import Mobilizon.Service.Metadata.Utils, only: [process_description: 2, default_description: 1]
+  import Mobilizon.Web.Gettext
 
   def build_tags(_actor, _locale \\ "en")
 
@@ -40,7 +43,24 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   end
 
   defp add_group_schema(tags, %Actor{} = group) do
-    tags ++ [~s{<script type="application/ld+json">#{json(group)}</script>} |> HTML.raw()]
+    tags ++
+      [
+        ~s{<script type="application/ld+json">#{json(group)}</script>} |> HTML.raw(),
+        Tag.tag(:link,
+          rel: "alternate",
+          type: "application/atom+xml",
+          title:
+            gettext("%{name}'s feed", name: group.name || group.preferred_username) |> HTML.raw(),
+          href: Routes.feed_url(Endpoint, :actor, group.preferred_username, :atom)
+        ),
+        Tag.tag(:link,
+          rel: "alternate",
+          type: "text/calendar",
+          title:
+            gettext("%{name}'s feed", name: group.name || group.preferred_username) |> HTML.raw(),
+          href: Routes.feed_url(Endpoint, :actor, group.preferred_username, :ics)
+        )
+      ]
   end
 
   # Insert JSON-LD schema by hand because Tag.content_tag wants to escape it

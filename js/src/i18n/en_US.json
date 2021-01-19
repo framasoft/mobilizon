@@ -47,7 +47,6 @@
   "Change my password": "Change my password",
   "Change": "Change",
   "Clear": "Clear",
-  "Click to select": "Click to select",
   "Click to upload": "Click to upload",
   "Close comments for all (except for admins)": "Close comments for all (except for admins)",
   "Close": "Close",
@@ -404,7 +403,6 @@
   "as {identity}": "as {identity}",
   "default Mobilizon terms": "default Mobilizon terms",
   "e.g. 10 Rue Jangot": "e.g. 10 Rue Jangot",
-  "firstDayOfWeek": "0",
   "iCal Feed": "iCal Feed",
   "profile@instance": "profile@instance",
   "with another identity…": "with another identity…",
@@ -828,5 +826,8 @@
   "There's no discussions yet": "There's no discussions yet",
   "Only group members can access discussions": "Only group members can access discussions",
   "Return to the group page": "Return to the group page",
-  "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content."
+  "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.",
+  "Atom feed for events and posts": "Atom feed for events and posts",
+  "ICS feed for events": "ICS feed for events",
+  "ICS/WebCal Feed": "ICS/WebCal Feed"
 }

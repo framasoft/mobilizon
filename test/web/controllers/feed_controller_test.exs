@@ -3,6 +3,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Config
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
@@ -28,7 +29,8 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       {:ok, feed} = ElixirFeedParser.parse(conn.resp_body)
 
-      assert feed.title == actor.preferred_username <> "'s public events feed on Mobilizon"
+      assert feed.title ==
+               actor.preferred_username <> "'s public events feed on #{Config.instance_name()}"
 
       [entry1, entry2] = entries = feed.entries
 
@@ -232,7 +234,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       {:ok, feed} = ElixirFeedParser.parse(conn.resp_body)
 
-      assert feed.title == "Feed for #{user.email} on Mobilizon"
+      assert feed.title == "Feed for #{user.email} on #{Config.instance_name()}"
 
       entries = feed.entries
 
@@ -267,7 +269,8 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       {:ok, feed} = ElixirFeedParser.parse(conn.resp_body)
 
-      assert feed.title == "#{actor1.preferred_username}'s private events feed on Mobilizon"
+      assert feed.title ==
+               "#{actor1.preferred_username}'s private events feed on #{Config.instance_name()}"
 
       [entry] = feed.entries
       assert entry.title == event1.title

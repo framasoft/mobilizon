@@ -11,6 +11,7 @@ defmodule Mobilizon.Web.FeedController do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("application/atom+xml")
+        |> put_resp_header("content-disposition", "attachment; filename=\"#{name}.atom\"")
         |> send_resp(200, data)
 
       _ ->
@@ -23,6 +24,7 @@ defmodule Mobilizon.Web.FeedController do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
+        |> put_resp_header("content-disposition", "attachment; filename=\"#{name}.ics\"")
         |> send_resp(200, data)
 
       _err ->
@@ -30,11 +32,16 @@ defmodule Mobilizon.Web.FeedController do
     end
   end
 
+  def actor(_conn, _) do
+    {:error, :not_found}
+  end
+
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
     case Cachex.fetch(:ics, "event_" <> uuid) do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
+        |> put_resp_header("content-disposition", "attachment; filename=\"event.ics\"")
         |> send_resp(200, data)
 
       _ ->
@@ -42,11 +49,16 @@ defmodule Mobilizon.Web.FeedController do
     end
   end
 
+  def event(_conn, _) do
+    {:error, :not_found}
+  end
+
   def going(conn, %{"token" => token, "format" => "ics"}) do
     case Cachex.fetch(:ics, "token_" <> token) do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
+        |> put_resp_header("content-disposition", "attachment; filename=\"events.ics\"")
         |> send_resp(200, data)
 
       _ ->
@@ -59,10 +71,15 @@ defmodule Mobilizon.Web.FeedController do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("application/atom+xml")
+        |> put_resp_header("content-disposition", "attachment; filename=\"events.atom\"")
         |> send_resp(200, data)
 
       {:ignore, _} ->
         {:error, :not_found}
     end
+  end
+
+  def going(_conn, _) do
+    {:error, :not_found}
   end
 end
