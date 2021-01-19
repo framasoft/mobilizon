@@ -22,11 +22,6 @@ msgstr ""
 "cambiata fino a che non accederai al link sotto per crearne una nuova."
 
 #, elixir-format
-#: lib/service/export/feed.ex:170
-msgid "Feed for %{email} on Mobilizon"
-msgstr "Flusso di %{email} su Mobilizon"
-
-#, elixir-format
 #: lib/web/templates/email/report.html.eex:74
 msgid "%{title} by %{creator}"
 msgstr "%{title} di %{creator}"
@@ -152,7 +147,7 @@ msgid "Warning"
 msgstr "Attenzione"
 
 #, elixir-format
-#: lib/web/email/participation.ex:134
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr "Conferma la tua partecipazione all'evento %{title}"
 
@@ -368,7 +363,7 @@ msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon su %{instance}: email modificata"
 
 #, elixir-format
-#: lib/web/email/notification.ex:46
+#: lib/web/email/notification.ex:47
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Un evento programmato oggi"
@@ -421,19 +416,19 @@ msgid "View the event on: %{link}"
 msgstr "Visualizza l'evento su: %{link}"
 
 #, elixir-format
-#: lib/web/email/group.ex:32
+#: lib/web/email/group.ex:33
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Sei stato invitato da %{inviter} per partecipare al gruppo %{group}"
 
 #, elixir-format
-#: lib/web/email/notification.ex:70
+#: lib/web/email/notification.ex:71
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Un evento in programma questa settimana"
 msgstr[1] "%{nb_events} eventi in programma questa settimana"
 
 #, elixir-format
-#: lib/web/email/notification.ex:92
+#: lib/web/email/notification.ex:93
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Una richiesta di partecipazione per l'evento %{title} da elaborare"
@@ -1277,7 +1272,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Addio, e grazie per il pesce!"
 
 #, elixir-format
-#: lib/web/email/group.ex:62
+#: lib/web/email/group.ex:63
 msgid "You have been removed from group %{group}"
 msgstr "Sei stato rimosso dal gruppo %{group}"
 
@@ -1347,12 +1342,12 @@ msgstr ""
 "%{group_name} (%{group_address}). Non sei più un membro di questo gruppo."
 
 #, elixir-format
-#: lib/web/email/group.ex:135
+#: lib/web/email/group.ex:136
 msgid "The group %{group} has been deleted on %{instance}"
 msgstr "Il gruppo %{group} è stato eliminato su %{instance}"
 
 #, elixir-format
-#: lib/web/email/group.ex:96
+#: lib/web/email/group.ex:97
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Il gruppo %{group} è stato sospeso su %{instance}"
 
@@ -1598,12 +1593,12 @@ msgstr ""
 "ora sei nella lista degli invitati!"
 
 #, elixir-format
-#: lib/mobilizon/posts/post.ex:91
+#: lib/mobilizon/posts/post.ex:94
 msgid "A text is required for the post"
 msgstr "È richiesto un testo per il post"
 
 #, elixir-format
-#: lib/mobilizon/posts/post.ex:90
+#: lib/mobilizon/posts/post.ex:93
 msgid "A title is required for the post"
 msgstr "È richiesto un titolo per il post"
 
@@ -1705,3 +1700,23 @@ msgstr "Siamo spiacenti, ma qualcosa è andato storto da parte nostra."
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Questo è un sito dimostrativo per testare Mobilizon."
+
+#, elixir-format
+#: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
+msgid "%{name}'s feed"
+msgstr ""
+
+#, elixir-format
+#: lib/service/export/feed.ex:77
+msgid "%{actor}'s private events feed on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/service/export/feed.ex:72
+msgid "%{actor}'s public events feed on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/service/export/feed.ex:203
+msgid "Feed for %{email} on %{instance}"
+msgstr ""
