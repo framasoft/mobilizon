@@ -274,7 +274,7 @@
   "Find an address": "Trouver une adresse",
   "Find an instance": "Trouver une instance",
   "Find another instance": "Trouver une autre instance",
-  "Followers": "Abonnés",
+  "Followers": "Abonné⋅es",
   "Followings": "Abonnements",
   "For instance: London": "Par exemple : Lyon",
   "For instance: London, Taekwondo, Architecture…": "Par exemple : Lyon, Taekwondo, Architecture…",
@@ -925,5 +925,11 @@
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
   "Atom feed for events and posts": "Flux Atom pour les événements et les billets",
   "ICS feed for events": "Flux ICS pour les événements",
-  "ICS/WebCal Feed": "Flux ICS/WebCal"
+  "ICS/WebCal Feed": "Flux ICS/WebCal",
+  "Group Followers": "Abonné⋅es au groupe",
+  "Follower": "Abonné⋅es",
+  "No follower matches the filters": "Aucun⋅e abonné⋅e ne correspond aux filtres",
+  "@{username}'s follow request was rejected": "La demande de suivi de @{username} a été rejettée",
+  "Followers will receive new public events and posts.": "Les abonnée⋅s recevront les nouveaux événements et billets publics.",
+  "Manually approve new followers": "Approuver les nouvelles demandes de suivi manuellement"
 }

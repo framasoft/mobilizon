@@ -302,6 +302,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
               do_handle_incoming_accept_join(accepted_object, actor)} do
       {:ok, activity, object}
     else
+      {:object_not_found, {:error, "Follow already accepted"}} ->
+        Logger.info("Follow was already accepted. Ignoring.")
+        :error
+
       {:object_not_found, nil} ->
         Logger.warn(
           "Unable to process Accept activity #{inspect(id)}. Object #{inspect(accepted_object)} wasn't found."
@@ -761,6 +765,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:ok, activity, follow}
     else
+      {:follow, {:ok, %Follower{approved: true} = _follow}} ->
+        Logger.debug("Follow already accepted")
+        {:error, "Follow already accepted"}
+
       {:follow, _} ->
         Logger.debug(
           "Tried to handle an Accept activity but it's not containing a Follow activity"
@@ -770,9 +778,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:same_actor} ->
         {:error, "Actor who accepted the follow wasn't the target. Quite odd."}
-
-      {:ok, %Follower{approved: true} = _follow} ->
-        {:error, "Follow already accepted"}
     end
   end
 

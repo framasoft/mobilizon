@@ -64,6 +64,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     suspended
     visibility
     openness
+    manuallyApprovesFollowers
     physicalAddress {
       description
       street
@@ -265,6 +266,7 @@ export const UPDATE_GROUP = gql`
     $visibility: GroupVisibility
     $openness: Openness
     $physicalAddress: AddressInput
+    $manuallyApprovesFollowers: Boolean
   ) {
     updateGroup(
       id: $id
@@ -275,6 +277,7 @@ export const UPDATE_GROUP = gql`
       visibility: $visibility
       openness: $openness
       physicalAddress: $physicalAddress
+      manuallyApprovesFollowers: $manuallyApprovesFollowers
     ) {
       id
       preferredUsername
@@ -282,6 +285,7 @@ export const UPDATE_GROUP = gql`
       summary
       visibility
       openness
+      manuallyApprovesFollowers
       avatar {
         id
         url

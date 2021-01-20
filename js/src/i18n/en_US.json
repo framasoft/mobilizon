@@ -829,5 +829,12 @@
   "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.",
   "Atom feed for events and posts": "Atom feed for events and posts",
   "ICS feed for events": "ICS feed for events",
-  "ICS/WebCal Feed": "ICS/WebCal Feed"
+  "ICS/WebCal Feed": "ICS/WebCal Feed",
+  "Group Followers": "Group Followers",
+  "Follower": "Follower",
+  "Reject": "Reject",
+  "No follower matches the filters": "No follower matches the filters",
+  "@{username}'s follow request was rejected": "@{username}'s follow request was rejected",
+  "Followers will receive new public events and posts.": "Followers will receive new public events and posts.",
+  "Manually approve new followers": "Manually approve new followers"
 }

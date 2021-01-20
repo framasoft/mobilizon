@@ -19,6 +19,7 @@ export interface IGroup extends IActor {
   organizedEvents: Paginate<IEvent>;
   physicalAddress: IAddress;
   openness: Openness;
+  manuallyApprovesFollowers: boolean;
 }
 
 export class Group extends Actor implements IGroup {
@@ -44,6 +45,8 @@ export class Group extends Actor implements IGroup {
   openness: Openness = Openness.INVITE_ONLY;
 
   physicalAddress: IAddress = new Address();
+
+  manuallyApprovesFollowers = true;
 
   patch(hash: IGroup | Record<string, unknown>): void {
     Object.assign(this, hash);

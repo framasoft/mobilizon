@@ -55,7 +55,8 @@ defmodule Mobilizon.Factory do
       shared_inbox_url: "#{Endpoint.url()}/inbox",
       last_refreshed_at: DateTime.utc_now(),
       user: build(:user),
-      visibility: :public
+      visibility: :public,
+      manually_approves_followers: false
     }
   end
 
@@ -108,7 +109,8 @@ defmodule Mobilizon.Factory do
       target_actor: build(:actor),
       actor: build(:actor),
       id: uuid,
-      url: "#{Endpoint.url()}/follows/#{uuid}"
+      url: "#{Endpoint.url()}/follows/#{uuid}",
+      approved: false
     }
   end
 

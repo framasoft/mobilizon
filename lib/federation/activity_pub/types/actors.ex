@@ -1,7 +1,7 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
@@ -9,6 +9,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.Notifications.Scheduler
+  alias Mobilizon.Web.Email.Follow, as: FollowMailer
   alias Mobilizon.Web.Endpoint
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
 
@@ -130,6 +131,15 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
+  def follow(%Actor{} = follower_actor, %Actor{} = followed, _local, additional) do
+    with {:ok, %Follower{} = follower} <-
+           Mobilizon.Actors.follow(followed, follower_actor, additional["activity_id"], false),
+         :ok <- FollowMailer.send_notification_to_admins(follower),
+         follower_as_data <- Convertible.model_to_as(follower) do
+      approve_if_manually_approves_followers(follower, follower_as_data)
+    end
+  end
+
   defp prepare_args_for_actor(args) do
     args
     |> maybe_sanitize_username()
@@ -188,5 +198,22 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     else
       {:ok, activity_data, member}
     end
+  end
+
+  defp approve_if_manually_approves_followers(
+         %Follower{} = follower,
+         follow_as_data
+       ) do
+    unless follower.target_actor.manually_approves_followers do
+      {:accept,
+       ActivityPub.accept(
+         :follow,
+         follower,
+         true,
+         %{"actor" => follower.actor.url}
+       )}
+    end
+
+    {:ok, follow_as_data, follower}
   end
 end

@@ -8,6 +8,7 @@ export enum GroupsRouteName {
   GROUP_SETTINGS = "GROUP_SETTINGS",
   GROUP_PUBLIC_SETTINGS = "GROUP_PUBLIC_SETTINGS",
   GROUP_MEMBERS_SETTINGS = "GROUP_MEMBERS_SETTINGS",
+  GROUP_FOLLOWERS_SETTINGS = "GROUP_FOLLOWERS_SETTINGS",
   RESOURCES = "RESOURCES",
   RESOURCE_FOLDER_ROOT = "RESOURCE_FOLDER_ROOT",
   RESOURCE_FOLDER = "RESOURCE_FOLDER",
@@ -83,6 +84,13 @@ export const groupsRoutes: RouteConfig[] = [
         name: GroupsRouteName.GROUP_MEMBERS_SETTINGS,
         component: (): Promise<EsModuleComponent> =>
           import("../views/Group/GroupMembers.vue"),
+        props: true,
+      },
+      {
+        path: "followers",
+        name: GroupsRouteName.GROUP_FOLLOWERS_SETTINGS,
+        component: (): Promise<EsModuleComponent> =>
+          import("../views/Group/GroupFollowers.vue"),
         props: true,
       },
     ],

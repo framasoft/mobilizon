@@ -16,6 +16,10 @@
               :title="this.$t('Members')"
               :to="{ name: RouteName.GROUP_MEMBERS_SETTINGS }"
             />
+            <SettingMenuItem
+              :title="this.$t('Followers')"
+              :to="{ name: RouteName.GROUP_FOLLOWERS_SETTINGS }"
+            />
           </SettingMenuSection>
         </ul>
       </aside>

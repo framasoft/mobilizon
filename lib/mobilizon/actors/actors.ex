@@ -1024,6 +1024,16 @@ defmodule Mobilizon.Actors do
 
   @doc """
   Gets a single follower.
+  """
+  @spec get_follower(integer | String.t()) :: Follower.t() | nil
+  def get_follower(id) do
+    Follower
+    |> Repo.get(id)
+    |> Repo.preload([:actor, :target_actor])
+  end
+
+  @doc """
+  Gets a single follower.
   Raises `Ecto.NoResultsError` if the follower does not exist.
   """
   @spec get_follower!(integer | String.t()) :: Follower.t()
@@ -1147,6 +1157,25 @@ defmodule Mobilizon.Actors do
     |> follower_for_actor_query()
     |> where(approved: true)
     |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Returns a paginated list of followers for an actor.
+  """
+  @spec list_paginated_followers_for_actor(Actor.t(), boolean | nil, integer | nil, integer | nil) ::
+          Page.t()
+  def list_paginated_followers_for_actor(
+        %Actor{id: actor_id},
+        approved \\ nil,
+        page \\ nil,
+        limit \\ nil
+      ) do
+    actor_id
+    |> follower_for_actor_query()
+    |> filter_followed_by_approved_status(approved)
+    |> order_by(desc: :updated_at)
+    |> preload([:actor, :target_actor])
+    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -1686,6 +1715,13 @@ defmodule Mobilizon.Actors do
 
   defp filter_by_name(query, [name, domain]) do
     from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
+  end
+
+  @spec filter_by_name(Ecto.Query.t(), boolean | nil) :: Ecto.Query.t()
+  defp filter_followed_by_approved_status(query, nil), do: query
+
+  defp filter_followed_by_approved_status(query, approved) do
+    from(f in query, where: f.approved == ^approved)
   end
 
   @spec preload_followers(Actor.t(), boolean) :: Actor.t()

@@ -50,7 +50,6 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Email.{Admin, Group, Mailer}
-  alias Mobilizon.Web.Email.Follow, as: FollowMailer
 
   require Logger
 
@@ -320,13 +319,22 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Make an actor follow another
   """
-  def follow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
+  def follow(
+        %Actor{} = follower,
+        %Actor{} = followed,
+        activity_id \\ nil,
+        local \\ true,
+        additional \\ %{}
+      ) do
     with {:different_actors, true} <- {:different_actors, followed.id != follower.id},
-         {:ok, %Follower{} = follower} <-
-           Actors.follow(followed, follower, activity_id, false),
-         :ok <- FollowMailer.send_notification_to_admins(follower),
-         follower_as_data <- Convertible.model_to_as(follower),
-         {:ok, activity} <- create_activity(follower_as_data, local),
+         {:ok, activity_data, %Follower{} = follower} <-
+           Types.Actors.follow(
+             follower,
+             followed,
+             local,
+             Map.merge(additional, %{"activity_id" => activity_id})
+           ),
+         {:ok, activity} <- create_activity(activity_data, local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, follower}
     else
