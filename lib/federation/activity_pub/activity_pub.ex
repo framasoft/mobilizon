@@ -338,7 +338,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          :ok <- maybe_federate(activity) do
       {:ok, activity, follower}
     else
-      {:error, err, msg} when err in [:already_following, :suspended] ->
+      {:error, err, msg} when err in [:already_following, :suspended, :no_person] ->
         {:error, msg}
 
       {:different_actors, _} ->

@@ -46,7 +46,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UndoTest do
     end
 
     test "it works for incomming unfollows with an existing follow" do
-      actor = insert(:actor)
+      actor = insert(:group)
 
       follow_data =
         File.read!("test/fixtures/mastodon-follow-activity.json")

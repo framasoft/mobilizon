@@ -131,7 +131,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
-  def follow(%Actor{} = follower_actor, %Actor{} = followed, _local, additional) do
+  def follow(%Actor{} = follower_actor, %Actor{type: type} = followed, _local, additional)
+      when type != :Person do
     with {:ok, %Follower{} = follower} <-
            Mobilizon.Actors.follow(followed, follower_actor, additional["activity_id"], false),
          :ok <- FollowMailer.send_notification_to_admins(follower),
@@ -139,6 +140,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
       approve_if_manually_approves_followers(follower, follower_as_data)
     end
   end
+
+  def follow(_, _, _, _), do: {:error, :no_person, "Only group and instances can be followed"}
 
   defp prepare_args_for_actor(args) do
     args

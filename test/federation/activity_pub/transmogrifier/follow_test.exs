@@ -1,6 +1,7 @@
 defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   use Mobilizon.DataCase
 
+  import ExUnit.CaptureLog
   import Mobilizon.Factory
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Follower
@@ -8,8 +9,24 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
 
   describe "handle incoming follow requests" do
-    test "it works for incoming follow requests" do
+    test "it works only for groups" do
       actor = insert(:actor)
+
+      data =
+        File.read!("test/fixtures/mastodon-follow-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", actor.url)
+
+      assert capture_log(fn ->
+               :error = Transmogrifier.handle_incoming(data)
+             end) =~ "Only group and instances can be followed"
+
+      actor = Actors.get_actor_with_preload(actor.id)
+      refute Actors.is_following(Actors.get_actor_by_url!(data["actor"], true), actor)
+    end
+
+    test "it works for incoming follow requests" do
+      actor = insert(:group)
 
       data =
         File.read!("test/fixtures/mastodon-follow-activity.json")
@@ -27,7 +44,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
     end
 
     test "it rejects activities without a valid ID" do
-      actor = insert(:actor)
+      actor = insert(:group)
 
       data =
         File.read!("test/fixtures/mastodon-follow-activity.json")
@@ -59,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   describe "handle incoming follow accept activities" do
     test "it works for incoming accepts" do
       follower = insert(:actor)
-      followed = insert(:actor, manually_approves_followers: false)
+      followed = insert(:group, manually_approves_followers: false)
 
       refute Actors.is_following(follower, followed)
 
@@ -91,7 +108,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
     test "it works for incoming accepts which were pre-accepted" do
       follower = insert(:actor)
-      followed = insert(:actor, manually_approves_followers: true)
+      followed = insert(:group, manually_approves_followers: true)
 
       refute Actors.is_following(follower, followed)
 
@@ -126,7 +143,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
     test "it works for incoming accepts which are referenced by IRI only" do
       follower = insert(:actor)
-      followed = insert(:actor, manually_approves_followers: true)
+      followed = insert(:group, manually_approves_followers: true)
 
       {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
 
@@ -148,7 +165,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
     test "it fails for incoming accepts which cannot be correlated" do
       follower = insert(:actor)
-      followed = insert(:actor)
+      followed = insert(:group)
 
       accept_data =
         File.read!("test/fixtures/mastodon-accept-activity.json")
@@ -169,7 +186,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   describe "handle incoming follow reject activities" do
     test "it fails for incoming rejects which cannot be correlated" do
       follower = insert(:actor)
-      followed = insert(:actor)
+      followed = insert(:group)
 
       accept_data =
         File.read!("test/fixtures/mastodon-reject-activity.json")
@@ -188,7 +205,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
     test "it works for incoming rejects which are referenced by IRI only" do
       follower = insert(:actor)
-      followed = insert(:actor)
+      followed = insert(:group)
 
       {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
 
