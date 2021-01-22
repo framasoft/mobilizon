@@ -41,10 +41,31 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
     {:ok, Enum.into(attributes, %{})["href"]}
   end
 
+  @oembed_allowed_attributes [
+    :type,
+    :version,
+    :html,
+    :width,
+    :height,
+    :title,
+    :author_name,
+    :author_url,
+    :provider_name,
+    :provider_url,
+    :cache_age,
+    :thumbnail_url,
+    :thumbnail_width,
+    :thumbnail_height,
+    :url
+  ]
+
   defp get_oembed_data(url) do
     with {:ok, %{body: json}} <- Tesla.get(url, opts: @http_options),
          {:ok, data} <- Jason.decode(json),
-         data <- data |> Map.new(fn {k, v} -> {String.to_atom(k), v} end) do
+         data <-
+           data
+           |> Map.new(fn {k, v} -> {String.to_existing_atom(k), v} end)
+           |> Map.take(@oembed_allowed_attributes) do
       {:ok, data}
     end
   end

@@ -10,6 +10,26 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
   require Logger
   alias Mobilizon.Service.RichMedia.Parsers.MetaTagsParser
 
+  @opengraph_properties [
+    :title,
+    :type,
+    :image,
+    :url,
+    :audio,
+    :description,
+    :determiner,
+    :locale,
+    :"locale:alternate",
+    :site_name,
+    :video,
+    :"image:url",
+    :"image.secure_url",
+    :"image:type",
+    :"image:width",
+    :"image:height",
+    :"image:alt"
+  ]
+
   def parse(html, data) do
     Logger.debug("Using OpenGraph card parser")
 
@@ -19,7 +39,9 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
              data,
              "og",
              "No OGP metadata found",
-             "property"
+             :property,
+             :content,
+             @opengraph_properties
            ) do
       data = transform_tags(data)
       Logger.debug("Data found with OpenGraph card parser")
@@ -29,9 +51,11 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
 
   defp transform_tags(data) do
     data
-    |> Map.put(:image_remote_url, Map.get(data, :image))
-    |> Map.put(:width, get_integer_value(data, :"image:width"))
-    |> Map.put(:height, get_integer_value(data, :"image:height"))
+    |> Enum.reject(fn {_, v} -> is_nil(v) end)
+    |> Map.new()
+    |> Map.update(:image_remote_url, Map.get(data, :image), & &1)
+    |> Map.update(:width, get_integer_value(data, :"image:width"), & &1)
+    |> Map.update(:height, get_integer_value(data, :"image:height"), & &1)
   end
 
   @spec get_integer_value(map(), atom()) :: integer() | nil
