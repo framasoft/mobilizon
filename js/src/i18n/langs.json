@@ -1,6 +1,7 @@
 {
   "ar": "العربية",
   "be": "Беларуская мова",
+  "bn": "বাংলা",
   "ca": "Català",
   "cs": "čeština",
   "de": "Deutsch",
@@ -22,5 +23,6 @@
   "pt": "Português",
   "pt_BR": "Português brasileiro",
   "ru": "Русский",
+  "sl": "Slovenščina",
   "sv": "Svenska"
 }

@@ -4,6 +4,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.4 - 20-01-2020
+
+### Added
+
+- Added interface to approve/reject group follow requests
+- Added UI for group public Atom/ICS feeds
+- Attach ICS files representing the event to notifications and participations emails
+- Add initial support to build Elixir releases
+
+### Changed
+
+- Added `<hr>` to allowed HTML tags
+- Events are now correctly ordered by their beginning date on search and group page
+
+### Fixed
+
+- Upgrade PWA support library to avoid a call to Google CDN
+- Fixed group avatar & banner upload
+- Fixed some events not showing on homepage
+- Fixed the `next` and `prev` attribute not being present in `CollectionPage` ActivityPub Collections
+- Added a text to explain that group discussions are restricted to members on discussion list page
+- Fixed ICS export timezone issues
+- Fixed remote interactions when the content was not local to the instance
+- Fixed a federation issue with group member removal
+- Fixed group remote subscription
+
+### Translations
+
+- Bengali (New!)
+- Catalan
+- Finnish
+- French
+- Galician
+- German
+- Italian
+- Norwegian
+- Polish
+- Portuguese (New!)
+- Slovenian (New!)
+- Spanish
+- Swedish
+
 ## 1.0.3 - 18-12-2020
 
 **This release adds new migrations, be sure to run them before restarting Mobilizon**

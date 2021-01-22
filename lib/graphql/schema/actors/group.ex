@@ -8,7 +8,18 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias Mobilizon.Addresses
-  alias Mobilizon.GraphQL.Resolvers.{Discussion, Group, Media, Member, Post, Resource, Todos}
+
+  alias Mobilizon.GraphQL.Resolvers.{
+    Discussion,
+    Followers,
+    Group,
+    Media,
+    Member,
+    Post,
+    Resource,
+    Todos
+  }
+
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Actors.MemberType)
@@ -47,8 +58,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     # These one should have a privacy setting
-    field(:following, list_of(:follower), description: "List of followings")
-    field(:followers, list_of(:follower), description: "List of followers")
     field(:followersCount, :integer, description: "Number of followers for this actor")
     field(:followingCount, :integer, description: "Number of actors following this actor")
 
@@ -115,6 +124,23 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     field :todo_lists, :paginated_todo_list_list do
       resolve(&Todos.find_todo_lists_for_group/3)
       description("A paginated list of the todo lists this group has")
+    end
+
+    field :followers, :paginated_follower_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated followers list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of followers per page")
+
+      arg(:approved, :boolean,
+        default_value: nil,
+        description: "Used to filter the followers list by approved status"
+      )
+
+      resolve(&Followers.find_followers_for_group/3)
+      description("A paginated list of the followers this group has")
     end
   end
 
@@ -230,6 +256,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
       arg(:openness, :openness,
         description: "Whether the group can be join freely, with approval or is invite-only."
+      )
+
+      arg(:manually_approves_followers, :boolean,
+        description: "Whether this group approves new followers manually"
       )
 
       arg(:avatar, :media_input,

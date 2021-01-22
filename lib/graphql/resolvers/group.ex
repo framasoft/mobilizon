@@ -26,8 +26,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    with {:ok, %Actor{id: group_id} = group} <-
-           ActivityPub.find_or_make_group_from_nickname(name),
+    with {:group, {:ok, %Actor{id: group_id} = group}} <-
+           {:group, ActivityPub.find_or_make_group_from_nickname(name)},
          {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
       {:ok, group}
@@ -35,8 +35,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:member, false} ->
         find_group(parent, args, nil)
 
-      _ ->
+      {:group, _} ->
         {:error, :group_not_found}
+
+      _ ->
+        {:error, :unknown}
     end
   end
 

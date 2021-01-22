@@ -134,6 +134,15 @@
           </b-radio>
         </div>
 
+        <b-field
+          :label="$t('Followers')"
+          :message="$t('Followers will receive new public events and posts.')"
+        >
+          <b-checkbox v-model="group.manuallyApprovesFollowers">
+            {{ $t("Manually approve new followers") }}
+          </b-checkbox>
+        </b-field>
+
         <full-address-auto-complete
           :label="$t('Group address')"
           v-model="group.physicalAddress"
