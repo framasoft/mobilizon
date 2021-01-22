@@ -110,7 +110,7 @@ defmodule Mobilizon.Mixfile do
       {:absinthe_plug, "~> 1.5.0"},
       {:dataloader, "~> 1.0.6"},
       {:plug_cowboy, "~> 2.0"},
-      {:atomex, github: "Betree/atomex"},
+      {:atomex, "~> 0.4"},
       {:cachex, "~> 3.1"},
       {:geohax, "~> 0.4.0"},
       {:mogrify, "~> 0.8.0"},
