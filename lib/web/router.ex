@@ -4,6 +4,12 @@ defmodule Mobilizon.Web.Router do
   """
   use Mobilizon.Web, :router
 
+  @csp if Application.fetch_env!(:mobilizon, :env) != :dev,
+         do: "default-src 'self';",
+         else:
+           "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+  @headers %{"content-security-policy" => @csp}
+
   pipeline :graphql do
     #    plug(:accepts, ["json"])
     plug(Mobilizon.Web.Auth.Pipeline)
@@ -30,6 +36,7 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :activity_pub_and_html do
     plug(:accepts, ["html", "activity-json"])
+    plug(:put_secure_browser_headers, @headers)
 
     plug(Cldr.Plug.AcceptLanguage,
       cldr_backend: Mobilizon.Cldr
@@ -37,6 +44,7 @@ defmodule Mobilizon.Web.Router do
   end
 
   pipeline :atom_and_ical do
+    plug(:put_secure_browser_headers, @headers)
     plug(:accepts, ["atom", "ics", "html"])
   end
 
@@ -48,10 +56,7 @@ defmodule Mobilizon.Web.Router do
     )
 
     plug(:accepts, ["html"])
-    plug(:fetch_session)
-    plug(:fetch_flash)
-    plug(:protect_from_forgery)
-    plug(:put_secure_browser_headers)
+    plug(:put_secure_browser_headers, @headers)
   end
 
   pipeline :remote_media do
@@ -158,6 +163,8 @@ defmodule Mobilizon.Web.Router do
     get("/interact", PageController, :interact)
 
     get("/auth/:provider", AuthController, :request)
+    # sobelow_skip ["Config.CSRFRoute"]
+    # Possibly related to https://github.com/ueberauth/ueberauth/issues/125
     get("/auth/:provider/callback", AuthController, :callback)
     post("/auth/:provider/callback", AuthController, :callback)
   end
