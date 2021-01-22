@@ -76,10 +76,11 @@ defmodule Mobilizon do
     :ok
   end
 
+  # sobelow_skip ["DOS.StringToAtom"]
   @spec cachex_spec(atom, integer, integer, integer, function | nil) :: Supervisor.child_spec()
   defp cachex_spec(name, limit, default, interval, fallback \\ nil) do
     %{
-      id: :"cache_#{name}",
+      id: String.to_atom("cache_#{to_string(name)}"),
       start:
         {Cachex, :start_link,
          [

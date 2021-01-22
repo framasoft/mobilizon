@@ -163,8 +163,8 @@ defmodule Mobilizon.Web.Router do
     get("/interact", PageController, :interact)
 
     get("/auth/:provider", AuthController, :request)
-    # sobelow_skip ["Config.CSRFRoute"]
-    # Possibly related to https://github.com/ueberauth/ueberauth/issues/125
+    # Have a look at https://github.com/ueberauth/ueberauth/issues/125 some day
+    # Also possible CSRF issue
     get("/auth/:provider/callback", AuthController, :callback)
     post("/auth/:provider/callback", AuthController, :callback)
   end

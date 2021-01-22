@@ -145,6 +145,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  # sobelow_skip ["XSS.SendResp"]
   def call(conn, _, _) do
     conn
     |> send_resp(400, Conn.Status.reason_phrase(400))
@@ -223,6 +224,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     |> send_resp(code, "")
   end
 
+  # sobelow_skip ["XSS.SendResp"]
   defp error_or_redirect(conn, url, code, body, opts) do
     if Keyword.get(opts, :redirect_on_failure, false) do
       conn

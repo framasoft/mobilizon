@@ -2,11 +2,11 @@
   verbose: true,
   private: false,
   skip: true,
-  router: "",
-  exit: "false",
+  router: "lib/web/router.ex",
+  exit: "low",
   format: "txt",
   out: "",
-  threshold: "low",
-  ignore: ["Config.Secrets", "XSS", "Config.HTTPS"],
-  ignore_files: [""]
+  threshold: "medium",
+  ignore: ["Config.HTTPS"],
+  ignore_files: ["config/dev.1.secret.exs", "config/dev.2.secret.exs", "config/dev.3.secret.exs", "config/dev.secret.exs", "config/e2e.secret.exs", "config/prod.secret.exs", "config/test.secret.exs"]
 ]

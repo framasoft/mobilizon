@@ -185,6 +185,7 @@ defmodule Mobilizon.Resources do
     end)
   end
 
+  # sobelow_skip ["SQL.Query"]
   @spec update_children(Multi.t(), Resource.t(), map()) :: Multi.t()
   defp update_children(
          %Multi{} = multi,
