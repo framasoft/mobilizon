@@ -12,11 +12,52 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.GraphQL.API
 
   alias Mobilizon.Federation.ActivityPub.Activity
+  import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
   @number_of_related_events 3
+
+  def organizer_for_event(
+        %Event{attributed_to_id: attributed_to_id, organizer_actor_id: organizer_actor_id},
+        _args,
+        %{context: %{current_user: %User{role: user_role} = user}} = _resolution
+      )
+      when not is_nil(attributed_to_id) do
+    with %Actor{id: group_id} <- Actors.get_actor(attributed_to_id),
+         %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+         {:member, true} <-
+           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
+         %Actor{} = actor <- Actors.get_actor(organizer_actor_id) do
+      {:ok, actor}
+    else
+      _ -> {:ok, nil}
+    end
+  end
+
+  def organizer_for_event(
+        %Event{attributed_to_id: attributed_to_id},
+        _args,
+        _resolution
+      )
+      when not is_nil(attributed_to_id) do
+    case Actors.get_actor(attributed_to_id) do
+      %Actor{} -> {:ok, nil}
+      _ -> {:error, "Unable to get organizer actor"}
+    end
+  end
+
+  def organizer_for_event(
+        %Event{organizer_actor_id: organizer_actor_id},
+        _args,
+        _resolution
+      ) do
+    case Actors.get_actor(organizer_actor_id) do
+      %Actor{} = actor -> {:ok, actor}
+      _ -> {:error, "Unable to get organizer actor"}
+    end
+  end
 
   def list_events(_parent, %{page: page, limit: limit}, _resolution)
       when limit < @event_max_limit do

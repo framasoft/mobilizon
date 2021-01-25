@@ -51,14 +51,14 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:online_address, :string, description: "Online address of the event")
     field(:phone_address, :string, description: "Phone address for the event")
 
-    field(:organizer_actor, :actor,
-      resolve: dataloader(Actors),
-      description: "The event's organizer (as a person)"
-    )
-
     field(:attributed_to, :actor,
       resolve: dataloader(Actors),
       description: "Who the event is attributed to (often a group)"
+    )
+
+    field(:organizer_actor, :actor,
+      resolve: &Event.organizer_for_event/3,
+      description: "The event's organizer (as a person)"
     )
 
     field(:tags, list_of(:tag),
