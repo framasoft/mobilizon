@@ -33,6 +33,7 @@
 
         <b-field horizontal :label="$t('Starts on…')" class="begins-on-field">
           <b-datetimepicker
+            class="datepicker starts-on"
             :placeholder="$t('Type or select a date…')"
             icon="calendar-today"
             :locale="$i18n.locale"
@@ -45,6 +46,7 @@
 
         <b-field horizontal :label="$t('Ends on…')">
           <b-datetimepicker
+            class="datepicker ends-on"
             :placeholder="$t('Type or select a date…')"
             icon="calendar-today"
             :locale="$i18n.locale"
@@ -378,6 +380,12 @@ h2.subtitle {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+}
+
+.datepicker {
+  ::v-deep .dropdown-menu {
+    z-index: 200;
   }
 }
 
