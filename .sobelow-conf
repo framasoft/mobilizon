@@ -7,6 +7,6 @@
   format: "txt",
   out: "",
   threshold: "medium",
-  ignore: ["Config.HTTPS"],
+  ignore: ["Config.HTTPS", "Config.CSP"],
   ignore_files: ["config/dev.1.secret.exs", "config/dev.2.secret.exs", "config/dev.3.secret.exs", "config/dev.secret.exs", "config/e2e.secret.exs", "config/prod.secret.exs", "config/test.secret.exs"]
 ]

@@ -215,6 +215,24 @@ config :mobilizon, :maps,
     type: :openstreetmap
   ]
 
+config :mobilizon, :http_security,
+  enabled: true,
+  sts: false,
+  sts_max_age: 31_536_000,
+  csp_policy: [
+    script_src: [],
+    style_src: [],
+    connect_src: [],
+    font_src: [],
+    img_src: ["*.tile.openstreetmap.org"],
+    manifest_src: [],
+    media_src: [],
+    object_src: [],
+    frame_src: [],
+    frame_ancestors: []
+  ],
+  referrer_policy: "same-origin"
+
 config :mobilizon, :anonymous,
   participation: [
     allowed: true,
