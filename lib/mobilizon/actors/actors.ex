@@ -296,18 +296,6 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  # defp transform_media_file(nil), do: nil
-
-  # defp transform_media_file(file) do
-  #   file = for({key, val} <- file, into: %{}, do: {String.to_atom(key), val})
-
-  #   if is_nil(file) do
-  #     nil
-  #   else
-  #     struct(Mobilizon.Medias.File, file)
-  #   end
-  # end
-
   @delete_actor_default_options [reserve_username: true, suspension: false]
 
   def delete_actor(%Actor{} = actor, options \\ @delete_actor_default_options) do

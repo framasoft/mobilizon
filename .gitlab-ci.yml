@@ -55,8 +55,9 @@ lint-elixir:
     - mix deps.get
   script:
     - export EXITVALUE=0
-    - mix credo --strict -a || export EXITVALUE=1
     - mix format --check-formatted --dry-run || export EXITVALUE=1
+    - mix credo --strict -a || export EXITVALUE=1
+    - mix sobelow --config --skip || export EXITVALUE=1
     - exit $EXITVALUE
 
 lint-front:

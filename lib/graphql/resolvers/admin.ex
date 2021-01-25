@@ -123,7 +123,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
   defp convert_changes_to_struct(struct, %{"report_id" => _report_id} = changes) do
-    with data <- for({key, val} <- changes, into: %{}, do: {String.to_atom(key), val}),
+    with data <- for({key, val} <- changes, into: %{}, do: {String.to_existing_atom(key), val}),
          data <- Map.put(data, :report, Mobilizon.Reports.get_report(data.report_id)) do
       struct(struct, data)
     end
@@ -135,7 +135,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
            for(
              {key, val} <- changes,
              into: %{},
-             do: {String.to_atom(key), process_eventual_type(changeset, key, val)}
+             do: {String.to_existing_atom(key), process_eventual_type(changeset, key, val)}
            ) do
       struct(struct, data)
     end
@@ -144,11 +144,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   # datetimes are not unserialized as DateTime/NaiveDateTime so we do it manually with changeset data
   defp process_eventual_type(changeset, key, val) do
     cond do
-      changeset[String.to_atom(key)] == :utc_datetime and not is_nil(val) ->
+      changeset[String.to_existing_atom(key)] == :utc_datetime and not is_nil(val) ->
         {:ok, datetime, _} = DateTime.from_iso8601(val)
         datetime
 
-      changeset[String.to_atom(key)] == :naive_datetime and not is_nil(val) ->
+      changeset[String.to_existing_atom(key)] == :naive_datetime and not is_nil(val) ->
         {:ok, datetime} = NaiveDateTime.from_iso8601(val)
         datetime
 

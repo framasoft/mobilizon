@@ -58,6 +58,7 @@ defmodule Mobilizon.Discussions do
   @doc """
   Callback for Absinthe Ecto Dataloader
   """
+  # sobelow_skip ["SQL.Query"]
   @spec data :: Dataloader.Ecto.t()
   def data do
     Dataloader.Ecto.new(Repo, query: &query/2)

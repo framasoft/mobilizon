@@ -5,6 +5,7 @@ defmodule Mobilizon.Web.Views.Utils do
 
   alias Mobilizon.Service.Metadata.Utils, as: MetadataUtils
 
+  # sobelow_skip ["Traversal.FileModule"]
   @spec inject_tags(Enum.t(), String.t()) :: {:safe, String.t()}
   def inject_tags(tags, locale \\ "en") do
     with {:ok, index_content} <- File.read(index_file_path()) do

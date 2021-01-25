@@ -7,12 +7,21 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
   @moduledoc """
   Module to parse meta tags data in HTML pages
   """
-  def parse(html, data, prefix, error_message, key_name, value_name \\ "content") do
+
+  def parse(
+        html,
+        data,
+        prefix,
+        error_message,
+        key_name,
+        value_name \\ :content,
+        allowed_attributes \\ []
+      ) do
     meta_data =
       html
       |> get_elements(key_name, prefix)
       |> Enum.reduce(data, fn el, acc ->
-        attributes = normalize_attributes(el, prefix, key_name, value_name)
+        attributes = normalize_attributes(el, prefix, key_name, value_name, allowed_attributes)
 
         Map.merge(acc, attributes)
       end)
@@ -27,18 +36,23 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
   end
 
   defp get_elements(html, key_name, prefix) do
-    html |> Floki.find("meta[#{key_name}^='#{prefix}:']")
+    html |> Floki.find("meta[#{to_string(key_name)}^='#{prefix}:']")
   end
 
-  defp normalize_attributes(html_node, prefix, key_name, value_name) do
+  defp normalize_attributes(html_node, prefix, key_name, value_name, allowed_attributes) do
     {_tag, attributes, _children} = html_node
 
     data =
-      Enum.into(attributes, %{}, fn {name, value} ->
+      attributes
+      |> Enum.into(%{}, fn {name, value} ->
         {name, String.trim_leading(value, "#{prefix}:")}
       end)
 
-    %{String.to_atom(data[key_name]) => data[value_name]}
+    if data[to_string(key_name)] in Enum.map(allowed_attributes, &to_string/1) do
+      %{String.to_existing_atom(data[to_string(key_name)]) => data[to_string(value_name)]}
+    else
+      %{}
+    end
   end
 
   defp maybe_put_title(%{title: _} = meta, _), do: meta
