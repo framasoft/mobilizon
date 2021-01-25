@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.Endpoint do
   use Absinthe.Phoenix.Endpoint
 
   plug(Mobilizon.Web.Plugs.SetLocalePlug)
+  plug(Mobilizon.Web.Plugs.HTTPSecurityPlug)
 
   # For e2e tests
   if Application.get_env(:mobilizon, :sql_sandbox) do
@@ -75,4 +76,9 @@ defmodule Mobilizon.Web.Endpoint do
   )
 
   plug(Mobilizon.Web.Router)
+
+  @spec websocket_url :: String.t()
+  def websocket_url do
+    String.replace_leading(url(), "http", "ws")
+  end
 end
