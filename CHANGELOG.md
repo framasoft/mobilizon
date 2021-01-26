@@ -8,18 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added interface to approve/reject group follow requests
-- Added UI for group public Atom/ICS feeds
-- Attach ICS files representing the event to notifications and participations emails
+- **Added interface to approve/reject group follow requests**
+- **Added UI for group public RSS (Atom) / ICS feeds**
+- **Attach ICS files representing the event to notifications and participations emails**
 - Add initial support to build Elixir releases
+- Add some CSP & other security headers
 
 ### Changed
 
 - Added `<hr>` to allowed HTML tags
 - Events are now correctly ordered by their beginning date on search and group page
+- Improve resource metadata parsing by restricting OGP/Twitter metadata to an allowed list of attributes
+- Reverse proxy pictures from resource metadata (favicons & such)
 
 ### Fixed
 
+- **Fixed group remote subscription**
 - Upgrade PWA support library to avoid a call to Google CDN
 - Fixed group avatar & banner upload
 - Fixed some events not showing on homepage
@@ -28,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed ICS export timezone issues
 - Fixed remote interactions when the content was not local to the instance
 - Fixed a federation issue with group member removal
-- Fixed group remote subscription
+- Hide event organiser profile through the GraphQL API when a group is the organizer
+- Fix an issue where the event form datepickers where displayed under the address map
 
 ### Translations
 
