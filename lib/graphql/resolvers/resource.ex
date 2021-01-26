@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   alias Mobilizon.Service.RichMedia.Parser
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  alias Mobilizon.Web.MediaProxy
   import Mobilizon.Web.Gettext
 
   require Logger
@@ -210,6 +211,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to view a resource preview")}
   end
 
+  def proxyify_pictures(%Metadata{} = metadata, _args, %{
+        definition: %{schema_node: %{name: name}}
+      }) do
+    case name do
+      "image_remote_url" -> {:ok, proxify_picture(metadata.image_remote_url)}
+      "favicon_url" -> {:ok, proxify_picture(metadata.favicon_url)}
+      _ -> {:error, "Unknown field"}
+    end
+  end
+
   @spec get_eventual_parent(map()) :: Resource.t() | nil
   defp get_eventual_parent(args) do
     parent = args |> Map.get(:parent_id) |> get_parent_resource()
@@ -234,4 +245,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   defp check_resource_owned_by_group(%Resource{actor_id: actor_id}, group_id)
        when is_number(group_id),
        do: actor_id == group_id
+
+  @spec proxify_picture(String.t() | nil) :: String.t() | nil
+  defp proxify_picture(nil), do: nil
+
+  defp proxify_picture(url) do
+    MediaProxy.url(url)
+  end
 end

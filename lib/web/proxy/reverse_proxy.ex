@@ -4,16 +4,21 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/lib/pleroma/reverse_proxy.ex
 
 defmodule Mobilizon.Web.ReverseProxy do
-  @keep_req_headers ~w(accept user-agent accept-encoding cache-control
-    if-modified-since if-unmodified-since if-none-match if-range range)
-  @resp_cache_headers ~w(etag date last-modified cache-control)
-  @keep_resp_headers @resp_cache_headers ++ ~w(content-type content-disposition
-    content-encoding content-range accept-ranges vary)
+  @range_headers ~w(range if-range)
+  @keep_req_headers ~w(accept user-agent accept-encoding cache-control if-modified-since) ++
+                      ~w(if-unmodified-since if-none-match) ++ @range_headers
+  @resp_cache_headers ~w(etag date last-modified)
+  @keep_resp_headers @resp_cache_headers ++
+                       ~w(content-length content-type content-disposition content-encoding) ++
+                       ~w(content-range accept-ranges vary)
   @default_cache_control_header "public, max-age=1209600"
   @valid_resp_codes [200, 206, 304]
   @max_read_duration :timer.seconds(30)
   @max_body_length :infinity
   @methods ~w(GET HEAD)
+
+  def max_read_duration_default, do: @max_read_duration
+  def default_cache_control_header, do: @default_cache_control_header
 
   @moduledoc """
   A reverse proxy.

@@ -81,6 +81,20 @@ config :mobilizon, Mobilizon.Web.Upload,
 
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
 
+config :mobilizon, :media_proxy,
+  enabled: true,
+  proxy_opts: [
+    redirect_on_failure: false,
+    max_body_length: 25 * 1_048_576,
+    # Note: max_read_duration defaults to Mobilizon.Web.ReverseProxy.max_read_duration_default/1
+    max_read_duration: 30_000,
+    http: [
+      follow_redirect: true,
+      pool: :media
+    ]
+  ],
+  whitelist: []
+
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",

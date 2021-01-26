@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Users.User
+  alias Mobilizon.Web.MediaProxy
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
@@ -405,10 +406,10 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://joinmobilizon.org/img/icons/favicon.png"
+               MediaProxy.url("https://joinmobilizon.org/img/icons/favicon.png")
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
-               "https://joinmobilizon.org/img/opengraph/home.jpg"
+               MediaProxy.url("https://joinmobilizon.org/img/opengraph/home.jpg")
 
       assert res["data"]["createResource"]["path"] == "/#{@resource_title}"
       assert res["data"]["createResource"]["resourceUrl"] == @resource_url
@@ -461,10 +462,10 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
       assert is_nil(res["errors"])
 
       assert res["data"]["createResource"]["metadata"]["faviconUrl"] ==
-               "https://joinmobilizon.org/img/icons/favicon.png"
+               MediaProxy.url("https://joinmobilizon.org/img/icons/favicon.png")
 
       assert res["data"]["createResource"]["metadata"]["imageRemoteUrl"] ==
-               "https://joinmobilizon.org/img/opengraph/home.jpg"
+               MediaProxy.url("https://joinmobilizon.org/img/opengraph/home.jpg")
 
       assert res["data"]["createResource"]["path"] == "#{parent_path}/#{@resource_title}"
       assert res["data"]["createResource"]["resourceUrl"] == @resource_url
