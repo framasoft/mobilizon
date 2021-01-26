@@ -1340,10 +1340,14 @@ defmodule Mobilizon.Events do
   end
 
   @spec events_for_search_query(String.t()) :: Ecto.Query.t()
-  defp events_for_search_query(""), do: Event
+  defp events_for_search_query("") do
+    Event
+    |> distinct([e], e.id)
+  end
 
   defp events_for_search_query(search_string) do
     from(event in Event,
+      distinct: event.id,
       join: id_and_rank in matching_event_ids_and_ranks(search_string),
       on: id_and_rank.id == event.id
     )
