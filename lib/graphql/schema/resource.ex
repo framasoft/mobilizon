@@ -45,7 +45,12 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:type, :string, description: "The type of the resource")
     field(:title, :string, description: "The resource's metadata title")
     field(:description, :string, description: "The resource's metadata description")
-    field(:image_remote_url, :string, description: "The resource's metadata image")
+
+    field(:image_remote_url, :string,
+      description: "The resource's metadata image",
+      resolve: &Resource.proxyify_pictures/3
+    )
+
     field(:width, :integer, description: "The resource's metadata image width")
     field(:height, :integer, description: "The resource's metadata image height")
     field(:author_name, :string, description: "The resource's author name")
@@ -53,7 +58,11 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:provider_name, :string, description: "The resource's provider name")
     field(:provider_url, :string, description: "The resource's provider URL")
     field(:html, :string, description: "The resource's author name")
-    field(:favicon_url, :string, description: "The resource's favicon URL")
+
+    field(:favicon_url, :string,
+      description: "The resource's favicon URL",
+      resolve: &Resource.proxyify_pictures/3
+    )
   end
 
   object :resource_queries do
