@@ -60,19 +60,14 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
       if Config.get(:env) == :dev do
         "script-src 'self' 'unsafe-eval' 'unsafe-inline' "
       else
-        "script-src 'self' "
+        "script-src 'self' 'unsafe-eval' 'sha256-4RS22DYeB7U14dra4KcQYxmwt5HkOInieXK1NUMBmQI=' "
       end
 
     script_src = [script_src] ++ Config.get([:http_security, :csp_policy, :script_src])
 
     style_src =
-      if Config.get(:env) == :dev do
-        "style-src 'self' 'unsafe-inline' "
-      else
-        "style-src 'self' "
-      end
-
-    style_src = [style_src] ++ Config.get([:http_security, :csp_policy, :style_src])
+      ["style-src 'self' 'unsafe-inline' "] ++
+        Config.get([:http_security, :csp_policy, :style_src])
 
     font_src = ["font-src 'self' "] ++ Config.get([:http_security, :csp_policy, :font_src])
 

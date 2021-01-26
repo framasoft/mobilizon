@@ -1,10 +1,8 @@
 const path = require("path");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const webpack = require("webpack");
 
 module.exports = {
-  runtimeCompiler: true,
-  filenameHashing: true,
-  productionSourceMap: false,
   outputDir: path.resolve(__dirname, "../priv/static"),
   configureWebpack: (config) => {
     // Limit the used memory when building
@@ -26,6 +24,12 @@ module.exports = {
     forkTsCheckerOptions.memoryLimit = process.env.NODE_BUILD_MEMORY || 2048;
 
     config.plugins.push(new ForkTsCheckerWebpackPlugin(forkTsCheckerOptions));
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        global: "window", // Placeholder for global used in any node_modules
+      })
+    );
+    config.node.global = false;
   },
   chainWebpack: (config) => {
     // remove the prefetch plugin
