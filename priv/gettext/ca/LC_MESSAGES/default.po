@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 11:48+0000\n"
-"PO-Revision-Date: 2021-01-22 10:14+0000\n"
+"PO-Revision-Date: 2021-01-26 13:04+0000\n"
 "Last-Translator: fadelkon <fadelkon@posteo.net>\n"
 "Language-Team: Catalan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ca/>\n"
@@ -1333,48 +1333,67 @@ msgstr "El grup %{group} ha estat suspès a %{instance}"
 msgctxt "terms"
 msgid "By accessing or using the Service, this means you agree to be bound by all the terms below. If these terms are in any way unclear, please let us know by contacting %{contact}."
 msgstr ""
+"Accedint o usant el Servei, confirmes implícitament que et compromets a les "
+"condicions següents. Si les condicions no et resulten clares, contacta a "
+"%{contact}."
 
 #: lib/web/templates/api/terms.html.eex:40
 #, elixir-format
 msgctxt "terms"
 msgid "For information about how we collect and use information about users of the Service, please check our <a href=\"/privacy\">privacy policy</a>."
 msgstr ""
+"Pots obtenir més informació sobre com recollim i usem informació de les "
+"persones usuàries del servei a <a href=\"/privacy\">la nostra política de "
+"privacitat</a>."
 
 #: lib/web/templates/api/terms.html.eex:36
 #, elixir-format
 msgctxt "terms"
 msgid "If you continue to use the Service after the revised Terms go into effect, you accept the revised Terms."
 msgstr ""
+"Continuar fent servir el Servei després que les Condicions revisades hagin "
+"entrat en vigor, implica l'acceptació d'aquestes noves Condicions."
 
 #: lib/web/templates/api/privacy.html.eex:78
 #, elixir-format
 msgctxt "terms"
 msgid "If you delete this information, you need to login again."
-msgstr ""
+msgstr "Si esborres aquesta informació hauràs de tornar a iniciar sessió."
 
 #: lib/web/templates/api/privacy.html.eex:80
 #, elixir-format
 msgctxt "terms"
 msgid "If you're not connected, we don't store any information on your device, unless you participate in an event anonymously. In this specific case we store the hash of an unique identifier for the event and participation status in your browser so that we may display participation status. Deleting this information will only stop displaying participation status in your browser."
 msgstr ""
+"Si no estat connectat, no emmagatzemem cap informació en el teu dispositiu, "
+"tret que participis anònimament en una activitat. En aquest cas específic, "
+"desem el resum (hash) d'un identificador únic de l'activitat i el teu estat "
+"d'assistència en el navegador, de manera que ho puguem mostrar sense que "
+"tinguis cap sessió oberta. L'única conseqüència d'esborrar aquesta "
+"informació és que deixarem de mostrar el teu estat d'assistència en el teu "
+"navegador."
 
 #: lib/web/templates/api/privacy.html.eex:87
 #, elixir-format
 msgctxt "terms"
 msgid "Note: This information is stored in your localStorage and not your cookies."
 msgstr ""
+"Nota: Aquesta informació es desa en l'emmagatzematge local (local storage) i "
+"no en les cookies."
 
 #: lib/web/templates/api/terms.html.eex:71
 #, elixir-format
 msgctxt "terms"
 msgid "Our responsibility"
-msgstr ""
+msgstr "La nostra responsabilitat"
 
 #: lib/web/templates/api/privacy.html.eex:61
 #, elixir-format
 msgctxt "terms"
 msgid "Retain server logs containing the IP address of all requests to this server, insofar as such logs are kept, no more than 90 days."
 msgstr ""
+"Retenir registres del sistema que continguin l'adreça IP de totes les "
+"peticions en aquest servidor, si és que se'n desen, no més de 90 dies."
 
 #: lib/web/templates/api/privacy.html.eex:3
 #: lib/web/templates/api/terms.html.eex:15
@@ -1382,12 +1401,18 @@ msgstr ""
 msgctxt "terms"
 msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better."
 msgstr ""
+"Algunes condicions que apareixen seguidament, siguin tècniques o d'altra "
+"mena, cobreixen conceptes que poden ser difícils d'entendre. Proporcionem un "
+"<a href=\"/glossary\">glossari</a> per ajudar-te a entendre-les millor."
 
 #: lib/web/templates/api/terms.html.eex:45
 #, elixir-format
 msgctxt "terms"
 msgid "We are not liable for any loss you may incur as a result of someone else using your email or password, either with or without your knowledge."
 msgstr ""
+"No som responsables de qualsevol pèrdua que pateixis com a resultat que algú "
+"altre faci servir el teu correu o contrasenya, amb el teu coneixement o "
+"sense."
 
 #: lib/web/templates/api/terms.html.eex:50
 #, elixir-format
@@ -1559,22 +1584,22 @@ msgstr "Activitat"
 #: lib/web/templates/email/event_updated.html.eex:38
 #, elixir-format
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
-msgstr ""
+msgstr "Hem pensat d'avisar-te dels canvis que hi ha hagut a <b>%{title}</b>."
 
 #: lib/web/templates/error/500_page.html.eex:46
 #, elixir-format
 msgid "The Mobilizon server seems to be temporarily down."
-msgstr ""
+msgstr "Sembla ser que el servidor de Mobilizon està temporalment inaccessible."
 
 #: lib/web/templates/error/500_page.html.eex:7
 #, elixir-format
 msgid "This page is not correct"
-msgstr ""
+msgstr "La pàgina no és correcta"
 
 #: lib/web/templates/error/500_page.html.eex:45
 #, elixir-format
 msgid "We're sorry, but something went wrong on our end."
-msgstr ""
+msgstr "Ho sentim, s'ha produït un error al nostre costat."
 
 #: lib/web/templates/email/email.html.eex:88
 #: lib/web/templates/email/email.text.eex:4
@@ -1585,19 +1610,19 @@ msgstr "Aquesta és una web de proves per provar la beta de Mobilizon."
 #: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
 #, elixir-format
 msgid "%{name}'s feed"
-msgstr ""
+msgstr "El flux de %{name}"
 
 #: lib/service/export/feed.ex:77
 #, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
-msgstr ""
+msgstr "El flux d'activitats privades de %{actor} a %{instance}"
 
 #: lib/service/export/feed.ex:72
 #, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
-msgstr ""
+msgstr "El flux d'activitats públiques de %{actor} a %{instance}"
 
 #: lib/service/export/feed.ex:203
 #, elixir-format
 msgid "Feed for %{email} on %{instance}"
-msgstr ""
+msgstr "Flux de %{email} a %{instance}"
