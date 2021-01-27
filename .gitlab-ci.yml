@@ -205,15 +205,13 @@ build-docker-tag:
 
 package-app:
   stage: package
-  before_script:
-    - apt update
-    - apt install -y --no-install-recommends build-essential git cmake
   variables:
     MIX_ENV: "prod"
   script:
     - mix local.hex --force
     - mix local.rebar --force
     - cp docker/production/releases.exs ./config/
+    - mix deps.get
     - mix phx.digest
     - mix release
   artifacts:
