@@ -285,7 +285,8 @@ config :mobilizon, Oban,
        # To be activated in Mobilizon 1.2
        # {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background}
-     ]}
+     ]},
+    {Oban.Plugins.Pruner, max_age: 300}
   ]
 
 config :mobilizon, :rich_media,
