@@ -4,6 +4,7 @@ defmodule Mobilizon.Web.Endpoint do
   """
   use Phoenix.Endpoint, otp_app: :mobilizon
   use Absinthe.Phoenix.Endpoint
+  use Sentry.Phoenix.Endpoint
 
   plug(Mobilizon.Web.Plugs.SetLocalePlug)
   plug(Mobilizon.Web.Plugs.HTTPSecurityPlug)
