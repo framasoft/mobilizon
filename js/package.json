@@ -40,7 +40,7 @@
     "register-service-worker": "^1.7.1",
     "tippy.js": "^6.2.3",
     "tiptap": "^1.31.0",
-    "tiptap-extensions": "^1.34.0",
+    "tiptap-extensions": "^1.35.0",
     "unfetch": "^4.2.0",
     "v-tooltip": "^2.1.2",
     "vue": "^2.6.11",
