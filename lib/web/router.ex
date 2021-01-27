@@ -3,6 +3,8 @@ defmodule Mobilizon.Web.Router do
   Router for mobilizon app
   """
   use Mobilizon.Web, :router
+  use Plug.ErrorHandler
+  use Sentry.Plug
 
   pipeline :graphql do
     #    plug(:accepts, ["json"])
