@@ -277,12 +277,15 @@ config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   log: false,
   queues: [default: 10, search: 5, mailers: 10, background: 5],
-  crontab: [
-    {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
-    {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
-    # To be activated in Mobilizon 1.2
-    # {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
-    {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background}
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
+       {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
+       # To be activated in Mobilizon 1.2
+       # {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
+       {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background}
+     ]}
   ]
 
 config :mobilizon, :rich_media,

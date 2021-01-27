@@ -53,7 +53,7 @@ config :tesla, Mobilizon.Service.HTTP.GeospatialClient,
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 
-config :mobilizon, Oban, queues: false, crontab: false, plugins: false
+config :mobilizon, Oban, queues: false, plugins: false
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
 
