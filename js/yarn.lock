@@ -12294,10 +12294,10 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-i18n-extract@^1.0.2:
-  version "1.1.10"
-  resolved "https://registry.yarnpkg.com/vue-i18n-extract/-/vue-i18n-extract-1.1.10.tgz#5b5e0f76830a561ab8dbaf1117a8725d8e7d877c"
-  integrity sha512-DYqcjrAm4L95Ftz8AVIzUyrHCBQV326rbOru6B3W2vXHIzUUuJwwFgyVPE+d7YTeHD189eoOkRu0aL6EzeMWZQ==
+vue-i18n-extract@^1.1.11:
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/vue-i18n-extract/-/vue-i18n-extract-1.1.11.tgz#4c27f32a25639e22714ab885443a1b4cbc41615f"
+  integrity sha512-CYblIKYrqvQkVH2VPPmCiz7k3OJo2F97bBFve1c/zcTPjAI42AJEFO2t6Yei8TWbwsIl6/wh18N9+g3pO2TvIA==
   dependencies:
     commander "^6.1.0"
     dot-object "^2.1.4"
