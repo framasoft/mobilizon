@@ -92,8 +92,7 @@ config :mobilizon, :media_proxy,
       follow_redirect: true,
       pool: :media
     ]
-  ],
-  whitelist: []
+  ]
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
