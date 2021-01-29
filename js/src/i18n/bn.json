@@ -1,6 +1,27 @@
 {
+  "About": "সম্পর্কে",
   "Accepted": "অনুমদিত",
   "Account": "অ্",
   "Add": "যোগ",
-  "Admin": "অ্যাড"
+  "Admin": "অ্যাড",
+  "Administration": "কর্তৃপক্ষ",
+  "Cancel": "বাতিল",
+  "Change": "পরিবর্তন",
+  "Clear": "পরিষ্কার",
+  "Close": "বন্ধ",
+  "Closed": "বন্ধকৃত",
+  "Comments": "মতামত",
+  "Country": "দেশ",
+  "Create": "বানাও",
+  "Custom": "আলাদা",
+  "Dashboard": "মূলপাতা",
+  "Date": "তারিখ",
+  "Default": "মূল",
+  "Delete": "মুছো",
+  "Description": "বিস্তারিত",
+  "Domain": "ডোমেইন",
+  "Draft": "খসড়া",
+  "Drafts": "খসড়াসমূহ",
+  "Edit": "সম্পাদন",
+  "Email": "ইমেইল"
 }
