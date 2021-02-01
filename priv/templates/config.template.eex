@@ -3,6 +3,7 @@
 import Config
 
 config :mobilizon, Mobilizon.Web.Endpoint,
+   server: true,
    url: [host: "<%= instance_domain %>"],
    http: [port: <%= listen_port %>],
    secret_key_base: "<%= instance_secret %>"

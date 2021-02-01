@@ -17,3 +17,4 @@ SECURITY.md
 ssh_match_hostname
 support
 .js/package-lock.json
+js/node_modules
