@@ -125,9 +125,9 @@
                     <b-icon icon="link" />
                   </p>
                 </template>
-                <template v-if="!event.local">
+                <template v-if="!event.local && organizer">
                   <a :href="event.url">
-                    <tag>{{ event.organizerActor.domain }}</tag>
+                    <tag>{{ organizer.domain }}</tag>
                   </a>
                 </template>
                 <p>
@@ -443,7 +443,7 @@
           <report-modal
             :on-confirm="reportEvent"
             :title="$t('Report this event')"
-            :outside-domain="domainForReport"
+            :outside-domain="organizerDomain"
             @close="$refs.reportModal.close()"
           />
         </b-modal>
@@ -959,7 +959,7 @@ export default class Event extends EventMixin {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.$refs.reportModal.close();
-    if (!this.event.organizerActor) return;
+    if (!this.organizer) return;
     const eventTitle = this.event.title;
 
     try {
@@ -967,7 +967,7 @@ export default class Event extends EventMixin {
         mutation: CREATE_REPORT,
         variables: {
           eventId: this.event.id,
-          reportedId: this.actorForReport ? this.actorForReport.id : null,
+          reportedId: this.organizer ? this.organizer.id : null,
           content,
           forward,
         },
@@ -1240,7 +1240,7 @@ export default class Event extends EventMixin {
     );
   }
 
-  get actorForReport(): IActor | null {
+  get organizer(): IActor | null {
     if (this.event.attributedTo && this.event.attributedTo.id) {
       return this.event.attributedTo;
     }
@@ -1250,9 +1250,9 @@ export default class Event extends EventMixin {
     return null;
   }
 
-  get domainForReport(): string | null {
-    if (this.actorForReport) {
-      return this.actorForReport.domain;
+  get organizerDomain(): string | null {
+    if (this.organizer) {
+      return this.organizer.domain;
     }
     return null;
   }
