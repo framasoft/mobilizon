@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <b-loading :active.sync="$apollo.loading" />
     <transition appear name="fade" mode="out-in">
       <div>
         <div

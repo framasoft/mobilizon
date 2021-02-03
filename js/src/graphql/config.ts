@@ -112,6 +112,15 @@ export const ABOUT = gql`
   }
 `;
 
+export const CONTACT = gql`
+  query Contact {
+    config {
+      name
+      contact
+    }
+  }
+`;
+
 export const RULES = gql`
   query Rules {
     config {
