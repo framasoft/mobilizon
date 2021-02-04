@@ -710,6 +710,8 @@ defmodule Mobilizon.Federation.ActivityPub do
       Relay.publish(activity)
     end
 
+    recipients = Enum.uniq(recipients)
+
     {recipients, followers} = convert_followers_in_recipients(recipients)
 
     {recipients, members} = convert_members_in_recipients(recipients)

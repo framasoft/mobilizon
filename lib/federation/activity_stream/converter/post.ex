@@ -34,10 +34,20 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   @impl Converter
   @spec model_to_as(Post.t()) :: map
   def model_to_as(
-        %Post{author: %Actor{url: actor_url}, attributed_to: %Actor{url: creator_url}} = post
+        %Post{
+          author: %Actor{url: actor_url},
+          attributed_to: %Actor{url: creator_url, followers_url: followers_url}
+        } = post
       ) do
+    to =
+      if post.visibility == :public,
+        do: ["https://www.w3.org/ns/activitystreams#Public"],
+        else: [followers_url]
+
     %{
       "type" => "Article",
+      "to" => to,
+      "cc" => [],
       "actor" => actor_url,
       "id" => post.url,
       "name" => post.title,

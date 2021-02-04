@@ -94,18 +94,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     to =
       if event.visibility == :public,
         do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [event.organizer_actor.followers_url]
+        else: [attributed_to_or_default(event).followers_url]
 
     %{
       "type" => "Event",
       "to" => to,
       "cc" => [],
-      "attributedTo" =>
-        if(is_nil(event.attributed_to) or not Ecto.assoc_loaded?(event.attributed_to),
-          do: nil,
-          else: event.attributed_to.url
-        ) ||
-          event.organizer_actor.url,
+      "attributedTo" => attributed_to_or_default(event).url,
       "name" => event.title,
       "actor" =>
         if(Ecto.assoc_loaded?(event.organizer_actor), do: event.organizer_actor.url, else: nil),
@@ -133,6 +128,15 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     |> maybe_add_event_picture(event)
     |> maybe_add_online_address(event)
     |> maybe_add_inline_media(event)
+  end
+
+  @spec attributed_to_or_default(Event.t()) :: Actor.t()
+  defp attributed_to_or_default(event) do
+    if(is_nil(event.attributed_to) or not Ecto.assoc_loaded?(event.attributed_to),
+      do: nil,
+      else: event.attributed_to
+    ) ||
+      event.organizer_actor
   end
 
   # Get only elements that we have in EventOptions

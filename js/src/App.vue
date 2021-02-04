@@ -20,7 +20,9 @@
         </p>
       </b-message>
     </div>
-    <main>
+    <error v-if="error" :error="error" />
+
+    <main v-else>
       <transition name="fade" mode="out-in">
         <router-view />
       </transition>
@@ -57,6 +59,8 @@ import { ICurrentUser } from "./types/current-user.model";
   components: {
     Logo,
     NavBar,
+    error: () =>
+      import(/* webpackChunkName: "editor" */ "./components/Error.vue"),
     "mobilizon-footer": Footer,
   },
 })
@@ -65,10 +69,16 @@ export default class App extends Vue {
 
   currentUser!: ICurrentUser;
 
+  error: Error | null = null;
+
   async created(): Promise<void> {
     if (await this.initializeCurrentUser()) {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);
     }
+  }
+
+  errorCaptured(error: Error): void {
+    this.error = error;
   }
 
   private async initializeCurrentUser() {
