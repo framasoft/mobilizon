@@ -1,5 +1,5 @@
 # First build the application assets
-FROM node:alpine as assets
+FROM node:14-alpine as assets
 
 RUN apk add --no-cache python build-base libwebp-tools bash imagemagick ncurses
 
@@ -8,7 +8,7 @@ RUN yarn install \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:alpine AS builder
+FROM elixir:1.11-alpine AS builder
 
 RUN apk add --no-cache build-base git cmake
 
