@@ -141,7 +141,7 @@ defmodule Mobilizon.Mixfile do
       {:remote_ip, "~> 0.2.0"},
       {:ex_cldr_languages, "~> 0.2.1"},
       {:slugger, "~> 0.3"},
-      {:sentry, "~> 7.0"},
+      {:sentry, "~> 8.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
