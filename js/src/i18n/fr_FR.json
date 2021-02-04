@@ -931,5 +931,19 @@
   "No follower matches the filters": "Aucun⋅e abonné⋅e ne correspond aux filtres",
   "@{username}'s follow request was rejected": "La demande de suivi de @{username} a été rejettée",
   "Followers will receive new public events and posts.": "Les abonnée⋅s recevront les nouveaux événements et billets publics.",
-  "Manually approve new followers": "Approuver les nouvelles demandes de suivi manuellement"
+  "Manually approve new followers": "Approuver les nouvelles demandes de suivi manuellement",
+  "An error has occured. Sorry about that. You may try to reload the page.": "Une erreur est survenue. Nous en sommes désolé⋅es. Vous pouvez essayer de rafraîchir la page.",
+  "What can I do to help?": "Que puis-je faire pour aider ?",
+  "We improve this software thanks to your feedback. To let us know about this issue, two possibilities (both unfortunately require user account creation):": "Nous améliorons ce logiciel grâce à vos retours. Pour nous avertir de ce problème, vous avez deux possibilités (les deux requièrent toutefois la création d'un compte) :",
+  "Please add as many details as possible to help identify the problem.": "Merci d'ajouter un maximum de détails afin d'aider à identifier le problème.",
+  "Technical details": "Détails techniques",
+  "Error message": "Message d'erreur",
+  "Error stacktrace": "Trace d'appels de l'erreur",
+  "The technical details of the error can help developers solve the problem more easily. Please add them to your feedback.": "Les détails techniques de l'erreur peuvent aider les développeur⋅ices à résoudre le problème plus facilement. Merci de les inclure dans vos retours.",
+  "Error details copied!": "Détails de l'erreur copiés !",
+  "Copy details to clipboard": "Copier les détails dans le presse-papiers",
+  "{instanceName} is an instance of {mobilizon_link}, a free software built with the community.": "{instanceName} est une instance de {mobilizon_link}, un logiciel libre construit de manière communautaire.",
+  "Open a topic on our forum": "Ouvrir un sujet sur notre forum",
+  "Open an issue on our bug tracker (advanced users)": "Ouvrir un ticket sur notre système de suivi des bugs (utilisateur⋅ices avancé⋅es)",
+  "Unable to copy to clipboard": "Impossible de copier dans le presse-papiers"
 }

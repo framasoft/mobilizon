@@ -127,7 +127,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   def maybe_relay_if_group_activity(activity, attributed_to \\ nil)
 
   def maybe_relay_if_group_activity(
-        %Activity{local: false, data: %{"object" => object}},
+        %Activity{data: %{"object" => object}},
         _attributed_to
       )
       when is_map(object) do
@@ -136,7 +136,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   # When doing a delete the object is just an AP ID string, so we pass the attributed_to actor as well
   def maybe_relay_if_group_activity(
-        %Activity{local: false, data: %{"object" => object}},
+        %Activity{data: %{"object" => object}},
         %Actor{url: attributed_to_url}
       )
       when is_binary(object) do
@@ -421,7 +421,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
          ["https://www.w3.org/ns/activitystreams#Public"]}
       else
         if actor_type == :Group do
-          {[actor.members_url], []}
+          {[actor.followers_url, actor.members_url], []}
         else
           {[actor.followers_url], []}
         end
