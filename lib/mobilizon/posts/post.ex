@@ -56,7 +56,7 @@ defmodule Mobilizon.Posts.Post do
     field(:title, :string)
     field(:url, :string)
     field(:publish_at, :utc_datetime)
-    field(:visibility, PostVisibility, default_value: :public)
+    field(:visibility, PostVisibility, default: :public)
     belongs_to(:author, Actor)
     belongs_to(:attributed_to, Actor)
     belongs_to(:picture, Media, on_replace: :update)
