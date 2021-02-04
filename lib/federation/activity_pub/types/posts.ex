@@ -2,6 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   @moduledoc false
   alias Mobilizon.{Actors, Posts, Tombstone}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -19,15 +20,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
            Posts.create_post(args),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
+         %Actor{} = creator <- Actors.get_actor(creator_id),
          post_as_data <-
            Convertible.model_to_as(%{post | attributed_to: group, author: creator}),
-         audience <- %{
-           "to" => [group.members_url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         } do
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(post) do
       create_data = make_create_data(post_as_data, Map.merge(audience, additional))
 
       {:ok, post, create_data}
@@ -44,16 +41,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
            Posts.update_post(post, args),
          {:ok, true} <- Cachex.del(:activity_pub, "post_#{post.slug}"),
-         {:ok, %Actor{url: group_url} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
+         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+         %Actor{} = creator <- Actors.get_actor(creator_id),
          post_as_data <-
            Convertible.model_to_as(%{post | attributed_to: group, author: creator}),
-         audience <- %{
-           "to" => [group.members_url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [group_url]
-         } do
+         audience <-
+           Audience.calculate_to_and_cc_from_mentions(post) do
       update_data = make_update_data(post_as_data, Map.merge(audience, additional))
 
       {:ok, post, update_data}
