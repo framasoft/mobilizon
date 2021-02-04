@@ -941,7 +941,7 @@ export default class Event extends EventMixin {
       });
     });
 
-    this.$on("eventDeleted", () => {
+    this.$on("event-deleted", () => {
       return this.$router.push({ name: RouteName.HOME });
     });
   }
