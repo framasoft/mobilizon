@@ -320,11 +320,9 @@ export default class CommentTree extends Vue {
   }
 
   get isEventOrganiser(): boolean {
-    return (
-      this.currentActor.id !== undefined &&
-      this.event.organizerActor !== undefined &&
-      this.currentActor.id === this.event.organizerActor.id
-    );
+    const organizerId =
+      this.event?.organizerActor?.id || this.event?.attributedTo?.id;
+    return organizerId !== undefined && this.currentActor?.id === organizerId;
   }
 
   get areCommentsClosed(): boolean {
@@ -335,7 +333,7 @@ export default class CommentTree extends Vue {
   }
 
   get isAbleToComment(): boolean {
-    if (this.currentActor && this.currentActor.id) {
+    if (this.currentActor?.id) {
       return this.areCommentsClosed || this.isEventOrganiser;
     }
     return false;
