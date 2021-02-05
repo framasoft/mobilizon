@@ -579,7 +579,7 @@ export default class EditEvent extends Vue {
   }
 
   private getDefaultActor() {
-    if (this.event.organizerActor && this.event.organizerActor.id) {
+    if (this.event.organizerActor?.id) {
       return this.event.organizerActor;
     }
     return this.currentActor;
@@ -725,7 +725,7 @@ export default class EditEvent extends Vue {
   get isCurrentActorOrganizer(): boolean {
     return !(
       this.eventId &&
-      this.event.organizerActor &&
+      this.event.organizerActor?.id !== undefined &&
       this.currentActor.id !== this.event.organizerActor.id
     ) as boolean;
   }
@@ -822,19 +822,17 @@ export default class EditEvent extends Vue {
   }
 
   get attributedToEqualToOrganizerActor(): boolean {
-    return (this.event.organizerActor &&
-      this.event.attributedTo &&
-      this.event.attributedTo.id === this.event.organizerActor.id) as boolean;
+    return (this.event.organizerActor?.id !== undefined &&
+      this.event.attributedTo?.id === this.event.organizerActor?.id) as boolean;
   }
 
   /**
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
-    this.event.organizerActor =
-      this.event.organizerActor && this.event.organizerActor.id
-        ? this.event.organizerActor
-        : this.currentActor;
+    this.event.organizerActor = this.event.organizerActor?.id
+      ? this.event.organizerActor
+      : this.currentActor;
     let res = this.event.toEditJSON();
     if (this.event.organizerActor) {
       res = Object.assign(res, {

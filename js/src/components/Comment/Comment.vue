@@ -296,11 +296,9 @@ export default class Comment extends Vue {
   }
 
   get commentFromOrganizer(): boolean {
-    return (
-      this.event.organizerActor !== undefined &&
-      this.comment.actor != null &&
-      this.comment.actor.id === this.event.organizerActor.id
-    );
+    const organizerId =
+      this.event?.organizerActor?.id || this.event?.attributedTo?.id;
+    return organizerId !== undefined && this.comment?.actor?.id === organizerId;
   }
 
   get commentId(): string {
