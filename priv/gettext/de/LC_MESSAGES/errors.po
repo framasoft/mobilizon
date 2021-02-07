@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-02-07 11:14+0000\n"
+"PO-Revision-Date: 2021-02-08 11:01+0000\n"
 "Last-Translator: Valentin Bachem <vbachem@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
@@ -70,8 +70,8 @@ msgstr[1] "sollte mindestens %{count} Artikel haben"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] "sollte höchstens  %{count} Zeichen haben"
-msgstr[1] "sollte höchstens  %{count} Zeichen haben"
+msgstr[0] "sollte höchstens ein Zeichen haben"
+msgstr[1] "sollte höchstens %{count} Zeichen haben"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
