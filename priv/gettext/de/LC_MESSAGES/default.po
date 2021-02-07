@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-02-07 11:14+0000\n"
+"PO-Revision-Date: 2021-02-08 11:01+0000\n"
 "Last-Translator: Valentin Bachem <vbachem@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -36,7 +36,7 @@ msgstr "Mein Konto aktivieren"
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr "Frag die Gemeinschaft auf Framacolibri"
+msgstr "Richte deine Fragen an die Gemeinschaft auf Framacolibri"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-format
@@ -158,7 +158,7 @@ msgstr "Meine Teilnahme an der Veranstaltung %{title} zusagen"
 #, elixir-format
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
-msgstr "Eine interne ID für deine derzeitig ausgewählte Identität."
+msgstr "Eine interne ID für deine aktuell ausgewählte Identität"
 
 #: lib/web/templates/api/privacy.html.eex:74
 #, elixir-format
@@ -235,8 +235,8 @@ msgstr "Tokens, um dich zu authentifizieren"
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
-"Wir können auch Serverprotokolle aufbewahren, die die IP-Adresse jeder "
-"Anfrage an unseren Server enthalten."
+"Wir können auch Serverprotokolle mit den IP-Adressen der Anfragen an unseren "
+"Server aufbewahren."
 
 #: lib/web/templates/api/privacy.html.eex:70
 #, elixir-format
@@ -329,8 +329,10 @@ msgid "The email address you provide may be used to send you information, update
 msgstr ""
 "Die von Ihnen angegebene E-Mail-Adresse kann verwendet werden, um Ihnen "
 "Informationen, Updates und Benachrichtigungen über andere Personen zu senden "
+"\n"
 "die mit Ihren Inhalten interagieren oder Ihnen Nachrichten senden, sowie zur "
-"Beantwortung von Anfragen, und/oder anderen Bitten oder Fragen."
+"Beantwortung von Anfragen, und/oder anderen Bitten oder \n"
+"Fragen."
 
 #: lib/web/templates/api/privacy.html.eex:45
 #, elixir-format
@@ -568,7 +570,7 @@ msgstr "Gesamte Vereinbarung"
 #, elixir-format
 msgctxt "terms"
 msgid "Feedback"
-msgstr "Feedback"
+msgstr "Rückmeldung"
 
 #: lib/web/templates/api/terms.html.eex:83
 #, elixir-format
@@ -626,10 +628,10 @@ msgstr "Dauer"
 msgctxt "terms"
 msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
 msgstr ""
-"den Dienst in einer Weise zu nutzen, die andere Nutzer stören, unterbrechen, "
-"negativ beeinflussen oder daran hindern könnte, den Dienst in vollem Umfang "
-"zu genießen, oder die die Funktion des Dienstes beschädigen, deaktivieren, "
-"überlasten oder beeinträchtigen könnte;"
+"Benutze unseren Dienst in einer Weise, die andere Nutzer nicht stören, "
+"unterbrechen, negativ beeinflussen oder daran hindern könnte, den Dienst in "
+"vollem Umfang zu genießen. Oder die Funktion des Dienstes beschädigen, "
+"deaktivieren, überlasten oder beeinträchtigen könnte;"
 
 #: lib/web/templates/api/terms.html.eex:47
 #, elixir-format
@@ -929,13 +931,13 @@ msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
 #, elixir-format
 msgid "You created an account on <b>%{host}</b> with this email address. You are one click away from activating it."
 msgstr ""
-"Du hast einen Account auf %{host} mit dieser E-Mail-Adresse. Du bist nur ein "
-"Klick von der Aktivierung entfernt."
+"Du hast einen Account auf <b>%{host}</b> mit dieser E-Mail-Adresse. Du bist "
+"nur ein Klick von der Aktivierung entfernt."
 
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr "Neue Meldung auf %{instance}"
+msgstr "Neue Meldung auf <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #, elixir-format
@@ -946,7 +948,8 @@ msgstr "Die E-Mail-Adresse für Ihr Konto auf <b>%{host}</b> wird geändert in:"
 #, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr ""
-"Du hast ein neues Passwort für deinen Account auf %{instance} angefragt."
+"Du hast ein neues Passwort für deinen Account auf <b>%{instance}</b> "
+"angefragt."
 
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-format
@@ -962,11 +965,12 @@ msgstr "Bitte verwenden Sie es nicht für reale Zwecke."
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
-"Wenn Du deine Teilnahme absagen musst, gehe einfach über obenstehenden Link "
+"Wenn Du die Teilnahme absagen musst, gehe einfach über obenstehenden Link "
 "auf die Veranstaltungs-Seite und klicke auf den Teilnahme-Button."
 msgstr[1] ""
-"Wenn Du deine Teilnahme absagen musst, gehe einfach über obenstehenden Link "
-"auf die Veranstaltungs-Seite und klicke auf den Teilnahme-Button."
+"Wenn Du die Teilnahme für ein oder mehrere Veranstaltungen absagen musst, "
+"gehe einfach über obenstehenden Link auf die Veranstaltungs-Seite und klicke "
+"auf den Teilnahme-Button."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:38
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
@@ -984,7 +988,7 @@ msgstr "%{instance} ist ein Mobilizon-Server."
 #: lib/web/templates/email/email.html.eex:142
 #, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
-msgstr "%{instance} ist ein Mobilizon-Server."
+msgstr "<b>%{instance}</b> ist ein Mobilizon-Server."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:13
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
@@ -1087,7 +1091,7 @@ msgstr ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "Learn more about Mobilizon here!"
-msgstr "Lerne mehr über Mobilizon."
+msgstr "Lerne mehr über Mobilizon!"
 
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
@@ -1133,7 +1137,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr "Entschuldigen Sie! Sie sind nicht dabei."
+msgstr "Schade! Sie sind nicht dabei."
 
 #: lib/web/templates/email/event_updated.html.eex:74
 #, elixir-format
@@ -1149,8 +1153,8 @@ msgstr "Start %{begins_on}"
 #, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr ""
-"Es haben sich Änderungen für %{title} daher dachten wir, wir lassen es Sie "
-"wissen."
+"Es gibt Änderungen für %{title}. Wir dachten daher, das könnte für Dich "
+"interessant sein."
 
 #: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
@@ -1170,8 +1174,8 @@ msgstr "Veranstaltung wurde bestätigt"
 #, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
-"Diese Veranstaltung muss noch bestätigt werden: Die Organisatoren werden Sie "
-"informieren, wenn sie sie bestätigen."
+"Diese Veranstaltung muss noch bestätigt werden: Die Organisatorinnen werden "
+"Dich nach der Bestätigung informieren."
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:45
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
@@ -1192,7 +1196,7 @@ msgstr "Meldung ansehen"
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
 msgid "View report:"
-msgstr "Meldung ansehen"
+msgstr "Meldung ansehen:"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
@@ -1432,9 +1436,8 @@ msgstr "Unsere Verantwortung"
 msgctxt "terms"
 msgid "Retain server logs containing the IP address of all requests to this server, insofar as such logs are kept, no more than 90 days."
 msgstr ""
-"Bewahren Sie Serverprotokolle, die die IP-Adresse aller Anfragen an diesen "
-"Server enthalten, sofern solche Protokolle geführt werden, nicht länger als "
-"90 Tage auf."
+"Serverprotokolle mit den IP-Adressen aller Anfragen an diesen Server werden "
+"nach 90 Tagen gelöscht, sofern solche Protokolle geführt werden."
 
 #: lib/web/templates/api/privacy.html.eex:3
 #: lib/web/templates/api/terms.html.eex:15
@@ -1556,10 +1559,10 @@ msgstr ""
 msgctxt "terms"
 msgid "Your content may be downloaded by other instances in the network. Your public events and comments are delivered to the instances following your own instance. Content created through a group is forwarded to all the instances of all the members of the group, insofar as these members reside on a different instance than this one."
 msgstr ""
-"Ihre Inhalte können von anderen Instanzen im Netzwerk heruntergeladen "
-"werden. Ihre öffentlichen Ereignisse und Kommentare werden an die Instanzen "
-"geliefert, die Ihrer eigenen Instanz folgen. Inhalte, die über eine Gruppe "
-"erstellt werden, werden an alle Instanzen aller Mitglieder der Gruppe "
+"Deine Inhalte können von anderen Instanzen im Netzwerk heruntergeladen "
+"werden. Deine öffentlichen Veranstaltungen und Kommentare werden an die "
+"Instanzen ausgeliefert, die Deiner Instanz folgen. Inhalte, die über eine "
+"Gruppe erstellt wurden, werden an alle Instanzen aller Mitglieder der Gruppe "
 "weitergeleitet, sofern sich diese Mitglieder auf einer anderen Instanz als "
 "dieser befinden."
 
@@ -1574,7 +1577,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.html.eex:38
 #, elixir-format
 msgid "You recently requested to attend <b>%{title}</b>."
-msgstr "Du hast angefragt, an der Veranstaltung %{title} teilzunehmen."
+msgstr "Du hast angefragt, an der Veranstaltung <b>%{title}</b> teilzunehmen."
 
 #: lib/web/email/participation.ex:91
 #, elixir-format
@@ -1584,8 +1587,7 @@ msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde akzeptiert"
 #: lib/web/templates/email/report.html.eex:41
 #, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr ""
-"%{reporter_name} (%{reporter_username}) hat den folgenden Inhalt gemeldet."
+msgstr "<b>%{reporter}</b> hat den folgenden Inhalt gemeldet."
 
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-format
@@ -1703,8 +1705,8 @@ msgstr "Veranstaltung"
 #, elixir-format
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""
-"Es gibt Änderungen für <b>%{title}</b>, also dachten wir, wir lassen Sie das "
-"wissen."
+"Es gibt Änderungen für <b>%{title}</b>, also dachten wir, das ist für Dich "
+"interessant."
 
 #: lib/web/templates/error/500_page.html.eex:46
 #, elixir-format
@@ -1745,4 +1747,4 @@ msgstr "Öffentlicher Veranstaltungsfeed von %{actor} auf %{instance}"
 #: lib/service/export/feed.ex:203
 #, elixir-format
 msgid "Feed for %{email} on %{instance}"
-msgstr ""
+msgstr "Feed für %{email} auf %{instance}"
