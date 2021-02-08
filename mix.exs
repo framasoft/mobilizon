@@ -121,7 +121,7 @@ defmodule Mobilizon.Mixfile do
       {:ex_optimizer, "~> 0.1"},
       {:progress_bar, "~> 2.0"},
       {:oban, "~> 2.2"},
-      {:floki, "~> 0.29.0"},
+      {:floki, "~> 0.30.0"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
       {:ueberauth, "~> 0.6"},
