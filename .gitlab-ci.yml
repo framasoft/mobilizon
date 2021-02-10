@@ -205,18 +205,32 @@ build-docker-tag:
 
 package-app:
   stage: package
-  variables:
+  variables: &release-variables
     MIX_ENV: "prod"
-  script:
+  script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
     - mix deps.get
     - mix phx.digest
-    - mix release
+    - mix release --path release
+    - cd release && ln -s lib/mobilizon-*/priv priv
+  only:
+    - tags@framasoft/mobilizon
+  artifacts:
+    expire_in: never
+    paths:
+      - release
+
+package-app-dev:
+  stage: package
+  variables: *release-variables
+  script: *release-script
+  except:
+    - tags@framasoft/mobilizon
   artifacts:
     expire_in: 2 days
     paths:
-      - _build/prod/rel
+      - release
 
 release-upload:
   stage: upload
