@@ -15,10 +15,11 @@ originId
 `;
 
 export const ADDRESS = gql`
-    query($query:String!, $locale: String) {
+    query($query:String!, $locale: String, $type: AddressSearchType) {
         searchAddress(
             query: $query,
-            locale: $locale
+            locale: $locale,
+            type: $type
         ) {
             ${$addressFragment}
         }

@@ -40,7 +40,6 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   @spec build_url(atom(), map(), list()) :: String.t()
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
-    coords = Keyword.get(options, :coords, nil)
     endpoint = Keyword.get(options, :endpoint, @endpoint)
 
     case method do
@@ -48,8 +47,9 @@ defmodule Mobilizon.Service.Geospatial.Addok do
         "#{endpoint}/reverse/?lon=#{args.lon}&lat=#{args.lat}&limit=#{limit}"
 
       :search ->
-        url = "#{endpoint}/search/?q=#{URI.encode(args.q)}&limit=#{limit}"
-        if is_nil(coords), do: url, else: url <> "&lat=#{coords.lat}&lon=#{coords.lon}"
+        "#{endpoint}/search/?q=#{URI.encode(args.q)}&limit=#{limit}"
+        |> add_parameter(options, :country_code)
+        |> add_parameter(options, :type)
     end
   end
 
@@ -89,4 +89,20 @@ defmodule Mobilizon.Service.Geospatial.Addok do
       Map.get(properties, "street")
     end
   end
+
+  @spec add_parameter(String.t(), Keyword.t(), atom()) :: String.t()
+  defp add_parameter(url, options, key) do
+    value = Keyword.get(options, key)
+
+    if is_nil(value), do: url, else: do_add_parameter(url, key, value)
+  end
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :coords, coords),
+    do: "#{url}&lat=#{coords.lat}&lon=#{coords.lon}"
+
+  defp do_add_parameter(url, :type, :administrative),
+    do: "#{url}&type=municipality"
+
+  defp do_add_parameter(url, :type, _type), do: url
 end

@@ -14,7 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
   @spec search(map, map, map) :: {:ok, [Address.t()]}
   def search(
         _parent,
-        %{query: query, locale: locale, page: _page, limit: _limit},
+        %{query: query, locale: locale, page: _page, limit: _limit} = args,
         %{context: %{ip: ip}}
       ) do
     geolix = Geolix.lookup(ip)
@@ -25,7 +25,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
         _ -> nil
       end
 
-    addresses = Geospatial.service().search(query, lang: locale, country_code: country_code)
+    addresses =
+      Geospatial.service().search(query,
+        lang: locale,
+        country_code: country_code,
+        type: Map.get(args, :type)
+      )
 
     {:ok, addresses}
   end

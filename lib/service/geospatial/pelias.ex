@@ -8,7 +8,6 @@ defmodule Mobilizon.Service.Geospatial.Pelias do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Service.HTTP.GeospatialClient
-
   require Logger
 
   @behaviour Provider
@@ -41,25 +40,20 @@ defmodule Mobilizon.Service.Geospatial.Pelias do
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
-    coords = Keyword.get(options, :coords, nil)
     endpoint = Keyword.get(options, :endpoint, @endpoint)
-    country_code = Keyword.get(options, :country_code)
 
     url =
       case method do
         :search ->
-          url =
-            "#{endpoint}/v1/autocomplete?text=#{URI.encode(args.q)}&lang=#{lang}&size=#{limit}"
-
-          if is_nil(coords),
-            do: url,
-            else: url <> "&focus.point.lat=#{coords.lat}&focus.point.lon=#{coords.lon}"
+          "#{endpoint}/v1/autocomplete?text=#{URI.encode(args.q)}&lang=#{lang}&size=#{limit}"
+          |> add_parameter(options, :coords)
+          |> add_parameter(options, :type)
 
         :geocode ->
           "#{endpoint}/v1/reverse?point.lon=#{args.lon}&point.lat=#{args.lat}"
       end
 
-    if is_nil(country_code), do: url, else: "#{url}&boundary.country=#{country_code}"
+    add_parameter(url, options, :country_code)
   end
 
   @spec fetch_features(String.t()) :: list(Address.t())
@@ -120,9 +114,31 @@ defmodule Mobilizon.Service.Geospatial.Pelias do
     "dependency"
   ]
 
+  @spec get_type(map()) :: String.t() | nil
   defp get_type(%{"layer" => layer}) when layer in @administrative_layers, do: "administrative"
   defp get_type(%{"layer" => "address"}), do: "house"
   defp get_type(%{"layer" => "street"}), do: "street"
   defp get_type(%{"layer" => "venue"}), do: "venue"
   defp get_type(%{"layer" => _}), do: nil
+
+  @spec add_parameter(String.t(), Keyword.t(), atom()) :: String.t()
+  def add_parameter(url, options, key) do
+    value = Keyword.get(options, key)
+
+    if is_nil(value), do: url, else: do_add_parameter(url, key, value)
+  end
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :coords, value),
+    do: "#{url}&focus.point.lat=#{value.lat}&focus.point.lon=#{value.lon}"
+
+  defp do_add_parameter(url, :type, :administrative),
+    do: "#{url}&layers=coarse"
+
+  defp do_add_parameter(url, :type, _type), do: url
+
+  defp do_add_parameter(url, :country_code, nil), do: url
+
+  defp do_add_parameter(url, :country_code, country_code),
+    do: "#{url}&boundary.country=#{country_code}"
 end

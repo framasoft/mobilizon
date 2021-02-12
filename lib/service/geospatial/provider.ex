@@ -54,6 +54,8 @@ defmodule Mobilizon.Service.Geospatial.Provider do
 
   * `coords` Map of coordinates (ex: `%{lon: 48.11, lat: -1.77}`) allowing to
   give a geographic priority to the search. Defaults to `nil`.
+  * `type` Filter by type of results. Allowed values:
+     * `:administrative` (cities, regions)
 
   ## Examples
 

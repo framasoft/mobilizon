@@ -135,13 +135,14 @@ import RouteName from "../../router/name";
 export default class Notifications extends Vue {
   loggedUser!: IUser;
 
-  notificationOnDay = true;
+  notificationOnDay: boolean | undefined = true;
 
-  notificationEachWeek = false;
+  notificationEachWeek: boolean | undefined = false;
 
-  notificationBeforeEvent = false;
+  notificationBeforeEvent: boolean | undefined = false;
 
-  notificationPendingParticipation = INotificationPendingEnum.NONE;
+  notificationPendingParticipation: INotificationPendingEnum | undefined =
+    INotificationPendingEnum.NONE;
 
   notificationPendingParticipationValues: Record<string, unknown> = {};
 

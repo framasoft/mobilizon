@@ -29,6 +29,9 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   @api_key_missing_message "API Key required to use Google Maps"
 
+  @geocode_endpoint "https://maps.googleapis.com/maps/api/geocode/json"
+  @details_endpoint "https://maps.googleapis.com/maps/api/place/details/json"
+
   @impl Provider
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
@@ -77,15 +80,13 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     api_key = Keyword.get(options, :api_key, @api_key)
     if is_nil(api_key), do: raise(ArgumentError, message: @api_key_missing_message)
 
-    url =
-      "https://maps.googleapis.com/maps/api/geocode/json?limit=#{limit}&key=#{api_key}&language=#{
-        lang
-      }"
+    url = "#{@geocode_endpoint}?limit=#{limit}&key=#{api_key}&language=#{lang}"
 
     uri =
       case method do
         :search ->
-          url <> "&address=#{args.q}"
+          "#{url}&address=#{args.q}"
+          |> add_parameter(options, :type)
 
         :geocode ->
           zoom = Keyword.get(options, :zoom, 15)
@@ -95,9 +96,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
           url <> "&latlng=#{args.lat},#{args.lon}&result_type=#{result_type}"
 
         :place_details ->
-          "https://maps.googleapis.com/maps/api/place/details/json?key=#{api_key}&placeid=#{
-            args.place_id
-          }"
+          "#{@details_endpoint}?key=#{api_key}&placeid=#{args.place_id}"
       end
 
     URI.encode(uri)
@@ -173,4 +172,17 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
         nil
     end
   end
+
+  @spec add_parameter(String.t(), Keyword.t(), atom()) :: String.t()
+  defp add_parameter(url, options, key, default \\ nil) do
+    value = Keyword.get(options, key, default)
+
+    if is_nil(value), do: url, else: do_add_parameter(url, key, value)
+  end
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :type, :administrative),
+    do: "#{url}&components=administrative_area"
+
+  defp do_add_parameter(url, :type, _), do: url
 end

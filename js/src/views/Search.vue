@@ -409,7 +409,7 @@ export default class Search extends Vue {
   }
 
   get geohash(): string | undefined {
-    if (this.location && this.location.geom) {
+    if (this.location?.geom) {
       const [lon, lat] = this.location.geom.split(";");
       return ngeohash.encode(lat, lon, 6);
     }

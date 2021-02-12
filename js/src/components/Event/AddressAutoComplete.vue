@@ -71,6 +71,7 @@ import { IConfig } from "../../types/config.model";
 })
 export default class AddressAutoComplete extends Vue {
   @Prop({ required: true }) value!: IAddress;
+  @Prop({ required: false, default: false }) type!: string | false;
 
   addressData: IAddress[] = [];
 
@@ -118,13 +119,17 @@ export default class AddressAutoComplete extends Vue {
     }
 
     this.isFetching = true;
+    const variables: { query: string; locale: string; type?: string } = {
+      query,
+      locale: this.$i18n.locale,
+    };
+    if (this.type) {
+      variables.type = this.type;
+    }
     const result = await this.$apollo.query({
       query: ADDRESS,
       fetchPolicy: "network-only",
-      variables: {
-        query,
-        locale: this.$i18n.locale,
-      },
+      variables,
     });
 
     this.addressData = result.data.searchAddress.map(
@@ -144,7 +149,7 @@ export default class AddressAutoComplete extends Vue {
 
   @Watch("value")
   updateEditing(): void {
-    if (!(this.value && this.value.id)) return;
+    if (!this.value?.id) return;
     this.selected = this.value;
     const address = new Address(this.selected);
     this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;

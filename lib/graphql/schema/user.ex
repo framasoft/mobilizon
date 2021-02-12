@@ -177,6 +177,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       description:
         "When does the user receives a notification about a new pending membership in one of the group they're admin for"
     )
+
+    field(:location, :location,
+      description: "The user's preferred location, where they want to be suggested events"
+    )
   end
 
   @desc "The list of values the for pending notification settings"
@@ -197,6 +201,25 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       as: :one_day,
       description: "One day. Notifications will be sent at most each day"
     )
+  end
+
+  object :location do
+    field(:range, :integer, description: "The range in kilometers the user wants to see events")
+
+    field(:geohash, :string, description: "A geohash representing the user's preferred location")
+
+    field(:name, :string, description: "A string describing the user's preferred  location")
+  end
+
+  @desc """
+  The set of parameters needed to input a location
+  """
+  input_object :location_input do
+    field(:range, :integer, description: "The range in kilometers the user wants to see events")
+
+    field(:geohash, :string, description: "A geohash representing the user's preferred location")
+
+    field(:name, :string, description: "A string describing the user's preferred  location")
   end
 
   object :user_queries do
@@ -341,6 +364,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:notification_pending_membership, :notification_pending_enum,
         description:
           "When does the user receives a notification about a new pending membership in one of the group they're admin for"
+      )
+
+      arg(:location, :location_input,
+        description: "A geohash of the user's preferred location, where they want to see events"
       )
 
       resolve(&User.set_user_setting/3)

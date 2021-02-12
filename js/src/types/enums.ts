@@ -178,3 +178,7 @@ export enum GroupVisibility {
   UNLISTED = "UNLISTED",
   PRIVATE = "PRIVATE",
 }
+
+export enum AddressSearchType {
+  ADMINISTRATIVE = "ADMINISTRATIVE",
+}

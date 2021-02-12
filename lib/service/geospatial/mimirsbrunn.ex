@@ -43,13 +43,13 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
-    coords = Keyword.get(options, :coords, nil)
     endpoint = Keyword.get(options, :endpoint, @endpoint)
 
     case method do
       :search ->
-        url = "#{endpoint}/autocomplete?q=#{URI.encode(args.q)}&lang=#{lang}&limit=#{limit}"
-        if is_nil(coords), do: url, else: url <> "&lat=#{coords.lat}&lon=#{coords.lon}"
+        "#{endpoint}/autocomplete?q=#{URI.encode(args.q)}&lang=#{lang}&limit=#{limit}"
+        |> add_parameter(options, :coords)
+        |> add_parameter(options, :type)
 
       :geocode ->
         "#{endpoint}/reverse?lon=#{args.lon}&lat=#{args.lat}"
@@ -143,4 +143,20 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
 
   defp get_postal_code(%{"postcode" => nil}), do: nil
   defp get_postal_code(%{"postcode" => postcode}), do: postcode |> String.split(";") |> hd()
+
+  @spec add_parameter(String.t(), Keyword.t(), atom()) :: String.t()
+  defp add_parameter(url, options, key) do
+    value = Keyword.get(options, key)
+
+    if is_nil(value), do: url, else: do_add_parameter(url, key, value)
+  end
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :coords, coords),
+    do: "#{url}&lat=#{coords.lat}&lon=#{coords.lon}"
+
+  defp do_add_parameter(url, :type, :administrative),
+    do: "#{url}&type=zone"
+
+  defp do_add_parameter(url, :type, _type), do: url
 end

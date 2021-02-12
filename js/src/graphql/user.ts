@@ -125,6 +125,11 @@ export const USER_SETTINGS_FRAGMENT = gql`
     notificationBeforeEvent
     notificationPendingParticipation
     notificationPendingMembership
+    location {
+      range
+      geohash
+      name
+    }
   }
 `;
 
@@ -149,6 +154,7 @@ export const SET_USER_SETTINGS = gql`
     $notificationBeforeEvent: Boolean
     $notificationPendingParticipation: NotificationPendingEnum
     $notificationPendingMembership: NotificationPendingEnum
+    $location: LocationInput
   ) {
     setUserSettings(
       timezone: $timezone
@@ -157,6 +163,7 @@ export const SET_USER_SETTINGS = gql`
       notificationBeforeEvent: $notificationBeforeEvent
       notificationPendingParticipation: $notificationPendingParticipation
       notificationPendingMembership: $notificationPendingMembership
+      location: $location
     ) {
       ...UserSettingFragment
     }
