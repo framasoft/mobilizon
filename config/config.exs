@@ -8,7 +8,7 @@ import Config
 # General application configuration
 config :mobilizon,
   ecto_repos: [Mobilizon.Storage.Repo],
-  env: Mix.env()
+  env: config_env()
 
 config :mobilizon, Mobilizon.Storage.Repo, types: Mobilizon.Storage.PostgresTypes
 
@@ -92,8 +92,7 @@ config :mobilizon, :media_proxy,
       follow_redirect: true,
       pool: :media
     ]
-  ],
-  whitelist: []
+  ]
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
@@ -115,6 +114,10 @@ config :logger, :console,
   backends: [:console, Sentry.LoggerBackend],
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :logger, Sentry.LoggerBackend,
+  level: :warn,
+  capture_log_messages: true
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian, issuer: "mobilizon"
 
@@ -138,24 +141,6 @@ config :ueberauth,
        providers: []
 
 config :mobilizon, :auth, oauth_consumer_strategies: []
-
-config :mobilizon, :ldap,
-  enabled: System.get_env("LDAP_ENABLED") == "true",
-  host: System.get_env("LDAP_HOST") || "localhost",
-  port: String.to_integer(System.get_env("LDAP_PORT") || "389"),
-  ssl: System.get_env("LDAP_SSL") == "true",
-  sslopts: [],
-  tls: System.get_env("LDAP_TLS") == "true",
-  tlsopts: [],
-  base: System.get_env("LDAP_BASE") || "dc=example,dc=com",
-  uid: System.get_env("LDAP_UID") || "cn",
-  require_bind_for_search: !(System.get_env("LDAP_REQUIRE_BIND_FOR_SEARCH") == "false"),
-  # The full CN to filter by `memberOf`, or `false` if disabled
-  group: false,
-  # Either the admin UID matching the field in `uid`,
-  # Either a tuple with the fully qualified DN: {:full, uid=admin,dc=example.com,dc=local}
-  bind_uid: System.get_env("LDAP_BIND_UID"),
-  bind_password: System.get_env("LDAP_BIND_PASSWORD")
 
 config :geolix,
   databases: [
@@ -310,4 +295,4 @@ config :mobilizon, :external_resource_providers, %{
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
+import_config "#{config_env()}.exs"

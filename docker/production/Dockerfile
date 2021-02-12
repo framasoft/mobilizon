@@ -1,5 +1,5 @@
 # First build the application assets
-FROM node:alpine as assets
+FROM node:14-alpine as assets
 
 RUN apk add --no-cache python build-base libwebp-tools bash imagemagick ncurses
 
@@ -8,7 +8,7 @@ RUN yarn install \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:alpine AS builder
+FROM elixir:1.11-alpine AS builder
 
 RUN apk add --no-cache build-base git cmake
 
@@ -20,9 +20,8 @@ RUN mix local.hex --force \
 
 COPY lib ./lib
 COPY priv ./priv
-COPY config ./config
+COPY config/config.exs config/prod.exs config/releases.exs ./config/
 COPY rel ./rel
-COPY docker/production/releases.exs ./config/
 COPY --from=assets ./priv/static ./priv/static
 
 RUN mix phx.digest \
@@ -31,12 +30,29 @@ RUN mix phx.digest \
 # Finally setup the app
 FROM alpine
 
+ARG BUILD_DATE
+ARG VCS_REF
+ARG CI_COMMIT_TAG
+ARG MOBILIZON_VERSION=${CI_COMMIT_TAG}
+
+LABEL org.opencontainers.image.title="mobilizon" \
+    org.opencontainers.image.description="Mobilizon for Docker" \
+    org.opencontainers.image.vendor="joinmobilizon.org" \
+    org.opencontainers.image.documentation="https://docs.joinmobilizon.org" \
+    org.opencontainers.image.licenses="AGPL-3.0" \
+    org.opencontainers.image.url="https://joinmobilizon.org" \
+    org.opencontainers.image.revision=$VCS_REF \
+    org.opencontainers.image.created=$BUILD_DATE
+
 RUN apk add --no-cache openssl ncurses-libs file postgresql-client
 
 RUN mkdir -p /app/uploads && chown nobody:nobody /app/uploads
+RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
 
 USER nobody
 EXPOSE 4000
+
+ENV MOBILIZON_DOCKER=true
 
 COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
 COPY docker/production/docker-entrypoint.sh ./

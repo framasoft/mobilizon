@@ -1,13 +1,13 @@
 defmodule Mobilizon.Mixfile do
   use Mix.Project
 
-  @version "1.0.6"
+  @version "1.1.0"
 
   def project do
     [
       app: :mobilizon,
       version: @version,
-      elixir: "~> 1.8",
+      elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       xref: [exclude: [:eldap]],
@@ -31,7 +31,8 @@ defmodule Mobilizon.Mixfile do
       docs: docs(),
       releases: [
         mobilizon: [
-          applications: [eldap: :transient]
+          applications: [eldap: :transient],
+          config_providers: [{Mobilizon.ConfigProvider, "/etc/mobilizon/config.exs"}]
         ]
       ]
     ]
@@ -141,7 +142,7 @@ defmodule Mobilizon.Mixfile do
       {:remote_ip, "~> 0.2.0"},
       {:ex_cldr_languages, "~> 0.2.1"},
       {:slugger, "~> 0.3"},
-      {:sentry, "~> 7.0"},
+      {:sentry, "~> 8.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

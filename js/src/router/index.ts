@@ -158,9 +158,11 @@ const router = new Router({
 
 router.beforeEach(authGuardIfNeeded);
 router.afterEach(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  router.app.$children[0].error = null;
+  if (router.app.$children[0]) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    router.app.$children[0].error = null;
+  }
 });
 
 export default router;

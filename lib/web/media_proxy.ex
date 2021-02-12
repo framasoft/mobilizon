@@ -29,10 +29,6 @@ defmodule Mobilizon.Web.MediaProxy do
 
   def enabled?, do: Config.get([:media_proxy, :enabled], false)
 
-  # Note: media proxy must be enabled for media preview proxy in order to load all
-  #   non-local non-whitelisted URLs through it and be sure that body size constraint is preserved.
-  def preview_enabled?, do: enabled?() and !!Config.get([:media_preview_proxy, :enabled])
-
   def local?(url), do: String.starts_with?(url, Web.Endpoint.url())
 
   defp base64_sig64(url) do

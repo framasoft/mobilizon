@@ -183,7 +183,7 @@ pages:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_AUTH\",\"email\":\"$CI_REGISTRY_EMAIL\"}}}" > /kaniko/.docker/config.json
   script:
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/production/Dockerfile --destination $DOCKER_IMAGE_NAME
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/production/Dockerfile --destination $DOCKER_IMAGE_NAME --build-arg VCS_REF=$CI_VCS_REF --build-arg BUILD_DATE=$CI_JOB_TIMESTAMP --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG
 
 build-docker-master:
   <<: *docker
@@ -205,19 +205,32 @@ build-docker-tag:
 
 package-app:
   stage: package
-  variables:
+  variables: &release-variables
     MIX_ENV: "prod"
-  script:
+  script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
-    - cp docker/production/releases.exs ./config/
     - mix deps.get
     - mix phx.digest
-    - mix release
+    - mix release --path release
+    - cd release && ln -s lib/mobilizon-*/priv priv
+  only:
+    - tags@framasoft/mobilizon
+  artifacts:
+    expire_in: never
+    paths:
+      - release
+
+package-app-dev:
+  stage: package
+  variables: *release-variables
+  script: *release-script
+  except:
+    - tags@framasoft/mobilizon
   artifacts:
     expire_in: 2 days
     paths:
-      - _build/prod/rel
+      - release
 
 release-upload:
   stage: upload

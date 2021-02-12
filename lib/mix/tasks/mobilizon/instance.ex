@@ -61,7 +61,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
 
     paths =
       [config_path, psql_path] = [
-        Keyword.get(options, :output, "config/prod.secret.exs"),
+        Keyword.get(options, :output, "config/runtime.exs"),
         Keyword.get(options, :output_psql, "setup_db.psql")
       ]
 
@@ -146,7 +146,6 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           database_port: Keyword.get(options, :dbport, 5432),
           database_username: dbuser,
           database_password: dbpass,
-          version: Mobilizon.Mixfile.project() |> Keyword.get(:version),
           instance_secret: instance_secret,
           auth_secret: auth_secret,
           listen_port: listen_port
@@ -160,28 +159,60 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           database_password: dbpass
         )
 
-      shell_info("Writing config to #{config_path}.")
-
-      File.write(config_path, result_config)
-      shell_info("Writing #{psql_path}.")
-      File.write(psql_path, result_psql)
-
-      shell_info(
-        "\n" <>
-          """
-          To get started:
-          1. Check the contents of the generated files.
-          2. Run `sudo -u postgres psql -f #{escape_sh_path(psql_path)} && rm #{
-            escape_sh_path(psql_path)
-          }`.
-          """
-      )
+      with :ok <- write_config(config_path, result_config),
+           :ok <- write_psql(psql_path, result_psql) do
+        shell_info(
+          "\n" <>
+            """
+            To get started:
+            1. Check the contents of the generated files.
+            2. Run `sudo -u postgres psql -f #{escape_sh_path(psql_path)} && rm #{
+              escape_sh_path(psql_path)
+            }`.
+            """
+        )
+      else
+        {:error, err} -> exit(err)
+        _ -> exit(:unknown_error)
+      end
     else
       shell_error(
         "The task would have overwritten the following files:\n" <>
           (will_overwrite |> Enum.map(&"- #{&1}\n") |> Enum.join("")) <>
           "Rerun with `-f/--force` to overwrite them."
       )
+    end
+  end
+
+  defp write_config(config_path, result_config) do
+    shell_info("Writing config to #{config_path}.")
+
+    case File.write(config_path, result_config) do
+      :ok ->
+        :ok
+
+      {:error, err} ->
+        shell_error(
+          "\nERROR: Unable to write config file to #{config_path}. Make sure you have permissions on the destination.\n"
+        )
+
+        {:error, err}
+    end
+  end
+
+  defp write_psql(psql_path, result_psql) do
+    shell_info("Writing #{psql_path}.")
+
+    case File.write(psql_path, result_psql) do
+      :ok ->
+        :ok
+
+      {:error, err} ->
+        shell_error(
+          "\nERROR: Unable to write psql file to #{psql_path}. Make sure you have permissions on the destination.\n"
+        )
+
+        {:error, err}
     end
   end
 end

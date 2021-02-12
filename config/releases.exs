@@ -3,10 +3,10 @@
 import Config
 
 config :mobilizon, Mobilizon.Web.Endpoint,
-   server: true,
-   url: [host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.lan")],
-   http: [port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000")],
-   secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis")
+  server: true,
+  url: [host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.lan")],
+  http: [port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000")],
+  secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis")
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian,
   secret_key: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY", "changethis")
@@ -22,10 +22,8 @@ config :mobilizon, :instance,
   email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL", "noreply@mobilizon.lan"),
   email_reply_to: System.get_env("MOBILIZON_REPLY_EMAIL", "noreply@mobilizon.lan")
 
-
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local,
   uploads: System.get_env("MOBILIZON_UPLOADS", "/app/uploads")
-
 
 config :mobilizon, Mobilizon.Storage.Repo,
   adapter: Ecto.Adapters.Postgres,
@@ -49,3 +47,14 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   retries: 1,
   no_mx_lookups: false,
   auth: :if_available
+
+config :geolix,
+  databases: [
+    %{
+      id: :city,
+      adapter: Geolix.Adapter.MMDB2,
+      source: "/var/lib/mobilizon/geo_db/GeoLite2-City.mmdb"
+    }
+  ]
+
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "/var/lib/mobilizon/uploads"

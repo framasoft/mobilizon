@@ -2,9 +2,12 @@ defmodule Mobilizon.Web.Endpoint do
   @moduledoc """
   Endpoint for Mobilizon app
   """
+  if Application.fetch_env!(:mobilizon, :env) !== :test do
+    use Sentry.PlugCapture
+  end
+
   use Phoenix.Endpoint, otp_app: :mobilizon
   use Absinthe.Phoenix.Endpoint
-  use Sentry.Phoenix.Endpoint
 
   plug(Mobilizon.Web.Plugs.SetLocalePlug)
   plug(Mobilizon.Web.Plugs.HTTPSecurityPlug)
@@ -81,5 +84,9 @@ defmodule Mobilizon.Web.Endpoint do
   @spec websocket_url :: String.t()
   def websocket_url do
     String.replace_leading(url(), "http", "ws")
+  end
+
+  if Application.fetch_env!(:mobilizon, :env) !== :test do
+    plug(Sentry.PlugContext)
   end
 end
