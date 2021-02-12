@@ -44,7 +44,7 @@
     "unfetch": "^4.2.0",
     "v-tooltip": "^2.1.2",
     "vue": "^2.6.11",
-    "vue-apollo": "^3.0.3",
+    "vue-apollo": "^3.0.7",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.14.0",
     "vue-meta": "^2.3.1",
