@@ -41,9 +41,6 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
     endpoint = Keyword.get(options, :endpoint, @endpoint)
-    country_code = Keyword.get(options, :country_code)
-    zoom = Keyword.get(options, :zoom)
-    api_key = Keyword.get(options, :api_key, @api_key)
 
     url =
       case method do
@@ -53,16 +50,15 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
           }&addressdetails=1&namedetails=1"
 
         :geocode ->
-          url =
-            "#{endpoint}/reverse?format=geocodejson&lat=#{args.lat}&lon=#{args.lon}&accept-language=#{
-              lang
-            }&addressdetails=1&namedetails=1"
-
-          if is_nil(zoom), do: url, else: url <> "&zoom=#{zoom}"
+          "#{endpoint}/reverse?format=geocodejson&lat=#{args.lat}&lon=#{args.lon}&accept-language=#{
+            lang
+          }&addressdetails=1&namedetails=1"
+          |> add_parameter(options, :zoom)
       end
 
-    url = if is_nil(country_code), do: url, else: "#{url}&countrycodes=#{country_code}"
-    if is_nil(api_key), do: url, else: url <> "&key=#{api_key}"
+    url
+    |> add_parameter(options, :country_code)
+    |> add_parameter(options, :api_key, @api_key)
   end
 
   @spec fetch_features(String.t()) :: list(Address.t())
@@ -146,4 +142,23 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
       description
     end
   end
+
+  @spec add_parameter(String.t(), Keyword.t(), atom()) :: String.t()
+  defp add_parameter(url, options, key, default \\ nil) do
+    value = Keyword.get(options, key, default)
+
+    if is_nil(value), do: url, else: do_add_parameter(url, key, value)
+  end
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :zoom, zoom),
+    do: "#{url}&zoom=#{zoom}"
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :country_code, country_code),
+    do: "#{url}&countrycodes=#{country_code}"
+
+  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  defp do_add_parameter(url, :api_key, api_key),
+    do: "#{url}&key=#{api_key}"
 end

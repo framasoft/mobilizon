@@ -66,9 +66,9 @@ export class Address implements IAddress {
     let alternativeName = "";
     let poiIcon: IPOIIcon = poiIcons.default;
     // Google Maps doesn't have a type
-    if (this.type == null && this.description === this.street)
+    if (this.type == null && this.description === this.street) {
       this.type = "house";
-
+    }
     switch (this.type) {
       case "house":
         name = this.description;
@@ -122,6 +122,9 @@ export class Address implements IAddress {
     const { name, alternativeName } = this.poiInfos;
     if (name && alternativeName) {
       return `${name}, ${alternativeName}`;
+    }
+    if (name) {
+      return name;
     }
     return "";
   }

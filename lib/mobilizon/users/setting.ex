@@ -30,6 +30,8 @@ defmodule Mobilizon.Users.Setting do
 
   @attrs @required_attrs ++ @optional_attrs
 
+  @location_attrs [:name, :range, :geohash]
+
   @primary_key {:user_id, :id, autogenerate: false}
   schema "user_settings" do
     field(:timezone, :string)
@@ -45,6 +47,12 @@ defmodule Mobilizon.Users.Setting do
       default: :one_day
     )
 
+    embeds_one :location, Location, on_replace: :update, primary_key: false do
+      field(:name, :string)
+      field(:range, :integer)
+      field(:geohash, :string)
+    end
+
     belongs_to(:user, User, primary_key: true, type: :id, foreign_key: :id, define_field: false)
 
     timestamps()
@@ -54,6 +62,12 @@ defmodule Mobilizon.Users.Setting do
   def changeset(setting, attrs) do
     setting
     |> cast(attrs, @attrs)
+    |> cast_embed(:location, with: &location_changeset/2)
     |> validate_required(@required_attrs)
+  end
+
+  def location_changeset(schema, params) do
+    schema
+    |> cast(params, @location_attrs)
   end
 end

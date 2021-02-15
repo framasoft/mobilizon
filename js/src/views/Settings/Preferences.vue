@@ -26,7 +26,7 @@
           </option>
         </b-select>
       </b-field>
-      <b-field :label="$t('Timezone')">
+      <b-field :label="$t('Timezone')" v-if="selectedTimezone">
         <b-select
           :placeholder="$t('Select a timezone')"
           :loading="!config || !loggedUser"
@@ -55,11 +55,46 @@
       <b-message v-else type="is-danger">{{
         $t("Unable to detect timezone.")
       }}</b-message>
+      <hr />
+      <b-field grouped>
+        <b-field :label="$t('City or region')" expanded>
+          <address-auto-complete
+            v-if="
+              loggedUser && loggedUser.settings && loggedUser.settings.location
+            "
+            :type="AddressSearchType.ADMINISTRATIVE"
+            v-model="address"
+          >
+          </address-auto-complete>
+        </b-field>
+        <b-field :label="$t('Radius')">
+          <b-select
+            :placeholder="$t('Select a radius')"
+            v-model="locationRange"
+          >
+            <option
+              v-for="index in [1, 5, 10, 25, 50, 100]"
+              :key="index"
+              :value="index"
+            >
+              {{ $tc("{count} km", index, { count: index }) }}
+            </option>
+          </b-select>
+        </b-field>
+      </b-field>
+      <p>
+        {{
+          $t(
+            "Your city or region and the radius will only be used to suggest you events nearby."
+          )
+        }}
+      </p>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import ngeohash from "ngeohash";
 import { saveLocaleData } from "@/utils/auth";
 import { TIMEZONES } from "../../graphql/config";
 import {
@@ -68,14 +103,20 @@ import {
   UPDATE_USER_LOCALE,
 } from "../../graphql/user";
 import { IConfig } from "../../types/config.model";
-import { IUser } from "../../types/current-user.model";
+import { IUser, IUserSettings } from "../../types/current-user.model";
 import langs from "../../i18n/langs.json";
 import RouteName from "../../router/name";
+import AddressAutoComplete from "../../components/Event/AddressAutoComplete.vue";
+import { AddressSearchType } from "@/types/enums";
+import { Address, IAddress } from "@/types/address.model";
 
 @Component({
   apollo: {
     config: TIMEZONES,
     loggedUser: USER_SETTINGS,
+  },
+  components: {
+    AddressAutoComplete,
   },
 })
 export default class Preferences extends Vue {
@@ -83,7 +124,7 @@ export default class Preferences extends Vue {
 
   loggedUser!: IUser;
 
-  selectedTimezone: string | null = null;
+  selectedTimezone: string | undefined = undefined;
 
   locale: string | null = null;
 
@@ -91,14 +132,16 @@ export default class Preferences extends Vue {
 
   langs: Record<string, string> = langs;
 
+  AddressSearchType = AddressSearchType;
+
   @Watch("loggedUser")
   setSavedTimezone(loggedUser: IUser): void {
-    if (loggedUser && loggedUser.settings.timezone) {
+    if (loggedUser?.settings?.timezone) {
       this.selectedTimezone = loggedUser.settings.timezone;
     } else {
       this.selectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
-    if (loggedUser && loggedUser.locale) {
+    if (loggedUser?.locale) {
       this.locale = loggedUser.locale;
     } else {
       this.locale = this.$i18n.locale;
@@ -145,12 +188,7 @@ export default class Preferences extends Vue {
   @Watch("selectedTimezone")
   async updateTimezone(): Promise<void> {
     if (this.selectedTimezone !== this.loggedUser.settings.timezone) {
-      await this.$apollo.mutate<{ setUserSetting: string }>({
-        mutation: SET_USER_SETTINGS,
-        variables: {
-          timezone: this.selectedTimezone,
-        },
-      });
+      this.updateUserSettings({ timezone: this.selectedTimezone });
     }
   }
 
@@ -165,6 +203,68 @@ export default class Preferences extends Vue {
       });
       saveLocaleData(this.locale);
     }
+  }
+
+  get address(): IAddress | null {
+    if (
+      this.loggedUser?.settings?.location?.name &&
+      this.loggedUser?.settings?.location?.geohash
+    ) {
+      const { latitude, longitude } = ngeohash.decode(
+        this.loggedUser?.settings?.location?.geohash
+      );
+      const name = this.loggedUser?.settings?.location?.name;
+      return {
+        description: name,
+        locality: "",
+        type: "administrative",
+        geom: `${longitude};${latitude}`,
+        street: "",
+        postalCode: "",
+        region: "",
+        country: "",
+      };
+    }
+    return null;
+  }
+
+  set address(address: IAddress | null) {
+    if (address && address.geom) {
+      const { geom } = address;
+      const addressObject = new Address(address);
+      const queryText = addressObject.poiInfos.name;
+      const [lon, lat] = geom.split(";");
+      const geohash = ngeohash.encode(lat, lon, 6);
+      if (queryText && geom) {
+        this.updateUserSettings({
+          location: {
+            geohash,
+            name: queryText,
+          },
+        });
+      }
+    }
+  }
+
+  get locationRange(): number | undefined {
+    return this.loggedUser?.settings?.location?.range;
+  }
+
+  set locationRange(locationRange: number | undefined) {
+    if (locationRange) {
+      this.updateUserSettings({
+        location: {
+          range: locationRange,
+        },
+      });
+    }
+  }
+
+  private async updateUserSettings(userSettings: IUserSettings) {
+    await this.$apollo.mutate<{ setUserSetting: string }>({
+      mutation: SET_USER_SETTINGS,
+      variables: userSettings,
+    });
   }
 }
 </script>

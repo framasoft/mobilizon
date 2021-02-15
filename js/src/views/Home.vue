@@ -47,20 +47,23 @@
       </div>
     </section>
     <div
-      id="featured_events"
+      id="recent_events"
       class="container section"
       v-if="config && (!currentUser.id || !currentActor.id)"
     >
-      <section class="events-featured">
-        <h2 class="title">{{ $t("Featured events") }}</h2>
+      <section class="events-recent">
+        <h2 class="is-size-2 has-text-weight-bold">
+          {{ $t("Last published events") }}
+        </h2>
+        <p>
+          {{ $t("On {instance}", { instance: config.name }) }}
+          <b-loading :active.sync="$apollo.loading" />
+        </p>
         <b-loading :active.sync="$apollo.loading" />
-        <div
-          v-if="filteredFeaturedEvents.length > 0"
-          class="columns is-multiline"
-        >
+        <div v-if="this.events.total > 0" class="columns is-multiline">
           <div
             class="column is-one-third-desktop"
-            v-for="event in filteredFeaturedEvents.slice(0, 6)"
+            v-for="event in this.events.elements.slice(0, 6)"
             :key="event.uuid"
           >
             <EventCard :event="event" />
@@ -185,11 +188,12 @@
           })
         }}</b-message>
       </section>
+      <!-- Your upcoming events -->
       <section
         v-if="currentActor.id && goingToEvents.size > 0"
         class="container"
       >
-        <h3 class="title">{{ $t("Upcoming") }}</h3>
+        <h3 class="title">{{ $t("Your upcoming events") }}</h3>
         <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
           <span
@@ -231,6 +235,7 @@
           >
         </span>
       </section>
+      <!-- Last week events -->
       <section v-if="currentActor && lastWeekEvents.length > 0">
         <h3 class="title">{{ $t("Last week") }}</h3>
         <b-loading :active.sync="$apollo.loading" />
@@ -244,19 +249,59 @@
           />
         </div>
       </section>
-      <section class="events-featured">
-        <h2 class="title">{{ $t("Featured events") }}</h2>
-        <b-loading :active.sync="$apollo.loading" />
-        <div
-          v-if="filteredFeaturedEvents.length > 0"
-          class="columns is-multiline"
-        >
+      <!-- Events close to you -->
+      <section class="events-close" v-if="closeEvents.total > 0">
+        <h2 class="is-size-2 has-text-weight-bold">
+          {{ $t("Close events") }}
+        </h2>
+        <p>
+          {{
+            $tc(
+              "Within {number} kilometers of {place}",
+              loggedUser.settings.location.radius,
+              {
+                number: loggedUser.settings.location.radius,
+                place: loggedUser.settings.location.name,
+              }
+            )
+          }}
+          <router-link :to="{ name: RouteName.PREFERENCES }">
+            <b-icon
+              class="clickable"
+              icon="pencil"
+              :title="$t('Change')"
+              size="is-small"
+            />
+          </router-link>
+          <b-loading :active.sync="$apollo.loading" />
+        </p>
+        <div class="columns is-multiline">
           <div
             class="column is-one-third-desktop"
-            v-for="event in filteredFeaturedEvents.slice(0, 6)"
+            v-for="event in closeEvents.elements.slice(0, 3)"
             :key="event.uuid"
           >
-            <EventCard :event="event" />
+            <event-card :event="event" />
+          </div>
+        </div>
+      </section>
+      <hr class="home-separator" />
+      <section class="events-recent">
+        <h2 class="is-size-2 has-text-weight-bold">
+          {{ $t("Last published events") }}
+        </h2>
+        <p>
+          {{ $t("On {instance}", { instance: config.name }) }}
+          <b-loading :active.sync="$apollo.loading" />
+        </p>
+
+        <div v-if="this.events.total > 0" class="columns is-multiline">
+          <div
+            class="column is-one-third-desktop"
+            v-for="event in this.events.elements.slice(0, 6)"
+            :key="event.uuid"
+          >
+            <recent-event-card-wrapper :event="event" />
           </div>
         </div>
         <b-message v-else type="is-danger"
@@ -279,9 +324,10 @@ import { ParticipantRole } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
 import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
-import { FETCH_EVENTS } from "../graphql/event";
+import { CLOSE_EVENTS, FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
 import EventCard from "../components/Event/EventCard.vue";
+import RecentEventCardWrapper from "../components/Event/RecentEventCardWrapper.vue";
 import {
   CURRENT_ACTOR_CLIENT,
   LOGGED_USER_PARTICIPATIONS,
@@ -330,7 +376,24 @@ import Subtitle from "../components/Utils/Subtitle.vue";
           (participation: IParticipant) => new Participant(participation)
         ),
       skip() {
-        return this.currentUser.isLoggedIn === false;
+        return this.currentUser?.isLoggedIn === false;
+      },
+    },
+    closeEvents: {
+      query: CLOSE_EVENTS,
+      variables() {
+        return {
+          location: this.loggedUser?.settings?.location?.geohash,
+          radius: this.loggedUser?.settings?.location?.radius,
+        };
+      },
+      update: (data) => data.searchEvents,
+      skip() {
+        return (
+          this.currentUser?.isLoggedIn === false &&
+          this.loggedUser?.settings?.location?.geohash &&
+          this.loggedUser?.settings?.location?.radius
+        );
       },
     },
   },
@@ -339,6 +402,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     DateComponent,
     EventListCard,
     EventCard,
+    RecentEventCardWrapper,
     "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
   metaInfo() {
@@ -364,7 +428,7 @@ export default class Home extends Vue {
 
   country = { name: null };
 
-  currentUser!: ICurrentUser;
+  currentUser!: IUser;
 
   loggedUser!: ICurrentUser;
 
@@ -377,6 +441,8 @@ export default class Home extends Vue {
   currentUserParticipations: IParticipant[] = [];
 
   supportsWebPFormat = supportsWebPFormat;
+
+  closeEvents: Paginate<IEvent> = { elements: [], total: 0 };
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
@@ -499,21 +565,6 @@ export default class Home extends Vue {
     return res;
   }
 
-  /**
-   * Return all events from server excluding the ones shown as participating
-   */
-  get filteredFeaturedEvents(): IEvent[] {
-    return this.events.elements.filter(
-      ({ id }) =>
-        !this.thisWeekGoingToEvents
-          .filter(
-            (participation) => participation.role === ParticipantRole.CREATOR
-          )
-          .map(({ event: { id: eventId } }) => eventId)
-          .includes(id)
-    );
-  }
-
   eventDeleted(eventid: string): void {
     this.currentUserParticipations = this.currentUserParticipations.filter(
       (participation) => participation.event.id !== eventid
@@ -549,7 +600,7 @@ main > div > .container {
   color: rgba(0, 0, 0, 0.87);
 }
 
-.events-featured {
+.events-recent {
   & > h3 {
     padding-left: 0.75rem;
   }
@@ -620,7 +671,7 @@ section.hero {
   }
 }
 
-#featured_events {
+#recent_events {
   padding: 1rem 0;
   min-height: calc(100vh - 400px);
   z-index: 10;
@@ -685,5 +736,13 @@ section.hero {
 
 #homepage {
   background: $white;
+}
+
+.home-separator {
+  background-color: $orange-2;
+}
+
+.clickable {
+  cursor: pointer;
 }
 </style>

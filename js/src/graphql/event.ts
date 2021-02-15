@@ -207,6 +207,7 @@ export const FETCH_EVENTS = gql`
         endsOn
         status
         visibility
+        insertedAt
         picture {
           id
           url
@@ -669,6 +670,29 @@ export const FETCH_GROUP_EVENTS = gql`
           }
         }
         total
+      }
+    }
+  }
+`;
+
+export const CLOSE_EVENTS = gql`
+  query CloseEvents($location: String, $radius: Float) {
+    searchEvents(location: $location, radius: $radius, page: 1, limit: 10) {
+      total
+      elements {
+        id
+        title
+        uuid
+        beginsOn
+        picture {
+          id
+          url
+        }
+        tags {
+          slug
+          title
+        }
+        __typename
       }
     }
   }

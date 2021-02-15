@@ -850,5 +850,14 @@
   "{instanceName} is an instance of {mobilizon_link}, a free software built with the community.": "{instanceName} is an instance of {mobilizon_link}, a free software built with the community.",
   "Open a topic on our forum": "Open a topic on our forum",
   "Open an issue on our bug tracker (advanced users)": "Open an issue on our bug tracker (advanced users)",
-  "Unable to copy to clipboard": "Unable to copy to clipboard"
+  "Unable to copy to clipboard": "Unable to copy to clipboard",
+  "{count} km": "{count} km",
+  "City or region": "City or region",
+  "Select a radius": "Select a radius",
+  "Your city or region and the radius will only be used to suggest you events nearby.": "Your city or region and the radius will only be used to suggest you events nearby.",
+  "Your upcoming events": "Your upcoming events",
+  "Last published events": "Last published events",
+  "On {instance}": "On {instance}",
+  "Close events": "Close events",
+  "Within {number} kilometers of {place}": "|Within one kilometer of {place}|Within {number} kilometers of {place}"
 }

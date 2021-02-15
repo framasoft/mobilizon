@@ -56,6 +56,15 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
     field(:origin_id, :string, description: "The address's original ID from the provider")
   end
 
+  @desc """
+  A list of possible values for the type option to search an address.
+
+  Results may vary depending on the geocoding provider.
+  """
+  enum :address_search_type do
+    value(:administrative, description: "Administrative results (cities, regions,...)")
+  end
+
   object :address_queries do
     @desc "Search for an address"
     field :search_address, type: list_of(:address) do
@@ -72,6 +81,8 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
       )
 
       arg(:limit, :integer, default_value: 10, description: "The limit of search results per page")
+
+      arg(:type, :address_search_type, description: "Filter by type of results")
 
       resolve(&Address.search/3)
     end

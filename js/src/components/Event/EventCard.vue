@@ -39,12 +39,23 @@
           />
         </div>
         <div class="media-content">
-          <p class="event-title">{{ event.title }}</p>
-          <div class="event-subtitle" v-if="event.physicalAddress">
+          <p class="event-title" :title="event.title">{{ event.title }}</p>
+          <div
+            class="event-subtitle"
+            v-if="event.physicalAddress"
+            :title="
+              isDescriptionDifferentFromLocality
+                ? `${event.physicalAddress.description}, ${event.physicalAddress.locality}`
+                : event.physicalAddress.description
+            "
+          >
             <!--            <p>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</p>-->
-            <span>
+            <span v-if="isDescriptionDifferentFromLocality">
               {{ event.physicalAddress.description }},
               {{ event.physicalAddress.locality }}
+            </span>
+            <span v-else>
+              {{ event.physicalAddress.description }}
             </span>
           </div>
         </div>
@@ -128,6 +139,14 @@ export default class EventCard extends Vue {
     return Object.assign(
       new Person(),
       this.event.organizerActor || this.mergedOptions.organizerActor
+    );
+  }
+
+  get isDescriptionDifferentFromLocality(): boolean {
+    return (
+      this.event?.physicalAddress?.description !==
+        this.event?.physicalAddress?.locality &&
+      this.event?.physicalAddress?.description !== undefined
     );
   }
 }

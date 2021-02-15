@@ -101,7 +101,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     # field(:sessions, list_of(:session))
 
     field(:updated_at, :datetime, description: "When the event was last updated")
-    field(:created_at, :datetime, description: "When the event was created")
+    field(:inserted_at, :datetime, description: "When the event was created")
     field(:options, :event_options, description: "The event options")
   end
 

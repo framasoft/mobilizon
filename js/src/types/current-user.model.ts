@@ -12,13 +12,20 @@ export interface ICurrentUser {
   defaultActor?: IPerson;
 }
 
+export interface IUserPreferredLocation {
+  range?: number;
+  name?: string;
+  geohash?: string;
+}
+
 export interface IUserSettings {
-  timezone: string;
-  notificationOnDay: boolean;
-  notificationEachWeek: boolean;
-  notificationBeforeEvent: boolean;
-  notificationPendingParticipation: INotificationPendingEnum;
-  notificationPendingMembership: INotificationPendingEnum;
+  timezone?: string;
+  notificationOnDay?: boolean;
+  notificationEachWeek?: boolean;
+  notificationBeforeEvent?: boolean;
+  notificationPendingParticipation?: INotificationPendingEnum;
+  notificationPendingMembership?: INotificationPendingEnum;
+  location?: IUserPreferredLocation;
 }
 
 export interface IUser extends ICurrentUser {
