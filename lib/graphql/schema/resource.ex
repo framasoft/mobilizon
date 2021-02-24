@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
 
   @desc "A resource"
   object :resource do
+    interfaces([:activity_object])
     field(:id, :id, description: "The resource's ID")
     field(:title, :string, description: "The resource's title")
     field(:summary, :string, description: "The resource's summary")

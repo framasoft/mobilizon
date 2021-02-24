@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
   Represents a member of a group
   """
   object :member do
+    interfaces([:activity_object])
     field(:id, :id, description: "The member's ID")
     field(:parent, :group, description: "Of which the profile is member")
     field(:actor, :person, description: "Which profile is member of")

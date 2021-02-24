@@ -321,3 +321,98 @@ export const REFRESH_PROFILE = gql`
     }
   }
 `;
+
+export const GROUP_TIMELINE = gql`
+  query GroupTimeline(
+    $preferredUsername: String!
+    $type: ActivityType
+    $page: Int
+    $limit: Int
+  ) {
+    group(preferredUsername: $preferredUsername) {
+      id
+      preferredUsername
+      domain
+      name
+      activity(type: $type, page: $page, limit: $limit) {
+        total
+        elements {
+          id
+          insertedAt
+          subject
+          subjectParams {
+            key
+            value
+          }
+          type
+          author {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
+          }
+          group {
+            id
+            preferredUsername
+          }
+          object {
+            ... on Event {
+              id
+              title
+            }
+            ... on Post {
+              id
+              title
+            }
+            ... on Member {
+              id
+              actor {
+                id
+                name
+                preferredUsername
+                domain
+                avatar {
+                  id
+                  url
+                }
+              }
+            }
+            ... on Resource {
+              id
+              title
+              path
+              type
+            }
+            ... on Discussion {
+              id
+              title
+              slug
+            }
+            ... on Group {
+              id
+              preferredUsername
+              domain
+              name
+              summary
+              visibility
+              openness
+              physicalAddress {
+                id
+              }
+              banner {
+                id
+              }
+              avatar {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

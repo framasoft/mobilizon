@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
 
   @desc "A post"
   object :post do
+    interfaces([:activity_object])
     field(:id, :id, description: "The post's ID")
     field(:title, :string, description: "The post's title")
     field(:slug, :string, description: "The post's slug")

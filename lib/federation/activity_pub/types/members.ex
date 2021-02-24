@@ -4,13 +4,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityStream.Convertible
+  alias Mobilizon.Service.Activity.Member, as: MemberActivity
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_update_data: 2]
 
   def update(
-        %Member{parent: %Actor{id: group_id}, id: member_id, role: current_role} = member,
+        %Member{parent: %Actor{id: group_id}, id: member_id, role: current_role} = old_member,
         %{role: updated_role} = args,
-        %{moderator: %Actor{url: moderator_url, id: moderator_id}} = additional
+        %{moderator: %Actor{url: moderator_url, id: moderator_id} = moderator} = additional
       ) do
     with additional <- Map.delete(additional, :moderator),
          {:has_rights_to_update_role, {:ok, %Member{role: moderator_role}}}
@@ -19,7 +20,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
          {:is_only_admin, false} <-
            {:is_only_admin, check_admins_left(member_id, group_id, current_role, updated_role)},
          {:ok, %Member{} = member} <-
-           Actors.update_member(member, args),
+           Actors.update_member(old_member, args),
+         {:ok, _} <-
+           MemberActivity.insert_activity(member,
+             old_member: old_member,
+             moderator: moderator,
+             subject: "member_updated"
+           ),
          {:ok, true} <- Cachex.del(:activity_pub, "member_#{member_id}"),
          member_as_data <-
            Convertible.model_to_as(member),

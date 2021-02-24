@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
 
   @desc "A discussion"
   object :discussion do
+    interfaces([:activity_object])
     field(:id, :id, description: "Internal ID for this discussion")
     field(:title, :string, description: "The title for this discussion")
     field(:slug, :string, description: "The slug for the discussion")

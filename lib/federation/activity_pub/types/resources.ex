@@ -5,6 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Resources.Resource
+  alias Mobilizon.Service.Activity.Resource, as: ResourceActivity
   alias Mobilizon.Service.RichMedia.Parser
   require Logger
 
@@ -33,6 +34,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     with {:ok,
           %Resource{actor_id: group_id, creator_id: creator_id, parent_id: parent_id} = resource} <-
            Resources.create_resource(args),
+         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_created"),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
          resource_as_data <-
@@ -63,7 +65,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   end
 
   @impl Entity
-  def update(%Resource{} = old_resource, %{parent_id: _parent_id} = args, additional) do
+  def update(
+        %Resource{parent_id: old_parent_id} = old_resource,
+        %{parent_id: parent_id} = args,
+        additional
+      )
+      when old_parent_id != parent_id do
     move(old_resource, args, additional)
   end
 
@@ -71,6 +78,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   def update(%Resource{} = old_resource, %{title: title} = _args, additional) do
     with {:ok, %Resource{actor_id: group_id, creator_id: creator_id} = resource} <-
            Resources.update_resource(old_resource, %{title: title}),
+         {:ok, _} <-
+           ResourceActivity.insert_activity(resource,
+             subject: "resource_renamed",
+             old_resource: old_resource
+           ),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          %Actor{url: creator_url} <- Actors.get_actor(creator_id),
          resource_as_data <-
@@ -100,6 +112,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
           %Resource{actor_id: group_id, creator_id: creator_id, parent_id: new_parent_id} =
             resource} <-
            Resources.update_resource(old_resource, args),
+         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_moved"),
          old_parent <- Resources.get_resource(old_parent_id),
          new_parent <- Resources.get_resource(new_parent_id),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
@@ -146,6 +159,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     }
 
     with {:ok, _resource} <- Resources.delete_resource(resource),
+         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_deleted"),
          {:ok, true} <- Cachex.del(:activity_pub, "resource_#{resource.id}") do
       {:ok, activity_data, actor, resource}
     end

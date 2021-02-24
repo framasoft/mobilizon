@@ -10,6 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
+  alias Mobilizon.Service.Activity.Event, as: EventActivity
   alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Share
@@ -24,6 +25,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   def create(args, additional) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = event} <- EventsManager.create_event(args),
+         {:ok, _} <-
+           EventActivity.insert_activity(event, subject: "event_created"),
          event_as_data <- Convertible.model_to_as(event),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(event),
@@ -38,6 +41,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   def update(%Event{} = old_event, args, additional) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = new_event} <- EventsManager.update_event(old_event, args),
+         {:ok, _} <-
+           EventActivity.insert_activity(new_event, subject: "event_updated"),
          {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
          event_as_data <- Convertible.model_to_as(new_event),
          audience <-
@@ -66,6 +71,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     with audience <-
            Audience.calculate_to_and_cc_from_mentions(event),
          {:ok, %Event{} = event} <- EventsManager.delete_event(event),
+         {:ok, _} <-
+           EventActivity.insert_activity(event, subject: "event_deleted"),
          {:ok, true} <- Cachex.del(:activity_pub, "event_#{event.uuid}"),
          {:ok, %Tombstone{} = _tombstone} <-
            Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}) do

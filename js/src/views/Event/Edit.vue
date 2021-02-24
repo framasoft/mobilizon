@@ -497,13 +497,11 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
   },
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: (this.isUpdate
         ? this.$t("Event edition")
         : this.$t("Event creation")) as string,
-      // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
   },

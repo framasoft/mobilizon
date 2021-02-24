@@ -49,4 +49,7 @@ export default class Settings extends mixins(GroupMixin) {
 aside.section {
   padding-top: 1rem;
 }
+.container.section {
+  background: $white;
+}
 </style>

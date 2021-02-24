@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
+  alias Mobilizon.Service.Activity.Discussion, as: DiscussionActivity
   alias Mobilizon.Web.Endpoint
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
   require Logger
@@ -19,6 +20,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
     with %Discussion{} = discussion <- Discussions.get_discussion(discussion_id),
          {:ok, %Discussion{last_comment_id: last_comment_id} = discussion} <-
            Discussions.reply_to_discussion(discussion, args),
+         {:ok, _} <-
+           DiscussionActivity.insert_activity(discussion,
+             subject: "discussion_replied",
+             actor_id: Map.get(args, :creator_id, args.actor_id)
+           ),
          %Comment{} = last_comment <- Discussions.get_comment_with_preload(last_comment_id),
          :ok <- maybe_publish_graphql_subscription(discussion),
          comment_as_data <- Convertible.model_to_as(last_comment),
@@ -35,6 +41,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   def create(args, additional) do
     with {:ok, %Discussion{} = discussion} <-
            Discussions.create_discussion(args),
+         {:ok, _} <-
+           DiscussionActivity.insert_activity(discussion, subject: "discussion_created"),
          discussion_as_data <- Convertible.model_to_as(discussion),
          audience <-
            Audience.calculate_to_and_cc_from_mentions(discussion),
@@ -49,6 +57,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   def update(%Discussion{} = old_discussion, args, additional) do
     with {:ok, %Discussion{} = new_discussion} <-
            Discussions.update_discussion(old_discussion, args),
+         {:ok, _} <-
+           DiscussionActivity.insert_activity(new_discussion,
+             subject: "discussion_renamed",
+             old_discussion: old_discussion
+           ),
          {:ok, true} <- Cachex.del(:activity_pub, "discussion_#{new_discussion.slug}"),
          discussion_as_data <- Convertible.model_to_as(new_discussion),
          audience <-
@@ -71,7 +84,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
         _local,
         _additionnal
       ) do
-    with {:ok, _} <- Discussions.delete_discussion(discussion) do
+    with {:ok, _} <- Discussions.delete_discussion(discussion),
+         {:ok, _} <-
+           DiscussionActivity.insert_activity(discussion,
+             subject: "discussion_deleted",
+             moderator: actor
+           ) do
       # This is just fake
       activity_data = %{
         "type" => "Delete",

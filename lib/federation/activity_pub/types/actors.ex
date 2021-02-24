@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
+  alias Mobilizon.Service.Activity.Group, as: GroupActivity
   alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Web.Email.Follow, as: FollowMailer
@@ -20,6 +21,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   def create(args, additional) do
     with args <- prepare_args_for_actor(args),
          {:ok, %Actor{} = actor} <- Actors.create_actor(args),
+         {:ok, _} <-
+           GroupActivity.insert_activity(actor,
+             subject: "group_created",
+             actor_id: args.creator_actor_id
+           ),
          actor_as_data <- Convertible.model_to_as(actor),
          audience <- %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []},
          create_data <-
@@ -32,6 +38,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @spec update(Actor.t(), map, map) :: {:ok, Actor.t(), Activity.t()} | any
   def update(%Actor{} = old_actor, args, additional) do
     with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
+         {:ok, _} <-
+           GroupActivity.insert_activity(new_actor,
+             subject: "group_updated",
+             old_group: old_actor,
+             updater_actor: Map.get(args, :updater_actor)
+           ),
          actor_as_data <- Convertible.model_to_as(new_actor),
          {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
          audience <-
@@ -112,6 +124,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
                |> Map.get(:metadata, %{})
                |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
            }),
+         {:ok, _} <-
+           Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_joined"),
          Absinthe.Subscription.publish(Endpoint, actor, group_membership_changed: actor.id),
          join_data <- %{
            "type" => "Join",

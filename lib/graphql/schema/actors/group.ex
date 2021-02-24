@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   alias Mobilizon.Addresses
 
   alias Mobilizon.GraphQL.Resolvers.{
+    Activity,
     Discussion,
     Followers,
     Group,
@@ -28,7 +29,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   Represents a group of actors
   """
   object :group do
-    interfaces([:actor, :interactable])
+    interfaces([:actor, :interactable, :activity_object])
 
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
@@ -141,6 +142,19 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
       resolve(&Followers.find_followers_for_group/3)
       description("A paginated list of the followers this group has")
+    end
+
+    field :activity, :paginated_activity_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated activity items list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of activity items per page")
+
+      arg(:type, :activity_type, description: "Filter by type of activity")
+      resolve(&Activity.group_activity/3)
+      description("The group activity")
     end
   end
 

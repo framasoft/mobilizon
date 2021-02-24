@@ -254,9 +254,7 @@ const GROUP_PAGE_LIMIT = 10;
   },
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
       title: this.$t("Explore events") as string,
-      // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
   },

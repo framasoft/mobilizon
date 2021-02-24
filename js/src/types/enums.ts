@@ -182,3 +182,56 @@ export enum GroupVisibility {
 export enum AddressSearchType {
   ADMINISTRATIVE = "ADMINISTRATIVE",
 }
+export enum ActivityType {
+  EVENT = "EVENT",
+  POST = "POST",
+  MEMBER = "MEMBER",
+  RESOURCE = "RESOURCE",
+  DISCUSSION = "DISCUSSION",
+  GROUP = "GROUP",
+}
+
+export enum ActivityEventSubject {
+  EVENT_CREATED = "event_created",
+  EVENT_UPDATED = "event_updated",
+  EVENT_DELETED = "event_deleted",
+}
+
+export enum ActivityPostSubject {
+  POST_CREATED = "post_created",
+  POST_UPDATED = "post_updated",
+  POST_DELETED = "post_deleted",
+}
+
+export enum ActivityMemberSubject {
+  MEMBER_REQUEST = "member_request",
+  MEMBER_INVITED = "member_invited",
+  MEMBER_ACCEPTED_INVITATION = "member_accepted_invitation",
+  MEMBER_REJECTED_INVITATION = "member_rejected_invitation",
+  MEMBER_ADDED = "member_added",
+  MEMBER_JOINED = "member_joined",
+  MEMBER_APPROVED = "member_approved",
+  MEMBER_UPDATED = "member_updated",
+  MEMBER_REMOVED = "member_removed",
+  MEMBER_QUIT = "member_quit",
+}
+
+export enum ActivityResourceSubject {
+  RESOURCE_CREATED = "resource_created",
+  RESOURCE_UPDATED = "resource_renamed",
+  RESOURCE_MOVED = "resource_moved",
+  RESOURCE_DELETED = "resource_deleted",
+}
+
+export enum ActivityDiscussionSubject {
+  DISCUSSION_CREATED = "discussion_created",
+  DISCUSSION_REPLIED = "discussion_replied",
+  DISCUSSION_RENAMED = "discussion_renamed",
+  DISCUSSION_ARCHIVED = "discussion_archived",
+  DISCUSSION_DELETED = "discussion_deleted",
+}
+
+export enum ActivityGroupSubject {
+  GROUP_CREATED = "group_created",
+  GROUP_UPDATED = "group_updated",
+}
