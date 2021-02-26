@@ -52,8 +52,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
     media_src = ["media-src 'self' "] ++ Config.get([:http_security, :csp_policy, :media_src])
 
+    # Connect-src is available for any origin because of webfinger query to redirect to content
     connect_src =
-      ["connect-src 'self' blob: ", static_url, ?\s, websocket_url] ++
+      ["connect-src 'self' * blob: ", static_url, ?\s, websocket_url] ++
         Config.get([:http_security, :csp_policy, :connect_src])
 
     script_src =
