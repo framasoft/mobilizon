@@ -43,7 +43,8 @@ defmodule Mobilizon.Discussions do
     :replies,
     :tags,
     :mentions,
-    :discussion
+    :discussion,
+    :media
   ]
 
   @discussion_preloads [
