@@ -31,7 +31,7 @@
               />
             </b-field>
             <b-field :label="$t('Radius')" label-for="radius">
-              <b-select v-model="radius" id="radius">
+              <b-select v-model="radius" id="radius" expanded>
                 <option
                   v-for="(radiusOption, index) in radiusOptions"
                   :key="index"
@@ -42,7 +42,12 @@
               </b-select>
             </b-field>
             <b-field :label="$t('Date')" label-for="date">
-              <b-select v-model="when" id="date" :disabled="activeTab !== 0">
+              <b-select
+                v-model="when"
+                id="date"
+                :disabled="activeTab !== 0"
+                expanded
+              >
                 <option
                   v-for="(option, index) in options"
                   :key="index"
@@ -458,6 +463,17 @@ h3.title {
 form {
   ::v-deep .field label.label {
     margin-bottom: 0;
+  }
+
+  .field.is-expanded:last-child > .field-body > .field.is-grouped {
+    flex-wrap: wrap;
+    flex: 1;
+    .field {
+      flex: 1 0 auto;
+      &:first-child {
+        flex: 3 0 300px;
+      }
+    }
   }
 }
 </style>
