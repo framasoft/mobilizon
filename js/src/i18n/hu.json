@@ -745,7 +745,7 @@
   "Visible everywhere on the web (public)": "Mindenhol látható a világhálón (nyilvános)",
   "Waiting for organization team approval.": "Várakozás a szervezői csapat jóváhagyására.",
   "Warning": "Figyelmeztetés",
-  "We improve this software thanks to your feedback. To let us know about this issue, two possibilities (both unfortunately require user account creation):": "A visszajelzéseknek köszönhetően javítunk a szoftveren. Két lehetősége van, hogy tudassa velünk a problémát (sajnos mind a kettőhöz fiók létrehozása szükséges):'",
+  "We improve this software thanks to your feedback. To let us know about this issue, two possibilities (both unfortunately require user account creation):": "A visszajelzéseknek köszönhetően javítunk a szoftveren. Két lehetősége van, hogy tudassa velünk a problémát (sajnos mind a kettőhöz fiók létrehozása szükséges):",
   "We just sent an email to {email}": "Most küldtünk egy e-mailt erre a címre: {email}",
   "We use your timezone to make sure you get notifications for an event at the correct time.": "Az időzónáját használjuk annak biztosításához, hogy a megfelelő időben kapja meg egy esemény értesítéseit.",
   "We will redirect you to your instance in order to interact with this event": "Át fogjuk irányítani a saját példányára az eseménnyel való interakció érdekében",
