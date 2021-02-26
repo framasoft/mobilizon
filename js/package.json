@@ -65,7 +65,7 @@
     "@types/prosemirror-state": "^1.2.4",
     "@types/prosemirror-view": "^1.11.4",
     "@types/vuedraggable": "^2.23.0",
-    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.14.1",
     "@vue/cli-plugin-babel": "~4.5.11",
     "@vue/cli-plugin-e2e-cypress": "~4.5.11",
