@@ -66,6 +66,7 @@ defmodule Mobilizon.Actors do
   Gets a single actor.
   """
   @spec get_actor(integer | String.t()) :: Actor.t() | nil
+  def get_actor(nil), do: nil
   def get_actor(id), do: Repo.get(Actor, id)
 
   @doc """
@@ -860,7 +861,7 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns the list of members for a group.
+  Returns a paginated list of members for a group.
   """
   @spec list_members_for_group(Actor.t(), list(atom()), integer | nil, integer | nil) :: Page.t()
   def list_members_for_group(
@@ -879,6 +880,13 @@ defmodule Mobilizon.Actors do
   def list_external_actors_members_for_group(%Actor{id: group_id, type: :Group}) do
     group_id
     |> group_external_member_actor_query()
+    |> Repo.all()
+  end
+
+  @spec list_internal_actors_members_for_group(Actor.t(), list()) :: list(Actor.t())
+  def list_internal_actors_members_for_group(%Actor{id: group_id, type: :Group}, roles \\ []) do
+    group_id
+    |> group_internal_member_actor_query(roles)
     |> Repo.all()
   end
 
@@ -1512,6 +1520,16 @@ defmodule Mobilizon.Actors do
     |> select([m, _a], m)
   end
 
+  @spec group_internal_member_actor_query(integer(), list()) :: Ecto.Query.t()
+  defp group_internal_member_actor_query(group_id, role) do
+    Member
+    |> where([m], m.parent_id == ^group_id)
+    |> filter_member_role(role)
+    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
+    |> where([_m, a], is_nil(a.domain))
+    |> select([_m, a], a)
+  end
+
   @spec group_internal_member_query(integer()) :: Ecto.Query.t()
   defp group_internal_member_query(group_id) do
     Member
@@ -1523,13 +1541,13 @@ defmodule Mobilizon.Actors do
   end
 
   @spec filter_member_role(Ecto.Query.t(), list(atom()) | atom()) :: Ecto.Query.t()
-  def filter_member_role(query, []), do: query
+  defp filter_member_role(query, []), do: query
 
-  def filter_member_role(query, roles) when is_list(roles) do
+  defp filter_member_role(query, roles) when is_list(roles) do
     where(query, [m], m.role in ^roles)
   end
 
-  def filter_member_role(query, role) when is_atom(role) do
+  defp filter_member_role(query, role) when is_atom(role) do
     from(m in query, where: m.role == ^role)
   end
 

@@ -104,9 +104,7 @@ import RouteName from "../../router/name";
   },
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
       title: this.$t("My groups") as string,
-      // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
   },

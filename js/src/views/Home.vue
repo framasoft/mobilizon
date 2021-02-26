@@ -407,11 +407,9 @@ import Subtitle from "../components/Utils/Subtitle.vue";
   },
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.instanceName,
-      // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
     };
   },

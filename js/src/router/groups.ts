@@ -18,6 +18,7 @@ export enum GroupsRouteName {
   POSTS = "POSTS",
   GROUP_EVENTS = "GROUP_EVENTS",
   GROUP_JOIN = "GROUP_JOIN",
+  TIMELINE = "TIMELINE",
 }
 
 const resourceFolder = (): Promise<EsModuleComponent> =>
@@ -144,5 +145,13 @@ export const groupsRoutes: RouteConfig[] = [
     props: true,
     name: GroupsRouteName.GROUP_JOIN,
     meta: { requiredAuth: false },
+  },
+  {
+    path: "/@:preferredUsername/timeline",
+    name: GroupsRouteName.TIMELINE,
+    component: (): Promise<EsModuleComponent> =>
+      import("@/views/Group/Timeline.vue"),
+    props: true,
+    meta: { requiredAuth: true },
   },
 ];

@@ -17,7 +17,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
   @desc "An event"
   object :event do
-    interfaces([:action_log_object, :interactable])
+    interfaces([:action_log_object, :interactable, :activity_object])
     field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")

@@ -409,4 +409,20 @@ defmodule Mobilizon.Factory do
       url: Routes.page_url(Endpoint, :discussion, group.preferred_username, slug)
     }
   end
+
+  def mobilizon_activity_factory do
+    group = build(:group)
+    actor = build(:actor)
+    event = build(:event, organizer_actor: actor, attributed_to: group)
+
+    %Mobilizon.Activities.Activity{
+      type: :event,
+      subject: :event_created,
+      subject_params: %{event: event},
+      author: actor,
+      group: group,
+      object_type: :event,
+      object_id: to_string(event.id)
+    }
+  end
 end

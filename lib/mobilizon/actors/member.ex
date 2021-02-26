@@ -25,6 +25,7 @@ defmodule Mobilizon.Actors.Member do
   schema "members" do
     field(:role, MemberRole, default: :member)
     field(:url, :string)
+    field(:member_since, :utc_datetime)
 
     embeds_one :metadata, Metadata, on_replace: :delete do
       # TODO : Use this space to put notes when someone is invited / requested to join
@@ -64,6 +65,7 @@ defmodule Mobilizon.Actors.Member do
     |> cast(attrs, @attrs)
     |> cast_embed(:metadata, with: &metadata_changeset/2)
     |> ensure_url()
+    |> update_member_since()
     |> validate_required(@required_attrs)
     # On both parent_id and actor_id
     |> unique_constraint(:parent_id, name: :members_actor_parent_unique_index)
@@ -97,5 +99,30 @@ defmodule Mobilizon.Actors.Member do
     changeset
     |> put_change(:id, uuid)
     |> put_change(:url, "#{Endpoint.url()}/member/#{uuid}")
+  end
+
+  @spec update_member_since(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp update_member_since(%Ecto.Changeset{data: data} = changeset) do
+    new_role = get_change(changeset, :role)
+
+    cond do
+      new_role in [
+        :member,
+        :moderator,
+        :administrator,
+        :creator
+      ] ->
+        put_change(
+          changeset,
+          :member_since,
+          DateTime.truncate(data.member_since || DateTime.utc_now(), :second)
+        )
+
+      new_role in [:invited, :not_approved, :rejected] ->
+        put_change(changeset, :member_since, nil)
+
+      true ->
+        changeset
+    end
   end
 end

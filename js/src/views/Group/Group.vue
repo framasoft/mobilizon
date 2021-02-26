@@ -57,14 +57,27 @@
             <b-skeleton v-else :animated="true" />
             <br />
             <div class="buttons">
-              <router-link
+              <b-button
+                outlined
+                icon-left="timeline-text"
+                v-if="isCurrentActorAGroupMember"
+                tag="router-link"
+                :to="{
+                  name: RouteName.TIMELINE,
+                  params: { preferredUsername: usernameWithDomain(group) },
+                }"
+                >{{ $t("Activity") }}</b-button
+              >
+              <b-button
+                outlined
+                icon-left="cog"
                 v-if="isCurrentActorAGroupAdmin"
+                tag="router-link"
                 :to="{
                   name: RouteName.GROUP_PUBLIC_SETTINGS,
                   params: { preferredUsername: usernameWithDomain(group) },
                 }"
-                class="button is-outlined"
-                >{{ $t("Group settings") }}</router-link
+                >{{ $t("Group settings") }}</b-button
               >
             </div>
           </div>
@@ -506,11 +519,9 @@ import ReportModal from "../../components/Report/ReportModal.vue";
   },
   metaInfo() {
     return {
-      // if no subcomponents specify a metaInfo.title, this title will be used
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.groupTitle,
-      // all titles will be injected into this template
       titleTemplate: "%s | Mobilizon",
       meta: [
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

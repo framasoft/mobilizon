@@ -26,33 +26,35 @@
         </span>
         {{ $t("Parent folder") }}
       </a>
-      <a
-        class="panel-block"
-        v-for="element in resource.children.elements"
-        :class="{
-          clickable:
-            element.type === 'folder' && element.id !== initialResource.id,
-        }"
-        :key="element.id"
-        @click="goDown(element)"
-      >
-        <span class="panel-icon">
-          <b-icon
-            icon="folder"
-            size="is-small"
-            v-if="element.type === 'folder'"
-          />
-          <b-icon icon="link" size="is-small" v-else />
-        </span>
-        {{ element.title }}
-        <span v-if="element.id === initialResource.id">
-          <em v-if="element.type === 'folder'"> {{ $t("(this folder)") }}</em>
-          <em v-else> {{ $t("(this link)") }}</em>
-        </span>
-      </a>
+      <template v-if="resource.children">
+        <a
+          class="panel-block"
+          v-for="element in resource.children.elements"
+          :class="{
+            clickable:
+              element.type === 'folder' && element.id !== initialResource.id,
+          }"
+          :key="element.id"
+          @click="goDown(element)"
+        >
+          <span class="panel-icon">
+            <b-icon
+              icon="folder"
+              size="is-small"
+              v-if="element.type === 'folder'"
+            />
+            <b-icon icon="link" size="is-small" v-else />
+          </span>
+          {{ element.title }}
+          <span v-if="element.id === initialResource.id">
+            <em v-if="element.type === 'folder'"> {{ $t("(this folder)") }}</em>
+            <em v-else> {{ $t("(this link)") }}</em>
+          </span>
+        </a>
+      </template>
       <p
         class="panel-block content has-text-grey has-text-centered"
-        v-if="resource.children.total === 0"
+        v-if="resource.children && resource.children.total === 0"
       >
         {{ $t("No resources in this folder") }}
       </p>
