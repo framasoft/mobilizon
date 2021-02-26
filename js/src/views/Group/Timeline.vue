@@ -72,7 +72,7 @@
         {{ $t("No more activity to display.") }}
       </empty-content>
       <empty-content
-        v-if="!$apollo.loading && activities.size === 0"
+        v-if="!$apollo.loading && activities.total === 0"
         icon="timeline-text"
       >
         {{
