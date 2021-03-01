@@ -34,7 +34,7 @@
     "intersection-observer": "^0.12.0",
     "leaflet": "^1.4.0",
     "leaflet.locatecontrol": "^0.72.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "ngeohash": "^0.6.3",
     "phoenix": "^1.4.11",
     "register-service-worker": "^1.7.1",
