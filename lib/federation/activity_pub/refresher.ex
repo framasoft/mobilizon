@@ -100,6 +100,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   def refresh_all_external_groups do
     Repo.transaction(fn ->
       Actors.list_external_groups_for_stream()
+      |> Stream.filter(&Actors.needs_update?/1)
       |> Stream.map(&refresh_profile/1)
       |> Stream.run()
     end)

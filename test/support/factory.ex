@@ -418,7 +418,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Activities.Activity{
       type: :event,
       subject: :event_created,
-      subject_params: %{event: event},
+      subject_params: %{event_title: event.title},
       author: actor,
       group: group,
       object_type: :event,

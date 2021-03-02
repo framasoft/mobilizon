@@ -72,13 +72,14 @@ defmodule Mobilizon.Activities do
     Repo.all(Activity)
   end
 
-  @spec list_activities_for_group(
+  @spec list_group_activities_for_member(
+          integer() | String.t(),
           integer() | String.t(),
           Keyword.t(),
           integer() | nil,
           integer() | nil
         ) :: Page.t()
-  def list_activities_for_group(
+  def list_group_activities_for_member(
         group_id,
         actor_asking_id,
         filters \\ [],
@@ -91,6 +92,26 @@ defmodule Mobilizon.Activities do
       on: m.parent_id == a.group_id and m.actor_id == ^actor_asking_id
     )
     |> where([a, m], a.inserted_at >= m.member_since)
+    |> filter_object_type(Keyword.get(filters, :type))
+    |> order_by(desc: :inserted_at)
+    |> preload([:author, :group])
+    |> Page.build_page(page, limit)
+  end
+
+  @spec list_group_activities(
+          integer() | String.t(),
+          Keyword.t(),
+          integer() | nil,
+          integer() | nil
+        ) :: Page.t()
+  def list_group_activities(
+        group_id,
+        filters \\ [],
+        page \\ nil,
+        limit \\ nil
+      ) do
+    Activity
+    |> where([a], a.group_id == ^group_id)
     |> filter_object_type(Keyword.get(filters, :type))
     |> order_by(desc: :inserted_at)
     |> preload([:author, :group])
