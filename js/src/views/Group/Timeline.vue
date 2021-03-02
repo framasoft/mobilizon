@@ -110,6 +110,7 @@ type IActivitySkeleton = IActivity | { skeleton: string };
   apollo: {
     group: {
       query: GROUP_TIMELINE,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
           preferredUsername: this.preferredUsername,
