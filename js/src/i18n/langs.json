@@ -3,7 +3,6 @@
   "be": "Беларуская мова",
   "bn": "বাংলা",
   "ca": "Català",
-  "cs": "čeština",
   "de": "Deutsch",
   "en": "English",
   "eo": "Esperanto",
@@ -11,6 +10,7 @@
   "eu": "Euskara",
   "fi": "suomi",
   "fr": "Français",
+  "gd": "Gàidhlig",
   "gl": "Galego",
   "hu": "Magyar",
   "it": "Italiano",
@@ -22,7 +22,7 @@
   "pl": "Polski",
   "pt": "Português",
   "pt_BR": "Português brasileiro",
-  "ru": "Русский",
   "sl": "Slovenščina",
-  "sv": "Svenska"
+  "sv": "Svenska",
+  "zh_Hant": "繁體字"
 }
