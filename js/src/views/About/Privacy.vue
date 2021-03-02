@@ -1,7 +1,7 @@
 <template>
   <div class="container section">
     <h2 class="title">{{ $t("Privacy Policy") }}</h2>
-    <div class="content" v-html="config.privacy.bodyHtml" />
+    <div class="content" v-if="config" v-html="config.privacy.bodyHtml" />
   </div>
 </template>
 
@@ -37,14 +37,14 @@ export default class Privacy extends Vue {
 
   @Watch("config", { deep: true })
   watchConfig(config: IConfig): void {
-    if (config.privacy.type) {
+    if (config?.privacy?.type) {
       this.redirectToUrl();
     }
   }
 
   redirectToUrl(): void {
-    if (this.config.privacy.type === InstancePrivacyType.URL) {
-      window.location.replace(this.config.privacy.url);
+    if (this.config?.privacy?.type === InstancePrivacyType.URL) {
+      window.location.replace(this.config?.privacy?.url);
     }
   }
 }

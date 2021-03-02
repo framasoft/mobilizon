@@ -25,7 +25,11 @@
       </div>
       <div class="column contact">
         <h4>{{ $t("Contact") }}</h4>
-        <instance-contact-link :contact="config.contact" />
+        <instance-contact-link
+          v-if="config && config.contact"
+          :contact="config.contact"
+        />
+        <p v-else>{{ $t("No information") }}</p>
       </div>
     </section>
     <hr />

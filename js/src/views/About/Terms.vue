@@ -1,7 +1,7 @@
 <template>
   <div class="container section">
     <h2 class="title">{{ $t("Terms") }}</h2>
-    <div class="content" v-html="config.terms.bodyHtml" />
+    <div class="content" v-if="config" v-html="config.terms.bodyHtml" />
   </div>
 </template>
 
@@ -37,14 +37,14 @@ export default class Terms extends Vue {
 
   @Watch("config", { deep: true })
   watchConfig(config: IConfig): void {
-    if (config.terms.type) {
+    if (config?.terms?.type) {
       this.redirectToUrl();
     }
   }
 
   redirectToUrl(): void {
-    if (this.config.terms.type === InstanceTermsType.URL) {
-      window.location.replace(this.config.terms.url);
+    if (this.config?.terms?.type === InstanceTermsType.URL) {
+      window.location.replace(this.config?.terms?.url);
     }
   }
 }

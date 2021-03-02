@@ -1049,5 +1049,6 @@
   "{profile} updated the member {member}.": "{profile} a mis à jour le ou la membre {member}.",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "No information": "Non renseigné"
 }

@@ -115,7 +115,6 @@
 <script lang="ts">
 import { CONTACT } from "@/graphql/config";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import InstanceContactLink from "@/components/About/InstanceContactLink.vue";
 
 @Component({
   apollo: {
@@ -130,9 +129,6 @@ import InstanceContactLink from "@/components/About/InstanceContactLink.vue";
       title: this.$t("Error") as string,
       titleTemplate: "%s | Mobilizon",
     };
-  },
-  components: {
-    InstanceContactLink,
   },
 })
 export default class ErrorComponent extends Vue {
