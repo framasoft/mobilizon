@@ -4,6 +4,7 @@ import { DateFnsPlugin } from "@/plugins/dateFns";
 import en from "../i18n/en_US.json";
 import langs from "../i18n/langs.json";
 import { getLocaleData } from "./auth";
+import pluralizationRules from "../i18n/pluralRules";
 
 const DEFAULT_LOCALE = "en_US";
 
@@ -31,6 +32,7 @@ export const i18n = new VueI18n({
   messages: en, // set locale messages
   fallbackLocale: DEFAULT_LOCALE,
   formatFallbackMessages: true,
+  pluralizationRules,
 });
 
 const loadedLanguages = [DEFAULT_LOCALE];
