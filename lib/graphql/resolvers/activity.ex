@@ -19,7 +19,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id) or is_moderator(role)} do
       %Page{total: total, elements: elements} =
-        Activities.list_activities_for_group(group_id, actor_id, [], page, limit)
+        Activities.list_group_activities_for_member(group_id, actor_id, [], page, limit)
 
       elements =
         Enum.map(elements, fn %Activity{} = activity ->

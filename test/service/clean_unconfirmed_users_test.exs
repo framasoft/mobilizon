@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Mobilizon.User.CleanUnconfirmedUsersTest do
+defmodule Mobilizon.Service.CleanUnconfirmedUsersTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
