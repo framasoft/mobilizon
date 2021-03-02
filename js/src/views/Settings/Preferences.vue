@@ -63,6 +63,7 @@
               loggedUser && loggedUser.settings && loggedUser.settings.location
             "
             :type="AddressSearchType.ADMINISTRATIVE"
+            :doGeoLocation="false"
             v-model="address"
           >
           </address-auto-complete>

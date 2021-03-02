@@ -20,7 +20,7 @@
         </template>
       </b-autocomplete>
     </b-field>
-    <b-field v-if="isSecureContext()">
+    <b-field v-if="canDoGeoLocation">
       <b-button
         type="is-text"
         v-if="!gettingLocation"
@@ -72,6 +72,8 @@ import { IConfig } from "../../types/config.model";
 export default class AddressAutoComplete extends Vue {
   @Prop({ required: true }) value!: IAddress;
   @Prop({ required: false, default: false }) type!: string | false;
+  @Prop({ required: false, default: true, type: Boolean })
+  doGeoLocation!: boolean;
 
   addressData: IAddress[] = [];
 
@@ -244,8 +246,12 @@ export default class AddressAutoComplete extends Vue {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  isSecureContext(): boolean {
+  get isSecureContext(): boolean {
     return window.isSecureContext;
+  }
+
+  get canDoGeoLocation(): boolean {
+    return this.isSecureContext && this.doGeoLocation;
   }
 }
 </script>
