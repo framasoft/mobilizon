@@ -245,11 +245,14 @@ export default class GroupFollowers extends mixins(GroupMixin) {
           },
         ],
       });
-      this.$notifier.success(
-        this.$t("@{username}'s follow request was rejected", {
-          username: follower.actor.preferredUsername,
-        }) as string
-      );
+      const message = approved
+        ? this.$t("@{username}'s follow request was accepted", {
+            username: follower.actor.preferredUsername,
+          })
+        : this.$t("@{username}'s follow request was rejected", {
+            username: follower.actor.preferredUsername,
+          });
+      this.$notifier.success(message as string);
     } catch (error) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {

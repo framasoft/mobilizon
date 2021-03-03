@@ -1050,5 +1050,6 @@
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
-  "No information": "Non renseigné"
+  "No information": "Non renseigné",
+  "@{username}'s follow request was accepted": "@{username}'s follow request was accepted"
 }

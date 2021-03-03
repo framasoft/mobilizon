@@ -956,5 +956,6 @@
   "The group's avatar was changed.": "The group's avatar was changed.",
   "The group's banner was changed.": "The group's banner was changed.",
   "The group's short description was changed.": "The group's short description was changed.",
-  "No information": "No information"
+  "No information": "No information",
+  "@{username}'s follow request was accepted": "@{username}'s follow request was accepted"
 }
