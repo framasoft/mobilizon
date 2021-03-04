@@ -89,6 +89,7 @@ defmodule Mobilizon.GraphQL.Error do
   defp metadata(:event_not_found), do: {404, dgettext("errors", "Event not found")}
   defp metadata(:group_not_found), do: {404, dgettext("errors", "Group not found")}
   defp metadata(:resource_not_found), do: {404, dgettext("errors", "Resource not found")}
+  defp metadata(:discussion_not_found), do: {404, dgettext("errors", "Discussion not found")}
   defp metadata(:unknown), do: {500, dgettext("errors", "Something went wrong")}
 
   defp metadata(code) do
