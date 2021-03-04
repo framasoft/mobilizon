@@ -395,7 +395,6 @@ defmodule Mobilizon.Factory do
     uuid = Ecto.UUID.generate()
     actor = build(:actor)
     group = build(:group)
-    comment = build(:comment, actor: actor, attributed_to: group)
     slug = "my-awesome-discussion-#{ShortUUID.encode!(uuid)}"
 
     %Mobilizon.Discussions.Discussion{
@@ -404,8 +403,8 @@ defmodule Mobilizon.Factory do
       creator: actor,
       actor: group,
       id: uuid,
-      last_comment: comment,
-      comments: [comment],
+      last_comment: nil,
+      comments: [],
       url: Routes.page_url(Endpoint, :discussion, group.preferred_username, slug)
     }
   end
