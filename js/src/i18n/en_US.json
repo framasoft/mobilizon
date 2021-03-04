@@ -854,7 +854,7 @@
   "{count} km": "{count} km",
   "City or region": "City or region",
   "Select a radius": "Select a radius",
-  "Your city or region and the radius will only be used to suggest you events nearby.": "Your city or region and the radius will only be used to suggest you events nearby.",
+  "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area.": "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area.",
   "Your upcoming events": "Your upcoming events",
   "Last published events": "Last published events",
   "On {instance}": "On {instance}",

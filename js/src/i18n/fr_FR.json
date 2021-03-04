@@ -933,7 +933,7 @@
   "Your account has been validated": "Votre compte a été validé",
   "Your account is being validated": "Votre compte est en cours de validation",
   "Your account is nearly ready, {username}": "Votre compte est presque prêt, {username}",
-  "Your city or region and the radius will only be used to suggest you events nearby.": "Votre ville ou région et le rayon seront uniquement utilisé pour vous suggérer des événements proches.",
+  "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area.": "Votre ville ou région et le rayon seront uniquement utilisés pour vous suggérer des événements proches. Le rayon des événements proches sera calculé par rapport au centre administratif de la zone.",
   "Your current email is {email}. You use it to log in.": "Votre adresse e-mail actuelle est {email}. Vous l'utilisez pour vous connecter.",
   "Your email": "Votre adresse e-mail",
   "Your email address was automatically set based on your {provider} account.": "Votre adresse email a été définie automatiquement en se basant sur votre compte {provider}.",

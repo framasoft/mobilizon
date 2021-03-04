@@ -86,7 +86,7 @@
       <p>
         {{
           $t(
-            "Your city or region and the radius will only be used to suggest you events nearby."
+            "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area."
           )
         }}
       </p>
@@ -94,7 +94,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import ngeohash from "ngeohash";
 import { saveLocaleData } from "@/utils/auth";
 import { TIMEZONES } from "../../graphql/config";
@@ -125,27 +125,41 @@ export default class Preferences extends Vue {
 
   loggedUser!: IUser;
 
-  selectedTimezone: string | undefined = undefined;
-
-  locale: string | null = null;
-
   RouteName = RouteName;
 
   langs: Record<string, string> = langs;
 
   AddressSearchType = AddressSearchType;
 
-  @Watch("loggedUser")
-  setSavedTimezone(loggedUser: IUser): void {
-    if (loggedUser?.settings?.timezone) {
-      this.selectedTimezone = loggedUser.settings.timezone;
-    } else {
-      this.selectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  get selectedTimezone(): string {
+    if (this.loggedUser?.settings?.timezone) {
+      return this.loggedUser.settings.timezone;
     }
-    if (loggedUser?.locale) {
-      this.locale = loggedUser.locale;
-    } else {
-      this.locale = this.$i18n.locale;
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  set selectedTimezone(selectedTimezone: string) {
+    if (selectedTimezone !== this.loggedUser?.settings?.timezone) {
+      this.updateUserSettings({ timezone: selectedTimezone });
+    }
+  }
+
+  get locale(): string {
+    if (this.loggedUser?.locale) {
+      return this.loggedUser?.locale;
+    }
+    return this.$i18n.locale;
+  }
+
+  set locale(locale: string) {
+    if (locale) {
+      this.$apollo.mutate({
+        mutation: UPDATE_USER_LOCALE,
+        variables: {
+          locale,
+        },
+      });
+      saveLocaleData(locale);
     }
   }
 
@@ -184,26 +198,6 @@ export default class Preferences extends Vue {
       },
       {}
     );
-  }
-
-  @Watch("selectedTimezone")
-  async updateTimezone(): Promise<void> {
-    if (this.selectedTimezone !== this.loggedUser.settings.timezone) {
-      this.updateUserSettings({ timezone: this.selectedTimezone });
-    }
-  }
-
-  @Watch("locale")
-  async updateLocale(): Promise<void> {
-    if (this.locale) {
-      await this.$apollo.mutate({
-        mutation: UPDATE_USER_LOCALE,
-        variables: {
-          locale: this.locale,
-        },
-      });
-      saveLocaleData(this.locale);
-    }
   }
 
   get address(): IAddress | null {
