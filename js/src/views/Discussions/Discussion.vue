@@ -79,7 +79,7 @@
               icon-right="close"
             />
             <b-button
-              @click="deleteConversation"
+              @click="openDeleteDiscussionConfirmation"
               type="is-danger"
               native-type="button"
               icon-left="delete"
@@ -386,6 +386,19 @@ export default class discussion extends mixins(GroupMixin) {
       },
     });
     this.editTitleMode = false;
+  }
+
+  openDeleteDiscussionConfirmation(): void {
+    this.$buefy.dialog.confirm({
+      type: "is-danger",
+      title: this.$t("Delete this discussion") as string,
+      message: this.$t(
+        "Are you sure you want to delete this entire discussion?"
+      ) as string,
+      confirmText: this.$t("Delete discussion") as string,
+      cancelText: this.$t("Cancel") as string,
+      onConfirm: () => this.deleteConversation(),
+    });
   }
 
   async deleteConversation(): Promise<void> {

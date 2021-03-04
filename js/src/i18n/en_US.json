@@ -957,5 +957,8 @@
   "The group's banner was changed.": "The group's banner was changed.",
   "The group's short description was changed.": "The group's short description was changed.",
   "No information": "No information",
-  "@{username}'s follow request was accepted": "@{username}'s follow request was accepted"
+  "@{username}'s follow request was accepted": "@{username}'s follow request was accepted",
+  "Delete this discussion": "Delete this discussion",
+  "Are you sure you want to delete this entire discussion?": "Are you sure you want to delete this entire discussion?",
+  "Delete discussion": "Delete discussion"
 }
