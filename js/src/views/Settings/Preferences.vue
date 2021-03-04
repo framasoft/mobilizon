@@ -86,7 +86,7 @@
       <p>
         {{
           $t(
-            "Your city or region and the radius will only be used to suggest you events nearby."
+            "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area."
           )
         }}
       </p>
