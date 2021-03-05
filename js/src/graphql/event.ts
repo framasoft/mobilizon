@@ -592,38 +592,6 @@ export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
   }
 `;
 
-export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
-  subscription($actorId: ID!) {
-    groupMembershipChanged(personId: $actorId) {
-      id
-      memberships {
-        total
-        elements {
-          id
-          role
-          parent {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
-          }
-          invitedBy {
-            id
-            preferredUsername
-            name
-          }
-          insertedAt
-          updatedAt
-        }
-      }
-    }
-  }
-`;
-
 export const FETCH_GROUP_EVENTS = gql`
   query(
     $name: String!

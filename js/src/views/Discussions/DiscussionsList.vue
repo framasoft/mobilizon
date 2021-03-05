@@ -75,8 +75,11 @@ import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import RouteName from "../../router/name";
 import { MemberRole } from "@/types/enums";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED } from "@/graphql/event";
+import {
+  CURRENT_ACTOR_CLIENT,
+  GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+  PERSON_MEMBERSHIP_GROUP,
+} from "@/graphql/actor";
 import { IMember } from "@/types/actor/member.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
@@ -96,11 +99,12 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
       },
     },
     person: {
-      query: PERSON_MEMBERSHIPS,
+      query: PERSON_MEMBERSHIP_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.currentActor.id,
+          group: this.preferredUsername,
         };
       },
       subscribeToMore: {
@@ -108,14 +112,21 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
         variables() {
           return {
             actorId: this.currentActor.id,
+            group: this.preferredUsername,
           };
         },
         skip() {
-          return !this.currentActor || !this.currentActor.id;
+          return (
+            !this.currentActor ||
+            !this.currentActor.id ||
+            !this.preferredUsername
+          );
         },
       },
       skip() {
-        return !this.currentActor || !this.currentActor.id;
+        return (
+          !this.currentActor || !this.currentActor.id || !this.preferredUsername
+        );
       },
     },
     currentActor: CURRENT_ACTOR_CLIENT,

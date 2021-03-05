@@ -934,7 +934,10 @@ defmodule Mobilizon.Federation.ActivityPub do
              do: Refresher.fetch_group(member.parent.url, member.actor)
            ),
          Absinthe.Subscription.publish(Endpoint, member.actor,
-           group_membership_changed: member.actor.id
+           group_membership_changed: [
+             Actor.preferred_username_and_domain(member.parent),
+             member.actor.id
+           ]
          ),
          member_as_data <- Convertible.model_to_as(member),
          audience <-

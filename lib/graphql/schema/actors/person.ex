@@ -70,7 +70,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field(:participations, :paginated_participant_list,
       description: "The list of events this person goes to"
     ) do
-      arg(:event_id, :id)
+      arg(:event_id, :id, description: "Filter by event ID")
 
       arg(:page, :integer,
         default_value: 1,
@@ -86,6 +86,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field(:memberships, :paginated_member_list,
       description: "The list of group this person is member of"
     ) do
+      arg(:group, :string, description: "Filter by group federated username")
+
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated memberships list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of memberships per page")
       resolve(&Person.person_memberships/3)
     end
   end
@@ -225,9 +233,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     @desc "Notify when a person's membership's status changed for a group"
     field :group_membership_changed, :person do
       arg(:person_id, non_null(:id), description: "The person's ID")
+      arg(:group, non_null(:string), description: "The group's federated username")
 
       config(fn args, _ ->
-        {:ok, topic: args.person_id}
+        {:ok, topic: [args.group, args.person_id]}
       end)
     end
   end

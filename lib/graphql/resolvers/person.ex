@@ -6,9 +6,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   import Mobilizon.Users.Guards
 
   alias Mobilizon.{Actors, Events, Users}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Events.Participant
-  alias Mobilizon.Storage.Page
+  alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
@@ -306,10 +306,33 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns the list of events this person is going to
   """
-  def person_memberships(%Actor{id: actor_id}, _args, %{context: %{current_user: user}}) do
+  @spec person_memberships(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
+  def person_memberships(%Actor{id: actor_id}, %{group: group}, %{
+        context: %{current_user: user}
+      }) do
+    with {:is_owned, %Actor{id: actor_id}} <- User.owns_actor(user, actor_id),
+         %Actor{id: group_id} <- Actors.get_actor_by_name(group, :Group),
+         {:ok, %Member{} = membership} <- Actors.get_member(actor_id, group_id),
+         memberships <- %Page{
+           total: 1,
+           elements: [Repo.preload(membership, [:actor, :parent, :invited_by])]
+         } do
+      {:ok, memberships}
+    else
+      {:error, :member_not_found} ->
+        {:ok, %Page{total: 0, elements: []}}
+
+      {:is_owned, nil} ->
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+    end
+  end
+
+  def person_memberships(%Actor{id: actor_id}, %{page: page, limit: limit}, %{
+        context: %{current_user: user}
+      }) do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         participations <- Actors.list_members_for_actor(actor) do
-      {:ok, participations}
+         memberships <- Actors.list_members_for_actor(actor, page, limit) do
+      {:ok, memberships}
     else
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}

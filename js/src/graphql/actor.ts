@@ -446,6 +446,70 @@ export const PERSON_MEMBERSHIPS_WITH_MEMBERS = gql`
   }
 `;
 
+export const PERSON_MEMBERSHIP_GROUP = gql`
+  query PersonMembershipGroup($id: ID!, $group: String!) {
+    person(id: $id) {
+      id
+      memberships(group: $group) {
+        total
+        elements {
+          id
+          role
+          parent {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
+          }
+          invitedBy {
+            id
+            preferredUsername
+            name
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+    }
+  }
+`;
+
+export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
+  subscription($actorId: ID!, $group: String!) {
+    groupMembershipChanged(personId: $actorId, group: $group) {
+      id
+      memberships {
+        total
+        elements {
+          id
+          role
+          parent {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
+          }
+          invitedBy {
+            id
+            preferredUsername
+            name
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_PERSON = gql`
   mutation CreatePerson(
     $preferredUsername: String!

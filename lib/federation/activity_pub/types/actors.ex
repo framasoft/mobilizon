@@ -126,7 +126,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
            }),
          {:ok, _} <-
            Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_joined"),
-         Absinthe.Subscription.publish(Endpoint, actor, group_membership_changed: actor.id),
+         Absinthe.Subscription.publish(Endpoint, actor,
+           group_membership_changed: [Actor.preferred_username_and_domain(group), actor.id]
+         ),
          join_data <- %{
            "type" => "Join",
            "id" => member.url,

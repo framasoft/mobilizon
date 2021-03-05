@@ -628,15 +628,14 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   get groupMember(): IMember | undefined {
-    if (!this.person || !this.person.id) return undefined;
-    return this.person.memberships.elements.find(
-      ({ parent: { id } }) => id === this.group.id
-    );
+    if (this.person?.memberships?.total > 0) {
+      return this.person?.memberships?.elements[0];
+    }
+    return undefined;
   }
 
   get groupMemberships(): (string | undefined)[] {
-    if (!this.person || !this.person.id) return [];
-    return this.person.memberships.elements
+    return this.person?.memberships?.elements
       .filter(
         (membership: IMember) =>
           ![
