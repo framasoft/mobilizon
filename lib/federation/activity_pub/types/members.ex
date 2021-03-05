@@ -5,11 +5,17 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.Activity.Member, as: MemberActivity
+  alias Mobilizon.Web.Endpoint
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_update_data: 2]
 
   def update(
-        %Member{parent: %Actor{id: group_id}, id: member_id, role: current_role} = old_member,
+        %Member{
+          parent: %Actor{id: group_id} = group,
+          id: member_id,
+          role: current_role,
+          actor: %Actor{id: actor_id} = actor
+        } = old_member,
         %{role: updated_role} = args,
         %{moderator: %Actor{url: moderator_url, id: moderator_id} = moderator} = additional
       ) do
@@ -27,6 +33,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
              moderator: moderator,
              subject: "member_updated"
            ),
+         Absinthe.Subscription.publish(Endpoint, actor,
+           group_membership_changed: [Actor.preferred_username_and_domain(group), actor_id]
+         ),
          {:ok, true} <- Cachex.del(:activity_pub, "member_#{member_id}"),
          member_as_data <-
            Convertible.model_to_as(member),

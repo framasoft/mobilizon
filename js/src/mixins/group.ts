@@ -1,5 +1,8 @@
-import { PERSON_MEMBERSHIPS, CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED } from "@/graphql/event";
+import {
+  CURRENT_ACTOR_CLIENT,
+  GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+  PERSON_MEMBERSHIP_GROUP,
+} from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
 import { Group, IActor, IGroup, IPerson } from "@/types/actor";
@@ -26,11 +29,12 @@ import { Component, Vue } from "vue-property-decorator";
       },
     },
     person: {
-      query: PERSON_MEMBERSHIPS,
+      query: PERSON_MEMBERSHIP_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.currentActor.id,
+          group: this.$route.params.preferredUsername,
         };
       },
       subscribeToMore: {
@@ -38,14 +42,23 @@ import { Component, Vue } from "vue-property-decorator";
         variables() {
           return {
             actorId: this.currentActor.id,
+            group: this.$route.params.preferredUsername,
           };
         },
         skip() {
-          return !this.currentActor || !this.currentActor.id;
+          return (
+            !this.currentActor ||
+            !this.currentActor.id ||
+            !this.$route.params.preferredUsername
+          );
         },
       },
       skip() {
-        return !this.currentActor || !this.currentActor.id;
+        return (
+          !this.currentActor ||
+          !this.currentActor.id ||
+          !this.$route.params.preferredUsername
+        );
       },
     },
     currentActor: CURRENT_ACTOR_CLIENT,
@@ -71,13 +84,7 @@ export default class GroupMixin extends Vue {
 
   hasCurrentActorThisRole(givenRole: string | string[]): boolean {
     const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
-    return (
-      this.person &&
-      this.person.memberships.elements.some(
-        ({ parent: { id }, role }) =>
-          id === this.group.id && roles.includes(role)
-      )
-    );
+    return roles.includes(this.person?.memberships?.elements[0].role);
   }
 
   handleErrors(errors: any[]): void {

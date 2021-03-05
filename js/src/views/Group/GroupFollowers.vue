@@ -33,14 +33,13 @@
     </nav>
     <section
       class="container section"
-      v-if="group && isCurrentActorAGroupAdmin"
+      v-if="group && isCurrentActorAGroupAdmin && followers"
     >
       <h1>{{ $t("Group Followers") }} ({{ followers.total }})</h1>
       <b-field :label="$t('Status')" horizontal>
         <b-switch v-model="pending">{{ $t("Pending") }}</b-switch>
       </b-field>
       <b-table
-        v-if="followers"
         :data="followers.elements"
         ref="queueTable"
         :loading="this.$apollo.loading"
