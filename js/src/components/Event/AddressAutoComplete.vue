@@ -81,7 +81,7 @@ export default class AddressAutoComplete extends Vue {
 
   isFetching = false;
 
-  queryText: string = (this.value && new Address(this.value).fullName) || "";
+  initialQueryText = "";
 
   addressModalActive = false;
 
@@ -149,12 +149,21 @@ export default class AddressAutoComplete extends Vue {
     }
   }
 
+  get queryText(): string {
+    if (this.value) {
+      return new Address(this.value).fullName;
+    }
+    return this.initialQueryText;
+  }
+
+  set queryText(queryText: string) {
+    this.initialQueryText = queryText;
+  }
+
   @Watch("value")
   updateEditing(): void {
     if (!this.value?.id) return;
     this.selected = this.value;
-    const address = new Address(this.selected);
-    this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
   }
 
   updateSelected(option: IAddress): void {

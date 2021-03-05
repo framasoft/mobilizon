@@ -27,7 +27,9 @@
               <address-auto-complete
                 v-model="location"
                 id="location"
+                ref="aac"
                 :placeholder="$t('For instance: London')"
+                @input="locchange"
               />
             </b-field>
             <b-field :label="$t('Radius')" label-for="radius">
@@ -63,7 +65,7 @@
     </section>
     <section
       class="events-featured"
-      v-if="!tag && !(search || location.geom || when !== 'any')"
+      v-if="!canSearchEvents && !canSearchGroups"
     >
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
@@ -173,7 +175,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import ngeohash from "ngeohash";
+import ngeohash, { GeographicPoint } from "ngeohash";
 import {
   endOfToday,
   addDays,
@@ -188,7 +190,6 @@ import {
   eachWeekendOfInterval,
 } from "date-fns";
 import { SearchTabs } from "@/types/enums";
-import { RawLocation } from "vue-router";
 import EventCard from "../components/Event/EventCard.vue";
 import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
@@ -200,6 +201,7 @@ import { Paginate } from "../types/paginate";
 import { IGroup } from "../types/actor";
 import GroupCard from "../components/Group/GroupCard.vue";
 import { CONFIG } from "../graphql/config";
+import { REVERSE_GEOCODE } from "../graphql/address";
 
 interface ISearchTimeOption {
   label: string;
@@ -210,6 +212,14 @@ interface ISearchTimeOption {
 const EVENT_PAGE_LIMIT = 10;
 
 const GROUP_PAGE_LIMIT = 10;
+
+const DEFAULT_RADIUS = 25; // value to set if radius is null but location set
+
+const DEFAULT_ZOOM = 11; // zoom on a city
+
+const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
+
+const THROTTLE = 2000; // minimum interval in ms between two requests
 
 @Component({
   components: {
@@ -235,9 +245,9 @@ const GROUP_PAGE_LIMIT = 10;
           limit: EVENT_PAGE_LIMIT,
         };
       },
-      debounce: 300,
+      throttle: THROTTLE,
       skip() {
-        return !this.tag && !this.geohash && this.end === null;
+        return !this.canSearchEvents;
       },
     },
     searchGroups: {
@@ -252,8 +262,9 @@ const GROUP_PAGE_LIMIT = 10;
           limit: GROUP_PAGE_LIMIT,
         };
       },
+      throttle: THROTTLE,
       skip() {
-        return !this.search && !this.geohash;
+        return !this.canSearchGroups;
       },
     },
   },
@@ -334,6 +345,14 @@ export default class Search extends Vue {
 
   GROUP_PAGE_LIMIT = GROUP_PAGE_LIMIT;
 
+  $refs!: {
+    aac: AddressAutoComplete;
+  };
+
+  mounted(): void {
+    this.prepareLocation(this.$route.query.geohash as string);
+  }
+
   radiusString = (radius: number | null): string => {
     if (radius) {
       return this.$tc("{nb} km", radius, { nb: radius }) as string;
@@ -352,13 +371,10 @@ export default class Search extends Vue {
   }
 
   set search(term: string | undefined) {
-    const route: RawLocation = {
+    this.$router.replace({
       name: RouteName.SEARCH,
-    };
-    if (term !== "") {
-      route.query = { ...this.$route.query, term };
-    }
-    this.$router.replace(route);
+      query: { ...this.$route.query, term },
+    });
   }
 
   get activeTab(): SearchTabs {
@@ -371,6 +387,21 @@ export default class Search extends Vue {
     this.$router.replace({
       name: RouteName.SEARCH,
       query: { ...this.$route.query, searchType: value.toString() },
+    });
+  }
+
+  get geohash(): string | undefined {
+    if (this.location?.geom) {
+      const [lon, lat] = this.location.geom.split(";");
+      return ngeohash.encode(lat, lon, GEOHASH_DEPTH);
+    }
+    return undefined;
+  }
+
+  set geohash(value: string | undefined) {
+    this.$router.replace({
+      name: RouteName.SEARCH,
+      query: { ...this.$route.query, geohash: value },
     });
   }
 
@@ -411,13 +442,42 @@ export default class Search extends Vue {
     return { start: startOfDay(start), end: endOfDay(end) };
   }
 
-  get geohash(): string | undefined {
-    if (this.location?.geom) {
-      const [lon, lat] = this.location.geom.split(";");
-      return ngeohash.encode(lat, lon, 6);
+  private prepareLocation(value: string | undefined): void {
+    if (value !== undefined) {
+      // decode
+      const latlon = ngeohash.decode(value);
+      // set location
+      this.reverseGeoCode(latlon, DEFAULT_ZOOM);
     }
-    return undefined;
   }
+
+  async reverseGeoCode(e: GeographicPoint, zoom: number): Promise<void> {
+    const result = await this.$apollo.query({
+      query: REVERSE_GEOCODE,
+      variables: {
+        latitude: e.latitude,
+        longitude: e.longitude,
+        zoom,
+        locale: this.$i18n.locale,
+      },
+    });
+    const addressData = result.data.reverseGeocode.map(
+      (address: IAddress) => new Address(address)
+    );
+    if (addressData.length > 0) {
+      this.location = addressData[0];
+    }
+  }
+
+  locchange = (e: IAddress): void => {
+    if (this.radius === undefined || this.radius === null) {
+      this.radius = DEFAULT_RADIUS;
+    }
+    if (e.geom) {
+      const [lon, lat] = e.geom.split(";");
+      this.geohash = ngeohash.encode(lat, lon, GEOHASH_DEPTH);
+    }
+  };
 
   get start(): Date | undefined {
     if (this.options[this.when]) {
@@ -431,6 +491,31 @@ export default class Search extends Vue {
       return this.options[this.when].end;
     }
     return undefined;
+  }
+
+  get canSearchGroups(): boolean {
+    return (
+      this.stringExists(this.search) ||
+      (this.stringExists(this.geohash) && this.valueExists(this.radius))
+    );
+  }
+
+  get canSearchEvents(): boolean {
+    return (
+      this.stringExists(this.search) ||
+      this.stringExists(this.tag) ||
+      (this.stringExists(this.geohash) && this.valueExists(this.radius)) ||
+      this.valueExists(this.end)
+    );
+  }
+
+  // helper functions for skip
+  private valueExists(value: any): boolean {
+    return value !== undefined && value !== null;
+  }
+
+  private stringExists(value: string | undefined): boolean {
+    return this.valueExists(value) && (value as string).length > 0;
   }
 }
 </script>
