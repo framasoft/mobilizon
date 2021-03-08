@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-17 11:48+0000\n"
-"PO-Revision-Date: 2021-01-26 13:04+0000\n"
+"PO-Revision-Date: 2021-03-09 15:51+0000\n"
 "Last-Translator: fadelkon <fadelkon@posteo.net>\n"
 "Language-Team: Catalan <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ca/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4.2\n"
+"X-Generator: Weblate 4.5.1\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 #, elixir-format
@@ -1486,95 +1486,108 @@ msgstr "%{reporter_name} (%{reporter_username}) ha denunciat aquest contingut."
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-format
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "S'ha denunciat el grup %{group}"
 
 #: lib/web/templates/email/report.html.eex:51
 #, elixir-format
 msgid "Group reported"
-msgstr ""
+msgstr "Grup denunciat"
 
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "S'ha denunciat el perfil %{profile}"
 
 #: lib/web/templates/email/report.html.eex:56
 #, elixir-format
 msgid "Profile reported"
-msgstr ""
+msgstr "Perfil denunciat"
 
 #: lib/web/templates/email/event_participation_confirmed.html.eex:45
 #, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Has confirmat la teva participació. Actualitza't l'agenda, perquè estàs a la "
+"llista de convidades!"
 
 #: lib/mobilizon/posts/post.ex:94
 #, elixir-format
 msgid "A text is required for the post"
-msgstr ""
+msgstr "Cal un text per la publicació"
 
 #: lib/mobilizon/posts/post.ex:93
 #, elixir-format
 msgid "A title is required for the post"
-msgstr ""
+msgstr "Cal un títol per la publicació"
 
 #: lib/web/templates/email/instance_follow.text.eex:3
 #, elixir-format
 msgid "%{name} (%{domain}) just requested to follow your instance."
 msgstr ""
+"%{name} (%{domain}) acaba de demanar-vos poder seguir la vostra instància."
 
 #: lib/web/email/follow.ex:54
 #, elixir-format
 msgid "%{name} requests to follow your instance"
-msgstr ""
+msgstr "%{name} demana poder seguir la vostra instància"
 
 #: lib/web/templates/email/instance_follow.html.eex:38
 #, elixir-format
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
 msgstr ""
+"<b>%{name} (%{domain})</b> acaba de demanar poder seguir la vostra "
+"instància. Si accepteu, la seva instància rebrà totes les activitats "
+"públiques de la vostra."
 
 #: lib/web/templates/email/instance_follow.text.eex:4
 #, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
-msgstr ""
+msgstr "Si accepteu, la instància rebrà totes les vostres activitats públiques."
 
 #: lib/web/email/follow.ex:48
 #, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr ""
+"La instància %{name} (%{domain}) soŀlicita poder seguir la vostra instància"
 
 #: lib/web/templates/email/instance_follow.html.eex:66
 #, elixir-format
 msgid "See the federation settings"
-msgstr ""
+msgstr "Obre les opcions de federació"
 
 #: lib/web/templates/email/instance_follow.html.eex:52
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
 msgstr ""
+"Per acceptar la invitació, ves a la configuració d'administració de la "
+"instància."
 
 #: lib/web/templates/email/instance_follow.html.eex:13
 #: lib/web/templates/email/instance_follow.text.eex:1
 #, elixir-format
 msgid "Want to connect?"
-msgstr ""
+msgstr "Voleu connectar-vos?"
 
 #: lib/web/templates/email/instance_follow.html.eex:45
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-format
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
+"Nota: que us segueixi %{name} (%{domain}) no implica que vosaltres la "
+"seguiu, però podeu demanar de seguir-la també."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:38
 #, elixir-format
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Hola! Acabes de demanar participar en « <b>%{title}</b> ». Si us plau, "
+"confirma l'adreça que has posat:"
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:38
 #, elixir-format
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Has soŀlicitat assistir a <b>%{title}</b>."
 
 #: lib/web/templates/email/event_updated.html.eex:64
 #, elixir-format
