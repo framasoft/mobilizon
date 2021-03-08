@@ -123,19 +123,29 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   end
 
   def calculate_to_and_cc_from_mentions(%Post{
-        attributed_to: %Actor{members_url: members_url},
-        visibility: visibility
+        attributed_to: %Actor{members_url: members_url, followers_url: followers_url},
+        visibility: visibility,
+        draft: draft
       }) do
-    case visibility do
-      :public ->
-        %{"to" => [@ap_public, members_url], "cc" => []}
+    cond do
+      # If the post is draft we send it only to members
+      draft == true ->
+        %{"to" => [members_url], "cc" => []}
 
-      :unlisted ->
-        %{"to" => [members_url], "cc" => [@ap_public]}
+      # If public everyone
+      visibility == :public ->
+        %{"to" => [@ap_public, members_url], "cc" => [followers_url]}
 
-      :private ->
+      # Otherwise just followers
+      visibility == :unlisted ->
+        %{"to" => [followers_url, members_url], "cc" => [@ap_public]}
+
+      visibility == :private ->
         # Private is restricted to only the members
         %{"to" => [members_url], "cc" => []}
+
+      true ->
+        %{"to" => [], "cc" => []}
     end
   end
 

@@ -421,7 +421,13 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
          ["https://www.w3.org/ns/activitystreams#Public"]}
       else
         if actor_type == :Group do
-          {[actor.followers_url, actor.members_url], []}
+          to =
+            (object["to"] || [])
+            |> MapSet.new()
+            |> MapSet.intersection(MapSet.new([actor.followers_url, actor.members_url]))
+            |> MapSet.to_list()
+
+          {to, []}
         else
           {[actor.followers_url], []}
         end

@@ -107,6 +107,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
     %Post{} =
       post_private = insert(:post, attributed_to: group, author: actor, visibility: :private)
 
+    insert(:follower, target_actor: group, approved: true)
+
     {:ok,
      user: user,
      group: group,
@@ -483,6 +485,32 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
       assert res["data"]["createPost"]["title"] == @post_title
       id = res["data"]["createPost"]["id"]
       assert res["data"]["createPost"]["slug"] == "my-post-#{ShortUUID.encode!(id)}"
+    end
+
+    test "create_post/3 creates a draft post for a group", %{
+      conn: conn,
+      user: user,
+      group: group
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_post,
+          variables: %{
+            title: @post_title,
+            body: "My new post is here",
+            attributedToId: group.id,
+            draft: true
+          }
+        )
+
+      assert is_nil(res["errors"])
+
+      assert res["data"]["createPost"]["title"] == @post_title
+      id = res["data"]["createPost"]["id"]
+      assert res["data"]["createPost"]["slug"] == "my-post-#{ShortUUID.encode!(id)}"
+      assert res["data"]["createPost"]["draft"] == true
     end
 
     test "create_post/3 doesn't create a post if no group is defined", %{

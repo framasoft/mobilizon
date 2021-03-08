@@ -7,7 +7,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   """
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.{Audience, Utils}
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
   alias Mobilizon.Posts.Post
@@ -36,18 +36,15 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   def model_to_as(
         %Post{
           author: %Actor{url: actor_url},
-          attributed_to: %Actor{url: creator_url, followers_url: followers_url}
+          attributed_to: %Actor{
+            url: creator_url
+          }
         } = post
       ) do
-    to =
-      if post.visibility == :public,
-        do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [followers_url]
+    audience = Audience.calculate_to_and_cc_from_mentions(post)
 
     %{
       "type" => "Article",
-      "to" => to,
-      "cc" => [],
       "actor" => actor_url,
       "id" => post.url,
       "name" => post.title,
@@ -56,6 +53,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       "published" => (post.publish_at || post.inserted_at) |> to_date(),
       "attachment" => []
     }
+    |> Map.merge(audience)
     |> maybe_add_post_picture(post)
     |> maybe_add_inline_media(post)
   end
