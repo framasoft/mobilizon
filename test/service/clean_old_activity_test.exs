@@ -7,7 +7,7 @@ defmodule Mobilizon.Service.CleanOldActivityTest do
   alias Mobilizon.Service.CleanOldActivity
 
   @activity_inserted_at_1 DateTime.from_iso8601("2019-01-02T10:33:39.207493Z") |> elem(1)
-  @activity_inserted_at_2 DateTime.from_iso8601("2021-03-02T10:33:39.207493Z") |> elem(1)
+  @activity_inserted_at_2 DateTime.utc_now()
 
   setup do
     group1 = insert(:group)

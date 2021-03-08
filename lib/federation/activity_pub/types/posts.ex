@@ -24,10 +24,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          %Actor{} = creator <- Actors.get_actor(creator_id),
          post_as_data <-
-           Convertible.model_to_as(%{post | attributed_to: group, author: creator}),
-         audience <-
-           Audience.calculate_to_and_cc_from_mentions(post) do
-      create_data = make_create_data(post_as_data, Map.merge(audience, additional))
+           Convertible.model_to_as(%{post | attributed_to: group, author: creator}) do
+      create_data = make_create_data(post_as_data, additional)
 
       {:ok, post, create_data}
     else

@@ -7,7 +7,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   """
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.{Audience, Utils}
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
   alias Mobilizon.Posts.Post
@@ -36,26 +36,25 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   def model_to_as(
         %Post{
           author: %Actor{url: actor_url},
-          attributed_to: %Actor{url: creator_url, followers_url: followers_url}
+          attributed_to: %Actor{
+            url: creator_url
+          }
         } = post
       ) do
-    to =
-      if post.visibility == :public,
-        do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [followers_url]
+    audience = Audience.calculate_to_and_cc_from_mentions(post)
 
     %{
       "type" => "Article",
-      "to" => to,
-      "cc" => [],
       "actor" => actor_url,
       "id" => post.url,
       "name" => post.title,
       "content" => post.body,
       "attributedTo" => creator_url,
       "published" => (post.publish_at || post.inserted_at) |> to_date(),
-      "attachment" => []
+      "attachment" => [],
+      "draft" => post.draft
     }
+    |> Map.merge(audience)
     |> maybe_add_post_picture(post)
     |> maybe_add_inline_media(post)
   end
@@ -81,7 +80,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
         local: false,
         publish_at: object["published"],
         picture_id: picture_id,
-        medias: medias
+        medias: medias,
+        draft: object["draft"] == true
       }
     else
       {:error, err} -> {:error, err}
@@ -93,6 +93,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   defp get_actor(nil), do: {:error, "nil property found for actor data"}
   defp get_actor(actor), do: actor |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url()
 
+  defp to_date(nil), do: nil
   defp to_date(%DateTime{} = date), do: DateTime.to_iso8601(date)
   defp to_date(%NaiveDateTime{} = date), do: NaiveDateTime.to_iso8601(date)
 

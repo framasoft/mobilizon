@@ -710,7 +710,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   @spec publish(Actor.t(), Activity.t()) :: :ok
   def publish(actor, %Activity{recipients: recipients} = activity) do
     Logger.debug("Publishing an activity")
-    Logger.debug(inspect(activity))
+    Logger.debug(inspect(activity, pretty: true))
 
     public = Visibility.is_public?(activity)
     Logger.debug("is public ? #{public}")
