@@ -51,7 +51,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       "content" => post.body,
       "attributedTo" => creator_url,
       "published" => (post.publish_at || post.inserted_at) |> to_date(),
-      "attachment" => []
+      "attachment" => [],
+      "draft" => post.draft
     }
     |> Map.merge(audience)
     |> maybe_add_post_picture(post)
@@ -79,7 +80,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
         local: false,
         publish_at: object["published"],
         picture_id: picture_id,
-        medias: medias
+        medias: medias,
+        draft: object["draft"] == true
       }
     else
       {:error, err} -> {:error, err}
@@ -91,6 +93,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   defp get_actor(nil), do: {:error, "nil property found for actor data"}
   defp get_actor(actor), do: actor |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url()
 
+  defp to_date(nil), do: nil
   defp to_date(%DateTime{} = date), do: DateTime.to_iso8601(date)
   defp to_date(%NaiveDateTime{} = date), do: NaiveDateTime.to_iso8601(date)
 
