@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-01-19 15:28+0100\n"
+"PO-Revision-Date: 2021-03-09 19:33+0100\n"
 "Last-Translator: Alexandra <peonne@gmail.com>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
@@ -1071,15 +1071,11 @@ msgstr "Titre de l'événement"
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr "Il y a eu des changements pour <b>%{title}</b> donc nous avons pensé que nous vous le ferions savoir."
 
-#: lib/web/templates/error/500_page.html.eex:46
-msgid "The Mobilizon server seems to be temporarily down."
-msgstr "Le serveur Mobilizon semble être temporairement hors-service."
-
 #: lib/web/templates/error/500_page.html.eex:7
 msgid "This page is not correct"
 msgstr "Cette page n’est pas correcte"
 
-#: lib/web/templates/error/500_page.html.eex:45
+#: lib/web/templates/error/500_page.html.eex:50
 msgid "We're sorry, but something went wrong on our end."
 msgstr "Nous sommes désolé·e·s, mais quelque chose s’est mal passé de notre côté."
 
@@ -1102,3 +1098,19 @@ msgstr "Flux public des événements de %{actor} sur %{instance}"
 #: lib/service/export/feed.ex:203
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flux pour %{email} sur %{instance}"
+
+#: lib/web/templates/error/500_page.html.eex:57
+msgid "If the issue persists, you may contact the server administrator at %{contact}."
+msgstr "Si le problème persiste, vous pouvez contacter l'administrateur⋅ice du serveur à %{contact}."
+
+#: lib/web/templates/error/500_page.html.eex:55
+msgid "If the issue persists, you may try to contact the server administrator."
+msgstr "Si le problème persiste, vous pouvez essayer de contacter l'administrateur⋅ice du serveur."
+
+#: lib/web/templates/error/500_page.html.eex:68
+msgid "Technical details"
+msgstr "Détails techniques"
+
+#: lib/web/templates/error/500_page.html.eex:52
+msgid "The Mobilizon server %{instance} seems to be temporarily down."
+msgstr "Le serveur Mobilizon %{instance} semble être temporairement hors-service."
