@@ -117,8 +117,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @spec create_user(any, map, any) :: tuple
   def create_user(_parent, args, _resolution) do
     with :registration_ok <- check_registration_config(args),
-         {:ok, %User{} = user} <- Users.register(args) do
-      Email.User.send_confirmation_email(user, Map.get(args, :locale, "en"))
+         {:ok, %User{} = user} <- Users.register(args),
+         {:ok, %Bamboo.Email{}} <-
+           Email.User.send_confirmation_email(user, Map.get(args, :locale, "en")) do
       {:ok, user}
     else
       :registration_closed ->
