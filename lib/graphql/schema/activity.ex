@@ -19,6 +19,11 @@ defmodule Mobilizon.GraphQL.Schema.ActivityType do
     value(:member, description: "Activities concerning members")
   end
 
+  enum :activity_author do
+    value(:self, description: "Activities created by the current actor")
+    value(:by, description: "Activities created by others")
+  end
+
   object :activity_param_item do
     field(:key, :string)
     field(:value, :string)

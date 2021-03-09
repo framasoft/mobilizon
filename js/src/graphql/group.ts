@@ -326,6 +326,7 @@ export const GROUP_TIMELINE = gql`
   query GroupTimeline(
     $preferredUsername: String!
     $type: ActivityType
+    $author: ActivityAuthor
     $page: Int
     $limit: Int
   ) {
@@ -334,7 +335,7 @@ export const GROUP_TIMELINE = gql`
       preferredUsername
       domain
       name
-      activity(type: $type, page: $page, limit: $limit) {
+      activity(type: $type, author: $author, page: $page, limit: $limit) {
         total
         elements {
           id
