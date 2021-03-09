@@ -1375,17 +1375,12 @@ msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you 
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/error/500_page.html.eex:46
-msgid "The Mobilizon server seems to be temporarily down."
-msgstr ""
-
-#, elixir-format
 #: lib/web/templates/error/500_page.html.eex:7
 msgid "This page is not correct"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/error/500_page.html.eex:45
+#: lib/web/templates/error/500_page.html.eex:50
 msgid "We're sorry, but something went wrong on our end."
 msgstr ""
 
@@ -1413,4 +1408,24 @@ msgstr ""
 #, elixir-format
 #: lib/service/export/feed.ex:203
 msgid "Feed for %{email} on %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:57
+msgid "If the issue persists, you may contact the server administrator at %{contact}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:55
+msgid "If the issue persists, you may try to contact the server administrator."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/error/500_page.html.eex:68
+msgid "Technical details"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/error/500_page.html.eex:52
+msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr ""

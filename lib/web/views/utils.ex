@@ -4,18 +4,38 @@ defmodule Mobilizon.Web.Views.Utils do
   """
 
   alias Mobilizon.Service.Metadata.Utils, as: MetadataUtils
+  import Mobilizon.Web.Gettext, only: [dgettext: 2]
+  import Plug.Conn, only: [put_status: 2, halt: 1]
+
+  @index_file_path Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
 
   # sobelow_skip ["Traversal.FileModule"]
-  @spec inject_tags(Enum.t(), String.t()) :: {:safe, String.t()}
+  @spec inject_tags(Enum.t(), String.t()) :: {:ok, {:safe, String.t()}}
   def inject_tags(tags, locale \\ "en") do
-    with {:ok, index_content} <- File.read(index_file_path()) do
-      do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale)
+    with {:exists, true} <- {:exists, File.exists?(@index_file_path)},
+         {:ok, index_content} <- File.read(@index_file_path),
+         safe <- do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale) do
+      {:ok, {:safe, safe}}
+    else
+      {:exists, false} -> {:error, :index_not_found}
     end
   end
 
-  @spec index_file_path :: String.t()
-  defp index_file_path do
-    Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
+  @spec return_error(Plug.Conn.t(), atom()) :: Plug.Conn.t()
+  def return_error(conn, error) do
+    conn
+    |> put_status(500)
+    |> Phoenix.Controller.put_view(Mobilizon.Web.ErrorView)
+    |> Phoenix.Controller.render("500.html", %{details: details(error)})
+    |> halt()
+  end
+
+  defp details(:index_not_found) do
+    [dgettext("errors", "Index file not found. You need to recompile the front-end.")]
+  end
+
+  defp details(_) do
+    []
   end
 
   @spec replace_meta(String.t(), String.t()) :: String.t()
@@ -25,12 +45,11 @@ defmodule Mobilizon.Web.Views.Utils do
     |> String.replace("<meta name=\"server-injected-data\" />", tags)
   end
 
-  @spec do_replacements(String.t(), String.t(), String.t()) :: {:safe, String.t()}
+  @spec do_replacements(String.t(), String.t(), String.t()) :: String.t()
   defp do_replacements(index_content, tags, locale) do
     index_content
     |> replace_meta(tags)
     |> String.replace("<html lang=\"en\">", "<html lang=\"#{locale}\">")
-    |> (&{:safe, &1}).()
   end
 
   @spec get_locale(Conn.t()) :: String.t()
