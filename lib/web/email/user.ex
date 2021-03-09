@@ -79,13 +79,14 @@ defmodule Mobilizon.Web.Email.User do
          {:ok, user} <-
            Users.update_user(user, %{
              "confirmation_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
-           }) do
-      send_confirmation_email(user, locale)
+           }),
+         {:ok, %Bamboo.Email{}} <- send_confirmation_email(user, locale) do
       Logger.info("Sent confirmation email again to #{user.email}")
       {:ok, user.email}
     end
   end
 
+  @spec send_confirmation_email(User.t(), String.t()) :: {:ok, Bamboo.Email.t()} | {:error, any()}
   def send_confirmation_email(%User{} = user, locale \\ "en") do
     user
     |> Email.User.confirmation_email(locale)
@@ -130,12 +131,11 @@ defmodule Mobilizon.Web.Email.User do
                "reset_password_token" => Crypto.random_string(30),
                "reset_password_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
              })
-           ) do
-      mail =
-        user_updated
-        |> Email.User.reset_password_email(locale)
-        |> Email.Mailer.deliver_later()
-
+           ),
+         {:ok, %Bamboo.Email{} = mail} <-
+           user_updated
+           |> Email.User.reset_password_email(locale)
+           |> Email.Mailer.deliver_later() do
       {:ok, mail}
     else
       {:error, reason} -> {:error, reason}
