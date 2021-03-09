@@ -23,6 +23,74 @@
       </ul>
     </nav>
     <section class="timeline">
+      <b-field>
+        <b-radio-button v-model="activityType" :native-value="undefined">
+          <b-icon icon="timeline-text"></b-icon>
+          {{ $t("All activities") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.MEMBER"
+        >
+          <b-icon icon="account-multiple-plus"></b-icon>
+          {{ $t("Members") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.GROUP"
+        >
+          <b-icon icon="cog"></b-icon>
+          {{ $t("Settings") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.EVENT"
+        >
+          <b-icon icon="calendar"></b-icon>
+          {{ $t("Events") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.POST"
+        >
+          <b-icon icon="bullhorn"></b-icon>
+          {{ $t("Posts") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.DISCUSSION"
+        >
+          <b-icon icon="chat"></b-icon>
+          {{ $t("Discussions") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityType"
+          :native-value="ActivityType.RESOURCE"
+        >
+          <b-icon icon="link"></b-icon>
+          {{ $t("Resources") }}</b-radio-button
+        >
+      </b-field>
+      <b-field>
+        <b-radio-button v-model="activityAuthor" :native-value="undefined">
+          <b-icon icon="timeline-text"></b-icon>
+          {{ $t("All activities") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityAuthor"
+          :native-value="ActivityAuthorFilter.SELF"
+        >
+          <b-icon icon="account"></b-icon>
+          {{ $t("From yourself") }}</b-radio-button
+        >
+        <b-radio-button
+          v-model="activityAuthor"
+          :native-value="ActivityAuthorFilter.BY"
+        >
+          <b-icon icon="account-multiple"></b-icon>
+          {{ $t("By others") }}</b-radio-button
+        >
+      </b-field>
       <transition-group name="timeline-list" tag="div">
         <div
           class="day"
@@ -100,11 +168,19 @@ import { IActivity } from "../../types/activity.model";
 import Observer from "../../components/Utils/Observer.vue";
 import SkeletonActivityItem from "../../components/Activity/SkeletonActivityItem.vue";
 import RouteName from "../../router/name";
+import { Location } from "vue-router";
 
 const PAGINATION_LIMIT = 25;
 const SKELETON_DAY_ITEMS = 2;
 const SKELETON_ITEMS_PER_DAY = 5;
 type IActivitySkeleton = IActivity | { skeleton: string };
+
+enum ActivityAuthorFilter {
+  SELF = "SELF",
+  BY = "BY",
+}
+
+export type ActivityFilter = ActivityType | ActivityAuthorFilter | null;
 
 @Component({
   apollo: {
@@ -116,6 +192,8 @@ type IActivitySkeleton = IActivity | { skeleton: string };
           preferredUsername: this.preferredUsername,
           page: 1,
           limit: PAGINATION_LIMIT,
+          type: this.activityType,
+          author: this.activityAuthor,
         };
       },
     },
@@ -156,6 +234,44 @@ export default class Timeline extends Vue {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  ActivityType = ActivityType;
+
+  ActivityAuthorFilter = ActivityAuthorFilter;
+
+  get activityType(): ActivityType | undefined {
+    if (this.$route?.query?.type) {
+      return this.$route?.query?.type as ActivityType;
+    }
+    return undefined;
+  }
+
+  set activityType(type: ActivityType | undefined) {
+    this.$router.push({
+      name: RouteName.TIMELINE,
+      params: {
+        preferredUsername: this.preferredUsername,
+      },
+      query: { ...this.$route.query, type },
+    });
+  }
+
+  get activityAuthor(): ActivityAuthorFilter | undefined {
+    if (this.$route?.query?.author) {
+      return this.$route?.query?.author as ActivityAuthorFilter;
+    }
+    return undefined;
+  }
+
+  set activityAuthor(author: ActivityAuthorFilter | undefined) {
+    this.$router.push({
+      name: RouteName.TIMELINE,
+      params: {
+        preferredUsername: this.preferredUsername,
+      },
+      query: { ...this.$route.query, author },
+    });
+  }
 
   get activity(): Paginate<IActivitySkeleton> {
     if (this.group) {

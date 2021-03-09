@@ -21,6 +21,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
     query GroupTimeline(
     $preferredUsername: String!
     $type: ActivityType
+    $author: ActivityAuthor
     $page: Int
     $limit: Int
     ) {
@@ -29,7 +30,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       preferredUsername
       domain
       name
-      activity(type: $type, page: $page, limit: $limit) {
+      activity(type: $type, author: $author, page: $page, limit: $limit) {
         total
         elements {
           id
@@ -208,6 +209,92 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
 
       assert Enum.find(activity["subjectParams"], &(&1["key"] == "event_uuid"))["value"] ==
                event.uuid
+    end
+
+    test "group_activity/3 list group activities filtered by type", %{
+      conn: conn,
+      group: %Actor{preferred_username: preferred_username, id: group_id} = group
+    } do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      insert(:member,
+        parent: group,
+        actor: actor,
+        role: :member,
+        member_since: DateTime.truncate(DateTime.utc_now(), :second)
+      )
+
+      event = insert(:event, attributed_to: group, organizer_actor: actor)
+      post = insert(:post, author: actor, attributed_to: group)
+      EventActivity.insert_activity(event, subject: "event_created")
+      PostActivity.insert_activity(post, subject: "post_created")
+      assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert Activities.list_activities() |> length() == 2
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @group_activities_query,
+          variables: %{preferredUsername: preferred_username, type: "POST"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["group"]["id"] == to_string(group_id)
+      assert res["data"]["group"]["activity"]["total"] == 1
+      activity = hd(res["data"]["group"]["activity"]["elements"])
+      assert activity["object"]["id"] == to_string(post.id)
+      assert activity["subject"] == "post_created"
+
+      assert Enum.find(activity["subjectParams"], &(&1["key"] == "post_title"))["value"] ==
+               post.title
+
+      assert Enum.find(activity["subjectParams"], &(&1["key"] == "post_slug"))["value"] ==
+               post.slug
+    end
+
+    test "group_activity/3 list group activities filtered by author", %{
+      conn: conn,
+      group: %Actor{preferred_username: preferred_username, id: group_id} = group
+    } do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+
+      insert(:member,
+        parent: group,
+        actor: actor,
+        role: :member,
+        member_since: DateTime.truncate(DateTime.utc_now(), :second)
+      )
+
+      event = insert(:event, attributed_to: group, organizer_actor: actor)
+      post = insert(:post, attributed_to: group)
+      EventActivity.insert_activity(event, subject: "event_created")
+      PostActivity.insert_activity(post, subject: "post_created")
+      assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert Activities.list_activities() |> length() == 2
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @group_activities_query,
+          variables: %{preferredUsername: preferred_username, author: "BY"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["group"]["id"] == to_string(group_id)
+      assert res["data"]["group"]["activity"]["total"] == 1
+      activity = hd(res["data"]["group"]["activity"]["elements"])
+      assert activity["object"]["id"] == to_string(post.id)
+      assert activity["subject"] == "post_created"
+
+      assert Enum.find(activity["subjectParams"], &(&1["key"] == "post_title"))["value"] ==
+               post.title
+
+      assert Enum.find(activity["subjectParams"], &(&1["key"] == "post_slug"))["value"] ==
+               post.slug
     end
 
     test "group_activity/3 list group activities from deleted object", %{

@@ -960,5 +960,8 @@
   "@{username}'s follow request was accepted": "@{username}'s follow request was accepted",
   "Delete this discussion": "Delete this discussion",
   "Are you sure you want to delete this entire discussion?": "Are you sure you want to delete this entire discussion?",
-  "Delete discussion": "Delete discussion"
+  "Delete discussion": "Delete discussion",
+  "All activities": "All activities",
+  "From yourself": "From yourself",
+  "By others": "By others"
 }

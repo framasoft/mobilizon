@@ -93,6 +93,7 @@ defmodule Mobilizon.Activities do
     )
     |> where([a, m], a.inserted_at >= m.member_since)
     |> filter_object_type(Keyword.get(filters, :type))
+    |> filter_author(Keyword.get(filters, :author), actor_asking_id)
     |> order_by(desc: :inserted_at)
     |> preload([:author, :group])
     |> Page.build_page(page, limit)
@@ -158,12 +159,21 @@ defmodule Mobilizon.Activities do
 
   def activity_types, do: @activity_types
 
-  @spec filter_object_type(Query.t(), atom()) :: Query.t()
-  defp filter_object_type(query, :type) do
-    where(query, [q], q.type == ^:type)
+  @spec filter_object_type(Query.t(), atom() | nil) :: Query.t()
+  defp filter_object_type(query, nil), do: query
+
+  defp filter_object_type(query, type) do
+    where(query, [q], q.type == ^type)
   end
 
-  defp filter_object_type(query, _) do
-    query
+  @spec filter_author(Query.t(), atom() | nil, integer() | String.t()) :: Query.t()
+  defp filter_author(query, nil, _), do: query
+
+  defp filter_author(query, :self, actor_asking_id) do
+    where(query, [q], q.author_id == ^actor_asking_id)
+  end
+
+  defp filter_author(query, :by, actor_asking_id) do
+    where(query, [q], q.author_id != ^actor_asking_id)
   end
 end
