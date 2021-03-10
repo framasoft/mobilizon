@@ -4,6 +4,61 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## 1.1.0-beta.1 - 10-03-2021
+
+### Added
+
+- Add a group activity logbook
+- Possibility for user to define a location in their settings to get close events
+- Support for Elixir releases
+- Support for Sentry
+- Added support for custom plural rules on front-end (only Gaelic supported for now)
+- Added possibility to bookmark search by location through geohash
+
+### Changed
+
+- Prune done background jobs
+- Improved search form
+- Improved backend error page
+- Added a confirmation step before deleting a conversation
+
+### Removed
+
+- Support for Elixir versions < 1.11
+
+### Fixes
+
+- Fixed editing a group discussion
+- Fixed accessing terms and privacy pages
+- Fixed refreshing only groups which are stale
+- Fixed success message when validating group follower
+- Fixed formatted dates using system locale instead of browser/Mobilizon's locale
+- Fixed federating draft status
+- Fixed group draft posts being sent to followers
+- Fixed detecting membership status on group page
+- Fixed admin language selection
+
+### Translations
+
+- Arabic
+- Belarusian
+- Bengali
+- Catalan
+- Chinese (Traditional)
+- English
+- French
+- Gaelic
+- Galician
+- German
+- Hungarian
+- Italian
+- Occitan
+- Portuguese (Brazil)
+- Slovenian
+- Spanish
+- Russian
+
 ## 1.0.7 - 27-02-2021
 
 ### Fixed
