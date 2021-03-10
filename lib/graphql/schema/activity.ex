@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Schema.ActivityType do
   use Absinthe.Schema.Notation
 
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Discussions.Discussion
+  alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
@@ -50,6 +50,9 @@ defmodule Mobilizon.GraphQL.Schema.ActivityType do
 
       %Discussion{}, _ ->
         :discussion
+
+      %Comment{}, _ ->
+        :comment
 
       %Actor{type: :Group}, _ ->
         :group

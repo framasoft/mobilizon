@@ -168,7 +168,6 @@ import { IActivity } from "../../types/activity.model";
 import Observer from "../../components/Utils/Observer.vue";
 import SkeletonActivityItem from "../../components/Activity/SkeletonActivityItem.vue";
 import RouteName from "../../router/name";
-import { Location } from "vue-router";
 
 const PAGINATION_LIMIT = 25;
 const SKELETON_DAY_ITEMS = 2;

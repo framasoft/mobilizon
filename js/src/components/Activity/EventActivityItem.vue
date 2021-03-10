@@ -35,7 +35,10 @@
 </template>
 <script lang="ts">
 import { usernameWithDomain } from "@/types/actor";
-import { ActivityEventSubject } from "@/types/enums";
+import {
+  ActivityEventCommentSubject,
+  ActivityEventSubject,
+} from "@/types/enums";
 import { mixins } from "vue-class-component";
 import { Component } from "vue-property-decorator";
 import RouteName from "../../router/name";
@@ -69,6 +72,17 @@ export default class EventActivityItem extends mixins(ActivityMixin) {
           return "You deleted the event {event}.";
         }
         return "The event {event} was deleted by {profile}.";
+      case ActivityEventCommentSubject.COMMENT_POSTED:
+        if (this.subjectParams.comment_reply_to) {
+          if (this.isAuthorCurrentActor) {
+            return "You replied to a comment on the event {event}.";
+          }
+          return "{profile} replied to a comment on the event {event}.";
+        }
+        if (this.isAuthorCurrentActor) {
+          return "You posted a comment on the event {event}.";
+        }
+        return "{profile} posted a comment on the event {event}.";
       default:
         return undefined;
     }
@@ -77,6 +91,7 @@ export default class EventActivityItem extends mixins(ActivityMixin) {
   get iconColor(): string | undefined {
     switch (this.activity.subject) {
       case ActivityEventSubject.EVENT_CREATED:
+      case ActivityEventCommentSubject.COMMENT_POSTED:
         return "is-success";
       case ActivityEventSubject.EVENT_UPDATED:
         return "is-grey";

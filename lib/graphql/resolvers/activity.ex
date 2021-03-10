@@ -78,6 +78,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
     Actors.get_actor(group_id)
   end
 
+  defp get_object(:comment, comment_id) do
+    Discussions.get_comment(comment_id)
+  end
+
   @spec transform_params(map()) :: list()
   defp transform_params(params) do
     Enum.map(params, fn {key, value} -> %{key: key, value: transform_value(value)} end)

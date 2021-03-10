@@ -393,6 +393,9 @@ export const GROUP_TIMELINE = gql`
               title
               slug
             }
+            ... on Comment {
+              id
+            }
             ... on Group {
               id
               preferredUsername

@@ -97,7 +97,7 @@
             <span
               style="cursor: pointer"
               class="level-item reply-btn"
-              @click="createReplyToComment(comment)"
+              @click="createReplyToComment()"
             >
               <span class="icon is-small">
                 <b-icon icon="reply" />
@@ -235,17 +235,13 @@ export default class Comment extends Vue {
     }
   }
 
-  async createReplyToComment(comment: IComment): Promise<void> {
+  async createReplyToComment(): Promise<void> {
     if (this.replyTo) {
       this.replyTo = false;
       this.newComment = new CommentModel();
       return;
     }
     this.replyTo = true;
-    // this.newComment.inReplyToComment = comment;
-    await this.$nextTick();
-    await this.$nextTick(); // For some reason commenteditor needs two $nextTick() to fully render
-    this.commentEditor.replyToComment(comment);
   }
 
   replyToComment(): void {
@@ -303,7 +299,7 @@ export default class Comment extends Vue {
 
   get commentId(): string {
     if (this.comment.originComment)
-      return `#comment-${this.comment.originComment.uuid}:${this.comment.uuid}`;
+      return `#comment-${this.comment.originComment.uuid}-${this.comment.uuid}`;
     return `#comment-${this.comment.uuid}`;
   }
 

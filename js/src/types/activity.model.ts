@@ -2,6 +2,7 @@ import { IActor, IGroup } from "./actor";
 import { IMember } from "./actor/member.model";
 import {
   ActivityDiscussionSubject,
+  ActivityEventCommentSubject,
   ActivityEventSubject,
   ActivityGroupSubject,
   ActivityMemberSubject,
@@ -19,7 +20,8 @@ export type ActivitySubject =
   | ActivityMemberSubject
   | ActivityResourceSubject
   | ActivityDiscussionSubject
-  | ActivityGroupSubject;
+  | ActivityGroupSubject
+  | ActivityEventCommentSubject;
 
 export interface IActivity {
   id: string;
