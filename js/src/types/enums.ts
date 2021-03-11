@@ -197,6 +197,10 @@ export enum ActivityEventSubject {
   EVENT_DELETED = "event_deleted",
 }
 
+export enum ActivityEventCommentSubject {
+  COMMENT_POSTED = "comment_posted",
+}
+
 export enum ActivityPostSubject {
   POST_CREATED = "post_created",
   POST_UPDATED = "post_updated",

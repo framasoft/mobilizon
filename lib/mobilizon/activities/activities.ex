@@ -53,7 +53,7 @@ defmodule Mobilizon.Activities do
               @resource_activity_subjects ++
               @member_activity_subjects ++ @settings_activity_subjects
 
-  @object_type ["event", "actor", "post", "discussion", "resource", "member", "group"]
+  @object_type ["event", "actor", "post", "discussion", "resource", "member", "group", "comment"]
 
   defenum(Type, @activity_types)
   defenum(Subject, @subjects)

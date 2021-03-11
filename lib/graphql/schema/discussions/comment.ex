@@ -11,7 +11,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
   @desc "A comment"
   object :comment do
-    interfaces([:action_log_object])
+    interfaces([:action_log_object, :activity_object])
     field(:id, :id, description: "Internal ID for this comment")
     field(:uuid, :uuid, description: "An UUID for this comment")
     field(:url, :string, description: "Comment URL")

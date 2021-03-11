@@ -963,5 +963,9 @@
   "Delete discussion": "Delete discussion",
   "All activities": "All activities",
   "From yourself": "From yourself",
-  "By others": "By others"
+  "By others": "By others",
+  "You posted a comment on the event {event}.": "You posted a comment on the event {event}.",
+  "{profile} posted a comment on the event {event}.": "{profile} posted a comment on the event {event}.",
+  "You replied to a comment on the event {event}.": "You replied to a comment on the event {event}.",
+  "{profile} replied to a comment on the event {event}.": "{profile} replied to a comment on the event {event}."
 }

@@ -9,6 +9,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
+  alias Mobilizon.Service.Activity.Comment, as: CommentActivity
   alias Mobilizon.Share
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Endpoint
@@ -24,6 +25,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
          :ok <- make_sure_event_allows_commenting(args),
          {:ok, %Comment{discussion_id: discussion_id} = comment} <-
            Discussions.create_comment(args),
+         {:ok, _} <-
+           CommentActivity.insert_activity(comment,
+             subject: "comment_posted"
+           ),
          :ok <- maybe_publish_graphql_subscription(discussion_id),
          comment_as_data <- Convertible.model_to_as(comment),
          audience <-
