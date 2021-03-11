@@ -81,7 +81,7 @@ config :mobilizon, Mobilizon.Web.Upload,
     ]
   ]
 
-config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "/var/lib/mobilizon/uploads"
 
 config :mobilizon, :media_proxy,
   enabled: true,
@@ -149,7 +149,7 @@ config :geolix,
     %{
       id: :city,
       adapter: Geolix.Adapter.MMDB2,
-      source: "priv/data/GeoLite2-City.mmdb"
+      source: "/var/lib/mobilizon/geo/GeoLite2-City.mmdb"
     }
   ]
 

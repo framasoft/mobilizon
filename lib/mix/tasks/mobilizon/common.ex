@@ -9,6 +9,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
   """
 
   def start_mobilizon do
+    if mix_task?(), do: Mix.Task.run("app.config")
     Application.put_env(:phoenix, :serve_endpoints, false, persistent: true)
 
     {:ok, _} = Application.ensure_all_started(:mobilizon)
@@ -63,6 +64,8 @@ defmodule Mix.Tasks.Mobilizon.Common do
 
   @doc "Performs a safe check whether `Mix.shell/0` is available (does not raise if Mix is not loaded)"
   def mix_shell?, do: :erlang.function_exported(Mix, :shell, 0)
+
+  def mix_task?, do: :erlang.function_exported(Mix.Task, :run, 1)
 
   def escape_sh_path(path) do
     ~S(') <> String.replace(path, ~S('), ~S(\')) <> ~S(')

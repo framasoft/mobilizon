@@ -7,13 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.1.0-beta.1 - 10-03-2021
 
-This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. If you want to migrate to a release install from a source release, you can read [more details here](./UPGRADE.md#upgrading-from-10-to-11). You may also stay on source install for now, or upgrade at any time.
+This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. Please read [UPGRADE.md](./UPGRADE.md#upgrading-from-10-to-11) for details on how to migrate to Elixir binary releases or stay on source install.
 
 ### Added
 
-- Add a group activity logbook
-- Possibility for user to define a location in their settings to get close events
-- Support for Elixir releases
+- **Add a group activity logbook**
+- **Possibility for user to define a location in their settings to get close events**
+- **Support for Elixir releases and runtime.exs, allowing to change configuration without recompiling**
 - Support for Sentry
 - Added support for custom plural rules on front-end (only Gaelic supported for now)
 - Added possibility to bookmark search by location through geohash
