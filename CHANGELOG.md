@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.1.0-beta.1 - 10-03-2021
 
+This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. If you want to migrate to a release install from a source release, you can read [more details here](./UPGRADE.md#upgrading-from-10-to-11). You may also stay on source install for now, or upgrade at any time.
+
 ### Added
 
 - Add a group activity logbook
