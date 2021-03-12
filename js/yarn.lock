@@ -1516,10 +1516,10 @@
     "@types/prosemirror-model" "*"
     "@types/prosemirror-state" "*"
 
-"@types/prosemirror-model@*", "@types/prosemirror-model@^1.7.2":
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/@types/prosemirror-model/-/prosemirror-model-1.11.3.tgz#22ba40e7f727de830ed9c6724fb8013b2b384768"
-  integrity sha512-tUnOUwwiyIFN18mdXkT9D7xIqCeszu6ePa3s0/uGCgtW009l9AaNRep69L7BORWHGCAvYVaqYB0cybSHXs4MuQ==
+"@types/prosemirror-model@*", "@types/prosemirror-model@^1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@types/prosemirror-model/-/prosemirror-model-1.12.0.tgz#891117f950a46a50104f888fab4e26e1236ec0f9"
+  integrity sha512-IBiaUED/iiDOy3bmrRuQuwIsCFKNcF+S/3cU1+zGoHdrVtpTDtPkDyAo7OvirGfnpgp+QgrOLJveqnihGy3quA==
   dependencies:
     "@types/orderedmap" "*"
 

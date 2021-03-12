@@ -61,7 +61,7 @@
     "@types/lodash": "^4.14.141",
     "@types/ngeohash": "^0.6.2",
     "@types/prosemirror-inputrules": "^1.0.2",
-    "@types/prosemirror-model": "^1.7.2",
+    "@types/prosemirror-model": "^1.12.0",
     "@types/prosemirror-state": "^1.2.4",
     "@types/prosemirror-view": "^1.11.4",
     "@types/vuedraggable": "^2.23.0",
