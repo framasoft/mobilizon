@@ -16,7 +16,7 @@ Staying on source releases means:
 * You can change things in Mobilizon's code and recompile right away to test changes
 
 ## Releases
-If you want to migrate to releases, [we provide a full guide](https://docs.joinmobilizon.org/administration/upgrading/source_to_release/). You may do this at any time.
+If you want to migrate to releases, [we provide a full guide](https://tcit.frama.io/documentation/administration/upgrading/source_to_release/). You may do this at any time.
 
 ## Source install
 To stay on a source release, you just need to check the following things:
