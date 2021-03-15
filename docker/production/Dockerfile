@@ -20,7 +20,7 @@ RUN mix local.hex --force \
 
 COPY lib ./lib
 COPY priv ./priv
-COPY config/config.exs config/prod.exs config/releases.exs ./config/
+COPY config/config.exs config/prod.exs config/docker.exs ./config/
 COPY rel ./rel
 COPY --from=assets ./priv/static ./priv/static
 
@@ -55,6 +55,7 @@ EXPOSE 4000
 ENV MOBILIZON_DOCKER=true
 
 COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
+RUN mv config/docker.exs /etc/mobilizon/config.exs
 COPY docker/production/docker-entrypoint.sh ./
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

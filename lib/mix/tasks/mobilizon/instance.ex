@@ -41,6 +41,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         options,
         strict: [
           force: :boolean,
+          source: :boolean,
           output: :string,
           output_psql: :string,
           domain: :string,
@@ -55,7 +56,8 @@ defmodule Mix.Tasks.Mobilizon.Instance do
         ],
         aliases: [
           o: :output,
-          f: :force
+          f: :force,
+          s: :source
         ]
       )
 
@@ -67,6 +69,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
 
     will_overwrite = Enum.filter(paths, &File.exists?/1)
     proceed? = Enum.empty?(will_overwrite) or Keyword.get(options, :force, false)
+    source_install? = Keyword.get(options, :source, false)
 
     if proceed? do
       [domain, port | _] =
@@ -148,7 +151,8 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           database_password: dbpass,
           instance_secret: instance_secret,
           auth_secret: auth_secret,
-          listen_port: listen_port
+          listen_port: listen_port,
+          release: source_install? == false
         )
 
       result_psql =
@@ -193,7 +197,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
 
       {:error, err} ->
         shell_error(
-          "\nERROR: Unable to write config file to #{config_path}. Make sure you have permissions on the destination.\n"
+          "\nERROR: Unable to write config file to #{config_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
         )
 
         {:error, err}
@@ -209,7 +213,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
 
       {:error, err} ->
         shell_error(
-          "\nERROR: Unable to write psql file to #{psql_path}. Make sure you have permissions on the destination.\n"
+          "\nERROR: Unable to write psql file to #{psql_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
         )
 
         {:error, err}

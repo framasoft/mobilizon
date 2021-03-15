@@ -32,8 +32,15 @@ else
 	if [ $# -gt 0 ]; then
 		shift
 	fi
+	echo "$1" | grep "^-" >/dev/null
+	if [ $? -eq 1 ]; then
+		SUBACTION="$1"
+		if [ $# -gt 0 ]; then
+			shift
+		fi
+	fi
 
-	if [ "$ACTION" = "migrate" ] || [ "$ACTION" = "rollback" ] || [ "$ACTION" = "create" ] || [ "$MOBILIZON_CTL_RPC_DISABLED" = true ]; then
+	if [ "$ACTION" = "migrate" ] || [ "$ACTION" = "rollback" ] || [ "$ACTION" = "create" ] || [ "$ACTION $SUBACTION" = "instance gen" ] || [ "$MOBILIZON_CTL_RPC_DISABLED" = true ]; then
 		"$SCRIPTPATH"/mobilizon eval 'Mobilizon.CLI.run("'"$FULL_ARGS"'")'
 	else
 		"$SCRIPTPATH"/mobilizon rpc 'Mobilizon.CLI.run("'"$FULL_ARGS"'")'
