@@ -243,7 +243,7 @@ release-upload:
     APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
 
     echo "Artifact: ${APP_ASSET}"
-    tar czf ${APP_ASSET} -C release mobilizon
+    tar czf ${APP_ASSET} -C release .
     ls -al ${APP_ASSET}
 
     curl --silent --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${APP_ASSET}" ${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}
