@@ -20,7 +20,8 @@ RUN mix local.hex --force \
 
 COPY lib ./lib
 COPY priv ./priv
-COPY config/config.exs config/prod.exs config/docker.exs ./config/
+COPY config/config.exs config/prod.exs ./config/
+COPY config/docker.exs ./config/runtime.exs
 COPY rel ./rel
 COPY --from=assets ./priv/static ./priv/static
 
