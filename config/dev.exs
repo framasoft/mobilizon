@@ -91,6 +91,8 @@ config :mobilizon, :instance,
 
 # config :mobilizon, :activitypub, sign_object_fetches: false
 
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
+
 config :mobilizon, :anonymous,
   reports: [
     allowed: true
