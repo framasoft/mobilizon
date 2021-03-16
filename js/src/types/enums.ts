@@ -239,3 +239,14 @@ export enum ActivityGroupSubject {
   GROUP_CREATED = "group_created",
   GROUP_UPDATED = "group_updated",
 }
+
+export enum EventSortField {
+  BEGINS_ON = "BEGINS_ON",
+  INSERTED_AT = "INSERTED_AT",
+  UPDATED_AT = "UPDATED_AT",
+}
+
+export enum SortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}

@@ -297,11 +297,29 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:id, :string, description: "The Contact Actor ID")
   end
 
+  @desc "Available event sort fields"
+  enum :event_order_by do
+    value(:begins_on, description: "Sort by the date the event starts")
+    value(:inserted_at, description: "Sort by the date the event was created")
+    value(:updated_at, description: "Sort by the date the event was updated")
+  end
+
   object :event_queries do
     @desc "Get all events"
     field :events, :paginated_event_list do
       arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
       arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
+
+      arg(:order_by, :event_order_by,
+        default_value: :begins_on,
+        description: "Order the list of events by field"
+      )
+
+      arg(:direction, :sort_direction,
+        default_value: :asc,
+        description: "Direction for the sort"
+      )
+
       resolve(&Event.list_events/3)
     end
 
