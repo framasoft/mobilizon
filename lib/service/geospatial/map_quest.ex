@@ -17,8 +17,6 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
   @behaviour Provider
 
-  @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
-
   @api_key_missing_message "API Key required to use MapQuest"
 
   @impl Provider
@@ -27,7 +25,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   """
   @spec geocode(String.t(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
-    api_key = Keyword.get(options, :api_key, @api_key)
+    api_key = Keyword.get(options, :api_key, api_key())
     limit = Keyword.get(options, :limit, 10)
     open_data = Keyword.get(options, :open_data, true)
 
@@ -56,7 +54,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
     limit = Keyword.get(options, :limit, 10)
-    api_key = Keyword.get(options, :api_key, @api_key)
+    api_key = Keyword.get(options, :api_key, api_key())
 
     open_data = Keyword.get(options, :open_data, true)
 
@@ -113,5 +111,9 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
       postal_code: Map.get(address, "postalCode"),
       street: Map.get(address, "street")
     }
+  end
+
+  defp api_key do
+    Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
   end
 end

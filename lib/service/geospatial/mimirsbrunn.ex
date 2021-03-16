@@ -10,12 +10,10 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Service.HTTP.GeospatialClient
-
+  import Mobilizon.Service.Geospatial.Provider, only: [endpoint: 1]
   require Logger
 
   @behaviour Provider
-
-  @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
 
   @impl Provider
   @doc """
@@ -43,7 +41,7 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
-    endpoint = Keyword.get(options, :endpoint, @endpoint)
+    endpoint = Keyword.get(options, :endpoint, endpoint(__MODULE__))
 
     case method do
       :search ->
