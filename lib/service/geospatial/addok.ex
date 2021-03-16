@@ -6,14 +6,10 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Service.HTTP.GeospatialClient
-
+  import Mobilizon.Service.Geospatial.Provider, only: [endpoint: 1]
   require Logger
 
   @behaviour Provider
-
-  @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
-  @default_country Application.get_env(:mobilizon, __MODULE__) |> get_in([:default_country]) ||
-                     "France"
 
   @impl Provider
   @doc """
@@ -40,7 +36,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
   @spec build_url(atom(), map(), list()) :: String.t()
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
-    endpoint = Keyword.get(options, :endpoint, @endpoint)
+    endpoint = Keyword.get(options, :endpoint, endpoint(__MODULE__))
 
     case method do
       :geocode ->
@@ -71,7 +67,7 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     features
     |> Enum.map(fn %{"geometry" => geometry, "properties" => properties} ->
       %Address{
-        country: Map.get(properties, "country", @default_country),
+        country: Map.get(properties, "country", default_country()),
         locality: Map.get(properties, "city"),
         region: Map.get(properties, "context"),
         description: Map.get(properties, "name") || street_address(properties),
@@ -105,4 +101,9 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     do: "#{url}&type=municipality"
 
   defp do_add_parameter(url, :type, _type), do: url
+
+  defp default_country do
+    Application.get_env(:mobilizon, __MODULE__) |> get_in([:default_country]) ||
+      "France"
+  end
 end

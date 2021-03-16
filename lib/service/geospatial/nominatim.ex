@@ -6,13 +6,10 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Service.HTTP.GeospatialClient
-
+  import Mobilizon.Service.Geospatial.Provider, only: [endpoint: 1]
   require Logger
 
   @behaviour Provider
-
-  @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
-  @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
 
   @impl Provider
   @doc """
@@ -40,7 +37,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
-    endpoint = Keyword.get(options, :endpoint, @endpoint)
+    endpoint = Keyword.get(options, :endpoint, endpoint(__MODULE__))
 
     url =
       case method do
@@ -58,7 +55,7 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
 
     url
     |> add_parameter(options, :country_code)
-    |> add_parameter(options, :api_key, @api_key)
+    |> add_parameter(options, :api_key, api_key())
   end
 
   @spec fetch_features(String.t()) :: list(Address.t())
@@ -161,4 +158,8 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
   @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
   defp do_add_parameter(url, :api_key, api_key),
     do: "#{url}&key=#{api_key}"
+
+  defp api_key do
+    Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
+  end
 end

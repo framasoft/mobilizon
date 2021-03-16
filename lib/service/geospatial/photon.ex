@@ -6,12 +6,10 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Service.Geospatial.Provider
   alias Mobilizon.Service.HTTP.GeospatialClient
-
+  import Mobilizon.Service.Geospatial.Provider, only: [endpoint: 1]
   require Logger
 
   @behaviour Provider
-
-  @endpoint Application.get_env(:mobilizon, __MODULE__) |> get_in([:endpoint])
 
   @impl Provider
   @doc """
@@ -42,7 +40,7 @@ defmodule Mobilizon.Service.Geospatial.Photon do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
     coords = Keyword.get(options, :coords, nil)
-    endpoint = Keyword.get(options, :endpoint, @endpoint)
+    endpoint = Keyword.get(options, :endpoint, endpoint(__MODULE__))
 
     case method do
       :search ->

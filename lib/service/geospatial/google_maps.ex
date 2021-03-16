@@ -13,11 +13,6 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
 
   @behaviour Provider
 
-  @api_key Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
-
-  @fetch_place_details (Application.get_env(:mobilizon, __MODULE__)
-                        |> get_in([:fetch_place_details])) in [true, "true", "True"]
-
   @components [
     "street_number",
     "route",
@@ -77,7 +72,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
-    api_key = Keyword.get(options, :api_key, @api_key)
+    api_key = Keyword.get(options, :api_key, api_key())
     if is_nil(api_key), do: raise(ArgumentError, message: @api_key_missing_message)
 
     url = "#{@geocode_endpoint}?limit=#{limit}&key=#{api_key}&language=#{lang}"
@@ -118,7 +113,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
       end)
 
     description =
-      if Keyword.get(options, :fetch_place_details, @fetch_place_details) == true do
+      if Keyword.get(options, :fetch_place_details, fetch_place_details()) == true do
         do_fetch_place_details(place_id, options) || description
       else
         description
@@ -185,4 +180,13 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     do: "#{url}&components=administrative_area"
 
   defp do_add_parameter(url, :type, _), do: url
+
+  defp api_key do
+    Application.get_env(:mobilizon, __MODULE__) |> get_in([:api_key])
+  end
+
+  defp fetch_place_details do
+    (Application.get_env(:mobilizon, __MODULE__)
+     |> get_in([:fetch_place_details])) in [true, "true", "True"]
+  end
 end

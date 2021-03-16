@@ -80,4 +80,9 @@ defmodule Mobilizon.Service.Geospatial.Provider do
 
   @spec coordinates(any) :: nil
   def coordinates(_, _), do: nil
+
+  @spec endpoint(atom()) :: String.t()
+  def endpoint(provider) do
+    Application.get_env(:mobilizon, provider) |> get_in([:endpoint])
+  end
 end
