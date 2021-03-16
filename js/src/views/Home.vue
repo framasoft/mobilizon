@@ -390,9 +390,9 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       update: (data) => data.searchEvents,
       skip() {
         return (
-          this.currentUser?.isLoggedIn === false &&
-          this.loggedUser?.settings?.location?.geohash &&
-          this.loggedUser?.settings?.location?.radius
+          !this.currentUser?.isLoggedIn ||
+          !this.loggedUser?.settings?.location?.geohash ||
+          !this.loggedUser?.settings?.location?.radius
         );
       },
     },
