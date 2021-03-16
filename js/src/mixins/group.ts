@@ -84,7 +84,10 @@ export default class GroupMixin extends Vue {
 
   hasCurrentActorThisRole(givenRole: string | string[]): boolean {
     const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
-    return roles.includes(this.person?.memberships?.elements[0].role);
+    return (
+      this.person?.memberships?.total > 0 &&
+      roles.includes(this.person?.memberships?.elements[0].role)
+    );
   }
 
   handleErrors(errors: any[]): void {
