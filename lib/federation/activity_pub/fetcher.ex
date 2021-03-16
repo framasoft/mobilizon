@@ -59,6 +59,10 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
         Logger.warn("Object origin check failed")
         {:error, "Object origin check failed"}
 
+      # Returned content is not JSON
+      {:ok, data} when is_binary(data) ->
+        {:error, "Failed to parse content as JSON"}
+
       {:error, err} ->
         {:error, err}
     end
