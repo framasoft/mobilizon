@@ -7,13 +7,12 @@ defmodule Mobilizon.Web.Views.Utils do
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
   import Plug.Conn, only: [put_status: 2, halt: 1]
 
-  @index_file_path Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html")
-
   # sobelow_skip ["Traversal.FileModule"]
   @spec inject_tags(Enum.t(), String.t()) :: {:ok, {:safe, String.t()}}
   def inject_tags(tags, locale \\ "en") do
-    with {:exists, true} <- {:exists, File.exists?(@index_file_path)},
-         {:ok, index_content} <- File.read(@index_file_path),
+    with path <- Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html"),
+         {:exists, true} <- {:exists, File.exists?(path)},
+         {:ok, index_content} <- File.read(path),
          safe <- do_replacements(index_content, MetadataUtils.stringify_tags(tags), locale) do
       {:ok, {:safe, safe}}
     else
