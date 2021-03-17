@@ -193,8 +193,8 @@ export const FETCH_EVENT_BASIC = gql`
 `;
 
 export const FETCH_EVENTS = gql`
-  query {
-    events {
+  query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection) {
+    events(orderBy: $orderBy, direction: $direction) {
       total
       elements {
         id

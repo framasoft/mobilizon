@@ -59,9 +59,7 @@
       <b-field grouped>
         <b-field :label="$t('City or region')" expanded>
           <address-auto-complete
-            v-if="
-              loggedUser && loggedUser.settings && loggedUser.settings.location
-            "
+            v-if="loggedUser && loggedUser.settings"
             :type="AddressSearchType.ADMINISTRATIVE"
             :doGeoLocation="false"
             v-model="address"

@@ -59,9 +59,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
-  def list_events(_parent, %{page: page, limit: limit}, _resolution)
+  def list_events(
+        _parent,
+        %{page: page, limit: limit, order_by: order_by, direction: direction},
+        _resolution
+      )
       when limit < @event_max_limit do
-    {:ok, Events.list_events(page, limit)}
+    {:ok, Events.list_events(page, limit, order_by, direction)}
   end
 
   def list_events(_parent, %{page: _page, limit: _limit}, _resolution) do

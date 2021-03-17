@@ -320,7 +320,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
-import { ParticipantRole } from "@/types/enums";
+import { EventSortField, ParticipantRole, SortDirection } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
 import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
@@ -347,6 +347,10 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     events: {
       query: FETCH_EVENTS,
       fetchPolicy: "no-cache", // Debug me: https://github.com/apollographql/apollo-client/issues/3030
+      variables: {
+        orderBy: EventSortField.INSERTED_AT,
+        direction: SortDirection.DESC,
+      },
     },
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
