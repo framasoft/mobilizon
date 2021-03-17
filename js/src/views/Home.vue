@@ -388,7 +388,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       variables() {
         return {
           location: this.loggedUser?.settings?.location?.geohash,
-          radius: this.loggedUser?.settings?.location?.radius,
+          radius: this.loggedUser?.settings?.location?.range,
         };
       },
       update: (data) => data.searchEvents,
@@ -396,7 +396,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
         return (
           !this.currentUser?.isLoggedIn ||
           !this.loggedUser?.settings?.location?.geohash ||
-          !this.loggedUser?.settings?.location?.radius
+          !this.loggedUser?.settings?.location?.range
         );
       },
     },
