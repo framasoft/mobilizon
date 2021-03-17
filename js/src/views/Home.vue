@@ -258,9 +258,9 @@
           {{
             $tc(
               "Within {number} kilometers of {place}",
-              loggedUser.settings.location.radius,
+              loggedUser.settings.location.range,
               {
-                number: loggedUser.settings.location.radius,
+                number: loggedUser.settings.location.range,
                 place: loggedUser.settings.location.name,
               }
             )
