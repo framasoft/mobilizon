@@ -522,7 +522,7 @@ defmodule Mobilizon.Events do
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
     |> event_order_begins_on_asc()
-    |> Page.build_page(page, limit)
+    |> Page.build_page(page, limit, :begins_on)
   end
 
   @doc """
@@ -1342,12 +1342,12 @@ defmodule Mobilizon.Events do
   @spec events_for_search_query(String.t()) :: Ecto.Query.t()
   defp events_for_search_query("") do
     Event
-    |> distinct([e], e.id)
+    |> distinct([e], asc: e.begins_on, asc: e.id)
   end
 
   defp events_for_search_query(search_string) do
     from(event in Event,
-      distinct: event.id,
+      distinct: [asc: event.begins_on, asc: event.id],
       join: id_and_rank in matching_event_ids_and_ranks(search_string),
       on: id_and_rank.id == event.id
     )
