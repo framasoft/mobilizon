@@ -47,6 +47,7 @@ export default class Validate extends Vue {
       this.loading = false;
       await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
+      this.loading = false;
       console.error(err);
       this.failed = true;
     }

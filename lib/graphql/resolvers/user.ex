@@ -389,7 +389,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def validate_email(_parent, %{token: token}, _resolution) do
-    with %User{} = user <- Users.get_user_by_activation_token(token),
+    with {:get, %User{} = user} <- {:get, Users.get_user_by_activation_token(token)},
          {:ok, %User{} = user} <-
            user
            |> User.changeset(%{
@@ -400,6 +400,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            })
            |> Repo.update() do
       {:ok, user}
+    else
+      {:get, nil} ->
+        {:error, dgettext("errors", "Invalid activation token")}
     end
   end
 
