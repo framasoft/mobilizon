@@ -967,5 +967,6 @@
   "You posted a comment on the event {event}.": "You posted a comment on the event {event}.",
   "{profile} posted a comment on the event {event}.": "{profile} posted a comment on the event {event}.",
   "You replied to a comment on the event {event}.": "You replied to a comment on the event {event}.",
-  "{profile} replied to a comment on the event {event}.": "{profile} replied to a comment on the event {event}."
+  "{profile} replied to a comment on the event {event}.": "{profile} replied to a comment on the event {event}.",
+  "New post": "New post"
 }

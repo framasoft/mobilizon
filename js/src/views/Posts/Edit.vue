@@ -2,6 +2,43 @@
   <div>
     <form @submit.prevent="publish(false)" v-if="isCurrentActorAGroupModerator">
       <div class="container section">
+        <nav class="breadcrumb" aria-label="breadcrumbs" v-if="actualGroup">
+          <ul>
+            <li>
+              <router-link
+                v-if="actualGroup"
+                :to="{
+                  name: RouteName.GROUP,
+                  params: {
+                    preferredUsername: usernameWithDomain(actualGroup),
+                  },
+                }"
+                >{{
+                  actualGroup.name || actualGroup.preferredUsername
+                }}</router-link
+              >
+              <b-skeleton v-else :animated="true"></b-skeleton>
+            </li>
+            <li>
+              <router-link
+                v-if="actualGroup"
+                :to="{
+                  name: RouteName.POSTS,
+                  params: {
+                    preferredUsername: usernameWithDomain(actualGroup),
+                  },
+                }"
+                >{{ $t("Posts") }}</router-link
+              >
+              <b-skeleton v-else :animated="true"></b-skeleton>
+            </li>
+            <li class="is-active">
+              <span v-if="preferredUsername">{{ $t("New post") }}</span>
+              <span v-else-if="slug">{{ $t("Edit post") }}</span>
+              <b-skeleton v-else :animated="true"></b-skeleton>
+            </li>
+          </ul>
+        </nav>
         <h1 class="title" v-if="isUpdate === true">
           {{ $t("Edit post") }}
         </h1>
@@ -111,7 +148,6 @@
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
-import { FETCH_GROUP } from "@/graphql/group";
 import {
   buildFileFromIMedia,
   buildFileVariable,
@@ -135,11 +171,24 @@ import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import PictureUpload from "../../components/PictureUpload.vue";
+import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
+import { FETCH_GROUP } from "@/graphql/group";
 
 @Component({
   apollo: {
     tags: TAGS,
     config: CONFIG,
+    group: {
+      query: FETCH_GROUP,
+      variables() {
+        return {
+          name: this.preferredUsername,
+        };
+      },
+      skip() {
+        return !this.preferredUsername;
+      },
+    },
     post: {
       query: FETCH_POST,
       fetchPolicy: "cache-and-network",
@@ -152,15 +201,17 @@ import PictureUpload from "../../components/PictureUpload.vue";
         return !this.slug;
       },
     },
-    group: {
-      query: FETCH_GROUP,
+    person: {
+      query: PERSON_MEMBERSHIP_GROUP,
+      fetchPolicy: "cache-and-network",
       variables() {
         return {
-          name: this.preferredUsername,
+          id: this.currentActor.id,
+          group: this.actualGroup.preferredUsername,
         };
       },
       skip() {
-        return !this.preferredUsername;
+        return !this.currentActor?.id || !this.actualGroup?.preferredUsername;
       },
     },
   },
@@ -205,6 +256,10 @@ export default class EditPost extends mixins(GroupMixin) {
   pictureFile: File | null = null;
 
   errors: Record<string, unknown> = {};
+
+  RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
 
   async mounted(): Promise<void> {
     this.pictureFile = await buildFileFromIMedia(this.post.picture);
@@ -331,18 +386,6 @@ export default class EditPost extends mixins(GroupMixin) {
     }
     return this.group;
   }
-
-  hasCurrentActorThisRole(givenRole: string | string[]): boolean {
-    const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
-    return (
-      this.person &&
-      this.actualGroup &&
-      this.person.memberships.elements.some(
-        ({ parent: { id }, role }) =>
-          id === this.actualGroup.id && roles.includes(role)
-      )
-    );
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -359,5 +402,9 @@ form {
       min-height: 2rem;
     }
   }
+}
+
+.breadcrumb li.is-active > span {
+  padding: 0 0.75em;
 }
 </style>
