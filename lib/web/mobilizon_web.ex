@@ -30,6 +30,7 @@ defmodule Mobilizon.Web do
     quote do
       use Phoenix.View,
         root: "lib/web/templates",
+        pattern: "**/*",
         namespace: Mobilizon.Web
 
       # Import convenience functions from controllers

@@ -1,0 +1,13 @@
+<%= case @activity.subject do %><% :group_created -> %><%= dgettext("activity", "%{profile} created the group %{group}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        group: @activity.subject_params["group_name"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :actor, @activity.subject_params["group_federated_username"]) |> URI.decode() %><% :group_updated -> %><%= dgettext("activity", "%{profile} updated the group %{group}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        group: @activity.subject_params["group_name"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :actor, @activity.subject_params["group_federated_username"]) |> URI.decode() %><% end %>

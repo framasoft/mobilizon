@@ -1,0 +1,50 @@
+<%= case @activity.subject do %>
+<% :resource_created -> %><%= if @activity.subject_params["is_folder"] do %><%= dgettext("activity", "%{profile} created the folder %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} created the resource %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% end %><% :resource_renamed -> %><%= if @activity.subject_params["is_folder"] do %><%= dgettext("activity", "%{profile} renamed the folder from %{old_resource_title} to %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"],
+        old_resource_title: @activity.subject_params["old_resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} renamed the resource from %{old_resource_title} to %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"],
+        old_resource_title: @activity.subject_params["old_resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% end %><% :resource_moved -> %><%= if @activity.subject_params["is_folder"] do %><%= dgettext("activity", "%{profile} moved the folder %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} moved the resource %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :resource, @activity.subject_params["resource_uuid"]) |> URI.decode() %><% end %><% :resource_deleted -> %><%= if @activity.subject_params["is_folder"] do %><%= dgettext("activity", "%{profile} deleted the folder %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %><% else %><%= dgettext("activity", "%{profile} deleted the resource %{resource}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        resource: @activity.subject_params["resource_title"]
+    }
+) %><% end %><% end %>

@@ -18,7 +18,7 @@
           ></popover-actor-card
         >
         <b slot="member" v-else>{{
-          subjectParams.member_preferred_username
+          subjectParams.member_actor_federated_username
         }}</b>
         <popover-actor-card
           :actor="activity.author"

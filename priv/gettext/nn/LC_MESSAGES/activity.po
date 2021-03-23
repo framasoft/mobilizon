@@ -1,0 +1,231 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: nn\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:12
+msgid "%{member} accepted the invitation to join the group."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:26
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:17
+msgid "%{member} rejected the invitation to join the group."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:1
+msgid "%{member} requested to join the group."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:11
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:6
+msgid "%{member} was invited by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:40
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:27
+msgid "%{profile} added the member %{member}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:49
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:19 lib/web/templates/email/activity/_discussion_activity_item.html.eex:46
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
+msgid "%{profile} archived the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:1 lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
+msgid "%{profile} created the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:5
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:2
+msgid "%{profile} created the folder %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_group_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_group_activity_item.text.eex:1
+msgid "%{profile} created the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:20
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:8
+msgid "%{profile} created the resource %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:64
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:25 lib/web/templates/email/activity/_discussion_activity_item.html.eex:60
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
+msgid "%{profile} deleted the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:103
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
+msgid "%{profile} deleted the folder %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:111
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
+msgid "%{profile} deleted the resource %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:56
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
+msgid "%{profile} excluded member %{member}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:71
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
+msgid "%{profile} moved the folder %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:86
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
+msgid "%{profile} moved the resource %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:64
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
+msgid "%{profile} quit the group."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:34
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:13 lib/web/templates/email/activity/_discussion_activity_item.html.eex:32
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
+msgid "%{profile} renamed the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:37
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:14
+msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_resource_activity_item.html.eex:53
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:21
+msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:7 lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
+msgid "%{profile} replied to the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_group_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_group_activity_item.text.eex:7
+msgid "%{profile} updated the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:48
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
+msgid "%{profile} updated the member %{member}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:1
+msgid "The event %{event} was created by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.eex:34
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:13
+msgid "The event %{event} was deleted by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:7
+msgid "The event %{event} was updated by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:1
+msgid "The post %{post} was created by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:34
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:13
+msgid "The post %{post} was deleted by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:7
+msgid "The post %{post} was updated by %{profile}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_member_activity_item.html.eex:33
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:22
+msgid "%{member} joined the group."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.eex:58
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:25
+msgid "%{profile} posted a comment on the event %{event}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.eex:43
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:19
+msgid "%{profile} replied to a comment on the event %{event}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:104
+#: lib/web/templates/email/email_direct_activity.text.eex:21
+msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:84
+#: lib/web/templates/email/email_direct_activity.text.eex:17
+msgid "View one more activity"
+msgid_plural "View %{count} more activities"
+msgstr[0] ""
+msgstr[1] ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:38
+#: lib/web/templates/email/email_direct_activity.text.eex:4
+msgid "There has been an activity!"
+msgid_plural "There has been some activity!"
+msgstr[0] ""
+msgstr[1] ""

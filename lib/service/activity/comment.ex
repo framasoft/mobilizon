@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Comment do
   @moduledoc """
   Insert a comment activity
   """
-  alias Mobilizon.{Actors, Events}
+  alias Mobilizon.{Actors, Discussions, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
@@ -48,4 +48,9 @@ defmodule Mobilizon.Service.Activity.Comment do
   end
 
   def insert_activity(_, _), do: {:ok, nil}
+
+  @impl Activity
+  def get_object(comment_id) do
+    Discussions.get_comment(comment_id)
+  end
 end

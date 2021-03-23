@@ -1,6 +1,7 @@
 defmodule Mobilizon.Web.EmailView do
   use Mobilizon.Web, :view
 
+  alias Cldr.DateTime.Relative
   import Mobilizon.Web.Gettext
 
   def datetime_to_string(%DateTime{} = datetime, locale \\ "en", format \\ :medium) do
@@ -26,5 +27,13 @@ defmodule Mobilizon.Web.EmailView do
       _ ->
         datetime
     end
+  end
+
+  @spec datetime_relative(DateTime.t(), String.t()) :: String.t()
+  def datetime_relative(%DateTime{} = datetime, locale \\ "en") do
+    Relative.to_string!(datetime, Mobilizon.Cldr,
+      relative_to: DateTime.utc_now(),
+      locale: locale
+    )
   end
 end

@@ -265,7 +265,7 @@ config :mobilizon, :anonymous,
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   log: false,
-  queues: [default: 10, search: 5, mailers: 10, background: 5, activity: 5],
+  queues: [default: 10, search: 5, mailers: 10, background: 5, activity: 5, notifications: 5],
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
@@ -297,6 +297,12 @@ config :mobilizon, :external_resource_providers, %{
   "https://docs.google.com/presentation/" => :google_presentation,
   "https://docs.google.com/spreadsheets/" => :google_spreadsheets
 }
+
+config :mobilizon, Mobilizon.Service.Notifier,
+  notifiers: [
+    Mobilizon.Service.Notifier.Email,
+    Mobilizon.Service.Notifier.Push
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

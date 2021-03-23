@@ -1432,3 +1432,8 @@ msgstr ""
 #, elixir-format
 msgid "Public feed for %{instance}"
 msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:25
+msgid "Activity notification for %{instance}"
+msgstr ""

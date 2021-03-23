@@ -59,6 +59,8 @@ defmodule Mobilizon.Activities do
   defenum(Subject, @subjects)
   defenum(ObjectType, @object_type)
 
+  @activity_preloads [:author, :group]
+
   @doc """
   Returns the list of activities.
 
@@ -151,6 +153,11 @@ defmodule Mobilizon.Activities do
     %Activity{}
     |> Activity.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @spec preload_activity(Activity.t()) :: Activity.t()
+  def preload_activity(%Activity{} = activity) do
+    Repo.preload(activity, @activity_preloads)
   end
 
   def object_types, do: @object_type

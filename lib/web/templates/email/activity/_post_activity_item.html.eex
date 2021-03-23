@@ -1,0 +1,40 @@
+<%= case @activity.subject do %>
+    <% :post_created -> %>
+        <%= 
+            dgettext("activity", "The post %{post} was created by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    post: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :post,
+                            @activity.subject_params["post_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["post_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :post_updated -> %>
+        <%= 
+            dgettext("activity", "The post %{post} was updated by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    post: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :post,
+                            @activity.subject_params["post_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["post_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :post_deleted -> %>
+        <%= 
+            dgettext("activity", "The post %{post} was deleted by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    post: "<b>#{@activity.subject_params["post_title"]}</b>"
+                }
+            ) |> raw %>
+<% end %>

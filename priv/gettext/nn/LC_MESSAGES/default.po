@@ -1700,3 +1700,8 @@ msgstr "Mobilizon-tenaren ser ut til å vera nede i augeblinken."
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
 msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:25
+msgid "Activity notification for %{instance}"
+msgstr ""
