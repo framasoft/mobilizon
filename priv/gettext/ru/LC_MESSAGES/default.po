@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2021-03-22 20:14+0000\n"
+"PO-Revision-Date: 2021-03-25 00:14+0000\n"
 "Last-Translator: deadmorose <cornerot@gmail.com>\n"
 "Language-Team: Russian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ru/>\n"
@@ -499,162 +499,232 @@ msgstr "Изменения в настоящих Условиях"
 msgctxt "terms"
 msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
 msgstr ""
+"Большая часть содержимого Сервиса принадлежит вам и другим лицам, и мы не "
+"просматриваем, не проверяем и не подтверждаем его подлинность, и он может "
+"содержать неточности или ложную информацию. Мы не делаем никаких заявлений и "
+"не даем никаких гарантий относительно качества, актуальности, достоверности, "
+"точности или полноты любого контента, содержащегося в Сервисе. Вы признаете, "
+"что несете единоличную ответственность и принимаете на себя все риски, "
+"возникающие в связи с использованием вами любого контента или вашего доверия "
+"к нему."
 
 #: lib/web/templates/api/terms.html.eex:60
 #, elixir-format
 msgctxt "terms"
 msgid "Also, you agree that you will not do any of the following in connection with the Service or other users:"
 msgstr ""
+"Кроме того, вы соглашаетесь с тем, что не будете делать ничего из следующего "
+"в отношении Сервиса или других пользователей:"
 
 #: lib/web/templates/api/terms.html.eex:65
 #, elixir-format
 msgctxt "terms"
 msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
 msgstr ""
+"Обходить или пытаться обойти любую фильтрацию, меры безопасности, "
+"ограничения скорости или другие функции, предназначенные для защиты Сервиса, "
+"пользователей Сервиса или третьих лиц."
 
 #: lib/web/templates/api/terms.html.eex:64
 #, elixir-format
 msgctxt "terms"
 msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
 msgstr ""
+"Собирать любую личную информацию о других пользователях или запугивать, "
+"угрожать, преследовать или иным образом беспокоить других пользователей "
+"Сервиса;"
 
 #: lib/web/templates/api/terms.html.eex:55
 #, elixir-format
 msgctxt "terms"
 msgid "Content that is illegal or unlawful, that would otherwise create liability;"
 msgstr ""
+"Контент, который является незаконным или повлечет за собой уголовную "
+"ответственность;"
 
 #: lib/web/templates/api/terms.html.eex:56
 #, elixir-format
 msgctxt "terms"
 msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
 msgstr ""
+"Контент, который может нарушать любой патент, товарный знак, коммерческую "
+"тайну, авторское право, право на неприкосновенность частной жизни, право на "
+"гласность или другие интеллектуальные и прочие права любой стороны;"
 
 #: lib/web/templates/api/terms.html.eex:42
 #, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr ""
+msgstr "Создание учетных записей"
 
 #: lib/web/templates/api/terms.html.eex:89
 #, elixir-format
 msgctxt "terms"
 msgid "Entire Agreement"
-msgstr ""
+msgstr "Полное согласие"
 
 #: lib/web/templates/api/terms.html.eex:92
 #, elixir-format
 msgctxt "terms"
 msgid "Feedback"
-msgstr ""
+msgstr "Обратная связь"
 
 #: lib/web/templates/api/terms.html.eex:83
 #, elixir-format
 msgctxt "terms"
 msgid "Hyperlinks and Third Party Content"
-msgstr ""
+msgstr "Гиперссылки и сторонний контент"
 
 #: lib/web/templates/api/terms.html.eex:88
 #, elixir-format
 msgctxt "terms"
 msgid "If you breach any of these Terms, we have the right to suspend or disable your access to or use of the Service."
 msgstr ""
+"Если вы нарушите какое-либо из этих Условий, мы имеем право временно "
+"приостановить или полностью заблокировать вам доступ к Сервису."
 
 #: lib/web/templates/api/terms.html.eex:63
 #, elixir-format
 msgctxt "terms"
 msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
 msgstr ""
+"Выдавать себя за другое лицо или публиковать сообщения от имени любого "
+"физического или юридического лица или иным образом искажать свою "
+"принадлежность к физическому или юридическому лицу;"
 
 #: lib/web/templates/api/terms.html.eex:48
 #, elixir-format
 msgctxt "terms"
 msgid "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness."
 msgstr ""
+"Наш Сервис позволяет вам и другим пользователям публиковать, размещать "
+"ссылки и иным образом делать контент доступным. Вы несете ответственность за "
+"контент, который вы предоставляете Сервису, включая его законность, "
+"правдивость и адекватность."
 
 #: lib/web/templates/api/terms.html.eex:39
 #, elixir-format
 msgctxt "terms"
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Политика конфиденциальности"
 
 #: lib/web/templates/api/terms.html.eex:95
 #, elixir-format
 msgctxt "terms"
 msgid "Questions & Contact Information"
-msgstr ""
+msgstr "Вопросы и контактная информация"
 
 #: lib/web/templates/api/terms.html.eex:87
 #, elixir-format
 msgctxt "terms"
 msgid "Termination"
-msgstr ""
+msgstr "Завершение"
 
 #: lib/web/templates/api/terms.html.eex:62
 #, elixir-format
 msgctxt "terms"
 msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
 msgstr ""
+"Использовать Сервис любым способом, который может нарушить, отрицательно "
+"повлиять или помешать другим пользователям в полной мере пользоваться "
+"Сервисом или который может повредить, вывести из строя, перегрузить или "
+"нарушить работу Сервиса;"
 
 #: lib/web/templates/api/terms.html.eex:47
 #, elixir-format
 msgctxt "terms"
 msgid "Your Content & Conduct"
-msgstr ""
+msgstr "Ваш контент и ваши действия"
 
 #: lib/web/templates/api/terms.html.eex:84
 #, elixir-format
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> makes no claim or representation regarding, and accepts no responsibility for third party websites accessible by hyperlink from the Service or websites linking to the Service. When you leave the Service, you should be aware that these Terms and our policies no longer govern. The inclusion of any link does not imply endorsement by <b>%{instance_name}</b> of the site. Use of any such linked website is at the user's own risk."
 msgstr ""
+"<b>%{instance_name}</b> не претендует, не представляет и не принимает на "
+"себя ответственность за любые сторонние веб-сайты, доступные по гиперссылкам "
+"с Сервиса, или сайты, которые ссылаются на Сервис. Вы должны знать, что "
+"Условия обслуживания применяются только к домену Сервиса. Включение внешних "
+"ссылок не означает поддержки со стороны <b>%{instance_name}</b> для целевого "
+"сайта. Ответственность за использование таких ссылок лежит на каждом "
+"пользователе."
 
 #: lib/web/templates/api/terms.html.eex:68
 #, elixir-format
 msgctxt "terms"
 msgid "Finally, your use of the Service is also subject to acceptance of <a href=\"/rules\">the instance's own specific rules</a> regarding the code of conduct and moderation rules. Breaking those rules may also result in your account being disabled or suspended."
 msgstr ""
+"Наконец, использование Сервиса также требует принятия <a href=\"/rules\""
+">правил конкретного узла</a>, касающихся кодекса поведения и правил "
+"модерации. Нарушение этих правил также может привести к приостановке или "
+"блокировки вашей учетной записи."
 
 #: lib/web/templates/api/terms.html.eex:81
 #, elixir-format
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
+"Для получения полной информации о Mobilizon <a href=\"https://joinmobilizon."
+"org\">смотреть тут</a>."
 
 #: lib/web/templates/api/terms.html.eex:18
 #, elixir-format
 msgctxt "terms"
 msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
 msgstr ""
+"Вот важные вещи, которые вам нужно знать о доступе и использовании "
+"<b>%{instance_name}</b> (<a href=\"https://%{instance_url}\""
+">%{instance_url}</a>) веб-сайта и сервиса (вместе именуемые \"Сервис\"). Это "
+"наши условия обслуживания (\"Условия\"). Пожалуйста, прочтите их внимательно."
 
 #: lib/web/templates/api/terms.html.eex:33
 #, elixir-format
 msgctxt "terms"
 msgid "If we make major changes, we will notify our users in a clear and prominent manner. Minor changes may only be highlighted in the footer of our website. It is your responsibility to check the website regularly for changes to these Terms."
 msgstr ""
+"Если мы внесем значительные изменения, то известим наших пользователей ясным "
+"и заметным образом. Незначительные изменения могут быть выделены только в "
+"подвале нашего веб-сайта. Вы обязаны регулярно проверять веб-сайт на предмет "
+"изменений в настоящих Условиях."
 
 #: lib/web/templates/api/terms.html.eex:53
 #, elixir-format
 msgctxt "terms"
 msgid "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:"
 msgstr ""
+"Чтобы сделать <b>%{instance_name}</b> идеальным местом для всех, пожалуйста, "
+"не публикуйте, не размещайте ссылки и не делайте доступными иным образом в "
+"нашем Сервисе любое из следующего:"
 
 #: lib/web/templates/api/terms.html.eex:57
 #, elixir-format
 msgctxt "terms"
 msgid "Private information of any third party (e.g., addresses, phone numbers, email addresses, Social Security numbers and credit card numbers); and"
 msgstr ""
+"Личная информация третьих лиц (например, адреса, номера телефонов, адреса "
+"электронной почты, номера социального страхования и номера кредитных карт); и"
 
 #: lib/web/templates/api/terms.html.eex:52
 #, elixir-format
 msgctxt "terms"
 msgid "Since Mobilizon is a distributed network, it is possible, depending on the visibility rules set to your content, that your content has been distributed to other Mobilizon instances. When you delete your content, we will request those other instances to also delete the content. Our responsibility on the content being deleted from those other instances ends here. If for some reason, some other instance does not delete the content, we cannot be held responsible."
 msgstr ""
+"Поскольку Mobilizon является распределенной сетью, возможно, в зависимости "
+"от правил видимости, установленных для вашего контента, ваш контент был "
+"распространен на другие узлы Mobilizon. Когда вы удаляете свой контент, мы "
+"просим другие узлы также удалить его. Наша ответственность за удаление "
+"контента на других узлах на этом заканчивается. Если по какой-то причине "
+"какой-либо другой узел не удаляет его, то мы не несем ответственности за это."
 
 #: lib/web/templates/api/terms.html.eex:90
 #, elixir-format
 msgctxt "terms"
 msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
 msgstr ""
+"Настоящие Условия представляют собой полное соглашение между вами и "
+"<b>%{instance_name}</b> в отношении использования Сервиса, заменяя все "
+"предыдущие соглашения между вами и <b>%{instance_name}</b>, касающиеся "
+"использования Сервиса."
 
 #: lib/web/templates/api/terms.html.eex:80
 #, elixir-format
