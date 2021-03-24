@@ -120,13 +120,21 @@ defmodule Mobilizon.Web.ReverseProxy do
         opts
       end
 
-    with {:ok, code, headers, client} <- request(method, url, req_headers, hackney_opts),
+    with {:is_url, true} <- {:is_url, valid_uri?(url)},
+         {:ok, code, headers, client} <- request(method, url, req_headers, hackney_opts),
          :ok <- header_length_constraint(headers, Keyword.get(opts, :max_body_length)) do
       response(conn, client, url, code, headers, opts)
     else
       {:ok, code, headers} ->
         conn
         |> head_response(url, code, headers, opts)
+        |> halt()
+
+      {:is_url, false} ->
+        Logger.warn("Tried to reverse proxy URL #{inspect(url)}")
+
+        conn
+        |> error_or_redirect(url, 500, "Request failed", opts)
         |> halt()
 
       {:error, {:invalid_http_response, code}} ->
@@ -396,5 +404,11 @@ defmodule Mobilizon.Web.ReverseProxy do
 
   def filename(url_or_path) do
     if path = URI.parse(url_or_path).path, do: Path.basename(path)
+  end
+
+  @spec valid_uri?(String.t()) :: boolean()
+  defp valid_uri?(url) do
+    uri = URI.parse(url)
+    uri.scheme != nil && uri.host =~ "."
   end
 end
