@@ -190,6 +190,9 @@
     <b-modal :active.sync="createLinkResourceModal" has-modal-card>
       <div class="modal-card">
         <section class="modal-card-body">
+          <b-message type="is-danger" v-if="modalError">
+            {{ modalError }}
+          </b-message>
           <form @submit.prevent="createResource">
             <b-field :label="$t('URL')">
               <b-input
@@ -317,6 +320,8 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   renameModal = false;
 
+  modalError = "";
+
   groupObject: Record<string, unknown> = {
     name: "resources",
     pull: "clone",
@@ -341,6 +346,7 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   async createResource(): Promise<void> {
     if (!this.resource.actor) return;
+    this.modalError = "";
     try {
       await this.$apollo.mutate({
         mutation: CREATE_RESOURCE,
@@ -364,21 +370,28 @@ export default class Resources extends Mixins(ResourceMixin) {
       this.newResource.resourceUrl = "";
     } catch (err) {
       console.error(err);
+      this.modalError = err.graphQLErrors[0].message;
     }
   }
 
   async previewResource(): Promise<void> {
-    if (this.newResource.resourceUrl === "") return;
-    const { data } = await this.$apollo.mutate({
-      mutation: PREVIEW_RESOURCE_LINK,
-      variables: {
-        resourceUrl: this.newResource.resourceUrl,
-      },
-    });
-    this.newResource.title = data.previewResourceLink.title;
-    this.newResource.summary = data.previewResourceLink.description;
-    this.newResource.metadata = data.previewResourceLink;
-    this.newResource.type = "link";
+    this.modalError = "";
+    try {
+      if (this.newResource.resourceUrl === "") return;
+      const { data } = await this.$apollo.mutate({
+        mutation: PREVIEW_RESOURCE_LINK,
+        variables: {
+          resourceUrl: this.newResource.resourceUrl,
+        },
+      });
+      this.newResource.title = data.previewResourceLink.title;
+      this.newResource.summary = data.previewResourceLink.description;
+      this.newResource.metadata = data.previewResourceLink;
+      this.newResource.type = "link";
+    } catch (err) {
+      console.error(err);
+      this.modalError = err.graphQLErrors[0].message;
+    }
   }
 
   createSentenceForType(type: string): string {
