@@ -28,6 +28,7 @@ defmodule Mobilizon.Discussions.Discussion do
   alias Mobilizon.Discussions.Discussion.TitleSlug
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
+  import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
   @type t :: %__MODULE__{
           creator: Actor.t(),
@@ -63,7 +64,7 @@ defmodule Mobilizon.Discussions.Discussion do
     discussion
     |> cast(attrs, @attrs)
     |> maybe_generate_id()
-    |> validate_required([:title, :id])
+    |> validate_required([:title, :id], message: dgettext("errors", "can't be blank"))
     |> TitleSlug.maybe_generate_slug()
     |> TitleSlug.unique_constraint()
     |> maybe_generate_url()

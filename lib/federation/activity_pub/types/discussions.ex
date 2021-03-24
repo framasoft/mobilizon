@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.Federation.ActivityPub.Audience
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
+  alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Activity.Discussion, as: DiscussionActivity
   alias Mobilizon.Web.Endpoint
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
@@ -17,7 +18,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   @impl Entity
   @spec create(map(), map()) :: {:ok, map()}
   def create(%{discussion_id: discussion_id} = args, additional) when not is_nil(discussion_id) do
-    with %Discussion{} = discussion <- Discussions.get_discussion(discussion_id),
+    with args <- prepare_args(args),
+         %Discussion{} = discussion <- Discussions.get_discussion(discussion_id),
          {:ok, %Discussion{last_comment_id: last_comment_id} = discussion} <-
            Discussions.reply_to_discussion(discussion, args),
          {:ok, _} <-
@@ -39,7 +41,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   @impl Entity
   @spec create(map(), map()) :: {:ok, map()}
   def create(args, additional) do
-    with {:ok, %Discussion{} = discussion} <-
+    with args <- prepare_args(args),
+         {:ok, %Discussion{} = discussion} <-
            Discussions.create_discussion(args),
          {:ok, _} <-
            DiscussionActivity.insert_activity(discussion, subject: "discussion_created"),
@@ -117,5 +120,19 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
     )
 
     :ok
+  end
+
+  defp prepare_args(args) do
+    {text, _mentions, _tags} =
+      APIUtils.make_content_html(
+        args |> Map.get(:text, "") |> String.trim(),
+        # Can't put additional tags on a comment
+        [],
+        "text/html"
+      )
+
+    args
+    |> Map.update(:title, "", &String.trim/1)
+    |> Map.put(:text, text)
   end
 end

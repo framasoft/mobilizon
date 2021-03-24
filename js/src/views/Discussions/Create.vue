@@ -3,7 +3,11 @@
     <h1>{{ $t("Create a discussion") }}</h1>
 
     <form @submit.prevent="createDiscussion">
-      <b-field :label="$t('Title')">
+      <b-field
+        :label="$t('Title')"
+        :message="errors.title"
+        :type="errors.title ? 'is-danger' : undefined"
+      >
         <b-input aria-required="true" required v-model="discussion.title" />
       </b-field>
 
@@ -64,7 +68,10 @@ export default class CreateDiscussion extends Vue {
 
   discussion = { title: "", text: "" };
 
+  errors = { title: "" };
+
   async createDiscussion(): Promise<void> {
+    this.errors = { title: "" };
     try {
       if (!this.group.id || !this.currentActor.id) return;
       const { data } = await this.$apollo.mutate({
@@ -86,7 +93,11 @@ export default class CreateDiscussion extends Vue {
     } catch (error) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
+        if (error.graphQLErrors[0].field == "title") {
+          this.errors.title = error.graphQLErrors[0].message;
+        } else {
+          this.$notifier.error(error.graphQLErrors[0].message);
+        }
       }
     }
   }

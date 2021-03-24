@@ -104,6 +104,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
            }) do
       {:ok, discussion}
     else
+      {:error, :discussion, err, _} ->
+        {:error, err}
+
       {:member, false} ->
         {:error, :unauthorized}
     end
