@@ -124,6 +124,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     else
+      {:error, err} ->
+        {:error, err}
+
       {:picture, {:error, :file_too_large}} ->
         {:error, dgettext("errors", "The provided picture is too heavy")}
     end
