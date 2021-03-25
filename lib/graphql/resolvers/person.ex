@@ -235,7 +235,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   This function is used to register a person afterwards the user has been created (but not activated)
   """
   def register_person(_parent, args, _resolution) do
-    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email),
+    # When registering, email is assumed confirmed (unlike changing email)
+    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email, unconfirmed: false),
          user_actor <- Users.get_actor_for_user(user),
          no_actor <- is_nil(user_actor),
          {:no_actor, true} <- {:no_actor, no_actor},
