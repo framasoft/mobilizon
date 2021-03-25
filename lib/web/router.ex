@@ -9,6 +9,10 @@ defmodule Mobilizon.Web.Router do
     plug(Mobilizon.Web.Auth.Pipeline)
   end
 
+  pipeline :host_meta do
+    plug(:accepts, ["xrd-xml"])
+  end
+
   pipeline :well_known do
     plug(:accepts, ["json", "jrd-json"])
   end
@@ -67,9 +71,14 @@ defmodule Mobilizon.Web.Router do
   end
 
   scope "/.well-known", Mobilizon.Web do
-    pipe_through(:well_known)
+    pipe_through(:host_meta)
 
     get("/host-meta", WebFingerController, :host_meta)
+  end
+
+  scope "/.well-known", Mobilizon.Web do
+    pipe_through(:well_known)
+
     get("/webfinger", WebFingerController, :webfinger)
     get("/nodeinfo", NodeInfoController, :schemas)
     get("/nodeinfo/:version", NodeInfoController, :nodeinfo)

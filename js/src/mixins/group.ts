@@ -34,7 +34,7 @@ import { Component, Vue } from "vue-property-decorator";
       variables() {
         return {
           id: this.currentActor.id,
-          group: this.$route.params.preferredUsername,
+          group: this.group.preferredUsername,
         };
       },
       subscribeToMore: {
@@ -42,14 +42,14 @@ import { Component, Vue } from "vue-property-decorator";
         variables() {
           return {
             actorId: this.currentActor.id,
-            group: this.$route.params.preferredUsername,
+            group: this.group.preferredUsername,
           };
         },
         skip() {
           return (
             !this.currentActor ||
             !this.currentActor.id ||
-            !this.$route.params.preferredUsername
+            !this.group.preferredUsername
           );
         },
       },
@@ -57,7 +57,7 @@ import { Component, Vue } from "vue-property-decorator";
         return (
           !this.currentActor ||
           !this.currentActor.id ||
-          !this.$route.params.preferredUsername
+          !this.group.preferredUsername
         );
       },
     },

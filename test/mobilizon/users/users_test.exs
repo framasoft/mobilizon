@@ -85,9 +85,9 @@ defmodule Mobilizon.UsersTest do
     test "get_user_by_email/1 finds an activated user by its email" do
       {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
 
-      {:ok, %User{id: id}} = Users.get_user_by_email(@email, false)
+      {:ok, %User{id: id}} = Users.get_user_by_email(@email, activated: false)
       assert id == user.id
-      assert {:error, :user_not_found} = Users.get_user_by_email(@email, true)
+      assert {:error, :user_not_found} = Users.get_user_by_email(@email, activated: true)
 
       Users.update_user(user, %{
         "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
@@ -95,9 +95,27 @@ defmodule Mobilizon.UsersTest do
         "confirmation_token" => nil
       })
 
-      assert {:error, :user_not_found} = Users.get_user_by_email(@email, false)
-      {:ok, %User{id: id}} = Users.get_user_by_email(@email, true)
+      assert {:error, :user_not_found} = Users.get_user_by_email(@email, activated: false)
+      {:ok, %User{id: id}} = Users.get_user_by_email(@email, activated: true)
       assert id == user.id
+    end
+
+    @unconfirmed_email "unconfirmed@email.com"
+    test "get_user_by_email/1 finds an user by its pending email" do
+      {:ok, %User{} = user} = Users.register(%{email: @email, password: @password})
+
+      Users.update_user(user, %{
+        "confirmed_at" => DateTime.utc_now() |> DateTime.truncate(:second),
+        "confirmation_sent_at" => nil,
+        "confirmation_token" => nil
+      })
+
+      assert {:ok, %User{}} = Users.update_user_email(user, @unconfirmed_email)
+
+      assert {:error, :user_not_found} =
+               Users.get_user_by_email(@unconfirmed_email, unconfirmed: false)
+
+      assert {:ok, %User{}} = Users.get_user_by_email(@unconfirmed_email, unconfirmed: true)
     end
   end
 

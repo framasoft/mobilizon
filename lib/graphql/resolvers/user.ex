@@ -7,7 +7,6 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   alias Mobilizon.{Actors, Admin, Config, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Crypto
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Auth.Authenticator
@@ -18,8 +17,6 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   import Mobilizon.Web.Gettext
 
   require Logger
-
-  @confirmation_token_length 30
 
   @doc """
   Find an user by its ID
@@ -183,11 +180,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   @doc """
   Send the confirmation email again.
-  We only do this to accounts unconfirmed
+  We only do this to accounts not activated
   """
   def resend_confirmation_email(_parent, args, _resolution) do
     with {:ok, %User{locale: locale} = user} <-
-           Users.get_user_by_email(Map.get(args, :email), false),
+           Users.get_user_by_email(Map.get(args, :email), activated: false, unconfirmed: false),
          {:ok, email} <-
            Email.User.resend_confirmation_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
@@ -205,7 +202,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   """
   def send_reset_password(_parent, args, _resolution) do
     with email <- Map.get(args, :email),
-         {:ok, %User{locale: locale} = user} <- Users.get_user_by_email(email, true),
+         {:ok, %User{locale: locale} = user} <-
+           Users.get_user_by_email(email, activated: true, unconfirmed: false),
          {:can_reset_password, true} <-
            {:can_reset_password, Authenticator.can_reset_password?(user)},
          {:ok, %Bamboo.Email{} = _email_html} <-
@@ -255,6 +253,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         {:error, :unable_to_change_default_actor}
     end
   end
+
+  def change_default_actor(_parent, _args, _resolution), do: {:error, :unauthenticated}
 
   @doc """
   Returns the list of events for all of this user's identities are going to
@@ -355,14 +355,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            {:current_password, Authenticator.login(user.email, password)},
          {:same_email, false} <- {:same_email, new_email == old_email},
          {:email_valid, true} <- {:email_valid, Email.Checker.valid?(new_email)},
-         {:ok, %User{} = user} <-
-           user
-           |> User.changeset(%{
-             unconfirmed_email: new_email,
-             confirmation_token: Crypto.random_string(@confirmation_token_length),
-             confirmation_sent_at: DateTime.utc_now() |> DateTime.truncate(:second)
-           })
-           |> Repo.update() do
+         {:ok, %User{} = user} <- Users.update_user_email(user, new_email) do
       user
       |> Email.User.send_email_reset_old_email()
       |> Email.Mailer.deliver_later()
@@ -389,17 +382,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def validate_email(_parent, %{token: token}, _resolution) do
-    with %User{} = user <- Users.get_user_by_activation_token(token),
-         {:ok, %User{} = user} <-
-           user
-           |> User.changeset(%{
-             email: user.unconfirmed_email,
-             unconfirmed_email: nil,
-             confirmation_token: nil,
-             confirmation_sent_at: nil
-           })
-           |> Repo.update() do
+    with {:get, %User{} = user} <- {:get, Users.get_user_by_activation_token(token)},
+         {:ok, %User{} = user} <- Users.validate_email(user) do
       {:ok, user}
+    else
+      {:get, nil} ->
+        {:error, dgettext("errors", "Invalid activation token")}
     end
   end
 

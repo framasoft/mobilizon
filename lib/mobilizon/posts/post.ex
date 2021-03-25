@@ -138,11 +138,12 @@ defmodule Mobilizon.Posts.Post do
   defp process_tag(tag), do: Tag.changeset(%Tag{}, tag)
 
   defp maybe_put_publish_date(%Changeset{} = changeset) do
-    publish_at =
+    default_publish_at =
       if get_field(changeset, :draft, true) == false,
         do: DateTime.utc_now() |> DateTime.truncate(:second),
         else: nil
 
+    publish_at = get_change(changeset, :publish_at, default_publish_at)
     put_change(changeset, :publish_at, publish_at)
   end
 

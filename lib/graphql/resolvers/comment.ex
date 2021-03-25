@@ -42,6 +42,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
            Comments.create_comment(args) do
       {:ok, comment}
     else
+      {:error, err} ->
+        {:error, err}
+
       {:allowed, false} ->
         {:error, :unauthorized}
     end

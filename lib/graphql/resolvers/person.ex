@@ -124,6 +124,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
     else
+      {:error, err} ->
+        {:error, err}
+
       {:picture, {:error, :file_too_large}} ->
         {:error, dgettext("errors", "The provided picture is too heavy")}
     end
@@ -232,7 +235,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   This function is used to register a person afterwards the user has been created (but not activated)
   """
   def register_person(_parent, args, _resolution) do
-    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email),
+    # When registering, email is assumed confirmed (unlike changing email)
+    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email, unconfirmed: false),
          user_actor <- Users.get_actor_for_user(user),
          no_actor <- is_nil(user_actor),
          {:no_actor, true} <- {:no_actor, no_actor},
@@ -364,9 +368,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
           context: %{current_user: %User{id: user_id, role: role}}
         }
       ) do
-    with true <- actor_user_id == user_id or is_moderator(role),
+    with {:can_get_events, true} <-
+           {:can_get_events, actor_user_id == user_id or is_moderator(role)},
          %Page{} = page <- Events.list_organized_events_for_actor(actor, page, limit) do
       {:ok, page}
+    else
+      {:can_get_events, false} ->
+        {:error, :unauthorized}
     end
   end
 

@@ -24,6 +24,9 @@
                 v-model="newComment.text"
               />
             </p>
+            <p class="help is-danger" v-if="emptyCommentError">
+              {{ $t("Comment text can't be empty") }}
+            </p>
           </div>
           <div class="send-comment">
             <b-button
@@ -125,12 +128,23 @@ export default class CommentTree extends Vue {
 
   CommentModeration = CommentModeration;
 
+  emptyCommentError = false;
+
   @Watch("currentActor")
   watchCurrentActor(currentActor: IPerson): void {
     this.newComment.actor = currentActor;
   }
 
+  @Watch("newComment", { deep: true })
+  resetEmptyCommentError(newComment: IComment): void {
+    if (this.emptyCommentError) {
+      this.emptyCommentError = ["", "<p></p>"].includes(newComment.text);
+    }
+  }
+
   async createCommentForEvent(comment: IComment): Promise<void> {
+    this.emptyCommentError = ["", "<p></p>"].includes(comment.text);
+    if (this.emptyCommentError) return;
     try {
       if (!comment.actor) return;
       await this.$apollo.mutate({
@@ -216,10 +230,13 @@ export default class CommentTree extends Vue {
 
       // and reset the new comment field
       this.newComment = new CommentModel();
-    } catch (error) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
+    } catch (errors) {
+      console.error(errors);
+      if (errors.graphQLErrors && errors.graphQLErrors.length > 0) {
+        const error = errors.graphQLErrors[0];
+        if (error.field !== "text" && error.message[0] !== "can't be blank") {
+          this.$notifier.error(error.message);
+        }
       }
     }
   }

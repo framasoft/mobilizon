@@ -57,7 +57,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   @spec parse_url(String.t(), Enum.t()) :: {:ok, map()} | {:error, any()}
   defp parse_url(url, options \\ []) do
-    user_agent = Keyword.get(options, :user_agent, Config.instance_user_agent())
+    user_agent = Keyword.get(options, :user_agent, default_user_agent(url))
     headers = [{"User-Agent", user_agent}]
     Logger.debug("Fetching content at address #{inspect(url)}")
 
@@ -212,7 +212,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   end
 
   defp check_parsed_data(data) do
-    {:error, "Found metadata was invalid or incomplete: #{inspect(data)}"}
+    Logger.debug("Found metadata was invalid or incomplete: #{inspect(data)}")
+    {:error, :invalid_parsed_data}
   end
 
   defp clean_parsed_data(data) do
@@ -293,4 +294,17 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   end
 
   defp check_remote_picture_path(data), do: data
+
+  # Twitter requires a well-know crawler user-agent to show server-rendered data
+  defp default_user_agent("https://twitter.com/" <> _) do
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+  end
+
+  defp default_user_agent("https://mobile.twitter.com/" <> _) do
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+  end
+
+  defp default_user_agent(_url) do
+    Config.instance_user_agent()
+  end
 end

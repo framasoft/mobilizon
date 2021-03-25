@@ -118,6 +118,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
            ) do
       {:ok, resource}
     else
+      {:error, _} ->
+        {:error, dgettext("errors", "Error while creating resource")}
+
       {:own_check, _} ->
         {:error, dgettext("errors", "Parent resource doesn't belong to this group")}
 
@@ -201,8 +204,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       {:ok, data} when is_map(data) ->
         {:ok, struct(Metadata, data)}
 
-      {:error, _err} ->
+      {:error, :invalid_parsed_data} ->
+        {:error, dgettext("errors", "Unable to fetch resource details from this URL.")}
+
+      {:error, err} ->
         Logger.warn("Error while fetching preview from #{inspect(resource_url)}")
+        Logger.debug(inspect(err))
         {:error, :unknown_resource}
     end
   end

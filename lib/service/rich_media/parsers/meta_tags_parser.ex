@@ -70,8 +70,14 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
 
   defp maybe_put_description(meta, html) when meta != %{} do
     case get_page_description(html) do
-      "" -> meta
-      description -> Map.put_new(meta, :description, description)
+      "" ->
+        meta
+
+      descriptions when is_list(descriptions) and length(descriptions) > 0 ->
+        Map.put_new(meta, :description, hd(descriptions))
+
+      description ->
+        Map.put_new(meta, :description, description)
     end
   end
 

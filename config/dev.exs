@@ -97,20 +97,3 @@ config :mobilizon, :anonymous,
   reports: [
     allowed: true
   ]
-
-require Logger
-
-cond do
-  System.get_env("INSTANCE_CONFIG") &&
-      File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
-    import_config System.get_env("INSTANCE_CONFIG")
-
-  System.get_env("DOCKER", "false") == "false" && File.exists?("./config/dev.secret.exs") ->
-    import_config "dev.secret.exs"
-
-  System.get_env("DOCKER", "false") == "true" ->
-    Logger.info("Using environment configuration for Docker")
-
-  true ->
-    Logger.error("No configuration file found")
-end

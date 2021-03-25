@@ -86,7 +86,7 @@ defmodule Mobilizon.Service.Auth.Authenticator do
   def fetch_user(nil), do: {:error, :user_not_found}
 
   def fetch_user(email) when not is_nil(email) do
-    with {:ok, %User{} = user} <- Users.get_user_by_email(email, true) do
+    with {:ok, %User{} = user} <- Users.get_user_by_email(email, activated: true) do
       user
     end
   end

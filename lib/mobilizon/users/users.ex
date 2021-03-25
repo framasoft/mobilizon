@@ -10,7 +10,7 @@ defmodule Mobilizon.Users do
 
   alias Ecto.Multi
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events
+  alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
@@ -18,6 +18,8 @@ defmodule Mobilizon.Users do
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
   defenum(NotificationPendingNotificationDelay, none: 0, direct: 1, one_hour: 5, one_day: 10)
+
+  @confirmation_token_length 30
 
   @doc """
   Registers an user.
@@ -66,10 +68,12 @@ defmodule Mobilizon.Users do
   @doc """
   Gets an user by its email.
   """
-  @spec get_user_by_email(String.t(), boolean | nil) ::
+  @spec get_user_by_email(String.t(), Keyword.t()) ::
           {:ok, User.t()} | {:error, :user_not_found}
-  def get_user_by_email(email, activated \\ nil) do
-    query = user_by_email_query(email, activated)
+  def get_user_by_email(email, options \\ []) do
+    activated = Keyword.get(options, :activated, nil)
+    unconfirmed = Keyword.get(options, :unconfirmed, true)
+    query = user_by_email_query(email, activated, unconfirmed)
 
     case Repo.one(query) do
       nil ->
@@ -83,10 +87,13 @@ defmodule Mobilizon.Users do
   @doc """
   Gets an user by its email.
   """
-  @spec get_user_by_email!(String.t(), boolean | nil) :: User.t()
-  def get_user_by_email!(email, activated \\ nil) do
+  @spec get_user_by_email!(String.t(), Keyword.t()) :: User.t()
+  def get_user_by_email!(email, options \\ []) do
+    activated = Keyword.get(options, :activated, nil)
+    unconfirmed = Keyword.get(options, :unconfirmed, true)
+
     email
-    |> user_by_email_query(activated)
+    |> user_by_email_query(activated, unconfirmed)
     |> Repo.one!()
   end
 
@@ -121,6 +128,29 @@ defmodule Mobilizon.Users do
            |> Repo.update() do
       {:ok, Repo.preload(user, [:default_actor])}
     end
+  end
+
+  @spec update_user_email(User.t(), String.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def update_user_email(%User{} = user, new_email) do
+    user
+    |> User.changeset(%{
+      unconfirmed_email: new_email,
+      confirmation_token: Crypto.random_string(@confirmation_token_length),
+      confirmation_sent_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
+    |> Repo.update()
+  end
+
+  @spec validate_email(User.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def validate_email(%User{} = user) do
+    user
+    |> User.changeset(%{
+      email: user.unconfirmed_email,
+      unconfirmed_email: nil,
+      confirmation_token: nil,
+      confirmation_sent_at: nil
+    })
+    |> Repo.update()
   end
 
   @delete_user_default_options [reserve_email: true]
@@ -375,29 +405,26 @@ defmodule Mobilizon.Users do
     Setting.changeset(setting, %{})
   end
 
-  @spec user_by_email_query(String.t(), boolean | nil) :: Ecto.Query.t()
-  defp user_by_email_query(email, nil) do
-    from(u in User,
-      where: u.email == ^email or u.unconfirmed_email == ^email,
-      preload: :default_actor
-    )
+  @spec user_by_email_query(String.t(), boolean | nil, boolean()) :: Ecto.Query.t()
+  defp user_by_email_query(email, activated, unconfirmed) do
+    User
+    |> where([u], u.email == ^email)
+    |> include_unconfirmed(unconfirmed, email)
+    |> filter_activated(activated)
+    |> preload([:default_actor])
   end
 
-  defp user_by_email_query(email, true) do
-    from(
-      u in User,
-      where: u.email == ^email and not is_nil(u.confirmed_at) and not u.disabled,
-      preload: :default_actor
-    )
-  end
+  defp include_unconfirmed(query, false, _email), do: query
 
-  defp user_by_email_query(email, false) do
-    from(
-      u in User,
-      where: (u.email == ^email or u.unconfirmed_email == ^email) and is_nil(u.confirmed_at),
-      preload: :default_actor
-    )
-  end
+  defp include_unconfirmed(query, true, email),
+    do: or_where(query, [u], u.unconfirmed_email == ^email)
+
+  defp filter_activated(query, nil), do: query
+
+  defp filter_activated(query, true),
+    do: where(query, [u], not is_nil(u.confirmed_at) and not u.disabled)
+
+  defp filter_activated(query, false), do: where(query, [u], is_nil(u.confirmed_at))
 
   @spec user_by_activation_token_query(String.t()) :: Ecto.Query.t()
   defp user_by_activation_token_query(token) do

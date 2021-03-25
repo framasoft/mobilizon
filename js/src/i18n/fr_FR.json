@@ -1061,5 +1061,7 @@
   "You posted a comment on the event {event}.": "Vous avez posté un commentaire sur l'événement {event}.",
   "{profile} posted a comment on the event {event}.": "{profile} a posté un commentaire sur l'événement {event}.",
   "You replied to a comment on the event {event}.": "Vous avez répondu à un commentaire sur l'événement {event}.",
-  "{profile} replied to a comment on the event {event}.": "{profile} a répondu à un commentaire sur l'événement {event}."
+  "{profile} replied to a comment on the event {event}.": "{profile} a répondu à un commentaire sur l'événement {event}.",
+  "New post": "Nouveau billet",
+  "Comment text can't be empty": "Le texte du commentaire ne peut être vide"
 }

@@ -121,6 +121,16 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
     }
   """
 
+  @change_default_actor """
+  mutation ChangeDefaultActor($preferredUsername: String!) {
+    changeDefaultActor(preferredUsername: $preferredUsername) {
+        defaultActor {
+          preferredUsername
+        }
+      }
+    }
+  """
+
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
 
@@ -835,7 +845,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   end
 
   describe "Resolver: change default actor for user" do
-    test "test change_default_actor/3 with valid actor", context do
+    test "test change_default_actor/3 without being logged-in", %{conn: conn} do
       # Prepare user with two actors
       user = insert(:user)
       insert(:actor, user: user)
@@ -848,24 +858,41 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
       assert length(actors) == 2
 
-      mutation = """
-          mutation {
-            changeDefaultActor(preferred_username: "#{actor2.preferred_username}") {
-                default_actor {
-                  preferred_username
-                }
-              }
-            }
-      """
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @change_default_actor,
+          variables: %{preferredUsername: actor2.preferred_username}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+    end
+
+    test "test change_default_actor/3 with valid actor", %{conn: conn} do
+      # Prepare user with two actors
+      user = insert(:user)
+      insert(:actor, user: user)
+
+      assert {:ok, %User{actors: _actors}} = Users.get_user_with_actors(user.id)
+
+      actor_params = @valid_single_actor_params |> Map.put(:user_id, user.id)
+      assert {:ok, %Actor{} = actor2} = Actors.create_actor(actor_params)
+
+      assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
+      assert length(actors) == 2
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @change_default_actor,
+          variables: %{preferredUsername: actor2.preferred_username}
+        )
 
-      assert json_response(res, 200)["data"]["changeDefaultActor"]["default_actor"][
-               "preferred_username"
-             ] == actor2.preferred_username
+      assert res["errors"] == nil
+
+      assert res["data"]["changeDefaultActor"]["defaultActor"]["preferredUsername"] ==
+               actor2.preferred_username
     end
   end
 
@@ -1111,6 +1138,59 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       user = Users.get_user!(user.id)
       assert user.email == @new_email
       assert user.unconfirmed_email == nil
+    end
+
+    test "change_email/3 with valid email but invalid token", %{conn: conn} do
+      {:ok, %User{} = user} = Users.register(%{email: @old_email, password: @password})
+
+      # Hammer time !
+      {:ok, %User{} = _user} =
+        Users.update_user(user, %{
+          confirmed_at: Timex.shift(user.confirmation_sent_at, hours: -3),
+          confirmation_sent_at: nil,
+          confirmation_token: nil
+        })
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @login_mutation,
+          variables: %{email: @old_email, password: @password}
+        )
+
+      login = res["data"]["login"]
+      assert Map.has_key?(login, "accessToken") && not is_nil(login["accessToken"])
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @change_email_mutation,
+          variables: %{email: @new_email, password: @password}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["changeEmail"]["id"] == to_string(user.id)
+
+      user = Users.get_user!(user.id)
+      assert user.email == @old_email
+      assert user.unconfirmed_email == @new_email
+
+      assert_delivered_email(Email.User.send_email_reset_old_email(user))
+      assert_delivered_email(Email.User.send_email_reset_new_email(user))
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @validate_email_mutation,
+          variables: %{token: "some token"}
+        )
+
+      assert hd(res["errors"])["message"] == "Invalid activation token"
+
+      user = Users.get_user!(user.id)
+      assert user.email == @old_email
+      assert user.unconfirmed_email == @new_email
     end
 
     test "change_email/3 with invalid password", %{conn: conn} do
