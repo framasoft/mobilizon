@@ -1414,7 +1414,7 @@ msgstr ""
 msgid "Technical details"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/error/500_page.html.eex:52
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr ""
