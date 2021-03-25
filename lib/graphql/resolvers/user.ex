@@ -254,6 +254,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
+  def change_default_actor(_parent, _args, _resolution), do: {:error, :unauthenticated}
+
   @doc """
   Returns the list of events for all of this user's identities are going to
   """

@@ -121,6 +121,16 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
     }
   """
 
+  @change_default_actor """
+  mutation ChangeDefaultActor($preferredUsername: String!) {
+    changeDefaultActor(preferredUsername: $preferredUsername) {
+        defaultActor {
+          preferredUsername
+        }
+      }
+    }
+  """
+
   @valid_actor_params %{email: "test@test.tld", password: "testest", username: "test"}
   @valid_single_actor_params %{preferred_username: "test2", keys: "yolo"}
 
@@ -835,7 +845,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   end
 
   describe "Resolver: change default actor for user" do
-    test "test change_default_actor/3 with valid actor", context do
+    test "test change_default_actor/3 without being logged-in", %{conn: conn} do
       # Prepare user with two actors
       user = insert(:user)
       insert(:actor, user: user)
@@ -848,24 +858,41 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
       assert length(actors) == 2
 
-      mutation = """
-          mutation {
-            changeDefaultActor(preferred_username: "#{actor2.preferred_username}") {
-                default_actor {
-                  preferred_username
-                }
-              }
-            }
-      """
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @change_default_actor,
+          variables: %{preferredUsername: actor2.preferred_username}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+    end
+
+    test "test change_default_actor/3 with valid actor", %{conn: conn} do
+      # Prepare user with two actors
+      user = insert(:user)
+      insert(:actor, user: user)
+
+      assert {:ok, %User{actors: _actors}} = Users.get_user_with_actors(user.id)
+
+      actor_params = @valid_single_actor_params |> Map.put(:user_id, user.id)
+      assert {:ok, %Actor{} = actor2} = Actors.create_actor(actor_params)
+
+      assert {:ok, %User{actors: actors}} = Users.get_user_with_actors(user.id)
+      assert length(actors) == 2
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @change_default_actor,
+          variables: %{preferredUsername: actor2.preferred_username}
+        )
 
-      assert json_response(res, 200)["data"]["changeDefaultActor"]["default_actor"][
-               "preferred_username"
-             ] == actor2.preferred_username
+      assert res["errors"] == nil
+
+      assert res["data"]["changeDefaultActor"]["defaultActor"]["preferredUsername"] ==
+               actor2.preferred_username
     end
   end
 
