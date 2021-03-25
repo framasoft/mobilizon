@@ -13,7 +13,7 @@ defmodule Mobilizon.Service.FormatterTest do
       text = "I love #cofe and #2hu"
 
       expected_text =
-        "I love <a class='hashtag' data-tag='cofe' href='http://mobilizon.test/tag/cofe' rel='tag'>#cofe</a> and <a class='hashtag' data-tag='2hu' href='http://mobilizon.test/tag/2hu' rel='tag'>#2hu</a>"
+        "I love <a class=\"hashtag\" data-tag=\"cofe\" href=\"http://mobilizon.test/tag/cofe\" rel=\"tag ugc\">#cofe</a> and <a class=\"hashtag\" data-tag=\"2hu\" href=\"http://mobilizon.test/tag/2hu\" rel=\"tag ugc\">#2hu</a>"
 
       assert {^expected_text, [], _tags} = Formatter.linkify(text)
     end
@@ -22,7 +22,7 @@ defmodule Mobilizon.Service.FormatterTest do
       text = "#fact_3: pleroma does what mastodon't"
 
       expected_text =
-        "<a class='hashtag' data-tag='fact_3' href='http://mobilizon.test/tag/fact_3' rel='tag'>#fact_3</a>: pleroma does what mastodon't"
+        "<a class=\"hashtag\" data-tag=\"fact_3\" href=\"http://mobilizon.test/tag/fact_3\" rel=\"tag ugc\">#fact_3</a>: pleroma does what mastodon't"
 
       assert {^expected_text, [], _tags} = Formatter.linkify(text)
     end
@@ -173,6 +173,12 @@ defmodule Mobilizon.Service.FormatterTest do
       ]
 
       assert {_text, [], ^expected_tags} = Formatter.linkify(text)
+    end
+
+    test "parses tags in HTML" do
+      text = "<p><i>Hello #there</i></p>"
+
+      assert {_text, [], [{"#there", "there"}]} = Formatter.linkify(text)
     end
   end
 
