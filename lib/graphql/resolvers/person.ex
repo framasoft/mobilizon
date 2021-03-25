@@ -368,9 +368,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
           context: %{current_user: %User{id: user_id, role: role}}
         }
       ) do
-    with true <- actor_user_id == user_id or is_moderator(role),
+    with {:can_get_events, true} <-
+           {:can_get_events, actor_user_id == user_id or is_moderator(role)},
          %Page{} = page <- Events.list_organized_events_for_actor(actor, page, limit) do
       {:ok, page}
+    else
+      {:can_get_events, false} ->
+        {:error, :unauthorized}
     end
   end
 
