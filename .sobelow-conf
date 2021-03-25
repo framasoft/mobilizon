@@ -8,5 +8,5 @@
   out: "",
   threshold: "medium",
   ignore: ["Config.HTTPS", "Config.CSP"],
-  ignore_files: ["config/dev.1.secret.exs", "config/dev.2.secret.exs", "config/dev.3.secret.exs", "config/dev.secret.exs", "config/e2e.secret.exs", "config/prod.secret.exs", "config/test.secret.exs"]
+  ignore_files: ["config/dev.1.secret.exs", "config/dev.2.secret.exs", "config/dev.3.secret.exs", "config/dev.secret.exs", "config/e2e.secret.exs", "config/prod.secret.exs", "config/test.secret.exs", "config/runtime.1.secret.exs", "config/runtime.2.secret.exs", "config/runtime.3.secret.exs", "config/runtime.exs"]
 ]
