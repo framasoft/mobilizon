@@ -138,7 +138,7 @@ defmodule Mobilizon.Mixfile do
       {:tesla, "~> 1.4.0"},
       {:sitemapper, "~> 0.5.0"},
       {:xml_builder, "~> 2.1.1"},
-      {:remote_ip, "~> 0.2.0"},
+      {:remote_ip, "~> 1.0.0"},
       {:ex_cldr_languages, "~> 0.2.1"},
       {:slugger, "~> 0.3"},
       {:sentry, "~> 8.0"},
