@@ -66,7 +66,15 @@ defmodule Mobilizon.Service.Formatter do
   def hashtag_handler("#" <> tag = tag_text, _buffer, _opts, acc) do
     tag = String.downcase(tag)
     url = "#{Endpoint.url()}/tag/#{tag}"
-    link = "<a class='hashtag' data-tag='#{tag}' href='#{url}' rel='tag'>#{tag_text}</a>"
+
+    link =
+      Tag.content_tag(:a, tag_text,
+        class: "hashtag",
+        "data-tag": tag,
+        href: url,
+        rel: "tag ugc"
+      )
+      |> Phoenix.HTML.safe_to_string()
 
     {link, %{acc | tags: MapSet.put(acc.tags, {tag_text, tag})}}
   end
@@ -81,7 +89,8 @@ defmodule Mobilizon.Service.Formatter do
     options = linkify_opts() ++ options
 
     acc = %{mentions: MapSet.new(), tags: MapSet.new()}
-    {text, %{mentions: mentions, tags: tags}} = Linkify.link_map(text, acc, options)
+    {text, %{mentions: mentions}} = Linkify.link_map(text, acc, options)
+    {text, tags} = extract_tags(text)
 
     {text, MapSet.to_list(mentions), MapSet.to_list(tags)}
   end
@@ -135,10 +144,45 @@ defmodule Mobilizon.Service.Formatter do
   defp linkify_opts do
     Mobilizon.Config.get(__MODULE__) ++
       [
-        hashtag: true,
-        hashtag_handler: &__MODULE__.hashtag_handler/4,
+        hashtag: false,
         mention: true,
         mention_handler: &__MODULE__.mention_handler/4
       ]
   end
+
+  @match_hashtag ~r/(?:^|[^\p{L}\p{M}\p{Nd}\)])(?<tag>\#[[:word:]_]*[[:alpha:]_·][[:word:]_·\p{M}]*)/u
+
+  @spec extract_tags(String.t()) :: {String.t(), MapSet.t()}
+  def extract_tags(text) do
+    matches =
+      @match_hashtag
+      |> Regex.scan(text, capture: [:tag])
+      |> Enum.map(&hd/1)
+      |> Enum.map(&{&1, tag_text_strip(&1)})
+      |> MapSet.new()
+
+    text =
+      @match_hashtag
+      |> Regex.replace(text, &generate_tag_link/2)
+      |> String.trim()
+
+    {text, matches}
+  end
+
+  @spec generate_tag_link(String.t(), String.t()) :: String.t()
+  defp generate_tag_link(_, tag_text) do
+    tag = tag_text_strip(tag_text)
+    url = "#{Endpoint.url()}/tag/#{tag}"
+
+    Tag.content_tag(:a, tag_text,
+      class: "hashtag",
+      "data-tag": tag,
+      href: url,
+      rel: "tag ugc"
+    )
+    |> Phoenix.HTML.safe_to_string()
+    |> (&" #{&1}").()
+  end
+
+  defp tag_text_strip(tag), do: tag |> String.trim("#") |> String.downcase()
 end
