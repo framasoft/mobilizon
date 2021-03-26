@@ -8,6 +8,7 @@ import Config
 # with brunch.io to recompile .js and .css sources.
 config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
+    ip: {127, 0, 0, 1},
     port: 4000
   ],
   url: [
