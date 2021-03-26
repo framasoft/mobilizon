@@ -7,11 +7,11 @@ defmodule Mobilizon.Service.Export.Feed do
 
   alias Atomex.{Entry, Feed}
 
-  alias Mobilizon.{Actors, Config, Events, Posts, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Config
+  alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Storage.Page
+  alias Mobilizon.Service.Export.Common
   alias Mobilizon.Users.User
 
   alias Mobilizon.Web.Endpoint
@@ -43,14 +43,57 @@ defmodule Mobilizon.Service.Export.Feed do
     end
   end
 
+  def create_cache("instance") do
+    case fetch_instance_feed() do
+      {:ok, res} ->
+        {:commit, res}
+
+      err ->
+        {:ignore, err}
+    end
+  end
+
+  @spec fetch_instance_feed :: {:ok, String.t()}
+  defp fetch_instance_feed do
+    case Common.fetch_instance_public_content() do
+      {:ok, events, posts} ->
+        {:ok, build_instance_feed(events, posts)}
+
+      err ->
+        {:error, err}
+    end
+  end
+
+  # Build an atom feed from the whole instance and its public events and posts
+  @spec build_instance_feed(list(), list()) :: String.t()
+  defp build_instance_feed(events, posts) do
+    self_url = Endpoint.url()
+
+    title =
+      gettext("Public feed for %{instance}",
+        instance: Config.instance_name()
+      )
+
+    # Title uses default instance language
+    self_url
+    |> Feed.new(
+      DateTime.utc_now(),
+      title
+    )
+    |> Feed.link(self_url, rel: "self")
+    |> Feed.link(self_url, rel: "alternate")
+    |> Feed.generator(Config.instance_name(), uri: Endpoint.url(), version: version())
+    |> Feed.entries(Enum.map(events ++ posts, &get_entry/1))
+    |> Feed.build()
+    |> Atomex.generate_document()
+  end
+
   @spec fetch_actor_event_feed(String.t()) :: String.t()
   defp fetch_actor_event_feed(name) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name),
-         {:visibility, true} <- {:visibility, Actor.is_public_visibility?(actor)},
-         %Page{elements: events} <- Events.list_public_events_for_actor(actor),
-         %Page{elements: posts} <- Posts.get_public_posts_for_group(actor) do
-      {:ok, build_actor_feed(actor, events, posts)}
-    else
+    case Common.fetch_actor_event_feed(name) do
+      {:ok, actor, events, posts} ->
+        {:ok, build_actor_feed(actor, events, posts)}
+
       err ->
         {:error, err}
     end
@@ -156,39 +199,13 @@ defmodule Mobilizon.Service.Export.Feed do
   # Only events, not posts
   @spec fetch_events_from_token(String.t()) :: String.t()
   defp fetch_events_from_token(token) do
-    with {:ok, _uuid} <- Ecto.UUID.cast(token),
-         %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
-      case actor do
-        %Actor{} = actor ->
-          events = actor |> fetch_identity_participations() |> participations_to_events()
-          {:ok, build_actor_feed(actor, events, [], false)}
-
-        nil ->
-          with actors <- Users.get_actors_for_user(user),
-               events <-
-                 actors
-                 |> Enum.map(fn actor ->
-                   actor
-                   |> Events.list_event_participations_for_actor()
-                   |> participations_to_events()
-                 end)
-                 |> Enum.concat() do
-            {:ok, build_user_feed(events, user, token)}
-          end
+    with %{events: events, token: token, user: user, actor: actor, type: type} <-
+           Common.fetch_events_from_token(token) do
+      case type do
+        :user -> {:ok, build_user_feed(events, user, token)}
+        :actor -> {:ok, build_actor_feed(actor, events, [], false)}
       end
     end
-  end
-
-  defp fetch_identity_participations(%Actor{} = actor) do
-    with %Page{} = page <- Events.list_event_participations_for_actor(actor) do
-      page
-    end
-  end
-
-  defp participations_to_events(%Page{elements: participations}) do
-    participations
-    |> Enum.map(& &1.event_id)
-    |> Enum.map(&Events.get_event_with_preload!/1)
   end
 
   # Build an atom feed from actor and its public events

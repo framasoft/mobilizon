@@ -5,31 +5,20 @@ defmodule Mobilizon.Web.FeedController do
   use Mobilizon.Web, :controller
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
+  alias Mobilizon.Config
 
-  def actor(conn, %{"name" => name, "format" => "atom"}) do
-    case Cachex.fetch(:feed, "actor_" <> name) do
-      {status, data} when status in [:commit, :ok] ->
-        conn
-        |> put_resp_content_type("application/atom+xml")
-        |> put_resp_header("content-disposition", "attachment; filename=\"#{name}.atom\"")
-        |> send_resp(200, data)
+  @formats ["ics", "atom"]
 
-      _ ->
-        {:error, :not_found}
+  def instance(conn, %{"format" => format}) when format in @formats do
+    if Config.get([:instance, :enable_instance_feeds], false) do
+      return_data(conn, format, "instance", Config.instance_name())
+    else
+      send_resp(conn, 401, "Instance feeds are not enabled.")
     end
   end
 
-  def actor(conn, %{"name" => name, "format" => "ics"}) do
-    case Cachex.fetch(:ics, "actor_" <> name) do
-      {status, data} when status in [:commit, :ok] ->
-        conn
-        |> put_resp_content_type("text/calendar")
-        |> put_resp_header("content-disposition", "attachment; filename=\"#{name}.ics\"")
-        |> send_resp(200, data)
-
-      _err ->
-        {:error, :not_found}
-    end
+  def actor(conn, %{"format" => format, "name" => name}) when format in @formats do
+    return_data(conn, format, "actor_" <> name, name)
   end
 
   def actor(_conn, _) do
@@ -37,49 +26,50 @@ defmodule Mobilizon.Web.FeedController do
   end
 
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
-    case Cachex.fetch(:ics, "event_" <> uuid) do
-      {status, data} when status in [:commit, :ok] ->
-        conn
-        |> put_resp_content_type("text/calendar")
-        |> put_resp_header("content-disposition", "attachment; filename=\"event.ics\"")
-        |> send_resp(200, data)
-
-      _ ->
-        {:error, :not_found}
-    end
+    return_data(conn, "ics", "event_" <> uuid, "event.ics")
   end
 
   def event(_conn, _) do
     {:error, :not_found}
   end
 
-  def going(conn, %{"token" => token, "format" => "ics"}) do
-    case Cachex.fetch(:ics, "token_" <> token) do
+  def going(conn, %{"token" => token, "format" => format}) when format in @formats do
+    return_data(conn, format, "token_" <> token, "events.#{format}")
+  end
+
+  def going(_conn, _) do
+    {:error, :not_found}
+  end
+
+  defp return_data(conn, "atom", type, filename) do
+    case Cachex.fetch(:feed, type) do
+      {status, data} when status in [:commit, :ok] ->
+        conn
+        |> put_resp_content_type("application/atom+xml")
+        |> put_resp_header(
+          "content-disposition",
+          "attachment; filename=\"#{filename}.atom\""
+        )
+        |> send_resp(200, data)
+
+      _err ->
+        {:error, :not_found}
+    end
+  end
+
+  defp return_data(conn, "ics", type, filename) do
+    case Cachex.fetch(:ics, type) do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
-        |> put_resp_header("content-disposition", "attachment; filename=\"events.ics\"")
+        |> put_resp_header(
+          "content-disposition",
+          "attachment; filename=\"#{filename}.ics\""
+        )
         |> send_resp(200, data)
 
       _ ->
         {:error, :not_found}
     end
-  end
-
-  def going(conn, %{"token" => token, "format" => "atom"}) do
-    case Cachex.fetch(:feed, "token_" <> token) do
-      {status, data} when status in [:commit, :ok] ->
-        conn
-        |> put_resp_content_type("application/atom+xml")
-        |> put_resp_header("content-disposition", "attachment; filename=\"events.atom\"")
-        |> send_resp(200, data)
-
-      {:ignore, _} ->
-        {:error, :not_found}
-    end
-  end
-
-  def going(_conn, _) do
-    {:error, :not_found}
   end
 end
