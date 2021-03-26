@@ -98,6 +98,77 @@
           $t("Delete this identity")
         }}</span>
       </div>
+
+      <section v-if="isUpdate">
+        <div class="setting-title">
+          <h2>{{ $t("Profile feeds") }}</h2>
+        </div>
+        <p>
+          {{
+            $t(
+              "These feeds contain event data for the events for which this specific profile is a participant or creator. You should keep these private. You can find feeds for all of your profiles into your notification settings."
+            )
+          }}
+        </p>
+        <div v-if="identity.feedTokens && identity.feedTokens.length > 0">
+          <div
+            class="buttons"
+            v-for="feedToken in identity.feedTokens"
+            :key="feedToken.token"
+          >
+            <b-tooltip
+              :label="$t('URL copied to clipboard')"
+              :active="showCopiedTooltip.atom"
+              always
+              type="is-success"
+              position="is-left"
+            >
+              <b-button
+                tag="a"
+                icon-left="rss"
+                @click="
+                  (e) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+                "
+                :href="tokenToURL(feedToken.token, 'atom')"
+                target="_blank"
+                >{{ $t("RSS/Atom Feed") }}</b-button
+              >
+            </b-tooltip>
+            <b-tooltip
+              :label="$t('URL copied to clipboard')"
+              :active="showCopiedTooltip.ics"
+              always
+              type="is-success"
+              position="is-left"
+            >
+              <b-button
+                tag="a"
+                @click="
+                  (e) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+                "
+                icon-left="calendar-sync"
+                :href="tokenToURL(feedToken.token, 'ics')"
+                target="_blank"
+                >{{ $t("ICS/WebCal Feed") }}</b-button
+              >
+            </b-tooltip>
+            <b-button
+              icon-left="refresh"
+              type="is-text"
+              @click="openRegenerateFeedTokensConfirmation"
+              >{{ $t("Regenerate new links") }}</b-button
+            >
+          </div>
+        </div>
+        <div v-else>
+          <b-button
+            icon-left="refresh"
+            type="is-text"
+            @click="generateFeedTokens"
+            >{{ $t("Create new links") }}</b-button
+          >
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -131,6 +202,10 @@ h1 {
 .username-field + .field {
   margin-bottom: 0;
 }
+
+::v-deep .buttons > *:not(:last-child) .button {
+  margin-right: 0.5rem;
+}
 </style>
 
 <script lang="ts">
@@ -151,6 +226,11 @@ import RouteName from "../../../router/name";
 import { buildFileVariable } from "../../../utils/image";
 import { changeIdentity } from "../../../utils/auth";
 import identityEditionMixin from "../../../mixins/identityEdition";
+import {
+  CREATE_FEED_TOKEN_ACTOR,
+  DELETE_FEED_TOKEN,
+} from "@/graphql/feed_tokens";
+import { IFeedToken } from "@/types/feedtoken.model";
 
 @Component({
   components: {
@@ -190,6 +270,8 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   private currentActor: IPerson | null = null;
 
   RouteName = RouteName;
+
+  showCopiedTooltip = { ics: false, atom: false };
 
   get message(): string | null {
     if (this.isUpdate) return null;
@@ -351,6 +433,63 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
   // eslint-disable-next-line class-methods-use-this
   get getInstanceHost(): string {
     return MOBILIZON_INSTANCE_HOST;
+  }
+
+  tokenToURL(token: string, format: string): string {
+    return `${window.location.origin}/events/going/${token}/${format}`;
+  }
+
+  copyURL(e: Event, url: string, format: "ics" | "atom"): void {
+    if (navigator.clipboard) {
+      e.preventDefault();
+      navigator.clipboard.writeText(url);
+      this.showCopiedTooltip[format] = true;
+      setTimeout(() => {
+        this.showCopiedTooltip[format] = false;
+      }, 2000);
+    }
+  }
+
+  async generateFeedTokens(): Promise<void> {
+    const newToken = await this.createNewFeedToken();
+    this.identity.feedTokens.push(newToken);
+  }
+
+  async regenerateFeedTokens(): Promise<void> {
+    if (this.identity?.feedTokens.length < 1) return;
+    await this.deleteFeedToken(this.identity.feedTokens[0].token);
+    const newToken = await this.createNewFeedToken();
+    this.identity.feedTokens.pop();
+    this.identity.feedTokens.push(newToken);
+  }
+
+  private async deleteFeedToken(token: string): Promise<void> {
+    await this.$apollo.mutate({
+      mutation: DELETE_FEED_TOKEN,
+      variables: { token },
+    });
+  }
+
+  private async createNewFeedToken(): Promise<IFeedToken> {
+    const { data } = await this.$apollo.mutate({
+      mutation: CREATE_FEED_TOKEN_ACTOR,
+      variables: { actor_id: this.identity?.id },
+    });
+
+    return data.createFeedToken;
+  }
+
+  openRegenerateFeedTokensConfirmation(): void {
+    this.$buefy.dialog.confirm({
+      type: "is-warning",
+      title: this.$t("Regenerate new links") as string,
+      message: this.$t(
+        "You'll need to change the URLs where there were previously entered."
+      ) as string,
+      confirmText: this.$t("Regenerate new links") as string,
+      cancelText: this.$t("Cancel") as string,
+      onConfirm: () => this.regenerateFeedTokens(),
+    });
   }
 
   openDeleteIdentityConfirmation(): void {

@@ -31,7 +31,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.FeedTokenType do
       description: "The actor that participates to the event"
     )
 
-    field(:token, :string, description: "The role of this actor at this event")
+    field(:token, :string, description: "A ShortUUID private token")
   end
 
   @desc "Represents a deleted feed_token"

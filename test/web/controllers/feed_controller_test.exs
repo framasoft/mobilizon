@@ -225,7 +225,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:going, feed_token.token, "atom")
+          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "atom")
           |> URI.decode()
         )
 
@@ -260,7 +260,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         |> put_req_header("accept", "application/atom+xml")
         |> get(
           Endpoint
-          |> Routes.feed_url(:going, feed_token.token, "atom")
+          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "atom")
           |> URI.decode()
         )
 
@@ -307,7 +307,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         |> put_req_header("accept", "text/calendar")
         |> get(
           Endpoint
-          |> Routes.feed_url(:going, feed_token.token, "ics")
+          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "ics")
           |> URI.decode()
         )
 
@@ -338,7 +338,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         |> put_req_header("accept", "text/calendar")
         |> get(
           Endpoint
-          |> Routes.feed_url(:going, feed_token.token, "ics")
+          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "ics")
           |> URI.decode()
         )
 

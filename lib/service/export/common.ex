@@ -25,8 +25,9 @@ defmodule Mobilizon.Service.Export.Common do
   # Only events, not posts
   @spec fetch_events_from_token(String.t()) :: String.t()
   def fetch_events_from_token(token) do
-    with {:ok, _uuid} <- Ecto.UUID.cast(token),
-         %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(token) do
+    with {:ok, uuid} <- ShortUUID.decode(token),
+         {:ok, _uuid} <- Ecto.UUID.cast(uuid),
+         %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(uuid) do
       case actor do
         %Actor{} = actor ->
           %{

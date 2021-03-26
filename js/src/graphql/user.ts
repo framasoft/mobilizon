@@ -241,3 +241,17 @@ export const UPDATE_USER_LOCALE = gql`
     }
   }
 `;
+
+export const FEED_TOKENS_LOGGED_USER = gql`
+  query {
+    loggedUser {
+      id
+      feedTokens {
+        token
+        actor {
+          id
+        }
+      }
+    }
+  }
+`;

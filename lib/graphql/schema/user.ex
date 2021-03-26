@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   """
   use Absinthe.Schema.Notation
 
-  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+  import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.Resolvers.{Media, User}
@@ -43,7 +43,13 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     )
 
     field(:feed_tokens, list_of(:feed_token),
-      resolve: dataloader(Events),
+      resolve:
+        dataloader(
+          Events,
+          callback: fn feed_tokens, _parent, _args ->
+            {:ok, Enum.map(feed_tokens, &Map.put(&1, :token, ShortUUID.encode!(&1.token)))}
+          end
+        ),
       description: "A list of the feed tokens for this user"
     )
 

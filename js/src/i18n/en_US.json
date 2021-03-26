@@ -969,5 +969,13 @@
   "You replied to a comment on the event {event}.": "You replied to a comment on the event {event}.",
   "{profile} replied to a comment on the event {event}.": "{profile} replied to a comment on the event {event}.",
   "New post": "New post",
-  "Comment text can't be empty": "Comment text can't be empty"
+  "Comment text can't be empty": "Comment text can't be empty",
+  "Notifications": "Notifications",
+  "Profile feeds": "Profile feeds",
+  "These feeds contain event data for the events for which this specific profile is a participant or creator. You should keep these private. You can find feeds for all of your profiles into your notification settings.": "These feeds contain event data for the events for which this specific profile is a participant or creator. You should keep these private. You can find feeds for all of your profiles into your notification settings.",
+  "Regenerate new links": "Regenerate new links",
+  "Create new links": "Create new links",
+  "You'll need to change the URLs where there were previously entered.": "You'll need to change the URLs where there were previously entered.",
+  "Personal feeds": "Personal feeds",
+  "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.": "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page."
 }

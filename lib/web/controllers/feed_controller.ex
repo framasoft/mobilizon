@@ -26,7 +26,7 @@ defmodule Mobilizon.Web.FeedController do
   end
 
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
-    return_data(conn, "ics", "event_" <> uuid, "event.ics")
+    return_data(conn, "ics", "event_" <> uuid, "event")
   end
 
   def event(_conn, _) do
@@ -34,7 +34,7 @@ defmodule Mobilizon.Web.FeedController do
   end
 
   def going(conn, %{"token" => token, "format" => format}) when format in @formats do
-    return_data(conn, format, "token_" <> token, "events.#{format}")
+    return_data(conn, format, "token_" <> token, "events")
   end
 
   def going(_conn, _) do

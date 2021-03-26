@@ -58,7 +58,7 @@ defmodule Mobilizon.Service.ICalendarTest do
       event = insert(:event)
       insert(:participant, event: event, actor: actor, role: :participant)
 
-      {:commit, ics} = ICalendarService.create_cache("token_#{token}")
+      {:commit, ics} = ICalendarService.create_cache("token_#{ShortUUID.encode!(token)}")
       assert ics =~ event.title
     end
   end
