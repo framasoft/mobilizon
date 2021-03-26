@@ -2,10 +2,21 @@
 
 import Config
 
+listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "::")
+
+listen_ip =
+  case :inet.parse_address(listen_ip) do
+    {:ok, listen_ip} -> listen_ip
+    _ -> raise "MOBILIZON_INSTANCE_LISTEN_IP does not match the expected IP format."
+  end
+
 config :mobilizon, Mobilizon.Web.Endpoint,
   server: true,
   url: [host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.lan")],
-  http: [port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000")],
+  http: [
+    port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000"),
+    ip: listen_ip
+  ],
   secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis")
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian,
