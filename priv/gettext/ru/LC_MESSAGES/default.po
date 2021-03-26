@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2021-03-26 18:37+0000\n"
+"PO-Revision-Date: 2021-03-26 21:51+0000\n"
 "Last-Translator: deadmorose <cornerot@gmail.com>\n"
 "Language-Team: Russian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ru/>\n"
@@ -157,7 +157,7 @@ msgstr "Подтвердите свое участие в мероприятии
 #, elixir-format
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
-msgstr "Внутренний ID для текущей выбранной личности"
+msgstr "Внутренний ID для выбранного идентификатора"
 
 #: lib/web/templates/api/privacy.html.eex:74
 #, elixir-format
