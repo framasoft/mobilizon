@@ -10,7 +10,7 @@ defmodule Mobilizon.Posts do
   import Ecto.Query
   require Logger
 
-  @post_preloads [:author, :attributed_to, :picture, :media]
+  @post_preloads [:author, :attributed_to, :picture, :media, :tags]
 
   import EctoEnum
 
@@ -20,6 +20,14 @@ defmodule Mobilizon.Posts do
     :restricted,
     :private
   ])
+
+  def list_public_local_posts(page \\ nil, limit \\ nil) do
+    Post
+    |> filter_public()
+    |> filter_local()
+    |> preload_post_associations()
+    |> Page.build_page(page, limit)
+  end
 
   @spec list_posts_for_stream :: Enum.t()
   def list_posts_for_stream do
@@ -141,10 +149,20 @@ defmodule Mobilizon.Posts do
     where(query, [p], p.visibility == ^:public and not p.draft)
   end
 
+  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  defp filter_local(query) do
+    where(query, [q], q.local == true)
+  end
+
   defp do_get_posts_for_group(group_id) do
     Post
     |> where(attributed_to_id: ^group_id)
     |> order_by(desc: :inserted_at)
-    |> preload([p], [:author, :attributed_to, :picture, :media, :tags])
+    |> preload_post_associations()
+  end
+
+  @spec preload_post_associations(Ecto.Query.t(), list()) :: Ecto.Query.t()
+  defp preload_post_associations(query, associations \\ @post_preloads) do
+    preload(query, ^associations)
   end
 end

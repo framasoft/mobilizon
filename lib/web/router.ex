@@ -137,6 +137,7 @@ defmodule Mobilizon.Web.Router do
     get("/@:name/feed/:format", FeedController, :actor)
     get("/events/:uuid/export/:format", FeedController, :event)
     get("/events/going/:token/:format", FeedController, :going)
+    get("/feed/instance/:format", FeedController, :instance)
   end
 
   ## MOBILIZON

@@ -6,7 +6,7 @@ defmodule Mobilizon.Service.ICalendarTest do
   alias ICalendar.Value
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, FeedToken}
   alias Mobilizon.Service.Export.ICalendar, as: ICalendarService
 
   describe "export an event to ics" do
@@ -34,6 +34,32 @@ defmodule Mobilizon.Service.ICalendarTest do
       """
 
       assert {:ok, ics} == ICalendarService.export_public_event(event)
+    end
+  end
+
+  describe "export the instance's public events" do
+    test "succeds" do
+      %Event{} = event = insert(:event, title: "I'm public")
+      %Event{} = event2 = insert(:event, visibility: :private, title: "I'm private")
+      %Event{} = event3 = insert(:event, title: "Another public")
+
+      {:commit, ics} = ICalendarService.create_cache("instance")
+      assert ics =~ event.title
+      refute ics =~ event2.title
+      assert ics =~ event3.title
+    end
+  end
+
+  describe "export an actor's events from a token" do
+    test "an actor feedtoken" do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      %FeedToken{token: token} = insert(:feed_token, user: user, actor: actor)
+      event = insert(:event)
+      insert(:participant, event: event, actor: actor, role: :participant)
+
+      {:commit, ics} = ICalendarService.create_cache("token_#{token}")
+      assert ics =~ event.title
     end
   end
 end
