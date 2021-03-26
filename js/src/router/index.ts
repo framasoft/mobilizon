@@ -109,7 +109,7 @@ export const routes = [
     path: "/interact",
     name: RouteName.INTERACT,
     component: (): Promise<EsModuleComponent> =>
-      import(/* webpackChunkName: "cookies" */ "@/views/Interact.vue"),
+      import(/* webpackChunkName: "interact" */ "@/views/Interact.vue"),
     meta: { requiredAuth: false },
   },
   {

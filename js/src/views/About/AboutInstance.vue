@@ -97,11 +97,11 @@ import langs from "../../i18n/langs.json";
       query: LANGUAGES_CODES,
       variables() {
         return {
-          codes: this.config.languages,
+          codes: this?.config.languages,
         };
       },
       skip() {
-        return !this.config || !this.config.languages;
+        return !this.config || !this.config?.languages;
       },
     },
   },
