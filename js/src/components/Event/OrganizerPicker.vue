@@ -1,11 +1,11 @@
 <template>
   <div class="list is-hoverable">
     <b-radio-button
-      v-model="currentActor"
+      v-model="selectedActor"
       :native-value="availableActor"
       class="list-item"
       v-for="availableActor in actualAvailableActors"
-      :class="{ 'is-active': availableActor.id === currentActor.id }"
+      :class="{ 'is-active': availableActor.id === selectedActor.id }"
       :key="availableActor.id"
     >
       <div class="media">
@@ -31,9 +31,13 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { IPerson, IActor, Actor } from "@/types/actor";
-import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  IDENTITIES,
+  LOGGED_USER_MEMBERSHIPS,
+} from "@/graphql/actor";
 import { Paginate } from "@/types/paginate";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
@@ -41,29 +45,37 @@ import { MemberRole } from "@/types/enums";
 @Component({
   apollo: {
     groupMemberships: {
-      query: PERSON_MEMBERSHIPS,
-      variables() {
-        return {
-          id: this.identity.id,
-        };
-      },
-      update: (data) => data.person.memberships,
-      skip() {
-        return !this.identity.id;
-      },
+      query: LOGGED_USER_MEMBERSHIPS,
+      update: (data) => data.loggedUser.memberships,
     },
+    identities: IDENTITIES,
+    currentActor: CURRENT_ACTOR_CLIENT,
   },
 })
 export default class OrganizerPicker extends Vue {
   @Prop() value!: IActor;
 
-  @Prop() identity!: IPerson;
-
   @Prop({ required: false, default: false }) restrictModeratorLevel!: boolean;
 
   groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
-  currentActor: IActor = this.value;
+  currentActor!: IPerson;
+
+  get selectedActor(): IActor | undefined {
+    if (this.value?.id) {
+      return this.value;
+    }
+    if (this.currentActor) {
+      return this.currentActor;
+    }
+    return undefined;
+  }
+
+  set selectedActor(actor: IActor | undefined) {
+    this.$emit("input", actor);
+  }
+
+  identities: IActor[] = [];
 
   Actor = Actor;
 
@@ -82,14 +94,12 @@ export default class OrganizerPicker extends Vue {
 
   get actualAvailableActors(): IActor[] {
     return [
-      this.identity,
+      this.currentActor,
+      ...this.identities.filter(
+        (identity: IActor) => identity.id !== this.currentActor?.id
+      ),
       ...this.actualMemberships.map((member) => member.parent),
-    ];
-  }
-
-  @Watch("currentActor")
-  async fetchMembersForGroup(): Promise<void> {
-    this.$emit("input", this.currentActor);
+    ].filter((elem) => elem);
   }
 }
 </script>

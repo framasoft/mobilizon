@@ -81,18 +81,20 @@
 
         <subtitle>{{ $t("Organizers") }}</subtitle>
 
-        <div v-if="config && config.features.groups">
+        <div v-if="config && config.features.groups && organizerActor.id">
           <b-field>
             <organizer-picker-wrapper
-              v-model="event.attributedTo"
+              v-model="organizerActor"
               :contacts.sync="event.contacts"
-              :identity="event.organizerActor"
             />
           </b-field>
-          <p v-if="!event.attributedTo.id || attributedToEqualToOrganizerActor">
+          <p v-if="!attributedToAGroup && organizerActorEqualToCurrentActor">
             {{
               $t("The event will show as attributed to your personal profile.")
             }}
+          </p>
+          <p v-else-if="!attributedToAGroup">
+            {{ $t("The event will show as attributed to this profile.") }}
           </p>
           <p v-else>
             <span>{{
@@ -101,6 +103,7 @@
             <span
               v-if="event.contacts && event.contacts.length"
               v-html="
+                ' ' +
                 $tc(
                   '<b>{contact}</b> will be displayed as contact.',
                   event.contacts.length,
@@ -114,6 +117,9 @@
                 )
               "
             />
+            <span v-else>
+              {{ $t("You may show some members as contacts.") }}
+            </span>
           </p>
         </div>
         <subtitle>{{ $t("Who can view this event and participate") }}</subtitle>
@@ -432,6 +438,7 @@ import Subtitle from "@/components/Utils/Subtitle.vue";
 import { Route } from "vue-router";
 import { formatList } from "@/utils/i18n";
 import {
+  ActorType,
   CommentModeration,
   EventJoinOptions,
   EventStatus,
@@ -448,10 +455,11 @@ import {
 import { EventModel, IEvent } from "../../types/event.model";
 import {
   CURRENT_ACTOR_CLIENT,
+  IDENTITIES,
   LOGGED_USER_DRAFTS,
   LOGGED_USER_PARTICIPATIONS,
 } from "../../graphql/actor";
-import { IPerson, Person, displayNameAndUsername } from "../../types/actor";
+import { displayNameAndUsername, IActor, IGroup } from "../../types/actor";
 import { TAGS } from "../../graphql/tags";
 import { ITag } from "../../types/tag.model";
 import {
@@ -480,6 +488,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
     currentActor: CURRENT_ACTOR_CLIENT,
     tags: TAGS,
     config: CONFIG,
+    identities: IDENTITIES,
     event: {
       query: FETCH_EVENT,
       variables() {
@@ -513,11 +522,13 @@ export default class EditEvent extends Vue {
 
   @Prop({ type: Boolean, default: false }) isDuplicate!: boolean;
 
-  currentActor = new Person();
+  currentActor!: IActor;
 
   tags: ITag[] = [];
 
   event: IEvent = new EventModel();
+
+  identities: IActor[] = [];
 
   config!: IConfig;
 
@@ -573,14 +584,30 @@ export default class EditEvent extends Vue {
 
     this.event.beginsOn = now;
     this.event.endsOn = end;
-    this.event.organizerActor = this.getDefaultActor();
   }
 
-  private getDefaultActor() {
-    if (this.event.organizerActor?.id) {
+  get organizerActor(): IActor {
+    if (this.event?.attributedTo?.id) {
+      return this.event.attributedTo;
+    }
+    if (this.event?.organizerActor?.id) {
       return this.event.organizerActor;
     }
     return this.currentActor;
+  }
+
+  set organizerActor(actor: IActor) {
+    if (actor?.type === ActorType.GROUP) {
+      this.event.attributedTo = actor as IGroup;
+      this.event.organizerActor = this.currentActor;
+    } else {
+      this.event.attributedTo = undefined;
+      this.event.organizerActor = actor;
+    }
+  }
+
+  get attributedToAGroup(): boolean {
+    return this.event.attributedTo?.id !== undefined;
   }
 
   async mounted(): Promise<void> {
@@ -724,8 +751,10 @@ export default class EditEvent extends Vue {
     return !(
       this.eventId &&
       this.event.organizerActor?.id !== undefined &&
-      this.currentActor.id !== this.event.organizerActor.id
-    ) as boolean;
+      !this.identities
+        .map(({ id }) => id)
+        .includes(this.event.organizerActor?.id)
+    );
   }
 
   get updateEventMessage(): string {
@@ -752,8 +781,7 @@ export default class EditEvent extends Vue {
    */
   private postCreateOrUpdate(store: any, updateEvent: IEvent) {
     const resultEvent: IEvent = { ...updateEvent };
-    const organizerActor: IPerson = this.event.organizerActor as Person;
-    resultEvent.organizerActor = organizerActor;
+    resultEvent.organizerActor = this.event.organizerActor;
     resultEvent.relatedEvents = [];
 
     store.writeQuery({
@@ -766,12 +794,12 @@ export default class EditEvent extends Vue {
         query: EVENT_PERSON_PARTICIPATION,
         variables: {
           eventId: updateEvent.id,
-          name: organizerActor.preferredUsername,
+          name: this.event.organizerActor?.preferredUsername,
         },
         data: {
           person: {
             __typename: "Person",
-            id: organizerActor.id,
+            id: this.event?.organizerActor?.id,
             participations: {
               __typename: "PaginatedParticipantList",
               total: 1,
@@ -782,7 +810,7 @@ export default class EditEvent extends Vue {
                   role: ParticipantRole.CREATOR,
                   actor: {
                     __typename: "Actor",
-                    id: organizerActor.id,
+                    id: this.event?.organizerActor?.id,
                   },
                   event: {
                     __typename: "Event",
@@ -819,30 +847,26 @@ export default class EditEvent extends Vue {
     ];
   }
 
-  get attributedToEqualToOrganizerActor(): boolean {
-    return (this.event.organizerActor?.id !== undefined &&
-      this.event.attributedTo?.id === this.event.organizerActor?.id) as boolean;
+  get organizerActorEqualToCurrentActor(): boolean {
+    return (
+      this.currentActor?.id !== undefined &&
+      this.organizerActor?.id === this.currentActor?.id
+    );
   }
 
   /**
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
-    this.event.organizerActor = this.event.organizerActor?.id
-      ? this.event.organizerActor
-      : this.currentActor;
     let res = this.event.toEditJSON();
     if (this.event.organizerActor) {
       res = Object.assign(res, {
         organizerActorId: this.event.organizerActor.id,
       });
     }
-    const attributedToId =
-      this.event.attributedTo &&
-      !this.attributedToEqualToOrganizerActor &&
-      this.event.attributedTo.id
-        ? this.event.attributedTo.id
-        : null;
+    const attributedToId = this.event.attributedTo?.id
+      ? this.event.attributedTo.id
+      : null;
     res = Object.assign(res, { attributedToId });
 
     // eslint-disable-next-line

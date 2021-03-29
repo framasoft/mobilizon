@@ -186,7 +186,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
                %{
                  "feedTokens" => [
                    %{
-                     "token" => feed_token.token
+                     "token" => ShortUUID.encode!(feed_token.token)
                    }
                  ]
                }
@@ -194,7 +194,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
       mutation = """
           mutation {
             deleteFeedToken(
-              token: "#{feed_token.token}",
+              token: "#{ShortUUID.encode!(feed_token.token)}",
             ) {
                 actor {
                   id
@@ -270,7 +270,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
       mutation = """
           mutation {
             deleteFeedToken(
-              token: "#{feed_token.token}",
+              token: "#{ShortUUID.encode!(feed_token.token)}",
             ) {
                 actor {
                   id
@@ -320,7 +320,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
       mutation = """
           mutation {
             deleteFeedToken(
-              token: "#{uuid}"
+              token: "#{ShortUUID.encode!(uuid)}"
             ) {
                 actor {
                   id

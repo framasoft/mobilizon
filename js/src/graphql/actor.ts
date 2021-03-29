@@ -319,6 +319,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
             preferredUsername
             domain
             name
+            type
             avatar {
               id
               url
@@ -359,6 +360,7 @@ export const IDENTITIES = gql`
         id
         url
       }
+      type
       preferredUsername
       name
     }
@@ -379,58 +381,10 @@ export const PERSON_MEMBERSHIPS = gql`
             preferredUsername
             name
             domain
+            type
             avatar {
               id
               url
-            }
-          }
-          invitedBy {
-            id
-            preferredUsername
-            name
-          }
-          insertedAt
-          updatedAt
-        }
-      }
-    }
-  }
-`;
-
-export const PERSON_MEMBERSHIPS_WITH_MEMBERS = gql`
-  query PersonMembershipsWithMembers($id: ID!) {
-    person(id: $id) {
-      id
-      memberships {
-        total
-        elements {
-          id
-          role
-          parent {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
-            members {
-              total
-              elements {
-                id
-                role
-                actor {
-                  id
-                  preferredUsername
-                  name
-                  domain
-                  avatar {
-                    id
-                    url
-                  }
-                }
-              }
             }
           }
           invitedBy {

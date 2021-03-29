@@ -1063,5 +1063,15 @@
   "You replied to a comment on the event {event}.": "Vous avez répondu à un commentaire sur l'événement {event}.",
   "{profile} replied to a comment on the event {event}.": "{profile} a répondu à un commentaire sur l'événement {event}.",
   "New post": "Nouveau billet",
-  "Comment text can't be empty": "Le texte du commentaire ne peut être vide"
+  "Comment text can't be empty": "Le texte du commentaire ne peut être vide",
+  "Notifications": "Notifications",
+  "Profile feeds": "Flux du profil",
+  "These feeds contain event data for the events for which this specific profile is a participant or creator. You should keep these private. You can find feeds for all of your profiles into your notification settings.": "Ces flux contiennent des informations sur les événements pour lesquels ce profil spécifique est un⋅e participant⋅e ou un⋅e créateur⋅ice. Vous devriez les garder privés. Vous pouvez trouver des flux pour l'ensemble de vos profils dans vos paramètres de notification.",
+  "Regenerate new links": "Regénérer de nouveaux liens",
+  "Create new links": "Créer de nouveaux liens",
+  "You'll need to change the URLs where there were previously entered.": "Vous devrez changer les URLs là où vous les avez entrées précédemment.",
+  "Personal feeds": "Flux personnels",
+  "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.": "Ces flux contiennent des informations sur les événements pour lesquels n'importe lequel de vos profils est un⋅e participant⋅e ou un⋅e créateur⋅ice. Vous devriez les garder privés. Vous pouvez trouver des flux spécifiques à chaque profil sur la page d'édition des profils.",
+  "The event will show as attributed to this profile.": "L'événement sera affiché comme attribué à ce profil.",
+  "You may show some members as contacts.": "Vous pouvez afficher certain⋅es membres en tant que contacts."
 }

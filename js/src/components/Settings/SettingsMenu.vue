@@ -14,7 +14,7 @@
           :to="{ name: RouteName.PREFERENCES }"
         />
         <SettingMenuItem
-          :title="this.$t('Email notifications')"
+          :title="this.$t('Notifications')"
           :to="{ name: RouteName.NOTIFICATIONS }"
         />
       </SettingMenuSection>

@@ -1,30 +1,30 @@
 <template>
-  <div class="organizer-picker">
+  <div class="organizer-picker" v-if="selectedActor">
     <!-- If we have a current actor (inline) -->
     <div
-      v-if="inline && currentActor.id"
+      v-if="inline && selectedActor.id"
       class="inline box"
       @click="isComponentModalActive = true"
     >
       <div class="media">
         <div class="media-left">
-          <figure class="image is-48x48" v-if="currentActor.avatar">
+          <figure class="image is-48x48" v-if="selectedActor.avatar">
             <img
               class="image is-rounded"
-              :src="currentActor.avatar.url"
-              :alt="currentActor.avatar.alt"
+              :src="selectedActor.avatar.url"
+              :alt="selectedActor.avatar.alt"
             />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
-        <div class="media-content" v-if="currentActor.name">
-          <p class="is-4">{{ currentActor.name }}</p>
+        <div class="media-content" v-if="selectedActor.name">
+          <p class="is-4">{{ selectedActor.name }}</p>
           <p class="is-6 has-text-grey">
-            {{ `@${currentActor.preferredUsername}` }}
+            {{ `@${selectedActor.preferredUsername}` }}
           </p>
         </div>
         <div class="media-content" v-else>
-          {{ `@${currentActor.preferredUsername}` }}
+          {{ `@${selectedActor.preferredUsername}` }}
         </div>
         <b-button type="is-text" @click="isComponentModalActive = true">
           {{ $t("Change") }}
@@ -33,45 +33,18 @@
     </div>
     <!-- If we have a current actor -->
     <span
-      v-else-if="currentActor.id"
+      v-else-if="selectedActor.id"
       class="block"
       @click="isComponentModalActive = true"
     >
       <img
         class="image is-48x48"
-        v-if="currentActor.avatar"
-        :src="currentActor.avatar.url"
-        :alt="currentActor.avatar.alt"
+        v-if="selectedActor.avatar"
+        :src="selectedActor.avatar.url"
+        :alt="selectedActor.avatar.alt"
       />
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
-    <!-- If we have no current actor -->
-    <div v-if="groupMemberships.total === 0 || !currentActor.id" class="box">
-      <div class="media">
-        <div class="media-left">
-          <figure class="image is-48x48" v-if="identity.avatar">
-            <img
-              class="image is-rounded"
-              :src="identity.avatar.url"
-              :alt="identity.avatar.alt"
-            />
-          </figure>
-          <b-icon v-else size="is-large" icon="account-circle" />
-        </div>
-        <div class="media-content" v-if="identity.name">
-          <p class="is-4">{{ identity.name }}</p>
-          <p class="is-6 has-text-grey">
-            {{ `@${identity.preferredUsername}` }}
-          </p>
-        </div>
-        <div class="media-content" v-else>
-          {{ `@${identity.preferredUsername}` }}
-        </div>
-        <b-button type="is-text" @click="isComponentModalActive = true">
-          {{ $t("Change") }}
-        </b-button>
-      </div>
-    </div>
     <b-modal :active.sync="isComponentModalActive" has-modal-card>
       <div class="modal-card">
         <header class="modal-card-head">
@@ -81,20 +54,15 @@
           <div class="columns">
             <div class="column">
               <organizer-picker
-                v-model="currentActor"
-                :identity.sync="identity"
+                v-model="selectedActor"
                 @input="relay"
                 :restrict-moderator-level="true"
               />
             </div>
             <div class="column">
-              <div v-if="actorMembersForCurrentActor.length > 0">
+              <div v-if="actorMembers.length > 0">
                 <p>{{ $t("Add a contact") }}</p>
-                <p
-                  class="field"
-                  v-for="actor in actorMembersForCurrentActor"
-                  :key="actor.id"
-                >
+                <p class="field" v-for="actor in actorMembers" :key="actor.id">
                   <b-checkbox v-model="actualContacts" :native-value="actor.id">
                     <div class="media">
                       <div class="media-left">
@@ -138,79 +106,121 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { IMember } from "@/types/actor/member.model";
-import { IActor, IGroup, IPerson } from "../../types/actor";
+import { IActor, IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import OrganizerPicker from "./OrganizerPicker.vue";
-import { PERSON_MEMBERSHIPS_WITH_MEMBERS } from "../../graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  LOGGED_USER_MEMBERSHIPS,
+} from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";
+import { GROUP_MEMBERS } from "@/graphql/member";
+import { ActorType, MemberRole } from "@/types/enums";
+
+const MEMBER_ROLES = [
+  MemberRole.CREATOR,
+  MemberRole.ADMINISTRATOR,
+  MemberRole.MODERATOR,
+  MemberRole.MEMBER,
+];
 
 @Component({
   components: { OrganizerPicker },
   apollo: {
-    groupMemberships: {
-      query: PERSON_MEMBERSHIPS_WITH_MEMBERS,
+    members: {
+      query: GROUP_MEMBERS,
       variables() {
         return {
-          id: this.identity.id,
+          name: usernameWithDomain(this.selectedActor),
+          page: this.membersPage,
+          limit: 10,
+          roles: MEMBER_ROLES.join(","),
         };
       },
-      update: (data) => data.person.memberships,
+      update: (data) => data.group.members,
       skip() {
-        return !this.identity.id;
+        return (
+          !this.selectedActor || this.selectedActor.type !== ActorType.GROUP
+        );
       },
+    },
+    currentActor: CURRENT_ACTOR_CLIENT,
+    userMemberships: {
+      query: LOGGED_USER_MEMBERSHIPS,
+      variables: {
+        page: 1,
+        limit: 100,
+      },
+      update: (data) => data.loggedUser.memberships,
     },
   },
 })
 export default class OrganizerPickerWrapper extends Vue {
-  @Prop({ type: Object, required: true }) value!: IActor;
+  @Prop({ type: Object, required: false }) value!: IActor;
 
   @Prop({ default: true, type: Boolean }) inline!: boolean;
 
-  @Prop({ type: Object, required: true }) identity!: IPerson;
+  currentActor!: IPerson;
 
   isComponentModalActive = false;
 
-  currentActor: IActor = this.value;
-
-  groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
-
   @Prop({ type: Array, required: false, default: () => [] })
   contacts!: IActor[];
+  members: Paginate<IMember> = { elements: [], total: 0 };
 
-  actualContacts: (string | undefined)[] = this.contacts.map(({ id }) => id);
+  membersPage = 1;
 
-  @Watch("contacts")
-  updateActualContacts(contacts: IActor[]): void {
-    this.actualContacts = contacts.map(({ id }) => id);
+  userMemberships: Paginate<IMember> = { elements: [], total: 0 };
+
+  get actualContacts(): (string | undefined)[] {
+    return this.contacts.map(({ id }) => id);
   }
 
-  @Watch("value")
-  updateCurrentActor(value: IGroup): void {
-    this.currentActor = value;
+  set actualContacts(contactsIds: (string | undefined)[]) {
+    this.$emit(
+      "update:contacts",
+      this.actorMembers.filter(({ id }) => contactsIds.includes(id))
+    );
+  }
+
+  @Watch("userMemberships")
+  setInitialActor(): void {
+    if (this.$route.query?.actorId) {
+      const actorId = this.$route.query?.actorId as string;
+      this.$router.replace({ query: undefined });
+      const actor = this.userMemberships.elements.find(
+        ({ parent: { id }, role }) =>
+          actorId === id && MEMBER_ROLES.includes(role)
+      )?.parent as IActor;
+      this.selectedActor = actor;
+    }
+  }
+
+  get selectedActor(): IActor | undefined {
+    if (this.value?.id) {
+      return this.value;
+    }
+    if (this.currentActor) {
+      return this.currentActor;
+    }
+    return undefined;
+  }
+
+  set selectedActor(selectedActor: IActor | undefined) {
+    this.$emit("input", selectedActor);
   }
 
   async relay(group: IGroup): Promise<void> {
-    this.currentActor = group;
+    this.actualContacts = [];
+    this.selectedActor = group;
   }
 
   pickActor(): void {
-    this.$emit(
-      "update:contacts",
-      this.actorMembersForCurrentActor.filter(({ id }) =>
-        this.actualContacts.includes(id)
-      )
-    );
-    this.$emit("input", this.currentActor);
     this.isComponentModalActive = false;
   }
 
-  get actorMembersForCurrentActor(): IActor[] {
-    const currentMembership = this.groupMemberships.elements.find(
-      ({ parent: { id } }) => id === this.currentActor.id
-    );
-    if (currentMembership) {
-      return currentMembership.parent.members.elements.map(
-        ({ actor }: { actor: IActor }) => actor
-      );
+  get actorMembers(): IActor[] {
+    if (this.selectedActor?.type === ActorType.GROUP) {
+      return this.members.elements.map(({ actor }: { actor: IActor }) => actor);
     }
     return [];
   }

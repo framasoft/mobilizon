@@ -327,6 +327,7 @@
               v-if="isCurrentActorAGroupModerator"
               :to="{
                 name: RouteName.CREATE_EVENT,
+                query: { actorId: group.id },
               }"
               class="button is-primary"
               >{{ $t("+ Create an event") }}</router-link

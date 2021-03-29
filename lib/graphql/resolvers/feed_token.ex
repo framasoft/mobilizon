@@ -22,7 +22,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
       ) do
     with {:is_owned, %Actor{}} <- User.owns_actor(user, actor_id),
          {:ok, feed_token} <- Events.create_feed_token(%{user_id: id, actor_id: actor_id}) do
-      {:ok, feed_token}
+      {:ok, to_short_uuid(feed_token)}
     else
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
@@ -32,7 +32,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   @spec create_feed_token(any, map, map) :: {:ok, FeedToken.t()}
   def create_feed_token(_parent, %{}, %{context: %{current_user: %User{id: id}}}) do
     with {:ok, feed_token} <- Events.create_feed_token(%{user_id: id}) do
-      {:ok, feed_token}
+      {:ok, to_short_uuid(feed_token)}
     end
   end
 
@@ -50,7 +50,8 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
         %{token: token},
         %{context: %{current_user: %User{id: id} = _user}}
       ) do
-    with {:ok, token} <- Ecto.UUID.cast(token),
+    with {:ok, token} <- ShortUUID.decode(token),
+         {:ok, token} <- Ecto.UUID.cast(token),
          {:no_token, %FeedToken{actor: actor, user: %User{} = user} = feed_token} <-
            {:no_token, Events.get_feed_token(token)},
          {:token_from_user, true} <- {:token_from_user, id == user.id},
@@ -65,6 +66,9 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
       :error ->
         {:error, dgettext("errors", "Token is not a valid UUID")}
 
+      {:error, "Invalid input"} ->
+        {:error, dgettext("errors", "Token is not a valid UUID")}
+
       {:no_token, _} ->
         {:error, dgettext("errors", "Token does not exist")}
 
@@ -76,5 +80,9 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedToken do
   @spec delete_feed_token(any, map, map) :: {:error, String.t()}
   def delete_feed_token(_parent, _args, %{}) do
     {:error, dgettext("errors", "You are not allowed to delete a feed token if not connected")}
+  end
+
+  defp to_short_uuid(%FeedToken{token: token} = feed_token) do
+    %FeedToken{feed_token | token: ShortUUID.encode!(token)}
   end
 end
