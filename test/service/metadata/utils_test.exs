@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.Metadata.UtilsTest do
                "<h1>Biography</h1><p>It all started when someone wanted a <b>very long string</b> to be cut. However it's difficult to invent things to write when you've got nothing to say. Anyway, what's the deal here. We just need to reach 200 characters.",
                "fr"
              ) ==
-               "Biography It all started when someone wanted a very long string to be cut. However it&#39;s difficult to invent things to write when you&#39;ve got nothing to say. Anyway, what&#39;s the deal here. We…"
+               "Biography It all started when someone wanted a very long string to be cut. However it's difficult to invent things to write when you've got nothing to say. Anyway, what's the deal here. We just need to…"
     end
 
     test "process_description/3 returns default if no description is provided" do

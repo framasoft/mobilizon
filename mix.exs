@@ -142,6 +142,7 @@ defmodule Mobilizon.Mixfile do
       {:ex_cldr_languages, "~> 0.2.1"},
       {:slugger, "~> 0.3"},
       {:sentry, "~> 8.0"},
+      {:html_entities, "~> 0.5"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
