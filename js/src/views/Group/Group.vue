@@ -79,6 +79,49 @@
                 }"
                 >{{ $t("Group settings") }}</b-button
               >
+              <b-dropdown
+                class="menu-dropdown"
+                aria-role="list"
+                v-if="isCurrentActorAGroupMember"
+                position="is-bottom-left"
+              >
+                <b-button
+                  slot="trigger"
+                  outlined
+                  role="button"
+                  icon-right="dots-horizontal"
+                >
+                </b-button>
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-if="ableToReport"
+                  @click="isReportModalActive = true"
+                >
+                  <span>
+                    {{ $t("Report") }}
+                    <b-icon icon="flag" />
+                  </span>
+                </b-dropdown-item>
+                <hr class="dropdown-divider" />
+                <b-dropdown-item has-link aria-role="listitem">
+                  <a
+                    :href="`@${preferredUsername}/feed/atom`"
+                    :title="$t('Atom feed for events and posts')"
+                  >
+                    {{ $t("RSS/Atom Feed") }}
+                    <b-icon icon="rss" />
+                  </a>
+                </b-dropdown-item>
+                <b-dropdown-item has-link aria-role="listitem">
+                  <a
+                    :href="`@${preferredUsername}/feed/ics`"
+                    :title="$t('ICS feed for events')"
+                  >
+                    {{ $t("ICS/WebCal Feed") }}
+                    <b-icon icon="calendar-sync" />
+                  </a>
+                </b-dropdown-item>
+              </b-dropdown>
             </div>
           </div>
         </div>
@@ -456,19 +499,19 @@
           />
         </div>
       </b-modal>
-      <b-modal
-        :active.sync="isReportModalActive"
-        has-modal-card
-        ref="reportModal"
-      >
-        <report-modal
-          :on-confirm="reportGroup"
-          :title="$t('Report this group')"
-          :outside-domain="group.domain"
-          @close="$refs.reportModal.close()"
-        />
-      </b-modal>
     </div>
+    <b-modal
+      :active.sync="isReportModalActive"
+      has-modal-card
+      ref="reportModal"
+    >
+      <report-modal
+        :on-confirm="reportGroup"
+        :title="$t('Report this group')"
+        :outside-domain="group.domain"
+        @close="$refs.reportModal.close()"
+      />
+    </b-modal>
   </div>
 </template>
 
