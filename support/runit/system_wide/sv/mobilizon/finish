@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /opt/mobilizon
+exec 2>&1
+exec chpst -u mobilizon /opt/mobilizon/bin/mobilizon stop

@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p  /var/log/mobilizon/
+exec chpst -u mobilizon svlogd -tt /var/log/mobilizon/

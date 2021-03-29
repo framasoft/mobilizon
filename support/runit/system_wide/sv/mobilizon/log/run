@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p $HOME/log
+exec chpst -u mobilizon svlogd -tt $HOME/log/

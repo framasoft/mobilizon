@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p $HOME/log
+exec svlogd -tt $HOME/log/
