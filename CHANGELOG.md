@@ -4,6 +4,81 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.0-rc.1 - 29-03-2021
+
+### Added
+
+- Add ENV parameter to allow Docker users to specify the IP which Mobilizon listens on
+- Add instance-wide ICS & Atom feeds of public events (disabled by default)
+- Add user and profile secret (tokened) feeds
+
+### Changed
+
+- The default configuration for Mobilizon now listens only on the local interface
+- Creating an event from the group page configures the event creation interface with the group as organizer
+
+### Fixed
+
+- Fixed hashtags disappearing from content
+- Fixed close events order
+- Fixed group posts edition
+- Fixed validating new email with bad token
+- Fixed `.well-known/host-meta` not being accessible with correct `Accept` header
+- Fixed posts default publish date overriding remote ones
+- Fixed getting a page description in some cases when creating a resource
+- Fixed getting metadata from tweets when creating a resource
+- Fixed bad handling of duplicate usernames
+- Fixed handling of bad URIs to proxify
+- Fixed creating discussion with title containing only spaces 
+- Fixed registering new user account with same email as unconfirmed
+- Fixed handling changing default actor unlogged
+- Fixed handling getting organized events from an actor when not authorized
+- Fixed empty comments being allowed
+
+### Translations
+
+- Gaelic
+- Galician
+- German
+- Hungarian
+- Italian
+- Polish
+- Portuguese (Brazil)
+- Russian
+- Slovenian
+- Spanish
+
+## 1.1.0-beta.6 - 17-03-2021
+
+### Fixed
+- Fixed a typo in range/radius showing the wrong radius for close events on homepage
+
+## 1.1.0-beta.5 - 17-03-2021
+
+### Fixed
+- Fixed a typo in range/radius preventing close events from showing up
+
+## 1.1.0-beta.4 - 17-03-2021
+
+### Fixed
+
+- Fixed accessing the homepage with no location setting defined
+- Fixed location field not showing in preferences if setting not already set
+- Fixed lasts events published order on the homepage
+
+## 1.1.0-beta.3 - 16-03-2021
+
+### Fixed
+- Handle ActivityPub Fetcher returning text that's not JSON
+- Fix accessing a group profile when not a member
+
+## 1.1.0-beta.2 - 16-03-2021
+
+### Fixed
+- Fixed geospatial configuration only being evaluated at compile-time, not at runtime
+
+### Translations
+- Slovenian
 
 ## 1.1.0-beta.1 - 10-03-2021
 
