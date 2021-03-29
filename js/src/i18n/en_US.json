@@ -977,5 +977,7 @@
   "Create new links": "Create new links",
   "You'll need to change the URLs where there were previously entered.": "You'll need to change the URLs where there were previously entered.",
   "Personal feeds": "Personal feeds",
-  "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.": "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page."
+  "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.": "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.",
+  "The event will show as attributed to this profile.": "The event will show as attributed to this profile.",
+  "You may show some members as contacts.": "You may show some members as contacts."
 }

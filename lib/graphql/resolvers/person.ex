@@ -315,7 +315,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         context: %{current_user: user}
       }) do
     with {:is_owned, %Actor{id: actor_id}} <- User.owns_actor(user, actor_id),
-         %Actor{id: group_id} <- Actors.get_actor_by_name(group, :Group),
+         {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(group, :Group)},
          {:ok, %Member{} = membership} <- Actors.get_member(actor_id, group_id),
          memberships <- %Page{
            total: 1,
@@ -325,6 +325,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     else
       {:error, :member_not_found} ->
         {:ok, %Page{total: 0, elements: []}}
+
+      {:group, nil} ->
+        {:error, :group_not_found}
 
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
