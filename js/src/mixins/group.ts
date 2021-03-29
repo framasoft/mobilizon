@@ -5,7 +5,13 @@ import {
 } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
-import { Group, IActor, IGroup, IPerson } from "@/types/actor";
+import {
+  Group,
+  IActor,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import { MemberRole } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -34,7 +40,7 @@ import { Component, Vue } from "vue-property-decorator";
       variables() {
         return {
           id: this.currentActor.id,
-          group: this.group.preferredUsername,
+          group: usernameWithDomain(this.group),
         };
       },
       subscribeToMore: {

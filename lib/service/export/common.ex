@@ -11,7 +11,7 @@ defmodule Mobilizon.Service.Export.Common do
 
   @spec fetch_actor_event_feed(String.t()) :: String.t()
   def fetch_actor_event_feed(name) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name(name),
+    with %Actor{} = actor <- Actors.get_actor_by_name(name),
          {:visibility, true} <- {:visibility, Actor.is_public_visibility?(actor)},
          %Page{elements: events} <- Events.list_public_events_for_actor(actor),
          %Page{elements: posts} <- Posts.get_public_posts_for_group(actor) do
