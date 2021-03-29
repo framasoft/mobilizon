@@ -1,7 +1,11 @@
 <template>
   <div class="container section">
     <h2 class="title">{{ $t("Privacy Policy") }}</h2>
-    <div class="content" v-if="config" v-html="config.privacy.bodyHtml" />
+    <div
+      class="content"
+      v-if="config && config.privacy"
+      v-html="config.privacy.bodyHtml"
+    />
   </div>
 </template>
 
