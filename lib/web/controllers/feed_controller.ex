@@ -7,9 +7,7 @@ defmodule Mobilizon.Web.FeedController do
   action_fallback(Mobilizon.Web.FallbackController)
   alias Mobilizon.Config
 
-  @formats ["ics", "atom"]
-
-  def instance(conn, %{"format" => format}) when format in @formats do
+  def instance(conn, %{"format" => format}) do
     if Config.get([:instance, :enable_instance_feeds], false) do
       return_data(conn, format, "instance", Config.instance_name())
     else
@@ -17,7 +15,7 @@ defmodule Mobilizon.Web.FeedController do
     end
   end
 
-  def actor(conn, %{"format" => format, "name" => name}) when format in @formats do
+  def actor(conn, %{"format" => format, "name" => name}) do
     return_data(conn, format, "actor_" <> name, name)
   end
 
@@ -33,7 +31,7 @@ defmodule Mobilizon.Web.FeedController do
     {:error, :not_found}
   end
 
-  def going(conn, %{"token" => token, "format" => format}) when format in @formats do
+  def going(conn, %{"token" => token, "format" => format}) do
     return_data(conn, format, "token_" <> token, "events")
   end
 
@@ -71,5 +69,9 @@ defmodule Mobilizon.Web.FeedController do
       _ ->
         {:error, :not_found}
     end
+  end
+
+  defp return_data(_conn, _, _, _) do
+    {:error, :not_found}
   end
 end
