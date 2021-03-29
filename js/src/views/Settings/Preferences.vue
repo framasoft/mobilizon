@@ -257,6 +257,7 @@ export default class Preferences extends Vue {
     await this.$apollo.mutate<{ setUserSetting: string }>({
       mutation: SET_USER_SETTINGS,
       variables: userSettings,
+      refetchQueries: [{ query: USER_SETTINGS }],
     });
   }
 }
