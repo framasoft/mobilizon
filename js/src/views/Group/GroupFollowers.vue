@@ -171,7 +171,7 @@ export default class GroupFollowers extends mixins(GroupMixin) {
   pending: boolean | null =
     (this.$route.query.pending as string) == "1" || null;
 
-  FOLLOWERS_PER_PAGE = 1;
+  FOLLOWERS_PER_PAGE = 10;
 
   usernameWithDomain = usernameWithDomain;
 
