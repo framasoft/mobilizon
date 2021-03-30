@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.0-rc.2 - 30-03-2021
+
+### Added
+
+- Runit configuration files
+
+### Fixed
+
+- Fixed the number of group followers per page
+- Fixed issue when selecting a location in your settings
+- Fixed group feeds not showing when you are a member of the group
+- Fixed handling feeds with unknown format
+- Fixed a couple of issues when viewing a remote group
+- Fixed issues with the attributed organizer when creating an event
+- Fixed HTML entities not being decoded in icalendar exports and feeds
+- Fixed instance follows being auto-approved
+
+### Translations
+
+- Galician
+- German
+- Hungarian
+- Russian
+- Spanish
 ## 1.1.0-rc.1 - 29-03-2021
 
 ### Added
