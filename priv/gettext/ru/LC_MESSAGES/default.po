@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2021-03-26 21:51+0000\n"
+"PO-Revision-Date: 2021-03-29 18:51+0000\n"
 "Last-Translator: deadmorose <cornerot@gmail.com>\n"
 "Language-Team: Russian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ru/>\n"
@@ -47,7 +47,7 @@ msgstr "Комментарии"
 #: lib/web/templates/email/report.text.eex:11
 #, elixir-format
 msgid "Event"
-msgstr "Событие"
+msgstr "Мероприятие"
 
 #: lib/web/email/user.ex:48
 #, elixir-format
@@ -79,7 +79,7 @@ msgstr "Инструкции по подтверждению учётной за
 #: lib/web/email/admin.ex:24
 #, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr "Новое сообщение о проблемах на Mobilizon узле %{instance}"
+msgstr "Новый отчёт на Mobilizon узле %{instance}"
 
 #: lib/web/templates/email/before_event_notification.html.eex:51
 #: lib/web/templates/email/before_event_notification.text.eex:4
@@ -90,7 +90,7 @@ msgstr "Перейти на страницу мероприятия"
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-format
 msgid "New report from %{reporter} on %{instance}"
-msgstr "Новый отчет от %{reporter} из %{instance}"
+msgstr "Новый отчёт от %{reporter} на %{instance}"
 
 #: lib/web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
@@ -115,7 +115,7 @@ msgstr ""
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
 "Вы создали аккаунт на% {host}, используя этот адрес электронной почты. Вы в "
-"одном шаге от его активации. Если это сделали не вы, просто проигнорируйте "
+"одном клике от его активации. Если это сделали не вы, просто проигнорируйте "
 "это письмо."
 
 #: lib/web/email/participation.ex:112
@@ -555,7 +555,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr "Создание учетных записей"
+msgstr "Создание учётных записей"
 
 #: lib/web/templates/api/terms.html.eex:89
 #, elixir-format
@@ -780,7 +780,7 @@ msgid "Instance administrators (and community moderators, given the relevant acc
 msgstr ""
 "Администраторы узла (и модераторы сообщества, имеющие соответствующий доступ)"
 " несут ответственность за мониторинг помеченного контента и других "
-"пользовательских отчетов и действия с ними, а также имеют право и обязаны "
+"пользовательских отчётов и действия с ними, а также имеют право и обязаны "
 "удалять или редактировать контент, который не соответствует правилам узла, "
 "или приостановить, заблокировать (временно или навсегда) любую учетную "
 "запись, сообщество или узел за нарушение этих условий или другое поведение, "
@@ -916,7 +916,7 @@ msgstr ""
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr "Новое уведомление на <b>%{instance}</b>"
+msgstr "Новый отчёт на <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #, elixir-format
@@ -1111,12 +1111,12 @@ msgstr "Подтверждение нового адреса электронн�
 #: lib/web/templates/email/report.html.eex:106
 #, elixir-format
 msgid "Reasons for report"
-msgstr "Причины сообщения"
+msgstr "Причина жалобы"
 
 #: lib/web/templates/email/report.html.eex:39
 #, elixir-format
 msgid "Someone on <b>%{instance}</b> reported the following content for you to analyze:"
-msgstr "Кто-то из <b>%{instance}</b> сообщил вам о следующем содержимом:"
+msgstr "Кто-то на <b>%{instance}</b> сообщил вам о следующем содержимом:"
 
 #: lib/web/templates/email/event_participation_rejected.html.eex:13
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
@@ -1173,12 +1173,12 @@ msgstr "Проверьте свой адрес электронной почты
 #: lib/web/templates/email/report.html.eex:126
 #, elixir-format
 msgid "View report"
-msgstr "Посмотреть отчет"
+msgstr "Смотреть отчёт"
 
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
 msgid "View report:"
-msgstr "Посмотреть отчет:"
+msgstr "Смотреть отчёт:"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:58
 #: lib/web/templates/email/event_participation_confirmed.html.eex:58
