@@ -5,7 +5,7 @@ import Config
 listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "::")
 
 listen_ip =
-  case :inet.parse_address(listen_ip) do
+  case listen_ip |> to_charlist() |> :inet.parse_address() do
     {:ok, listen_ip} -> listen_ip
     _ -> raise "MOBILIZON_INSTANCE_LISTEN_IP does not match the expected IP format."
   end

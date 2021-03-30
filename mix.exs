@@ -31,6 +31,7 @@ defmodule Mobilizon.Mixfile do
       docs: docs(),
       releases: [
         mobilizon: [
+          include_executables_for: [:unix],
           applications: [eldap: :transient],
           config_providers: [{Mobilizon.ConfigProvider, "/etc/mobilizon/config.exs"}]
         ]
