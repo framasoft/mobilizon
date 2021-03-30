@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.Formatter.HTML do
   def strip_tags(html) do
     case FastSanitize.strip_tags(html) do
       {:ok, html} ->
-        html
+        HtmlEntities.decode(html)
 
       _ ->
         raise "Failed to filter tags"

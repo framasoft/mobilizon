@@ -859,9 +859,12 @@ export default class EditEvent extends Vue {
    */
   private async buildVariables() {
     let res = this.event.toEditJSON();
-    if (this.event.organizerActor) {
+    const organizerActor = this.event.organizerActor?.id
+      ? this.event.organizerActor
+      : this.organizerActor;
+    if (organizerActor) {
       res = Object.assign(res, {
-        organizerActorId: this.event.organizerActor.id,
+        organizerActorId: organizerActor.id,
       });
     }
     const attributedToId = this.event.attributedTo?.id
