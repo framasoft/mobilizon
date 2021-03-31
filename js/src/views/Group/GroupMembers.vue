@@ -376,6 +376,12 @@ export default class GroupMembers extends mixins(GroupMixin) {
 
   async removeMember(memberId: string): Promise<void> {
     const { roles, MEMBERS_PER_PAGE, group, page } = this;
+    const variables = {
+      name: usernameWithDomain(group),
+      page,
+      limit: MEMBERS_PER_PAGE,
+      roles,
+    };
     try {
       await this.$apollo.mutate<{ removeMember: IMember }>({
         mutation: REMOVE_MEMBER,
@@ -386,14 +392,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
         refetchQueries: [
           {
             query: GROUP_MEMBERS,
-            variables() {
-              return {
-                name: usernameWithDomain(group),
-                page,
-                limit: MEMBERS_PER_PAGE,
-                roles,
-              };
-            },
+            variables,
           },
         ],
       });
