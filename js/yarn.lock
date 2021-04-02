@@ -8486,10 +8486,10 @@ mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-mock-apollo-client@^0.5:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/mock-apollo-client/-/mock-apollo-client-0.5.0.tgz#8f0d6a1ba0d349ebde87a1dcd85c7fd353076922"
-  integrity sha512-qdMUt1NhmNXLjHd/IaHbvbX5LaEE91WZB4glfj7AfUUs413/z148kBuXKg6XpMZqvJr+XdR/9i1V+YGY7UnCKA==
+mock-apollo-client@^0.6:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/mock-apollo-client/-/mock-apollo-client-0.6.0.tgz#ff1760f18798789931e421c6668bfc0e7f1f0649"
+  integrity sha512-HPo6yVkAE+uxIpB8oPO9ISM86hFDwefrHKz5uOowecT/hR79e/NbXAl372LOQ1lWYVNVgCaP3RIMgWEhVFWtjw==
 
 moment@2.24.0:
   version "2.24.0"
