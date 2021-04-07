@@ -450,7 +450,7 @@
   "No message": "Нет сообщений",
   "No moderation logs yet": "Журналов модерования пока нет",
   "No more activity to display.": "Больше нет действия для отображения.",
-  "No one is going to this event": "Никто не идёт на это мероприятие|Один человек пойдёт|{going} людей пойдут",
+  "No one is going to this event": "Пока никто не участвует|Один человек пойдёт|{going} людей пойдут",
   "No open reports yet": "Пока нет открытых отчётов",
   "No participant matches the filters": "Ни один участник не соответствует критериям",
   "No participant to approve|Approve participant|Approve {number} participants": "Нет участников для одобрения | Принять участника | Принять {number} участников",
