@@ -65,7 +65,7 @@ describe("ParticipationWithoutAccount", () => {
     customProps: Record<string, unknown> = {},
     baseData: Record<string, unknown> = {}
   ) => {
-    const cache = new InMemoryCache({ addTypename: false });
+    const cache = new InMemoryCache({ addTypename: true });
 
     mockClient = createMockClient({
       cache,

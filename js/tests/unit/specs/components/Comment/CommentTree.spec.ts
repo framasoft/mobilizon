@@ -37,7 +37,7 @@ describe("CommentTree", () => {
   let requestHandlers: Record<string, RequestHandler>;
 
   const generateWrapper = (handlers = {}, baseData = {}) => {
-    const cache = new InMemoryCache({ addTypename: false });
+    const cache = new InMemoryCache({ addTypename: true });
 
     mockClient = createMockClient({
       cache,
@@ -88,10 +88,13 @@ describe("CommentTree", () => {
   it("renders a comment tree", async () => {
     generateWrapper();
 
-    expect(wrapper.findComponent({ name: "b-notification" }).text()).toBe(
-      "The organiser has chosen to close comments."
-    );
+    expect(wrapper.exists()).toBe(true);
     expect(wrapper.find(".loading").text()).toBe("Loading comments…");
+
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick(); // because of the <transition>
+
+    expect(wrapper.find(".no-comments").text()).toBe("No comments yet");
     expect(wrapper.html()).toMatchSnapshot();
   });
 

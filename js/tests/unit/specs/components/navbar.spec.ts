@@ -25,7 +25,7 @@ describe("App component", () => {
   let requestHandlers: Record<string, RequestHandler>;
 
   const createComponent = (handlers = {}, baseData = {}) => {
-    const cache = new InMemoryCache({ addTypename: false });
+    const cache = new InMemoryCache({ addTypename: true });
 
     mockClient = createMockClient({
       cache,
