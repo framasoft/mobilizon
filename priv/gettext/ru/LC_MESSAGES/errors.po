@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-03-29 18:51+0000\n"
+"PO-Revision-Date: 2021-03-31 16:01+0000\n"
 "Last-Translator: deadmorose <cornerot@gmail.com>\n"
 "Language-Team: Russian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/ru/>\n"
@@ -443,12 +443,12 @@ msgstr "Не найдено человека с именем пользоват�
 #: lib/graphql/resolvers/post.ex:167 lib/graphql/resolvers/post.ex:200
 #, elixir-format
 msgid "Post ID is not a valid ID"
-msgstr "ID публикации имеет недопустимое значение"
+msgstr "ID поста имеет недопустимое значение"
 
 #: lib/graphql/resolvers/post.ex:170 lib/graphql/resolvers/post.ex:203
 #, elixir-format
 msgid "Post doesn't exist"
-msgstr "Публикация не существует"
+msgstr "Пост не существует"
 
 #: lib/graphql/resolvers/member.ex:83
 #, elixir-format
@@ -761,7 +761,7 @@ msgstr "Этот электронный адрес уже используетс
 #: lib/graphql/error.ex:88
 #, elixir-format
 msgid "Post not found"
-msgstr "Публикация не найдена"
+msgstr "Пост не найден"
 
 #: lib/graphql/error.ex:75
 #, elixir-format
