@@ -60,11 +60,15 @@ defmodule Mobilizon.Service.RichMedia.Favicon do
     uri = URI.parse(url)
 
     cond do
-      is_nil(image_uri.host) -> "#{uri.scheme}://#{uri.host}#{path}"
+      is_nil(image_uri.host) -> "#{uri.scheme}://#{uri.host}#{correct_path(path)}"
       is_nil(image_uri.scheme) -> "#{uri.scheme}:#{path}"
       true -> path
     end
   end
+
+  # Sometimes paths have "/" in front, sometimes not
+  defp correct_path("/" <> _ = path), do: path
+  defp correct_path(path), do: "/#{path}"
 
   @spec find_favicon_link_tag(String.t()) :: {:ok, tuple()} | {:error, any()}
   defp find_favicon_link_tag(html) do

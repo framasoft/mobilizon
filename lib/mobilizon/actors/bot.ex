@@ -23,7 +23,7 @@ defmodule Mobilizon.Actors.Bot do
 
   schema "bots" do
     field(:source, :string)
-    field(:type, :string, default: :ics)
+    field(:type, :string, default: "ics")
 
     belongs_to(:actor, Actor)
     belongs_to(:user, User)

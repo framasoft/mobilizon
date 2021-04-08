@@ -60,6 +60,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
       {:ok, discussion}
     else
       nil -> {:error, dgettext("errors", "Discussion not found")}
+      {:member, false} -> {:error, :unauthorized}
     end
   end
 

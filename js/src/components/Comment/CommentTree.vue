@@ -39,7 +39,7 @@
         </div>
       </article>
     </form>
-    <b-notification v-else :closable="false">{{
+    <b-notification v-else-if="isConnected" :closable="false">{{
       $t("The organiser has chosen to close comments.")
     }}</b-notification>
     <p
@@ -65,7 +65,7 @@
           @delete-comment="deleteComment"
         />
       </transition-group>
-      <div v-else-if="isAbleToComment" class="no-comments">
+      <div class="no-comments">
         <span>{{ $t("No comments yet") }}</span>
       </div>
     </transition>
@@ -350,10 +350,14 @@ export default class CommentTree extends Vue {
   }
 
   get isAbleToComment(): boolean {
-    if (this.currentActor?.id) {
+    if (this.isConnected) {
       return this.areCommentsClosed || this.isEventOrganiser;
     }
     return false;
+  }
+
+  get isConnected(): boolean {
+    return this.currentActor?.id != undefined;
   }
 }
 </script>

@@ -12,6 +12,7 @@ export const fetchEventBasicMock = {
       uuid: "f37910ea-fd5a-4756-9679-00971f3f4106",
       joinOptions: EventJoinOptions.FREE,
       participantStats: {
+        __typename: "ParticipantStats",
         notApproved: 0,
         notConfirmed: 0,
         rejected: 0,
@@ -28,18 +29,26 @@ export const fetchEventBasicMock = {
 export const joinEventResponseMock = {
   data: {
     joinEvent: {
+      __typename: "Participant",
       id: "5",
       role: ParticipantRole.NOT_APPROVED,
       insertedAt: "2020-12-07T09:33:41Z",
       metadata: {
+        __typename: "ParticipantMetadata",
         cancellationToken: "some token",
         message: "a message long enough",
       },
       event: {
+        __typename: "Event",
         id: "1",
         uuid: "f37910ea-fd5a-4756-9679-00971f3f4106",
       },
       actor: {
+        __typename: "Person",
+        preferredUsername: "some_actor",
+        name: "Some actor",
+        avatar: null,
+        domain: null,
         id: "1",
       },
     },
@@ -73,7 +82,9 @@ export const eventCommentThreadsMock = {
           totalReplies: 5,
           updatedAt: "2020-12-03T09:02:00Z",
           actor: {
+            __typename: "Person",
             avatar: {
+              __typename: "Media",
               id: "78",
               url: "http://someavatar.url.me",
             },
@@ -97,7 +108,9 @@ export const eventCommentThreadsMock = {
           totalReplies: 0,
           updatedAt: "2020-12-03T11:02:00Z",
           actor: {
+            __typename: "Person",
             avatar: {
+              __typename: "Media",
               id: "78",
               url: "http://someavatar.url.me",
             },
@@ -123,6 +136,7 @@ export const newCommentForEventMock = {
 export const newCommentForEventResponse: DataMock = {
   data: {
     createComment: {
+      __typename: "Comment",
       id: "79",
       uuid: "e37910ea-fd5a-4756-9679-01171f3f4444",
       url:
@@ -134,8 +148,11 @@ export const newCommentForEventResponse: DataMock = {
       updatedAt: "2020-12-03T13:02:00Z",
       originComment: null,
       inReplyToComment: null,
+      replies: [],
       actor: {
+        __typename: "Person",
         avatar: {
+          __typename: "Media",
           id: "78",
           url: "http://someavatar.url.me",
         },

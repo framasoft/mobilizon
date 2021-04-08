@@ -114,7 +114,10 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
 
     Logger.debug(inspect(items))
 
-    Enum.each(items, &handling_element/1)
+    items
+    |> Enum.map(fn item -> Task.async(fn -> handling_element(item) end) end)
+    |> Task.await_many()
+
     Logger.debug("Finished processing a collection")
     :ok
   end
