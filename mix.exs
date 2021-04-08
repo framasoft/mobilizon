@@ -148,7 +148,7 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
       {:excoveralls, "~> 0.14.0", only: :test},
-      {:ex_doc, "~> 0.23", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.23", only: [:dev, :test], runtime: false, override: true},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
