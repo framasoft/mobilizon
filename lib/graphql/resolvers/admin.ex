@@ -321,7 +321,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_bitstring(err) ->
+      {:error, {:error, err}} when is_binary(err) ->
         {:error, err}
     end
   end
@@ -336,7 +336,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_bitstring(err) ->
+      {:error, {:error, err}} when is_binary(err) ->
+        {:error, err}
+
+      {:error, err} when is_binary(err) ->
         {:error, err}
     end
   end
@@ -351,7 +354,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_bitstring(err) ->
+      {:error, {:error, err}} when is_binary(err) ->
+        {:error, err}
+
+      {:error, err} when is_binary(err) ->
         {:error, err}
     end
   end

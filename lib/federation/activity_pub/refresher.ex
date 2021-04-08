@@ -127,7 +127,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
        do: process_collection(first, on_behalf_of)
 
   defp process_collection(%{"type" => "OrderedCollection", "first" => first}, on_behalf_of)
-       when is_bitstring(first) do
+       when is_binary(first) do
     Logger.debug("OrderedCollection has a first property pointing to an URI")
 
     with {:ok, data} <- Fetcher.fetch(first, on_behalf_of: on_behalf_of) do

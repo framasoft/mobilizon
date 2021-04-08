@@ -264,7 +264,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @spec valid_email?(String.t() | nil) :: boolean
   defp valid_email?(email) when is_nil(email), do: false
 
-  defp valid_email?(email) when is_bitstring(email) do
+  defp valid_email?(email) when is_binary(email) do
     email
     |> String.trim()
     |> Checker.valid?()

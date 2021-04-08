@@ -126,7 +126,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     end
   end
 
-  defp fetch_object(object) when is_bitstring(object), do: {object, object}
+  defp fetch_object(object) when is_binary(object), do: {object, object}
 
   @spec fetch_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   # Dirty hack
