@@ -144,6 +144,7 @@ defmodule Mobilizon.Mixfile do
       {:slugger, "~> 0.3"},
       {:sentry, "~> 8.0"},
       {:html_entities, "~> 0.5"},
+      {:sweet_xml, "~> 0.6.6"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

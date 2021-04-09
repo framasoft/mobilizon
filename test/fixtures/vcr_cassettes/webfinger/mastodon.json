@@ -3,26 +3,26 @@
     "request": {
       "body": "",
       "headers": {
-        "User-Agent": "localhost - Mobilizon 1.0.0-rc.2-5-g6701e6a4",
-        "Accept": "application/json, application/activity+json, application/jrd+json"
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
       },
       "method": "get",
       "options": {
         "recv_timeout": 20000
       },
       "request_body": "",
-      "url": "http://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
+      "url": "http://social.tcit.fr/.well-known/host-meta"
     },
     "response": {
       "binary": false,
-      "body": "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body>\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.19.3</center>\r\n</body>\r\n</html>\r\n",
+      "body": "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.14.2</center>\r\n</body>\r\n</html>\r\n",
       "headers": {
-        "Server": "nginx/1.19.3",
-        "Date": "Wed, 21 Oct 2020 09:07:41 GMT",
+        "Server": "nginx/1.14.2",
+        "Date": "Thu, 08 Apr 2021 18:59:56 GMT",
         "Content-Type": "text/html",
-        "Content-Length": "169",
+        "Content-Length": "185",
         "Connection": "keep-alive",
-        "Location": "https://social.tcit.fr/.well-known/webfinger?resource=acct:tcit@social.tcit.fr"
+        "Location": "https://social.tcit.fr/.well-known/host-meta"
       },
       "status_code": 301,
       "type": "ok"
@@ -32,7 +32,47 @@
     "request": {
       "body": "",
       "headers": {
-        "User-Agent": "localhost - Mobilizon 1.0.0-rc.2-5-g6701e6a4",
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "https://social.tcit.fr/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\">\n  <Link rel=\"lrdd\" template=\"https://social.tcit.fr/.well-known/webfinger?resource={uri}\"/>\n</XRD>\n",
+      "headers": {
+        "Date": "Thu, 08 Apr 2021 18:59:56 GMT",
+        "Content-Type": "application/xrd+xml; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "Mastodon",
+        "X-Frame-Options": "DENY",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "same-origin",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Clacks-Overhead": "GNU Natalie Nguyen",
+        "Vary": "Accept, Accept-Encoding, Origin",
+        "Cache-Control": "max-age=259200, public",
+        "ETag": "W/\"b397089bfee005b03360ba4435bb4aad\"",
+        "X-Request-Id": "41e837ba-21a6-4324-bda8-cac28a8d1778",
+        "X-Runtime": "0.004198",
+        "X-Cached": "MISS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
         "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
@@ -46,7 +86,7 @@
       "binary": false,
       "body": "{\"subject\":\"acct:tcit@social.tcit.fr\",\"aliases\":[\"https://social.tcit.fr/@tcit\",\"https://social.tcit.fr/users/tcit\"],\"links\":[{\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\",\"href\":\"https://social.tcit.fr/@tcit\"},{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://social.tcit.fr/users/tcit\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://social.tcit.fr/authorize_interaction?uri={uri}\"}]}",
       "headers": {
-        "Date": "Wed, 21 Oct 2020 09:07:41 GMT",
+        "Date": "Thu, 08 Apr 2021 18:59:56 GMT",
         "Content-Type": "application/jrd+json; charset=utf-8",
         "Transfer-Encoding": "chunked",
         "Connection": "keep-alive",
@@ -60,8 +100,8 @@
         "Vary": "Accept, Accept-Encoding, Origin",
         "Cache-Control": "max-age=259200, public",
         "ETag": "W/\"37760e35c1537b8e02b6d4b4f9ebfe82\"",
-        "X-Request-Id": "429bb891-1033-498b-91bb-12835984223f",
-        "X-Runtime": "0.072046",
+        "X-Request-Id": "4c8384d6-d921-4ef6-8a18-1fcbf35ee6bc",
+        "X-Runtime": "0.009277",
         "X-Cached": "MISS"
       },
       "status_code": 200,

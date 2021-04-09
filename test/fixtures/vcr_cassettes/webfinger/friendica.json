@@ -3,28 +3,81 @@
     "request": {
       "body": "",
       "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "http://squeet.me/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>301 Moved Permanently</title>\n</head><body>\n<h1>Moved Permanently</h1>\n<p>The document has moved <a href=\"https://squeet.me/.well-known/host-meta\">here</a>.</p>\n<hr>\n<address>Apache/2.4.25 (Debian) Server at squeet.me Port 80</address>\n</body></html>\n",
+      "headers": {
+        "Date": "Fri, 09 Apr 2021 08:08:52 GMT",
+        "Server": "Apache/2.4.25 (Debian)",
+        "Location": "https://squeet.me/.well-known/host-meta",
+        "Content-Length": "322",
+        "Content-Type": "text/html; charset=iso-8859-1"
+      },
+      "status_code": 301,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "https://squeet.me/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<?xml version='1.0' encoding='UTF-8'?>\n<XRD xmlns='http://docs.oasis-open.org/ns/xri/xrd-1.0'\n     xmlns:hm='http://host-meta.net/xrd/1.0'>\n \n    <hm:Host>squeet.me</hm:Host>\n \n    <Link rel='lrdd' type='application/xrd+xml' template='https://squeet.me/xrd?uri={uri}' />\n    <Link rel='lrdd' type='application/json' template='https://squeet.me/.well-known/webfinger?resource={uri}' />\n    <Link rel='acct-mgmt' href='https://squeet.me/amcd' />\n    <Link rel='http://services.mozilla.com/amcd/0.1' href='https://squeet.me/amcd' />\n\t<Link rel=\"http://oexchange.org/spec/0.8/rel/resident-target\" type=\"application/xrd+xml\" \n        href=\"https://squeet.me/oexchange/xrd\" />\n\n    <Property xmlns:mk=\"http://salmon-protocol.org/ns/magic-key\"\n        type=\"http://salmon-protocol.org/ns/magic-key\"\n        mk:key_id=\"1\">RSA.xlM2BNDH9hnO3W6vOUfJ5-tcUCaX-rx-kKydQd4ht21At4D4d1MrZ6nAQu7rnf5or9YZRhIpgvJvXBqWSo0zmALkUZUVrsS9WhH65I0qt24XNTPZJ1FdPDd7c1C131GzkymCbXBie3U2JaT7t0oimhWKUeA45gNfXk1T1l-7v4k.AQAB</Property>\n</XRD>\n",
+      "headers": {
+        "Date": "Fri, 09 Apr 2021 08:08:52 GMT",
+        "Server": "Apache/2.4.25 (Debian)",
+        "X-Account-Management-Status": "none",
+        "Vary": "Accept-Encoding",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "text/xml;charset=UTF-8"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
         "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
       "options": {
-        "follow_redirect": "true"
+        "recv_timeout": 20000
       },
       "request_body": "",
-      "url": "http://squeet.me/.well-known/webfinger?resource=acct:lain@squeet.me"
+      "url": "https://squeet.me/.well-known/webfinger?resource=acct:lain@squeet.me"
     },
     "response": {
       "binary": false,
-      "body": "{\"subject\":\"acct:lain@squeet.me\",\"aliases\":[\"https:\\/\\/squeet.me\\/~lain\",\"https:\\/\\/squeet.me\\/profile\\/lain\"],\"links\":[{\"rel\":\"http:\\/\\/purl.org\\/macgirvin\\/dfrn\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/schemas.google.com\\/g\\/2010#updates-from\",\"type\":\"application\\/atom+xml\",\"href\":\"https:\\/\\/squeet.me\\/dfrn_poll\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/profile-page\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"self\",\"type\":\"application\\/activity+json\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/microformats.org\\/profile\\/hcard\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/hcard\\/lain\"},{\"rel\":\"http:\\/\\/portablecontacts.net\\/spec\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/poco\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/avatar\",\"type\":\"image\\/jpeg\",\"href\":\"https:\\/\\/squeet.me\\/photo\\/profile\\/301.jpg\"},{\"rel\":\"http:\\/\\/joindiaspora.com\\/seed_location\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\"},{\"rel\":\"salmon\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-replies\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-mention\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\\/mention\"},{\"rel\":\"http:\\/\\/ostatus.org\\/schema\\/1.0\\/subscribe\",\"template\":\"https:\\/\\/squeet.me\\/follow?url={uri}\"},{\"rel\":\"magic-public-key\",\"href\":\"data:application\\/magic-public-key,RSA.AMwa8FUs2fWEjX0xN7yRQgegQffhBpuKNC6fa5VNSVorFjGZhRrlPMn7TQOeihlc9lBz2OsHlIedbYn2uJ7yCs0.AQAB\"},{\"rel\":\"http:\\/\\/purl.org\\/openwebauth\\/v1\",\"type\":\"application\\/x-dfrn+json\",\"href\":\"https:\\/\\/squeet.me\\/owa\"}]}",
+      "body": "{\"subject\":\"acct:lain@squeet.me\",\"aliases\":[\"https:\\/\\/squeet.me\\/~lain\",\"https:\\/\\/squeet.me\\/profile\\/lain\"],\"links\":[{\"rel\":\"http:\\/\\/purl.org\\/macgirvin\\/dfrn\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/schemas.google.com\\/g\\/2010#updates-from\",\"type\":\"application\\/atom+xml\",\"href\":\"https:\\/\\/squeet.me\\/dfrn_poll\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/profile-page\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"self\",\"type\":\"application\\/activity+json\",\"href\":\"https:\\/\\/squeet.me\\/profile\\/lain\"},{\"rel\":\"http:\\/\\/microformats.org\\/profile\\/hcard\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\\/hcard\\/lain\"},{\"rel\":\"http:\\/\\/portablecontacts.net\\/spec\\/1.0\",\"href\":\"https:\\/\\/squeet.me\\/poco\\/lain\"},{\"rel\":\"http:\\/\\/webfinger.net\\/rel\\/avatar\",\"type\":\"image\\/jpeg\",\"href\":\"https:\\/\\/squeet.me\\/photo\\/abf2ee40bfcb044ac7fd1d143c82f63a-4.jpg?ts=1526641378\"},{\"rel\":\"http:\\/\\/joindiaspora.com\\/seed_location\",\"type\":\"text\\/html\",\"href\":\"https:\\/\\/squeet.me\"},{\"rel\":\"salmon\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-replies\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\"},{\"rel\":\"http:\\/\\/salmon-protocol.org\\/ns\\/salmon-mention\",\"href\":\"https:\\/\\/squeet.me\\/salmon\\/lain\\/mention\"},{\"rel\":\"http:\\/\\/ostatus.org\\/schema\\/1.0\\/subscribe\",\"template\":\"https:\\/\\/squeet.me\\/follow?url={uri}\"},{\"rel\":\"magic-public-key\",\"href\":\"data:application\\/magic-public-key,RSA.zBrwVSzZ9YSNfTE3vJFCB6BB9-EGm4o0Lp9rlU1JWisWMZmFGuU8yftNA56KGVz2UHPY6weUh51tifa4nvIKzQ.AQAB\"},{\"rel\":\"http:\\/\\/purl.org\\/openwebauth\\/v1\",\"type\":\"application\\/x-zot+json\",\"href\":\"https:\\/\\/squeet.me\\/owa\"}]}",
       "headers": {
-        "Date": "Tue, 13 Nov 2018 11:11:09 GMT",
-        "Server": "Apache",
-        "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
-        "Cache-Control": "no-store, no-cache, must-revalidate",
-        "Pragma": "no-cache",
+        "Date": "Fri, 09 Apr 2021 08:08:52 GMT",
+        "Server": "Apache/2.4.25 (Debian)",
         "X-Account-Management-Status": "none",
         "Access-Control-Allow-Origin": "*",
-        "Set-Cookie": "PHPSESSID=330arcps63iok272c5hqdsfhp3; path=/; secure; HttpOnly",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Content-Type": "application/json; charset=utf-8"
       },

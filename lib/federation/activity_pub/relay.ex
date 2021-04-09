@@ -159,7 +159,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   @spec finger_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   defp finger_actor(nickname) do
     case WebFinger.finger(nickname) do
-      {:ok, %{"url" => url}} when not is_nil(url) ->
+      {:ok, url} when is_binary(url) ->
         {:ok, url}
 
       _e ->
