@@ -225,9 +225,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   defp save_picture(media, key) do
-    with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
+    with {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
            Upload.store(media.file, type: key, description: media.alt) do
-      %{"name" => name, "url" => url, "mediaType" => content_type}
+      %{"name" => name, "url" => url, "content_type" => content_type, "size" => size}
     end
   end
 
