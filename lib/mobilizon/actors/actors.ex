@@ -156,7 +156,7 @@ defmodule Mobilizon.Actors do
 
     query
     |> filter_by_type(type)
-    |> filter_by_name(String.split(name, "@"))
+    |> filter_by_name(name |> String.trim() |> String.trim_leading("@") |> String.split("@"))
     |> Repo.one()
   end
 
