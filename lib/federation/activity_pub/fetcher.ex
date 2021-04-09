@@ -39,6 +39,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
       {:ok, %Tesla.Env{} = res} ->
         {:error, res}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
