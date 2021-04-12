@@ -102,6 +102,12 @@ export const configMock = {
         },
       ],
       slogan: null,
+      uploadLimits: {
+        __typename: "UploadLimits",
+        default: 10_000_000,
+        avatar: 2_000_000,
+        banner: 4_000_000,
+      },
     },
   },
 };
