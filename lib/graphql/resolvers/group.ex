@@ -96,7 +96,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   # TODO Move me to somewhere cleaner
   defp save_attached_pictures(args) do
     Enum.reduce([:avatar, :banner], args, fn key, args ->
-      if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
+      if is_map(args) && Map.has_key?(args, key) && !is_nil(args[key][:media]) do
         pic = args[key][:media]
 
         with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
@@ -122,14 +122,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         }
       ) do
     with %Actor{id: creator_actor_id} = creator_actor <- Users.get_actor_for_user(user),
-         args <- Map.update(args, :preferred_username, "", &String.downcase/1),
-         args <- Map.put(args, :creator_actor, creator_actor),
-         args <- Map.put(args, :creator_actor_id, creator_actor_id),
-         args <- save_attached_pictures(args),
+         args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
+         args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
+         args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
+         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.create_group(args) do
       {:ok, group}
     else
+      {:picture, {:error, :file_too_large}} ->
+        {:error, dgettext("errors", "The provided picture is too heavy")}
+
       {:error, err} when is_binary(err) ->
         {:error, err}
     end
@@ -154,12 +157,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
          {:administrator, true} <-
            {:administrator, Actors.is_administrator?(updater_actor.id, group_id)},
-         args <- Map.put(args, :updater_actor, updater_actor),
-         args <- save_attached_pictures(args),
+         args when is_map(args) <- Map.put(args, :updater_actor, updater_actor),
+         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, _activity, %Actor{type: :Group} = group} <-
            API.Groups.update_group(args) do
       {:ok, group}
     else
+      {:picture, {:error, :file_too_large}} ->
+        {:error, dgettext("errors", "The provided picture is too heavy")}
+
       {:error, err} when is_binary(err) ->
         {:error, err}
 
