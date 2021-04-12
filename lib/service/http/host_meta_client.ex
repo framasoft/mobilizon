@@ -1,7 +1,7 @@
-defmodule Mobilizon.Service.HTTP.GeospatialClient do
+defmodule Mobilizon.Service.HTTP.HostMetaClient do
   @moduledoc """
   Tesla HTTP Basic Client
-  with JSON middleware
+  with XML middleware
   """
 
   use Tesla
@@ -17,7 +17,8 @@ defmodule Mobilizon.Service.HTTP.GeospatialClient do
 
   plug(Tesla.Middleware.Timeout, timeout: 10_000)
 
-  plug(Tesla.Middleware.Headers, [{"User-Agent", Config.instance_user_agent()}])
-
-  plug(Tesla.Middleware.JSON)
+  plug(Tesla.Middleware.Headers, [
+    {"User-Agent", Config.instance_user_agent()},
+    {"Accept", "application/xrd+xml, application/xml, text/xml"}
+  ])
 end

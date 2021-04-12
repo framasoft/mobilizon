@@ -78,7 +78,7 @@ defmodule Mobilizon.Admin do
   defp stringify_struct(struct), do: struct
 
   def get_admin_setting_value(group, name, fallback \\ nil)
-      when is_bitstring(group) and is_bitstring(name) do
+      when is_binary(group) and is_binary(name) do
     case Repo.get_by(Setting, group: group, name: name) do
       nil ->
         fallback

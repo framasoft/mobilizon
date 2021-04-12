@@ -26,7 +26,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
   def get_url(%{"id" => id}), do: id
-  def get_url(id) when is_bitstring(id), do: id
+  def get_url(id) when is_binary(id), do: id
   def get_url(ids) when is_list(ids), do: get_url(hd(ids))
   def get_url(_), do: nil
 
@@ -223,7 +223,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
-  def get_actor(%{"actor" => %{"id" => id}}) when is_bitstring(id) do
+  def get_actor(%{"actor" => %{"id" => id}}) when is_binary(id) do
     id
   end
 

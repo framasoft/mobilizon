@@ -654,7 +654,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
   def make_actor_from_nickname(nickname) do
     case WebFinger.finger(nickname) do
-      {:ok, %{"url" => url}} when not is_nil(url) ->
+      {:ok, url} when is_binary(url) ->
         make_actor_from_url(url)
 
       _e ->

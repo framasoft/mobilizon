@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
         %{"type" => "Document", "url" => media_url, "name" => name},
         actor_id
       )
-      when is_bitstring(media_url) do
+      when is_binary(media_url) do
     with {:ok, %{body: body}} <- Tesla.get(media_url, opts: @http_options),
          {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
            Upload.store(%{body: body, name: name}),

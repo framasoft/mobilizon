@@ -75,6 +75,11 @@ export const CONFIG = gql`
           label
         }
       }
+      uploadLimits {
+        default
+        avatar
+        banner
+      }
     }
   }
 `;

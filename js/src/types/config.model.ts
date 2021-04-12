@@ -89,4 +89,9 @@ export interface IConfig {
     ldap: boolean;
     oauthProviders: IOAuthProvider[];
   };
+  uploadLimits: {
+    default: number;
+    avatar: number;
+    banner: number;
+  };
 }

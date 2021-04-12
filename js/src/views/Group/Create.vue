@@ -58,12 +58,20 @@
 
       <div>
         <b>{{ $t("Avatar") }}</b>
-        <picture-upload :textFallback="$t('Avatar')" v-model="avatarFile" />
+        <picture-upload
+          :textFallback="$t('Avatar')"
+          v-model="avatarFile"
+          :maxSize="avatarMaxSize"
+        />
       </div>
 
       <div>
         <b>{{ $t("Banner") }}</b>
-        <picture-upload :textFallback="$t('Banner')" v-model="bannerFile" />
+        <picture-upload
+          :textFallback="$t('Banner')"
+          v-model="bannerFile"
+          :maxSize="bannerMaxSize"
+        />
       </div>
 
       <button class="button is-primary" native-type="submit">
@@ -84,6 +92,10 @@ import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
+import { ErrorResponse } from "apollo-link-error";
+import { ServerParseError } from "apollo-link-http-common";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 
 @Component({
   components: {
@@ -93,12 +105,15 @@ import PictureUpload from "../../components/PictureUpload.vue";
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
     },
+    config: CONFIG,
   },
 })
 export default class CreateGroup extends mixins(IdentityEditionMixin) {
   currentActor!: IPerson;
 
   group = new Group();
+
+  config!: IConfig;
 
   avatarFile: File | null = null;
 
@@ -110,6 +125,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
 
   async createGroup(): Promise<void> {
     try {
+      this.errors = [];
       await this.$apollo.mutate({
         mutation: CREATE_GROUP,
         variables: this.buildVariables(),
@@ -154,6 +170,14 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
     return window.location.hostname;
   }
 
+  get avatarMaxSize(): number | undefined {
+    return this?.config?.uploadLimits?.avatar;
+  }
+
+  get bannerMaxSize(): number | undefined {
+    return this?.config?.uploadLimits?.banner;
+  }
+
   @Watch("group.name")
   updateUsername(groupName: string): void {
     this.group.preferredUsername = convertToUsername(groupName);
@@ -194,9 +218,22 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
     };
   }
 
-  private handleError(err: any) {
+  private handleError(err: ErrorResponse) {
+    if (err?.networkError?.name === "ServerParseError") {
+      const error = err?.networkError as ServerParseError;
+
+      if (error?.response?.status === 413) {
+        this.errors.push(
+          this.$t(
+            "Unable to create the group. One of the pictures may be too heavy."
+          ) as string
+        );
+      }
+    }
     this.errors.push(
-      ...err.graphQLErrors.map(({ message }: { message: string }) => message)
+      ...(err.graphQLErrors || []).map(
+        ({ message }: { message: string }) => message
+      )
     );
   }
 }

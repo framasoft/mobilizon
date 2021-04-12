@@ -12,11 +12,9 @@ defmodule Mobilizon.Service.HTTP.RemoteMediaDownloaderClient do
 
   adapter(Tesla.Adapter.Hackney, @default_opts)
 
-  @user_agent Config.instance_user_agent()
-
   plug(Tesla.Middleware.FollowRedirects)
 
   plug(Tesla.Middleware.Timeout, timeout: 10_000)
 
-  plug(Tesla.Middleware.Headers, [{"User-Agent", @user_agent}])
+  plug(Tesla.Middleware.Headers, [{"User-Agent", Config.instance_user_agent()}])
 end

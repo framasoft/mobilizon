@@ -155,7 +155,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   end
 
   @spec get_address(map | binary | nil) :: integer | nil
-  defp get_address(address_url) when is_bitstring(address_url) do
+  defp get_address(address_url) when is_binary(address_url) do
     get_address(%{"id" => address_url})
   end
 

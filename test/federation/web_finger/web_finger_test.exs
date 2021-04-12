@@ -54,10 +54,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
   describe "fingering" do
     test "a mastodon actor" do
       use_cassette "webfinger/mastodon" do
-        res = %{
-          "subject" => "acct:" <> @mastodon_account,
-          "url" => "https://social.tcit.fr/users/#{@mastodon_account_username}"
-        }
+        res = "https://social.tcit.fr/users/#{@mastodon_account_username}"
 
         assert {:ok, res} == WebFinger.finger(@mastodon_account)
       end
@@ -65,10 +62,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
     test "a pleroma actor" do
       use_cassette "webfinger/pleroma" do
-        res = %{
-          "subject" => "acct:" <> @pleroma_account,
-          "url" => "https://pleroma.soykaf.com/users/#{@pleroma_account_username}"
-        }
+        res = "https://pleroma.soykaf.com/users/#{@pleroma_account_username}"
 
         assert {:ok, res} == WebFinger.finger(@pleroma_account)
       end
@@ -76,10 +70,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
     test "a peertube actor" do
       use_cassette "webfinger/peertube" do
-        res = %{
-          "subject" => "acct:" <> @peertube_account,
-          "url" => "https://framatube.org/accounts/#{@peertube_account_username}"
-        }
+        res = "https://framatube.org/accounts/#{@peertube_account_username}"
 
         assert {:ok, res} == WebFinger.finger(@peertube_account)
       end
@@ -87,10 +78,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
     test "a friendica actor" do
       use_cassette "webfinger/friendica" do
-        res = %{
-          "subject" => "acct:" <> @friendica_account,
-          "url" => "https://squeet.me/profile/#{@friendica_account_username}"
-        }
+        res = "https://squeet.me/profile/#{@friendica_account_username}"
 
         assert {:ok, res} == WebFinger.finger(@friendica_account)
       end

@@ -1073,5 +1073,10 @@
   "Personal feeds": "Flux personnels",
   "These feeds contain event data for the events for which any of your profiles is a participant or creator. You should keep these private. You can find feeds for specific profiles on each profile edition page.": "Ces flux contiennent des informations sur les événements pour lesquels n'importe lequel de vos profils est un⋅e participant⋅e ou un⋅e créateur⋅ice. Vous devriez les garder privés. Vous pouvez trouver des flux spécifiques à chaque profil sur la page d'édition des profils.",
   "The event will show as attributed to this profile.": "L'événement sera affiché comme attribué à ce profil.",
-  "You may show some members as contacts.": "Vous pouvez afficher certain⋅es membres en tant que contacts."
+  "You may show some members as contacts.": "Vous pouvez afficher certain⋅es membres en tant que contacts.",
+  "The selected picture is too heavy. You need to select a file smaller than {size}.": "L'image sélectionnée est trop lourde. Vous devez sélectionner un fichier de moins de {size}.",
+  "Unable to create the group. One of the pictures may be too heavy.": "Impossible de créer le groupe. Une des images est trop lourde.",
+  "Unable to update the profile. The avatar picture may be too heavy.": "Impossible de mettre à jour le profil. L'image d'avatar est probablement trop lourde.",
+  "Unable to create the profile. The avatar picture may be too heavy.": "Impossible de créer le profil. L'image d'avatar est probablement trop lourde.",
+  "Error while loading the preview": "Erreur lors du chargement de l'aperçu"
 }

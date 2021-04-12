@@ -13,7 +13,6 @@ import buildCurrentUserResolver from "@/apollo/user";
 import { isServerError } from "@/types/apollo";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
 import { logout } from "@/utils/auth";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { Socket as PhoenixSocket } from "phoenix";
 import * as AbsintheSocket from "@absinthe/socket";
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
@@ -123,12 +122,7 @@ const errorLink = onError(
     }
 
     if (networkError) {
-      console.log(`[Network error]: ${networkError}`);
-      Snackbar.open({
-        message: "Please refresh the page and retry.",
-        type: "is-danger",
-        position: "is-bottom",
-      });
+      console.error(`[Network error]: ${networkError}`);
     }
   }
 );

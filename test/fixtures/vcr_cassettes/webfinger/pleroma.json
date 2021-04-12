@@ -3,38 +3,107 @@
     "request": {
       "body": "",
       "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "http://pleroma.soykaf.com/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body>\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.18.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n",
+      "headers": {
+        "Server": "nginx/1.18.0 (Ubuntu)",
+        "Date": "Thu, 08 Apr 2021 18:59:57 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "178",
+        "Connection": "keep-alive",
+        "Location": "https://pleroma.soykaf.com/.well-known/host-meta"
+      },
+      "status_code": 301,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "https://pleroma.soykaf.com/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\"><Link rel=\"lrdd\" template=\"https://pleroma.soykaf.com/.well-known/webfinger?resource={uri}\" type=\"application/xrd+xml\" /></XRD>",
+      "headers": {
+        "Server": "nginx/1.18.0 (Ubuntu)",
+        "Date": "Thu, 08 Apr 2021 18:59:57 GMT",
+        "Content-Type": "application/xrd+xml; charset=utf-8",
+        "Content-Length": "220",
+        "Connection": "keep-alive",
+        "access-control-allow-credentials": "true",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Link,X-RateLimit-Reset,X-RateLimit-Limit,X-RateLimit-Remaining,X-Request-Id,Idempotency-Key",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "content-security-policy": "upgrade-insecure-requests;script-src 'self';connect-src 'self' blob: https://pleroma.soykaf.com wss://pleroma.soykaf.com;media-src 'self';img-src 'self' data: blob:;default-src 'none';base-uri 'self';frame-ancestors 'none';style-src 'self' 'unsafe-inline';font-src 'self';manifest-src 'self';",
+        "referrer-policy": "same-origin",
+        "x-content-type-options": "nosniff",
+        "x-download-options": "noopen",
+        "x-frame-options": "DENY",
+        "x-permitted-cross-domain-policies": "none",
+        "x-request-id": "FnP3HZA8tRWC7E4EYzyS",
+        "x-xss-protection": "1; mode=block"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
         "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
       "options": {
-        "follow_redirect": "true"
+        "recv_timeout": 20000
       },
       "request_body": "",
-      "url": "http://pleroma.soykaf.com/.well-known/webfinger?resource=acct:lain@pleroma.soykaf.com"
+      "url": "https://pleroma.soykaf.com/.well-known/webfinger?resource=acct:lain@pleroma.soykaf.com"
     },
     "response": {
       "binary": false,
-      "body": "{\"aliases\":[\"https://pleroma.soykaf.com/users/lain\"],\"links\":[{\"href\":\"https://pleroma.soykaf.com/users/lain/feed.atom\",\"rel\":\"http://schemas.google.com/g/2010#updates-from\",\"type\":\"application/atom+xml\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\"},{\"href\":\"https://pleroma.soykaf.com/users/lain/salmon\",\"rel\":\"salmon\"},{\"href\":\"data:application/magic-public-key,RSA.u39dKLin8N4PywPvasEGXstOMsgg9m1OEKnpfHnSHqc6UOtIPs5-aI_LcLbhIEH2EVl6jstvtqMIloPch1FizZ3OBiKz81dXTiEZ3NfKgj_GJfIlipChAadxrmUyWT_Pr0qPaF1vhPrkSTwR8iDNUiQ-OEggRPpJVkJ619MXNdsJE59yklZiD1WY0vC9aG9m-dh0BANKNwSjwfZ3uFjDh0UosMATKjPTSO_I59nK_lArex_jAwTnVm6Dryk2qR2XXZyzTzZAHuYqSM77RlsNTJUCOaSadl816eZAvU3TF-ibIou0D-0sN-M-QehRh93sVJ95U40GQz8jOGc_5wK8xw==.AQAB\",\"rel\":\"magic-public-key\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/activity+json\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/ld+json; profile=\\\"https://www.w3.org/ns/activitystreams\\\"\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://pleroma.soykaf.com/ostatus_subscribe?acct={uri}\"}],\"subject\":\"acct:lain@pleroma.soykaf.com\"}",
+      "body": "{\"aliases\":[\"https://pleroma.soykaf.com/users/lain\"],\"links\":[{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"http://webfinger.net/rel/profile-page\",\"type\":\"text/html\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/activity+json\"},{\"href\":\"https://pleroma.soykaf.com/users/lain\",\"rel\":\"self\",\"type\":\"application/ld+json; profile=\\\"https://www.w3.org/ns/activitystreams\\\"\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://pleroma.soykaf.com/ostatus_subscribe?acct={uri}\"}],\"subject\":\"acct:lain@pleroma.soykaf.com\"}",
       "headers": {
-        "Server": "nginx/1.10.3",
-        "Date": "Tue, 13 Nov 2018 11:11:11 GMT",
+        "Server": "nginx/1.18.0 (Ubuntu)",
+        "Date": "Thu, 08 Apr 2021 18:59:57 GMT",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": "1214",
+        "Content-Length": "576",
         "Connection": "keep-alive",
         "Vary": "Accept-Encoding",
-        "cache-control": "max-age=0, private, must-revalidate",
-        "x-request-id": "2ljal4oljell0gfni41am571",
-        "access-control-allow-origin": "*",
-        "access-control-expose-headers": "",
         "access-control-allow-credentials": "true",
-        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Authorization, Content-Type",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Permitted-Cross-Domain-Policies": "none",
-        "X-Frame-Options": "DENY",
-        "X-Content-Type-Options": "nosniff",
-        "Referrer-Policy": "same-origin",
-        "X-Download-Options": "noopen"
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Link,X-RateLimit-Reset,X-RateLimit-Limit,X-RateLimit-Remaining,X-Request-Id,Idempotency-Key",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "content-security-policy": "upgrade-insecure-requests;script-src 'self';connect-src 'self' blob: https://pleroma.soykaf.com wss://pleroma.soykaf.com;media-src 'self';img-src 'self' data: blob:;default-src 'none';base-uri 'self';frame-ancestors 'none';style-src 'self' 'unsafe-inline';font-src 'self';manifest-src 'self';",
+        "referrer-policy": "same-origin",
+        "x-content-type-options": "nosniff",
+        "x-download-options": "noopen",
+        "x-frame-options": "DENY",
+        "x-permitted-cross-domain-policies": "none",
+        "x-request-id": "FnP3HZJ_kh8ymy8E1OCx",
+        "x-xss-protection": "1; mode=block"
       },
       "status_code": 200,
       "type": "ok"

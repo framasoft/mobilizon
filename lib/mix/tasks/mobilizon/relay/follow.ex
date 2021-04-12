@@ -16,9 +16,10 @@ defmodule Mix.Tasks.Mobilizon.Relay.Follow do
       {:ok, _activity, _follow} ->
         # put this task to sleep to allow the genserver to push out the messages
         :timer.sleep(500)
+        shell_info("Requested to follow #{target}")
 
       {:error, e} ->
-        IO.puts(:stderr, "Error while following #{target}: #{inspect(e)}")
+        shell_error("Error while following #{target}: #{inspect(e)}")
     end
   end
 

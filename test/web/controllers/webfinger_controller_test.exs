@@ -23,9 +23,9 @@ defmodule Mobilizon.Web.WebFingerControllerTest do
     conn = get(conn, "/.well-known/host-meta")
 
     assert response(conn, 200) ==
-             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\"><Link rel=\"lrdd\" template=\"#{
+             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\" xmlns:hm=\"http://host-meta.net/ns/1.0\"><hm:Host>mobilizon.test</hm:Host><Link rel=\"lrdd\" template=\"#{
                Endpoint.url()
-             }/.well-known/webfinger?resource={uri}\" type=\"application/xrd+xml\" /></XRD>"
+             }/.well-known/webfinger?resource={uri}\" type=\"application/jrd+json\" /></XRD>"
 
     assert {"content-type", "application/xrd+xml; charset=utf-8"} in conn.resp_headers
   end

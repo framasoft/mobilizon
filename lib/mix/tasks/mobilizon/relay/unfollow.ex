@@ -16,9 +16,10 @@ defmodule Mix.Tasks.Mobilizon.Relay.Unfollow do
       {:ok, _activity, _follow} ->
         # put this task to sleep to allow the genserver to push out the messages
         :timer.sleep(500)
+        shell_info("Unfollowed #{target}")
 
       {:error, e} ->
-        IO.puts(:stderr, "Error while unfollowing #{target}: #{inspect(e)}")
+        shell_error("Error while unfollowing #{target}: #{inspect(e)}")
     end
   end
 

@@ -17,7 +17,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   def fetch(url, options \\ []) do
     on_behalf_of = Keyword.get(options, :on_behalf_of, Relay.get_actor())
 
-    with date <- Signature.generate_date_header(),
+    with false <- address_invalid(url),
+         date <- Signature.generate_date_header(),
          headers <-
            [{:Accept, "application/activity+json"}]
            |> maybe_date_fetch(date)
@@ -38,6 +39,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
       {:ok, %Tesla.Env{} = res} ->
         {:error, res}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -88,6 +92,14 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
       {:error, err} ->
         {:error, err}
+    end
+  end
+
+  @spec address_invalid(String.t()) :: false | {:error, :invalid_url}
+  defp address_invalid(address) do
+    with %URI{host: host, scheme: scheme} <- URI.parse(address),
+         true <- is_nil(host) or is_nil(scheme) do
+      {:error, :invalid_url}
     end
   end
 end

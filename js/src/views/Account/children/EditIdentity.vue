@@ -32,6 +32,7 @@
       <picture-upload
         v-model="avatarFile"
         :defaultImage="identity.avatar"
+        :maxSize="avatarMaxSize"
         class="picture-upload"
       />
 
@@ -231,6 +232,9 @@ import {
   DELETE_FEED_TOKEN,
 } from "@/graphql/feed_tokens";
 import { IFeedToken } from "@/types/feedtoken.model";
+import { ServerParseError } from "apollo-link-http-common";
+import { IConfig } from "@/types/config.model";
+import { CONFIG } from "@/graphql/config";
 
 @Component({
   components: {
@@ -256,12 +260,15 @@ import { IFeedToken } from "@/types/feedtoken.model";
         this.handleErrors(graphQLErrors);
       },
     },
+    config: CONFIG,
   },
 })
 export default class EditIdentity extends mixins(identityEditionMixin) {
   @Prop({ type: Boolean }) isUpdate!: boolean;
 
   @Prop({ type: String }) identityName!: string;
+
+  config!: IConfig;
 
   errors: string[] = [];
 
@@ -450,6 +457,10 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
+  get avatarMaxSize(): number | undefined {
+    return this?.config?.uploadLimits?.avatar;
+  }
+
   async generateFeedTokens(): Promise<void> {
     const newToken = await this.createNewFeedToken();
     this.identity.feedTokens.push(newToken);
@@ -527,6 +538,21 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   private handleError(err: any) {
     console.error(err);
+
+    if (err?.networkError?.name === "ServerParseError") {
+      const error = err?.networkError as ServerParseError;
+
+      if (error?.response?.status === 413) {
+        const errorMessage = this.isUpdate
+          ? this.$t(
+              "Unable to update the profile. The avatar picture may be too heavy."
+            )
+          : this.$t(
+              "Unable to create the profile. The avatar picture may be too heavy."
+            );
+        this.errors.push(errorMessage as string);
+      }
+    }
 
     if (err.graphQLErrors !== undefined) {
       err.graphQLErrors.forEach(({ message }: { message: string }) => {

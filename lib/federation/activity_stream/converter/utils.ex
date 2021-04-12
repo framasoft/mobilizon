@@ -94,7 +94,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     end
   end
 
-  defp fetch_tag(tag) when is_bitstring(tag), do: [tag_without_hash(tag)]
+  defp fetch_tag(tag) when is_binary(tag), do: [tag_without_hash(tag)]
 
   defp tag_without_hash("#" <> tag_title), do: tag_title
   defp tag_without_hash(tag_title), do: tag_title

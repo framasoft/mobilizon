@@ -3,33 +3,88 @@
     "request": {
       "body": "",
       "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "http://framatube.org/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.14.2</center>\r\n</body>\r\n</html>\r\n",
+      "headers": {
+        "Server": "nginx/1.14.2",
+        "Date": "Thu, 08 Apr 2021 18:59:59 GMT",
+        "Content-Type": "text/html",
+        "Content-Length": "185",
+        "Connection": "keep-alive",
+        "Location": "https://framatube.org/.well-known/host-meta"
+      },
+      "status_code": 301,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
+        "Accept": "application/xrd+xml, application/xml, text/xml"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 20000
+      },
+      "request_body": "",
+      "url": "https://framatube.org/.well-known/host-meta"
+    },
+    "response": {
+      "binary": false,
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\">\n  <Link rel=\"lrdd\" type=\"application/xrd+xml\" template=\"https://framatube.org/.well-known/webfinger?resource={uri}\"/>\n</XRD>",
+      "headers": {
+        "Server": "nginx/1.14.2",
+        "Date": "Thu, 08 Apr 2021 18:59:59 GMT",
+        "Content-Type": "application/xml; charset=utf-8",
+        "Content-Length": "219",
+        "Connection": "keep-alive",
+        "Tk": "N",
+        "Access-Control-Allow-Origin": "*",
+        "ETag": "W/\"db-l6RCFQ8UK40DPZ9VQ8G/SKn3A64\""
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "User-Agent": "localhost - Mobilizon 1.1.0-32-gbd53bfc4-dirty",
         "Accept": "application/json, application/activity+json, application/jrd+json"
       },
       "method": "get",
       "options": {
-        "follow_redirect": "true"
+        "recv_timeout": 20000
       },
       "request_body": "",
-      "url": "http://framatube.org/.well-known/webfinger?resource=acct:framasoft@framatube.org"
+      "url": "https://framatube.org/.well-known/webfinger?resource=acct:framasoft@framatube.org"
     },
     "response": {
       "binary": false,
-      "body": "{\"subject\":\"acct:framasoft@framatube.org\",\"aliases\":[\"https://framatube.org/accounts/framasoft\"],\"links\":[{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://framatube.org/accounts/framasoft\"}]}",
+      "body": "{\"subject\":\"acct:framasoft@framatube.org\",\"aliases\":[\"https://framatube.org/accounts/framasoft\"],\"links\":[{\"rel\":\"self\",\"type\":\"application/activity+json\",\"href\":\"https://framatube.org/accounts/framasoft\"},{\"rel\":\"http://ostatus.org/schema/1.0/subscribe\",\"template\":\"https://framatube.org/remote-interaction?uri={uri}\"}]}",
       "headers": {
-        "Server": "nginx/1.10.3",
-        "Date": "Tue, 13 Nov 2018 11:11:11 GMT",
+        "Server": "nginx/1.14.2",
+        "Date": "Thu, 08 Apr 2021 18:59:59 GMT",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": "207",
+        "Content-Length": "321",
         "Connection": "keep-alive",
-        "X-DNS-Prefetch-Control": "off",
-        "X-Frame-Options": "DENY",
-        "X-Download-Options": "noopen",
-        "X-Content-Type-Options": "nosniff",
-        "X-XSS-Protection": "1; mode=block",
         "Tk": "N",
-        "ETag": "W/\"cf-VoWlsif7OQ4xxqki7jRAnOPKRes\"",
-        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
-        "X-Robots-Tag": "none"
+        "Access-Control-Allow-Origin": "*",
+        "ETag": "W/\"141-yxvvlAPayX5y2q2Yra8qYVtz4VU\""
       },
       "status_code": 200,
       "type": "ok"

@@ -134,6 +134,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       auth: %{
         ldap: Config.ldap_enabled?(),
         oauth_providers: Config.oauth_consumer_strategies()
+      },
+      upload_limits: %{
+        default: Config.get([:instance, :upload_limit]),
+        avatar: Config.get([:instance, :avatar_upload_limit]),
+        banner: Config.get([:instance, :banner_upload_limit])
       }
     }
   end
