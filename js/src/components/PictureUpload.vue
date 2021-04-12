@@ -1,15 +1,35 @@
 <template>
   <div class="root">
-    <figure class="image" v-if="imageSrc">
-      <img :src="imageSrc" />
+    <figure class="image" v-if="imageSrc && !imagePreviewLoadingError">
+      <img :src="imageSrc" @error="showImageLoadingError" />
     </figure>
     <figure class="image is-128x128" v-else>
-      <div class="image-placeholder">
-        <span class="has-text-centered">{{ textFallback }}</span>
+      <div
+        class="image-placeholder"
+        :class="{ error: imagePreviewLoadingError }"
+      >
+        <span class="has-text-centered" v-if="imagePreviewLoadingError">{{
+          $t("Error while loading the preview")
+        }}</span>
+        <span class="has-text-centered" v-else>{{ textFallback }}</span>
       </div>
     </figure>
 
     <div class="action-buttons">
+      <p v-if="pictureFile" class="metadata">
+        <span class="name" :title="pictureFile.name">{{
+          pictureFile.name
+        }}</span>
+        <span class="size">({{ formatBytes(pictureFile.size) }})</span>
+      </p>
+      <p v-if="pictureTooBig" class="picture-too-big">
+        {{
+          $t(
+            "The selected picture is too heavy. You need to select a file smaller than {size}.",
+            { size: formatBytes(maxSize) }
+          )
+        }}
+      </p>
       <b-field class="file is-primary">
         <b-upload @input="onFileChanged" :accept="accept" class="file-label">
           <span class="file-cta">
@@ -47,6 +67,10 @@ figure.image {
   justify-content: center;
   align-items: center;
 
+  &.error {
+    border: 2px solid red;
+  }
+
   span {
     flex: 1;
     color: #eee;
@@ -56,6 +80,27 @@ figure.image {
 .action-buttons {
   display: flex;
   flex-direction: column;
+
+  .file {
+    justify-content: center;
+  }
+
+  .metadata {
+    display: inline-flex;
+
+    .name {
+      max-width: 200px;
+      display: block;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-right: 5px;
+    }
+  }
+}
+
+.picture-too-big {
+  color: $danger;
 }
 </style>
 
@@ -87,30 +132,32 @@ export default class PictureUpload extends Vue {
   })
   textFallback!: string;
 
-  imageSrc: string | null = this.defaultImage ? this.defaultImage.url : null;
+  @Prop({ type: Number, required: false, default: 10_485_760 })
+  maxSize!: number;
 
   file!: File | null;
 
-  mounted(): void {
-    if (this.pictureFile) {
-      this.updatePreview(this.pictureFile);
+  imagePreviewLoadingError = false;
+
+  get pictureTooBig(): boolean {
+    return this.pictureFile?.size > this.maxSize;
+  }
+
+  get imageSrc(): string | null {
+    if (this.pictureFile !== undefined) {
+      if (this.pictureFile === null) return null;
+      try {
+        return URL.createObjectURL(this.pictureFile);
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
-
-  @Watch("pictureFile")
-  onPictureFileChanged(val: File): void {
-    this.updatePreview(val);
-  }
-
-  @Watch("defaultImage")
-  onDefaultImageChange(defaultImage: IMedia): void {
-    this.imageSrc = defaultImage ? defaultImage.url : null;
+    return this.defaultImage ? this.defaultImage.url : null;
   }
 
   onFileChanged(file: File | null): void {
     this.$emit("change", file);
 
-    this.updatePreview(file);
     this.file = file;
   }
 
@@ -118,13 +165,23 @@ export default class PictureUpload extends Vue {
     this.onFileChanged(null);
   }
 
-  private updatePreview(file?: File | null) {
-    if (file) {
-      this.imageSrc = URL.createObjectURL(file);
-      return;
-    }
+  @Watch("imageSrc")
+  resetImageLoadingError(): void {
+    this.imagePreviewLoadingError = false;
+  }
 
-    this.imageSrc = null;
+  showImageLoadingError(): void {
+    this.imagePreviewLoadingError = true;
+  }
+
+  // https://gist.github.com/zentala/1e6f72438796d74531803cc3833c039c
+  formatBytes(bytes: number, decimals: number): string {
+    if (bytes == 0) return "0 Bytes";
+    const k = 1024,
+      dm = decimals || 2,
+      sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
+      i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
 }
 </script>

@@ -47,6 +47,7 @@
             :textFallback="$t('Avatar')"
             v-model="avatarFile"
             :defaultImage="group.avatar"
+            :maxSize="avatarMaxSize"
           />
         </b-field>
 
@@ -55,6 +56,7 @@
             :textFallback="$t('Banner')"
             v-model="bannerFile"
             :defaultImage="group.banner"
+            :maxSize="bannerMaxSize"
           />
         </b-field>
         <p class="label">{{ $t("Group visibility") }}</p>
@@ -158,6 +160,9 @@
           }}</b-button>
         </div>
       </form>
+      <b-message type="is-danger" v-for="(value, index) in errors" :key="index">
+        {{ value }}
+      </b-message>
     </section>
     <b-message v-else>
       {{ $t("You are not an administrator for this group.") }}
@@ -177,6 +182,10 @@ import RouteName from "../../router/name";
 import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
+import { ErrorResponse } from "apollo-link-error";
+import { ServerParseError } from "apollo-link-http-common";
 
 @Component({
   components: {
@@ -184,13 +193,20 @@ import { Address, IAddress } from "../../types/address.model";
     PictureUpload,
     editor: () => import("../../components/Editor.vue"),
   },
+  apollo: {
+    config: CONFIG,
+  },
 })
 export default class GroupSettings extends mixins(GroupMixin) {
   loading = true;
 
   RouteName = RouteName;
 
+  config!: IConfig;
+
   newMemberUsername = "";
+
+  errors: string[] = [];
 
   avatarFile: File | null = null;
 
@@ -205,12 +221,16 @@ export default class GroupSettings extends mixins(GroupMixin) {
   showCopiedTooltip = false;
 
   async updateGroup(): Promise<void> {
-    const variables = this.buildVariables();
-    await this.$apollo.mutate<{ updateGroup: IGroup }>({
-      mutation: UPDATE_GROUP,
-      variables,
-    });
-    this.$notifier.success(this.$t("Group settings saved") as string);
+    try {
+      const variables = this.buildVariables();
+      await this.$apollo.mutate<{ updateGroup: IGroup }>({
+        mutation: UPDATE_GROUP,
+        variables,
+      });
+      this.$notifier.success(this.$t("Group settings saved") as string);
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 
   confirmDeleteGroup(): void {
@@ -298,6 +318,33 @@ export default class GroupSettings extends mixins(GroupMixin) {
 
   get currentAddress(): IAddress {
     return new Address(this.group.physicalAddress);
+  }
+
+  get avatarMaxSize(): number | undefined {
+    return this?.config?.uploadLimits?.avatar;
+  }
+
+  get bannerMaxSize(): number | undefined {
+    return this?.config?.uploadLimits?.banner;
+  }
+
+  private handleError(err: ErrorResponse) {
+    if (err?.networkError?.name === "ServerParseError") {
+      const error = err?.networkError as ServerParseError;
+
+      if (error?.response?.status === 413) {
+        this.errors.push(
+          this.$t(
+            "Unable to create the group. One of the pictures may be too heavy."
+          ) as string
+        );
+      }
+    }
+    this.errors.push(
+      ...(err.graphQLErrors || []).map(
+        ({ message }: { message: string }) => message
+      )
+    );
   }
 }
 </script>
