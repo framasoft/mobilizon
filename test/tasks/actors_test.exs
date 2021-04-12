@@ -11,6 +11,7 @@ defmodule Mix.Tasks.Mobilizon.ActorsTest do
 
   @username "someone"
   @domain "somewhere.tld"
+  @error "Error: No such actor"
 
   describe "show actor" do
     test "show existing local actor" do
@@ -50,7 +51,7 @@ defmodule Mix.Tasks.Mobilizon.ActorsTest do
     test "show non-existing actor" do
       Show.run([@username])
       assert_received {:mix_shell, :error, [message]}
-      assert message =~ "Error: No such actor"
+      assert message =~ @error
     end
   end
 end
