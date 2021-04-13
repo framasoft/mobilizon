@@ -33,7 +33,8 @@ defmodule Mobilizon.Mixfile do
         mobilizon: [
           include_executables_for: [:unix],
           applications: [eldap: :transient],
-          config_providers: [{Mobilizon.ConfigProvider, "/etc/mobilizon/config.exs"}]
+          config_providers: [{Mobilizon.ConfigProvider, "/etc/mobilizon/config.exs"}],
+          steps: [:assemble, &copy_files/1, &copy_config/1]
         ]
       ]
     ]
@@ -47,6 +48,23 @@ defmodule Mobilizon.Mixfile do
       mod: {Mobilizon, []},
       extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
     ]
+  end
+
+  def copy_files(%{path: target_path} = release) do
+    File.cp_r!("./rel/overlays", target_path)
+    release
+  end
+
+  def copy_config(%{path: target_path} = release) do
+    support_path = Path.join([target_path, "support"])
+    File.mkdir!(support_path)
+
+    File.cp_r!(
+      "./support",
+      support_path
+    )
+
+    release
   end
 
   # Specifies which paths to compile per environment.
