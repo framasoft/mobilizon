@@ -1341,6 +1341,10 @@ div.sidebar {
 .intro.section {
   background: white;
 
+  .is-3-tablet {
+    width: initial;
+  }
+
   p.tags {
     a {
       text-decoration: none;
