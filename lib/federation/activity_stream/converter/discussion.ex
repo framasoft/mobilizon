@@ -31,7 +31,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
 
     %{
       "type" => "Note",
-      "to" => [discussion.actor.followers_url],
+      "to" => [discussion.actor.members_url],
       "cc" => [],
       "name" => discussion.title,
       "content" => discussion.last_comment.text,
