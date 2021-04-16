@@ -3,7 +3,7 @@
 # Copyright © 2017-2019 Pleroma Authors <https://pleroma.social/>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-defmodule Mobilizon.Web.Plug.FederatingTest do
+defmodule Mobilizon.Web.Plugs.FederatingTest do
   use Mobilizon.Web.ConnCase
 
   alias Mobilizon.Web.Plugs.Federating

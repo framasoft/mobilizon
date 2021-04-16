@@ -1,4 +1,4 @@
-defmodule Mobilizon.Web.Plug.HTTPSignaturesTest do
+defmodule Mobilizon.Web.Plugs.HTTPSignaturesTest do
   use Mobilizon.Web.ConnCase
   import Mock
 
