@@ -67,7 +67,7 @@
           </b-field>
 
           <p class="control has-text-centered" v-if="!submitted">
-            <button class="button is-primary is-large">
+            <button type="submit" class="button is-primary is-large">
               {{ $t("Login") }}
             </button>
           </p>
@@ -222,44 +222,51 @@ export default class Login extends Vue {
       }
 
       saveUserData(data.login);
-
-      await this.$apollo.mutate({
-        mutation: UPDATE_CURRENT_USER_CLIENT,
-        variables: {
-          id: data.login.user.id,
-          email: this.credentials.email,
-          isLoggedIn: true,
-          role: data.login.user.role,
-        },
-      });
-      try {
-        await initializeCurrentActor(this.$apollo.provider.defaultClient);
-      } catch (err) {
-        if (err instanceof NoIdentitiesException) {
-          this.$router.push({
-            name: RouteName.REGISTER_PROFILE,
-            params: {
-              email: this.currentUser.email,
-              userAlreadyActivated: "true",
-            },
-          });
-        }
-      }
+      await this.setupClientUserAndActors(data.login);
 
       if (this.$route.query.redirect) {
-        console.log("redirect", this.$route.query.redirect);
         this.$router.push(this.$route.query.redirect as string);
         return;
       }
-      window.localStorage.setItem("welcome-back", "yes");
+      if (window.localStorage) {
+        window.localStorage.setItem("welcome-back", "yes");
+      }
       this.$router.push({ name: RouteName.HOME });
       return;
     } catch (err) {
       this.submitted = false;
-      console.error(err);
-      err.graphQLErrors.forEach(({ message }: { message: string }) => {
-        this.errors.push(message);
-      });
+      if (err.graphQLErrors) {
+        err.graphQLErrors.forEach(({ message }: { message: string }) => {
+          this.errors.push(message);
+        });
+      } else if (err.networkError) {
+        this.errors.push(err.networkError.message);
+      }
+    }
+  }
+
+  private async setupClientUserAndActors(login: ILogin): Promise<void> {
+    await this.$apollo.mutate({
+      mutation: UPDATE_CURRENT_USER_CLIENT,
+      variables: {
+        id: login.user.id,
+        email: this.credentials.email,
+        isLoggedIn: true,
+        role: login.user.role,
+      },
+    });
+    try {
+      await initializeCurrentActor(this.$apollo.provider.defaultClient);
+    } catch (err) {
+      if (err instanceof NoIdentitiesException) {
+        this.$router.push({
+          name: RouteName.REGISTER_PROFILE,
+          params: {
+            email: this.currentUser.email,
+            userAlreadyActivated: "true",
+          },
+        });
+      }
     }
   }
 }
