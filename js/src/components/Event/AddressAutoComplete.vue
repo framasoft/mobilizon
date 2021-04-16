@@ -12,7 +12,7 @@
         expanded
         @select="updateSelected"
       >
-        <template slot-scope="{ option }">
+        <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />
           <b>{{ option.poiInfos.name }}</b
           ><br />

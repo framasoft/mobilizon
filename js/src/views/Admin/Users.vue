@@ -33,7 +33,7 @@
           {{ props.row.id }}
         </b-table-column>
         <b-table-column field="email" :label="$t('Email')" searchable>
-          <template slot="searchable" slot-scope="props">
+          <template #searchable="props">
             <b-input
               v-model="props.filters.email"
               :placeholder="$t('Search…')"
@@ -76,7 +76,7 @@
           {{ props.row.locale }}
         </b-table-column>
 
-        <template slot="detail" slot-scope="props">
+        <template #detail="props">
           <router-link
             class="profile"
             v-for="actor in props.row.actors"

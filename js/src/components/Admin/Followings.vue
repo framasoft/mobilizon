@@ -103,7 +103,7 @@
         ></b-table-column
       >
 
-      <template slot="detail" slot-scope="props">
+      <template #detail="props">
         <article>
           <div class="content">
             <strong>{{ props.row.targetActor.name }}</strong>
