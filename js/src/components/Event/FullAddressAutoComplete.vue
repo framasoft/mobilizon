@@ -22,7 +22,7 @@
         expanded
         @select="updateSelected"
       >
-        <template slot-scope="{ option }">
+        <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />
           <b>{{ option.poiInfos.name }}</b
           ><br />
@@ -31,7 +31,7 @@
         <template slot="empty">
           <span v-if="isFetching">{{ $t("Searching…") }}</span>
           <div v-else-if="queryText.length >= 3" class="is-enabled">
-            <span>{{ $t('No results for "{queryText}"') }}</span>
+            <span>{{ $t('No results for "{queryText}"', { queryText }) }}</span>
             <span>{{
               $t(
                 "You can try another search term or drag and drop the marker on the map",
@@ -300,6 +300,14 @@ export default class FullAddressAutoComplete extends Vue {
         }
       );
     });
+  }
+
+  @Watch("queryText")
+  resetAddressOnEmptyField(queryText: string): void {
+    if (queryText === "" && this.selected?.id) {
+      console.log("doing reset");
+      this.resetAddress();
+    }
   }
 
   resetAddress(): void {
