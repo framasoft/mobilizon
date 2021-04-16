@@ -150,7 +150,7 @@ export default class AddressAutoComplete extends Vue {
   }
 
   get queryText(): string {
-    if (this.value) {
+    if (this.value !== undefined) {
       return new Address(this.value).fullName;
     }
     return this.initialQueryText;

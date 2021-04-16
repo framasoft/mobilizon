@@ -46,6 +46,12 @@
           </div>
         </template>
       </b-autocomplete>
+      <b-button
+        :disabled="!queryText"
+        @click="resetAddress"
+        class="reset-area"
+        icon-left="close"
+      />
     </b-field>
     <div class="map" v-if="selected && selected.geom && selected.poiInfos">
       <map-leaflet
@@ -294,6 +300,12 @@ export default class FullAddressAutoComplete extends Vue {
         }
       );
     });
+  }
+
+  resetAddress(): void {
+    this.$emit("input", null);
+    this.queryText = "";
+    this.selected = new Address();
   }
 }
 </script>
