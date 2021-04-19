@@ -26,7 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    with {:group, {:ok, %Actor{id: group_id} = group}} <-
+    with {:group, {:ok, %Actor{id: group_id, suspended: false} = group}} <-
            {:group, ActivityPub.find_or_make_group_from_nickname(name)},
          {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
@@ -44,7 +44,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   end
 
   def find_group(_parent, %{preferred_username: name}, _resolution) do
-    with {:ok, actor} <- ActivityPub.find_or_make_group_from_nickname(name),
+    with {:ok, %Actor{suspended: false} = actor} <-
+           ActivityPub.find_or_make_group_from_nickname(name),
          %Actor{} = actor <- restrict_fields_for_non_member_request(actor) do
       {:ok, actor}
     else

@@ -58,7 +58,11 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
       An user has been modified with the following information:
         - email: #{user.email}
         - Role: #{user.role}
-        - Activated: #{if user.confirmed_at, do: user.confirmed_at, else: "False"}
+        - account status: #{
+        if user.confirmed_at,
+          do: "activated on #{DateTime.to_string(user.confirmed_at)} (UTC)",
+          else: "disabled"
+      }
       """)
     else
       {:makes_changes, false} ->

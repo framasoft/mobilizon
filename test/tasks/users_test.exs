@@ -76,16 +76,15 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   describe "show user" do
     test "show existing user" do
-      %User{confirmed_at: confirmed_at, role: role, disabled: disabled} =
-        user = insert(:user, email: @email)
+      %User{confirmed_at: confirmed_at, role: role} = user = insert(:user, email: @email)
 
       actor1 = insert(:actor, user: user)
       actor2 = insert(:actor, user: user)
 
       output =
-        "Informations for the user #{@email}:\n  - Activated: #{confirmed_at}\n  - Disabled: #{
-          disabled
-        }\n  - Role: #{role}\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{
+        "Informations for the user #{@email}:\n  - account status: Activated on #{confirmed_at} (UTC)\n  - Role: #{
+          role
+        }\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{
           actor2.preferred_username
         } / \n\n\n"
 
@@ -139,30 +138,27 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert output_received ==
                "An user has been modified with the following information:\n  - email: #{
                  user.email
-               }\n  - Role: #{user.role}\n  - Activated: False\n"
+               }\n  - Role: #{user.role}\n  - account status: disabled\n"
 
-      assert {:ok, %User{email: email, confirmed_at: confirmed_at}} =
-               Users.get_user_by_email(@email)
+      assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
       assert is_nil(confirmed_at)
 
       Modify.run([@email, "--enable"])
       assert_received {:mix_shell, :info, [output_received]}
 
-      assert {:ok, %User{email: email, confirmed_at: confirmed_at}} =
-               Users.get_user_by_email(@email)
+      assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
       assert output_received ==
                "An user has been modified with the following information:\n  - email: #{
                  user.email
-               }\n  - Role: #{user.role}\n  - Activated: #{confirmed_at}\n"
+               }\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
 
       refute is_nil(confirmed_at)
 
       Modify.run([@email, "--enable"])
 
-      assert {:ok, %User{email: email, confirmed_at: confirmed_at}} =
-               Users.get_user_by_email(@email)
+      assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
       refute is_nil(confirmed_at)
       assert_received {:mix_shell, :info, [output_received]}
