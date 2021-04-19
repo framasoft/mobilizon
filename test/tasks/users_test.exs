@@ -170,5 +170,22 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert_received {:mix_shell, :error, [message]}
       assert message =~ "Can't use both --enabled and --disable options at the same time."
     end
+
+    @modified_email "modified@email.tld"
+
+    test "change user's email" do
+      user = insert(:user, email: @email)
+      Modify.run([@email, "--email", @modified_email])
+
+      assert_received {:mix_shell, :info, [output_received]}
+
+      assert {:ok, %User{confirmed_at: confirmed_at, email: @modified_email}} =
+               Users.get_user_by_email(@modified_email)
+
+      assert output_received ==
+               "An user has been modified with the following information:\n  - email: #{
+                 @modified_email
+               }\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
+    end
   end
 end
