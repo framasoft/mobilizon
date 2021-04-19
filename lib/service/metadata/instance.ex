@@ -9,6 +9,8 @@ defmodule Mobilizon.Service.Metadata.Instance do
   alias Mobilizon.Config
   alias Mobilizon.Service.Metadata.Utils
   alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.Router.Helpers, as: Routes
+  import Mobilizon.Web.Gettext
 
   @doc """
   Build the list of tags for the instance
@@ -40,6 +42,26 @@ defmodule Mobilizon.Service.Metadata.Instance do
       Tag.tag(:meta, property: "og:description", content: description),
       Tag.tag(:meta, property: "og:type", content: "website"),
       HTML.raw(instance_json_ld)
+    ] ++ maybe_add_instance_feeds(Config.get([:instance, :enable_instance_feeds]))
+  end
+
+  @spec maybe_add_instance_feeds(boolean()) :: list()
+  defp maybe_add_instance_feeds(true) do
+    [
+      Tag.tag(:link,
+        rel: "alternate",
+        type: "application/atom+xml",
+        title: gettext("%{name}'s feed", name: Config.instance_name()) |> HTML.raw(),
+        href: Routes.feed_url(Endpoint, :instance, :atom)
+      ),
+      Tag.tag(:link,
+        rel: "alternate",
+        type: "text/calendar",
+        title: gettext("%{name}'s feed", name: Config.instance_name()) |> HTML.raw(),
+        href: Routes.feed_url(Endpoint, :instance, :ics)
+      )
     ]
   end
+
+  defp maybe_add_instance_feeds(false), do: []
 end

@@ -83,8 +83,10 @@ defmodule Mobilizon.Addresses.Address do
   def representation(nil), do: nil
 
   def representation(%__MODULE__{} = address) do
-    "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{
-      address.country
-    }"
+    String.trim(
+      "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{
+        address.country
+      }"
+    )
   end
 end

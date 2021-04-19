@@ -80,6 +80,9 @@ export const CONFIG = gql`
         avatar
         banner
       }
+      instanceFeeds {
+        enabled
+      }
     }
   }
 `;
@@ -113,6 +116,9 @@ export const ABOUT = gql`
       }
       version
       federating
+      instanceFeeds {
+        enabled
+      }
     }
   }
 `;

@@ -139,6 +139,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         default: Config.get([:instance, :upload_limit]),
         avatar: Config.get([:instance, :avatar_upload_limit]),
         banner: Config.get([:instance, :banner_upload_limit])
+      },
+      instance_feeds: %{
+        enabled: Config.get([:instance, :enable_instance_feeds])
       }
     }
   end
