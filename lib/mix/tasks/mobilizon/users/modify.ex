@@ -40,7 +40,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
          attrs <- %{},
          role <- calculate_role(admin?, moderator?, user?),
-         attrs <- process_new_value(attrs, :mail, new_email, user.email),
+         attrs <- process_new_value(attrs, :email, new_email, user.email),
          attrs <- process_new_value(attrs, :role, role, user.role),
          attrs <-
            if(disable? && !is_nil(user.confirmed_at),
