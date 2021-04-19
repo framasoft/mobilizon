@@ -12,7 +12,7 @@
         expanded
         @select="updateSelected"
       >
-        <template slot-scope="{ option }">
+        <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />
           <b>{{ option.poiInfos.name }}</b
           ><br />
@@ -150,7 +150,7 @@ export default class AddressAutoComplete extends Vue {
   }
 
   get queryText(): string {
-    if (this.value) {
+    if (this.value !== undefined) {
       return new Address(this.value).fullName;
     }
     return this.initialQueryText;

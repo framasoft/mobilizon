@@ -172,7 +172,7 @@
             }}
           </span>
         </b-table-column>
-        <template slot="detail" slot-scope="props">
+        <template #detail="props">
           <article v-html="nl2br(props.row.metadata.message)" />
         </template>
         <template slot="empty">

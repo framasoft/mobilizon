@@ -13,9 +13,9 @@ export interface ICurrentUser {
 }
 
 export interface IUserPreferredLocation {
-  range?: number;
-  name?: string;
-  geohash?: string;
+  range?: number | null;
+  name?: string | null;
+  geohash?: string | null;
 }
 
 export interface IUserSettings {

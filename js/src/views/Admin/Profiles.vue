@@ -33,7 +33,7 @@
           :label="$t('Username')"
           searchable
         >
-          <template slot="searchable" slot-scope="props">
+          <template #searchable="props">
             <b-input
               v-model="props.filters.preferredUsername"
               placeholder="Search..."
@@ -68,7 +68,7 @@
         </b-table-column>
 
         <b-table-column field="domain" :label="$t('Domain')" searchable>
-          <template slot="searchable" slot-scope="props">
+          <template #searchable="props">
             <b-input
               v-model="props.filters.domain"
               placeholder="Search..."

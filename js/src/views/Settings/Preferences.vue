@@ -80,6 +80,12 @@
             </option>
           </b-select>
         </b-field>
+        <b-button
+          :disabled="address == undefined"
+          @click="resetArea"
+          class="reset-area"
+          icon-left="close"
+        />
       </b-field>
       <p>
         {{
@@ -239,11 +245,11 @@ export default class Preferences extends Vue {
     }
   }
 
-  get locationRange(): number | undefined {
+  get locationRange(): number | undefined | null {
     return this.loggedUser?.settings?.location?.range;
   }
 
-  set locationRange(locationRange: number | undefined) {
+  set locationRange(locationRange: number | undefined | null) {
     if (locationRange) {
       this.updateUserSettings({
         location: {
@@ -251,6 +257,16 @@ export default class Preferences extends Vue {
         },
       });
     }
+  }
+
+  resetArea(): void {
+    this.updateUserSettings({
+      location: {
+        geohash: null,
+        name: null,
+        range: null,
+      },
+    });
   }
 
   private async updateUserSettings(userSettings: IUserSettings) {
@@ -262,3 +278,10 @@ export default class Preferences extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.reset-area {
+  align-self: center;
+  position: relative;
+  top: 10px;
+}
+</style>

@@ -10,7 +10,7 @@
     @select="handleSelect"
     @infinite-scroll="getAsyncData"
   >
-    <template slot-scope="props">
+    <template #default="props">
       <div class="media">
         <div class="media-left">
           <img
