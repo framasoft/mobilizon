@@ -1078,5 +1078,6 @@
   "Unable to create the group. One of the pictures may be too heavy.": "Impossible de créer le groupe. Une des images est trop lourde.",
   "Unable to update the profile. The avatar picture may be too heavy.": "Impossible de mettre à jour le profil. L'image d'avatar est probablement trop lourde.",
   "Unable to create the profile. The avatar picture may be too heavy.": "Impossible de créer le profil. L'image d'avatar est probablement trop lourde.",
-  "Error while loading the preview": "Erreur lors du chargement de l'aperçu"
+  "Error while loading the preview": "Erreur lors du chargement de l'aperçu",
+  "Instance feeds": "Flux de l'instance"
 }

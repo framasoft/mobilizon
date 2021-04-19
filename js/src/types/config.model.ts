@@ -94,4 +94,7 @@ export interface IConfig {
     avatar: number;
     banner: number;
   };
+  instanceFeeds: {
+    enabled: boolean;
+  };
 }

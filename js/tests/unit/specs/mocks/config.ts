@@ -108,6 +108,10 @@ export const configMock = {
         avatar: 2_000_000,
         banner: 4_000_000,
       },
+      instanceFeeds: {
+        __typename: "InstanceFeeds",
+        enabled: false,
+      },
     },
   },
 };

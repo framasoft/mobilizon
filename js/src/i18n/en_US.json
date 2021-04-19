@@ -984,5 +984,6 @@
   "Unable to create the group. One of the pictures may be too heavy.": "Unable to create the group. One of the pictures may be too heavy.",
   "Unable to update the profile. The avatar picture may be too heavy.": "Unable to update the profile. The avatar picture may be too heavy.",
   "Unable to create the profile. The avatar picture may be too heavy.": "Unable to create the profile. The avatar picture may be too heavy.",
-  "Error while loading the preview": "Error while loading the preview"
+  "Error while loading the preview": "Error while loading the preview",
+  "Instance feeds": "Instance feeds"
 }

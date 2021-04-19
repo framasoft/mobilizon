@@ -63,6 +63,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:rules, :string, description: "The instance's rules")
 
     field(:auth, :auth, description: "The instance auth methods")
+    field(:instance_feeds, :instance_feeds, description: "The instance's feed settings")
   end
 
   @desc """
@@ -292,6 +293,10 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:default, :integer, description: "The default limitation, in bytes")
     field(:avatar, :integer, description: "The avatar limitation, in bytes")
     field(:banner, :integer, description: "The banner limitation, in bytes")
+  end
+
+  object :instance_feeds do
+    field(:enabled, :boolean, description: "Whether the instance-wide feeds are enabled")
   end
 
   object :config_queries do
