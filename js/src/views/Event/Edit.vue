@@ -425,6 +425,20 @@ section {
   }
 }
 </style>
+<style lang="scss">
+.dialog .modal-card {
+  max-width: 500px;
+
+  .modal-card-foot {
+    justify-content: center;
+    flex-wrap: wrap;
+
+    & > button {
+      margin-bottom: 5px;
+    }
+  }
+}
+</style>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
