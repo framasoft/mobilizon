@@ -90,7 +90,7 @@ defmodule Mobilizon.Web.Email.User do
   def send_confirmation_email(%User{} = user, locale \\ "en") do
     user
     |> Email.User.confirmation_email(locale)
-    |> Email.Mailer.deliver_later()
+    |> Email.Mailer.send_email_later()
   end
 
   @doc """
@@ -135,7 +135,7 @@ defmodule Mobilizon.Web.Email.User do
          {:ok, %Bamboo.Email{} = mail} <-
            user_updated
            |> Email.User.reset_password_email(locale)
-           |> Email.Mailer.deliver_later() do
+           |> Email.Mailer.send_email_later() do
       {:ok, mail}
     else
       {:error, reason} -> {:error, reason}

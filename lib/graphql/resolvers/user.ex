@@ -358,11 +358,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          {:ok, %User{} = user} <- Users.update_user_email(user, new_email) do
       user
       |> Email.User.send_email_reset_old_email()
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       user
       |> Email.User.send_email_reset_new_email()
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       {:ok, user}
     else

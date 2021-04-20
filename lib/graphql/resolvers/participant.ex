@@ -70,7 +70,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
           participant,
           Map.get(args, :locale, "en")
         )
-        |> Email.Mailer.deliver_later()
+        |> Email.Mailer.send_email_later()
       end
 
       {:ok, participant}

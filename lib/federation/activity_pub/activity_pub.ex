@@ -592,7 +592,7 @@ defmodule Mobilizon.Federation.ActivityPub do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
         |> Admin.report(report)
-        |> Mailer.deliver_later()
+        |> Mailer.send_email_later()
       end)
 
       {:ok, activity, report}

@@ -42,7 +42,7 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:group, group)
       |> assign(:subject, subject)
       |> render(:group_invite)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       :ok
     end
@@ -70,7 +70,7 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:group, group)
       |> assign(:subject, subject)
       |> render(:group_member_removal)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       :ok
     end
@@ -107,7 +107,7 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:subject, subject)
       |> assign(:instance, instance)
       |> render(:group_suspension)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       :ok
     end
@@ -147,7 +147,7 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:instance, instance)
       |> assign(:author, author)
       |> render(:group_deletion)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       :ok
     else

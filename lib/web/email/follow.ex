@@ -62,7 +62,7 @@ defmodule Mobilizon.Web.Email.Follow do
     |> assign(:follower, follower)
     |> assign(:subject, subject)
     |> render(:instance_follow)
-    |> Email.Mailer.deliver_later()
+    |> Email.Mailer.send_email_later()
 
     :ok
   end

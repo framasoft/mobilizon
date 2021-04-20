@@ -28,7 +28,7 @@ defmodule Mobilizon.Web.Email.Participation do
 
       email
       |> participation_updated(participation, locale)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
     end
 
     :ok
@@ -40,7 +40,7 @@ defmodule Mobilizon.Web.Email.Participation do
     with %User{locale: locale} = user <- Users.get_user!(user_id) do
       user
       |> participation_updated(participation, locale)
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       :ok
     end
