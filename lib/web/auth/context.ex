@@ -23,7 +23,8 @@ defmodule Mobilizon.Web.Auth.Context do
 
     context =
       case Guardian.Plug.current_resource(conn) do
-        %User{} = user ->
+        %User{id: user_id, email: user_email} = user ->
+          Sentry.Context.set_user_context(%{id: user_id, name: user_email})
           Map.put(context, :current_user, user)
 
         nil ->
