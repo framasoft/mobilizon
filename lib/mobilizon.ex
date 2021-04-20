@@ -16,7 +16,7 @@ defmodule Mobilizon do
 
   alias Mobilizon.{Config, Storage, Web}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Service.ErrorPage
+  alias Mobilizon.Service.{ErrorPage, ErrorReporter}
   alias Mobilizon.Service.Export.{Feed, ICalendar}
 
   @name Mix.Project.config()[:name]
@@ -65,6 +65,16 @@ defmodule Mobilizon do
         }
       ] ++
         task_children(@env)
+
+    Logger.add_backend(Sentry.LoggerBackend)
+    :ok = Oban.Telemetry.attach_default_logger()
+
+    :telemetry.attach_many(
+      "oban-errors",
+      [[:oban, :job, :exception], [:oban, :circuit, :trip]],
+      &ErrorReporter.handle_event/4,
+      %{}
+    )
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
   end

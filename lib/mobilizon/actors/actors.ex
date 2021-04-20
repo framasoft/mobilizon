@@ -1282,10 +1282,12 @@ defmodule Mobilizon.Actors do
   @doc """
   Whether the actor needs to be updated.
 
-  Local actors obviously don't need to be updated
+  Local actors obviously don't need to be updated, neither do suspended ones
   """
   @spec needs_update?(Actor.t()) :: boolean
   def needs_update?(%Actor{domain: nil}), do: false
+
+  def needs_update?(%Actor{suspended: true}), do: false
 
   def needs_update?(%Actor{last_refreshed_at: nil, domain: domain}) when not is_nil(domain),
     do: true

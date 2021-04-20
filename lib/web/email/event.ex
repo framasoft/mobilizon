@@ -143,6 +143,6 @@ defmodule Mobilizon.Web.Email.Event do
        ) do
     email
     |> Email.Event.event_updated(actor, old_event, event, diff, timezone, locale)
-    |> Email.Mailer.deliver_later()
+    |> Email.Mailer.send_email_later()
   end
 end

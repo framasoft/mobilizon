@@ -132,7 +132,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
       )
 
     args
-    |> Map.update(:title, "", &String.trim/1)
+    # title might be nil
+    |> Map.update(:title, "", fn title -> String.trim(title || "") end)
     |> Map.put(:text, text)
   end
 end

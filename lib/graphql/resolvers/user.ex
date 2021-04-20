@@ -115,7 +115,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def create_user(_parent, args, _resolution) do
     with :registration_ok <- check_registration_config(args),
          {:ok, %User{} = user} <- Users.register(args),
-         {:ok, %Bamboo.Email{}} <-
+         %Bamboo.Email{} <-
            Email.User.send_confirmation_email(user, Map.get(args, :locale, "en")) do
       {:ok, user}
     else
@@ -206,7 +206,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            Users.get_user_by_email(email, activated: true, unconfirmed: false),
          {:can_reset_password, true} <-
            {:can_reset_password, Authenticator.can_reset_password?(user)},
-         {:ok, %Bamboo.Email{} = _email_html} <-
+         {:ok, %Bamboo.Email{}} <-
            Email.User.send_password_reset_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
@@ -358,11 +358,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          {:ok, %User{} = user} <- Users.update_user_email(user, new_email) do
       user
       |> Email.User.send_email_reset_old_email()
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       user
       |> Email.User.send_email_reset_new_email()
-      |> Email.Mailer.deliver_later()
+      |> Email.Mailer.send_email_later()
 
       {:ok, user}
     else

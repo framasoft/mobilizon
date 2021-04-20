@@ -592,7 +592,7 @@ defmodule Mobilizon.Federation.ActivityPub do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
         |> Admin.report(report)
-        |> Mailer.deliver_later()
+        |> Mailer.send_email_later()
       end)
 
       {:ok, activity, report}
@@ -620,6 +620,10 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:error, :actor_deleted} ->
           Logger.info("Actor was deleted")
           {:error, :actor_deleted}
+
+        {:error, e} ->
+          Logger.warn("Failed to make actor from url")
+          {:error, e}
 
         e ->
           Logger.warn("Failed to make actor from url")
@@ -800,6 +804,10 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, %{status: 410}} ->
           Logger.info("Response HTTP 410")
           {:error, :actor_deleted}
+
+        {:error, e} ->
+          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+          {:error, e}
 
         e ->
           Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
