@@ -621,6 +621,10 @@ defmodule Mobilizon.Federation.ActivityPub do
           Logger.info("Actor was deleted")
           {:error, :actor_deleted}
 
+        {:error, e} ->
+          Logger.warn("Failed to make actor from url")
+          {:error, e}
+
         e ->
           Logger.warn("Failed to make actor from url")
           {:error, e}
@@ -800,6 +804,10 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, %{status: 410}} ->
           Logger.info("Response HTTP 410")
           {:error, :actor_deleted}
+
+        {:error, e} ->
+          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+          {:error, e}
 
         e ->
           Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")

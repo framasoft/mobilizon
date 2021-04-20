@@ -80,7 +80,7 @@ defmodule Mobilizon.Web.Email.User do
            Users.update_user(user, %{
              "confirmation_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
            }),
-         {:ok, %Bamboo.Email{}} <- send_confirmation_email(user, locale) do
+         %Bamboo.Email{} <- send_confirmation_email(user, locale) do
       Logger.info("Sent confirmation email again to #{user.email}")
       {:ok, user.email}
     end
@@ -132,7 +132,7 @@ defmodule Mobilizon.Web.Email.User do
                "reset_password_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
              })
            ),
-         {:ok, %Bamboo.Email{} = mail} <-
+         %Bamboo.Email{} = mail <-
            user_updated
            |> Email.User.reset_password_email(locale)
            |> Email.Mailer.send_email_later() do
