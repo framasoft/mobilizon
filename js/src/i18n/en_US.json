@@ -858,7 +858,7 @@
   "Your upcoming events": "Your upcoming events",
   "Last published events": "Last published events",
   "On {instance}": "On {instance}",
-  "Close events": "Close events",
+  "Events nearby": "Events nearby",
   "Within {number} kilometers of {place}": "|Within one kilometer of {place}|Within {number} kilometers of {place}",
   "@{username}": "@{username}",
   "Yesterday": "Yesterday",

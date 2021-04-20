@@ -252,7 +252,7 @@
       <!-- Events close to you -->
       <section class="events-close" v-if="closeEvents.total > 0">
         <h2 class="is-size-2 has-text-weight-bold">
-          {{ $t("Close events") }}
+          {{ $t("Events nearby") }}
         </h2>
         <p>
           {{
