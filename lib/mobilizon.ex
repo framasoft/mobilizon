@@ -66,6 +66,8 @@ defmodule Mobilizon do
       ] ++
         task_children(@env)
 
+    Logger.add_backend(Sentry.LoggerBackend)
+    :ok = Oban.Telemetry.attach_default_logger()
     Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
   end
 
