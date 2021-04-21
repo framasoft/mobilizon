@@ -259,7 +259,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     are_same_origin?(id, actor)
   end
 
-  def origin_check?(_id, %{"type" => type} = _params) when type in ["Actor", "Group"], do: true
+  def origin_check?(_id, %{"type" => type} = _params) when type in ["Actor", "Person", "Group"],
+    do: true
 
   def origin_check?(_id, %{"actor" => nil} = _args), do: false
 
@@ -699,6 +700,44 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       end
     else
       true
+    end
+  end
+
+  @spec label_in_collection?(any(), any()) :: boolean()
+  defp label_in_collection?(url, coll) when is_binary(coll), do: url == coll
+  defp label_in_collection?(url, coll) when is_list(coll), do: url in coll
+  defp label_in_collection?(_, _), do: false
+
+  @spec label_in_message?(String.t(), map()) :: boolean()
+  def label_in_message?(label, params),
+    do:
+      [params["to"], params["cc"], params["bto"], params["bcc"]]
+      |> Enum.any?(&label_in_collection?(label, &1))
+
+  @spec unaddressed_message?(map()) :: boolean()
+  def unaddressed_message?(params),
+    do:
+      [params["to"], params["cc"], params["bto"], params["bcc"]]
+      |> Enum.all?(&is_nil(&1))
+
+  @spec recipient_in_message(Actor.t(), Actor.t(), map()) :: boolean()
+  def recipient_in_message(%Actor{url: url} = _recipient, %Actor{} = _actor, params),
+    do: label_in_message?(url, params) || unaddressed_message?(params)
+
+  defp extract_list(target) when is_binary(target), do: [target]
+  defp extract_list(lst) when is_list(lst), do: lst
+  defp extract_list(_), do: []
+
+  def maybe_splice_recipient(url, params) do
+    need_splice? =
+      !label_in_collection?(url, params["to"]) &&
+        !label_in_collection?(url, params["cc"])
+
+    if need_splice? do
+      cc_list = extract_list(params["cc"])
+      Map.put(params, "cc", [url | cc_list])
+    else
+      params
     end
   end
 end

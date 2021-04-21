@@ -61,7 +61,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
       e ->
         # Just drop those for now
-        Logger.error("Unhandled activity")
+        Logger.debug("Unhandled activity")
         Logger.debug(inspect(e))
         Logger.debug(Jason.encode!(params))
     end

@@ -79,7 +79,6 @@ defmodule Mobilizon.Federation.ActivityPub do
           {:ok, struct()} | {:error, any()}
   def fetch_object_from_url(url, options \\ []) do
     Logger.info("Fetching object from url #{url}")
-    force_fetch = Keyword.get(options, :force, false)
 
     with {:not_http, true} <- {:not_http, String.starts_with?(url, "http")},
          {:existing, nil} <-
@@ -99,43 +98,59 @@ defmodule Mobilizon.Federation.ActivityPub do
       Preloader.maybe_preload(entity)
     else
       {:existing, entity} ->
-        Logger.debug("Entity is already existing")
-
-        res =
-          if force_fetch and not are_same_origin?(url, Endpoint.url()) do
-            Logger.debug("Entity is external and we want a force fetch")
-
-            case Fetcher.fetch_and_update(url, options) do
-              {:ok, _activity, entity} ->
-                {:ok, entity}
-
-              {:error, "Gone"} ->
-                {:error, "Gone", entity}
-
-              {:error, "Not found"} ->
-                {:error, "Not found", entity}
-            end
-          else
-            {:ok, entity}
-          end
-
-        Logger.debug("Going to preload an existing entity")
-
-        case res do
-          {:ok, entity} ->
-            Preloader.maybe_preload(entity)
-
-          {:error, status, entity} ->
-            {:ok, entity} = Preloader.maybe_preload(entity)
-            {:error, status, entity}
-
-          err ->
-            err
-        end
+        handle_existing_entity(url, entity, options)
 
       e ->
         Logger.warn("Something failed while fetching url #{inspect(e)}")
         {:error, e}
+    end
+  end
+
+  @spec handle_existing_entity(String.t(), struct(), Keyword.t()) ::
+          {:ok, struct()}
+          | {:ok, struct()}
+          | {:error, String.t(), struct()}
+          | {:error, String.t()}
+  defp handle_existing_entity(url, entity, options) do
+    Logger.debug("Entity is already existing")
+    Logger.debug("Going to preload an existing entity")
+
+    case refresh_entity(url, entity, options) do
+      {:ok, entity} ->
+        Preloader.maybe_preload(entity)
+
+      {:error, status, entity} ->
+        {:ok, entity} = Preloader.maybe_preload(entity)
+        {:error, status, entity}
+
+      err ->
+        err
+    end
+  end
+
+  @spec refresh_entity(String.t(), struct(), Keyword.t()) ::
+          {:ok, struct()} | {:error, String.t(), struct()} | {:error, String.t()}
+  defp refresh_entity(url, entity, options) do
+    force_fetch = Keyword.get(options, :force, false)
+
+    if force_fetch and not are_same_origin?(url, Endpoint.url()) do
+      Logger.debug("Entity is external and we want a force fetch")
+
+      case Fetcher.fetch_and_update(url, options) do
+        {:ok, _activity, entity} ->
+          {:ok, entity}
+
+        {:error, "Gone"} ->
+          {:error, "Gone", entity}
+
+        {:error, "Not found"} ->
+          {:error, "Not found", entity}
+
+        {:error, "Object origin check failed"} ->
+          {:error, "Object origin check failed"}
+      end
+    else
+      {:ok, entity}
     end
   end
 
@@ -165,8 +180,8 @@ defmodule Mobilizon.Federation.ActivityPub do
           {:ok, %Actor{} = actor} ->
             {:ok, actor}
 
-          err ->
-            Logger.warn("Could not fetch by AP id")
+          {:error, err} ->
+            Logger.debug("Could not fetch by AP id")
             Logger.debug(inspect(err))
             {:error, "Could not fetch by AP id"}
         end
@@ -624,10 +639,6 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:error, e} ->
           Logger.warn("Failed to make actor from url")
           {:error, e}
-
-        e ->
-          Logger.warn("Failed to make actor from url")
-          {:error, e}
       end
     end
   end
@@ -784,7 +795,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   # Fetching a remote actor's information through its AP ID
-  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, struct()} | {:error, atom()} | any()
+  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, map()} | {:error, atom()} | any()
   defp fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
     Logger.debug(inspect(url))

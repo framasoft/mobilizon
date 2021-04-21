@@ -371,11 +371,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  def handle_incoming(%{
-        "type" => "Update",
-        "object" => %{"type" => object_type} = object,
-        "actor" => _actor_id
-      })
+  def handle_incoming(
+        %{
+          "type" => "Update",
+          "object" => %{"type" => object_type} = object,
+          "actor" => _actor_id
+        } = params
+      )
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
     with {:ok, %Actor{suspended: false} = old_actor} <-
            ActivityPub.get_or_fetch_actor_by_url(object["id"]),
@@ -386,7 +388,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_actor}
     else
       e ->
-        Logger.error(inspect(e))
+        Sentry.capture_message("Error while handling an Update activity",
+          extra: %{params: params}
+        )
+
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -572,7 +578,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
     with actor_url <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         {:actor, {:ok, %Actor{} = actor}} <-
+           {:actor, ActivityPub.get_or_fetch_actor_by_url(actor_url)},
          object_id <- Utils.get_url(object),
          {:ok, object} <- is_group_object_gone(object_id),
          {:origin_check, true} <-
@@ -586,8 +593,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Logger.warn("Object origin check failed")
         :error
 
+      {:actor, {:error, "Could not fetch by AP id"}} ->
+        {:error, :unknown_actor}
+
+      {:error, e} ->
+        Logger.debug(inspect(e))
+
+        # Sentry.capture_message("Error while handling a Delete activity",
+        #   extra: %{data: data}
+        # )
+
+        :error
+
       e ->
         Logger.error(inspect(e))
+
+        # Sentry.capture_message("Error while handling a Delete activity",
+        #   extra: %{data: data}
+        # )
+
         :error
     end
   end
@@ -610,7 +634,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_resource}
     else
       e ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
+
+        Sentry.capture_message("Error while handling an Move activity",
+          extra: %{data: data}
+        )
+
         :error
     end
   end
@@ -741,6 +770,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(object) do
     Logger.info("Handing something with type #{object["type"]} not supported")
     Logger.debug(inspect(object))
+
+    Sentry.capture_message("Handing something with type #{object["type"]} not supported",
+      extra: %{object: object}
+    )
+
     {:error, :not_supported}
   end
 

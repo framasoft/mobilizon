@@ -50,7 +50,8 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
   # Gets a public key for a given ActivityPub actor ID (url).
   @spec get_public_key_for_url(String.t()) ::
-          {:ok, String.t()} | {:error, :actor_fetch_error | :pem_decode_error}
+          {:ok, String.t()}
+          | {:error, :actor_fetch_error | :pem_decode_error | :actor_not_fetchable}
   defp get_public_key_for_url(url) do
     with {:ok, %Actor{keys: keys}} <- ActivityPub.get_or_fetch_actor_by_url(url),
          {:ok, public_key} <- prepare_public_key(keys) do
@@ -61,8 +62,16 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
         {:error, :pem_decode_error}
 
-      _ ->
+      {:error, "Could not fetch by AP id"} ->
+        {:error, :actor_not_fetchable}
+
+      err ->
+        Sentry.capture_message("Unable to fetch actor, so no keys for you",
+          extra: %{url: url}
+        )
+
         Logger.error("Unable to fetch actor, so no keys for you")
+        Logger.error(inspect(err))
 
         {:error, :actor_fetch_error}
     end
@@ -74,9 +83,6 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
          :ok <- Logger.debug("Fetching public key for #{actor_id}"),
          {:ok, public_key} <- get_public_key_for_url(actor_id) do
       {:ok, public_key}
-    else
-      e ->
-        {:error, e}
     end
   end
 
@@ -87,9 +93,6 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
          {:ok, _actor} <- ActivityPub.make_actor_from_url(actor_id),
          {:ok, public_key} <- get_public_key_for_url(actor_id) do
       {:ok, public_key}
-    else
-      e ->
-        {:error, e}
     end
   end
 
