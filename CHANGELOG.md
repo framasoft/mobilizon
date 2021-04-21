@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.1 - 21-03-2021
+
+### Changed
+
+- Allow to remove user location setting and location information on an event or group
+- Instance level feeds are now shown on the instance About page, and are exposed as `rel=alternate` links, if instance level feeds are activated in the config
+- Webfinger module now queries the host-meta XRD endpoint to detect the webfinger well-known endpoint
+- Instance maximum upload sizes are now exposed in the API
+- Improve handling of media files which are too heavy
+- Improve details when editing or showing an user through CLI
+- More strict browser compatibility
+- Renamed "Close events" to "Nearby events" ("close" is too close to "closed")
+- Improved Sentry integration
+
+### Fixes
+
+- Fixed accessing a group discussion page without being a member (the page was just broken)
+- Fixed reloading the members list after excluding a member
+- Fixed comments being closed under an event message when not connected
+- Fixed path issue when fetching favicon for resources
+- Fixed content type and size missing for profile avatars
+- Fixed HTTP clients user-agent not using runtime configuration
+- Fixed the `support` folder not being copied into releases
+- Fixed the participation button position when text is too long or in some cases
+- Fixed the incorrect CSP configuration
+- Fixed discussions being sent to followers instead of members
+- Fixed showing broken public UI for deleted/suspended group
+- Fixed warning when getting out of creating/editing an unsaved event that was broken for some languages
+- Fixed addresses being not trimmed in the iCalendar exports
+- Fixed editing an user's email in CLI
+- Fixed suspended actors being refreshed
+
+
+### Translations
+
+- Gaelic
+- German
+- Kabyle (New!)
+- Norwegian
+- Russian
+- Slovenian
+- Spanish
+
 ## 1.1.0 - 31-03-2021
 
 This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. Please read [UPGRADE.md](./UPGRADE.md#upgrading-from-10-to-11) for details on how to migrate to Elixir binary releases or stay on source install.
