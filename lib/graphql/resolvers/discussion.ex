@@ -105,7 +105,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
            }) do
       {:ok, discussion}
     else
-      {:error, :discussion, err, _} ->
+      {:error, type, err, _} when type in [:discussion, :comment] ->
         {:error, err}
 
       {:member, false} ->
