@@ -14,6 +14,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
@@ -175,7 +176,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @spec remote_actors(list(String.t())) :: list(Actor.t())
   def remote_actors(recipients) do
     recipients
-    |> Enum.map(fn url -> ActivityPub.get_or_fetch_actor_by_url(url) end)
+    |> Enum.map(fn url -> ActivityPubActor.get_or_fetch_actor_by_url(url) end)
     |> Enum.map(fn {status, actor} ->
       case status do
         :ok ->
@@ -259,8 +260,9 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     are_same_origin?(id, actor)
   end
 
-  def origin_check?(_id, %{"type" => type} = _params) when type in ["Actor", "Person", "Group"],
-    do: true
+  def origin_check?(id, %{"type" => type, "id" => actor_id} = _params)
+      when type in ["Actor", "Person", "Group"],
+      do: id == actor_id
 
   def origin_check?(_id, %{"actor" => nil} = _args), do: false
 

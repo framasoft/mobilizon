@@ -8,7 +8,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Member do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Actors.Member, as: MemberModel
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Utils
 
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -53,5 +53,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Member do
 
   @spec get_actor(String.t() | map() | nil) :: {:ok, Actor.t()} | {:error, String.t()}
   defp get_actor(nil), do: {:error, "nil property found for actor data"}
-  defp get_actor(actor), do: actor |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url()
+
+  defp get_actor(actor),
+    do: actor |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url()
 end

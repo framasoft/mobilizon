@@ -6,7 +6,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
   internal one, and back.
   """
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Todos.TodoList
 
@@ -39,7 +39,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
   @impl Converter
   @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
   def as_to_model_data(%{"type" => "TodoList", "actor" => actor_url} = object) do
-    case ActivityPub.get_or_fetch_actor_by_url(actor_url) do
+    case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
       {:ok, %Actor{type: :Group, id: group_id} = _group} ->
         %{
           title: object["name"],

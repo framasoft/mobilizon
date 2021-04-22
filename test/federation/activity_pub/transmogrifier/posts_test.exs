@@ -7,7 +7,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.PostsTest do
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
   describe "handle incoming posts" do
     setup :verify_on_exit!

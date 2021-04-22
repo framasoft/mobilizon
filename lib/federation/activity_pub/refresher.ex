@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
   require Logger
 
@@ -31,7 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   end
 
   def refresh_profile(%Actor{type: type, url: url}) when type in [:Person, :Application] do
-    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPub.make_actor_from_url(url),
+    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPubActor.make_actor_from_url(url),
          :ok <- fetch_collection(outbox_url, Relay.get_actor()) do
       :ok
     end
@@ -49,7 +50,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
             discussions_url: discussions_url,
             events_url: events_url
           }} <-
-           ActivityPub.make_actor_from_url(group_url),
+           ActivityPubActor.make_actor_from_url(group_url),
          :ok <- fetch_collection(outbox_url, on_behalf_of),
          :ok <- fetch_collection(members_url, on_behalf_of),
          :ok <- fetch_collection(resources_url, on_behalf_of),

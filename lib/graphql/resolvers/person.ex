@@ -13,6 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   require Logger
 
   alias Mobilizon.Web.Upload
@@ -39,7 +40,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         context: %{current_user: %User{} = user}
       }) do
     with {:ok, %Actor{id: actor_id} = actor} <-
-           ActivityPub.find_or_make_actor_from_nickname(preferred_username),
+           ActivityPubActor.find_or_make_actor_from_nickname(preferred_username),
          {:own, {:is_owned, _}} <- {:own, User.owns_actor(user, actor_id)} do
       {:ok, actor}
     else

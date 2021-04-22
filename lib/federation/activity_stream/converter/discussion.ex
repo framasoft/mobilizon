@@ -8,7 +8,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Discussion
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Discussion, as: DiscussionConverter
   alias Mobilizon.Storage.Repo
@@ -49,10 +49,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
   def as_to_model_data(%{"type" => "Note", "name" => name} = object) when not is_nil(name) do
     with creator_url <- Map.get(object, "actor"),
          {:ok, %Actor{id: creator_id, suspended: false}} <-
-           ActivityPub.get_or_fetch_actor_by_url(creator_url),
+           ActivityPubActor.get_or_fetch_actor_by_url(creator_url),
          actor_url <- Map.get(object, "attributedTo"),
          {:ok, %Actor{id: actor_id, suspended: false}} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor_url) do
+           ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
       %{
         title: name,
         actor_id: actor_id,

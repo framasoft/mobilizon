@@ -12,7 +12,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
 
   alias Mobilizon.Actors.Actor
 
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.HTTPSignatures.Signature
 
@@ -34,7 +34,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
   @spec actor_from_key_id(Plug.Conn.t()) :: Actor.t() | nil
   defp actor_from_key_id(conn) do
     with key_actor_id when is_binary(key_actor_id) <- key_id_from_conn(conn),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(key_actor_id) do
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(key_actor_id) do
       actor
     else
       _ ->

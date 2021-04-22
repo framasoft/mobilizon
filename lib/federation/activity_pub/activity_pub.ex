@@ -39,11 +39,12 @@ defmodule Mobilizon.Federation.ActivityPub do
     Visibility
   }
 
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+
   alias Mobilizon.Federation.ActivityPub.Types.{Managable, Ownable}
 
-  alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Federation.HTTPSignatures.Signature
-  alias Mobilizon.Federation.WebFinger
 
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Storage.Page
@@ -151,40 +152,6 @@ defmodule Mobilizon.Federation.ActivityPub do
       end
     else
       {:ok, entity}
-    end
-  end
-
-  @doc """
-  Getting an actor from url, eventually creating it if we don't have it locally or if it needs an update
-  """
-  @spec get_or_fetch_actor_by_url(String.t(), boolean) :: {:ok, Actor.t()} | {:error, String.t()}
-  def get_or_fetch_actor_by_url(url, preload \\ false)
-
-  def get_or_fetch_actor_by_url(nil, _preload), do: {:error, "Can't fetch a nil url"}
-
-  def get_or_fetch_actor_by_url("https://www.w3.org/ns/activitystreams#Public", _preload) do
-    with %Actor{url: url} <- Relay.get_actor() do
-      get_or_fetch_actor_by_url(url)
-    end
-  end
-
-  @spec get_or_fetch_actor_by_url(String.t(), boolean()) :: {:ok, Actor.t()} | {:error, any()}
-  def get_or_fetch_actor_by_url(url, preload) do
-    with {:ok, %Actor{} = cached_actor} <- Actors.get_actor_by_url(url, preload),
-         false <- Actors.needs_update?(cached_actor) do
-      {:ok, cached_actor}
-    else
-      _ ->
-        # For tests, see https://github.com/jjh42/mock#not-supported---mocking-internal-function-calls and Mobilizon.Federation.ActivityPubTest
-        case __MODULE__.make_actor_from_url(url, preload) do
-          {:ok, %Actor{} = actor} ->
-            {:ok, actor}
-
-          {:error, err} ->
-            Logger.debug("Could not fetch by AP id")
-            Logger.debug(inspect(err))
-            {:error, "Could not fetch by AP id"}
-        end
     end
   end
 
@@ -302,7 +269,8 @@ defmodule Mobilizon.Federation.ActivityPub do
         local \\ true,
         public \\ true
       ) do
-    with {:ok, %Actor{id: object_owner_actor_id}} <- get_or_fetch_actor_by_url(object["actor"]),
+    with {:ok, %Actor{id: object_owner_actor_id}} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(object["actor"]),
          {:ok, %Share{} = _share} <- Share.create(object["id"], actor.id, object_owner_actor_id),
          announce_data <- make_announce_data(actor, object, activity_id, public),
          {:ok, activity} <- create_activity(announce_data, local),
@@ -619,64 +587,6 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @doc """
-  Create an actor locally by its URL (AP ID)
-  """
-  @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
-  def make_actor_from_url(url, preload \\ false) do
-    if are_same_origin?(url, Endpoint.url()) do
-      {:error, "Can't make a local actor from URL"}
-    else
-      case fetch_and_prepare_actor_from_url(url) do
-        {:ok, data} ->
-          Actors.upsert_actor(data, preload)
-
-        # Request returned 410
-        {:error, :actor_deleted} ->
-          Logger.info("Actor was deleted")
-          {:error, :actor_deleted}
-
-        {:error, e} ->
-          Logger.warn("Failed to make actor from url")
-          {:error, e}
-      end
-    end
-  end
-
-  @doc """
-  Find an actor in our local database or call WebFinger to find what's its AP ID is and then fetch it
-  """
-  @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) :: tuple()
-  def find_or_make_actor_from_nickname(nickname, type \\ nil) do
-    case Actors.get_actor_by_name(nickname, type) do
-      %Actor{} = actor ->
-        {:ok, actor}
-
-      nil ->
-        make_actor_from_nickname(nickname)
-    end
-  end
-
-  @spec find_or_make_person_from_nickname(String.t()) :: tuple()
-  def find_or_make_person_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Person)
-
-  @spec find_or_make_group_from_nickname(String.t()) :: tuple()
-  def find_or_make_group_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Group)
-
-  @doc """
-  Create an actor inside our database from username, using WebFinger to find out its AP ID and then fetch it
-  """
-  @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
-  def make_actor_from_nickname(nickname) do
-    case WebFinger.finger(nickname) do
-      {:ok, url} when is_binary(url) ->
-        make_actor_from_url(url)
-
-      _e ->
-        {:error, "No ActivityPub URL found in WebFinger"}
-    end
-  end
-
   @spec is_create_activity?(Activity.t()) :: boolean
   defp is_create_activity?(%Activity{data: %{"type" => "Create"}}), do: true
   defp is_create_activity?(_), do: false
@@ -792,40 +702,6 @@ defmodule Mobilizon.Federation.ActivityPub do
         {"date", date}
       ]
     )
-  end
-
-  # Fetching a remote actor's information through its AP ID
-  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, map()} | {:error, atom()} | any()
-  defp fetch_and_prepare_actor_from_url(url) do
-    Logger.debug("Fetching and preparing actor from url")
-    Logger.debug(inspect(url))
-
-    res =
-      with {:ok, %{status: 200, body: body}} <-
-             Tesla.get(url,
-               headers: [{"Accept", "application/activity+json"}],
-               follow_redirect: true
-             ),
-           :ok <- Logger.debug("response okay, now decoding json"),
-           {:ok, data} <- Jason.decode(body) do
-        Logger.debug("Got activity+json response at actor's endpoint, now converting data")
-        {:ok, Converter.Actor.as_to_model_data(data)}
-      else
-        # Actor is gone, probably deleted
-        {:ok, %{status: 410}} ->
-          Logger.info("Response HTTP 410")
-          {:error, :actor_deleted}
-
-        {:error, e} ->
-          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-          {:error, e}
-
-        e ->
-          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-          {:error, e}
-      end
-
-    res
   end
 
   @doc """

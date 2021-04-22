@@ -10,7 +10,7 @@ defmodule Mobilizon.Federation.WebFinger do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger.XmlBuilder
   alias Mobilizon.Service.HTTP.{HostMetaClient, WebfingerClient}
   alias Mobilizon.Web.Endpoint
@@ -56,7 +56,7 @@ defmodule Mobilizon.Federation.WebFinger do
       {:ok, represent_actor(actor, "JSON")}
     else
       _e ->
-        case ActivityPub.get_or_fetch_actor_by_url(resource) do
+        case ActivityPubActor.get_or_fetch_actor_by_url(resource) do
           {:ok, %Actor{} = actor} when not is_nil(actor) ->
             {:ok, represent_actor(actor, "JSON")}
 

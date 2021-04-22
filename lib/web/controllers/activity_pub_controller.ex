@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   alias Mobilizon.Actors.{Actor, Member}
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.{Federator, Utils}
 
   alias Mobilizon.Web.ActivityPub.ActorView
@@ -108,7 +109,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   def inbox(%{assigns: %{valid_signature: true}} = conn, %{"name" => preferred_username} = params) do
     with %Actor{url: recipient_url} = recipient <-
            Actors.get_local_actor_by_name(preferred_username),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(params["actor"]),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(params["actor"]),
          true <- Utils.recipient_in_message(recipient, actor, params),
          params <- Utils.maybe_splice_recipient(recipient_url, params) do
       Federator.enqueue(:incoming_ap_doc, params)
