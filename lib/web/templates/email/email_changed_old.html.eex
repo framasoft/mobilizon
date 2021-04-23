@@ -37,9 +37,6 @@
           <p style="margin: 0;">
             <%= gettext("The email address for your account on <b>%{host}</b> is being changed to:", host: @instance[:name]) |> raw %>
           </p>
-          <p>
-            <%= gettext("If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}.", host: @instance[:name]) %>
-          </p>
         </td>
       </tr>
       <tr>
