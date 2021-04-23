@@ -42,6 +42,7 @@ LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.vendor="joinmobilizon.org" \
     org.opencontainers.image.documentation="https://docs.joinmobilizon.org" \
     org.opencontainers.image.licenses="AGPL-3.0" \
+    org.opencontainers.image.source="https://framagit.org/framasoft/mobilizon" \
     org.opencontainers.image.url="https://joinmobilizon.org" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
