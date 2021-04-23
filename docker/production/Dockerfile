@@ -34,8 +34,6 @@ FROM alpine
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG CI_COMMIT_TAG
-ARG MOBILIZON_VERSION=${CI_COMMIT_TAG}
 
 LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.description="Mobilizon for Docker" \
@@ -58,7 +56,7 @@ EXPOSE 4000
 ENV MOBILIZON_DOCKER=true
 
 COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
-RUN cp /releases/${MOBILIZON_VERSION}/runtime.exs /etc/mobilizon/config.exs
+RUN cp /releases/*/runtime.exs /etc/mobilizon/config.exs
 COPY docker/production/docker-entrypoint.sh ./
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
