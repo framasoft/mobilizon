@@ -6,8 +6,8 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
-  alias Mobilizon.Storage.Repo
   require Logger
 
   @doc """
@@ -32,7 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   end
 
   def refresh_profile(%Actor{type: type, url: url}) when type in [:Person, :Application] do
-    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPub.make_actor_from_url(url),
+    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPubActor.make_actor_from_url(url),
          :ok <- fetch_collection(outbox_url, Relay.get_actor()) do
       :ok
     end
@@ -50,7 +50,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
             discussions_url: discussions_url,
             events_url: events_url
           }} <-
-           ActivityPub.make_actor_from_url(group_url),
+           ActivityPubActor.make_actor_from_url(group_url),
          :ok <- fetch_collection(outbox_url, on_behalf_of),
          :ok <- fetch_collection(members_url, on_behalf_of),
          :ok <- fetch_collection(resources_url, on_behalf_of),
@@ -60,9 +60,23 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
          :ok <- fetch_collection(events_url, on_behalf_of) do
       :ok
     else
+      {:error, err} ->
+        Logger.error("Error while refreshing a group")
+
+        Sentry.capture_message("Error while refreshing a group",
+          extra: %{group_url: group_url}
+        )
+
+        Logger.debug(inspect(err))
+
       err ->
         Logger.error("Error while refreshing a group")
-        Logger.error(inspect(err))
+
+        Sentry.capture_message("Error while refreshing a group",
+          extra: %{group_url: group_url}
+        )
+
+        Logger.debug(inspect(err))
     end
   end
 
@@ -96,14 +110,11 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
   end
 
-  @spec refresh_all_external_groups :: any()
+  @spec refresh_all_external_groups :: :ok
   def refresh_all_external_groups do
-    Repo.transaction(fn ->
-      Actors.list_external_groups_for_stream()
-      |> Stream.filter(&Actors.needs_update?/1)
-      |> Stream.map(&refresh_profile/1)
-      |> Stream.run()
-    end)
+    Actors.list_external_groups()
+    |> Enum.filter(&Actors.needs_update?/1)
+    |> Enum.each(&refresh_profile/1)
   end
 
   defp process_collection(%{"type" => type, "orderedItems" => items}, _on_behalf_of)
@@ -120,6 +131,14 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
 
     Logger.debug("Finished processing a collection")
     :ok
+  end
+
+  # Lemmy uses an OrderedCollection with the items property
+  defp process_collection(%{"type" => type, "items" => items} = collection, on_behalf_of)
+       when type in ["OrderedCollection", "OrderedCollectionPage"] do
+    collection
+    |> Map.put("orderedItems", items)
+    |> process_collection(on_behalf_of)
   end
 
   defp process_collection(%{"type" => "OrderedCollection", "first" => first}, on_behalf_of)
@@ -148,6 +167,11 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
 
     Transmogrifier.handle_incoming(data)
+  end
+
+  # If we're handling an announce activity
+  defp handling_element(%{"type" => "Announce"} = data) do
+    handling_element(get_in(data, ["object"]))
   end
 
   # If we're handling directly an object

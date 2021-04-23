@@ -47,6 +47,10 @@ defmodule Mobilizon.Web.ErrorView do
     %{msg: "Not acceptable"}
   end
 
+  def render("500.json", assigns) do
+    render("500.html", assigns)
+  end
+
   def render("500.html", assigns) do
     Mobilizon.Config.instance_config()
     |> Keyword.get(:default_language, "en")

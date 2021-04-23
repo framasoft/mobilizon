@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
   """
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Todos
   alias Mobilizon.Todos.{Todo, TodoList}
@@ -51,7 +52,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
         %{"type" => "Todo", "actor" => actor_url, "todoList" => todo_list_url} = object
       ) do
     with {:ok, %Actor{id: creator_id} = _creator} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor_url),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
          {:todo_list, %TodoList{id: todo_list_id}} <-
            {:todo_list, Todos.get_todo_list_by_url(todo_list_url)} do
       %{

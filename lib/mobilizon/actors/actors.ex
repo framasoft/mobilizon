@@ -374,12 +374,22 @@ defmodule Mobilizon.Actors do
 
       {:error, remove, error, _} when remove in [:remove_banner, :remove_avatar] ->
         Logger.error("Error while deleting actor's banner or avatar")
-        Logger.error(inspect(error, pretty: true))
+
+        Sentry.capture_message("Error while deleting actor's banner or avatar",
+          extra: %{err: error}
+        )
+
+        Logger.debug(inspect(error, pretty: true))
         {:error, error}
 
       err ->
         Logger.error("Unknown error while deleting actor")
-        Logger.error(inspect(err, pretty: true))
+
+        Sentry.capture_message("Error while deleting actor's banner or avatar",
+          extra: %{err: err}
+        )
+
+        Logger.debug(inspect(err, pretty: true))
         {:error, err}
     end
   end
@@ -652,10 +662,11 @@ defmodule Mobilizon.Actors do
   @doc """
   Lists the groups.
   """
-  @spec list_groups_for_stream :: Enum.t()
-  def list_external_groups_for_stream do
+  @spec list_external_groups(non_neg_integer()) :: list(Actor.t())
+  def list_external_groups(limit \\ 100) when limit > 0 do
     external_groups_query()
-    |> Repo.stream()
+    |> limit(^limit)
+    |> Repo.all()
   end
 
   @doc """

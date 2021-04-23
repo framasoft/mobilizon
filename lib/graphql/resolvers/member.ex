@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   alias Mobilizon.{Actors, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Refresher
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
@@ -70,7 +71,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
            target_actor_username |> String.trim() |> String.trim_leading("@"),
          {:target_actor_username, {:ok, %Actor{id: target_actor_id} = target_actor}} <-
            {:target_actor_username,
-            ActivityPub.find_or_make_actor_from_nickname(target_actor_username)},
+            ActivityPubActor.find_or_make_actor_from_nickname(target_actor_username)},
          {:existant, true} <-
            {:existant, check_member_not_existant_or_rejected(target_actor_id, group.id)},
          {:ok, _activity, %Member{} = member} <- ActivityPub.invite(group, actor, target_actor) do

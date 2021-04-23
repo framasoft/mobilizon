@@ -12,6 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Preloader do
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Tombstone
 
+  @spec maybe_preload(struct()) :: {:ok, struct()} | {:error, struct()}
   def maybe_preload(%Event{url: url}),
     do: {:ok, Events.get_public_event_by_url_with_preload!(url)}
 

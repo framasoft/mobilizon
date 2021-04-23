@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
   """
   use Mix.Task
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Storage.Repo
   import Ecto.Query
   import Mix.Tasks.Mobilizon.Common
@@ -65,7 +65,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
   def run([preferred_username]) do
     start_mobilizon()
 
-    case ActivityPub.make_actor_from_nickname(preferred_username) do
+    case ActivityPubActor.make_actor_from_nickname(preferred_username) do
       {:ok, %Actor{}} ->
         shell_info("""
         Actor #{preferred_username} refreshed
@@ -89,7 +89,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
 
   @spec make_actor(String.t(), boolean()) :: any()
   defp make_actor(username, verbose) do
-    ActivityPub.make_actor_from_nickname(username)
+    ActivityPubActor.make_actor_from_nickname(username)
   rescue
     _ ->
       if verbose do

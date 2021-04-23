@@ -11,13 +11,12 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   import Mox
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Discussions, Events}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Discussions, Events}
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
@@ -38,116 +37,6 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
       assert signature =~ "headers=\"(request-target) content-length date digest host\""
     end
-  end
-
-  describe "fetching actor from its url" do
-    test "returns an actor from nickname" do
-      use_cassette "activity_pub/fetch_tcit@framapiaf.org" do
-        assert {:ok,
-                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :public} =
-                  _actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
-      end
-
-      use_cassette "activity_pub/fetch_tcit@framapiaf.org_not_discoverable" do
-        assert {:ok,
-                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :unlisted} =
-                  _actor} = ActivityPub.make_actor_from_nickname("tcit@framapiaf.org")
-      end
-    end
-
-    @actor_url "https://framapiaf.org/users/tcit"
-    test "returns an actor from url" do
-      # Initial fetch
-      use_cassette "activity_pub/fetch_framapiaf.org_users_tcit" do
-        # Unlisted because discoverable is not present in the JSON payload
-        assert {:ok,
-                %Actor{preferred_username: "tcit", domain: "framapiaf.org", visibility: :unlisted}} =
-                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
-      end
-
-      # Fetch uses cache if Actors.needs_update? returns false
-      with_mocks([
-        {Actors, [:passthrough],
-         [
-           get_actor_by_url: fn @actor_url, false ->
-             {:ok,
-              %Actor{
-                preferred_username: "tcit",
-                domain: "framapiaf.org"
-              }}
-           end,
-           needs_update?: fn _ -> false end
-         ]},
-        {ActivityPub, [:passthrough],
-         make_actor_from_url: fn @actor_url, false ->
-           {:ok,
-            %Actor{
-              preferred_username: "tcit",
-              domain: "framapiaf.org"
-            }}
-         end}
-      ]) do
-        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
-
-        assert_called(Actors.needs_update?(:_))
-        refute called(ActivityPub.make_actor_from_url(@actor_url, false))
-      end
-
-      # Fetch doesn't use cache if Actors.needs_update? returns true
-      with_mocks([
-        {Actors, [:passthrough],
-         [
-           get_actor_by_url: fn @actor_url, false ->
-             {:ok,
-              %Actor{
-                preferred_username: "tcit",
-                domain: "framapiaf.org"
-              }}
-           end,
-           needs_update?: fn _ -> true end
-         ]},
-        {ActivityPub, [:passthrough],
-         make_actor_from_url: fn @actor_url, false ->
-           {:ok,
-            %Actor{
-              preferred_username: "tcit",
-              domain: "framapiaf.org"
-            }}
-         end}
-      ]) do
-        assert {:ok, %Actor{preferred_username: "tcit", domain: "framapiaf.org"}} =
-                 ActivityPub.get_or_fetch_actor_by_url(@actor_url)
-
-        assert_called(ActivityPub.get_or_fetch_actor_by_url(@actor_url))
-        assert_called(Actors.get_actor_by_url(@actor_url, false))
-        assert_called(Actors.needs_update?(:_))
-        assert_called(ActivityPub.make_actor_from_url(@actor_url, false))
-      end
-    end
-
-    @public_url "https://www.w3.org/ns/activitystreams#Public"
-    test "activitystreams#Public uri returns Relay actor" do
-      assert ActivityPub.get_or_fetch_actor_by_url(@public_url) == {:ok, Relay.get_actor()}
-    end
-  end
-
-  describe "create activities" do
-    #    test "removes doubled 'to' recipients" do
-    #      actor = insert(:actor)
-    #
-    #      {:ok, activity, _} =
-    #        ActivityPub.create(%{
-    #          to: ["user1", "user1", "user2"],
-    #          actor: actor,
-    #          context: "",
-    #          object: %{}
-    #        })
-    #
-    #      assert activity.data["to"] == ["user1", "user2"]
-    #      assert activity.actor == actor.url
-    #      assert activity.recipients == ["user1", "user2"]
-    #    end
   end
 
   describe "fetching an" do

@@ -3,7 +3,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Oban.Testing, repo: Mobilizon.Storage.Repo
   import Mobilizon.Factory
-  import ExUnit.CaptureLog
   import Mox
 
   alias Mobilizon.{Actors, Discussions, Events, Posts, Resources}
@@ -78,7 +77,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
         data
         |> Map.put("object", object)
 
-      :error = Transmogrifier.handle_incoming(data)
+      {:error, :unknown_actor} = Transmogrifier.handle_incoming(data)
 
       assert Discussions.get_comment_from_url(comment.url)
     end
@@ -119,12 +118,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
 
     test "it fails for incoming actor deletes with spoofed origin" do
       %{url: url} = insert(:actor)
-      deleted_actor_url = "https://framapiaf.org/users/admin"
 
       data =
         File.read!("test/fixtures/mastodon-delete-user.json")
         |> Jason.decode!()
         |> Map.put("actor", url)
+
+      deleted_actor_url = "https://framapiaf.org/users/admin"
 
       deleted_actor_data =
         File.read!("test/fixtures/mastodon-actor.json")
@@ -137,9 +137,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
           {:ok, %Tesla.Env{status: 200, body: deleted_actor_data}}
       end)
 
-      assert capture_log(fn ->
-               assert :error == Transmogrifier.handle_incoming(data)
-             end) =~ "Object origin check failed"
+      assert :error == Transmogrifier.handle_incoming(data)
 
       assert Actors.get_actor_by_url(url)
     end

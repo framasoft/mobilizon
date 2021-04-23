@@ -63,6 +63,7 @@ defmodule Mobilizon.Addresses.Address do
     |> cast(attrs, @attrs)
     |> set_url()
     |> validate_required(@required_attrs)
+    |> unique_constraint(:url, name: :addresses_url_index)
   end
 
   @spec set_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()

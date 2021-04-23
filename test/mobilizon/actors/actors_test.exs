@@ -13,7 +13,7 @@ defmodule Mobilizon.ActorsTest do
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
 
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
   alias Mobilizon.Web.Upload.Uploader
 
@@ -106,7 +106,7 @@ defmodule Mobilizon.ActorsTest do
            preferred_username: preferred_username,
            domain: domain,
            avatar: %FileModel{name: picture_name} = _picture
-         } = _actor} = ActivityPub.get_or_fetch_actor_by_url(@remote_account_url)
+         } = _actor} = ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url)
 
         assert picture_name == "a28c50ce5f2b13fd.jpg"
 
@@ -156,7 +156,8 @@ defmodule Mobilizon.ActorsTest do
 
     test "get_actor_by_name_with_preload!/1 returns the remote actor with its organized events" do
       use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(@remote_account_url) do
+        with {:ok, %Actor{} = actor} <-
+               ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
           assert Actors.get_actor_by_name_with_preload(
                    "#{actor.preferred_username}@#{actor.domain}"
                  ).organized_events == []
@@ -186,7 +187,7 @@ defmodule Mobilizon.ActorsTest do
          %{actor: %Actor{id: actor_id}} do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{id: actor2_id}} <-
-               ActivityPub.get_or_fetch_actor_by_url(@remote_account_url) do
+               ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
           %Page{total: 2, elements: actors} =
             Actors.build_actors_by_username_or_name_page("tcit",
               actor_type: [:Person],

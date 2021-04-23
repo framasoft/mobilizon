@@ -12,14 +12,15 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
   alias Mobilizon.GraphQL.API.Search
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
   test "search an user by username" do
-    with_mock ActivityPub,
+    with_mock ActivityPubActor,
       find_or_make_actor_from_nickname: fn "toto@domain.tld" -> {:ok, %Actor{id: 42}} end do
       assert {:ok, %Page{total: 1, elements: [%Actor{id: 42}]}} ==
                Search.search_actors(%{term: "toto@domain.tld"}, 1, 10, :Person)
 
-      assert_called(ActivityPub.find_or_make_actor_from_nickname("toto@domain.tld"))
+      assert_called(ActivityPubActor.find_or_make_actor_from_nickname("toto@domain.tld"))
     end
   end
 

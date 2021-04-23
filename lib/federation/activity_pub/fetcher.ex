@@ -8,6 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Federation.ActivityPub.{Relay, Transmogrifier}
+  alias Mobilizon.Federation.ActivityStream.Converter.Actor, as: ActorConverter
   alias Mobilizon.Service.HTTP.ActivityPub, as: ActivityPubClient
 
   import Mobilizon.Federation.ActivityPub.Utils,
@@ -30,11 +31,11 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       {:ok, data}
     else
       {:ok, %Tesla.Env{status: 410}} ->
-        Logger.warn("Resource at #{url} is 410 Gone")
+        Logger.debug("Resource at #{url} is 410 Gone")
         {:error, "Gone"}
 
       {:ok, %Tesla.Env{status: 404}} ->
-        Logger.warn("Resource at #{url} is 404 Gone")
+        Logger.debug("Resource at #{url} is 404 Gone")
         {:error, "Not found"}
 
       {:ok, %Tesla.Env{} = res} ->
@@ -75,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   @spec fetch_and_update(String.t(), Keyword.t()) :: {:ok, map(), struct()}
   def fetch_and_update(url, options \\ []) do
     with {:ok, data} when is_map(data) <- fetch(url, options),
-         {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
+         {:origin_check, true} <- {:origin_check, origin_check(url, data)},
          params <- %{
            "type" => "Update",
            "to" => data["to"],
@@ -87,11 +88,57 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       Transmogrifier.handle_incoming(params)
     else
       {:origin_check, false} ->
-        Logger.warn("Object origin check failed")
         {:error, "Object origin check failed"}
 
       {:error, err} ->
         {:error, err}
+    end
+  end
+
+  @doc """
+  Fetching a remote actor's information through its AP ID
+  """
+  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, map()} | {:error, atom()} | any()
+  def fetch_and_prepare_actor_from_url(url) do
+    Logger.debug("Fetching and preparing actor from url")
+    Logger.debug(inspect(url))
+
+    res =
+      with {:ok, %{status: 200, body: body}} <-
+             Tesla.get(url,
+               headers: [{"Accept", "application/activity+json"}],
+               follow_redirect: true
+             ),
+           :ok <- Logger.debug("response okay, now decoding json"),
+           {:ok, data} <- Jason.decode(body) do
+        Logger.debug("Got activity+json response at actor's endpoint, now converting data")
+        {:ok, ActorConverter.as_to_model_data(data)}
+      else
+        # Actor is gone, probably deleted
+        {:ok, %{status: 410}} ->
+          Logger.info("Response HTTP 410")
+          {:error, :actor_deleted}
+
+        {:error, e} ->
+          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+          {:error, e}
+
+        e ->
+          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+          {:error, e}
+      end
+
+    res
+  end
+
+  @spec origin_check(String.t(), map()) :: boolean()
+  defp origin_check(url, data) do
+    if origin_check?(url, data) do
+      true
+    else
+      Sentry.capture_message("Object origin check failed", extra: %{url: url, data: data})
+      Logger.debug("Object origin check failed")
+      false
     end
   end
 

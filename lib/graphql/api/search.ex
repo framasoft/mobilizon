@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.API.Search do
   alias Mobilizon.Storage.Page
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
   require Logger
 
@@ -92,7 +93,7 @@ defmodule Mobilizon.GraphQL.API.Search do
   # If the search string is an username
   @spec process_from_username(String.t()) :: Page.t()
   defp process_from_username(search) do
-    case ActivityPub.find_or_make_actor_from_nickname(search) do
+    case ActivityPubActor.find_or_make_actor_from_nickname(search) do
       {:ok, actor} ->
         %Page{total: 1, elements: [actor]}
 

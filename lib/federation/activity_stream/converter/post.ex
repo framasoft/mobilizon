@@ -6,7 +6,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   internal one, and back.
   """
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.{Audience, Utils}
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
@@ -91,7 +91,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
 
   @spec get_actor(String.t() | map() | nil) :: {:ok, Actor.t()} | {:error, String.t()}
   defp get_actor(nil), do: {:error, "nil property found for actor data"}
-  defp get_actor(actor), do: actor |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url()
+
+  defp get_actor(actor),
+    do: actor |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url()
 
   defp to_date(nil), do: nil
   defp to_date(%DateTime{} = date), do: DateTime.to_iso8601(date)

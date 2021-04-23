@@ -13,6 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
   require Logger
 
@@ -42,7 +43,8 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
     Logger.debug(inspect(activity))
     Logger.debug(fn -> "Running publish for #{activity.data["id"]}" end)
 
-    with {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(activity.data["actor"]) do
+    with {:ok, %Actor{} = actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(activity.data["actor"]) do
       Logger.info(fn -> "Sending #{activity.data["id"]} out via AP" end)
       ActivityPub.publish(actor, activity)
     end
@@ -61,7 +63,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
       e ->
         # Just drop those for now
-        Logger.error("Unhandled activity")
+        Logger.debug("Unhandled activity")
         Logger.debug(inspect(e))
         Logger.debug(Jason.encode!(params))
     end

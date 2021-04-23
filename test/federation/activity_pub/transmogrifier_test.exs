@@ -21,6 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -89,7 +90,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
           preferred_username: "member"
         )
 
-      with_mock ActivityPub, [:passthrough],
+      with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
             ^group_url -> {:ok, group}
@@ -168,7 +169,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       group = insert(:group, domain: "morebilizon.com", url: @mobilizon_group_url)
       %Actor{url: actor_url} = actor = insert(:actor)
 
-      with_mock ActivityPub, [:passthrough],
+      with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:ok, group}
@@ -198,7 +199,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     test "it accepts incoming todo lists and handles group being not found" do
       %Actor{url: actor_url} = actor = insert(:actor)
 
-      with_mock ActivityPub, [:passthrough],
+      with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:error, "Not found"}
@@ -274,7 +275,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       group = insert(:group, domain: "morebilizon.com", url: @mobilizon_group_url)
       %Actor{url: actor_url} = actor = insert(:actor)
 
-      with_mock ActivityPub, [:passthrough],
+      with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:ok, group}
@@ -304,7 +305,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     test "it accepts incoming todo lists and handles group being not found" do
       %Actor{url: actor_url} = actor = insert(:actor)
 
-      with_mock ActivityPub, [:passthrough],
+      with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:error, "Not found"}

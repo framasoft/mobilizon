@@ -10,7 +10,8 @@ defmodule Mobilizon.Web.ActivityPubController do
   alias Mobilizon.Actors.{Actor, Member}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Federator
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+  alias Mobilizon.Federation.ActivityPub.{Federator, Utils}
 
   alias Mobilizon.Web.ActivityPub.ActorView
   alias Mobilizon.Web.Cache
@@ -105,7 +106,17 @@ defmodule Mobilizon.Web.ActivityPubController do
     actor_collection(conn, "outbox", args)
   end
 
-  # TODO: Ensure that this inbox is a recipient of the message
+  def inbox(%{assigns: %{valid_signature: true}} = conn, %{"name" => preferred_username} = params) do
+    with %Actor{url: recipient_url} = recipient <-
+           Actors.get_local_actor_by_name(preferred_username),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(params["actor"]),
+         true <- Utils.recipient_in_message(recipient, actor, params),
+         params <- Utils.maybe_splice_recipient(recipient_url, params) do
+      Federator.enqueue(:incoming_ap_doc, params)
+      json(conn, "ok")
+    end
+  end
+
   def inbox(%{assigns: %{valid_signature: true}} = conn, params) do
     Logger.debug("Got something with valid signature inside inbox")
     Federator.enqueue(:incoming_ap_doc, params)
@@ -114,7 +125,7 @@ defmodule Mobilizon.Web.ActivityPubController do
 
   # only accept relayed Creates
   def inbox(conn, %{"type" => "Create"} = params) do
-    Logger.info(
+    Logger.debug(
       "Signature missing or not from author, relayed Create message, fetching object from source"
     )
 
@@ -126,8 +137,9 @@ defmodule Mobilizon.Web.ActivityPubController do
   def inbox(conn, params) do
     headers = Enum.into(conn.req_headers, %{})
 
-    if String.contains?(headers["signature"], params["actor"]) do
-      Logger.error(
+    if headers["signature"] && params["actor"] &&
+         String.contains?(headers["signature"], params["actor"]) do
+      Logger.debug(
         "Signature validation error for: #{params["actor"]}, make sure you are forwarding the HTTP Host header!"
       )
 

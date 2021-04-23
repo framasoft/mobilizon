@@ -13,6 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger
 
   alias Mobilizon.GraphQL.API.Follows
@@ -37,7 +38,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   def follow(address) do
     with {:ok, target_instance} <- fetch_actor(address),
          %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.follow(local_actor, target_actor) do
       Logger.info("Relay: followed instance #{target_instance}; id=#{activity.data["id"]}")
       {:ok, activity, follow}
@@ -56,7 +58,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   def unfollow(address) do
     with {:ok, target_instance} <- fetch_actor(address),
          %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.unfollow(local_actor, target_actor) do
       Logger.info("Relay: unfollowed instance #{target_instance}: id=#{activity.data["id"]}")
       {:ok, activity, follow}
@@ -73,7 +76,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
     with {:ok, target_instance} <- fetch_actor(address),
          %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.accept(target_actor, local_actor) do
       {:ok, activity, follow}
     end
@@ -84,7 +88,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
     with {:ok, target_instance} <- fetch_actor(address),
          %Actor{} = local_actor <- get_actor(),
-         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance),
+         {:ok, %Actor{} = target_actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.reject(target_actor, local_actor) do
       {:ok, activity, follow}
     end
@@ -94,7 +99,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     Logger.debug("We're trying to refresh a remote instance")
 
     with {:ok, target_instance} <- fetch_actor(address),
-         {:ok, %Actor{} = target_actor} <- ActivityPub.get_or_fetch_actor_by_url(target_instance) do
+         {:ok, %Actor{} = target_actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(target_instance) do
       Refresher.refresh_profile(target_actor)
     end
   end

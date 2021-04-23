@@ -18,6 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Tombstone
@@ -117,12 +118,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   def handle_incoming(%{
         "type" => "Create",
-        "object" => %{"type" => "Group", "id" => group_url} = _object
-      }) do
-    Logger.info("Handle incoming to create a group")
+        "object" => %{"type" => type, "id" => actor_url} = _object
+      })
+      when type in ["Group", "Person", "Actor"] do
+    Logger.info("Handle incoming to create an actor")
 
-    with {:ok, %Actor{} = group} <- ActivityPub.get_or_fetch_actor_by_url(group_url) do
-      {:ok, nil, group}
+    with {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
+      {:ok, nil, actor}
     end
   end
 
@@ -201,8 +203,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = _data
       ) do
-    with {:ok, %Actor{} = followed} <- ActivityPub.get_or_fetch_actor_by_url(followed, true),
-         {:ok, %Actor{} = follower} <- ActivityPub.get_or_fetch_actor_by_url(follower),
+    with {:ok, %Actor{} = followed} <- ActivityPubActor.get_or_fetch_actor_by_url(followed, true),
+         {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
          {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
       {:ok, activity, object}
     else
@@ -221,7 +223,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with {:existing_todo_list, nil} <-
            {:existing_todo_list, Todos.get_todo_list_by_url(object_url)},
-         {:ok, %Actor{url: actor_url}} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         {:ok, %Actor{url: actor_url}} <- ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
          object_data when is_map(object_data) <-
            object |> Converter.TodoList.as_to_model_data(),
          {:ok, %Activity{} = activity, %TodoList{} = todo_list} <-
@@ -295,7 +297,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         } = data
       ) do
     with actor_url <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
          {:object_not_found, {:ok, %Activity{} = activity, object}} <-
            {:object_not_found,
             do_handle_incoming_accept_following(accepted_object, actor) ||
@@ -328,7 +330,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Reject", "object" => rejected_object, "actor" => _actor, "id" => id} = data
       ) do
     with actor_url <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
          {:object_not_found, {:ok, activity, object}} <-
            {:object_not_found,
             do_handle_incoming_reject_following(rejected_object, actor) ||
@@ -359,7 +361,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with actor_url <- Utils.get_actor(data),
          {:ok, %Actor{id: actor_id, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor_url),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
          :ok <- Logger.debug("Fetching contained object"),
          {:ok, entity} <- process_announce_data(object, actor),
          :ok <- eventually_create_share(object, entity, actor_id) do
@@ -371,14 +373,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  def handle_incoming(%{
-        "type" => "Update",
-        "object" => %{"type" => object_type} = object,
-        "actor" => _actor_id
-      })
+  def handle_incoming(
+        %{
+          "type" => "Update",
+          "object" => %{"type" => object_type} = object,
+          "actor" => _actor_id
+        } = params
+      )
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
     with {:ok, %Actor{suspended: false} = old_actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(object["id"]),
+           ActivityPubActor.get_or_fetch_actor_by_url(object["id"]),
          object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
@@ -386,7 +390,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_actor}
     else
       e ->
-        Logger.error(inspect(e))
+        Sentry.capture_message("Error while handling an Update activity",
+          extra: %{params: params}
+        )
+
+        Logger.debug(inspect(e))
         :error
     end
   end
@@ -397,7 +405,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, %Event{} = old_event} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Event.as_to_model_data(object),
@@ -422,7 +430,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false}} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
          object_data <- Converter.Comment.as_to_model_data(object),
          {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
@@ -442,7 +450,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, %Post{} = old_post} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Post.as_to_model_data(object),
@@ -470,7 +478,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       when type in ["ResourceCollection", "Document"] do
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false}} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, %Resource{} = old_resource} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Resource.as_to_model_data(object),
@@ -495,7 +503,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with actor <- Utils.get_actor(update_data),
          {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:origin_check, true} <- {:origin_check, Utils.origin_check?(actor_url, update_data)},
          object_data <- Converter.Member.as_to_model_data(object),
          {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
@@ -537,7 +545,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         } = data
       ) do
     with actor <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
          {:ok, activity, object} <-
            ActivityPub.unannounce(actor, object, id, cancelled_activity_id, false) do
@@ -555,8 +563,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
           "id" => id
         } = _data
       ) do
-    with {:ok, %Actor{domain: nil} = followed} <- ActivityPub.get_or_fetch_actor_by_url(followed),
-         {:ok, %Actor{} = follower} <- ActivityPub.get_or_fetch_actor_by_url(follower),
+    with {:ok, %Actor{domain: nil} = followed} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(followed),
+         {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
          {:ok, activity, object} <- ActivityPub.unfollow(follower, followed, id, false) do
       {:ok, activity, object}
     else
@@ -572,7 +581,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
     with actor_url <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor_url),
+         {:actor, {:ok, %Actor{} = actor}} <-
+           {:actor, ActivityPubActor.get_or_fetch_actor_by_url(actor_url)},
          object_id <- Utils.get_url(object),
          {:ok, object} <- is_group_object_gone(object_id),
          {:origin_check, true} <-
@@ -586,8 +596,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Logger.warn("Object origin check failed")
         :error
 
+      {:actor, {:error, "Could not fetch by AP id"}} ->
+        {:error, :unknown_actor}
+
+      {:error, e} ->
+        Logger.debug(inspect(e))
+
+        # Sentry.capture_message("Error while handling a Delete activity",
+        #   extra: %{data: data}
+        # )
+
+        :error
+
       e ->
         Logger.error(inspect(e))
+
+        # Sentry.capture_message("Error while handling a Delete activity",
+        #   extra: %{data: data}
+        # )
+
         :error
     end
   end
@@ -598,7 +625,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       when type in ["ResourceCollection", "Document"] do
     with actor <- Utils.get_actor(data),
          {:ok, %Actor{url: actor_url, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, %Resource{} = old_resource} <-
            object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- Converter.Resource.as_to_model_data(object),
@@ -610,7 +637,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_resource}
     else
       e ->
-        Logger.error(inspect(e))
+        Logger.debug(inspect(e))
+
+        Sentry.capture_message("Error while handling an Move activity",
+          extra: %{data: data}
+        )
+
         :error
     end
   end
@@ -625,7 +657,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with actor <- Utils.get_actor(data),
          {:ok, %Actor{url: _actor_url, suspended: false} = actor} <-
-           ActivityPub.get_or_fetch_actor_by_url(actor),
+           ActivityPubActor.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <-
@@ -643,7 +675,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   def handle_incoming(%{"type" => "Leave", "object" => object, "actor" => actor} = data) do
     with actor <- Utils.get_actor(data),
-         {:ok, %Actor{} = actor} <- ActivityPub.get_or_fetch_actor_by_url(actor),
+         {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <- ActivityPub.leave(object, actor, false) do
@@ -673,10 +705,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to invite someone")
 
     with {:ok, %Actor{} = actor} <-
-           data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
+           data |> Utils.get_actor() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:ok, object} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          {:ok, %Actor{} = target} <-
-           target |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+           target |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:ok, activity, %Member{} = member} <-
            ActivityPub.invite(object, actor, target, false, %{url: id}) do
       {:ok, activity, member}
@@ -689,10 +721,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handle incoming to remove a member from a group")
 
     with {:ok, %Actor{id: moderator_id} = moderator} <-
-           data |> Utils.get_actor() |> ActivityPub.get_or_fetch_actor_by_url(),
+           data |> Utils.get_actor() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:ok, person_id} <- get_remove_object(object),
          {:ok, %Actor{type: :Group, id: group_id} = group} <-
-           origin |> Utils.get_url() |> ActivityPub.get_or_fetch_actor_by_url(),
+           origin |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:is_admin, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
            {:is_admin, Actors.get_member(moderator_id, group_id)},
@@ -741,6 +773,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(object) do
     Logger.info("Handing something with type #{object["type"]} not supported")
     Logger.debug(inspect(object))
+
+    Sentry.capture_message("Handing something with type #{object["type"]} not supported",
+      extra: %{object: object}
+    )
+
     {:error, :not_supported}
   end
 
