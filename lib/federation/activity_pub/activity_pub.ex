@@ -824,10 +824,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            Mobilizon.Service.Activity.Member.insert_activity(member,
              subject: "member_approved"
            ),
-         _ <-
-           unless(is_nil(member.parent.domain),
-             do: Refresher.fetch_group(member.parent.url, member.actor)
-           ),
+         _ <- maybe_refresh_group(member),
          Absinthe.Subscription.publish(Endpoint, member.actor,
            group_membership_changed: [
              Actor.preferred_username_and_domain(member.parent),
@@ -866,6 +863,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            Mobilizon.Service.Activity.Member.insert_activity(member,
              subject: "member_accepted_invitation"
            ),
+         _ <- maybe_refresh_group(member),
          accept_data <- %{
            "type" => "Accept",
            "attributedTo" => member.parent.url,
@@ -877,6 +875,14 @@ defmodule Mobilizon.Federation.ActivityPub do
          } do
       {:ok, member, accept_data}
     end
+  end
+
+  defp maybe_refresh_group(%Member{
+         parent: %Actor{domain: parent_domain, url: parent_url},
+         actor: %Actor{} = actor
+       }) do
+    unless is_nil(parent_domain),
+      do: Refresher.fetch_group(parent_url, actor)
   end
 
   @spec reject_join(Participant.t(), map()) :: {:ok, Participant.t(), Activity.t()} | any()
