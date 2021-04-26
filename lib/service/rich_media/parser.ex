@@ -208,7 +208,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   defp check_parsed_data(%{title: title} = data)
        when is_binary(title) and byte_size(title) > 0 do
-    {:ok, data}
+    data
   end
 
   defp check_parsed_data(data) do
@@ -285,15 +285,20 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
     image_remote_url =
       cond do
-        is_nil(image_uri.host) -> "#{uri.scheme}://#{uri.host}#{image_remote_url}"
+        is_nil(image_uri.host) -> "#{uri.scheme}://#{uri.host}#{correct_path(image_remote_url)}"
         is_nil(image_uri.scheme) -> "#{uri.scheme}:#{image_remote_url}"
         true -> image_remote_url
       end
 
-    Map.put(data, :image_remote_url, image_remote_url)
+    data = Map.put(data, :image_remote_url, image_remote_url)
+    {:ok, data}
   end
 
-  defp check_remote_picture_path(data), do: data
+  defp check_remote_picture_path(data), do: {:ok, data}
+
+  # Sometimes paths have "/" in front, sometimes not
+  defp correct_path("/" <> _ = path), do: path
+  defp correct_path(path), do: "/#{path}"
 
   # Twitter requires a well-know crawler user-agent to show server-rendered data
   defp default_user_agent("https://twitter.com/" <> _) do

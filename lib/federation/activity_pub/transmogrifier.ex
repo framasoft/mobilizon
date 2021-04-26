@@ -774,10 +774,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     Logger.info("Handing something with type #{object["type"]} not supported")
     Logger.debug(inspect(object))
 
-    Sentry.capture_message("Handing something with type #{object["type"]} not supported",
-      extra: %{object: object}
-    )
-
     {:error, :not_supported}
   end
 

@@ -119,6 +119,10 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
           Logger.info("Response HTTP 410")
           {:error, :actor_deleted}
 
+        {:ok, %Tesla.Env{}} ->
+          Logger.info("Non 200 HTTP Code")
+          {:error, :http_error}
+
         {:error, e} ->
           Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
           {:error, e}
