@@ -109,8 +109,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
              member,
              true
            ) do
-      # Launch an async task to refresh the group profile, fetch resources, discussions, members
-      Refresher.fetch_group(member.parent.url, actor)
       {:ok, member}
     else
       {:is_same_actor, false} ->
