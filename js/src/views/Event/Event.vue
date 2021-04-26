@@ -341,7 +341,10 @@
                   :endsOn="event.endsOn"
                 />
               </event-metadata-block>
-              <event-metadata-block :title="$t('Organized by')">
+              <event-metadata-block
+                class="metadata-organized-by"
+                :title="$t('Organized by')"
+              >
                 <popover-actor-card
                   :actor="event.organizerActor"
                   v-if="!event.attributedTo"
@@ -1427,6 +1430,20 @@ div.sidebar {
 
     span.online-address {
       display: flex;
+    }
+  }
+
+  ::v-deep .metadata-organized-by {
+    .v-popover.popover .trigger {
+      width: 100%;
+      .media-content {
+        width: calc(100% - 32px - 1rem);
+
+        p.has-text-grey {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
     }
   }
 
