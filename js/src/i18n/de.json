@@ -1020,7 +1020,7 @@
   "Your timezone is currently set to {timezone}.": "Ihre Zeitzone ist aktuell {timezone}.",
   "Your timezone was detected as {timezone}.": "Ihre Zeitzone wurde erkannt als {timezone}.",
   "Your timezone {timezone} isn't supported.": "Ihre Zeitzone {timezone} wird nicht unterstützt.",
-  "Your upcoming events": "Deine bevorstehenden Veranstaltungen",
+  "Your upcoming events": "Ihre bevorstehenden Veranstaltungen",
   "[This comment has been deleted by it's author]": "[Dieser Kommentar wurde vom Autor entfernt]",
   "[This comment has been deleted]": "[Ihr Kommentar wurde gelöscht]",
   "[deleted]": "[gelöscht]",
