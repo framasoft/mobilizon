@@ -119,7 +119,7 @@ defmodule Mobilizon.Mixfile do
       {:http_sign, "~> 0.1.1"},
       {:ecto_enum, "~> 1.4"},
       {:ex_ical, "~> 0.2"},
-      {:bamboo, "~> 2.1", override: true},
+      {:bamboo, "~> 2.1"},
       {:bamboo_phoenix, "~> 1.0"},
       {:bamboo_smtp, "~> 4.0"},
       {:geolix, "~> 2.0"},
