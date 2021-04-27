@@ -333,28 +333,33 @@ defmodule Mobilizon.Actors do
       |> Multi.run(:remove_avatar, fn _, _ -> remove_avatar(actor) end)
 
     multi =
-      if type == :Group do
-        multi
-        |> Multi.run(:delete_remote_members, fn _, _ ->
-          delete_group_elements(actor, :remote_members)
-        end)
-        |> Multi.run(:delete_group_organized_events, fn _, _ ->
-          delete_group_elements(actor, :events)
-        end)
-        |> Multi.run(:delete_group_posts, fn _, _ ->
-          delete_group_elements(actor, :posts)
-        end)
-        |> Multi.run(:delete_group_resources, fn _, _ ->
-          delete_group_elements(actor, :resources)
-        end)
-        |> Multi.run(:delete_group_todo_lists, fn _, _ ->
-          delete_group_elements(actor, :todo_lists)
-        end)
-        |> Multi.run(:delete_group_discussions, fn _, _ ->
-          delete_group_elements(actor, :discussions)
-        end)
-      else
-        multi
+      case type do
+        :Group ->
+          multi
+          |> Multi.run(:delete_remote_members, fn _, _ ->
+            delete_group_elements(actor, :remote_members)
+          end)
+          |> Multi.run(:delete_group_organized_events, fn _, _ ->
+            delete_group_elements(actor, :events)
+          end)
+          |> Multi.run(:delete_group_posts, fn _, _ ->
+            delete_group_elements(actor, :posts)
+          end)
+          |> Multi.run(:delete_group_resources, fn _, _ ->
+            delete_group_elements(actor, :resources)
+          end)
+          |> Multi.run(:delete_group_todo_lists, fn _, _ ->
+            delete_group_elements(actor, :todo_lists)
+          end)
+          |> Multi.run(:delete_group_discussions, fn _, _ ->
+            delete_group_elements(actor, :discussions)
+          end)
+
+        :Person ->
+          # When deleting a profile, reset default_actor_id
+          Multi.run(multi, :reset_default_actor_id, fn _, _ ->
+            reset_default_actor_id(actor)
+          end)
       end
 
     multi =
@@ -1824,6 +1829,24 @@ defmodule Mobilizon.Actors do
       {:error, res}
     end
   end
+
+  @spec reset_default_actor_id(Actor.t()) :: {:ok, User.t()} | {:error, :user_not_found}
+  defp reset_default_actor_id(%Actor{type: :Person, user: %User{id: user_id} = user, id: actor_id}) do
+    Logger.debug("reset_default_actor_id")
+
+    new_actor_id =
+      user
+      |> Users.get_actors_for_user()
+      |> Enum.map(& &1.id)
+      |> Enum.find(&(&1 !== actor_id))
+
+    {:ok, Users.update_user_default_actor(user_id, new_actor_id)}
+  rescue
+    _e in Ecto.NoResultsError ->
+      {:error, :user_not_found}
+  end
+
+  defp reset_default_actor_id(%Actor{type: :Person, user: nil}), do: {:ok, nil}
 
   defp accumulate_paginated_elements(
          %Actor{} = actor,
