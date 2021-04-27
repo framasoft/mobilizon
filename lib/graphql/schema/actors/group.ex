@@ -29,7 +29,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   Represents a group of actors
   """
   object :group do
-    interfaces([:actor, :interactable, :activity_object])
+    interfaces([:actor, :interactable, :activity_object, :action_log_object])
 
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")

@@ -190,6 +190,12 @@ export const LOGS = gql`
           domain
           name
         }
+        ... on Group {
+          id
+          preferredUsername
+          domain
+          name
+        }
         ... on User {
           id
           email

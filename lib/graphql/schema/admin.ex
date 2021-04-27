@@ -62,6 +62,9 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       %User{}, _ ->
         :user
 
+      %Actor{type: "Group"}, _ ->
+        :group
+
       _, _ ->
         nil
     end)
