@@ -1368,21 +1368,24 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       query = """
       {
         actionLogs {
-          action,
-          actor {
-            preferredUsername
-          },
-          object {
-            ... on Report {
-              id,
-              status
+          total
+          elements {
+            action,
+            actor {
+              preferredUsername
             },
-            ... on ReportNote {
-              content
-            }
-            ... on Event {
-              id,
-              title
+            object {
+              ... on Report {
+                id,
+                status
+              },
+              ... on ReportNote {
+                content
+              }
+              ... on Event {
+                id,
+                title
+              }
             }
           }
         }
@@ -1394,7 +1397,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> auth_conn(user_moderator)
         |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
 
-      assert hd(json_response(res, 200)["data"]["actionLogs"]) == %{
+      assert hd(json_response(res, 200)["data"]["actionLogs"]["elements"]) == %{
                "action" => "EVENT_DELETION",
                "actor" => %{"preferredUsername" => actor_moderator.preferred_username},
                "object" => %{"title" => event.title, "id" => to_string(event.id)}

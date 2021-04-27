@@ -31,17 +31,20 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
       query = """
       {
         actionLogs {
-          action,
-          actor {
-            preferredUsername
-          },
-          object {
-            ... on Report {
-              id,
-              status
+          total
+          elements {
+            action,
+            actor {
+              preferredUsername
             },
-            ... on ReportNote {
-              content
+            object {
+              ... on Report {
+                id,
+                status
+              },
+              ... on ReportNote {
+                content
+              }
             }
           }
         }
@@ -62,9 +65,10 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
 
       assert json_response(res, 200)["errors"] == nil
 
-      assert json_response(res, 200)["data"]["actionLogs"] |> length == 3
+      assert json_response(res, 200)["data"]["actionLogs"]["total"] == 3
+      assert json_response(res, 200)["data"]["actionLogs"]["elements"] |> length == 3
 
-      assert json_response(res, 200)["data"]["actionLogs"] == [
+      assert json_response(res, 200)["data"]["actionLogs"]["elements"] == [
                %{
                  "action" => "NOTE_DELETION",
                  "actor" => %{"preferredUsername" => moderator_2.preferred_username},
