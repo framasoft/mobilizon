@@ -8,7 +8,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
-  alias Mobilizon.Federation.ActivityPub.Refresher
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -100,7 +99,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
 
   def accept_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         %Member{actor: %Actor{id: member_actor_id} = actor} = member <-
+         %Member{actor: %Actor{id: member_actor_id}} = member <-
            Actors.get_member(member_id),
          {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
          {:ok, _activity, %Member{} = member} <-
