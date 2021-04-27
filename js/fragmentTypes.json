@@ -6,16 +6,49 @@
         "name": "ActionLogObject",
         "possibleTypes": [
           {
+            "name": "Comment"
+          },
+          {
             "name": "Event"
           },
           {
-            "name": "Comment"
+            "name": "Person"
           },
           {
             "name": "Report"
           },
           {
             "name": "ReportNote"
+          },
+          {
+            "name": "User"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "ActivityObject",
+        "possibleTypes": [
+          {
+            "name": "Comment"
+          },
+          {
+            "name": "Discussion"
+          },
+          {
+            "name": "Event"
+          },
+          {
+            "name": "Group"
+          },
+          {
+            "name": "Member"
+          },
+          {
+            "name": "Post"
+          },
+          {
+            "name": "Resource"
           }
         ]
       },
@@ -31,6 +64,18 @@
           },
           {
             "name": "Application"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Interactable",
+        "possibleTypes": [
+          {
+            "name": "Event"
+          },
+          {
+            "name": "Group"
           }
         ]
       }
