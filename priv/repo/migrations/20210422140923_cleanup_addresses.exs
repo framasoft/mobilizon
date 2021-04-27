@@ -5,8 +5,6 @@ defmodule Mobilizon.Storage.Repo.Migrations.CleanupAddresses do
     # Make sure we don't have any duplicate addresses
     rows = fetch_bad_rows()
     Enum.each(rows, &process_row/1)
-
-    flush()
   end
 
   def down do
