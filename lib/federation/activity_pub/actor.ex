@@ -48,7 +48,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Create an actor locally by its URL (AP ID)
   """
-  @spec make_actor_from_url(String.t(), boolean()) :: {:ok, %Actor{}} | {:error, any()}
+  @spec make_actor_from_url(String.t(), boolean()) ::
+          {:ok, %Actor{}} | {:error, :actor_deleted} | {:error, :http_error} | {:error, any()}
   def make_actor_from_url(url, preload \\ false) do
     if are_same_origin?(url, Endpoint.url()) do
       {:error, "Can't make a local actor from URL"}
@@ -61,6 +62,9 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
         {:error, :actor_deleted} ->
           Logger.info("Actor was deleted")
           {:error, :actor_deleted}
+
+        {:error, :http_error} ->
+          {:error, :http_error}
 
         {:error, e} ->
           Logger.warn("Failed to make actor from url")

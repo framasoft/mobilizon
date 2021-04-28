@@ -60,6 +60,12 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
          :ok <- fetch_collection(events_url, on_behalf_of) do
       :ok
     else
+      {:error, :actor_deleted} ->
+        {:error, :actor_deleted}
+
+      {:error, :http_error} ->
+        {:error, :http_error}
+
       {:error, err} ->
         Logger.error("Error while refreshing a group")
 
@@ -68,6 +74,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
         )
 
         Logger.debug(inspect(err))
+        {:error, err}
 
       err ->
         Logger.error("Error while refreshing a group")
@@ -77,6 +84,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
         )
 
         Logger.debug(inspect(err))
+        err
     end
   end
 
