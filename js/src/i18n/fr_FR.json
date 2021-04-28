@@ -479,7 +479,7 @@
   "No message": "Pas de message",
   "No moderation logs yet": "Pas encore de journaux de modération",
   "No more activity to display.": "Il n'y a plus d'activités à afficher.",
-  "No one is going to this event": "Personne n'y va|Une personne y va|{going} personnes y vont",
+  "No one is participating|One person participating|{going} people participating": "Personne ne participe|Une personne participe|{going} personnes participent",
   "No ongoing todos": "Pas de todos en cours",
   "No open reports yet": "Aucun signalement ouvert pour le moment",
   "No participant matches the filters": "Aucun·e participant·e ne correspond aux filtres",

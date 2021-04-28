@@ -157,7 +157,7 @@
                     <span v-else>
                       {{
                         $tc(
-                          "No one is going to this event",
+                          "No one is participating|One person participating|{going} people participating",
                           event.participantStats.participant,
                           {
                             going: event.participantStats.participant,
@@ -185,7 +185,7 @@
                     <span v-else>
                       {{
                         $tc(
-                          "No one is going to this event",
+                          "No one is participating|One person participating|{going} people participating",
                           event.participantStats.participant,
                           {
                             going: event.participantStats.participant,
