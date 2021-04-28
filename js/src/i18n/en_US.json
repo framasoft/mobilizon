@@ -425,7 +425,7 @@
   "This identity is not a member of any group.": "This identity is not a member of any group.",
   "(Masked)": "(Masked)",
   "{available}/{capacity} available places": "No places left|{available}/{capacity} available places",
-  "No one is going to this event": "No one is going to this event|One person going|{going} persons going",
+  "No one is participating|One person participating|{going} people participating": "No one is participating|One person participating|{going} people participating",
   "By @{group}": "By @{group}",
   "Date and time": "Date and time",
   "Location": "Location",

@@ -142,7 +142,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     else
       {:actor_approve_permission, _} ->
         {:error,
-         dgettext("errors", "Provided moderator profile doesn't have permission on this event")}
+         dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
     end
   end
 

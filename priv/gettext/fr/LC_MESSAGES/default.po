@@ -845,8 +845,8 @@ msgid "Hi there! Just a quick note to confirm that the email address linked to y
 msgstr "Salut ! Juste un petite note pour confirmer que l'adresse e-mail liée à votre compte sur %{host} a été changée depuis celle-ci à :"
 
 #, elixir-format
-#: lib/web/templates/email/email_changed_old.html.eex:41
-#: lib/web/templates/email/email_changed_old.html.eex:65 lib/web/templates/email/email_changed_old.text.eex:5
+#: lib/web/templates/email/email_changed_old.html.eex:62
+#: lib/web/templates/email/email_changed_old.text.eex:5
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr "Si vous n'avez pas effectué cette modification vous-même, il est probable que quelqu'un ait eu accès à votre compte %{host}. Veuillez vous connecter et changer immédiatement votre mot de passe. Si vous ne pouvez pas vous connecter, contactez l'administrateur·ice sur %{host}."
 
@@ -1371,21 +1371,22 @@ msgstr "Ceci est un site de démonstration permettant de tester Mobilizon."
 
 #, elixir-format
 #: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
+#: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
 msgid "%{name}'s feed"
 msgstr "Flux de %{name}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:77
+#: lib/service/export/feed.ex:120
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "Flux privé des événements de %{actor} sur %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:72
+#: lib/service/export/feed.ex:115
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "Flux public des événements de %{actor} sur %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:203
+#: lib/service/export/feed.ex:220
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flux pour %{email} sur %{instance}"
 
@@ -1408,3 +1409,8 @@ msgstr "Détails techniques"
 #: lib/web/templates/error/500_page.html.eex:52
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr "Le serveur Mobilizon %{instance} semble être temporairement hors-service."
+
+#, elixir-format
+#: lib/service/export/feed.ex:73
+msgid "Public feed for %{instance}"
+msgstr ""
