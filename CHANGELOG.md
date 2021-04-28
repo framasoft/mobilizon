@@ -24,7 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Translations
 
+- Italian
 - German
+- Slovenian
 - Russian
 
 ## 1.1.1 - 22-04-2021
