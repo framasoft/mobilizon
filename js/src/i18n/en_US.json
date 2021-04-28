@@ -987,5 +987,8 @@
   "Error while loading the preview": "Error while loading the preview",
   "Instance feeds": "Instance feeds",
   "{moderator} suspended group {profile}": "{moderator} suspended group {profile}",
-  "{moderator} has unsuspended group {profile}": "{moderator} has unsuspended group {profile}"
+  "{moderator} has unsuspended group {profile}": "{moderator} has unsuspended group {profile}",
+  "{moderator} has done an unknown action": "{moderator} has done an unknown action",
+  "{moderator} has deleted a comment from {author} under the event {event}": "{moderator} has deleted a comment from {author} under the event {event}",
+  "{moderator} has deleted a comment from {author}": "{moderator} has deleted a comment from {author}"
 }

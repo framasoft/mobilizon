@@ -270,6 +270,83 @@
               </router-link>
               <b v-else slot="user">{{ log.object.email }}</b>
             </i18n>
+            <span
+              v-else-if="
+                log.action === ActionLogAction.COMMENT_DELETION &&
+                log.object.event
+              "
+            >
+              <i18n
+                tag="span"
+                path="{moderator} has deleted a comment from {author} under the event {event}"
+              >
+                <router-link
+                  slot="moderator"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+                <router-link
+                  v-if="log.object.event && log.object.event.uuid"
+                  slot="event"
+                  :to="{
+                    name: RouteName.EVENT,
+                    params: { uuid: log.object.event.uuid },
+                  }"
+                  >{{ log.object.event.title }}
+                </router-link>
+                <b v-else slot="event">{{ log.object.event.title }}</b>
+                <router-link
+                  slot="author"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.object.actor.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object.actor) }}
+                </router-link>
+              </i18n>
+              <pre v-html="log.object.text" />
+            </span>
+            <span v-else-if="log.action === ActionLogAction.COMMENT_DELETION">
+              <i18n
+                tag="span"
+                path="{moderator} has deleted a comment from {author}"
+              >
+                <router-link
+                  slot="moderator"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+                <router-link
+                  slot="author"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.object.actor.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object.actor) }}
+                </router-link>
+              </i18n>
+              <pre v-html="log.object.text" />
+            </span>
+            <i18n
+              v-else
+              tag="span"
+              path="{moderator} has done an unknown action"
+            >
+              <router-link
+                slot="moderator"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: log.actor.id },
+                }"
+                >@{{ log.actor.preferredUsername }}</router-link
+              >
+            </i18n>
             <br />
             <small>{{ log.insertedAt | formatDateTimeString }}</small>
           </div>

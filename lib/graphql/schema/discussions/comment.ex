@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias Mobilizon.{Actors, Discussions}
+  alias Mobilizon.{Actors, Discussions, Events}
   alias Mobilizon.GraphQL.Resolvers.Comment
 
   @desc "A comment"
