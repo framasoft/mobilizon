@@ -126,6 +126,7 @@ defmodule Mobilizon.Discussions.Comment do
     |> put_assoc(:media, Map.get(attrs, :media, []))
     |> put_tags(attrs)
     |> put_mentions(attrs)
+    |> unique_constraint(:url, name: :comments_url_index)
   end
 
   @spec maybe_generate_uuid(Ecto.Changeset.t()) :: Ecto.Changeset.t()
