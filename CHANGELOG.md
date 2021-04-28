@@ -4,7 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.1.1 - 21-03-2021
+## 1.1.2 - 28-04-2021
+
+### Changed
+
+- Added an unique index on the addresses url
+- Added org.opencontainers.image.source annotation to the Docker image 
+- Improved the moderation action logs interface
+
+### Fixes
+
+- **Fixed some invalid email headers**
+- **Fixed and repaired default profile still pointing on deleted profile**
+- Fixed some ActivityPub issues and improve error handling
+- Fixed a duplicate sentence in the email changed html template
+- Fixed resource metadata remote image URL
+- Fixed not only remote groups being refreshed after the acceptation of an invite
+- Fixed an UI overflow on the organizer metadata block if the organizer remote username is too long
+
+### Translations
+
+- German
+- Russian
+
+## 1.1.1 - 22-04-2021
 
 ### Changed
 
