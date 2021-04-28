@@ -54,7 +54,7 @@
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.18",
+    "@types/jest": "^26.0.23",
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.60.7",
     "@types/lodash": "^4.14.141",
