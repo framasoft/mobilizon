@@ -185,6 +185,21 @@ export const LOGS = gql`
             id
             title
           }
+          ... on Comment {
+            id
+            text
+            event {
+              id
+              title
+              uuid
+            }
+            actor {
+              id
+              preferredUsername
+              domain
+              name
+            }
+          }
           ... on Person {
             id
             preferredUsername

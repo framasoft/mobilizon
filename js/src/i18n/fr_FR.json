@@ -1081,5 +1081,8 @@
   "Error while loading the preview": "Erreur lors du chargement de l'aperçu",
   "Instance feeds": "Flux de l'instance",
   "{moderator} suspended group {profile}": "{moderator} a suspendu le groupe {profile}",
-  "{moderator} has unsuspended group {profile}": "{moderator} a annulé la suspension du groupe {profile}"
+  "{moderator} has unsuspended group {profile}": "{moderator} a annulé la suspension du groupe {profile}",
+  "{moderator} has done an unknown action": "{moderator} a effectué une action inconnue",
+  "{moderator} has deleted a comment from {author} under the event {event}": "{moderator} a supprimé un commentaire de {author} sous l'événement {event}",
+  "{moderator} has deleted a comment from {author}": "{moderator} a supprimé un commentaire de {author}"
 }
