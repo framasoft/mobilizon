@@ -985,5 +985,7 @@
   "Unable to update the profile. The avatar picture may be too heavy.": "Unable to update the profile. The avatar picture may be too heavy.",
   "Unable to create the profile. The avatar picture may be too heavy.": "Unable to create the profile. The avatar picture may be too heavy.",
   "Error while loading the preview": "Error while loading the preview",
-  "Instance feeds": "Instance feeds"
+  "Instance feeds": "Instance feeds",
+  "{moderator} suspended group {profile}": "{moderator} suspended group {profile}",
+  "{moderator} has unsuspended group {profile}": "{moderator} has unsuspended group {profile}"
 }

@@ -228,25 +228,28 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
       query = """
       {
         actionLogs {
-          action,
-          actor {
-            preferredUsername
-          },
-          object {
-            ... on Report {
-              id,
-              status
+          total
+          elements {
+            action,
+            actor {
+              preferredUsername
             },
-            ... on ReportNote {
-              content
-            }
-            ... on Event {
-              id,
-              title
-            },
-            ... on Comment {
-              id,
-              text
+            object {
+              ... on Report {
+                id,
+                status
+              },
+              ... on ReportNote {
+                content
+              }
+              ... on Event {
+                id,
+                title
+              },
+              ... on Comment {
+                id,
+                text
+              }
             }
           }
         }
@@ -260,7 +263,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
       refute json_response(res, 200)["errors"]
 
-      assert hd(json_response(res, 200)["data"]["actionLogs"]) == %{
+      assert hd(json_response(res, 200)["data"]["actionLogs"]["elements"]) == %{
                "action" => "COMMENT_DELETION",
                "actor" => %{"preferredUsername" => actor_moderator.preferred_username},
                "object" => %{"text" => comment.text, "id" => to_string(comment.id)}

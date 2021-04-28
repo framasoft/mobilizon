@@ -27,7 +27,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         %{context: %{current_user: %User{role: role}}}
       )
       when is_moderator(role) do
-    with action_logs <- Mobilizon.Admin.list_action_logs(page, limit) do
+    with %Page{elements: action_logs, total: total} <-
+           Mobilizon.Admin.list_action_logs(page, limit) do
       action_logs =
         action_logs
         |> Enum.map(fn %ActionLog{
@@ -44,7 +45,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         end)
         |> Enum.filter(& &1)
 
-      {:ok, action_logs}
+      {:ok, %Page{elements: action_logs, total: total}}
     end
   end
 

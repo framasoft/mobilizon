@@ -158,45 +158,54 @@ export const CREATE_REPORT_NOTE = gql`
 `;
 
 export const LOGS = gql`
-  query {
-    actionLogs {
-      id
-      action
-      actor {
+  query ActionLogs($page: Int, $limit: Int) {
+    actionLogs(page: $page, limit: $limit) {
+      elements {
         id
-        preferredUsername
-        domain
-        avatar {
-          id
-          url
-        }
-      }
-      object {
-        ... on Report {
-          id
-        }
-        ... on ReportNote {
-          report {
-            id
-          }
-        }
-        ... on Event {
-          id
-          title
-        }
-        ... on Person {
+        action
+        actor {
           id
           preferredUsername
           domain
-          name
+          avatar {
+            id
+            url
+          }
         }
-        ... on User {
-          id
-          email
-          confirmedAt
+        object {
+          ... on Report {
+            id
+          }
+          ... on ReportNote {
+            report {
+              id
+            }
+          }
+          ... on Event {
+            id
+            title
+          }
+          ... on Person {
+            id
+            preferredUsername
+            domain
+            name
+          }
+          ... on Group {
+            id
+            preferredUsername
+            domain
+            name
+          }
+          ... on User {
+            id
+            email
+            confirmedAt
+          }
         }
+        insertedAt
       }
-      insertedAt
+      total
     }
   }
 `;

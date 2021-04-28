@@ -685,15 +685,18 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
     @moderation_logs_query """
     {
       actionLogs {
-        action,
-        actor {
-          id,
-          preferredUsername
-        },
-        object {
-          ...on Person {
+        total
+        elements {
+          action,
+          actor {
             id,
             preferredUsername
+          },
+          object {
+            ...on Person {
+              id,
+              preferredUsername
+            }
           }
         }
       }
@@ -733,7 +736,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         |> auth_conn(modo)
         |> AbsintheHelpers.graphql_query(query: @moderation_logs_query)
 
-      actionlog = hd(res["data"]["actionLogs"])
+      actionlog = hd(res["data"]["actionLogs"]["elements"])
       refute is_nil(actionlog)
       assert actionlog["action"] == "ACTOR_SUSPENSION"
       assert actionlog["actor"]["id"] == to_string(modo_actor_id)

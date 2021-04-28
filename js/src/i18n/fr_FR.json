@@ -1079,5 +1079,7 @@
   "Unable to update the profile. The avatar picture may be too heavy.": "Impossible de mettre à jour le profil. L'image d'avatar est probablement trop lourde.",
   "Unable to create the profile. The avatar picture may be too heavy.": "Impossible de créer le profil. L'image d'avatar est probablement trop lourde.",
   "Error while loading the preview": "Erreur lors du chargement de l'aperçu",
-  "Instance feeds": "Flux de l'instance"
+  "Instance feeds": "Flux de l'instance",
+  "{moderator} suspended group {profile}": "{moderator} a suspendu le groupe {profile}",
+  "{moderator} has unsuspended group {profile}": "{moderator} a annulé la suspension du groupe {profile}"
 }

@@ -23,6 +23,14 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   end
 
   @desc """
+  A paginated list of action logs
+  """
+  object :paginated_action_log_list do
+    field(:elements, list_of(:action_log), description: "A list of action logs")
+    field(:total, :integer, description: "The total number of action logs in the list")
+  end
+
+  @desc """
   The different types of action log actions
   """
   enum :action_log_action do
@@ -61,6 +69,9 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
       %User{}, _ ->
         :user
+
+      %Actor{type: "Group"}, _ ->
+        :group
 
       _, _ ->
         nil
@@ -144,7 +155,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
   object :admin_queries do
     @desc "Get the list of action logs"
-    field :action_logs, type: list_of(:action_log) do
+    field :action_logs, type: :paginated_action_log_list do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
       resolve(&Admin.list_action_logs/3)

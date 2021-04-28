@@ -6,28 +6,10 @@ import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from "@/constants";
 import { REFRESH_TOKEN } from "@/graphql/auth";
 import { saveTokenData } from "@/utils/auth";
 import { ApolloClient } from "apollo-client";
+import introspectionQueryResultData from "../../fragmentTypes.json";
 
 export const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData: {
-    __schema: {
-      types: [
-        {
-          kind: "UNION",
-          name: "SearchResult",
-          possibleTypes: [
-            { name: "Event" },
-            { name: "Person" },
-            { name: "Group" },
-          ],
-        },
-        {
-          kind: "INTERFACE",
-          name: "Actor",
-          possibleTypes: [{ name: "Person" }, { name: "Group" }],
-        },
-      ],
-    },
-  },
+  introspectionQueryResultData,
 });
 
 export async function refreshAccessToken(

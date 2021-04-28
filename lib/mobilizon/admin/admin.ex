@@ -36,11 +36,10 @@ defmodule Mobilizon.Admin do
   @doc """
   Returns the list of action logs.
   """
-  @spec list_action_logs(integer | nil, integer | nil) :: [ActionLog.t()]
+  @spec list_action_logs(integer | nil, integer | nil) :: Page.t()
   def list_action_logs(page \\ nil, limit \\ nil) do
     list_action_logs_query()
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """
