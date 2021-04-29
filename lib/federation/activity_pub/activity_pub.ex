@@ -101,8 +101,12 @@ defmodule Mobilizon.Federation.ActivityPub do
       {:existing, entity} ->
         handle_existing_entity(url, entity, options)
 
+      {:error, e} ->
+        Logger.warn("Something failed while fetching url #{url} #{inspect(e)}")
+        {:error, e}
+
       e ->
-        Logger.warn("Something failed while fetching url #{inspect(e)}")
+        Logger.warn("Something failed while fetching url #{url} #{inspect(e)}")
         {:error, e}
     end
   end

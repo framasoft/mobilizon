@@ -270,7 +270,7 @@ config :mobilizon, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
-       {"17 * * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
+       {"17 4 * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
        # To be activated in Mobilizon 1.2
        # {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background},

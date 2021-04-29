@@ -111,8 +111,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, event}
     else
       {:existing_event, %Event{} = event} -> {:ok, nil, event}
-      {:error, _, _} -> :error
-      {:error, _} -> :error
+      _ -> :error
     end
   end
 
