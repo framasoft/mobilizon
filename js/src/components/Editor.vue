@@ -6,16 +6,12 @@
       id="tiptab-editor"
       :data-actor-id="currentActor && currentActor.id"
     >
-      <editor-menu-bar
-        v-if="isDescriptionMode"
-        :editor="editor"
-        v-slot="{ commands, isActive, focused }"
-      >
-        <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
+      <div v-if="isDescriptionMode" :editor="editor">
+        <div class="menubar bar-is-hidden">
           <button
             class="menubar__button"
-            :class="{ 'is-active': isActive.bold() }"
-            @click="commands.bold"
+            :class="{ 'is-active': editor.isActive('bold') }"
+            @click="editor.chain().focus().toggleBold().focus().run()"
             type="button"
           >
             <b-icon icon="format-bold" />
@@ -23,8 +19,8 @@
 
           <button
             class="menubar__button"
-            :class="{ 'is-active': isActive.italic() }"
-            @click="commands.italic"
+            :class="{ 'is-active': editor.isActive('italic') }"
+            @click="editor.chain().focus().toggleItalic().focus().run()"
             type="button"
           >
             <b-icon icon="format-italic" />
@@ -32,8 +28,8 @@
 
           <button
             class="menubar__button"
-            :class="{ 'is-active': isActive.underline() }"
-            @click="commands.underline"
+            :class="{ 'is-active': editor.isActive('underline') }"
+            @click="editor.chain().focus().toggleUnderline().focus().run()"
             type="button"
           >
             <b-icon icon="format-underline" />
@@ -42,8 +38,10 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-            @click="commands.heading({ level: 1 })"
+            :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+            @click="
+              editor.chain().focus().toggleHeading({ level: 1 }).focus().run()
+            "
             type="button"
           >
             <b-icon icon="format-header-1" />
@@ -52,8 +50,10 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-            @click="commands.heading({ level: 2 })"
+            :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+            @click="
+              editor.chain().focus().toggleHeading({ level: 2 }).focus().run()
+            "
             type="button"
           >
             <b-icon icon="format-header-2" />
@@ -62,8 +62,10 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-            @click="commands.heading({ level: 3 })"
+            :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+            @click="
+              editor.chain().focus().toggleHeading({ level: 3 }).focus().run()
+            "
             type="button"
           >
             <b-icon icon="format-header-3" />
@@ -71,17 +73,26 @@
 
           <button
             class="menubar__button"
-            @click="showLinkMenu(commands.link, isActive.link())"
-            :class="{ 'is-active': isActive.link() }"
+            @click="showLinkMenu()"
+            :class="{ 'is-active': editor.isActive('link') }"
             type="button"
           >
             <b-icon icon="link" />
           </button>
 
           <button
+            v-if="editor.isActive('link')"
+            class="menubar__button"
+            @click="editor.chain().focus().unsetLink().run()"
+            type="button"
+          >
+            <b-icon icon="link-off" />
+          </button>
+
+          <button
             class="menubar__button"
             v-if="!isBasicMode"
-            @click="showImagePrompt(commands.image)"
+            @click="showImagePrompt()"
             type="button"
           >
             <b-icon icon="image" />
@@ -90,8 +101,8 @@
           <button
             class="menubar__button"
             v-if="!isBasicMode"
-            :class="{ 'is-active': isActive.bullet_list() }"
-            @click="commands.bullet_list"
+            :class="{ 'is-active': editor.isActive('bulletList') }"
+            @click="editor.chain().focus().toggleBulletList().focus().run()"
             type="button"
           >
             <b-icon icon="format-list-bulleted" />
@@ -100,8 +111,8 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            :class="{ 'is-active': isActive.ordered_list() }"
-            @click="commands.ordered_list"
+            :class="{ 'is-active': editor.isActive('orderedList') }"
+            @click="editor.chain().focus().toggleOrderedList().focus().run()"
             type="button"
           >
             <b-icon icon="format-list-numbered" />
@@ -110,8 +121,8 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            :class="{ 'is-active': isActive.blockquote() }"
-            @click="commands.blockquote"
+            :class="{ 'is-active': editor.isActive('blockquote') }"
+            @click="editor.chain().focus().toggleBlockquote().run()"
             type="button"
           >
             <b-icon icon="format-quote-close" />
@@ -120,7 +131,7 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            @click="commands.undo"
+            @click="editor.chain().focus().undo().run()"
             type="button"
           >
             <b-icon icon="undo" />
@@ -129,19 +140,19 @@
           <button
             v-if="!isBasicMode"
             class="menubar__button"
-            @click="commands.redo"
+            @click="editor.chain().focus().redo().run()"
             type="button"
           >
             <b-icon icon="redo" />
           </button>
         </div>
-      </editor-menu-bar>
+      </div>
 
-      <editor-menu-bubble
-        v-if="isCommentMode"
+      <bubble-menu
+        v-if="editor && isCommentMode"
         :editor="editor"
         :keep-in-bounds="true"
-        v-slot="{ commands, isActive, menu }"
+        v-slot="{ menu }"
       >
         <div
           class="menububble"
@@ -150,8 +161,8 @@
         >
           <button
             class="menububble__button"
-            :class="{ 'is-active': isActive.bold() }"
-            @click="commands.bold"
+            :class="{ 'is-active': editor.isActive('bold') }"
+            @click="editor.chain().focus().toggleBold().focus().run()"
             type="button"
           >
             <b-icon icon="format-bold" />
@@ -160,15 +171,15 @@
 
           <button
             class="menububble__button"
-            :class="{ 'is-active': isActive.italic() }"
-            @click="commands.italic"
+            :class="{ 'is-active': editor.isActive('italic') }"
+            @click="editor.chain().focus().toggleItalic().focus().run()"
             type="button"
           >
             <b-icon icon="format-italic" />
             <span class="visually-hidden">{{ $t("Italic") }}</span>
           </button>
         </div>
-      </editor-menu-bubble>
+      </bubble-menu>
 
       <editor-content class="editor__content" :editor="editor" />
     </div>
@@ -200,37 +211,29 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Editor, EditorContent, EditorMenuBar, EditorMenuBubble } from "tiptap";
-import {
-  Blockquote,
-  HardBreak,
-  Heading,
-  OrderedList,
-  BulletList,
-  ListItem,
-  TodoItem,
-  TodoList,
-  Bold,
-  Code,
-  Italic,
-  Link,
-  Underline,
-  History,
-  Placeholder,
-  Mention,
-} from "tiptap-extensions";
+import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
+import { defaultExtensions } from "@tiptap/starter-kit";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
 import tippy, { Instance, sticky } from "tippy.js";
-import { SEARCH_PERSONS } from "../graphql/search";
+// import { SEARCH_PERSONS } from "../graphql/search";
 import { Actor, IActor, IPerson } from "../types/actor";
-import Image from "./Editor/Image";
-import MaxSize from "./Editor/MaxSize";
+import CustomImage from "./Editor/Image";
 import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IComment } from "../types/comment.model";
+import Mention from "@tiptap/extension-mention";
+import MentionOptions from "./Editor/Mention";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import CharacterCount from "@tiptap/extension-character-count";
 
 @Component({
-  components: { EditorContent, EditorMenuBar, EditorMenuBubble },
+  components: { EditorContent, BubbleMenu },
   apollo: {
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
@@ -295,138 +298,37 @@ export default class EditorComponent extends Vue {
   mounted(): void {
     this.editor = new Editor({
       extensions: [
-        new Blockquote(),
-        new BulletList(),
-        new HardBreak(),
-        new Heading({ levels: [1, 2, 3] }),
-        new Mention({
-          items: () => [],
-          onEnter: ({
-            items,
-            query,
-            range,
-            command,
-            virtualNode,
-          }: {
-            items: any;
-            query: any;
-            range: any;
-            command: any;
-            virtualNode: any;
-          }) => {
-            this.query = query;
-            this.filteredActors = items;
-            this.suggestionRange = range;
-            this.renderPopup(virtualNode);
-            // we save the command for inserting a selected mention
-            // this allows us to call it inside of our custom popup
-            // via keyboard navigation and on click
-            this.insertMention = command;
-          },
-          /**
-           * is called when a suggestion has changed
-           */
-          onChange: ({
-            items,
-            query,
-            range,
-            virtualNode,
-          }: {
-            items: any;
-            query: any;
-            range: any;
-            virtualNode: any;
-          }) => {
-            this.query = query;
-            this.filteredActors = items;
-            this.suggestionRange = range;
-            this.navigatedActorIndex = 0;
-            this.renderPopup(virtualNode);
-          },
-
-          /**
-           * is called when a suggestion is cancelled
-           */
-          onExit: () => {
-            // reset all saved values
-            this.query = null;
-            this.filteredActors = [];
-            this.suggestionRange = null;
-            this.navigatedActorIndex = 0;
-            this.destroyPopup();
-          },
-
-          /**
-           * is called on every keyDown event while a suggestion is active
-           */
-          onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-            if (event.key === "ArrowUp") {
-              this.upHandler();
-              return true;
-            }
-            if (event.key === "ArrowDown") {
-              this.downHandler();
-              return true;
-            }
-            if (event.key === "Enter") {
-              this.enterHandler();
-              return true;
-            }
-            return false;
-          },
-          onFilter: async (items: any, query: string) => {
-            if (!query) {
-              return items;
-            }
-            const result = await this.$apollo.query({
-              query: SEARCH_PERSONS,
-              variables: {
-                searchText: query,
-              },
-            });
-            // TipTap doesn't handle async for onFilter, hence the following line.
-            this.filteredActors = result.data.searchPersons.elements;
-            return this.filteredActors;
-          },
+        Document,
+        Paragraph,
+        Text,
+        OrderedList,
+        ListItem,
+        Mention.configure(MentionOptions),
+        CustomImage,
+        Underline,
+        Link,
+        CharacterCount.configure({
+          limit: this.maxSize,
         }),
-        new ListItem(),
-        new OrderedList(),
-        new TodoItem(),
-        new TodoList(),
-        new Link(),
-        new Bold(),
-        new Code(),
-        new Italic(),
-        new Underline(),
-        new History(),
-        new Placeholder({
-          emptyEditorClass: "is-empty",
-          emptyNodeText: this.$t("Write something…") as string,
-          showOnlyWhenEditable: false,
-        }),
-        new Image(),
-        new MaxSize({ maxSize: this.maxSize }),
+        ...defaultExtensions(),
       ],
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      onUpdate: ({ getHTML }: { getHTML: Function }) => {
-        this.$emit("input", getHTML());
+      onUpdate: ({ editor }) => {
+        this.$emit("input", editor.getHTML());
       },
     });
-    this.editor.setContent(this.value);
+    this.editor.commands.setContent(this.value);
   }
 
   @Watch("value")
   onValueChanged(val: string): void {
     if (!this.editor) return;
     if (val !== this.editor.getHTML()) {
-      this.editor.setContent(val, false);
+      this.editor.commands.setContent(val, false);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  showLinkMenu(command: Function, active: boolean): Function | undefined {
-    if (!this.editor) return undefined;
-    if (active) return command({ href: null });
+  showLinkMenu(): Function | undefined {
     this.$buefy.dialog.prompt({
       message: this.$t("Enter the link URL") as string,
       inputAttrs: {
@@ -434,9 +336,8 @@ export default class EditorComponent extends Vue {
       },
       trapFocus: true,
       onConfirm: (value) => {
-        command({ href: value });
-        if (!this.editor) return;
-        this.editor.focus();
+        if (!this.editor) return undefined;
+        this.editor.chain().focus().setLink({ href: value }).run();
       },
     });
     return undefined;
@@ -480,19 +381,19 @@ export default class EditorComponent extends Vue {
       },
     });
     if (!this.editor) return;
-    this.editor.focus();
+    this.editor.commands.focus();
   }
 
   /** We use this to programatically insert an actor mention when creating a reply to comment */
   replyToComment(comment: IComment): void {
     if (!comment.actor) return;
-    const actorModel = new Actor(comment.actor);
+    // const actorModel = new Actor(comment.actor);
     if (!this.editor) return;
-    this.editor.commands.mention({
-      id: actorModel.id,
-      label: actorModel.usernameWithDomain().substring(1),
-    });
-    this.editor.focus();
+    // this.editor.commands.mention({
+    //   id: actorModel.id,
+    //   label: actorModel.usernameWithDomain().substring(1),
+    // });
+    this.editor.commands.focus();
   }
 
   /**
@@ -539,7 +440,7 @@ export default class EditorComponent extends Vue {
    * @param command
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  async showImagePrompt(command: Function): Promise<void> {
+  async showImagePrompt(): Promise<void> {
     const image = await listenFileUpload();
     try {
       const { data } = await this.$apollo.mutate({
@@ -549,11 +450,17 @@ export default class EditorComponent extends Vue {
           name: image.name,
         },
       });
-      if (data.uploadMedia && data.uploadMedia.url) {
-        command({
-          src: data.uploadMedia.url,
-          "data-media-id": data.uploadMedia.id,
-        });
+      if (data.uploadMedia && data.uploadMedia.url && this.editor) {
+        this.editor
+          .chain()
+          .focus()
+          .setImage({
+            src: data.uploadMedia.url,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            "data-media-id": data.uploadMedia.id,
+          })
+          .run();
       }
     } catch (error) {
       console.error(error);
