@@ -31,7 +31,11 @@
         {{ $t("You have been removed from this group's members.") }}
       </b-message>
       <b-message
-        v-if="isCurrentActorAGroupMember && isCurrentActorARecentMember"
+        v-if="
+          isCurrentActorAGroupMember &&
+          isCurrentActorARecentMember &&
+          isCurrentActorOnADifferentDomainThanGroup
+        "
         type="is-info"
       >
         {{
@@ -733,6 +737,10 @@ export default class Group extends mixins(GroupMixin) {
       this.groupMember.role === MemberRole.MEMBER &&
       addMinutes(new Date(`${this.groupMember.updatedAt}Z`), 10) > new Date()
     );
+  }
+
+  get isCurrentActorOnADifferentDomainThanGroup(): boolean {
+    return this.group.domain !== null;
   }
 
   get members(): IMember[] {
