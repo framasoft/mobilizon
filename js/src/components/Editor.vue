@@ -419,7 +419,7 @@ export default class EditorComponent extends Vue {
   onValueChanged(val: string): void {
     if (!this.editor) return;
     if (val !== this.editor.getHTML()) {
-      this.editor.setContent(val);
+      this.editor.setContent(val, false);
     }
   }
 
