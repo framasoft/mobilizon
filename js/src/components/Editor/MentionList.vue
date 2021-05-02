@@ -7,20 +7,29 @@
       :key="index"
       @click="selectItem(index)"
     >
-      {{ item }}
+      <actor-card :actor="item" />
     </button>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { displayName, usernameWithDomain } from "@/types/actor/actor.model";
+import { IPerson } from "@/types/actor";
+import ActorCard from "../../components/Account/ActorCard.vue";
 
-@Component
+@Component({
+  components: {
+    ActorCard,
+  },
+})
 export default class MentionList extends Vue {
-  @Prop({ type: Array, required: true }) items!: Array<any>;
+  @Prop({ type: Array, required: true }) items!: Array<IPerson>;
   @Prop({ type: Function, required: true }) command!: any;
 
   selectedIndex = 0;
+
+  displayName = displayName;
 
   @Watch("items")
   watchItems(): void {
@@ -63,7 +72,7 @@ export default class MentionList extends Vue {
     const item = this.items[index];
 
     if (item) {
-      this.command({ id: item });
+      this.command({ id: usernameWithDomain(item) });
     }
   }
 }
@@ -86,12 +95,12 @@ export default class MentionList extends Vue {
   text-align: left;
   background: transparent;
   border: none;
-  padding: 0.2rem 0.5rem;
+  padding: 0.5rem 0.75rem;
 
   &.is-selected,
   &:hover {
-    color: #a975ff;
-    background: rgba(#a975ff, 0.1);
+    color: $background-color;
+    background: rgba($background-color, 0.1);
   }
 }
 </style>

@@ -48,6 +48,7 @@
     "leaflet.locatecontrol": "^0.73.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
+    "p-debounce": "^4.0.0",
     "phoenix": "^1.4.11",
     "register-service-worker": "^1.7.1",
     "tippy.js": "^6.2.3",

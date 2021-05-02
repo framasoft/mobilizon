@@ -5,23 +5,34 @@ import MentionList from "./MentionList.vue";
 import ApolloClient from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import apolloProvider from "@/vue-apollo";
+import { IPerson } from "@/types/actor";
+import pDebounce from "p-debounce";
 
 const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+
+const fetchItems = async (query: string): Promise<IPerson[]> => {
+  const result = await client.query({
+    query: SEARCH_PERSONS,
+    variables: {
+      searchText: query,
+    },
+  });
+  // TipTap doesn't handle async for onFilter, hence the following line.
+  return result.data.searchPersons.elements;
+};
+
+const debouncedFetchItems = pDebounce(fetchItems, 200);
 
 const mentionOptions: Partial<any> = {
   HTMLAttributes: {
     class: "mention",
   },
   suggestion: {
-    items: async (query: string) => {
-      const result = await client.query({
-        query: SEARCH_PERSONS,
-        variables: {
-          searchText: query,
-        },
-      });
-      // TipTap doesn't handle async for onFilter, hence the following line.
-      return result.data.searchPersons.elements;
+    items: async (query: string): Promise<IPerson[]> => {
+      if (query === "") {
+        return [];
+      }
+      return await debouncedFetchItems(query);
     },
     render: () => {
       let component: VueRenderer;
@@ -51,9 +62,10 @@ const mentionOptions: Partial<any> = {
             getReferenceClientRect: props.clientRect,
           });
         },
-        // onKeyDown(props: any) {
-        // return component.ref?.onKeyDown(props);
-        // },
+        onKeyDown(props: any) {
+          const ref = component.ref as typeof MentionList;
+          return ref?.onKeyDown(props);
+        },
         onExit() {
           popup[0].destroy();
           component.destroy();
