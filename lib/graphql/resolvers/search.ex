@@ -9,7 +9,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   Search persons
   """
   def search_persons(_parent, %{page: page, limit: limit} = args, _resolution) do
-    Search.search_actors(args, page, limit, :Person)
+    Search.search_actors(Map.put(args, :minimum_visibility, :private), page, limit, :Person)
   end
 
   @doc """

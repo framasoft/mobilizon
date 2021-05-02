@@ -46,7 +46,7 @@ defmodule Mobilizon.GraphQL.API.Search do
               actor_type: [result_type],
               radius: Map.get(args, :radius),
               location: Map.get(args, :location),
-              minimum_visibility: :public
+              minimum_visibility: Map.get(args, :minimum_visibility, :public)
             ],
             page,
             limit
