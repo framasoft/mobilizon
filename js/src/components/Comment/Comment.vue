@@ -212,6 +212,7 @@ export default class Comment extends Vue {
   // See https://github.com/kaorun343/vue-property-decorator/issues/257
   @Ref() readonly commentEditor!: EditorComponent & {
     replyToComment: (comment: IComment) => void;
+    focus: () => void;
   };
 
   currentActor!: IPerson;
@@ -242,6 +243,11 @@ export default class Comment extends Vue {
       return;
     }
     this.replyTo = true;
+    if (this.comment.actor) {
+      this.commentEditor.replyToComment(this.comment.actor);
+      await this.$nextTick; // wait for the mention to be injected
+      this.commentEditor.focus();
+    }
   }
 
   replyToComment(): void {

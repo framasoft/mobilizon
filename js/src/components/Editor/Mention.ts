@@ -63,8 +63,9 @@ const mentionOptions: Partial<any> = {
           });
         },
         onKeyDown(props: any) {
-          const ref = component.ref as typeof MentionList;
-          return ref?.onKeyDown(props);
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return component.ref?.onKeyDown(props);
         },
         onExit() {
           popup[0].destroy();

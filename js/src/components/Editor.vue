@@ -183,12 +183,11 @@ import { defaultExtensions } from "@tiptap/starter-kit";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
-import { Actor, IActor, IPerson } from "../types/actor";
+import { IActor, IPerson, usernameWithDomain } from "../types/actor";
 import CustomImage from "./Editor/Image";
 import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
-import { IComment } from "../types/comment.model";
 import Mention from "@tiptap/extension-mention";
 import MentionOptions from "./Editor/Mention";
 import OrderedList from "@tiptap/extension-ordered-list";
@@ -324,15 +323,23 @@ export default class EditorComponent extends Vue {
   /**
    * We use this to programatically insert an actor mention when creating a reply to comment
    */
-  replyToComment(comment: IComment): void {
-    if (!comment.actor) return;
-    // const actorModel = new Actor(comment.actor);
+  replyToComment(actor: IActor): void {
     if (!this.editor) return;
-    // this.editor.commands.mention({
-    //   id: actorModel.id,
-    //   label: actorModel.usernameWithDomain().substring(1),
-    // });
-    this.editor.commands.focus();
+    this.editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "mention",
+        attrs: {
+          id: usernameWithDomain(actor),
+        },
+      })
+      .insertContent(" ")
+      .run();
+  }
+
+  focus(): void {
+    this.editor?.chain().focus("end");
   }
 
   beforeDestroy(): void {
