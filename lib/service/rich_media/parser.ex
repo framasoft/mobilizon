@@ -19,6 +19,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   alias Mobilizon.Config
   alias Mobilizon.Service.HTTP.RichMediaPreviewClient
   alias Mobilizon.Service.RichMedia.Favicon
+  alias Mobilizon.Service.RichMedia.Parsers.Fallback
   alias Plug.Conn.Utils
   require Logger
 
@@ -211,9 +212,17 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     data
   end
 
-  defp check_parsed_data(data) do
-    Logger.debug("Found metadata was invalid or incomplete: #{inspect(data)}")
-    {:error, :invalid_parsed_data}
+  defp check_parsed_data(data, html, first_run) do
+    # Maybe the first data found is incomplete, pass it through the Fallback parser once again
+    if first_run do
+      {:ok, data} = Fallback.parse(html, data)
+      Logger.debug("check parsed data")
+      Logger.debug(inspect(data))
+      check_parsed_data(data, html, false)
+    else
+      Logger.debug("Found metadata was invalid or incomplete: #{inspect(data)}")
+      {:error, :invalid_parsed_data}
+    end
   end
 
   defp clean_parsed_data(data) do
@@ -280,25 +289,20 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   @spec check_remote_picture_path(map()) :: map()
   defp check_remote_picture_path(%{image_remote_url: image_remote_url, url: url} = data) do
     Logger.debug("Checking image_remote_url #{image_remote_url}")
-    image_uri = URI.parse(image_remote_url)
-    uri = URI.parse(url)
 
-    image_remote_url =
-      cond do
-        is_nil(image_uri.host) -> "#{uri.scheme}://#{uri.host}#{correct_path(image_remote_url)}"
-        is_nil(image_uri.scheme) -> "#{uri.scheme}:#{image_remote_url}"
-        true -> image_remote_url
-      end
-
-    data = Map.put(data, :image_remote_url, image_remote_url)
+    data = Map.put(data, :image_remote_url, format_url(url, image_remote_url))
     {:ok, data}
   end
 
   defp check_remote_picture_path(data), do: {:ok, data}
 
-  # Sometimes paths have "/" in front, sometimes not
-  defp correct_path("/" <> _ = path), do: path
-  defp correct_path(path), do: "/#{path}"
+  @spec format_url(String.t(), String.t()) :: String.t()
+  defp format_url(url, path) do
+    url
+    |> URI.parse()
+    |> URI.merge(path)
+    |> to_string()
+  end
 
   # Twitter requires a well-know crawler user-agent to show server-rendered data
   defp default_user_agent("https://twitter.com/" <> _) do
