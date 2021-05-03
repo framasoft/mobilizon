@@ -6,231 +6,198 @@
       id="tiptab-editor"
       :data-actor-id="currentActor && currentActor.id"
     >
-      <editor-menu-bar
+      <div
+        class="menubar bar-is-hidden"
         v-if="isDescriptionMode"
         :editor="editor"
-        v-slot="{ commands, isActive, focused }"
       >
-        <div class="menubar bar-is-hidden" :class="{ 'is-focused': focused }">
-          <button
-            class="menubar__button"
-            :class="{ 'is-active': isActive.bold() }"
-            @click="commands.bold"
-            type="button"
-          >
-            <b-icon icon="format-bold" />
-          </button>
-
-          <button
-            class="menubar__button"
-            :class="{ 'is-active': isActive.italic() }"
-            @click="commands.italic"
-            type="button"
-          >
-            <b-icon icon="format-italic" />
-          </button>
-
-          <button
-            class="menubar__button"
-            :class="{ 'is-active': isActive.underline() }"
-            @click="commands.underline"
-            type="button"
-          >
-            <b-icon icon="format-underline" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 1 }) }"
-            @click="commands.heading({ level: 1 })"
-            type="button"
-          >
-            <b-icon icon="format-header-1" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 2 }) }"
-            @click="commands.heading({ level: 2 })"
-            type="button"
-          >
-            <b-icon icon="format-header-2" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            :class="{ 'is-active': isActive.heading({ level: 3 }) }"
-            @click="commands.heading({ level: 3 })"
-            type="button"
-          >
-            <b-icon icon="format-header-3" />
-          </button>
-
-          <button
-            class="menubar__button"
-            @click="showLinkMenu(commands.link, isActive.link())"
-            :class="{ 'is-active': isActive.link() }"
-            type="button"
-          >
-            <b-icon icon="link" />
-          </button>
-
-          <button
-            class="menubar__button"
-            v-if="!isBasicMode"
-            @click="showImagePrompt(commands.image)"
-            type="button"
-          >
-            <b-icon icon="image" />
-          </button>
-
-          <button
-            class="menubar__button"
-            v-if="!isBasicMode"
-            :class="{ 'is-active': isActive.bullet_list() }"
-            @click="commands.bullet_list"
-            type="button"
-          >
-            <b-icon icon="format-list-bulleted" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            :class="{ 'is-active': isActive.ordered_list() }"
-            @click="commands.ordered_list"
-            type="button"
-          >
-            <b-icon icon="format-list-numbered" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            :class="{ 'is-active': isActive.blockquote() }"
-            @click="commands.blockquote"
-            type="button"
-          >
-            <b-icon icon="format-quote-close" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            @click="commands.undo"
-            type="button"
-          >
-            <b-icon icon="undo" />
-          </button>
-
-          <button
-            v-if="!isBasicMode"
-            class="menubar__button"
-            @click="commands.redo"
-            type="button"
-          >
-            <b-icon icon="redo" />
-          </button>
-        </div>
-      </editor-menu-bar>
-
-      <editor-menu-bubble
-        v-if="isCommentMode"
-        :editor="editor"
-        :keep-in-bounds="true"
-        v-slot="{ commands, isActive, menu }"
-      >
-        <div
-          class="menububble"
-          :class="{ 'is-active': menu.isActive }"
-          :style="`left: ${menu.left}px; bottom: ${menu.bottom}px;`"
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('bold') }"
+          @click="editor.chain().focus().toggleBold().run()"
+          type="button"
         >
-          <button
-            class="menububble__button"
-            :class="{ 'is-active': isActive.bold() }"
-            @click="commands.bold"
-            type="button"
-          >
-            <b-icon icon="format-bold" />
-            <span class="visually-hidden">{{ $t("Bold") }}</span>
-          </button>
+          <b-icon icon="format-bold" />
+        </button>
 
-          <button
-            class="menububble__button"
-            :class="{ 'is-active': isActive.italic() }"
-            @click="commands.italic"
-            type="button"
-          >
-            <b-icon icon="format-italic" />
-            <span class="visually-hidden">{{ $t("Italic") }}</span>
-          </button>
-        </div>
-      </editor-menu-bubble>
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('italic') }"
+          @click="editor.chain().focus().toggleItalic().run()"
+          type="button"
+        >
+          <b-icon icon="format-italic" />
+        </button>
+
+        <button
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('underline') }"
+          @click="editor.chain().focus().toggleUnderline().run()"
+          type="button"
+        >
+          <b-icon icon="format-underline" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+          @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+          type="button"
+        >
+          <b-icon icon="format-header-1" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+          @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+          type="button"
+        >
+          <b-icon icon="format-header-2" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+          @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+          type="button"
+        >
+          <b-icon icon="format-header-3" />
+        </button>
+
+        <button
+          class="menubar__button"
+          @click="showLinkMenu()"
+          :class="{ 'is-active': editor.isActive('link') }"
+          type="button"
+        >
+          <b-icon icon="link" />
+        </button>
+
+        <button
+          v-if="editor.isActive('link')"
+          class="menubar__button"
+          @click="editor.chain().focus().unsetLink().run()"
+          type="button"
+        >
+          <b-icon icon="link-off" />
+        </button>
+
+        <button
+          class="menubar__button"
+          v-if="!isBasicMode"
+          @click="showImagePrompt()"
+          type="button"
+        >
+          <b-icon icon="image" />
+        </button>
+
+        <button
+          class="menubar__button"
+          v-if="!isBasicMode"
+          :class="{ 'is-active': editor.isActive('bulletList') }"
+          @click="editor.chain().focus().toggleBulletList().run()"
+          type="button"
+        >
+          <b-icon icon="format-list-bulleted" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('orderedList') }"
+          @click="editor.chain().focus().toggleOrderedList().run()"
+          type="button"
+        >
+          <b-icon icon="format-list-numbered" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          :class="{ 'is-active': editor.isActive('blockquote') }"
+          @click="editor.chain().focus().toggleBlockquote().run()"
+          type="button"
+        >
+          <b-icon icon="format-quote-close" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          @click="editor.chain().focus().undo().run()"
+          type="button"
+        >
+          <b-icon icon="undo" />
+        </button>
+
+        <button
+          v-if="!isBasicMode"
+          class="menubar__button"
+          @click="editor.chain().focus().redo().run()"
+          type="button"
+        >
+          <b-icon icon="redo" />
+        </button>
+      </div>
+
+      <bubble-menu
+        v-if="editor && isCommentMode"
+        class="bubble-menu"
+        :editor="editor"
+        :tippy-options="{ duration: 100 }"
+      >
+        <button
+          class="menububble__button"
+          :class="{ 'is-active': editor.isActive('bold') }"
+          @click="editor.chain().focus().toggleBold().run()"
+          type="button"
+        >
+          <b-icon icon="format-bold" />
+          <span class="visually-hidden">{{ $t("Bold") }}</span>
+        </button>
+
+        <button
+          class="menububble__button"
+          :class="{ 'is-active': editor.isActive('italic') }"
+          @click="editor.chain().focus().toggleItalic().run()"
+          type="button"
+        >
+          <b-icon icon="format-italic" />
+          <span class="visually-hidden">{{ $t("Italic") }}</span>
+        </button>
+      </bubble-menu>
 
       <editor-content class="editor__content" :editor="editor" />
-    </div>
-    <div class="suggestion-list" v-show="showSuggestions" ref="suggestions">
-      <template v-if="hasResults">
-        <div
-          v-for="(actor, index) in filteredActors"
-          :key="actor.id"
-          class="media suggestion-list__item"
-          :class="{ 'is-selected': navigatedActorIndex === index }"
-          @click="selectActor(actor)"
-        >
-          <div class="media-left">
-            <figure class="image is-16x16" v-if="actor.avatar">
-              <img :src="actor.avatar.url" alt="" />
-            </figure>
-          </div>
-          <div class="media-content">
-            {{ actor.name }}
-          </div>
-        </div>
-      </template>
-      <div v-else class="suggestion-list__item is-empty">
-        {{ $t("No profiles found") }}
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Editor, EditorContent, EditorMenuBar, EditorMenuBubble } from "tiptap";
-import {
-  Blockquote,
-  HardBreak,
-  Heading,
-  OrderedList,
-  BulletList,
-  ListItem,
-  TodoItem,
-  TodoList,
-  Bold,
-  Code,
-  Italic,
-  Link,
-  Underline,
-  History,
-  Placeholder,
-  Mention,
-} from "tiptap-extensions";
-import tippy, { Instance, sticky } from "tippy.js";
-import { SEARCH_PERSONS } from "../graphql/search";
-import { Actor, IActor, IPerson } from "../types/actor";
-import Image from "./Editor/Image";
-import MaxSize from "./Editor/MaxSize";
+import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
+import { defaultExtensions } from "@tiptap/starter-kit";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import { IActor, IPerson, usernameWithDomain } from "../types/actor";
+import CustomImage from "./Editor/Image";
 import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
-import { IComment } from "../types/comment.model";
+import Mention from "@tiptap/extension-mention";
+import MentionOptions from "./Editor/Mention";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import CharacterCount from "@tiptap/extension-character-count";
 
 @Component({
-  components: { EditorContent, EditorMenuBar, EditorMenuBubble },
+  components: { EditorContent, BubbleMenu },
   apollo: {
     currentActor: {
       query: CURRENT_ACTOR_CLIENT,
@@ -248,19 +215,6 @@ export default class EditorComponent extends Vue {
 
   editor: Editor | null = null;
 
-  /**
-   * Editor Suggestions
-   */
-  query!: string | null;
-
-  filteredActors: IActor[] = [];
-
-  suggestionRange!: Record<string, unknown> | null;
-
-  navigatedActorIndex = 0;
-
-  popup!: Instance[] | null;
-
   get isDescriptionMode(): boolean {
     return this.mode === "description" || this.isBasicMode;
   }
@@ -271,14 +225,6 @@ export default class EditorComponent extends Vue {
 
   get isShortMode(): boolean {
     return this.isBasicMode;
-  }
-
-  get hasResults(): boolean {
-    return this.filteredActors.length > 0;
-  }
-
-  get showSuggestions(): boolean {
-    return (this.query || this.hasResults) as boolean;
   }
 
   get isBasicMode(): boolean {
@@ -295,138 +241,39 @@ export default class EditorComponent extends Vue {
   mounted(): void {
     this.editor = new Editor({
       extensions: [
-        new Blockquote(),
-        new BulletList(),
-        new HardBreak(),
-        new Heading({ levels: [1, 2, 3] }),
-        new Mention({
-          items: () => [],
-          onEnter: ({
-            items,
-            query,
-            range,
-            command,
-            virtualNode,
-          }: {
-            items: any;
-            query: any;
-            range: any;
-            command: any;
-            virtualNode: any;
-          }) => {
-            this.query = query;
-            this.filteredActors = items;
-            this.suggestionRange = range;
-            this.renderPopup(virtualNode);
-            // we save the command for inserting a selected mention
-            // this allows us to call it inside of our custom popup
-            // via keyboard navigation and on click
-            this.insertMention = command;
-          },
-          /**
-           * is called when a suggestion has changed
-           */
-          onChange: ({
-            items,
-            query,
-            range,
-            virtualNode,
-          }: {
-            items: any;
-            query: any;
-            range: any;
-            virtualNode: any;
-          }) => {
-            this.query = query;
-            this.filteredActors = items;
-            this.suggestionRange = range;
-            this.navigatedActorIndex = 0;
-            this.renderPopup(virtualNode);
-          },
-
-          /**
-           * is called when a suggestion is cancelled
-           */
-          onExit: () => {
-            // reset all saved values
-            this.query = null;
-            this.filteredActors = [];
-            this.suggestionRange = null;
-            this.navigatedActorIndex = 0;
-            this.destroyPopup();
-          },
-
-          /**
-           * is called on every keyDown event while a suggestion is active
-           */
-          onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-            if (event.key === "ArrowUp") {
-              this.upHandler();
-              return true;
-            }
-            if (event.key === "ArrowDown") {
-              this.downHandler();
-              return true;
-            }
-            if (event.key === "Enter") {
-              this.enterHandler();
-              return true;
-            }
-            return false;
-          },
-          onFilter: async (items: any, query: string) => {
-            if (!query) {
-              return items;
-            }
-            const result = await this.$apollo.query({
-              query: SEARCH_PERSONS,
-              variables: {
-                searchText: query,
-              },
-            });
-            // TipTap doesn't handle async for onFilter, hence the following line.
-            this.filteredActors = result.data.searchPersons.elements;
-            return this.filteredActors;
-          },
+        Document,
+        Paragraph,
+        Text,
+        OrderedList,
+        ListItem,
+        Mention.configure(MentionOptions),
+        CustomImage,
+        Underline,
+        Link,
+        CharacterCount.configure({
+          limit: this.maxSize,
         }),
-        new ListItem(),
-        new OrderedList(),
-        new TodoItem(),
-        new TodoList(),
-        new Link(),
-        new Bold(),
-        new Code(),
-        new Italic(),
-        new Underline(),
-        new History(),
-        new Placeholder({
-          emptyEditorClass: "is-empty",
-          emptyNodeText: this.$t("Write something…") as string,
-          showOnlyWhenEditable: false,
-        }),
-        new Image(),
-        new MaxSize({ maxSize: this.maxSize }),
+        ...defaultExtensions(),
       ],
-      // eslint-disable-next-line @typescript-eslint/ban-types
-      onUpdate: ({ getHTML }: { getHTML: Function }) => {
-        this.$emit("input", getHTML());
+      content: this.value,
+      onUpdate: () => {
+        this.$emit("input", this.editor?.getHTML());
       },
     });
-    this.editor.setContent(this.value);
   }
 
   @Watch("value")
   onValueChanged(val: string): void {
     if (!this.editor) return;
     if (val !== this.editor.getHTML()) {
-      this.editor.setContent(val, false);
+      this.editor.commands.setContent(val, false);
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  showLinkMenu(command: Function, active: boolean): Function | undefined {
-    if (!this.editor) return undefined;
-    if (active) return command({ href: null });
+  /**
+   * Show a popup to get the link from the URL
+   */
+  showLinkMenu(): void {
     this.$buefy.dialog.prompt({
       message: this.$t("Enter the link URL") as string,
       inputAttrs: {
@@ -434,112 +281,16 @@ export default class EditorComponent extends Vue {
       },
       trapFocus: true,
       onConfirm: (value) => {
-        command({ href: value });
-        if (!this.editor) return;
-        this.editor.focus();
+        if (!this.editor) return undefined;
+        this.editor.chain().focus().setLink({ href: value }).run();
       },
     });
-    return undefined;
-  }
-
-  upHandler(): void {
-    this.navigatedActorIndex =
-      (this.navigatedActorIndex + this.filteredActors.length - 1) %
-      this.filteredActors.length;
-  }
-
-  /**
-   * navigate to the next item
-   * if it's the last item, navigate to the first one
-   */
-  downHandler(): void {
-    this.navigatedActorIndex =
-      (this.navigatedActorIndex + 1) % this.filteredActors.length;
-  }
-
-  enterHandler(): void {
-    const actor = this.filteredActors[this.navigatedActorIndex];
-    if (actor) {
-      this.selectActor(actor);
-    }
-  }
-
-  /**
-   * we have to replace our suggestion text with a mention
-   * so it's important to pass also the position of your suggestion text
-   * @param actor IActor
-   */
-  selectActor(actor: IActor): void {
-    const actorModel = new Actor(actor);
-    this.insertMention({
-      range: this.suggestionRange,
-      attrs: {
-        id: actorModel.id,
-        // usernameWithDomain returns with a @ prefix and tiptap adds one itself
-        label: actorModel.usernameWithDomain().substring(1),
-      },
-    });
-    if (!this.editor) return;
-    this.editor.focus();
-  }
-
-  /** We use this to programatically insert an actor mention when creating a reply to comment */
-  replyToComment(comment: IComment): void {
-    if (!comment.actor) return;
-    const actorModel = new Actor(comment.actor);
-    if (!this.editor) return;
-    this.editor.commands.mention({
-      id: actorModel.id,
-      label: actorModel.usernameWithDomain().substring(1),
-    });
-    this.editor.focus();
-  }
-
-  /**
-   * renders a popup with suggestions
-   * tiptap provides a virtualNode object for using popper.js (or tippy.js) for popups
-   * @param node
-   */
-  renderPopup(node: Element): void {
-    if (this.popup) {
-      return;
-    }
-    this.popup = tippy("#mobilizon", {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      getReferenceClientRect: node.getBoundingClientRect,
-      appendTo: () => document.body,
-      content: this.$refs.suggestions as HTMLElement,
-      trigger: "mouseenter",
-      interactive: true,
-      sticky: true, // make sure position of tippy is updated when content changes
-      plugins: [sticky],
-      showOnCreate: true,
-      theme: "dark",
-      placement: "top-start",
-      inertia: true,
-      duration: [400, 200],
-    }) as Instance[];
-  }
-
-  destroyPopup(): void {
-    if (this.popup) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.popup[0].destroy();
-      this.popup = null;
-    }
-    if (this.observer) {
-      this.observer.disconnect();
-    }
   }
 
   /**
    * Show a file prompt, upload picture and insert it into editor
-   * @param command
    */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  async showImagePrompt(command: Function): Promise<void> {
+  async showImagePrompt(): Promise<void> {
     const image = await listenFileUpload();
     try {
       const { data } = await this.$apollo.mutate({
@@ -549,11 +300,17 @@ export default class EditorComponent extends Vue {
           name: image.name,
         },
       });
-      if (data.uploadMedia && data.uploadMedia.url) {
-        command({
-          src: data.uploadMedia.url,
-          "data-media-id": data.uploadMedia.id,
-        });
+      if (data.uploadMedia && data.uploadMedia.url && this.editor) {
+        this.editor
+          .chain()
+          .focus()
+          .setImage({
+            src: data.uploadMedia.url,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            "data-media-id": data.uploadMedia.id,
+          })
+          .run();
       }
     } catch (error) {
       console.error(error);
@@ -563,14 +320,36 @@ export default class EditorComponent extends Vue {
     }
   }
 
-  beforeDestroy(): void {
+  /**
+   * We use this to programatically insert an actor mention when creating a reply to comment
+   */
+  replyToComment(actor: IActor): void {
     if (!this.editor) return;
-    this.destroyPopup();
-    this.editor.destroy();
+    this.editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: "mention",
+        attrs: {
+          id: usernameWithDomain(actor),
+        },
+      })
+      .insertContent(" ")
+      .run();
+  }
+
+  focus(): void {
+    this.editor?.chain().focus("end");
+  }
+
+  beforeDestroy(): void {
+    this.editor?.destroy();
   }
 }
 </script>
 <style lang="scss">
+@import "./Editor/style.scss";
+
 $color-black: #000;
 $color-white: #eee;
 
@@ -643,8 +422,6 @@ $color-white: #eee;
       }
     }
 
-    word-wrap: break-word;
-
     h1 {
       font-size: 2em;
     }
@@ -655,10 +432,6 @@ $color-white: #eee;
 
     h3 {
       font-size: 1.25em;
-    }
-
-    * {
-      caret-color: currentColor;
     }
 
     ul,
@@ -694,57 +467,26 @@ $color-white: #eee;
   }
 }
 
-.menububble {
-  position: absolute;
+.bubble-menu {
   display: flex;
-  z-index: 20;
-  background: $color-black;
-  border-radius: 5px;
-  padding: 0.3rem;
-  margin-bottom: 0.5rem;
-  transform: translateX(-50%);
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s, visibility 0.2s;
+  background-color: #0d0d0d;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
 
-  &.is-active {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  &__button {
-    display: inline-flex;
-    background: transparent;
-    border: 0;
-    color: $color-white;
-    padding: 0.2rem 0.5rem;
-    margin-right: 0.2rem;
-    border-radius: 3px;
+  button {
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0 0.2rem;
+    opacity: 0.6;
     cursor: pointer;
 
-    &:last-child {
-      margin-right: 0;
-    }
-
-    &:hover {
-      background-color: rgba($color-white, 0.1);
-    }
-
+    &:hover,
     &.is-active {
-      background-color: rgba($color-white, 0.2);
+      opacity: 1;
     }
-  }
-
-  &__form {
-    display: flex;
-    align-items: center;
-  }
-
-  &__input {
-    font: inherit;
-    border: none;
-    background: transparent;
-    color: $color-white;
   }
 }
 

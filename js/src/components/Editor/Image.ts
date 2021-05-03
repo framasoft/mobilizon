@@ -1,70 +1,32 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { Node } from "tiptap";
 import { UPLOAD_MEDIA } from "@/graphql/upload";
 import apolloProvider from "@/vue-apollo";
 import ApolloClient from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import { NodeType, NodeSpec } from "prosemirror-model";
-import { EditorState, Plugin, TextSelection } from "prosemirror-state";
-import { DispatchFn } from "tiptap-commands";
+import { Plugin } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
+import Image from "@tiptap/extension-image";
 
 /* eslint-disable class-methods-use-this */
 
-export default class Image extends Node {
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  get name() {
-    return "image";
-  }
-
-  get schema(): NodeSpec {
+const CustomImage = Image.extend({
+  name: "image",
+  addAttributes() {
     return {
-      inline: true,
-      attrs: {
-        src: {},
-        alt: {
-          default: null,
-        },
-        title: {
-          default: null,
-        },
-        "data-media-id": {},
+      src: {
+        default: null,
       },
-      group: "inline",
-      draggable: true,
-      parseDOM: [
-        {
-          tag: "img",
-          getAttrs: (dom: any) => ({
-            src: dom.getAttribute("src"),
-            title: dom.getAttribute("title"),
-            alt: dom.getAttribute("alt"),
-            "data-media-id": dom.getAttribute("data-media-id"),
-          }),
-        },
-      ],
-      toDOM: (node: any) => ["img", node.attrs],
+      alt: {
+        default: null,
+      },
+      title: {
+        default: null,
+      },
+      "data-media-id": {
+        default: null,
+      },
     };
-  }
-
-  commands({ type }: { type: NodeType }): any {
-    return (attrs: { [key: string]: string }) => (
-      state: EditorState,
-      dispatch: DispatchFn
-    ) => {
-      const { selection }: { selection: TextSelection } = state;
-      const position = selection.$cursor
-        ? selection.$cursor.pos
-        : selection.$to.pos;
-      const node = type.create(attrs);
-      const transaction = state.tr.insert(position, node);
-      dispatch(transaction);
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  get plugins() {
+  },
+  addProseMirrorPlugins() {
     return [
       new Plugin({
         props: {
@@ -129,5 +91,7 @@ export default class Image extends Node {
         },
       }),
     ];
-  }
-}
+  },
+});
+
+export default CustomImage;

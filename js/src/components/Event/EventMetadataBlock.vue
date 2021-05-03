@@ -32,7 +32,6 @@ div.eventMetadataBlock {
   margin-bottom: 1.75rem;
 
   p {
-    flex: 1;
     overflow: hidden;
 
     &.padding-left {

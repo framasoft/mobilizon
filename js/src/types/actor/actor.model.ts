@@ -52,9 +52,7 @@ export class Actor implements IActor {
   }
 
   public displayName(): string {
-    return this.name != null && this.name !== ""
-      ? this.name
-      : this.usernameWithDomain();
+    return displayName(this);
   }
 }
 
@@ -66,6 +64,12 @@ export function usernameWithDomain(actor: IActor, force = false): string {
     return `${actor.preferredUsername}@${window.location.hostname}`;
   }
   return actor.preferredUsername;
+}
+
+export function displayName(actor: IActor): string {
+  return actor.name != null && actor.name !== ""
+    ? actor.name
+    : usernameWithDomain(actor);
 }
 
 export function displayNameAndUsername(actor: IActor): string {

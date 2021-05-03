@@ -500,6 +500,10 @@ defmodule Mobilizon.Actors do
   defp filter_suspended(query, true), do: where(query, [a], a.suspended)
   defp filter_suspended(query, false), do: where(query, [a], not a.suspended)
 
+  @spec filter_out_anonymous_actor_id(Ecto.Query.t(), integer() | String.t()) :: Ecto.Query.t()
+  defp filter_out_anonymous_actor_id(query, anonymous_actor_id),
+    do: where(query, [a], a.id != ^anonymous_actor_id)
+
   @doc """
   Returns the list of local actors by their username.
   """
@@ -527,12 +531,15 @@ defmodule Mobilizon.Actors do
         page \\ nil,
         limit \\ nil
       ) do
+    anonymous_actor_id = Mobilizon.Config.anonymous_actor_id()
+
     Actor
     |> actor_by_username_or_name_query(term)
     |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
     |> filter_by_types(Keyword.get(options, :actor_type, :Group))
     |> filter_by_minimum_visibility(Keyword.get(options, :minimum_visibility, :public))
     |> filter_suspended(false)
+    |> filter_out_anonymous_actor_id(anonymous_actor_id)
     |> Page.build_page(page, limit)
   end
 
