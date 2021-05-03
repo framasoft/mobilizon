@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.3 - 03-05-2021
+
+### Changed
+
+- Lower the frequency for refreshment of external groups
+
+### Fixes
+
+- Fixed spaces being eaten in the rich text editor (event description, comments and public posts)
+- Fixed event physical address display
+- Fixed tags being limited to 20 characters
+- Fixed some ActivityPub errors
+
+### Translations
+
+- Galician
+- Russian
+- Spanish
+
 ## 1.1.2 - 28-04-2021
 
 ### Changed
