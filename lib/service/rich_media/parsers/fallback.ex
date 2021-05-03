@@ -29,11 +29,19 @@ defmodule Mobilizon.Service.RichMedia.Parsers.Fallback do
   end
 
   defp get_page(html, :title) do
-    html |> Floki.find("html head title") |> List.first() |> Floki.text() |> String.trim()
+    html
+    |> Floki.parse_document!()
+    |> Floki.find("html title")
+    |> List.first()
+    |> Floki.text()
+    |> String.trim()
   end
 
   defp get_page(html, :description) do
-    case html |> Floki.find("html head meta[name='description']") |> List.first() do
+    case html
+         |> Floki.parse_document!()
+         |> Floki.find("html meta[name='description']")
+         |> List.first() do
       nil -> ""
       elem -> elem |> Floki.attribute("content") |> List.first() |> String.trim()
     end

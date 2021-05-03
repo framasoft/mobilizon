@@ -36,7 +36,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
   end
 
   defp get_elements(html, key_name, prefix) do
-    html |> Floki.find("meta[#{to_string(key_name)}^='#{prefix}:']")
+    html |> Floki.parse_document!() |> Floki.find("meta[#{to_string(key_name)}^='#{prefix}:']")
   end
 
   defp normalize_attributes(html_node, prefix, key_name, value_name, allowed_attributes) do
@@ -83,14 +83,26 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
 
   defp maybe_put_description(meta, _), do: meta
 
+  @spec get_page_title(String.t()) :: String.t()
   defp get_page_title(html) do
-    html |> Floki.find("html head title") |> List.first() |> Floki.text()
+    with {:ok, document} <- Floki.parse_document(html),
+         elem when not is_nil(elem) <- document |> Floki.find("html head title") |> List.first(),
+         title when is_binary(title) <- Floki.text(elem) do
+      title
+    else
+      _ -> ""
+    end
   end
 
+  @spec get_page_description(String.t()) :: String.t()
   defp get_page_description(html) do
-    case html |> Floki.find("html head meta[name='description']") |> List.first() do
-      nil -> ""
-      elem -> Floki.attribute(elem, "content")
+    with {:ok, document} <- Floki.parse_document(html),
+         elem when not is_nil(elem) <-
+           document |> Floki.find("html head meta[name='description']") |> List.first(),
+         description when is_binary(description) <- Floki.attribute(elem, "content") do
+      description
+    else
+      _ -> ""
     end
   end
 end

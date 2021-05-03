@@ -74,12 +74,11 @@ defmodule Mobilizon.Service.RichMedia.Parser do
            {:is_html, _response_headers, true} <-
              {:is_html, response_headers, is_html(response_headers)} do
         body
-        |> parse_html()
         |> maybe_parse()
         |> Map.put(:url, url)
         |> maybe_add_favicon()
         |> clean_parsed_data()
-        |> check_parsed_data()
+        |> check_parsed_data(body)
         |> check_remote_picture_path()
       else
         {:is_html, response_headers, false} ->
@@ -193,8 +192,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end
   end
 
-  defp parse_html(html), do: Floki.parse_document!(html)
-
+  @spec maybe_parse(String.t()) :: {:halt, map()} | {:cont, map()}
   defp maybe_parse(html) do
     Enum.reduce_while(parsers(), %{}, fn parser, acc ->
       case parser.parse(html, acc) do
@@ -207,7 +205,9 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end)
   end
 
-  defp check_parsed_data(%{title: title} = data)
+  defp check_parsed_data(data, html, first_run \\ true)
+
+  defp check_parsed_data(%{title: title} = data, _html, _first_run)
        when is_binary(title) and byte_size(title) > 0 do
     data
   end
