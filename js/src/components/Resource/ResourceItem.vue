@@ -127,7 +127,6 @@ a {
       white-space: nowrap;
       display: inline-block;
       font-weight: 500;
-      margin-bottom: 5px;
       color: $primary;
       overflow: hidden;
       text-overflow: ellipsis;
