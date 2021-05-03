@@ -3,25 +3,25 @@
 exports[`CommentTree renders a comment tree 1`] = `
 <div>
   <!---->
-  <transition-stub name="comment-empty-list" mode="out-in">
+  <transition-group-stub name="comment-empty-list" mode="out-in">
     <transition-group-stub tag="ul" name="comment-list" class="comment-list">
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
     </transition-group-stub>
     <div class="no-comments"><span>No comments yet</span></div>
-  </transition-stub>
+  </transition-group-stub>
 </div>
 `;
 
 exports[`CommentTree renders a comment tree 2`] = `
 <div>
   <!---->
-  <transition-stub name="comment-empty-list" mode="out-in">
+  <transition-group-stub name="comment-empty-list" mode="out-in">
     <transition-group-stub tag="ul" name="comment-list" class="comment-list">
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
     </transition-group-stub>
     <div class="no-comments"><span>No comments yet</span></div>
-  </transition-stub>
+  </transition-group-stub>
 </div>
 `;

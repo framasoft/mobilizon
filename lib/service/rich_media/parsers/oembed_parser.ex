@@ -32,7 +32,9 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
   end
 
   defp get_discovery_data(html) do
-    html |> Floki.find("link[type='application/json+oembed']")
+    with {:ok, document} <- Floki.parse_document(html) do
+      Floki.find(document, "link[type='application/json+oembed']")
+    end
   end
 
   defp get_oembed_url(nodes) do

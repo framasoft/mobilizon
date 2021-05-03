@@ -48,8 +48,9 @@
     >
       {{ $t("Loading comments…") }}
     </p>
-    <transition name="comment-empty-list" mode="out-in" v-else>
+    <transition-group name="comment-empty-list" mode="out-in" v-else>
       <transition-group
+        key="list"
         name="comment-list"
         v-if="comments.length"
         class="comment-list"
@@ -65,10 +66,10 @@
           @delete-comment="deleteComment"
         />
       </transition-group>
-      <div class="no-comments">
+      <div class="no-comments" key="no-comments">
         <span>{{ $t("No comments yet") }}</span>
       </div>
-    </transition>
+    </transition-group>
   </div>
 </template>
 
