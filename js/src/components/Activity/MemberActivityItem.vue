@@ -83,6 +83,8 @@ export default class MemberActivityItem extends mixins(ActivityMixin) {
           return "You added the member {member}.";
         }
         return "{profile} added the member {member}.";
+      case ActivityMemberSubject.MEMBER_JOINED:
+        return "{member} joined the group.";
       case ActivityMemberSubject.MEMBER_UPDATED:
         if (this.subjectParams.member_role && this.subjectParams.old_role) {
           return this.roleUpdate;
