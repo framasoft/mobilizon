@@ -1306,7 +1306,7 @@ export default class Event extends EventMixin {
 }
 
 .header-picture-default {
-  background-image: url("/img/mobilizon_default_card.png");
+  background-image: url("../../../public/img/mobilizon_default_card.png");
 }
 
 div.sidebar {

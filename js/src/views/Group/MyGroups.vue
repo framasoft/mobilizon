@@ -200,18 +200,18 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("/img/pics/group-480w.jpg");
+    background-image: url("../../../public/img/pics/group-480w.jpg");
 
     @media (min-resolution: 2dppx) {
       & {
-        background-image: url("/img/pics/group-1024w.jpg");
+        background-image: url("../../../public/img/pics/group-1024w.jpg");
       }
     }
     &.webp {
-      background-image: url("/img/pics/group-480w.webp");
+      background-image: url("../../../public/img/pics/group-480w.webp");
       @media (min-resolution: 2dppx) {
         & {
-          background-image: url("/img/pics/group-1024w.webp");
+          background-image: url("../../../public/img/pics/group-1024w.webp");
         }
       }
     }
