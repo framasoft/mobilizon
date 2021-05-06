@@ -14,12 +14,12 @@ defmodule Mobilizon.Service.Notifier do
   @doc """
   Sends one or multiple notifications from an activity
   """
-  @callback send(User.t(), Activity.t()) :: {:ok, any()} | {:error, String.t()}
+  @callback send(User.t(), Activity.t(), Keyword.t()) :: {:ok, any()} | {:error, String.t()}
 
-  @callback send(User.t(), list(Activity.t())) :: {:ok, any()} | {:error, String.t()}
+  @callback send(User.t(), list(Activity.t()), Keyword.t()) :: {:ok, any()} | {:error, String.t()}
 
   def notify(%User{} = user, %Activity{} = activity, opts \\ []) do
-    Enum.each(providers(opts), & &1.send(user, activity))
+    Enum.each(providers(opts), & &1.send(user, activity, opts))
   end
 
   @spec providers(Keyword.t()) :: list()

@@ -11,7 +11,7 @@
 <%= for activity <- Enum.take(group_activities, 5) do %>
 * <%= case activity.type do %><% :discussion -> %><%= render("activity/_discussion_activity_item.text", activity: activity) %><% :event -> %><%= render("activity/_event_activity_item.text", activity: activity) %><% :group -> %><%= render("activity/_group_activity_item.text", activity: activity) %>
 <% :member -> %><%= render("activity/_member_activity_item.text", activity: activity) %><% :post -> %><%= render("activity/_post_activity_item.text", activity: activity) %><% :resource -> %><%= render("activity/_resource_activity_item.text", activity: activity) %><% :comment -> %><%= render("activity/_comment_activity_item.text", activity: activity) %><% end %>
-<%= datetime_relative(activity.inserted_at, @locale) %>
+<%= unless @single_activity do %><%= datetime_relative(activity.inserted_at, @locale) %><% end %>
 <% end %>
 <%= if length(group_activities) > 5 do %>
 <%= dngettext "activity", "View one more activity", "View %{count} more activities", length(group_activities) - 5, %{count: length(group_activities) - 5} %>

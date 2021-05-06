@@ -29,7 +29,7 @@ defmodule Mobilizon.Service.Workers.ActivityBuilder do
   def notify_activity(%Activity{} = activity) do
     activity
     |> users_to_notify()
-    |> Enum.each(&Notifier.notify(&1, activity))
+    |> Enum.each(&Notifier.notify(&1, activity, single_activity: true))
   end
 
   @spec users_to_notify(Activity.t()) :: list(User.t())
@@ -45,6 +45,6 @@ defmodule Mobilizon.Service.Workers.ActivityBuilder do
     |> Enum.map(& &1.user_id)
     |> Enum.filter(& &1)
     |> Enum.uniq()
-    |> Enum.map(&Users.get_user!/1)
+    |> Enum.map(&Users.get_user_with_settings!/1)
   end
 end

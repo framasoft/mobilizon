@@ -13,7 +13,7 @@ defmodule Mobilizon.Users do
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Users.{Setting, User}
+  alias Mobilizon.Users.{PushSubscription, Setting, User}
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
@@ -403,6 +403,80 @@ defmodule Mobilizon.Users do
   """
   def change_setting(%Setting{} = setting) do
     Setting.changeset(setting, %{})
+  end
+
+  @doc """
+  Get a paginated list of all of a user's subscriptions
+  """
+  @spec list_user_push_subscriptions(String.t() | integer(), integer() | nil, integer() | nil) ::
+          Page.t()
+  def list_user_push_subscriptions(user_id, page \\ nil, limit \\ nil) do
+    PushSubscription
+    |> where([p], p.user_id == ^user_id)
+    |> preload([:user])
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Get a push subscription by their ID
+  """
+  @spec get_push_subscription(String.t() | integer()) :: PushSubscription.t() | nil
+  def get_push_subscription(push_subscription_id) do
+    PushSubscription
+    |> Repo.get(push_subscription_id)
+    |> Repo.preload([:user])
+  end
+
+  @doc """
+  Creates a push subscription.
+
+  ## Examples
+
+      iex> create_push_subscription(%{field: value})
+      {:ok, %PushSubscription{}}
+
+      iex> create_push_subscription(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_push_subscription(attrs \\ %{}) do
+    %PushSubscription{}
+    |> PushSubscription.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a push subscription.
+
+  ## Examples
+
+      iex> update_push_subscription(push_subscription, %{field: new_value})
+      {:ok, %PushSubscription{}}
+
+      iex> update_push_subscription(push_subscription, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_push_subscription(%PushSubscription{} = push_subscription, attrs) do
+    push_subscription
+    |> PushSubscription.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a push subscription.
+
+  ## Examples
+
+      iex> delete_push_subscription(push_subscription)
+      {:ok, %PushSubscription{}}
+
+      iex> delete_push_subscription(push_subscription)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_push_subscription(%PushSubscription{} = push_subscription) do
+    Repo.delete(push_subscription)
   end
 
   @spec user_by_email_query(String.t(), boolean | nil, boolean()) :: Ecto.Query.t()

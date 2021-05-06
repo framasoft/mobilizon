@@ -105,7 +105,9 @@
                               <%= render("activity/_comment_activity_item.html", activity: activity) %>
                           <% end %>
                         </p>
+                        <%= unless @single_activity do %>
                         <em><%= datetime_relative(activity.inserted_at, @locale) %></em>
+                        <% end %>
                       </li>
                       <% end %>
                     </ul>

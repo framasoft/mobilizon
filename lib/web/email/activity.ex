@@ -17,8 +17,10 @@ defmodule Mobilizon.Web.Email.Activity do
   def direct_activity(
         email,
         activities,
-        locale \\ "en"
+        options \\ []
       ) do
+    locale = Keyword.get(options, :locale, "en")
+    single_activity = Keyword.get(options, :single_activity, false)
     Gettext.put_locale(locale)
 
     subject =
@@ -34,6 +36,7 @@ defmodule Mobilizon.Web.Email.Activity do
     |> assign(:subject, subject)
     |> assign(:activities, chunked_activities)
     |> assign(:total_number_activities, length(activities))
+    |> assign(:single_activity, single_activity)
     |> render(:email_direct_activity)
   end
 
