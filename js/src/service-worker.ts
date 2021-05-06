@@ -11,6 +11,7 @@ import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { ExpirationPlugin } from "workbox-expiration";
 
 import { precacheAndRoute } from "workbox-precaching";
+import { IPushNotification } from "./types/push-notification";
 
 // Use with precache injection
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -75,3 +76,25 @@ registerRoute(
     ],
   })
 );
+
+self.addEventListener("push", async (event: any) => {
+  const payload = event.data.json() as IPushNotification;
+  console.log("received push", payload);
+  const options = {
+    title: payload.title,
+    body: payload.body,
+    icon: "/img/icons/android-chrome-512x512.png",
+    badge: "/img/icons/badge-128x128.png",
+    timestamp: new Date(payload.timestamp),
+    lang: payload.locale,
+    data: {
+      dateOfArrival: Date.now(),
+    },
+  };
+
+  event.waitUntil(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    self.registration.showNotification(payload.title, options)
+  );
+});

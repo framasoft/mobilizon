@@ -64,6 +64,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
     field(:auth, :auth, description: "The instance auth methods")
     field(:instance_feeds, :instance_feeds, description: "The instance's feed settings")
+    field(:web_push, :web_push, description: "Web Push settings for the instance")
   end
 
   @desc """
@@ -299,6 +300,11 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   object :instance_feeds do
     field(:enabled, :boolean, description: "Whether the instance-wide feeds are enabled")
+  end
+
+  object :web_push do
+    field(:enabled, :boolean, description: "Whether the WebPush feature is enabled")
+    field(:public_key, :string, description: "The server's public WebPush VAPID key")
   end
 
   object :config_queries do

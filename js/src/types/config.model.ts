@@ -98,4 +98,8 @@ export interface IConfig {
   instanceFeeds: {
     enabled: boolean;
   };
+  webPush: {
+    enabled: boolean;
+    publicKey: string;
+  };
 }

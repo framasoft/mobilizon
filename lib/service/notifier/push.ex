@@ -4,10 +4,11 @@ defmodule Mobilizon.Service.Notifier.Push do
   """
   alias Mobilizon.Activities.Activity
   alias Mobilizon.{Config, Users}
+  alias Mobilizon.Service.Activity.{Renderer, Utils}
   alias Mobilizon.Service.Notifier
   alias Mobilizon.Service.Notifier.Push
   alias Mobilizon.Storage.Page
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{PushSubscription, User}
 
   @behaviour Notifier
 
@@ -17,26 +18,37 @@ defmodule Mobilizon.Service.Notifier.Push do
   end
 
   @impl Notifier
-  def send(%User{id: user_id} = _user, %Activity{} = activity, _opts) do
+  def send(user, activity, options \\ [])
+
+  def send(%User{id: user_id, locale: locale} = _user, %Activity{} = activity, options) do
+    options = Keyword.put_new(options, :locale, locale)
+
     %Page{elements: subscriptions} = Users.list_user_push_subscriptions(user_id, 1, 100)
-    Enum.each(subscriptions, &send_subscription(activity, &1))
+    Enum.map(subscriptions, &send_subscription(activity, convert_subscription(&1), options))
   end
 
   @impl Notifier
-  def send(%User{} = user, activities, opts) when is_list(activities) do
-    Enum.each(activities, &Push.send(user, &1, opts))
+  def send(%User{} = user, activities, options) when is_list(activities) do
+    Enum.map(activities, &Push.send(user, &1, options))
   end
 
-  defp payload(%Activity{subject: subject}) do
-    %{
-      title: subject
-    }
+  defp send_subscription(activity, subscription, options) do
+    activity
+    |> payload(options)
+    |> WebPushEncryption.send_web_push(subscription)
+  end
+
+  defp payload(%Activity{} = activity, options) do
+    activity
+    |> Utils.add_activity_object()
+    |> Renderer.render(options)
     |> Jason.encode!()
   end
 
-  defp send_subscription(activity, subscription) do
-    activity
-    |> payload()
-    |> WebPushEncryption.send_web_push(subscription)
+  defp convert_subscription(%PushSubscription{} = subscription) do
+    %{
+      endpoint: subscription.endpoint,
+      keys: %{auth: subscription.auth, p256dh: subscription.p256dh}
+    }
   end
 end

@@ -413,17 +413,16 @@ defmodule Mobilizon.Users do
   def list_user_push_subscriptions(user_id, page \\ nil, limit \\ nil) do
     PushSubscription
     |> where([p], p.user_id == ^user_id)
-    |> preload([:user])
     |> Page.build_page(page, limit)
   end
 
   @doc """
-  Get a push subscription by their ID
+  Get a push subscription by their endpoint
   """
-  @spec get_push_subscription(String.t() | integer()) :: PushSubscription.t() | nil
-  def get_push_subscription(push_subscription_id) do
+  @spec get_push_subscription_by_endpoint(String.t()) :: PushSubscription.t() | nil
+  def get_push_subscription_by_endpoint(endpoint) do
     PushSubscription
-    |> Repo.get(push_subscription_id)
+    |> Repo.get_by(endpoint: endpoint)
     |> Repo.preload([:user])
   end
 

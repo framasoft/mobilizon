@@ -25,25 +25,39 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
   def register_push_subscription(_parent, args, %{
         context: %{current_user: %User{id: user_id}}
       }) do
-    Users.create_push_subscription(Map.put(args, :user_id, user_id))
+    case Users.create_push_subscription(Map.put(args, :user_id, user_id)) do
+      {:ok, %PushSubscription{}} ->
+        {:ok, "OK"}
+
+      {:error, err} ->
+        require Logger
+        Logger.error(inspect(err))
+        {:error, "Something went wrong"}
+    end
   end
 
   @spec unregister_push_subscription(map(), map(), map()) ::
           {:ok, PushSubscription.t()} | {:error, :unauthorized} | {:error, :not_found}
-  def unregister_push_subscription(_parent, %{id: push_subscription_id}, %{
+  def unregister_push_subscription(_parent, %{endpoint: push_subscription_endpoint}, %{
         context: %{current_user: %User{id: user_id}}
       }) do
     with %PushSubscription{user: %User{id: push_subscription_user_id}} = push_subscription <-
-           Users.get_push_subscription(push_subscription_id),
+           Users.get_push_subscription_by_endpoint(push_subscription_endpoint),
          {:user_owns_push_subscription, true} <-
-           {:user_owns_push_subscription, push_subscription_user_id == user_id} do
-      Users.delete_push_subscription(push_subscription)
+           {:user_owns_push_subscription, push_subscription_user_id == user_id},
+         {:ok, %PushSubscription{}} <- Users.delete_push_subscription(push_subscription) do
+      {:ok, "OK"}
     else
       {:user_owns_push_subscription, false} ->
         {:error, :unauthorized}
 
       nil ->
         {:error, :not_found}
+
+      {:error, err} ->
+        require Logger
+        Logger.error(inspect(err))
+        {:error, "Something went wrong"}
     end
   end
 end

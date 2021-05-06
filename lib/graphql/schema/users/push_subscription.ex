@@ -5,29 +5,32 @@ defmodule Mobilizon.GraphQL.Schema.Users.PushSubscription do
   use Absinthe.Schema.Notation
   alias Mobilizon.GraphQL.Resolvers.PushSubscription
 
-  @desc """
-  An object representing the keys for a push subscription
-  """
-  input_object :push_subscription_keys do
-    field(:p256dh, non_null(:string))
-    field(:auth, non_null(:string))
-  end
+  # object :push_subscription do
+  #   field(:id, :id)
+  # end
 
-  object :push_queries do
-    field :list_push_subscriptions, :paginated_push_subscription_list do
-      resolve(&PushSubscription.list_user_push_subscriptions/3)
-    end
-  end
+  # @desc "A paginated list of subscriptions"
+  # object :paginated_push_subscription_list do
+  #   field(:elements, list_of(:push_subscription), description: "A list of push subscriptions")
+  #   field(:total, :integer, description: "The total number of push subscriptions in the list")
+  # end
+
+  # object :push_queries do
+  #   field :list_push_subscriptions, :paginated_push_subscription_list do
+  #     resolve(&PushSubscription.list_user_push_subscriptions/3)
+  #   end
+  # end
 
   object :push_mutations do
-    field :register_push_mutation, :string do
+    field :register_push, :string do
       arg(:endpoint, non_null(:string))
-      arg(:keys, non_null(:push_subscription_keys))
+      arg(:auth, non_null(:string))
+      arg(:p256dh, non_null(:string))
       resolve(&PushSubscription.register_push_subscription/3)
     end
 
-    field :unregister_push_mutation, :string do
-      arg(:id, non_null(:id))
+    field :unregister_push, :string do
+      arg(:endpoint, non_null(:string))
       resolve(&PushSubscription.unregister_push_subscription/3)
     end
   end

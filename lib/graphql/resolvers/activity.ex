@@ -5,9 +5,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
 
   import Mobilizon.Users.Guards
   alias Mobilizon.{Activities, Actors, Users}
-  alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Service.Activity, as: ActivityService
+  alias Mobilizon.Service.Activity.Utils
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
@@ -27,12 +26,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
           limit
         )
 
-      elements =
-        Enum.map(elements, fn %Activity{} = activity ->
-          activity
-          |> Map.update(:subject_params, %{}, &transform_params/1)
-          |> Map.put(:object, ActivityService.object(activity))
-        end)
+      elements = Enum.map(elements, &Utils.transform_activity/1)
 
       {:ok, %Page{total: total, elements: elements}}
     else
@@ -44,15 +38,4 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
   def group_activity(_, _, _) do
     {:error, :unauthenticated}
   end
-
-  @spec transform_params(map()) :: list()
-  defp transform_params(params) do
-    Enum.map(params, fn {key, value} -> %{key: key, value: transform_value(value)} end)
-  end
-
-  defp transform_value(value) when is_list(value) do
-    Enum.join(value, ",")
-  end
-
-  defp transform_value(value), do: value
 end

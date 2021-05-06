@@ -18,6 +18,19 @@
       <div class="setting-title">
         <h2>{{ $t("Participation notifications") }}</h2>
       </div>
+      <b-button v-if="subscribed" @click="unsubscribeToWebPush()">{{
+        $t("Unsubscribe to WebPush")
+      }}</b-button>
+      <b-button
+        icon-left="rss"
+        @click="subscribeToWebPush"
+        v-else-if="canShowWebPush()"
+        >{{ $t("WebPush") }}</b-button
+      >
+      <span v-else>{{ $t("You can't use webpush in this browser.") }}</span>
+      <div class="setting-title">
+        <h2>{{ $t("Participation notifications") }}</h2>
+      </div>
       <div class="field">
         <strong>{{
           $t(
@@ -202,6 +215,14 @@ import { IUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 import { IFeedToken } from "@/types/feedtoken.model";
 import { CREATE_FEED_TOKEN, DELETE_FEED_TOKEN } from "@/graphql/feed_tokens";
+import {
+  subscribeUserToPush,
+  unsubscribeUserToPush,
+} from "../../services/push-subscription";
+import {
+  REGISTER_PUSH_MUTATION,
+  UNREGISTER_PUSH_MUTATION,
+} from "@/graphql/webPush";
 
 @Component({
   apollo: {
@@ -234,6 +255,8 @@ export default class Notifications extends Vue {
   RouteName = RouteName;
 
   showCopiedTooltip = { ics: false, atom: false };
+
+  subscribed = false;
 
   mounted(): void {
     this.notificationPendingParticipationValues = {
@@ -305,6 +328,55 @@ export default class Notifications extends Vue {
   async generateFeedTokens(): Promise<void> {
     const newToken = await this.createNewFeedToken();
     this.feedTokens.push(newToken);
+  }
+
+  async subscribeToWebPush(): Promise<void> {
+    if (this.canShowWebPush()) {
+      const subscription = await subscribeUserToPush();
+      if (subscription) {
+        const subscriptionJSON = subscription?.toJSON();
+        console.log("subscription", subscriptionJSON);
+        const { data } = await this.$apollo.mutate({
+          mutation: REGISTER_PUSH_MUTATION,
+          variables: {
+            endpoint: subscriptionJSON.endpoint,
+            auth: subscriptionJSON?.keys?.auth,
+            p256dh: subscriptionJSON?.keys?.p256dh,
+          },
+        });
+        this.subscribed = true;
+        console.log(data);
+      }
+    } else {
+      console.log("can't do webpush");
+    }
+  }
+
+  async unsubscribeToWebPush(): Promise<void> {
+    const endpoint = await unsubscribeUserToPush();
+    if (endpoint) {
+      const { data } = await this.$apollo.mutate({
+        mutation: UNREGISTER_PUSH_MUTATION,
+        variables: {
+          endpoint,
+        },
+      });
+      console.log(data);
+      this.subscribed = false;
+    }
+  }
+
+  canShowWebPush(): boolean {
+    return window.isSecureContext && !!navigator.serviceWorker;
+  }
+
+  async created(): Promise<void> {
+    this.subscribed = await this.isSubscribed();
+  }
+
+  private async isSubscribed(): Promise<boolean> {
+    const registration = await navigator.serviceWorker.getRegistration();
+    return (await registration?.pushManager.getSubscription()) !== null;
   }
 
   private async deleteFeedToken(token: string): Promise<void> {

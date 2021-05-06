@@ -32,7 +32,7 @@ msgid "Activate my account"
 msgstr "Aktivoi tilini"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:117
+#: lib/web/templates/email/email.html.eex:118
 #: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Kysy yhteisöltä Framacolibrissa"
@@ -143,7 +143,7 @@ msgid "You requested a new password for your account on %{instance}."
 msgstr "Pyysit uutta salasanaa tilillesi palvelimella %{instance}."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:85
+#: lib/web/templates/email/email.html.eex:86
 msgid "Warning"
 msgstr "Varoitus"
 
@@ -885,7 +885,7 @@ msgstr ""
 "sähköpostiosoite:"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:114
+#: lib/web/templates/email/email.html.eex:115
 #: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Tarvitsetko apua? Eikö kaikki toimi niin kuin pitäisi?"
@@ -948,7 +948,7 @@ msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} on Mobilizon-palvelin."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:142
+#: lib/web/templates/email/email.html.eex:143
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "<b>%{instance}</b> on Mobilizon-palvelin."
 
@@ -1048,7 +1048,7 @@ msgstr ""
 "linkistä ja napsauta siellä osallistumispainiketta."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:143
+#: lib/web/templates/email/email.html.eex:144
 #: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "Lue lisää Mobilizonista."
@@ -1224,7 +1224,7 @@ msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr "Jos et tehnyt vaihtoa itse, voit jättää tämän viestin huomiotta."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:89
+#: lib/web/templates/email/email.html.eex:90
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "<b>Älä käytä todellisiin tarkoituksiin.</b>"
 
@@ -1651,7 +1651,7 @@ msgid "We're sorry, but something went wrong on our end."
 msgstr "Pahoittelemme, tapahtui virhe palvelimen päässä."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:88
+#: lib/web/templates/email/email.html.eex:89
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Tällä kokeilusivustolla voit koekäyttää Mobilizonia."
@@ -1703,6 +1703,6 @@ msgid "Public feed for %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/activity.ex:25
+#: lib/web/email/activity.ex:27
 msgid "Activity notification for %{instance}"
 msgstr ""
