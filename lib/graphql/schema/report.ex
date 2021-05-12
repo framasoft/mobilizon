@@ -30,6 +30,11 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     field(:updated_at, :datetime, description: "When the report was updated")
   end
 
+  object :paginated_report_list do
+    field(:elements, list_of(:report), description: "A list of reports")
+    field(:total, :integer, description: "The total number of reports in the list")
+  end
+
   @desc "A report note object"
   object :report_note do
     interfaces([:action_log_object])
@@ -54,10 +59,10 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
 
   object :report_queries do
     @desc "Get all reports"
-    field :reports, list_of(:report) do
+    field :reports, :paginated_report_list do
       arg(:page, :integer,
         default_value: 1,
-        description: "The page in the reports participations list"
+        description: "The page in the report list"
       )
 
       arg(:limit, :integer, default_value: 10, description: "The limit of reports per page")
