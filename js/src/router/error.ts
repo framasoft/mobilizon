@@ -1,4 +1,3 @@
-import { beforeRegisterGuard } from "@/router/guards/register-guard";
 import { RouteConfig } from "vue-router";
 import { EsModuleComponent } from "vue/types/options";
 
@@ -12,6 +11,5 @@ export const errorRoutes: RouteConfig[] = [
     name: ErrorRouteName.ERROR,
     component: (): Promise<EsModuleComponent> =>
       import(/* webpackChunkName: "Error" */ "../views/Error.vue"),
-    beforeEnter: beforeRegisterGuard,
   },
 ];
