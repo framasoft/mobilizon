@@ -227,6 +227,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
     unless follower.target_actor.manually_approves_followers or
              follower.target_actor.id == relay_id do
+      require Logger
+      Logger.debug("Target doesn't manually approves followers, we can accept right away")
+
       {:accept,
        ActivityPub.accept(
          :follow,
