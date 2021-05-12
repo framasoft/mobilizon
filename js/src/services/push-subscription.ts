@@ -1,6 +1,6 @@
 import apolloProvider from "@/vue-apollo";
-import ApolloClient from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
+import { ApolloClient } from "@apollo/client/core/ApolloClient";
 import { WEB_PUSH } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 

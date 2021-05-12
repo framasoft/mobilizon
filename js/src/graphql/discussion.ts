@@ -67,6 +67,17 @@ export const DISCUSSION_FIELDS_FRAGMENT = gql`
       text
       insertedAt
       updatedAt
+      deletedAt
+      publishedAt
+      actor {
+        id
+        domain
+        name
+        preferredUsername
+        avatar {
+          url
+        }
+      }
     }
     actor {
       id
@@ -104,8 +115,7 @@ export const REPLY_TO_DISCUSSION = gql`
 export const GET_DISCUSSION = gql`
   query getDiscussion($slug: String!, $page: Int, $limit: Int) {
     discussion(slug: $slug) {
-      comments(page: $page, limit: $limit)
-        @connection(key: "discussion-comments", filter: ["slug"]) {
+      comments(page: $page, limit: $limit) {
         total
         elements {
           id
@@ -158,6 +168,8 @@ export const DISCUSSION_COMMENT_CHANGED = gql`
         text
         updatedAt
         insertedAt
+        deletedAt
+        publishedAt
         actor {
           id
           preferredUsername

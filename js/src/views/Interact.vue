@@ -33,6 +33,7 @@ import { INTERACT } from "@/graphql/search";
 import { IEvent } from "@/types/event.model";
 import { IGroup, usernameWithDomain } from "@/types/actor";
 import RouteName from "../router/name";
+import { GraphQLError } from "graphql";
 
 @Component({
   apollo: {
@@ -56,7 +57,7 @@ import RouteName from "../router/name";
         if (networkError) {
           this.errors = [networkError.message];
         }
-        this.errors = graphQLErrors.map((error) => error.message);
+        this.errors = graphQLErrors.map((error: GraphQLError) => error.message);
       },
       async result({ data: { interact } }) {
         switch (interact.__typename) {

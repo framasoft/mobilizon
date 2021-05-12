@@ -301,6 +301,8 @@ import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
 import { ActorType, ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
+import { GraphQLError } from "graphql";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -313,7 +315,9 @@ import RouteName from "../../router/name";
         };
       },
       error({ graphQLErrors }) {
-        this.errors = uniq(graphQLErrors.map(({ message }) => message));
+        this.errors = uniq(
+          graphQLErrors.map(({ message }: GraphQLError) => message)
+        );
       },
     },
     currentActor: {
@@ -356,7 +360,7 @@ export default class Report extends Vue {
           reportId: this.report.id,
           content: this.noteContent,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           const cachedData = store.readQuery<{ report: IReport }>({
             query: REPORT,
@@ -462,7 +466,7 @@ export default class Report extends Vue {
           reportId: this.report.id,
           status,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           const reportCachedData = store.readQuery<{ report: IReport }>({
             query: REPORT,

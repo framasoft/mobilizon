@@ -23,6 +23,12 @@
         paginated
         backend-pagination
         backend-filtering
+        :debounce-search="200"
+        :current-page.sync="page"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="persons.total"
         :per-page="PROFILES_PER_PAGE"
         @page-change="onPageChange"
@@ -81,20 +87,21 @@
           </template>
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("No profile matches the filters") }}</p>
-            </div>
-          </section>
+          <empty-content icon="account" :inline="true">
+            {{ $t("No profile matches the filters") }}
+          </empty-content>
         </template>
       </b-table>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { LIST_PROFILES } from "../../graphql/actor";
 import RouteName from "../../router/name";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const PROFILES_PER_PAGE = 10;
 
@@ -110,52 +117,87 @@ const PROFILES_PER_PAGE = 10;
           domain: this.domain,
           local: this.local,
           suspended: this.suspended,
-          page: 1,
+          page: this.page,
           limit: PROFILES_PER_PAGE,
         };
       },
     },
   },
+  components: {
+    EmptyContent,
+  },
 })
 export default class Profiles extends Vue {
-  page = 1;
-
-  preferredUsername = "";
-
-  name = "";
-
-  domain = "";
-
-  local = true;
-
-  suspended = false;
-
   PROFILES_PER_PAGE = PROFILES_PER_PAGE;
 
   RouteName = RouteName;
 
-  async onPageChange(page: number): Promise<void> {
-    this.page = page;
+  async onPageChange(): Promise<void> {
+    await this.doFetchMore();
+  }
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter({ page: page.toString() });
+  }
+
+  get domain(): string {
+    return (this.$route.query.domain as string) || "";
+  }
+
+  set domain(domain: string) {
+    this.pushRouter({ domain });
+  }
+
+  get preferredUsername(): string {
+    return (this.$route.query.preferredUsername as string) || "";
+  }
+
+  set preferredUsername(preferredUsername: string) {
+    this.pushRouter({ preferredUsername });
+  }
+
+  get local(): boolean {
+    return this.$route.query.local === "1";
+  }
+
+  set local(local: boolean) {
+    this.pushRouter({ local: local ? "1" : "0" });
+  }
+
+  get suspended(): boolean {
+    return this.$route.query.suspended === "1";
+  }
+
+  set suspended(suspended: boolean) {
+    this.pushRouter({ suspended: suspended ? "1" : "0" });
+  }
+
+  private async pushRouter(args: Record<string, string>): Promise<void> {
+    try {
+      await this.$router.push({
+        name: RouteName.PROFILES,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
+  }
+
+  private async doFetchMore(): Promise<void> {
     await this.$apollo.queries.persons.fetchMore({
       variables: {
         preferredUsername: this.preferredUsername,
-        name: this.name,
         domain: this.domain,
         local: this.local,
         suspended: this.suspended,
         page: this.page,
         limit: PROFILES_PER_PAGE,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newProfiles = fetchMoreResult.persons.elements;
-        return {
-          persons: {
-            __typename: previousResult.persons.__typename,
-            total: previousResult.persons.total,
-            elements: [...previousResult.persons.elements, ...newProfiles],
-          },
-        };
       },
     });
   }
@@ -169,11 +211,7 @@ export default class Profiles extends Vue {
   }): void {
     this.preferredUsername = preferredUsername;
     this.domain = domain;
-  }
-
-  @Watch("domain")
-  domainNotLocal(): void {
-    this.local = this.domain === "";
+    this.doFetchMore();
   }
 }
 </script>

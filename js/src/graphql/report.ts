@@ -1,41 +1,44 @@
 import gql from "graphql-tag";
 
 export const REPORTS = gql`
-  query Reports($status: ReportStatus) {
-    reports(status: $status) {
-      id
-      reported {
+  query Reports($status: ReportStatus, $page: Int, $limit: Int) {
+    reports(status: $status, page: $page, limit: $limit) {
+      total
+      elements {
         id
-        preferredUsername
-        domain
-        name
-        avatar {
+        reported {
           id
-          url
+          preferredUsername
+          domain
+          name
+          avatar {
+            id
+            url
+          }
         }
-      }
-      reporter {
-        id
-        preferredUsername
-        name
-        avatar {
+        reporter {
           id
-          url
+          preferredUsername
+          name
+          avatar {
+            id
+            url
+          }
+          domain
+          type
         }
-        domain
-        type
-      }
-      event {
-        id
-        uuid
-        title
-        picture {
+        event {
           id
-          url
+          uuid
+          title
+          picture {
+            id
+            url
+          }
         }
+        status
+        content
       }
-      status
-      content
     }
   }
 `;

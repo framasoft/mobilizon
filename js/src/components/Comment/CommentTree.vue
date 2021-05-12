@@ -88,6 +88,7 @@ import {
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
 import { IEvent } from "../../types/event.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -157,7 +158,7 @@ export default class CommentTree extends Vue {
             ? comment.inReplyToComment.id
             : null,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           const newComment = data.createComment;
 
@@ -249,7 +250,7 @@ export default class CommentTree extends Vue {
         variables: {
           commentId: comment.id,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           const deletedCommentId = data.deleteComment.id;
 

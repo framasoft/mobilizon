@@ -9,11 +9,11 @@ import {
 } from "@/constants";
 import { ILogin, IToken } from "@/types/login.model";
 import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
-import ApolloClient from "apollo-client";
+import { ApolloClient } from "@apollo/client/core/ApolloClient";
 import { IPerson } from "@/types/actor";
 import { IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import { ICurrentUserRole } from "@/types/enums";
+import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 
 export function saveTokenData(obj: IToken): void {
   localStorage.setItem(AUTH_ACCESS_TOKEN, obj.accessToken);

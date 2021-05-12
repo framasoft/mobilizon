@@ -442,7 +442,7 @@ section {
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
+import { RefetchQueryDescription } from "@apollo/client/core/watchQueryOptions";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
@@ -485,6 +485,7 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -706,10 +707,12 @@ export default class EditEvent extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables,
-        update: (store, { data: { createEvent } }) =>
-          this.postCreateOrUpdate(store, createEvent),
-        refetchQueries: ({ data: { createEvent } }) =>
-          this.postRefetchQueries(createEvent),
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updatedData }: FetchResult
+        ) => this.postCreateOrUpdate(store, updatedData?.createEvent),
+        refetchQueries: ({ data: updatedData }: FetchResult) =>
+          this.postRefetchQueries(updatedData?.createEvent),
       });
 
       this.$buefy.notification.open({
@@ -739,10 +742,12 @@ export default class EditEvent extends Vue {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
         variables,
-        update: (store, { data: { updateEvent } }) =>
-          this.postCreateOrUpdate(store, updateEvent),
-        refetchQueries: ({ data: { updateEvent } }) =>
-          this.postRefetchQueries(updateEvent),
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updatedData }: FetchResult
+        ) => this.postCreateOrUpdate(store, updatedData?.updateEvent),
+        refetchQueries: ({ data }: FetchResult) =>
+          this.postRefetchQueries(data?.updateEvent),
       });
 
       this.$buefy.notification.open({

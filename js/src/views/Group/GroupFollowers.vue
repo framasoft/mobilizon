@@ -209,17 +209,6 @@ export default class GroupFollowers extends mixins(GroupMixin) {
           approved: !pending,
         };
       },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const oldFollowers = previousResult.group.followers;
-        const newFollowers = fetchMoreResult.group.followers;
-        return {
-          elements: [...oldFollowers.elements, ...newFollowers.elements],
-          total: newFollowers.total,
-          __typename: oldFollowers.__typename,
-        };
-      },
     });
   }
 

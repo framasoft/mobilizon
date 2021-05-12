@@ -51,6 +51,7 @@ import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { IActor } from "@/types/actor";
 import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   components: {
@@ -88,7 +89,7 @@ export default class TodoList extends Vue {
         status: this.newTodo.status,
         todoListId: this.id,
       },
-      update: (store, { data }) => {
+      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
         if (data == null) return;
         const cachedData = store.readQuery<{ todoList: ITodoList }>({
           query: FETCH_TODO_LIST,

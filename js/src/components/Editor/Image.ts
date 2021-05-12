@@ -1,10 +1,10 @@
 import { UPLOAD_MEDIA } from "@/graphql/upload";
 import apolloProvider from "@/vue-apollo";
-import ApolloClient from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ApolloClient } from "@apollo/client/core/ApolloClient";
 import { Plugin } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import Image from "@tiptap/extension-image";
+import { NormalizedCacheObject } from "@apollo/client/cache";
 
 /* eslint-disable class-methods-use-this */
 

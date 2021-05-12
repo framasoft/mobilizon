@@ -10,10 +10,10 @@ import {
   RequestHandler,
 } from "mock-apollo-client";
 import buildCurrentUserResolver from "@/apollo/user";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { CONFIG } from "@/graphql/config";
 import VueApollo from "vue-apollo";
 import { configMock } from "../../mocks/config";
+import { InMemoryCache } from "@apollo/client/cache";
 
 const localVue = createLocalVue();
 localVue.use(Buefy);

@@ -360,17 +360,6 @@ export default class GroupMembers extends mixins(GroupMixin) {
           roles,
         };
       },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const oldMembers = previousResult.group.members;
-        const newMembers = fetchMoreResult.group.members;
-        return {
-          elements: [...oldMembers.elements, ...newMembers.elements],
-          total: newMembers.total,
-          __typename: oldMembers.__typename,
-        };
-      },
     });
   }
 

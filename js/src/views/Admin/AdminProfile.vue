@@ -74,6 +74,11 @@
         :loading="$apollo.queries.person.loading"
         paginated
         backend-pagination
+        :current-page.sync="organizedEventsPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="person.organizedEvents.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
@@ -93,11 +98,9 @@
           </router-link>
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("Nothing to see here") }}</p>
-            </div>
-          </section>
+          <empty-content icon="account-group" :inline="true">
+            {{ $t("No organized events listed") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -115,9 +118,14 @@
             (participation) => participation.event
           )
         "
-        :loading="$apollo.queries.person.loading"
+        :loading="$apollo.loading"
         paginated
         backend-pagination
+        :current-page.sync="participationsPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="person.participations.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onParticipationsPageChange"
@@ -137,11 +145,115 @@
           </router-link>
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("Nothing to see here") }}</p>
+          <empty-content icon="account-group" :inline="true">
+            {{ $t("No participations listed") }}
+          </empty-content>
+        </template>
+      </b-table>
+    </section>
+    <section>
+      <h2 class="subtitle">
+        {{
+          $tc("{number} memberships", person.memberships.total, {
+            number: person.memberships.total,
+          })
+        }}
+      </h2>
+      <b-table
+        :data="person.memberships.elements"
+        :loading="$apollo.loading"
+        paginated
+        backend-pagination
+        :current-page.sync="membershipsPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
+        :total="person.memberships.total"
+        :per-page="EVENTS_PER_PAGE"
+        @page-change="onMembershipsPageChange"
+      >
+        <b-table-column
+          field="parent.preferredUsername"
+          :label="$t('Group')"
+          v-slot="props"
+        >
+          <article class="media">
+            <figure
+              class="media-left image is-48x48"
+              v-if="props.row.parent.avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="props.row.parent.avatar.url"
+                alt=""
+              />
+            </figure>
+            <b-icon
+              class="media-left"
+              v-else
+              size="is-large"
+              icon="account-circle"
+            />
+            <div class="media-content">
+              <div class="content">
+                <span v-if="props.row.parent.name">{{
+                  props.row.parent.name
+                }}</span
+                ><br />
+                <span class="is-size-7 has-text-grey"
+                  >@{{ usernameWithDomain(props.row.parent) }}</span
+                >
+              </div>
             </div>
-          </section>
+          </article>
+        </b-table-column>
+        <b-table-column field="role" :label="$t('Role')" v-slot="props">
+          <b-tag
+            type="is-primary"
+            v-if="props.row.role === MemberRole.ADMINISTRATOR"
+          >
+            {{ $t("Administrator") }}
+          </b-tag>
+          <b-tag
+            type="is-primary"
+            v-else-if="props.row.role === MemberRole.MODERATOR"
+          >
+            {{ $t("Moderator") }}
+          </b-tag>
+          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+            {{ $t("Member") }}
+          </b-tag>
+          <b-tag
+            type="is-warning"
+            v-else-if="props.row.role === MemberRole.NOT_APPROVED"
+          >
+            {{ $t("Not approved") }}
+          </b-tag>
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === MemberRole.REJECTED"
+          >
+            {{ $t("Rejected") }}
+          </b-tag>
+          <b-tag
+            type="is-danger"
+            v-else-if="props.row.role === MemberRole.INVITED"
+          >
+            {{ $t("Invited") }}
+          </b-tag>
+        </b-table-column>
+        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+          <span class="has-text-centered">
+            {{ props.row.insertedAt | formatDateString }}<br />{{
+              props.row.insertedAt | formatTimeString
+            }}
+          </span>
+        </b-table-column>
+        <template slot="empty">
+          <empty-content icon="account-group" :inline="true">
+            {{ $t("No memberships found") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -159,8 +271,15 @@ import { IPerson } from "../../types/actor";
 import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import VueRouter from "vue-router";
+import { MemberRole } from "@/types/enums";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const EVENTS_PER_PAGE = 10;
+const PARTICIPATIONS_PER_PAGE = 10;
+const MEMBERSHIPS_PER_PAGE = 10;
 
 @Component({
   apollo: {
@@ -170,8 +289,12 @@ const EVENTS_PER_PAGE = 10;
       variables() {
         return {
           actorId: this.id,
-          organizedEventsPage: 1,
+          organizedEventsPage: this.organizedEventsPage,
           organizedEventsLimit: EVENTS_PER_PAGE,
+          participationsPage: this.participationsPage,
+          participationLimit: PARTICIPATIONS_PER_PAGE,
+          membershipsPage: this.membershipsPage,
+          membershipsLimit: MEMBERSHIPS_PER_PAGE,
         };
       },
       skip() {
@@ -181,6 +304,7 @@ const EVENTS_PER_PAGE = 10;
   },
   components: {
     ActorCard,
+    EmptyContent,
   },
 })
 export default class AdminProfile extends Vue {
@@ -194,9 +318,41 @@ export default class AdminProfile extends Vue {
 
   EVENTS_PER_PAGE = EVENTS_PER_PAGE;
 
-  organizedEventsPage = 1;
+  PARTICIPATIONS_PER_PAGE = PARTICIPATIONS_PER_PAGE;
 
-  participationsPage = 1;
+  MEMBERSHIPS_PER_PAGE = MEMBERSHIPS_PER_PAGE;
+
+  MemberRole = MemberRole;
+
+  get organizedEventsPage(): number {
+    return parseInt(
+      (this.$route.query.organizedEventsPage as string) || "1",
+      10
+    );
+  }
+
+  set organizedEventsPage(page: number) {
+    this.pushRouter({ organizedEventsPage: page.toString() });
+  }
+
+  get participationsPage(): number {
+    return parseInt(
+      (this.$route.query.participationsPage as string) || "1",
+      10
+    );
+  }
+
+  set participationsPage(page: number) {
+    this.pushRouter({ participationsPage: page.toString() });
+  }
+
+  get membershipsPage(): number {
+    return parseInt((this.$route.query.membershipsPage as string) || "1", 10);
+  }
+
+  set membershipsPage(page: number) {
+    this.pushRouter({ membershipsPage: page.toString() });
+  }
 
   get metadata(): Array<Record<string, unknown>> {
     if (!this.person) return [];
@@ -233,7 +389,7 @@ export default class AdminProfile extends Vue {
       variables: {
         id: this.id,
       },
-      update: (store, { data }) => {
+      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
         if (data == null) return;
         const profileId = this.id;
 
@@ -248,16 +404,20 @@ export default class AdminProfile extends Vue {
 
         if (!profileData) return;
         const { person } = profileData;
-        person.suspended = true;
-        person.avatar = null;
-        person.name = "";
-        person.summary = "";
         store.writeQuery({
           query: GET_PERSON,
           variables: {
             actorId: profileId,
           },
-          data: { person },
+          data: {
+            person: {
+              ...person,
+              suspended: true,
+              avatar: null,
+              name: "",
+              summary: "",
+            },
+          },
         });
       },
     });
@@ -283,62 +443,47 @@ export default class AdminProfile extends Vue {
     });
   }
 
-  async onOrganizedEventsPageChange(page: number): Promise<void> {
-    this.organizedEventsPage = page;
+  async onOrganizedEventsPageChange(): Promise<void> {
     await this.$apollo.queries.person.fetchMore({
       variables: {
         actorId: this.id,
         organizedEventsPage: this.organizedEventsPage,
         organizedEventsLimit: EVENTS_PER_PAGE,
       },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newOrganizedEvents =
-          fetchMoreResult.person.organizedEvents.elements;
-        return {
-          person: {
-            ...previousResult.person,
-            organizedEvents: {
-              __typename: previousResult.person.organizedEvents.__typename,
-              total: previousResult.person.organizedEvents.total,
-              elements: [
-                ...previousResult.person.organizedEvents.elements,
-                ...newOrganizedEvents,
-              ],
-            },
-          },
-        };
-      },
     });
   }
 
-  async onParticipationsPageChange(page: number): Promise<void> {
-    this.participationsPage = page;
+  async onParticipationsPageChange(): Promise<void> {
     await this.$apollo.queries.person.fetchMore({
       variables: {
         actorId: this.id,
         participationPage: this.participationsPage,
-        participationLimit: EVENTS_PER_PAGE,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newParticipations =
-          fetchMoreResult.person.participations.elements;
-        return {
-          person: {
-            ...previousResult.person,
-            participations: {
-              __typename: previousResult.person.participations.__typename,
-              total: previousResult.person.participations.total,
-              elements: [
-                ...previousResult.person.participations.elements,
-                ...newParticipations,
-              ],
-            },
-          },
-        };
+        participationLimit: PARTICIPATIONS_PER_PAGE,
       },
     });
+  }
+
+  async onMembershipsPageChange(): Promise<void> {
+    await this.$apollo.queries.person.fetchMore({
+      variables: {
+        actorId: this.id,
+        membershipsPage: this.participationsPage,
+        membershipsLimit: MEMBERSHIPS_PER_PAGE,
+      },
+    });
+  }
+
+  private async pushRouter(args: Record<string, string>): Promise<void> {
+    try {
+      await this.$router.push({
+        name: RouteName.ADMIN_PROFILE,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
   }
 }
 </script>

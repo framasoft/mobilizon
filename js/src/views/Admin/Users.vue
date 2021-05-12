@@ -22,6 +22,11 @@
         backend-pagination
         backend-filtering
         detailed
+        :current-page.sync="page"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :show-detail-icon="true"
         :total="users.total"
         :per-page="USERS_PER_PAGE"
@@ -108,6 +113,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import { LIST_USERS } from "../../graphql/user";
 import RouteName from "../../router/name";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const USERS_PER_PAGE = 10;
 
@@ -119,7 +126,7 @@ const USERS_PER_PAGE = 10;
       variables() {
         return {
           email: this.email,
-          page: 1,
+          page: this.page,
           limit: USERS_PER_PAGE,
         };
       },
@@ -127,13 +134,25 @@ const USERS_PER_PAGE = 10;
   },
 })
 export default class Users extends Vue {
-  page = 1;
-
-  email = "";
-
   USERS_PER_PAGE = USERS_PER_PAGE;
 
   RouteName = RouteName;
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter({ page: page.toString() });
+  }
+
+  get email(): string {
+    return (this.$route.query.email as string) || "";
+  }
+
+  set email(email: string) {
+    this.pushRouter({ email });
+  }
 
   async onPageChange(page: number): Promise<void> {
     this.page = page;
@@ -143,22 +162,24 @@ export default class Users extends Vue {
         page: this.page,
         limit: USERS_PER_PAGE,
       },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newFollowings = fetchMoreResult.users.elements;
-        return {
-          users: {
-            __typename: previousResult.users.__typename,
-            total: previousResult.users.total,
-            elements: [...previousResult.users.elements, ...newFollowings],
-          },
-        };
-      },
     });
   }
 
   onFiltersChange({ email }: { email: string }): void {
     this.email = email;
+  }
+
+  private async pushRouter(args: Record<string, string>): Promise<void> {
+    try {
+      await this.$router.push({
+        name: RouteName.USERS,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
   }
 }
 </script>

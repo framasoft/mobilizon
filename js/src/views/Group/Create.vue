@@ -92,10 +92,11 @@ import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
-import { ErrorResponse } from "apollo-link-error";
-import { ServerParseError } from "apollo-link-http-common";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
+import { ErrorResponse } from "@apollo/client/link/error";
+import { ServerParseError } from "@apollo/client/link/http";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   components: {
@@ -129,7 +130,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
       await this.$apollo.mutate({
         mutation: CREATE_GROUP,
         variables: this.buildVariables(),
-        update: (store, { data: { createGroup } }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           const query = {
             query: PERSON_MEMBERSHIPS,
             variables: {
@@ -140,7 +141,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
           if (!membershipData) return;
           const { person } = membershipData;
           person.memberships.elements.push({
-            parent: createGroup,
+            parent: data?.createGroup,
             role: MemberRole.ADMINISTRATOR,
             actor: this.currentActor,
             insertedAt: new Date().toString(),

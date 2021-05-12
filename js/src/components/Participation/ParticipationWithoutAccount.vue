@@ -134,6 +134,7 @@ import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousP
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
 import { IParticipant } from "../../types/participant.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -195,7 +196,10 @@ export default class ParticipationWithoutAccount extends Vue {
           message: this.anonymousParticipation.message,
           locale: this.$i18n.locale,
         },
-        update: (store, { data: updateData }) => {
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updateData }: FetchResult
+        ) => {
           if (updateData == null) {
             console.error(
               "Cannot update event participant cache, because of data null value."

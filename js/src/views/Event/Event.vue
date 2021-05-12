@@ -665,6 +665,7 @@ import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -1002,7 +1003,7 @@ export default class Event extends EventMixin {
           actorId: identity.id,
           message,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
 
           const participationCachedData = store.readQuery<{ person: IPerson }>({

@@ -325,24 +325,6 @@ export default class Timeline extends Vue {
           page: this.page,
           limit: PAGINATION_LIMIT,
         },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return previousResult;
-          const newActivities = fetchMoreResult.group.activity.elements;
-          const newTotal = fetchMoreResult.group.activity.total;
-          return {
-            group: {
-              ...previousResult.group,
-              activity: {
-                __typename: previousResult.group.activity.__typename,
-                total: newTotal,
-                elements: [
-                  ...previousResult.group.activity.elements,
-                  ...newActivities,
-                ],
-              },
-            },
-          };
-        },
       });
     } catch (e) {
       console.error(e);

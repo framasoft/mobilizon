@@ -1,7 +1,6 @@
 import { config, createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
 import CommentTree from "@/components/Comment/CommentTree.vue";
 import Buefy from "buefy";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import {
   createMockClient,
   MockApolloClient,
@@ -17,6 +16,7 @@ import {
   newCommentForEventMock,
   newCommentForEventResponse,
 } from "../../mocks/event";
+import { InMemoryCache } from "@apollo/client/cache";
 
 const localVue = createLocalVue();
 localVue.use(Buefy);

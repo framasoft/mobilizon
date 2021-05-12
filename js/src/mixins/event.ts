@@ -11,6 +11,7 @@ import {
   LEAVE_EVENT,
 } from "../graphql/event";
 import { IPerson } from "../types/actor";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component
 export default class EventMixin extends mixins(Vue) {
@@ -30,7 +31,7 @@ export default class EventMixin extends mixins(Vue) {
           actorId,
           token,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           let participation;
 

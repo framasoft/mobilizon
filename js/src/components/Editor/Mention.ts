@@ -2,11 +2,11 @@ import { SEARCH_PERSONS } from "@/graphql/search";
 import { VueRenderer } from "@tiptap/vue-2";
 import tippy from "tippy.js";
 import MentionList from "./MentionList.vue";
-import ApolloClient from "apollo-client";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
+import { ApolloClient } from "@apollo/client/core/ApolloClient";
 import apolloProvider from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
+import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 
 const client =
   apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;

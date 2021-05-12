@@ -32,8 +32,13 @@
       :show-detail-icon="false"
       paginated
       backend-pagination
+      :current-page.sync="page"
+      :aria-next-label="$t('Next page')"
+      :aria-previous-label="$t('Previous page')"
+      :aria-page-label="$t('Page')"
+      :aria-current-label="$t('Current page')"
       :total="relayFollowings.total"
-      :per-page="perPage"
+      :per-page="FOLLOWINGS_PER_PAGE"
       @page-change="onFollowingsPageChange"
       checkable
       checkbox-position="left"
@@ -127,7 +132,7 @@
         </b-button>
       </template>
     </b-table>
-    <b-message type="is-danger" v-if="relayFollowings.elements.length === 0">{{
+    <b-message type="is-danger" v-if="relayFollowings.total === 0">{{
       $t("You don't follow any instances yet.")
     }}</b-message>
   </div>
@@ -139,8 +144,31 @@ import { formatDistanceToNow } from "date-fns";
 import { ADD_RELAY, REMOVE_RELAY } from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import RelayMixin from "../../mixins/relay";
+import { RELAY_FOLLOWINGS } from "@/graphql/admin";
+import { Paginate } from "@/types/paginate";
+import RouteName from "@/router/name";
+import {
+  ApolloCache,
+  FetchResult,
+  InMemoryCache,
+  Reference,
+} from "@apollo/client/core";
+import gql from "graphql-tag";
+
+const FOLLOWINGS_PER_PAGE = 10;
 
 @Component({
+  apollo: {
+    relayFollowings: {
+      query: RELAY_FOLLOWINGS,
+      variables() {
+        return {
+          page: this.page,
+          limit: FOLLOWINGS_PER_PAGE,
+        };
+      },
+    },
+  },
   metaInfo() {
     return {
       title: this.$t("Followings") as string,
@@ -155,16 +183,78 @@ export default class Followings extends Mixins(RelayMixin) {
 
   formatDistanceToNow = formatDistanceToNow;
 
+  relayFollowings: Paginate<IFollower> = { elements: [], total: 0 };
+
+  FOLLOWINGS_PER_PAGE = FOLLOWINGS_PER_PAGE;
+
+  checkedRows: IFollower[] = [];
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter(RouteName.RELAY_FOLLOWINGS, {
+      page: page.toString(),
+    });
+  }
+
+  async onFollowingsPageChange(page: number): Promise<void> {
+    this.page = page;
+    try {
+      await this.$apollo.queries.relayFollowings.fetchMore({
+        variables: {
+          page: this.page,
+          limit: FOLLOWINGS_PER_PAGE,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async followRelay(e: Event): Promise<void> {
     e.preventDefault();
     try {
-      await this.$apollo.mutate({
+      await this.$apollo.mutate<{ relayFollowings: Paginate<IFollower> }>({
         mutation: ADD_RELAY,
         variables: {
           address: this.newRelayAddress.trim(), // trim to fix copy and paste domain name spaces and tabs
         },
+        update(cache: ApolloCache<InMemoryCache>, { data }: FetchResult) {
+          cache.modify({
+            fields: {
+              relayFollowings(
+                existingFollowings = { elements: [], total: 0 },
+                { readField }
+              ) {
+                const newFollowingRef = cache.writeFragment({
+                  id: `${data?.addRelay.__typename}:${data?.addRelay.id}`,
+                  data: data?.addRelay,
+                  fragment: gql`
+                    fragment NewFollowing on Follower {
+                      id
+                    }
+                  `,
+                });
+                if (
+                  existingFollowings.elements.some(
+                    (ref: Reference) =>
+                      readField("id", ref) === data?.addRelay.id
+                  )
+                ) {
+                  return existingFollowings;
+                }
+                return {
+                  total: existingFollowings.total + 1,
+                  elements: [newFollowingRef, ...existingFollowings.elements],
+                };
+              },
+            },
+            broadcast: false,
+          });
+        },
       });
-      await this.$apollo.queries.relayFollowings.refetch();
       this.newRelayAddress = "";
     } catch (err) {
       Snackbar.open({
@@ -175,20 +265,34 @@ export default class Followings extends Mixins(RelayMixin) {
     }
   }
 
-  async removeRelays(): Promise<void> {
-    await this.checkedRows.forEach((row: IFollower) => {
-      this.removeRelay(
-        `${row.targetActor.preferredUsername}@${row.targetActor.domain}`
-      );
+  removeRelays(): void {
+    this.checkedRows.forEach((row: IFollower) => {
+      this.removeRelay(row);
     });
   }
 
-  async removeRelay(address: string): Promise<void> {
+  async removeRelay(follower: IFollower): Promise<void> {
+    const address = `${follower.targetActor.preferredUsername}@${follower.targetActor.domain}`;
     try {
       await this.$apollo.mutate({
         mutation: REMOVE_RELAY,
         variables: {
           address,
+        },
+        update(cache: ApolloCache<InMemoryCache>) {
+          cache.modify({
+            fields: {
+              relayFollowings(existingFollowingRefs, { readField }) {
+                return {
+                  total: existingFollowingRefs.total - 1,
+                  elements: existingFollowingRefs.elements.filter(
+                    (followingRef: Reference) =>
+                      follower.id !== readField("id", followingRef)
+                  ),
+                };
+              },
+            },
+          });
         },
       });
       await this.$apollo.queries.relayFollowings.refetch();

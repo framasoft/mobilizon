@@ -308,25 +308,6 @@ export default class Participants extends Vue {
         page: this.page,
         limit: this.limit,
       },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const oldParticipants = previousResult.event.participants;
-        const newParticipants = fetchMoreResult.event.participants;
-
-        return {
-          event: {
-            ...previousResult.event,
-            participants: {
-              elements: [
-                ...oldParticipants.elements,
-                ...newParticipants.elements,
-              ],
-              total: newParticipants.total,
-              __typename: oldParticipants.__typename,
-            },
-          },
-        };
-      },
     });
   }
 

@@ -1,14 +1,16 @@
 import Vue from "vue";
 import VueApollo from "vue-apollo";
-import { ApolloLink, Observable, split } from "apollo-link";
+import { onError } from "@apollo/client/link/error";
+import { createLink } from "apollo-absinthe-upload-link";
 import {
+  ApolloClient,
+  ApolloLink,
   defaultDataIdFromObject,
   InMemoryCache,
   NormalizedCacheObject,
-} from "apollo-cache-inmemory";
-import { onError } from "apollo-link-error";
-import { createLink } from "apollo-absinthe-upload-link";
-import { ApolloClient } from "apollo-client";
+  Observable,
+  split,
+} from "@apollo/client/core";
 import buildCurrentUserResolver from "@/apollo/user";
 import { isServerError } from "@/types/apollo";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
@@ -16,10 +18,14 @@ import { logout } from "@/utils/auth";
 import { Socket as PhoenixSocket } from "phoenix";
 import * as AbsintheSocket from "@absinthe/socket";
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
-import { getMainDefinition } from "apollo-utilities";
+import { getMainDefinition } from "@apollo/client/utilities";
 import fetch from "unfetch";
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from "./api/_entrypoint";
-import { fragmentMatcher, refreshAccessToken } from "./apollo/utils";
+import {
+  possibleTypes,
+  typePolicies,
+  refreshAccessToken,
+} from "./apollo/utils";
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -89,7 +95,7 @@ const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
     if (
       isServerError(networkError) &&
-      networkError.statusCode === 401 &&
+      networkError?.statusCode === 401 &&
       !alreadyRefreshedToken
     ) {
       if (!refreshingTokenPromise)
@@ -130,7 +136,8 @@ const errorLink = onError(
 const fullLink = authMiddleware.concat(errorLink).concat(link);
 
 const cache = new InMemoryCache({
-  fragmentMatcher,
+  typePolicies,
+  possibleTypes,
   dataIdFromObject: (object: any) => {
     if (object.__typename === "Address") {
       return object.origin_id;

@@ -279,7 +279,7 @@ export default class Comment extends Vue {
     const { event } = eventData;
     const { comments } = event;
     const parentCommentIndex = comments.findIndex(
-      (oldComment) => oldComment.id === parentId
+      (oldComment: IComment) => oldComment.id === parentId
     );
     const parentComment = comments[parentCommentIndex];
     if (!parentComment) return;

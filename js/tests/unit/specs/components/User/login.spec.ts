@@ -8,7 +8,6 @@ import {
 } from "mock-apollo-client";
 import VueApollo from "vue-apollo";
 import buildCurrentUserResolver from "@/apollo/user";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { configMock } from "../../mocks/config";
 import { i18n } from "@/utils/i18n";
 import { CONFIG } from "@/graphql/config";
@@ -18,6 +17,7 @@ import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import flushPromises from "flush-promises";
 import RouteName from "@/router/name";
+import { InMemoryCache } from "@apollo/client/cache";
 
 const localVue = createLocalVue();
 localVue.use(Buefy);

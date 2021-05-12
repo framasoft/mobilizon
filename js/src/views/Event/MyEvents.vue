@@ -265,28 +265,6 @@ export default class MyEvents extends Vue {
         page: this.futurePage,
         limit: this.limit,
       },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const oldParticipations = previousResult.loggedUser.participations;
-        const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMoreFutureParticipations =
-          newParticipations.total ===
-          oldParticipations.length + newParticipations.length;
-
-        return {
-          loggedUser: {
-            __typename: previousResult.loggedUser.__typename,
-            participations: {
-              __typename: newParticipations.__typename,
-              total: newParticipations.total,
-              elements: [
-                ...oldParticipations.elements,
-                ...newParticipations.elements,
-              ],
-            },
-          },
-        };
-      },
     });
   }
 
@@ -297,28 +275,6 @@ export default class MyEvents extends Vue {
       variables: {
         page: this.pastPage,
         limit: this.limit,
-      },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const oldParticipations = previousResult.loggedUser.participations;
-        const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMorePastParticipations =
-          newParticipations.total ===
-          oldParticipations.length + newParticipations.length;
-
-        return {
-          loggedUser: {
-            __typename: previousResult.loggedUser.__typename,
-            participations: {
-              __typename: newParticipations.__typename,
-              total: newParticipations.total,
-              elements: [
-                ...oldParticipations.elements,
-                ...newParticipations.elements,
-              ],
-            },
-          },
-        };
       },
     });
   }

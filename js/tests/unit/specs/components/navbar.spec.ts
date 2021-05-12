@@ -8,10 +8,10 @@ import {
 import VueApollo from "vue-apollo";
 import { CONFIG } from "@/graphql/config";
 import { USER_SETTINGS } from "@/graphql/user";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import buildCurrentUserResolver from "@/apollo/user";
 import Buefy from "buefy";
 import { configMock } from "../mocks/config";
+import { InMemoryCache } from "@apollo/client/cache";
 
 const localVue = createLocalVue();
 localVue.use(VueApollo);

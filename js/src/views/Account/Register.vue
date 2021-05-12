@@ -128,6 +128,7 @@ import { MOBILIZON_INSTANCE_HOST } from "../../api/_entrypoint";
 import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
 import identityEditionMixin from "../../mixins/identityEdition";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -164,7 +165,10 @@ export default class Register extends mixins(identityEditionMixin) {
       const { data } = await this.$apollo.mutate<{ registerPerson: IPerson }>({
         mutation: REGISTER_PERSON,
         variables: { email: this.email, ...this.identity },
-        update: (store, { data: localData }) => {
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: localData }: FetchResult
+        ) => {
           if (this.userAlreadyActivated) {
             const identitiesData = store.readQuery<{ identities: IPerson[] }>({
               query: IDENTITIES,
