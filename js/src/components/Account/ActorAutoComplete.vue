@@ -45,7 +45,7 @@
 </template>
 <script lang="ts">
 import { Component, Model, Vue, Watch } from "vue-property-decorator";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import { IPerson } from "@/types/actor";
 import { SEARCH_PERSONS } from "@/graphql/search";
 import { Paginate } from "@/types/paginate";

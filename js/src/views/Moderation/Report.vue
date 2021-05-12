@@ -295,7 +295,7 @@ import { IReport, IReportNote } from "@/types/report.model";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { IPerson, displayNameAndUsername } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
-import { uniq } from "lodash";
+import uniq from "lodash/uniq";
 import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";

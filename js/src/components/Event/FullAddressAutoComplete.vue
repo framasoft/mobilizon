@@ -111,7 +111,8 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { LatLng } from "leaflet";
-import { debounce, DebouncedFunc } from "lodash";
+import debounce from "lodash/debounce";
+import { DebouncedFunc } from "lodash";
 import { Address, IAddress } from "../../types/address.model";
 import { ADDRESS, REVERSE_GEOCODE } from "../../graphql/address";
 import { CONFIG } from "../../graphql/config";

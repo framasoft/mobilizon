@@ -18,7 +18,8 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { debounce, DebouncedFunc } from "lodash";
+import debounce from "lodash/debounce";
+import { DebouncedFunc } from "lodash";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
