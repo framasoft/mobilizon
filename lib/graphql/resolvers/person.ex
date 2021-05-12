@@ -265,11 +265,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   Returns the participations, optionally restricted to an event
   """
   def person_participations(
-        %Actor{id: actor_id},
+        %Actor{id: actor_id} = person,
         %{event_id: event_id},
-        %{context: %{current_user: user}}
+        %{context: %{current_user: %User{} = user}}
       ) do
-    with {:is_owned, %Actor{} = _actor} <- User.owns_actor(user, actor_id),
+    with {:can_get_participations, true} <-
+           {:can_get_participations, user_can_access_person_details?(person, user)},
          {:no_participant, {:ok, %Participant{} = participant}} <-
            {:no_participant, Events.get_participant(event_id, actor_id)} do
       {:ok, %Page{elements: [participant], total: 1}}
@@ -282,28 +283,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
-  def person_participations(%Actor{id: actor_id} = actor, %{page: page, limit: limit}, %{
-        context: %{current_user: %User{role: role} = user}
+  def person_participations(%Actor{} = person, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{} = user}
       }) do
-    {:is_owned, actor_found} = User.owns_actor(user, actor_id)
-
-    res =
-      cond do
-        not is_nil(actor_found) ->
-          true
-
-        is_moderator(role) ->
-          true
-
-        true ->
-          false
-      end
-
-    with {:is_owned, true} <- {:is_owned, res},
-         %Page{} = page <- Events.list_event_participations_for_actor(actor, page, limit) do
+    with {:can_get_participations, true} <-
+           {:can_get_participations, user_can_access_person_details?(person, user)},
+         %Page{} = page <- Events.list_event_participations_for_actor(person, page, limit) do
       {:ok, page}
     else
-      {:is_owned, false} ->
+      {:can_get_participations, false} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
@@ -312,10 +300,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   Returns the list of events this person is going to
   """
   @spec person_memberships(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
-  def person_memberships(%Actor{id: actor_id}, %{group: group}, %{
-        context: %{current_user: user}
+  def person_memberships(%Actor{id: actor_id} = person, %{group: group}, %{
+        context: %{current_user: %User{} = user}
       }) do
-    with {:is_owned, %Actor{id: actor_id}} <- User.owns_actor(user, actor_id),
+    with {:can_get_memberships, true} <-
+           {:can_get_memberships, user_can_access_person_details?(person, user)},
          {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(group, :Group)},
          {:ok, %Member{} = membership} <- Actors.get_member(actor_id, group_id),
          memberships <- %Page{
@@ -330,19 +319,24 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:group, nil} ->
         {:error, :group_not_found}
 
-      {:is_owned, nil} ->
+      {:can_get_memberships, _} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
-  def person_memberships(%Actor{id: actor_id}, %{page: page, limit: limit}, %{
-        context: %{current_user: user}
-      }) do
-    with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
-         memberships <- Actors.list_members_for_actor(actor, page, limit) do
+  def person_memberships(
+        %Actor{} = person,
+        %{page: page, limit: limit},
+        %{
+          context: %{current_user: %User{} = user}
+        }
+      ) do
+    with {:can_get_memberships, true} <-
+           {:can_get_memberships, user_can_access_person_details?(person, user)},
+         memberships <- Actors.list_members_for_actor(person, page, limit) do
       {:ok, memberships}
     else
-      {:is_owned, nil} ->
+      {:can_get_memberships, _} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
@@ -366,15 +360,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   def user_for_person(_, _args, _resolution), do: {:error, nil}
 
   def organized_events_for_person(
-        %Actor{user_id: actor_user_id} = actor,
+        %Actor{} = person,
         %{page: page, limit: limit},
         %{
-          context: %{current_user: %User{id: user_id, role: role}}
+          context: %{current_user: %User{} = user}
         }
       ) do
     with {:can_get_events, true} <-
-           {:can_get_events, actor_user_id == user_id or is_moderator(role)},
-         %Page{} = page <- Events.list_organized_events_for_actor(actor, page, limit) do
+           {:can_get_events, user_can_access_person_details?(person, user)},
+         %Page{} = page <- Events.list_organized_events_for_actor(person, page, limit) do
       {:ok, page}
     else
       {:can_get_events, false} ->
@@ -390,4 +384,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   defp last_admin_of_a_group?(actor_id) do
     length(Actors.list_group_ids_where_last_administrator(actor_id)) > 0
   end
+
+  @spec user_can_access_person_details?(Actor.t(), User.t()) :: boolean()
+  defp user_can_access_person_details?(%Actor{}, %User{role: role}) when is_moderator(role),
+    do: true
+
+  defp user_can_access_person_details?(%Actor{type: :Person, user_id: actor_user_id}, %User{
+         id: user_id
+       })
+       when not is_nil(user_id),
+       do: actor_user_id == user_id
+
+  defp user_can_access_person_details?(_, _), do: false
 end
