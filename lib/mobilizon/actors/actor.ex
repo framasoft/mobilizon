@@ -416,17 +416,18 @@ defmodule Mobilizon.Actors.Actor do
   @spec build_relay_creation_attrs :: Ecto.Changeset.t()
   def build_relay_creation_attrs do
     data = %{
-      "name" => Config.get([:instance, :name], "Mobilizon"),
-      "summary" =>
+      name: Config.get([:instance, :name], "Mobilizon"),
+      summary:
         Config.get(
           [:instance, :description],
           "An internal service actor for this Mobilizon instance"
         ),
-      "keys" => Crypto.generate_rsa_2048_private_key(),
-      "preferred_username" => "relay",
-      "domain" => nil,
-      "visibility" => :public,
-      "type" => :Application
+      keys: Crypto.generate_rsa_2048_private_key(),
+      preferred_username: "relay",
+      domain: nil,
+      visibility: :public,
+      type: :Application,
+      manually_approves_followers: true
     }
 
     %__MODULE__{}
@@ -440,12 +441,13 @@ defmodule Mobilizon.Actors.Actor do
   @spec build_anonymous_actor_creation_attrs :: Ecto.Changeset.t()
   def build_anonymous_actor_creation_attrs do
     data = %{
-      "name" => "Mobilizon Anonymous Actor",
-      "summary" => "A fake person for anonymous participations",
-      "keys" => Crypto.generate_rsa_2048_private_key(),
-      "preferred_username" => "anonymous",
-      "domain" => nil,
-      "type" => :Person
+      name: "Mobilizon Anonymous Actor",
+      summary: "A fake person for anonymous participations",
+      keys: Crypto.generate_rsa_2048_private_key(),
+      preferred_username: "anonymous",
+      domain: nil,
+      type: :Person,
+      manually_approves_followers: true
     }
 
     %__MODULE__{}
