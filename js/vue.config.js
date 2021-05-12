@@ -14,6 +14,9 @@ module.exports = {
       swSrc: "./src/service-worker.ts",
       // ...other Workbox options...
     },
+    manifestOptions: {
+      orientation: "portrait-primary",
+    },
   },
   css: {
     loaderOptions: {
