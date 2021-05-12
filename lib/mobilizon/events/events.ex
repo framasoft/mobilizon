@@ -421,7 +421,7 @@ defmodule Mobilizon.Events do
   @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
   def list_organized_events_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
-    |> event_for_actor_query()
+    |> event_for_actor_query(desc: :begins_on)
     |> preload_for_event()
     |> Page.build_page(page, limit)
   end
@@ -1264,12 +1264,10 @@ defmodule Mobilizon.Events do
   end
 
   @spec event_for_actor_query(integer | String.t()) :: Ecto.Query.t()
-  defp event_for_actor_query(actor_id) do
-    from(
-      e in Event,
-      where: e.organizer_actor_id == ^actor_id,
-      order_by: [desc: :id]
-    )
+  defp event_for_actor_query(actor_id, order_by \\ [desc: :id]) do
+    Event
+    |> where([e], e.organizer_actor_id == ^actor_id)
+    |> order_by([e], ^order_by)
   end
 
   @spec event_for_group_query(integer | String.t()) :: Ecto.Query.t()
