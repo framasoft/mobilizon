@@ -71,6 +71,8 @@ export default class App extends Vue {
 
   error: Error | null = null;
 
+  online = true;
+
   async created(): Promise<void> {
     if (await this.initializeCurrentUser()) {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);
@@ -99,6 +101,23 @@ export default class App extends Vue {
       });
     }
     return false;
+  }
+
+  mounted(): void {
+    this.online = window.navigator.onLine;
+    window.addEventListener("offline", () => {
+      this.online = false;
+      this.showOfflineNetworkWarning();
+      console.log("offline");
+    });
+    window.addEventListener("online", () => {
+      this.online = true;
+      console.log("online");
+    });
+  }
+
+  showOfflineNetworkWarning(): void {
+    this.$notifier.error(this.$t("You are offline") as string);
   }
 }
 </script>
