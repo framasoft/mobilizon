@@ -1865,7 +1865,7 @@ defmodule Mobilizon.Actors do
          limit \\ 10
        ) do
     Logger.debug("accumulate_paginated_elements")
-    %Page{total: total, elements: new_elements} = page = method.(actor, page, limit)
+    %Page{total: total, elements: new_elements} = method.(actor, page, limit)
     elements = elements ++ new_elements
     count = length(elements)
 
