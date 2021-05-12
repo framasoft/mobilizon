@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Mobilizon.Relay.Refresh do
     IO.puts("Refreshing #{target}, this can take a while.")
 
     case Relay.refresh(target) do
-      :ok ->
+      {:ok, _} ->
         IO.puts("Refreshed #{target}")
 
       err ->

@@ -32,9 +32,10 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   end
 
   def refresh_profile(%Actor{type: type, url: url}) when type in [:Person, :Application] do
-    with {:ok, %Actor{outbox_url: outbox_url}} <- ActivityPubActor.make_actor_from_url(url),
+    with {:ok, %Actor{outbox_url: outbox_url} = actor} <-
+           ActivityPubActor.make_actor_from_url(url),
          :ok <- fetch_collection(outbox_url, Relay.get_actor()) do
-      :ok
+      {:ok, actor}
     end
   end
 

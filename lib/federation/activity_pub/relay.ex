@@ -12,9 +12,10 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Actors.{Actor, Follower}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger
+  alias Mobilizon.Service.Workers.Background
 
   alias Mobilizon.GraphQL.API.Follows
 
@@ -95,13 +96,16 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     end
   end
 
+  @spec refresh(String.t()) :: {:ok, any()}
   def refresh(address) do
     Logger.debug("We're trying to refresh a remote instance")
 
     with {:ok, target_instance} <- fetch_actor(address),
-         {:ok, %Actor{} = target_actor} <-
+         {:ok, %Actor{id: target_actor_id}} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance) do
-      Refresher.refresh_profile(target_actor)
+      Background.enqueue("refresh_profile", %{
+        "actor_id" => target_actor_id
+      })
     end
   end
 
