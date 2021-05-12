@@ -331,38 +331,46 @@ export default class Notifications extends Vue {
   }
 
   async subscribeToWebPush(): Promise<void> {
-    if (this.canShowWebPush()) {
-      const subscription = await subscribeUserToPush();
-      if (subscription) {
-        const subscriptionJSON = subscription?.toJSON();
-        console.log("subscription", subscriptionJSON);
-        const { data } = await this.$apollo.mutate({
-          mutation: REGISTER_PUSH_MUTATION,
-          variables: {
-            endpoint: subscriptionJSON.endpoint,
-            auth: subscriptionJSON?.keys?.auth,
-            p256dh: subscriptionJSON?.keys?.p256dh,
-          },
-        });
-        this.subscribed = true;
-        console.log(data);
+    try {
+      if (this.canShowWebPush()) {
+        const subscription = await subscribeUserToPush();
+        if (subscription) {
+          const subscriptionJSON = subscription?.toJSON();
+          console.log("subscription", subscriptionJSON);
+          const { data } = await this.$apollo.mutate({
+            mutation: REGISTER_PUSH_MUTATION,
+            variables: {
+              endpoint: subscriptionJSON.endpoint,
+              auth: subscriptionJSON?.keys?.auth,
+              p256dh: subscriptionJSON?.keys?.p256dh,
+            },
+          });
+          this.subscribed = true;
+          console.log(data);
+        }
+      } else {
+        console.log("can't do webpush");
       }
-    } else {
-      console.log("can't do webpush");
+    } catch (e) {
+      console.error(e);
     }
   }
 
   async unsubscribeToWebPush(): Promise<void> {
-    const endpoint = await unsubscribeUserToPush();
-    if (endpoint) {
-      const { data } = await this.$apollo.mutate({
-        mutation: UNREGISTER_PUSH_MUTATION,
-        variables: {
-          endpoint,
-        },
-      });
-      console.log(data);
-      this.subscribed = false;
+    try {
+      const endpoint = await unsubscribeUserToPush();
+      if (endpoint) {
+        const { data } = await this.$apollo.mutate({
+          mutation: UNREGISTER_PUSH_MUTATION,
+          variables: {
+            endpoint,
+          },
+        });
+        console.log(data);
+        this.subscribed = false;
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -375,6 +383,7 @@ export default class Notifications extends Vue {
   }
 
   private async isSubscribed(): Promise<boolean> {
+    if (!("serviceWorker" in navigator)) return Promise.resolve(false);
     const registration = await navigator.serviceWorker.getRegistration();
     return (await registration?.pushManager.getSubscription()) !== null;
   }

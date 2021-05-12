@@ -44,11 +44,6 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
   return null;
 }
 
-export async function isSubscribed(): Promise<boolean> {
-  const registration = await navigator.serviceWorker.ready;
-  return (await registration.pushManager.getSubscription()) !== null;
-}
-
 export async function unsubscribeUserToPush(): Promise<string | undefined> {
   console.log("performing unsubscribeUserToPush");
   const registration = await navigator.serviceWorker.ready;
