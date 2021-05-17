@@ -486,7 +486,6 @@ import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
-import { cloneDeep } from "@apollo/client/utilities";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -513,7 +512,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
         };
       },
       update(data) {
-        return new EventModel(cloneDeep(data.event));
+        return new EventModel(data.event);
       },
       skip() {
         return !this.eventId;
