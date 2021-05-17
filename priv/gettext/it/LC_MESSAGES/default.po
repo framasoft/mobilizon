@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2021-04-28 14:49+0000\n"
+"PO-Revision-Date: 2021-05-17 16:22+0000\n"
 "Last-Translator: Leo Durruti <leodurruti@disroot.org>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -100,7 +100,7 @@ msgstr "Partecipazione approvata"
 #: lib/web/templates/email/password_reset.text.eex:1
 #, elixir-format
 msgid "Password reset"
-msgstr "Reset della password"
+msgstr "Resettare la password"
 
 #: lib/web/templates/email/password_reset.text.eex:7
 #, elixir-format
@@ -144,7 +144,7 @@ msgstr "Hai richiesto una nuova password per il tuo account su %{instance}."
 #: lib/web/templates/email/email.html.eex:85
 #, elixir-format
 msgid "Warning"
-msgstr "Attenzione"
+msgstr "Avviso"
 
 #: lib/web/email/participation.ex:135
 #, elixir-format
@@ -1039,9 +1039,9 @@ msgstr ""
 "Ciao! Solo una breve nota per confermare che l'indirizzo email collegato al "
 "tuo account su% {host} è stato cambiato da questo a:"
 
-#, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:62
 #: lib/web/templates/email/email_changed_old.text.eex:5
+#, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
 "Se non hai attivato tu stesso questa modifica, è probabile che qualcuno "
@@ -1079,7 +1079,7 @@ msgstr "Scopri di più su Mobilizon qui!"
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
 msgid "Location"
-msgstr "Luogo"
+msgstr "Posizione"
 
 #: lib/web/templates/email/event_updated.html.eex:104
 #, elixir-format
@@ -1694,25 +1694,25 @@ msgstr "Siamo spiacenti, ma qualcosa è andato storto da parte nostra."
 #: lib/web/templates/email/email.text.eex:4
 #, elixir-format
 msgid "This is a demonstration site to test Mobilizon."
-msgstr "Questo è un sito dimostrativo per testare Mobilizon."
+msgstr "Questo è un sito di prova per testare Mobilizon."
 
 #: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
 #: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
 msgid "%{name}'s feed"
 msgstr "Flusso di %{name}"
 
-#, elixir-format
 #: lib/service/export/feed.ex:120
+#, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "Flusso privato degli eventi di %{actor} su %{instance}"
 
-#, elixir-format
 #: lib/service/export/feed.ex:115
+#, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "Flusso pubblico degli eventi di %{actor} su %{instance}"
 
-#, elixir-format
 #: lib/service/export/feed.ex:220
+#, elixir-format
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flusso per %{email} su %{instance}"
 
@@ -1739,7 +1739,7 @@ msgstr "Dettagli tecnici"
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr "Il server Mobilizon sembra essere temporaneamente inattivo."
 
-#, elixir-format
 #: lib/service/export/feed.ex:73
+#, elixir-format
 msgid "Public feed for %{instance}"
-msgstr ""
+msgstr "Feed pubblico per %{instance}"
