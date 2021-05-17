@@ -91,7 +91,7 @@ export const SUSPEND_USER = gql`
 `;
 
 export const CURRENT_USER_CLIENT = gql`
-  query {
+  query CurrentUserClient {
     currentUser @client {
       id
       email

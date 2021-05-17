@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const CONFIG = gql`
-  query {
+  query FullConfig {
     config {
       name
       description

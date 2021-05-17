@@ -373,7 +373,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
 `;
 
 export const IDENTITIES = gql`
-  query {
+  query Identities {
     identities {
       id
       avatar {
@@ -453,7 +453,10 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
 `;
 
 export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
-  subscription ($actorId: ID!, $group: String!) {
+  subscription GroupMembershipSubscriptionChanged(
+    $actorId: ID!
+    $group: String!
+  ) {
     groupMembershipChanged(personId: $actorId, group: $group) {
       id
       memberships {
