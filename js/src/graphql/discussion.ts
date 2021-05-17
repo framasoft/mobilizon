@@ -150,7 +150,7 @@ export const DELETE_DISCUSSION = gql`
 `;
 
 export const DISCUSSION_COMMENT_CHANGED = gql`
-  subscription($slug: String!) {
+  subscription ($slug: String!) {
     discussionCommentChanged(slug: $slug) {
       id
       lastComment {

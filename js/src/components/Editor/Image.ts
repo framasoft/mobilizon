@@ -60,7 +60,8 @@ const CustomImage = Image.extend({
                 top: realEvent.clientY,
               });
               if (!coordinates) return false;
-              const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+              const client =
+                apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
 
               try {
                 images.forEach(async (image) => {

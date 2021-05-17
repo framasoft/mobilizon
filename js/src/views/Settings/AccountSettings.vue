@@ -155,7 +155,10 @@
             <div class="container">
               <div class="columns">
                 <div
-                  class="column is-one-third-desktop is-offset-one-third-desktop"
+                  class="
+                    column
+                    is-one-third-desktop is-offset-one-third-desktop
+                  "
                 >
                   <h1 class="title">
                     {{ $t("Deleting your Mobilizon account") }}

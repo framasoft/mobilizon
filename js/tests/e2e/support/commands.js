@@ -106,28 +106,26 @@ const decreaseFetches = () => {
   Cypress.env("fetchCount", count - 1);
 };
 
-const buildTrackableFetchWithSessionId = (fetch) => (
-  fetchUrl,
-  fetchOptions
-) => {
-  const { headers } = fetchOptions;
-  const modifiedHeaders = {
-    "x-session-id": Cypress.env("sessionId"),
-    ...headers,
+const buildTrackableFetchWithSessionId =
+  (fetch) => (fetchUrl, fetchOptions) => {
+    const { headers } = fetchOptions;
+    const modifiedHeaders = {
+      "x-session-id": Cypress.env("sessionId"),
+      ...headers,
+    };
+
+    const modifiedOptions = { ...fetchOptions, headers: modifiedHeaders };
+
+    return fetch(fetchUrl, modifiedOptions)
+      .then((result) => {
+        decreaseFetches();
+        return Promise.resolve(result);
+      })
+      .catch((result) => {
+        decreaseFetches();
+        return Promise.reject(result);
+      });
   };
-
-  const modifiedOptions = { ...fetchOptions, headers: modifiedHeaders };
-
-  return fetch(fetchUrl, modifiedOptions)
-    .then((result) => {
-      decreaseFetches();
-      return Promise.resolve(result);
-    })
-    .catch((result) => {
-      decreaseFetches();
-      return Promise.reject(result);
-    });
-};
 
 Cypress.on("window:before:load", (win) => {
   cy.stub(win, "fetch", buildTrackableFetchWithSessionId(fetch));

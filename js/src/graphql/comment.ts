@@ -46,7 +46,7 @@ export const COMMENT_RECURSIVE_FRAGMENT = gql`
 `;
 
 export const FETCH_THREAD_REPLIES = gql`
-  query($threadId: ID!) {
+  query ($threadId: ID!) {
     thread(id: $threadId) {
       ...CommentRecursive
     }
@@ -55,7 +55,7 @@ export const FETCH_THREAD_REPLIES = gql`
 `;
 
 export const COMMENTS_THREADS = gql`
-  query($eventUUID: UUID!) {
+  query ($eventUUID: UUID!) {
     event(uuid: $eventUUID) {
       id
       uuid

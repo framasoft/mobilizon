@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GROUP_FOLLOWERS = gql`
-  query(
+  query (
     $name: String!
     $followersPage: Int
     $followersLimit: Int

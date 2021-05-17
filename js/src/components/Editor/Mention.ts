@@ -8,7 +8,8 @@ import apolloProvider from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
 
-const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+const client =
+  apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
 
 const fetchItems = async (query: string): Promise<IPerson[]> => {
   const result = await client.query({

@@ -774,9 +774,11 @@ export default class EditEvent extends Vue {
   get updateEventMessage(): string {
     if (this.unmodifiedEvent.draft && !this.event.draft)
       return this.$i18n.t("The event has been updated and published") as string;
-    return (this.event.draft
-      ? this.$i18n.t("The draft event has been updated")
-      : this.$i18n.t("The event has been updated")) as string;
+    return (
+      this.event.draft
+        ? this.$i18n.t("The draft event has been updated")
+        : this.$i18n.t("The event has been updated")
+    ) as string;
   }
 
   private handleError(err: any) {

@@ -874,7 +874,8 @@ export default class Event extends EventMixin {
 
     try {
       if (window.isSecureContext) {
-        this.anonymousParticipation = await this.anonymousParticipationConfirmed();
+        this.anonymousParticipation =
+          await this.anonymousParticipationConfirmed();
       }
     } catch (e) {
       if (e instanceof AnonymousParticipationNotFoundError) {
