@@ -127,6 +127,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            {:actor_approve_permission, Events.moderator_for_event?(event_id, actor_id)} do
       roles =
         case roles do
+          nil ->
+            []
+
           "" ->
             []
 

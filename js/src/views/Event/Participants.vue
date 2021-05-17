@@ -30,8 +30,8 @@
       </nav>
       <h2 class="title">{{ $t("Participants") }}</h2>
       <b-field :label="$t('Status')" horizontal>
-        <b-select v-model="roles">
-          <option value="">
+        <b-select v-model="role">
+          <option :value="null">
             {{ $t("Everything") }}
           </option>
           <option :value="ParticipantRole.CREATOR">
@@ -230,6 +230,8 @@ import { IConfig } from "../../types/config.model";
 import { nl2br } from "../../utils/html";
 import { asyncForEach } from "../../utils/asyncForEach";
 import RouteName from "../../router/name";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
@@ -242,13 +244,12 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
     config: CONFIG,
     event: {
       query: PARTICIPANTS,
-      fetchPolicy: "cache-and-network",
       variables() {
         return {
           uuid: this.eventId,
-          page: 1,
+          page: this.page,
           limit: PARTICIPANTS_PER_PAGE,
-          roles: this.roles,
+          roles: this.role,
         };
       },
       skip() {
@@ -264,7 +265,32 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
 export default class Participants extends Vue {
   @Prop({ required: true }) eventId!: string;
 
-  page = 1;
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter(RouteName.RELAY_FOLLOWINGS, {
+      page: page.toString(),
+    });
+  }
+
+  get role(): ParticipantRole | null {
+    if (
+      Object.values(ParticipantRole).includes(
+        this.$route.query.role as ParticipantRole
+      )
+    ) {
+      return this.$route.query.role as ParticipantRole;
+    }
+    return null;
+  }
+
+  set role(role: ParticipantRole | null) {
+    this.pushRouter(RouteName.PARTICIPATIONS, {
+      role: role || "",
+    });
+  }
 
   limit = PARTICIPANTS_PER_PAGE;
 
@@ -280,20 +306,11 @@ export default class Participants extends Vue {
 
   checkedRows: IParticipant[] = [];
 
-  roles: ParticipantRole = ParticipantRole.PARTICIPANT;
-
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
 
   @Ref("queueTable") readonly queueTable!: any;
-
-  mounted(): void {
-    const roleQuery = this.$route.query.role as string;
-    if (Object.values(ParticipantRole).includes(roleQuery as ParticipantRole)) {
-      this.roles = roleQuery as ParticipantRole;
-    }
-  }
 
   get participantStats(): IEventParticipantStats | null {
     if (!this.event) return null;
@@ -385,6 +402,22 @@ export default class Participants extends Vue {
     )
       return;
     this.queueTable.toggleDetails(row);
+  }
+
+  async pushRouter(
+    routeName: string,
+    args: Record<string, string>
+  ): Promise<void> {
+    try {
+      await this.$router.push({
+        name: routeName,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
   }
 }
 </script>

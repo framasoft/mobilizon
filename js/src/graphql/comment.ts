@@ -21,6 +21,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
       summary
     }
     totalReplies
+    insertedAt
     updatedAt
     deletedAt
   }

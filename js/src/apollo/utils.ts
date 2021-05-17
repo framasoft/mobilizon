@@ -1,6 +1,7 @@
 import { AUTH_ACCESS_TOKEN, AUTH_REFRESH_TOKEN } from "@/constants";
 import { REFRESH_TOKEN } from "@/graphql/auth";
 import { IFollower } from "@/types/actor/follower.model";
+import { IParticipant } from "@/types/participant.model";
 import { Paginate } from "@/types/paginate";
 import { saveTokenData } from "@/utils/auth";
 import {
@@ -11,6 +12,9 @@ import {
   TypePolicies,
 } from "@apollo/client/core";
 import introspectionQueryResultData from "../../fragmentTypes.json";
+import { IMember } from "@/types/actor/member.model";
+import { IComment } from "@/types/comment.model";
+import { IEvent } from "@/types/event.model";
 
 type possibleTypes = { name: string };
 type schemaType = {
@@ -31,19 +35,34 @@ export const possibleTypes = types.reduce((acc, type) => {
 export const typePolicies: TypePolicies = {
   Discussion: {
     fields: {
-      comments: pageLimitPagination(),
+      comments: paginatedLimitPagination(),
     },
   },
   Group: {
     fields: {
-      organizedEvents: pageLimitPagination(["afterDatetime", "beforeDatetime"]),
+      organizedEvents: paginatedLimitPagination([
+        "afterDatetime",
+        "beforeDatetime",
+      ]),
     },
   },
   Person: {
     fields: {
       organizedEvents: pageLimitPagination(),
-      participations: pageLimitPagination(["eventId"]),
-      memberships: pageLimitPagination(["group"]),
+      participations: paginatedLimitPagination<IParticipant>(["eventId"]),
+      memberships: paginatedLimitPagination<IMember>(["group"]),
+    },
+  },
+  Event: {
+    fields: {
+      participants: paginatedLimitPagination<IParticipant>(["roles"]),
+      commnents: pageLimitPagination<IComment>(),
+      relatedEvents: pageLimitPagination<IEvent>(),
+    },
+  },
+  Comment: {
+    fields: {
+      replies: pageLimitPagination<IComment>(),
     },
   },
   RootQueryType: {
@@ -53,15 +72,15 @@ export const typePolicies: TypePolicies = {
         "orderBy",
         "direction",
       ]),
-      events: pageLimitPagination(),
-      groups: pageLimitPagination([
+      events: paginatedLimitPagination(),
+      groups: paginatedLimitPagination([
         "preferredUsername",
         "name",
         "domain",
         "local",
         "suspended",
       ]),
-      persons: pageLimitPagination([
+      persons: paginatedLimitPagination([
         "preferredUsername",
         "name",
         "domain",
@@ -103,12 +122,12 @@ type KeyArgs = FieldPolicy<any>["keyArgs"];
 export function pageLimitPagination<T = Reference>(
   keyArgs: KeyArgs = false
 ): FieldPolicy<T[]> {
-  console.log("pageLimitPagination");
   return {
     keyArgs,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     merge(existing, incoming, { args }) {
+      console.log("pageLimitPagination");
       console.log("existing", existing);
       console.log("incoming", incoming);
       // console.log("args", args);
@@ -123,12 +142,14 @@ export function pageLimitPagination<T = Reference>(
 export function paginatedLimitPagination<T = Paginate<any>>(
   keyArgs: KeyArgs = false
 ): FieldPolicy<Paginate<T>> {
-  console.log("paginatedLimitPagination");
   return {
     keyArgs,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     merge(existing, incoming, { args }) {
+      console.log("paginatedLimitPagination");
+      console.log("existing", existing);
+      console.log("incoming", incoming);
       if (!incoming) return existing;
       if (!existing) return incoming; // existing will be empty the first time
 
