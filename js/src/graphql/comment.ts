@@ -38,6 +38,12 @@ export const COMMENT_RECURSIVE_FRAGMENT = gql`
     }
     replies {
       ...CommentFields
+      inReplyToComment {
+        ...CommentFields
+      }
+      originComment {
+        ...CommentFields
+      }
       replies {
         ...CommentFields
       }
@@ -66,6 +72,19 @@ export const COMMENTS_THREADS = gql`
     }
   }
   ${COMMENT_FIELDS_FRAGMENT}
+`;
+
+export const COMMENTS_THREADS_WITH_REPLIES = gql`
+  query($eventUUID: UUID!) {
+    event(uuid: $eventUUID) {
+      id
+      uuid
+      comments {
+        ...CommentRecursive
+      }
+    }
+  }
+  ${COMMENT_RECURSIVE_FRAGMENT}
 `;
 
 export const CREATE_COMMENT_FROM_EVENT = gql`

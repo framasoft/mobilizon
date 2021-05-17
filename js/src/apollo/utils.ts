@@ -60,11 +60,6 @@ export const typePolicies: TypePolicies = {
       relatedEvents: pageLimitPagination<IEvent>(),
     },
   },
-  Comment: {
-    fields: {
-      replies: pageLimitPagination<IComment>(),
-    },
-  },
   RootQueryType: {
     fields: {
       relayFollowers: paginatedLimitPagination<IFollower>(),

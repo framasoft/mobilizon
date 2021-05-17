@@ -65,7 +65,7 @@ defmodule Mobilizon.Discussions.Comment do
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
     belongs_to(:discussion, Discussion, type: :binary_id)
-    has_many(:replies, Comment, foreign_key: :in_reply_to_comment_id)
+    has_many(:replies, Comment, foreign_key: :origin_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
     has_many(:mentions, Mention)
     many_to_many(:media, Media, join_through: "comments_medias", on_replace: :delete)

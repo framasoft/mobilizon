@@ -82,8 +82,7 @@ import { CommentModel, IComment } from "../../types/comment.model";
 import {
   CREATE_COMMENT_FROM_EVENT,
   DELETE_COMMENT,
-  COMMENTS_THREADS,
-  FETCH_THREAD_REPLIES,
+  COMMENTS_THREADS_WITH_REPLIES,
 } from "../../graphql/comment";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
@@ -96,7 +95,7 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
       query: CURRENT_ACTOR_CLIENT,
     },
     comments: {
-      query: COMMENTS_THREADS,
+      query: COMMENTS_THREADS_WITH_REPLIES,
       variables() {
         return {
           eventUUID: this.event.uuid,
@@ -145,6 +144,7 @@ export default class CommentTree extends Vue {
   }
 
   async createCommentForEvent(comment: IComment): Promise<void> {
+    console.log("creating comment", comment);
     this.emptyCommentError = ["", "<p></p>"].includes(comment.text);
     if (this.emptyCommentError) return;
     try {
@@ -160,21 +160,19 @@ export default class CommentTree extends Vue {
         },
         update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
-          const newComment = data.createComment;
-
           // comments are attached to the event, so we can pass it to replies later
-          newComment.event = this.event;
+          const newComment = { ...data.createComment, event: this.event };
 
           // we load all existing threads
           const commentThreadsData = store.readQuery<{ event: IEvent }>({
-            query: COMMENTS_THREADS,
+            query: COMMENTS_THREADS_WITH_REPLIES,
             variables: {
               eventUUID: this.event.uuid,
             },
           });
           if (!commentThreadsData) return;
           const { event } = commentThreadsData;
-          const { comments: oldComments } = event;
+          const oldComments = [...event.comments];
 
           // if it's no a root comment, we first need to find
           // existing replies and add the new reply to it
@@ -185,44 +183,25 @@ export default class CommentTree extends Vue {
             );
             const parentComment = oldComments[parentCommentIndex];
 
-            let oldReplyList: IComment[] = [];
-            try {
-              const threadData = store.readQuery<{ thread: IComment[] }>({
-                query: FETCH_THREAD_REPLIES,
-                variables: {
-                  threadId: parentComment.id,
-                },
-              });
-              if (!threadData) return;
-              oldReplyList = threadData.thread;
-            } catch (e) {
-              // This simply means there's no loaded replies yet
-            } finally {
-              oldReplyList.push(newComment);
-
-              // save the updated list of replies (with the one we've just added)
-              store.writeQuery({
-                query: FETCH_THREAD_REPLIES,
-                data: { thread: oldReplyList },
-                variables: {
-                  threadId: parentComment.id,
-                },
-              });
-
-              // replace the root comment with has the updated list of replies in the thread list
-              parentComment.replies = oldReplyList;
-              event.comments.splice(parentCommentIndex, 1, parentComment);
-            }
+            // replace the root comment with has the updated list of replies in the thread list
+            oldComments.splice(parentCommentIndex, 1, {
+              ...parentComment,
+              replies: [...parentComment.replies, newComment],
+            });
           } else {
             // otherwise it's simply a new thread and we add it to the list
             oldComments.push(newComment);
           }
 
           // finally we save the thread list
-          event.comments = oldComments;
           store.writeQuery({
-            query: COMMENTS_THREADS,
-            data: { event },
+            query: COMMENTS_THREADS_WITH_REPLIES,
+            data: {
+              event: {
+                ...event,
+                comments: oldComments,
+              },
+            },
             variables: {
               eventUUID: this.event.uuid,
             },
@@ -255,58 +234,61 @@ export default class CommentTree extends Vue {
           const deletedCommentId = data.deleteComment.id;
 
           const commentsData = store.readQuery<{ event: IEvent }>({
-            query: COMMENTS_THREADS,
+            query: COMMENTS_THREADS_WITH_REPLIES,
             variables: {
               eventUUID: this.event.uuid,
             },
           });
           if (!commentsData) return;
           const { event } = commentsData;
-          const { comments: oldComments } = event;
+          let updatedComments: IComment[] = [...event.comments];
 
           if (comment.originComment) {
             // we have deleted a reply to a thread
-            const localData = store.readQuery<{ thread: IComment[] }>({
-              query: FETCH_THREAD_REPLIES,
-              variables: {
-                threadId: comment.originComment.id,
-              },
-            });
-            if (!localData) return;
-            const { thread: oldReplyList } = localData;
-            const replies = oldReplyList.filter(
-              (reply) => reply.id !== deletedCommentId
-            );
-            store.writeQuery({
-              query: FETCH_THREAD_REPLIES,
-              variables: {
-                threadId: comment.originComment.id,
-              },
-              data: { thread: replies },
-            });
-
             const { originComment } = comment;
 
-            const parentCommentIndex = oldComments.findIndex(
+            const parentCommentIndex = updatedComments.findIndex(
               (oldComment) => oldComment.id === originComment.id
             );
-            const parentComment = oldComments[parentCommentIndex];
-            parentComment.replies = replies;
-            parentComment.totalReplies -= 1;
-            oldComments.splice(parentCommentIndex, 1, parentComment);
-            event.comments = oldComments;
+            const parentComment = updatedComments[parentCommentIndex];
+            const updatedReplies = parentComment.replies.map((reply) => {
+              if (reply.id === deletedCommentId) {
+                return {
+                  ...reply,
+                  deletedAt: new Date().toString(),
+                };
+              }
+              return reply;
+            });
+            updatedComments.splice(parentCommentIndex, 1, {
+              ...parentComment,
+              replies: updatedReplies,
+              totalReplies: parentComment.totalReplies - 1,
+            });
+            console.log("updatedComments", updatedComments);
           } else {
             // we have deleted a thread itself
-            event.comments = oldComments.filter(
-              (reply) => reply.id !== deletedCommentId
-            );
+            updatedComments = updatedComments.map((reply) => {
+              if (reply.id === deletedCommentId) {
+                return {
+                  ...reply,
+                  deletedAt: new Date().toString(),
+                };
+              }
+              return reply;
+            });
           }
           store.writeQuery({
-            query: COMMENTS_THREADS,
+            query: COMMENTS_THREADS_WITH_REPLIES,
             variables: {
               eventUUID: this.event.uuid,
             },
-            data: { event },
+            data: {
+              event: {
+                ...event,
+                comments: updatedComments,
+              },
+            },
           });
         },
       });

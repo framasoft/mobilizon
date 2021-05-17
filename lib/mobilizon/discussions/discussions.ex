@@ -72,7 +72,7 @@ defmodule Mobilizon.Discussions do
   Read: https://hexdocs.pm/absinthe/ecto.html#dataloader
   """
   @spec query(atom(), map()) :: Ecto.Queryable.t()
-  def query(Comment, _params) do
+  def query(Comment, %{top_level: true}) do
     Comment
     |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
     |> where([c, _], is_nil(c.in_reply_to_comment_id))
@@ -81,6 +81,10 @@ defmodule Mobilizon.Discussions do
     # |> where([_, r], is_nil(r.deleted_at))
     |> group_by([c], c.id)
     |> select([c, r], %{c | total_replies: count(r.id)})
+  end
+
+  def query(Comment, _) do
+    order_by(Comment, [c], asc: :published_at)
   end
 
   def query(queryable, _) do

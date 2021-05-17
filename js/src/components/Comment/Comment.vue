@@ -55,7 +55,7 @@
           <span class="icons" v-if="!comment.deletedAt">
             <button
               v-if="comment.actor.id === currentActor.id"
-              @click="$emit('delete-comment', comment)"
+              @click="deleteComment"
             >
               <b-icon icon="delete" size="is-small" aria-hidden="true" />
               <span class="visually-hidden">{{ $t("Delete") }}</span>
@@ -183,7 +183,6 @@ import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
-import { COMMENTS_THREADS, FETCH_THREAD_REPLIES } from "../../graphql/comment";
 import { IEvent } from "../../types/event.model";
 import ReportModal from "../Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
@@ -257,39 +256,15 @@ export default class Comment extends Vue {
     this.$emit("create-comment", this.newComment);
     this.newComment = new CommentModel();
     this.replyTo = false;
+    this.showReplies = true;
   }
 
-  async fetchReplies(): Promise<void> {
-    const parentId = this.comment.id;
-    const { data } = await this.$apollo.query<{ thread: IComment[] }>({
-      query: FETCH_THREAD_REPLIES,
-      variables: {
-        threadId: parentId,
-      },
-    });
-    if (!data) return;
-    const { thread } = data;
-    const eventData = this.$apollo.getClient().readQuery<{ event: IEvent }>({
-      query: COMMENTS_THREADS,
-      variables: {
-        eventUUID: this.event.uuid,
-      },
-    });
-    if (!eventData) return;
-    const { event } = eventData;
-    const { comments } = event;
-    const parentCommentIndex = comments.findIndex(
-      (oldComment: IComment) => oldComment.id === parentId
-    );
-    const parentComment = comments[parentCommentIndex];
-    if (!parentComment) return;
-    parentComment.replies = thread;
-    comments[parentCommentIndex] = parentComment;
-    event.comments = comments;
-    this.$apollo.getClient().writeQuery({
-      query: COMMENTS_THREADS,
-      data: { event },
-    });
+  deleteComment(): void {
+    this.$emit("delete-comment", this.comment);
+    this.showReplies = false;
+  }
+
+  fetchReplies(): void {
     this.showReplies = true;
   }
 
