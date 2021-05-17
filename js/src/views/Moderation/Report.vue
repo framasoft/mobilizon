@@ -480,13 +480,15 @@ export default class Report extends Vue {
             );
             return;
           }
-          const updatedReport = data.updateReportStatus;
-          report.status = updatedReport.status;
+          const updatedReport = {
+            ...report,
+            status: data.updateReportStatus.status,
+          };
 
           store.writeQuery({
             query: REPORT,
             variables: { id: this.report.id },
-            data: { report },
+            data: { report: updatedReport },
           });
         },
       });

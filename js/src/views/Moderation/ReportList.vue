@@ -90,7 +90,7 @@ import VueRouter from "vue-router";
 import { Paginate } from "@/types/paginate";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
-const REPORT_PAGE_LIMIT = 1;
+const REPORT_PAGE_LIMIT = 10;
 
 @Component({
   components: {
@@ -99,6 +99,7 @@ const REPORT_PAGE_LIMIT = 1;
   },
   apollo: {
     reports: {
+      fetchPolicy: "cache-and-network",
       query: REPORTS,
       variables() {
         return {
