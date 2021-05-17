@@ -291,6 +291,8 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
   end
 
   defp date_to_datetime(%Date{} = day, time, timezone) do
+    # Just in case
+    timezone = timezone || "Etc/UTC"
     {:ok, datetime} = NaiveDateTime.new(day, time)
     {:ok, datetime} = DateTime.from_naive(datetime, timezone)
     datetime
