@@ -82,6 +82,7 @@ export interface IConfig {
   features: {
     eventCreation: boolean;
     groups: boolean;
+    koenaConnect: boolean;
   };
   federating: boolean;
   version: string;

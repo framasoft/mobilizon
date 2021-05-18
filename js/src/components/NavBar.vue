@@ -51,6 +51,7 @@
         >
       </b-navbar-item>
       <b-navbar-item
+        v-if="config && config.features.koenaConnect"
         class="koena"
         tag="a"
         href="https://mediation.koena.net/framasoft/mobilizon/"

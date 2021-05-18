@@ -54,6 +54,7 @@ export const configMock = {
         __typename: "Features",
         eventCreation: true,
         groups: true,
+        koenaConnect: false,
       },
       geocoding: {
         __typename: "Geocoding",
