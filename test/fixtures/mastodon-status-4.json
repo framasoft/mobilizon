@@ -16,40 +16,40 @@
       }
     }
   ],
-  "id": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
+  "id": "https://framapiaf.org/users/peertube/statuses/105945857653893100",
   "type": "Note",
   "summary": null,
   "inReplyTo": null,
-  "published": "2020-07-27T07:19:11Z",
-  "url": "https://framapiaf.org/@peertube/104584600044284729",
+  "published": "2021-03-24T17:04:54Z",
+  "url": "https://framapiaf.org/@peertube/105945857653893100",
   "attributedTo": "https://framapiaf.org/users/peertube",
   "to": ["https://www.w3.org/ns/activitystreams#Public"],
   "cc": ["https://framapiaf.org/users/peertube/followers"],
   "sensitive": false,
-  "atomUri": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
+  "atomUri": "https://framapiaf.org/users/peertube/statuses/105945857653893100",
   "inReplyToAtomUri": null,
-  "conversation": "tag:framapiaf.org,2020-07-27:objectId=39135637:objectType=Conversation",
-  "content": "<p>PeerTube 2.3 is out! Discover on <a href=\"https://joinpeertube.org/fr_FR/news#release-2-3-0\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/fr_FR/news#re</span><span class=\"invisible\">lease-2-3-0</span></a> the list of new features! </p><p>Have you seen the broadcast message system ? 🤩</p>",
+  "conversation": "tag:framapiaf.org,2021-03-24:objectId=47491096:objectType=Conversation",
+  "content": "<p>PeerTube v3.1 is out! <br />Better transcoding features, more pleasant interfaces, possibility to easily subscribe to a remote account and... so many great features!</p><p>➡️ <a href=\"https://joinpeertube.org/en_US/news#release-3.1\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/en_US/news#re</span><span class=\"invisible\">lease-3.1</span></a></p>",
   "contentMap": {
-    "en": "<p>PeerTube 2.3 is out! Discover on <a href=\"https://joinpeertube.org/fr_FR/news#release-2-3-0\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/fr_FR/news#re</span><span class=\"invisible\">lease-2-3-0</span></a> the list of new features! </p><p>Have you seen the broadcast message system ? 🤩</p>"
+    "en": "<p>PeerTube v3.1 is out! <br />Better transcoding features, more pleasant interfaces, possibility to easily subscribe to a remote account and... so many great features!</p><p>➡️ <a href=\"https://joinpeertube.org/en_US/news#release-3.1\" rel=\"nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"ellipsis\">joinpeertube.org/en_US/news#re</span><span class=\"invisible\">lease-3.1</span></a></p>"
   },
   "attachment": [
     {
       "type": "Document",
       "mediaType": "image/png",
-      "url": "https://framapiaf.s3.framasoft.org/framapiaf/media_attachments/files/104/584/599/807/860/387/original/88c94143f78fdfa3.png",
+      "url": "https://framapiaf.s3.framasoft.org/framapiaf/media_attachments/files/105/945/857/331/391/923/original/7932c6912fe1e5ac.png",
       "name": null,
-      "blurhash": "U5SY?Z00nOxu7ORP.8-pU^kVS#NGXyxbMxM{"
+      "blurhash": "UdMHJg00D%9F-pozjFoL?aWBe.of%Mofaeof"
     }
   ],
   "tag": [],
   "replies": {
-    "id": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies",
+    "id": "https://framapiaf.org/users/peertube/statuses/105945857653893100/replies",
     "type": "Collection",
     "first": {
       "type": "CollectionPage",
-      "next": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies?only_other_accounts=true&page=true",
-      "partOf": "https://framapiaf.org/users/peertube/statuses/104584600044284729/replies",
+      "next": "https://framapiaf.org/users/peertube/statuses/105945857653893100/replies?only_other_accounts=true&page=true",
+      "partOf": "https://framapiaf.org/users/peertube/statuses/105945857653893100/replies",
       "items": []
     }
   }

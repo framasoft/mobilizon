@@ -1,23 +1,24 @@
 {
   "@context": [
     "https://www.w3.org/ns/activitystreams",
-    "https://zoltasila.pl/schemas/litepub-0.1.jsonld",
+    "https://pirateradio.social/schemas/litepub-0.1.jsonld",
     {
       "@language": "und"
     }
   ],
-  "actor": "https://zoltasila.pl/users/mkljczk",
+  "actor": "https://pirateradio.social/users/captain",
   "attachment": [],
-  "attributedTo": "https://zoltasila.pl/users/mkljczk",
-  "cc": ["https://zoltasila.pl/users/mkljczk/followers"],
-  "content": "<p><span class=\"h-card\"><a class=\"u-url mention\" data-user=\"9xUDK5nC4I2pNtyIsq\" href=\"https://framapiaf.org/@peertube\" rel=\"ugc\">@<span>peertube</span></a></span> guess you wanted to put the <a href=\"https://joinpeertube.org/en_US/news#release-2-3-0\">en_US lang link</a></p>",
-  "context": "tag:framapiaf.org,2020-07-27:objectId=39135637:objectType=Conversation",
-  "conversation": "tag:framapiaf.org,2020-07-27:objectId=39135637:objectType=Conversation",
-  "id": "https://zoltasila.pl/objects/1c295713-8e3c-411e-9e62-57a7b9c9e514",
-  "inReplyTo": "https://framapiaf.org/users/peertube/statuses/104584600044284729",
-  "published": "2020-07-27T09:37:57.202806Z",
+  "attributedTo": "https://pirateradio.social/users/captain",
+  "cc": ["https://pirateradio.social/users/captain/followers"],
+  "content": "<p><span class=\"h-card\"><a class=\"u-url mention\" data-user=\"A56TgeKXmVurb7Znoe\" href=\"https://framapiaf.org/@peertube\" rel=\"ugc\">@<span>peertube</span></a></span> <a href=\"https://tv.pirateradio.social/about/instance\">Pirate Radio TV</a> is updated. You can now remote follow channels on PeerTube, awesome!</p>",
+  "context": "tag:framapiaf.org,2021-03-24:objectId=47491096:objectType=Conversation",
+  "conversation": "tag:framapiaf.org,2021-03-24:objectId=47491096:objectType=Conversation",
+  "id": "https://pirateradio.social/objects/eeaa8ced-27d6-49bb-a53b-fd2646b63f99",
+  "inReplyTo": "https://framapiaf.org/users/peertube/statuses/105945857653893100",
+  "published": "2021-03-24T19:01:37.759478Z",
+  "repliesCount": 1,
   "sensitive": false,
-  "source": "@peertube@framapiaf.org guess you wanted to put the [en_US lang link](https://joinpeertube.org/en_US/news#release-2-3-0)",
+  "source": "@peertube@framapiaf.org [Pirate Radio TV](https://tv.pirateradio.social/about/instance) is updated. You can now remote follow channels on PeerTube, awesome!",
   "summary": "",
   "tag": [
     {
