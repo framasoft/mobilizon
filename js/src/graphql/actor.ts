@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const FETCH_PERSON = gql`
-  query($username: String!) {
+  query ($username: String!) {
     fetchPerson(preferredUsername: $username) {
       id
       url
@@ -37,7 +37,7 @@ export const FETCH_PERSON = gql`
 `;
 
 export const GET_PERSON = gql`
-  query(
+  query (
     $actorId: ID!
     $organizedEventsPage: Int
     $organizedEventsLimit: Int
@@ -433,7 +433,7 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
 `;
 
 export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
-  subscription($actorId: ID!, $group: String!) {
+  subscription ($actorId: ID!, $group: String!) {
     groupMembershipChanged(personId: $actorId, group: $group) {
       id
       memberships {
@@ -522,7 +522,7 @@ export const DELETE_PERSON = gql`
  * Prefer CREATE_PERSON when creating another identity
  */
 export const REGISTER_PERSON = gql`
-  mutation(
+  mutation (
     $preferredUsername: String!
     $name: String!
     $summary: String!

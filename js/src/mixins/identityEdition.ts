@@ -14,9 +14,8 @@ export default class IdentityEditionMixin extends Mixins(Vue) {
     );
 
     if (this.identity.preferredUsername === oldUsername) {
-      this.identity.preferredUsername = IdentityEditionMixin.convertToUsername(
-        newDisplayName
-      );
+      this.identity.preferredUsername =
+        IdentityEditionMixin.convertToUsername(newDisplayName);
     }
 
     this.oldDisplayName = newDisplayName;

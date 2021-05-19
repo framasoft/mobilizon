@@ -55,7 +55,7 @@ export const REJECT_INVITATION = gql`
 `;
 
 export const GROUP_MEMBERS = gql`
-  query($name: String!, $roles: String, $page: Int, $limit: Int) {
+  query ($name: String!, $roles: String, $page: Int, $limit: Int) {
     group(preferredUsername: $name) {
       id
       url

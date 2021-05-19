@@ -251,8 +251,10 @@ export default class Notifications extends Vue {
     if (this.loggedUser && this.loggedUser.settings) {
       this.notificationOnDay = this.loggedUser.settings.notificationOnDay;
       this.notificationEachWeek = this.loggedUser.settings.notificationEachWeek;
-      this.notificationBeforeEvent = this.loggedUser.settings.notificationBeforeEvent;
-      this.notificationPendingParticipation = this.loggedUser.settings.notificationPendingParticipation;
+      this.notificationBeforeEvent =
+        this.loggedUser.settings.notificationBeforeEvent;
+      this.notificationPendingParticipation =
+        this.loggedUser.settings.notificationPendingParticipation;
     }
   }
 

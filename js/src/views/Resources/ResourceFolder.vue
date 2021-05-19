@@ -562,9 +562,10 @@ export default class Resources extends Mixins(ResourceMixin) {
           const updatedResource: IResource = data.updateResource;
 
           // eslint-disable-next-line vue/max-len
-          oldParentCachedResource.children.elements = oldParentCachedResource.children.elements.filter(
-            (cachedResource) => cachedResource.id !== updatedResource.id
-          );
+          oldParentCachedResource.children.elements =
+            oldParentCachedResource.children.elements.filter(
+              (cachedResource) => cachedResource.id !== updatedResource.id
+            );
 
           store.writeQuery({
             query: GET_RESOURCE,

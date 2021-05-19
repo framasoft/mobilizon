@@ -61,8 +61,8 @@ defmodule Mobilizon.Federation.ActivityPubTest do
     end
 
     test "object reply by url" do
-      url = "https://zoltasila.pl/objects/1c295713-8e3c-411e-9e62-57a7b9c9e514"
-      reply_to_url = "https://framapiaf.org/users/peertube/statuses/104584600044284729"
+      url = "https://pirateradio.social/notice/A5XnLBsFNQDKtthzM0"
+      reply_to_url = "https://framapiaf.org/users/peertube/statuses/105945857653893100"
 
       data =
         File.read!("test/fixtures/mastodon-status-3.json")

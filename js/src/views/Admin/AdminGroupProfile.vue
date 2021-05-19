@@ -344,14 +344,16 @@ export default class AdminGroupProfile extends Vue {
   }
 
   confirmSuspendProfile(): void {
-    const message = (this.group.domain
-      ? this.$t(
-          "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
-          { instance: this.group.domain }
-        )
-      : this.$t(
-          "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
-        )) as string;
+    const message = (
+      this.group.domain
+        ? this.$t(
+            "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
+            { instance: this.group.domain }
+          )
+        : this.$t(
+            "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
+          )
+    ) as string;
 
     this.$buefy.dialog.confirm({
       title: this.$t("Suspend group") as string,

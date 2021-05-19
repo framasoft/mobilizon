@@ -268,6 +268,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:event_creation, :boolean,
       description: "Whether event creation is allowed on this instance"
     )
+
+    field(:koena_connect, :boolean, description: "Activate link to Koena Connect")
   end
 
   @desc """

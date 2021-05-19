@@ -74,8 +74,7 @@ export const eventCommentThreadsMock = {
           __typename: "Comment",
           id: "2",
           uuid: "e37910ea-fd5a-4756-9679-00971f3f4107",
-          url:
-            "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-00971f3f4107",
+          url: "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-00971f3f4107",
           text: "my comment text",
           local: true,
           visibility: "PUBLIC",
@@ -100,8 +99,7 @@ export const eventCommentThreadsMock = {
           __typename: "Comment",
           id: "29",
           uuid: "e37910ea-fd5a-4756-9679-01171f3f4107",
-          url:
-            "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-01171f3f4107",
+          url: "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-01171f3f4107",
           text: "a second comment",
           local: true,
           visibility: "PUBLIC",
@@ -139,8 +137,7 @@ export const newCommentForEventResponse: DataMock = {
       __typename: "Comment",
       id: "79",
       uuid: "e37910ea-fd5a-4756-9679-01171f3f4444",
-      url:
-        "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-01171f3f4444",
+      url: "https://some-instance.tld/comments/e37910ea-fd5a-4756-9679-01171f3f4444",
       text: newCommentForEventMock.text,
       local: true,
       visibility: "PUBLIC",

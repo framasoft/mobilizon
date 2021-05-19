@@ -177,7 +177,7 @@ export const FETCH_EVENT = gql`
 `;
 
 export const FETCH_EVENT_BASIC = gql`
-  query($uuid: UUID!) {
+  query ($uuid: UUID!) {
     event(uuid: $uuid) {
       id
       uuid
@@ -551,7 +551,7 @@ export const PARTICIPANTS = gql`
 `;
 
 export const EVENT_PERSON_PARTICIPATION = gql`
-  query($actorId: ID!, $eventId: ID!) {
+  query ($actorId: ID!, $eventId: ID!) {
     person(id: $actorId) {
       id
       participations(eventId: $eventId) {
@@ -572,7 +572,7 @@ export const EVENT_PERSON_PARTICIPATION = gql`
 `;
 
 export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
-  subscription($actorId: ID!, $eventId: ID!) {
+  subscription ($actorId: ID!, $eventId: ID!) {
     eventPersonParticipationChanged(personId: $actorId) {
       id
       participations(eventId: $eventId) {
@@ -593,7 +593,7 @@ export const EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED = gql`
 `;
 
 export const FETCH_GROUP_EVENTS = gql`
-  query(
+  query (
     $name: String!
     $afterDateTime: DateTime
     $beforeDateTime: DateTime

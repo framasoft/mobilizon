@@ -545,6 +545,7 @@ import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
+import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
 
 @Component({
   apollo: {
@@ -604,11 +605,24 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   async joinGroup(): Promise<void> {
+    const [group, currentActorId] = [
+      usernameWithDomain(this.group),
+      this.currentActor.id,
+    ];
     this.$apollo.mutate({
       mutation: JOIN_GROUP,
       variables: {
         groupId: this.group.id,
       },
+      refetchQueries: [
+        {
+          query: PERSON_MEMBERSHIP_GROUP,
+          variables: {
+            id: currentActorId,
+            group,
+          },
+        },
+      ],
     });
   }
 
