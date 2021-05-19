@@ -1,7 +1,7 @@
 # First build the application assets
 FROM node:16-alpine as assets
 
-RUN apk add --no-cache python build-base libwebp-tools bash imagemagick ncurses
+RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 
 COPY js .
 RUN yarn install \
