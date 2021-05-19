@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.4 - 19-05-2021
+
+### Fixes
+
+- Fixes rich media parsers, so that some resource links work again
+- Fixes some depreciated calls that were removed in OTP24
+- Fixes groups not being refreshed after joining a group
+- Fixes the notice that is shown when joining a group that the content may not be available right away - because the group is remote - being shown everytime, even when the group is local
+- Fixes OGP image not being defined for posts
+
+### Translations
+
+- French
+- Galician
+- Italian
+
 ## 1.1.3 - 03-05-2021
 
 ### Changed

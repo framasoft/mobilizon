@@ -1,5 +1,5 @@
 # First build the application assets
-FROM node:14-alpine as assets
+FROM node:16-alpine as assets
 
 RUN apk add --no-cache python build-base libwebp-tools bash imagemagick ncurses
 

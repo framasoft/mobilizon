@@ -120,7 +120,7 @@ defmodule Mobilizon.Service.MetadataTest do
                  Metadata.Utils.process_description(post.body)
                }\" property=\"og:description\"><meta content=\"article\" property=\"og:type\"><meta content=\"summary\" property=\"twitter:card\"><link href=\"#{
                  post.url
-               }\" rel=\"canonical\"><meta content=\"summary_large_image\" property=\"twitter:card\"><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"author\":{\"@type\":\"Organization\",\"name\":\"#{
+               }\" rel=\"canonical\"><meta content=\"#{post.picture.file.url}\" property=\"og:image\"><meta content=\"summary_large_image\" property=\"twitter:card\"><script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Article\",\"author\":{\"@type\":\"Organization\",\"name\":\"#{
                  post.attributed_to.preferred_username
                }\"},\"dateModified\":\"#{DateTime.to_iso8601(post.updated_at)}\",\"datePublished\":\"#{
                  DateTime.to_iso8601(post.publish_at)
