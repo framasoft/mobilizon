@@ -194,6 +194,10 @@ export const FETCH_GROUP = gql`
     $beforeDateTime: DateTime
     $organisedEventsPage: Int
     $organisedEventslimit: Int
+    $postsPage: Int
+    $postsLimit: Int
+    $membersPage: Int
+    $membersLimit: Int
   ) {
     group(preferredUsername: $name) {
       ...GroupFullFields
