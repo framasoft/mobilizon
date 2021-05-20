@@ -119,7 +119,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       }
       total
     }
-    discussions {
+    discussions(page: $discussionsPage, limit: $discussionsLimit) {
       total
       elements {
         ...DiscussionBasicFields
@@ -198,6 +198,8 @@ export const FETCH_GROUP = gql`
     $postsLimit: Int
     $membersPage: Int
     $membersLimit: Int
+    $discussionsPage: Int
+    $discussionsLimit: Int
   ) {
     group(preferredUsername: $name) {
       ...GroupFullFields
@@ -220,6 +222,8 @@ export const GET_GROUP = gql`
     $postsLimit: Int
     $membersPage: Int
     $membersLimit: Int
+    $discussionsPage: Int
+    $discussionsLimit: Int
   ) {
     getGroup(id: $id) {
       mediaSize

@@ -49,6 +49,17 @@
           v-for="discussion in group.discussions.elements"
           :key="discussion.id"
         />
+        <b-pagination
+          class="discussion-pagination"
+          :total="group.discussions.total"
+          v-model="page"
+          :per-page="DISCUSSIONS_PER_PAGE"
+          :aria-next-label="$t('Next page')"
+          :aria-previous-label="$t('Previous page')"
+          :aria-page-label="$t('Page')"
+          :aria-current-label="$t('Current page')"
+        >
+        </b-pagination>
       </div>
       <empty-content v-else icon="chat">
         {{ $t("There's no discussions yet") }}
@@ -82,6 +93,10 @@ import {
 } from "@/graphql/actor";
 import { IMember } from "@/types/actor/member.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
+
+const DISCUSSIONS_PER_PAGE = 10;
 
 @Component({
   components: { DiscussionListItem, EmptyContent },
@@ -92,6 +107,8 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
       variables() {
         return {
           name: this.preferredUsername,
+          discussionsPage: this.page,
+          discussionsLimit: DISCUSSIONS_PER_PAGE,
         };
       },
       skip() {
@@ -154,6 +171,18 @@ export default class DiscussionsList extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
+  DISCUSSIONS_PER_PAGE = DISCUSSIONS_PER_PAGE;
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter(RouteName.DISCUSSION_LIST, {
+      page: page.toString(),
+    });
+  }
+
   get groupMemberships(): (string | undefined)[] {
     if (!this.person || !this.person.id) return [];
     return this.person.memberships.elements
@@ -174,10 +203,30 @@ export default class DiscussionsList extends Vue {
       this.groupMemberships.includes(this.group.id)
     );
   }
+
+  protected async pushRouter(
+    routeName: string,
+    args: Record<string, string>
+  ): Promise<void> {
+    try {
+      await this.$router.push({
+        name: routeName,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
+  }
 }
 </script>
 <style lang="scss">
 div.container.section {
   background: white;
+
+  .discussion-pagination {
+    margin-top: 1rem;
+  }
 }
 </style>

@@ -86,6 +86,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     end
 
     field :discussions, :paginated_discussion_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated discussion list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of discussions per page")
       resolve(&Discussion.find_discussions_for_actor/3)
       description("A list of the discussions for this group")
     end
