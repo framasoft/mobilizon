@@ -170,6 +170,9 @@ config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 config :phoenix, :json_library, Jason
 config :phoenix, :filter_parameters, ["password", "token"]
 
+config :absinthe, schema: Mobilizon.GraphQL.Schema
+config :absinthe, Absinthe.Logger, filter_variables: ["token", "password", "secret"]
+
 config :ex_cldr,
   default_locale: "en",
   default_backend: Mobilizon.Cldr
