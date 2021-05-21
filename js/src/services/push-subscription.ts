@@ -18,7 +18,8 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export async function subscribeUserToPush(): Promise<PushSubscription | null> {
-  const client = apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+  const client =
+    apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
 
   const registration = await navigator.serviceWorker.ready;
   const { data } = await client.mutate<{ config: IConfig }>({
