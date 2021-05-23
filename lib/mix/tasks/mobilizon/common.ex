@@ -7,9 +7,15 @@ defmodule Mix.Tasks.Mobilizon.Common do
   @moduledoc """
   Common functions to be reused in mix tasks
   """
+  require Logger
 
   def start_mobilizon do
     if mix_task?(), do: Mix.Task.run("app.config")
+
+    unless System.get_env("DEBUG") do
+      Logger.configure(level: :error)
+    end
+
     Application.put_env(:phoenix, :serve_endpoints, false, persistent: true)
 
     {:ok, _} = Application.ensure_all_started(:mobilizon)
