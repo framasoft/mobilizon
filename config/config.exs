@@ -44,9 +44,6 @@ config :mobilizon, :events, creation: true
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,
-  http: [
-    transport_options: [socket_opts: [:inet6]]
-  ],
   url: [
     host: "mobilizon.local",
     scheme: "https"
