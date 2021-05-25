@@ -1047,7 +1047,7 @@
   "{moderator} suspended group {profile}": "{moderator} a suspendu le groupe {profile}",
   "{moderator} suspended profile {profile}": "{moderator} a suspendu le profil {profile}",
   "{nb} km": "{nb} km",
-  "{number} members": "{number} membres",
+  "{number} members": "Aucun⋅e membre|Un⋅e membre|{number} membres",
   "{number} organized events": "Aucun événement organisé|Un événement organisé|{number} événements organisés",
   "{number} participations": "Aucune participation|Une participation|{number} participations",
   "{number} posts": "Aucun billet|Un billet|{number} billets",

@@ -21,7 +21,7 @@
               name: RouteName.PROFILES,
               params: { id: group.id },
             }"
-            >{{ group.name || group.preferredUsername }}</router-link
+            >{{ group.name || usernameWithDomain(group) }}</router-link
           >
         </li>
       </ul>
@@ -293,9 +293,9 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import VueRouter from "vue-router";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
-const EVENTS_PER_PAGE = 3;
-const POSTS_PER_PAGE = 1;
-const MEMBERS_PER_PAGE = 3;
+const EVENTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 10;
+const MEMBERS_PER_PAGE = 10;
 
 @Component({
   apollo: {
