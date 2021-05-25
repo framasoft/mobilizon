@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.1.4 - 19-05-2021
+## 1.1.4 - 2021-05-19
 
 ### Fixes
 
@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Galician
 - Italian
 
-## 1.1.3 - 03-05-2021
+## 1.1.3 - 2021-05-03
 
 ### Changed
 
@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Russian
 - Spanish
 
-## 1.1.2 - 28-04-2021
+## 1.1.2 - 2021-04-28
 
 ### Changed
 
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Slovenian
 - Russian
 
-## 1.1.1 - 22-04-2021
+## 1.1.1 - 2021-04-22
 
 ### Changed
 
@@ -96,7 +96,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed editing an user's email in CLI
 - Fixed suspended actors being refreshed
 
-
 ### Translations
 
 - Gaelic
@@ -107,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Slovenian
 - Spanish
 
-## 1.1.0 - 31-03-2021
+## 1.1.0 - 2021-03-31
 
 This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. Please read [UPGRADE.md](./UPGRADE.md#upgrading-from-10-to-11) for details on how to migrate to Elixir binary releases or stay on source install.
 
@@ -203,7 +202,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Slovenian
 - Spanish
 
-## 1.1.0-rc.3 - 30-03-2021
+## 1.1.0-rc.3 - 2021-03-30
 
 ### Changed
 
@@ -214,7 +213,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed parsing the IP from the MOBILIZON_INSTANCE_LISTEN_IP env variable for Docker
 - Fixed release startup in Docker container
 
-## 1.1.0-rc.2 - 30-03-2021
+## 1.1.0-rc.2 - 2021-03-30
 
 ### Added
 
@@ -238,7 +237,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Hungarian
 - Russian
 - Spanish
-## 1.1.0-rc.1 - 29-03-2021
+## 1.1.0-rc.1 - 2021-03-29
 
 ### Added
 
@@ -282,17 +281,17 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Slovenian
 - Spanish
 
-## 1.1.0-beta.6 - 17-03-2021
+## 1.1.0-beta.6 - 2021-03-17
 
 ### Fixed
 - Fixed a typo in range/radius showing the wrong radius for close events on homepage
 
-## 1.1.0-beta.5 - 17-03-2021
+## 1.1.0-beta.5 - 2021-03-17
 
 ### Fixed
 - Fixed a typo in range/radius preventing close events from showing up
 
-## 1.1.0-beta.4 - 17-03-2021
+## 1.1.0-beta.4 - 2021-03-17
 
 ### Fixed
 
@@ -300,13 +299,13 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed location field not showing in preferences if setting not already set
 - Fixed lasts events published order on the homepage
 
-## 1.1.0-beta.3 - 16-03-2021
+## 1.1.0-beta.3 - 2021-03-16
 
 ### Fixed
 - Handle ActivityPub Fetcher returning text that's not JSON
 - Fix accessing a group profile when not a member
 
-## 1.1.0-beta.2 - 16-03-2021
+## 1.1.0-beta.2 - 2021-03-16
 
 ### Fixed
 - Fixed geospatial configuration only being evaluated at compile-time, not at runtime
@@ -314,7 +313,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 ### Translations
 - Slovenian
 
-## 1.1.0-beta.1 - 10-03-2021
+## 1.1.0-beta.1 - 2021-03-10
 
 This version introduces a new way to install and host Mobilizon : Elixir releases. This is the new default way of installing Mobilizon. Please read [UPGRADE.md](./UPGRADE.md#upgrading-from-10-to-11) for details on how to migrate to Elixir binary releases or stay on source install.
 
@@ -370,7 +369,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Spanish
 - Russian
 
-## 1.0.7 - 27-02-2021
+## 1.0.7 - 2021-02-27
 
 ### Fixed
 
@@ -380,7 +379,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed search form display
 - Fixed wrong year in CHANGELOG.md
 
-## 1.0.6 - 04-02-2021
+## 1.0.6 - 2021-02-04
 
 ### Added
 
@@ -392,13 +391,13 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed sending events & posts to group followers
 - Fixed redirection after deleting an event
 
-## 1.0.5 - 27-01-2021
+## 1.0.5 - 2021-01-27
 
 ### Fixed
 
 - Fixed duplicate entries in search with empty search query
 
-## 1.0.4 - 26-01-2021
+## 1.0.4 - 2021-02-26
 
 ### Added
 
@@ -445,7 +444,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Spanish
 - Swedish
 
-## 1.0.3 - 18-12-2020
+## 1.0.3 - 2020-12-18
 
 **This release adds new migrations, be sure to run them before restarting Mobilizon**
 
