@@ -120,14 +120,19 @@ config :logger, Sentry.LoggerBackend,
   level: :warn,
   capture_log_messages: true
 
-config :mobilizon, Mobilizon.Web.Auth.Guardian, issuer: "mobilizon"
+config :mobilizon, Mobilizon.Web.Auth.Guardian,
+  issuer: "mobilizon",
+  token_ttl: %{
+    "access" => {15, :minutes},
+    "refresh" => {60, :days}
+  }
 
 config :guardian, Guardian.DB,
   repo: Mobilizon.Storage.Repo,
   # default
   schema_name: "guardian_tokens",
   # store all token types if not set
-  # token_types: ["refresh_token"],
+  token_types: ["refresh"],
   # default: 60 minutes
   sweep_interval: 60
 

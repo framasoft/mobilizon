@@ -105,6 +105,28 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to have an existing token to get a refresh token")}
   end
 
+  def logout(_parent, %{refresh_token: refresh_token}, %{context: %{current_user: %User{}}}) do
+    with {:ok, _claims} <- Auth.Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}),
+         {:ok, _claims} <- Auth.Guardian.revoke(refresh_token) do
+      {:ok, refresh_token}
+    else
+      {:error, :token_not_found} ->
+        {:error, :token_not_found}
+
+      {:error, error} ->
+        Logger.debug("Cannot remove user refresh token: #{inspect(error)}")
+        {:error, :unable_to_logout}
+    end
+  end
+
+  def logout(_parent, %{refresh_token: _refresh_token}, _context) do
+    {:error, :unauthenticated}
+  end
+
+  def logout(_parent, _params, _context) do
+    {:error, :invalid_argument}
+  end
+
   @doc """
   Register an user:
     - check registrations are enabled

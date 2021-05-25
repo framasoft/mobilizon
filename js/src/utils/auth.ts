@@ -14,6 +14,7 @@ import { IPerson } from "@/types/actor";
 import { IDENTITIES, UPDATE_CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { ICurrentUserRole } from "@/types/enums";
 import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
+import { LOGOUT } from "@/graphql/auth";
 
 export function saveTokenData(obj: IToken): void {
   localStorage.setItem(AUTH_ACCESS_TOKEN, obj.accessToken);
@@ -96,6 +97,13 @@ export async function initializeCurrentActor(
 export async function logout(
   apollo: ApolloClient<NormalizedCacheObject>
 ): Promise<void> {
+  await apollo.mutate({
+    mutation: LOGOUT,
+    variables: {
+      refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
+    },
+  });
+
   await apollo.mutate({
     mutation: UPDATE_CURRENT_USER_CLIENT,
     variables: {

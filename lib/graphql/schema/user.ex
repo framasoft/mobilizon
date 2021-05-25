@@ -310,6 +310,12 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       resolve(&User.refresh_token/3)
     end
 
+    @desc "Logout an user, deleting a refresh token"
+    field :logout, :string do
+      arg(:refresh_token, non_null(:string))
+      resolve(&User.logout/3)
+    end
+
     @desc "Change default actor for user"
     field :change_default_actor, :user do
       arg(:preferred_username, non_null(:string), description: "The actor preferred_username")
