@@ -152,7 +152,7 @@ export default class PictureUpload extends Vue {
         console.error(e);
       }
     }
-    return this.defaultImage ? this.defaultImage.url : null;
+    return this.defaultImage?.url;
   }
 
   onFileChanged(file: File | null): void {
