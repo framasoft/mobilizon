@@ -134,6 +134,11 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
   apollo: {
     config: CONFIG,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Register") as string,
+    };
+  },
 })
 export default class Register extends mixins(identityEditionMixin) {
   @Prop({ type: String, required: true }) email!: string;

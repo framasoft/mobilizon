@@ -274,6 +274,19 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     config: CONFIG,
     currentActor: CURRENT_ACTOR_CLIENT,
   },
+  metaInfo() {
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title: this.isRoot
+        ? (this.$t("Resources") as string)
+        : (this.$t("{folder} - Resources", {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            folder: this.lastFragment,
+          }) as string),
+    };
+  },
 })
 export default class Resources extends Mixins(ResourceMixin) {
   @Prop({ required: true }) path!: string;
@@ -343,6 +356,14 @@ export default class Resources extends Mixins(ResourceMixin) {
       return ResourceMixin.resourcePathArray(this.resource);
     }
     return [];
+  }
+
+  get isRoot(): boolean {
+    return this.actualPath === "/";
+  }
+
+  get lastFragment(): string | undefined {
+    return this.filteredPath.slice(-1)[0];
   }
 
   async createResource(): Promise<void> {

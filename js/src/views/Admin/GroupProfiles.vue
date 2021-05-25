@@ -122,6 +122,11 @@ const PROFILES_PER_PAGE = 10;
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Groups") as string,
+    };
+  },
   components: {
     EmptyContent,
   },

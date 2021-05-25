@@ -83,6 +83,11 @@ import { GraphQLError } from "graphql";
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Interact with a remote content") as string,
+    };
+  },
 })
 export default class Interact extends Vue {
   interact!: IEvent | IGroup;

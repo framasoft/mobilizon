@@ -263,6 +263,20 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     },
     config: CONFIG,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { isUpdate, identityName } = this;
+    let title = this.$t("Create a new profile") as string;
+    if (isUpdate) {
+      title = this.$t("Edit profile {profile}", {
+        profile: identityName,
+      }) as string;
+    }
+    return {
+      title,
+    };
+  },
 })
 export default class EditIdentity extends mixins(identityEditionMixin) {
   @Prop({ type: Boolean }) isUpdate!: boolean;

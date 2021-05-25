@@ -216,8 +216,6 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.discussion.title,
-      // all titles will be injected into this template
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

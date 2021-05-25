@@ -150,11 +150,7 @@ const DISCUSSIONS_PER_PAGE = 10;
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       title: this.$t("Discussions") as string,
-      // all titles will be injected into this template
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

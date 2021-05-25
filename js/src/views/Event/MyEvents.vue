@@ -187,7 +187,6 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
   metaInfo() {
     return {
       title: this.$t("My events") as string,
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

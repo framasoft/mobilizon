@@ -526,7 +526,6 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
       title: (this.isUpdate
         ? this.$t("Event edition")
         : this.$t("Event creation")) as string,
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

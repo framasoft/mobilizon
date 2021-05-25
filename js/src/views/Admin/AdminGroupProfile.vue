@@ -321,6 +321,14 @@ const MEMBERS_PER_PAGE = 3;
     ActorCard,
     EmptyContent,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { group } = this;
+    return {
+      title: group ? group.name || usernameWithDomain(group) : "",
+    };
+  },
 })
 export default class AdminGroupProfile extends Vue {
   @Prop({ required: true }) id!: string;

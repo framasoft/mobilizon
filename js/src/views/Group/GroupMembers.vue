@@ -265,6 +265,11 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
   components: {
     EmptyContent,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Group Members") as string,
+    };
+  },
 })
 export default class GroupMembers extends mixins(GroupMixin) {
   loading = true;

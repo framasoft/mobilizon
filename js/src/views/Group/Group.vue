@@ -571,7 +571,6 @@ import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.groupTitle,
-      titleTemplate: "%s | Mobilizon",
       meta: [
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

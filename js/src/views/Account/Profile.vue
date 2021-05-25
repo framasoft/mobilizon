@@ -124,6 +124,11 @@ import { CREATE_FEED_TOKEN_ACTOR } from "../../graphql/feed_tokens";
   components: {
     EventCard,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Profile") as string,
+    };
+  },
 })
 export default class Profile extends Vue {
   @Prop({ type: String, required: true }) name!: string;

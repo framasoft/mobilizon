@@ -196,6 +196,11 @@ import { ErrorResponse } from "@apollo/client/link/error";
   apollo: {
     config: CONFIG,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Group settings") as string,
+    };
+  },
 })
 export default class GroupSettings extends mixins(GroupMixin) {
   loading = true;

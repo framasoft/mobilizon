@@ -126,6 +126,11 @@ const PROFILES_PER_PAGE = 10;
   components: {
     EmptyContent,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Profiles") as string,
+    };
+  },
 })
 export default class Profiles extends Vue {
   PROFILES_PER_PAGE = PROFILES_PER_PAGE;

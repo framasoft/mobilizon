@@ -108,6 +108,15 @@ import RouteName from "../router/name";
       query: CONFIG,
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("About {instance}", {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        instance: this?.config?.name,
+      }) as string,
+    };
+  },
 })
 export default class About extends Vue {
   config!: IConfig;

@@ -123,6 +123,11 @@ import { Address, IAddress } from "@/types/address.model";
   components: {
     AddressAutoComplete,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Preferences") as string,
+    };
+  },
 })
 export default class Preferences extends Vue {
   config!: IConfig;

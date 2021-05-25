@@ -160,6 +160,11 @@ import { Paginate } from "@/types/paginate";
   components: {
     EmptyContent,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Group Followers") as string,
+    };
+  },
 })
 export default class GroupFollowers extends mixins(GroupMixin) {
   loading = true;

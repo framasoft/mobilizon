@@ -73,6 +73,11 @@ import { IConfig } from "../../types/config.model";
   apollo: {
     config: ABOUT,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Glossary") as string,
+    };
+  },
 })
 export default class Glossary extends Vue {
   config!: IConfig;

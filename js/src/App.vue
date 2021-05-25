@@ -63,6 +63,11 @@ import { ICurrentUser } from "./types/current-user.model";
       import(/* webpackChunkName: "editor" */ "./components/Error.vue"),
     "mobilizon-footer": Footer,
   },
+  metaInfo() {
+    return {
+      titleTemplate: "%s | Mobilizon",
+    };
+  },
 })
 export default class App extends Vue {
   config!: IConfig;

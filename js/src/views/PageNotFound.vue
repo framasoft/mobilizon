@@ -67,6 +67,11 @@ import RouteName from "../router/name";
   components: {
     BField,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Page not found") as string,
+    };
+  },
 })
 export default class PageNotFound extends Vue {
   searchText = "";

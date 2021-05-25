@@ -132,6 +132,11 @@ const USERS_PER_PAGE = 10;
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Users") as string,
+    };
+  },
 })
 export default class Users extends Vue {
   USERS_PER_PAGE = USERS_PER_PAGE;

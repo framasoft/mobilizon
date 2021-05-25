@@ -235,6 +235,11 @@ import {
         ),
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Notifications") as string,
+    };
+  },
 })
 export default class Notifications extends Vue {
   loggedUser!: IUser;

@@ -29,6 +29,11 @@ import { InstancePrivacyType } from "@/types/enums";
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Privacy Policy") as string,
+    };
+  },
 })
 export default class Privacy extends Vue {
   config!: IConfig;

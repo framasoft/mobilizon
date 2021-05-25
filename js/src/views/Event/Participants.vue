@@ -261,6 +261,11 @@ const MESSAGE_ELLIPSIS_LENGTH = 130;
     ellipsize: (text?: string) =>
       text && text.substr(0, MESSAGE_ELLIPSIS_LENGTH).concat("…"),
   },
+  metaInfo() {
+    return {
+      title: this.$t("Participants") as string,
+    };
+  },
 })
 export default class Participants extends Vue {
   @Prop({ required: true }) eventId!: string;

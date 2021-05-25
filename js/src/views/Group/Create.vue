@@ -108,6 +108,11 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     },
     config: CONFIG,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Create a new group") as string,
+    };
+  },
 })
 export default class CreateGroup extends mixins(IdentityEditionMixin) {
   currentActor!: IPerson;

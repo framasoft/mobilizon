@@ -744,7 +744,6 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.eventTitle,
-      titleTemplate: "%s | Mobilizon",
       meta: [
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
