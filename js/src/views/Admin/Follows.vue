@@ -87,11 +87,6 @@ import RouteName from "../../router/name";
       },
     },
   },
-  metaInfo() {
-    return {
-      title: this.$t("Follows") as string,
-    };
-  },
 })
 export default class Follows extends Vue {
   RouteName = RouteName;
