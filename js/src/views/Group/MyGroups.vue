@@ -139,22 +139,28 @@ export default class MyGroups extends Vue {
   }
 
   async leaveGroup(group: IGroup): Promise<void> {
-    const { page, limit } = this;
-    await this.$apollo.mutate({
-      mutation: LEAVE_GROUP,
-      variables: {
-        groupId: group.id,
-      },
-      refetchQueries: [
-        {
-          query: LOGGED_USER_MEMBERSHIPS,
-          variables: {
-            page,
-            limit,
-          },
+    try {
+      const { page, limit } = this;
+      await this.$apollo.mutate({
+        mutation: LEAVE_GROUP,
+        variables: {
+          groupId: group.id,
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: LOGGED_USER_MEMBERSHIPS,
+            variables: {
+              page,
+              limit,
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
   }
 
   get invitations(): IMember[] {
