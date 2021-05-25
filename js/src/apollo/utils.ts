@@ -15,6 +15,7 @@ import introspectionQueryResultData from "../../fragmentTypes.json";
 import { IMember } from "@/types/actor/member.model";
 import { IComment } from "@/types/comment.model";
 import { IEvent } from "@/types/event.model";
+import { IActivity } from "@/types/activity.model";
 
 type possibleTypes = { name: string };
 type schemaType = {
@@ -44,6 +45,7 @@ export const typePolicies: TypePolicies = {
         "afterDatetime",
         "beforeDatetime",
       ]),
+      activity: paginatedLimitPagination<IActivity>(["type", "author"]),
     },
   },
   Person: {
