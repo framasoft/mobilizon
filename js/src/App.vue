@@ -50,6 +50,8 @@ import { initializeCurrentActor } from "./utils/auth";
 import { CONFIG } from "./graphql/config";
 import { IConfig } from "./types/config.model";
 import { ICurrentUser } from "./types/current-user.model";
+import jwt_decode, { JwtPayload } from "jwt-decode";
+import { refreshAccessToken } from "./apollo/utils";
 
 @Component({
   apollo: {
@@ -77,6 +79,8 @@ export default class App extends Vue {
   error: Error | null = null;
 
   online = true;
+
+  interval: number | undefined = undefined;
 
   async created(): Promise<void> {
     if (await this.initializeCurrentUser()) {
@@ -119,10 +123,28 @@ export default class App extends Vue {
       this.online = true;
       console.log("online");
     });
+
+    this.interval = setInterval(async () => {
+      const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
+      if (accessToken) {
+        const token = jwt_decode<JwtPayload>(accessToken);
+        if (
+          token?.exp !== undefined &&
+          new Date(token.exp * 1000 - 60000) < new Date()
+        ) {
+          refreshAccessToken(this.$apollo.getClient());
+        }
+      }
+    }, 60000);
   }
 
   showOfflineNetworkWarning(): void {
     this.$notifier.error(this.$t("You are offline") as string);
+  }
+
+  unmounted(): void {
+    clearInterval(this.interval);
+    this.interval = undefined;
   }
 }
 </script>
