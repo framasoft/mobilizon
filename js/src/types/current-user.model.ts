@@ -28,6 +28,12 @@ export interface IUserSettings {
   location?: IUserPreferredLocation;
 }
 
+export interface IActivitySetting {
+  key: string;
+  method: string;
+  enabled: boolean;
+}
+
 export interface IUser extends ICurrentUser {
   confirmedAt: Date;
   confirmationSendAt: Date;
@@ -37,6 +43,7 @@ export interface IUser extends ICurrentUser {
   mediaSize: number;
   drafts: IEvent[];
   settings: IUserSettings;
+  activitySettings: IActivitySetting[];
   locale: string;
   provider?: string;
   lastSignInAt: string;

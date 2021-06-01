@@ -43,8 +43,15 @@ defmodule Mobilizon.Web.Email.Activity do
   @spec chunk_activities(list()) :: map()
   defp chunk_activities(activities) do
     activities
-    |> Enum.reduce(%{}, fn %Activity{group: %Actor{id: group_id}} = activity, acc ->
-      Map.update(acc, group_id, [activity], fn activities -> activities ++ [activity] end)
+    |> Enum.reduce(%{}, fn activity, acc ->
+      case activity do
+        %Activity{group: %Actor{id: group_id}} ->
+          Map.update(acc, group_id, [activity], fn activities -> activities ++ [activity] end)
+
+        # Not a group activity
+        %Activity{} ->
+          Map.update(acc, nil, [activity], fn activities -> activities ++ [activity] end)
+      end
     end)
     |> Enum.map(fn {key, value} ->
       {key, Enum.sort(value, &(&1.inserted_at <= &2.inserted_at))}
@@ -57,20 +64,34 @@ defmodule Mobilizon.Web.Email.Activity do
   # so it will probably not catch much things
   @spec filter_duplicates(list()) :: list()
   defp filter_duplicates(activities) do
-    Enum.uniq_by(activities, fn %Activity{
-                                  author: %Actor{id: author_id},
-                                  group: %Actor{id: group_id},
-                                  type: type,
-                                  subject: subject,
-                                  subject_params: subject_params
-                                } ->
-      %{
-        author_id: author_id,
-        group_id: group_id,
-        type: type,
-        subject: subject,
-        subject_params: subject_params
-      }
+    Enum.uniq_by(activities, fn activity ->
+      case activity do
+        %Activity{
+          author: %Actor{id: author_id},
+          group: %Actor{id: group_id},
+          type: type,
+          subject: subject,
+          subject_params: subject_params
+        } ->
+          %{
+            author_id: author_id,
+            group_id: group_id,
+            type: type,
+            subject: subject,
+            subject_params: subject_params
+          }
+
+        %Activity{
+          type: type,
+          subject: subject,
+          subject_params: subject_params
+        } ->
+          %{
+            type: type,
+            subject: subject,
+            subject_params: subject_params
+          }
+      end
     end)
   end
 end

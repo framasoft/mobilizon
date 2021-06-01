@@ -16,18 +16,63 @@
     </nav>
     <section>
       <div class="setting-title">
-        <h2>{{ $t("Participation notifications") }}</h2>
+        <h2>{{ $t("Browser notifications") }}</h2>
       </div>
       <b-button v-if="subscribed" @click="unsubscribeToWebPush()">{{
-        $t("Unsubscribe to WebPush")
+        $t("Unsubscribe to browser notifications")
       }}</b-button>
       <b-button
         icon-left="rss"
         @click="subscribeToWebPush"
         v-else-if="canShowWebPush()"
-        >{{ $t("WebPush") }}</b-button
+        >{{ $t("Activate browser notification") }}</b-button
       >
-      <span v-else>{{ $t("You can't use webpush in this browser.") }}</span>
+      <span v-else>{{
+        $t("You can't use notifications in this browser.")
+      }}</span>
+    </section>
+    <section>
+      <div class="setting-title">
+        <h2>{{ $t("Notification settings") }}</h2>
+      </div>
+      <p>
+        {{
+          $t(
+            "Select the activities for which you wish to receive an email or a push notification."
+          )
+        }}
+      </p>
+      <table class="table">
+        <tbody>
+          <template v-for="notificationType in notificationTypes">
+            <tr :key="`${notificationType.label}-title`">
+              <th colspan="3">
+                {{ notificationType.label }}
+              </th>
+            </tr>
+            <tr :key="`${notificationType.label}-subtitle`">
+              <th v-for="(method, key) in notificationMethods" :key="key">
+                {{ method }}
+              </th>
+              <th></th>
+            </tr>
+            <tr v-for="subType in notificationType.subtypes" :key="subType.id">
+              <td v-for="(method, key) in notificationMethods" :key="key">
+                <b-checkbox
+                  :value="notificationValues[subType.id][key]"
+                  @input="(e) => updateNotificationValue(subType.id, key, e)"
+                  :disabled="notificationValues[subType.id].disabled"
+                />
+              </td>
+              <td>
+                {{ subType.label }}
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </section>
+    <section>
       <div class="setting-title">
         <h2>{{ $t("Participation notifications") }}</h2>
       </div>
@@ -207,9 +252,10 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { INotificationPendingEnum } from "@/types/enums";
 import {
-  USER_SETTINGS,
   SET_USER_SETTINGS,
   FEED_TOKENS_LOGGED_USER,
+  USER_NOTIFICATIONS,
+  UPDATE_ACTIVITY_SETTING,
 } from "../../graphql/user";
 import { IUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
@@ -223,10 +269,14 @@ import {
   REGISTER_PUSH_MUTATION,
   UNREGISTER_PUSH_MUTATION,
 } from "@/graphql/webPush";
+import { merge } from "lodash";
+
+type NotificationSubType = { label: string; id: string };
+type NotificationType = { label: string; subtypes: NotificationSubType[] };
 
 @Component({
   apollo: {
-    loggedUser: USER_SETTINGS,
+    loggedUser: USER_NOTIFICATIONS,
     feedTokens: {
       query: FEED_TOKENS_LOGGED_USER,
       update: (data) =>
@@ -263,6 +313,201 @@ export default class Notifications extends Vue {
 
   subscribed = false;
 
+  notificationMethods = {
+    email: this.$t("Email") as string,
+    push: this.$t("Push") as string,
+  };
+
+  defaultNotificationValues = {
+    participation_event_updated: {
+      email: true,
+      push: true,
+      disabled: true,
+    },
+    participation_event_comment: {
+      email: true,
+      push: true,
+    },
+    event_new_pending_participation: {
+      email: true,
+      push: true,
+    },
+    event_new_participation: {
+      email: false,
+      push: false,
+    },
+    event_created: {
+      email: false,
+      push: false,
+    },
+    event_updated: {
+      email: false,
+      push: false,
+    },
+    discussion_updated: {
+      email: false,
+      push: false,
+    },
+    post_published: {
+      email: false,
+      push: false,
+    },
+    post_updated: {
+      email: false,
+      push: false,
+    },
+    resource_updated: {
+      email: false,
+      push: false,
+    },
+    member_request: {
+      email: true,
+      push: true,
+    },
+    member_updated: {
+      email: false,
+      push: false,
+    },
+    user_email_password_updated: {
+      email: true,
+      push: false,
+      disabled: true,
+    },
+    event_comment_mention: {
+      email: true,
+      push: true,
+    },
+    discussion_mention: {
+      email: true,
+      push: false,
+    },
+    event_new_comment: {
+      email: true,
+      push: false,
+    },
+  };
+
+  notificationTypes: NotificationType[] = [
+    {
+      label: this.$t("Mentions") as string,
+      subtypes: [
+        {
+          id: "event_comment_mention",
+          label: this.$t(
+            "I've been mentionned in a comment under an event"
+          ) as string,
+        },
+        {
+          id: "discussion_mention",
+          label: this.$t(
+            "I've been mentionned in a group discussion"
+          ) as string,
+        },
+      ],
+    },
+    {
+      label: this.$t("Participations") as string,
+      subtypes: [
+        {
+          id: "participation_event_updated",
+          label: this.$t("An event I'm going to has been updated") as string,
+        },
+        {
+          id: "participation_event_comment",
+          label: this.$t(
+            "An event I'm going to has posted an announcement"
+          ) as string,
+        },
+      ],
+    },
+    {
+      label: this.$t("Organizers") as string,
+      subtypes: [
+        {
+          id: "event_new_pending_participation",
+          label: this.$t(
+            "An event I'm organizing has a new pending participation"
+          ) as string,
+        },
+        {
+          id: "event_new_participation",
+          label: this.$t(
+            "An event I'm organizing has a new participation"
+          ) as string,
+        },
+        {
+          id: "event_new_comment",
+          label: this.$t("An event I'm organizing has a new comment") as string,
+        },
+      ],
+    },
+    {
+      label: this.$t("Group activity") as string,
+      subtypes: [
+        {
+          id: "event_created",
+          label: this.$t(
+            "An event from one of my groups has been published"
+          ) as string,
+        },
+        {
+          id: "event_updated",
+          label: this.$t(
+            "An event from one of my groups has been updated or deleted"
+          ) as string,
+        },
+        {
+          id: "discussion_updated",
+          label: this.$t("A discussion has been created or updated") as string,
+        },
+        {
+          id: "post_published",
+          label: this.$t("A post has been published") as string,
+        },
+        {
+          id: "post_updated",
+          label: this.$t("A post has been updated") as string,
+        },
+        {
+          id: "resource_updated",
+          label: this.$t("A resource has been created or updated") as string,
+        },
+        {
+          id: "member_request",
+          label: this.$t(
+            "A member requested to join one of my groups"
+          ) as string,
+        },
+        {
+          id: "member_updated",
+          label: this.$t("A member has been updated") as string,
+        },
+      ],
+    },
+    {
+      label: this.$t("User settings") as string,
+      subtypes: [
+        {
+          id: "user_email_password_updated",
+          label: this.$t("You changed your email or password") as string,
+        },
+      ],
+    },
+  ];
+
+  get userNotificationValues(): Record<string, Record<string, boolean>> {
+    return this.loggedUser.activitySettings.reduce((acc, activitySetting) => {
+      acc[activitySetting.key] = acc[activitySetting.key] || {};
+      acc[activitySetting.key][activitySetting.method] =
+        activitySetting.enabled;
+      return acc;
+    }, {} as Record<string, Record<string, boolean>>);
+  }
+
+  get notificationValues(): Record<string, Record<string, boolean>> {
+    return merge(this.defaultNotificationValues, this.userNotificationValues);
+  }
+
   mounted(): void {
     this.notificationPendingParticipationValues = {
       [INotificationPendingEnum.NONE]: this.$t("Do not receive any mail"),
@@ -290,7 +535,7 @@ export default class Notifications extends Vue {
     await this.$apollo.mutate<{ setUserSettings: string }>({
       mutation: SET_USER_SETTINGS,
       variables,
-      refetchQueries: [{ query: USER_SETTINGS }],
+      refetchQueries: [{ query: USER_NOTIFICATIONS }],
     });
   }
 
@@ -385,6 +630,22 @@ export default class Notifications extends Vue {
 
   async created(): Promise<void> {
     this.subscribed = await this.isSubscribed();
+  }
+
+  async updateNotificationValue(
+    key: string,
+    method: string,
+    enabled: boolean
+  ): Promise<void> {
+    await this.$apollo.mutate({
+      mutation: UPDATE_ACTIVITY_SETTING,
+      variables: {
+        key,
+        method,
+        enabled,
+        userId: this.loggedUser.id,
+      },
+    });
   }
 
   private async isSubscribed(): Promise<boolean> {

@@ -17,25 +17,33 @@
         </figure>
         <div class="media-content">
           <div class="field">
-            <p class="control">
-              <editor
-                ref="commenteditor"
-                mode="comment"
-                v-model="newComment.text"
-              />
-            </p>
-            <p class="help is-danger" v-if="emptyCommentError">
-              {{ $t("Comment text can't be empty") }}
-            </p>
+            <div class="field">
+              <p class="control">
+                <editor
+                  ref="commenteditor"
+                  mode="comment"
+                  v-model="newComment.text"
+                />
+              </p>
+              <p class="help is-danger" v-if="emptyCommentError">
+                {{ $t("Comment text can't be empty") }}
+              </p>
+            </div>
+            <div class="field notify-participants" v-if="isEventOrganiser">
+              <b-switch v-model="newComment.isAnnouncement">{{
+                $t("Notify participants")
+              }}</b-switch>
+            </div>
           </div>
-          <div class="send-comment">
-            <b-button
-              native-type="submit"
-              type="is-primary"
-              class="comment-button-submit"
-              >{{ $t("Post a comment") }}</b-button
-            >
-          </div>
+        </div>
+        <div class="send-comment">
+          <b-button
+            native-type="submit"
+            type="is-primary"
+            class="comment-button-submit"
+            icon-left="send"
+            :aria-label="$t('Post a comment')"
+          />
         </div>
       </article>
     </form>
@@ -157,6 +165,7 @@ export default class CommentTree extends Vue {
           inReplyToCommentId: comment.inReplyToComment
             ? comment.inReplyToComment.id
             : null,
+          isAnnouncement: comment.isAnnouncement,
         },
         update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
@@ -359,6 +368,10 @@ form.new-comment {
       flex: 1;
       padding-right: 10px;
       margin-bottom: 0;
+
+      &.notify-participants {
+        margin-top: 0.5rem;
+      }
     }
   }
 }

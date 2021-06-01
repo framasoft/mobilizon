@@ -24,6 +24,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     insertedAt
     updatedAt
     deletedAt
+    isAnnouncement
   }
 `;
 
@@ -92,11 +93,13 @@ export const CREATE_COMMENT_FROM_EVENT = gql`
     $eventId: ID!
     $text: String!
     $inReplyToCommentId: ID
+    $isAnnouncement: Boolean
   ) {
     createComment(
       eventId: $eventId
       text: $text
       inReplyToCommentId: $inReplyToCommentId
+      isAnnouncement: $isAnnouncement
     ) {
       ...CommentRecursive
     }

@@ -34,6 +34,6 @@ if ("serviceWorker" in navigator && isProduction()) {
 }
 
 function isProduction(): boolean {
-  // return true;
-  return process.env.NODE_ENV === "production";
+  return true;
+  // return process.env.NODE_ENV === "production";
 }

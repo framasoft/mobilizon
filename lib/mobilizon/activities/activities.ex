@@ -17,7 +17,7 @@ defmodule Mobilizon.Activities do
     very_high: 50
   )
 
-  @activity_types ["event", "post", "discussion", "resource", "group", "member"]
+  @activity_types ["event", "post", "discussion", "resource", "group", "member", "comment"]
   @event_activity_subjects ["event_created", "event_updated", "event_deleted", "comment_posted"]
   @post_activity_subjects ["post_created", "post_updated", "post_deleted"]
   @discussion_activity_subjects [

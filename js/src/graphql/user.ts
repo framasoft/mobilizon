@@ -171,6 +171,38 @@ export const SET_USER_SETTINGS = gql`
   ${USER_SETTINGS_FRAGMENT}
 `;
 
+export const USER_NOTIFICATIONS = gql`
+  query UserNotifications {
+    loggedUser {
+      id
+      locale
+      settings {
+        ...UserSettingFragment
+      }
+      activitySettings {
+        key
+        method
+        enabled
+      }
+    }
+  }
+  ${USER_SETTINGS_FRAGMENT}
+`;
+
+export const UPDATE_ACTIVITY_SETTING = gql`
+  mutation UpdateActivitySetting(
+    $key: String!
+    $method: String!
+    $enabled: Boolean!
+  ) {
+    updateActivitySetting(key: $key, method: $method, enabled: $enabled) {
+      key
+      method
+      enabled
+    }
+  }
+`;
+
 export const LIST_USERS = gql`
   query ListUsers($email: String, $page: Int, $limit: Int) {
     users(email: $email, page: $page, limit: $limit) {

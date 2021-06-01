@@ -6,32 +6,26 @@
       :id="commentId"
     >
       <popover-actor-card
-        class="media-left"
         :actor="comment.actor"
         :inline="true"
         v-if="comment.actor"
       >
         <figure
-          class="image is-48x48"
+          class="image is-32x32 media-left"
           v-if="!comment.deletedAt && comment.actor.avatar"
         >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon
-          class="media-left"
-          v-else
-          size="is-large"
-          icon="account-circle"
-        />
+        <b-icon class="media-left" v-else icon="account-circle" />
       </popover-actor-card>
       <div v-else class="media-left">
         <figure
-          class="image is-48x48"
+          class="image is-32x32"
           v-if="!comment.deletedAt && comment.actor.avatar"
         >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon v-else size="is-large" icon="account-circle" />
+        <b-icon v-else icon="account-circle" />
       </div>
       <div class="media-content">
         <div class="content">
@@ -39,18 +33,20 @@
             <strong :class="{ organizer: commentFromOrganizer }">{{
               comment.actor.name
             }}</strong>
-            <small>@{{ usernameWithDomain(comment.actor) }}</small>
-            <a class="comment-link has-text-grey" :href="commentURL">
-              <small>{{
-                formatDistanceToNow(new Date(comment.updatedAt), {
-                  locale: $dateFnsLocale,
-                  addSuffix: true,
-                })
-              }}</small>
-            </a>
+            <small class="has-text-grey">{{
+              usernameWithDomain(comment.actor)
+            }}</small>
           </span>
           <a v-else class="comment-link has-text-grey" :href="commentURL">
             <span>{{ $t("[deleted]") }}</span>
+          </a>
+          <a class="comment-link has-text-grey" :href="commentURL">
+            <small>{{
+              formatDistanceToNow(new Date(comment.updatedAt), {
+                locale: $dateFnsLocale,
+                addSuffix: true,
+              })
+            }}</small>
           </a>
           <span class="icons" v-if="!comment.deletedAt">
             <button
@@ -369,8 +365,17 @@ form.reply {
   }
 }
 
-.comment-link small:hover {
-  color: hsl(0, 0%, 21%);
+a.comment-link {
+  text-decoration: none;
+  margin-left: 5px;
+  &:hover {
+    text-decoration: underline;
+  }
+  small {
+    &:hover {
+      color: hsl(0, 0%, 21%);
+    }
+  }
 }
 
 .root-comment .replies {

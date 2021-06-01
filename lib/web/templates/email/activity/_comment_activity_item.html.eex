@@ -67,4 +67,35 @@
                     discussion: "<b>#{@activity.subject_params["discussion_title"]}</b>"
                 }
             ) |> raw %>
+
+    <% :event_comment_mention -> %>
+    <%= 
+            dgettext("activity", "%{profile} mentionned you in a comment under event %{event}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :participation_event_comment -> %>
+    <%= 
+            dgettext("activity", "%{profile} has posted an announcement under event %{event}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
 <% end %>

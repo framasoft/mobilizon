@@ -13,7 +13,7 @@ defmodule Mobilizon.Users do
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Users.{PushSubscription, Setting, User}
+  alias Mobilizon.Users.{ActivitySetting, PushSubscription, Setting, User}
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
@@ -476,6 +476,48 @@ defmodule Mobilizon.Users do
   """
   def delete_push_subscription(%PushSubscription{} = push_subscription) do
     Repo.delete(push_subscription)
+  end
+
+  @doc """
+  Lists the activity settings for an user
+
+  ## Examples
+
+      iex> activity_settings_for_user(user)
+      [%ActivitySetting{}]
+
+      iex> activity_settings_for_user(user)
+      []
+
+  """
+  def activity_settings_for_user(%User{id: user_id}) do
+    ActivitySetting
+    |> where([a], a.user_id == ^user_id)
+    |> Repo.all()
+  end
+
+  def activity_setting(%User{id: user_id}, key, method) do
+    ActivitySetting
+    |> where([a], a.user_id == ^user_id and a.key == ^key and a.method == ^method)
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates an activity setting. Overrides existing values if present
+
+  ## Examples
+
+      iex> create_activity_setting(%{field: value})
+      {:ok, %ActivitySetting{}}
+
+      iex> create_activity_setting(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_activity_setting(attrs \\ %{}) do
+    %ActivitySetting{}
+    |> ActivitySetting.changeset(attrs)
+    |> Repo.insert(on_conflict: :replace_all, conflict_target: [:user_id, :key, :method])
   end
 
   @spec user_by_email_query(String.t(), boolean | nil, boolean()) :: Ecto.Query.t()

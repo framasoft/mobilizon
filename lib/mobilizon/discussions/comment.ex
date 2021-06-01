@@ -45,6 +45,7 @@ defmodule Mobilizon.Discussions.Comment do
     :attributed_to_id,
     :deleted_at,
     :local,
+    :is_announcement,
     :discussion_id
   ]
   @attrs @required_attrs ++ @optional_attrs
@@ -58,6 +59,7 @@ defmodule Mobilizon.Discussions.Comment do
     field(:total_replies, :integer, virtual: true, default: 0)
     field(:deleted_at, :utc_datetime)
     field(:published_at, :utc_datetime)
+    field(:is_announcement, :boolean, default: false)
 
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)

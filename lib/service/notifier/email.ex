@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Notifier.Email do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.{Config, Users}
   alias Mobilizon.Service.Notifier
-  alias Mobilizon.Service.Notifier.Email
+  alias Mobilizon.Service.Notifier.{Email, Filter}
   alias Mobilizon.Users.{NotificationPendingNotificationDelay, Setting, User}
   alias Mobilizon.Web.Email.Activity, as: EmailActivity
   alias Mobilizon.Web.Email.Mailer
@@ -17,6 +17,8 @@ defmodule Mobilizon.Service.Notifier.Email do
     Config.get(__MODULE__, :enabled)
   end
 
+  def send(user, activity, options \\ [])
+
   @impl Notifier
   def send(%User{} = user, %Activity{} = activity, options) do
     Email.send(user, [activity], options)
@@ -25,7 +27,9 @@ defmodule Mobilizon.Service.Notifier.Email do
   @impl Notifier
   def send(%User{email: email, locale: locale} = user, activities, options)
       when is_list(activities) do
-    if can_send?(user) do
+    activities = Enum.filter(activities, &can_send_activity?(&1, user))
+
+    if can_send?(user) && length(activities) > 0 do
       email
       |> EmailActivity.direct_activity(activities, Keyword.put(options, :locale, locale))
       |> Mailer.send_email()
@@ -34,6 +38,34 @@ defmodule Mobilizon.Service.Notifier.Email do
       {:ok, :sent}
     else
       {:ok, :skipped}
+    end
+  end
+
+  @spec can_send_activity?(Activity.t(), User.t()) :: boolean()
+  defp can_send_activity?(%Activity{} = activity, %User{} = user) do
+    Filter.can_send_activity?(activity, "email", user, &default_activity_behavior/1)
+  end
+
+  @spec default_activity_behavior(String.t()) :: boolean()
+  defp default_activity_behavior(activity_setting) do
+    case activity_setting do
+      "participation_event_updated" -> true
+      "participation_event_comment" -> true
+      "event_new_pending_participation" -> true
+      "event_new_participation" -> false
+      "event_created" -> false
+      "event_updated" -> false
+      "discussion_updated" -> false
+      "post_published" -> false
+      "post_updated" -> false
+      "resource_updated" -> false
+      "member_request" -> true
+      "member_updated" -> false
+      "user_email_password_updated" -> true
+      "event_comment_mention" -> true
+      "discussion_mention" -> true
+      "event_new_comment" -> true
+      _ -> false
     end
   end
 

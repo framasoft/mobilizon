@@ -5,7 +5,17 @@ defmodule Mobilizon.Service.Activity.Renderer do
 
   alias Mobilizon.Config
   alias Mobilizon.Activities.Activity
-  alias Mobilizon.Service.Activity.Renderer.{Discussion, Event, Group, Member, Post, Resource}
+
+  alias Mobilizon.Service.Activity.Renderer.{
+    Comment,
+    Discussion,
+    Event,
+    Group,
+    Member,
+    Post,
+    Resource
+  }
+
   require Logger
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
@@ -41,6 +51,7 @@ defmodule Mobilizon.Service.Activity.Renderer do
       :member -> Member.render(activity, options)
       :post -> Post.render(activity, options)
       :resource -> Resource.render(activity, options)
+      :comment -> Comment.render(activity, options)
       _ -> nil
     end
   end

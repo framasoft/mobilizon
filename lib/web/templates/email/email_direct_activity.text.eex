@@ -6,7 +6,9 @@
 <%= for {_, group_activities} <- @activities do %>
 
 ==
+<%= if hd(group_activities).group do %>
 <%= hd(group_activities).group.name || "@#{Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)}" %>
+<% end %>
 
 <%= for activity <- Enum.take(group_activities, 5) do %>
 * <%= case activity.type do %><% :discussion -> %><%= render("activity/_discussion_activity_item.text", activity: activity) %><% :event -> %><%= render("activity/_event_activity_item.text", activity: activity) %><% :group -> %><%= render("activity/_group_activity_item.text", activity: activity) %>
