@@ -156,6 +156,7 @@ defmodule Mobilizon.Factory do
       deleted_at: nil,
       tags: build_list(3, :tag),
       in_reply_to_comment: nil,
+      is_announcement: false,
       published_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :comment, uuid)
     }
