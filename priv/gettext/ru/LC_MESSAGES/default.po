@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2021-05-01 10:59+0000\n"
+"PO-Revision-Date: 2021-06-03 20:15+0000\n"
 "Last-Translator: deadmorose <cornerot@gmail.com>\n"
 "Language-Team: Russian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/ru/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.6\n"
+"X-Generator: Weblate 4.6.2\n"
 
 #: lib/web/templates/email/password_reset.html.eex:48
 #, elixir-format
@@ -146,7 +146,7 @@ msgstr "Вы запросили новый пароль для своей уче
 #: lib/web/templates/email/email.html.eex:85
 #, elixir-format
 msgid "Warning"
-msgstr "Внимание"
+msgstr "Предупреждение"
 
 #: lib/web/email/participation.ex:135
 #, elixir-format
@@ -1083,7 +1083,7 @@ msgstr "Узнайте больше о Mobilizon!"
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
 msgid "Location"
-msgstr "Место расположения"
+msgstr "Местонахождение"
 
 #: lib/web/templates/email/event_updated.html.eex:104
 #, elixir-format
@@ -1690,7 +1690,7 @@ msgstr "Сожалеем, но с нашей стороны что-то пошл
 #: lib/web/templates/email/email.text.eex:4
 #, elixir-format
 msgid "This is a demonstration site to test Mobilizon."
-msgstr "Это демонстрационный сайт, на котором вы можете опробовать Mobilizon."
+msgstr "Это демонстрационная площадка для тестирования Mobilizon."
 
 #: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
 #: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
@@ -1730,7 +1730,7 @@ msgstr ""
 #: lib/web/templates/error/500_page.html.eex:68
 #, elixir-format
 msgid "Technical details"
-msgstr "Технические детали"
+msgstr "Технические подробности"
 
 #: lib/web/templates/error/500_page.html.eex:52
 #, elixir-format
