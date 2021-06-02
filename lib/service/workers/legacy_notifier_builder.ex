@@ -3,8 +3,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   Worker to push legacy notifications
   """
 
-  alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Activities.Activity
+  alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Service.Notifier
 
   use Mobilizon.Service.Workers.Helper, queue: "activity"
@@ -20,7 +20,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     end
   end
 
-  def build_activity(args) do
+  defp build_activity(args) do
     author = Actors.get_actor(args["author_id"])
 
     %Activity{

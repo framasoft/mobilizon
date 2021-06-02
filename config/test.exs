@@ -82,3 +82,8 @@ config :junit_formatter, report_dir: "."
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
   import_config "test.secret.exs"
 end
+
+config :mobilizon, Mobilizon.Service.Notifier,
+  notifiers: [
+    Mobilizon.Service.Notifier.Mock
+  ]
