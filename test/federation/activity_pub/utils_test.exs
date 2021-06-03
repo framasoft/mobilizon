@@ -34,7 +34,8 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url,
                "mediaType" => "text/html",
-               "published" => reply.published_at |> DateTime.to_iso8601()
+               "published" => reply.published_at |> DateTime.to_iso8601(),
+               "isAnnouncement" => false
              } == Converter.Comment.model_to_as(reply)
     end
 
