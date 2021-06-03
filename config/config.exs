@@ -309,6 +309,10 @@ config :mobilizon, Mobilizon.Service.Notifier,
     Mobilizon.Service.Notifier.Push
   ]
 
+config :mobilizon, Mobilizon.Service.Notifier.Email, enabled: true
+
+config :mobilizon, Mobilizon.Service.Notifier.Push, enabled: true
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

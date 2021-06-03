@@ -20,7 +20,7 @@ defmodule Mobilizon.Service.Activity.CommentTest do
       %Event{title: event_title, uuid: event_uuid} = event = insert(:event)
       %Comment{id: comment_id, actor_id: author_id} = comment = insert(:comment, event: event)
 
-      assert [organizer: :enqueued, announcement: :skipped, mentionned: :skipped] ==
+      assert {:ok, [organizer: :enqueued, announcement: :skipped, mentionned: :skipped]} ==
                CommentActivity.insert_activity(comment)
 
       refute_enqueued(
@@ -61,7 +61,7 @@ defmodule Mobilizon.Service.Activity.CommentTest do
           ]
       }
 
-      assert [organizer: :enqueued, announcement: :skipped, mentionned: :enqueued] ==
+      assert {:ok, [organizer: :enqueued, announcement: :skipped, mentionned: :enqueued]} ==
                CommentActivity.insert_activity(comment)
 
       assert_enqueued(
@@ -107,7 +107,7 @@ defmodule Mobilizon.Service.Activity.CommentTest do
       %Comment{id: comment_id, actor_id: author_id} =
         comment = insert(:comment, text: "Hey you", event: event, is_announcement: true)
 
-      assert [organizer: :enqueued, announcement: :enqueued, mentionned: :skipped] ==
+      assert {:ok, [organizer: :enqueued, announcement: :enqueued, mentionned: :skipped]} ==
                CommentActivity.insert_activity(comment)
 
       assert_enqueued(

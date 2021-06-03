@@ -5,14 +5,16 @@ defmodule Mobilizon.Service.Workers.ActivityBuilderTest do
 
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.Notifier.Mock, as: NotifierMock
   alias Mobilizon.Service.Workers.ActivityBuilder
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.Email.Activity, as: EmailActivity
 
   use Mobilizon.DataCase
-  use Bamboo.Test
 
   import Mobilizon.Factory
+  import Mox
+
+  setup :verify_on_exit!
 
   describe "Sends direct email notification to users" do
     test "if the user has a profile member of a group" do
@@ -26,14 +28,19 @@ defmodule Mobilizon.Service.Workers.ActivityBuilderTest do
       %Activity{} =
         activity = insert(:mobilizon_activity, group: group, inserted_at: DateTime.utc_now())
 
-      assert :ok == ActivityBuilder.notify_activity(activity)
+      NotifierMock
+      |> expect(:ready?, 1, fn -> true end)
+      |> expect(:send, 1, fn %User{},
+                             %Activity{
+                               type: :event,
+                               subject: :event_created,
+                               object_type: :event
+                             },
+                             [single_activity: true] ->
+        {:ok, :sent}
+      end)
 
-      assert_delivered_email(
-        EmailActivity.direct_activity(
-          user.email,
-          [activity]
-        )
-      )
+      assert :ok == ActivityBuilder.notify_activity(activity)
     end
 
     test "unless if the user has a profile member of a group" do
@@ -50,12 +57,17 @@ defmodule Mobilizon.Service.Workers.ActivityBuilderTest do
 
       assert :ok == ActivityBuilder.notify_activity(activity)
 
-      refute_delivered_email(
-        EmailActivity.direct_activity(
-          user.email,
-          [activity]
-        )
-      )
+      NotifierMock
+      |> expect(:ready?, 0, fn -> true end)
+      |> expect(:send, 0, fn %User{},
+                             %Activity{
+                               type: :event,
+                               subject: :event_created,
+                               object_type: :event
+                             },
+                             [single_activity: true] ->
+        {:ok, :sent}
+      end)
     end
   end
 end

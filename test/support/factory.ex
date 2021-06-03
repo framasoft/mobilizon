@@ -418,11 +418,34 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Activities.Activity{
       type: :event,
       subject: :event_created,
-      subject_params: %{event_title: event.title},
+      subject_params: %{
+        "event_title" => event.title,
+        "event_uuid" => event.uuid,
+        "event_id" => event.id
+      },
       author: actor,
       group: group,
       object_type: :event,
       object_id: to_string(event.id)
+    }
+  end
+
+  def mobilizon_activity_setting_factory do
+    %Mobilizon.Users.ActivitySetting{
+      key: "event_created",
+      method: "email",
+      enabled: true,
+      user: build(:user)
+    }
+  end
+
+  def push_subscription_factory do
+    %Mobilizon.Users.PushSubscription{
+      digest: "",
+      endpoint: "",
+      auth: "",
+      p256dh: "",
+      user: build(:user)
     }
   end
 end

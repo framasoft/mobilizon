@@ -11,8 +11,11 @@ defmodule Mobilizon.Service.Notifier.Filter do
   @spec can_send_activity?(Activity.t(), method(), User.t(), function()) :: boolean()
   def can_send_activity?(%Activity{} = activity, method, %User{} = user, get_default) do
     case map_activity_to_activity_setting(activity) do
-      false -> false
-      key -> user |> Users.activity_setting(key, method) |> enabled?(key, get_default)
+      false ->
+        false
+
+      key when is_binary(key) ->
+        user |> Users.activity_setting(key, method) |> enabled?(key, get_default)
     end
   end
 

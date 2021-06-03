@@ -14,7 +14,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   @impl Notifier
   def ready? do
-    Config.get(__MODULE__, :enabled)
+    Config.get([__MODULE__, :enabled])
   end
 
   def send(user, activity, options \\ [])
