@@ -16,96 +16,50 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
     locale = Keyword.get(options, :locale, "en")
     Gettext.put_locale(locale)
 
-    case activity.subject do
-      :member_request ->
-        %{
-          body:
-            dgettext("activity", "%{member} requested to join the group.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+    %{
+      body:
+        text(activity.subject, %{
+          profile: profile(activity),
+          member: title(activity)
+        }),
+      url: member_url(activity)
+    }
+  end
 
-      :member_invited ->
-        %{
-          body:
-            dgettext("activity", "%{member} was invited by %{profile}.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_request, args) do
+    dgettext("activity", "%{member} requested to join the group.", args)
+  end
 
-      :member_accepted_invitation ->
-        %{
-          body:
-            dgettext("activity", "%{member} accepted the invitation to join the group.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_invited, args) do
+    dgettext("activity", "%{member} was invited by %{profile}.", args)
+  end
 
-      :member_rejected_invitation ->
-        %{
-          body:
-            dgettext("activity", "%{member} rejected the invitation to join the group.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_accepted_invitation, args) do
+    dgettext("activity", "%{member} accepted the invitation to join the group.", args)
+  end
 
-      :member_joined ->
-        %{
-          body:
-            dgettext("activity", "%{member} joined the group.", %{
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_rejected_invitation, args) do
+    dgettext("activity", "%{member} rejected the invitation to join the group.", args)
+  end
 
-      :member_added ->
-        %{
-          body:
-            dgettext("activity", "%{profile} added the member %{member}.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_joined, args) do
+    dgettext("activity", "%{member} joined the group.", args)
+  end
 
-      :member_updated ->
-        %{
-          body:
-            dgettext("activity", "%{profile} updated the member %{member}.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_added, args) do
+    dgettext("activity", "%{profile} added the member %{member}.", args)
+  end
 
-      :member_removed ->
-        %{
-          body:
-            dgettext("activity", "%{profile} excluded member %{member}.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
+  defp text(:member_updated, args) do
+    dgettext("activity", "%{profile} updated the member %{member}.", args)
+  end
 
-      :member_quit ->
-        %{
-          body:
-            dgettext("activity", "%{profile} quit the group.", %{
-              profile: profile(activity),
-              member: title(activity)
-            }),
-          url: member_url(activity)
-        }
-    end
+  defp text(:member_removed, args) do
+    dgettext("activity", "%{profile} excluded member %{member}.", args)
+  end
+
+  defp text(:member_quit, args) do
+    dgettext("activity", "%{profile} quit the group.", args)
   end
 
   defp member_url(activity) do

@@ -3,8 +3,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
   Handles the push subscriptions-related GraphQL calls.
   """
 
-  alias Mobilizon.Users
   alias Mobilizon.Storage.Page
+  alias Mobilizon.Users
   alias Mobilizon.Users.{PushSubscription, User}
 
   @doc """

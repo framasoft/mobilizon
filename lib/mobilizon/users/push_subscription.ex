@@ -1,4 +1,7 @@
 defmodule Mobilizon.Users.PushSubscription do
+  @moduledoc """
+  Represents informations about a push subscription for a specific user
+  """
   use Ecto.Schema
   alias Mobilizon.Users.User
   import Ecto.Changeset

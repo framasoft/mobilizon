@@ -3,8 +3,8 @@ defmodule Mobilizon.Service.Activity.Renderer do
   Behavior for Activity renderers
   """
 
-  alias Mobilizon.Config
   alias Mobilizon.Activities.Activity
+  alias Mobilizon.Config
 
   alias Mobilizon.Service.Activity.Renderer.{
     Comment,

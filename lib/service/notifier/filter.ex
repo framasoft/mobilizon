@@ -1,6 +1,9 @@
 defmodule Mobilizon.Service.Notifier.Filter do
-  alias Mobilizon.Users
+  @moduledoc """
+  Module to filter activities to notify according to user's activity settings
+  """
   alias Mobilizon.Activities.Activity
+  alias Mobilizon.Users
   alias Mobilizon.Users.{ActivitySetting, User}
 
   @type method :: String.t()

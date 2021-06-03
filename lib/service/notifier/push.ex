@@ -42,27 +42,28 @@ defmodule Mobilizon.Service.Notifier.Push do
     Filter.can_send_activity?(activity, "push", user, &default_activity_behavior/1)
   end
 
+  @default_behavior %{
+    "participation_event_updated" => true,
+    "participation_event_comment" => true,
+    "event_new_pending_participation" => true,
+    "event_new_participation" => false,
+    "event_created" => false,
+    "event_updated" => false,
+    "discussion_updated" => false,
+    "post_published" => false,
+    "post_updated" => false,
+    "resource_updated" => false,
+    "member_request" => true,
+    "member_updated" => false,
+    "user_email_password_updated" => false,
+    "event_comment_mention" => true,
+    "discussion_mention" => false,
+    "event_new_comment" => false
+  }
+
   @spec default_activity_behavior(String.t()) :: boolean()
   defp default_activity_behavior(activity_setting) do
-    case activity_setting do
-      "participation_event_updated" -> true
-      "participation_event_comment" -> true
-      "event_new_pending_participation" -> true
-      "event_new_participation" -> false
-      "event_created" -> false
-      "event_updated" -> false
-      "discussion_updated" -> false
-      "post_published" -> false
-      "post_updated" -> false
-      "resource_updated" -> false
-      "member_request" -> true
-      "member_updated" -> false
-      "user_email_password_updated" -> false
-      "event_comment_mention" -> true
-      "discussion_mention" -> false
-      "event_new_comment" -> false
-      _ -> false
-    end
+    Map.get(@default_behavior, activity_setting, false)
   end
 
   defp send_subscription(activity, subscription, options) do

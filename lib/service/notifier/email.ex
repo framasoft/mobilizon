@@ -46,27 +46,28 @@ defmodule Mobilizon.Service.Notifier.Email do
     Filter.can_send_activity?(activity, "email", user, &default_activity_behavior/1)
   end
 
+  @default_behavior %{
+    "participation_event_updated" => true,
+    "participation_event_comment" => true,
+    "event_new_pending_participation" => true,
+    "event_new_participation" => false,
+    "event_created" => false,
+    "event_updated" => false,
+    "discussion_updated" => false,
+    "post_published" => false,
+    "post_updated" => false,
+    "resource_updated" => false,
+    "member_request" => true,
+    "member_updated" => false,
+    "user_email_password_updated" => true,
+    "event_comment_mention" => true,
+    "discussion_mention" => true,
+    "event_new_comment" => true
+  }
+
   @spec default_activity_behavior(String.t()) :: boolean()
   defp default_activity_behavior(activity_setting) do
-    case activity_setting do
-      "participation_event_updated" -> true
-      "participation_event_comment" -> true
-      "event_new_pending_participation" -> true
-      "event_new_participation" -> false
-      "event_created" -> false
-      "event_updated" -> false
-      "discussion_updated" -> false
-      "post_published" -> false
-      "post_updated" -> false
-      "resource_updated" -> false
-      "member_request" -> true
-      "member_updated" -> false
-      "user_email_password_updated" -> true
-      "event_comment_mention" -> true
-      "discussion_mention" -> true
-      "event_new_comment" -> true
-      _ -> false
-    end
+    Map.get(@default_behavior, activity_setting, false)
   end
 
   @type notification_type ::
