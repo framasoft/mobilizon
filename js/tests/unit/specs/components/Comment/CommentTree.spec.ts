@@ -6,9 +6,11 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import buildCurrentUserResolver from "@/apollo/user";
 import VueApollo from "vue-apollo";
-import { COMMENTS_THREADS, CREATE_COMMENT_FROM_EVENT } from "@/graphql/comment";
+import {
+  COMMENTS_THREADS_WITH_REPLIES,
+  CREATE_COMMENT_FROM_EVENT,
+} from "@/graphql/comment";
 import { CommentModeration } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import {
@@ -16,8 +18,9 @@ import {
   newCommentForEventMock,
   newCommentForEventResponse,
 } from "../../mocks/event";
-import { InMemoryCache } from "@apollo/client/cache";
-
+import flushPromises from "flush-promises";
+import { InMemoryCache } from "@apollo/client/core";
+import { defaultResolvers } from "../../common";
 const localVue = createLocalVue();
 localVue.use(Buefy);
 localVue.use(VueApollo);
@@ -35,13 +38,12 @@ describe("CommentTree", () => {
   let mockClient: MockApolloClient;
   let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
+  const cache = new InMemoryCache({ addTypename: false });
 
   const generateWrapper = (handlers = {}, baseData = {}) => {
-    const cache = new InMemoryCache({ addTypename: true });
-
     mockClient = createMockClient({
       cache,
-      resolvers: buildCurrentUserResolver(cache),
+      resolvers: defaultResolvers,
     });
 
     requestHandlers = {
@@ -55,14 +57,13 @@ describe("CommentTree", () => {
     };
 
     mockClient.setRequestHandler(
-      COMMENTS_THREADS,
+      COMMENTS_THREADS_WITH_REPLIES,
       requestHandlers.eventCommentThreadsQueryHandler
     );
     mockClient.setRequestHandler(
       CREATE_COMMENT_FROM_EVENT,
       requestHandlers.createCommentForEventMutationHandler
     );
-
     apolloProvider = new VueApollo({
       defaultClient: mockClient,
     });
@@ -76,16 +77,13 @@ describe("CommentTree", () => {
       stubs: ["editor"],
       data() {
         return {
-          currentActor: {
-            id: "76",
-          },
           ...baseData,
         };
       },
     });
   };
 
-  it("renders a comment tree", async () => {
+  it("renders an empty comment tree", async () => {
     generateWrapper();
 
     expect(wrapper.exists()).toBe(true);
@@ -98,7 +96,7 @@ describe("CommentTree", () => {
     expect(wrapper.html()).toMatchSnapshot();
   });
 
-  it("renders a comment tree", async () => {
+  it("renders a comment tree with comments", async () => {
     generateWrapper();
 
     await wrapper.vm.$nextTick();
@@ -124,14 +122,7 @@ describe("CommentTree", () => {
       }
     );
 
-    wrapper.setData({
-      currentActor: {
-        id: "67",
-      },
-    });
-
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick(); // because of the <transition>
+    await flushPromises();
 
     expect(wrapper.find("form.new-comment").isVisible()).toBe(true);
     expect(wrapper.findAll(".comment-list .root-comment").length).toBe(2);
@@ -147,7 +138,7 @@ describe("CommentTree", () => {
 
     if (mockClient) {
       const cachedData = mockClient.cache.readQuery<{ event: IEvent }>({
-        query: COMMENTS_THREADS,
+        query: COMMENTS_THREADS_WITH_REPLIES,
         variables: {
           eventUUID: eventData.uuid,
         },

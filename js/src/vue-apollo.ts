@@ -136,6 +136,7 @@ const errorLink = onError(
 const fullLink = authMiddleware.concat(errorLink).concat(link);
 
 const cache = new InMemoryCache({
+  addTypename: true,
   typePolicies,
   possibleTypes,
   dataIdFromObject: (object: any) => {

@@ -80,6 +80,9 @@ export const eventCommentThreadsMock = {
           visibility: "PUBLIC",
           totalReplies: 5,
           updatedAt: "2020-12-03T09:02:00Z",
+          inReplyToComment: null,
+          originComment: null,
+          replies: [],
           actor: {
             __typename: "Person",
             avatar: {
@@ -94,6 +97,7 @@ export const eventCommentThreadsMock = {
             summary: "I am the senate",
           },
           deletedAt: null,
+          isAnnouncement: false,
         },
         {
           __typename: "Comment",
@@ -105,6 +109,9 @@ export const eventCommentThreadsMock = {
           visibility: "PUBLIC",
           totalReplies: 0,
           updatedAt: "2020-12-03T11:02:00Z",
+          inReplyToComment: null,
+          originComment: null,
+          replies: [],
           actor: {
             __typename: "Person",
             avatar: {
@@ -119,6 +126,7 @@ export const eventCommentThreadsMock = {
             summary: "I am the senate",
           },
           deletedAt: null,
+          isAnnouncement: false,
         },
       ],
     },
@@ -129,6 +137,7 @@ export const newCommentForEventMock = {
   eventId: "1",
   text: "my new comment",
   inReplyToCommentId: null,
+  isAnnouncement: false,
 };
 
 export const newCommentForEventResponse: DataMock = {
@@ -160,6 +169,7 @@ export const newCommentForEventResponse: DataMock = {
         summary: "I am the senate",
       },
       deletedAt: null,
+      isAnnouncement: false,
     },
   },
 };

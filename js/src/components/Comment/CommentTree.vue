@@ -99,9 +99,7 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
+    currentActor: CURRENT_ACTOR_CLIENT,
     comments: {
       query: COMMENTS_THREADS_WITH_REPLIES,
       variables() {
@@ -152,7 +150,6 @@ export default class CommentTree extends Vue {
   }
 
   async createCommentForEvent(comment: IComment): Promise<void> {
-    console.log("creating comment", comment);
     this.emptyCommentError = ["", "<p></p>"].includes(comment.text);
     if (this.emptyCommentError) return;
     try {

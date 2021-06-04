@@ -98,7 +98,7 @@ describe("ReportModal", () => {
     );
 
     const switchButton = wrapper.find('input[type="checkbox"]');
-    switchButton.trigger("click");
+    switchButton.setChecked();
 
     const submit = wrapper.find("footer.modal-card-foot button.is-primary");
     submit.trigger("click");

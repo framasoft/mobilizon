@@ -113,6 +113,11 @@ export const configMock = {
         __typename: "InstanceFeeds",
         enabled: false,
       },
+      webPush: {
+        __typename: "WebPush",
+        enabled: true,
+        publicKey: "",
+      },
     },
   },
 };

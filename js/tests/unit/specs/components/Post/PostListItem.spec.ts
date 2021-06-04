@@ -3,10 +3,14 @@ import PostListItem from "@/components/Post/PostListItem.vue";
 import Buefy from "buefy";
 import VueRouter from "vue-router";
 import { routes } from "@/router";
+import { enUS } from "date-fns/locale";
 
 const localVue = createLocalVue();
 localVue.use(Buefy);
 localVue.use(VueRouter);
+localVue.use((vue) => {
+  vue.prototype.$dateFnsLocale = enUS;
+});
 const router = new VueRouter({ routes, mode: "history" });
 config.mocks.$t = (key: string): string => key;
 

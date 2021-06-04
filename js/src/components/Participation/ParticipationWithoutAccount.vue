@@ -217,25 +217,24 @@ export default class ParticipationWithoutAccount extends Vue {
             );
             return;
           }
-          const { event } = cachedData;
-          if (event === null) {
-            console.error(
-              "Cannot update event participant cache, because of null value."
-            );
-            return;
-          }
+          const participantStats = { ...cachedData.event.participantStats };
 
           if (updateData.joinEvent.role === ParticipantRole.NOT_CONFIRMED) {
-            event.participantStats.notConfirmed += 1;
+            participantStats.notConfirmed += 1;
           } else {
-            event.participantStats.going += 1;
-            event.participantStats.participant += 1;
+            participantStats.going += 1;
+            participantStats.participant += 1;
           }
 
           store.writeQuery({
             query: FETCH_EVENT_BASIC,
             variables: { uuid: this.event.uuid },
-            data: { event },
+            data: {
+              event: {
+                ...cachedData.event,
+                participantStats,
+              },
+            },
           });
         },
       });

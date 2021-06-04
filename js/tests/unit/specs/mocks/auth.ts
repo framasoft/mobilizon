@@ -18,3 +18,17 @@ export const loginResponseMock = {
     },
   },
 };
+
+export const resetPasswordResponseMock = {
+  data: {
+    resetPassword: {
+      __typename: "Login",
+      accessToken: "some access token",
+      refreshToken: "some refresh token",
+      user: {
+        __typename: "User",
+        id: "1",
+      },
+    },
+  },
+};

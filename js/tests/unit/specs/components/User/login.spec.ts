@@ -36,7 +36,7 @@ describe("Render login form", () => {
     baseData: Record<string, unknown> = {},
     customMocks: Record<string, unknown> = {}
   ) => {
-    const cache = new InMemoryCache({ addTypename: true });
+    const cache = new InMemoryCache({ addTypename: false });
 
     mockClient = createMockClient({
       cache,
