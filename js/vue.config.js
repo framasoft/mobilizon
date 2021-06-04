@@ -22,6 +22,9 @@ module.exports = {
     loaderOptions: {
       scss: {
         additionalData: `@import "@/variables.scss";`,
+        sassOptions: {
+          quietDeps: true,
+        },
       },
     },
   },
