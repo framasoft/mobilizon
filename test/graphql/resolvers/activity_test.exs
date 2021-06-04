@@ -14,11 +14,6 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
   setup %{conn: conn} do
     group = insert(:group)
 
-    Mobilizon.Config.put([Mobilizon.Service.Notifier, :notifiers], [
-      Mobilizon.Service.Notifier.Email,
-      Mobilizon.Service.Notifier.Push
-    ])
-
     {:ok, conn: conn, group: group}
   end
 

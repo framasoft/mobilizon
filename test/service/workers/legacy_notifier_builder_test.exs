@@ -15,6 +15,16 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
   import Mox
   import Mobilizon.Factory
 
+  setup_all do
+    Mox.defmock(Mobilizon.Service.Notifier.Mock, for: Mobilizon.Service.Notifier)
+
+    Mobilizon.Config.put([Mobilizon.Service.Notifier, :notifiers], [
+      Mobilizon.Service.Notifier.Mock
+    ])
+
+    :ok
+  end
+
   @mentionned %{
     "type" => "comment",
     "subject" => "event_comment_mention",

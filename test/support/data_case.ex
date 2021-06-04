@@ -79,6 +79,4 @@ defmodule Mobilizon.DataCase do
   Mox.defmock(Mobilizon.Service.HTTP.GeospatialClient.Mock,
     for: Tesla.Adapter
   )
-
-  Mox.defmock(Mobilizon.Service.Notifier.Mock, for: Mobilizon.Service.Notifier)
 end
