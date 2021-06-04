@@ -10,6 +10,7 @@ defmodule Mobilizon.Service.Workers.ActivityBuilderTest do
   alias Mobilizon.Users.User
 
   use Mobilizon.DataCase
+  use Mobilizon.Tests.Helpers
 
   import Mobilizon.Factory
   import Mox
@@ -17,7 +18,7 @@ defmodule Mobilizon.Service.Workers.ActivityBuilderTest do
   setup_all do
     Mox.defmock(NotifierMock, for: Mobilizon.Service.Notifier)
 
-    Mobilizon.Config.put([Mobilizon.Service.Notifier, :notifiers], [
+    clear_config([Mobilizon.Service.Notifier, :notifiers], [
       NotifierMock
     ])
 

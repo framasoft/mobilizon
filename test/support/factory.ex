@@ -31,7 +31,9 @@ defmodule Mobilizon.Factory do
       notification_before_event: false,
       notification_pending_participation: :one_day,
       notification_pending_membership: :one_day,
-      user_id: nil
+      group_notifications: :one_day,
+      last_notification_sent: nil,
+      user: build(:user)
     }
   end
 

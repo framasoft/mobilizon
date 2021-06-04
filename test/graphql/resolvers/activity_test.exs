@@ -260,6 +260,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       group: %Actor{preferred_username: preferred_username, id: group_id} = group
     } do
       user = insert(:user)
+      insert(:settings, user_id: user.id, user: user)
       actor = insert(:actor, user: user)
 
       insert(:member,

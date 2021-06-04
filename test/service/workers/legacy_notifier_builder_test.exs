@@ -9,17 +9,18 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
   alias Mobilizon.Events.Event
   alias Mobilizon.Service.Notifier.Mock, as: NotifierMock
   alias Mobilizon.Service.Workers.LegacyNotifierBuilder
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{Setting, User}
 
-  use Mobilizon.DataCase, async: true
+  use Mobilizon.DataCase
+  use Mobilizon.Tests.Helpers
   import Mox
   import Mobilizon.Factory
 
   setup_all do
-    Mox.defmock(Mobilizon.Service.Notifier.Mock, for: Mobilizon.Service.Notifier)
+    Mox.defmock(NotifierMock, for: Mobilizon.Service.Notifier)
 
-    Mobilizon.Config.put([Mobilizon.Service.Notifier, :notifiers], [
-      Mobilizon.Service.Notifier.Mock
+    clear_config([Mobilizon.Service.Notifier, :notifiers], [
+      NotifierMock
     ])
 
     :ok
@@ -56,8 +57,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
       args =
         Map.merge(@mentionned, %{
           "subject_params" => %{
-            event_uuid: uuid,
-            event_title: title
+            "event_uuid" => uuid,
+            "event_title" => title
           },
           "author_id" => actor_id,
           "object_id" => to_string(comment_id),
@@ -82,6 +83,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
     test "if the actor mentionned is local" do
       %User{} = user1 = insert(:user)
       %User{} = user2 = insert(:user)
+      %Setting{} = settings2 = insert(:settings, user: user2, user_id: user2.id)
+      user2 = %User{user2 | settings: settings2}
 
       %Actor{id: actor_id} = actor = insert(:actor, user: user1)
       %Actor{id: actor_id_2} = insert(:actor, user: user2)
@@ -92,8 +95,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
       args =
         Map.merge(@mentionned, %{
           "subject_params" => %{
-            event_uuid: uuid,
-            event_title: title
+            "event_uuid" => uuid,
+            "event_title" => title
           },
           "author_id" => actor_id,
           "object_id" => to_string(comment_id),
@@ -155,6 +158,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
     test "if there's some participants" do
       %User{} = user1 = insert(:user)
       %User{} = user2 = insert(:user)
+      %Setting{} = settings2 = insert(:settings, user: user2, user_id: user2.id)
+      user2 = %User{user2 | settings: settings2}
 
       %Actor{id: actor_id} = actor = insert(:actor, user: user1)
       %Actor{} = actor2 = insert(:actor, user: user2)

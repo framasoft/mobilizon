@@ -12,7 +12,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
   def start_mobilizon do
     if mix_task?(), do: Mix.Task.run("app.config")
 
-    unless System.get_env("DEBUG") do
+    unless System.get_env("DEBUG") || Application.fetch_env!(:mobilizon, :env) == :test do
       Logger.configure(level: :error)
     end
 
