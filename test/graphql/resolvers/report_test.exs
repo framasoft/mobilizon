@@ -182,34 +182,38 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
   end
 
   describe "Resolver: Get list of reports" do
+    @reports_query """
+    query ListReports($page: Int, $limit: Int) {
+      reports(page: $page, limit: $limit) {
+        elements {
+          id
+          reported {
+            id
+            preferredUsername
+          }
+          content,
+          updatedAt
+        }
+        total
+      }
+    }
+    """
+
     test "get an empty list of reports", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
 
-      query = """
-      {
-        reports {
-          id,
-          reported {
-            preferredUsername
-          }
-        }
-      }
-      """
+      res = AbsintheHelpers.graphql_query(conn, query: @reports_query)
 
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
-
-      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
+      assert hd(res["errors"])["message"] ==
                "You need to be logged-in and a moderator to list reports"
 
       res =
         conn
         |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
+        |> AbsintheHelpers.graphql_query(query: @reports_query)
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["reports"] == []
+      assert res["errors"] == nil
+      assert res["data"]["reports"]["elements"] == []
     end
 
     test "get a list of reports", %{conn: conn} do
@@ -224,67 +228,34 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
       %Report{id: report_3_id} = insert(:report, content: "My content 3")
       %Report{} = insert(:report, status: :closed)
 
-      query = """
-      {
-        reports {
-          id,
-          reported {
-            preferredUsername
-          },
-          content,
-          updatedAt
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
+        |> AbsintheHelpers.graphql_query(query: @reports_query)
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
+      assert res["data"]["reports"]["total"] == 3
 
-      assert json_response(res, 200)["data"]["reports"]
+      assert res["data"]["reports"]["elements"]
              |> Enum.map(fn report -> Map.get(report, "id") end) ==
                Enum.map([report_3_id, report_2_id, report_1_id], &to_string/1)
 
-      query = """
-      {
-        reports(page: 2, limit: 2) {
-          id,
-          reported {
-            preferredUsername
-          }
-        }
-      }
-      """
+      res =
+        conn
+        |> auth_conn(user_moderator)
+        |> AbsintheHelpers.graphql_query(query: @reports_query, variables: %{page: 2, limit: 2})
+
+      assert res["errors"] == nil
+      assert res["data"]["reports"]["total"] == 3
+      assert res["data"]["reports"]["elements"] |> length == 1
 
       res =
         conn
         |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
+        |> AbsintheHelpers.graphql_query(query: @reports_query, variables: %{page: 3, limit: 2})
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["reports"] |> length == 1
-
-      query = """
-      {
-        reports(page: 3, limit: 2) {
-          id,
-          reported {
-            preferredUsername
-          }
-        }
-      }
-      """
-
-      res =
-        conn
-        |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
-
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["reports"] |> length == 0
+      assert res["errors"] == nil
+      assert res["data"]["reports"]["elements"] |> length == 0
     end
   end
 
