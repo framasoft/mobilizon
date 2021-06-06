@@ -1039,9 +1039,9 @@ msgstr ""
 "Ciao! Solo una breve nota per confermare che l'indirizzo email collegato al "
 "tuo account su% {host} è stato cambiato da questo a:"
 
+#, elixir-format
 #: lib/web/templates/email/email_changed_old.html.eex:62
 #: lib/web/templates/email/email_changed_old.text.eex:5
-#, elixir-format
 msgid "If you did not trigger this change yourself, it is likely that someone has gained access to your %{host} account. Please log in and change your password immediately. If you cannot login, contact the admin on %{host}."
 msgstr ""
 "Se non hai attivato tu stesso questa modifica, è probabile che qualcuno "
@@ -1702,18 +1702,18 @@ msgstr "Questo è un sito di prova per testare Mobilizon."
 msgid "%{name}'s feed"
 msgstr "Flusso di %{name}"
 
-#: lib/service/export/feed.ex:120
 #, elixir-format
+#: lib/service/export/feed.ex:120
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "Flusso privato degli eventi di %{actor} su %{instance}"
 
-#: lib/service/export/feed.ex:115
 #, elixir-format
+#: lib/service/export/feed.ex:115
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "Flusso pubblico degli eventi di %{actor} su %{instance}"
 
-#: lib/service/export/feed.ex:220
 #, elixir-format
+#: lib/service/export/feed.ex:220
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flusso per %{email} su %{instance}"
 
@@ -1740,8 +1740,8 @@ msgstr "Dettagli tecnici"
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr "Il server Mobilizon sembra essere temporaneamente inattivo."
 
-#: lib/service/export/feed.ex:73
 #, elixir-format
+#: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
 msgstr "Feed pubblico per %{instance}"
 

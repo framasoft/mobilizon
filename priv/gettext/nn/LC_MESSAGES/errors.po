@@ -126,7 +126,7 @@ msgid "Current profile is not an administrator of the selected group"
 msgstr "Denne brukaren er ikkje styrar av gruppa"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:501
+#: lib/graphql/resolvers/user.ex:523
 msgid "Error while saving user settings"
 msgstr "Greidde ikkje lagra brukarinnstillingane"
 
@@ -152,18 +152,18 @@ msgid "Member not found"
 msgstr "Fann ikkje medlemen"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:58 lib/graphql/resolvers/actor.ex:88
-#: lib/graphql/resolvers/user.ex:406
+#: lib/graphql/resolvers/actor.ex:61 lib/graphql/resolvers/actor.ex:91
+#: lib/graphql/resolvers/user.ex:428
 msgid "No profile found for the moderator user"
 msgstr "Fann ingen profil for moderator-brukaren"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:193
+#: lib/graphql/resolvers/user.ex:215
 msgid "No user to validate with this email was found"
 msgstr "Fann ingen brukar med denne eposten å godkjenna"
 
 #, elixir-format
-#: lib/graphql/resolvers/person.ex:254 lib/graphql/resolvers/user.ex:218
+#: lib/graphql/resolvers/person.ex:254 lib/graphql/resolvers/user.ex:240
 msgid "No user with this email was found"
 msgstr "Fann ingen brukar med denne eposten"
 
@@ -171,49 +171,49 @@ msgstr "Fann ingen brukar med denne eposten"
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:28 lib/graphql/resolvers/participant.ex:159
 #: lib/graphql/resolvers/participant.ex:188 lib/graphql/resolvers/person.ex:165 lib/graphql/resolvers/person.ex:199
-#: lib/graphql/resolvers/person.ex:278 lib/graphql/resolvers/person.ex:307 lib/graphql/resolvers/person.ex:334
-#: lib/graphql/resolvers/person.ex:346
+#: lib/graphql/resolvers/person.ex:279 lib/graphql/resolvers/person.ex:295 lib/graphql/resolvers/person.ex:323
+#: lib/graphql/resolvers/person.ex:340
 msgid "Profile is not owned by authenticated user"
 msgstr "Ingen godkjent brukar eig denne profilen"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:123
+#: lib/graphql/resolvers/user.ex:145
 msgid "Registrations are not open"
 msgstr "Det er ikkje opna for å registrera seg"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:331
+#: lib/graphql/resolvers/user.ex:353
 msgid "The current password is invalid"
 msgstr "Dette passordet er ugyldig"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:376
+#: lib/graphql/resolvers/user.ex:398
 msgid "The new email doesn't seem to be valid"
 msgstr "Den nye epostadressa ser ut til å vera feil"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:373
+#: lib/graphql/resolvers/user.ex:395
 msgid "The new email must be different"
 msgstr "Den nye epostadressa må vera annleis"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:334
+#: lib/graphql/resolvers/user.ex:356
 msgid "The new password must be different"
 msgstr "Det nye passordet må vera annleis"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:370 lib/graphql/resolvers/user.ex:428
-#: lib/graphql/resolvers/user.ex:431
+#: lib/graphql/resolvers/user.ex:392 lib/graphql/resolvers/user.ex:450
+#: lib/graphql/resolvers/user.ex:453
 msgid "The password provided is invalid"
 msgstr "Dette passordet er ugyldig"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:338
+#: lib/graphql/resolvers/user.ex:360
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr "Dette passordet er for kort. Passord må ha minst 6 teikn."
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:214
+#: lib/graphql/resolvers/user.ex:236
 msgid "This user can't reset their password"
 msgstr "Denne brukaren kan ikkje nullstilla passordet sitt"
 
@@ -223,17 +223,17 @@ msgid "This user has been disabled"
 msgstr "Denne brukaren er avskrudd"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:177
+#: lib/graphql/resolvers/user.ex:199
 msgid "Unable to validate user"
 msgstr "Greier ikkje godkjenna brukaren"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:409
+#: lib/graphql/resolvers/user.ex:431
 msgid "User already disabled"
 msgstr "Brukaren er allereie inaktiv"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:476
+#: lib/graphql/resolvers/user.ex:498
 msgid "User requested is not logged-in"
 msgstr "Den førespurte brukaren er ikkje innlogga"
 
@@ -258,12 +258,12 @@ msgid "You may not list groups unless moderator."
 msgstr "Du kan ikkje lista opp grupper med mindre du er moderator."
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:381
+#: lib/graphql/resolvers/user.ex:403
 msgid "You need to be logged-in to change your email"
 msgstr "Du må vera innlogga for å endra epostadressa di"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:346
+#: lib/graphql/resolvers/user.ex:368
 msgid "You need to be logged-in to change your password"
 msgstr "Du må vera innlogga for å endra passordet ditt"
 
@@ -273,7 +273,7 @@ msgid "You need to be logged-in to delete a group"
 msgstr "Du må vera innlogga for å sletta ei gruppe"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:436
+#: lib/graphql/resolvers/user.ex:458
 msgid "You need to be logged-in to delete your account"
 msgstr "Du må vera innlogga for å sletta kontoen din"
 
@@ -298,47 +298,47 @@ msgid "You need to have an existing token to get a refresh token"
 msgstr "Du treng eit eksisterande teikn for å få eit fornyingsteikn"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:196 lib/graphql/resolvers/user.ex:221
+#: lib/graphql/resolvers/user.ex:218 lib/graphql/resolvers/user.ex:243
 msgid "You requested again a confirmation email too soon"
 msgstr "Du ba om ny stadfestingsepost for snøgt"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:126
+#: lib/graphql/resolvers/user.ex:148
 msgid "Your email is not on the allowlist"
 msgstr "Epostadressa di er ikkje på lista over godkjende adresser"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:64 lib/graphql/resolvers/actor.ex:94
+#: lib/graphql/resolvers/actor.ex:67 lib/graphql/resolvers/actor.ex:97
 msgid "Error while performing background task"
 msgstr "Greidde ikkje utføra ei bakgrunnsoppgåve"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:27
+#: lib/graphql/resolvers/actor.ex:30
 msgid "No profile found with this ID"
 msgstr "Fann ingen profil med denne ID-en"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:54 lib/graphql/resolvers/actor.ex:91
+#: lib/graphql/resolvers/actor.ex:57 lib/graphql/resolvers/actor.ex:94
 msgid "No remote profile found with this ID"
 msgstr "Fann ingen fjern profil med denne ID-en"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:69
+#: lib/graphql/resolvers/actor.ex:72
 msgid "Only moderators and administrators can suspend a profile"
 msgstr "Berre moderatorar og styrarar kan sperra ein profil"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:99
+#: lib/graphql/resolvers/actor.ex:102
 msgid "Only moderators and administrators can unsuspend a profile"
 msgstr "Berre moderatorar og styrarar kan oppheva sperring av profilar"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:24
+#: lib/graphql/resolvers/actor.ex:27
 msgid "Only remote profiles may be refreshed"
 msgstr "Du kan berre lasta fjerne profilar på nytt"
 
 #, elixir-format
-#: lib/graphql/resolvers/actor.ex:61
+#: lib/graphql/resolvers/actor.ex:64
 msgid "Profile already suspended"
 msgstr "Profilen er allereie sperra"
 
@@ -388,8 +388,8 @@ msgid "Event id not found"
 msgstr "Fann ikkje ID-en til hendinga"
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:281
-#: lib/graphql/resolvers/event.ex:325
+#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:284
+#: lib/graphql/resolvers/event.ex:328
 msgid "Event not found"
 msgstr "Fann ikkje hendinga"
 
@@ -517,7 +517,7 @@ msgid "Token is not a valid UUID"
 msgstr "Teiknet er ikkje ein gyldig UUID"
 
 #, elixir-format
-#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:362
+#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:356
 msgid "User not found"
 msgstr "Fann ikkje brukaren"
 
@@ -588,7 +588,7 @@ msgid "You cannot delete this comment"
 msgstr "Du kan ikkje sletta denne kommentaren"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:321
+#: lib/graphql/resolvers/event.ex:324
 msgid "You cannot delete this event"
 msgstr "Du kan ikkje sletta denne hendinga"
 
@@ -655,7 +655,7 @@ msgid "You need to be logged-in to access resources"
 msgstr "Du må vera innlogga for å sjå ressursane"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:256
+#: lib/graphql/resolvers/event.ex:259
 msgid "You need to be logged-in to create events"
 msgstr "Du må vera innlogga for å laga hendingar"
 
@@ -675,7 +675,7 @@ msgid "You need to be logged-in to create resources"
 msgstr "Du må vera innlogga for å laga ressursar"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:330
+#: lib/graphql/resolvers/event.ex:333
 msgid "You need to be logged-in to delete an event"
 msgstr "Du må vera innlogga for å sletta ei hending"
 
@@ -700,7 +700,7 @@ msgid "You need to be logged-in to leave an event"
 msgstr "Du må vera innlogga for å melda deg av ei hending"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:295
+#: lib/graphql/resolvers/event.ex:298
 msgid "You need to be logged-in to update an event"
 msgstr "Du må vera innlogga for å oppdatera hendingar"
 
@@ -725,19 +725,19 @@ msgid "Parent resource doesn't belong to this group"
 msgstr "Opphavsressursen høyrer ikkje til denne gruppa"
 
 #, elixir-format
-#: lib/mobilizon/users/user.ex:109
+#: lib/mobilizon/users/user.ex:110
 msgid "The chosen password is too short."
 msgstr "Dette passordet er for kort."
 
 #, elixir-format
-#: lib/mobilizon/users/user.ex:138
+#: lib/mobilizon/users/user.ex:139
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr ""
 "Registreringsteiknet er allereie i bruk, dette ser ut som ein feil frå vår "
 "side."
 
 #, elixir-format
-#: lib/mobilizon/users/user.ex:104
+#: lib/mobilizon/users/user.ex:105
 msgid "This email is already used."
 msgstr "Denne eposten er allereie i bruk."
 
@@ -807,12 +807,12 @@ msgid "Profile is not administrator for the group"
 msgstr "Profilen er ikkje administrator for gruppa"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:284
+#: lib/graphql/resolvers/event.ex:287
 msgid "You can't edit this event."
 msgstr "Du kan ikkje endra denne hendinga."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:287
+#: lib/graphql/resolvers/event.ex:290
 msgid "You can't attribute this event to this profile."
 msgstr "Du kan ikkje kopla denne hendinga til denne profilen."
 
@@ -843,7 +843,7 @@ msgstr ""
 "Du må gje anten ein ID eller ei stuttadresse for å få tilgang til ordskiftet"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:245
+#: lib/graphql/resolvers/event.ex:248
 msgid "Organizer profile is not owned by the user"
 msgstr "Brukaren eig ikkje arrangørprofilen"
 
@@ -869,7 +869,7 @@ msgid "Error while creating resource"
 msgstr "Greidde ikkje laga ressursen"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:390
+#: lib/graphql/resolvers/user.ex:412
 msgid "Invalid activation token"
 msgstr "Ugyldig aktiveringslykjel"
 
@@ -879,6 +879,6 @@ msgid "Unable to fetch resource details from this URL."
 msgstr "Greidde ikkje henta ressursdetaljane frå denne adressa."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:145 lib/graphql/resolvers/participant.ex:234
+#: lib/graphql/resolvers/event.ex:148 lib/graphql/resolvers/participant.ex:234
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "Moderatorprofilen har ikkje tilgang til denne hendinga"
