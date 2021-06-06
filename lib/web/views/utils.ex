@@ -40,7 +40,7 @@ defmodule Mobilizon.Web.Views.Utils do
   @spec replace_meta(String.t(), String.t()) :: String.t()
   defp replace_meta(index_content, tags) do
     index_content
-    |> String.replace("<meta name=\"server-injected-data\">", tags)
+    |> String.replace("<meta name=\"server-injected-data\"/>", tags)
     |> String.replace("<meta name=\"server-injected-data\" />", tags)
   end
 
