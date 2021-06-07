@@ -16,7 +16,7 @@ variables:
   # DB Variables for Postgres / Postgis
   POSTGRES_DB: mobilizon_test
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: ""
+  POSTGRES_PASSWORD: postgres
   POSTGRES_HOST: postgres
   # DB Variables for Mobilizon
   MOBILIZON_DATABASE_USERNAME: $POSTGRES_USER
@@ -104,11 +104,12 @@ exunit-1.11:
   stage: test
   image: tcitworld/mobilizon-ci:legacy
   services:
-    - name: mdillon/postgis:11
+    - name: postgis/postgis:11-3.0
       alias: postgres
   variables:
     MIX_ENV: test
   before_script:
+    - mix deps.clean --all
     - mix deps.get
     - mix ecto.create
     - mix ecto.migrate
@@ -119,7 +120,7 @@ exunit-1.11:
 exunit:
   stage: test
   services:
-    - name: mdillon/postgis:13
+    - name: postgis/postgis:13-3.1
       alias: postgres
   variables:
     MIX_ENV: test
@@ -156,7 +157,7 @@ jest:
 # cypress:
 #   stage: test
 #   services:
-#     - name: mdillon/postgis:11
+#     - name: postgis/postgis:13.3
 #       alias: postgres
 #   variables:
 #     MIX_ENV=e2e
