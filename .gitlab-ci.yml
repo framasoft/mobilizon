@@ -61,7 +61,7 @@ lint-elixir:
     - exit $EXITVALUE
 
 lint-front:
-  image: node:14
+  image: node:16
   stage: check
   before_script:
     - export EXITVALUE=0
@@ -73,7 +73,7 @@ lint-front:
 
 build-frontend:
   stage: build-js
-  image: node:14
+  image: node:16
   before_script:
     - apt update
     - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
@@ -100,10 +100,26 @@ deps:
   needs:
     - install
 
+exunit-1.11:
+  stage: test
+  image: tcitworld/mobilizon-ci:legacy
+  services:
+    - name: mdillon/postgis:11
+      alias: postgres
+  variables:
+    MIX_ENV: test
+  before_script:
+    - mix deps.get
+    - mix ecto.create
+    - mix ecto.migrate
+  script:
+    - mix coveralls
+  allow_failure: true
+
 exunit:
   stage: test
   services:
-    - name: mdillon/postgis:11
+    - name: mdillon/postgis:13
       alias: postgres
   variables:
     MIX_ENV: test
