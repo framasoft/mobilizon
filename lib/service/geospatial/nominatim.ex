@@ -42,14 +42,10 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     url =
       case method do
         :search ->
-          "#{endpoint}/search?format=geocodejson&q=#{URI.encode(args.q)}&limit=#{limit}&accept-language=#{
-            lang
-          }&addressdetails=1&namedetails=1"
+          "#{endpoint}/search?format=geocodejson&q=#{URI.encode(args.q)}&limit=#{limit}&accept-language=#{lang}&addressdetails=1&namedetails=1"
 
         :geocode ->
-          "#{endpoint}/reverse?format=geocodejson&lat=#{args.lat}&lon=#{args.lon}&accept-language=#{
-            lang
-          }&addressdetails=1&namedetails=1"
+          "#{endpoint}/reverse?format=geocodejson&lat=#{args.lat}&lon=#{args.lon}&accept-language=#{lang}&addressdetails=1&namedetails=1"
           |> add_parameter(options, :zoom)
       end
 

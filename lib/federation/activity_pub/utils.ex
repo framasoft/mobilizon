@@ -303,18 +303,14 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         case role do
           :moderator ->
             Logger.debug(
-              "Checking if activity actor #{actor_url} is a moderator from group from #{
-                object.url
-              }"
+              "Checking if activity actor #{actor_url} is a moderator from group from #{object.url}"
             )
 
             Actors.is_moderator?(actor_id, group_id)
 
           :administrator ->
             Logger.debug(
-              "Checking if activity actor #{actor_url} is an administrator from group from #{
-                object.url
-              }"
+              "Checking if activity actor #{actor_url} is an administrator from group from #{object.url}"
             )
 
             Actors.is_administrator?(actor_id, group_id)

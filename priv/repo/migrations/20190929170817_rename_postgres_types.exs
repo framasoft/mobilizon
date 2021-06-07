@@ -36,9 +36,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.RenamePostgresTypes do
     with %Postgrex.Result{columns: ["exists"], rows: [[true]]} <-
            Ecto.Adapters.SQL.query!(
              Mobilizon.Storage.Repo,
-             "select exists (select 1 from pg_type where typname = '#{
-               old_type_name |> remove_schema
-             }' and typnamespace = (select oid from pg_namespace where nspname = 'public'))"
+             "select exists (select 1 from pg_type where typname = '#{old_type_name |> remove_schema}' and typnamespace = (select oid from pg_namespace where nspname = 'public'))"
            ) do
       Ecto.Migration.execute(
         "ALTER TYPE #{old_type_name |> remove_schema} RENAME TO #{new_type_name |> remove_schema}"

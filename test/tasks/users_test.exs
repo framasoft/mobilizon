@@ -82,11 +82,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       actor2 = insert(:actor, user: user)
 
       output =
-        "Informations for the user #{@email}:\n  - account status: Activated on #{confirmed_at} (UTC)\n  - Role: #{
-          role
-        }\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{
-          actor2.preferred_username
-        } / \n\n\n"
+        "Informations for the user #{@email}:\n  - account status: Activated on #{confirmed_at} (UTC)\n  - Role: #{role}\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{actor2.preferred_username} / \n\n\n"
 
       Show.run([@email])
       assert_received {:mix_shell, :info, [output_received]}
@@ -136,9 +132,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert_received {:mix_shell, :info, [output_received]}
 
       assert output_received ==
-               "An user has been modified with the following information:\n  - email: #{
-                 user.email
-               }\n  - Role: #{user.role}\n  - account status: disabled\n"
+               "An user has been modified with the following information:\n  - email: #{user.email}\n  - Role: #{user.role}\n  - account status: disabled\n"
 
       assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
@@ -150,9 +144,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
       assert output_received ==
-               "An user has been modified with the following information:\n  - email: #{
-                 user.email
-               }\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
+               "An user has been modified with the following information:\n  - email: #{user.email}\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
 
       refute is_nil(confirmed_at)
 
@@ -183,9 +175,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
                Users.get_user_by_email(@modified_email)
 
       assert output_received ==
-               "An user has been modified with the following information:\n  - email: #{
-                 @modified_email
-               }\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
+               "An user has been modified with the following information:\n  - email: #{@modified_email}\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
     end
   end
 end

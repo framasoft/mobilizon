@@ -19,11 +19,9 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
          actors <- Users.get_actors_for_user(user) do
       shell_info("""
       Informations for the user #{user.email}:
-        - account status: #{
-        if user.confirmed_at,
-          do: "Activated on #{DateTime.to_string(user.confirmed_at)} (UTC)",
-          else: "disabled"
-      }
+        - account status: #{if user.confirmed_at,
+        do: "Activated on #{DateTime.to_string(user.confirmed_at)} (UTC)",
+        else: "disabled"}
         - Role: #{user.role}
         #{display_actors(actors)}
       """)

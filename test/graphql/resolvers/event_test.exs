@@ -384,9 +384,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
               createEvent(
                   title: "my event is referenced",
                   description: "with tags!",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()}",
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   tags: ["nicolas", "birthday", "bad tag"]
@@ -428,9 +426,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
               createEvent(
                   title: "my event is referenced",
                   description: "with tags!",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()}",
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   physical_address: {
@@ -470,9 +466,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
               createEvent(
                   title: "my event is referenced",
                   description: "with tags!",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()}",
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   physical_address: {
@@ -520,9 +514,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
               createEvent(
                   title: "come to my event",
                   description: "it will be fine",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()}",
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
@@ -609,9 +601,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
               createEvent(
                   title: "come to my event",
                   description: "it will be fine",
-                  begins_on: "#{
-        DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
-      }",
+                  begins_on: "#{DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()}",
                   organizer_actor_id: "#{actor.id}",
                   category: "birthday",
                   picture: {
