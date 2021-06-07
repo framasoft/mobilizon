@@ -9,8 +9,6 @@ defmodule Mobilizon.Service.CleanUnconfirmedUsers do
   alias Mobilizon.Users.User
   import Ecto.Query
 
-  @grace_period Mobilizon.Config.get([:instance, :unconfirmed_user_grace_period_hours], 48)
-
   @doc """
   Clean unattached media
 
@@ -49,7 +47,10 @@ defmodule Mobilizon.Service.CleanUnconfirmedUsers do
 
   @spec find_unconfirmed_users_to_clean(Keyword.t()) :: list(User.t())
   defp find_unconfirmed_users_to_clean(opts) do
-    grace_period = Keyword.get(opts, :grace_period, @grace_period)
+    default_grace_period =
+      Mobilizon.Config.get([:instance, :unconfirmed_user_grace_period_hours], 48)
+
+    grace_period = Keyword.get(opts, :grace_period, default_grace_period)
     expiration_date = DateTime.add(DateTime.utc_now(), grace_period * -3600)
 
     User

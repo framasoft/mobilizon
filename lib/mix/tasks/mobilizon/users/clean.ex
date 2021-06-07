@@ -8,7 +8,6 @@ defmodule Mix.Tasks.Mobilizon.Users.Clean do
   alias Mobilizon.Service.CleanUnconfirmedUsers
 
   @shortdoc "Clean unconfirmed users from Mobilizon"
-  @grace_period Mobilizon.Config.get([:instance, :unconfirmed_user_grace_period_hours], 48)
 
   @impl Mix.Task
   def run(options) do
@@ -26,9 +25,12 @@ defmodule Mix.Tasks.Mobilizon.Users.Clean do
         ]
       )
 
+    default_grace_period =
+      Mobilizon.Config.get([:instance, :unconfirmed_user_grace_period_hours], 48)
+
     dry_run = Keyword.get(options, :dry_run, false)
     grace_period = Keyword.get(options, :days)
-    grace_period = if is_nil(grace_period), do: @grace_period, else: grace_period * 24
+    grace_period = if is_nil(grace_period), do: default_grace_period, else: grace_period * 24
     verbose = Keyword.get(options, :verbose, false)
 
     start_mobilizon()

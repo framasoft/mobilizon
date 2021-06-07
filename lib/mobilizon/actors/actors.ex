@@ -1740,17 +1740,14 @@ defmodule Mobilizon.Actors do
     from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
   end
 
-  @own_domain Mobilizon.Config.instance_hostname()
-
-  defp filter_by_name(query, [name, @own_domain]) do
-    filter_by_name(query, [name])
-  end
-
   defp filter_by_name(query, [name, domain]) do
-    from(a in query, where: a.preferred_username == ^name and a.domain == ^domain)
+    if domain == Mobilizon.Config.instance_hostname() do
+      filter_by_name(query, [name])
+    else
+      where(query, [a], a.preferred_username == ^name and a.domain == ^domain)
+    end
   end
 
-  @spec filter_by_name(Ecto.Query.t(), boolean | nil) :: Ecto.Query.t()
   defp filter_followed_by_approved_status(query, nil), do: query
 
   defp filter_followed_by_approved_status(query, approved) do
