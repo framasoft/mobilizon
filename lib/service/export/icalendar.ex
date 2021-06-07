@@ -10,8 +10,6 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.Service.Export.Common
   alias Mobilizon.Service.Formatter.HTML
 
-  @vendor "Mobilizon #{Config.instance_version()}"
-
   @doc """
   Create cache for an actor, an event or an user token
   """
@@ -119,7 +117,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   @spec events_to_ics(list(Events.t())) :: String.t()
   defp events_to_ics(events) do
     %ICalendar{events: events |> Enum.map(&do_export_event/1)}
-    |> ICalendar.to_ics(vendor: @vendor)
+    |> ICalendar.to_ics(vendor: vendor())
   end
 
   @spec do_export_event(Event.t()) :: ICalendar.Event.t()
@@ -136,5 +134,9 @@ defmodule Mobilizon.Service.Export.ICalendar do
       location: Address.representation(event.physical_address),
       categories: event.tags |> Enum.map(& &1.title)
     }
+  end
+
+  defp vendor do
+    "Mobilizon #{Config.instance_version()}"
   end
 end

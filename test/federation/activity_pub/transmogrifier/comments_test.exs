@@ -40,7 +40,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
         File.read!("test/fixtures/mastodon-post-activity.json")
         |> Jason.decode!()
 
-      reply_to_url = "https://soc.punktrash.club/objects/d811df79-6e54-4f51-841e-0c38bc356467"
+      reply_to_url = "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
 
       object =
         data["object"]
@@ -65,11 +65,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
       %Comment{} =
         origin_comment =
         Discussions.get_comment_from_url(
-          "https://soc.punktrash.club/objects/d811df79-6e54-4f51-841e-0c38bc356467"
+          "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
         )
 
       assert returned_activity.data["object"]["inReplyTo"] ==
-               "https://soc.punktrash.club/objects/d811df79-6e54-4f51-841e-0c38bc356467"
+               "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
 
       assert returned_activity.data["object"]["inReplyTo"] == origin_comment.url
     end

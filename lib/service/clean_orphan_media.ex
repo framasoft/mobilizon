@@ -9,8 +9,6 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
   alias Mobilizon.Storage.Repo
   import Ecto.Query
 
-  @grace_period Mobilizon.Config.get([:instance, :orphan_upload_grace_period_hours], 48)
-
   @doc """
   Clean orphan media
 
@@ -37,7 +35,10 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
 
   @spec find_media(Keyword.t()) :: list(Media.t())
   defp find_media(opts) do
-    grace_period = Keyword.get(opts, :grace_period, @grace_period)
+    default_grace_period =
+      Mobilizon.Config.get([:instance, :orphan_upload_grace_period_hours], 48)
+
+    grace_period = Keyword.get(opts, :grace_period, default_grace_period)
     expiration_date = DateTime.add(DateTime.utc_now(), grace_period * -3600)
 
     Media
