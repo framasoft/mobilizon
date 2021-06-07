@@ -1,25 +1,37 @@
 {
   "@context": [
     "https://www.w3.org/ns/activitystreams",
-    "https://soc.punktrash.club/schemas/litepub-0.1.jsonld",
+    "https://fedi.absturztau.be/schemas/litepub-0.1.jsonld",
     {
       "@language": "und"
     }
   ],
-  "actor": "https://soc.punktrash.club/users/jorin",
-  "attachment": [],
-  "attributedTo": "https://soc.punktrash.club/users/jorin",
-  "cc": ["https://soc.punktrash.club/users/jorin/followers"],
-  "content": "I live in Spain<br><br>The S is silent<br><br>And it&#39;s French<br><br>🥖😎",
-  "context": "https://soc.punktrash.club/contexts/62eb8f27-c8ea-4cc3-818d-385ff96e4397",
-  "conversation": "https://soc.punktrash.club/contexts/62eb8f27-c8ea-4cc3-818d-385ff96e4397",
-  "id": "https://soc.punktrash.club/objects/d811df79-6e54-4f51-841e-0c38bc356467",
-  "published": "2021-05-06T03:52:10.195835Z",
-  "repliesCount": 1,
-  "sensitive": false,
-  "source": "I live in Spain\n\nThe S is silent\n\nAnd it's French\n\n🥖😎",
+  "actor": "https://fedi.absturztau.be/users/dqn",
+  "attachment": [
+    {
+      "mediaType": "image/jpeg",
+      "name": "",
+      "type": "Document",
+      "url": "https://fedi.absturztau.be/media/f96e58881c72844e8e233b78f7e53ab93d8308dcf2118e493fcf53d5cc968ea6.jpg?name=p5d85wsralb61.jpg"
+    }
+  ],
+  "attributedTo": "https://fedi.absturztau.be/users/dqn",
+  "cc": ["https://fedi.absturztau.be/users/dqn/followers"],
+  "content": "<a class=\"hashtag\" data-tag=\"animeirl\" href=\"https://fedi.absturztau.be/tag/animeirl\" rel=\"tag ugc\">#animeirl</a><br><a href=\"https://fedi.absturztau.be/media/f96e58881c72844e8e233b78f7e53ab93d8308dcf2118e493fcf53d5cc968ea6.jpg?name=p5d85wsralb61.jpg\" class='attachment'></a>",
+  "context": "https://fedi.absturztau.be/contexts/4adddb80-0236-4e03-8a83-94be817b5dbe",
+  "conversation": "https://fedi.absturztau.be/contexts/4adddb80-0236-4e03-8a83-94be817b5dbe",
+  "id": "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9",
+  "published": "2021-06-07T09:00:04.292206Z",
+  "sensitive": null,
+  "source": "#animeirl",
   "summary": "",
-  "tag": [],
+  "tag": [
+    {
+      "href": "https://fedi.absturztau.be/tags/animeirl",
+      "name": "#animeirl",
+      "type": "Hashtag"
+    }
+  ],
   "to": ["https://www.w3.org/ns/activitystreams#Public"],
   "type": "Note"
 }
