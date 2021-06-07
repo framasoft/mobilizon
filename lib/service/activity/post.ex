@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Post do
   @moduledoc """
   Insert an post activity
   """
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Posts}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Service.Activity
   alias Mobilizon.Service.Workers.ActivityBuilder
@@ -34,4 +34,9 @@ defmodule Mobilizon.Service.Activity.Post do
   end
 
   def insert_activity(_, _), do: {:ok, nil}
+
+  @impl Activity
+  def get_object(post_id) do
+    Posts.get_post(post_id)
+  end
 end

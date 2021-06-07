@@ -10,8 +10,13 @@
       :show-detail-icon="false"
       paginated
       backend-pagination
+      :current-page.sync="page"
+      :aria-next-label="$t('Next page')"
+      :aria-previous-label="$t('Previous page')"
+      :aria-page-label="$t('Page')"
+      :aria-current-label="$t('Current page')"
       :total="relayFollowers.total"
-      :per-page="perPage"
+      :per-page="FOLLOWERS_PER_PAGE"
       @page-change="onFollowersPageChange"
       checkable
       checkbox-position="left"
@@ -123,14 +128,33 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins } from "vue-property-decorator";
+import { Component, Mixins, Ref } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
-import { ACCEPT_RELAY, REJECT_RELAY } from "../../graphql/admin";
+import {
+  ACCEPT_RELAY,
+  REJECT_RELAY,
+  RELAY_FOLLOWERS,
+} from "../../graphql/admin";
 import { IFollower } from "../../types/actor/follower.model";
 import RelayMixin from "../../mixins/relay";
+import RouteName from "@/router/name";
+import { Paginate } from "@/types/paginate";
+
+const FOLLOWERS_PER_PAGE = 10;
 
 @Component({
+  apollo: {
+    relayFollowers: {
+      query: RELAY_FOLLOWERS,
+      variables() {
+        return {
+          page: this.page,
+          limit: FOLLOWERS_PER_PAGE,
+        };
+      },
+    },
+  },
   metaInfo() {
     return {
       title: this.$t("Followers") as string,
@@ -143,14 +167,36 @@ export default class Followers extends Mixins(RelayMixin) {
 
   formatDistanceToNow = formatDistanceToNow;
 
-  async acceptRelays(): Promise<void> {
-    await this.checkedRows.forEach((row: IFollower) => {
+  relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
+
+  checkedRows: IFollower[] = [];
+
+  FOLLOWERS_PER_PAGE = FOLLOWERS_PER_PAGE;
+
+  @Ref("table") readonly table!: any;
+
+  toggle(row: Record<string, unknown>): void {
+    this.table.toggleDetails(row);
+  }
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter(RouteName.RELAY_FOLLOWERS, {
+      page: page.toString(),
+    });
+  }
+
+  acceptRelays(): void {
+    this.checkedRows.forEach((row: IFollower) => {
       this.acceptRelay(`${row.actor.preferredUsername}@${row.actor.domain}`);
     });
   }
 
-  async rejectRelays(): Promise<void> {
-    await this.checkedRows.forEach((row: IFollower) => {
+  rejectRelays(): void {
+    this.checkedRows.forEach((row: IFollower) => {
       this.rejectRelay(`${row.actor.preferredUsername}@${row.actor.domain}`);
     });
   }
@@ -195,6 +241,20 @@ export default class Followers extends Mixins(RelayMixin) {
 
   get checkedRowsHaveAtLeastOneToApprove(): boolean {
     return this.checkedRows.some((checkedRow) => !checkedRow.approved);
+  }
+
+  async onFollowersPageChange(page: number): Promise<void> {
+    this.page = page;
+    try {
+      await this.$apollo.queries.relayFollowers.fetchMore({
+        variables: {
+          page: this.page,
+          limit: FOLLOWERS_PER_PAGE,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
 </script>

@@ -1,0 +1,69 @@
+<%= case @activity.subject do %>
+    <% :member_request -> %>
+        <%= 
+            dgettext("activity", "%{member} requested to join the group.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                }
+            ) |> raw %>
+    <% :member_invited -> %>
+        <%= 
+            dgettext("activity", "%{member} was invited by %{profile}.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                }
+            ) |> raw %>
+    <% :member_accepted_invitation -> %>
+        <%= 
+            dgettext("activity", "%{member} accepted the invitation to join the group.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                }
+            ) |> raw %>
+    <% :member_rejected_invitation -> %>
+        <%= 
+            dgettext("activity", "%{member} rejected the invitation to join the group.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                }
+            ) |> raw %>
+    <% :member_joined -> %>
+        <%= 
+            dgettext("activity", "%{member} joined the group.", 
+                %{
+                    member: "<b title=\"#{@activity.subject_params["member_actor_federated_username"]}\">#{@activity.subject_params["member_actor_name"]}</b>",
+                }
+            ) |> raw %>
+    <% :member_added -> %>
+        <%= 
+            dgettext("activity", "%{profile} added the member %{member}.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                }
+            ) |> raw %>
+    <% :member_updated -> %>
+        <%= 
+            dgettext("activity", "%{profile} updated the member %{member}.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                }
+            ) |> raw %>
+    <% :member_removed -> %>
+        <%= 
+            dgettext("activity", "%{profile} excluded member %{member}.", 
+                %{
+                    member: "<b>#{@activity.subject_params["member_actor_name"]}</b>",
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                }
+            ) |> raw %>
+    <% :member_quit -> %>
+        <%= 
+            dgettext("activity", "%{profile} quit the group.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                }
+            ) |> raw %>
+<% end %>

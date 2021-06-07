@@ -232,9 +232,10 @@ import {
   DELETE_FEED_TOKEN,
 } from "@/graphql/feed_tokens";
 import { IFeedToken } from "@/types/feedtoken.model";
-import { ServerParseError } from "apollo-link-http-common";
 import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
+import { ServerParseError } from "@apollo/client/link/http";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   components: {
@@ -261,6 +262,20 @@ import { CONFIG } from "@/graphql/config";
       },
     },
     config: CONFIG,
+  },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { isUpdate, identityName } = this;
+    let title = this.$t("Create a new profile") as string;
+    if (isUpdate) {
+      title = this.$t("Edit profile {profile}", {
+        profile: identityName,
+      }) as string;
+    }
+    return {
+      title,
+    };
   },
 })
 export default class EditIdentity extends mixins(identityEditionMixin) {
@@ -324,7 +339,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
         variables: {
           id: this.identity.id,
         },
-        update: (store) => {
+        update: (store: ApolloCache<InMemoryCache>) => {
           const data = store.readQuery<{ identities: IPerson[] }>({
             query: IDENTITIES,
           });
@@ -368,18 +383,21 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       await this.$apollo.mutate({
         mutation: UPDATE_PERSON,
         variables,
-        update: (store, { data: { updatePerson } }) => {
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updateData }: FetchResult
+        ) => {
           const data = store.readQuery<{ identities: IPerson[] }>({
             query: IDENTITIES,
           });
 
-          if (data) {
+          if (data && updateData?.updatePerson) {
             const index = data.identities.findIndex(
               (i) => i.id === this.identity.id
             );
 
-            this.$set(data.identities, index, updatePerson);
-            this.maybeUpdateCurrentActorCache(updatePerson);
+            this.$set(data.identities, index, updateData?.updatePerson);
+            this.maybeUpdateCurrentActorCache(updateData?.updatePerson);
 
             store.writeQuery({ query: IDENTITIES, data });
           }
@@ -403,13 +421,16 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
       await this.$apollo.mutate({
         mutation: CREATE_PERSON,
         variables,
-        update: (store, { data: { createPerson } }) => {
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updateData }: FetchResult
+        ) => {
           const data = store.readQuery<{ identities: IPerson[] }>({
             query: IDENTITIES,
           });
 
-          if (data) {
-            data.identities.push(createPerson);
+          if (data && updateData?.createPerson) {
+            data.identities.push(updateData?.createPerson);
 
             store.writeQuery({ query: IDENTITIES, data });
           }

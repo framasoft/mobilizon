@@ -6,32 +6,26 @@
       :id="commentId"
     >
       <popover-actor-card
-        class="media-left"
         :actor="comment.actor"
         :inline="true"
         v-if="comment.actor"
       >
         <figure
-          class="image is-48x48"
+          class="image is-32x32 media-left"
           v-if="!comment.deletedAt && comment.actor.avatar"
         >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon
-          class="media-left"
-          v-else
-          size="is-large"
-          icon="account-circle"
-        />
+        <b-icon class="media-left" v-else icon="account-circle" />
       </popover-actor-card>
       <div v-else class="media-left">
         <figure
-          class="image is-48x48"
+          class="image is-32x32"
           v-if="!comment.deletedAt && comment.actor.avatar"
         >
           <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
         </figure>
-        <b-icon v-else size="is-large" icon="account-circle" />
+        <b-icon v-else icon="account-circle" />
       </div>
       <div class="media-content">
         <div class="content">
@@ -39,23 +33,25 @@
             <strong :class="{ organizer: commentFromOrganizer }">{{
               comment.actor.name
             }}</strong>
-            <small>@{{ usernameWithDomain(comment.actor) }}</small>
-            <a class="comment-link has-text-grey" :href="commentURL">
-              <small>{{
-                formatDistanceToNow(new Date(comment.updatedAt), {
-                  locale: $dateFnsLocale,
-                  addSuffix: true,
-                })
-              }}</small>
-            </a>
+            <small class="has-text-grey">{{
+              usernameWithDomain(comment.actor)
+            }}</small>
           </span>
           <a v-else class="comment-link has-text-grey" :href="commentURL">
             <span>{{ $t("[deleted]") }}</span>
           </a>
+          <a class="comment-link has-text-grey" :href="commentURL">
+            <small>{{
+              formatDistanceToNow(new Date(comment.updatedAt), {
+                locale: $dateFnsLocale,
+                addSuffix: true,
+              })
+            }}</small>
+          </a>
           <span class="icons" v-if="!comment.deletedAt">
             <button
               v-if="comment.actor.id === currentActor.id"
-              @click="$emit('delete-comment', comment)"
+              @click="deleteComment"
             >
               <b-icon icon="delete" size="is-small" aria-hidden="true" />
               <span class="visually-hidden">{{ $t("Delete") }}</span>
@@ -183,7 +179,6 @@ import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson, usernameWithDomain } from "../../types/actor";
-import { COMMENTS_THREADS, FETCH_THREAD_REPLIES } from "../../graphql/comment";
 import { IEvent } from "../../types/event.model";
 import ReportModal from "../Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
@@ -257,39 +252,15 @@ export default class Comment extends Vue {
     this.$emit("create-comment", this.newComment);
     this.newComment = new CommentModel();
     this.replyTo = false;
+    this.showReplies = true;
   }
 
-  async fetchReplies(): Promise<void> {
-    const parentId = this.comment.id;
-    const { data } = await this.$apollo.query<{ thread: IComment[] }>({
-      query: FETCH_THREAD_REPLIES,
-      variables: {
-        threadId: parentId,
-      },
-    });
-    if (!data) return;
-    const { thread } = data;
-    const eventData = this.$apollo.getClient().readQuery<{ event: IEvent }>({
-      query: COMMENTS_THREADS,
-      variables: {
-        eventUUID: this.event.uuid,
-      },
-    });
-    if (!eventData) return;
-    const { event } = eventData;
-    const { comments } = event;
-    const parentCommentIndex = comments.findIndex(
-      (oldComment) => oldComment.id === parentId
-    );
-    const parentComment = comments[parentCommentIndex];
-    if (!parentComment) return;
-    parentComment.replies = thread;
-    comments[parentCommentIndex] = parentComment;
-    event.comments = comments;
-    this.$apollo.getClient().writeQuery({
-      query: COMMENTS_THREADS,
-      data: { event },
-    });
+  deleteComment(): void {
+    this.$emit("delete-comment", this.comment);
+    this.showReplies = false;
+  }
+
+  fetchReplies(): void {
     this.showReplies = true;
   }
 
@@ -394,8 +365,17 @@ form.reply {
   }
 }
 
-.comment-link small:hover {
-  color: hsl(0, 0%, 21%);
+a.comment-link {
+  text-decoration: none;
+  margin-left: 5px;
+  &:hover {
+    text-decoration: underline;
+  }
+  small {
+    &:hover {
+      color: hsl(0, 0%, 21%);
+    }
+  }
 }
 
 .root-comment .replies {

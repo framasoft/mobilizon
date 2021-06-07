@@ -28,6 +28,11 @@ import { ICurrentUser } from "../types/current-user.model";
     },
     currentUser: CURRENT_USER_CLIENT,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Settings") as string,
+    };
+  },
 })
 export default class Settings extends Vue {
   RouteName = RouteName;

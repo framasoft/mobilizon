@@ -31,7 +31,9 @@ defmodule Mobilizon.Factory do
       notification_before_event: false,
       notification_pending_participation: :one_day,
       notification_pending_membership: :one_day,
-      user_id: nil
+      group_notifications: :one_day,
+      last_notification_sent: nil,
+      user: build(:user)
     }
   end
 
@@ -156,6 +158,7 @@ defmodule Mobilizon.Factory do
       deleted_at: nil,
       tags: build_list(3, :tag),
       in_reply_to_comment: nil,
+      is_announcement: false,
       published_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :comment, uuid)
     }
@@ -417,11 +420,34 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Activities.Activity{
       type: :event,
       subject: :event_created,
-      subject_params: %{event_title: event.title},
+      subject_params: %{
+        "event_title" => event.title,
+        "event_uuid" => event.uuid,
+        "event_id" => event.id
+      },
       author: actor,
       group: group,
       object_type: :event,
       object_id: to_string(event.id)
+    }
+  end
+
+  def mobilizon_activity_setting_factory do
+    %Mobilizon.Users.ActivitySetting{
+      key: "event_created",
+      method: "email",
+      enabled: true,
+      user: build(:user)
+    }
+  end
+
+  def push_subscription_factory do
+    %Mobilizon.Users.PushSubscription{
+      digest: "",
+      endpoint: "",
+      auth: "",
+      p256dh: "",
+      user: build(:user)
     }
   end
 end

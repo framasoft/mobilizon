@@ -1,0 +1,31 @@
+<%= case @activity.subject do %><% :event_created -> %><%= dgettext("activity", "The event %{event} was created by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_updated -> %><%= dgettext("activity", "The event %{event} was updated by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_deleted -> %><%= dgettext("activity", "The event %{event} was deleted by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<% :comment_posted -> %><%= if @activity.subject_params["comment_reply_to"] do %><%= dgettext("activity", "%{profile} replied to a comment on the event %{event}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} posted a comment on the event %{event}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% end %><% end %>

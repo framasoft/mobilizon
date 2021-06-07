@@ -21,8 +21,10 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
       summary
     }
     totalReplies
+    insertedAt
     updatedAt
     deletedAt
+    isAnnouncement
   }
 `;
 
@@ -37,6 +39,12 @@ export const COMMENT_RECURSIVE_FRAGMENT = gql`
     }
     replies {
       ...CommentFields
+      inReplyToComment {
+        ...CommentFields
+      }
+      originComment {
+        ...CommentFields
+      }
       replies {
         ...CommentFields
       }
@@ -46,7 +54,7 @@ export const COMMENT_RECURSIVE_FRAGMENT = gql`
 `;
 
 export const FETCH_THREAD_REPLIES = gql`
-  query ($threadId: ID!) {
+  query FetchThreadReplies($threadId: ID!) {
     thread(id: $threadId) {
       ...CommentRecursive
     }
@@ -55,7 +63,7 @@ export const FETCH_THREAD_REPLIES = gql`
 `;
 
 export const COMMENTS_THREADS = gql`
-  query ($eventUUID: UUID!) {
+  query CommentThreads($eventUUID: UUID!) {
     event(uuid: $eventUUID) {
       id
       uuid
@@ -67,16 +75,31 @@ export const COMMENTS_THREADS = gql`
   ${COMMENT_FIELDS_FRAGMENT}
 `;
 
+export const COMMENTS_THREADS_WITH_REPLIES = gql`
+  query CommentThreadsWithReplies($eventUUID: UUID!) {
+    event(uuid: $eventUUID) {
+      id
+      uuid
+      comments {
+        ...CommentRecursive
+      }
+    }
+  }
+  ${COMMENT_RECURSIVE_FRAGMENT}
+`;
+
 export const CREATE_COMMENT_FROM_EVENT = gql`
   mutation CreateCommentFromEvent(
     $eventId: ID!
     $text: String!
     $inReplyToCommentId: ID
+    $isAnnouncement: Boolean
   ) {
     createComment(
       eventId: $eventId
       text: $text
       inReplyToCommentId: $inReplyToCommentId
+      isAnnouncement: $isAnnouncement
     ) {
       ...CommentRecursive
     }

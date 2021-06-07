@@ -2,7 +2,7 @@
 const vueJest = require("vue-jest/lib/template-compiler");
 
 module.exports = {
-  process(content) {
+  process(content: any) {
     const { render } = vueJest({
       content,
       attrs: {

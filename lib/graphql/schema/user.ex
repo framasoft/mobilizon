@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.Resolvers.{Media, User}
+  alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.SortType)
@@ -130,6 +131,11 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:media_size, :integer,
       resolve: &Media.user_size/3,
       description: "The total size of all the media from this user (from all their actors)"
+    )
+
+    field(:activity_settings, list_of(:activity_setting),
+      resolve: &ActivitySettings.user_activity_settings/3,
+      description: "The user's activity settings"
     )
   end
 
@@ -308,6 +314,12 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field :refresh_token, type: :refreshed_token do
       arg(:refresh_token, non_null(:string), description: "A refresh token")
       resolve(&User.refresh_token/3)
+    end
+
+    @desc "Logout an user, deleting a refresh token"
+    field :logout, :string do
+      arg(:refresh_token, non_null(:string))
+      resolve(&User.logout/3)
     end
 
     @desc "Change default actor for user"

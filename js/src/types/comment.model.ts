@@ -19,6 +19,7 @@ export interface IComment {
   totalReplies: number;
   insertedAt?: Date | string;
   publishedAt?: Date | string;
+  isAnnouncement: boolean;
 }
 
 export class CommentModel implements IComment {
@@ -50,6 +51,8 @@ export class CommentModel implements IComment {
 
   totalReplies = 0;
 
+  isAnnouncement = false;
+
   constructor(hash?: IComment) {
     if (!hash) return;
 
@@ -66,5 +69,6 @@ export class CommentModel implements IComment {
     this.deletedAt = hash.deletedAt;
     this.insertedAt = new Date(hash.insertedAt as string);
     this.totalReplies = hash.totalReplies;
+    this.isAnnouncement = hash.isAnnouncement;
   }
 }

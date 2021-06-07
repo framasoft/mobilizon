@@ -8,8 +8,8 @@ module.exports = {
   extends: [
     "plugin:vue/essential",
     "eslint:recommended",
-    "@vue/prettier",
     "@vue/typescript/recommended",
+    "@vue/prettier",
     "@vue/prettier/@typescript-eslint",
   ],
 

@@ -1,0 +1,49 @@
+<%= case @activity.subject do %><% :member_request -> %><%= dgettext("activity", "%{member} requested to join the group.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+    }
+) %>
+<% :member_invited -> %><%= dgettext("activity", "%{member} was invited by %{profile}.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<% :member_accepted_invitation -> %><%= dgettext("activity", "%{member} accepted the invitation to join the group.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+    }
+) %>
+<% :member_rejected_invitation -> %><%= dgettext("activity", "%{member} rejected the invitation to join the group.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+    }
+) %>
+<% :member_joined -> %><%= dgettext("activity", "%{member} joined the group.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+    }
+) %>
+<% :member_added -> %><%= dgettext("activity", "%{profile} added the member %{member}.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<% :member_updated -> %><%= dgettext("activity", "%{profile} updated the member %{member}.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<% :member_removed -> %><%= dgettext("activity", "%{profile} excluded member %{member}.", 
+    %{
+        member: @activity.subject_params["member_actor_name"],
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<% :member_quit -> %><%= dgettext("activity", "%{profile} quit the group.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %><% end %>

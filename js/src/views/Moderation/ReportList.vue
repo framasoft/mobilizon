@@ -17,23 +17,23 @@
     <section>
       <b-field>
         <b-radio-button
-          v-model="filterReports"
+          v-model="status"
           :native-value="ReportStatusEnum.OPEN"
           >{{ $t("Open") }}</b-radio-button
         >
         <b-radio-button
-          v-model="filterReports"
+          v-model="status"
           :native-value="ReportStatusEnum.RESOLVED"
           >{{ $t("Resolved") }}</b-radio-button
         >
         <b-radio-button
-          v-model="filterReports"
+          v-model="status"
           :native-value="ReportStatusEnum.CLOSED"
           >{{ $t("Closed") }}</b-radio-button
         >
       </b-field>
-      <ul v-if="reports.length > 0">
-        <li v-for="report in reports" :key="report.id">
+      <ul v-if="reports.elements.length > 0">
+        <li v-for="report in reports.elements" :key="report.id">
           <router-link
             :to="{ name: RouteName.REPORT, params: { reportId: report.id } }"
           >
@@ -41,48 +41,71 @@
           </router-link>
         </li>
       </ul>
-      <div v-else>
-        <b-message
-          v-if="filterReports === ReportStatusEnum.OPEN"
-          type="is-info"
+      <div v-else class="no-reports">
+        <empty-content
+          icon="chat-alert"
+          inline
+          v-if="status === ReportStatusEnum.OPEN"
         >
           {{ $t("No open reports yet") }}
-        </b-message>
-        <b-message
-          v-if="filterReports === ReportStatusEnum.RESOLVED"
-          type="is-info"
+        </empty-content>
+        <empty-content
+          icon="chat-alert"
+          inline
+          v-if="status === ReportStatusEnum.RESOLVED"
         >
           {{ $t("No resolved reports yet") }}
-        </b-message>
-        <b-message
-          v-if="filterReports === ReportStatusEnum.CLOSED"
-          type="is-info"
+        </empty-content>
+        <empty-content
+          icon="chat-alert"
+          inline
+          v-if="status === ReportStatusEnum.CLOSED"
         >
           {{ $t("No closed reports yet") }}
-        </b-message>
+        </empty-content>
       </div>
+      <b-pagination
+        :total="reports.total"
+        v-model="page"
+        :simple="true"
+        :per-page="REPORT_PAGE_LIMIT"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
+      >
+      </b-pagination>
     </section>
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { IReport } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
+import VueRouter from "vue-router";
+import { Paginate } from "@/types/paginate";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
+
+const REPORT_PAGE_LIMIT = 10;
 
 @Component({
   components: {
     ReportCard,
+    EmptyContent,
   },
   apollo: {
     reports: {
-      query: REPORTS,
       fetchPolicy: "cache-and-network",
+      query: REPORTS,
       variables() {
         return {
-          status: this.filterReports,
+          page: this.page,
+          status: this.status,
+          limit: REPORT_PAGE_LIMIT,
         };
       },
       pollInterval: 120000, // 2 minutes
@@ -90,7 +113,7 @@ import RouteName from "../../router/name";
   },
 })
 export default class ReportList extends Vue {
-  reports?: IReport[] = [];
+  reports?: Paginate<IReport> = { elements: [], total: 0 };
 
   RouteName = RouteName;
 
@@ -98,27 +121,63 @@ export default class ReportList extends Vue {
 
   filterReports: ReportStatusEnum = ReportStatusEnum.OPEN;
 
-  @Watch("$route.params.filter", { immediate: true })
-  onRouteFilterChanged(val: string): void {
-    if (!val) return;
-    const filter = val.toUpperCase();
-    if (filter in ReportStatusEnum) {
-      this.filterReports = filter as ReportStatusEnum;
-    }
+  REPORT_PAGE_LIMIT = REPORT_PAGE_LIMIT;
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
   }
 
-  @Watch("filterReports", { immediate: true })
-  async onFilterChanged(val: string): Promise<void> {
-    await this.$router.push({
-      name: RouteName.REPORTS,
-      params: { filter: val.toLowerCase() },
+  set page(page: number) {
+    this.pushRouter(RouteName.REPORTS, {
+      page: page.toString(),
     });
+  }
+
+  get status(): ReportStatusEnum {
+    const filter = this.$route.params.filter?.toUpperCase();
+    if (filter in ReportStatusEnum) {
+      return filter as ReportStatusEnum;
+    }
+    return ReportStatusEnum.OPEN;
+  }
+
+  set status(status: ReportStatusEnum) {
+    this.$router.push({
+      name: RouteName.REPORTS,
+      params: { filter: status.toLowerCase() },
+    });
+  }
+
+  protected async pushRouter(
+    routeName: string,
+    args: Record<string, string>
+  ): Promise<void> {
+    try {
+      await this.$router.push({
+        name: routeName,
+        params: this.$route.params,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-section > ul li > a {
-  text-decoration: none;
+section {
+  .no-reports {
+    margin-bottom: 2rem;
+  }
+  & > ul li {
+    margin: 0.5rem auto;
+
+    & > a {
+      text-decoration: none;
+    }
+  }
 }
 </style>

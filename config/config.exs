@@ -44,9 +44,6 @@ config :mobilizon, :events, creation: true
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,
-  http: [
-    transport_options: [socket_opts: [:inet6]]
-  ],
   url: [
     host: "mobilizon.local",
     scheme: "https"
@@ -123,14 +120,19 @@ config :logger, Sentry.LoggerBackend,
   level: :warn,
   capture_log_messages: true
 
-config :mobilizon, Mobilizon.Web.Auth.Guardian, issuer: "mobilizon"
+config :mobilizon, Mobilizon.Web.Auth.Guardian,
+  issuer: "mobilizon",
+  token_ttl: %{
+    "access" => {15, :minutes},
+    "refresh" => {60, :days}
+  }
 
 config :guardian, Guardian.DB,
   repo: Mobilizon.Storage.Repo,
   # default
   schema_name: "guardian_tokens",
   # store all token types if not set
-  # token_types: ["refresh_token"],
+  token_types: ["refresh"],
   # default: 60 minutes
   sweep_interval: 60
 
@@ -169,6 +171,9 @@ config :tesla, adapter: Tesla.Adapter.Hackney
 config :phoenix, :format_encoders, json: Jason, "activity-json": Jason
 config :phoenix, :json_library, Jason
 config :phoenix, :filter_parameters, ["password", "token"]
+
+config :absinthe, schema: Mobilizon.GraphQL.Schema
+config :absinthe, Absinthe.Logger, filter_variables: ["token", "password", "secret"]
 
 config :ex_cldr,
   default_locale: "en",
@@ -265,7 +270,7 @@ config :mobilizon, :anonymous,
 config :mobilizon, Oban,
   repo: Mobilizon.Storage.Repo,
   log: false,
-  queues: [default: 10, search: 5, mailers: 10, background: 5, activity: 5],
+  queues: [default: 10, search: 5, mailers: 10, background: 5, activity: 5, notifications: 5],
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
@@ -297,6 +302,16 @@ config :mobilizon, :external_resource_providers, %{
   "https://docs.google.com/presentation/" => :google_presentation,
   "https://docs.google.com/spreadsheets/" => :google_spreadsheets
 }
+
+config :mobilizon, Mobilizon.Service.Notifier,
+  notifiers: [
+    Mobilizon.Service.Notifier.Email,
+    Mobilizon.Service.Notifier.Push
+  ]
+
+config :mobilizon, Mobilizon.Service.Notifier.Email, enabled: true
+
+config :mobilizon, Mobilizon.Service.Notifier.Push, enabled: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

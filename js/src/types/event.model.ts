@@ -42,6 +42,7 @@ interface IEventEditJSON {
   draft: boolean;
   picture?: IMedia | { mediaId: string } | null;
   attributedToId: string | null;
+  organizerActorId?: string;
   onlineAddress?: string;
   phoneAddress?: string;
   physicalAddress?: IAddress;
@@ -209,13 +210,22 @@ export class EventModel implements IEvent {
       tags: this.tags.map((t) => t.title),
       onlineAddress: this.onlineAddress,
       phoneAddress: this.phoneAddress,
-      physicalAddress: this.physicalAddress,
-      options: this.options,
+      physicalAddress: this.removeTypeName(this.physicalAddress),
+      options: this.removeTypeName(this.options),
       attributedToId:
         this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
       contacts: this.contacts.map(({ id }) => ({
         id,
       })),
     };
+  }
+
+  private removeTypeName(entity: any): any {
+    if (entity?.__typename) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { __typename, ...purgedEntity } = entity;
+      return purgedEntity;
+    }
+    return entity;
   }
 }

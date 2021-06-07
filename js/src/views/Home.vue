@@ -649,11 +649,11 @@ section.hero {
     height: 100%;
     opacity: 0.3;
     z-index: -1;
-    background: url("/img/pics/homepage_background-1024w.png");
+    background: url("../../public/img/pics/homepage_background-1024w.png");
     background-size: cover;
   }
   &.webp::before {
-    background-image: url("/img/pics/homepage_background-1024w.webp");
+    background-image: url("../../public/img/pics/homepage_background-1024w.webp");
   }
 
   & > .hero-body {

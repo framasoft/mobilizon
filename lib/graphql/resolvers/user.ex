@@ -31,7 +31,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Return current logged-in user
   """
-  def get_current_user(_parent, _args, %{context: %{current_user: user}}) do
+  def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user}}) do
     {:ok, user}
   end
 
@@ -87,13 +87,13 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Refresh a token
   """
-  def refresh_token(_parent, %{refresh_token: refresh_token}, context) do
+  def refresh_token(_parent, %{refresh_token: refresh_token}, _resolution) do
     with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
-           Auth.Guardian.exchange(refresh_token, ["access", "refresh"], "access"),
-         {:ok, refresh_token} <- Authenticator.generate_refresh_token(user),
-         {:ok, %User{}} <- update_user_login_information(user, context) do
-      {:ok, %{access_token: exchanged_token, refresh_token: refresh_token}}
+           Auth.Guardian.exchange(refresh_token, "refresh", "access"),
+         {:ok, new_refresh_token} <- Authenticator.generate_refresh_token(user),
+         {:ok, _claims} <- Auth.Guardian.revoke(refresh_token) do
+      {:ok, %{access_token: exchanged_token, refresh_token: new_refresh_token}}
     else
       {:error, message} ->
         Logger.debug("Cannot refresh user token: #{inspect(message)}")
@@ -103,6 +103,28 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   def refresh_token(_parent, _params, _context) do
     {:error, dgettext("errors", "You need to have an existing token to get a refresh token")}
+  end
+
+  def logout(_parent, %{refresh_token: refresh_token}, %{context: %{current_user: %User{}}}) do
+    with {:ok, _claims} <- Auth.Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}),
+         {:ok, _claims} <- Auth.Guardian.revoke(refresh_token) do
+      {:ok, refresh_token}
+    else
+      {:error, :token_not_found} ->
+        {:error, :token_not_found}
+
+      {:error, error} ->
+        Logger.debug("Cannot remove user refresh token: #{inspect(error)}")
+        {:error, :unable_to_logout}
+    end
+  end
+
+  def logout(_parent, %{refresh_token: _refresh_token}, _context) do
+    {:error, :unauthenticated}
+  end
+
+  def logout(_parent, _params, _context) do
+    {:error, :invalid_argument}
   end
 
   @doc """

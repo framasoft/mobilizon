@@ -25,6 +25,11 @@ import { InstanceTermsType } from "@/types/enums";
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Terms") as string,
+    };
+  },
 })
 export default class Terms extends Vue {
   config!: IConfig;

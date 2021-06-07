@@ -1,0 +1,66 @@
+<%= case @activity.subject do %>
+    <% :discussion_created -> %>
+        <%= 
+            dgettext("activity", "%{profile} created the discussion %{discussion}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    discussion: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :discussion,
+                            Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["discussion_title"]}</a>"
+                }
+            ) |> raw %>
+    <% :discussion_replied -> %>
+    <%= 
+            dgettext("activity", "%{profile} replied to the discussion %{discussion}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    discussion: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :discussion,
+                            Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["discussion_title"]}</a>"
+                }
+            ) |> raw %>
+    <% :discussion_renamed -> %>
+    <%= 
+            dgettext("activity", "%{profile} renamed the discussion %{discussion}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    discussion: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :discussion,
+                            Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["discussion_title"]}</a>"
+                }
+            ) |> raw %>
+    <% :discussion_archived -> %>
+    <%= 
+            dgettext("activity", "%{profile} archived the discussion %{discussion}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    discussion: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :discussion,
+                            Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["discussion_title"]}</a>"
+                }
+            ) |> raw %>
+    <% :discussion_deleted -> %>
+    <%= 
+            dgettext("activity", "%{profile} deleted the discussion %{discussion}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    discussion: "<b>#{@activity.subject_params["discussion_title"]}</b>"
+                }
+            ) |> raw %>
+<% end %>

@@ -8,7 +8,9 @@
           slot="group"
           :to="{
             name: RouteName.GROUP,
-            params: { preferredUsername: usernameWithDomain(activity.object) },
+            params: {
+              preferredUsername: subjectParams.group_federated_username,
+            },
           }"
           >{{ subjectParams.group_name }}</router-link
         >

@@ -129,6 +129,16 @@ const EVENTS_PAGE_LIMIT = 10;
     Subtitle,
     EventListViewCard,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { group } = this;
+    return {
+      title: this.$t("{group} events", {
+        group: group.name || usernameWithDomain(group),
+      }) as string,
+    };
+  },
 })
 export default class GroupEvents extends mixins(GroupMixin) {
   group!: IGroup;

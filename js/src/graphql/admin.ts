@@ -37,6 +37,7 @@ export const DASHBOARD = gql`
 
 export const RELAY_FRAGMENT = gql`
   fragment relayFragment on Follower {
+    id
     actor {
       id
       preferredUsername

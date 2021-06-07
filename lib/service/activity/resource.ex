@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Resource do
   @moduledoc """
   Insert an resource activity
   """
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Resources}
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Service.Activity
   alias Mobilizon.Service.Workers.ActivityBuilder
@@ -37,6 +37,11 @@ defmodule Mobilizon.Service.Activity.Resource do
   @impl Activity
   def insert_activity(_, _), do: {:ok, nil}
 
+  @impl Activity
+  def get_object(resource_id) do
+    Resources.get_resource(resource_id)
+  end
+
   @spec subject_params(Resource.t(), String.t() | nil, Resource.t() | nil) :: map()
   defp subject_params(%Resource{} = resource, "resource_renamed", old_resource) do
     resource
@@ -44,7 +49,7 @@ defmodule Mobilizon.Service.Activity.Resource do
     |> Map.put(:old_resource_title, old_resource.title)
   end
 
-  defp subject_params(%Resource{path: path, title: title}, _, _) do
-    %{resource_path: path, resource_title: title}
+  defp subject_params(%Resource{path: path, title: title, type: type, id: id}, _, _) do
+    %{resource_path: path, resource_title: title, is_folder: type == :folder, resource_uuid: id}
   end
 end

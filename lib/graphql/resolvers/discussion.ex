@@ -14,7 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
 
   def find_discussions_for_actor(
         %Actor{id: group_id},
-        _args,
+        %{page: page, limit: limit},
         %{
           context: %{
             current_user: %User{} = user
@@ -24,7 +24,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, %Actor{type: :Group} = group} <- Actors.get_group_by_actor_id(group_id) do
-      {:ok, Discussions.find_discussions_for_actor(group)}
+      {:ok, Discussions.find_discussions_for_actor(group, page, limit)}
     else
       {:member, false} ->
         {:ok, %Page{total: 0, elements: []}}

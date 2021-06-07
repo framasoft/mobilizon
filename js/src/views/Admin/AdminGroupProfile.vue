@@ -21,7 +21,7 @@
               name: RouteName.PROFILES,
               params: { id: group.id },
             }"
-            >{{ group.name || group.preferredUsername }}</router-link
+            >{{ group.name || usernameWithDomain(group) }}</router-link
           >
         </li>
       </ul>
@@ -88,6 +88,11 @@
         :loading="$apollo.queries.group.loading"
         paginated
         backend-pagination
+        :current-page.sync="membersPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="group.members.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onMembersPageChange"
@@ -119,8 +124,11 @@
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
+                ><span v-else>@{{ usernameWithDomain(props.row.actor) }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey"
+                <span
+                  v-if="props.row.actor.name"
+                  class="is-size-7 has-text-grey"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
                 >
               </div>
@@ -170,11 +178,9 @@
           </span>
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("Nothing to see here") }}</p>
-            </div>
-          </section>
+          <empty-content icon="account-group" :inline="true">
+            {{ $t("No members found") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -191,6 +197,11 @@
         :loading="$apollo.queries.group.loading"
         paginated
         backend-pagination
+        :current-page.sync="organizedEventsPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="group.organizedEvents.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
@@ -213,11 +224,9 @@
           {{ props.row.beginsOn | formatDateTimeString }}
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("Nothing to see here") }}</p>
-            </div>
-          </section>
+          <empty-content icon="account-group" :inline="true">
+            {{ $t("No organized events found") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -234,8 +243,13 @@
         :loading="$apollo.queries.group.loading"
         paginated
         backend-pagination
+        :current-page.sync="postsPage"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
         :total="group.posts.total"
-        :per-page="EVENTS_PER_PAGE"
+        :per-page="POSTS_PER_PAGE"
         @page-change="onPostsPageChange"
       >
         <b-table-column field="title" :label="$t('Title')" v-slot="props">
@@ -256,11 +270,9 @@
           {{ props.row.publishAt | formatDateTimeString }}
         </b-table-column>
         <template slot="empty">
-          <section class="section">
-            <div class="content has-text-grey has-text-centered">
-              <p>{{ $t("Nothing to see here") }}</p>
-            </div>
-          </section>
+          <empty-content icon="bullhorn" :inline="true">
+            {{ $t("No posts found") }}
+          </empty-content>
         </template>
       </b-table>
     </section>
@@ -276,8 +288,14 @@ import { IGroup } from "../../types/actor";
 import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const EVENTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 10;
+const MEMBERS_PER_PAGE = 10;
 
 @Component({
   apollo: {
@@ -287,8 +305,10 @@ const EVENTS_PER_PAGE = 10;
       variables() {
         return {
           id: this.id,
-          organizedEventsPage: 1,
+          organizedEventsPage: this.organizedEventsPage,
           organizedEventsLimit: EVENTS_PER_PAGE,
+          postsPage: this.postsPage,
+          postsLimit: POSTS_PER_PAGE,
         };
       },
       skip() {
@@ -299,6 +319,15 @@ const EVENTS_PER_PAGE = 10;
   },
   components: {
     ActorCard,
+    EmptyContent,
+  },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { group } = this;
+    return {
+      title: group ? group.name || usernameWithDomain(group) : "",
+    };
   },
 })
 export default class AdminGroupProfile extends Vue {
@@ -312,13 +341,38 @@ export default class AdminGroupProfile extends Vue {
 
   EVENTS_PER_PAGE = EVENTS_PER_PAGE;
 
-  organizedEventsPage = 1;
+  POSTS_PER_PAGE = POSTS_PER_PAGE;
 
-  membersPage = 1;
-
-  postsPage = 1;
+  MEMBERS_PER_PAGE = MEMBERS_PER_PAGE;
 
   MemberRole = MemberRole;
+
+  get organizedEventsPage(): number {
+    return parseInt(
+      (this.$route.query.organizedEventsPage as string) || "1",
+      10
+    );
+  }
+
+  set organizedEventsPage(page: number) {
+    this.pushRouter({ organizedEventsPage: page.toString() });
+  }
+
+  get membersPage(): number {
+    return parseInt((this.$route.query.membersPage as string) || "1", 10);
+  }
+
+  set membersPage(page: number) {
+    this.pushRouter({ membersPage: page.toString() });
+  }
+
+  get postsPage(): number {
+    return parseInt((this.$route.query.postsPage as string) || "1", 10);
+  }
+
+  set postsPage(page: number) {
+    this.pushRouter({ postsPage: page.toString() });
+  }
 
   get metadata(): Array<Record<string, string>> {
     if (!this.group) return [];
@@ -367,64 +421,85 @@ export default class AdminGroupProfile extends Vue {
   }
 
   async suspendProfile(): Promise<void> {
-    this.$apollo.mutate<{ suspendProfile: { id: string } }>({
-      mutation: SUSPEND_PROFILE,
-      variables: {
-        id: this.id,
-      },
-      update: (store, { data }) => {
-        if (data == null) return;
-        const profileId = this.id;
+    try {
+      await this.$apollo.mutate<{ suspendProfile: { id: string } }>({
+        mutation: SUSPEND_PROFILE,
+        variables: {
+          id: this.id,
+        },
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+          if (data == null) return;
+          const profileId = this.id;
 
-        const profileData = store.readQuery<{ getGroup: IGroup }>({
-          query: GET_GROUP,
-          variables: {
-            id: profileId,
-          },
-        });
+          const profileData = store.readQuery<{ getGroup: IGroup }>({
+            query: GET_GROUP,
+            variables: {
+              id: profileId,
+            },
+          });
 
-        if (!profileData) return;
-        const { getGroup: group } = profileData;
-        group.suspended = true;
-        group.avatar = null;
-        group.name = "";
-        group.summary = "";
-        store.writeQuery({
-          query: GET_GROUP,
-          variables: {
-            id: profileId,
-          },
-          data: { getGroup: group },
-        });
-      },
-    });
+          if (!profileData) return;
+          store.writeQuery({
+            query: GET_GROUP,
+            variables: {
+              id: profileId,
+            },
+            data: {
+              getGroup: {
+                ...profileData.getGroup,
+                suspended: true,
+                avatar: null,
+                name: "",
+                summary: "",
+              },
+            },
+          });
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      this.$notifier.error(this.$t("Error while suspending group") as string);
+    }
   }
 
   async unsuspendProfile(): Promise<void> {
-    const profileID = this.id;
-    await this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
-      mutation: UNSUSPEND_PROFILE,
-      variables: {
-        id: this.id,
-      },
-      refetchQueries: [
-        {
-          query: GET_GROUP,
-          variables: {
-            id: profileID,
-          },
+    try {
+      const profileID = this.id;
+      await this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
+        mutation: UNSUSPEND_PROFILE,
+        variables: {
+          id: this.id,
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: GET_GROUP,
+            variables: {
+              id: profileID,
+            },
+          },
+        ],
+      });
+    } catch (e) {
+      console.error(e);
+      this.$notifier.error(this.$t("Error while suspending group") as string);
+    }
   }
 
   async refreshProfile(): Promise<void> {
-    this.$apollo.mutate<{ refreshProfile: IActor }>({
-      mutation: REFRESH_PROFILE,
-      variables: {
-        actorId: this.id,
-      },
-    });
+    try {
+      this.$apollo.mutate<{ refreshProfile: IActor }>({
+        mutation: REFRESH_PROFILE,
+        variables: {
+          actorId: this.id,
+        },
+      });
+      this.$notifier.success(
+        this.$t("Triggered profile refreshment") as string
+      );
+    } catch (e) {
+      console.error(e);
+      this.$notifier.error(this.$t("Error while suspending group") as string);
+    }
   }
 
   async onOrganizedEventsPageChange(page: number): Promise<void> {
@@ -434,24 +509,6 @@ export default class AdminGroupProfile extends Vue {
         actorId: this.id,
         organizedEventsPage: this.organizedEventsPage,
         organizedEventsLimit: EVENTS_PER_PAGE,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newOrganizedEvents =
-          fetchMoreResult.group.organizedEvents.elements;
-        return {
-          group: {
-            ...previousResult.group,
-            organizedEvents: {
-              __typename: previousResult.group.organizedEvents.__typename,
-              total: previousResult.group.organizedEvents.total,
-              elements: [
-                ...previousResult.group.organizedEvents.elements,
-                ...newOrganizedEvents,
-              ],
-            },
-          },
-        };
       },
     });
   }
@@ -464,23 +521,6 @@ export default class AdminGroupProfile extends Vue {
         memberPage: this.membersPage,
         memberLimit: EVENTS_PER_PAGE,
       },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newMembers = fetchMoreResult.group.members.elements;
-        return {
-          group: {
-            ...previousResult.group,
-            members: {
-              __typename: previousResult.group.members.__typename,
-              total: previousResult.group.members.total,
-              elements: [
-                ...previousResult.group.members.elements,
-                ...newMembers,
-              ],
-            },
-          },
-        };
-      },
     });
   }
 
@@ -490,23 +530,22 @@ export default class AdminGroupProfile extends Vue {
       variables: {
         actorId: this.id,
         postsPage: this.postsPage,
-        postLimit: EVENTS_PER_PAGE,
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const newPosts = fetchMoreResult.group.posts.elements;
-        return {
-          group: {
-            ...previousResult.group,
-            posts: {
-              __typename: previousResult.group.posts.__typename,
-              total: previousResult.group.posts.total,
-              elements: [...previousResult.group.posts.elements, ...newPosts],
-            },
-          },
-        };
+        postLimit: POSTS_PER_PAGE,
       },
     });
+  }
+
+  private async pushRouter(args: Record<string, string>): Promise<void> {
+    try {
+      await this.$router.push({
+        name: RouteName.ADMIN_GROUP_PROFILE,
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
+    }
   }
 }
 </script>

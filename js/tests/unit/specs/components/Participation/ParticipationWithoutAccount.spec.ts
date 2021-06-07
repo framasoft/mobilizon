@@ -13,8 +13,6 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import buildCurrentUserResolver from "@/apollo/user";
-import { InMemoryCache } from "apollo-cache-inmemory";
 import { CONFIG } from "@/graphql/config";
 import VueApollo from "vue-apollo";
 import { FETCH_EVENT_BASIC, JOIN_EVENT } from "@/graphql/event";
@@ -26,6 +24,9 @@ import {
   joinEventMock,
   joinEventResponseMock,
 } from "../../mocks/event";
+import { InMemoryCache } from "@apollo/client/cache";
+import { defaultResolvers } from "../../common";
+import flushPromises from "flush-promises";
 
 const localVue = createLocalVue();
 localVue.use(Buefy);
@@ -65,11 +66,11 @@ describe("ParticipationWithoutAccount", () => {
     customProps: Record<string, unknown> = {},
     baseData: Record<string, unknown> = {}
   ) => {
-    const cache = new InMemoryCache({ addTypename: true });
+    const cache = new InMemoryCache({ addTypename: false });
 
     mockClient = createMockClient({
       cache,
-      resolvers: buildCurrentUserResolver(cache),
+      resolvers: defaultResolvers,
     });
     requestHandlers = {
       configQueryHandler: jest.fn().mockResolvedValue(configMock),
@@ -155,11 +156,7 @@ describe("ParticipationWithoutAccount", () => {
         eventData.participantStats.participant + 1
       );
     }
-    // lots of things to await
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.find("form").exists()).toBeFalsy();
     expect(wrapper.find("h1.title").text()).toBe(
       "Request for participation confirmation sent"

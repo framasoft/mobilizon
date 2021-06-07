@@ -76,7 +76,7 @@ defmodule Mobilizon.Reports do
   @doc """
   Returns the list of reports.
   """
-  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus) :: [Report.t()]
+  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus) :: Page.t()
   def list_reports(
         page \\ nil,
         limit \\ nil,
@@ -86,9 +86,8 @@ defmodule Mobilizon.Reports do
       ) do
     status
     |> list_reports_query()
-    |> Page.paginate(page, limit)
     |> sort(sort, direction)
-    |> Repo.all()
+    |> Page.build_page(page, limit)
   end
 
   @doc """

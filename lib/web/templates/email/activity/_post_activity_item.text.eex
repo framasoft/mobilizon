@@ -1,0 +1,18 @@
+<%= case @activity.subject do %><% :post_created -> %><%= dgettext("activity", "The post %{post} was created by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        post: @activity.subject_params["post_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :post, @activity.subject_params["post_slug"]) |> URI.decode() %><% :post_updated -> %><%= dgettext("activity", "The post %{post} was updated by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        post: @activity.subject_params["post_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :post, @activity.subject_params["post_slug"]) |> URI.decode() %><% :post_deleted -> %><%= dgettext("activity", "The post %{post} was deleted by %{profile}.", 
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        post: @activity.subject_params["post_title"]
+    }
+) %><% end %>

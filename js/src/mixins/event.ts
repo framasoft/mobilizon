@@ -11,6 +11,7 @@ import {
   LEAVE_EVENT,
 } from "../graphql/event";
 import { IPerson } from "../types/actor";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component
 export default class EventMixin extends mixins(Vue) {
@@ -30,7 +31,7 @@ export default class EventMixin extends mixins(Vue) {
           actorId,
           token,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
           let participation;
 
@@ -43,19 +44,18 @@ export default class EventMixin extends mixins(Vue) {
             });
             if (participationCachedData == null) return;
             const { person } = participationCachedData;
-            if (person === null) {
-              console.error(
-                "Cannot update participation cache, because of null value."
-              );
-              return;
-            }
             [participation] = person.participations.elements;
-            person.participations.elements = [];
-            person.participations.total = 0;
-            store.writeQuery({
-              query: EVENT_PERSON_PARTICIPATION,
-              variables: { eventId: event.id, actorId },
-              data: { person },
+
+            store.modify({
+              id: `Person:${actorId}`,
+              fields: {
+                participations() {
+                  return {
+                    elements: [],
+                    total: 0,
+                  };
+                },
+              },
             });
           }
 
@@ -69,21 +69,27 @@ export default class EventMixin extends mixins(Vue) {
             console.error("Cannot update event cache, because of null value.");
             return;
           }
+          const participantStats = { ...eventCached.participantStats };
           if (
             participation &&
-            participation.role === ParticipantRole.NOT_APPROVED
+            participation?.role === ParticipantRole.NOT_APPROVED
           ) {
-            eventCached.participantStats.notApproved -= 1;
+            participantStats.notApproved -= 1;
           } else if (anonymousParticipationConfirmed === false) {
-            eventCached.participantStats.notConfirmed -= 1;
+            participantStats.notConfirmed -= 1;
           } else {
-            eventCached.participantStats.going -= 1;
-            eventCached.participantStats.participant -= 1;
+            participantStats.going -= 1;
+            participantStats.participant -= 1;
           }
           store.writeQuery({
             query: FETCH_EVENT,
             variables: { uuid: event.uuid },
-            data: { event: eventCached },
+            data: {
+              event: {
+                ...eventCached,
+                participantStats,
+              },
+            },
           });
         },
       });

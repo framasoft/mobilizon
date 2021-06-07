@@ -45,6 +45,7 @@ defmodule Mobilizon.Discussions.Comment do
     :attributed_to_id,
     :deleted_at,
     :local,
+    :is_announcement,
     :discussion_id
   ]
   @attrs @required_attrs ++ @optional_attrs
@@ -58,6 +59,7 @@ defmodule Mobilizon.Discussions.Comment do
     field(:total_replies, :integer, virtual: true, default: 0)
     field(:deleted_at, :utc_datetime)
     field(:published_at, :utc_datetime)
+    field(:is_announcement, :boolean, default: false)
 
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
@@ -65,7 +67,7 @@ defmodule Mobilizon.Discussions.Comment do
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
     belongs_to(:discussion, Discussion, type: :binary_id)
-    has_many(:replies, Comment, foreign_key: :in_reply_to_comment_id)
+    has_many(:replies, Comment, foreign_key: :origin_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
     has_many(:mentions, Mention)
     many_to_many(:media, Media, join_through: "comments_medias", on_replace: :delete)

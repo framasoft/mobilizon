@@ -255,6 +255,7 @@ export default class EditorComponent extends Vue {
         }),
         ...defaultExtensions(),
       ],
+      injectCSS: false,
       content: this.value,
       onUpdate: () => {
         this.$emit("input", this.editor?.getHTML());

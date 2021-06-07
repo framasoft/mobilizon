@@ -1,0 +1,72 @@
+<%= case @activity.subject do %>
+    <% :event_created -> %>
+        <%= 
+            dgettext("activity", "The event %{event} was created by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :event_updated -> %>
+    <%= 
+            dgettext("activity", "The event %{event} was updated by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :event_deleted -> %>
+    <%= 
+            dgettext("activity", "The event %{event} was deleted by %{profile}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<b>#{@activity.subject_params["event_title"]}</b>"
+                }
+            ) |> raw %>
+    <% :comment_posted -> %>
+    <%= if @activity.subject_params["comment_reply_to"] do %>
+        <%= 
+            dgettext("activity", "%{profile} replied to a comment on the event %{event}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% else %>
+        <%= 
+            dgettext("activity", "%{profile} posted a comment on the event %{event}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    event: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :event,
+                            @activity.subject_params["event_uuid"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["event_title"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% end %>
+<% end %>

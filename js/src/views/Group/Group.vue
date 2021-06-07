@@ -102,8 +102,18 @@
                   @click="isReportModalActive = true"
                 >
                   <span>
-                    {{ $t("Report") }}
                     <b-icon icon="flag" />
+                    {{ $t("Report") }}
+                  </span>
+                </b-dropdown-item>
+                <b-dropdown-item
+                  aria-role="listitem"
+                  v-if="isCurrentActorAGroupMember"
+                  @click="leaveGroup"
+                >
+                  <span>
+                    <b-icon icon="exit-to-app" />
+                    {{ $t("Leave") }}
                   </span>
                 </b-dropdown-item>
                 <hr class="dropdown-divider" />
@@ -112,8 +122,8 @@
                     :href="`@${preferredUsername}/feed/atom`"
                     :title="$t('Atom feed for events and posts')"
                   >
-                    {{ $t("RSS/Atom Feed") }}
                     <b-icon icon="rss" />
+                    {{ $t("RSS/Atom Feed") }}
                   </a>
                 </b-dropdown-item>
                 <b-dropdown-item has-link aria-role="listitem">
@@ -121,8 +131,8 @@
                     :href="`@${preferredUsername}/feed/ics`"
                     :title="$t('ICS feed for events')"
                   >
-                    {{ $t("ICS/WebCal Feed") }}
                     <b-icon icon="calendar-sync" />
+                    {{ $t("ICS/WebCal Feed") }}
                   </a>
                 </b-dropdown-item>
               </b-dropdown>
@@ -222,8 +232,8 @@
                 @click="isReportModalActive = true"
               >
                 <span>
-                  {{ $t("Report") }}
                   <b-icon icon="flag" />
+                  {{ $t("Report") }}
                 </span>
               </b-dropdown-item>
               <hr class="dropdown-divider" />
@@ -232,8 +242,8 @@
                   :href="`@${preferredUsername}/feed/atom`"
                   :title="$t('Atom feed for events and posts')"
                 >
-                  {{ $t("RSS/Atom Feed") }}
                   <b-icon icon="rss" />
+                  {{ $t("RSS/Atom Feed") }}
                 </a>
               </b-dropdown-item>
               <b-dropdown-item has-link aria-role="listitem">
@@ -241,8 +251,8 @@
                   :href="`@${preferredUsername}/feed/ics`"
                   :title="$t('ICS feed for events')"
                 >
-                  {{ $t("ICS/WebCal Feed") }}
                   <b-icon icon="calendar-sync" />
+                  {{ $t("ICS/WebCal Feed") }}
                 </a>
               </b-dropdown-item>
             </b-dropdown>
@@ -546,6 +556,7 @@ import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
 import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
+import { LEAVE_GROUP } from "@/graphql/group";
 
 @Component({
   apollo: {
@@ -571,7 +582,6 @@ import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.groupTitle,
-      titleTemplate: "%s | Mobilizon",
       meta: [
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -624,6 +634,34 @@ export default class Group extends mixins(GroupMixin) {
         },
       ],
     });
+  }
+
+  async leaveGroup(): Promise<void> {
+    try {
+      const [group, currentActorId] = [
+        usernameWithDomain(this.group),
+        this.currentActor.id,
+      ];
+      await this.$apollo.mutate({
+        mutation: LEAVE_GROUP,
+        variables: {
+          groupId: this.group.id,
+        },
+        refetchQueries: [
+          {
+            query: PERSON_MEMBERSHIP_GROUP,
+            variables: {
+              id: currentActorId,
+              group,
+            },
+          },
+        ],
+      });
+    } catch (error) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
   }
 
   acceptInvitation(): void {

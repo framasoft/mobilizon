@@ -158,7 +158,6 @@ import RouteName from "../../router/name";
   metaInfo() {
     return {
       title: this.$t("Administration") as string,
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

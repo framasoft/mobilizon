@@ -2,7 +2,7 @@
 
 import { register } from "register-service-worker";
 
-if (process.env.NODE_ENV === "production") {
+if ("serviceWorker" in navigator && isProduction()) {
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
       console.log(
@@ -31,4 +31,9 @@ if (process.env.NODE_ENV === "production") {
       console.error("Error during service worker registration:", error);
     },
   });
+}
+
+function isProduction(): boolean {
+  return true;
+  // return process.env.NODE_ENV === "production";
 }

@@ -1343,6 +1343,7 @@ defmodule Mobilizon.Actors do
 
   defp remove_banner(%Actor{banner: %File{url: url}} = actor) do
     safe_remove_file(url, actor)
+    {:ok, actor}
   end
 
   @spec remove_avatar(Actor.t()) :: {:ok, Actor.t()}
@@ -1350,6 +1351,7 @@ defmodule Mobilizon.Actors do
 
   defp remove_avatar(%Actor{avatar: %File{url: url}} = actor) do
     safe_remove_file(url, actor)
+    {:ok, actor}
   end
 
   @spec safe_remove_file(String.t(), Actor.t()) :: {:ok, Actor.t()}
@@ -1863,7 +1865,7 @@ defmodule Mobilizon.Actors do
          limit \\ 10
        ) do
     Logger.debug("accumulate_paginated_elements")
-    %Page{total: total, elements: new_elements} = page = method.(actor, page, limit)
+    %Page{total: total, elements: new_elements} = method.(actor, page, limit)
     elements = elements ++ new_elements
     count = length(elements)
 

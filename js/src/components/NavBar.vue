@@ -234,7 +234,9 @@ export default class NavBar extends Vue {
       query: IDENTITIES,
     });
     if (data) {
-      this.identities = data.identities.map((identity) => new Person(identity));
+      this.identities = data.identities.map(
+        (identity: IPerson) => new Person(identity)
+      );
 
       // If we don't have any identities, the user has validated their account,
       // is logging for the first time but didn't create an identity somehow

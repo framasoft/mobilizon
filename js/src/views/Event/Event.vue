@@ -665,6 +665,7 @@ import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -743,7 +744,6 @@ import { IParticipant } from "../../types/participant.model";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.eventTitle,
-      titleTemplate: "%s | Mobilizon",
       meta: [
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -1002,27 +1002,32 @@ export default class Event extends EventMixin {
           actorId: identity.id,
           message,
         },
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (data == null) return;
 
           const participationCachedData = store.readQuery<{ person: IPerson }>({
             query: EVENT_PERSON_PARTICIPATION,
             variables: { eventId: this.event.id, actorId: identity.id },
           });
-          if (participationCachedData == null) return;
-          const { person } = participationCachedData;
-          if (person === null) {
+
+          if (participationCachedData?.person == undefined) {
             console.error(
               "Cannot update participation cache, because of null value."
             );
             return;
           }
-          person.participations.elements.push(data.joinEvent);
-          person.participations.total += 1;
           store.writeQuery({
             query: EVENT_PERSON_PARTICIPATION,
             variables: { eventId: this.event.id, actorId: identity.id },
-            data: { person },
+            data: {
+              person: {
+                ...participationCachedData?.person,
+                participations: {
+                  elements: [data.joinEvent],
+                  total: 1,
+                },
+              },
+            },
           });
 
           const cachedData = store.readQuery<{ event: IEvent }>({
@@ -1037,18 +1042,24 @@ export default class Event extends EventMixin {
             );
             return;
           }
+          const participantStats = { ...event.participantStats };
 
           if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
-            event.participantStats.notApproved += 1;
+            participantStats.notApproved += 1;
           } else {
-            event.participantStats.going += 1;
-            event.participantStats.participant += 1;
+            participantStats.going += 1;
+            participantStats.participant += 1;
           }
 
           store.writeQuery({
             query: FETCH_EVENT,
             variables: { uuid: this.uuid },
-            data: { event },
+            data: {
+              event: {
+                ...event,
+                participantStats,
+              },
+            },
           });
         },
       });
@@ -1306,7 +1317,7 @@ export default class Event extends EventMixin {
 }
 
 .header-picture-default {
-  background-image: url("/img/mobilizon_default_card.png");
+  background-image: url("../../../public/img/mobilizon_default_card.png");
 }
 
 div.sidebar {

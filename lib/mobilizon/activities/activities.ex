@@ -17,7 +17,7 @@ defmodule Mobilizon.Activities do
     very_high: 50
   )
 
-  @activity_types ["event", "post", "discussion", "resource", "group", "member"]
+  @activity_types ["event", "post", "discussion", "resource", "group", "member", "comment"]
   @event_activity_subjects ["event_created", "event_updated", "event_deleted", "comment_posted"]
   @post_activity_subjects ["post_created", "post_updated", "post_deleted"]
   @discussion_activity_subjects [
@@ -58,6 +58,8 @@ defmodule Mobilizon.Activities do
   defenum(Type, @activity_types)
   defenum(Subject, @subjects)
   defenum(ObjectType, @object_type)
+
+  @activity_preloads [:author, :group]
 
   @doc """
   Returns the list of activities.
@@ -151,6 +153,11 @@ defmodule Mobilizon.Activities do
     %Activity{}
     |> Activity.changeset(attrs)
     |> Repo.insert()
+  end
+
+  @spec preload_activity(Activity.t()) :: Activity.t()
+  def preload_activity(%Activity{} = activity) do
+    Repo.preload(activity, @activity_preloads)
   end
 
   def object_types, do: @object_type

@@ -187,7 +187,6 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
   metaInfo() {
     return {
       title: this.$t("My events") as string,
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })
@@ -265,28 +264,6 @@ export default class MyEvents extends Vue {
         page: this.futurePage,
         limit: this.limit,
       },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const oldParticipations = previousResult.loggedUser.participations;
-        const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMoreFutureParticipations =
-          newParticipations.total ===
-          oldParticipations.length + newParticipations.length;
-
-        return {
-          loggedUser: {
-            __typename: previousResult.loggedUser.__typename,
-            participations: {
-              __typename: newParticipations.__typename,
-              total: newParticipations.total,
-              elements: [
-                ...oldParticipations.elements,
-                ...newParticipations.elements,
-              ],
-            },
-          },
-        };
-      },
     });
   }
 
@@ -297,28 +274,6 @@ export default class MyEvents extends Vue {
       variables: {
         page: this.pastPage,
         limit: this.limit,
-      },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        const oldParticipations = previousResult.loggedUser.participations;
-        const newParticipations = fetchMoreResult.loggedUser.participations;
-        this.hasMorePastParticipations =
-          newParticipations.total ===
-          oldParticipations.length + newParticipations.length;
-
-        return {
-          loggedUser: {
-            __typename: previousResult.loggedUser.__typename,
-            participations: {
-              __typename: newParticipations.__typename,
-              total: newParticipations.total,
-              elements: [
-                ...oldParticipations.elements,
-                ...newParticipations.elements,
-              ],
-            },
-          },
-        };
       },
     });
   }
@@ -356,18 +311,18 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("/img/pics/event_creation-480w.jpg");
+    background-image: url("../../../public/img/pics/event_creation-480w.jpg");
     @media (min-resolution: 2dppx) {
       & {
-        background-image: url("/img/pics/event_creation-1024w.jpg");
+        background-image: url("../../../public/img/pics/event_creation-1024w.jpg");
       }
     }
 
     &.webp {
-      background-image: url("/img/pics/event_creation-480w.webp");
+      background-image: url("../../../public/img/pics/event_creation-480w.webp");
       @media (min-resolution: 2dppx) {
         & {
-          background-image: url("/img/pics/event_creation-1024w.webp");
+          background-image: url("../../../public/img/pics/event_creation-1024w.webp");
         }
       }
     }

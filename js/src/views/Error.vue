@@ -14,7 +14,13 @@
 import { ErrorCode } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Error") as string,
+    };
+  },
+})
 export default class ErrorPage extends Vue {
   code: ErrorCode | null = null;
 

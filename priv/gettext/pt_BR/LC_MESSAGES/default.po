@@ -32,7 +32,7 @@ msgid "Activate my account"
 msgstr "Ativar a minha conta"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:117
+#: lib/web/templates/email/email.html.eex:118
 #: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Perguntar à comunidade Framacolibri"
@@ -143,7 +143,7 @@ msgid "You requested a new password for your account on %{instance}."
 msgstr "Você solicitou uma nova senha para sua conta em %{instance}."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:85
+#: lib/web/templates/email/email.html.eex:86
 msgid "Warning"
 msgstr "Atenção"
 
@@ -790,7 +790,7 @@ msgid "Hi there! You just registered to join this event: « %{title} ». Please 
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:114
+#: lib/web/templates/email/email.html.eex:115
 #: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Precisa de ajuda? Algo não está funcionando bem?"
@@ -851,7 +851,7 @@ msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} é um servidor Mobilizon."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:142
+#: lib/web/templates/email/email.html.eex:143
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "%{instance} é um servidor Mobilizon."
 
@@ -937,7 +937,7 @@ msgstr ""
 "evento através do link acima e clique no botão participação."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:143
+#: lib/web/templates/email/email.html.eex:144
 #: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "Aprenda mais sobre Mobilizon."
@@ -1105,7 +1105,7 @@ msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:89
+#: lib/web/templates/email/email.html.eex:90
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "Por favor não utilize este serviço em nenhum caso real"
 
@@ -1466,7 +1466,7 @@ msgid "We're sorry, but something went wrong on our end."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.eex:88
+#: lib/web/templates/email/email.html.eex:89
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Este é um site de demonstração para testar a versão beta do Mobilizon."
@@ -1515,4 +1515,9 @@ msgstr ""
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:27
+msgid "Activity notification for %{instance}"
 msgstr ""

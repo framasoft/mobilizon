@@ -35,6 +35,11 @@ defmodule Mobilizon.Service.Activity.Member do
 
   def insert_activity(_, _), do: {:ok, nil}
 
+  @impl Activity
+  def get_object(member_id) do
+    Actors.get_member(member_id)
+  end
+
   @spec get_author(Member.t(), Member.t() | nil) :: String.t() | integer()
   defp get_author(%Member{actor_id: actor_id}, options) do
     moderator = Keyword.get(options, :moderator)
@@ -72,11 +77,12 @@ defmodule Mobilizon.Service.Activity.Member do
       if(is_nil(actor),
         do: subject_params,
         else:
-          Map.put(
-            subject_params,
-            :member_preferred_username,
+          subject_params
+          |> Map.put(
+            :member_actor_federated_username,
             Actor.preferred_username_and_domain(actor)
           )
+          |> Map.put(:member_actor_name, actor.name)
       )
 
     subject_params =

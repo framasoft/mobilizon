@@ -28,6 +28,11 @@ import { IEvent } from "../../types/event.model";
   components: {
     EventCard,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Event list") as string,
+    };
+  },
 })
 export default class EventList extends Vue {
   @Prop(String) location!: string;

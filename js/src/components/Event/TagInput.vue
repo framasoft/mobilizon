@@ -28,7 +28,8 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { get, differenceBy } from "lodash";
+import get from "lodash/get";
+import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
 
 @Component({

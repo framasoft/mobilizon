@@ -233,6 +233,11 @@ import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
   apollo: {
     loggedUser: LOGGED_USER,
   },
+  metaInfo() {
+    return {
+      title: this.$t("General settings") as string,
+    };
+  },
 })
 export default class AccountSettings extends Vue {
   @Ref("passwordForm") readonly passwordForm!: HTMLElement;

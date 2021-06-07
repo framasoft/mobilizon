@@ -37,12 +37,14 @@ export const FETCH_PERSON = gql`
 `;
 
 export const GET_PERSON = gql`
-  query (
+  query Person(
     $actorId: ID!
     $organizedEventsPage: Int
     $organizedEventsLimit: Int
     $participationPage: Int
     $participationLimit: Int
+    $membershipsPage: Int
+    $membershipsLimit: Int
   ) {
     person(id: $actorId) {
       id
@@ -86,6 +88,24 @@ export const GET_PERSON = gql`
             uuid
             title
             beginsOn
+          }
+        }
+      }
+      memberships(page: $membershipsPage, limit: $membershipsLimit) {
+        total
+        elements {
+          id
+          role
+          insertedAt
+          parent {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
           }
         }
       }
@@ -353,7 +373,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
 `;
 
 export const IDENTITIES = gql`
-  query {
+  query Identities {
     identities {
       id
       avatar {
@@ -433,7 +453,10 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
 `;
 
 export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
-  subscription ($actorId: ID!, $group: String!) {
+  subscription GroupMembershipSubscriptionChanged(
+    $actorId: ID!
+    $group: String!
+  ) {
     groupMembershipChanged(personId: $actorId, group: $group) {
       id
       memberships {

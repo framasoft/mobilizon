@@ -1,0 +1,32 @@
+<%= case @activity.subject do %>
+    <% :group_created -> %>
+        <%= 
+            dgettext("activity", "%{profile} created the group %{group}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    group: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :actor,
+                            @activity.subject_params["group_federated_username"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["group_name"]}
+                        </a>"
+                }
+            ) |> raw %>
+    <% :group_updated -> %>
+    <%= 
+            dgettext("activity", "%{profile} updated the group %{group}.", 
+                %{
+                    profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                    group: "<a href=\"#{
+                        page_url(
+                            Mobilizon.Web.Endpoint,
+                            :actor,
+                            @activity.subject_params["group_federated_username"]
+                        ) |> URI.decode()}\">
+                            #{@activity.subject_params["group_name"]}
+                        </a>"
+                }
+            ) |> raw %>
+<% end %>

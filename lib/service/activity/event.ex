@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Event do
   @moduledoc """
   Insert an event activity
   """
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Events}
   alias Mobilizon.Events.Event
   alias Mobilizon.Service.Activity
   alias Mobilizon.Service.Workers.ActivityBuilder
@@ -36,4 +36,12 @@ defmodule Mobilizon.Service.Activity.Event do
 
   @impl Activity
   def insert_activity(_, _), do: {:ok, nil}
+
+  @impl Activity
+  def get_object(event_id) do
+    case Events.get_event(event_id) do
+      {:ok, %Event{} = event} -> event
+      _ -> nil
+    end
+  end
 end

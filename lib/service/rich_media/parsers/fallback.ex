@@ -7,8 +7,12 @@ defmodule Mobilizon.Service.RichMedia.Parsers.Fallback do
   @moduledoc """
   Module to parse fallback data in HTML pages (plain old title and meta description)
   """
+  require Logger
+
   @spec parse(String.t(), map()) :: {:ok, map()} | {:error, String.t()}
   def parse(html, data) do
+    Logger.debug("Running Fallback parser")
+
     data =
       data
       |> maybe_put(html, :title)

@@ -442,7 +442,7 @@ section {
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
+import { RefetchQueryDescription } from "@apollo/client/core/watchQueryOptions";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
@@ -485,6 +485,7 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -525,7 +526,6 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
       title: (this.isUpdate
         ? this.$t("Event edition")
         : this.$t("Event creation")) as string,
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })
@@ -545,8 +545,6 @@ export default class EditEvent extends Vue {
   identities: IActor[] = [];
 
   config!: IConfig;
-
-  unmodifiedEvent!: IEvent;
 
   pictureFile: File | null = null;
 
@@ -645,7 +643,11 @@ export default class EditEvent extends Vue {
     if (!(this.isUpdate || this.isDuplicate)) {
       this.initializeEvent();
     } else {
-      this.event.description = this.event.description || "";
+      this.event = {
+        ...this.event,
+        options: this.event.options,
+        description: this.event.description || "",
+      };
     }
   }
 
@@ -668,27 +670,6 @@ export default class EditEvent extends Vue {
     }
   }
 
-  @Watch("event")
-  setInitialData(): void {
-    if (
-      this.isUpdate &&
-      this.unmodifiedEvent === undefined &&
-      this.event &&
-      this.event.uuid
-    ) {
-      this.unmodifiedEvent = JSON.parse(
-        JSON.stringify(this.event.toEditJSON())
-      );
-    }
-  }
-
-  // @Watch('event.attributedTo', { deep: true })
-  // updateHideOrganizerWhenGroupEventOption(attributedTo) {
-  //   if (!attributedTo.preferredUsername) {
-  //     this.event.options.hideOrganizerWhenGroupEvent = false;
-  //   }
-  // }
-
   private validateForm() {
     const form = this.$refs.form as HTMLFormElement;
     if (form.checkValidity()) {
@@ -706,10 +687,12 @@ export default class EditEvent extends Vue {
       const { data } = await this.$apollo.mutate({
         mutation: CREATE_EVENT,
         variables,
-        update: (store, { data: { createEvent } }) =>
-          this.postCreateOrUpdate(store, createEvent),
-        refetchQueries: ({ data: { createEvent } }) =>
-          this.postRefetchQueries(createEvent),
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updatedData }: FetchResult
+        ) => this.postCreateOrUpdate(store, updatedData?.createEvent),
+        refetchQueries: ({ data: updatedData }: FetchResult) =>
+          this.postRefetchQueries(updatedData?.createEvent),
       });
 
       this.$buefy.notification.open({
@@ -739,10 +722,12 @@ export default class EditEvent extends Vue {
       await this.$apollo.mutate({
         mutation: EDIT_EVENT,
         variables,
-        update: (store, { data: { updateEvent } }) =>
-          this.postCreateOrUpdate(store, updateEvent),
-        refetchQueries: ({ data: { updateEvent } }) =>
-          this.postRefetchQueries(updateEvent),
+        update: (
+          store: ApolloCache<InMemoryCache>,
+          { data: updatedData }: FetchResult
+        ) => this.postCreateOrUpdate(store, updatedData?.updateEvent),
+        refetchQueries: ({ data }: FetchResult) =>
+          this.postRefetchQueries(data?.updateEvent),
       });
 
       this.$buefy.notification.open({
@@ -772,8 +757,8 @@ export default class EditEvent extends Vue {
   }
 
   get updateEventMessage(): string {
-    if (this.unmodifiedEvent.draft && !this.event.draft)
-      return this.$i18n.t("The event has been updated and published") as string;
+    // if (this.unmodifiedEvent.draft && !this.event.draft)
+    //   return this.$i18n.t("The event has been updated and published") as string;
     return (
       this.event.draft
         ? this.$i18n.t("The draft event has been updated")
@@ -879,24 +864,12 @@ export default class EditEvent extends Vue {
       ? this.event.organizerActor
       : this.organizerActor;
     if (organizerActor) {
-      res = Object.assign(res, {
-        organizerActorId: organizerActor.id,
-      });
+      res = { ...res, organizerActorId: organizerActor?.id };
     }
     const attributedToId = this.event.attributedTo?.id
       ? this.event.attributedTo.id
       : null;
-    res = Object.assign(res, { attributedToId });
-
-    // eslint-disable-next-line
-    // @ts-ignore
-    delete this.event.options.__typename;
-
-    if (this.event.physicalAddress) {
-      // eslint-disable-next-line
-      // @ts-ignore
-      delete this.event.physicalAddress.__typename;
-    }
+    res = { ...res, attributedToId };
 
     if (this.endsOnNull) {
       res.endsOn = null;
@@ -924,25 +897,6 @@ export default class EditEvent extends Vue {
       console.error(e);
     }
     return res;
-  }
-
-  private async getEvent() {
-    const result = await this.$apollo.query({
-      query: FETCH_EVENT,
-      variables: {
-        uuid: this.eventId,
-      },
-    });
-
-    if (result.data.event.endsOn === null) {
-      this.endsOnNull = true;
-    }
-    // as stated here : https://github.com/elixir-ecto/ecto/issues/1684
-    // "Ecto currently silently transforms empty strings into nil"
-    if (result.data.event.description === null) {
-      result.data.event.description = "";
-    }
-    return new EventModel(result.data.event);
   }
 
   @Watch("limitedPlaces")
@@ -1018,10 +972,11 @@ export default class EditEvent extends Vue {
   }
 
   get isEventModified(): boolean {
-    return (
-      JSON.stringify(this.event.toEditJSON()) !==
-      JSON.stringify(this.unmodifiedEvent)
-    );
+    // return (
+    //   JSON.stringify(this.event.toEditJSON()) !==
+    //   JSON.stringify(this.unmodifiedEvent)
+    // );
+    return false;
   }
 
   get beginsOn(): Date {

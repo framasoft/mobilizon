@@ -184,8 +184,8 @@ import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { ErrorResponse } from "apollo-link-error";
-import { ServerParseError } from "apollo-link-http-common";
+import { ServerParseError } from "@apollo/client/link/http";
+import { ErrorResponse } from "@apollo/client/link/error";
 
 @Component({
   components: {
@@ -195,6 +195,11 @@ import { ServerParseError } from "apollo-link-http-common";
   },
   apollo: {
     config: CONFIG,
+  },
+  metaInfo() {
+    return {
+      title: this.$t("Group settings") as string,
+    };
   },
 })
 export default class GroupSettings extends mixins(GroupMixin) {

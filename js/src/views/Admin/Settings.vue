@@ -347,6 +347,11 @@ import RouteName from "../../router/name";
     adminSettings: ADMIN_SETTINGS,
     languages: LANGUAGES,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Settings") as string,
+    };
+  },
 })
 export default class Settings extends Vue {
   adminSettings!: IAdminSettings;

@@ -143,6 +143,7 @@ import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -168,24 +169,36 @@ import { IComment } from "../../types/comment.model";
         variables() {
           return {
             slug: this.slug,
+            page: this.page,
+            limit: this.COMMENTS_PER_PAGE,
           };
         },
-        updateQuery: (previousResult, { subscriptionData }) => {
+        updateQuery: function (
+          previousResult: any,
+          { subscriptionData }: { subscriptionData: any }
+        ) {
           const previousDiscussion = previousResult.discussion;
-          console.log("updating subscription with ", subscriptionData);
-          if (
-            !previousDiscussion.comments.elements.find(
-              (comment: IComment) =>
-                comment.id ===
-                subscriptionData.data.discussionCommentChanged.lastComment.id
-            )
-          ) {
-            previousDiscussion.lastComment =
-              subscriptionData.data.discussionCommentChanged.lastComment;
-            previousDiscussion.comments.elements.push(
-              subscriptionData.data.discussionCommentChanged.lastComment
-            );
-            previousDiscussion.comments.total += 1;
+          const lastComment =
+            subscriptionData.data.discussionCommentChanged.lastComment;
+          const canLoadMore = !previousDiscussion.comments.elements.find(
+            (comment: IComment) => comment.id === lastComment.id
+          );
+          if (canLoadMore) {
+            return {
+              discussion: {
+                ...previousDiscussion,
+                lastComment: lastComment,
+                comments: {
+                  elements: [
+                    ...previousDiscussion.comments.elements.filter(
+                      ({ id }: { id: string }) => id !== lastComment.id
+                    ),
+                    lastComment,
+                  ],
+                  total: previousDiscussion.comments.total + 1,
+                },
+              },
+            };
           }
 
           return previousDiscussion;
@@ -203,8 +216,6 @@ import { IComment } from "../../types/comment.model";
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       title: this.discussion.title,
-      // all titles will be injected into this template
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })
@@ -239,29 +250,6 @@ export default class discussion extends mixins(GroupMixin) {
         discussionId: this.discussion.id,
         text: this.newComment,
       },
-      update: (store, { data: { replyToDiscussion } }) => {
-        const discussionData = store.readQuery<{
-          discussion: IDiscussion;
-        }>({
-          query: GET_DISCUSSION,
-          variables: {
-            slug: this.slug,
-            page: this.page,
-          },
-        });
-        if (!discussionData) return;
-        const { discussion: discussionCached } = discussionData;
-        discussionCached.lastComment = replyToDiscussion.lastComment;
-        discussionCached.comments.elements.push(replyToDiscussion.lastComment);
-        discussionCached.comments.total += 1;
-        store.writeQuery({
-          query: GET_DISCUSSION,
-          variables: { slug: this.slug, page: this.page },
-          data: { discussion: discussionCached },
-        });
-      },
-      // We don't need to handle cache update since
-      // there's the subscription that handles this for us
     });
     this.newComment = "";
   }
@@ -273,7 +261,7 @@ export default class discussion extends mixins(GroupMixin) {
         commentId: comment.id,
         text: comment.text,
       },
-      update: (store, { data }) => {
+      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -308,7 +296,7 @@ export default class discussion extends mixins(GroupMixin) {
       variables: {
         commentId: comment.id,
       },
-      update: (store, { data }) => {
+      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -324,17 +312,30 @@ export default class discussion extends mixins(GroupMixin) {
         const index = discussionCached.comments.elements.findIndex(
           ({ id }) => id === data.deleteComment.id
         );
+        let discussionUpdated = discussionCached;
         if (index > -1) {
-          const updatedComment = discussionCached.comments.elements[index];
-          updatedComment.deletedAt = new Date();
-          updatedComment.actor = null;
-          updatedComment.text = "";
-          discussionCached.comments.elements.splice(index, 1, updatedComment);
+          const updatedComment = {
+            ...discussionCached.comments.elements[index],
+            deletedAt: new Date(),
+            actor: null,
+            updatedComment: {
+              text: "",
+            },
+          };
+          const elements = [...discussionCached.comments.elements];
+          elements.splice(index, 1, updatedComment);
+          discussionUpdated = {
+            ...discussionCached,
+            comments: {
+              total: discussionCached.comments.total,
+              elements,
+            },
+          };
         }
         store.writeQuery({
           query: GET_DISCUSSION,
           variables: { slug: this.slug, page: this.page },
-          data: { discussion: discussionCached },
+          data: { discussion: discussionUpdated },
         });
       },
     });
@@ -351,19 +352,6 @@ export default class discussion extends mixins(GroupMixin) {
           page: this.page,
           limit: this.COMMENTS_PER_PAGE,
         },
-        // Transform the previous result with new data
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return previousResult;
-          const newComments = fetchMoreResult.discussion.comments.elements;
-          this.hasMoreComments = newComments.length === 1;
-          const { discussion: discussionCached } = previousResult;
-          discussionCached.comments.elements = [
-            ...previousResult.discussion.comments.elements,
-            ...newComments,
-          ];
-
-          return { discussion: discussionCached };
-        },
       });
     } catch (e) {
       console.error(e);
@@ -377,7 +365,10 @@ export default class discussion extends mixins(GroupMixin) {
         discussionId: this.discussion.id,
         title: this.newTitle,
       },
-      update: (store, { data: { updateDiscussion } }) => {
+      update: (
+        store: ApolloCache<InMemoryCache>,
+        { data }: FetchResult<{ updateDiscussion: IDiscussion }>
+      ) => {
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
         }>({
@@ -387,14 +378,18 @@ export default class discussion extends mixins(GroupMixin) {
             page: this.page,
           },
         });
-        if (!discussionData) return;
-        const { discussion: discussionCached } = discussionData;
-        discussionCached.title = updateDiscussion.title;
-        store.writeQuery({
-          query: GET_DISCUSSION,
-          variables: { slug: this.slug, page: this.page },
-          data: { discussion: discussionCached },
-        });
+        if (discussionData && data?.updateDiscussion) {
+          store.writeQuery({
+            query: GET_DISCUSSION,
+            variables: { slug: this.slug, page: this.page },
+            data: {
+              discussion: {
+                ...discussionData.discussion,
+                title: data?.updateDiscussion.title,
+              },
+            },
+          });
+        }
       },
     });
     this.editTitleMode = false;

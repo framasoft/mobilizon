@@ -69,7 +69,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
         mentions: mentions,
         local: is_nil(actor_domain),
         visibility: if(Visibility.is_public?(object), do: :public, else: :private),
-        published_at: object["published"]
+        published_at: object["published"],
+        is_announcement: Map.get(object, "isAnnouncement", false)
       }
 
       Logger.debug("Converted object before fetching parents")
@@ -109,7 +110,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
       "uuid" => comment.uuid,
       "id" => comment.url,
       "tag" => build_mentions(comment.mentions) ++ build_tags(comment.tags),
-      "published" => comment.published_at |> DateTime.to_iso8601()
+      "published" => comment.published_at |> DateTime.to_iso8601(),
+      "isAnnouncement" => comment.is_announcement
     }
 
     object =

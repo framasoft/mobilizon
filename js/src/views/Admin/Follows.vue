@@ -32,7 +32,6 @@
             tag="li"
             active-class="is-active"
             :to="{ name: RouteName.RELAY_FOLLOWINGS }"
-            exact
           >
             <a>
               <b-icon icon="inbox-arrow-down"></b-icon>
@@ -46,7 +45,6 @@
             tag="li"
             active-class="is-active"
             :to="{ name: RouteName.RELAY_FOLLOWERS }"
-            exact
           >
             <a>
               <b-icon icon="inbox-arrow-up"></b-icon>

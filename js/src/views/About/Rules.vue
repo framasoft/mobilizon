@@ -18,6 +18,11 @@ import RouteName from "../../router/name";
       query: RULES,
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Rules") as string,
+    };
+  },
 })
 export default class Rules extends Vue {
   config!: IConfig;

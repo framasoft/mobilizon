@@ -5,6 +5,7 @@ defmodule Mobilizon.Service.Workers.Background do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.Refresher
 
   use Mobilizon.Service.Workers.Helper, queue: "background"
 
@@ -20,6 +21,12 @@ defmodule Mobilizon.Service.Workers.Background do
   def perform(%Job{args: %{"op" => "actor_key_rotation", "actor_id" => actor_id}}) do
     with %Actor{} = actor <- Actors.get_actor(actor_id) do
       Actors.actor_key_rotation(actor)
+    end
+  end
+
+  def perform(%Job{args: %{"op" => "refresh_profile", "actor_id" => actor_id}}) do
+    with %Actor{} = actor <- Actors.get_actor(actor_id) do
+      Refresher.refresh_profile(actor)
     end
   end
 end

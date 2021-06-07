@@ -14,6 +14,8 @@ defmodule Mobilizon.Users.Setting do
           notification_before_event: boolean,
           notification_pending_participation: NotificationPendingNotificationDelay.t(),
           notification_pending_membership: NotificationPendingNotificationDelay.t(),
+          group_notifications: NotificationPendingNotificationDelay.t(),
+          last_notification_sent: DateTime.t(),
           user: User.t()
         }
 
@@ -25,7 +27,9 @@ defmodule Mobilizon.Users.Setting do
     :notification_each_week,
     :notification_before_event,
     :notification_pending_participation,
-    :notification_pending_membership
+    :notification_pending_membership,
+    :group_notifications,
+    :last_notification_sent
   ]
 
   @attrs @required_attrs ++ @optional_attrs
@@ -46,6 +50,9 @@ defmodule Mobilizon.Users.Setting do
     field(:notification_pending_membership, NotificationPendingNotificationDelay,
       default: :one_day
     )
+
+    field(:group_notifications, NotificationPendingNotificationDelay, default: :one_day)
+    field(:last_notification_sent, :utc_datetime)
 
     embeds_one :location, Location, on_replace: :update, primary_key: false do
       field(:name, :string)

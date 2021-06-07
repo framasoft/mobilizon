@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
   alias Mobilizon.{Actors, Admin, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Refresher
+  alias Mobilizon.Service.Workers.Background
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
@@ -16,8 +16,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
   def refresh_profile(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     case Actors.get_actor(id) do
-      %Actor{domain: domain} = actor when not is_nil(domain) ->
-        Refresher.refresh_profile(actor)
+      %Actor{domain: domain, id: actor_id} = actor when not is_nil(domain) ->
+        Background.enqueue("refresh_profile", %{
+          "actor_id" => actor_id
+        })
+
         {:ok, actor}
 
       %Actor{} ->
@@ -80,7 +83,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
          {:delete_tombstones, {_, nil}} <-
            {:delete_tombstones, Mobilizon.Tombstone.delete_actor_tombstones(id)},
          {:ok, %Actor{} = actor} <- Actors.update_actor(actor, %{suspended: false}),
-         {:ok, %Actor{} = actor} <- refresh_if_remote(actor),
+         :ok <- refresh_if_remote(actor),
          {:ok, _} <- Admin.log_action(moderator_actor, "unsuspend", actor) do
       {:ok, actor}
     else
@@ -99,7 +102,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
     {:error, dgettext("errors", "Only moderators and administrators can unsuspend a profile")}
   end
 
-  @spec refresh_if_remote(Actor.t()) :: {:ok, Actor.t()}
-  defp refresh_if_remote(%Actor{domain: nil} = actor), do: {:ok, actor}
-  defp refresh_if_remote(%Actor{} = actor), do: Refresher.refresh_profile(actor)
+  @spec refresh_if_remote(Actor.t()) :: :ok
+  defp refresh_if_remote(%Actor{domain: nil}), do: :ok
+
+  defp refresh_if_remote(%Actor{id: actor_id}) do
+    Background.enqueue("refresh_profile", %{
+      "actor_id" => actor_id
+    })
+
+    :ok
+  end
 end

@@ -2,7 +2,7 @@ defmodule Mobilizon.Service.Activity.Discussion do
   @moduledoc """
   Insert a discussion activity
   """
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Discussions}
   alias Mobilizon.Discussions.Discussion
   alias Mobilizon.Service.Activity
   alias Mobilizon.Service.Workers.ActivityBuilder
@@ -37,6 +37,11 @@ defmodule Mobilizon.Service.Activity.Discussion do
   end
 
   def insert_activity(_, _), do: {:ok, nil}
+
+  @impl Activity
+  def get_object(discussion_id) do
+    Discussions.get_discussion(discussion_id)
+  end
 
   @spec subject_params(Discussion.t(), String.t() | nil, Discussion.t() | nil) :: map()
   defp subject_params(%Discussion{} = discussion, "discussion_renamed", old_discussion) do

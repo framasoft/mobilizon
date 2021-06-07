@@ -229,7 +229,7 @@ import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import Draggable from "vuedraggable";
-import { RefetchQueryDescription } from "apollo-client/core/watchQueryOptions";
+import { RefetchQueryDescription } from "@apollo/client/core/watchQueryOptions";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IActor, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
@@ -249,6 +249,7 @@ import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import ResourceMixin from "../../mixins/resource";
 import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
+import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
 @Component({
   components: { FolderItem, ResourceItem, Draggable, ResourceSelector },
@@ -272,6 +273,19 @@ import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
     },
     config: CONFIG,
     currentActor: CURRENT_ACTOR_CLIENT,
+  },
+  metaInfo() {
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title: this.isRoot
+        ? (this.$t("Resources") as string)
+        : (this.$t("{folder} - Resources", {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            folder: this.lastFragment,
+          }) as string),
+    };
   },
 })
 export default class Resources extends Mixins(ResourceMixin) {
@@ -342,6 +356,14 @@ export default class Resources extends Mixins(ResourceMixin) {
       return ResourceMixin.resourcePathArray(this.resource);
     }
     return [];
+  }
+
+  get isRoot(): boolean {
+    return this.actualPath === "/";
+  }
+
+  get lastFragment(): string | undefined {
+    return this.filteredPath.slice(-1)[0];
   }
 
   async createResource(): Promise<void> {
@@ -538,7 +560,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           path: resource.path,
         },
         refetchQueries: () => this.postRefreshQueries(),
-        update: (store, { data }) => {
+        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
           if (!data || data.updateResource == null || parentPath == null)
             return;
           if (!this.resource.actor) return;

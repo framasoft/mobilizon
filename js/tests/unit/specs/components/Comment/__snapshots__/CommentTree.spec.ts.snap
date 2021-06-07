@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CommentTree renders a comment tree 1`] = `
+exports[`CommentTree renders a comment tree with comments 1`] = `
 <div>
   <!---->
   <transition-group-stub name="comment-empty-list" mode="out-in">
@@ -13,7 +13,7 @@ exports[`CommentTree renders a comment tree 1`] = `
 </div>
 `;
 
-exports[`CommentTree renders a comment tree 2`] = `
+exports[`CommentTree renders an empty comment tree 1`] = `
 <div>
   <!---->
   <transition-group-stub name="comment-empty-list" mode="out-in">

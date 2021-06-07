@@ -17,10 +17,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Refresher, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Service.Workers.Background
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Email.Participation
   alias Mobilizon.Web.Endpoint
@@ -792,7 +793,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       # If this is an instance follow, refresh the followed profile (especially their outbox)
       if follower.id == relay_actor.id do
-        Refresher.refresh_profile(followed)
+        Background.enqueue("refresh_profile", %{
+          "actor_id" => followed.id
+        })
       end
 
       {:ok, activity, follow}

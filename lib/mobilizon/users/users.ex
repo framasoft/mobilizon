@@ -13,7 +13,7 @@ defmodule Mobilizon.Users do
   alias Mobilizon.{Crypto, Events}
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Storage.{Page, Repo}
-  alias Mobilizon.Users.{Setting, User}
+  alias Mobilizon.Users.{ActivitySetting, PushSubscription, Setting, User}
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
@@ -403,6 +403,121 @@ defmodule Mobilizon.Users do
   """
   def change_setting(%Setting{} = setting) do
     Setting.changeset(setting, %{})
+  end
+
+  @doc """
+  Get a paginated list of all of a user's subscriptions
+  """
+  @spec list_user_push_subscriptions(String.t() | integer(), integer() | nil, integer() | nil) ::
+          Page.t()
+  def list_user_push_subscriptions(user_id, page \\ nil, limit \\ nil) do
+    PushSubscription
+    |> where([p], p.user_id == ^user_id)
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Get a push subscription by their endpoint
+  """
+  @spec get_push_subscription_by_endpoint(String.t()) :: PushSubscription.t() | nil
+  def get_push_subscription_by_endpoint(endpoint) do
+    PushSubscription
+    |> Repo.get_by(endpoint: endpoint)
+    |> Repo.preload([:user])
+  end
+
+  @doc """
+  Creates a push subscription.
+
+  ## Examples
+
+      iex> create_push_subscription(%{field: value})
+      {:ok, %PushSubscription{}}
+
+      iex> create_push_subscription(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_push_subscription(attrs \\ %{}) do
+    %PushSubscription{}
+    |> PushSubscription.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a push subscription.
+
+  ## Examples
+
+      iex> update_push_subscription(push_subscription, %{field: new_value})
+      {:ok, %PushSubscription{}}
+
+      iex> update_push_subscription(push_subscription, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_push_subscription(%PushSubscription{} = push_subscription, attrs) do
+    push_subscription
+    |> PushSubscription.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a push subscription.
+
+  ## Examples
+
+      iex> delete_push_subscription(push_subscription)
+      {:ok, %PushSubscription{}}
+
+      iex> delete_push_subscription(push_subscription)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_push_subscription(%PushSubscription{} = push_subscription) do
+    Repo.delete(push_subscription)
+  end
+
+  @doc """
+  Lists the activity settings for an user
+
+  ## Examples
+
+      iex> activity_settings_for_user(user)
+      [%ActivitySetting{}]
+
+      iex> activity_settings_for_user(user)
+      []
+
+  """
+  def activity_settings_for_user(%User{id: user_id}) do
+    ActivitySetting
+    |> where([a], a.user_id == ^user_id)
+    |> Repo.all()
+  end
+
+  def activity_setting(%User{id: user_id}, key, method) do
+    ActivitySetting
+    |> where([a], a.user_id == ^user_id and a.key == ^key and a.method == ^method)
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates an activity setting. Overrides existing values if present
+
+  ## Examples
+
+      iex> create_activity_setting(%{field: value})
+      {:ok, %ActivitySetting{}}
+
+      iex> create_activity_setting(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_activity_setting(attrs \\ %{}) do
+    %ActivitySetting{}
+    |> ActivitySetting.changeset(attrs)
+    |> Repo.insert(on_conflict: :replace_all, conflict_target: [:user_id, :key, :method])
   end
 
   @spec user_by_email_query(String.t(), boolean | nil, boolean()) :: Ecto.Query.t()

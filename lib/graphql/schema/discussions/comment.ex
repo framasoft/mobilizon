@@ -50,6 +50,10 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     field(:updated_at, :datetime, description: "When was the comment updated")
     field(:deleted_at, :datetime, description: "When was the comment deleted")
     field(:published_at, :datetime, description: "When was the comment published")
+
+    field(:is_announcement, non_null(:boolean),
+      description: "Whether this comment needs to be announced to participants"
+    )
   end
 
   @desc "The list of visibility options for a comment"
@@ -86,6 +90,8 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       arg(:event_id, non_null(:id), description: "The event under which this comment is")
       arg(:in_reply_to_comment_id, :id, description: "The comment ID this one replies to")
 
+      arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
+
       resolve(&Comment.create_comment/3)
     end
 
@@ -93,6 +99,8 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     field :update_comment, type: :comment do
       arg(:text, non_null(:string), description: "The comment updated body")
       arg(:comment_id, non_null(:id), description: "The comment ID")
+
+      arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
 
       resolve(&Comment.update_comment/3)
     end

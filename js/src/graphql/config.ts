@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const CONFIG = gql`
-  query {
+  query FullConfig {
     config {
       name
       description
@@ -84,6 +84,10 @@ export const CONFIG = gql`
       instanceFeeds {
         enabled
       }
+      webPush {
+        enabled
+        publicKey
+      }
     }
   }
 `;
@@ -157,6 +161,17 @@ export const TIMEZONES = gql`
   query {
     config {
       timezones
+    }
+  }
+`;
+
+export const WEB_PUSH = gql`
+  query {
+    config {
+      webPush {
+        enabled
+        publicKey
+      }
     }
   }
 `;

@@ -51,11 +51,7 @@ import RouteName from "../../router/name";
   },
   metaInfo() {
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       title: this.$t("Create a discussion") as string,
-      // all titles will be injected into this template
-      titleTemplate: "%s | Mobilizon",
     };
   },
 })

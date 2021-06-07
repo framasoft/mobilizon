@@ -40,6 +40,11 @@ defmodule Mobilizon.Service.Activity.Group do
 
   def insert_activity(_, _), do: {:ok, nil}
 
+  @impl Activity
+  def get_object(group_id) do
+    Actors.get_actor(group_id)
+  end
+
   @spec subject_params(Actor.t(), String.t() | nil, Actor.t() | nil) :: map()
   defp subject_params(%Actor{} = group, "group_updated", %Actor{} = old_group) do
     group
@@ -67,7 +72,7 @@ defmodule Mobilizon.Service.Activity.Group do
   end
 
   defp subject_params(
-         %Actor{preferred_username: preferred_username, domain: domain, name: name},
+         %Actor{preferred_username: preferred_username, domain: domain, name: name} = actor,
          _,
          _
        ) do
@@ -75,6 +80,7 @@ defmodule Mobilizon.Service.Activity.Group do
       group_preferred_username: preferred_username,
       group_name: name,
       group_domain: domain,
+      group_federated_username: Actor.preferred_username_and_domain(actor),
       group_changes: []
     }
   end

@@ -265,6 +265,11 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
   components: {
     EmptyContent,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Group Members") as string,
+    };
+  },
 })
 export default class GroupMembers extends mixins(GroupMixin) {
   loading = true;
@@ -358,17 +363,6 @@ export default class GroupMembers extends mixins(GroupMixin) {
           page,
           limit: MEMBERS_PER_PAGE,
           roles,
-        };
-      },
-      // Transform the previous result with new data
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) return previousResult;
-        const oldMembers = previousResult.group.members;
-        const newMembers = fetchMoreResult.group.members;
-        return {
-          elements: [...oldMembers.elements, ...newMembers.elements],
-          total: newMembers.total,
-          __typename: oldMembers.__typename,
         };
       },
     });

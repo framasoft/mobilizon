@@ -47,6 +47,11 @@ import { IDENTITIES } from "@/graphql/actor";
       query: IDENTITIES,
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Identities") as string,
+    };
+  },
 })
 export default class IdentityPicker extends Vue {
   @Prop() value!: IActor;

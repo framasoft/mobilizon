@@ -1,12 +1,14 @@
+import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUserRole } from "@/types/enums";
-import { ApolloCache } from "apollo-cache";
-import { NormalizedCacheObject } from "apollo-cache-inmemory";
-import { Resolvers } from "apollo-client/core/types";
+import { ApolloCache, NormalizedCacheObject } from "@apollo/client/cache";
+import { Resolvers } from "@apollo/client/core/types";
 
 export default function buildCurrentUserResolver(
   cache: ApolloCache<NormalizedCacheObject>
 ): Resolvers {
-  cache.writeData({
+  cache.writeQuery({
+    query: CURRENT_USER_CLIENT,
     data: {
       currentUser: {
         __typename: "CurrentUser",
@@ -15,6 +17,12 @@ export default function buildCurrentUserResolver(
         isLoggedIn: false,
         role: ICurrentUserRole.USER,
       },
+    },
+  });
+
+  cache.writeQuery({
+    query: CURRENT_ACTOR_CLIENT,
+    data: {
       currentActor: {
         __typename: "CurrentActor",
         id: null,
@@ -47,7 +55,7 @@ export default function buildCurrentUserResolver(
           },
         };
 
-        localCache.writeData({ data });
+        localCache.writeQuery({ data, query: CURRENT_USER_CLIENT });
       },
       updateCurrentActor: (
         _: any,
@@ -74,7 +82,7 @@ export default function buildCurrentUserResolver(
           },
         };
 
-        localCache.writeData({ data });
+        localCache.writeQuery({ data, query: CURRENT_ACTOR_CLIENT });
       },
     },
   };

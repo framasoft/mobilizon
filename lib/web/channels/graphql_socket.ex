@@ -24,5 +24,7 @@ defmodule Mobilizon.Web.GraphQLSocket do
     end
   end
 
+  def connect(_args, _socket), do: :error
+
   def id(_socket), do: nil
 end

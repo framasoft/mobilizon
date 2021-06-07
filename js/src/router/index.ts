@@ -47,7 +47,7 @@ export const routes = [
     path: "/search",
     name: RouteName.SEARCH,
     component: (): Promise<EsModuleComponent> =>
-      import(/* webpackChunkName: "search" */ "../views/Search.vue"),
+      import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
     props: true,
     meta: { requiredAuth: false },
   },
@@ -140,7 +140,9 @@ export const routes = [
     path: "/404",
     name: RouteName.PAGE_NOT_FOUND,
     component: (): Promise<EsModuleComponent> =>
-      import(/* webpackChunkName: "search" */ "../views/PageNotFound.vue"),
+      import(
+        /* webpackChunkName: "PageNotFound" */ "../views/PageNotFound.vue"
+      ),
     meta: { requiredAuth: false },
   },
   {
