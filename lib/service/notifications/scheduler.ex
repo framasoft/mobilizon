@@ -93,9 +93,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
         %DateTime{} = begins_on_shifted = shift_zone(begins_on, timezone)
 
         Logger.debug(
-          "Participation event start at #{inspect(begins_on_shifted)} (user timezone is #{
-            timezone
-          })"
+          "Participation event start at #{inspect(begins_on_shifted)} (user timezone is #{timezone})"
         )
 
         notification_date =

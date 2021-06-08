@@ -130,11 +130,7 @@ defmodule Mobilizon.Service.FormatterTest do
       assert length(mentions) == 3
 
       expected_text =
-        "<span class=\"h-card mention\" data-user=\"#{gsimg.id}\">@<span>gsimg</span></span> According to <span class=\"h-card mention\" data-user=\"#{
-          archaeme.id
-        }\">@<span>archa_eme_</span></span>, that is @daggsy. Also hello <span class=\"h-card mention\" data-user=\"#{
-          archaeme_remote.id
-        }\">@<span>archaeme</span></span>"
+        "<span class=\"h-card mention\" data-user=\"#{gsimg.id}\">@<span>gsimg</span></span> According to <span class=\"h-card mention\" data-user=\"#{archaeme.id}\">@<span>archa_eme_</span></span>, that is @daggsy. Also hello <span class=\"h-card mention\" data-user=\"#{archaeme_remote.id}\">@<span>archaeme</span></span>"
 
       assert expected_text == text
     end

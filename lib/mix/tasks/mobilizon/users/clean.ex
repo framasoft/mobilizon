@@ -66,9 +66,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Clean do
 
     Enum.each(deleted_users, fn deleted_user ->
       shell_info(
-        "ID: #{deleted_user.id}, Email: #{deleted_user.email}, Profile: @#{
-          hd(deleted_user.actors).preferred_username
-        }"
+        "ID: #{deleted_user.id}, Email: #{deleted_user.email}, Profile: @#{hd(deleted_user.actors).preferred_username}"
       )
     end)
   end

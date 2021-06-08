@@ -170,9 +170,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
             """
             To get started:
             1. Check the contents of the generated files.
-            2. Run `sudo -u postgres psql -f #{escape_sh_path(psql_path)} && rm #{
-              escape_sh_path(psql_path)
-            }`.
+            2. Run `sudo -u postgres psql -f #{escape_sh_path(psql_path)} && rm #{escape_sh_path(psql_path)}`.
             """
         )
       else

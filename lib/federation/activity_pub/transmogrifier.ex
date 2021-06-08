@@ -317,9 +317,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       e ->
         Logger.warn(
-          "Unable to process Accept activity #{inspect(id)} for object #{inspect(accepted_object)} only returned #{
-            inspect(e)
-          }"
+          "Unable to process Accept activity #{inspect(id)} for object #{inspect(accepted_object)} only returned #{inspect(e)}"
         )
 
         :error
@@ -347,9 +345,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       e ->
         Logger.warn(
-          "Unable to process Reject activity #{inspect(id)} for object #{inspect(rejected_object)} only returned #{
-            inspect(e)
-          }"
+          "Unable to process Reject activity #{inspect(id)} for object #{inspect(rejected_object)} only returned #{inspect(e)}"
         )
 
         :error
@@ -734,9 +730,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     else
       {:is_admin, {:ok, %Member{}}} ->
         Logger.warn(
-          "Person #{inspect(actor)} is not an admin from #{inspect(origin)} and can't remove member #{
-            inspect(object)
-          }"
+          "Person #{inspect(actor)} is not an admin from #{inspect(origin)} and can't remove member #{inspect(object)}"
         )
 
         {:error, "Member already removed"}

@@ -35,9 +35,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
 
     with {:ok, %{status: 200, body: body}} <-
            GeospatialClient.get(
-             "https://#{prefix}.mapquestapi.com/geocoding/v1/reverse?key=#{api_key}&location=#{
-               lat
-             },#{lon}&maxResults=#{limit}"
+             "https://#{prefix}.mapquestapi.com/geocoding/v1/reverse?key=#{api_key}&location=#{lat},#{lon}&maxResults=#{limit}"
            ),
          %{"results" => results, "info" => %{"statuscode" => 0}} <- body do
       results |> Enum.map(&process_data/1)
@@ -63,9 +61,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
     if is_nil(api_key), do: raise(ArgumentError, message: @api_key_missing_message)
 
     url =
-      "https://#{prefix}.mapquestapi.com/geocoding/v1/address?key=#{api_key}&location=#{
-        URI.encode(q)
-      }&maxResults=#{limit}"
+      "https://#{prefix}.mapquestapi.com/geocoding/v1/address?key=#{api_key}&location=#{URI.encode(q)}&maxResults=#{limit}"
 
     Logger.debug("Asking MapQuest for addresses with #{url}")
 

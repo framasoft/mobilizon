@@ -16,7 +16,7 @@ variables:
   # DB Variables for Postgres / Postgis
   POSTGRES_DB: mobilizon_test
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: ""
+  POSTGRES_PASSWORD: postgres
   POSTGRES_HOST: postgres
   # DB Variables for Mobilizon
   MOBILIZON_DATABASE_USERNAME: $POSTGRES_USER
@@ -61,7 +61,7 @@ lint-elixir:
     - exit $EXITVALUE
 
 lint-front:
-  image: node:14
+  image: node:16
   stage: check
   before_script:
     - export EXITVALUE=0
@@ -73,7 +73,7 @@ lint-front:
 
 build-frontend:
   stage: build-js
-  image: node:14
+  image: node:16
   before_script:
     - apt update
     - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
@@ -100,10 +100,27 @@ deps:
   needs:
     - install
 
+exunit-1.11:
+  stage: test
+  image: tcitworld/mobilizon-ci:legacy
+  services:
+    - name: postgis/postgis:11-3.0
+      alias: postgres
+  variables:
+    MIX_ENV: test
+  before_script:
+    - mix deps.clean --all
+    - mix deps.get
+    - mix ecto.create
+    - mix ecto.migrate
+  script:
+    - mix coveralls
+  allow_failure: true
+
 exunit:
   stage: test
   services:
-    - name: mdillon/postgis:11
+    - name: postgis/postgis:13-3.1
       alias: postgres
   variables:
     MIX_ENV: test
@@ -140,7 +157,7 @@ jest:
 # cypress:
 #   stage: test
 #   services:
-#     - name: mdillon/postgis:11
+#     - name: postgis/postgis:13.3
 #       alias: postgres
 #   variables:
 #     MIX_ENV=e2e

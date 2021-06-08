@@ -104,9 +104,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Resource do
   @spec get_parent_id(String.t(), String.t()) :: Resource.t() | map()
   defp get_parent_id(context, resources_url) do
     Logger.debug(
-      "Getting parentID for context #{inspect(context)} and with resources_url #{
-        inspect(resources_url)
-      }"
+      "Getting parentID for context #{inspect(context)} and with resources_url #{inspect(resources_url)}"
     )
 
     case Utils.get_url(context) do

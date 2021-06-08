@@ -1,0 +1,28 @@
+# We build Elixir manually to have the oldest acceptable version of OTP
+FROM erlang:21
+LABEL maintainer="Thomas Citharel <tcit@tcit.fr>"
+
+# elixir expects utf8.
+ENV ELIXIR_VERSION="v1.11.4" \
+    LANG=C.UTF-8
+
+RUN set -xe \
+    && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/${ELIXIR_VERSION}.tar.gz" \
+    && ELIXIR_DOWNLOAD_SHA256="85c7118a0db6007507313db5bddf370216d9394ed7911fe80f21e2fbf7f54d29" \
+    && curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
+    && echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
+    && mkdir -p /usr/local/src/elixir \
+    && tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
+    && rm elixir-src.tar.gz \
+    && cd /usr/local/src/elixir \
+    && make install clean
+
+CMD ["iex"]
+
+ENV REFRESHED_AT=2021-06-07
+RUN apt-get update -yq && apt-get install -yq build-essential inotify-tools postgresql-client git curl gnupg xvfb libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 cmake exiftool
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash && apt-get install nodejs -yq
+RUN npm install -g yarn wait-on
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN mix local.hex --force && mix local.rebar --force
+RUN curl https://dbip.mirror.framasoft.org/files/dbip-city-lite-latest.mmdb --output GeoLite2-City.mmdb -s && mkdir -p /usr/share/GeoIP && mv GeoLite2-City.mmdb /usr/share/GeoIP/

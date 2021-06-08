@@ -18,9 +18,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.AddMemberSinceToMembers do
       if role in ["member", "moderator", "administrator", "creator"] do
         Ecto.Adapters.SQL.query!(
           Mobilizon.Storage.Repo,
-          "UPDATE members SET member_since = '#{DateTime.to_iso8601(DateTime.utc_now())}' WHERE id = '#{
-            Ecto.UUID.cast!(id)
-          }'"
+          "UPDATE members SET member_since = '#{DateTime.to_iso8601(DateTime.utc_now())}' WHERE id = '#{Ecto.UUID.cast!(id)}'"
         )
       end
     end)

@@ -85,9 +85,7 @@ defmodule Mobilizon.Addresses.Address do
 
   def representation(%__MODULE__{} = address) do
     String.trim(
-      "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{
-        address.country
-      }"
+      "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{address.country}"
     )
   end
 end
