@@ -15,6 +15,7 @@ import { CommentModeration } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import {
   eventCommentThreadsMock,
+  eventNoCommentThreadsMock,
   newCommentForEventMock,
   newCommentForEventResponse,
 } from "../../mocks/event";
@@ -35,7 +36,7 @@ const eventData = {
 };
 describe("CommentTree", () => {
   let wrapper: Wrapper<Vue>;
-  let mockClient: MockApolloClient;
+  let mockClient: MockApolloClient | null;
   let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
   const cache = new InMemoryCache({ addTypename: false });
@@ -83,24 +84,10 @@ describe("CommentTree", () => {
     });
   };
 
-  it("renders an empty comment tree", async () => {
-    generateWrapper();
-
-    expect(wrapper.exists()).toBe(true);
-    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
-
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick(); // because of the <transition>
-
-    expect(wrapper.find(".no-comments").text()).toBe("No comments yet");
-    expect(wrapper.html()).toMatchSnapshot();
-  });
-
   it("renders a comment tree with comments", async () => {
     generateWrapper();
 
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick(); // because of the <transition>
+    await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
     expect(
@@ -149,5 +136,22 @@ describe("CommentTree", () => {
         expect(event.comments).toHaveLength(3);
       }
     }
+  });
+
+  it("renders an empty comment tree", async () => {
+    generateWrapper({
+      eventCommentThreadsQueryHandler: jest
+        .fn()
+        .mockResolvedValue(eventNoCommentThreadsMock),
+    });
+    expect(requestHandlers.eventCommentThreadsQueryHandler).toHaveBeenCalled();
+
+    expect(wrapper.exists()).toBe(true);
+    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
+
+    await flushPromises();
+
+    expect(wrapper.find(".no-comments").text()).toBe("No comments yet");
+    expect(wrapper.html()).toMatchSnapshot();
   });
 });

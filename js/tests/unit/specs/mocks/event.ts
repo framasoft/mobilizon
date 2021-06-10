@@ -63,6 +63,17 @@ export const joinEventMock = {
   locale: "en_US",
 };
 
+export const eventNoCommentThreadsMock = {
+  data: {
+    event: {
+      __typename: "Event",
+      id: "1",
+      uuid: "f37910ea-fd5a-4756-9679-00971f3f4106",
+      comments: [],
+    },
+  },
+};
+
 export const eventCommentThreadsMock = {
   data: {
     event: {

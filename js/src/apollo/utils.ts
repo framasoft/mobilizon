@@ -59,7 +59,7 @@ export const typePolicies: TypePolicies = {
   Event: {
     fields: {
       participants: paginatedLimitPagination<IParticipant>(["roles"]),
-      commnents: pageLimitPagination<IComment>(),
+      comments: pageLimitPagination<IComment>(),
       relatedEvents: pageLimitPagination<IEvent>(),
     },
   },

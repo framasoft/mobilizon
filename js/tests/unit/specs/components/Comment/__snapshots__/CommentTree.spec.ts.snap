@@ -2,25 +2,62 @@
 
 exports[`CommentTree renders a comment tree with comments 1`] = `
 <div>
-  <!---->
+  <form class="new-comment">
+    <!---->
+    <article class="media">
+      <figure class="media-left">
+        <identity-picker-wrapper-stub value="[object Object]"></identity-picker-wrapper-stub>
+      </figure>
+      <div class="media-content">
+        <div class="field">
+          <div class="field">
+            <p class="control">
+              <editor-stub mode="comment" value=""></editor-stub>
+            </p>
+            <!---->
+          </div>
+          <!---->
+        </div>
+      </div>
+      <div class="send-comment">
+        <b-button-stub type="is-primary" iconleft="send" nativetype="submit" tag="button" aria-label="Post a comment" class="comment-button-submit"></b-button-stub>
+      </div>
+    </article>
+  </form>
   <transition-group-stub name="comment-empty-list" mode="out-in">
     <transition-group-stub tag="ul" name="comment-list" class="comment-list">
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
       <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
     </transition-group-stub>
-    <div class="no-comments"><span>No comments yet</span></div>
   </transition-group-stub>
 </div>
 `;
 
 exports[`CommentTree renders an empty comment tree 1`] = `
 <div>
-  <!---->
+  <form class="new-comment">
+    <!---->
+    <article class="media">
+      <figure class="media-left">
+        <identity-picker-wrapper-stub value="[object Object]"></identity-picker-wrapper-stub>
+      </figure>
+      <div class="media-content">
+        <div class="field">
+          <div class="field">
+            <p class="control">
+              <editor-stub mode="comment" value=""></editor-stub>
+            </p>
+            <!---->
+          </div>
+          <!---->
+        </div>
+      </div>
+      <div class="send-comment">
+        <b-button-stub type="is-primary" iconleft="send" nativetype="submit" tag="button" aria-label="Post a comment" class="comment-button-submit"></b-button-stub>
+      </div>
+    </article>
+  </form>
   <transition-group-stub name="comment-empty-list" mode="out-in">
-    <transition-group-stub tag="ul" name="comment-list" class="comment-list">
-      <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
-      <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
-    </transition-group-stub>
     <div class="no-comments"><span>No comments yet</span></div>
   </transition-group-stub>
 </div>
