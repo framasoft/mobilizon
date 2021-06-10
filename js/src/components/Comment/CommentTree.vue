@@ -74,7 +74,7 @@
           @delete-comment="deleteComment"
         />
       </transition-group>
-      <div class="no-comments" key="no-comments">
+      <div v-else class="no-comments" key="no-comments">
         <span>{{ $t("No comments yet") }}</span>
       </div>
     </transition-group>
@@ -311,7 +311,18 @@ export default class CommentTree extends Vue {
     return this.comments
       .filter((comment) => comment.inReplyToComment == null)
       .sort((a, b) => {
-        if (a.updatedAt && b.updatedAt) {
+        if (a.isAnnouncement !== b.isAnnouncement) {
+          return (
+            (b.isAnnouncement === true ? 1 : 0) -
+            (a.isAnnouncement === true ? 1 : 0)
+          );
+        }
+        if (a.publishedAt && b.publishedAt) {
+          return (
+            new Date(b.publishedAt).getTime() -
+            new Date(a.publishedAt).getTime()
+          );
+        } else if (a.updatedAt && b.updatedAt) {
           return (
             new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           );

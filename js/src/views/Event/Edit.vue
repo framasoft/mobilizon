@@ -782,25 +782,18 @@ export default class EditEvent extends Vue {
    */
   private postCreateOrUpdate(store: any, updateEvent: IEvent) {
     const resultEvent: IEvent = { ...updateEvent };
-    resultEvent.organizerActor = this.event.organizerActor;
-    resultEvent.relatedEvents = [];
-
-    store.writeQuery({
-      query: FETCH_EVENT,
-      variables: { uuid: updateEvent.uuid },
-      data: { event: resultEvent },
-    });
+    console.log(resultEvent);
     if (!updateEvent.draft) {
       store.writeQuery({
         query: EVENT_PERSON_PARTICIPATION,
         variables: {
-          eventId: updateEvent.id,
-          name: this.event.organizerActor?.preferredUsername,
+          eventId: resultEvent.id,
+          name: resultEvent.organizerActor?.preferredUsername,
         },
         data: {
           person: {
             __typename: "Person",
-            id: this.event?.organizerActor?.id,
+            id: resultEvent?.organizerActor?.id,
             participations: {
               __typename: "PaginatedParticipantList",
               total: 1,
@@ -811,11 +804,11 @@ export default class EditEvent extends Vue {
                   role: ParticipantRole.CREATOR,
                   actor: {
                     __typename: "Actor",
-                    id: this.event?.organizerActor?.id,
+                    id: resultEvent?.organizerActor?.id,
                   },
                   event: {
                     __typename: "Event",
-                    id: updateEvent.id,
+                    id: resultEvent.id,
                   },
                 },
               ],
@@ -859,7 +852,7 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
-    let res = this.event.toEditJSON();
+    let res = new EventModel(this.event).toEditJSON();
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor
       : this.organizerActor;

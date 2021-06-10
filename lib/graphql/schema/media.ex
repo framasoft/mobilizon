@@ -14,6 +14,7 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
     field(:url, :string, description: "The media's full URL")
     field(:content_type, :string, description: "The media's detected content type")
     field(:size, :integer, description: "The media's size")
+    field(:metadata, :media_metadata, description: "The media's metadata")
   end
 
   @desc """
@@ -22,6 +23,15 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
   object :paginated_media_list do
     field(:elements, list_of(:media), description: "The list of medias")
     field(:total, :integer, description: "The total number of medias in the list")
+  end
+
+  @desc """
+  Some metadata associated with a media
+  """
+  object :media_metadata do
+    field(:width, :integer, description: "The media width (if a picture)")
+    field(:height, :integer, description: "The media width (if a height)")
+    field(:blurhash, :string, description: "The media blurhash (if a picture")
   end
 
   @desc "An attached media or a link to a media"

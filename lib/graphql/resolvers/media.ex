@@ -47,7 +47,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
         %{context: %{current_user: %User{} = user}}
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:ok, %{name: _name, url: url, content_type: content_type, size: size}} <-
+         {:ok,
+          %{
+            name: _name,
+            url: url,
+            content_type: content_type,
+            size: size
+          } = uploaded} <-
            Mobilizon.Web.Upload.store(file),
          args <-
            args
@@ -55,7 +61,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
            |> Map.put(:size, size)
            |> Map.put(:content_type, content_type),
          {:ok, media = %Media{}} <-
-           Medias.create_media(%{"file" => args, "actor_id" => actor_id}) do
+           Medias.create_media(%{
+             file: args,
+             actor_id: actor_id,
+             metadata: Map.take(uploaded, [:width, :height, :blurhash])
+           }) do
       {:ok, transform_media(media)}
     else
       {:error, :mime_type_not_allowed} ->
@@ -124,13 +134,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
   def user_size(_parent, _args, _resolution), do: {:error, :unauthenticated}
 
   @spec transform_media(Media.t()) :: map()
-  defp transform_media(%Media{id: id, file: file}) do
+  defp transform_media(%Media{id: id, file: file, metadata: metadata}) do
     %{
       name: file.name,
       url: file.url,
       id: id,
       content_type: file.content_type,
-      size: file.size
+      size: file.size,
+      metadata: metadata
     }
   end
 

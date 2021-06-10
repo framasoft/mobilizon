@@ -352,18 +352,14 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   end
 
   def make_media_data(media) when is_map(media) do
-    with {:ok, %{"url" => [%{"href" => url, "mediaType" => content_type}], "size" => size}} <-
+    with {:ok, %{url: url} = uploaded} <-
            Mobilizon.Web.Upload.store(media.file),
          {:media_exists, nil} <- {:media_exists, Mobilizon.Medias.get_media_by_url(url)},
          {:ok, %Media{file: _file} = media} <-
            Mobilizon.Medias.create_media(%{
-             "file" => %{
-               "url" => url,
-               "name" => media.name,
-               "content_type" => content_type,
-               "size" => size
-             },
-             "actor_id" => media.actor_id
+             file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+             metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+             actor_id: media.actor_id
            }) do
       Converter.Media.model_to_as(media)
     else

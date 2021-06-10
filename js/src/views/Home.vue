@@ -189,10 +189,7 @@
         }}</b-message>
       </section>
       <!-- Your upcoming events -->
-      <section
-        v-if="currentActor.id && goingToEvents.size > 0"
-        class="container"
-      >
+      <section v-if="canShowMyUpcomingEvents" class="container">
         <h3 class="title">{{ $t("Your upcoming events") }}</h3>
         <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
@@ -236,7 +233,7 @@
         </span>
       </section>
       <!-- Last week events -->
-      <section v-if="currentActor && lastWeekEvents.length > 0">
+      <section v-if="canShowLastWeekEvents">
         <h3 class="title">{{ $t("Last week") }}</h3>
         <b-loading :active.sync="$apollo.loading" />
         <div>
@@ -250,7 +247,7 @@
         </div>
       </section>
       <!-- Events close to you -->
-      <section class="events-close" v-if="closeEvents.total > 0">
+      <section class="events-close" v-if="canShowCloseEvents">
         <h2 class="is-size-2 has-text-weight-bold">
           {{ $t("Events nearby") }}
         </h2>
@@ -285,7 +282,12 @@
           </div>
         </div>
       </section>
-      <hr class="home-separator" />
+      <hr
+        class="home-separator"
+        v-if="
+          canShowMyUpcomingEvents || canShowLastWeekEvents || canShowCloseEvents
+        "
+      />
       <section class="events-recent">
         <h2 class="is-size-2 has-text-weight-bold">
           {{ $t("Last published events") }}
@@ -585,6 +587,18 @@ export default class Home extends Vue {
         params: { step: "1" },
       });
     }
+  }
+
+  get canShowMyUpcomingEvents(): boolean {
+    return this.currentActor.id != undefined && this.goingToEvents.size > 0;
+  }
+
+  get canShowLastWeekEvents(): boolean {
+    return this.currentActor && this.lastWeekEvents.length > 0;
+  }
+
+  get canShowCloseEvents(): boolean {
+    return this.closeEvents.total > 0;
   }
 }
 </script>

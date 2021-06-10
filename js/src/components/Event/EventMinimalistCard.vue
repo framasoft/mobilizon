@@ -3,7 +3,11 @@
     class="event-minimalist-card-wrapper"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
-    <date-calendar-icon class="calendar-icon" :date="event.beginsOn" />
+    <date-calendar-icon
+      class="calendar-icon"
+      :date="event.beginsOn"
+      :small="true"
+    />
     <div class="title-info-wrapper">
       <p class="event-minimalist-title">{{ event.title }}</p>
       <p v-if="event.physicalAddress" class="has-text-grey">

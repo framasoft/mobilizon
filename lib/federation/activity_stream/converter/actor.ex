@@ -143,7 +143,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
          when code in 200..299 <- RemoteMediaDownloaderClient.get(url),
          name <- name || Parser.get_filename_from_response(response_headers, url) || default_name,
          {:ok, file} <- Upload.store(%{body: body, name: name}) do
-      file
+      Map.take(file, [:content_type, :name, :url, :size])
     end
   end
 end

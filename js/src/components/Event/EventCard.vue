@@ -4,12 +4,11 @@
     :to="{ name: 'Event', params: { uuid: event.uuid } }"
   >
     <div class="card-image">
-      <figure
-        class="image is-16by9"
-        :style="`background-image: url('${
-          event.picture ? event.picture.url : '/img/mobilizon_default_card.png'
-        }')`"
-      >
+      <figure class="image is-16by9">
+        <lazy-image-wrapper
+          :picture="event.picture"
+          style="height: 100%; position: absolute; top: 0; left: 0; width: 100%"
+        />
         <div
           class="tag-container"
           v-if="event.tags || event.status !== EventStatus.CONFIRMED"
@@ -34,6 +33,7 @@
       <div class="media">
         <div class="media-left">
           <date-calendar-icon
+            :small="true"
             v-if="!mergedOptions.hideDate"
             :date="event.beginsOn"
           />
@@ -103,6 +103,7 @@
 import { IEvent, IEventCardOptions } from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import { Actor, Person } from "@/types/actor";
 import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
@@ -110,6 +111,7 @@ import RouteName from "../../router/name";
 @Component({
   components: {
     DateCalendarIcon,
+    LazyImageWrapper,
   },
 })
 export default class EventCard extends Vue {
@@ -219,6 +221,22 @@ a.card {
 
   .card-content {
     padding: 0.5rem;
+
+    & > .media {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      & > .media-left {
+        margin-top: -15px;
+        height: 0;
+        display: flex;
+        align-items: flex-end;
+        align-self: flex-start;
+        margin-bottom: 15px;
+        margin-left: 0rem;
+      }
+    }
 
     .event-title {
       font-size: 1.2rem;

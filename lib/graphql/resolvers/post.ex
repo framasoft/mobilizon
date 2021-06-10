@@ -215,13 +215,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   defp process_picture(%{media_id: _picture_id} = args, _), do: args
 
   defp process_picture(%{media: media}, %Actor{id: actor_id}) do
-    %{
-      file:
-        media
-        |> Map.get(:file)
-        |> Utils.make_media_data(description: Map.get(media, :name)),
-      actor_id: actor_id
-    }
+    with uploaded when is_map(uploaded) <-
+           media
+           |> Map.get(:file)
+           |> Utils.make_media_data(description: Map.get(media, :name)) do
+      %{
+        file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+        metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+        actor_id: actor_id
+      }
+    end
   end
 
   @spec extract_pictures_from_post_body(map(), String.t()) :: map()

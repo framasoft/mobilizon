@@ -64,14 +64,11 @@ $color-black: #000;
 }
 
 body {
-  // background: #f7f8fa;
   background: $body-background-color;
   font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, "Segoe UI",
     "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  /*main {*/
-  /*  margin: 1rem auto 0;*/
-  /*}*/
+  overflow-x: hidden;
 }
 
 #mobilizon > .container > .message {

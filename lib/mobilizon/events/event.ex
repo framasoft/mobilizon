@@ -256,7 +256,7 @@ defmodule Mobilizon.Events.Event do
 
   # In case it's a new picture
   defp put_picture(%Changeset{} = changeset, _attrs) do
-    cast_assoc(changeset, :picture)
+    cast_assoc(changeset, :picture, with: &Media.changeset/2)
   end
 
   # Created or updated with draft parameter: don't publish

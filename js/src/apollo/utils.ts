@@ -16,6 +16,7 @@ import { IMember } from "@/types/actor/member.model";
 import { IComment } from "@/types/comment.model";
 import { IEvent } from "@/types/event.model";
 import { IActivity } from "@/types/activity.model";
+import uniqBy from "lodash/uniqBy";
 
 type possibleTypes = { name: string };
 type schemaType = {
@@ -58,7 +59,7 @@ export const typePolicies: TypePolicies = {
   Event: {
     fields: {
       participants: paginatedLimitPagination<IParticipant>(["roles"]),
-      commnents: pageLimitPagination<IComment>(),
+      comments: pageLimitPagination<IComment>(),
       relatedEvents: pageLimitPagination<IEvent>(),
     },
   },
@@ -124,10 +125,6 @@ export function pageLimitPagination<T = Reference>(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     merge(existing, incoming, { args }) {
-      console.log("pageLimitPagination");
-      console.log("existing", existing);
-      console.log("incoming", incoming);
-      // console.log("args", args);
       if (!incoming) return existing;
       if (!existing) return incoming; // existing will be empty the first time
 
@@ -144,9 +141,6 @@ export function paginatedLimitPagination<T = Paginate<any>>(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     merge(existing, incoming, { args }) {
-      console.log("paginatedLimitPagination");
-      console.log("existing", existing);
-      console.log("incoming", incoming);
       if (!incoming) return existing;
       if (!existing) return incoming; // existing will be empty the first time
 
@@ -168,7 +162,6 @@ function doMerge<T = any>(
   if (args) {
     // Assume an page of 1 if args.page omitted.
     const { page = 1, limit = 10 } = args;
-    console.log("args, selected", { page, limit });
     for (let i = 0; i < incoming.length; ++i) {
       merged[(page - 1) * limit + i] = incoming[i];
     }
@@ -179,7 +172,8 @@ function doMerge<T = any>(
     // exception here, instead of recovering by appending incoming
     // onto the existing array.
     res = [...merged, ...incoming];
+    // eslint-disable-next-line no-underscore-dangle
+    res = uniqBy(res, (elem: any) => elem.__ref);
   }
-  console.log("doMerge returns", res);
   return res;
 }
