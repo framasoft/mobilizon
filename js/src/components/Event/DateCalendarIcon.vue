@@ -12,9 +12,17 @@
 </docs>
 
 <template>
-  <time class="datetime-container" :datetime="dateObj.getUTCSeconds()">
-    <span class="month">{{ month }}</span>
-    <span class="day">{{ day }}</span>
+  <time
+    class="datetime-container"
+    :class="{ small }"
+    :datetime="dateObj.getUTCSeconds()"
+    :style="`--small: ${smallStyle}`"
+  >
+    <div class="datetime-container-header" />
+    <div class="datetime-container-content">
+      <span class="day">{{ day }}</span>
+      <span class="month">{{ month }}</span>
+    </div>
   </time>
 </template>
 <script lang="ts">
@@ -26,6 +34,7 @@ export default class DateCalendarIcon extends Vue {
    * `date` can be a string or an actual date object.
    */
   @Prop({ required: true }) date!: string;
+  @Prop({ required: false, default: false }) small!: boolean;
 
   get dateObj(): Date {
     return new Date(this.$props.date);
@@ -38,28 +47,41 @@ export default class DateCalendarIcon extends Vue {
   get day(): string {
     return this.dateObj.toLocaleString(undefined, { day: "numeric" });
   }
+  get smallStyle(): string {
+    return this.small ? "1.2" : "2";
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 time.datetime-container {
-  background: $backgrounds;
-  border: 1px solid $borders;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /*height: 50px;*/
-  width: 50px;
-  padding: 8px;
   text-align: center;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  align-items: stretch;
+  width: calc(40px * var(--small));
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  height: calc(40px * var(--small));
+  background: #fff;
+
+  .datetime-container-header {
+    height: calc(10px * var(--small));
+    background: #f3425f;
+  }
+  .datetime-container-content {
+    height: calc(30px * var(--small));
+  }
 
   span {
     display: block;
     font-weight: 600;
+    color: $violet-3;
 
     &.month {
-      color: $danger;
       padding: 2px 0;
       font-size: 12px;
       line-height: 12px;
@@ -67,9 +89,8 @@ time.datetime-container {
     }
 
     &.day {
-      color: $violet-3;
-      font-size: 20px;
-      line-height: 20px;
+      font-size: calc(1rem * var(--small));
+      line-height: calc(1rem * var(--small));
     }
   }
 }

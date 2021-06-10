@@ -4,7 +4,7 @@
       <div class="content column">
         <div class="title-wrapper">
           <div class="date-component">
-            <date-calendar-icon :date="event.beginsOn" />
+            <date-calendar-icon :date="event.beginsOn" :small="true" />
           </div>
           <router-link
             :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"

@@ -1570,4 +1570,30 @@ a.participations-link {
   border: 0;
   cursor: auto;
 }
+
+.wrapper,
+.intro-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.intro-wrapper {
+  position: relative;
+  padding: 0 16px 16px;
+  background: #fff;
+
+  .date-calendar-icon-wrapper {
+    margin-top: 16px;
+    height: 0;
+    display: flex;
+    align-items: flex-end;
+    align-self: flex-start;
+    margin-bottom: 7px;
+    margin-left: 0rem;
+  }
+}
+.title {
+  margin: 0;
+  font-size: 2rem;
+}
 </style>

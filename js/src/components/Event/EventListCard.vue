@@ -7,11 +7,14 @@
       {{ displayNameAndUsername(participation.actor) }}
     </div>
     <div class="list-card">
+      <div class="date-component">
+        <date-calendar-icon
+          :date="participation.event.beginsOn"
+          :small="true"
+        />
+      </div>
       <div class="content">
         <div class="title-wrapper">
-          <div class="date-component">
-            <date-calendar-icon :date="participation.event.beginsOn" />
-          </div>
           <router-link
             :to="{
               name: RouteName.EVENT,
