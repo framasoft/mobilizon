@@ -115,12 +115,13 @@ footer.footer {
     flex: 1;
     max-width: 40rem;
     @include mobile {
-      max-width: 400px;
+      max-width: 100%;
     }
   }
 
   div.content {
     flex: 1;
+    padding-top: 10px;
   }
 
   ul {
@@ -131,6 +132,7 @@ footer.footer {
     li {
       display: inline-flex;
       margin: auto 5px;
+      padding: 2px 0;
       a {
         font-size: 1.1rem;
       }
@@ -143,9 +145,12 @@ footer.footer {
     text-decoration-color: $secondary;
   }
 
-  ::v-deep span.select select {
-    background: $background-color;
-    color: $white;
+  ::v-deep span.select {
+    select,
+    option {
+      background: $background-color;
+      color: $white;
+    }
   }
 }
 </style>
