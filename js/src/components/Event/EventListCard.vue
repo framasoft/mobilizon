@@ -24,7 +24,7 @@
             <h3 class="title">{{ participation.event.title }}</h3>
           </router-link>
         </div>
-        <div class="participation-actor has-text-grey">
+        <div class="participation-actor">
           <span>
             <b-icon
               icon="earth"
@@ -50,17 +50,20 @@
             "
             >{{ participation.event.physicalAddress.locality }} -</span
           >
-          <span>
-            <i18n tag="span" path="Organized by {name}">
-              <popover-actor-card
-                slot="name"
-                :actor="organizerActor"
-                :inline="true"
-              >
-                {{ organizerActor.displayName() }}
-              </popover-actor-card>
-            </i18n>
-          </span>
+          <i18n
+            tag="span"
+            path="Organized by {name}"
+            v-if="organizerActor.id !== currentActor.id"
+          >
+            <popover-actor-card
+              slot="name"
+              :actor="organizerActor"
+              :inline="true"
+            >
+              {{ organizerActor.displayName() }}
+            </popover-actor-card>
+          </i18n>
+          <span v-else>{{ $t("Organized by you") }}</span>
         </div>
         <div>
           <span
@@ -116,7 +119,9 @@
                   $tc(
                     "{count} requests waiting",
                     participation.event.participantStats.notApproved,
-                    { count: participation.event.participantStats.notApproved }
+                    {
+                      count: participation.event.participantStats.notApproved,
+                    }
                   )
                 }}
               </b-button>
@@ -347,6 +352,7 @@ article.box {
   .list-card {
     display: flex;
     align-items: center;
+    padding: 0 6px;
 
     .actions {
       padding-right: 7.5px;

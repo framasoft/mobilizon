@@ -22,7 +22,7 @@ export default class EventBanner extends Vue {
 .banner-container {
   display: flex;
   justify-content: center;
-  height: 400px;
+  height: 30vh;
 }
 ::v-deep img {
   width: 100%;

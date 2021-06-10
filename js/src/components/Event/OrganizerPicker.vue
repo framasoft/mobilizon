@@ -66,7 +66,9 @@ export default class OrganizerPicker extends Vue {
       return this.value;
     }
     if (this.currentActor) {
-      return this.currentActor;
+      return this.identities.find(
+        (identity) => identity.id === this.currentActor.id
+      );
     }
     return undefined;
   }

@@ -110,6 +110,7 @@ import { IActor, IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import OrganizerPicker from "./OrganizerPicker.vue";
 import {
   CURRENT_ACTOR_CLIENT,
+  IDENTITIES,
   LOGGED_USER_MEMBERSHIPS,
 } from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";
@@ -152,6 +153,7 @@ const MEMBER_ROLES = [
       },
       update: (data) => data.loggedUser.memberships,
     },
+    identities: IDENTITIES,
   },
 })
 export default class OrganizerPickerWrapper extends Vue {
@@ -160,6 +162,8 @@ export default class OrganizerPickerWrapper extends Vue {
   @Prop({ default: true, type: Boolean }) inline!: boolean;
 
   currentActor!: IPerson;
+
+  identities!: IPerson[];
 
   isComponentModalActive = false;
 
@@ -200,7 +204,9 @@ export default class OrganizerPickerWrapper extends Vue {
       return this.value;
     }
     if (this.currentActor) {
-      return this.currentActor;
+      return this.identities.find(
+        (identity) => identity.id === this.currentActor.id
+      );
     }
     return undefined;
   }

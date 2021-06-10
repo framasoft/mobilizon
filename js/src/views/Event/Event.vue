@@ -1,299 +1,296 @@
 <template>
   <div class="container">
     <transition appear name="fade" mode="out-in">
-      <div>
-        <div
-          class="header-picture"
-          v-if="event.picture"
-          :style="`background-image: url('${event.picture.url}')`"
-        />
-        <div class="header-picture-default" v-else />
-        <section class="section intro">
-          <div class="columns">
-            <div class="column is-1-tablet">
-              <date-calendar-icon :date="event.beginsOn" />
-            </div>
-            <div class="column">
-              <h1 class="title" style="margin: 0">{{ event.title }}</h1>
-              <div class="organizer">
-                <span v-if="event.organizerActor && !event.attributedTo">
-                  <popover-actor-card
-                    :actor="event.organizerActor"
-                    :inline="true"
+      <div class="wrapper">
+        <event-banner :picture="event.picture" />
+        <div class="intro-wrapper">
+          <div class="date-calendar-icon-wrapper">
+            <date-calendar-icon :date="event.beginsOn" />
+          </div>
+          <section class="intro">
+            <div class="columns">
+              <div class="column">
+                <h1 class="title" style="margin: 0">{{ event.title }}</h1>
+                <div class="organizer">
+                  <span v-if="event.organizerActor && !event.attributedTo">
+                    <popover-actor-card
+                      :actor="event.organizerActor"
+                      :inline="true"
+                    >
+                      <span>
+                        {{
+                          $t("By @{username}", {
+                            username: usernameWithDomain(event.organizerActor),
+                          })
+                        }}
+                      </span>
+                    </popover-actor-card>
+                  </span>
+                  <span
+                    v-else-if="
+                      event.attributedTo &&
+                      event.options.hideOrganizerWhenGroupEvent
+                    "
                   >
-                    <span>
-                      {{
-                        $t("By @{username}", {
-                          username: usernameWithDomain(event.organizerActor),
-                        })
-                      }}
-                    </span>
-                  </popover-actor-card>
-                </span>
-                <span
-                  v-else-if="
-                    event.attributedTo &&
-                    event.options.hideOrganizerWhenGroupEvent
-                  "
-                >
-                  <popover-actor-card
-                    :actor="event.attributedTo"
-                    :inline="true"
-                  >
-                    {{
-                      $t("By @{group}", {
-                        group: usernameWithDomain(event.attributedTo),
-                      })
-                    }}
-                  </popover-actor-card>
-                </span>
-                <span v-else-if="event.organizerActor && event.attributedTo">
-                  <i18n path="By {group}">
                     <popover-actor-card
                       :actor="event.attributedTo"
-                      slot="group"
                       :inline="true"
+                    >
+                      {{
+                        $t("By @{group}", {
+                          group: usernameWithDomain(event.attributedTo),
+                        })
+                      }}
+                    </popover-actor-card>
+                  </span>
+                  <span v-else-if="event.organizerActor && event.attributedTo">
+                    <i18n path="By {group}">
+                      <popover-actor-card
+                        :actor="event.attributedTo"
+                        slot="group"
+                        :inline="true"
+                      >
+                        <router-link
+                          :to="{
+                            name: RouteName.GROUP,
+                            params: {
+                              preferredUsername: usernameWithDomain(
+                                event.attributedTo
+                              ),
+                            },
+                          }"
+                        >
+                          {{
+                            $t("@{group}", {
+                              group: usernameWithDomain(event.attributedTo),
+                            })
+                          }}
+                        </router-link>
+                      </popover-actor-card>
+                    </i18n>
+                  </span>
+                </div>
+                <p class="tags" v-if="event.tags && event.tags.length > 0">
+                  <router-link
+                    v-for="tag in event.tags"
+                    :key="tag.title"
+                    :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
+                  >
+                    <tag>{{ tag.title }}</tag>
+                  </router-link>
+                </p>
+                <b-tag type="is-warning" size="is-medium" v-if="event.draft"
+                  >{{ $t("Draft") }}
+                </b-tag>
+                <span
+                  class="event-status"
+                  v-if="event.status !== EventStatus.CONFIRMED"
+                >
+                  <b-tag
+                    type="is-warning"
+                    v-if="event.status === EventStatus.TENTATIVE"
+                    >{{ $t("Event to be confirmed") }}</b-tag
+                  >
+                  <b-tag
+                    type="is-danger"
+                    v-if="event.status === EventStatus.CANCELLED"
+                    >{{ $t("Event cancelled") }}</b-tag
+                  >
+                </span>
+              </div>
+              <div class="column is-3-tablet">
+                <participation-section
+                  :participation="participations[0]"
+                  :event="event"
+                  :anonymousParticipation="anonymousParticipation"
+                  @join-event="joinEvent"
+                  @join-modal="isJoinModalActive = true"
+                  @join-event-with-confirmation="joinEventWithConfirmation"
+                  @confirm-leave="confirmLeave"
+                  @cancel-anonymous-participation="cancelAnonymousParticipation"
+                />
+                <div class="has-text-right">
+                  <template class="visibility" v-if="!event.draft">
+                    <p v-if="event.visibility === EventVisibility.PUBLIC">
+                      {{ $t("Public event") }}
+                      <b-icon icon="earth" />
+                    </p>
+                    <p v-if="event.visibility === EventVisibility.UNLISTED">
+                      {{ $t("Private event") }}
+                      <b-icon icon="link" />
+                    </p>
+                  </template>
+                  <template v-if="!event.local && organizer">
+                    <a :href="event.url">
+                      <tag>{{ organizer.domain }}</tag>
+                    </a>
+                  </template>
+                  <p>
+                    <router-link
+                      class="participations-link"
+                      v-if="actorIsOrganizer && event.draft === false"
+                      :to="{
+                        name: RouteName.PARTICIPATIONS,
+                        params: { eventId: event.uuid },
+                      }"
+                    >
+                      <!-- We retire one because of the event creator who is a participant -->
+                      <span v-if="event.options.maximumAttendeeCapacity">
+                        {{
+                          $tc(
+                            "{available}/{capacity} available places",
+                            event.options.maximumAttendeeCapacity -
+                              event.participantStats.participant,
+                            {
+                              available:
+                                event.options.maximumAttendeeCapacity -
+                                event.participantStats.participant,
+                              capacity: event.options.maximumAttendeeCapacity,
+                            }
+                          )
+                        }}
+                      </span>
+                      <span v-else>
+                        {{
+                          $tc(
+                            "No one is participating|One person participating|{going} people participating",
+                            event.participantStats.participant,
+                            {
+                              going: event.participantStats.participant,
+                            }
+                          )
+                        }}
+                      </span>
+                    </router-link>
+                    <span v-else>
+                      <span v-if="event.options.maximumAttendeeCapacity">
+                        {{
+                          $tc(
+                            "{available}/{capacity} available places",
+                            event.options.maximumAttendeeCapacity -
+                              event.participantStats.participant,
+                            {
+                              available:
+                                event.options.maximumAttendeeCapacity -
+                                event.participantStats.participant,
+                              capacity: event.options.maximumAttendeeCapacity,
+                            }
+                          )
+                        }}
+                      </span>
+                      <span v-else>
+                        {{
+                          $tc(
+                            "No one is participating|One person participating|{going} people participating",
+                            event.participantStats.participant,
+                            {
+                              going: event.participantStats.participant,
+                            }
+                          )
+                        }}
+                      </span>
+                    </span>
+                    <b-tooltip
+                      type="is-dark"
+                      v-if="!event.local"
+                      :label="
+                        $t(
+                          'The actual number of participants may differ, as this event is hosted on another instance.'
+                        )
+                      "
+                    >
+                      <b-icon size="is-small" icon="help-circle-outline" />
+                    </b-tooltip>
+                    <b-icon icon="ticket-confirmation-outline" />
+                  </p>
+                  <b-dropdown position="is-bottom-left" aria-role="list">
+                    <b-button
+                      slot="trigger"
+                      role="button"
+                      icon-right="dots-horizontal"
+                    >
+                      {{ $t("Actions") }}
+                    </b-button>
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      has-link
+                      v-if="actorIsOrganizer || event.draft"
                     >
                       <router-link
                         :to="{
-                          name: RouteName.GROUP,
-                          params: {
-                            preferredUsername: usernameWithDomain(
-                              event.attributedTo
-                            ),
-                          },
+                          name: RouteName.EDIT_EVENT,
+                          params: { eventId: event.uuid },
                         }"
                       >
-                        {{
-                          $t("@{group}", {
-                            group: usernameWithDomain(event.attributedTo),
-                          })
-                        }}
+                        {{ $t("Edit") }}
+                        <b-icon icon="pencil" />
                       </router-link>
-                    </popover-actor-card>
-                  </i18n>
-                </span>
-              </div>
-              <p class="tags" v-if="event.tags && event.tags.length > 0">
-                <router-link
-                  v-for="tag in event.tags"
-                  :key="tag.title"
-                  :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-                >
-                  <tag>{{ tag.title }}</tag>
-                </router-link>
-              </p>
-              <b-tag type="is-warning" size="is-medium" v-if="event.draft"
-                >{{ $t("Draft") }}
-              </b-tag>
-              <span
-                class="event-status"
-                v-if="event.status !== EventStatus.CONFIRMED"
-              >
-                <b-tag
-                  type="is-warning"
-                  v-if="event.status === EventStatus.TENTATIVE"
-                  >{{ $t("Event to be confirmed") }}</b-tag
-                >
-                <b-tag
-                  type="is-danger"
-                  v-if="event.status === EventStatus.CANCELLED"
-                  >{{ $t("Event cancelled") }}</b-tag
-                >
-              </span>
-            </div>
-            <div class="column is-3-tablet">
-              <participation-section
-                :participation="participations[0]"
-                :event="event"
-                :anonymousParticipation="anonymousParticipation"
-                @join-event="joinEvent"
-                @join-modal="isJoinModalActive = true"
-                @join-event-with-confirmation="joinEventWithConfirmation"
-                @confirm-leave="confirmLeave"
-                @cancel-anonymous-participation="cancelAnonymousParticipation"
-              />
-              <div class="has-text-right">
-                <template class="visibility" v-if="!event.draft">
-                  <p v-if="event.visibility === EventVisibility.PUBLIC">
-                    {{ $t("Public event") }}
-                    <b-icon icon="earth" />
-                  </p>
-                  <p v-if="event.visibility === EventVisibility.UNLISTED">
-                    {{ $t("Private event") }}
-                    <b-icon icon="link" />
-                  </p>
-                </template>
-                <template v-if="!event.local && organizer">
-                  <a :href="event.url">
-                    <tag>{{ organizer.domain }}</tag>
-                  </a>
-                </template>
-                <p>
-                  <router-link
-                    class="participations-link"
-                    v-if="actorIsOrganizer && event.draft === false"
-                    :to="{
-                      name: RouteName.PARTICIPATIONS,
-                      params: { eventId: event.uuid },
-                    }"
-                  >
-                    <!-- We retire one because of the event creator who is a participant -->
-                    <span v-if="event.options.maximumAttendeeCapacity">
-                      {{
-                        $tc(
-                          "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity -
-                            event.participantStats.participant,
-                          {
-                            available:
-                              event.options.maximumAttendeeCapacity -
-                              event.participantStats.participant,
-                            capacity: event.options.maximumAttendeeCapacity,
-                          }
-                        )
-                      }}
-                    </span>
-                    <span v-else>
-                      {{
-                        $tc(
-                          "No one is participating|One person participating|{going} people participating",
-                          event.participantStats.participant,
-                          {
-                            going: event.participantStats.participant,
-                          }
-                        )
-                      }}
-                    </span>
-                  </router-link>
-                  <span v-else>
-                    <span v-if="event.options.maximumAttendeeCapacity">
-                      {{
-                        $tc(
-                          "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity -
-                            event.participantStats.participant,
-                          {
-                            available:
-                              event.options.maximumAttendeeCapacity -
-                              event.participantStats.participant,
-                            capacity: event.options.maximumAttendeeCapacity,
-                          }
-                        )
-                      }}
-                    </span>
-                    <span v-else>
-                      {{
-                        $tc(
-                          "No one is participating|One person participating|{going} people participating",
-                          event.participantStats.participant,
-                          {
-                            going: event.participantStats.participant,
-                          }
-                        )
-                      }}
-                    </span>
-                  </span>
-                  <b-tooltip
-                    type="is-dark"
-                    v-if="!event.local"
-                    :label="
-                      $t(
-                        'The actual number of participants may differ, as this event is hosted on another instance.'
-                      )
-                    "
-                  >
-                    <b-icon size="is-small" icon="help-circle-outline" />
-                  </b-tooltip>
-                  <b-icon icon="ticket-confirmation-outline" />
-                </p>
-                <b-dropdown position="is-bottom-left" aria-role="list">
-                  <b-button
-                    slot="trigger"
-                    role="button"
-                    icon-right="dots-horizontal"
-                  >
-                    {{ $t("Actions") }}
-                  </b-button>
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    has-link
-                    v-if="actorIsOrganizer || event.draft"
-                  >
-                    <router-link
-                      :to="{
-                        name: RouteName.EDIT_EVENT,
-                        params: { eventId: event.uuid },
-                      }"
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      has-link
+                      v-if="actorIsOrganizer || event.draft"
                     >
-                      {{ $t("Edit") }}
-                      <b-icon icon="pencil" />
-                    </router-link>
-                  </b-dropdown-item>
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    has-link
-                    v-if="actorIsOrganizer || event.draft"
-                  >
-                    <router-link
-                      :to="{
-                        name: RouteName.DUPLICATE_EVENT,
-                        params: { eventId: event.uuid },
-                      }"
+                      <router-link
+                        :to="{
+                          name: RouteName.DUPLICATE_EVENT,
+                          params: { eventId: event.uuid },
+                        }"
+                      >
+                        {{ $t("Duplicate") }}
+                        <b-icon icon="content-duplicate" />
+                      </router-link>
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      v-if="actorIsOrganizer || event.draft"
+                      @click="openDeleteEventModalWrapper"
                     >
-                      {{ $t("Duplicate") }}
-                      <b-icon icon="content-duplicate" />
-                    </router-link>
-                  </b-dropdown-item>
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    v-if="actorIsOrganizer || event.draft"
-                    @click="openDeleteEventModalWrapper"
-                  >
-                    {{ $t("Delete") }}
-                    <b-icon icon="delete" />
-                  </b-dropdown-item>
+                      {{ $t("Delete") }}
+                      <b-icon icon="delete" />
+                    </b-dropdown-item>
 
-                  <hr
-                    class="dropdown-divider"
-                    aria-role="menuitem"
-                    v-if="actorIsOrganizer || event.draft"
-                  />
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    v-if="!event.draft"
-                    @click="triggerShare()"
-                  >
-                    <span>
-                      {{ $t("Share this event") }}
-                      <b-icon icon="share" />
-                    </span>
-                  </b-dropdown-item>
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    @click="downloadIcsEvent()"
-                    v-if="!event.draft"
-                  >
-                    <span>
-                      {{ $t("Add to my calendar") }}
-                      <b-icon icon="calendar-plus" />
-                    </span>
-                  </b-dropdown-item>
-                  <b-dropdown-item
-                    aria-role="listitem"
-                    v-if="ableToReport"
-                    @click="isReportModalActive = true"
-                  >
-                    <span>
-                      {{ $t("Report") }}
-                      <b-icon icon="flag" />
-                    </span>
-                  </b-dropdown-item>
-                </b-dropdown>
+                    <hr
+                      class="dropdown-divider"
+                      aria-role="menuitem"
+                      v-if="actorIsOrganizer || event.draft"
+                    />
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      v-if="!event.draft"
+                      @click="triggerShare()"
+                    >
+                      <span>
+                        {{ $t("Share this event") }}
+                        <b-icon icon="share" />
+                      </span>
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      @click="downloadIcsEvent()"
+                      v-if="!event.draft"
+                    >
+                      <span>
+                        {{ $t("Add to my calendar") }}
+                        <b-icon icon="calendar-plus" />
+                      </span>
+                    </b-dropdown-item>
+                    <b-dropdown-item
+                      aria-role="listitem"
+                      v-if="ableToReport"
+                      @click="isReportModalActive = true"
+                    >
+                      <span>
+                        {{ $t("Report") }}
+                        <b-icon icon="flag" />
+                      </span>
+                    </b-dropdown-item>
+                  </b-dropdown>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
         <div class="event-description-wrapper">
           <aside class="event-metadata">
             <div class="sticky">
@@ -662,6 +659,7 @@ import { IConfig } from "../../types/config.model";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import Tag from "../../components/Tag.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
+import EventBanner from "../../components/Event/EventBanner.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
@@ -683,6 +681,7 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     Tag,
     ActorCard,
     PopoverActorCard,
+    EventBanner,
     "map-leaflet": () =>
       import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
     ShareEventModal: () =>
@@ -1308,18 +1307,6 @@ export default class Event extends EventMixin {
   opacity: 0;
 }
 
-.header-picture,
-.header-picture-default {
-  height: 400px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.header-picture-default {
-  background-image: url("../../../public/img/mobilizon_default_card.png");
-}
-
 div.sidebar {
   display: flex;
   flex-wrap: wrap;
@@ -1353,7 +1340,7 @@ div.sidebar {
   }
 }
 
-.intro.section {
+.intro {
   background: white;
 
   .is-3-tablet {
