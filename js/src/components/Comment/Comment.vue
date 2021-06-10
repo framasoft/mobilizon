@@ -1,10 +1,13 @@
 <template>
-  <li :class="{ reply: comment.inReplyToComment }">
-    <article
-      class="media"
-      :class="{ selected: commentSelected }"
-      :id="commentId"
-    >
+  <li
+    :class="{
+      reply: comment.inReplyToComment,
+      announcement: comment.isAnnouncement,
+      selected: commentSelected,
+    }"
+    class="comment-element"
+  >
+    <article class="media" :id="commentId">
       <popover-actor-card
         :actor="comment.actor"
         :inline="true"
@@ -33,14 +36,12 @@
             <strong :class="{ organizer: commentFromOrganizer }">{{
               comment.actor.name
             }}</strong>
-            <small class="has-text-grey">{{
-              usernameWithDomain(comment.actor)
-            }}</small>
+            <small>{{ usernameWithDomain(comment.actor) }}</small>
           </span>
-          <a v-else class="comment-link has-text-grey" :href="commentURL">
+          <a v-else class="comment-link" :href="commentURL">
             <span>{{ $t("[deleted]") }}</span>
           </a>
-          <a class="comment-link has-text-grey" :href="commentURL">
+          <a class="comment-link" :href="commentURL">
             <small>{{
               formatDistanceToNow(new Date(comment.updatedAt), {
                 locale: $dateFnsLocale,
@@ -265,7 +266,7 @@ export default class Comment extends Vue {
   }
 
   get commentSelected(): boolean {
-    return this.commentId === this.$route.hash;
+    return `#${this.commentId}` === this.$route.hash;
   }
 
   get commentFromOrganizer(): boolean {
@@ -276,13 +277,13 @@ export default class Comment extends Vue {
 
   get commentId(): string {
     if (this.comment.originComment)
-      return `#comment-${this.comment.originComment.uuid}-${this.comment.uuid}`;
-    return `#comment-${this.comment.uuid}`;
+      return `comment-${this.comment.originComment.uuid}-${this.comment.uuid}`;
+    return `comment-${this.comment.uuid}`;
   }
 
   get commentURL(): string {
     if (!this.comment.local && this.comment.url) return this.comment.url;
-    return this.commentId;
+    return `#${this.commentId}`;
   }
 
   reportModal(): void {
@@ -368,6 +369,7 @@ form.reply {
 a.comment-link {
   text-decoration: none;
   margin-left: 5px;
+  color: $text;
   &:hover {
     text-decoration: underline;
   }
@@ -375,6 +377,41 @@ a.comment-link {
     &:hover {
       color: hsl(0, 0%, 21%);
     }
+  }
+}
+
+.comment-element {
+  padding: 0.25rem;
+  border-radius: 5px;
+
+  &.announcement {
+    background: $purple-2;
+
+    small {
+      color: hsl(0, 0%, 21%);
+    }
+  }
+
+  &.selected {
+    background-color: $violet-1;
+    color: $white;
+    .reply-btn,
+    small,
+    strong,
+    .icons button {
+      color: $white;
+    }
+    a.comment-link:hover {
+      text-decoration: underline;
+      text-decoration-color: $white;
+      small {
+        color: $purple-3;
+      }
+    }
+  }
+
+  .media-left {
+    margin-right: 0.5rem;
   }
 }
 
@@ -402,6 +439,7 @@ a.comment-link {
 }
 
 .media .media-content {
+  overflow-x: initial;
   .content .editor-line {
     display: flex;
     align-items: center;
@@ -433,16 +471,12 @@ a.comment-link {
 
 .level-item.reply-btn {
   font-weight: bold;
-  color: $primary;
+  color: $violet-2;
 }
 
 article {
   border-radius: 4px;
   margin-bottom: 5px;
-
-  &.selected {
-    background-color: lighten($secondary, 30%);
-  }
 }
 
 .comment-replies {
