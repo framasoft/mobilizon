@@ -80,11 +80,12 @@ defmodule Mobilizon.Discussions do
     # However, it also excludes all top-level comments with deleted replies from being selected
     # |> where([_, r], is_nil(r.deleted_at))
     |> group_by([c], c.id)
+    |> order_by([c], desc: :is_announcement, asc: :published_at)
     |> select([c, r], %{c | total_replies: count(r.id)})
   end
 
   def query(Comment, _) do
-    order_by(Comment, [c], asc: :published_at)
+    order_by(Comment, [c], asc: :is_announcement, asc: :published_at)
   end
 
   def query(queryable, _) do

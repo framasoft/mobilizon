@@ -40,17 +40,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
       )
       when is_binary(media_url) do
     with {:ok, %{body: body}} <- Tesla.get(media_url, opts: @http_options),
-         {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
+         {:ok, %{url: url} = uploaded} <-
            Upload.store(%{body: body, name: name}),
          {:media_exists, nil} <- {:media_exists, Medias.get_media_by_url(url)} do
       Medias.create_media(%{
-        "file" => %{
-          "url" => url,
-          "name" => name,
-          "content_type" => content_type,
-          "size" => size
-        },
-        "actor_id" => actor_id
+        file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+        metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+        actor_id: actor_id
       })
     else
       {:media_exists, %MediaModel{file: _file} = media} ->

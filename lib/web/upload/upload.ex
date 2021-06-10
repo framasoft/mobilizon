@@ -73,12 +73,9 @@ defmodule Mobilizon.Web.Upload do
          {:ok, upload} <- Filter.filter(opts.filters, upload),
          {:ok, url_spec} <- Uploader.put_file(opts.uploader, upload) do
       {:ok,
-       %{
-         name: Map.get(opts, :description) || upload.name,
-         url: url_from_spec(upload, opts.base_url, url_spec),
-         content_type: upload.content_type,
-         size: upload.size
-       }}
+       upload
+       |> Map.put(:name, Map.get(opts, :description) || upload.name)
+       |> Map.put(:url, url_from_spec(upload, opts.base_url, url_spec))}
     else
       {:error, error} ->
         Logger.error(
