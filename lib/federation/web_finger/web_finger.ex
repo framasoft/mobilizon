@@ -144,7 +144,7 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec find_webfinger_endpoint(String.t()) :: String.t()
   def find_webfinger_endpoint(domain) when is_binary(domain) do
     with {:ok, %{body: body}} <- fetch_document("http://#{domain}/.well-known/host-meta"),
-         link_template <- find_link_from_template(body) do
+         link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}
     end
   end
@@ -203,6 +203,9 @@ defmodule Mobilizon.Federation.WebFinger do
            xpath(doc, ~x"//Link[@rel=\"lrdd\"][@type=\"application/json\"]/@template"s),
          res when res in [nil, ""] <- xpath(doc, ~x"//Link[@rel=\"lrdd\"]/@template"s),
          do: {:error, :link_not_found}
+  catch
+    :exit, _e ->
+      {:error, :link_not_found}
   end
 
   @spec fetch_document(String.t()) :: Tesla.Env.result()
