@@ -58,6 +58,7 @@ $danger-invert: findColorInvert($danger);
 $link: $primary;
 $link-invert: $primary-invert;
 $text: $violet-1;
+$grey: #757575;
 
 $colors: map-merge(
   $colors,
