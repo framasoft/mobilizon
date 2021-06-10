@@ -150,7 +150,7 @@ export default class EventMixin extends mixins(Vue) {
   }
 
   private async deleteEvent(event: IEvent) {
-    const eventTitle = event.title;
+    const { title: eventTitle, id: eventId } = event;
 
     try {
       await this.$apollo.mutate<IParticipant>({
@@ -159,6 +159,9 @@ export default class EventMixin extends mixins(Vue) {
           eventId: event.id,
         },
       });
+      const cache = this.$apollo.getClient().cache as InMemoryCache;
+      cache.evict({ id: `Event:${eventId}` });
+      cache.gc();
       /**
        * When the event corresponding has been deleted (by the organizer).
        * A notification is already triggered.
