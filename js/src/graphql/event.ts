@@ -1,179 +1,189 @@
 import gql from "graphql-tag";
+import { ADDRESS_FRAGMENT } from "./address";
+import { TAG_FRAGMENT } from "./tags";
 
-const participantQuery = `
-  role,
-  id,
-  actor {
-    preferredUsername,
-    avatar {
+const PARTICIPANT_QUERY_FRAGMENT = gql`
+  fragment ParticipantQuery on Participant {
+    role
+    id
+    actor {
+      preferredUsername
+      avatar {
+        id
+        url
+      }
+      name
       id
-      url
-    },
-    name,
-    id,
-    domain
-  },
-  event {
-    id,
-    uuid
-  },
-  metadata {
-    cancellationToken,
-    message
-  },
-  insertedAt
-`;
-
-const participantsQuery = `
-  total,
-  elements {
-    ${participantQuery}
+      domain
+    }
+    event {
+      id
+      uuid
+    }
+    metadata {
+      cancellationToken
+      message
+    }
+    insertedAt
   }
 `;
 
-const physicalAddressQuery = `
-  description,
-  street,
-  locality,
-  postalCode,
-  region,
-  country,
-  geom,
-  type,
-  id,
-  originId
+const PARTICIPANTS_QUERY_FRAGMENT = gql`
+  fragment ParticipantsQuery on PaginatedParticipantList {
+    total
+    elements {
+      ...ParticipantQuery
+    }
+  }
+  ${PARTICIPANT_QUERY_FRAGMENT}
 `;
 
-const tagsQuery = `
-  id,
-  slug,
-  title
+const EVENT_OPTIONS_FRAGMENT = gql`
+  fragment EventOptions on EventOptions {
+    maximumAttendeeCapacity
+    remainingAttendeeCapacity
+    showRemainingAttendeeCapacity
+    anonymousParticipation
+    showStartTime
+    showEndTime
+    offers {
+      price
+      priceCurrency
+      url
+    }
+    participationConditions {
+      title
+      content
+      url
+    }
+    attendees
+    program
+    commentModeration
+    showParticipationPrice
+    hideOrganizerWhenGroupEvent
+  }
 `;
 
-const optionsQuery = `
-  maximumAttendeeCapacity,
-  remainingAttendeeCapacity,
-  showRemainingAttendeeCapacity,
-  anonymousParticipation,
-  showStartTime,
-  showEndTime,
-  offers {
-    price,
-    priceCurrency,
+const FULL_EVENT_FRAGMENT = gql`
+  fragment FullEvent on Event {
+    id
+    uuid
     url
-  },
-  participationConditions {
-    title,
-    content,
-    url
-  },
-  attendees,
-  program,
-  commentModeration,
-  showParticipationPrice,
-  hideOrganizerWhenGroupEvent,
-  __typename
-`;
-
-export const FETCH_EVENT = gql`
-  query FetchEvent($uuid:UUID!) {
-    event(uuid: $uuid) {
-      id,
-      uuid,
-      url,
-      local,
-      title,
-      description,
-      beginsOn,
-      endsOn,
-      status,
-      visibility,
-      joinOptions,
-      draft,
+    local
+    title
+    description
+    beginsOn
+    endsOn
+    status
+    visibility
+    joinOptions
+    draft
+    picture {
+      id
+      url
+      name
+      metadata {
+        width
+        height
+        blurhash
+      }
+    }
+    publishAt
+    onlineAddress
+    phoneAddress
+    physicalAddress {
+      ...AdressFragment
+    }
+    organizerActor {
+      avatar {
+        id
+        url
+      }
+      preferredUsername
+      domain
+      name
+      url
+      id
+      summary
+    }
+    contacts {
+      avatar {
+        id
+        url
+      }
+      preferredUsername
+      name
+      summary
+      domain
+      url
+      id
+    }
+    attributedTo {
+      avatar {
+        id
+        url
+      }
+      preferredUsername
+      name
+      summary
+      domain
+      url
+      id
+    }
+    participantStats {
+      going
+      notApproved
+      participant
+    }
+    tags {
+      ...TagFragment
+    }
+    relatedEvents {
+      id
+      uuid
+      title
+      beginsOn
       picture {
         id
         url
         name
-      },
-      publishAt,
-      onlineAddress,
-      phoneAddress,
+        metadata {
+          width
+          height
+          blurhash
+        }
+      }
       physicalAddress {
-        ${physicalAddressQuery}
+        id
+        description
       }
       organizerActor {
+        id
         avatar {
           id
           url
-        },
-        preferredUsername,
-        domain,
-        name,
-        url,
-        id,
-        summary
-      },
-      contacts {
-        avatar {
-          id
-          url,
         }
-        preferredUsername,
-        name,
-        summary,
-        domain,
-        url,
-        id
-      },
-      attributedTo {
-        avatar {
-          id
-          url,
-        }
-        preferredUsername,
-        name,
-        summary,
-        domain,
-        url,
-        id
-      },
-      participantStats {
-        going,
-        notApproved,
-        participant
-      },
-      tags {
-        ${tagsQuery}
-      },
-      relatedEvents {
-        id
-        uuid,
-        title,
-        beginsOn,
-        picture {
-          id,
-          url
-        }
-        physicalAddress {
-          id
-          description
-        },
-        organizerActor {
-          id
-          avatar {
-            id
-            url,
-          },
-          preferredUsername,
-          domain,
-          name,
-        }
-      },
-      options {
-        ${optionsQuery}
+        preferredUsername
+        domain
+        name
       }
     }
+    options {
+      ...EventOptions
+    }
   }
+  ${ADDRESS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+`;
+
+export const FETCH_EVENT = gql`
+  query FetchEvent($uuid: UUID!) {
+    event(uuid: $uuid) {
+      ...FullEvent
+    }
+  }
+  ${FULL_EVENT_FRAGMENT}
 `;
 
 export const FETCH_EVENT_BASIC = gql`
@@ -240,252 +250,129 @@ export const FETCH_EVENTS = gql`
         #      },
         category
         tags {
-          slug
-          title
+          ...TagFragment
         }
       }
     }
   }
+  ${TAG_FRAGMENT}
 `;
 
 export const CREATE_EVENT = gql`
   mutation createEvent(
-    $organizerActorId: ID!,
-    $attributedToId: ID,
-    $title: String!,
-    $description: String!,
-    $beginsOn: DateTime!,
-    $endsOn: DateTime,
-    $status: EventStatus,
-    $visibility: EventVisibility,
-    $joinOptions: EventJoinOptions,
-    $draft: Boolean,
-    $tags: [String],
-    $picture: MediaInput,
-    $onlineAddress: String,
-    $phoneAddress: String,
-    $category: String,
-    $physicalAddress: AddressInput,
-    $options: EventOptionsInput,
+    $organizerActorId: ID!
+    $attributedToId: ID
+    $title: String!
+    $description: String!
+    $beginsOn: DateTime!
+    $endsOn: DateTime
+    $status: EventStatus
+    $visibility: EventVisibility
+    $joinOptions: EventJoinOptions
+    $draft: Boolean
+    $tags: [String]
+    $picture: MediaInput
+    $onlineAddress: String
+    $phoneAddress: String
+    $category: String
+    $physicalAddress: AddressInput
+    $options: EventOptionsInput
     $contacts: [Contact]
   ) {
     createEvent(
-      organizerActorId: $organizerActorId,
-      attributedToId: $attributedToId,
-      title: $title,
-      description: $description,
-      beginsOn: $beginsOn,
-      endsOn: $endsOn,
-      status: $status,
-      visibility: $visibility,
-      joinOptions: $joinOptions,
-      draft: $draft,
-      tags: $tags,
-      picture: $picture,
-      onlineAddress: $onlineAddress,
-      phoneAddress: $phoneAddress,
-      category: $category,
+      organizerActorId: $organizerActorId
+      attributedToId: $attributedToId
+      title: $title
+      description: $description
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+      status: $status
+      visibility: $visibility
+      joinOptions: $joinOptions
+      draft: $draft
+      tags: $tags
+      picture: $picture
+      onlineAddress: $onlineAddress
+      phoneAddress: $phoneAddress
+      category: $category
       physicalAddress: $physicalAddress
-      options: $options,
+      options: $options
       contacts: $contacts
     ) {
-      id,
-      uuid,
-      title,
-      url,
-      local,
-      description,
-      beginsOn,
-      endsOn,
-      status,
-      visibility,
-      joinOptions,
-      draft,
-      picture {
-        id
-        url
-      },
-      publishAt,
-      category,
-      onlineAddress,
-      phoneAddress,
-      physicalAddress {
-        ${physicalAddressQuery}
-      },
-      attributedTo {
-        id,
-        domain,
-        name,
-        url,
-        preferredUsername,
-        avatar {
-          id
-          url
-        }
-      },
-      organizerActor {
-        avatar {
-          id
-          url
-        },
-        preferredUsername,
-        domain,
-        name,
-        url,
-        id,
-      },
-      contacts {
-        avatar {
-          id
-          url
-        },
-        preferredUsername,
-        domain,
-        name,
-        url,
-        id,
-      },
-      participantStats {
-        going,
-        notApproved,
-        participant
-      },
-      tags {
-        ${tagsQuery}
-      },
-      options {
-        ${optionsQuery}
-      }
+      ...FullEvent
     }
   }
+  ${FULL_EVENT_FRAGMENT}
 `;
 
 export const EDIT_EVENT = gql`
   mutation updateEvent(
-    $id: ID!,
-    $title: String,
-    $description: String,
-    $beginsOn: DateTime,
-    $endsOn: DateTime,
-    $status: EventStatus,
-    $visibility: EventVisibility,
-    $joinOptions: EventJoinOptions,
-    $draft: Boolean,
-    $tags: [String],
-    $picture: MediaInput,
-    $onlineAddress: String,
-    $phoneAddress: String,
-    $organizerActorId: ID,
-    $attributedToId: ID,
-    $category: String,
-    $physicalAddress: AddressInput,
-    $options: EventOptionsInput,
+    $id: ID!
+    $title: String
+    $description: String
+    $beginsOn: DateTime
+    $endsOn: DateTime
+    $status: EventStatus
+    $visibility: EventVisibility
+    $joinOptions: EventJoinOptions
+    $draft: Boolean
+    $tags: [String]
+    $picture: MediaInput
+    $onlineAddress: String
+    $phoneAddress: String
+    $organizerActorId: ID
+    $attributedToId: ID
+    $category: String
+    $physicalAddress: AddressInput
+    $options: EventOptionsInput
     $contacts: [Contact]
   ) {
     updateEvent(
-      eventId: $id,
-      title: $title,
-      description: $description,
-      beginsOn: $beginsOn,
-      endsOn: $endsOn,
-      status: $status,
-      visibility: $visibility,
-      joinOptions: $joinOptions,
-      draft: $draft,
-      tags: $tags,
-      picture: $picture,
-      onlineAddress: $onlineAddress,
-      phoneAddress: $phoneAddress,
-      organizerActorId: $organizerActorId,
-      attributedToId: $attributedToId,
-      category: $category,
+      eventId: $id
+      title: $title
+      description: $description
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+      status: $status
+      visibility: $visibility
+      joinOptions: $joinOptions
+      draft: $draft
+      tags: $tags
+      picture: $picture
+      onlineAddress: $onlineAddress
+      phoneAddress: $phoneAddress
+      organizerActorId: $organizerActorId
+      attributedToId: $attributedToId
+      category: $category
       physicalAddress: $physicalAddress
-      options: $options,
+      options: $options
       contacts: $contacts
     ) {
-      id,
-      uuid,
-      title,
-      url,
-      local,
-      description,
-      beginsOn,
-      endsOn,
-      status,
-      visibility,
-      joinOptions,
-      draft,
-      picture {
-        id
-        url
-      },
-      publishAt,
-      category,
-      onlineAddress,
-      phoneAddress,
-      physicalAddress {
-        ${physicalAddressQuery}
-      },
-      attributedTo {
-        id,
-        domain,
-        name,
-        url,
-        preferredUsername,
-        avatar {
-          id
-          url
-        }
-      },
-      contacts {
-        avatar {
-          id
-          url
-        },
-        preferredUsername,
-        domain,
-        name,
-        url,
-        id,
-      },
-      organizerActor {
-        avatar {
-          id
-          url
-        },
-        preferredUsername,
-        domain,
-        name,
-        url,
-        id,
-      },
-      participantStats {
-        going,
-        notApproved,
-        participant
-      },
-      tags {
-        ${tagsQuery}
-      },
-      options {
-        ${optionsQuery}
-      }
+      ...FullEvent
     }
   }
+  ${FULL_EVENT_FRAGMENT}
 `;
 
 export const JOIN_EVENT = gql`
-  mutation JoinEvent($eventId: ID!, $actorId: ID!, $email: String, $message: String, $locale: String) {
+  mutation JoinEvent(
+    $eventId: ID!
+    $actorId: ID!
+    $email: String
+    $message: String
+    $locale: String
+  ) {
     joinEvent(
-      eventId: $eventId,
-      actorId: $actorId,
-      email: $email,
-      message: $message,
+      eventId: $eventId
+      actorId: $actorId
+      email: $email
+      message: $message
       locale: $locale
     ) {
-        ${participantQuery}
+      ...ParticipantsQuery
     }
   }
+  ${PARTICIPANTS_QUERY_FRAGMENT}
 `;
 
 export const LEAVE_EVENT = gql`
@@ -534,20 +421,21 @@ export const DELETE_EVENT = gql`
 export const PARTICIPANTS = gql`
   query Participants($uuid: UUID!, $page: Int, $limit: Int, $roles: String) {
     event(uuid: $uuid) {
-      id,
-      uuid,
-      title,
+      id
+      uuid
+      title
       participants(page: $page, limit: $limit, roles: $roles) {
-        ${participantsQuery}
-      },
+        ...ParticipantsQuery
+      }
       participantStats {
-        going,
-        notApproved,
-        rejected,
+        going
+        notApproved
+        rejected
         participant
       }
     }
   }
+  ${PARTICIPANTS_QUERY_FRAGMENT}
 `;
 
 export const EVENT_PERSON_PARTICIPATION = gql`
