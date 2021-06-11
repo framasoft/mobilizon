@@ -188,7 +188,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
 `;
 
 export const FETCH_GROUP = gql`
-  query (
+  query FetchGroup(
     $name: String!
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
@@ -212,7 +212,7 @@ export const FETCH_GROUP = gql`
 `;
 
 export const GET_GROUP = gql`
-  query (
+  query GetGroup(
     $id: ID!
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
