@@ -13,206 +13,208 @@
           :small="true"
         />
       </div>
-      <div class="content">
-        <div class="title-wrapper">
-          <router-link
-            :to="{
-              name: RouteName.EVENT,
-              params: { uuid: participation.event.uuid },
-            }"
-          >
-            <h3 class="title">{{ participation.event.title }}</h3>
-          </router-link>
-        </div>
-        <div class="participation-actor">
-          <span>
-            <b-icon
-              icon="earth"
-              v-if="participation.event.visibility === EventVisibility.PUBLIC"
-            />
-            <b-icon
-              icon="link"
-              v-else-if="
-                participation.event.visibility === EventVisibility.UNLISTED
-              "
-            />
-            <b-icon
-              icon="lock"
-              v-else-if="
-                participation.event.visibility === EventVisibility.PRIVATE
-              "
-            />
-          </span>
-          <span
-            v-if="
-              participation.event.physicalAddress &&
-              participation.event.physicalAddress.locality
-            "
-            >{{ participation.event.physicalAddress.locality }} -</span
-          >
-          <i18n
-            tag="span"
-            path="Organized by {name}"
-            v-if="organizerActor.id !== currentActor.id"
-          >
-            <popover-actor-card
-              slot="name"
-              :actor="organizerActor"
-              :inline="true"
-            >
-              {{ organizerActor.displayName() }}
-            </popover-actor-card>
-          </i18n>
-          <span v-else>{{ $t("Organized by you") }}</span>
-        </div>
-        <div>
-          <span
-            class="participant-stats"
-            v-if="
-              ![
-                ParticipantRole.PARTICIPANT,
-                ParticipantRole.NOT_APPROVED,
-              ].includes(participation.role)
-            "
-          >
-            <span
-              v-if="participation.event.options.maximumAttendeeCapacity !== 0"
-            >
-              {{
-                $tc(
-                  "{available}/{capacity} available places",
-                  participation.event.options.maximumAttendeeCapacity -
-                    participation.event.participantStats.participant,
-                  {
-                    available:
-                      participation.event.options.maximumAttendeeCapacity -
-                      participation.event.participantStats.participant,
-                    capacity:
-                      participation.event.options.maximumAttendeeCapacity,
-                  }
-                )
-              }}
-            </span>
-            <span v-else>
-              {{
-                $tc(
-                  "{count} participants",
-                  participation.event.participantStats.participant,
-                  {
-                    count: participation.event.participantStats.participant,
-                  }
-                )
-              }}
-            </span>
-            <span v-if="participation.event.participantStats.notApproved > 0">
-              <b-button
-                type="is-text"
-                @click="
-                  gotToWithCheck(participation, {
-                    name: RouteName.PARTICIPATIONS,
-                    query: { role: ParticipantRole.NOT_APPROVED },
-                    params: { eventId: participation.event.uuid },
-                  })
-                "
-              >
-                {{
-                  $tc(
-                    "{count} requests waiting",
-                    participation.event.participantStats.notApproved,
-                    {
-                      count: participation.event.participantStats.notApproved,
-                    }
-                  )
-                }}
-              </b-button>
-            </span>
-          </span>
-        </div>
-      </div>
-      <div class="actions">
-        <b-dropdown aria-role="list" position="is-bottom-left">
-          <b-button slot="trigger" role="button" icon-right="dots-horizontal">
-            {{ $t("Actions") }}
-          </b-button>
-
-          <b-dropdown-item
-            v-if="
-              ![
-                ParticipantRole.PARTICIPANT,
-                ParticipantRole.NOT_APPROVED,
-              ].includes(participation.role)
-            "
-            aria-role="listitem"
-            @click="
-              gotToWithCheck(participation, {
-                name: RouteName.EDIT_EVENT,
-                params: { eventId: participation.event.uuid },
-              })
-            "
-          >
-            <b-icon icon="pencil" />
-            {{ $t("Edit") }}
-          </b-dropdown-item>
-
-          <b-dropdown-item
-            v-if="participation.role === ParticipantRole.CREATOR"
-            aria-role="listitem"
-            @click="
-              gotToWithCheck(participation, {
-                name: RouteName.DUPLICATE_EVENT,
-                params: { eventId: participation.event.uuid },
-              })
-            "
-          >
-            <b-icon icon="content-duplicate" />
-            {{ $t("Duplicate") }}
-          </b-dropdown-item>
-
-          <b-dropdown-item
-            v-if="
-              ![
-                ParticipantRole.PARTICIPANT,
-                ParticipantRole.NOT_APPROVED,
-              ].includes(participation.role)
-            "
-            aria-role="listitem"
-            @click="openDeleteEventModalWrapper"
-          >
-            <b-icon icon="delete" />
-            {{ $t("Delete") }}
-          </b-dropdown-item>
-
-          <b-dropdown-item
-            v-if="
-              ![
-                ParticipantRole.PARTICIPANT,
-                ParticipantRole.NOT_APPROVED,
-              ].includes(participation.role)
-            "
-            aria-role="listitem"
-            @click="
-              gotToWithCheck(participation, {
-                name: RouteName.PARTICIPATIONS,
-                params: { eventId: participation.event.uuid },
-              })
-            "
-          >
-            <b-icon icon="account-multiple-plus" />
-            {{ $t("Manage participations") }}
-          </b-dropdown-item>
-
-          <b-dropdown-item aria-role="listitem" has-link>
+      <div class="content-and-actions">
+        <div class="list-card-content">
+          <div class="title-wrapper">
             <router-link
               :to="{
                 name: RouteName.EVENT,
                 params: { uuid: participation.event.uuid },
               }"
             >
-              <b-icon icon="view-compact" />
-              {{ $t("View event page") }}
+              <h3 class="title">{{ participation.event.title }}</h3>
             </router-link>
-          </b-dropdown-item>
-        </b-dropdown>
+          </div>
+          <div class="participation-actor">
+            <span>
+              <b-icon
+                icon="earth"
+                v-if="participation.event.visibility === EventVisibility.PUBLIC"
+              />
+              <b-icon
+                icon="link"
+                v-else-if="
+                  participation.event.visibility === EventVisibility.UNLISTED
+                "
+              />
+              <b-icon
+                icon="lock"
+                v-else-if="
+                  participation.event.visibility === EventVisibility.PRIVATE
+                "
+              />
+            </span>
+            <span
+              v-if="
+                participation.event.physicalAddress &&
+                participation.event.physicalAddress.locality
+              "
+              >{{ participation.event.physicalAddress.locality }} -</span
+            >
+            <i18n
+              tag="span"
+              path="Organized by {name}"
+              v-if="organizerActor.id !== currentActor.id"
+            >
+              <popover-actor-card
+                slot="name"
+                :actor="organizerActor"
+                :inline="true"
+              >
+                {{ organizerActor.displayName() }}
+              </popover-actor-card>
+            </i18n>
+            <span v-else>{{ $t("Organized by you") }}</span>
+          </div>
+          <div>
+            <span
+              class="participant-stats"
+              v-if="
+                ![
+                  ParticipantRole.PARTICIPANT,
+                  ParticipantRole.NOT_APPROVED,
+                ].includes(participation.role)
+              "
+            >
+              <span
+                v-if="participation.event.options.maximumAttendeeCapacity !== 0"
+              >
+                {{
+                  $tc(
+                    "{available}/{capacity} available places",
+                    participation.event.options.maximumAttendeeCapacity -
+                      participation.event.participantStats.participant,
+                    {
+                      available:
+                        participation.event.options.maximumAttendeeCapacity -
+                        participation.event.participantStats.participant,
+                      capacity:
+                        participation.event.options.maximumAttendeeCapacity,
+                    }
+                  )
+                }}
+              </span>
+              <span v-else>
+                {{
+                  $tc(
+                    "{count} participants",
+                    participation.event.participantStats.participant,
+                    {
+                      count: participation.event.participantStats.participant,
+                    }
+                  )
+                }}
+              </span>
+              <span v-if="participation.event.participantStats.notApproved > 0">
+                <b-button
+                  type="is-text"
+                  @click="
+                    gotToWithCheck(participation, {
+                      name: RouteName.PARTICIPATIONS,
+                      query: { role: ParticipantRole.NOT_APPROVED },
+                      params: { eventId: participation.event.uuid },
+                    })
+                  "
+                >
+                  {{
+                    $tc(
+                      "{count} requests waiting",
+                      participation.event.participantStats.notApproved,
+                      {
+                        count: participation.event.participantStats.notApproved,
+                      }
+                    )
+                  }}
+                </b-button>
+              </span>
+            </span>
+          </div>
+        </div>
+        <div class="actions">
+          <b-dropdown aria-role="list" position="is-bottom-left">
+            <b-button slot="trigger" role="button" icon-right="dots-horizontal">
+              {{ $t("Actions") }}
+            </b-button>
+
+            <b-dropdown-item
+              v-if="
+                ![
+                  ParticipantRole.PARTICIPANT,
+                  ParticipantRole.NOT_APPROVED,
+                ].includes(participation.role)
+              "
+              aria-role="listitem"
+              @click="
+                gotToWithCheck(participation, {
+                  name: RouteName.EDIT_EVENT,
+                  params: { eventId: participation.event.uuid },
+                })
+              "
+            >
+              <b-icon icon="pencil" />
+              {{ $t("Edit") }}
+            </b-dropdown-item>
+
+            <b-dropdown-item
+              v-if="participation.role === ParticipantRole.CREATOR"
+              aria-role="listitem"
+              @click="
+                gotToWithCheck(participation, {
+                  name: RouteName.DUPLICATE_EVENT,
+                  params: { eventId: participation.event.uuid },
+                })
+              "
+            >
+              <b-icon icon="content-duplicate" />
+              {{ $t("Duplicate") }}
+            </b-dropdown-item>
+
+            <b-dropdown-item
+              v-if="
+                ![
+                  ParticipantRole.PARTICIPANT,
+                  ParticipantRole.NOT_APPROVED,
+                ].includes(participation.role)
+              "
+              aria-role="listitem"
+              @click="openDeleteEventModalWrapper"
+            >
+              <b-icon icon="delete" />
+              {{ $t("Delete") }}
+            </b-dropdown-item>
+
+            <b-dropdown-item
+              v-if="
+                ![
+                  ParticipantRole.PARTICIPANT,
+                  ParticipantRole.NOT_APPROVED,
+                ].includes(participation.role)
+              "
+              aria-role="listitem"
+              @click="
+                gotToWithCheck(participation, {
+                  name: RouteName.PARTICIPATIONS,
+                  params: { eventId: participation.event.uuid },
+                })
+              "
+            >
+              <b-icon icon="account-multiple-plus" />
+              {{ $t("Manage participations") }}
+            </b-dropdown-item>
+
+            <b-dropdown-item aria-role="listitem" has-link>
+              <router-link
+                :to="{
+                  name: RouteName.EVENT,
+                  params: { uuid: participation.event.uuid },
+                }"
+              >
+                <b-icon icon="view-compact" />
+                {{ $t("View event page") }}
+              </router-link>
+            </b-dropdown-item>
+          </b-dropdown>
+        </div>
       </div>
     </div>
   </article>
@@ -351,51 +353,72 @@ article.box {
 
   .list-card {
     display: flex;
-    align-items: center;
     padding: 0 6px;
+    position: relative;
+    flex-direction: column;
 
-    .actions {
-      padding-right: 7.5px;
-      cursor: pointer;
+    div.date-component {
+      align-self: flex-start;
+      padding: 5px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-top: 1px;
+      height: 0;
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 15px;
+      margin-left: 0rem;
     }
 
-    div.content {
-      flex: 1;
-      padding: 5px;
+    .content-and-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 1rem;
 
-      .participation-actor span,
-      .participant-stats span {
-        padding: 0 5px;
-
-        button {
-          height: auto;
-          padding-top: 0;
-        }
+      .actions {
+        padding-right: 7.5px;
+        cursor: pointer;
       }
 
-      div.title-wrapper {
-        display: flex;
-        align-items: center;
+      div.list-card-content {
+        flex: 1;
+        padding: 5px;
+        min-width: 350px;
 
-        div.date-component {
-          flex: 0;
-          margin-right: 16px;
+        .participation-actor span,
+        .participant-stats span {
+          padding: 0 5px;
+
+          button {
+            height: auto;
+            padding-top: 0;
+          }
         }
 
-        a {
-          text-decoration: none;
-        }
+        div.title-wrapper {
+          display: flex;
+          align-items: center;
+          padding-top: 5px;
 
-        .title {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          font-weight: 400;
-          line-height: 1em;
-          font-size: 1.6em;
-          padding-bottom: 5px;
-          margin: auto 0;
+          a {
+            text-decoration: none;
+            padding-bottom: 5px;
+          }
+
+          .title {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-weight: 400;
+            line-height: 1em;
+            font-size: 1.4em;
+            padding-bottom: 5px;
+            margin: auto 0;
+          }
         }
       }
     }
@@ -405,6 +428,7 @@ article.box {
     background: $yellow-2;
     display: flex;
     padding: 5px;
+    padding-left: calc(48px + 15px);
 
     figure {
       padding-right: 3px;

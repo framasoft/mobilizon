@@ -15,12 +15,12 @@
             >{{ post.attributedTo.name }}</router-link
           >
         </i18n>
-        <p class="published" v-if="!post.draft">
+        <p class="published has-text-grey-dark" v-if="!post.draft">
           {{ post.publishAt | formatDateTimeString }}
         </p>
         <small
           v-if="post.visibility === PostVisibility.PRIVATE"
-          class="has-text-grey"
+          class="has-text-grey-dark"
         >
           <b-icon icon="lock" size="is-small" />
           {{
@@ -68,7 +68,7 @@ import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 
 import { IPost } from "../../types/post.model";
-import { IPerson, usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 
@@ -126,8 +126,6 @@ export default class Post extends mixins(GroupMixin) {
 
   memberships!: IMember[];
 
-  currentActor!: IPerson;
-
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
@@ -171,7 +169,6 @@ article {
 
     .published {
       margin-top: 1rem;
-      color: rgba(0, 0, 0, 0.5);
     }
 
     &::after {

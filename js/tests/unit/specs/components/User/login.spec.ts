@@ -6,7 +6,7 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import buildCurrentUserResolver from "@/apollo/user";
 import { configMock } from "../../mocks/config";
 import { i18n } from "@/utils/i18n";

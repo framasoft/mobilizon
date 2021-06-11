@@ -6,7 +6,7 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import {
   COMMENTS_THREADS_WITH_REPLIES,
   CREATE_COMMENT_FROM_EVENT,

@@ -249,7 +249,7 @@ import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import ResourceMixin from "../../mixins/resource";
 import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
 
 @Component({
   components: { FolderItem, ResourceItem, Draggable, ResourceSelector },
@@ -560,7 +560,10 @@ export default class Resources extends Mixins(ResourceMixin) {
           path: resource.path,
         },
         refetchQueries: () => this.postRefreshQueries(),
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+        update: (
+          store: ApolloCache<{ updateResource: IResource }>,
+          { data }: FetchResult
+        ) => {
           if (!data || data.updateResource == null || parentPath == null)
             return;
           if (!this.resource.actor) return;

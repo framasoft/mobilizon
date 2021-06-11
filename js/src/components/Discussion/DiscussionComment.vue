@@ -57,7 +57,12 @@
       <div v-if="!editMode && !comment.deletedAt" class="text-wrapper">
         <div class="description-content" v-html="comment.text"></div>
         <p
-          v-if="comment.insertedAt.getTime() !== comment.updatedAt.getTime()"
+          v-if="
+            comment.insertedAt &&
+            comment.updatedAt &&
+            new Date(comment.insertedAt).getTime() !==
+              new Date(comment.updatedAt).getTime()
+          "
           :title="comment.updatedAt | formatDateTimeString"
         >
           {{

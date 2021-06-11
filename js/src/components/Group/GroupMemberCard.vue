@@ -97,6 +97,10 @@ export default class GroupMemberCard extends Vue {
     & > div:last-child {
       cursor: pointer;
     }
+
+    .media-content {
+      overflow: hidden;
+    }
   }
 
   .identity-header {

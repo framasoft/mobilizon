@@ -107,11 +107,7 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
           eventUUID: this.event.uuid,
         };
       },
-      update(data) {
-        return data.event.comments.map(
-          (comment: IComment) => new CommentModel(comment)
-        );
-      },
+      update: (data) => data.event.comments,
       skip() {
         return !this.event.uuid;
       },

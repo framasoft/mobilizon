@@ -3,7 +3,7 @@ import PasswordReset from "@/views/User/PasswordReset.vue";
 import Buefy from "buefy";
 import { createMockClient, RequestHandler } from "mock-apollo-client";
 import { RESET_PASSWORD } from "@/graphql/auth";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import { resetPasswordResponseMock } from "../../mocks/auth";
 import RouteName from "@/router/name";
 import flushPromises from "flush-promises";

@@ -67,7 +67,8 @@
           <div v-else>{{ $t("[This comment has been deleted]") }}</div>
           <div class="load-replies" v-if="comment.totalReplies">
             <p v-if="!showReplies" @click="fetchReplies">
-              <b-icon icon="chevron-down" /><span>{{
+              <b-icon icon="chevron-down" class="reply-btn" />
+              <span class="reply-btn">{{
                 $tc("View a reply", comment.totalReplies, {
                   totalReplies: comment.totalReplies,
                 })
@@ -77,8 +78,8 @@
               v-else-if="comment.totalReplies && showReplies"
               @click="showReplies = false"
             >
-              <b-icon icon="chevron-up" />
-              <span>{{ $t("Hide replies") }}</span>
+              <b-icon icon="chevron-up" class="reply-btn" />
+              <span class="reply-btn">{{ $t("Hide replies") }}</span>
             </p>
           </div>
         </div>
@@ -465,7 +466,7 @@ a.comment-link {
 
   & > p > span {
     font-weight: bold;
-    color: $primary;
+    color: $violet-2;
   }
 }
 

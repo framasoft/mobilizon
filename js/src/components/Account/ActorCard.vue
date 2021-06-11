@@ -12,7 +12,7 @@
         <p>
           {{ actor.name || `@${usernameWithDomain(actor)}` }}
         </p>
-        <p class="has-text-grey" v-if="actor.name">
+        <p class="has-text-grey-dark" v-if="actor.name">
           @{{ usernameWithDomain(actor) }}
         </p>
         <div

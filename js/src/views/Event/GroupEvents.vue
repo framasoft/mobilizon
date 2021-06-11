@@ -41,6 +41,7 @@
         v-if="isCurrentActorAGroupModerator"
         :to="{
           name: RouteName.CREATE_EVENT,
+          query: { actorId: group.id },
         }"
         class="button is-primary"
         >{{ $t("+ Create an event") }}</router-link
@@ -88,17 +89,16 @@ import { mixins } from "vue-class-component";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_EVENTS } from "@/graphql/event";
-import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain } from "../../types/actor";
 
 const EVENTS_PAGE_LIMIT = 10;
 
 @Component({
   apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
     memberships: {
       query: PERSON_MEMBERSHIPS,
       fetchPolicy: "cache-and-network",
@@ -141,11 +141,7 @@ const EVENTS_PAGE_LIMIT = 10;
   },
 })
 export default class GroupEvents extends mixins(GroupMixin) {
-  group!: IGroup;
-
   memberships!: IMember[];
-
-  currentActor!: IPerson;
 
   eventsPage = 1;
 

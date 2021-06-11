@@ -15,6 +15,8 @@ import {
 import { MemberRole } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
 
+const now = new Date();
+
 @Component({
   apollo: {
     group: {
@@ -24,7 +26,7 @@ import { Component, Vue } from "vue-property-decorator";
         return {
           name: this.$route.params.preferredUsername,
           beforeDateTime: null,
-          afterDateTime: new Date(),
+          afterDateTime: now,
         };
       },
       skip() {

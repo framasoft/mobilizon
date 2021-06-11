@@ -37,7 +37,7 @@ export const possibleTypes = types.reduce((acc, type) => {
 export const typePolicies: TypePolicies = {
   Discussion: {
     fields: {
-      comments: paginatedLimitPagination(),
+      comments: paginatedLimitPagination<IComment>(),
     },
   },
   Group: {

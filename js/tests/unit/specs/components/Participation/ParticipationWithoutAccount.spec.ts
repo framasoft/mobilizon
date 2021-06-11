@@ -14,7 +14,7 @@ import {
   RequestHandler,
 } from "mock-apollo-client";
 import { CONFIG } from "@/graphql/config";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import { FETCH_EVENT_BASIC, JOIN_EVENT } from "@/graphql/event";
 import { IEvent } from "@/types/event.model";
 import { i18n } from "@/utils/i18n";

@@ -127,7 +127,6 @@
 </template>
 <script lang="ts">
 import { Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
 import {
   GET_DISCUSSION,
   REPLY_TO_DISCUSSION,
@@ -135,21 +134,22 @@ import {
   DELETE_DISCUSSION,
   DISCUSSION_COMMENT_CHANGED,
 } from "@/graphql/discussion";
-import { IDiscussion, Discussion } from "@/types/discussions";
+import { IDiscussion } from "@/types/discussions";
+import { Discussion as DiscussionModel } from "@/types/discussions";
 import { usernameWithDomain } from "@/types/actor";
 import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { GraphQLError } from "graphql";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
-import GroupMixin from "@/mixins/group";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
+import { mixins } from "vue-class-component";
+import GroupMixin from "@/mixins/group";
 
 @Component({
   apollo: {
     discussion: {
       query: GET_DISCUSSION,
-      fetchPolicy: "cache-and-network",
       variables() {
         return {
           slug: this.slug,
@@ -163,12 +163,11 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
       error({ graphQLErrors }) {
         this.handleErrors(graphQLErrors);
       },
-      update: (data) => new Discussion(data.discussion),
       subscribeToMore: {
         document: DISCUSSION_COMMENT_CHANGED,
         variables() {
           return {
-            slug: this.slug,
+            slug: this.$route.params.slug,
             page: this.page,
             limit: this.COMMENTS_PER_PAGE,
           };
@@ -180,10 +179,10 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
           const previousDiscussion = previousResult.discussion;
           const lastComment =
             subscriptionData.data.discussionCommentChanged.lastComment;
-          const canLoadMore = !previousDiscussion.comments.elements.find(
+          this.hasMoreComments = !previousDiscussion.comments.elements.some(
             (comment: IComment) => comment.id === lastComment.id
           );
-          if (canLoadMore) {
+          if (this.hasMoreComments) {
             return {
               discussion: {
                 ...previousDiscussion,
@@ -219,10 +218,10 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     };
   },
 })
-export default class discussion extends mixins(GroupMixin) {
+export default class Discussion extends mixins(GroupMixin) {
   @Prop({ type: String, required: true }) slug!: string;
 
-  discussion: IDiscussion = new Discussion();
+  discussion: IDiscussion = new DiscussionModel();
 
   newComment = "";
 
@@ -261,7 +260,10 @@ export default class discussion extends mixins(GroupMixin) {
         commentId: comment.id,
         text: comment.text,
       },
-      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+      update: (
+        store: ApolloCache<{ deleteComment: IComment }>,
+        { data }: FetchResult
+      ) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -296,7 +298,10 @@ export default class discussion extends mixins(GroupMixin) {
       variables: {
         commentId: comment.id,
       },
-      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+      update: (
+        store: ApolloCache<{ deleteComment: IComment }>,
+        { data }: FetchResult
+      ) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -343,7 +348,7 @@ export default class discussion extends mixins(GroupMixin) {
 
   async loadMoreComments(): Promise<void> {
     if (!this.hasMoreComments) return;
-    this.page += 1;
+    this.page++;
     try {
       await this.$apollo.queries.discussion.fetchMore({
         // New variables
@@ -352,21 +357,38 @@ export default class discussion extends mixins(GroupMixin) {
           page: this.page,
           limit: this.COMMENTS_PER_PAGE,
         },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          return {
+            discussion: {
+              ...previousResult.discussion,
+              comments: {
+                ...fetchMoreResult.discussion.comments,
+                elements: [
+                  ...previousResult.discussion.comments.elements,
+                  ...fetchMoreResult.discussion.comments.elements,
+                ],
+              },
+            },
+          };
+        },
       });
+      this.hasMoreComments = !this.discussion.comments.elements
+        .map(({ id }) => id)
+        .includes(this.discussion?.lastComment?.id);
     } catch (e) {
       console.error(e);
     }
   }
 
   async updateDiscussion(): Promise<void> {
-    await this.$apollo.mutate({
+    await this.$apollo.mutate<{ updateDiscussion: IDiscussion }>({
       mutation: UPDATE_DISCUSSION,
       variables: {
         discussionId: this.discussion.id,
         title: this.newTitle,
       },
       update: (
-        store: ApolloCache<InMemoryCache>,
+        store: ApolloCache<{ updateDiscussion: IDiscussion }>,
         { data }: FetchResult<{ updateDiscussion: IDiscussion }>
       ) => {
         const discussionData = store.readQuery<{

@@ -289,7 +289,7 @@ import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
 import VueRouter from "vue-router";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
@@ -427,7 +427,10 @@ export default class AdminGroupProfile extends Vue {
         variables: {
           id: this.id,
         },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+        update: (
+          store: ApolloCache<{ suspendProfile: { id: string } }>,
+          { data }: FetchResult
+        ) => {
           if (data == null) return;
           const profileId = this.id;
 
