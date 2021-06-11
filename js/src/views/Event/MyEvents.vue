@@ -67,7 +67,7 @@
       </subtitle>
       <transition-group name="list" tag="p">
         <div v-for="month in monthlyPastParticipations" :key="month[0]">
-          <span>{{ month[0] }}</span>
+          <span class="past-month">{{ month[0] }}</span>
           <EventListCard
             v-for="participation in month[1]"
             :key="participation.id"
@@ -304,8 +304,24 @@ main > .container {
 }
 
 section {
-  .upcoming-month {
+  .upcoming-month,
+  .past-month {
     text-transform: capitalize;
+    display: inline-block;
+    position: relative;
+    font-size: 1.3rem;
+
+    &::after {
+      background: $orange-3;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      content: "";
+      width: calc(100% + 30px);
+      height: 3px;
+      max-width: 150px;
+    }
   }
 }
 

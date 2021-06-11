@@ -608,7 +608,7 @@ export default class Home extends Vue {
 
 main > div > .container {
   background: $white;
-  padding: 1rem 1.5rem 3rem;
+  padding: 1rem 0.5rem 3rem;
 }
 
 .search-autocomplete {
