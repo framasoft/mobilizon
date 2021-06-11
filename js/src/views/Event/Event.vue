@@ -315,7 +315,9 @@
                         >
                           {{ physicalAddress.poiInfos.name }}
                         </p>
-                        <p>{{ physicalAddress.poiInfos.alternativeName }}</p>
+                        <p class="has-text-grey-dark">
+                          {{ physicalAddress.poiInfos.alternativeName }}
+                        </p>
                       </address>
                     </div>
                     <span
@@ -1424,7 +1426,6 @@ div.sidebar {
           }
 
           :not(.addressDescription) {
-            color: rgba(46, 62, 72, 0.6);
             flex: 1;
             min-width: 100%;
           }
