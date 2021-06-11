@@ -134,7 +134,7 @@ import { addLocalUnconfirmedAnonymousParticipation } from "@/services/AnonymousP
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
 import { IParticipant } from "../../types/participant.model";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -197,7 +197,7 @@ export default class ParticipationWithoutAccount extends Vue {
           locale: this.$i18n.locale,
         },
         update: (
-          store: ApolloCache<InMemoryCache>,
+          store: ApolloCache<{ joinEvent: IParticipant }>,
           { data: updateData }: FetchResult
         ) => {
           if (updateData == null) {

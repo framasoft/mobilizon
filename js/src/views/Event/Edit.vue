@@ -485,7 +485,7 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -684,11 +684,11 @@ export default class EditEvent extends Vue {
     const variables = await this.buildVariables();
 
     try {
-      const { data } = await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate<{ createEvent: IEvent }>({
         mutation: CREATE_EVENT,
         variables,
         update: (
-          store: ApolloCache<InMemoryCache>,
+          store: ApolloCache<{ createEvent: IEvent }>,
           { data: updatedData }: FetchResult
         ) => this.postCreateOrUpdate(store, updatedData?.createEvent),
         refetchQueries: ({ data: updatedData }: FetchResult) =>
@@ -719,11 +719,11 @@ export default class EditEvent extends Vue {
     const variables = await this.buildVariables();
 
     try {
-      await this.$apollo.mutate({
+      await this.$apollo.mutate<{ updateEvent: IEvent }>({
         mutation: EDIT_EVENT,
         variables,
         update: (
-          store: ApolloCache<InMemoryCache>,
+          store: ApolloCache<{ updateEvent: IEvent }>,
           { data: updatedData }: FetchResult
         ) => this.postCreateOrUpdate(store, updatedData?.updateEvent),
         refetchQueries: ({ data }: FetchResult) =>

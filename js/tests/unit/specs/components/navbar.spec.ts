@@ -5,7 +5,7 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import { CONFIG } from "@/graphql/config";
 import { USER_SETTINGS } from "@/graphql/user";
 import buildCurrentUserResolver from "@/apollo/user";

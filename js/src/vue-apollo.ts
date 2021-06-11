@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import { onError } from "@apollo/client/link/error";
 import { createLink } from "apollo-absinthe-upload-link";
 import {

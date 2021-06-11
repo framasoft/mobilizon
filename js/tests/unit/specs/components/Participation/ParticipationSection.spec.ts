@@ -10,7 +10,7 @@ import {
   RequestHandler,
 } from "mock-apollo-client";
 import { CONFIG } from "@/graphql/config";
-import VueApollo from "vue-apollo";
+import VueApollo from "@vue/apollo-option";
 import { configMock } from "../../mocks/config";
 import { InMemoryCache } from "@apollo/client/cache";
 import { defaultResolvers } from "../../common";

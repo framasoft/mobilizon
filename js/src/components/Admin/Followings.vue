@@ -147,12 +147,7 @@ import RelayMixin from "../../mixins/relay";
 import { RELAY_FOLLOWINGS } from "@/graphql/admin";
 import { Paginate } from "@/types/paginate";
 import RouteName from "@/router/name";
-import {
-  ApolloCache,
-  FetchResult,
-  InMemoryCache,
-  Reference,
-} from "@apollo/client/core";
+import { ApolloCache, FetchResult, Reference } from "@apollo/client/core";
 import gql from "graphql-tag";
 
 const FOLLOWINGS_PER_PAGE = 10;
@@ -221,7 +216,10 @@ export default class Followings extends Mixins(RelayMixin) {
         variables: {
           address: this.newRelayAddress.trim(), // trim to fix copy and paste domain name spaces and tabs
         },
-        update(cache: ApolloCache<InMemoryCache>, { data }: FetchResult) {
+        update(
+          cache: ApolloCache<{ relayFollowings: Paginate<IFollower> }>,
+          { data }: FetchResult
+        ) {
           cache.modify({
             fields: {
               relayFollowings(
@@ -274,12 +272,12 @@ export default class Followings extends Mixins(RelayMixin) {
   async removeRelay(follower: IFollower): Promise<void> {
     const address = `${follower.targetActor.preferredUsername}@${follower.targetActor.domain}`;
     try {
-      await this.$apollo.mutate({
+      await this.$apollo.mutate<{ removeRelay: IFollower }>({
         mutation: REMOVE_RELAY,
         variables: {
           address,
         },
-        update(cache: ApolloCache<InMemoryCache>) {
+        update(cache: ApolloCache<{ removeRelay: IFollower }>) {
           cache.modify({
             fields: {
               relayFollowings(existingFollowingRefs, { readField }) {

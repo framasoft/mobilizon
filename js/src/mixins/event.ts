@@ -31,7 +31,12 @@ export default class EventMixin extends mixins(Vue) {
           actorId,
           token,
         },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+        update: (
+          store: ApolloCache<{
+            leaveEvent: IParticipant;
+          }>,
+          { data }: FetchResult
+        ) => {
           if (data == null) return;
           let participation;
 

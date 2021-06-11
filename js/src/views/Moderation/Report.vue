@@ -302,7 +302,7 @@ import { IComment } from "@/types/comment.model";
 import { ActorType, ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 import { GraphQLError } from "graphql";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { ApolloCache, FetchResult } from "@apollo/client/core";
 
 @Component({
   apollo: {
@@ -360,7 +360,10 @@ export default class Report extends Vue {
           reportId: this.report.id,
           content: this.noteContent,
         },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+        update: (
+          store: ApolloCache<{ createReportNote: IReportNote }>,
+          { data }: FetchResult
+        ) => {
           if (data == null) return;
           const cachedData = store.readQuery<{ report: IReport }>({
             query: REPORT,
@@ -460,13 +463,16 @@ export default class Report extends Vue {
 
   async updateReport(status: ReportStatusEnum): Promise<void> {
     try {
-      await this.$apollo.mutate({
+      await this.$apollo.mutate<{ updateReportStatus: IReport }>({
         mutation: UPDATE_REPORT,
         variables: {
           reportId: this.report.id,
           status,
         },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+        update: (
+          store: ApolloCache<{ updateReportStatus: IReport }>,
+          { data }: FetchResult
+        ) => {
           if (data == null) return;
           const reportCachedData = store.readQuery<{ report: IReport }>({
             query: REPORT,

@@ -261,7 +261,10 @@ export default class discussion extends mixins(GroupMixin) {
         commentId: comment.id,
         text: comment.text,
       },
-      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+      update: (
+        store: ApolloCache<{ deleteComment: IComment }>,
+        { data }: FetchResult
+      ) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -296,7 +299,10 @@ export default class discussion extends mixins(GroupMixin) {
       variables: {
         commentId: comment.id,
       },
-      update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+      update: (
+        store: ApolloCache<{ deleteComment: IComment }>,
+        { data }: FetchResult
+      ) => {
         if (!data || !data.deleteComment) return;
         const discussionData = store.readQuery<{
           discussion: IDiscussion;
@@ -359,14 +365,14 @@ export default class discussion extends mixins(GroupMixin) {
   }
 
   async updateDiscussion(): Promise<void> {
-    await this.$apollo.mutate({
+    await this.$apollo.mutate<{ updateDiscussion: IDiscussion }>({
       mutation: UPDATE_DISCUSSION,
       variables: {
         discussionId: this.discussion.id,
         title: this.newTitle,
       },
       update: (
-        store: ApolloCache<InMemoryCache>,
+        store: ApolloCache<{ updateDiscussion: IDiscussion }>,
         { data }: FetchResult<{ updateDiscussion: IDiscussion }>
       ) => {
         const discussionData = store.readQuery<{
