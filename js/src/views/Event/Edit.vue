@@ -703,10 +703,12 @@ export default class EditEvent extends Vue {
         position: "is-bottom-right",
         duration: 5000,
       });
-      await this.$router.push({
-        name: "Event",
-        params: { uuid: data.createEvent.uuid },
-      });
+      if (data?.createEvent) {
+        await this.$router.push({
+          name: "Event",
+          params: { uuid: data.createEvent.uuid },
+        });
+      }
     } catch (err) {
       this.saving = false;
       console.error(err);
