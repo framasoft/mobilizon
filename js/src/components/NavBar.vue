@@ -69,20 +69,34 @@
         <search-field @navbar-search="mobileNavbarActive = false" />
       </b-navbar-item>
 
-      <b-navbar-dropdown v-if="currentActor.id && currentUser.isLoggedIn" right>
+      <b-navbar-dropdown
+        v-if="currentActor.id && currentUser.isLoggedIn"
+        right
+        collapsible
+      >
         <template
           slot="label"
           v-if="currentActor"
           class="navbar-dropdown-profile"
         >
-          <figure class="image is-32x32" v-if="currentActor.avatar">
-            <img
-              class="is-rounded"
-              alt="avatarUrl"
-              :src="currentActor.avatar.url"
-            />
-          </figure>
-          <b-icon v-else icon="account-circle" />
+          <div class="identity-wrapper">
+            <div>
+              <figure class="image is-32x32" v-if="currentActor.avatar">
+                <img
+                  class="is-rounded"
+                  alt="avatarUrl"
+                  :src="currentActor.avatar.url"
+                />
+              </figure>
+              <b-icon v-else icon="account-circle" />
+            </div>
+            <div class="media-content is-hidden-desktop">
+              <span>{{ displayName(currentActor) }}</span>
+              <span class="has-text-grey-dark" v-if="currentActor.name"
+                >@{{ currentActor.preferredUsername }}</span
+              >
+            </div>
+          </div>
         </template>
 
         <!-- No identities dropdown if no identities -->
@@ -103,8 +117,8 @@
             </div>
 
             <div class="media-content">
-              <span>{{ identity.displayName() }}</span>
-              <span class="has-text-grey" v-if="identity.name"
+              <span>{{ displayName(identity) }}</span>
+              <span class="has-text-grey-dark" v-if="identity.name"
                 >@{{ identity.preferredUsername }}</span
               >
             </div>
@@ -169,7 +183,7 @@ import {
   IDENTITIES,
   UPDATE_DEFAULT_ACTOR,
 } from "../graphql/actor";
-import { IPerson, Person } from "../types/actor";
+import { displayName, IPerson, Person } from "../types/actor";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 import { ICurrentUser, IUser } from "../types/current-user.model";
@@ -226,6 +240,8 @@ export default class NavBar extends Vue {
   RouteName = RouteName;
 
   mobileNavbarActive = false;
+
+  displayName = displayName;
 
   @Watch("currentActor")
   async initializeListOfIdentities(): Promise<void> {
@@ -309,7 +325,7 @@ nav {
     cursor: pointer;
 
     span {
-      display: inherit;
+      display: flex;
     }
 
     &.is-active {
@@ -341,6 +357,15 @@ nav {
     & > img {
       max-height: 4rem;
       padding-top: 0.2rem;
+    }
+  }
+
+  .identity-wrapper {
+    display: flex;
+
+    .media-content span {
+      display: flex;
+      color: $violet-2;
     }
   }
 }
