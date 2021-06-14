@@ -1041,5 +1041,7 @@
   "A member requested to join one of my groups": "A member requested to join one of my groups",
   "A member has been updated": "A member has been updated",
   "User settings": "User settings",
-  "You changed your email or password": "You changed your email or password"
+  "You changed your email or password": "You changed your email or password",
+  "Organized by you": "Organized by you",
+  "Move resource to the root folder": "Move resource to the root folder"
 }

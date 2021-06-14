@@ -1132,5 +1132,7 @@
   "{profile} updated the member {member}.": "{profile} a mis à jour le ou la membre {member}.",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Organized by you": "Organisé par vous",
+  "Move resource to the root folder": "Déplacer la resource dans le dossier racine"
 }
