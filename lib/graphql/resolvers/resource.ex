@@ -50,7 +50,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
 
   def find_resources_for_parent(
         %Resource{actor_id: group_id} = parent,
-        _args,
+        %{page: page, limit: limit},
         %{
           context: %{
             current_user: %User{} = user
@@ -59,7 +59,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       ) do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         %Page{} = page <- Resources.get_resources_for_folder(parent) do
+         %Page{} = page <- Resources.get_resources_for_folder(parent, page, limit) do
       {:ok, page}
     end
   end

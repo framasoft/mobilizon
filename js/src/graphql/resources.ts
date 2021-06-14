@@ -11,7 +11,12 @@ export const RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT = gql`
 `;
 
 export const GET_RESOURCE = gql`
-  query GetResource($path: String!, $username: String!) {
+  query GetResource(
+    $path: String!
+    $username: String!
+    $page: Int
+    $limit: Int
+  ) {
     resource(path: $path, username: $username) {
       id
       title
@@ -38,7 +43,7 @@ export const GET_RESOURCE = gql`
         name
         domain
       }
-      children {
+      children(page: $page, limit: $limit) {
         total
         elements {
           id

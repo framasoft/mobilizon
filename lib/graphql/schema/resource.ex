@@ -27,6 +27,14 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
 
     field :children, :paginated_resource_list do
       description("Children resources in folder")
+
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated resource list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of resources per page")
+
       resolve(&Resource.find_resources_for_parent/3)
     end
   end
