@@ -275,7 +275,7 @@ export default class Participants extends Vue {
   }
 
   set page(page: number) {
-    this.pushRouter(RouteName.RELAY_FOLLOWINGS, {
+    this.pushRouter(RouteName.PARTICIPATIONS, {
       page: page.toString(),
     });
   }
