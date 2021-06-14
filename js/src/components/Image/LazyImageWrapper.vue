@@ -24,7 +24,7 @@ export default class LazyImageWrapper extends Vue {
   get pictureOrDefault(): Partial<IMedia> {
     return {
       url:
-        this?.picture?.url === null
+        this?.picture === null
           ? "/img/mobilizon_default_card.png"
           : this?.picture?.url,
       metadata: {

@@ -35,7 +35,7 @@ div.eventMetadataBlock {
     overflow: hidden;
 
     &.padding-left {
-      padding-left: 20px;
+      padding: 0 20px;
     }
   }
 }

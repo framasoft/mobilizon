@@ -1395,7 +1395,7 @@ div.sidebar {
       position: sticky;
       background: white;
       top: 50px;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     div.address-wrapper {
@@ -1513,6 +1513,11 @@ div.sidebar {
 
 .more-events {
   background: white;
+  padding: 1rem 1rem 4rem;
+
+  & > .title {
+    font-size: 1.5rem;
+  }
 }
 
 .dropdown .dropdown-trigger span {
