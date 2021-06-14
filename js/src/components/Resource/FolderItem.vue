@@ -162,7 +162,7 @@ a {
   }
 
   .body {
-    padding: 10px 8px 8px;
+    padding: 8px;
     flex: 1 1 auto;
     overflow: hidden;
 

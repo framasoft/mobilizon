@@ -20,6 +20,7 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:actor, :actor, description: "The resource's owner")
     field(:inserted_at, :naive_datetime, description: "The resource's creation date")
     field(:updated_at, :naive_datetime, description: "The resource's last update date")
+    field(:published_at, :naive_datetime, description: "The resource's publication date")
     field(:type, :string, description: "The resource's type (if it's a folder)")
     field(:path, :string, description: "The resource's path")
 
@@ -27,6 +28,14 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
 
     field :children, :paginated_resource_list do
       description("Children resources in folder")
+
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated resource list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of resources per page")
+
       resolve(&Resource.find_resources_for_parent/3)
     end
   end

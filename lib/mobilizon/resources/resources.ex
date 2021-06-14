@@ -47,7 +47,7 @@ defmodule Mobilizon.Resources do
       ) do
     Resource
     |> where([r], r.actor_id == ^group_id and is_nil(r.parent_id))
-    |> order_by(asc: :type)
+    |> order_by(asc: :type, asc: :title)
     |> preload([r], [:actor, :creator])
     |> Page.build_page(page, limit)
   end
@@ -55,7 +55,7 @@ defmodule Mobilizon.Resources do
   def get_resources_for_folder(%Resource{id: resource_id}, page, limit) do
     Resource
     |> where([r], r.parent_id == ^resource_id)
-    |> order_by(asc: :type)
+    |> order_by(asc: :type, asc: :title)
     |> preload([r], [:actor, :creator])
     |> Page.build_page(page, limit)
   end

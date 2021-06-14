@@ -58,18 +58,34 @@
       >
         {{ $t("No resources in this folder") }}
       </p>
+      <b-pagination
+        v-if="resource.children.total > RESOURCES_PER_PAGE"
+        :total="resource.children.total"
+        v-model="page"
+        size="is-small"
+        :per-page="RESOURCES_PER_PAGE"
+        :aria-next-label="$t('Next page')"
+        :aria-previous-label="$t('Previous page')"
+        :aria-page-label="$t('Page')"
+        :aria-current-label="$t('Current page')"
+      />
     </article>
-    <b-button
-      type="is-primary"
-      @click="updateResource"
-      :disabled="moveDisabled"
-      >{{
-        $t("Move resource to {folder}", { folder: resource.title })
-      }}</b-button
-    >
-    <b-button type="is-text" @click="$emit('close-move-modal')">{{
-      $t("Cancel")
-    }}</b-button>
+    <div class="buttons">
+      <b-button type="is-text" @click="$emit('close-move-modal')">{{
+        $t("Cancel")
+      }}</b-button>
+      <b-button
+        type="is-primary"
+        @click="updateResource"
+        :disabled="moveDisabled"
+        ><template v-if="resource.path === '/'">
+          {{ $t("Move resource to the root folder") }}
+        </template>
+        <template v-else
+          >{{ $t("Move resource to {folder}", { folder: resource.title }) }}
+        </template></b-button
+      >
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -86,6 +102,8 @@ import { IResource } from "../../types/resource";
           return {
             path: this.resource.path,
             username: this.username,
+            page: this.page,
+            limit: this.RESOURCES_PER_PAGE,
           };
         }
         return { path: "/", username: this.username };
@@ -102,6 +120,10 @@ export default class ResourceSelector extends Vue {
   @Prop({ required: true }) username!: string;
 
   resource: IResource | undefined = this.initialResource.parent;
+
+  RESOURCES_PER_PAGE = 10;
+
+  page = 1;
 
   goDown(element: IResource): void {
     if (element.type === "folder" && element.id !== this.initialResource.id) {
@@ -149,5 +171,12 @@ export default class ResourceSelector extends Vue {
     background: $primary;
     color: #fff;
   }
+}
+.buttons {
+  justify-content: flex-end;
+}
+
+nav.pagination {
+  margin: 0.5rem;
 }
 </style>

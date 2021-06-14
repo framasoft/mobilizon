@@ -145,6 +145,17 @@
         <p>{{ $t("No resources in this folder") }}</p>
       </div>
     </section>
+    <b-pagination
+      v-if="resource.children.total > RESOURCES_PER_PAGE"
+      :total="resource.children.total"
+      v-model="page"
+      :per-page="RESOURCES_PER_PAGE"
+      :aria-next-label="$t('Next page')"
+      :aria-previous-label="$t('Previous page')"
+      :aria-page-label="$t('Page')"
+      :aria-current-label="$t('Current page')"
+    >
+    </b-pagination>
     <b-modal :active.sync="renameModal" has-modal-card>
       <div class="modal-card">
         <section class="modal-card-body">
@@ -187,7 +198,11 @@
         </section>
       </div>
     </b-modal>
-    <b-modal :active.sync="createLinkResourceModal" has-modal-card>
+    <b-modal
+      :active.sync="createLinkResourceModal"
+      has-modal-card
+      class="link-resource-modal"
+    >
       <div class="modal-card">
         <section class="modal-card-body">
           <b-message type="is-danger" v-if="modalError">
@@ -204,7 +219,7 @@
             </b-field>
 
             <div class="new-resource-preview" v-if="newResource.title">
-              <resource-item :resource="newResource" />
+              <resource-item :resource="newResource" :preview="true" />
             </div>
 
             <b-field :label="$t('Title')">
@@ -250,6 +265,8 @@ import { IConfig } from "../../types/config.model";
 import ResourceMixin from "../../mixins/resource";
 import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
+import VueRouter from "vue-router";
+const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 @Component({
   components: { FolderItem, ResourceItem, Draggable, ResourceSelector },
@@ -265,6 +282,8 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
         return {
           path,
           username: this.$route.params.preferredUsername,
+          page: this.page,
+          limit: this.RESOURCES_PER_PAGE,
         };
       },
       error({ graphQLErrors }) {
@@ -302,6 +321,8 @@ export default class Resources extends Mixins(ResourceMixin) {
   ResourceMixin = ResourceMixin;
 
   usernameWithDomain = usernameWithDomain;
+
+  RESOURCES_PER_PAGE = 10;
 
   newResource: IResource = {
     title: "",
@@ -343,6 +364,16 @@ export default class Resources extends Mixins(ResourceMixin) {
   };
 
   mapServiceTypeToIcon = mapServiceTypeToIcon;
+
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.pushRouter({
+      page: page.toString(),
+    });
+  }
 
   get actualPath(): string {
     const path = Array.isArray(this.$route.params.path)
@@ -641,9 +672,40 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
+  @Watch("page")
+  loadMoreResources(): void {
+    this.$apollo.queries.resource.fetchMore({
+      // New variables
+      variables: {
+        page: this.page,
+        limit: this.RESOURCES_PER_PAGE,
+      },
+    });
+  }
+
   handleErrors(errors: any[]): void {
     if (errors.some((error) => error.status_code === 404)) {
       this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    }
+  }
+
+  async pushRouter(args: Record<string, string>): Promise<void> {
+    try {
+      const path = this.filteredPath.toString();
+      const routeName =
+        path === ""
+          ? RouteName.RESOURCE_FOLDER_ROOT
+          : RouteName.RESOURCE_FOLDER;
+
+      await this.$router.push({
+        name: routeName,
+        params: { path },
+        query: { ...this.$route.query, ...args },
+      });
+    } catch (e) {
+      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
+        throw Error(e.toString());
+      }
     }
   }
 }
@@ -651,6 +713,10 @@ export default class Resources extends Mixins(ResourceMixin) {
 <style lang="scss" scoped>
 .container.section {
   background: $white;
+
+  & > nav.pagination {
+    margin-top: 1rem;
+  }
 }
 
 nav.breadcrumb ul {
@@ -675,6 +741,10 @@ nav.breadcrumb ul {
     display: flex;
     align-items: center;
 
+    ::v-deep .b-checkbox.checkbox {
+      margin-left: 10px;
+    }
+
     .actions {
       margin-right: 5px;
 
@@ -693,11 +763,16 @@ nav.breadcrumb ul {
   border-radius: 4px;
   color: #444b5d;
   margin-top: 14px;
+  margin-bottom: 14px;
 
   .resource-checkbox {
     align-self: center;
-    padding: 0 3px 0 10px;
+    padding-left: 10px;
     opacity: 0.3;
+
+    ::v-deep .b-checkbox.checkbox {
+      margin-right: 0.25rem;
+    }
   }
 
   &:hover .resource-checkbox,
