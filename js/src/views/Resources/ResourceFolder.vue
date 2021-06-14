@@ -198,7 +198,11 @@
         </section>
       </div>
     </b-modal>
-    <b-modal :active.sync="createLinkResourceModal" has-modal-card>
+    <b-modal
+      :active.sync="createLinkResourceModal"
+      has-modal-card
+      class="link-resource-modal"
+    >
       <div class="modal-card">
         <section class="modal-card-body">
           <b-message type="is-danger" v-if="modalError">
@@ -215,7 +219,7 @@
             </b-field>
 
             <div class="new-resource-preview" v-if="newResource.title">
-              <resource-item :resource="newResource" />
+              <resource-item :resource="newResource" :preview="true" />
             </div>
 
             <b-field :label="$t('Title')">
@@ -737,6 +741,10 @@ nav.breadcrumb ul {
     display: flex;
     align-items: center;
 
+    ::v-deep .b-checkbox.checkbox {
+      margin-left: 10px;
+    }
+
     .actions {
       margin-right: 5px;
 
@@ -755,11 +763,16 @@ nav.breadcrumb ul {
   border-radius: 4px;
   color: #444b5d;
   margin-top: 14px;
+  margin-bottom: 14px;
 
   .resource-checkbox {
     align-self: center;
-    padding: 0 3px 0 10px;
+    padding-left: 10px;
     opacity: 0.3;
+
+    ::v-deep .b-checkbox.checkbox {
+      margin-right: 0.25rem;
+    }
   }
 
   &:hover .resource-checkbox,

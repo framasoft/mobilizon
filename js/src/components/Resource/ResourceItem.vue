@@ -20,21 +20,30 @@
         </div>
       </div>
       <div class="body">
-        <img
-          class="favicon"
-          v-if="resource.metadata && resource.metadata.faviconUrl"
-          :src="resource.metadata.faviconUrl"
-        />
-        <h3>{{ resource.title }}</h3>
-        <span class="host" v-if="inline">{{
-          resource.updatedAt | formatDateTimeString
-        }}</span>
-        <span class="host" v-else>{{ urlHostname }}</span>
+        <div class="title-wrapper">
+          <img
+            class="favicon"
+            v-if="resource.metadata && resource.metadata.faviconUrl"
+            :src="resource.metadata.faviconUrl"
+          />
+          <h3>{{ resource.title }}</h3>
+        </div>
+        <div class="metadata-wrapper">
+          <span class="host" v-if="!inline || preview">{{ urlHostname }}</span>
+          <span
+            class="published-at is-hidden-mobile"
+            v-if="resource.updatedAt || resource.publishedAt"
+            >{{
+              (resource.updatedAt || resource.publishedAt)
+                | formatDateTimeString
+            }}</span
+          >
+        </div>
       </div>
     </a>
     <resource-dropdown
       class="actions"
-      v-if="!inline"
+      v-if="!inline || !preview"
       @delete="$emit('delete', resource.id)"
       @move="$emit('move', resource)"
       @rename="$emit('rename', resource)"
@@ -53,6 +62,7 @@ export default class ResourceItem extends Vue {
   @Prop({ required: true, type: Object }) resource!: IResource;
 
   @Prop({ required: false, default: false }) inline!: boolean;
+  @Prop({ required: false, default: false }) preview!: boolean;
 
   list = [];
 
@@ -74,11 +84,12 @@ export default class ResourceItem extends Vue {
   display: flex;
   flex: 1;
   align-items: center;
+  width: 100%;
 
   .actions {
     flex: 0;
     display: block;
-    margin: auto 1rem auto 2rem;
+    margin: auto 1rem;
     cursor: pointer;
   }
 }
@@ -111,9 +122,14 @@ a {
   }
 
   .body {
-    padding: 10px 8px 8px;
+    padding: 8px;
     flex: 1 1 auto;
     overflow: hidden;
+
+    .title-wrapper {
+      display: flex;
+      max-width: calc(100vw - 122px);
+    }
 
     img.favicon {
       display: inline-block;
@@ -134,13 +150,29 @@ a {
       vertical-align: middle;
     }
 
-    .host {
-      display: block;
-      margin-top: 5px;
-      font-size: 13px;
+    .metadata-wrapper {
+      max-width: calc(100vw - 122px);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      span {
+        &:last-child::before {
+          content: "⋅";
+          padding: 0 5px;
+        }
+        &:first-child::before {
+          content: "";
+          padding: initial;
+        }
+
+        &.host,
+        &.published-at {
+          font-size: 13px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
     }
   }
 }

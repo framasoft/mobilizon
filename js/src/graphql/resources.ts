@@ -58,6 +58,9 @@ export const GET_RESOURCE = gql`
             path
             type
           }
+          publishedAt
+          updatedAt
+          insertedAt
           metadata {
             ...ResourceMetadataBasicFields
           }
