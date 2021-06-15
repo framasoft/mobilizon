@@ -41,6 +41,11 @@ export const POST_FRAGMENT = gql`
       id
       url
       name
+      metadata {
+        height
+        width
+        blurhash
+      }
     }
   }
   ${TAG_FRAGMENT}

@@ -32,10 +32,10 @@
           }}</span
         >
       </div>
-      <div class="has-text-grey" v-if="!discussion.lastComment.deletedAt">
+      <div class="has-text-grey-dark" v-if="!discussion.lastComment.deletedAt">
         {{ htmlTextEllipsis }}
       </div>
-      <div v-else class="has-text-grey">
+      <div v-else class="has-text-grey-dark">
         {{ $t("[This comment has been deleted]") }}
       </div>
     </div>

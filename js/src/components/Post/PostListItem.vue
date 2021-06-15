@@ -5,7 +5,7 @@
   >
     <div class="title-info-wrapper">
       <p class="post-minimalist-title">{{ post.title }}</p>
-      <small class="has-text-grey">{{
+      <small class="has-text-grey-dark">{{
         formatDistanceToNow(new Date(post.publishAt || post.insertedAt), {
           locale: $dateFnsLocale,
           addSuffix: true,

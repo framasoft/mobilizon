@@ -1134,5 +1134,9 @@
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
   "Organized by you": "Organisé par vous",
-  "Move resource to the root folder": "Déplacer la resource dans le dossier racine"
+  "Move resource to the root folder": "Déplacer la resource dans le dossier racine",
+  "Share this group": "Partager ce groupe",
+  "This group is accessible only through it's link. Be careful where you post this link.": "Ce groupe est accessible uniquement à travers son lien. Faites attention où vous le diffusez.",
+  "{count} members": "{count} membres",
+  "Share": "Partager"
 }

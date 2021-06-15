@@ -55,20 +55,21 @@ section {
 }
 
 div.group-section-title {
+  --title-color: $violet-2;
   display: flex;
   align-items: stretch;
   background: $secondary;
-  color: #3a384c;
+  color: var(--title-color);
 
   &.privateSection {
-    color: $violet-2;
-    background: $purple-2;
+    color: $purple-3;
+    background: $violet-2;
   }
 
   ::v-deep & > a {
     align-self: center;
     margin-right: 5px;
-    color: $orange-3;
+    color: var(--title-color);
   }
 
   h2 {

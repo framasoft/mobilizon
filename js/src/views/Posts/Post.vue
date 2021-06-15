@@ -1,61 +1,78 @@
 <template>
-  <div>
-    <article class="container" v-if="post">
-      <section class="heading-section">
-        <h1 class="title">{{ post.title }}</h1>
-        <i18n tag="span" path="By {author}" class="authors">
-          <router-link
-            slot="author"
-            :to="{
-              name: RouteName.GROUP,
-              params: {
-                preferredUsername: usernameWithDomain(post.attributedTo),
-              },
-            }"
-            >{{ post.attributedTo.name }}</router-link
-          >
-        </i18n>
-        <p class="published has-text-grey-dark" v-if="!post.draft">
-          {{ post.publishAt | formatDateTimeString }}
-        </p>
-        <small
-          v-if="post.visibility === PostVisibility.PRIVATE"
-          class="has-text-grey-dark"
-        >
-          <b-icon icon="lock" size="is-small" />
-          {{
-            $t("Accessible only to members", { group: post.attributedTo.name })
-          }}
-        </small>
-        <p class="buttons" v-if="isCurrentActorMember">
-          <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{
-            $t("Draft")
-          }}</b-tag>
-          <router-link
-            v-if="
-              currentActor.id === post.author.id ||
-              isCurrentActorAGroupModerator
-            "
-            :to="{ name: RouteName.POST_EDIT, params: { slug: post.slug } }"
-            tag="button"
-            class="button is-text"
-            >{{ $t("Edit") }}</router-link
-          >
-        </p>
-        <img v-if="post.picture" :src="post.picture.url" alt="" />
-      </section>
-      <section v-html="post.body" class="content" />
-      <section class="tags">
-        <router-link
-          v-for="tag in post.tags"
-          :key="tag.title"
-          :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
-        >
-          <tag>{{ tag.title }}</tag>
-        </router-link>
-      </section>
-    </article>
-  </div>
+  <article class="container" v-if="post">
+    <header>
+      <div class="banner-container">
+        <lazy-image
+          v-if="post.picture"
+          :src="post.picture.url"
+          :width="post.picture.metadata.width"
+          :height="post.picture.metadata.height"
+          :blurhash="post.picture.metadata.blurhash"
+        />
+      </div>
+      <div class="heading-section">
+        <div class="heading-wrapper">
+          <div class="title-metadata">
+            <h1 class="title">{{ post.title }}</h1>
+            <p class="metadata">
+              <router-link
+                slot="author"
+                :to="{
+                  name: RouteName.GROUP,
+                  params: {
+                    preferredUsername: usernameWithDomain(post.attributedTo),
+                  },
+                }"
+              >
+                <actor-inline :actor="post.attributedTo" />
+              </router-link>
+              <span class="published has-text-grey-dark" v-if="!post.draft">
+                <b-icon icon="clock" size="is-small" />
+                {{ post.publishAt | formatDateTimeString }}
+              </span>
+              <span
+                v-if="post.visibility === PostVisibility.PRIVATE"
+                class="has-text-grey-dark"
+              >
+                <b-icon icon="lock" size="is-small" />
+                {{
+                  $t("Accessible only to members", {
+                    group: post.attributedTo.name,
+                  })
+                }}
+              </span>
+            </p>
+          </div>
+          <p class="buttons" v-if="isCurrentActorMember">
+            <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{
+              $t("Draft")
+            }}</b-tag>
+            <router-link
+              v-if="
+                currentActor.id === post.author.id ||
+                isCurrentActorAGroupModerator
+              "
+              :to="{ name: RouteName.POST_EDIT, params: { slug: post.slug } }"
+              tag="button"
+              class="button is-text"
+              >{{ $t("Edit") }}</router-link
+            >
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <section v-html="post.body" class="content" />
+    <section class="tags">
+      <router-link
+        v-for="tag in post.tags"
+        :key="tag.title"
+        :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
+      >
+        <tag>{{ tag.title }}</tag>
+      </router-link>
+    </section>
+  </article>
 </template>
 
 <script lang="ts">
@@ -66,11 +83,12 @@ import { PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
-
 import { IPost } from "../../types/post.model";
 import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
+import LazyImage from "../../components/Image/LazyImage.vue";
+import ActorInline from "../../components/Account/ActorInline.vue";
 
 @Component({
   apollo: {
@@ -106,6 +124,8 @@ import Tag from "../../components/Tag.vue";
   },
   components: {
     Tag,
+    LazyImage,
+    ActorInline,
   },
   metaInfo() {
     return {
@@ -148,78 +168,93 @@ export default class Post extends mixins(GroupMixin) {
 </script>
 <style lang="scss" scoped>
 article {
-  section.heading-section {
-    text-align: center;
-    position: relative;
+  background: $white !important;
+  header {
     display: flex;
     flex-direction: column;
-    margin: auto -3rem 2rem;
-
-    h1.title {
-      margin: 0 auto;
-      padding-top: 3rem;
-      font-size: 3rem;
-      font-weight: 700;
-    }
-
-    .authors {
-      margin-top: 2rem;
-      display: inline-block;
-    }
-
-    .published {
-      margin-top: 1rem;
-    }
-
-    &::after {
-      height: 0.2rem;
-      content: " ";
-      display: block;
-      width: 100%;
-      background-color: $purple-1;
-      margin-top: 1rem;
-    }
-
-    .buttons {
+    .banner-container {
+      display: flex;
       justify-content: center;
-    }
-    & > * {
-      z-index: 10;
+      height: 30vh;
     }
 
-    & > img {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.3;
-      object-fit: cover;
-      object-position: 50% 50%;
-      z-index: 0;
-    }
-  }
+    .heading-section {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
 
-  section.content {
-    font-size: 1.1rem;
-  }
+      .heading-wrapper {
+        padding: 15px 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
 
-  section.tags {
-    padding-bottom: 5rem;
+        .title-metadata {
+          min-width: 300px;
+          flex: 20;
 
-    a {
-      text-decoration: none;
-    }
-    span {
-      &.tag {
-        margin: 0 2px;
+          p.metadata {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+
+            *:not(:first-child) {
+              padding-left: 5px;
+            }
+          }
+        }
+        p.buttons {
+          flex: 1;
+        }
+      }
+
+      h1.title {
+        margin: 0;
+        font-weight: 500;
+        font-size: 38px;
+        font-family: "Roboto", "Helvetica", "Arial", serif;
+      }
+
+      .authors {
+        display: inline-block;
+      }
+
+      &::after {
+        height: 0.2rem;
+        content: " ";
+        display: block;
+        background-color: $purple-1;
+      }
+
+      .buttons {
+        justify-content: center;
       }
     }
   }
 
-  background: $white;
-  max-width: 700px;
+  & > section {
+    margin: 0 2rem;
+
+    &.content {
+      font-size: 1.1rem;
+    }
+
+    &.tags {
+      padding-bottom: 5rem;
+
+      a {
+        text-decoration: none;
+      }
+      span {
+        &.tag {
+          margin: 0 2px;
+        }
+      }
+    }
+  }
+
   margin: 0 auto;
-  padding: 0 3rem;
 }
 </style>

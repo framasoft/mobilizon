@@ -45,21 +45,145 @@
         }}
       </b-message>
       <header class="block-container presentation">
-        <div class="block-column media">
-          <div class="media-left">
+        <div class="banner-container">
+          <lazy-image-wrapper :picture="group.picture" />
+        </div>
+        <div class="header">
+          <div class="avatar-container">
             <figure class="image is-128x128" v-if="group.avatar">
               <img class="is-rounded" :src="group.avatar.url" alt="" />
             </figure>
             <b-icon v-else size="is-large" icon="account-group" />
           </div>
-          <div class="media-content">
+          <div class="title-container">
             <h1 v-if="group.name">{{ group.name }}</h1>
             <b-skeleton v-else :animated="true" />
-            <small class="has-text-grey" v-if="group.preferredUsername"
+            <small class="has-text-grey-dark" v-if="group.preferredUsername"
               >@{{ usernameWithDomain(group) }}</small
             >
             <b-skeleton v-else :animated="true" />
             <br />
+          </div>
+          <div class="group-metadata">
+            <div class="block-column members" v-if="isCurrentActorAGroupMember">
+              <div>
+                <figure
+                  class="image is-32x32"
+                  :title="
+                    $t(`@{username} ({role})`, {
+                      username: usernameWithDomain(member.actor),
+                      role: member.role,
+                    })
+                  "
+                  v-for="member in members"
+                  :key="member.actor.id"
+                >
+                  <img
+                    class="is-rounded"
+                    :src="member.actor.avatar.url"
+                    v-if="member.actor.avatar"
+                    alt
+                  />
+                  <b-icon v-else size="is-medium" icon="account-circle" />
+                </figure>
+              </div>
+              <p>
+                {{ $t("{count} members", { count: group.members.total }) }}
+                <router-link
+                  v-if="isCurrentActorAGroupAdmin"
+                  :to="{
+                    name: RouteName.GROUP_MEMBERS_SETTINGS,
+                    params: { preferredUsername: usernameWithDomain(group) },
+                  }"
+                  >{{ $t("Add / Remove…") }}</router-link
+                >
+              </p>
+            </div>
+            <!-- <div class="block-column address">
+              <address v-if="physicalAddress">
+                <p
+                  class="addressDescription"
+                  :title="physicalAddress.poiInfos.name"
+                >
+                  {{ physicalAddress.poiInfos.name }}
+                </p>
+                <p>{{ physicalAddress.poiInfos.alternativeName }}</p>
+              </address>
+              <span
+                class="map-show-button"
+                @click="showMap = !showMap"
+                v-if="physicalAddress && physicalAddress.geom"
+                >{{ $t("Show map") }}</span
+              >
+              <p class="buttons">
+                <b-tooltip
+                  v-if="group.openness !== Openness.OPEN"
+                  :label="$t('This group is invite-only')"
+                  position="is-bottom"
+                >
+                  <b-button disabled type="is-primary">{{
+                    $t("Join group")
+                  }}</b-button></b-tooltip
+                >
+                <b-button
+                  v-else-if="currentActor.id"
+                  @click="joinGroup"
+                  type="is-primary"
+                  >{{ $t("Join group") }}</b-button
+                >
+                <b-button
+                  tag="router-link"
+                  :to="{
+                    name: RouteName.GROUP_JOIN,
+                    params: { preferredUsername: usernameWithDomain(group) },
+                  }"
+                  v-else
+                  type="is-primary"
+                  >{{ $t("Join group") }}</b-button
+                >
+                <b-dropdown
+                  class="menu-dropdown"
+                  aria-role="list"
+                  position="is-bottom-left"
+                >
+                  <b-button
+                    slot="trigger"
+                    role="button"
+                    icon-right="dots-horizontal"
+                  >
+                  </b-button>
+                  <b-dropdown-item
+                    aria-role="listitem"
+                    v-if="ableToReport"
+                    @click="isReportModalActive = true"
+                  >
+                    <span>
+                      <b-icon icon="flag" />
+                      {{ $t("Report") }}
+                    </span>
+                  </b-dropdown-item>
+                  <hr class="dropdown-divider" />
+                  <b-dropdown-item has-link aria-role="listitem">
+                    <a
+                      :href="`@${preferredUsername}/feed/atom`"
+                      :title="$t('Atom feed for events and posts')"
+                    >
+                      <b-icon icon="rss" />
+                      {{ $t("RSS/Atom Feed") }}
+                    </a>
+                  </b-dropdown-item>
+                  <b-dropdown-item has-link aria-role="listitem">
+                    <a
+                      :href="`@${preferredUsername}/feed/ics`"
+                      :title="$t('ICS feed for events')"
+                    >
+                      <b-icon icon="calendar-sync" />
+                      {{ $t("ICS/WebCal Feed") }}
+                    </a>
+                  </b-dropdown-item>
+                </b-dropdown>
+              </p>
+            </div> -->
             <div class="buttons">
               <b-button
                 outlined
@@ -83,21 +207,55 @@
                 }"
                 >{{ $t("Group settings") }}</b-button
               >
+              <b-button
+                outlined
+                icon-left="share"
+                @click="triggerShare()"
+                v-if="!isCurrentActorAGroupMember"
+              >
+                {{ $t("Share") }}
+              </b-button>
               <b-dropdown
                 class="menu-dropdown"
-                aria-role="list"
                 v-if="isCurrentActorAGroupMember"
                 position="is-bottom-left"
+                aria-role="menu"
               >
                 <b-button
                   slot="trigger"
                   outlined
                   role="button"
-                  icon-right="dots-horizontal"
-                >
-                </b-button>
+                  icon-left="dots-horizontal"
+                  aria-label="Other actions"
+                />
+                <b-dropdown-item aria-role="menuitem" @click="triggerShare()">
+                  <span>
+                    <b-icon icon="share" />
+                    {{ $t("Share") }}
+                  </span>
+                </b-dropdown-item>
+                <hr class="dropdown-divider" />
+                <b-dropdown-item has-link aria-role="menuitem">
+                  <a
+                    :href="`@${preferredUsername}/feed/atom`"
+                    :title="$t('Atom feed for events and posts')"
+                  >
+                    <b-icon icon="rss" />
+                    {{ $t("RSS/Atom Feed") }}
+                  </a>
+                </b-dropdown-item>
+                <b-dropdown-item has-link aria-role="menuitem">
+                  <a
+                    :href="`@${preferredUsername}/feed/ics`"
+                    :title="$t('ICS feed for events')"
+                  >
+                    <b-icon icon="calendar-sync" />
+                    {{ $t("ICS/WebCal Feed") }}
+                  </a>
+                </b-dropdown-item>
+                <hr class="dropdown-divider" />
                 <b-dropdown-item
-                  aria-role="listitem"
+                  aria-role="menuitem"
                   v-if="ableToReport"
                   @click="isReportModalActive = true"
                 >
@@ -107,7 +265,7 @@
                   </span>
                 </b-dropdown-item>
                 <b-dropdown-item
-                  aria-role="listitem"
+                  aria-role="menuitem"
                   v-if="isCurrentActorAGroupMember"
                   @click="leaveGroup"
                 >
@@ -116,153 +274,10 @@
                     {{ $t("Leave") }}
                   </span>
                 </b-dropdown-item>
-                <hr class="dropdown-divider" />
-                <b-dropdown-item has-link aria-role="listitem">
-                  <a
-                    :href="`@${preferredUsername}/feed/atom`"
-                    :title="$t('Atom feed for events and posts')"
-                  >
-                    <b-icon icon="rss" />
-                    {{ $t("RSS/Atom Feed") }}
-                  </a>
-                </b-dropdown-item>
-                <b-dropdown-item has-link aria-role="listitem">
-                  <a
-                    :href="`@${preferredUsername}/feed/ics`"
-                    :title="$t('ICS feed for events')"
-                  >
-                    <b-icon icon="calendar-sync" />
-                    {{ $t("ICS/WebCal Feed") }}
-                  </a>
-                </b-dropdown-item>
               </b-dropdown>
             </div>
           </div>
         </div>
-        <div class="block-column members" v-if="isCurrentActorAGroupMember">
-          <div>
-            <figure
-              class="image is-48x48"
-              :title="
-                $t(`@{username} ({role})`, {
-                  username: usernameWithDomain(member.actor),
-                  role: member.role,
-                })
-              "
-              v-for="member in members"
-              :key="member.actor.id"
-            >
-              <img
-                class="is-rounded"
-                :src="member.actor.avatar.url"
-                v-if="member.actor.avatar"
-                alt
-              />
-              <b-icon v-else size="is-large" icon="account-circle" />
-            </figure>
-          </div>
-          <p>
-            {{ $t("{count} team members", { count: group.members.total }) }}
-            <router-link
-              v-if="isCurrentActorAGroupAdmin"
-              :to="{
-                name: RouteName.GROUP_MEMBERS_SETTINGS,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              >{{ $t("Add / Remove…") }}</router-link
-            >
-          </p>
-        </div>
-        <div class="block-column address" v-else>
-          <address v-if="physicalAddress">
-            <p
-              class="addressDescription"
-              :title="physicalAddress.poiInfos.name"
-            >
-              {{ physicalAddress.poiInfos.name }}
-            </p>
-            <p>{{ physicalAddress.poiInfos.alternativeName }}</p>
-          </address>
-          <span
-            class="map-show-button"
-            @click="showMap = !showMap"
-            v-if="physicalAddress && physicalAddress.geom"
-            >{{ $t("Show map") }}</span
-          >
-          <p class="buttons">
-            <b-tooltip
-              v-if="group.openness !== Openness.OPEN"
-              :label="$t('This group is invite-only')"
-              position="is-bottom"
-            >
-              <b-button disabled type="is-primary">{{
-                $t("Join group")
-              }}</b-button></b-tooltip
-            >
-            <b-button
-              v-else-if="currentActor.id"
-              @click="joinGroup"
-              type="is-primary"
-              >{{ $t("Join group") }}</b-button
-            >
-            <b-button
-              tag="router-link"
-              :to="{
-                name: RouteName.GROUP_JOIN,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              v-else
-              type="is-primary"
-              >{{ $t("Join group") }}</b-button
-            >
-            <b-dropdown
-              class="menu-dropdown"
-              aria-role="list"
-              position="is-bottom-left"
-            >
-              <b-button
-                slot="trigger"
-                role="button"
-                icon-right="dots-horizontal"
-              >
-              </b-button>
-              <b-dropdown-item
-                aria-role="listitem"
-                v-if="ableToReport"
-                @click="isReportModalActive = true"
-              >
-                <span>
-                  <b-icon icon="flag" />
-                  {{ $t("Report") }}
-                </span>
-              </b-dropdown-item>
-              <hr class="dropdown-divider" />
-              <b-dropdown-item has-link aria-role="listitem">
-                <a
-                  :href="`@${preferredUsername}/feed/atom`"
-                  :title="$t('Atom feed for events and posts')"
-                >
-                  <b-icon icon="rss" />
-                  {{ $t("RSS/Atom Feed") }}
-                </a>
-              </b-dropdown-item>
-              <b-dropdown-item has-link aria-role="listitem">
-                <a
-                  :href="`@${preferredUsername}/feed/ics`"
-                  :title="$t('ICS feed for events')"
-                >
-                  <b-icon icon="calendar-sync" />
-                  {{ $t("ICS/WebCal Feed") }}
-                </a>
-              </b-dropdown-item>
-            </b-dropdown>
-          </p>
-        </div>
-        <img
-          v-if="group.banner && group.banner.url"
-          :src="group.banner.url"
-          alt=""
-        />
       </header>
     </div>
     <div v-if="isCurrentActorAGroupMember" class="block-container">
@@ -285,7 +300,7 @@
                 :discussion="discussion"
               />
             </div>
-            <div v-else class="content has-text-grey has-text-centered">
+            <div v-else class="content has-text-grey-dark has-text-centered">
               <p>{{ $t("No discussions yet") }}</p>
             </div>
           </template>
@@ -330,7 +345,7 @@
             </div>
             <div
               v-else-if="group"
-              class="content has-text-grey has-text-centered"
+              class="content has-text-grey-dark has-text-centered"
             >
               <p>{{ $t("No resources yet") }}</p>
             </div>
@@ -351,7 +366,7 @@
       <div class="block-column">
         <!-- Events -->
         <group-section
-          :title="$t('Upcoming events')"
+          :title="$t('Events')"
           icon="calendar"
           :privateSection="false"
           :route="{
@@ -373,7 +388,7 @@
             </div>
             <div
               v-else-if="group"
-              class="content has-text-grey has-text-centered"
+              class="content has-text-grey-dark has-text-centered"
             >
               <p>{{ $t("No public upcoming events") }}</p>
             </div>
@@ -411,7 +426,7 @@
             </div>
             <div
               v-else-if="group"
-              class="content has-text-grey has-text-centered"
+              class="content has-text-grey-dark has-text-centered"
             >
               <p>{{ $t("No posts yet") }}</p>
             </div>
@@ -434,71 +449,119 @@
       {{ $t("No group found") }}
     </b-message>
     <div v-else class="public-container">
-      <section>
-        <subtitle>{{ $t("About") }}</subtitle>
-        <div
-          v-html="group.summary"
-          v-if="group.summary && group.summary !== '<p></p>'"
-        />
-        <div v-else-if="group" class="content has-text-grey has-text-centered">
-          <p>{{ $t("This group doesn't have a description yet.") }}</p>
+      <aside class="group-metadata">
+        <div class="sticky">
+          <event-metadata-block
+            :title="$t('Location')"
+            :icon="
+              physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'
+            "
+          >
+            <div class="address-wrapper">
+              <span v-if="!physicalAddress">{{
+                $t("No address defined")
+              }}</span>
+              <div class="address" v-if="physicalAddress">
+                <div>
+                  <address>
+                    <p
+                      class="addressDescription"
+                      :title="physicalAddress.poiInfos.name"
+                    >
+                      {{ physicalAddress.poiInfos.name }}
+                    </p>
+                    <p class="has-text-grey-dark">
+                      {{ physicalAddress.poiInfos.alternativeName }}
+                    </p>
+                  </address>
+                </div>
+                <span
+                  class="map-show-button"
+                  @click="showMap = !showMap"
+                  v-if="physicalAddress.geom"
+                  >{{ $t("Show map") }}</span
+                >
+              </div>
+            </div>
+          </event-metadata-block>
         </div>
-      </section>
-      <section>
-        <subtitle>{{ $t("Upcoming events") }}</subtitle>
-        <div
-          class="organized-events-wrapper"
-          v-if="group && group.organizedEvents.total > 0"
-        >
-          <EventMinimalistCard
-            v-for="event in group.organizedEvents.elements"
-            :event="event"
-            :key="event.uuid"
-            class="organized-event"
+      </aside>
+      <div class="main-content">
+        <section>
+          <subtitle>{{ $t("About") }}</subtitle>
+          <div
+            v-html="group.summary"
+            v-if="group.summary && group.summary !== '<p></p>'"
           />
-        </div>
-        <div
-          v-else-if="group && group.organizedEvents.elements.length == 0"
-          class="content has-text-grey has-text-centered"
-        >
-          <p>{{ $t("No public upcoming events") }}</p>
-        </div>
-        <div v-else-if="group" class="content has-text-grey has-text-centered">
-          <p>{{ $t("No public upcoming events") }}</p>
-        </div>
-        <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
-        <router-link
-          v-if="group.organizedEvents.total > 0"
-          :to="{
-            name: RouteName.GROUP_EVENTS,
-            params: { preferredUsername: usernameWithDomain(group) },
-            query: { future: group.organizedEvents.elements.length > 0 },
-          }"
-          >{{ $t("View all events") }}</router-link
-        >
-      </section>
-      <section>
-        <subtitle>{{ $t("Latest posts") }}</subtitle>
-        <div v-if="group.posts.total > 0" class="posts-wrapper">
-          <post-list-item
-            v-for="post in group.posts.elements"
-            :key="post.id"
-            :post="post"
-          />
-        </div>
-        <div v-else-if="group" class="content has-text-grey has-text-centered">
-          <p>{{ $t("No posts yet") }}</p>
-        </div>
-        <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
-        <router-link
-          v-if="group.posts.total > 0"
-          :to="{
-            name: RouteName.POSTS,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-          >{{ $t("View all posts") }}</router-link
-        >
-      </section>
+          <div
+            v-else-if="group"
+            class="content has-text-grey-dark has-text-centered"
+          >
+            <p>{{ $t("This group doesn't have a description yet.") }}</p>
+          </div>
+        </section>
+        <section>
+          <subtitle>{{ $t("Upcoming events") }}</subtitle>
+          <div
+            class="organized-events-wrapper"
+            v-if="group && group.organizedEvents.total > 0"
+          >
+            <EventMinimalistCard
+              v-for="event in group.organizedEvents.elements"
+              :event="event"
+              :key="event.uuid"
+              class="organized-event"
+            />
+          </div>
+          <div
+            v-else-if="group && group.organizedEvents.elements.length == 0"
+            class="content has-text-grey-dark has-text-centered"
+          >
+            <p>{{ $t("No public upcoming events") }}</p>
+          </div>
+          <div
+            v-else-if="group"
+            class="content has-text-grey-dark has-text-centered"
+          >
+            <p>{{ $t("No public upcoming events") }}</p>
+          </div>
+          <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
+          <router-link
+            v-if="group.organizedEvents.total > 0"
+            :to="{
+              name: RouteName.GROUP_EVENTS,
+              params: { preferredUsername: usernameWithDomain(group) },
+              query: { future: group.organizedEvents.elements.length > 0 },
+            }"
+            >{{ $t("View all events") }}</router-link
+          >
+        </section>
+        <section>
+          <subtitle>{{ $t("Latest posts") }}</subtitle>
+          <div v-if="group.posts.total > 0" class="posts-wrapper">
+            <post-list-item
+              v-for="post in group.posts.elements"
+              :key="post.id"
+              :post="post"
+            />
+          </div>
+          <div
+            v-else-if="group"
+            class="content has-text-grey-dark has-text-centered"
+          >
+            <p>{{ $t("No posts yet") }}</p>
+          </div>
+          <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
+          <router-link
+            v-if="group.posts.total > 0"
+            :to="{
+              name: RouteName.POSTS,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ $t("View all posts") }}</router-link
+          >
+        </section>
+      </div>
       <b-modal
         v-if="physicalAddress && physicalAddress.geom"
         :active.sync="showMap"
@@ -526,13 +589,16 @@
         @close="$refs.reportModal.close()"
       />
     </b-modal>
+    <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
+      <share-group-modal :group="group" />
+    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch } from "vue-property-decorator";
 import EventCard from "@/components/Event/EventCard.vue";
-import { IActor, usernameWithDomain } from "@/types/actor";
+import { displayName, IActor, usernameWithDomain } from "@/types/actor";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
@@ -557,6 +623,8 @@ import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
 import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
+import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
+import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 
 @Component({
   apollo: {
@@ -574,8 +642,14 @@ import { LEAVE_GROUP } from "@/graphql/group";
     GroupSection,
     Invitations,
     ReportModal,
+    LazyImageWrapper,
+    EventMetadataBlock,
     "map-leaflet": () =>
       import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
+    ShareGroupModal: () =>
+      import(
+        /* webpackChunkName: "shareGroupModal" */ "../../components/Group/ShareGroupModal.vue"
+      ),
   },
   metaInfo() {
     return {
@@ -606,6 +680,8 @@ export default class Group extends mixins(GroupMixin) {
   showMap = false;
 
   isReportModalActive = false;
+
+  isShareModalActive = false;
 
   @Watch("currentActor")
   watchCurrentActor(currentActor: IActor, oldActor: IActor): void {
@@ -717,6 +793,27 @@ export default class Group extends mixins(GroupMixin) {
     }
   }
 
+  triggerShare(): void {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore-start
+    if (navigator.share) {
+      navigator
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        .share({
+          title: displayName(this.group),
+          url: this.group.url,
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error: any) => console.log("Error sharing", error));
+    } else {
+      this.isShareModalActive = true;
+      // send popup
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore-end
+  }
+
   get groupTitle(): undefined | string {
     if (!this.group) return undefined;
     return this.group.name || this.group.preferredUsername;
@@ -822,15 +919,29 @@ export default class Group extends mixins(GroupMixin) {
 </script>
 <style lang="scss" scoped>
 div.container {
-  background: white;
   margin-bottom: 3rem;
-  padding: 2rem 0;
 
   .header,
   .public-container {
-    margin: auto 1rem;
     display: flex;
     flex-direction: column;
+  }
+
+  .header {
+    background: $white;
+    padding-top: 1rem;
+  }
+
+  .header .breadcrumb {
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+  }
+
+  .public-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    padding: 0;
   }
 
   .block-container {
@@ -840,8 +951,9 @@ div.container {
 
     &.presentation {
       border: 2px solid $purple-2;
-      padding: 10px 0;
+      padding: 0 0 10px;
       position: relative;
+      flex-direction: column;
 
       h1 {
         color: $purple-1;
@@ -858,28 +970,16 @@ div.container {
         z-index: 2;
       }
 
-      & > img {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0.3;
-        object-fit: cover;
-        object-position: 50% 50%;
-      }
-    }
-
-    .members {
-      display: flex;
-      flex-direction: column;
-
-      div {
+      & > .banner-container {
         display: flex;
-      }
-
-      figure:not(:first-child) {
-        margin-left: -10px;
+        justify-content: center;
+        height: 30vh;
+        ::v-deep img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 50%;
+        }
       }
     }
 
@@ -925,9 +1025,19 @@ div.container {
 
     .block-column {
       flex: 1;
-      margin: 0 1rem;
+      margin: 0 0.5rem;
+      max-width: 576px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
 
       section {
+        background: $white;
+
         .posts-wrapper {
           padding-bottom: 1rem;
         }
@@ -965,9 +1075,95 @@ div.container {
         }
       }
     }
+
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      flex-direction: column;
+      flex: 1;
+      margin: 0;
+      align-items: center;
+
+      .avatar-container {
+        display: flex;
+        align-self: center;
+        height: 0;
+        margin-top: 16px;
+        align-items: flex-end;
+
+        figure {
+          position: relative;
+
+          img {
+            position: absolute;
+            background: #fff;
+          }
+        }
+      }
+
+      .title-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+        h1 {
+          font-size: 32px;
+          line-height: 38px;
+        }
+      }
+
+      .group-metadata {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        & > .buttons {
+          justify-content: center;
+        }
+
+        .members {
+          display: flex;
+          flex-direction: column;
+          min-width: 300px;
+          align-items: center;
+
+          div {
+            display: flex;
+          }
+
+          figure:not(:first-child) {
+            margin-left: -10px;
+          }
+        }
+      }
+    }
   }
 
   .public-container {
+    .group-metadata {
+      min-width: 20rem;
+      flex: 1;
+      padding-left: 1rem;
+      margin: 2rem auto;
+
+      .sticky {
+        position: sticky;
+        background: white;
+        top: 50px;
+        padding: 1rem;
+      }
+    }
+    .main-content {
+      min-width: 20rem;
+      padding: 1rem;
+      flex: 2;
+      background: white;
+      margin: 2rem auto;
+    }
+
     section {
       margin-top: 2rem;
     }
