@@ -46,7 +46,7 @@ defmodule Mobilizon.Web.Email do
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          {:ok, event_ics_data} <- ICalendar.export_event(event) do
       put_attachment(email, %Bamboo.Attachment{
-        filename: Slugger.slugify_downcase(event.title),
+        filename: "#{Slugger.slugify_downcase(event.title)}.ics",
         content_type: "text/calendar",
         data: event_ics_data
       })
