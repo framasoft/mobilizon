@@ -12,27 +12,38 @@ import { IMedia } from "@/types/media.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import LazyImage from "../Image/LazyImage.vue";
 
+const DEFAULT_CARD_URL = "/img/mobilizon_default_card.png";
+const DEFAULT_BLURHASH = "MCHKI4El-P-U}+={R-WWoes,Iu-P=?R,xD";
+const DEFAULT_WIDTH = 630;
+const DEFAULT_HEIGHT = 350;
+const DEFAULT_PICTURE = {
+  url: DEFAULT_CARD_URL,
+  metadata: {
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+    blurhash: DEFAULT_BLURHASH,
+  },
+};
+
 @Component({
   components: {
     LazyImage,
   },
 })
 export default class LazyImageWrapper extends Vue {
-  @Prop({ required: true, default: null })
-  picture!: IMedia | null;
+  @Prop({ required: true })
+  picture!: IMedia;
 
   get pictureOrDefault(): Partial<IMedia> {
+    if (this.picture === null) {
+      return DEFAULT_PICTURE;
+    }
     return {
-      url:
-        this?.picture === null
-          ? "/img/mobilizon_default_card.png"
-          : this?.picture?.url,
+      url: this?.picture?.url,
       metadata: {
-        width: this?.picture?.metadata?.width || 630,
-        height: this?.picture?.metadata?.height || 350,
-        blurhash:
-          this?.picture?.metadata?.blurhash ||
-          "MCHKI4El-P-U}+={R-WWoes,Iu-P=?R,xD",
+        width: this?.picture?.metadata?.width,
+        height: this?.picture?.metadata?.height,
+        blurhash: this?.picture?.metadata?.blurhash,
       },
     };
   }
