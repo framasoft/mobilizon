@@ -2,8 +2,9 @@
 FROM node:16-alpine as assets
 
 RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
-
+WORKDIR /build
 COPY js .
+RUN ls -a
 RUN yarn install \
     && yarn run build
 
@@ -24,7 +25,7 @@ COPY config/config.exs config/prod.exs ./config/
 COPY config/docker.exs ./config/runtime.exs
 COPY rel ./rel
 COPY support ./support
-COPY --from=assets ./priv/static ./priv/static
+COPY --from=assets ./build/priv/static ./priv/static
 
 RUN mix phx.digest \
     && mix release
