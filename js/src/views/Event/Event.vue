@@ -1443,8 +1443,9 @@ div.sidebar {
       width: 100%;
       .media-content {
         width: calc(100% - 32px - 1rem);
+        max-width: 80vw;
 
-        p.has-text-grey {
+        p.has-text-grey-dark {
           text-overflow: ellipsis;
           overflow: hidden;
         }
