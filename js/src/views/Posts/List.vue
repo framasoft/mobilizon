@@ -86,7 +86,7 @@ import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_POSTS } from "../../graphql/post";
 import { Paginate } from "../../types/paginate";
 import { IPost } from "../../types/post.model";
-import { IGroup, IPerson, usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import PostElementItem from "../../components/Post/PostElementItem.vue";
 
@@ -138,13 +138,9 @@ const POSTS_PAGE_LIMIT = 10;
 export default class PostList extends mixins(GroupMixin) {
   @Prop({ required: true, type: String }) preferredUsername!: string;
 
-  group!: IGroup;
-
   posts!: Paginate<IPost>;
 
   memberships!: IMember[];
-
-  currentActor!: IPerson;
 
   postsPage = 1;
 

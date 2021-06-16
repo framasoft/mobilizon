@@ -99,7 +99,9 @@ export default class GroupMemberCard extends Vue {
     }
 
     .media-content {
-      overflow: hidden;
+      ::v-deep .tags {
+        margin-bottom: 0;
+      }
     }
   }
 

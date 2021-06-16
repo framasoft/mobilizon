@@ -5,7 +5,7 @@
   >
     <div class="title-info-wrapper">
       <p class="post-minimalist-title">{{ post.title }}</p>
-      <small class="has-text-grey">{{
+      <small class="has-text-grey-dark">{{
         formatDistanceToNow(new Date(post.publishAt || post.insertedAt), {
           locale: $dateFnsLocale,
           addSuffix: true,
@@ -43,10 +43,9 @@ export default class PostListItem extends Vue {
 
     .post-minimalist-title {
       color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
-        serif;
-      font-size: 1rem;
-      font-weight: 700;
+      font-family: Roboto, Helvetica, Arial, serif;
+      font-size: 16px;
+      font-weight: 500;
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;

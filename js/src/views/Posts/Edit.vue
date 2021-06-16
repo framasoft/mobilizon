@@ -49,7 +49,7 @@
         <picture-upload
           v-model="pictureFile"
           :textFallback="$t('Headline picture')"
-          :defaultImage="post.picture"
+          :defaultImage="editablePost.picture"
         />
 
         <b-field
@@ -61,21 +61,21 @@
             size="is-large"
             aria-required="true"
             required
-            v-model="post.title"
+            v-model="editablePost.title"
           />
         </b-field>
 
-        <tag-input v-model="post.tags" :data="tags" path="title" />
+        <tag-input v-model="editablePost.tags" :data="tags" path="title" />
 
         <div class="field">
           <label class="label">{{ $t("Post") }}</label>
           <p v-if="errors.body" class="help is-danger">{{ errors.body }}</p>
-          <editor v-model="post.body" />
+          <editor v-model="editablePost.body" />
         </div>
         <subtitle>{{ $t("Who can view this post") }}</subtitle>
         <div class="field">
           <b-radio
-            v-model="post.visibility"
+            v-model="editablePost.visibility"
             name="postVisibility"
             :native-value="PostVisibility.PUBLIC"
             >{{ $t("Visible everywhere on the web") }}</b-radio
@@ -83,7 +83,7 @@
         </div>
         <div class="field">
           <b-radio
-            v-model="post.visibility"
+            v-model="editablePost.visibility"
             name="postVisibility"
             :native-value="PostVisibility.UNLISTED"
             >{{ $t("Only accessible through link") }}</b-radio
@@ -91,7 +91,7 @@
         </div>
         <div class="field">
           <b-radio
-            v-model="post.visibility"
+            v-model="editablePost.visibility"
             name="postVisibility"
             :native-value="PostVisibility.PRIVATE"
             >{{ $t("Only accessible to members of the group") }}</b-radio
@@ -166,7 +166,7 @@ import {
 
 import { IPost } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
-import { IActor, IGroup, usernameWithDomain } from "../../types/actor";
+import { IActor, usernameWithDomain } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
@@ -249,8 +249,6 @@ export default class EditPost extends mixins(GroupMixin) {
     tags: [],
   };
 
-  group!: IGroup;
-
   PostVisibility = PostVisibility;
 
   pictureFile: File | null = null;
@@ -258,6 +256,8 @@ export default class EditPost extends mixins(GroupMixin) {
   errors: Record<string, unknown> = {};
 
   RouteName = RouteName;
+
+  editablePost!: IPost;
 
   usernameWithDomain = usernameWithDomain;
 
@@ -270,6 +270,7 @@ export default class EditPost extends mixins(GroupMixin) {
     if (oldPost.picture !== newPost.picture) {
       this.pictureFile = await buildFileFromIMedia(this.post.picture);
     }
+    this.editablePost = { ...this.post };
   }
 
   // eslint-disable-next-line consistent-return
@@ -280,11 +281,11 @@ export default class EditPost extends mixins(GroupMixin) {
       const { data } = await this.$apollo.mutate({
         mutation: UPDATE_POST,
         variables: {
-          id: this.post.id,
-          title: this.post.title,
-          body: this.post.body,
-          tags: (this.post.tags || []).map(({ title }) => title),
-          visibility: this.post.visibility,
+          id: this.editablePost.id,
+          title: this.editablePost.title,
+          body: this.editablePost.body,
+          tags: (this.editablePost.tags || []).map(({ title }) => title),
+          visibility: this.editablePost.visibility,
           draft,
           ...(await this.buildPicture()),
         },
@@ -300,9 +301,9 @@ export default class EditPost extends mixins(GroupMixin) {
         const { data } = await this.$apollo.mutate({
           mutation: CREATE_POST,
           variables: {
-            ...this.post,
+            ...this.editablePost,
             ...(await this.buildPicture()),
-            tags: (this.post.tags || []).map(({ title }) => title),
+            tags: (this.editablePost.tags || []).map(({ title }) => title),
             attributedToId: this.actualGroup.id,
             draft,
           },
@@ -362,16 +363,16 @@ export default class EditPost extends mixins(GroupMixin) {
       obj = { ...obj, ...pictureObj };
     }
     try {
-      if (this.post.picture && this.pictureFile) {
+      if (this.editablePost.picture && this.pictureFile) {
         const oldPictureFile = (await buildFileFromIMedia(
-          this.post.picture
+          this.editablePost.picture
         )) as File;
         const oldPictureFileContent = await readFileAsync(oldPictureFile);
         const newPictureFileContent = await readFileAsync(
           this.pictureFile as File
         );
         if (oldPictureFileContent === newPictureFileContent) {
-          obj.picture = { mediaId: this.post.picture.id };
+          obj.picture = { mediaId: this.editablePost.picture.id };
         }
       }
     } catch (e) {
@@ -381,7 +382,7 @@ export default class EditPost extends mixins(GroupMixin) {
   }
 
   get actualGroup(): IActor {
-    if (!this.group.id) {
+    if (!this.group?.id) {
       return this.post.attributedTo as IActor;
     }
     return this.group;

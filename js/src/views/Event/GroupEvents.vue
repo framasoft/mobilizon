@@ -135,7 +135,7 @@ const EVENTS_PAGE_LIMIT = 10;
     const { group } = this;
     return {
       title: this.$t("{group} events", {
-        group: group.name || usernameWithDomain(group),
+        group: group?.name || usernameWithDomain(group),
       }) as string,
     };
   },

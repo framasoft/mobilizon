@@ -76,14 +76,19 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Find an actor in our local database or call WebFinger to find what's its AP ID is and then fetch it
   """
-  @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) :: tuple()
+  @spec find_or_make_actor_from_nickname(String.t(), atom() | nil) ::
+          {:ok, Actor.t()} | {:error, any()}
   def find_or_make_actor_from_nickname(nickname, type \\ nil) do
-    case Actors.get_actor_by_name(nickname, type) do
-      %Actor{} = actor ->
-        {:ok, actor}
+    case Actors.get_actor_by_name_with_preload(nickname, type) do
+      %Actor{url: actor_url} = actor ->
+        if Actors.needs_update?(actor) do
+          make_actor_from_url(actor_url, true)
+        else
+          {:ok, actor}
+        end
 
       nil ->
-        make_actor_from_nickname(nickname)
+        make_actor_from_nickname(nickname, true)
     end
   end
 
@@ -94,10 +99,10 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   Create an actor inside our database from username, using WebFinger to find out its AP ID and then fetch it
   """
   @spec make_actor_from_nickname(String.t()) :: {:ok, %Actor{}} | {:error, any()}
-  def make_actor_from_nickname(nickname) do
+  def make_actor_from_nickname(nickname, preload \\ false) do
     case WebFinger.finger(nickname) do
       {:ok, url} when is_binary(url) ->
-        make_actor_from_url(url)
+        make_actor_from_url(url, preload)
 
       _e ->
         {:error, "No ActivityPub URL found in WebFinger"}

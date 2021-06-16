@@ -5,13 +5,7 @@ import {
 } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
-import {
-  Group,
-  IActor,
-  IGroup,
-  IPerson,
-  usernameWithDomain,
-} from "@/types/actor";
+import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
 import { MemberRole } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -50,14 +44,14 @@ const now = new Date();
         variables() {
           return {
             actorId: this.currentActor.id,
-            group: this.group.preferredUsername,
+            group: this.group?.preferredUsername,
           };
         },
         skip() {
           return (
             !this.currentActor ||
             !this.currentActor.id ||
-            !this.group.preferredUsername
+            !this.group?.preferredUsername
           );
         },
       },
@@ -65,7 +59,7 @@ const now = new Date();
         return (
           !this.currentActor ||
           !this.currentActor.id ||
-          !this.group.preferredUsername
+          !this.group?.preferredUsername
         );
       },
     },
@@ -73,7 +67,7 @@ const now = new Date();
   },
 })
 export default class GroupMixin extends Vue {
-  group: IGroup = new Group();
+  group!: IGroup;
 
   currentActor!: IActor;
 

@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router, { Route } from "vue-router";
 import VueScrollTo from "vue-scrollto";
 import { PositionResult } from "vue-router/types/router.d";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 import Home from "../views/Home.vue";
 import { eventRoutes } from "./event";
 import { actorRoutes } from "./actor";
@@ -46,7 +46,7 @@ export const routes = [
   {
     path: "/search",
     name: RouteName.SEARCH,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
     props: true,
     meta: { requiredAuth: false },
@@ -60,7 +60,7 @@ export const routes = [
   {
     path: "/about",
     name: RouteName.ABOUT,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "about" */ "@/views/About.vue"),
     meta: { requiredAuth: false },
     redirect: { name: RouteName.ABOUT_INSTANCE },
@@ -68,7 +68,7 @@ export const routes = [
       {
         path: "instance",
         name: RouteName.ABOUT_INSTANCE,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "about" */ "@/views/About/AboutInstance.vue"
           ),
@@ -76,28 +76,28 @@ export const routes = [
       {
         path: "/terms",
         name: RouteName.TERMS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Terms.vue"),
         meta: { requiredAuth: false },
       },
       {
         path: "/privacy",
         name: RouteName.PRIVACY,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Privacy.vue"),
         meta: { requiredAuth: false },
       },
       {
         path: "/rules",
         name: RouteName.RULES,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Rules.vue"),
         meta: { requiredAuth: false },
       },
       {
         path: "/glossary",
         name: RouteName.GLOSSARY,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "cookies" */ "@/views/About/Glossary.vue"
           ),
@@ -108,14 +108,14 @@ export const routes = [
   {
     path: "/interact",
     name: RouteName.INTERACT,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "interact" */ "@/views/Interact.vue"),
     meta: { requiredAuth: false },
   },
   {
     path: "/auth/:provider/callback",
     name: "auth-callback",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"
       ),
@@ -123,7 +123,7 @@ export const routes = [
   {
     path: "/welcome/:step?",
     name: RouteName.WELCOME_SCREEN,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "WelcomeScreen" */ "@/views/User/SettingsOnboard.vue"
       ),
@@ -139,7 +139,7 @@ export const routes = [
   {
     path: "/404",
     name: RouteName.PAGE_NOT_FOUND,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "PageNotFound" */ "../views/PageNotFound.vue"
       ),

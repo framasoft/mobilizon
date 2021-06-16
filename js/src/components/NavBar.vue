@@ -112,7 +112,12 @@
           <span @click="setIdentity(identity)">
             <div class="media-left">
               <figure class="image is-32x32" v-if="identity.avatar">
-                <img class="is-rounded" :src="identity.avatar.url" alt />
+                <img
+                  class="is-rounded"
+                  loading="lazy"
+                  :src="identity.avatar.url"
+                  alt
+                />
               </figure>
               <b-icon v-else size="is-medium" icon="account-circle" />
             </div>
@@ -133,11 +138,6 @@
           :to="{ name: RouteName.UPDATE_IDENTITY }"
           >{{ $t("My account") }}</b-navbar-item
         >
-
-        <!--          <b-navbar-item tag="router-link" :to="{ name: RouteName.CREATE_GROUP }">-->
-        <!--            {{ $t('Create group') }}-->
-        <!--          </b-navbar-item>-->
-
         <b-navbar-item
           v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR"
           tag="router-link"

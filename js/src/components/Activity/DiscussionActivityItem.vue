@@ -41,7 +41,7 @@
           ></popover-actor-card
         ></i18n
       >
-      <small class="has-text-grey activity-date">{{
+      <small class="has-text-grey-dark activity-date">{{
         activity.insertedAt | formatTimeString
       }}</small>
     </div>

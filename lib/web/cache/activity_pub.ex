@@ -4,10 +4,11 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   """
 
   alias Mobilizon.{Actors, Discussions, Events, Posts, Resources, Todos, Tombstone}
-  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Actors.Actor, as: ActorModel
+  alias Mobilizon.Actors.Member
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityPub.{Actor, Relay}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
@@ -23,8 +24,8 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
           {:commit, Actor.t()} | {:ignore, nil}
   def get_actor_by_name(name) do
     Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
-      case Actors.get_actor_by_name_with_preload(name) do
-        %Actor{} = actor ->
+      case Actor.find_or_make_actor_from_nickname(name) do
+        {:ok, %ActorModel{} = actor} ->
           {:commit, actor}
 
         nil ->
@@ -41,7 +42,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   def get_local_actor_by_name(name) do
     Cachex.fetch(@cache, "local_actor_" <> name, fn "local_actor_" <> name ->
       case Actors.get_local_actor_by_name(name) do
-        %Actor{} = actor ->
+        %ActorModel{} = actor ->
           {:commit, actor}
 
         nil ->

@@ -1043,5 +1043,9 @@
   "User settings": "User settings",
   "You changed your email or password": "You changed your email or password",
   "Organized by you": "Organized by you",
-  "Move resource to the root folder": "Move resource to the root folder"
+  "Move resource to the root folder": "Move resource to the root folder",
+  "Share this group": "Share this group",
+  "This group is accessible only through it's link. Be careful where you post this link.": "This group is accessible only through it's link. Be careful where you post this link.",
+  "{count} members": "No members|One member|{count} members",
+  "Share": "Share"
 }

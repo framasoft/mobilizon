@@ -34,7 +34,7 @@
         v-for="detail in details"
         :key="detail"
         tag="p"
-        class="has-text-grey"
+        class="has-text-grey-dark"
       >
         <popover-actor-card
           :actor="activity.author"
@@ -63,7 +63,7 @@
           subjectParams.old_group_name
         }}</b>
       </i18n>
-      <small class="has-text-grey activity-date">{{
+      <small class="has-text-grey-dark activity-date">{{
         activity.insertedAt | formatTimeString
       }}</small>
     </div>

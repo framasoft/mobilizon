@@ -23,6 +23,7 @@
         <div class="title-wrapper">
           <img
             class="favicon"
+            alt=""
             v-if="resource.metadata && resource.metadata.faviconUrl"
             :src="resource.metadata.faviconUrl"
           />
@@ -31,7 +32,8 @@
         <div class="metadata-wrapper">
           <span class="host" v-if="!inline || preview">{{ urlHostname }}</span>
           <span
-            class="published-at is-hidden-mobile"
+            class="published-at"
+            :class="{ 'is-hidden-mobile': !inline }"
             v-if="resource.updatedAt || resource.publishedAt"
             >{{
               (resource.updatedAt || resource.publishedAt)

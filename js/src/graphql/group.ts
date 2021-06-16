@@ -80,10 +80,22 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     avatar {
       id
       url
+      name
+      metadata {
+        width
+        height
+        blurhash
+      }
     }
     banner {
       id
       url
+      name
+      metadata {
+        width
+        height
+        blurhash
+      }
     }
     organizedEvents(
       afterDatetime: $afterDateTime

@@ -369,10 +369,10 @@ export const JOIN_EVENT = gql`
       message: $message
       locale: $locale
     ) {
-      ...ParticipantsQuery
+      ...ParticipantQuery
     }
   }
-  ${PARTICIPANTS_QUERY_FRAGMENT}
+  ${PARTICIPANT_QUERY_FRAGMENT}
 `;
 
 export const LEAVE_EVENT = gql`

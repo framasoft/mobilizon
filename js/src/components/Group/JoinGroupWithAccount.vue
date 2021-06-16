@@ -30,6 +30,17 @@ import { IGroup } from "@/types/actor";
       },
     },
   },
+  metaInfo() {
+    return {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      title: this.$t("Join group {group}", {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        group: this.groupTitle,
+      }) as string,
+    };
+  },
 })
 export default class JoinGroupWithAccount extends Vue {
   @Prop({ type: String, required: true }) preferredUsername!: string;
@@ -38,6 +49,10 @@ export default class JoinGroupWithAccount extends Vue {
 
   get uri(): string {
     return this.group?.url;
+  }
+
+  get groupTitle(): undefined | string {
+    return this.group?.name || this.group?.preferredUsername;
   }
 
   sentence = this.$t(

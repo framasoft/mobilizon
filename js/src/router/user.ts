@@ -1,6 +1,6 @@
 import { beforeRegisterGuard } from "@/router/guards/register-guard";
 import { Route, RouteConfig } from "vue-router";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 
 export enum UserRouteName {
   REGISTER = "Register",
@@ -17,7 +17,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/register/user",
     name: UserRouteName.REGISTER,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "RegisterUser" */ "@/views/User/Register.vue"
       ),
@@ -28,7 +28,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/register/profile",
     name: UserRouteName.REGISTER_PROFILE,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "RegisterProfile" */ "@/views/Account/Register.vue"
       ),
@@ -42,7 +42,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/resend-instructions",
     name: UserRouteName.RESEND_CONFIRMATION,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "ResendConfirmation" */ "@/views/User/ResendConfirmation.vue"
       ),
@@ -52,7 +52,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/password-reset/send",
     name: UserRouteName.SEND_PASSWORD_RESET,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "SendPasswordReset" */ "@/views/User/SendPasswordReset.vue"
       ),
@@ -62,7 +62,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/password-reset/:token",
     name: UserRouteName.PASSWORD_RESET,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "PasswordReset" */ "@/views/User/PasswordReset.vue"
       ),
@@ -72,7 +72,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/validate/email/:token",
     name: UserRouteName.EMAIL_VALIDATE,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "EmailValidate" */ "@/views/User/EmailValidate.vue"
       ),
@@ -82,7 +82,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/validate/:token",
     name: UserRouteName.VALIDATE,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Validate" */ "@/views/User/Validate.vue"),
     props: true,
     meta: { requiresAuth: false },
@@ -90,7 +90,7 @@ export const userRoutes: RouteConfig[] = [
   {
     path: "/login",
     name: UserRouteName.LOGIN,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Login" */ "@/views/User/Login.vue"),
     props: true,
     meta: { requiredAuth: false },

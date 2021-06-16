@@ -32,10 +32,10 @@
           }}</span
         >
       </div>
-      <div class="has-text-grey" v-if="!discussion.lastComment.deletedAt">
+      <div class="has-text-grey-dark" v-if="!discussion.lastComment.deletedAt">
         {{ htmlTextEllipsis }}
       </div>
-      <div v-else class="has-text-grey">
+      <div v-else class="has-text-grey-dark">
         {{ $t("[This comment has been deleted]") }}
       </div>
     </div>
@@ -98,10 +98,9 @@ export default class DiscussionListItem extends Vue {
 
       .discussion-minimalist-title {
         color: #3c376e;
-        font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica,
-          Arial, serif;
-        font-size: 1.25rem;
-        font-weight: 700;
+        font-family: Roboto, Helvetica, Arial, serif;
+        font-size: 16px;
+        font-weight: 500;
         flex: 1;
       }
     }
