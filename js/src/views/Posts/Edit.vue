@@ -382,7 +382,7 @@ export default class EditPost extends mixins(GroupMixin) {
   }
 
   get actualGroup(): IActor {
-    if (!this.group.id) {
+    if (!this.group?.id) {
       return this.post.attributedTo as IActor;
     }
     return this.group;
