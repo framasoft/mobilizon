@@ -1,5 +1,5 @@
 import { RouteConfig } from "vue-router";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 
 export enum ActorRouteName {
   GROUP = "Group",
@@ -12,14 +12,14 @@ export const actorRoutes: RouteConfig[] = [
   {
     path: "/groups/create",
     name: ActorRouteName.CREATE_GROUP,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "CreateGroup" */ "@/views/Group/Create.vue"),
     meta: { requiredAuth: true },
   },
   {
     path: "/@:preferredUsername",
     name: ActorRouteName.GROUP,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Group" */ "@/views/Group/Group.vue"),
     props: true,
     meta: { requiredAuth: false },
@@ -27,7 +27,7 @@ export const actorRoutes: RouteConfig[] = [
   {
     path: "/groups/me",
     name: ActorRouteName.MY_GROUPS,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "MyGroups" */ "@/views/Group/MyGroups.vue"),
     meta: { requiredAuth: true },
   },

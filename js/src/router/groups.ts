@@ -1,5 +1,5 @@
 import { RouteConfig, Route } from "vue-router";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 
 export enum GroupsRouteName {
   TODO_LISTS = "TODO_LISTS",
@@ -21,16 +21,16 @@ export enum GroupsRouteName {
   TIMELINE = "TIMELINE",
 }
 
-const resourceFolder = (): Promise<EsModuleComponent> =>
+const resourceFolder = (): Promise<ImportedComponent> =>
   import("@/views/Resources/ResourceFolder.vue");
-const groupEvents = (): Promise<EsModuleComponent> =>
+const groupEvents = (): Promise<ImportedComponent> =>
   import(/* webpackChunkName: "groupEvents" */ "@/views/Event/GroupEvents.vue");
 
 export const groupsRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/todo-lists",
     name: GroupsRouteName.TODO_LISTS,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Todos/TodoLists.vue"),
     props: true,
     meta: { requiredAuth: true },
@@ -38,7 +38,7 @@ export const groupsRoutes: RouteConfig[] = [
   {
     path: "/todo-lists/:id",
     name: GroupsRouteName.TODO_LIST,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Todos/TodoList.vue"),
     props: true,
     meta: { requiredAuth: true },
@@ -46,7 +46,7 @@ export const groupsRoutes: RouteConfig[] = [
   {
     path: "/todo/:todoId",
     name: GroupsRouteName.TODO,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Todos/Todo.vue"),
     props: true,
     meta: { requiredAuth: true },
@@ -67,7 +67,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/settings",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Group/Settings.vue"),
     props: true,
     meta: { requiredAuth: true },
@@ -77,20 +77,20 @@ export const groupsRoutes: RouteConfig[] = [
       {
         path: "public",
         name: GroupsRouteName.GROUP_PUBLIC_SETTINGS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import("../views/Group/GroupSettings.vue"),
       },
       {
         path: "members",
         name: GroupsRouteName.GROUP_MEMBERS_SETTINGS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import("../views/Group/GroupMembers.vue"),
         props: true,
       },
       {
         path: "followers",
         name: GroupsRouteName.GROUP_FOLLOWERS_SETTINGS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import("../views/Group/GroupFollowers.vue"),
         props: true,
       },
@@ -98,7 +98,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/p/new",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Posts/Edit.vue"),
     props: true,
     name: GroupsRouteName.POST_CREATE,
@@ -106,7 +106,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/p/:slug/edit",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Posts/Edit.vue"),
     props: (route: Route): Record<string, unknown> => ({
       ...route.params,
@@ -117,7 +117,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/p/:slug",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Posts/Post.vue"),
     props: true,
     name: GroupsRouteName.POST,
@@ -125,7 +125,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/p",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Posts/List.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
@@ -140,7 +140,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/join",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/components/Group/JoinGroupWithAccount.vue"),
     props: true,
     name: GroupsRouteName.GROUP_JOIN,
@@ -149,7 +149,7 @@ export const groupsRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/timeline",
     name: GroupsRouteName.TIMELINE,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import("@/views/Group/Timeline.vue"),
     props: true,
     meta: { requiredAuth: true },

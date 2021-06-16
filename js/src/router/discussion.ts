@@ -1,5 +1,5 @@
 import { RouteConfig } from "vue-router";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 
 export enum DiscussionRouteName {
   DISCUSSION_LIST = "DISCUSSION_LIST",
@@ -11,7 +11,7 @@ export const discussionRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/discussions",
     name: DiscussionRouteName.DISCUSSION_LIST,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "DiscussionsList" */ "@/views/Discussions/DiscussionsList.vue"
       ),
@@ -21,7 +21,7 @@ export const discussionRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/discussions/new",
     name: DiscussionRouteName.CREATE_DISCUSSION,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "CreateDiscussion" */ "@/views/Discussions/Create.vue"
       ),
@@ -31,7 +31,7 @@ export const discussionRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/c/:slug/:comment_id?",
     name: DiscussionRouteName.DISCUSSION,
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(
         /* webpackChunkName: "Discussion" */ "@/views/Discussions/Discussion.vue"
       ),

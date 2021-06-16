@@ -1,5 +1,5 @@
 import { Route, RouteConfig } from "vue-router";
-import { EsModuleComponent } from "vue/types/options";
+import { ImportedComponent } from "vue/types/options";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -31,7 +31,7 @@ export enum SettingsRouteName {
 export const settingsRoutes: RouteConfig[] = [
   {
     path: "/settings",
-    component: (): Promise<EsModuleComponent> =>
+    component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Settings" */ "@/views/Settings.vue"),
     props: true,
     meta: { requiredAuth: true },
@@ -47,7 +47,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "account/general",
         name: SettingsRouteName.ACCOUNT_SETTINGS_GENERAL,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AccountSettings" */ "@/views/Settings/AccountSettings.vue"
           ),
@@ -57,7 +57,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "preferences",
         name: SettingsRouteName.PREFERENCES,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "Preferences" */ "@/views/Settings/Preferences.vue"
           ),
@@ -67,7 +67,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "notifications",
         name: SettingsRouteName.NOTIFICATIONS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "Notifications" */ "@/views/Settings/Notifications.vue"
           ),
@@ -83,7 +83,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/dashboard",
         name: SettingsRouteName.ADMIN_DASHBOARD,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "Dashboard" */ "@/views/Admin/Dashboard.vue"
           ),
@@ -92,7 +92,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/settings",
         name: SettingsRouteName.ADMIN_SETTINGS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AdminSettings" */ "@/views/Admin/Settings.vue"
           ),
@@ -102,7 +102,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/users",
         name: SettingsRouteName.USERS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "Users" */ "@/views/Admin/Users.vue"),
         props: true,
         meta: { requiredAuth: true },
@@ -110,7 +110,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/users/:id",
         name: SettingsRouteName.ADMIN_USER_PROFILE,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AdminUserProfile" */ "@/views/Admin/AdminUserProfile.vue"
           ),
@@ -120,7 +120,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/profiles",
         name: SettingsRouteName.PROFILES,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AdminProfiles" */ "@/views/Admin/Profiles.vue"
           ),
@@ -130,7 +130,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/profiles/:id",
         name: SettingsRouteName.ADMIN_PROFILE,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AdminProfile" */ "@/views/Admin/AdminProfile.vue"
           ),
@@ -140,7 +140,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/groups",
         name: SettingsRouteName.ADMIN_GROUPS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "GroupProfiles" */ "@/views/Admin/GroupProfiles.vue"
           ),
@@ -150,7 +150,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/groups/:id",
         name: SettingsRouteName.ADMIN_GROUP_PROFILE,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "AdminGroupProfile" */ "@/views/Admin/AdminGroupProfile.vue"
           ),
@@ -161,14 +161,14 @@ export const settingsRoutes: RouteConfig[] = [
         path: "admin/relays",
         name: SettingsRouteName.RELAYS,
         redirect: { name: SettingsRouteName.RELAY_FOLLOWINGS },
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "Follows" */ "@/views/Admin/Follows.vue"),
         meta: { requiredAuth: true },
         children: [
           {
             path: "followings",
             name: SettingsRouteName.RELAY_FOLLOWINGS,
-            component: (): Promise<EsModuleComponent> =>
+            component: (): Promise<ImportedComponent> =>
               import(
                 /* webpackChunkName: "Followings" */ "@/components/Admin/Followings.vue"
               ),
@@ -177,7 +177,7 @@ export const settingsRoutes: RouteConfig[] = [
           {
             path: "followers",
             name: SettingsRouteName.RELAY_FOLLOWERS,
-            component: (): Promise<EsModuleComponent> =>
+            component: (): Promise<ImportedComponent> =>
               import(
                 /* webpackChunkName: "Followers" */ "@/components/Admin/Followers.vue"
               ),
@@ -195,7 +195,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/moderation/reports/:filter?",
         name: SettingsRouteName.REPORTS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "ReportList" */ "@/views/Moderation/ReportList.vue"
           ),
@@ -205,7 +205,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/moderation/report/:reportId",
         name: SettingsRouteName.REPORT,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "Report" */ "@/views/Moderation/Report.vue"
           ),
@@ -215,7 +215,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/moderation/logs",
         name: SettingsRouteName.REPORT_LOGS,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "ModerationLogs" */ "@/views/Moderation/Logs.vue"
           ),
@@ -231,7 +231,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/identity/create",
         name: SettingsRouteName.CREATE_IDENTITY,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
@@ -244,7 +244,7 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/identity/update/:identityName?",
         name: SettingsRouteName.UPDATE_IDENTITY,
-        component: (): Promise<EsModuleComponent> =>
+        component: (): Promise<ImportedComponent> =>
           import(
             /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
           ),
