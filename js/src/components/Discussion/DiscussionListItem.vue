@@ -98,10 +98,9 @@ export default class DiscussionListItem extends Vue {
 
       .discussion-minimalist-title {
         color: #3c376e;
-        font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica,
-          Arial, serif;
-        font-size: 1.25rem;
-        font-weight: 700;
+        font-family: Roboto, Helvetica, Arial, serif;
+        font-size: 16px;
+        font-weight: 500;
         flex: 1;
       }
     }

@@ -10,7 +10,7 @@
           </li>
           <li class="is-active">
             <router-link
-              v-if="group.preferredUsername"
+              v-if="group && group.preferredUsername"
               :to="{
                 name: RouteName.GROUP,
                 params: { preferredUsername: usernameWithDomain(group) },
@@ -44,9 +44,9 @@
           )
         }}
       </b-message>
-      <header class="block-container presentation">
+      <header class="block-container presentation" v-if="group">
         <div class="banner-container">
-          <lazy-image-wrapper :picture="group.picture" />
+          <lazy-image-wrapper :picture="group.banner" />
         </div>
         <div class="header">
           <div class="avatar-container">
@@ -65,7 +65,10 @@
             <br />
           </div>
           <div class="group-metadata">
-            <div class="block-column members" v-if="isCurrentActorAGroupMember">
+            <div
+              class="block-column members"
+              v-if="isCurrentActorAGroupMember && !previewPublic"
+            >
               <div>
                 <figure
                   class="image is-32x32"
@@ -88,7 +91,11 @@
                 </figure>
               </div>
               <p>
-                {{ $t("{count} members", { count: group.members.total }) }}
+                {{
+                  $tc("{count} members", group.members.total, {
+                    count: group.members.total,
+                  })
+                }}
                 <router-link
                   v-if="isCurrentActorAGroupAdmin"
                   :to="{
@@ -188,7 +195,7 @@
               <b-button
                 outlined
                 icon-left="timeline-text"
-                v-if="isCurrentActorAGroupMember"
+                v-if="isCurrentActorAGroupMember && !previewPublic"
                 tag="router-link"
                 :to="{
                   name: RouteName.TIMELINE,
@@ -199,7 +206,7 @@
               <b-button
                 outlined
                 icon-left="cog"
-                v-if="isCurrentActorAGroupAdmin"
+                v-if="isCurrentActorAGroupAdmin && !previewPublic"
                 tag="router-link"
                 :to="{
                   name: RouteName.GROUP_PUBLIC_SETTINGS,
@@ -207,17 +214,50 @@
                 }"
                 >{{ $t("Group settings") }}</b-button
               >
+              <b-tooltip
+                v-if="
+                  (!isCurrentActorAGroupMember || previewPublic) &&
+                  group.openness !== Openness.OPEN
+                "
+                :label="$t('This group is invite-only')"
+                position="is-bottom"
+              >
+                <b-button disabled type="is-primary">{{
+                  $t("Join group")
+                }}</b-button></b-tooltip
+              >
+              <b-button
+                v-else-if="
+                  (!isCurrentActorAGroupMember || previewPublic) &&
+                  currentActor.id
+                "
+                @click="joinGroup"
+                type="is-primary"
+                :disabled="previewPublic"
+                >{{ $t("Join group") }}</b-button
+              >
+              <b-button
+                tag="router-link"
+                :to="{
+                  name: RouteName.GROUP_JOIN,
+                  params: { preferredUsername: usernameWithDomain(group) },
+                }"
+                v-else-if="!isCurrentActorAGroupMember || previewPublic"
+                :disabled="previewPublic"
+                type="is-primary"
+                >{{ $t("Join group") }}</b-button
+              >
               <b-button
                 outlined
                 icon-left="share"
                 @click="triggerShare()"
-                v-if="!isCurrentActorAGroupMember"
+                v-if="!isCurrentActorAGroupMember || previewPublic"
               >
                 {{ $t("Share") }}
               </b-button>
               <b-dropdown
                 class="menu-dropdown"
-                v-if="isCurrentActorAGroupMember"
+                v-if="isCurrentActorAGroupMember || previewPublic"
                 position="is-bottom-left"
                 aria-role="menu"
               >
@@ -228,13 +268,25 @@
                   icon-left="dots-horizontal"
                   aria-label="Other actions"
                 />
-                <b-dropdown-item aria-role="menuitem" @click="triggerShare()">
+                <b-dropdown-item aria-role="menuitem">
+                  <b-switch v-model="previewPublic">{{
+                    $t("Public preview")
+                  }}</b-switch>
+                </b-dropdown-item>
+                <b-dropdown-item
+                  v-if="!previewPublic"
+                  aria-role="menuitem"
+                  @click="triggerShare()"
+                >
                   <span>
                     <b-icon icon="share" />
                     {{ $t("Share") }}
                   </span>
                 </b-dropdown-item>
-                <hr class="dropdown-divider" />
+                <hr
+                  class="dropdown-divider"
+                  v-if="isCurrentActorAGroupMember"
+                />
                 <b-dropdown-item has-link aria-role="menuitem">
                   <a
                     :href="`@${preferredUsername}/feed/atom`"
@@ -255,8 +307,8 @@
                 </b-dropdown-item>
                 <hr class="dropdown-divider" />
                 <b-dropdown-item
-                  aria-role="menuitem"
                   v-if="ableToReport"
+                  aria-role="menuitem"
                   @click="isReportModalActive = true"
                 >
                   <span>
@@ -266,7 +318,7 @@
                 </b-dropdown-item>
                 <b-dropdown-item
                   aria-role="menuitem"
-                  v-if="isCurrentActorAGroupMember"
+                  v-if="isCurrentActorAGroupMember && !previewPublic"
                   @click="leaveGroup"
                 >
                   <span>
@@ -280,7 +332,10 @@
         </div>
       </header>
     </div>
-    <div v-if="isCurrentActorAGroupMember" class="block-container">
+    <div
+      v-if="isCurrentActorAGroupMember && !previewPublic"
+      class="block-container"
+    >
       <!-- Private things -->
       <div class="block-column">
         <!-- Group discussions -->
@@ -300,9 +355,9 @@
                 :discussion="discussion"
               />
             </div>
-            <div v-else class="content has-text-grey-dark has-text-centered">
-              <p>{{ $t("No discussions yet") }}</p>
-            </div>
+            <empty-content v-else icon="chat" :inline="true">
+              {{ $t("No discussions yet") }}
+            </empty-content>
           </template>
           <template v-slot:create>
             <router-link
@@ -343,12 +398,9 @@
                 />
               </div>
             </div>
-            <div
-              v-else-if="group"
-              class="content has-text-grey-dark has-text-centered"
-            >
-              <p>{{ $t("No resources yet") }}</p>
-            </div>
+            <empty-content v-else icon="link" :inline="true">
+              {{ $t("No resources yet") }}
+            </empty-content>
           </template>
           <template v-slot:create>
             <router-link
@@ -386,12 +438,9 @@
                 class="organized-event"
               />
             </div>
-            <div
-              v-else-if="group"
-              class="content has-text-grey-dark has-text-centered"
-            >
-              <p>{{ $t("No public upcoming events") }}</p>
-            </div>
+            <empty-content v-else-if="group" icon="calendar" :inline="true">
+              {{ $t("No public upcoming events") }}
+            </empty-content>
             <b-skeleton animated v-else></b-skeleton>
           </template>
           <template v-slot:create>
@@ -424,12 +473,9 @@
                 :post="post"
               />
             </div>
-            <div
-              v-else-if="group"
-              class="content has-text-grey-dark has-text-centered"
-            >
-              <p>{{ $t("No posts yet") }}</p>
-            </div>
+            <empty-content v-else-if="group" icon="bullhorn" :inline="true">
+              {{ $t("No posts yet") }}
+            </empty-content>
           </template>
           <template v-slot:create>
             <router-link
@@ -448,10 +494,18 @@
     <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
       {{ $t("No group found") }}
     </b-message>
-    <div v-else class="public-container">
+    <div v-else-if="group" class="public-container">
       <aside class="group-metadata">
         <div class="sticky">
+          <event-metadata-block :title="$t('Members')" icon="account-group">
+            {{
+              $tc("{count} members", group.members.total, {
+                count: group.members.total,
+              })
+            }}
+          </event-metadata-block>
           <event-metadata-block
+            v-if="physicalAddress"
             :title="$t('Location')"
             :icon="
               physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'
@@ -493,12 +547,9 @@
             v-html="group.summary"
             v-if="group.summary && group.summary !== '<p></p>'"
           />
-          <div
-            v-else-if="group"
-            class="content has-text-grey-dark has-text-centered"
-          >
-            <p>{{ $t("This group doesn't have a description yet.") }}</p>
-          </div>
+          <empty-content v-else-if="group" icon="image-text" :inline="true">
+            {{ $t("This group doesn't have a description yet.") }}
+          </empty-content>
         </section>
         <section>
           <subtitle>{{ $t("Upcoming events") }}</subtitle>
@@ -513,18 +564,9 @@
               class="organized-event"
             />
           </div>
-          <div
-            v-else-if="group && group.organizedEvents.elements.length == 0"
-            class="content has-text-grey-dark has-text-centered"
-          >
-            <p>{{ $t("No public upcoming events") }}</p>
-          </div>
-          <div
-            v-else-if="group"
-            class="content has-text-grey-dark has-text-centered"
-          >
-            <p>{{ $t("No public upcoming events") }}</p>
-          </div>
+          <empty-content v-else-if="group" icon="calendar" :inline="true">
+            {{ $t("No public upcoming events") }}
+          </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
           <router-link
             v-if="group.organizedEvents.total > 0"
@@ -545,12 +587,9 @@
               :post="post"
             />
           </div>
-          <div
-            v-else-if="group"
-            class="content has-text-grey-dark has-text-centered"
-          >
-            <p>{{ $t("No posts yet") }}</p>
-          </div>
+          <empty-content v-else-if="group" icon="bullhorn" :inline="true">
+            {{ $t("No posts yet") }}
+          </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
           <router-link
             v-if="group.posts.total > 0"
@@ -581,6 +620,7 @@
       :active.sync="isReportModalActive"
       has-modal-card
       ref="reportModal"
+      v-if="group"
     >
       <report-modal
         :on-confirm="reportGroup"
@@ -589,7 +629,12 @@
         @close="$refs.reportModal.close()"
       />
     </b-modal>
-    <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
+    <b-modal
+      v-if="group"
+      :active.sync="isShareModalActive"
+      has-modal-card
+      ref="shareModal"
+    >
       <share-group-modal :group="group" />
     </b-modal>
   </div>
@@ -625,6 +670,7 @@ import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
 
 @Component({
   apollo: {
@@ -644,6 +690,7 @@ import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
     ReportModal,
     LazyImageWrapper,
     EventMetadataBlock,
+    EmptyContent,
     "map-leaflet": () =>
       import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
     ShareGroupModal: () =>
@@ -682,6 +729,8 @@ export default class Group extends mixins(GroupMixin) {
   isReportModalActive = false;
 
   isShareModalActive = false;
+
+  previewPublic = false;
 
   @Watch("currentActor")
   watchCurrentActor(currentActor: IActor, oldActor: IActor): void {
@@ -815,13 +864,11 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   get groupTitle(): undefined | string {
-    if (!this.group) return undefined;
-    return this.group.name || this.group.preferredUsername;
+    return this.group?.name || this.group?.preferredUsername;
   }
 
   get groupSummary(): undefined | string {
-    if (!this.group) return undefined;
-    return this.group.summary;
+    return this.group?.summary;
   }
 
   get groupMember(): IMember | undefined {
@@ -918,6 +965,7 @@ export default class Group extends mixins(GroupMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@import "~bulma/sass/utilities/mixins.sass";
 div.container {
   margin-bottom: 3rem;
 
@@ -935,13 +983,6 @@ div.container {
   .header .breadcrumb {
     margin-bottom: 0.5rem;
     margin-left: 0.5rem;
-  }
-
-  .public-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row-reverse;
-    padding: 0;
   }
 
   .block-container {
@@ -1025,14 +1066,18 @@ div.container {
 
     .block-column {
       flex: 1;
-      margin: 0 0.5rem;
+      margin: 0;
       max-width: 576px;
 
-      &:first-child {
-        margin-left: 0;
-      }
-      &:last-child {
-        margin-right: 0;
+      @include desktop {
+        margin: 0 0.5rem;
+
+        &:first-child {
+          margin-left: 0;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
       }
 
       section {
@@ -1092,6 +1137,17 @@ div.container {
         margin-top: 16px;
         align-items: flex-end;
 
+        ::v-deep .icon {
+          border-radius: 290486px;
+          border: 1px solid #cdcaea;
+          background: white;
+          height: 5rem;
+          width: 5rem;
+          i::before {
+            font-size: 60px;
+          }
+        }
+
         figure {
           position: relative;
 
@@ -1122,6 +1178,10 @@ div.container {
 
         & > .buttons {
           justify-content: center;
+
+          ::v-deep .b-tooltip {
+            padding-right: 0.5em;
+          }
         }
 
         .members {
@@ -1143,11 +1203,19 @@ div.container {
   }
 
   .public-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    padding: 0;
+    margin-top: 1rem;
+
     .group-metadata {
       min-width: 20rem;
       flex: 1;
       padding-left: 1rem;
-      margin: 2rem auto;
+      @include mobile {
+        padding-left: 0;
+      }
 
       .sticky {
         position: sticky;
@@ -1158,14 +1226,28 @@ div.container {
     }
     .main-content {
       min-width: 20rem;
-      padding: 1rem;
       flex: 2;
       background: white;
-      margin: 2rem auto;
+
+      @include desktop {
+        padding: 10px;
+      }
+
+      @include mobile {
+        margin-top: 1rem;
+      }
+
+      h2 {
+        margin: 0 auto 10px;
+      }
     }
 
     section {
-      margin-top: 2rem;
+      margin-top: 0;
+
+      .posts-wrapper {
+        margin-bottom: 1rem;
+      }
     }
   }
 

@@ -4,11 +4,12 @@
       <ul>
         <li>
           <router-link
+            v-if="group"
             :to="{
               name: RouteName.GROUP,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ group.name }}</router-link
+            >{{ group.name || usernameWithDomain(group) }}</router-link
           >
         </li>
         <li>
@@ -78,7 +79,7 @@
           <b-radio
             v-model="editableGroup.visibility"
             name="groupVisibility"
-            :native-value="GroupVisibility.PRIVATE"
+            :native-value="GroupVisibility.UNLISTED"
             >{{ $t("Only accessible through link") }}<br />
             <small>{{
               $t(
@@ -186,6 +187,7 @@ import { IConfig } from "@/types/config.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ErrorResponse } from "@apollo/client/link/error";
 import RouteName from "@/router/name";
+import { buildFileFromIMedia } from "@/utils/image";
 
 @Component({
   components: {
@@ -274,7 +276,19 @@ export default class GroupSettings extends mixins(GroupMixin) {
   }
 
   @Watch("group")
-  async watchUpdateGroup(): Promise<void> {
+  async watchUpdateGroup(oldGroup: IGroup, newGroup: IGroup): Promise<void> {
+    if (
+      oldGroup?.avatar !== undefined &&
+      oldGroup?.avatar !== newGroup?.avatar
+    ) {
+      this.avatarFile = await buildFileFromIMedia(this.group.avatar);
+    }
+    if (
+      oldGroup?.banner !== undefined &&
+      oldGroup?.banner !== newGroup?.banner
+    ) {
+      this.bannerFile = await buildFileFromIMedia(this.group.banner);
+    }
     this.editableGroup = { ...this.group };
   }
 

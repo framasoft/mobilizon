@@ -1046,6 +1046,6 @@
   "Move resource to the root folder": "Move resource to the root folder",
   "Share this group": "Share this group",
   "This group is accessible only through it's link. Be careful where you post this link.": "This group is accessible only through it's link. Be careful where you post this link.",
-  "{count} members": "{count} members",
+  "{count} members": "No members|One member|{count} members",
   "Share": "Share"
 }
