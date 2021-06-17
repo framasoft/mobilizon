@@ -114,7 +114,9 @@ defmodule Mobilizon.Service.Activity.Renderer.Resource do
   end
 
   defp resource_url(activity) do
-    Routes.page_url(Endpoint, :resource, activity.subject_params["resource_uuid"])
+    Endpoint
+    |> Routes.page_url(:resource, activity.subject_params["resource_uuid"])
+    |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

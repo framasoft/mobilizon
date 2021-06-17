@@ -70,12 +70,13 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
   end
 
   defp discussion_url(activity) do
-    Routes.page_url(
-      Endpoint,
+    Endpoint
+    |> Routes.page_url(
       :discussion,
       Actor.preferred_username_and_domain(activity.group),
       activity.subject_params["discussion_slug"]
     )
+    |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

@@ -50,7 +50,9 @@ defmodule Mobilizon.Service.Activity.Renderer.Group do
   end
 
   defp post_url(activity) do
-    Routes.page_url(Endpoint, :post, activity.subject_params["post_slug"])
+    Endpoint
+    |> Routes.page_url(:post, activity.subject_params["post_slug"])
+    |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

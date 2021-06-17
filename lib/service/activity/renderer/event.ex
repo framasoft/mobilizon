@@ -71,11 +71,12 @@ defmodule Mobilizon.Service.Activity.Renderer.Event do
   end
 
   defp event_url(activity) do
-    Routes.page_url(
-      Endpoint,
+    Endpoint
+    |> Routes.page_url(
       :event,
       activity.subject_params["event_uuid"]
     )
+    |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
