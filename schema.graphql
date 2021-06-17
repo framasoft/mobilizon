@@ -1,3 +1,4 @@
+"Represents a schema"
 schema {
   query: RootQueryType
   mutation: RootMutationType
@@ -81,12 +82,6 @@ type Application implements Actor {
   "The actor's banner media"
   banner: Media
 
-  "List of followings"
-  following: [Follower]
-
-  "List of followers"
-  followers: [Follower]
-
   "Number of followers for this actor"
   followersCount: Int
 
@@ -145,6 +140,18 @@ enum ParticipantRoleEnum {
   REJECTED
 }
 
+"Available event sort fields"
+enum EventOrderBy {
+  "Sort by the date the event starts"
+  BEGINS_ON
+
+  "Sort by the date the event was created"
+  INSERTED_AT
+
+  "Sort by the date the event was updated"
+  UPDATED_AT
+}
+
 "A config object"
 type Config {
   "The instance's name"
@@ -192,6 +199,9 @@ type Config {
   "The instance's enabled resource providers"
   resourceProviders: [ResourceProvider]
 
+  "The configuration for upload limits"
+  uploadLimits: UploadLimits
+
   "The instance's available timezones"
   timezones: [String]
 
@@ -221,6 +231,12 @@ type Config {
 
   "The instance auth methods"
   auth: Auth
+
+  "The instance's feed settings"
+  instanceFeeds: InstanceFeeds
+
+  "Web Push settings for the instance"
+  webPush: WebPush
 }
 
 "A tag"
@@ -265,6 +281,16 @@ enum UserRole {
   USER
 }
 
+"""
+A list of possible values for the type option to search an address.
+
+Results may vary depending on the geocoding provider.
+"""
+enum AddressSearchType {
+  "Administrative results (cities, regions,...)"
+  ADMINISTRATIVE
+}
+
 "A todo list"
 type TodoList {
   "The todo list's ID"
@@ -307,6 +333,19 @@ enum SortableUserField {
   ID
 }
 
+interface ActivityObject {
+  id: ID
+}
+
+"A paginated list of activity items"
+type PaginatedActivityList {
+  "A list of activities"
+  elements: [Activity]
+
+  "The total number of elements in the list"
+  total: Int
+}
+
 """
 The `UUID` scalar type represents UUID4 compliant string data, represented as UTF-8
 character sequences. The UUID4 type is most often used to represent unique
@@ -321,6 +360,18 @@ type PaginatedDiscussionList {
 
   "The total number of discussions in the list"
   total: Int
+}
+
+"The set of parameters needed to input a location"
+input LocationInput {
+  "The range in kilometers the user wants to see events"
+  range: Int
+
+  "A geohash representing the user's preferred location"
+  geohash: String
+
+  "A string describing the user's preferred  location"
+  name: String
 }
 
 "The objects that can be in an action log"
@@ -342,7 +393,7 @@ type PaginatedPostList {
 }
 
 "A comment"
-type Comment implements ActionLogObject {
+type Comment implements ActivityObject & ActionLogObject {
   "Internal ID for this comment"
   id: ID
 
@@ -396,6 +447,9 @@ type Comment implements ActionLogObject {
 
   "When was the comment published"
   publishedAt: DateTime
+
+  "Whether this comment needs to be announced to participants"
+  isAnnouncement: Boolean!
 }
 
 "An attached media or a link to a media"
@@ -450,6 +504,14 @@ enum ReportStatus {
 
   "The report has been marked as resolved"
   RESOLVED
+}
+
+enum ActivityAuthor {
+  "Activities created by the current actor"
+  SELF
+
+  "Activities created by others"
+  BY
 }
 
 "The metadata associated to the resource"
@@ -522,6 +584,9 @@ type Media {
 
   "The media's size"
   size: Int
+
+  "The media's metadata"
+  metadata: MediaMetadata
 }
 
 "Instance anonymous participation with validation by captcha configuration"
@@ -563,13 +628,25 @@ type Todo {
 "Root subscription"
 type RootSubscriptionType {
   "Notify when a person's participation's status changed for an event"
-  eventPersonParticipationChanged("The person's ID" personId: ID!): Person
+  eventPersonParticipationChanged(
+    "The person's ID"
+    personId: ID!
+  ): Person
 
   "Notify when a person's membership's status changed for a group"
-  groupMembershipChanged("The person's ID" personId: ID!): Person
+  groupMembershipChanged(
+    "The person's ID"
+    personId: ID!
+
+    "The group's federated username"
+    group: String!
+  ): Person
 
   "Notify when a discussion changed"
-  discussionCommentChanged("The discussion's slug" slug: String!): Discussion
+  discussionCommentChanged(
+    "The discussion's slug"
+    slug: String!
+  ): Discussion
 }
 
 "Represents a deleted feed_token"
@@ -588,6 +665,17 @@ type AnonymousParticipationValidation {
 
   "The policy to validate anonymous participations by captcha"
   captcha: AnonymousParticipationValidationCaptcha
+}
+
+type Location {
+  "The range in kilometers the user wants to see events"
+  range: Int
+
+  "A geohash representing the user's preferred location"
+  geohash: String
+
+  "A string describing the user's preferred  location"
+  name: String
 }
 
 "The list of visibility options for a comment"
@@ -700,7 +788,7 @@ type PaginatedMemberList {
 }
 
 "A post"
-type Post {
+type Post implements ActivityObject {
   "The post's ID"
   id: ID
 
@@ -742,6 +830,15 @@ type Post {
 
   "The posts's media"
   picture: Media
+}
+
+"A paginated list of action logs"
+type PaginatedActionLogList {
+  "A list of action logs"
+  elements: [ActionLog]
+
+  "The total number of action logs in the list"
+  total: Int
 }
 
 "A paginated list of events"
@@ -872,12 +969,6 @@ interface Actor {
   "The actor's banner media"
   banner: Media
 
-  "List of followings"
-  following: [Follower]
-
-  "List of followers"
-  followers: [Follower]
-
   "Number of followers for this actor"
   followersCount: Int
 
@@ -886,6 +977,18 @@ interface Actor {
 
   "The total size of the media from this actor"
   mediaSize: Int
+}
+
+"Some metadata associated with a media"
+type MediaMetadata {
+  "The media width (if a picture)"
+  width: Int
+
+  "The media width (if a height)"
+  height: Int
+
+  "The media blurhash (if a picture"
+  blurhash: String
 }
 
 "Instance anonymous event creation validation configuration"
@@ -953,12 +1056,6 @@ type Person implements ActionLogObject & Actor {
   "The actor's banner media"
   banner: Media
 
-  "List of followings"
-  following: [Follower]
-
-  "List of followers"
-  followers: [Follower]
-
   "Number of followers for this actor"
   followersCount: Int
 
@@ -982,6 +1079,7 @@ type Person implements ActionLogObject & Actor {
 
   "The list of events this person goes to"
   participations(
+    "Filter by event ID"
     eventId: ID
 
     "The page in the paginated participation list"
@@ -992,7 +1090,16 @@ type Person implements ActionLogObject & Actor {
   ): PaginatedParticipantList
 
   "The list of group this person is member of"
-  memberships: PaginatedMemberList
+  memberships(
+    "Filter by group federated username"
+    group: String
+
+    "The page in the paginated memberships list"
+    page: Int
+
+    "The limit of memberships per page"
+    limit: Int
+  ): PaginatedMemberList
 }
 
 "Root Mutation"
@@ -1055,7 +1162,13 @@ type RootMutationType {
   ): Login
 
   "Refresh a token"
-  refreshToken("A refresh token" refreshToken: String!): RefreshedToken
+  refreshToken(
+    "A refresh token"
+    refreshToken: String!
+  ): RefreshedToken
+
+  "Logout an user, deleting a refresh token"
+  logout(refreshToken: String!): String
 
   "Change default actor for user"
   changeDefaultActor(
@@ -1115,10 +1228,16 @@ type RootMutationType {
 
     "When does the user receives a notification about a new pending membership in one of the group they're admin for"
     notificationPendingMembership: NotificationPendingEnum
+
+    "A geohash of the user's preferred location, where they want to see events"
+    location: LocationInput
   ): UserSettings
 
   "Update the user's locale"
-  updateLocale("The user's new locale" locale: String): User
+  updateLocale(
+    "The user's new locale"
+    locale: String
+  ): User
 
   "Create a new person for user"
   createPerson(
@@ -1157,7 +1276,10 @@ type RootMutationType {
   ): Person
 
   "Delete an identity"
-  deletePerson("The person's ID" id: ID!): Person
+  deletePerson(
+    "The person's ID"
+    id: ID!
+  ): Person
 
   "Register a first profile on registration"
   registerPerson(
@@ -1194,6 +1316,9 @@ type RootMutationType {
     "The visibility for the group"
     visibility: GroupVisibility
 
+    "Whether the group can be join freely, with approval or is invite-only."
+    openness: Openness
+
     "The avatar for the group, either as an object or directly the ID of an existing media"
     avatar: MediaInput
 
@@ -1221,6 +1346,9 @@ type RootMutationType {
     "Whether the group can be join freely, with approval or is invite-only."
     openness: Openness
 
+    "Whether this group approves new followers manually"
+    manuallyApprovesFollowers: Boolean
+
     "The avatar for the group, either as an object or directly the ID of an existing media"
     avatar: MediaInput
 
@@ -1232,7 +1360,10 @@ type RootMutationType {
   ): Group
 
   "Delete a group"
-  deleteGroup("The group ID" groupId: ID!): DeletedObject
+  deleteGroup(
+    "The group ID"
+    groupId: ID!
+  ): DeletedObject
 
   "Create an event"
   createEvent(
@@ -1355,7 +1486,10 @@ type RootMutationType {
   ): Event
 
   "Delete an event"
-  deleteEvent("The event ID to delete" eventId: ID!): DeletedObject
+  deleteEvent(
+    "The event ID to delete"
+    eventId: ID!
+  ): DeletedObject
 
   "Create a comment"
   createComment(
@@ -1367,6 +1501,9 @@ type RootMutationType {
 
     "The comment ID this one replies to"
     inReplyToCommentId: ID
+
+    "Should this comment be announced to everyone?"
+    isAnnouncement: Boolean
   ): Comment
 
   "Update a comment"
@@ -1376,10 +1513,16 @@ type RootMutationType {
 
     "The comment ID"
     commentId: ID!
+
+    "Should this comment be announced to everyone?"
+    isAnnouncement: Boolean
   ): Comment
 
   "Delete a single comment"
-  deleteComment("The comment ID" commentId: ID!): Comment
+  deleteComment(
+    "The comment ID"
+    commentId: ID!
+  ): Comment
 
   "Join an event"
   joinEvent(
@@ -1427,10 +1570,16 @@ type RootMutationType {
   ): Participant
 
   "Join a group"
-  joinGroup("The group ID" groupId: ID!): Member
+  joinGroup(
+    "The group ID"
+    groupId: ID!
+  ): Member
 
   "Leave a group"
-  leaveGroup("The group ID" groupId: ID!): DeletedObject
+  leaveGroup(
+    "The group ID"
+    groupId: ID!
+  ): DeletedObject
 
   "Invite an actor to join the group"
   inviteMember(
@@ -1442,10 +1591,16 @@ type RootMutationType {
   ): Member
 
   "Accept an invitation to a group"
-  acceptInvitation("The member ID" id: ID!): Member
+  acceptInvitation(
+    "The member ID"
+    id: ID!
+  ): Member
 
   "Reject an invitation to a group"
-  rejectInvitation("The member ID" id: ID!): Member
+  rejectInvitation(
+    "The member ID"
+    id: ID!
+  ): Member
 
   "Update a member's role"
   updateMember(
@@ -1466,10 +1621,16 @@ type RootMutationType {
   ): Member
 
   "Create a Feed Token"
-  createFeedToken("The actor ID for the feed token" actorId: ID): FeedToken
+  createFeedToken(
+    "The actor ID for the feed token"
+    actorId: ID
+  ): FeedToken
 
   "Delete a feed token"
-  deleteFeedToken("The token to delete" token: String!): DeletedFeedToken
+  deleteFeedToken(
+    "The token to delete"
+    token: String!
+  ): DeletedFeedToken
 
   "Upload a media"
   uploadMedia(
@@ -1484,7 +1645,10 @@ type RootMutationType {
   ): Media
 
   "Remove a media"
-  removeMedia("The media's ID" id: ID!): DeletedObject
+  removeMedia(
+    "The media's ID"
+    id: ID!
+  ): DeletedObject
 
   "Create a report"
   createReport(
@@ -1523,19 +1687,34 @@ type RootMutationType {
   ): ReportNote
 
   "Delete a note on a report"
-  deleteReportNote("The note's ID" noteId: ID!): DeletedObject
+  deleteReportNote(
+    "The note's ID"
+    noteId: ID!
+  ): DeletedObject
 
   "Add a relay subscription"
-  addRelay("The relay hostname to add" address: String!): Follower
+  addRelay(
+    "The relay hostname to add"
+    address: String!
+  ): Follower
 
   "Delete a relay subscription"
-  removeRelay("The relay hostname to delete" address: String!): Follower
+  removeRelay(
+    "The relay hostname to delete"
+    address: String!
+  ): Follower
 
   "Accept a relay subscription"
-  acceptRelay("The accepted relay hostname" address: String!): Follower
+  acceptRelay(
+    "The accepted relay hostname"
+    address: String!
+  ): Follower
 
   "Reject a relay subscription"
-  rejectRelay("The rejected relay hostname" address: String!): Follower
+  rejectRelay(
+    "The rejected relay hostname"
+    address: String!
+  ): Follower
 
   "Save admin settings"
   saveAdminSettings(
@@ -1661,7 +1840,10 @@ type RootMutationType {
   ): Discussion
 
   "Delete a discussion"
-  deleteDiscussion("The discussion's ID" discussionId: ID!): Discussion
+  deleteDiscussion(
+    "The discussion's ID"
+    discussionId: ID!
+  ): Discussion
 
   "Create a resource"
   createResource(
@@ -1703,7 +1885,10 @@ type RootMutationType {
   ): Resource
 
   "Delete a resource"
-  deleteResource("The resource ID" id: ID!): DeletedObject
+  deleteResource(
+    "The resource ID"
+    id: ID!
+  ): DeletedObject
 
   "Get a preview for a resource link"
   previewResourceLink(
@@ -1769,16 +1954,48 @@ type RootMutationType {
   ): Post
 
   "Delete a post"
-  deletePost("The post's ID" id: ID!): DeletedObject
+  deletePost(
+    "The post's ID"
+    id: ID!
+  ): DeletedObject
 
   "Suspend an actor"
-  suspendProfile("The remote profile ID to suspend" id: ID!): DeletedObject
+  suspendProfile(
+    "The remote profile ID to suspend"
+    id: ID!
+  ): DeletedObject
 
   "Unsuspend an actor"
-  unsuspendProfile("The remote profile ID to unsuspend" id: ID!): Actor
+  unsuspendProfile(
+    "The remote profile ID to unsuspend"
+    id: ID!
+  ): Actor
 
   "Refresh a profile"
-  refreshProfile("The remote profile ID to refresh" id: ID!): Actor
+  refreshProfile(
+    "The remote profile ID to refresh"
+    id: ID!
+  ): Actor
+
+  "Update follower"
+  updateFollower(
+    "The follower ID"
+    id: ID!
+
+    "Whether the follower has been approved by the target actor or not"
+    approved: Boolean!
+  ): Follower
+
+  registerPush(endpoint: String!, auth: String!, p256dh: String!): String
+
+  unregisterPush(endpoint: String!): String
+
+  updateActivitySetting(key: String!, method: String!, enabled: Boolean!): ActivitySetting
+}
+
+type ActivityParamItem {
+  key: String
+  value: String
 }
 
 "Instance anonymous event creation email validation configuration"
@@ -1861,7 +2078,10 @@ type RootQueryType {
   ): Events
 
   "Interact with an URI"
-  interact("The URI for to interact with" uri: String!): Interactable
+  interact(
+    "The URI for to interact with"
+    uri: String!
+  ): Interactable
 
   "Get an user"
   user(id: ID!): User
@@ -1897,7 +2117,10 @@ type RootQueryType {
   ): Person
 
   "Get a person by its ID"
-  person("The person ID" id: ID!): Person
+  person(
+    "The person ID"
+    id: ID!
+  ): Person
 
   "Get the persons for an user"
   identities: [Person]
@@ -1951,7 +2174,10 @@ type RootQueryType {
   ): PaginatedGroupList
 
   "Get a group by its ID"
-  getGroup("The group ID" id: ID!): Group
+  getGroup(
+    "The group ID"
+    id: ID!
+  ): Group
 
   "Get a group by its preferred username"
   group(
@@ -1966,13 +2192,25 @@ type RootQueryType {
 
     "The limit of events per page"
     limit: Int
+
+    "Order the list of events by field"
+    orderBy: EventOrderBy
+
+    "Direction for the sort"
+    direction: SortDirection
   ): PaginatedEventList
 
   "Get an event by uuid"
-  event("The event's UUID" uuid: UUID!): Event
+  event(
+    "The event's UUID"
+    uuid: UUID!
+  ): Event
 
   "Get replies for thread"
-  thread("The comment ID" id: ID!): [Comment]
+  thread(
+    "The comment ID"
+    id: ID!
+  ): [Comment]
 
   "Get the list of tags"
   tags(
@@ -1995,6 +2233,9 @@ type RootQueryType {
 
     "The limit of search results per page"
     limit: Int
+
+    "Filter by type of results"
+    type: AddressSearchType
   ): [Address]
 
   "Reverse geocode coordinates"
@@ -2016,11 +2257,14 @@ type RootQueryType {
   config: Config
 
   "Get a media"
-  media("The media ID" id: ID!): Media
+  media(
+    "The media ID"
+    id: ID!
+  ): Media
 
   "Get all reports"
   reports(
-    "The page in the reports participations list"
+    "The page in the report list"
     page: Int
 
     "The limit of reports per page"
@@ -2028,13 +2272,16 @@ type RootQueryType {
 
     "Filter reports by status"
     status: ReportStatus
-  ): [Report]
+  ): PaginatedReportList
 
   "Get a report by id"
-  report("The report ID" id: ID!): Report
+  report(
+    "The report ID"
+    id: ID!
+  ): Report
 
   "Get the list of action logs"
-  actionLogs(page: Int, limit: Int): [ActionLog]
+  actionLogs(page: Int, limit: Int): PaginatedActionLogList
 
   "List the instance's supported languages"
   languages(
@@ -2073,10 +2320,16 @@ type RootQueryType {
   ): PaginatedFollowerList
 
   "Get a todo list"
-  todoList("The todo-list ID" id: ID!): TodoList
+  todoList(
+    "The todo-list ID"
+    id: ID!
+  ): TodoList
 
   "Get a todo"
-  todo("The todo ID" id: ID!): Todo
+  todo(
+    "The todo ID"
+    id: ID!
+  ): Todo
 
   "Get a discussion"
   discussion(
@@ -2097,10 +2350,20 @@ type RootQueryType {
   ): Resource
 
   "Get a post"
-  post("The post's slug" slug: String!): Post
+  post(
+    "The post's slug"
+    slug: String!
+  ): Post
 
   "Get the instance statistics"
   statistics: Statistics
+}
+
+type ActivitySetting {
+  key: String
+  method: String
+  enabled: Boolean
+  user: User
 }
 
 "The list of types an actor can be"
@@ -2149,7 +2412,7 @@ enum InstancePrivacyType {
 }
 
 "A resource"
-type Resource {
+type Resource implements ActivityObject {
   "The resource's ID"
   id: ID
 
@@ -2180,6 +2443,9 @@ type Resource {
   "The resource's last update date"
   updatedAt: NaiveDateTime
 
+  "The resource's publication date"
+  publishedAt: NaiveDateTime
+
   "The resource's type (if it's a folder)"
   type: String
 
@@ -2190,7 +2456,13 @@ type Resource {
   parent: Resource
 
   "Children resources in folder"
-  children: PaginatedResourceList
+  children(
+    "The page in the paginated resource list"
+    page: Int
+
+    "The limit of resources per page"
+    limit: Int
+  ): PaginatedResourceList
 }
 
 "Event options"
@@ -2302,7 +2574,7 @@ type PaginatedTodoListList {
 }
 
 "An event"
-type Event implements Interactable & ActionLogObject {
+type Event implements ActivityObject & Interactable & ActionLogObject {
   "Internal ID for this event"
   id: ID
 
@@ -2357,11 +2629,11 @@ type Event implements Interactable & ActionLogObject {
   "Phone address for the event"
   phoneAddress: String
 
-  "The event's organizer (as a person)"
-  organizerActor: Actor
-
   "Who the event is attributed to (often a group)"
   attributedTo: Actor
+
+  "The event's organizer (as a person)"
+  organizerActor: Actor
 
   "The event's tags"
   tags: [Tag]
@@ -2400,7 +2672,7 @@ type Event implements Interactable & ActionLogObject {
   updatedAt: DateTime
 
   "When the event was created"
-  createdAt: DateTime
+  insertedAt: DateTime
 
   "The event options"
   options: EventOptions
@@ -2434,7 +2706,7 @@ input MediaInputObject {
 }
 
 """
-The `Point` scalar type represents Point geographic information compliant string data,
+The `Point` scalar type represents Point geographic information compliant string data, 
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
@@ -2511,6 +2783,11 @@ enum EventJoinOptions {
   INVITE
 }
 
+type InstanceFeeds {
+  "Whether the instance-wide feeds are enabled"
+  enabled: Boolean
+}
+
 "Event options"
 type EventOptions {
   "The maximum attendee capacity for this event"
@@ -2579,6 +2856,9 @@ type EventOffer {
 
 "Represents an actor's follower"
 type Follower {
+  "The follow ID"
+  id: ID
+
   "What or who the profile follows"
   targetActor: Actor
 
@@ -2596,7 +2876,7 @@ type Follower {
 }
 
 "A discussion"
-type Discussion {
+type Discussion implements ActivityObject {
   "Internal ID for this discussion"
   id: ID
 
@@ -2686,7 +2966,7 @@ type FeedToken {
   "The actor that participates to the event"
   user: User
 
-  "The role of this actor at this event"
+  "A ShortUUID private token"
   token: String
 }
 
@@ -2723,6 +3003,32 @@ type AnonymousParticipationValidationEmail {
   confirmationRequired: Boolean
 }
 
+type Activity {
+  "The activity item ID"
+  id: ID
+
+  "When was the activity inserted"
+  insertedAt: DateTime
+
+  priority: Int
+
+  type: ActivityType
+
+  subject: String
+
+  subjectParams: [ActivityParamItem]
+
+  message: String
+
+  messageParams: [ActivityParamItem]
+
+  object: ActivityObject
+
+  author: Actor
+
+  group: Group
+}
+
 "The list of visibility options for a post"
 enum PostVisibility {
   "Publicly listed and federated. Can be shared."
@@ -2742,6 +3048,17 @@ enum GroupVisibility {
 
   "Visible only to people with the link - or invited"
   UNLISTED
+
+  "Visible only to people with the link - or invited"
+  PRIVATE
+}
+
+type WebPush {
+  "Whether the WebPush feature is enabled"
+  enabled: Boolean
+
+  "The server's public WebPush VAPID key"
+  publicKey: String
 }
 
 "Instance geocoding configuration"
@@ -2778,6 +3095,26 @@ enum GroupType {
 
   "A public group of many actors"
   COMMUNITY
+}
+
+enum ActivityType {
+  "Activities concerning events"
+  EVENT
+
+  "Activities concerning posts"
+  POST
+
+  "Activities concerning discussions"
+  DISCUSSION
+
+  "Activities concerning resources"
+  RESOURCE
+
+  "Activities concerning group settings"
+  GROUP
+
+  "Activities concerning members"
+  MEMBER
 }
 
 "A paginated list of persons"
@@ -2853,6 +3190,14 @@ type Dashboard {
 
   "The number of total confirmed participations to local events"
   numberOfConfirmedParticipationsToLocalEvents: Int
+}
+
+type PaginatedReportList {
+  "A list of reports"
+  elements: [Report]
+
+  "The total number of reports in the list"
+  total: Int
 }
 
 "A paginated list of todos"
@@ -2942,6 +3287,18 @@ type Terms {
   bodyHtml: String
 }
 
+"An upload limits configuration"
+type UploadLimits {
+  "The default limitation, in bytes"
+  default: Int
+
+  "The avatar limitation, in bytes"
+  avatar: Int
+
+  "The banner limitation, in bytes"
+  banner: Int
+}
+
 "Participation statistics"
 type ParticipantStats {
   "The number of approved participants"
@@ -3021,6 +3378,9 @@ type Features {
 
   "Whether event creation is allowed on this instance"
   eventCreation: Boolean
+
+  "Activate link to Koena Connect"
+  koenaConnect: Boolean
 }
 
 "A set of user settings"
@@ -3042,10 +3402,13 @@ type UserSettings {
 
   "When does the user receives a notification about a new pending membership in one of the group they're admin for"
   notificationPendingMembership: NotificationPendingEnum
+
+  "The user's preferred location, where they want to be suggested events"
+  location: Location
 }
 
 "Represents a member of a group"
-type Member {
+type Member implements ActivityObject {
   "The member's ID"
   id: ID
 
@@ -3082,13 +3445,13 @@ type User implements ActionLogObject {
   "The user's default actor"
   defaultActor: Person
 
-  "The datetime when the user was confirmed/activated"
+  "The datetime when the user was confirmed\/activated"
   confirmedAt: DateTime
 
-  "The datetime the last activation/confirmation token was sent"
+  "The datetime the last activation\/confirmation token was sent"
   confirmationSentAt: DateTime
 
-  "The account activation/confirmation token"
+  "The account activation\/confirmation token"
   confirmationToken: String
 
   "The datetime last reset password email was sent"
@@ -3171,10 +3534,13 @@ type User implements ActionLogObject {
 
   "The total size of all the media from this user (from all their actors)"
   mediaSize: Int
+
+  "The user's activity settings"
+  activitySettings: [ActivitySetting]
 }
 
 "Represents a group of actors"
-type Group implements Interactable & Actor {
+type Group implements ActionLogObject & ActivityObject & Interactable & Actor {
   "Internal ID for this group"
   id: ID
 
@@ -3202,7 +3568,7 @@ type Group implements Interactable & Actor {
   "Whether the actors manually approves followers"
   manuallyApprovesFollowers: Boolean
 
-  "Whether the group can be found and/or promoted"
+  "Whether the group can be found and\/or promoted"
   visibility: GroupVisibility
 
   "If the actor is suspended"
@@ -3216,12 +3582,6 @@ type Group implements Interactable & Actor {
 
   "The type of the event's address"
   physicalAddress: Address
-
-  "List of followings"
-  following: [Follower]
-
-  "List of followers"
-  followers: [Follower]
 
   "Number of followers for this actor"
   followersCount: Int
@@ -3248,7 +3608,13 @@ type Group implements Interactable & Actor {
   ): PaginatedEventList
 
   "A list of the discussions for this group"
-  discussions: PaginatedDiscussionList
+  discussions(
+    "The page in the paginated discussion list"
+    page: Int
+
+    "The limit of discussions per page"
+    limit: Int
+  ): PaginatedDiscussionList
 
   "The type of group : Group, Community,…"
   types: GroupType
@@ -3288,4 +3654,31 @@ type Group implements Interactable & Actor {
 
   "A paginated list of the todo lists this group has"
   todoLists: PaginatedTodoListList
+
+  "A paginated list of the followers this group has"
+  followers(
+    "The page in the paginated followers list"
+    page: Int
+
+    "The limit of followers per page"
+    limit: Int
+
+    "Used to filter the followers list by approved status"
+    approved: Boolean
+  ): PaginatedFollowerList
+
+  "The group activity"
+  activity(
+    "The page in the paginated activity items list"
+    page: Int
+
+    "The limit of activity items per page"
+    limit: Int
+
+    "Filter by type of activity"
+    type: ActivityType
+
+    "Filter by activity author"
+    author: ActivityAuthor
+  ): PaginatedActivityList
 }
