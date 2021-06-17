@@ -11,7 +11,12 @@ import { CacheableResponsePlugin } from "workbox-cacheable-response";
 import { ExpirationPlugin } from "workbox-expiration";
 
 import { precacheAndRoute } from "workbox-precaching";
-import { IPushNotification } from "./types/push-notification";
+
+/// <reference lib="WebWorker" />
+
+// export empty type because of tsc --isolatedModules flag
+export type {};
+declare const self: ServiceWorkerGlobalScope;
 
 // Use with precache injection
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -77,24 +82,45 @@ registerRoute(
   })
 );
 
-self.addEventListener("push", async (event: any) => {
-  const payload = event.data.json() as IPushNotification;
+self.addEventListener("push", async (event: PushEvent) => {
+  if (!event.data) return;
+  const payload = event.data.json();
   console.log("received push", payload);
   const options = {
-    title: payload.title,
     body: payload.body,
     icon: "/img/icons/android-chrome-512x512.png",
     badge: "/img/icons/badge-128x128.png",
-    timestamp: new Date(payload.timestamp),
+    timestamp: new Date(payload.timestamp).getTime(),
     lang: payload.locale,
     data: {
       dateOfArrival: Date.now(),
+      url: payload.url,
     },
   };
 
+  event.waitUntil(self.registration.showNotification(payload.title, options));
+});
+
+self.addEventListener("notificationclick", function (event: NotificationEvent) {
+  const url = event.notification.data.url;
+  event.notification.close();
+
+  // This looks to see if the current is already open and
+  // focuses if it is
   event.waitUntil(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    self.registration.showNotification(payload.title, options)
+    (async () => {
+      const clientList = await self.clients.matchAll({
+        type: "window",
+      });
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i] as WindowClient;
+        if (client.url == url && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(url);
+      }
+    })()
   );
 });
