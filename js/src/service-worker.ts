@@ -42,10 +42,11 @@ registerRoute(
 
 // Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
 registerRoute(
-  // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
+  // Check to see if the request's destination is style for stylesheets, script for JavaScript, font, or worker for web worker
   ({ request }) =>
     request.destination === "style" ||
     request.destination === "script" ||
+    request.destination === "font" ||
     request.destination === "worker",
   // Use a Stale While Revalidate caching strategy
   new StaleWhileRevalidate({
