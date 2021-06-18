@@ -2,7 +2,13 @@
   <article class="box">
     <div class="identity-header">
       <figure class="image is-24x24" v-if="participation.actor.avatar">
-        <img class="is-rounded" :src="participation.actor.avatar.url" alt="" />
+        <img
+          class="is-rounded"
+          :src="participation.actor.avatar.url"
+          alt=""
+          height="24"
+          width="24"
+        />
       </figure>
       {{ displayNameAndUsername(participation.actor) }}
     </div>
