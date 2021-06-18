@@ -179,7 +179,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
-import { defaultExtensions } from "@tiptap/starter-kit";
+import StarterKit from "@tiptap/starter-kit";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
@@ -241,6 +241,7 @@ export default class EditorComponent extends Vue {
   mounted(): void {
     this.editor = new Editor({
       extensions: [
+        StarterKit,
         Document,
         Paragraph,
         Text,
@@ -253,7 +254,6 @@ export default class EditorComponent extends Vue {
         CharacterCount.configure({
           limit: this.maxSize,
         }),
-        ...defaultExtensions(),
       ],
       injectCSS: false,
       content: this.value,

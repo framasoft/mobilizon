@@ -70,7 +70,6 @@
     "@types/prosemirror-model": "^1.7.2",
     "@types/prosemirror-state": "^1.2.4",
     "@types/prosemirror-view": "^1.11.4",
-    "@types/vuedraggable": "^2.23.0",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vue/cli-plugin-babel": "~5.0.0-beta.2",
