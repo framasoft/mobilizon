@@ -138,6 +138,7 @@ self.addEventListener("notificationclick", function (event: NotificationEvent) {
     (async () => {
       const clientList = await self.clients.matchAll({
         type: "window",
+        includeUncontrolled: true,
       });
       for (let i = 0; i < clientList.length; i++) {
         const client = clientList[i] as WindowClient;
