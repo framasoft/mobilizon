@@ -26,6 +26,7 @@ import {
   typePolicies,
   refreshAccessToken,
 } from "./apollo/utils";
+import { GraphQLError } from "graphql";
 
 // Install the vue plugin
 Vue.use(VueApollo);
@@ -120,10 +121,14 @@ const errorLink = onError(
     }
 
     if (graphQLErrors) {
-      graphQLErrors.map(({ message, locations, path }) =>
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        )
+      graphQLErrors.map(
+        (graphQLError: GraphQLError & { status_code?: number }) => {
+          if (graphQLError?.status_code !== 401) {
+            console.log(
+              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${graphQLError.locations}, Path: ${graphQLError.path}`
+            );
+          }
+        }
       );
     }
 
