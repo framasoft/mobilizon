@@ -83,6 +83,24 @@ registerRoute(
   })
 );
 
+async function isClientFocused(): Promise<boolean> {
+  const windowClients = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+
+  let clientIsFocused = false;
+  for (let i = 0; i < windowClients.length; i++) {
+    const windowClient = windowClients[i] as WindowClient;
+    if (windowClient.focused) {
+      clientIsFocused = true;
+      break;
+    }
+  }
+
+  return clientIsFocused;
+}
+
 self.addEventListener("push", async (event: PushEvent) => {
   if (!event.data) return;
   const payload = event.data.json();
@@ -99,7 +117,15 @@ self.addEventListener("push", async (event: PushEvent) => {
     },
   };
 
-  event.waitUntil(self.registration.showNotification(payload.title, options));
+  event.waitUntil(
+    (async () => {
+      if (await isClientFocused()) {
+        // No need to show a notification, client already focused
+        return;
+      }
+      self.registration.showNotification(payload.title, options);
+    })()
+  );
 });
 
 self.addEventListener("notificationclick", function (event: NotificationEvent) {
