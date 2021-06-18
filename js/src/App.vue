@@ -117,11 +117,38 @@ export default class App extends Vue {
     window.addEventListener("offline", () => {
       this.online = false;
       this.showOfflineNetworkWarning();
-      console.log("offline");
+      console.debug("offline");
     });
     window.addEventListener("online", () => {
       this.online = true;
-      console.log("online");
+      console.debug("online");
+    });
+    document.addEventListener("refreshApp", (event: Event) => {
+      this.$buefy.snackbar.open({
+        queue: false,
+        indefinite: true,
+        type: "is-primary",
+        actionText: this.$t("Update app") as string,
+        cancelText: this.$t("Ignore") as string,
+        message: this.$t("A new version is available.") as string,
+        onAction: async () => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          const detail = event.detail;
+          const registration = detail as ServiceWorkerRegistration;
+          try {
+            await this.refreshApp(registration);
+            window.location.reload();
+          } catch (err) {
+            console.error(err);
+            this.$notifier.error(
+              this.$t(
+                "An error has occured while refreshing the page."
+              ) as string
+            );
+          }
+        },
+      });
     });
 
     this.interval = setInterval(async () => {
@@ -136,6 +163,30 @@ export default class App extends Vue {
         }
       }
     }, 60000);
+  }
+
+  private async refreshApp(
+    registration: ServiceWorkerRegistration
+  ): Promise<any> {
+    const worker = registration.waiting;
+    if (!worker) {
+      return Promise.resolve();
+    }
+    console.debug("Doing worker.skipWaiting().");
+    return new Promise((resolve, reject) => {
+      const channel = new MessageChannel();
+
+      channel.port1.onmessage = (event) => {
+        console.debug("Done worker.skipWaiting().");
+        if (event.data.error) {
+          reject(event.data);
+        } else {
+          resolve(event.data);
+        }
+      };
+      console.debug("calling skip waiting");
+      worker?.postMessage({ type: "skip-waiting" }, [channel.port2]);
+    });
   }
 
   showOfflineNetworkWarning(): void {

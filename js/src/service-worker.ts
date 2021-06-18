@@ -124,3 +124,17 @@ self.addEventListener("notificationclick", function (event: NotificationEvent) {
     })()
   );
 });
+
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
+  const replyPort = event.ports[0];
+  const message = event.data;
+  if (replyPort && message && message.type === "skip-waiting") {
+    console.log("doing skip waiting");
+    event.waitUntil(
+      self.skipWaiting().then(
+        () => replyPort.postMessage({ error: null }),
+        (error) => replyPort.postMessage({ error })
+      )
+    );
+  }
+});

@@ -1047,5 +1047,11 @@
   "Share this group": "Share this group",
   "This group is accessible only through it's link. Be careful where you post this link.": "This group is accessible only through it's link. Be careful where you post this link.",
   "{count} members": "No members|One member|{count} members",
-  "Share": "Share"
+  "Share": "Share",
+  "Update app": "Update app",
+  "Ignore": "Ignore",
+  "A new version is available.": "A new version is available.",
+  "An error has occured while refreshing the page.": "An error has occured while refreshing the page.",
+  "Join group {group}": "Join group {group}",
+  "Public preview": "Public preview"
 }
