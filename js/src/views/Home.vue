@@ -52,11 +52,13 @@
       v-if="config && (!currentUser.id || !currentActor.id)"
     >
       <section class="events-recent">
-        <h2 class="is-size-2 has-text-weight-bold">
+        <h2 class="title">
           {{ $t("Last published events") }}
         </h2>
         <p>
-          {{ $t("On {instance}", { instance: config.name }) }}
+          <i18n tag="span" path="On {instance} and other federated instances">
+            <b slot="instance">{{ config.name }}</b>
+          </i18n>
           <b-loading :active.sync="$apollo.loading" />
         </p>
         <b-loading :active.sync="$apollo.loading" />
@@ -176,7 +178,7 @@
       class="container section"
       v-if="config && loggedUser && loggedUser.settings"
     >
-      <section v-if="currentActor.id">
+      <section v-if="currentActor.id && (welcomeBack || newRegisteredUser)">
         <b-message type="is-info" v-if="welcomeBack">{{
           $t("Welcome back {username}!", {
             username: currentActor.displayName(),
@@ -189,34 +191,33 @@
         }}</b-message>
       </section>
       <!-- Your upcoming events -->
-      <section v-if="canShowMyUpcomingEvents" class="container">
-        <h3 class="title">{{ $t("Your upcoming events") }}</h3>
+      <section v-if="canShowMyUpcomingEvents">
+        <h2 class="title">{{ $t("Your upcoming events") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
-          <span
+          <p
             class="date-component-container"
             v-if="isInLessThanSevenDays(row[0])"
           >
-            <date-component :date="row[0]" />
-            <subtitle v-if="isToday(row[0])">{{
+            <span v-if="isToday(row[0])">{{
               $tc("You have one event today.", row[1].length, {
                 count: row[1].length,
               })
-            }}</subtitle>
-            <subtitle v-else-if="isTomorrow(row[0])">{{
+            }}</span>
+            <span v-else-if="isTomorrow(row[0])">{{
               $tc("You have one event tomorrow.", row[1].length, {
                 count: row[1].length,
               })
-            }}</subtitle>
-            <subtitle v-else-if="isInLessThanSevenDays(row[0])">
+            }}</span>
+            <span v-else-if="isInLessThanSevenDays(row[0])">
               {{
                 $tc("You have one event in {days} days.", row[1].length, {
                   count: row[1].length,
                   days: calculateDiffDays(row[0]),
                 })
               }}
-            </subtitle>
-          </span>
+            </span>
+          </p>
           <div>
             <EventListCard
               v-for="participation in thisWeek(row)"
@@ -232,9 +233,13 @@
           >
         </span>
       </section>
+      <hr
+        class="home-separator"
+        v-if="canShowMyUpcomingEvents && canShowLastWeekEvents"
+      />
       <!-- Last week events -->
       <section v-if="canShowLastWeekEvents">
-        <h3 class="title">{{ $t("Last week") }}</h3>
+        <h2 class="title">{{ $t("Last week") }}</h2>
         <b-loading :active.sync="$apollo.loading" />
         <div>
           <EventListCard
@@ -246,9 +251,13 @@
           />
         </div>
       </section>
+      <hr
+        class="home-separator"
+        v-if="canShowLastWeekEvents && canShowCloseEvents"
+      />
       <!-- Events close to you -->
       <section class="events-close" v-if="canShowCloseEvents">
-        <h2 class="is-size-2 has-text-weight-bold">
+        <h2 class="title">
           {{ $t("Events nearby") }}
         </h2>
         <p>
@@ -289,11 +298,13 @@
         "
       />
       <section class="events-recent">
-        <h2 class="is-size-2 has-text-weight-bold">
+        <h2 class="title">
           {{ $t("Last published events") }}
         </h2>
         <p>
-          {{ $t("On {instance}", { instance: config.name }) }}
+          <i18n tag="span" path="On {instance} and other federated instances">
+            <b slot="instance">{{ config.name }}</b>
+          </i18n>
           <b-loading :active.sync="$apollo.loading" />
         </p>
 
@@ -629,20 +640,16 @@ main > div > .container {
 .date-component-container {
   display: flex;
   align-items: center;
-  margin: 1.5rem auto;
+  margin: 0.5rem auto 1rem;
 
   h3.subtitle {
     margin-left: 7px;
   }
 }
 
-section.container {
-  margin: auto auto 3rem;
-}
-
 span.view-all {
   display: block;
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: right;
 
   a {
@@ -688,8 +695,8 @@ section.hero {
 }
 
 #recent_events {
-  padding: 1rem 0;
-  min-height: calc(100vh - 400px);
+  padding: 0;
+  min-height: 20vh;
   z-index: 10;
 
   .title {
@@ -697,7 +704,7 @@ section.hero {
   }
 
   .columns {
-    margin: 0rem auto 3rem;
+    margin: 0 auto;
   }
 }
 
@@ -760,5 +767,12 @@ section.hero {
 
 .clickable {
   cursor: pointer;
+}
+
+.title {
+  font-size: 27px;
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
 }
 </style>

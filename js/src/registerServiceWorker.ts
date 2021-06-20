@@ -5,25 +5,27 @@ import { register } from "register-service-worker";
 if ("serviceWorker" in navigator && isProduction()) {
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
-      console.log(
+      console.debug(
         "App is being served from cache by a service worker.\n" +
           "For more details, visit https://goo.gl/AFskqB"
       );
     },
     registered() {
-      console.log("Service worker has been registered.");
+      console.debug("Service worker has been registered.");
     },
     cached() {
-      console.log("Content has been cached for offline use.");
+      console.debug("Content has been cached for offline use.");
     },
     updatefound() {
-      console.log("New content is downloading.");
+      console.debug("New content is downloading.");
     },
-    updated() {
-      console.log("New content is available; please refresh.");
+    updated(registration: ServiceWorkerRegistration) {
+      const event = new CustomEvent("refreshApp", { detail: registration });
+      document.dispatchEvent(event);
+      console.debug("New content is available; please refresh.");
     },
     offline() {
-      console.log(
+      console.debug(
         "No internet connection found. App is running in offline mode."
       );
     },
@@ -34,6 +36,5 @@ if ("serviceWorker" in navigator && isProduction()) {
 }
 
 function isProduction(): boolean {
-  return true;
-  // return process.env.NODE_ENV === "production";
+  return process.env.NODE_ENV === "production";
 }

@@ -42,10 +42,11 @@ registerRoute(
 
 // Cache CSS, JS, and Web Worker requests with a Stale While Revalidate strategy
 registerRoute(
-  // Check to see if the request's destination is style for stylesheets, script for JavaScript, or worker for web worker
+  // Check to see if the request's destination is style for stylesheets, script for JavaScript, font, or worker for web worker
   ({ request }) =>
     request.destination === "style" ||
     request.destination === "script" ||
+    request.destination === "font" ||
     request.destination === "worker",
   // Use a Stale While Revalidate caching strategy
   new StaleWhileRevalidate({
@@ -82,6 +83,24 @@ registerRoute(
   })
 );
 
+async function isClientFocused(): Promise<boolean> {
+  const windowClients = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+
+  let clientIsFocused = false;
+  for (let i = 0; i < windowClients.length; i++) {
+    const windowClient = windowClients[i] as WindowClient;
+    if (windowClient.focused) {
+      clientIsFocused = true;
+      break;
+    }
+  }
+
+  return clientIsFocused;
+}
+
 self.addEventListener("push", async (event: PushEvent) => {
   if (!event.data) return;
   const payload = event.data.json();
@@ -98,7 +117,15 @@ self.addEventListener("push", async (event: PushEvent) => {
     },
   };
 
-  event.waitUntil(self.registration.showNotification(payload.title, options));
+  event.waitUntil(
+    (async () => {
+      if (await isClientFocused()) {
+        // No need to show a notification, client already focused
+        return;
+      }
+      self.registration.showNotification(payload.title, options);
+    })()
+  );
 });
 
 self.addEventListener("notificationclick", function (event: NotificationEvent) {
@@ -111,6 +138,7 @@ self.addEventListener("notificationclick", function (event: NotificationEvent) {
     (async () => {
       const clientList = await self.clients.matchAll({
         type: "window",
+        includeUncontrolled: true,
       });
       for (let i = 0; i < clientList.length; i++) {
         const client = clientList[i] as WindowClient;
@@ -123,4 +151,18 @@ self.addEventListener("notificationclick", function (event: NotificationEvent) {
       }
     })()
   );
+});
+
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
+  const replyPort = event.ports[0];
+  const message = event.data;
+  if (replyPort && message && message.type === "skip-waiting") {
+    console.log("doing skip waiting");
+    event.waitUntil(
+      self.skipWaiting().then(
+        () => replyPort.postMessage({ error: null }),
+        (error) => replyPort.postMessage({ error })
+      )
+    );
+  }
 });

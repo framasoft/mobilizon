@@ -561,7 +561,6 @@
   "On {date} ending at {endTime}": "Le {date}, se terminant à {endTime}",
   "On {date} from {startTime} to {endTime}": "Le {date} de {startTime} à {endTime}",
   "On {date} starting at {startTime}": "Le {date} à partir de {startTime}",
-  "On {instance}": "Sur {instance}",
   "Ongoing tasks": "Tâches en cours",
   "Only accessible through link": "Accessible uniquement par le lien",
   "Only accessible through link (private)": "Uniquement accessible par lien (privé)",
@@ -1138,5 +1137,12 @@
   "Share this group": "Partager ce groupe",
   "This group is accessible only through it's link. Be careful where you post this link.": "Ce groupe est accessible uniquement à travers son lien. Faites attention où vous le diffusez.",
   "{count} members": "Aucun membre|Un⋅e membre|{count} membres",
-  "Share": "Partager"
+  "Share": "Partager",
+  "Update app": "Mettre à jour",
+  "Ignore": "Ignorer",
+  "A new version is available.": "Une nouvelle version est disponible.",
+  "An error has occured while refreshing the page.": "Une erreur est survenue lors du rafraîchissement de la page.",
+  "Join group {group}": "Rejoindre le groupe {group}",
+  "Public preview": "Aperçu public",
+  "On {instance} and other federated instances": "Sur {instance} et d'autres instances fédérées"
 }

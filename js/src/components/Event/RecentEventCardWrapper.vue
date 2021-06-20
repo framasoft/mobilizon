@@ -30,6 +30,6 @@ export default class RecentEventCardWrapper extends Vue {
 </script>
 <style lang="scss" scoped>
 p.time {
-  color: $orange-2;
+  color: $violet-3;
 }
 </style>
