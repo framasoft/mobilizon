@@ -276,7 +276,7 @@ release-create:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules: *tag-rules
   before_script:
-    - apk --no-cache add awk sed grep
+    - apk --no-cache add gawk sed grep
   script: |
     APP_VERSION="${CI_COMMIT_TAG}"
     APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
