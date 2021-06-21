@@ -252,34 +252,45 @@ package-app-dev:
 
 release-upload:
   stage: upload
-  image: curlimages/curl:latest
-  rules:
-    - if: $CI_COMMIT_TAG
-  script: |
-    APP_VERSION="${CI_COMMIT_TAG}"
-    APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
+  image: framasoft/yakforms-assets-deploy:latest
+  only:
+    variables:
+      - $CI_COMMIT_TAG
+      - $DEPLOYEMENT_KEY
+      - $DEPLOYEMENT_USER
+      - $DEPLOYEMENT_HOST
+  script:
+    - APP_VERSION="${CI_COMMIT_TAG}"
+    - APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
 
-    echo "Artifact: ${APP_ASSET}"
-    tar czf ${APP_ASSET} -C release mobilizon
-    ls -al ${APP_ASSET}
+    - 'echo "Artifact: ${APP_ASSET}"'
+    - tar czf ${APP_ASSET} -C release mobilizon
+    - ls -al ${APP_ASSET}
 
-    curl --silent --show-error --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${APP_ASSET}" ${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}
+    - eval `ssh-agent -s`
+    - ssh-add <(echo "${DEPLOYEMENT_KEY}" | base64 --decode -i)
+    - echo "put -r ${APP_ASSET}" | sftp -o "VerifyHostKeyDNS yes" ${DEPLOYEMENT_USER}@${DEPLOYEMENT_HOST}:public/
   artifacts:
     expire_in: 1 day
     when: on_success
     paths:
       - mobilizon_*.tar.gz
-# release-create:
-#   stage: deploy
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   rules:
-#     - if: $CI_COMMIT_TAG
-#   dependencies: []
-#   cache: {}
-#   script: |
-#     APP_VERSION="${CI_COMMIT_TAG}"
-#     APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
 
-#     release-cli create  --name "$CI_PROJECT_TITLE v$CI_COMMIT_TAG" \
-#                         --tag-name "$CI_COMMIT_TAG" \
-#                         --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}\"}"
+release-create:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  only:
+    variables:
+      - $CI_COMMIT_TAG
+  before_script:
+    - apk --no-cache add awk sed grep
+  script: |
+    APP_VERSION="${CI_COMMIT_TAG}"
+    APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
+    CHANGELOG=$(awk -v version="$APP_VERSION" '/^## / { printit = $2 == version }; printit' CHANGELOG.md | grep -v "## $APP_VERSION" | sed '1{/^$/d}')
+    ENDPOINT="https://packages.joinmobilizon.org"
+
+    release-cli create  --name "$CI_PROJECT_TITLE v$CI_COMMIT_TAG" \
+                        --description "$CHANGELOG" \
+                        --tag-name "$CI_COMMIT_TAG" \
+                        --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${ENDPOINT}/${APP_ASSET}\"}"
