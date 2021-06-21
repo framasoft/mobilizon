@@ -52,7 +52,7 @@ exports[`ParticipationWithoutAccount handles being already a participant 1`] = `
           <!---->
         </div>
         <div class="field">
-          <!----><label class="b-checkbox checkbox"><input type="checkbox" true-value="true" value="false"><span class="check"></span><span class="control-label"><b>Remember my participation in this browser</b> <p>
+          <!----><label class="b-checkbox checkbox"><input type="checkbox" autocomplete="on" true-value="true" value="false"><span class="check"></span><span class="control-label"><b>Remember my participation in this browser</b> <p>
               Will allow to display and manage your participation status on the event page when using this device. Uncheck if you're using a public device.
             </p></span></label>
           <!---->
