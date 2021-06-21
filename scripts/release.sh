@@ -20,7 +20,4 @@ fi
 
 git tag -s -a "$version" -m "$changelog"
 
-APP_VERSION="${CI_COMMIT_TAG}"
-APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
-
-release-cli create  --name "$CI_COMMIT_TAG" --tag-name "$CI_COMMIT_TAG" --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${APP_VERSION}/${APP_ASSET}\"}"
+git push origin "$version"
