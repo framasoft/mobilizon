@@ -6,6 +6,7 @@ defmodule Mobilizon.Service.MetadataTest do
   alias Mobilizon.Service.Metadata
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Endpoint
+  alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.Router.Helpers, as: Routes
   use Mobilizon.DataCase
   import Mobilizon.Factory
@@ -37,29 +38,81 @@ defmodule Mobilizon.Service.MetadataTest do
   end
 
   describe "build_tags/2 for an event" do
+    @long_description """
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada commodo nunc, dictum dignissim erat aliquet quis. Morbi iaculis scelerisque magna eu dapibus. Morbi ultricies mollis arcu, vel auctor enim dapibus ut. Cras tempus sapien eu lacus blandit suscipit. Fusce tincidunt fringilla velit non elementum. Etiam pretium venenatis placerat. Suspendisse interdum, justo efficitur faucibus commodo, dolor elit vehicula lacus, eu molestie nulla mi vel dolor. Nullam fringilla at lorem a gravida. Praesent viverra, ante eu porttitor rutrum, ex leo condimentum felis, vitae vestibulum neque turpis in nunc. Nullam aliquam rhoncus ornare. Suspendisse finibus finibus est sed eleifend. Nam a massa vestibulum, mollis lorem vel, placerat purus. Nam ex nunc, hendrerit ut lacinia ac, pellentesque eu est.</p>
+
+    <p>Fusce nec odio tellus. Aliquam at fermentum turpis, ut dictum tellus. Fusce ac nibh vehicula, imperdiet ipsum sit amet, pellentesque dui. Vivamus venenatis efficitur elementum. Quisque mattis dui ac faucibus mollis. Nullam ac malesuada nisi, vitae scelerisque nisi. Nulla placerat nunc non convallis sollicitudin. Donec sed pulvinar leo, quis tristique eros. Nulla pretium elit ante, consectetur aliquam sapien varius nec. Donec cursus, orci quis suscipit placerat, mi lectus convallis sem, et scelerisque urna libero nec sapien. Nam quis justo ante. Nulla placerat est nec suscipit euismod.</p>
+    """
+    @truncated_description "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer malesuada commodo nunc, dictum dignissim erat aliquet quis. Morbi iaculis scelerisque magna eu dapibus. Morbi ultricies mollis arcu, vel…"
+
     test "gives tags" do
-      alias Mobilizon.Web.Endpoint
+      %Event{} = event = insert(:event, description: @long_description)
 
-      %Event{} = event = insert(:event)
+      tags_output = event |> Metadata.build_tags() |> Metadata.Utils.stringify_tags()
+      {:ok, document} = Floki.parse_fragment(tags_output)
+      assert "#{event.title} - Mobilizon" == document |> Floki.find("title") |> Floki.text()
 
-      # Because the description in Schema.org data is double-escaped
-      a = "\n"
-      b = "\\n"
+      assert @truncated_description ==
+               document
+               |> Floki.find("meta[name=\"description\"]")
+               |> Floki.attribute("content")
+               |> hd
 
-      assert event
-             |> Metadata.build_tags()
-             |> Metadata.Utils.stringify_tags() ==
-               String.trim("""
-               <title>#{event.title} - Mobilizon</title><meta content="#{event.description}" name="description"><meta content="#{event.title}" property="og:title"><meta content="#{event.url}" property="og:url"><meta content="#{event.description}" property="og:description"><meta content="website" property="og:type"><link href="#{event.url}" rel="canonical"><meta content="#{event.picture.file.url}" property="og:image"><meta content="summary_large_image" property="twitter:card"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Event","description":"#{String.replace(event.description, a, b)}","endDate":"#{DateTime.to_iso8601(event.ends_on)}","eventStatus":"https://schema.org/EventScheduled","image":["#{event.picture.file.url}"],"location":{"@type":"Place","address":{"@type":"PostalAddress","addressCountry":"My Country","addressLocality":"My Locality","addressRegion":"My Region","postalCode":"My Postal Code","streetAddress":"My Street Address"},"name":"#{event.physical_address.description}"},"name":"#{event.title}","organizer":{"@type":"Person","name":"#{event.organizer_actor.preferred_username}"},"performer":{"@type":"Person","name":"#{event.organizer_actor.preferred_username}"},"startDate":"#{DateTime.to_iso8601(event.begins_on)}"}</script>
-               """)
+      assert event.title ==
+               document
+               |> Floki.find("meta[property=\"og:title\"]")
+               |> Floki.attribute("content")
+               |> hd
 
-      assert event
-             |> Map.put(:picture, nil)
-             |> Metadata.build_tags()
-             |> Metadata.Utils.stringify_tags() ==
-               String.trim("""
-               <title>#{event.title} - Mobilizon</title><meta content="#{event.description}" name="description"><meta content="#{event.title}" property="og:title"><meta content="#{event.url}" property="og:url"><meta content="#{event.description}" property="og:description"><meta content="website" property="og:type"><link href="#{event.url}" rel="canonical"><meta content="summary_large_image" property="twitter:card"><script type="application/ld+json">{"@context":"https://schema.org","@type":"Event","description":"#{String.replace(event.description, a, b)}","endDate":"#{DateTime.to_iso8601(event.ends_on)}","eventStatus":"https://schema.org/EventScheduled","image":["#{"#{Endpoint.url()}/img/mobilizon_default_card.png"}"],"location":{"@type":"Place","address":{"@type":"PostalAddress","addressCountry":"My Country","addressLocality":"My Locality","addressRegion":"My Region","postalCode":"My Postal Code","streetAddress":"My Street Address"},"name":"#{event.physical_address.description}"},"name":"#{event.title}","organizer":{"@type":"Person","name":"#{event.organizer_actor.preferred_username}"},"performer":{"@type":"Person","name":"#{event.organizer_actor.preferred_username}"},"startDate":"#{DateTime.to_iso8601(event.begins_on)}"}</script>
-               """)
+      assert event.url ==
+               document
+               |> Floki.find("meta[property=\"og:url\"]")
+               |> Floki.attribute("content")
+               |> hd
+
+      assert document
+             |> Floki.find("meta[property=\"og:description\"]")
+             |> Floki.attribute("content")
+             |> hd =~ @truncated_description
+
+      assert "website" ==
+               document
+               |> Floki.find("meta[property=\"og:type\"]")
+               |> Floki.attribute("content")
+               |> hd
+
+      assert event.url ==
+               document
+               |> Floki.find("link[rel=\"canonical\"]")
+               |> Floki.attribute("href")
+               |> hd
+
+      assert event.picture.file.url ==
+               document
+               |> Floki.find("meta[property=\"og:image\"]")
+               |> Floki.attribute("content")
+               |> hd
+
+      assert "summary_large_image" ==
+               document
+               |> Floki.find("meta[property=\"twitter:card\"]")
+               |> Floki.attribute("content")
+               |> hd
+
+      assert "event.json" |> ObjectView.render(%{event: event}) |> Jason.encode!() ==
+               document
+               |> Floki.find("script[type=\"application/ld+json\"]")
+               |> Floki.text(js: true)
+
+      tags_output =
+        event
+        |> Map.put(:picture, nil)
+        |> Metadata.build_tags()
+        |> Metadata.Utils.stringify_tags()
+
+      {:ok, document} = Floki.parse_fragment(tags_output)
+
+      assert [] == Floki.find(document, "meta[property=\"og:image\"]")
     end
   end
 
