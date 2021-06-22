@@ -3,6 +3,7 @@ defmodule Mobilizon.Service.Metadata.Utils do
   Tools to convert tags to string.
   """
 
+  alias Mobilizon.Service.{Address, DateTime}
   alias Mobilizon.Service.Formatter.HTML, as: HTMLFormatter
   alias Phoenix.HTML
   import Mobilizon.Web.Gettext
@@ -51,6 +52,9 @@ defmodule Mobilizon.Service.Metadata.Utils do
     Gettext.put_locale(locale)
     gettext("The event organizer didn't add any description.")
   end
+
+  defdelegate datetime_to_string(datetime, locale \\ "en", format \\ :medium), to: DateTime
+  defdelegate render_address(address), to: Address
 
   defp maybe_slice(description, limit) do
     if String.length(description) > limit do

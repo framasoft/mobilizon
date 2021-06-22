@@ -5,6 +5,7 @@ defmodule Mobilizon.Cldr do
 
   use Cldr,
     locales: Application.get_env(:mobilizon, :cldr)[:locales],
+    add_fallback_locales: true,
     gettext:
       if(Application.fetch_env!(:mobilizon, :env) == :prod,
         do: Mobilizon.Web.Gettext,
