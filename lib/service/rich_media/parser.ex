@@ -287,7 +287,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   end
 
   @spec check_remote_picture_path(map()) :: map()
-  defp check_remote_picture_path(%{image_remote_url: image_remote_url, url: url} = data) do
+  defp check_remote_picture_path(%{image_remote_url: image_remote_url, url: url} = data)
+       when is_binary(image_remote_url) and is_binary(url) do
     Logger.debug("Checking image_remote_url #{image_remote_url}")
 
     data = Map.put(data, :image_remote_url, format_url(url, image_remote_url))
