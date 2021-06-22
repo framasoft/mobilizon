@@ -96,6 +96,7 @@ defmodule Mobilizon.Posts.Post do
     |> TitleSlug.unique_constraint()
     |> maybe_generate_url()
     |> validate_required(@required_attrs -- [:slug, :url])
+    |> unique_constraint(:url)
   end
 
   defp maybe_generate_id(%Ecto.Changeset{} = changeset) do

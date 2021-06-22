@@ -42,6 +42,29 @@ defmodule Mobilizon.PostsTest do
       end
     end
 
+    test "create_post/1 with an already existing URL returns error changeset" do
+      %Actor{} = actor = insert(:actor)
+      %Actor{} = group = insert(:group)
+
+      post_data =
+        Map.merge(@valid_attrs, %{
+          author_id: actor.id,
+          attributed_to_id: group.id,
+          url: "https://remote.tld/p/post"
+        })
+
+      {:ok, %Post{} = _post} = Posts.create_post(post_data)
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  url:
+                    {"has already been taken",
+                     [constraint: :unique, constraint_name: "posts_url_index"]}
+                ]
+              }} = Posts.create_post(post_data)
+    end
+
     test "create_post/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Posts.create_post(@invalid_attrs)
     end
