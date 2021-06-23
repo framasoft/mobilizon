@@ -17,7 +17,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.CleanupPosts do
         Mobilizon.Storage.Repo,
         "SELECT * FROM (
           SELECT id, url,
-          ROW_NUMBER() OVER(PARTITION BY url ORDER BY id asc) AS Row
+          ROW_NUMBER() OVER(PARTITION BY url ORDER BY inserted_at asc) AS Row
           FROM posts
         ) dups
         WHERE dups.Row > 1;"
@@ -50,7 +50,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.CleanupPosts do
   defp repair_post_medias(id, first_id) do
     Ecto.Adapters.SQL.query!(
       Mobilizon.Storage.Repo,
-      "UPDATE post_medias SET post_id = $1 WHERE post_id = $2",
+      "UPDATE posts_medias SET post_id = $1 WHERE post_id = $2",
       [first_id, id]
     )
   end
@@ -58,7 +58,7 @@ defmodule Mobilizon.Storage.Repo.Migrations.CleanupPosts do
   defp repair_post_tags(id, first_id) do
     Ecto.Adapters.SQL.query!(
       Mobilizon.Storage.Repo,
-      "UPDATE post_tags SET post_id = $1 WHERE post_id = $2",
+      "UPDATE posts_tags SET post_id = $1 WHERE post_id = $2",
       [first_id, id]
     )
   end
