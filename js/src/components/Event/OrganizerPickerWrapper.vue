@@ -190,7 +190,6 @@ export default class OrganizerPickerWrapper extends Vue {
   setInitialActor(): void {
     if (this.$route.query?.actorId) {
       const actorId = this.$route.query?.actorId as string;
-      this.$router.replace({ query: undefined });
       const actor = this.userMemberships.elements.find(
         ({ parent: { id }, role }) =>
           actorId === id && MEMBER_ROLES.includes(role)
