@@ -9,6 +9,8 @@ defmodule Mobilizon.Service.Activity.Comment do
   alias Mobilizon.Service.Activity
   alias Mobilizon.Service.Workers.{ActivityBuilder, LegacyNotifierBuilder}
 
+  import Mobilizon.Service.Activity.Utils, only: [maybe_inserted_at: 0]
+
   @behaviour Activity
 
   @impl Activity
@@ -62,15 +64,6 @@ defmodule Mobilizon.Service.Activity.Comment do
       :legacy_notify,
       @common_params |> Map.merge(maybe_inserted_at()) |> Map.merge(args)
     )
-  end
-
-  @spec maybe_inserted_at :: map()
-  defp maybe_inserted_at do
-    if Application.fetch_env!(:mobilizon, :env) == :test do
-      %{}
-    else
-      %{"inserted_at" => DateTime.utc_now()}
-    end
   end
 
   @type notification_type :: atom()

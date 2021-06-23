@@ -27,4 +27,13 @@ defmodule Mobilizon.Service.Activity.Utils do
   end
 
   defp transform_value(value), do: value
+
+  @spec maybe_inserted_at :: map()
+  def maybe_inserted_at do
+    if Application.fetch_env!(:mobilizon, :env) == :test do
+      %{}
+    else
+      %{"inserted_at" => DateTime.utc_now()}
+    end
+  end
 end

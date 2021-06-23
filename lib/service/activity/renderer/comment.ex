@@ -45,56 +45,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
             ),
           url: event_url(activity)
         }
-
-      :discussion_mention ->
-        %{
-          body:
-            dgettext("activity", "%{profile} mentionned you in the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_renamed ->
-        %{
-          body:
-            dgettext("activity", "%{profile} renamed the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_archived ->
-        %{
-          body:
-            dgettext("activity", "%{profile} archived the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_deleted ->
-        %{
-          body:
-            dgettext("activity", "%{profile} deleted the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title(activity)
-            }),
-          url: nil
-        }
     end
-  end
-
-  defp discussion_url(activity) do
-    Routes.page_url(
-      Endpoint,
-      :discussion,
-      Actor.preferred_username_and_domain(activity.group),
-      activity.subject_params["discussion_slug"]
-    )
   end
 
   defp event_url(activity) do
@@ -107,5 +58,4 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
   defp event_title(activity), do: activity.subject_params["event_title"]
-  defp title(activity), do: activity.subject_params["discussion_title"]
 end
