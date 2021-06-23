@@ -34,6 +34,11 @@ export const possibleTypes = types.reduce((acc, type) => {
   return acc;
 }, {} as Record<string, string[]>);
 
+const replaceMergePolicy = <TExisting = any, TIncoming = any>(
+  _existing: TExisting,
+  incoming: TIncoming
+): TIncoming => incoming;
+
 export const typePolicies: TypePolicies = {
   Discussion: {
     fields: {
@@ -61,6 +66,8 @@ export const typePolicies: TypePolicies = {
       participants: paginatedLimitPagination<IParticipant>(["roles"]),
       comments: pageLimitPagination<IComment>(),
       relatedEvents: pageLimitPagination<IEvent>(),
+      options: { merge: replaceMergePolicy },
+      participantStats: { merge: replaceMergePolicy },
     },
   },
   RootQueryType: {
