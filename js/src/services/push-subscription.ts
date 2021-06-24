@@ -33,14 +33,15 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
         data?.config?.webPush?.publicKey
       ),
     };
-    const pushSubscription = await registration.pushManager.subscribe(
-      subscribeOptions
-    );
-    console.log(
-      "Received PushSubscription: ",
-      JSON.stringify(pushSubscription)
-    );
-    return pushSubscription;
+    try {
+      const pushSubscription = await registration.pushManager.subscribe(
+        subscribeOptions
+      );
+      console.debug("Received PushSubscription: ", pushSubscription);
+      return pushSubscription;
+    } catch (e) {
+      console.error("Error while subscribing to push notifications", e);
+    }
   }
   return null;
 }
