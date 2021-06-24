@@ -597,6 +597,10 @@ export default class Notifications extends Vue {
           });
           this.subscribed = true;
           console.log(data);
+        } else {
+          this.$notifier.error(
+            this.$t("Error while subscribing to push notifications") as string
+          );
         }
       } else {
         console.log("can't do webpush");

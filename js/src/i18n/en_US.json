@@ -1053,5 +1053,6 @@
   "An error has occured while refreshing the page.": "An error has occured while refreshing the page.",
   "Join group {group}": "Join group {group}",
   "Public preview": "Public preview",
-  "On {instance} and other federated instances": "On {instance} and other federated instances"
+  "On {instance} and other federated instances": "On {instance} and other federated instances",
+  "Error while subscribing to push notifications": "Error while subscribing to push notifications"
 }
