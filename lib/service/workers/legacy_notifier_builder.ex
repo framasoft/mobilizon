@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
       activity = build_activity(args)
 
       args
-      |> users_to_notify(args["author_id"])
+      |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
       |> Enum.each(&Notifier.notify(&1, activity, single_activity: true))
     end
   end
@@ -35,12 +35,21 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     }
   end
 
-  @spec users_to_notify(map(), integer() | String.t()) :: list(Users.t())
+  @spec users_to_notify(map(), Keyword.t()) :: list(Users.t())
   defp users_to_notify(
          %{"subject" => "event_comment_mention", "mentions" => mentionned_actor_ids},
-         author_id
+         options
        ) do
-    users_from_actor_ids(mentionned_actor_ids, author_id)
+    users_from_actor_ids(mentionned_actor_ids, Keyword.fetch!(options, :author_id))
+  end
+
+  defp users_to_notify(
+         %{"subject" => "discussion_mention", "mentions" => mentionned_actor_ids},
+         options
+       ) do
+    mentionned_actor_ids
+    |> Enum.filter(&Actors.is_member?(&1, Keyword.fetch!(options, :group_id)))
+    |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
   end
 
   defp users_to_notify(
@@ -48,13 +57,13 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
            "subject" => "participation_event_comment",
            "subject_params" => subject_params
          },
-         author_id
+         options
        ) do
     subject_params
     |> Map.get("event_id")
     |> Events.list_actors_participants_for_event()
     |> Enum.map(& &1.id)
-    |> users_from_actor_ids(author_id)
+    |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
   end
 
   @spec users_from_actor_ids(list(), integer() | String.t()) :: list(Users.t())
