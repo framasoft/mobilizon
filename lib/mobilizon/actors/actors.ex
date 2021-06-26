@@ -360,6 +360,9 @@ defmodule Mobilizon.Actors do
           Multi.run(multi, :reset_default_actor_id, fn _, _ ->
             reset_default_actor_id(actor)
           end)
+
+        _ ->
+          multi
       end
 
     multi =
