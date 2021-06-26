@@ -17,7 +17,13 @@ defmodule Mobilizon.Users do
 
   defenum(UserRole, :user_role, [:administrator, :moderator, :user])
 
-  defenum(NotificationPendingNotificationDelay, none: 0, direct: 1, one_hour: 5, one_day: 10)
+  defenum(NotificationPendingNotificationDelay,
+    none: 0,
+    direct: 1,
+    one_hour: 5,
+    one_day: 10,
+    one_week: 15
+  )
 
   @confirmation_token_length 30
 
@@ -518,6 +524,18 @@ defmodule Mobilizon.Users do
     %ActivitySetting{}
     |> ActivitySetting.changeset(attrs)
     |> Repo.insert(on_conflict: :replace_all, conflict_target: [:user_id, :key, :method])
+  end
+
+  @doc """
+  Returns a stream of users which want to have a scheduled recap
+  """
+  @spec stream_users_for_recap :: Enum.t()
+  def stream_users_for_recap do
+    User
+    |> filter_activated(true)
+    |> join(:inner, [u], s in Setting, on: s.user_id == u.id)
+    |> where([_u, s], s.group_notifications in [:one_hour, :one_day, :one_week])
+    |> Repo.stream()
   end
 
   @spec user_by_email_query(String.t(), boolean | nil, boolean()) :: Ecto.Query.t()

@@ -42,18 +42,16 @@ msgid "%{profile} added the member %{member}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/comment.ex:72
-#: lib/service/activity/renderer/discussion.ex:53 lib/service/activity/renderer/post.ex:53
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:49 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
+#: lib/service/activity/renderer/discussion.ex:65
+#: lib/service/activity/renderer/post.ex:53 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:23
-#: lib/service/activity/renderer/post.ex:23 lib/web/templates/email/activity/_comment_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:1 lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
+#: lib/service/activity/renderer/discussion.ex:25
+#: lib/service/activity/renderer/post.ex:23 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:4 lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 msgid "%{profile} created the discussion %{discussion}."
 msgstr ""
 
@@ -76,9 +74,8 @@ msgid "%{profile} created the resource %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/comment.ex:82
-#: lib/service/activity/renderer/discussion.ex:63 lib/service/activity/renderer/post.ex:63
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:64 lib/web/templates/email/activity/_comment_activity_item.text.eex:25
+#: lib/service/activity/renderer/discussion.ex:75
+#: lib/service/activity/renderer/post.ex:63 lib/web/templates/email/activity/_comment_activity_item.text.eex:25
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr ""
@@ -120,9 +117,8 @@ msgid "%{profile} quit the group."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/comment.ex:62
-#: lib/service/activity/renderer/discussion.ex:43 lib/service/activity/renderer/post.ex:43
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:34 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
+#: lib/service/activity/renderer/discussion.ex:55
+#: lib/service/activity/renderer/post.ex:43 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr ""
@@ -140,10 +136,9 @@ msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:33
-#: lib/service/activity/renderer/post.ex:33 lib/web/templates/email/activity/_comment_activity_item.html.eex:19
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:7 lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
+#: lib/service/activity/renderer/discussion.ex:35
+#: lib/service/activity/renderer/post.ex:33 lib/web/templates/email/activity/_comment_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:18 lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr ""
 
@@ -214,21 +209,20 @@ msgid "%{profile} replied to a comment on the event %{event}."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email_direct_activity.html.eex:144
 #: lib/web/templates/email/email_direct_activity.text.eex:23
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email_direct_activity.html.eex:124
+#: lib/web/templates/email/email_direct_activity.html.eex:133
 #: lib/web/templates/email/email_direct_activity.text.eex:19
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
 msgstr[0] ""
 
 #, elixir-format
-#: lib/web/templates/email/email_direct_activity.html.eex:38
-#: lib/web/templates/email/email_direct_activity.text.eex:4
+#: lib/web/templates/email/email_direct_activity.html.eex:44
+#: lib/web/templates/email/email_direct_activity.html.eex:46 lib/web/templates/email/email_direct_activity.text.eex:4
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
 msgstr[0] ""
@@ -238,24 +232,49 @@ msgstr[0] ""
 msgid "Activity on %{instance}"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:38
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:88 lib/web/templates/email/activity/_comment_activity_item.text.eex:37
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:19 lib/web/templates/email/activity/_comment_activity_item.text.eex:37
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:31
-msgid "%{profile} mentionned you in a comment under %{event}."
-msgstr ""
-
-#, elixir-format, fuzzy
 #: lib/service/activity/renderer/comment.ex:24
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:73
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:31
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr ""
 
-#, elixir-format, fuzzy
-#: lib/service/activity/renderer/comment.ex:52
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:45
 msgid "%{profile} mentionned you in the discussion %{discussion}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:153
+msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:42
+msgid "Here's your weekly activity recap"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:101 lib/web/email/activity.ex:122
+msgid "Activity notification for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:108
+msgid "Daily activity recap for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:40
+msgid "Here's your daily activity recap"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:115
+msgid "Weekly activity recap for %{instance}"
 msgstr ""

@@ -125,6 +125,7 @@ export const USER_SETTINGS_FRAGMENT = gql`
     notificationBeforeEvent
     notificationPendingParticipation
     notificationPendingMembership
+    groupNotifications
     location {
       range
       geohash
@@ -154,6 +155,7 @@ export const SET_USER_SETTINGS = gql`
     $notificationBeforeEvent: Boolean
     $notificationPendingParticipation: NotificationPendingEnum
     $notificationPendingMembership: NotificationPendingEnum
+    $groupNotifications: NotificationPendingEnum
     $location: LocationInput
   ) {
     setUserSettings(
@@ -163,6 +165,7 @@ export const SET_USER_SETTINGS = gql`
       notificationBeforeEvent: $notificationBeforeEvent
       notificationPendingParticipation: $notificationPendingParticipation
       notificationPendingMembership: $notificationPendingMembership
+      groupNotifications: $groupNotifications
       location: $location
     ) {
       ...UserSettingFragment

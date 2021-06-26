@@ -190,6 +190,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
         "When does the user receives a notification about a new pending membership in one of the group they're admin for"
     )
 
+    field(:group_notifications, :notification_pending_enum,
+      description: "When does the user receives a notification about new activity"
+    )
+
     field(:location, :location,
       description: "The user's preferred location, where they want to be suggested events"
     )
@@ -212,6 +216,11 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     value(:one_day,
       as: :one_day,
       description: "One day. Notifications will be sent at most each day"
+    )
+
+    value(:one_week,
+      as: :one_week,
+      description: "One Week. Notifications will be sent at most each week"
     )
   end
 
@@ -382,6 +391,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:notification_pending_membership, :notification_pending_enum,
         description:
           "When does the user receives a notification about a new pending membership in one of the group they're admin for"
+      )
+
+      arg(:group_notifications, :notification_pending_enum,
+        description: "When does the user receives a notification about new activity"
       )
 
       arg(:location, :location_input,

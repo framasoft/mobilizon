@@ -436,7 +436,7 @@ msgstr[0] "Avètz un eveniment aquesta setmana :"
 msgstr[1] "Avètz %{total} eveniments aquesta setmana :"
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:52
+#: lib/service/metadata/utils.ex:53
 msgid "The event organizer didn't add any description."
 msgstr "L'organizator de l'eveniment a pas ajustat cap de descripcion."
 
@@ -1508,9 +1508,4 @@ msgstr ""
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/web/email/activity.ex:27
-msgid "Activity notification for %{instance}"
 msgstr ""

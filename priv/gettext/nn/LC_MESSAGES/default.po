@@ -439,7 +439,7 @@ msgstr[0] "Du har ei hending denne veka:"
 msgstr[1] "Du har %{total} hendingar denne veka:"
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:52
+#: lib/service/metadata/utils.ex:53
 msgid "The event organizer didn't add any description."
 msgstr "Tilskiparen skreiv inga skildring."
 
@@ -1699,9 +1699,4 @@ msgstr "Mobilizon-tenaren ser ut til å vera nede i augeblinken."
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/web/email/activity.ex:27
-msgid "Activity notification for %{instance}"
 msgstr ""

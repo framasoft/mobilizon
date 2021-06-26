@@ -1474,12 +1474,9 @@ defmodule Mobilizon.Actors do
 
   @spec groups_member_of_query(integer | String.t()) :: Ecto.Query.t()
   defp groups_member_of_query(actor_id) do
-    from(
-      a in Actor,
-      join: m in Member,
-      on: a.id == m.parent_id,
-      where: m.actor_id == ^actor_id
-    )
+    Actor
+    |> join(:inner, [a], m in Member, on: a.id == m.parent_id)
+    |> where([a, m], m.actor_id == ^actor_id and m.role in ^@member_roles)
   end
 
   @spec groups_query :: Ecto.Query.t()

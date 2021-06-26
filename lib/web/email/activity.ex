@@ -21,13 +21,10 @@ defmodule Mobilizon.Web.Email.Activity do
       ) do
     locale = Keyword.get(options, :locale, "en")
     single_activity = Keyword.get(options, :single_activity, false)
+    recap = Keyword.get(options, :recap, false)
     Gettext.put_locale(locale)
 
-    subject =
-      gettext(
-        "Activity notification for %{instance}",
-        instance: Config.instance_name()
-      )
+    subject = get_subject(recap)
 
     chunked_activities = chunk_activities(activities)
 
@@ -37,6 +34,7 @@ defmodule Mobilizon.Web.Email.Activity do
     |> assign(:activities, chunked_activities)
     |> assign(:total_number_activities, length(activities))
     |> assign(:single_activity, single_activity)
+    |> assign(:recap, recap)
     |> render(:email_direct_activity)
   end
 
@@ -93,5 +91,39 @@ defmodule Mobilizon.Web.Email.Activity do
           }
       end
     end)
+  end
+
+  @spec get_subject(atom() | false) :: String.t()
+  defp get_subject(recap) do
+    if recap do
+      case recap do
+        :one_hour ->
+          dgettext(
+            "activity",
+            "Activity notification for %{instance}",
+            instance: Config.instance_name()
+          )
+
+        :one_day ->
+          dgettext(
+            "activity",
+            "Daily activity recap for %{instance}",
+            instance: Config.instance_name()
+          )
+
+        :one_week ->
+          dgettext(
+            "activity",
+            "Weekly activity recap for %{instance}",
+            instance: Config.instance_name()
+          )
+      end
+    else
+      dgettext(
+        "activity",
+        "Activity notification for %{instance}",
+        instance: Config.instance_name()
+      )
+    end
   end
 end

@@ -25,6 +25,7 @@ export interface IUserSettings {
   notificationBeforeEvent?: boolean;
   notificationPendingParticipation?: INotificationPendingEnum;
   notificationPendingMembership?: INotificationPendingEnum;
+  groupNotifications?: INotificationPendingEnum;
   location?: IUserPreferredLocation;
 }
 

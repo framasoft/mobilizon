@@ -19,16 +19,16 @@
         <h2>{{ $t("Browser notifications") }}</h2>
       </div>
       <b-button v-if="subscribed" @click="unsubscribeToWebPush()">{{
-        $t("Unsubscribe to browser notifications")
+        $t("Unsubscribe to browser push notifications")
       }}</b-button>
       <b-button
         icon-left="rss"
         @click="subscribeToWebPush"
-        v-else-if="canShowWebPush()"
-        >{{ $t("Activate browser notification") }}</b-button
+        v-else-if="canShowWebPush"
+        >{{ $t("Activate browser push notifications") }}</b-button
       >
       <span v-else>{{
-        $t("You can't use notifications in this browser.")
+        $t("You can't use push notifications in this browser.")
       }}</span>
     </section>
     <section>
@@ -71,6 +71,28 @@
           </template>
         </tbody>
       </table>
+
+      <b-field
+        :label="$t('Send notification e-mails')"
+        :message="
+          $t(
+            'Announcements and mentions notifications are always sent straight away.'
+          )
+        "
+      >
+        <b-select
+          v-model="groupNotifications"
+          @input="updateSetting({ groupNotifications })"
+        >
+          <option
+            v-for="(value, key) in groupNotificationsValues"
+            :value="key"
+            :key="key"
+          >
+            {{ value }}
+          </option>
+        </b-select>
+      </b-field>
     </section>
     <section>
       <div class="setting-title">
@@ -305,13 +327,19 @@ export default class Notifications extends Vue {
   notificationPendingParticipation: INotificationPendingEnum | undefined =
     INotificationPendingEnum.NONE;
 
+  groupNotifications: INotificationPendingEnum | undefined =
+    INotificationPendingEnum.ONE_DAY;
+
   notificationPendingParticipationValues: Record<string, unknown> = {};
+  groupNotificationsValues: Record<string, unknown> = {};
 
   RouteName = RouteName;
 
   showCopiedTooltip = { ics: false, atom: false };
 
   subscribed = false;
+
+  canShowWebPush = false;
 
   notificationMethods = {
     email: this.$t("Email") as string,
@@ -508,7 +536,7 @@ export default class Notifications extends Vue {
     return merge(this.defaultNotificationValues, this.userNotificationValues);
   }
 
-  mounted(): void {
+  async mounted(): Promise<void> {
     this.notificationPendingParticipationValues = {
       [INotificationPendingEnum.NONE]: this.$t("Do not receive any mail"),
       [INotificationPendingEnum.DIRECT]: this.$t(
@@ -516,7 +544,18 @@ export default class Notifications extends Vue {
       ),
       [INotificationPendingEnum.ONE_HOUR]: this.$t("Hourly email summary"),
       [INotificationPendingEnum.ONE_DAY]: this.$t("Daily email summary"),
+      [INotificationPendingEnum.ONE_WEEK]: this.$t("Weekly email summary"),
     };
+    this.groupNotificationsValues = {
+      [INotificationPendingEnum.NONE]: this.$t("Do not receive any mail"),
+      [INotificationPendingEnum.DIRECT]: this.$t(
+        "Receive one email for each activity"
+      ),
+      [INotificationPendingEnum.ONE_HOUR]: this.$t("Hourly email summary"),
+      [INotificationPendingEnum.ONE_DAY]: this.$t("Daily email summary"),
+      [INotificationPendingEnum.ONE_WEEK]: this.$t("Weekly email summary"),
+    };
+    this.canShowWebPush = await this.checkCanShowWebPush();
   }
 
   @Watch("loggedUser")
@@ -528,6 +567,7 @@ export default class Notifications extends Vue {
         this.loggedUser.settings.notificationBeforeEvent;
       this.notificationPendingParticipation =
         this.loggedUser.settings.notificationPendingParticipation;
+      this.groupNotifications = this.loggedUser.settings.groupNotifications;
     }
   }
 
@@ -582,7 +622,7 @@ export default class Notifications extends Vue {
 
   async subscribeToWebPush(): Promise<void> {
     try {
-      if (this.canShowWebPush()) {
+      if (this.canShowWebPush) {
         const subscription = await subscribeUserToPush();
         if (subscription) {
           const subscriptionJSON = subscription?.toJSON();
@@ -628,8 +668,12 @@ export default class Notifications extends Vue {
     }
   }
 
-  canShowWebPush(): boolean {
-    return window.isSecureContext && !!navigator.serviceWorker;
+  async checkCanShowWebPush(): Promise<boolean> {
+    if (!window.isSecureContext && !("serviceWorker" in navigator))
+      return Promise.resolve(false);
+    const registration = await navigator.serviceWorker.getRegistration();
+    console.log("registration", registration);
+    return registration !== undefined;
   }
 
   async created(): Promise<void> {

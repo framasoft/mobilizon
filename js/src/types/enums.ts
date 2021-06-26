@@ -22,6 +22,7 @@ export enum INotificationPendingEnum {
   DIRECT = "DIRECT",
   ONE_DAY = "ONE_DAY",
   ONE_HOUR = "ONE_HOUR",
+  ONE_WEEK = "ONE_WEEK",
 }
 
 export enum IAuthProvider {

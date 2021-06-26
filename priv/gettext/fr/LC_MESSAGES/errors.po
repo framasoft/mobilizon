@@ -773,7 +773,7 @@ msgid "You can't reject this invitation with this profile."
 msgstr "Vous ne pouvez pas rejeter cette invitation avec ce profil."
 
 #, elixir-format
-#: lib/graphql/resolvers/media.ex:62
+#: lib/graphql/resolvers/media.ex:72
 msgid "File doesn't have an allowed MIME type."
 msgstr "Le fichier n'a pas un type MIME autorisé."
 

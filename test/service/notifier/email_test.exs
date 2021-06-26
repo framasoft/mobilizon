@@ -46,7 +46,63 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
     test "when the user allows it" do
       %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
       %User{} = user = insert(:user)
-      %Setting{} = user_settings = insert(:settings, user_id: user.id)
+
+      %Setting{} =
+        user_settings = insert(:settings, user_id: user.id, group_notifications: :direct)
+
+      %ActivitySetting{} =
+        activity_setting = insert(:mobilizon_activity_setting, user_id: user.id, user: user)
+
+      user = %User{user | settings: user_settings, activity_settings: [activity_setting]}
+
+      assert {:ok, :sent} == Email.send(user, activity)
+
+      assert_delivered_email(
+        EmailActivity.direct_activity(
+          user.email,
+          [activity]
+        )
+      )
+    end
+
+    test "if it's been an hour since the last notification" do
+      %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
+      %User{} = user = insert(:user)
+
+      %Setting{} =
+        user_settings =
+        insert(:settings,
+          user_id: user.id,
+          group_notifications: :one_hour,
+          last_notification_sent: DateTime.add(DateTime.utc_now(), -3_659)
+        )
+
+      %ActivitySetting{} =
+        activity_setting = insert(:mobilizon_activity_setting, user_id: user.id, user: user)
+
+      user = %User{user | settings: user_settings, activity_settings: [activity_setting]}
+
+      assert {:ok, :sent} == Email.send(user, activity)
+
+      assert_delivered_email(
+        EmailActivity.direct_activity(
+          user.email,
+          [activity]
+        )
+      )
+    end
+
+    test "if there's no delay since the last notification" do
+      %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
+      %User{} = user = insert(:user)
+
+      %Setting{} =
+        user_settings =
+        insert(:settings,
+          user_id: user.id,
+          group_notifications: :one_hour,
+          last_notification_sent: nil
+        )
 
       %ActivitySetting{} =
         activity_setting = insert(:mobilizon_activity_setting, user_id: user.id, user: user)
