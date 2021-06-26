@@ -8,6 +8,15 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.Workers.Notification
   alias Mobilizon.Users.{Setting, User}
+
+  import Mobilizon.Service.DateTime,
+    only: [
+      datetime_tz_convert: 2,
+      calculate_first_day_of_week: 2,
+      calculate_next_day_notification: 2,
+      calculate_next_week_notification: 2
+    ]
+
   require Logger
 
   @spec trigger_notifications_for_participant(Participant.t()) :: {:ok, nil}
@@ -44,7 +53,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
       when not is_nil(user_id) do
     case Users.get_setting(user_id) do
       %Setting{notification_on_day: true, timezone: timezone} ->
-        %DateTime{hour: hour} = begins_on_shifted = shift_zone(begins_on, timezone)
+        %DateTime{hour: hour} = begins_on_shifted = datetime_tz_convert(begins_on, timezone)
         Logger.debug("Participation event start at #{inspect(begins_on_shifted)} (user timezone)")
 
         send_date =
@@ -90,7 +99,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
     case settings do
       %Setting{notification_each_week: true, timezone: timezone} ->
-        %DateTime{} = begins_on_shifted = shift_zone(begins_on, timezone)
+        %DateTime{} = begins_on_shifted = datetime_tz_convert(begins_on, timezone)
 
         Logger.debug(
           "Participation event start at #{inspect(begins_on_shifted)} (user timezone is #{timezone})"
@@ -143,6 +152,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
     with %Actor{user_id: user_id} when not is_nil(user_id) <-
            Actors.get_actor(organizer_actor_id),
          %User{
+           locale: locale,
            settings: %Setting{
              notification_pending_participation: notification_pending_participation,
              timezone: timezone
@@ -157,7 +167,13 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
             :direct
 
           :one_day ->
-            calculate_next_day_notification(Date.utc_today(), timezone)
+            calculate_next_day_notification(Date.utc_today(), timezone: timezone)
+
+          :one_week ->
+            calculate_next_week_notification(DateTime.utc_now(),
+              timezone: timezone,
+              locale: locale
+            )
 
           :one_hour ->
             DateTime.utc_now()
@@ -258,41 +274,5 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
       true ->
         Notification.enqueue(:pending_membership_notification, params, scheduled_at: send_at)
     end
-  end
-
-  defp shift_zone(datetime, timezone) do
-    case DateTime.shift_zone(datetime, timezone) do
-      {:ok, shift_datetime} -> shift_datetime
-      {:error, _} -> datetime
-    end
-  end
-
-  defp calculate_first_day_of_week(%Date{} = date, locale) do
-    day_number = Date.day_of_week(date)
-    first_day_number = Cldr.Calendar.first_day_for_locale(locale)
-
-    if day_number == first_day_number,
-      do: date,
-      else: calculate_first_day_of_week(Date.add(date, -1), locale)
-  end
-
-  defp calculate_next_day_notification(%Date{} = day, timezone) do
-    send_at = date_to_datetime(day, ~T[18:00:00], timezone)
-
-    if DateTime.compare(send_at, DateTime.utc_now()) == :lt do
-      day
-      |> Date.add(1)
-      |> date_to_datetime(~T[18:00:00], timezone)
-    else
-      send_at
-    end
-  end
-
-  defp date_to_datetime(%Date{} = day, time, timezone) do
-    # Just in case
-    timezone = timezone || "Etc/UTC"
-    {:ok, datetime} = NaiveDateTime.new(day, time)
-    {:ok, datetime} = DateTime.from_naive(datetime, timezone)
-    datetime
   end
 end

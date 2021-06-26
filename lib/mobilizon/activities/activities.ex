@@ -121,6 +121,32 @@ defmodule Mobilizon.Activities do
     |> Page.build_page(page, limit)
   end
 
+  @spec list_group_activities_for_recap(
+          integer() | String.t(),
+          integer() | String.t(),
+          DateTime.t() | nil
+        ) :: [Activity.t()]
+  def list_group_activities_for_recap(
+        group_id,
+        actor_asking_id,
+        last_sent_at \\ nil
+      ) do
+    query =
+      Activity
+      |> where([a], a.group_id == ^group_id)
+      |> join(:inner, [a], m in Member,
+        on: m.parent_id == a.group_id and m.actor_id == ^actor_asking_id
+      )
+      |> where([a, m], a.inserted_at >= m.member_since)
+      |> order_by(desc: :inserted_at)
+      |> preload([:author, :group])
+
+    query =
+      if is_nil(last_sent_at), do: query, else: where(query, [a], a.inserted_at >= ^last_sent_at)
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single activity.
 

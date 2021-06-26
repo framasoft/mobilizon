@@ -446,7 +446,7 @@ msgstr[0] "Tens una activitat aquesta setmana:"
 msgstr[1] "Tens %{total} activitats aquesta setmana:"
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:52
+#: lib/service/metadata/utils.ex:53
 msgid "The event organizer didn't add any description."
 msgstr "L'organitzadora no hi ha posat cap descripció."
 
@@ -1659,9 +1659,4 @@ msgstr "Sembla ser que el servidor de Mobilizon està temporalment inaccessible.
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/web/email/activity.ex:27
-msgid "Activity notification for %{instance}"
 msgstr ""

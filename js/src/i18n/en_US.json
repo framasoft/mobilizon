@@ -1011,14 +1011,8 @@
   "Page not found": "Page not found",
   "{folder} - Resources": "{folder} - Resources",
   "General settings": "General settings",
-  "Unsubscribe to WebPush": "Unsubscribe to WebPush",
-  "WebPush": "WebPush",
-  "You can't use webpush in this browser.": "You can't use webpush in this browser.",
   "Notify participants": "Notify participants",
   "Browser notifications": "Browser notifications",
-  "Unsubscribe to browser notifications": "Unsubscribe to browser notifications",
-  "Activate browser notification": "Activate browser notification",
-  "You can't use notifications in this browser.": "You can't use notifications in this browser.",
   "Notification settings": "Notification settings",
   "Select the activities for which you wish to receive an email or a push notification.": "Select the activities for which you wish to receive an email or a push notification.",
   "Push": "Push",
@@ -1054,5 +1048,12 @@
   "Join group {group}": "Join group {group}",
   "Public preview": "Public preview",
   "On {instance} and other federated instances": "On {instance} and other federated instances",
-  "Error while subscribing to push notifications": "Error while subscribing to push notifications"
+  "Error while subscribing to push notifications": "Error while subscribing to push notifications",
+  "Unsubscribe to browser push notifications": "Unsubscribe to browser push notifications",
+  "Activate browser push notifications": "Activate browser push notifications",
+  "You can't use push notifications in this browser.": "You can't use push notifications in this browser.",
+  "Send notification e-mails": "Send notification e-mails",
+  "Announcements and mentions notifications are always sent straight away.": "Announcements and mentions notifications are always sent straight away.",
+  "Weekly email summary": "Weekly email summary",
+  "Receive one email for each activity": "Receive one email for each activity"
 }

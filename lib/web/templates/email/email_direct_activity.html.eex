@@ -35,7 +35,16 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 5% 0px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= dngettext("activity", "There has been an activity!", "There has been some activity!", @total_number_activities) %>
+            <%= case @recap do %>
+              <% :one_day -> %>
+                <% dgettext("activity", "Here's your daily activity recap") %>
+              <% :one_week -> %>
+                <% dgettext("activity", "Here's your weekly activity recap") %>
+              <% :one_hour -> %>
+                <%= dngettext("activity", "There has been an activity!", "There has been some activity!", @total_number_activities) %>
+              <% false -> %>
+                <%= dngettext("activity", "There has been an activity!", "There has been some activity!", @total_number_activities) %>
+            <% end %>
           </p>
         </td>
       </tr>
@@ -108,7 +117,9 @@
                           <% end %>
                         </p>
                         <%= unless @single_activity do %>
-                        <em><%= datetime_relative(activity.inserted_at, @locale) %></em>
+                        <em>
+                          <%= datetime_to_string(activity.inserted_at, @locale, :short) %>
+                        </em>
                         <% end %>
                       </li>
                       <% end %>
@@ -141,7 +152,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
           <p style="margin: 0">
-            <%= dgettext "activity", "Don't want to receive activity notifications? You may change frequency or disable them in your settings." %>
+            <%= dgettext("activity", "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}.", %{tag_start: "<a href=\"#{Mobilizon.Web.Endpoint.url()}/settings/notifications\">", tag_end: "</a>"}) |> raw %>
           </p>
         </td>
       </tr>

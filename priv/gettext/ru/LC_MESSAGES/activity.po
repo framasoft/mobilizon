@@ -19,257 +19,278 @@ msgstr ""
 "X-Generator: Weblate 4.6.2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:38
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:19 lib/web/templates/email/activity/_member_activity_item.text.eex:12
-#, elixir-format
 msgid "%{member} accepted the invitation to join the group."
 msgstr "%{member} принял приглашение присоединиться к группе."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:42
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:26 lib/web/templates/email/activity/_member_activity_item.text.eex:17
-#, elixir-format
 msgid "%{member} rejected the invitation to join the group."
 msgstr "%{member} отклонил приглашение присоединиться к группе."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:30
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:4 lib/web/templates/email/activity/_member_activity_item.text.eex:1
-#, elixir-format
 msgid "%{member} requested to join the group."
 msgstr "%{member} попросил присоединиться к группе."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:34
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:11 lib/web/templates/email/activity/_member_activity_item.text.eex:6
-#, elixir-format
 msgid "%{member} was invited by %{profile}."
 msgstr "%{member} был приглашён %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:50
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:40 lib/web/templates/email/activity/_member_activity_item.text.eex:27
-#, elixir-format
 msgid "%{profile} added the member %{member}."
 msgstr "%{profile} добавил участника %{member}."
 
-#: lib/service/activity/renderer/comment.ex:72
-#: lib/service/activity/renderer/discussion.ex:53 lib/service/activity/renderer/post.ex:53
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:49 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:65
+#: lib/service/activity/renderer/post.ex:53 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr "%{profile} заархивировал обсуждение %{discussion}."
 
-#: lib/service/activity/renderer/discussion.ex:23
-#: lib/service/activity/renderer/post.ex:23 lib/web/templates/email/activity/_comment_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:1 lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:25
+#: lib/service/activity/renderer/post.ex:23 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:4 lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 msgid "%{profile} created the discussion %{discussion}."
 msgstr "%{profile} создал обсуждение %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:24
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:5 lib/web/templates/email/activity/_resource_activity_item.text.eex:2
-#, elixir-format
 msgid "%{profile} created the folder %{resource}."
 msgstr "%{profile} создал папку %{resource}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_group_activity_item.html.eex:4
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:1
-#, elixir-format
 msgid "%{profile} created the group %{group}."
 msgstr "%{profile} создал группу %{group}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:20 lib/web/templates/email/activity/_resource_activity_item.text.eex:8
-#, elixir-format
 msgid "%{profile} created the resource %{resource}."
 msgstr "%{profile} создал ресурс %{resource}."
 
-#: lib/service/activity/renderer/comment.ex:82
-#: lib/service/activity/renderer/discussion.ex:63 lib/service/activity/renderer/post.ex:63
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:64 lib/web/templates/email/activity/_comment_activity_item.text.eex:25
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:75
+#: lib/service/activity/renderer/post.ex:63 lib/web/templates/email/activity/_comment_activity_item.text.eex:25
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} удалил обсуждение %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:97
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:103 lib/web/templates/email/activity/_resource_activity_item.text.eex:40
-#, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
 msgstr "%{profile} удалил папку %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:106
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:111 lib/web/templates/email/activity/_resource_activity_item.text.eex:45
-#, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} удалил ресурс %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:58
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:56 lib/web/templates/email/activity/_member_activity_item.text.eex:39
-#, elixir-format
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} исключил участника %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:76
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:71 lib/web/templates/email/activity/_resource_activity_item.text.eex:28
-#, elixir-format
 msgid "%{profile} moved the folder %{resource}."
 msgstr "%{profile} переместил папку %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:85
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:86 lib/web/templates/email/activity/_resource_activity_item.text.eex:34
-#, elixir-format
 msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} переместил ресурс %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:62
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:64 lib/web/templates/email/activity/_member_activity_item.text.eex:45
-#, elixir-format
 msgid "%{profile} quit the group."
 msgstr "%{profile} вышел из группы."
 
-#: lib/service/activity/renderer/comment.ex:62
-#: lib/service/activity/renderer/discussion.ex:43 lib/service/activity/renderer/post.ex:43
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:34 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:55
+#: lib/service/activity/renderer/post.ex:43 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} переименовал обсуждение %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:37 lib/web/templates/email/activity/_resource_activity_item.text.eex:14
-#, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr "%{profile} переименовал папку из %{old_resource_title} в %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:59
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:53 lib/web/templates/email/activity/_resource_activity_item.text.eex:21
-#, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
 msgstr "%{profile} переименовал ресурс из %{old_resource_title} в %{resource}."
 
-#: lib/service/activity/renderer/discussion.ex:33
-#: lib/service/activity/renderer/post.ex:33 lib/web/templates/email/activity/_comment_activity_item.html.eex:19
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:7 lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:35
+#: lib/service/activity/renderer/post.ex:33 lib/web/templates/email/activity/_comment_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:18 lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} ответил на обсуждение %{discussion}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_group_activity_item.html.eex:19
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:7
-#, elixir-format
 msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} обновил группу %{group}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:54
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:48 lib/web/templates/email/activity/_member_activity_item.text.eex:33
-#, elixir-format
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} обновил участника %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:23
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:4 lib/web/templates/email/activity/_event_activity_item.text.eex:1
-#, elixir-format
 msgid "The event %{event} was created by %{profile}."
 msgstr "Мероприятие %{event} было создано %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:43
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:34 lib/web/templates/email/activity/_event_activity_item.text.eex:13
-#, elixir-format
 msgid "The event %{event} was deleted by %{profile}."
 msgstr "Мероприятие %{event} было удалено %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:33
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:19 lib/web/templates/email/activity/_event_activity_item.text.eex:7
-#, elixir-format
 msgid "The event %{event} was updated by %{profile}."
 msgstr "Мероприятие %{event} было обновлено %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/group.ex:23
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:4 lib/web/templates/email/activity/_post_activity_item.text.eex:1
-#, elixir-format
 msgid "The post %{post} was created by %{profile}."
 msgstr "Публикация %{post} была создана %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/group.ex:43
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:34 lib/web/templates/email/activity/_post_activity_item.text.eex:13
-#, elixir-format
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "Публикация %{post} была удалена %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/group.ex:33
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:19 lib/web/templates/email/activity/_post_activity_item.text.eex:7
-#, elixir-format
 msgid "The post %{post} was updated by %{profile}."
 msgstr "Публикация %{post} была обновлена %{profile}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:46
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:33 lib/web/templates/email/activity/_member_activity_item.text.eex:22
-#, elixir-format
 msgid "%{member} joined the group."
 msgstr "%{member} присоединился к группе."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:63
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:58 lib/web/templates/email/activity/_event_activity_item.text.eex:25
-#, elixir-format
 msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} оставил комментарий к мероприятию %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:54
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:43 lib/web/templates/email/activity/_event_activity_item.text.eex:19
-#, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} ответил на комментарий к мероприятию %{event}."
 
-#: lib/web/templates/email/email_direct_activity.html.eex:144
-#: lib/web/templates/email/email_direct_activity.text.eex:23
 #, elixir-format
+#: lib/web/templates/email/email_direct_activity.text.eex:23
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
 msgstr ""
 "Не хотите получать уведомления о событиях? Вы можете изменить частоту "
 "уведомлений или отключить их в своих настройках."
 
-#: lib/web/templates/email/email_direct_activity.html.eex:124
-#: lib/web/templates/email/email_direct_activity.text.eex:19
 #, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:133
+#: lib/web/templates/email/email_direct_activity.text.eex:19
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
 msgstr[0] "Посмотреть еще одно событие"
 msgstr[1] "Посмотреть еще %{count} события"
 msgstr[2] "Посмотреть еще %{count} событий"
 
-#: lib/web/templates/email/email_direct_activity.html.eex:38
-#: lib/web/templates/email/email_direct_activity.text.eex:4
 #, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:44
+#: lib/web/templates/email/email_direct_activity.html.eex:46 lib/web/templates/email/email_direct_activity.text.eex:4
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
 msgstr[0] "Было событие!"
 msgstr[1] "Были события!"
 msgstr[2] "Были события!"
 
-#: lib/service/activity/renderer/renderer.ex:38
 #, elixir-format
+#: lib/service/activity/renderer/renderer.ex:38
 msgid "Activity on %{instance}"
 msgstr "События на %{instance}"
 
-#: lib/service/activity/renderer/comment.ex:38
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:88 lib/web/templates/email/activity/_comment_activity_item.text.eex:37
 #, elixir-format
+#: lib/service/activity/renderer/comment.ex:38
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:19 lib/web/templates/email/activity/_comment_activity_item.text.eex:37
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} разместил объявление под мероприятием %{event}."
 
-#: lib/web/templates/email/activity/_comment_activity_item.text.eex:31
 #, elixir-format
-msgid "%{profile} mentionned you in a comment under %{event}."
-msgstr "%{profile} упомянул вас в комментарии под %{event}."
-
 #: lib/service/activity/renderer/comment.ex:24
-#: lib/web/templates/email/activity/_comment_activity_item.html.eex:73
-#, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.eex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:31
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} упомянул вас в комментарии под мероприятием %{event}."
 
-#: lib/service/activity/renderer/comment.ex:52
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:45
 msgid "%{profile} mentionned you in the discussion %{discussion}."
 msgstr "%{profile} упомянул вас в обсуждении %{discussion}."
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:153
+msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
+msgstr ""
+"Не хотите получать уведомления о событиях? Вы можете изменить частоту "
+"уведомлений или отключить их в своих настройках."
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:42
+msgid "Here's your weekly activity recap"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:101 lib/web/email/activity.ex:122
+msgid "Activity notification for %{instance}"
+msgstr "События на %{instance}"
+
+#, elixir-format
+#: lib/web/email/activity.ex:108
+msgid "Daily activity recap for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:40
+msgid "Here's your daily activity recap"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/activity.ex:115
+msgid "Weekly activity recap for %{instance}"
+msgstr ""

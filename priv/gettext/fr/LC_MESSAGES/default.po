@@ -422,7 +422,7 @@ msgstr[0] "Vous avez un événement aujourd'hui :"
 msgstr[1] "Vous avez %{total} événements aujourd'hui :"
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:52
+#: lib/service/metadata/utils.ex:53
 msgid "The event organizer didn't add any description."
 msgstr "L'organisateur·ice de l'événement n'a pas ajouté de description."
 
@@ -1428,8 +1428,3 @@ msgstr "Le serveur Mobilizon %{instance} semble être temporairement hors-servic
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
 msgstr "Flux public pour %{instance}"
-
-#, elixir-format
-#: lib/web/email/activity.ex:27
-msgid "Activity notification for %{instance}"
-msgstr "Notification d'activité sur %{instance}"

@@ -450,7 +450,7 @@ msgstr[0] "Egy eseménye van a héten:"
 msgstr[1] "%{total} eseménye van a héten:"
 
 #, elixir-format
-#: lib/service/metadata/utils.ex:52
+#: lib/service/metadata/utils.ex:53
 msgid "The event organizer didn't add any description."
 msgstr "Az eseményszervező nem adott meg leírást."
 
@@ -1455,9 +1455,4 @@ msgstr ""
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
-msgstr ""
-
-#, elixir-format
-#: lib/web/email/activity.ex:27
-msgid "Activity notification for %{instance}"
 msgstr ""

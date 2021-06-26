@@ -11,6 +11,11 @@ defmodule Mobilizon.Service.Workers.Notification do
   alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.Email.{Mailer, Notification}
 
+  import Mobilizon.Service.DateTime,
+    only: [
+      datetime_tz_convert: 2
+    ]
+
   use Mobilizon.Service.Workers.Helper, queue: "mailers"
 
   @impl Oban.Worker
@@ -109,16 +114,9 @@ defmodule Mobilizon.Service.Workers.Notification do
     end
   end
 
-  defp shift_zone(datetime, timezone) do
-    case DateTime.shift_zone(datetime, timezone) do
-      {:ok, shift_datetime} -> shift_datetime
-      {:error, _} -> datetime
-    end
-  end
-
   defp calculate_start_end(days, timezone) do
     now = DateTime.utc_now()
-    %DateTime{} = now_shifted = shift_zone(now, timezone)
+    %DateTime{} = now_shifted = datetime_tz_convert(now, timezone)
     start = %{now_shifted | hour: 8, minute: 0, second: 0, microsecond: {0, 0}}
 
     {:ok, %NaiveDateTime{} = tomorrow} =
