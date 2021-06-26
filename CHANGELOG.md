@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.0-beta.2 - 2021-06-26
+
+### Added
+
+- Added basic metadata (start time & physical address) in the opengraph preview
+- Made mentions trigger notifications
+- Allow to send activity digests
+- Mix task to generate web push keypair
+
+### Fixed
+
+- Fixed missing unique index on posts URL
+- Fixed creating events from group page not always auto-selecting the correct organizer actor
+
+### Translations
+
+- French
+- Spanish
+
 ## 1.2.0-beta.1 - 2021-06-21
 
 ### Added
