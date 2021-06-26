@@ -296,6 +296,7 @@
   "Error while login with {provider}. This login provider doesn't exist.": "Error al iniciar sesión con {provider}. Este proveedor de inicio de sesión no existe.",
   "Error while reporting group {groupTitle}": "Error al informar sobre el grupo {groupTitle}",
   "Error while saving report.": "Error al guardar el informe.",
+  "Error while subscribing to push notifications": "Error al suscribirse a notificaciones push",
   "Error while suspending group": "Error al suspender el grupo",
   "Error while validating account": "Error al validar la cuenta",
   "Error while validating participation": "Error al validar la participación",
