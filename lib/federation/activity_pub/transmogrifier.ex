@@ -21,6 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
+  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Workers.Background
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Email.Participation

@@ -16,6 +16,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Medias.File
+  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users

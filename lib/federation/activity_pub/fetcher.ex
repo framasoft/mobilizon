@@ -9,6 +9,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Federation.ActivityPub.{Relay, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Converter.Actor, as: ActorConverter
+  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.HTTP.ActivityPub, as: ActivityPubClient
 
   import Mobilizon.Federation.ActivityPub.Utils,

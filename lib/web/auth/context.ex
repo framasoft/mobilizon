@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.Auth.Context do
 
   import Plug.Conn
 
+  alias Mobilizon.Service.ErrorReporting.Sentry, as: SentryAdapter
   alias Mobilizon.Users.User
 
   def init(opts) do
@@ -24,7 +25,10 @@ defmodule Mobilizon.Web.Auth.Context do
     context =
       case Guardian.Plug.current_resource(conn) do
         %User{id: user_id, email: user_email} = user ->
-          Sentry.Context.set_user_context(%{id: user_id, name: user_email})
+          if SentryAdapter.enabled?() do
+            Sentry.Context.set_user_context(%{id: user_id, name: user_email})
+          end
+
           Map.put(context, :current_user, user)
 
         nil ->

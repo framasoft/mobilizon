@@ -3,6 +3,7 @@ defmodule Mobilizon.Web.Email.Mailer do
   Mobilizon Mailer.
   """
   use Bamboo.Mailer, otp_app: :mobilizon
+  alias Mobilizon.Service.ErrorReporting.Sentry
 
   def send_email_later(email) do
     Mobilizon.Web.Email.Mailer.deliver_later!(email)

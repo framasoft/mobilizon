@@ -8,6 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
+  alias Mobilizon.Service.ErrorReporting.Sentry
   require Logger
 
   @doc """
