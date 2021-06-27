@@ -300,13 +300,13 @@ msgstr ""
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 msgid "%{profile} has posted a new comment under your event %{event}."
-msgstr "%{profile} on julkaissut ilmoituksen tapahtumassa %{event}."
+msgstr ""
 
 #, elixir-format, fuzzy
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 msgid "%{profile} has posted a new reply under your event %{event}."
-msgstr "%{profile} on julkaissut ilmoituksen tapahtumassa %{event}."
+msgstr ""
 
 #, elixir-format
 #: lib/web/email/activity.ex:44
