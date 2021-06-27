@@ -4,7 +4,7 @@ import { AUTH_ACCESS_TOKEN } from "@/constants";
 import { LoginErrorCode } from "@/types/enums";
 
 export const authGuardIfNeeded: NavigationGuard = async (to, from, next) => {
-  if (to.meta.requiredAuth !== true) return next();
+  if (to.meta?.requiredAuth !== true) return next();
 
   // We can't use "currentUser" from apollo here
   // because we may not have loaded the user from the local storage yet
