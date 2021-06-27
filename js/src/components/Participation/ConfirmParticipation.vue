@@ -4,7 +4,7 @@
       {{ $t("Your participation request is being validated") }}
     </h1>
     <div v-else>
-      <div v-if="failed">
+      <div v-if="failed && participation === undefined">
         <b-message
           :title="$t('Error while validating participation request')"
           type="is-danger"
@@ -28,6 +28,22 @@
             $t("Your participation still has to be approved by the organisers.")
           }}
         </p>
+        <div v-if="failed">
+          <b-message
+            :title="
+              $t(
+                'Error while updating participation status inside this browser'
+              )
+            "
+            type="is-warning"
+          >
+            {{
+              $t(
+                "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue."
+              )
+            }}
+          </b-message>
+        </div>
         <div class="columns has-text-centered">
           <div class="column">
             <router-link

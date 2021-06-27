@@ -1611,6 +1611,19 @@ defmodule Mobilizon.Events do
     |> select([p, a, u, s], {p, a, u, s})
   end
 
+  @doc """
+  List anonymous participations to an event
+  """
+  @spec list_anonymous_participants_for_event(String.t()) :: [Participant.t()]
+  def list_anonymous_participants_for_event(event_id) do
+    Participant
+    |> where(
+      [p],
+      p.event_id == ^event_id and p.role not in [^:not_approved, ^:not_confirmed, ^:rejected]
+    )
+    |> Repo.all()
+  end
+
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
   defp list_participations_for_user_query(user_id) do
     from(

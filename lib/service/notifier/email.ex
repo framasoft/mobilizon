@@ -51,6 +51,18 @@ defmodule Mobilizon.Service.Notifier.Email do
     end
   end
 
+  @doc """
+  Send an anonymous activity directly to an email, for anonymous participants for instance
+  """
+  @spec send_anonymous_activity(String.t(), Activity.t(), Keyword.t()) :: {:ok, :sent}
+  def send_anonymous_activity(email, %Activity{} = activity, options) do
+    email
+    |> EmailActivity.anonymous_activity(activity, options)
+    |> Mailer.send_email()
+
+    {:ok, :sent}
+  end
+
   # These notifications are using LegacyNotifierBuilder and don't have any history,
   # so we always send them directly, as long as the setting isn't none
   @always_direct_subjects [

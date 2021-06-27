@@ -486,6 +486,7 @@ import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
+import cloneDeep from "lodash/cloneDeep";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -645,7 +646,7 @@ export default class EditEvent extends Vue {
     } else {
       this.event = {
         ...this.event,
-        options: this.event.options,
+        options: cloneDeep(this.event.options),
         description: this.event.description || "",
       };
     }

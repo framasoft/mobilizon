@@ -1069,8 +1069,8 @@ msgid "View report:"
 msgstr "Zobacz zgłoszenie"
 
 #, elixir-format
-#: lib/web/templates/email/event_participation_approved.html.eex:58
-#: lib/web/templates/email/event_participation_confirmed.html.eex:58
+#: lib/web/templates/email/email_anonymous_activity.html.eex:67
+#: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_participation_confirmed.html.eex:58
 msgid "Visit event page"
 msgstr "Odwiedź stronę wydarzenia"
 

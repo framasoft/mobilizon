@@ -1,0 +1,11 @@
+<%= @subject %>
+
+==
+
+<%= dgettext("activity", "%{profile} has posted an announcement under event %{event}.",
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["event_title"]
+    }
+) %>
+<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %>
