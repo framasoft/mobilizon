@@ -238,32 +238,46 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       user = Map.put(user, :settings, settings)
       actor = insert(:actor, user: user)
 
-      # Make sure event happens next week
-      %Date{} = event_day = Date.utc_today() |> Date.add(3)
-      {:ok, %NaiveDateTime{} = event_date} = event_day |> NaiveDateTime.new(~T[16:00:00])
-      {:ok, begins_on} = DateTime.from_naive(event_date, "Etc/UTC")
-
-      %Event{} = event = insert(:event, begins_on: begins_on, local: true, organizer_actor: actor)
+      %Event{} =
+        event =
+        insert(:event, begins_on: ~U[2021-06-26 12:00:00Z], local: true, organizer_actor: actor)
 
       %Participant{} = _participant = insert(:participant, event: event, role: :not_approved)
 
-      Scheduler.pending_participation_notification(event)
-
-      now = Time.utc_now()
-
-      {:ok, scheduled_at} =
-        if now.hour <= 18 do
-          NaiveDateTime.new(Date.utc_today(), ~T[18:00:00])
-        else
-          Date.utc_today() |> Date.add(1) |> NaiveDateTime.new(~T[18:00:00])
-        end
-
-      {:ok, scheduled_at} = DateTime.from_naive(scheduled_at, "Europe/Paris")
+      Scheduler.pending_participation_notification(event, compare_to: ~U[2021-06-25 07:00:00Z])
 
       assert_enqueued(
         worker: Notification,
         args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification},
-        scheduled_at: scheduled_at
+        scheduled_at: ~U[2021-06-25 16:00:00Z]
+      )
+    end
+
+    test "if the notification date is passed" do
+      %User{id: user_id} = user = insert(:user, locale: "fr")
+
+      settings =
+        insert(:settings,
+          user_id: user_id,
+          notification_pending_participation: :one_day,
+          timezone: "Europe/Paris"
+        )
+
+      user = Map.put(user, :settings, settings)
+      actor = insert(:actor, user: user)
+
+      %Event{} =
+        event =
+        insert(:event, begins_on: ~U[2021-06-26 12:00:00Z], local: true, organizer_actor: actor)
+
+      %Participant{} = _participant = insert(:participant, event: event, role: :not_approved)
+
+      Scheduler.pending_participation_notification(event, compare_to: ~U[2021-06-26 07:00:00Z])
+
+      refute_enqueued(
+        worker: Notification,
+        args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification},
+        scheduled_at: ~U[2021-06-25 16:00:00Z]
       )
     end
 

@@ -144,11 +144,17 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
   def weekly_notification(_), do: {:ok, nil}
 
-  def pending_participation_notification(%Event{
-        id: event_id,
-        organizer_actor_id: organizer_actor_id,
-        local: true
-      }) do
+  def pending_participation_notification(event, options \\ [])
+
+  def pending_participation_notification(
+        %Event{
+          id: event_id,
+          organizer_actor_id: organizer_actor_id,
+          local: true,
+          begins_on: begins_on
+        },
+        options
+      ) do
     with %Actor{user_id: user_id} when not is_nil(user_id) <-
            Actors.get_actor(organizer_actor_id),
          %User{
@@ -158,28 +164,14 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
              timezone: timezone
            }
          } <- Users.get_user_with_settings!(user_id) do
+      compare_to = Keyword.get(options, :compare_to, DateTime.utc_now())
+
       send_at =
-        case notification_pending_participation do
-          :none ->
-            nil
-
-          :direct ->
-            :direct
-
-          :one_day ->
-            calculate_next_day_notification(Date.utc_today(), timezone: timezone)
-
-          :one_week ->
-            calculate_next_week_notification(DateTime.utc_now(),
-              timezone: timezone,
-              locale: locale
-            )
-
-          :one_hour ->
-            DateTime.utc_now()
-            |> DateTime.shift_zone!(timezone)
-            |> (&%{&1 | minute: 0, second: 0, microsecond: {0, 0}}).()
-        end
+        determine_send_at(notification_pending_participation, begins_on,
+          compare_to: compare_to,
+          timezone: timezone,
+          locale: locale
+        )
 
       params = %{
         user_id: user_id,
@@ -196,15 +188,18 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
           {:ok, nil}
 
         # Sending to calculated time
-        true ->
+        DateTime.compare(begins_on, send_at) == :gt ->
           Notification.enqueue(:pending_participation_notification, params, scheduled_at: send_at)
+
+        true ->
+          {:ok, nil}
       end
     else
       _ -> {:ok, nil}
     end
   end
 
-  def pending_participation_notification(_), do: {:ok, nil}
+  def pending_participation_notification(_, _), do: {:ok, nil}
 
   def pending_membership_notification(%Actor{type: :Group, id: group_id}) do
     group_id
@@ -273,6 +268,38 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
       # Sending to calculated time
       true ->
         Notification.enqueue(:pending_membership_notification, params, scheduled_at: send_at)
+    end
+  end
+
+  defp determine_send_at(notification_pending_participation, begins_on, options) do
+    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    locale = Keyword.get(options, :locale, "en")
+    compare_to = Keyword.get(options, :compare_to, DateTime.utc_now())
+
+    case notification_pending_participation do
+      :none ->
+        nil
+
+      :direct ->
+        :direct
+
+      :one_day ->
+        calculate_next_day_notification(DateTime.to_date(compare_to),
+          timezone: timezone,
+          compare_to: compare_to
+        )
+
+      :one_week ->
+        calculate_next_week_notification(begins_on,
+          timezone: timezone,
+          locale: locale,
+          compare_to: compare_to
+        )
+
+      :one_hour ->
+        compare_to
+        |> DateTime.shift_zone!(timezone)
+        |> (&%{&1 | minute: 0, second: 0, microsecond: {0, 0}}).()
     end
   end
 end
