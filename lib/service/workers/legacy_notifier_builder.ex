@@ -6,7 +6,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.Notifier
 
   use Mobilizon.Service.Workers.Helper, queue: "activity"
@@ -15,6 +15,10 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   def perform(%Job{args: args}) do
     with {"legacy_notify", args} <- Map.pop(args, "op") do
       activity = build_activity(args)
+
+      if args["subject"] == "participation_event_comment" do
+        notify_anonymous_participants(get_in(args, ["subject_params", "event_id"]), activity)
+      end
 
       args
       |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
@@ -90,5 +94,21 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     |> Enum.filter(& &1)
     |> Enum.uniq()
     |> Enum.map(&Users.get_user_with_settings!/1)
+  end
+
+  defp notify_anonymous_participants(nil, _activity), do: :ok
+
+  defp notify_anonymous_participants(event_id, activity) do
+    event_id
+    |> Events.list_anonymous_participants_for_event()
+    |> Enum.filter(fn %Participant{metadata: metadata} ->
+      is_map(metadata) && is_binary(metadata.email)
+    end)
+    |> Enum.map(fn %Participant{metadata: metadata} -> metadata end)
+    |> Enum.map(fn metadata ->
+      Notifier.Email.send_anonymous_activity(metadata.email, activity,
+        locale: Map.get(metadata, :locale, "en")
+      )
+    end)
   end
 end

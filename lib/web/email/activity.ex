@@ -38,6 +38,24 @@ defmodule Mobilizon.Web.Email.Activity do
     |> render(:email_direct_activity)
   end
 
+  @spec anonymous_activity(String.t(), Activity.t(), Keyword.t()) :: Bamboo.Email.t()
+  def anonymous_activity(email, %Activity{subject_params: subject_params} = activity, options) do
+    locale = Keyword.get(options, :locale, "en")
+
+    subject =
+      dgettext(
+        "activity",
+        "Announcement for your event %{event}",
+        event: subject_params["event_title"]
+      )
+
+    Email.base_email(to: email, subject: subject)
+    |> assign(:subject, subject)
+    |> assign(:activity, activity)
+    |> assign(:locale, locale)
+    |> render(:email_anonymous_activity)
+  end
+
   @spec chunk_activities(list()) :: map()
   defp chunk_activities(activities) do
     activities
