@@ -16,6 +16,7 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Medias.File
+  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
@@ -360,6 +361,9 @@ defmodule Mobilizon.Actors do
           Multi.run(multi, :reset_default_actor_id, fn _, _ ->
             reset_default_actor_id(actor)
           end)
+
+        _ ->
+          multi
       end
 
     multi =

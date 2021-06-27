@@ -37,7 +37,8 @@ defmodule Mobilizon.Web.Router do
     plug(:put_secure_browser_headers)
 
     plug(Cldr.Plug.AcceptLanguage,
-      cldr_backend: Mobilizon.Cldr
+      cldr_backend: Mobilizon.Cldr,
+      no_match_log_level: :debug
     )
   end
 
@@ -50,7 +51,8 @@ defmodule Mobilizon.Web.Router do
     plug(Plug.Static, at: "/", from: "priv/static")
 
     plug(Cldr.Plug.AcceptLanguage,
-      cldr_backend: Mobilizon.Cldr
+      cldr_backend: Mobilizon.Cldr,
+      no_match_log_level: :debug
     )
 
     plug(:accepts, ["html"])

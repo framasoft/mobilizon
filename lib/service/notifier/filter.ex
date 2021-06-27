@@ -23,9 +23,12 @@ defmodule Mobilizon.Service.Notifier.Filter do
   defp enabled?(nil, activity_setting, get_default), do: get_default.(activity_setting)
   defp enabled?(%ActivitySetting{enabled: enabled}, _activity_setting, _get_default), do: enabled
 
-  # Comment mention
+  # Mention
   defp map_activity_to_activity_setting(%Activity{subject: :event_comment_mention}),
     do: "event_comment_mention"
+
+  defp map_activity_to_activity_setting(%Activity{subject: :discussion_mention}),
+    do: "discussion_mention"
 
   # Participation
   @spec map_activity_to_activity_setting(Activity.t()) :: String.t() | false
@@ -41,6 +44,9 @@ defmodule Mobilizon.Service.Notifier.Filter do
 
   defp map_activity_to_activity_setting(%Activity{subject: :event_new_participation}),
     do: "event_new_participation"
+
+  defp map_activity_to_activity_setting(%Activity{subject: :event_new_comment}),
+    do: "event_new_comment"
 
   # Event
   defp map_activity_to_activity_setting(%Activity{subject: :event_created}), do: "event_created"
@@ -60,7 +66,7 @@ defmodule Mobilizon.Service.Notifier.Filter do
   defp map_activity_to_activity_setting(%Activity{subject: :member_request}),
     do: "member_request"
 
-  defp map_activity_to_activity_setting(%Activity{type: :member}), do: "member"
+  defp map_activity_to_activity_setting(%Activity{type: :member}), do: "member_updated"
 
   defp map_activity_to_activity_setting(_), do: false
 end

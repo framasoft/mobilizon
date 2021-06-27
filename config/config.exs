@@ -113,7 +113,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
 
 # Configures Elixir's Logger
 config :logger, :console,
-  backends: [:console, Sentry.LoggerBackend],
+  backends: [:console],
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 

@@ -159,10 +159,11 @@ defmodule Mobilizon.Service.Activity.Comment do
          %Comment{
            actor_id: actor_id,
            in_reply_to_comment_id: in_reply_to_comment_id,
-           id: comment_id
-         },
+           id: comment_id,
+           uuid: comment_uuid
+         } = comment,
          %Event{
-           uuid: uuid,
+           uuid: event_uuid,
            title: title,
            attributed_to: nil,
            organizer_actor_id: organizer_actor_id
@@ -174,8 +175,10 @@ defmodule Mobilizon.Service.Activity.Comment do
       "subject" => :event_new_comment,
       "subject_params" => %{
         event_title: title,
-        event_uuid: uuid,
-        comment_reply_to: !is_nil(in_reply_to_comment_id)
+        event_uuid: event_uuid,
+        comment_reply_to: !is_nil(in_reply_to_comment_id),
+        comment_uuid: comment_uuid,
+        comment_reply_to_uuid: reply_to_comment_uuid(comment)
       },
       "author_id" => actor_id,
       "object_id" => to_string(comment_id)
@@ -185,4 +188,10 @@ defmodule Mobilizon.Service.Activity.Comment do
   end
 
   defp notify(_, _, _, _), do: {:ok, :skipped}
+
+  @spec reply_to_comment_uuid(Comment.t()) :: String.t() | nil
+  defp reply_to_comment_uuid(%Comment{in_reply_to_comment: %Comment{uuid: comment_reply_to_uuid}}),
+    do: comment_reply_to_uuid
+
+  defp reply_to_comment_uuid(%Comment{in_reply_to_comment: _}), do: nil
 end

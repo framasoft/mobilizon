@@ -18,7 +18,9 @@ defmodule Mobilizon.Service.Activity.CommentTest do
   describe "handle comment with mentions" do
     test "with no mentions" do
       %Event{title: event_title, uuid: event_uuid} = event = insert(:event)
-      %Comment{id: comment_id, actor_id: author_id} = comment = insert(:comment, event: event)
+
+      %Comment{id: comment_id, actor_id: author_id, uuid: comment_uuid} =
+        comment = insert(:comment, event: event)
 
       assert {:ok, [organizer: :enqueued, announcement: :skipped, mentionned: :skipped]} ==
                CommentActivity.insert_activity(comment)
@@ -37,9 +39,11 @@ defmodule Mobilizon.Service.Activity.CommentTest do
           "op" => "legacy_notify",
           "subject" => "event_new_comment",
           "subject_params" => %{
+            "comment_reply_to_uuid" => nil,
             "event_title" => event_title,
             "event_uuid" => event_uuid,
-            "comment_reply_to" => false
+            "comment_reply_to" => false,
+            "comment_uuid" => comment_uuid
           },
           "type" => "comment"
         }
@@ -51,7 +55,7 @@ defmodule Mobilizon.Service.Activity.CommentTest do
       %Actor{id: actor_id} = actor = insert(:actor, user: user)
       %Event{uuid: event_uuid, title: event_title} = event = insert(:event)
 
-      %Comment{id: comment_id, actor_id: author_id} =
+      %Comment{id: comment_id, actor_id: author_id, uuid: comment_uuid} =
         comment = insert(:comment, text: "Hey @you", event: event)
 
       comment = %Comment{
@@ -90,9 +94,11 @@ defmodule Mobilizon.Service.Activity.CommentTest do
           "op" => "legacy_notify",
           "subject" => "event_new_comment",
           "subject_params" => %{
+            "comment_reply_to_uuid" => nil,
             "event_title" => event_title,
             "event_uuid" => event_uuid,
-            "comment_reply_to" => false
+            "comment_reply_to" => false,
+            "comment_uuid" => comment_uuid
           },
           "type" => "comment"
         }

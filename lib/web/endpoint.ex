@@ -2,7 +2,10 @@ defmodule Mobilizon.Web.Endpoint do
   @moduledoc """
   Endpoint for Mobilizon app
   """
-  if Application.fetch_env!(:mobilizon, :env) !== :test do
+  alias Mobilizon.Service.ErrorReporting.Sentry, as: SentryAdapter
+
+  if Application.fetch_env!(:mobilizon, :env) !== :test &&
+       SentryAdapter.enabled?() do
     use Sentry.PlugCapture
   end
 
@@ -92,7 +95,8 @@ defmodule Mobilizon.Web.Endpoint do
     String.replace_leading(url(), "http", "ws")
   end
 
-  if Application.fetch_env!(:mobilizon, :env) !== :test do
+  if Application.fetch_env!(:mobilizon, :env) !== :test &&
+       SentryAdapter.enabled?() do
     plug(Sentry.PlugContext)
   end
 end

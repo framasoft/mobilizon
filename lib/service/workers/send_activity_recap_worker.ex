@@ -96,7 +96,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
-    is_between_hours(timezone: timezone)
+    is_between_hours(timezone: timezone || "Etc/UTC")
   end
 
   # If we're on the first day of the week between notification hours
@@ -107,6 +107,6 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
-    is_between_hours_on_first_day(timezone: timezone, locale: locale)
+    is_between_hours_on_first_day(timezone: timezone || "Etc/UTC", locale: locale)
   end
 end

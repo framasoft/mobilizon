@@ -13,6 +13,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
   alias Mobilizon.Actors.Actor
 
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+  alias Mobilizon.Service.ErrorReporting.Sentry
 
   require Logger
 

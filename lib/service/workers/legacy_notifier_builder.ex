@@ -5,6 +5,8 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
 
   alias Mobilizon.Activities.Activity
   alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Events.Event
   alias Mobilizon.Service.Notifier
 
   use Mobilizon.Service.Workers.Helper, queue: "activity"
@@ -65,6 +67,18 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     |> Enum.map(& &1.id)
     |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
   end
+
+  defp users_to_notify(
+         %{"subject" => "event_new_comment", "subject_params" => %{"event_uuid" => event_uuid}},
+         options
+       ) do
+    event_uuid
+    |> Events.get_event_by_uuid_with_preload()
+    |> (fn %Event{organizer_actor: %Actor{id: actor_id}} -> [actor_id] end).()
+    |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
+  end
+
+  defp users_to_notify(_, _), do: []
 
   @spec users_from_actor_ids(list(), integer() | String.t()) :: list(Users.t())
   defp users_from_actor_ids(actor_ids, author_id) do
