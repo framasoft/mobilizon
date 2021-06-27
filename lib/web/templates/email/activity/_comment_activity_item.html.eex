@@ -29,4 +29,37 @@
                         </a>"
                 }
             ) |> raw %>
+
+    <% :event_new_comment -> %>
+        <%= if @activity.subject_params["comment_reply_to"] do %>
+        <%= 
+                dgettext("activity", "%{profile} has posted a new reply under your event %{event}.", 
+                    %{
+                        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                        event: "<a href=\"#{
+                            page_url(
+                                Mobilizon.Web.Endpoint,
+                                :event,
+                                @activity.subject_params["event_uuid"]
+                            ) |> URI.decode()}#comment-#{@activity.subject_params["comment_reply_to_uuid"]}-#{@activity.subject_params["comment_uuid"]}\">
+                                #{@activity.subject_params["event_title"]}
+                            </a>"
+                    }
+                ) |> raw %>
+        <% else %>
+        <%= 
+                dgettext("activity", "%{profile} has posted a new comment under your event %{event}.", 
+                    %{
+                        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+                        event: "<a href=\"#{
+                            page_url(
+                                Mobilizon.Web.Endpoint,
+                                :event,
+                                @activity.subject_params["event_uuid"]
+                            ) |> URI.decode()}#comment-#{@activity.subject_params["comment_uuid"]}\">
+                                #{@activity.subject_params["event_title"]}
+                            </a>"
+                    }
+                ) |> raw %>
+        <% end %>
 <% end %>

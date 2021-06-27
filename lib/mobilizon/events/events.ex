@@ -217,6 +217,17 @@ defmodule Mobilizon.Events do
   @doc """
   Gets an event by its UUID, with all associations loaded.
   """
+  @spec get_event_by_uuid_with_preload(String.t()) :: Event.t() | nil
+  def get_event_by_uuid_with_preload(uuid) do
+    uuid
+    |> event_by_uuid_query()
+    |> preload_for_event()
+    |> Repo.one()
+  end
+
+  @doc """
+  Gets an event by its UUID, with all associations loaded.
+  """
   @spec get_own_event_by_uuid_with_preload(String.t(), integer()) :: Event.t() | nil
   def get_own_event_by_uuid_with_preload(uuid, user_id) do
     uuid

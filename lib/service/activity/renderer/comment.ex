@@ -45,6 +45,35 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
             ),
           url: event_url(activity)
         }
+
+      :event_new_comment ->
+        if activity.subject_params["comment_reply_to"] do
+          %{
+            body:
+              dgettext(
+                "activity",
+                "%{profile} has posted a new reply under your event %{event}.",
+                %{
+                  profile: profile,
+                  event: event_title(activity)
+                }
+              ),
+            url: event_comment_url(activity)
+          }
+        else
+          %{
+            body:
+              dgettext(
+                "activity",
+                "%{profile} has posted a new comment under your event %{event}.",
+                %{
+                  profile: profile,
+                  event: event_title(activity)
+                }
+              ),
+            url: event_comment_url(activity)
+          }
+        end
     end
   end
 
@@ -54,6 +83,18 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
       :event,
       activity.subject_params["event_uuid"]
     )
+  end
+
+  defp event_comment_url(activity) do
+    "#{event_url(activity)}#comment-#{comment_uuid(activity)}"
+  end
+
+  defp comment_uuid(activity) do
+    if activity.subject_params["comment_reply_to"] do
+      "#{activity.subject_params["reply_to_comment_uuid"]}-#{activity.subject_params["comment_uuid"]}"
+    else
+      activity.subject_params["comment_uuid"]
+    end
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

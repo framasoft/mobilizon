@@ -56,7 +56,8 @@ defmodule Mobilizon.Service.Notifier.Email do
   @always_direct_subjects [
     :participation_event_comment,
     :event_comment_mention,
-    :discussion_mention
+    :discussion_mention,
+    :event_new_comment
   ]
 
   @spec can_send_activity?(Activity.t(), User.t(), Keyword.t()) :: boolean()
@@ -96,30 +97,24 @@ defmodule Mobilizon.Service.Notifier.Email do
        when subject in @always_direct_subjects,
        do: true
 
+  # First notification EVER!
+  defp match_group_notifications_setting(:one_hour, _, last_notification_sent, _)
+       when is_nil(last_notification_sent),
+       do: true
+
+  # Delay ok since last notification
+  defp match_group_notifications_setting(:one_hour, _, %DateTime{} = last_notification_sent, _) do
+    is_delay_ok_since_last_notification_sent(last_notification_sent)
+  end
+
+  # This is a recap
   defp match_group_notifications_setting(
-         group_notifications,
+         _group_notifications,
          _subject,
-         last_notification_sent,
+         _last_notification_sent,
          options
        ) do
-    cond do
-      # This is a recap
-      Keyword.get(options, :recap, false) != false ->
-        true
-
-      # First notification EVER!
-      group_notifications == :one_hour && is_nil(last_notification_sent) ->
-        true
-
-      # Delay ok since last notification
-      group_notifications == :one_hour &&
-          is_delay_ok_since_last_notification_sent(last_notification_sent) ->
-        true
-
-      # Otherwise, no thanks
-      true ->
-        false
-    end
+    Keyword.get(options, :recap, false) != false
   end
 
   @default_behavior %{
