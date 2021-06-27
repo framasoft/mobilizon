@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.0-beta.3 - 2021-06-27
+
+### Added
+
+- Allow sending notifications to event organizer when new comment is posted
+- Allow sending comment announcements notifications to anonymous participants as well
+
+### Changed
+
+- Disabled Cldr warning that the `Cldr.Plug.AcceptLanguage` plug didn't many any known locale
+
+### Fixed
+
+- Fixed error when deleting actor with type different from Person or Group
+- Fixed not defaulting to UTC timezone when user has no tz setting in their activity recaps
+- Fixed Sentry loading itself even if not configured
+- Fixed showing proper message when anonymous participation was confirmed but just wasn't saved in browser
+- Fixed editing some event properties
+
+### Translations
+
+- Persian (New!)
+- Spanish
+
 ## 1.2.0-beta.2 - 2021-06-26
 
 ### Added
