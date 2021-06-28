@@ -24,12 +24,24 @@
       <b-button
         icon-left="rss"
         @click="subscribeToWebPush"
-        v-else-if="canShowWebPush"
+        v-else-if="canShowWebPush && webPushEnabled"
         >{{ $t("Activate browser push notifications") }}</b-button
       >
-      <span v-else>{{
+      <b-message type="is-warning" v-else-if="!webPushEnabled">
+        {{ $t("This instance hasn't got push notifications enabled.") }}
+        <i18n path="Ask your instance admin to {enable_feature}.">
+          <a
+            slot="enable_feature"
+            href="https://docs.joinmobilizon.org/administration/configure/push/"
+            target="_blank"
+            rel="noopener noreferer"
+            >{{ $t("enable the feature") }}</a
+          >
+        </i18n>
+      </b-message>
+      <b-message type="is-danger" v-else>{{
         $t("You can't use push notifications in this browser.")
-      }}</span>
+      }}</b-message>
     </section>
     <section>
       <div class="setting-title">
@@ -292,6 +304,7 @@ import {
   UNREGISTER_PUSH_MUTATION,
 } from "@/graphql/webPush";
 import { merge } from "lodash";
+import { WEB_PUSH } from "@/graphql/config";
 
 type NotificationSubType = { label: string; id: string };
 type NotificationType = { label: string; subtypes: NotificationSubType[] };
@@ -305,6 +318,10 @@ type NotificationType = { label: string; subtypes: NotificationSubType[] };
         data.loggedUser.feedTokens.filter(
           (token: IFeedToken) => token.actor === null
         ),
+    },
+    webPushEnabled: {
+      query: WEB_PUSH,
+      update: (data) => data.config.webPush.enabled,
     },
   },
   metaInfo() {
@@ -340,6 +357,8 @@ export default class Notifications extends Vue {
   subscribed = false;
 
   canShowWebPush = false;
+
+  webPushEnabled = false;
 
   notificationMethods = {
     email: this.$t("Email") as string,
@@ -626,8 +645,7 @@ export default class Notifications extends Vue {
         const subscription = await subscribeUserToPush();
         if (subscription) {
           const subscriptionJSON = subscription?.toJSON();
-          console.log("subscription", subscriptionJSON);
-          const { data } = await this.$apollo.mutate({
+          await this.$apollo.mutate({
             mutation: REGISTER_PUSH_MUTATION,
             variables: {
               endpoint: subscriptionJSON.endpoint,
@@ -636,14 +654,13 @@ export default class Notifications extends Vue {
             },
           });
           this.subscribed = true;
-          console.log(data);
         } else {
           this.$notifier.error(
             this.$t("Error while subscribing to push notifications") as string
           );
         }
       } else {
-        console.log("can't do webpush");
+        console.error("can't do webpush");
       }
     } catch (e) {
       console.error(e);
@@ -672,7 +689,6 @@ export default class Notifications extends Vue {
     if (!window.isSecureContext && !("serviceWorker" in navigator))
       return Promise.resolve(false);
     const registration = await navigator.serviceWorker.getRegistration();
-    console.log("registration", registration);
     return registration !== undefined;
   }
 

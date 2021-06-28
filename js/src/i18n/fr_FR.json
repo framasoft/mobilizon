@@ -1146,5 +1146,10 @@
   "Send notification e-mails": "Envoyer des e-mails de notification",
   "Announcements and mentions notifications are always sent straight away.": "Les notifications d'annonces et de mentions sont toujours envoyées directement.",
   "Weekly email summary": "Résumé hebdomadaire par e-mail",
-  "Receive one email for each activity": "Recevoir un e-mail à chaque activité"
+  "Receive one email for each activity": "Recevoir un e-mail à chaque activité",
+  "Error while updating participation status inside this browser": "Erreur lors de la mise à jour du statut de votre participation dans ce navigateur",
+  "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue.": "Nous n'avons pas pu sauvegarder votre participation dans ce navigateur. Aucune inquiétude, vous avez bien confirmé votre participation, nous n'avons juste pas pu enregistrer son statut dans ce navigateur à cause d'un souci technique.",
+  "This instance hasn't got push notifications enabled.": "Cette instance n'a pas activé la fonctionnalité de notification push.",
+  "enable the feature": "activer la fonctionnalité",
+  "Ask your instance admin to {enable_feature}.": "Demandez à l'administrateur⋅ice de votre instance d'{enable_feature}."
 }
