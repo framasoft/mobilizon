@@ -15,25 +15,26 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   def init(opts), do: opts
 
-  def call(conn, _options) do
+  def call(conn, options \\ []) do
     if Config.get([:http_security, :enabled]) do
       conn
-      |> merge_resp_headers(headers())
+      |> merge_resp_headers(headers(options))
       |> maybe_send_sts_header(Config.get([:http_security, :sts]))
     else
       conn
     end
   end
 
-  defp headers do
-    referrer_policy = Config.get([:http_security, :referrer_policy])
+  defp headers(options) do
+    referrer_policy =
+      Keyword.get(options, :referrer_policy, Config.get([:http_security, :referrer_policy]))
 
     [
       {"x-xss-protection", "0"},
       {"x-frame-options", "DENY"},
       {"x-content-type-options", "nosniff"},
       {"referrer-policy", referrer_policy},
-      {"content-security-policy", csp_string()}
+      {"content-security-policy", csp_string(options)}
     ]
   end
 
@@ -55,14 +56,14 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   @style_src "style-src 'self' "
   @font_src "font-src 'self' "
 
-  defp csp_string do
-    scheme = Config.get([Pleroma.Web.Endpoint, :url])[:scheme]
+  defp csp_string(options) do
+    scheme = Keyword.get(options, :scheme, Config.get([Pleroma.Web.Endpoint, :url])[:scheme])
     static_url = Mobilizon.Web.Endpoint.static_url()
     websocket_url = Mobilizon.Web.Endpoint.websocket_url()
 
-    img_src = [@img_src | get_csp_config(:img_src)]
+    img_src = [@img_src | get_csp_config(:img_src, options)]
 
-    media_src = [@media_src | get_csp_config(:media_src)]
+    media_src = [@media_src | get_csp_config(:media_src, options)]
 
     connect_src = [
       @connect_src,
@@ -70,7 +71,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
       ?\s,
       websocket_url,
       ?\s,
-      get_csp_config(:connect_src)
+      get_csp_config(:connect_src, options)
     ]
 
     script_src =
@@ -83,19 +84,22 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
         ]
       end
 
-    script_src = [script_src | get_csp_config(:script_src)]
+    script_src = [script_src | get_csp_config(:script_src, options)]
 
-    style_src = [@style_src | get_csp_config(:style_src)]
+    style_src =
+      if Config.get(:env) == :dev, do: [@style_src | "'unsafe-inline' "], else: @style_src
 
-    font_src = [@font_src | get_csp_config(:font_src)]
+    style_src = [style_src | get_csp_config(:style_src, options)]
+
+    font_src = [@font_src | get_csp_config(:font_src, options)]
 
     frame_src = if Config.get(:env) == :dev, do: "frame-src 'self' ", else: "frame-src 'none' "
-    frame_src = [frame_src | get_csp_config(:frame_src)]
+    frame_src = [frame_src | get_csp_config(:frame_src, options)]
 
     frame_ancestors =
       if Config.get(:env) == :dev, do: "frame-ancestors 'self' ", else: "frame-ancestors 'none' "
 
-    frame_ancestors = [frame_ancestors | get_csp_config(:frame_ancestors)]
+    frame_ancestors = [frame_ancestors | get_csp_config(:frame_ancestors, options)]
 
     insecure = if scheme == "https", do: "upgrade-insecure-requests"
 
@@ -126,6 +130,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   defp maybe_send_sts_header(conn, _), do: conn
 
-  defp get_csp_config(type),
-    do: [:http_security, :csp_policy, type] |> Config.get() |> Enum.join(" ")
+  defp get_csp_config(type, options) do
+    options
+    |> Keyword.get(type, Config.get([:http_security, :csp_policy, type]))
+    |> Enum.join(" ")
+  end
 end
