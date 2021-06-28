@@ -158,7 +158,7 @@ export const PRIVACY = gql`
 `;
 
 export const TIMEZONES = gql`
-  query {
+  query Timezones {
     config {
       timezones
     }
@@ -166,7 +166,7 @@ export const TIMEZONES = gql`
 `;
 
 export const WEB_PUSH = gql`
-  query {
+  query WebPush {
     config {
       webPush {
         enabled

@@ -22,8 +22,8 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
     apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
 
   const registration = await navigator.serviceWorker.ready;
-  const { data } = await client.mutate<{ config: IConfig }>({
-    mutation: WEB_PUSH,
+  const { data } = await client.query<{ config: IConfig }>({
+    query: WEB_PUSH,
   });
 
   if (data?.config?.webPush?.enabled && data?.config?.webPush?.publicKey) {

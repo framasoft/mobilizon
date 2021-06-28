@@ -1055,5 +1055,10 @@
   "Send notification e-mails": "Send notification e-mails",
   "Announcements and mentions notifications are always sent straight away.": "Announcements and mentions notifications are always sent straight away.",
   "Weekly email summary": "Weekly email summary",
-  "Receive one email for each activity": "Receive one email for each activity"
+  "Receive one email for each activity": "Receive one email for each activity",
+  "Error while updating participation status inside this browser": "Error while updating participation status inside this browser",
+  "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue.": "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue.",
+  "This instance hasn't got push notifications enabled.": "This instance hasn't got push notifications enabled.",
+  "enable the feature": "enable the feature",
+  "Ask your instance admin to {enable_feature}.": "Ask your instance admin to {enable_feature}."
 }
