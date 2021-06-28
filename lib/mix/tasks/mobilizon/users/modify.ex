@@ -32,7 +32,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
     new_email = Keyword.get(options, :email)
 
     if disable? && enable? do
-      shell_error("Can't use both --enabled and --disable options at the same time.")
+      shell_error("Can't use both --enable and --disable options at the same time.")
     end
 
     start_mobilizon()
