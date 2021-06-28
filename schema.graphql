@@ -114,6 +114,9 @@ enum NotificationPendingEnum {
 
   "One day. Notifications will be sent at most each day"
   ONE_DAY
+
+  "One Week. Notifications will be sent at most each week"
+  ONE_WEEK
 }
 
 "The possible values for a participant role"
@@ -1228,6 +1231,9 @@ type RootMutationType {
 
     "When does the user receives a notification about a new pending membership in one of the group they're admin for"
     notificationPendingMembership: NotificationPendingEnum
+
+    "When does the user receives a notification about new activity"
+    groupNotifications: NotificationPendingEnum
 
     "A geohash of the user's preferred location, where they want to see events"
     location: LocationInput
@@ -3402,6 +3408,9 @@ type UserSettings {
 
   "When does the user receives a notification about a new pending membership in one of the group they're admin for"
   notificationPendingMembership: NotificationPendingEnum
+
+  "When does the user receives a notification about new activity"
+  groupNotifications: NotificationPendingEnum
 
   "The user's preferred location, where they want to be suggested events"
   location: Location
