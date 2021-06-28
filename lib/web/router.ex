@@ -9,6 +9,16 @@ defmodule Mobilizon.Web.Router do
     plug(Mobilizon.Web.Auth.Pipeline)
   end
 
+  pipeline :graphiql do
+    plug(Mobilizon.Web.Auth.Pipeline)
+
+    plug(Mobilizon.Web.Plugs.HTTPSecurityPlug,
+      script_src: ["cdn.jsdelivr.net"],
+      style_src: ["cdn.jsdelivr.net"],
+      font_src: ["cdn.jsdelivr.net"]
+    )
+  end
+
   pipeline :host_meta do
     plug(:accepts, ["xrd-xml"])
   end
@@ -144,8 +154,12 @@ defmodule Mobilizon.Web.Router do
 
   ## MOBILIZON
   scope "/graphiql" do
-    pipe_through(:graphql)
-    forward("/", Absinthe.Plug.GraphiQL, schema: Mobilizon.GraphQL.Schema)
+    pipe_through(:graphiql)
+
+    forward("/", Absinthe.Plug.GraphiQL,
+      schema: Mobilizon.GraphQL.Schema,
+      interface: :playground
+    )
   end
 
   scope "/", Mobilizon.Web do
