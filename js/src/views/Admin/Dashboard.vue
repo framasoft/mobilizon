@@ -183,4 +183,8 @@ article.tile a {
   color: #4a4a4a;
   text-decoration: none;
 }
+
+.image.is-4by3 img {
+  object-fit: cover;
+}
 </style>
