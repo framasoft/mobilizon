@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-06-27 16:48+0000\n"
+"PO-Revision-Date: 2021-06-29 09:52+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/es/>\n"
@@ -227,20 +227,20 @@ msgstr "%{profile} publicó un comentario sobre el evento %{event}."
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} respondió a un comentario sobre el evento %{event}."
 
-#, elixir-format
 #: lib/web/templates/email/email_direct_activity.text.eex:27
 #: lib/web/templates/email/email_direct_activity.text.eex:23
+#, elixir-format
 #, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
 msgstr ""
 "¿No quieres recibir notificaciones de actividad? Puede cambiar la frecuencia "
 "o deshabilitarlos en su configuración."
 
-#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:135
 #: lib/web/templates/email/email_direct_activity.text.eex:23
 #: lib/web/templates/email/email_direct_activity.html.eex:133
 #: lib/web/templates/email/email_direct_activity.text.eex:19
+#, elixir-format
 #, elixir-format
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
@@ -282,9 +282,9 @@ msgstr "%{profile} te mencionó en un comentario en el evento %{event}."
 msgid "%{profile} mentionned you in the discussion %{discussion}."
 msgstr "%{profile}te mencioné en la discusión %{discussion}."
 
-#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:155
 #: lib/web/templates/email/email_direct_activity.html.eex:153
+#, elixir-format
 #, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
@@ -316,18 +316,19 @@ msgstr "Aquí está su resumen de actividad diaria"
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 msgid "%{profile} has posted a new comment under your event %{event}."
-msgstr ""
+msgstr "%{profile} ha publicado un nuevo comentario en tu evento %{event}."
 
-#, elixir-format, fuzzy
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
-msgid "%{profile} has posted a new reply under your event %{event}."
-msgstr ""
-
 #, elixir-format
+msgid "%{profile} has posted a new reply under your event %{event}."
+msgstr "%{profile} ha publicado una nueva respuesta en tu evento %{event}."
+
 #: lib/web/email/activity.ex:44
+#, elixir-format
 msgid "Announcement for your event %{event}"
-msgstr ""
+msgstr "Anuncio para su evento %{event}"
+
 #: lib/web/email/activity.ex:115
 #, elixir-format
 msgid "Weekly activity recap for %{instance}"
