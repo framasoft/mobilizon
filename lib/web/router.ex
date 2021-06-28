@@ -156,7 +156,10 @@ defmodule Mobilizon.Web.Router do
   scope "/graphiql" do
     pipe_through(:graphiql)
 
-    forward("/", Absinthe.Plug.GraphiQL, schema: Mobilizon.GraphQL.Schema)
+    forward("/", Absinthe.Plug.GraphiQL,
+      schema: Mobilizon.GraphQL.Schema,
+      interface: :playground
+    )
   end
 
   scope "/", Mobilizon.Web do
