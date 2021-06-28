@@ -127,7 +127,7 @@ export default class App extends Vue {
       this.$buefy.snackbar.open({
         queue: false,
         indefinite: true,
-        type: "is-primary",
+        type: "is-secondary",
         actionText: this.$t("Update app") as string,
         cancelText: this.$t("Ignore") as string,
         message: this.$t("A new version is available.") as string,
