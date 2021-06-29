@@ -45,7 +45,7 @@ LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apk add --no-cache openssl ncurses-libs file postgresql-client
+RUN apk add --no-cache openssl ncurses-libs file postgresql-client libgcc libstdc++
 
 RUN mkdir -p /app/uploads && chown nobody:nobody /app/uploads
 RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
