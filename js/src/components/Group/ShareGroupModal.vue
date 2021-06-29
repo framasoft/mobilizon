@@ -57,6 +57,12 @@
           <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="linkedin" size="is-large" type="is-primary"
           /></a>
+          <a :href="whatsAppShareUrl" target="_blank" rel="nofollow noopener"
+            ><b-icon icon="whatsapp" size="is-large" type="is-primary"
+          /></a>
+          <a :href="telegramShareUrl" target="_blank" rel="nofollow noopener"
+            ><b-icon icon="telegram" size="is-large" type="is-primary"
+          /></a>
           <a
             :href="diasporaShareUrl"
             class="diaspora"
@@ -112,6 +118,16 @@ export default class ShareGroupModal extends Vue {
     return `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
       this.group.url
     )}&title=${displayName(this.group)}`;
+  }
+
+  get whatsAppShareUrl(): string {
+    return `https://wa.me/?text=${encodeURIComponent(this.basicTextToEncode)}`;
+  }
+
+  get telegramShareUrl(): string {
+    return `https://t.me/share/url?url=${encodeURIComponent(
+      this.group.url
+    )}&text=${encodeURIComponent(displayName(this.group))}`;
   }
 
   get emailShareUrl(): string {
