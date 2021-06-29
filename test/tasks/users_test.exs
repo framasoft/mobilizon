@@ -160,7 +160,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "enable and disable at the same time" do
       Modify.run([@email, "--disable", "--enable"])
       assert_received {:mix_shell, :error, [message]}
-      assert message =~ "Can't use both --enabled and --disable options at the same time."
+      assert message =~ "Can't use both --enable and --disable options at the same time."
     end
 
     @modified_email "modified@email.tld"
