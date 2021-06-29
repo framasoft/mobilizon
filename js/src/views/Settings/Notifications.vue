@@ -686,7 +686,7 @@ export default class Notifications extends Vue {
   }
 
   async checkCanShowWebPush(): Promise<boolean> {
-    if (!window.isSecureContext && !("serviceWorker" in navigator))
+    if (!window.isSecureContext || !("serviceWorker" in navigator))
       return Promise.resolve(false);
     const registration = await navigator.serviceWorker.getRegistration();
     return registration !== undefined;
