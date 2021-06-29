@@ -1060,5 +1060,8 @@
   "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue.": "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue.",
   "This instance hasn't got push notifications enabled.": "This instance hasn't got push notifications enabled.",
   "enable the feature": "enable the feature",
-  "Ask your instance admin to {enable_feature}.": "Ask your instance admin to {enable_feature}."
+  "Ask your instance admin to {enable_feature}.": "Ask your instance admin to {enable_feature}.",
+  "Event URL": "Event URL",
+  "Copy URL to clipboard": "Copy URL to clipboard",
+  "Group URL": "Group URL"
 }
