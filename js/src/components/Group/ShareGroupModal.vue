@@ -55,9 +55,7 @@
             target="_blank"
             rel="nofollow noopener"
           >
-            <span data-v-5e15e80a="" class="icon has-text-primary is-large">
-              <DiasporaLogo alt="diaspora-logo" />
-            </span>
+            <diaspora-logo />
           </a>
           <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="email" size="is-large" type="is-primary"
@@ -71,9 +69,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { GroupVisibility } from "@/types/enums";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import DiasporaLogo from "../../assets/diaspora-icon.svg?inline";
+import DiasporaLogo from "../Share/DiasporaLogo.vue";
 import { displayName, IGroup } from "@/types/actor";
 
 @Component({
