@@ -17,8 +17,13 @@
             )
           }}
         </b-notification>
-        <b-field>
-          <b-input ref="groupURLInput" :value="group.url" expanded />
+        <b-field :label="$t('Group URL')" label-for="group-url-text">
+          <b-input
+            id="group-url-text"
+            ref="groupURLInput"
+            :value="group.url"
+            expanded
+          />
           <p class="control">
             <b-tooltip
               :label="$t('URL copied to clipboard')"
@@ -33,14 +38,17 @@
                 native-type="button"
                 @click="copyURL"
                 @keyup.enter="copyURL"
+                :title="$t('Copy URL to clipboard')"
               />
             </b-tooltip>
           </p>
         </b-field>
         <div>
-          <!--                  <b-icon icon="mastodon" size="is-large" type="is-primary" />-->
-
-          <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="twitterShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="Twitter"
             ><b-icon icon="twitter" size="is-large" type="is-primary"
           /></a>
           <a
@@ -48,22 +56,40 @@
             class="mastodon"
             target="_blank"
             rel="nofollow noopener"
+            title="Mastodon"
           >
             <mastodon-logo />
           </a>
-          <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="facebookShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="Facebook"
             ><b-icon icon="facebook" size="is-large" type="is-primary"
           /></a>
-          <a :href="linkedInShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="linkedInShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="LinkedIn"
             ><b-icon icon="linkedin" size="is-large" type="is-primary"
           /></a>
-          <a :href="whatsAppShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="whatsAppShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="WhatsApp"
             ><b-icon icon="whatsapp" size="is-large" type="is-primary"
           /></a>
-          <a :href="telegramShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="telegramShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="Telegram"
             ><b-icon icon="telegram" size="is-large" type="is-primary"
           /></a>
           <a
+            title="Diaspora"
             :href="diasporaShareUrl"
             class="diaspora"
             target="_blank"
@@ -71,7 +97,11 @@
           >
             <diaspora-logo />
           </a>
-          <a :href="emailShareUrl" target="_blank" rel="nofollow noopener"
+          <a
+            :href="emailShareUrl"
+            target="_blank"
+            rel="nofollow noopener"
+            title="Email"
             ><b-icon icon="email" size="is-large" type="is-primary"
           /></a>
         </div>
