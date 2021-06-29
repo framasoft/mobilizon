@@ -2,13 +2,7 @@
   <article class="container" v-if="post">
     <header>
       <div class="banner-container">
-        <lazy-image
-          v-if="post.picture"
-          :src="post.picture.url"
-          :width="post.picture.metadata.width"
-          :height="post.picture.metadata.height"
-          :blurhash="post.picture.metadata.blurhash"
-        />
+        <lazy-image-wrapper :picture="post.picture" />
       </div>
       <div class="heading-section">
         <div class="heading-wrapper">
@@ -87,7 +81,7 @@ import { IPost } from "../../types/post.model";
 import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
-import LazyImage from "../../components/Image/LazyImage.vue";
+import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import ActorInline from "../../components/Account/ActorInline.vue";
 
 @Component({
@@ -124,7 +118,7 @@ import ActorInline from "../../components/Account/ActorInline.vue";
   },
   components: {
     Tag,
-    LazyImage,
+    LazyImageWrapper,
     ActorInline,
   },
   metaInfo() {

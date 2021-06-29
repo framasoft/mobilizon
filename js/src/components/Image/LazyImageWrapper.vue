@@ -32,7 +32,7 @@ const DEFAULT_PICTURE = {
 })
 export default class LazyImageWrapper extends Vue {
   @Prop({ required: true })
-  picture!: IMedia;
+  picture!: IMedia | null;
 
   get pictureOrDefault(): Partial<IMedia> {
     if (this.picture === null) {
