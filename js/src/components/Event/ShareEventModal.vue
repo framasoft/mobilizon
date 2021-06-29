@@ -53,6 +53,14 @@
           <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="twitter" size="is-large" type="is-primary"
           /></a>
+          <a
+            :href="mastodonShareUrl"
+            class="mastodon"
+            target="_blank"
+            rel="nofollow noopener"
+          >
+            <mastodon-logo />
+          </a>
           <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="facebook" size="is-large" type="is-primary"
           /></a>
@@ -81,10 +89,12 @@ import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { EventStatus, EventVisibility } from "@/types/enums";
 import { IEvent } from "../../types/event.model";
 import DiasporaLogo from "../Share/DiasporaLogo.vue";
+import MastodonLogo from "../Share/MastodonLogo.vue";
 
 @Component({
   components: {
     DiasporaLogo,
+    MastodonLogo,
   },
 })
 export default class ShareEventModal extends Vue {
@@ -129,6 +139,16 @@ export default class ShareEventModal extends Vue {
     )}&url=${encodeURIComponent(this.event.url)}`;
   }
 
+  get mastodonShareUrl(): string {
+    return `https://toot.karamoff.dev/?text=${encodeURIComponent(
+      this.basicTextToEncode
+    )}`;
+  }
+
+  get basicTextToEncode(): string {
+    return `${this.event.title}\r\n${this.event.url}`;
+  }
+
   copyURL(): void {
     this.eventURLInput.$refs.input.select();
     document.execCommand("copy");
@@ -140,8 +160,10 @@ export default class ShareEventModal extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.diaspora span svg {
-  height: 2rem;
-  width: 2rem;
+.diaspora,
+.mastodon {
+  ::v-deep span svg {
+    width: 2.25rem;
+  }
 }
 </style>

@@ -43,6 +43,14 @@
           <a :href="twitterShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="twitter" size="is-large" type="is-primary"
           /></a>
+          <a
+            :href="mastodonShareUrl"
+            class="mastodon"
+            target="_blank"
+            rel="nofollow noopener"
+          >
+            <mastodon-logo />
+          </a>
           <a :href="facebookShareUrl" target="_blank" rel="nofollow noopener"
             ><b-icon icon="facebook" size="is-large" type="is-primary"
           /></a>
@@ -70,11 +78,13 @@
 import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { GroupVisibility } from "@/types/enums";
 import DiasporaLogo from "../Share/DiasporaLogo.vue";
+import MastodonLogo from "../Share/MastodonLogo.vue";
 import { displayName, IGroup } from "@/types/actor";
 
 @Component({
   components: {
     DiasporaLogo,
+    MastodonLogo,
   },
 })
 export default class ShareGroupModal extends Vue {
@@ -116,6 +126,16 @@ export default class ShareGroupModal extends Vue {
     )}&url=${encodeURIComponent(this.group.url)}`;
   }
 
+  get mastodonShareUrl(): string {
+    return `https://toot.karamoff.dev/?text=${encodeURIComponent(
+      this.basicTextToEncode
+    )}`;
+  }
+
+  get basicTextToEncode(): string {
+    return `${displayName(this.group)}\r\n${this.group.url}`;
+  }
+
   copyURL(): void {
     this.groupURLInput.$refs.input.select();
     document.execCommand("copy");
@@ -127,8 +147,10 @@ export default class ShareGroupModal extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.diaspora span svg {
-  height: 2rem;
-  width: 2rem;
+.diaspora,
+.mastodon {
+  ::v-deep span svg {
+    width: 2.25rem;
+  }
 }
 </style>
