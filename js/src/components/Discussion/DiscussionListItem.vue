@@ -32,7 +32,10 @@
           }}</span
         >
       </div>
-      <div class="has-text-grey-dark" v-if="!discussion.lastComment.deletedAt">
+      <div
+        class="ellipsis has-text-grey-dark"
+        v-if="!discussion.lastComment.deletedAt"
+      >
         {{ htmlTextEllipsis }}
       </div>
       <div v-else class="has-text-grey-dark">
@@ -105,7 +108,7 @@ export default class DiscussionListItem extends Vue {
       }
     }
 
-    div.has-text-grey {
+    div.ellipsis {
       overflow: hidden;
       display: -webkit-box;
       -webkit-box-orient: vertical;

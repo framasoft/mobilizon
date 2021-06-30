@@ -395,12 +395,23 @@ export default class EditPost extends mixins(GroupMixin) {
 }
 form {
   nav.navbar {
-    position: sticky;
-    bottom: 0;
-    min-height: 2rem;
+    min-height: 2rem !important;
+    background: lighten($secondary, 10%);
 
     .container {
       min-height: 2rem;
+
+      .navbar-menu,
+      .navbar-end {
+        display: flex !important;
+        background: lighten($secondary, 10%);
+        flex-wrap: wrap;
+      }
+
+      .navbar-end {
+        justify-content: flex-end;
+        margin-left: auto;
+      }
     }
   }
 }
