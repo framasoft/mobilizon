@@ -109,7 +109,7 @@
                     props.row.actor.name
                   }}</span
                   ><br />
-                  <span class="is-size-7 has-text-grey"
+                  <span class="is-size-7 has-text-grey-dark"
                     >@{{ usernameWithDomain(props.row.actor) }}</span
                   >
                 </span>
@@ -148,10 +148,11 @@
         </b-table-column>
         <b-table-column
           field="metadata.message"
+          class="column-message"
           :label="$t('Message')"
           v-slot="props"
         >
-          <span
+          <div
             @click="toggleQueueDetails(props.row)"
             :class="{
               'ellipsed-message':
@@ -159,11 +160,25 @@
             }"
             v-if="props.row.metadata && props.row.metadata.message"
           >
-            {{ props.row.metadata.message | ellipsize }}
-          </span>
-          <span v-else class="has-text-grey">
+            <p>
+              {{ props.row.metadata.message | ellipsize }}
+            </p>
+            <button
+              type="button"
+              class="button is-text"
+              v-if="props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH"
+              @click.stop="toggleQueueDetails(props.row)"
+            >
+              {{
+                openDetailedRows[props.row.id]
+                  ? $t("View less")
+                  : $t("View more")
+              }}
+            </button>
+          </div>
+          <p v-else class="has-text-grey-dark">
             {{ $t("No message") }}
-          </span>
+          </p>
         </b-table-column>
         <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
           <span class="has-text-centered">
@@ -177,7 +192,7 @@
         </template>
         <template slot="empty">
           <section class="section">
-            <div class="content has-text-grey has-text-centered">
+            <div class="content has-text-grey-dark has-text-centered">
               <p>{{ $t("No participant matches the filters") }}</p>
             </div>
           </section>
@@ -407,7 +422,12 @@ export default class Participants extends Vue {
     )
       return;
     this.queueTable.toggleDetails(row);
+    if (row.id) {
+      this.openDetailedRows[row.id] = !this.openDetailedRows[row.id];
+    }
   }
+
+  openDetailedRows: Record<string, boolean> = {};
 
   async pushRouter(
     routeName: string,
@@ -434,8 +454,24 @@ section {
 }
 
 .table {
+  .column-message {
+    vertical-align: middle;
+  }
   .ellipsed-message {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    p {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    button {
+      display: inline;
+    }
   }
 
   span.tag {
