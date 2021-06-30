@@ -33,7 +33,7 @@ defmodule Mobilizon.Service.Workers.ActivityBuilder do
   end
 
   @spec users_to_notify(Activity.t()) :: list(User.t())
-  defp users_to_notify(%Activity{group: %Actor{} = group, author_id: author_id}) do
+  defp users_to_notify(%Activity{group: %Actor{type: :Group} = group, author_id: author_id}) do
     group
     |> Actors.list_internal_actors_members_for_group([
       :creator,
@@ -47,4 +47,6 @@ defmodule Mobilizon.Service.Workers.ActivityBuilder do
     |> Enum.uniq()
     |> Enum.map(&Users.get_user_with_settings!/1)
   end
+
+  defp users_to_notify(_), do: []
 end

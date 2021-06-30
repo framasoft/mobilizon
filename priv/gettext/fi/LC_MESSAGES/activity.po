@@ -50,15 +50,13 @@ msgstr "%{profile} lisäsi jäsenen %{member}."
 
 #, elixir-format
 #: lib/service/activity/renderer/discussion.ex:65
-#: lib/service/activity/renderer/post.ex:53 lib/web/templates/email/activity/_discussion_activity_item.html.eex:46
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr "%{profile} arkistoi keskustelun %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/discussion.ex:25
-#: lib/service/activity/renderer/post.ex:23 lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:4 lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 msgid "%{profile} created the discussion %{discussion}."
 msgstr "%{profile} loi keskustelun %{discussion}."
 
@@ -82,8 +80,7 @@ msgstr "%{profile} loi resurssin %{resource}."
 
 #, elixir-format
 #: lib/service/activity/renderer/discussion.ex:75
-#: lib/service/activity/renderer/post.ex:63 lib/web/templates/email/activity/_discussion_activity_item.html.eex:60
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} poisti keskustelun %{discussion}."
 
@@ -125,8 +122,7 @@ msgstr "%{profile} poistui ryhmästä."
 
 #, elixir-format
 #: lib/service/activity/renderer/discussion.ex:55
-#: lib/service/activity/renderer/post.ex:43 lib/web/templates/email/activity/_discussion_activity_item.html.eex:32
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} muutti keskustelun %{discussion} nimer."
 
@@ -144,8 +140,7 @@ msgstr "%{profile} muutti resurssin %{old_resource_title} nimeksi %{resource}."
 
 #, elixir-format
 #: lib/service/activity/renderer/discussion.ex:35
-#: lib/service/activity/renderer/post.ex:33 lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
-#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:18 lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} vastasi keskusteluun %{discussion}."
 
@@ -180,20 +175,20 @@ msgid "The event %{event} was updated by %{profile}."
 msgstr "%{profile} päivitti tapahtumaa %{event}."
 
 #, elixir-format
-#: lib/service/activity/renderer/group.ex:23
-#: lib/web/templates/email/activity/_post_activity_item.html.eex:4 lib/web/templates/email/activity/_post_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:4
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:1
 msgid "The post %{post} was created by %{profile}."
 msgstr "%{profile} loi julkaisun %{post}."
 
 #, elixir-format
-#: lib/service/activity/renderer/group.ex:43
-#: lib/web/templates/email/activity/_post_activity_item.html.eex:34 lib/web/templates/email/activity/_post_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:34
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:13
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "%{profile} poisti julkaisun %{post}."
 
 #, elixir-format
-#: lib/service/activity/renderer/group.ex:33
-#: lib/web/templates/email/activity/_post_activity_item.html.eex:19 lib/web/templates/email/activity/_post_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:19
+#: lib/web/templates/email/activity/_post_activity_item.text.eex:7
 msgid "The post %{post} was updated by %{profile}."
 msgstr "%{profile} päivitti julkaisun %{post}."
 
@@ -276,12 +271,12 @@ msgid "Here's your weekly activity recap"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/activity.ex:117 lib/web/email/activity.ex:138
+#: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
 msgid "Activity notification for %{instance}"
 msgstr "Toimenpide palvelimella %{instance}"
 
 #, elixir-format
-#: lib/web/email/activity.ex:124
+#: lib/web/email/activity.ex:126
 msgid "Daily activity recap for %{instance}"
 msgstr ""
 
@@ -292,23 +287,43 @@ msgid "Here's your daily activity recap"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/activity.ex:131
+#: lib/web/email/activity.ex:133
 msgid "Weekly activity recap for %{instance}"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/activity.ex:44
+#: lib/web/email/activity.ex:46
 msgid "Announcement for your event %{event}"
 msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/group.ex:23
+msgid "The group %{group} was updated by %{profile}."
+msgstr "%{profile} päivitti julkaisun %{post}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/post.ex:47
+msgid "The post %{post} from group %{group} was deleted by %{profile}."
+msgstr "%{profile} päivitti julkaisun %{post}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/post.ex:31
+msgid "The post %{post} from group %{group} was published by %{profile}."
+msgstr "%{profile} päivitti julkaisun %{post}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/post.ex:39
+msgid "The post %{post} from group %{group} was updated by %{profile}."
+msgstr "%{profile} päivitti julkaisun %{post}."

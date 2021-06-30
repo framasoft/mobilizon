@@ -17,44 +17,24 @@ defmodule Mobilizon.Service.Activity.Renderer.Group do
     Gettext.put_locale(locale)
 
     case activity.subject do
-      :post_created ->
+      :group_updated ->
         %{
           body:
-            dgettext("activity", "The post %{post} was created by %{profile}.", %{
+            dgettext("activity", "The group %{group} was updated by %{profile}.", %{
               profile: profile(activity),
-              post: title(activity)
+              group: group(activity)
             }),
-          url: post_url(activity)
-        }
-
-      :post_updated ->
-        %{
-          body:
-            dgettext("activity", "The post %{post} was updated by %{profile}.", %{
-              profile: profile(activity),
-              post: title(activity)
-            }),
-          url: post_url(activity)
-        }
-
-      :post_deleted ->
-        %{
-          body:
-            dgettext("activity", "The post %{post} was deleted by %{profile}.", %{
-              profile: profile(activity),
-              post: title(activity)
-            }),
-          url: post_url(activity)
+          url: group_url(activity)
         }
     end
   end
 
-  defp post_url(activity) do
+  defp group_url(activity) do
     Endpoint
-    |> Routes.page_url(:post, activity.subject_params["post_slug"])
+    |> Routes.page_url(:actor, Actor.preferred_username_and_domain(activity.group))
     |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
-  defp title(activity), do: activity.subject_params["post_title"]
+  defp group(activity), do: Actor.display_name_and_username(activity.group)
 end

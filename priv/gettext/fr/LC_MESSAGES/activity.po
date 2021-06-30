@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-06-27 18:06+0200\n"
+"PO-Revision-Date: 2021-06-30 12:15+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/activity/fr/>\n"
 "Language: fr\n"
@@ -45,14 +45,12 @@ msgstr "%{member} a été invité⋅e par %{profile}."
 msgid "%{profile} added the member %{member}."
 msgstr "%{profile} a ajouté le ou la membre %{membre}."
 
-#: lib/service/activity/renderer/discussion.ex:65 lib/service/activity/renderer/post.ex:53
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46
+#: lib/service/activity/renderer/discussion.ex:65 lib/web/templates/email/activity/_discussion_activity_item.html.eex:46
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr "%{profile} a archivé la discussion %{discussion}."
 
-#: lib/service/activity/renderer/discussion.ex:25 lib/service/activity/renderer/post.ex:23
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
+#: lib/service/activity/renderer/discussion.ex:25 lib/web/templates/email/activity/_discussion_activity_item.html.eex:4
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 msgid "%{profile} created the discussion %{discussion}."
 msgstr "%{profile} a créé la discussion %{discussion}."
@@ -71,8 +69,7 @@ msgstr "%{profile} a créé le groupe %{group}."
 msgid "%{profile} created the resource %{resource}."
 msgstr "%{profile} a créé la resource %{resource}."
 
-#: lib/service/activity/renderer/discussion.ex:75 lib/service/activity/renderer/post.ex:63
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60
+#: lib/service/activity/renderer/discussion.ex:75 lib/web/templates/email/activity/_discussion_activity_item.html.eex:60
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} a créé la discussion %{discussion}."
@@ -107,8 +104,7 @@ msgstr "%{profile} a déplacé la ressource %{resource}."
 msgid "%{profile} quit the group."
 msgstr "%{profile} a quitté le groupe."
 
-#: lib/service/activity/renderer/discussion.ex:55 lib/service/activity/renderer/post.ex:43
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32
+#: lib/service/activity/renderer/discussion.ex:55 lib/web/templates/email/activity/_discussion_activity_item.html.eex:32
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} a renommé la discussion %{discussion}."
@@ -123,8 +119,7 @@ msgstr "%{profile} a renommé le dossier %{old_resource_title} en %{resource}."
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
 msgstr "%{profile} a renommé la resource %{old_resource_title} en %{resource}."
 
-#: lib/service/activity/renderer/discussion.ex:35 lib/service/activity/renderer/post.ex:33
-#: lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
+#: lib/service/activity/renderer/discussion.ex:35 lib/web/templates/email/activity/_discussion_activity_item.html.eex:18
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} a répondu à la discussion %{discussion}."
@@ -153,18 +148,15 @@ msgstr "L'événement %{event} a été supprimé par %{profile}."
 msgid "The event %{event} was updated by %{profile}."
 msgstr "L'événement %{event} a été mis à jour par %{profile}."
 
-#: lib/service/activity/renderer/group.ex:23 lib/web/templates/email/activity/_post_activity_item.html.eex:4
-#: lib/web/templates/email/activity/_post_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:4 lib/web/templates/email/activity/_post_activity_item.text.eex:1
 msgid "The post %{post} was created by %{profile}."
 msgstr "Le billet %{post} a été créé par %{profile}."
 
-#: lib/service/activity/renderer/group.ex:43 lib/web/templates/email/activity/_post_activity_item.html.eex:34
-#: lib/web/templates/email/activity/_post_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:34 lib/web/templates/email/activity/_post_activity_item.text.eex:13
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "Le billet %{post} a été supprimé par %{profile}."
 
-#: lib/service/activity/renderer/group.ex:33 lib/web/templates/email/activity/_post_activity_item.html.eex:19
-#: lib/web/templates/email/activity/_post_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_post_activity_item.html.eex:19 lib/web/templates/email/activity/_post_activity_item.text.eex:7
 msgid "The post %{post} was updated by %{profile}."
 msgstr "Le billet %{post} a été mis à jour par %{profile}."
 
@@ -229,11 +221,11 @@ msgstr ""
 msgid "Here's your weekly activity recap"
 msgstr "Voici votre récapitulatif hebdomadaire d'activité"
 
-#: lib/web/email/activity.ex:117 lib/web/email/activity.ex:138
+#: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
 msgid "Activity notification for %{instance}"
 msgstr "Notification d'activité sur %{instance}"
 
-#: lib/web/email/activity.ex:124
+#: lib/web/email/activity.ex:126
 msgid "Daily activity recap for %{instance}"
 msgstr "Récapitulatif quotidien d'activité sur %{instance}"
 
@@ -241,7 +233,7 @@ msgstr "Récapitulatif quotidien d'activité sur %{instance}"
 msgid "Here's your daily activity recap"
 msgstr "Voici votre récapitulatif quotidien d'activité"
 
-#: lib/web/email/activity.ex:131
+#: lib/web/email/activity.ex:133
 msgid "Weekly activity recap for %{instance}"
 msgstr "Récapitulatif hebdomadaire d'activité sur %{instance}"
 
@@ -255,6 +247,22 @@ msgstr "%{profile} a posté un nouveau commentaire sous votre événement %{even
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr "%{profile} a posté une nouvelle réponse sous votre événement %{event}."
 
-#: lib/web/email/activity.ex:44
+#: lib/web/email/activity.ex:46
 msgid "Announcement for your event %{event}"
 msgstr "Annonce pour votre événement %{event}"
+
+#: lib/service/activity/renderer/group.ex:23
+msgid "The group %{group} was updated by %{profile}."
+msgstr "Le groupe %{group} a été mis à jour par %{profile}."
+
+#: lib/service/activity/renderer/post.ex:47
+msgid "The post %{post} from group %{group} was deleted by %{profile}."
+msgstr "Le billet %{post} du groupe %{group} a été supprimé par %{profile}."
+
+#: lib/service/activity/renderer/post.ex:31
+msgid "The post %{post} from group %{group} was published by %{profile}."
+msgstr "Le billet %{post} du groupe %{group} a été publié par %{profile}."
+
+#: lib/service/activity/renderer/post.ex:39
+msgid "The post %{post} from group %{group} was updated by %{profile}."
+msgstr "Le billet %{post} du groupe %{group} a été mis à jour par %{profile}."
