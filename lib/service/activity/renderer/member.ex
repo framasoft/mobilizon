@@ -20,7 +20,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
       body:
         text(activity.subject, %{
           profile: profile(activity),
-          member: title(activity)
+          member: member(activity)
         }),
       url: member_url(activity)
     }
@@ -63,15 +63,21 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
   end
 
   defp member_url(activity) do
-    Endpoint
-    |> Routes.page_url(
-      :discussion,
-      Actor.preferred_username_and_domain(activity.group),
-      activity.subject_params["discussion_slug"]
-    )
-    |> URI.decode()
+    group_url =
+      Endpoint
+      |> Routes.page_url(
+        :actor,
+        Actor.preferred_username_and_domain(activity.group)
+      )
+      |> URI.decode()
+
+    "#{group_url}/settings/members"
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
-  defp title(activity), do: activity.subject_params["discussion_title"]
+
+  defp member(activity),
+    do:
+      activity.subject_params["member_actor_name"] ||
+        activity.subject_params["member_actor_federated_username"]
 end

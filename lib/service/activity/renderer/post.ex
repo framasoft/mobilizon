@@ -16,69 +16,51 @@ defmodule Mobilizon.Service.Activity.Renderer.Post do
     locale = Keyword.get(options, :locale, "en")
     Gettext.put_locale(locale)
 
-    case activity.subject do
-      :discussion_created ->
-        %{
-          body:
-            dgettext("activity", "%{profile} created the discussion %{discussion}.", %{
-              profile: profile(activity),
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_replied ->
-        %{
-          body:
-            dgettext("activity", "%{profile} replied to the discussion %{discussion}.", %{
-              profile: profile(activity),
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_renamed ->
-        %{
-          body:
-            dgettext("activity", "%{profile} renamed the discussion %{discussion}.", %{
-              profile: profile(activity),
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_archived ->
-        %{
-          body:
-            dgettext("activity", "%{profile} archived the discussion %{discussion}.", %{
-              profile: profile(activity),
-              discussion: title(activity)
-            }),
-          url: discussion_url(activity)
-        }
-
-      :discussion_deleted ->
-        %{
-          body:
-            dgettext("activity", "%{profile} deleted the discussion %{discussion}.", %{
-              profile: profile(activity),
-              discussion: title(activity)
-            }),
-          url: nil
-        }
-    end
+    %{
+      body:
+        text(activity.subject, %{
+          profile: profile(activity),
+          post: title(activity),
+          group: group(activity)
+        }),
+      url: if(activity.subject !== :post_deleted, do: post_url(activity), else: nil)
+    }
   end
 
-  defp discussion_url(activity) do
+  defp text(:post_created, args) do
+    dgettext(
+      "activity",
+      "The post %{post} from group %{group} was published by %{profile}.",
+      args
+    )
+  end
+
+  defp text(:post_updated, args) do
+    dgettext(
+      "activity",
+      "The post %{post} from group %{group} was updated by %{profile}.",
+      args
+    )
+  end
+
+  defp text(:post_deleted, args) do
+    dgettext(
+      "activity",
+      "The post %{post} from group %{group} was deleted by %{profile}.",
+      args
+    )
+  end
+
+  defp post_url(activity) do
     Endpoint
     |> Routes.page_url(
-      :discussion,
-      Actor.preferred_username_and_domain(activity.group),
-      activity.subject_params["discussion_slug"]
+      :post,
+      activity.subject_params["post_slug"]
     )
     |> URI.decode()
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
-  defp title(activity), do: activity.subject_params["discussion_title"]
+  defp title(activity), do: activity.subject_params["post_title"]
+  defp group(activity), do: Actor.display_name_and_username(activity.group)
 end
