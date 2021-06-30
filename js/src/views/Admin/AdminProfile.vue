@@ -275,6 +275,7 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import VueRouter from "vue-router";
 import { MemberRole } from "@/types/enums";
+import cloneDeep from "lodash/cloneDeep";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const EVENTS_PER_PAGE = 10;
@@ -402,6 +403,10 @@ export default class AdminProfile extends Vue {
             actorId: profileId,
             organizedEventsPage: 1,
             organizedEventsLimit: EVENTS_PER_PAGE,
+            participationsPage: 1,
+            participationLimit: PARTICIPATIONS_PER_PAGE,
+            membershipsPage: 1,
+            membershipsLimit: MEMBERSHIPS_PER_PAGE,
           },
         });
 
@@ -414,7 +419,8 @@ export default class AdminProfile extends Vue {
           },
           data: {
             person: {
-              ...person,
+              ...cloneDeep(person),
+              participations: { total: 0, elements: [] },
               suspended: true,
               avatar: null,
               name: "",

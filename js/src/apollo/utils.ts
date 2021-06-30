@@ -164,7 +164,7 @@ function doMerge<T = any>(
   incoming: Array<T>,
   args: Record<string, any> | null
 ): Array<T> {
-  const merged = existing ? existing.slice(0) : [];
+  const merged = existing && Array.isArray(existing) ? existing.slice(0) : [];
   let res;
   if (args) {
     // Assume an page of 1 if args.page omitted.

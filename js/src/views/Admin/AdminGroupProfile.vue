@@ -438,6 +438,10 @@ export default class AdminGroupProfile extends Vue {
             query: GET_GROUP,
             variables: {
               id: profileId,
+              organizedEventsPage: this.organizedEventsPage,
+              organizedEventsLimit: EVENTS_PER_PAGE,
+              postsPage: this.postsPage,
+              postsLimit: POSTS_PER_PAGE,
             },
           });
 
