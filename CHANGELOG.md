@@ -5,12 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 1.2.2 - 2021-07-01
-
-## Changed
+### Changed
 
 - Improved UI for participations when message is too long 
 
-## Fixed
+### Fixed
 
 - Fixed pictures without metadata information in post display
 - Fixed crash when trying to notify activities not from groups
@@ -20,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed submission button for posts not visible on mobile
 - Fixed remote profile suspension
 
-## Translations
+### Translations
 
 - Spanish
 
