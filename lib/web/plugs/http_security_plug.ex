@@ -51,8 +51,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   # Connect-src is available for any origin (*) because of webfinger query to redirect to content
   @connect_src "connect-src 'self' * blob: "
   # unsafe-eval is because of JS issues with regenerator-runtime
-  # unsafe-inline will be overriten in prod with sha256 hash
-  @script_src "script-src 'self' 'unsafe-eval' 'unsafe-inline' "
+  @script_src "script-src 'self' 'unsafe-eval' "
   @style_src "style-src 'self' "
   @font_src "font-src 'self' "
 
@@ -76,7 +75,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
     script_src =
       if Config.get(:env) == :dev do
-        @script_src
+        [@script_src, "'unsafe-inline' "]
       else
         [
           @script_src,

@@ -73,7 +73,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlugTest do
       [csp] = Conn.get_resp_header(conn, "content-security-policy")
 
       assert csp =~
-               ~r/script-src 'self' 'unsafe-eval' 'unsafe-inline' 'sha256-[\w+\/=]*' example.com matomo.example.com;/
+               ~r/script-src 'self' 'unsafe-eval' 'sha256-[\w+\/=]*' example.com matomo.example.com;/
     end
   end
 
