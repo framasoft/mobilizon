@@ -24,7 +24,10 @@
     <div class="title-info-wrapper">
       <div class="title-and-date">
         <p class="discussion-minimalist-title">{{ discussion.title }}</p>
-        <span :title="actualDate | formatDateTimeString">
+        <span
+          class="has-text-grey-dark"
+          :title="actualDate | formatDateTimeString"
+        >
           {{
             formatDistanceToNowStrict(new Date(actualDate), {
               locale: $dateFnsLocale,
@@ -102,8 +105,8 @@ export default class DiscussionListItem extends Vue {
       .discussion-minimalist-title {
         color: #3c376e;
         font-family: Roboto, Helvetica, Arial, serif;
-        font-size: 16px;
-        font-weight: 500;
+        font-size: 19px;
+        font-weight: 600;
         flex: 1;
       }
     }
@@ -113,6 +116,7 @@ export default class DiscussionListItem extends Vue {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      font-size: 15px;
     }
   }
 }
