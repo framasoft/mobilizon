@@ -1,14 +1,20 @@
 <template>
   <article class="comment">
     <div class="avatar">
-      <figure class="image is-48x48" v-if="comment.actor.avatar">
+      <figure
+        class="image is-48x48"
+        v-if="comment.actor && comment.actor.avatar"
+      >
         <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
       </figure>
       <b-icon v-else size="is-large" icon="account-circle" />
     </div>
     <div class="body">
       <div class="meta">
-        <span class="first-line name" v-if="!comment.deletedAt">
+        <span
+          class="first-line name"
+          v-if="comment.actor && !comment.deletedAt"
+        >
           <strong>{{ comment.actor.name }}</strong>
           <small>@{{ usernameWithDomain(comment.actor) }}</small>
         </span>
@@ -17,7 +23,11 @@
         </span>
         <span
           class="icons"
-          v-if="!comment.deletedAt && comment.actor.id === currentActor.id"
+          v-if="
+            comment.actor &&
+            !comment.deletedAt &&
+            comment.actor.id === currentActor.id
+          "
         >
           <b-dropdown aria-role="list">
             <b-icon slot="trigger" role="button" icon="dots-horizontal" />
