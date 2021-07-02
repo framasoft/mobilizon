@@ -303,7 +303,7 @@ import {
   REGISTER_PUSH_MUTATION,
   UNREGISTER_PUSH_MUTATION,
 } from "@/graphql/webPush";
-import { merge } from "lodash";
+import merge from "lodash/merge";
 import { WEB_PUSH } from "@/graphql/config";
 
 type NotificationSubType = { label: string; id: string };
