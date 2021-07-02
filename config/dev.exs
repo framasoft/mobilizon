@@ -1,19 +1,12 @@
 import Config
 
-# For development, we disable any cache and enable
-# debugging and code reloading.
-#
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with brunch.io to recompile .js and .css sources.
 config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
-    ip: {127, 0, 0, 1},
-    port: 4000
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "4000"))
   ],
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.local"),
-    port: 80,
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "80")),
     scheme: "http"
   ],
   debug_errors: true,
