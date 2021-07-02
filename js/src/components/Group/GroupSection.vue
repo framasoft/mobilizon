@@ -49,7 +49,7 @@ section {
 
   .main-slot {
     min-height: 5rem;
-    padding: 5px;
+    padding: 2px 5px;
     flex: 1;
   }
 }
