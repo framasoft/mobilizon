@@ -62,10 +62,16 @@ defmodule Mix.Tasks.Mobilizon.Common do
   end
 
   @spec shell_error(String.t()) :: :ok
-  def shell_error(message) do
-    if mix_shell?(),
-      do: Mix.shell().error(message),
-      else: IO.puts(:stderr, message)
+  def shell_error(message, options \\ []) do
+    if mix_shell?() do
+      Mix.shell().error(message)
+    else
+      IO.puts(:stderr, message)
+    end
+
+    if Application.fetch_env!(:mobilizon, :env) != :test do
+      exit({:shutdown, Keyword.get(options, :error_code, 1)})
+    end
   end
 
   @doc "Performs a safe check whether `Mix.shell/0` is available (does not raise if Mix is not loaded)"

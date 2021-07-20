@@ -4,6 +4,8 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
   """
   use Mix.Task
   import Mix.Tasks.Mobilizon.Common
+  import Mix.Tasks.Mobilizon.Actors.Utils
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users
   alias Mobilizon.Users.User
 
@@ -17,7 +19,9 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
         strict: [
           password: :string,
           moderator: :boolean,
-          admin: :boolean
+          admin: :boolean,
+          profile_username: :string,
+          profile_display_name: :string
         ],
         aliases: [
           p: :password
@@ -52,13 +56,26 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
            confirmation_token: nil
          }) do
       {:ok, %User{} = user} ->
+        profile = maybe_create_profile(user, options)
+
         shell_info("""
         An user has been created with the following information:
           - email: #{user.email}
           - password: #{password}
           - Role: #{user.role}
-        The user will be prompted to create a new profile after login for the first time.
         """)
+
+        if is_nil(profile) do
+          shell_info("""
+          The user will be prompted to create a new profile after login for the first time.
+          """)
+        else
+          shell_info("""
+          A profile was added with the following information:
+          - username: #{profile.preferred_username}
+          - display name: #{profile.name}
+          """)
+        end
 
       {:error, %Ecto.Changeset{errors: errors}} ->
         shell_error(inspect(errors))
@@ -72,5 +89,17 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
 
   def run(_) do
     shell_error("mobilizon.users.new requires an email as argument")
+  end
+
+  @spec maybe_create_profile(User.t(), Keyword.t()) :: Actor.t() | nil
+  defp maybe_create_profile(%User{} = user, options) do
+    profile_username = Keyword.get(options, :profile_username)
+    profile_name = Keyword.get(options, :profile_display_name)
+
+    if profile_name != nil || profile_username != nil do
+      create_profile(user, profile_username, profile_name)
+    else
+      nil
+    end
   end
 end
