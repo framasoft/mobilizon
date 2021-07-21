@@ -36,7 +36,7 @@ defmodule Mobilizon.Service.Formatter.DefaultScrubbler do
     "ugc"
   ])
 
-  Meta.allow_tag_with_these_attributes(:a, ["name", "title"])
+  Meta.allow_tag_with_these_attributes(:a, ["name", "title", "target"])
 
   Meta.allow_tag_with_these_attributes(:abbr, ["title"])
 
