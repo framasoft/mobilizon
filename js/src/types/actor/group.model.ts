@@ -18,6 +18,7 @@ export interface IGroup extends IActor {
   todoLists: Paginate<ITodoList>;
   discussions: Paginate<IDiscussion>;
   organizedEvents: Paginate<IEvent>;
+  posts: Paginate<IPost>;
   physicalAddress: IAddress;
   openness: Openness;
   visibility: GroupVisibility;
