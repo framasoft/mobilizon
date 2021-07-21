@@ -1154,5 +1154,9 @@
   "Ask your instance admin to {enable_feature}.": "Demandez à l'administrateur⋅ice de votre instance d'{enable_feature}.",
   "Event URL": "URL de l'événement",
   "Copy URL to clipboard": "Copier l'URL dans le presse-papiers",
-  "Group URL": "URL du groupe"
+  "Group URL": "URL du groupe",
+  "View less": "Voir moins",
+  "View more": "Voir plus",
+  "Breadcrumbs": "Fil d'Ariane",
+  "Other actions": "Autres actions"
 }

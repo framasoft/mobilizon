@@ -1063,5 +1063,9 @@
   "Ask your instance admin to {enable_feature}.": "Ask your instance admin to {enable_feature}.",
   "Event URL": "Event URL",
   "Copy URL to clipboard": "Copy URL to clipboard",
-  "Group URL": "Group URL"
+  "Group URL": "Group URL",
+  "View less": "View less",
+  "View more": "View more",
+  "Breadcrumbs": "Breadcrumbs",
+  "Other actions": "Other actions"
 }
