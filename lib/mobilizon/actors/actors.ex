@@ -741,6 +741,9 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @doc """
+  Returns whether the `actor_id` is a confirmed member for the group `parent_id`
+  """
   @spec is_member?(integer | String.t(), integer | String.t()) :: boolean()
   def is_member?(actor_id, parent_id) do
     match?(
@@ -749,6 +752,9 @@ defmodule Mobilizon.Actors do
     )
   end
 
+  @doc """
+  Returns whether the `actor_id` is a moderator for the group `parent_id`
+  """
   @spec is_moderator?(integer | String.t(), integer | String.t()) :: boolean()
   def is_moderator?(actor_id, parent_id) do
     match?(
@@ -757,6 +763,9 @@ defmodule Mobilizon.Actors do
     )
   end
 
+  @doc """
+  Returns whether the `actor_id` is an administrator for the group `parent_id`
+  """
   @spec is_administrator?(integer | String.t(), integer | String.t()) :: boolean()
   def is_administrator?(actor_id, parent_id) do
     match?(

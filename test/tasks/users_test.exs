@@ -5,7 +5,8 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   alias Mix.Tasks.Mobilizon.Users.{Delete, Modify, New, Show}
 
-  alias Mobilizon.Users
+  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
 
   Mix.shell(Mix.Shell.Process)
@@ -51,6 +52,88 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
       assert_received {:mix_shell, :error, [message]}
       assert message =~ "User has not been created because of the above reason."
+    end
+
+    @preferred_username "toto"
+    @name "Léo Pandaï"
+    @converted_username "leo_pandai"
+
+    test "create a profile with the user" do
+      New.run([@email, "--profile-username", @preferred_username, "--profile-display-name", @name])
+
+      assert {:ok,
+              %User{
+                email: email,
+                role: role,
+                confirmed_at: confirmed_at,
+                id: user_id,
+                default_actor_id: user_default_actor_id
+              }} = Users.get_user_by_email(@email)
+
+      assert %Actor{
+               preferred_username: @preferred_username,
+               name: @name,
+               domain: nil,
+               user_id: ^user_id,
+               id: actor_id
+             } = Actors.get_local_actor_by_name(@preferred_username)
+
+      assert user_default_actor_id == actor_id
+      assert email == @email
+      assert role == :user
+      refute is_nil(confirmed_at)
+    end
+
+    test "create a profile from displayed name only" do
+      New.run([@email, "--profile-display-name", @name])
+
+      assert {:ok,
+              %User{
+                email: email,
+                role: role,
+                confirmed_at: confirmed_at,
+                id: user_id,
+                default_actor_id: user_default_actor_id
+              }} = Users.get_user_by_email(@email)
+
+      assert %Actor{
+               preferred_username: @converted_username,
+               name: @name,
+               domain: nil,
+               user_id: ^user_id,
+               id: actor_id
+             } = Actors.get_local_actor_by_name(@converted_username)
+
+      assert user_default_actor_id == actor_id
+      assert email == @email
+      assert role == :user
+      refute is_nil(confirmed_at)
+    end
+
+    test "create a profile from username only" do
+      New.run([@email, "--profile-username", @preferred_username])
+
+      assert {:ok,
+              %User{
+                email: email,
+                role: role,
+                confirmed_at: confirmed_at,
+                id: user_id,
+                default_actor_id: user_default_actor_id
+              }} = Users.get_user_by_email(@email)
+
+      assert %Actor{
+               preferred_username: @preferred_username,
+               name: @preferred_username,
+               domain: nil,
+               user_id: ^user_id,
+               id: actor_id
+             } = Actors.get_local_actor_by_name(@preferred_username)
+
+      assert user_default_actor_id == actor_id
+      assert email == @email
+      assert role == :user
+      refute is_nil(confirmed_at)
     end
   end
 
