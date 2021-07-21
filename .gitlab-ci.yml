@@ -235,7 +235,7 @@ package-app:
   only:
     - tags@framasoft/mobilizon
   artifacts:
-    expire_in: never
+    expire_in: 30 days
     paths:
       - release
 
