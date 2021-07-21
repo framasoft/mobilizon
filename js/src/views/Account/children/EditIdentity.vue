@@ -484,15 +484,15 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
 
   async generateFeedTokens(): Promise<void> {
     const newToken = await this.createNewFeedToken();
-    this.identity.feedTokens.push(newToken);
+    this.identity.feedTokens = [...this.identity.feedTokens, newToken];
   }
 
   async regenerateFeedTokens(): Promise<void> {
     if (this.identity?.feedTokens.length < 1) return;
     await this.deleteFeedToken(this.identity.feedTokens[0].token);
     const newToken = await this.createNewFeedToken();
-    this.identity.feedTokens.pop();
-    this.identity.feedTokens.push(newToken);
+    const feedTokens = this.identity.feedTokens.slice(0, -1);
+    this.identity.feedTokens = [...feedTokens, newToken];
   }
 
   private async deleteFeedToken(token: string): Promise<void> {
