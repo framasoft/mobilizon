@@ -172,7 +172,6 @@
               </b-button>
               <b-dropdown
                 class="menu-dropdown"
-                v-if="isCurrentActorAGroupMember || previewPublic"
                 position="is-bottom-left"
                 aria-role="menu"
               >
@@ -183,13 +182,16 @@
                   icon-left="dots-horizontal"
                   aria-label="Other actions"
                 />
-                <b-dropdown-item aria-role="menuitem">
+                <b-dropdown-item
+                  aria-role="menuitem"
+                  v-if="isCurrentActorAGroupMember || previewPublic"
+                >
                   <b-switch v-model="previewPublic">{{
                     $t("Public preview")
                   }}</b-switch>
                 </b-dropdown-item>
                 <b-dropdown-item
-                  v-if="!previewPublic"
+                  v-if="!previewPublic && isCurrentActorAGroupMember"
                   aria-role="menuitem"
                   @click="triggerShare()"
                 >
