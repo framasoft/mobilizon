@@ -1,7 +1,7 @@
 <template>
   <div class="container is-widescreen">
     <div class="header">
-      <nav class="breadcrumb" aria-label="breadcrumbs">
+      <nav class="breadcrumb" :aria-label="$t('Breadcrumbs')">
         <ul>
           <li>
             <router-link :to="{ name: RouteName.MY_GROUPS }">{{
@@ -10,6 +10,7 @@
           </li>
           <li class="is-active">
             <router-link
+              aria-current-value="location"
               v-if="group && group.preferredUsername"
               :to="{
                 name: RouteName.GROUP,
@@ -172,7 +173,6 @@
               </b-button>
               <b-dropdown
                 class="menu-dropdown"
-                v-if="isCurrentActorAGroupMember || previewPublic"
                 position="is-bottom-left"
                 aria-role="menu"
               >
@@ -181,15 +181,18 @@
                   outlined
                   role="button"
                   icon-left="dots-horizontal"
-                  aria-label="Other actions"
+                  :aria-label="$t('Other actions')"
                 />
-                <b-dropdown-item aria-role="menuitem">
+                <b-dropdown-item
+                  aria-role="menuitem"
+                  v-if="isCurrentActorAGroupMember || previewPublic"
+                >
                   <b-switch v-model="previewPublic">{{
                     $t("Public preview")
                   }}</b-switch>
                 </b-dropdown-item>
                 <b-dropdown-item
-                  v-if="!previewPublic"
+                  v-if="!previewPublic && isCurrentActorAGroupMember"
                   aria-role="menuitem"
                   @click="triggerShare()"
                 >
