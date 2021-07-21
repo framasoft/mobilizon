@@ -473,10 +473,10 @@
           <subtitle>{{ $t("Upcoming events") }}</subtitle>
           <div
             class="organized-events-wrapper"
-            v-if="group && group.organizedEvents.total > 0"
+            v-if="group && organizedEvents.elements.length > 0"
           >
             <EventMinimalistCard
-              v-for="event in group.organizedEvents.elements"
+              v-for="event in organizedEvents.elements"
               :event="event"
               :key="event.uuid"
               class="organized-event"
@@ -487,20 +487,20 @@
           </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
           <router-link
-            v-if="group.organizedEvents.total > 0"
+            v-if="organizedEvents.total > 0"
             :to="{
               name: RouteName.GROUP_EVENTS,
               params: { preferredUsername: usernameWithDomain(group) },
-              query: { future: group.organizedEvents.elements.length > 0 },
+              query: { future: organizedEvents.elements.length > 0 },
             }"
             >{{ $t("View all events") }}</router-link
           >
         </section>
         <section>
           <subtitle>{{ $t("Latest posts") }}</subtitle>
-          <div v-if="group.posts.total > 0" class="posts-wrapper">
+          <div v-if="posts.elements.length > 0" class="posts-wrapper">
             <post-list-item
-              v-for="post in group.posts.elements"
+              v-for="post in posts.elements"
               :key="post.id"
               :post="post"
             />
@@ -510,7 +510,7 @@
           </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
           <router-link
-            v-if="group.posts.total > 0"
+            v-if="posts.total > 0"
             :to="{
               name: RouteName.POSTS,
               params: { preferredUsername: usernameWithDomain(group) },
@@ -579,7 +579,7 @@ import { IConfig } from "@/types/config.model";
 import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
 import { JOIN_GROUP } from "@/graphql/member";
-import { MemberRole, Openness } from "@/types/enums";
+import { MemberRole, Openness, PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
@@ -589,6 +589,9 @@ import { LEAVE_GROUP } from "@/graphql/group";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
+import { Paginate } from "@/types/paginate";
+import { IEvent } from "@/types/event.model";
+import { IPost } from "@/types/post.model";
 
 @Component({
   apollo: {
@@ -879,6 +882,30 @@ export default class Group extends mixins(GroupMixin) {
       (this.currentActor.id !== undefined ||
         this.config.anonymous.reports.allowed)
     );
+  }
+
+  get organizedEvents(): Paginate<IEvent> {
+    return {
+      total: this.group.organizedEvents.total,
+      elements: this.group.organizedEvents.elements.filter((event: IEvent) => {
+        if (this.previewPublic) {
+          return !event.draft; // TODO when events get visibility access add visibility constraint like below for posts
+        }
+        return true;
+      }),
+    };
+  }
+
+  get posts(): Paginate<IPost> {
+    return {
+      total: this.group.posts.total,
+      elements: this.group.posts.elements.filter((post: IPost) => {
+        if (this.previewPublic) {
+          return !(post.draft || post.visibility == PostVisibility.PRIVATE);
+        }
+        return true;
+      }),
+    };
   }
 }
 </script>
