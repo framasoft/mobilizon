@@ -6,6 +6,6 @@
 <% end %>
 
 <%= gettext "Need help? Is something not working as expected?" %>
-<%= gettext "Ask the community on Framacolibri" %> https://framacolibri.org/c/mobilizon/test-mobilizon
+<%= gettext "Ask the community on Framacolibri" %> https://framacolibri.org/c/mobilizon/39
 
 <%= gettext "%{instance} is powered by Mobilizon.", instance: @instance[:name] %> <%= gettext "Learn more about Mobilizon here!" %> https://joinmobilizon.org
