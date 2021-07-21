@@ -50,7 +50,7 @@ export async function unsubscribeUserToPush(): Promise<string | undefined> {
   console.log("performing unsubscribeUserToPush");
   const registration = await navigator.serviceWorker.ready;
   console.log("found registration", registration);
-  const subscription = await registration.pushManager.getSubscription();
+  const subscription = await registration.pushManager?.getSubscription();
   console.log("found subscription", subscription);
   if (subscription && (await subscription?.unsubscribe()) === true) {
     console.log("done unsubscription");

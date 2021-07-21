@@ -715,7 +715,7 @@ export default class Notifications extends Vue {
   private async isSubscribed(): Promise<boolean> {
     if (!("serviceWorker" in navigator)) return Promise.resolve(false);
     const registration = await navigator.serviceWorker.getRegistration();
-    return (await registration?.pushManager.getSubscription()) != null;
+    return (await registration?.pushManager?.getSubscription()) != null;
   }
 
   private async deleteFeedToken(token: string): Promise<void> {
