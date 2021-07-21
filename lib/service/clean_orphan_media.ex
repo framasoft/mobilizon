@@ -33,6 +33,22 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
     end
   end
 
+  # Ecto doesn't currently allow us to use exists with a subquery,
+  # so we can't create the union through Ecto
+  # https://github.com/elixir-ecto/ecto/issues/3619
+  @union_query [
+                 [from: "events", param: "picture_id"],
+                 [from: "events_medias", param: "media_id"],
+                 [from: "posts", param: "picture_id"],
+                 [from: "posts_medias", param: "media_id"],
+                 [from: "comments_medias", param: "media_id"]
+               ]
+               |> Enum.map(fn [from: from, param: param] ->
+                 "SELECT 1 FROM #{from} WHERE #{from}.#{param} = m0.id"
+               end)
+               |> Enum.join(" UNION ")
+               |> (&"NOT EXISTS(#{&1})").()
+
   @spec find_media(Keyword.t()) :: list(Media.t())
   defp find_media(opts) do
     default_grace_period =
@@ -41,21 +57,17 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
     grace_period = Keyword.get(opts, :grace_period, default_grace_period)
     expiration_date = DateTime.add(DateTime.utc_now(), grace_period * -3600)
 
-    Media
-    |> where([m], m.inserted_at < ^expiration_date)
-    |> join(:inner, [m], a in Actor)
-    |> where([_m, a], is_nil(a.domain))
-    |> join(:left, [m], e in assoc(m, :events))
-    |> join(:left, [m], ep in assoc(m, :event_picture))
-    |> join(:left, [m], p in assoc(m, :posts))
-    |> join(:left, [m], pp in assoc(m, :posts_picture))
-    |> join(:left, [m], c in assoc(m, :comments))
-    |> where([_m, _a, e], is_nil(e.id))
-    |> where([_m, _a, _e, ep], is_nil(ep.id))
-    |> where([_m, _a, _e, _ep, p], is_nil(p.id))
-    |> where([_m, _a, _e, _ep, _p, pp], is_nil(pp.id))
-    |> where([_m, _a, _e, _ep, _p, _pp, c], is_nil(c.id))
-    |> distinct(true)
-    |> Repo.all()
+    query =
+      from(m in Media,
+        as: :media,
+        distinct: true,
+        join: a in Actor,
+        on: a.id == m.actor_id,
+        where: is_nil(a.domain),
+        where: m.inserted_at < ^expiration_date,
+        where: fragment(@union_query)
+      )
+
+    Repo.all(query)
   end
 end
