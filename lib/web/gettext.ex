@@ -24,21 +24,24 @@ defmodule Mobilizon.Web.Gettext do
 
   def put_locale(locale) do
     locale = determine_best_locale(locale)
-    Gettext.put_locale(Mobilizon.Web.Gettext, locale)
+    Gettext.put_locale(__MODULE__, locale)
   end
 
   @spec determine_best_locale(String.t()) :: String.t()
   def determine_best_locale(locale) do
     locale = String.trim(locale)
-    locales = Gettext.known_locales(Mobilizon.Web.Gettext)
+    locales = Gettext.known_locales(__MODULE__)
+    default = Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en") || "en"
 
     cond do
-      # Either it matches directly, eg: "en" => "en", "fr" => "fr", "fr_FR" => "fr_FR"
+      # Default if nothing provided
+      locale == "" -> default
+      # Either it matches directly, eg: "en" => "en", "fr" => "fr"
       locale in locales -> locale
       # Either the first part matches, "fr_CA" => "fr"
       split_locale(locale) in locales -> split_locale(locale)
       # Otherwise set to default
-      true -> Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en") || "en"
+      true -> default
     end
   end
 

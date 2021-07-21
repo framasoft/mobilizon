@@ -7,6 +7,7 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlugTest do
   use ExUnit.Case, async: true
   use Plug.Test
 
+  alias Mobilizon.Web.Gettext, as: GettextBackend
   alias Mobilizon.Web.Plugs.SetLocalePlug
   alias Plug.Conn
 
@@ -17,7 +18,7 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlugTest do
       |> SetLocalePlug.call([])
 
     assert "en" == Gettext.get_locale()
-    assert %{locale: "en"} == conn.assigns
+    assert %{locale: ""} == conn.assigns
   end
 
   test "use supported locale from `accept-language`" do
@@ -30,7 +31,7 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlugTest do
       )
       |> SetLocalePlug.call([])
 
-    assert "ru" == Gettext.get_locale()
+    assert "ru" == Gettext.get_locale(GettextBackend)
     assert %{locale: "ru"} == conn.assigns
   end
 
@@ -41,7 +42,7 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlugTest do
       |> Conn.put_req_header("accept-language", "tlh")
       |> SetLocalePlug.call([])
 
-    assert "en" == Gettext.get_locale()
-    assert %{locale: "en"} == conn.assigns
+    assert "en" == Gettext.get_locale(GettextBackend)
+    assert %{locale: ""} == conn.assigns
   end
 end
