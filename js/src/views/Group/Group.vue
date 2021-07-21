@@ -1,7 +1,7 @@
 <template>
   <div class="container is-widescreen">
     <div class="header">
-      <nav class="breadcrumb" aria-label="breadcrumbs">
+      <nav class="breadcrumb" :aria-label="$t('Breadcrumbs')">
         <ul>
           <li>
             <router-link :to="{ name: RouteName.MY_GROUPS }">{{
@@ -10,6 +10,7 @@
           </li>
           <li class="is-active">
             <router-link
+              aria-current-value="location"
               v-if="group && group.preferredUsername"
               :to="{
                 name: RouteName.GROUP,
@@ -180,7 +181,7 @@
                   outlined
                   role="button"
                   icon-left="dots-horizontal"
-                  aria-label="Other actions"
+                  :aria-label="$t('Other actions')"
                 />
                 <b-dropdown-item
                   aria-role="menuitem"
