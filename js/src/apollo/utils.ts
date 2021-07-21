@@ -56,7 +56,7 @@ export const typePolicies: TypePolicies = {
   },
   Person: {
     fields: {
-      organizedEvents: pageLimitPagination(),
+      organizedEvents: paginatedLimitPagination<IEvent>(),
       participations: paginatedLimitPagination<IParticipant>(["eventId"]),
       memberships: paginatedLimitPagination<IMember>(["group"]),
     },
