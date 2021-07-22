@@ -42,11 +42,12 @@ defmodule Mobilizon.Users do
     end
   end
 
-  @spec create_external(String.t(), String.t()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def create_external(email, provider) do
+  @spec create_external(String.t(), String.t(), Map.t()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def create_external(email, provider, args \\ %{}) do
     with {:ok, %User{} = user} <-
            %User{}
-           |> User.auth_provider_changeset(%{email: email, provider: provider})
+           |> User.auth_provider_changeset(Map.merge(args, %{email: email, provider: provider}))
            |> Repo.insert() do
       Events.create_feed_token(%{user_id: user.id})
 

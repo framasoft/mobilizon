@@ -34,6 +34,9 @@ defmodule Mobilizon.Service.Auth.Authenticator do
   @callback can_change_password?(User.t()) :: boolean
   def can_change_password?(%User{} = user), do: implementation().can_change_password?(user)
 
+  @callback provider_name :: String.t() | nil
+  def provider_name, do: implementation().provider_name()
+
   @spec has_password?(User.t()) :: boolean()
   def has_password?(%User{provider: provider}), do: is_nil(provider) or provider == "ldap"
 

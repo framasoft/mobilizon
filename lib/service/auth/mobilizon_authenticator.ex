@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.Auth.MobilizonAuthenticator do
 
   @behaviour Authenticator
 
+  @impl Authenticator
   def login(email, password) do
     require Logger
 
@@ -33,7 +34,12 @@ defmodule Mobilizon.Service.Auth.MobilizonAuthenticator do
     end
   end
 
+  @impl Authenticator
   def can_change_email?(%User{provider: provider}), do: is_nil(provider)
 
+  @impl Authenticator
   def can_change_password?(%User{provider: provider}), do: is_nil(provider)
+
+  @impl Authenticator
+  def provider_name, do: nil
 end

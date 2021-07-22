@@ -22,6 +22,7 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
   @connection_timeout 10_000
   @search_timeout 10_000
 
+  @impl Authenticator
   def login(email, password) do
     with {:ldap, true} <- {:ldap, Mobilizon.Config.get([:ldap, :enabled])},
          %User{} = user <- ldap_user(email, password) do
@@ -39,9 +40,14 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
     end
   end
 
+  @impl Authenticator
   def can_change_email?(%User{provider: provider}), do: provider != "ldap"
 
+  @impl Authenticator
   def can_change_password?(%User{provider: provider}), do: provider != "ldap"
+
+  @impl Authenticator
+  def provider_name, do: "ldap"
 
   defp ldap_user(email, password) do
     ldap = Mobilizon.Config.get(:ldap, [])
