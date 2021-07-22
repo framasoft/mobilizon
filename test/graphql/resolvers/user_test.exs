@@ -317,6 +317,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @create_user_mutation,
           variables: @user_creation
@@ -403,6 +404,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @register_person_mutation,
           variables: Map.put(@user_creation, :email, "random")
@@ -431,6 +433,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @register_person_mutation,
           variables: @user_creation
@@ -451,6 +454,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @register_person_mutation,
           variables: Map.put(@user_creation, :preferredUsername, "Myactor")

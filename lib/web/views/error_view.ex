@@ -56,15 +56,18 @@ defmodule Mobilizon.Web.ErrorView do
   end
 
   def render("500.html", assigns) do
-    Mobilizon.Config.instance_config()
-    |> Keyword.get(:default_language, "en")
-    |> Gettext.put_locale()
+    locale =
+      Mobilizon.Config.instance_config()
+      |> Keyword.get(:default_language, "en")
+
+    Gettext.put_locale(locale)
 
     assigns =
       assigns
       |> Map.update(:details, [], & &1)
       |> Map.put(:instance, Mobilizon.Config.instance_name())
       |> Map.put(:contact, Mobilizon.Config.contact())
+      |> Map.put(:locale, locale)
 
     render("500_page.html", assigns)
   end
