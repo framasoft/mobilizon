@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   alias Mix.Tasks.Mobilizon.Users.{Delete, Modify, New, Show}
 
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Users.User
 
@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "create with no options" do
       New.run([@email])
 
-      assert {:ok, %User{email: email, role: role, confirmed_at: confirmed_at}} =
+      assert {:ok, %User{email: email, role: role, confirmed_at: confirmed_at, provider: nil}} =
                Users.get_user_by_email(@email)
 
       assert email == @email
@@ -53,7 +53,57 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert_received {:mix_shell, :error, [message]}
       assert message =~ "User has not been created because of the above reason."
     end
+  end
 
+  describe "create user from external provider" do
+    test "create user from ldap" do
+      New.run([@email, "--provider", "ldap"])
+
+      assert {:ok,
+              %User{email: @email, password: nil, provider: "ldap", confirmed_at: %DateTime{}}} =
+               Users.get_user_by_email(@email)
+
+      assert_received {:mix_shell, :info, [message]}
+
+      assert message =~
+               "Warning: The ldap provider isn't currently configured as default authenticator."
+    end
+
+    test "create user from ldap when configured" do
+      Config.put([Mobilizon.Service.Auth.Authenticator], Mobilizon.Service.Auth.LDAPAuthenticator)
+
+      New.run([@email, "--provider", "ldap"])
+
+      assert {:ok,
+              %User{email: @email, password: nil, provider: "ldap", confirmed_at: %DateTime{}}} =
+               Users.get_user_by_email(@email)
+
+      assert_received {:mix_shell, :info, [message]}
+
+      refute message =~
+               "Warning: The ldap provider isn't currently configured as default authenticator."
+
+      Config.put(
+        [Mobilizon.Service.Auth.Authenticator],
+        Mobilizon.Service.Auth.MobilizonAuthenticator
+      )
+    end
+
+    test "can't set --provider at the same time than --password" do
+      New.run([@email, "--provider", "ldap", "--password", "random"])
+
+      assert {:ok,
+              %User{email: @email, password: nil, provider: "ldap", confirmed_at: %DateTime{}}} =
+               Users.get_user_by_email(@email)
+
+      assert_received {:mix_shell, :error, [message]}
+
+      assert message =~
+               "The --password and --provider options can't be specified at the same time."
+    end
+  end
+
+  describe "create user and profile" do
     @preferred_username "toto"
     @name "Léo Pandaï"
     @converted_username "leo_pandai"
