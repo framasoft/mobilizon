@@ -1,13 +1,11 @@
-# syntax=docker/dockerfile:1.2
-
 # First build the application assets
 FROM node:16-alpine as assets
 
 RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 WORKDIR /build
 COPY js .
-RUN --mount=type=cache,target=/root/.cache yarn install
-RUN yarn run build
+RUN yarn install \
+    && yarn run build
 
 # Then, build the application binary
 FROM elixir:1.12-alpine AS builder
@@ -26,9 +24,6 @@ COPY config/config.exs config/prod.exs ./config/
 COPY config/docker.exs ./config/runtime.exs
 COPY rel ./rel
 COPY support ./support
-
-RUN mix compile
-
 COPY --from=assets ./priv/static ./priv/static
 
 RUN mix phx.digest \
