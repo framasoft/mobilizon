@@ -25,6 +25,29 @@
                 {{ post.publishAt | formatDateTimeString }}
               </span>
               <span
+                class="published has-text-grey-dark"
+                :title="
+                  $options.filters.formatDateTimeString(
+                    post.updatedAt,
+                    true,
+                    'short'
+                  )
+                "
+                v-else
+              >
+                <b-icon icon="clock" size="is-small" />
+                {{
+                  $t("Edited {relative_time} ago", {
+                    relative_time: formatDistanceToNowStrict(
+                      new Date(post.updatedAt),
+                      {
+                        locale: $dateFnsLocale,
+                      }
+                    ),
+                  })
+                }}
+              </span>
+              <span
                 v-if="post.visibility === PostVisibility.PRIVATE"
                 class="has-text-grey-dark"
               >
@@ -75,7 +98,11 @@ import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
 import { PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "../../graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  PERSON_MEMBERSHIPS,
+  PERSON_MEMBERSHIP_GROUP,
+} from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 import { IPost } from "../../types/post.model";
 import { usernameWithDomain } from "../../types/actor";
@@ -83,6 +110,7 @@ import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import ActorInline from "../../components/Account/ActorInline.vue";
+import { formatDistanceToNowStrict } from "date-fns";
 
 @Component({
   apollo: {
@@ -115,6 +143,23 @@ import ActorInline from "../../components/Account/ActorInline.vue";
         this.handleErrors(graphQLErrors);
       },
     },
+    person: {
+      query: PERSON_MEMBERSHIP_GROUP,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          id: this.currentActor.id,
+          group: usernameWithDomain(this.post.attributedTo),
+        };
+      },
+      skip() {
+        return (
+          !this.currentActor ||
+          !this.currentActor.id ||
+          !this.post?.attributedTo
+        );
+      },
+    },
   },
   components: {
     Tag,
@@ -143,6 +188,8 @@ export default class Post extends mixins(GroupMixin) {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  formatDistanceToNowStrict = formatDistanceToNowStrict;
 
   PostVisibility = PostVisibility;
 
