@@ -91,6 +91,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   def group_actor(%Post{attributed_to_id: attributed_to_id}),
     do: Actors.get_actor(attributed_to_id)
 
+  def role_needed_to_access(%Post{draft: false}), do: :member
+  def role_needed_to_access(%Post{}), do: :moderator
   def role_needed_to_update(%Post{}), do: :moderator
   def role_needed_to_delete(%Post{}), do: :moderator
 end

@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Permission, Relay, Utils}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -409,7 +409,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data) ||
-              Utils.can_update_group_object?(actor, old_event)},
+              Permission.can_update_group_object?(actor, old_event)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
            ActivityPub.update(old_event, object_data, false) do
       {:ok, activity, new_event}
@@ -454,7 +454,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data["object"]) ||
-              Utils.can_update_group_object?(actor, old_post)},
+              Permission.can_update_group_object?(actor, old_post)},
          {:ok, %Activity{} = activity, %Post{} = new_post} <-
            ActivityPub.update(old_post, object_data, false) do
       {:ok, activity, new_post}
@@ -482,7 +482,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data) ||
-              Utils.can_update_group_object?(actor, old_resource)},
+              Permission.can_update_group_object?(actor, old_resource)},
          {:ok, %Activity{} = activity, %Resource{} = new_resource} <-
            ActivityPub.update(old_resource, object_data, false) do
       {:ok, activity, new_resource}
@@ -585,7 +585,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
-              Utils.can_delete_group_object?(actor, object)},
+              Permission.can_delete_group_object?(actor, object)},
          {:ok, activity, object} <- ActivityPub.delete(object, actor, false) do
       {:ok, activity, object}
     else
@@ -629,7 +629,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, data) ||
-              Utils.can_update_group_object?(actor, old_resource)},
+              Permission.can_update_group_object?(actor, old_resource)},
          {:ok, activity, new_resource} <- ActivityPub.move(:resource, old_resource, object_data) do
       {:ok, activity, new_resource}
     else

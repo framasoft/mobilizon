@@ -80,6 +80,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
     end
   end
 
+  def role_needed_to_access(%Todo{}), do: :member
   def role_needed_to_update(%Todo{}), do: :member
   def role_needed_to_delete(%Todo{}), do: :member
 end

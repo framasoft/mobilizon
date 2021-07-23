@@ -110,6 +110,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
 
   def group_actor(%Discussion{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  def role_needed_to_access(%Discussion{}), do: :member
   def role_needed_to_update(%Discussion{}), do: :moderator
   def role_needed_to_delete(%Discussion{}), do: :moderator
 

@@ -104,6 +104,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
+  def role_needed_to_access(%Comment{}), do: :member
   def role_needed_to_update(%Comment{attributed_to: %Actor{} = _group}), do: :administrator
   def role_needed_to_delete(%Comment{attributed_to_id: _attributed_to_id}), do: :administrator
 

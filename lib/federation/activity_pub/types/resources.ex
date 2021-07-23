@@ -170,6 +170,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
 
   def group_actor(%Resource{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  def role_needed_to_access(%Resource{}), do: :member
   def role_needed_to_update(%Resource{}), do: :member
   def role_needed_to_delete(%Resource{}), do: :member
 end

@@ -104,6 +104,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   def group_actor(%Actor{} = actor), do: actor
 
+  def role_needed_to_access(%Actor{} = _group), do: :member
   def role_needed_to_update(%Actor{} = _group), do: :administrator
   def role_needed_to_delete(%Actor{} = _group), do: :administrator
 
