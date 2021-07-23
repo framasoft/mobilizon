@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.GraphQL.API
 
   alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Federation.ActivityPub.Permission
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
 
@@ -75,13 +76,28 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   defp find_private_event(
          _parent,
          %{uuid: uuid},
-         %{context: %{current_user: %User{id: user_id}}} = _resolution
+         %{context: %{current_user: %User{} = user}} = _resolution
        ) do
-    case {:has_event, Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
-      {:has_event, %Event{} = event} ->
-        {:ok, event}
+    %Actor{} = profile = Users.get_actor_for_user(user)
 
-      {:has_event, _} ->
+    case Events.get_event_by_uuid_with_preload(uuid) do
+      # Event attributed to group
+      %Event{attributed_to: %Actor{}} = event ->
+        if Permission.can_access_group_object?(profile, event) do
+          {:ok, event}
+        else
+          {:error, :event_not_found}
+        end
+
+      # Own event
+      %Event{organizer_actor: %Actor{id: actor_id}} = event ->
+        if actor_id == profile.id do
+          {:ok, event}
+        else
+          {:error, :event_not_found}
+        end
+
+      _ ->
         {:error, :event_not_found}
     end
   end

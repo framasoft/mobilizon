@@ -902,7 +902,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          type
        )
        when role in [:not_approved, :rejected, :invited] and type in [:join, :invite] do
-    # TODO: The actor that accepts the Join activity may another one that the event organizer ?
     # Or maybe for groups it's the group that sends the Accept activity
     with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
            ActivityPub.accept(

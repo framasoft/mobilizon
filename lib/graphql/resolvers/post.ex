@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   alias Mobilizon.{Actors, Posts, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.{Permission, Utils}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
@@ -69,11 +69,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
           }
         } = _resolution
       ) do
-    with {:current_actor, %Actor{id: actor_id}} <-
+    with {:current_actor, %Actor{} = current_profile} <-
            {:current_actor, Users.get_actor_for_user(user)},
-         {:post, %Post{attributed_to: %Actor{id: group_id}} = post} <-
+         {:post, %Post{attributed_to: %Actor{}} = post} <-
            {:post, Posts.get_post_by_slug_with_preloads(slug)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
+         {:member, true} <- {:member, Permission.can_access_group_object?(current_profile, post)} do
       {:ok, post}
     else
       {:member, false} -> get_post(parent, %{slug: slug}, nil)
