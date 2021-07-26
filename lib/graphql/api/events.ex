@@ -22,7 +22,7 @@ defmodule Mobilizon.GraphQL.API.Events do
              process_picture(picture, organizer_actor)
            end) do
       # For now we don't federate drafts but it will be needed if we want to edit them as groups
-      ActivityPub.create(:event, args, args.draft == false)
+      ActivityPub.create(:event, args, should_federate(args))
     end
   end
 
@@ -37,7 +37,7 @@ defmodule Mobilizon.GraphQL.API.Events do
            Map.update(args, :picture, nil, fn picture ->
              process_picture(picture, organizer_actor)
            end) do
-      ActivityPub.update(event, args, Map.get(args, :draft, false) == false)
+      ActivityPub.update(event, args, should_federate(args))
     end
   end
 
@@ -74,4 +74,9 @@ defmodule Mobilizon.GraphQL.API.Events do
   end
 
   defp extract_pictures_from_event_body(args, _), do: args
+
+  defp should_federate(%{attributed_to_id: attributed_to_id}) when not is_nil(attributed_to_id),
+    do: true
+
+  defp should_federate(args), do: Map.get(args, :draft, false) == false
 end
