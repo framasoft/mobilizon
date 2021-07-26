@@ -188,13 +188,11 @@ defmodule Mobilizon.Events.Event do
   @doc """
   Checks whether an event can be managed.
   """
-  @spec can_be_managed_by(t, integer | String.t()) :: boolean
-  def can_be_managed_by(%__MODULE__{organizer_actor_id: organizer_actor_id}, actor_id)
-      when organizer_actor_id == actor_id do
-    {:event_can_be_managed, true}
-  end
+  @spec can_be_managed_by?(t, integer | String.t()) :: boolean
+  def can_be_managed_by?(%__MODULE__{organizer_actor_id: organizer_actor_id}, actor_id),
+    do: organizer_actor_id == actor_id
 
-  def can_be_managed_by(_event, _actor), do: {:event_can_be_managed, false}
+  def can_be_managed_by?(_event, _actor), do: false
 
   @spec put_tags(Changeset.t(), map) :: Changeset.t()
   defp put_tags(%Changeset{} = changeset, %{tags: tags}) do
