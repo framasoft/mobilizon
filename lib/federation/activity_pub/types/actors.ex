@@ -3,7 +3,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Audience, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -104,9 +104,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   def group_actor(%Actor{} = actor), do: actor
 
-  def role_needed_to_access(%Actor{} = _group), do: :member
-  def role_needed_to_update(%Actor{} = _group), do: :administrator
-  def role_needed_to_delete(%Actor{} = _group), do: :administrator
+  def permissions(%Actor{} = _group) do
+    %Permission{
+      access: :member,
+      create: nil,
+      update: :administrator,
+      delete: :administrator
+    }
+  end
 
   @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, map(), Member.t()}
   def join(%Actor{type: :Group} = group, %Actor{} = actor, _local, additional) do

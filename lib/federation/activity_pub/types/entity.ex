@@ -17,6 +17,7 @@ alias Mobilizon.Federation.ActivityPub.Types.{
 alias Mobilizon.Actors.{Actor, Member}
 alias Mobilizon.Events.Event
 alias Mobilizon.Discussions.{Comment, Discussion}
+alias Mobilizon.Federation.ActivityPub.Permission
 alias Mobilizon.Posts.Post
 alias Mobilizon.Resources.Resource
 alias Mobilizon.Todos.{Todo, TodoList}
@@ -67,14 +68,8 @@ defprotocol Mobilizon.Federation.ActivityPub.Types.Ownable do
   @doc "Returns the actor for the entity"
   def actor(entity)
 
-  @spec role_needed_to_access(Entity.t()) :: group_role()
-  def role_needed_to_access(entity)
-
-  @spec role_needed_to_update(Entity.t()) :: group_role()
-  def role_needed_to_update(entity)
-
-  @spec role_needed_to_delete(Entity.t()) :: group_role()
-  def role_needed_to_delete(entity)
+  @spec permissions(Entity.t()) :: Permission.t()
+  def permissions(entity)
 end
 
 defimpl Managable, for: Event do
@@ -85,9 +80,7 @@ end
 defimpl Ownable, for: Event do
   defdelegate group_actor(entity), to: Events
   defdelegate actor(entity), to: Events
-  defdelegate role_needed_to_access(entity), to: Events
-  defdelegate role_needed_to_update(entity), to: Events
-  defdelegate role_needed_to_delete(entity), to: Events
+  defdelegate permissions(entity), to: Events
 end
 
 defimpl Managable, for: Comment do
@@ -98,9 +91,7 @@ end
 defimpl Ownable, for: Comment do
   defdelegate group_actor(entity), to: Comments
   defdelegate actor(entity), to: Comments
-  defdelegate role_needed_to_access(entity), to: Comments
-  defdelegate role_needed_to_update(entity), to: Comments
-  defdelegate role_needed_to_delete(entity), to: Comments
+  defdelegate permissions(entity), to: Comments
 end
 
 defimpl Managable, for: Post do
@@ -111,9 +102,7 @@ end
 defimpl Ownable, for: Post do
   defdelegate group_actor(entity), to: Posts
   defdelegate actor(entity), to: Posts
-  defdelegate role_needed_to_access(entity), to: Posts
-  defdelegate role_needed_to_update(entity), to: Posts
-  defdelegate role_needed_to_delete(entity), to: Posts
+  defdelegate permissions(entity), to: Posts
 end
 
 defimpl Managable, for: Actor do
@@ -124,9 +113,7 @@ end
 defimpl Ownable, for: Actor do
   defdelegate group_actor(entity), to: Actors
   defdelegate actor(entity), to: Actors
-  defdelegate role_needed_to_access(entity), to: Actors
-  defdelegate role_needed_to_update(entity), to: Actors
-  defdelegate role_needed_to_delete(entity), to: Actors
+  defdelegate permissions(entity), to: Actors
 end
 
 defimpl Managable, for: TodoList do
@@ -137,9 +124,7 @@ end
 defimpl Ownable, for: TodoList do
   defdelegate group_actor(entity), to: TodoLists
   defdelegate actor(entity), to: TodoLists
-  defdelegate role_needed_to_access(entity), to: TodoLists
-  defdelegate role_needed_to_update(entity), to: TodoLists
-  defdelegate role_needed_to_delete(entity), to: TodoLists
+  defdelegate permissions(entity), to: TodoLists
 end
 
 defimpl Managable, for: Todo do
@@ -150,9 +135,7 @@ end
 defimpl Ownable, for: Todo do
   defdelegate group_actor(entity), to: Todos
   defdelegate actor(entity), to: Todos
-  defdelegate role_needed_to_access(entity), to: Todos
-  defdelegate role_needed_to_update(entity), to: Todos
-  defdelegate role_needed_to_delete(entity), to: Todos
+  defdelegate permissions(entity), to: Todos
 end
 
 defimpl Managable, for: Resource do
@@ -163,9 +146,7 @@ end
 defimpl Ownable, for: Resource do
   defdelegate group_actor(entity), to: Resources
   defdelegate actor(entity), to: Resources
-  defdelegate role_needed_to_access(entity), to: Resources
-  defdelegate role_needed_to_update(entity), to: Resources
-  defdelegate role_needed_to_delete(entity), to: Resources
+  defdelegate permissions(entity), to: Resources
 end
 
 defimpl Managable, for: Discussion do
@@ -176,17 +157,13 @@ end
 defimpl Ownable, for: Discussion do
   defdelegate group_actor(entity), to: Discussions
   defdelegate actor(entity), to: Discussions
-  defdelegate role_needed_to_access(entity), to: Discussions
-  defdelegate role_needed_to_update(entity), to: Discussions
-  defdelegate role_needed_to_delete(entity), to: Discussions
+  defdelegate permissions(entity), to: Discussions
 end
 
 defimpl Ownable, for: Tombstone do
   defdelegate group_actor(entity), to: Tombstones
   defdelegate actor(entity), to: Tombstones
-  defdelegate role_needed_to_access(entity), to: Tombstones
-  defdelegate role_needed_to_update(entity), to: Tombstones
-  defdelegate role_needed_to_delete(entity), to: Tombstones
+  defdelegate permissions(entity), to: Tombstones
 end
 
 defimpl Managable, for: Member do

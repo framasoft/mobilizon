@@ -8,12 +8,42 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
   alias Mobilizon.Federation.ActivityPub.Types.{Entity, Ownable}
   require Logger
 
+  use StructAccess
+  defstruct [:access, :create, :update, :delete]
+
+  @member_roles [:member, :moderator, :administrator]
+
   @doc """
   Check that actor can access the object
   """
   @spec can_access_group_object?(Actor.t(), Entity.t()) :: boolean()
   def can_access_group_object?(%Actor{} = actor, object) do
-    can_manage_group_object?(:role_needed_to_access, actor, object)
+    can_manage_group_object?(:access, actor, object)
+  end
+
+  @doc """
+  Check that actor can create such an object
+  """
+  @spec can_create_group_object?(String.t() | integer(), String.t() | integer(), Entity.t()) ::
+          boolean()
+  def can_create_group_object?(
+        actor_id,
+        group_id,
+        object
+      ) do
+    case object |> Ownable.permissions() |> get_in([:create]) do
+      :member ->
+        Actors.is_member?(actor_id, group_id)
+
+      :moderator ->
+        Actors.is_moderator?(actor_id, group_id)
+
+      :administrator ->
+        Actors.is_administrator?(actor_id, group_id)
+
+      _ ->
+        false
+    end
   end
 
   @doc """
@@ -21,7 +51,7 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
   """
   @spec can_update_group_object?(Actor.t(), Entity.t()) :: boolean()
   def can_update_group_object?(%Actor{} = actor, object) do
-    can_manage_group_object?(:role_needed_to_update, actor, object)
+    can_manage_group_object?(:update, actor, object)
   end
 
   @doc """
@@ -29,29 +59,31 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
   """
   @spec can_delete_group_object?(Actor.t(), Entity.t()) :: boolean()
   def can_delete_group_object?(%Actor{} = actor, object) do
-    can_manage_group_object?(:role_needed_to_delete, actor, object)
+    can_manage_group_object?(:delete, actor, object)
   end
 
+  @type existing_object_permissions :: :access | :update | :delete
+
   @spec can_manage_group_object?(
-          :role_needed_to_access | :role_needed_to_update | :role_needed_to_delete,
+          existing_object_permissions(),
           Actor.t(),
           any()
         ) :: boolean()
-  defp can_manage_group_object?(action_function, %Actor{url: actor_url} = actor, object) do
+  defp can_manage_group_object?(permission, %Actor{url: actor_url} = actor, object) do
     if Ownable.group_actor(object) != nil do
-      case apply(Ownable, action_function, [object]) do
-        role when role in [:member, :moderator, :administrator] ->
+      case object |> Ownable.permissions() |> get_in([permission]) do
+        role when role in @member_roles ->
           activity_actor_is_group_member?(actor, object, role)
 
         _ ->
-          case action_function do
-            :role_needed_to_access ->
+          case permission do
+            :access ->
               Logger.warn("Actor #{actor_url} can't access #{object.url}")
 
-            :role_needed_to_update ->
+            :update ->
               Logger.warn("Actor #{actor_url} can't update #{object.url}")
 
-            :role_needed_to_delete ->
+            :delete ->
               Logger.warn("Actor #{actor_url} can't delete #{object.url}")
           end
 

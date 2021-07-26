@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Events, as: EventsManager
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -95,11 +95,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   def group_actor(_), do: nil
 
-  def role_needed_to_access(%Event{draft: false}), do: :member
-  def role_needed_to_access(%Event{}), do: :moderator
-  def role_needed_to_update(%Event{attributed_to: %Actor{} = _group}), do: :moderator
-  def role_needed_to_delete(%Event{attributed_to_id: _attributed_to_id}), do: :moderator
-  def role_needed_to_delete(_), do: nil
+  def permissions(%Event{draft: draft, attributed_to_id: _attributed_to_id}) do
+    %Permission{
+      access: if(draft, do: nil, else: :member),
+      create: :moderator,
+      update: :moderator,
+      delete: :moderator
+    }
+  end
 
   def join(%Event{} = event, %Actor{} = actor, _local, additional) do
     with {:maximum_attendee_capacity, true} <-

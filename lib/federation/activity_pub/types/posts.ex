@@ -2,7 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   @moduledoc false
   alias Mobilizon.{Actors, Posts, Tombstone}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -91,8 +91,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   def group_actor(%Post{attributed_to_id: attributed_to_id}),
     do: Actors.get_actor(attributed_to_id)
 
-  def role_needed_to_access(%Post{draft: false}), do: :member
-  def role_needed_to_access(%Post{}), do: :moderator
-  def role_needed_to_update(%Post{}), do: :moderator
-  def role_needed_to_delete(%Post{}), do: :moderator
+  def permissions(%Post{draft: draft}) do
+    %Permission{
+      access: if(draft, do: nil, else: :member),
+      create: :moderator,
+      update: :moderator,
+      delete: :moderator
+    }
+  end
 end

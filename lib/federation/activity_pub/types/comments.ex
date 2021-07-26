@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, EventOptions}
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -104,9 +104,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
-  def role_needed_to_access(%Comment{}), do: :member
-  def role_needed_to_update(%Comment{attributed_to: %Actor{} = _group}), do: :administrator
-  def role_needed_to_delete(%Comment{attributed_to_id: _attributed_to_id}), do: :administrator
+  def permissions(%Comment{}),
+    do: %Permission{
+      access: :member,
+      create: :member,
+      update: :administrator,
+      delete: :administrator
+    }
 
   # Prepare and sanitize arguments for comments
   defp prepare_args_for_comment(args) do

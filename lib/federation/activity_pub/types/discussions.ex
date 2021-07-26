@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.{Actors, Discussions}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -110,9 +110,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
 
   def group_actor(%Discussion{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
-  def role_needed_to_access(%Discussion{}), do: :member
-  def role_needed_to_update(%Discussion{}), do: :moderator
-  def role_needed_to_delete(%Discussion{}), do: :moderator
+  def permissions(%Discussion{}) do
+    %Permission{access: :member, create: :member, update: :moderator, delete: :moderator}
+  end
 
   @spec maybe_publish_graphql_subscription(Discussion.t()) :: :ok
   defp maybe_publish_graphql_subscription(%Discussion{} = discussion) do
