@@ -5,8 +5,11 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.Events
+  alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Events, Users}
+  alias Mobilizon.Events.Event
   alias Mobilizon.Service.Workers
+  alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
@@ -21,6 +24,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     category: "meeting"
   }
 
+  @find_event_query """
+  query Event($uuid: UUID!) {
+      event(uuid: $uuid) {
+        uuid,
+        draft
+      }
+    }
+  """
+
   setup %{conn: conn} do
     user = insert(:user)
     actor = insert(:actor, user: user, preferred_username: "test")
@@ -28,16 +40,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     {:ok, conn: conn, actor: actor, user: user}
   end
 
-  describe "Event Resolver" do
-    @find_event_query """
-    query Event($uuid: UUID!) {
-        event(uuid: $uuid) {
-          uuid,
-          draft
-        }
-      }
-    """
-
+  describe "Find an event" do
     test "find_event/3 returns an event", context do
       event =
         @event
@@ -66,7 +69,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert [%{"message" => "Event not found"}] = res["errors"]
     end
+  end
 
+  describe "create_event/3 for a regular profile" do
     @create_event_mutation """
     mutation CreateEvent(
       $title: String!,
@@ -76,6 +81,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       $status: EventStatus,
       $visibility: EventVisibility,
       $organizer_actor_id: ID!,
+      $attributed_to_id: ID,
       $online_address: String,
       $options: EventOptionsInput,
       $draft: Boolean
@@ -88,6 +94,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           status: $status,
           visibility: $visibility,
           organizer_actor_id: $organizer_actor_id,
+          attributed_to_id: $attributed_to_id,
           online_address: $online_address,
           options: $options,
           draft: $draft
@@ -629,30 +636,171 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
     end
+  end
 
-    test "update_event/3 should check the event exists", %{conn: conn, actor: _actor, user: user} do
-      mutation = """
-          mutation {
-              updateEvent(
-                  event_id: 45,
-                  title: "my event updated"
-              ) {
-                title,
-                uuid,
-                tags {
-                  title,
-                  slug
-                }
-              }
-            }
-      """
+  describe "create_event/3 on behalf of a group" do
+    @variables %{
+      title: "come to my event",
+      description: "it will be fine",
+      begins_on: "2021-07-26T09:00:00Z"
+    }
+
+    test "create_event/3 should check the member has permission to create a group event", %{
+      conn: conn
+    } do
+      %User{} = user = insert(:user)
+      %Actor{id: group_id} = group = insert(:group)
+
+      %Actor{id: member_not_approved_actor_id} =
+        member_not_approved_actor = insert(:actor, user: user)
+
+      insert(:member, parent: group, actor: member_not_approved_actor)
+      %Actor{id: member_actor_id} = member_actor = insert(:actor, user: user)
+      insert(:member, parent: group, actor: member_actor, role: :member)
+      %Actor{id: moderator_actor_id} = moderator_actor = insert(:actor, user: user)
+      insert(:member, parent: group, actor: moderator_actor, role: :moderator)
+      %Actor{id: not_member_actor_id} = insert(:actor, user: user)
+
+      variables = Map.put(@variables, :attributed_to_id, "#{group_id}")
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{member_not_approved_actor_id}")
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "Event not found"
+      assert res["data"]["createEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "Organizer profile doesn't have permission to create an event on behalf of this group"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{not_member_actor_id}")
+        )
+
+      assert res["data"]["createEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "Organizer profile doesn't have permission to create an event on behalf of this group"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{member_actor_id}")
+        )
+
+      assert res["data"]["createEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "Organizer profile doesn't have permission to create an event on behalf of this group"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{moderator_actor_id}")
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["createEvent"] != nil
+    end
+  end
+
+  @update_event_mutation """
+  mutation updateEvent(
+    $eventId: ID!
+    $title: String
+    $description: String
+    $beginsOn: DateTime
+    $endsOn: DateTime
+    $status: EventStatus
+    $visibility: EventVisibility
+    $joinOptions: EventJoinOptions
+    $draft: Boolean
+    $tags: [String]
+    $picture: MediaInput
+    $onlineAddress: String
+    $phoneAddress: String
+    $organizerActorId: ID
+    $attributedToId: ID
+    $category: String
+    $physicalAddress: AddressInput
+    $options: EventOptionsInput
+    $contacts: [Contact]
+  ) {
+  updateEvent(
+    eventId: $eventId
+    title: $title
+    description: $description
+    beginsOn: $beginsOn
+    endsOn: $endsOn
+    status: $status
+    visibility: $visibility
+    joinOptions: $joinOptions
+    draft: $draft
+    tags: $tags
+    picture: $picture
+    onlineAddress: $onlineAddress
+    phoneAddress: $phoneAddress
+    organizerActorId: $organizerActorId
+    attributedToId: $attributedToId
+    category: $category
+    physicalAddress: $physicalAddress
+    options: $options
+    contacts: $contacts
+  ) {
+      id,
+      uuid,
+      url,
+      title
+      draft
+      description
+      beginsOn
+      endsOn
+      status
+      tags {
+        title,
+        slug
+      },
+      online_address,
+      phone_address,
+      category,
+      options {
+        maximumAttendeeCapacity,
+        showRemainingAttendeeCapacity
+      },
+      physicalAddress {
+        url,
+        geom,
+        street
+      }
+      picture {
+        name
+      }
+    }
+  }
+  """
+
+  describe "update_event/3" do
+    test "update_event/3 should check the event exists", %{conn: conn, actor: _actor, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{eventId: 45, title: "my event updated"}
+        )
+
+      assert hd(res["errors"])["message"] == "Event not found"
     end
 
     test "update_event/3 should check the user can change the organizer", %{
@@ -663,29 +811,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       event = insert(:event, organizer_actor: actor)
       actor2 = insert(:actor)
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  title: "my event updated",
-                  event_id: #{event.id}
-                  organizer_actor_id: #{actor2.id}
-              ) {
-                title,
-                uuid,
-                tags {
-                  title,
-                  slug
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{eventId: event.id, title: "my event updated", organizerActorId: actor2.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You can't attribute this event to this profile."
     end
 
@@ -696,28 +830,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     } do
       event = insert(:event)
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  title: "my event updated",
-                  event_id: #{event.id}
-              ) {
-                title,
-                uuid,
-                tags {
-                  title,
-                  slug
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{eventId: event.id, title: "my event updated"}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "You can't edit this event."
+      assert hd(res["errors"])["message"] == "You can't edit this event."
     end
 
     test "update_event/3 should check the user is the organizer also when it's changed", %{
@@ -727,29 +848,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     } do
       event = insert(:event)
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  title: "my event updated",
-                  event_id: #{event.id},
-                  organizer_actor_id: #{actor.id}
-              ) {
-                title,
-                uuid,
-                tags {
-                  title,
-                  slug
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{eventId: event.id, title: "my event updated", organizerActorId: actor.id}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] == "You can't edit this event."
+      assert hd(res["errors"])["message"] == "You can't edit this event."
     end
 
     test "update_event/3 should check end time is after the beginning time", %{
@@ -759,29 +866,19 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     } do
       event = insert(:event, organizer_actor: actor)
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  title: "my event updated",
-                  ends_on: "#{Timex.shift(event.begins_on, hours: -2)}",
-                  event_id: #{event.id}
-              ) {
-                title,
-                uuid,
-                tags {
-                  title,
-                  slug
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{
+            eventId: event.id,
+            title: "my event updated",
+            endsOn: event.begins_on |> DateTime.add(3600 * -2) |> DateTime.to_iso8601()
+          }
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                ["ends_on cannot be set before begins_on"]
     end
 
@@ -799,69 +896,41 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       begins_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
       ends_on = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  event_id: #{event.id},
-                  title: "my event updated",
-                  description: "description updated",
-                  begins_on: "#{begins_on}",
-                  ends_on: "#{ends_on}",
-                  status: TENTATIVE,
-                  tags: ["tag1_updated", "tag2_updated"],
-                  online_address: "toto@example.com",
-                  phone_address: "0000000000",
-                  category: "birthday",
-                  options: {
-                    maximumAttendeeCapacity: 30,
-                    showRemainingAttendeeCapacity: true
-                  },
-                  physical_address: {
-                    street: "#{address.street}",
-                    locality: "#{address.locality}"
-                  }
-              ) {
-                id,
-                uuid,
-                url,
-                title,
-                description,
-                begins_on,
-                ends_on,
-                status,
-                tags {
-                  title,
-                  slug
-                },
-                online_address,
-                phone_address,
-                category,
-                options {
-                  maximumAttendeeCapacity,
-                  showRemainingAttendeeCapacity
-                },
-                physicalAddress {
-                  url,
-                  geom,
-                  street
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{
+            eventId: event.id,
+            title: "my event updated",
+            description: "description updated",
+            beginsOn: "#{begins_on}",
+            endsOn: "#{ends_on}",
+            status: "TENTATIVE",
+            tags: ["tag1_updated", "tag2_updated"],
+            onlineAddress: "toto@example.com",
+            phoneAddress: "0000000000",
+            category: "birthday",
+            options: %{
+              maximumAttendeeCapacity: 30,
+              showRemainingAttendeeCapacity: true
+            },
+            physicalAddress: %{
+              street: "#{address.street}",
+              locality: "#{address.locality}"
+            }
+          }
+        )
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
 
-      event_res = json_response(res, 200)["data"]["updateEvent"]
+      event_res = res["data"]["updateEvent"]
 
       assert event_res["title"] == "my event updated"
       assert event_res["description"] == "description updated"
-      assert event_res["begins_on"] == "#{begins_on}"
-      assert event_res["ends_on"] == "#{ends_on}"
+      assert event_res["beginsOn"] == "#{begins_on}"
+      assert event_res["endsOn"] == "#{ends_on}"
       assert event_res["status"] == "TENTATIVE"
       assert event_res["online_address"] == "toto@example.com"
       assert event_res["phone_address"] == "0000000000"
@@ -920,212 +989,166 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       begins_on =
         event.begins_on
-        |> Timex.shift(hours: 3)
+        |> DateTime.add(3 * 3600)
         |> DateTime.truncate(:second)
         |> DateTime.to_iso8601()
-
-      mutation = """
-          mutation {
-              updateEvent(
-                  title: "my event updated",
-                  description: "description updated",
-                  begins_on: "#{begins_on}",
-                  event_id: #{event.id},
-                  category: "birthday",
-                  picture: {
-                    media: {
-                      name: "picture for my event",
-                      alt: "A very sunny landscape",
-                      file: "event.jpg",
-                      actor_id: "#{actor.id}"
-                    }
-                  }
-              ) {
-                title,
-                uuid,
-                url,
-                beginsOn,
-                picture {
-                  name,
-                  url
-                }
-              }
-          }
-      """
-
-      map = %{
-        "query" => mutation,
-        "event.jpg" => %Plug.Upload{
-          path: "test/fixtures/picture.png",
-          filename: "event.jpg"
-        }
-      }
 
       res =
         conn
         |> auth_conn(user)
         |> put_req_header("content-type", "multipart/form-data")
-        |> post("/api", map)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{
+            eventId: event.id,
+            title: "my event updated",
+            description: "description updated",
+            beginsOn: "#{begins_on}",
+            category: "birthday",
+            picture: %{
+              media: %{
+                name: "picture for my event",
+                alt: "A very sunny landscape",
+                file: "event.jpg",
+                actorId: "#{actor.id}"
+              }
+            }
+          },
+          uploads: %{
+            "event.jpg" => %Plug.Upload{
+              path: "test/fixtures/picture.png",
+              filename: "event.jpg"
+            }
+          }
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["updateEvent"]["title"] == "my event updated"
-      assert json_response(res, 200)["data"]["updateEvent"]["uuid"] == event.uuid
-      assert json_response(res, 200)["data"]["updateEvent"]["url"] == event.url
+      assert res["errors"] == nil
+      assert res["data"]["updateEvent"]["title"] == "my event updated"
+      assert res["data"]["updateEvent"]["uuid"] == event.uuid
+      assert res["data"]["updateEvent"]["url"] == event.url
 
-      assert json_response(res, 200)["data"]["updateEvent"]["beginsOn"] ==
-               DateTime.to_iso8601(event.begins_on |> Timex.shift(hours: 3))
+      assert res["data"]["updateEvent"]["beginsOn"] ==
+               event.begins_on |> DateTime.add(3 * 3600) |> DateTime.to_iso8601()
 
-      assert json_response(res, 200)["data"]["updateEvent"]["picture"]["name"] ==
+      assert res["data"]["updateEvent"]["picture"]["name"] ==
                "picture for my event"
     end
 
-    test "update_event/3 respects the draft status", %{conn: conn, actor: actor, user: user} do
+    @person_participations_query """
+    query EventPersonParticipation($actorId: ID!, $eventId: ID!) {
+      person(id: $actorId) {
+        id
+        participations(eventId: $eventId) {
+          total
+          elements {
+            role
+            actor {
+              id
+            }
+            event {
+              id
+            }
+          }
+        }
+      }
+    }
+    """
+
+    test "respects the draft status", %{conn: conn, actor: actor, user: user} do
       event = insert(:event, organizer_actor: actor, draft: true)
 
-      mutation = """
-          mutation {
-              updateEvent(
-                  event_id: #{event.id},
-                  title: "my event updated but still draft"
-              ) {
-                draft,
-                title,
-                uuid
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert json_response(res, 200)["data"]["updateEvent"]["draft"] == true
-
-      query = """
-      {
-        event(uuid: "#{event.uuid}") {
-          uuid,
-          draft
-        }
-      }
-      """
-
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
-
-      query = """
-      {
-        event(uuid: "#{event.uuid}") {
-          uuid,
-          draft
-        }
-      }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
-
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["event"]["draft"] == true
-
-      query = """
-      {
-        person(id: "#{actor.id}") {
-          id,
-          participations(eventId: #{event.id}) {
-            elements {
-              id,
-              role,
-              actor {
-                id
-              },
-              event {
-                id
-              }
-            }
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{
+            eventId: event.id,
+            title: "my event updated but still draft",
+            draft: true
           }
-        }
-      }
-      """
+        )
+
+      assert res["data"]["updateEvent"]["draft"] == true
 
       res =
         conn
-        |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
-
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["person"]["participations"]["elements"] == []
-
-      mutation = """
-          mutation {
-              updateEvent(
-                  event_id: #{event.id},
-                  title: "my event updated and no longer draft",
-                  draft: false
-              ) {
-                draft,
-                title,
-                uuid
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert json_response(res, 200)["data"]["updateEvent"]["draft"] == false
-
-      query = """
-      {
-        event(uuid: "#{event.uuid}") {
-          uuid,
-          draft
-        }
-      }
-      """
-
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "event"))
-
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["event"]["draft"] == false
-
-      query = """
-      {
-        person(id: "#{actor.id}") {
-          id,
-          participations(eventId: #{event.id}) {
-            elements {
-              role,
-              actor {
-                id
-              },
-              event {
-                id
-              }
-            }
+        |> AbsintheHelpers.graphql_query(
+          query: @find_event_query,
+          variables: %{
+            uuid: event.uuid
           }
-        }
-      }
-      """
+        )
+
+      assert hd(res["errors"])["message"] =~ "not found"
 
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "person"))
+        |> AbsintheHelpers.graphql_query(
+          query: @find_event_query,
+          variables: %{
+            uuid: event.uuid
+          }
+        )
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
+      assert res["data"]["event"]["draft"] == true
 
-      assert json_response(res, 200)["data"]["person"]["participations"]["elements"] == [
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations_query,
+          variables: %{
+            eventId: event.id,
+            actorId: actor.id
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["person"]["participations"]["elements"] == []
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: %{
+            eventId: event.id,
+            title: "my event updated and no longer draft",
+            draft: false
+          }
+        )
+
+      assert res["data"]["updateEvent"]["draft"] == false
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @find_event_query,
+          variables: %{
+            uuid: event.uuid
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["event"]["draft"] == false
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @person_participations_query,
+          variables: %{
+            eventId: event.id,
+            actorId: actor.id
+          }
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["person"]["participations"]["elements"] == [
                %{
                  "actor" => %{"id" => to_string(actor.id)},
                  "event" => %{"id" => to_string(event.id)},
@@ -1133,7 +1156,98 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                }
              ]
     end
+  end
 
+  describe "update_event/3 on behalf of a group" do
+    test "should check the member has permission to update a group event", %{
+      conn: conn
+    } do
+      %User{} = user = insert(:user)
+      %Actor{id: group_id} = group = insert(:group)
+
+      %Actor{id: member_not_approved_actor_id} =
+        member_not_approved_actor = insert(:actor, user: user)
+
+      insert(:member, parent: group, actor: member_not_approved_actor)
+      %Actor{id: member_actor_id} = member_actor = insert(:actor, user: user)
+      insert(:member, parent: group, actor: member_actor, role: :member)
+      %Actor{id: moderator_actor_id} = moderator_actor = insert(:actor, user: user)
+      insert(:member, parent: group, actor: moderator_actor, role: :moderator)
+
+      %Actor{} = administrator_actor = insert(:actor, user: user)
+      insert(:member, parent: group, actor: administrator_actor, role: :administrator)
+
+      %Actor{id: not_member_actor_id} = insert(:actor, user: user)
+
+      %Event{} =
+        event = insert(:event, attributed_to: group, organizer_actor: administrator_actor)
+
+      variables =
+        @variables
+        |> Map.put(:attributed_to_id, "#{group_id}")
+        |> Map.put(:eventId, to_string(event.id))
+
+      Users.update_user_default_actor(user.id, member_not_approved_actor_id)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{member_not_approved_actor_id}")
+        )
+
+      assert res["data"]["updateEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "This profile doesn't have permission to update an event on behalf of this group"
+
+      Users.update_user_default_actor(user.id, not_member_actor_id)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{not_member_actor_id}")
+        )
+
+      assert res["data"]["updateEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "This profile doesn't have permission to update an event on behalf of this group"
+
+      Users.update_user_default_actor(user.id, member_actor_id)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{member_actor_id}")
+        )
+
+      assert res["data"]["updateEvent"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "This profile doesn't have permission to update an event on behalf of this group"
+
+      Users.update_user_default_actor(user.id, moderator_actor_id)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_event_mutation,
+          variables: Map.put(variables, :organizer_actor_id, "#{moderator_actor_id}")
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["updateEvent"] != nil
+    end
+  end
+
+  describe "list_events/3" do
     @fetch_events_query """
     query Events($page: Int, $limit: Int) {
       events(page: $page, limit: $limit) {
@@ -1250,7 +1364,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     #      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
     #               "Event with UUID #{event.uuid} not found"
     #    end
+  end
 
+  describe "delete_event/3" do
     test "delete_event/3 deletes an event", %{conn: conn, user: user, actor: actor} do
       event = insert(:event, organizer_actor: actor)
 
@@ -1393,7 +1509,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                "object" => %{"title" => event.title, "id" => to_string(event.id)}
              }
     end
+  end
 
+  describe "list_related_events/3" do
     test "list_related_events/3 should give related events", %{
       conn: conn,
       actor: actor

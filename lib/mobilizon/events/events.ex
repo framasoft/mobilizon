@@ -153,6 +153,7 @@ defmodule Mobilizon.Events do
   def get_event_by_url!(url) do
     url
     |> event_by_url_query()
+    |> preload_for_event()
     |> Repo.one!()
   end
 
