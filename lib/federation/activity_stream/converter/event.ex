@@ -14,6 +14,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
+  alias Mobilizon.Web.Endpoint
 
   import Mobilizon.Federation.ActivityStream.Converter.Utils,
     only: [
@@ -43,7 +44,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @impl Converter
   @spec as_to_model_data(map) :: {:ok, map()} | {:error, any()}
   def as_to_model_data(object) do
-    with {%Actor{id: actor_id, domain: actor_domain}, attributed_to} <-
+    with {%Actor{id: actor_id}, attributed_to} <-
            maybe_fetch_actor_and_attributed_to_id(object),
          {:address, address_id} <-
            {:address, get_address(object["location"])},
@@ -65,7 +66,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         category: object["category"],
         visibility: visibility,
         join_options: Map.get(object, "joinMode", "free"),
-        local: is_nil(actor_domain),
+        local: is_local(object["id"]),
         options: options,
         status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
         online_address: object |> Map.get("attachment", []) |> get_online_address(),
@@ -273,5 +274,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       [],
       &(&1 ++ medias)
     )
+  end
+
+  defp is_local(url) do
+    %URI{host: url_domain} = URI.parse(url)
+    %URI{host: local_domain} = URI.parse(Endpoint.url())
+    url_domain == local_domain
   end
 end
