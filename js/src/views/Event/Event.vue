@@ -128,7 +128,7 @@
                   <p>
                     <router-link
                       class="participations-link"
-                      v-if="actorIsOrganizer && event.draft === false"
+                      v-if="canManageEvent && event.draft === false"
                       :to="{
                         name: RouteName.PARTICIPATIONS,
                         params: { eventId: event.uuid },
@@ -214,7 +214,7 @@
                     <b-dropdown-item
                       aria-role="listitem"
                       has-link
-                      v-if="actorIsOrganizer || event.draft"
+                      v-if="canManageEvent || event.draft"
                     >
                       <router-link
                         :to="{
@@ -229,7 +229,7 @@
                     <b-dropdown-item
                       aria-role="listitem"
                       has-link
-                      v-if="actorIsOrganizer || event.draft"
+                      v-if="canManageEvent || event.draft"
                     >
                       <router-link
                         :to="{
@@ -243,7 +243,7 @@
                     </b-dropdown-item>
                     <b-dropdown-item
                       aria-role="listitem"
-                      v-if="actorIsOrganizer || event.draft"
+                      v-if="canManageEvent || event.draft"
                       @click="openDeleteEventModalWrapper"
                     >
                       {{ $t("Delete") }}
@@ -253,7 +253,7 @@
                     <hr
                       class="dropdown-divider"
                       aria-role="menuitem"
-                      v-if="actorIsOrganizer || event.draft"
+                      v-if="canManageEvent || event.draft"
                     />
                     <b-dropdown-item
                       aria-role="listitem"
@@ -623,6 +623,7 @@ import {
   EventJoinOptions,
   EventStatus,
   EventVisibility,
+  MemberRole,
   ParticipantRole,
   RoutingTransportationType,
   RoutingType,
@@ -633,7 +634,10 @@ import {
   FETCH_EVENT,
   JOIN_EVENT,
 } from "../../graphql/event";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
+import {
+  CURRENT_ACTOR_CLIENT,
+  PERSON_MEMBERSHIP_GROUP,
+} from "../../graphql/actor";
 import { EventModel, IEvent } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
@@ -738,6 +742,22 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
         );
       },
     },
+    person: {
+      query: PERSON_MEMBERSHIP_GROUP,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          id: this.currentActor.id,
+          group: usernameWithDomain(this.event?.attributedTo),
+        };
+      },
+      skip() {
+        return (
+          !this.event?.attributedTo ||
+          !this.event?.attributedTo?.preferredUsername
+        );
+      },
+    },
     config: CONFIG,
   },
   metaInfo() {
@@ -763,6 +783,8 @@ export default class Event extends EventMixin {
   identity: IPerson = new Person();
 
   config!: IConfig;
+
+  person!: IPerson;
 
   participations: IParticipant[] = [];
 
@@ -1209,6 +1231,19 @@ export default class Event extends EventMixin {
       this.participations.length > 0 &&
       this.participations[0].role === ParticipantRole.CREATOR
     );
+  }
+
+  get hasGroupPrivileges(): boolean {
+    return (
+      this.person?.memberships?.total > 0 &&
+      [MemberRole.MODERATOR, MemberRole.ADMINISTRATOR].includes(
+        this.person?.memberships?.elements[0].role
+      )
+    );
+  }
+
+  get canManageEvent(): boolean {
+    return this.actorIsOrganizer || this.hasGroupPrivileges;
   }
 
   get endDate(): Date {
