@@ -40,7 +40,6 @@ defmodule Mobilizon.Web do
       use Phoenix.HTML
 
       import Mobilizon.Web.Router.Helpers
-      import Mobilizon.Web.ErrorHelpers
       import Mobilizon.Web.Gettext
     end
   end

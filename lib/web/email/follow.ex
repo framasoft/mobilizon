@@ -11,7 +11,7 @@ defmodule Mobilizon.Web.Email.Follow do
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @doc """
   Send follow notification to admins if the followed actor

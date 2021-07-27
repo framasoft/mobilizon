@@ -12,7 +12,7 @@ defmodule Mobilizon.Web.Email.Participation do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @doc """
   Send participation emails to local user

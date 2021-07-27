@@ -21,30 +21,4 @@ defmodule Mobilizon.Web.Gettext do
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
   use Gettext, otp_app: :mobilizon
-
-  def put_locale(locale) do
-    locale = determine_best_locale(locale)
-    Gettext.put_locale(__MODULE__, locale)
-  end
-
-  @spec determine_best_locale(String.t()) :: String.t()
-  def determine_best_locale(locale) do
-    locale = String.trim(locale)
-    locales = Gettext.known_locales(__MODULE__)
-    default = Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en") || "en"
-
-    cond do
-      # Default if nothing provided
-      locale == "" -> default
-      # Either it matches directly, eg: "en" => "en", "fr" => "fr"
-      locale in locales -> locale
-      # Either the first part matches, "fr_CA" => "fr"
-      split_locale(locale) in locales -> split_locale(locale)
-      # Otherwise set to default
-      true -> default
-    end
-  end
-
-  # Keep only the first part of the locale
-  defp split_locale(locale), do: locale |> String.split("_", trim: true, parts: 2) |> hd
 end

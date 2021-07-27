@@ -10,7 +10,7 @@ defmodule Mobilizon.Web.Email.Group do
   alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @doc """
   Send emails to local user

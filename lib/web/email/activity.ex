@@ -10,7 +10,7 @@ defmodule Mobilizon.Web.Email.Activity do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @spec direct_activity(String.t(), list(), String.t()) ::
           Bamboo.Email.t()

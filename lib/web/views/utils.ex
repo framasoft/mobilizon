@@ -53,27 +53,6 @@ defmodule Mobilizon.Web.Views.Utils do
 
   @spec get_locale(Plug.Conn.t()) :: String.t()
   def get_locale(%Plug.Conn{assigns: assigns}) do
-    assigns
-    |> Map.get(:locale)
-    |> check_locale()
-  end
-
-  def get_locale(_), do: default_locale()
-
-  defp check_locale(nil) do
-    default_locale()
-    |> check_locale()
-  end
-
-  defp check_locale("") do
-    check_locale(nil)
-  end
-
-  defp check_locale(locale) when is_binary(locale), do: locale
-
-  defp default_locale do
-    Mobilizon.Config.instance_config()
-    |> Keyword.get(:default_language, "en")
-    |> Kernel.||("en")
+    Map.get(assigns, :locale)
   end
 end

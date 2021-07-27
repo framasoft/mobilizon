@@ -7,13 +7,13 @@ defmodule Mobilizon.Web.Email.User do
 
   import Bamboo.Phoenix
 
-  import Mobilizon.Web.Gettext
+  import Mobilizon.Web.Gettext, only: [gettext: 2]
 
   alias Mobilizon.{Config, Crypto, Users}
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   require Logger
 

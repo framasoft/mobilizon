@@ -22,17 +22,19 @@ defmodule Mobilizon.Web.Auth.Context do
   def set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
-    context =
+    {conn, context} =
       case Guardian.Plug.current_resource(conn) do
         %User{id: user_id, email: user_email} = user ->
           if SentryAdapter.enabled?() do
             Sentry.Context.set_user_context(%{id: user_id, name: user_email})
           end
 
-          Map.put(context, :current_user, user)
+          context = Map.put(context, :current_user, user)
+          conn = assign(conn, :user_locale, user.locale)
+          {conn, context}
 
         nil ->
-          context
+          {conn, context}
       end
 
     context =

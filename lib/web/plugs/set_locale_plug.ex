@@ -8,37 +8,25 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
   @moduledoc """
   Plug to set locale for Gettext
   """
-  import Plug.Conn, only: [get_req_header: 2, assign: 3]
+  import Plug.Conn, only: [assign: 3]
   alias Mobilizon.Web.Gettext, as: GettextBackend
 
   def init(_), do: nil
 
   def call(conn, _) do
-    locale = get_locale_from_header(conn)
-    GettextBackend.put_locale(locale)
+    locale =
+      [
+        conn.assigns[:user_locale],
+        conn.assigns[:detected_locale],
+        default_locale(),
+        "en"
+      ]
+      |> Enum.map(&determine_best_locale/1)
+      |> Enum.filter(&supported_locale?/1)
+      |> hd()
+
+    Gettext.put_locale(locale)
     assign(conn, :locale, locale)
-  end
-
-  defp get_locale_from_header(conn) do
-    conn
-    |> extract_accept_language()
-    |> Enum.find("", &supported_locale?/1)
-  end
-
-  defp extract_accept_language(conn) do
-    case get_req_header(conn, "accept-language") do
-      [value | _] ->
-        value
-        |> String.split(",")
-        |> Enum.map(&parse_language_option/1)
-        |> Enum.sort(&(&1.quality > &2.quality))
-        |> Enum.map(& &1.tag)
-        |> Enum.reject(&is_nil/1)
-        |> ensure_language_fallbacks()
-
-      _ ->
-        []
-    end
   end
 
   defp supported_locale?(locale) do
@@ -47,22 +35,28 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
     |> Enum.member?(locale)
   end
 
-  defp parse_language_option(string) do
-    captures = Regex.named_captures(~r/^\s?(?<tag>[\w\-]+)(?:;q=(?<quality>[\d\.]+))?$/i, string)
-
-    quality =
-      case Float.parse(captures["quality"] || "1.0") do
-        {val, _} -> val
-        :error -> 1.0
-      end
-
-    %{tag: captures["tag"], quality: quality}
+  defp default_locale do
+    Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en")
   end
 
-  defp ensure_language_fallbacks(tags) do
-    Enum.flat_map(tags, fn tag ->
-      [language | _] = String.split(tag, "-")
-      if Enum.member?(tags, language), do: [tag], else: [tag, language]
-    end)
+  @spec determine_best_locale(String.t()) :: String.t()
+  def determine_best_locale(locale) when is_binary(locale) do
+    locale = String.trim(locale)
+    locales = Gettext.known_locales(GettextBackend)
+
+    cond do
+      locale == "" -> nil
+      # Either it matches directly, eg: "en" => "en", "fr" => "fr"
+      locale in locales -> locale
+      # Either the first part matches, "fr_CA" => "fr"
+      split_locale(locale) in locales -> split_locale(locale)
+      # Otherwise set to default
+      true -> nil
+    end
   end
+
+  def determine_best_locale(_), do: nil
+
+  # Keep only the first part of the locale
+  defp split_locale(locale), do: locale |> String.split("_", trim: true, parts: 2) |> hd
 end
