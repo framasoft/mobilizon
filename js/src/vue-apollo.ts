@@ -6,9 +6,9 @@ import {
   ApolloClient,
   ApolloLink,
   defaultDataIdFromObject,
+  fromPromise,
   InMemoryCache,
   NormalizedCacheObject,
-  Observable,
   split,
 } from "@apollo/client/core";
 import buildCurrentUserResolver from "@/apollo/user";
@@ -31,8 +31,8 @@ import { GraphQLError } from "graphql";
 // Install the vue plugin
 Vue.use(VueApollo);
 
-let refreshingTokenPromise: Promise<boolean> | undefined;
-let alreadyRefreshedToken = false;
+let isRefreshing = false;
+let pendingRequests: any[] = [];
 
 // Endpoints
 const httpServer = GRAPHQL_API_ENDPOINT || "http://localhost:4000";
@@ -92,32 +92,55 @@ const link = split(
   uploadLink
 );
 
+const resolvePendingRequests = () => {
+  pendingRequests.map((callback) => callback());
+  pendingRequests = [];
+};
+
 const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
-    if (
-      isServerError(networkError) &&
-      networkError?.statusCode === 401 &&
-      !alreadyRefreshedToken
-    ) {
-      if (!refreshingTokenPromise)
-        refreshingTokenPromise = refreshAccessToken(apolloClient);
+    if (isServerError(networkError) && networkError?.statusCode === 401) {
+      let forwardOperation;
 
-      return promiseToObservable(refreshingTokenPromise).flatMap(() => {
-        refreshingTokenPromise = undefined;
-        alreadyRefreshedToken = true;
+      if (!isRefreshing) {
+        isRefreshing = true;
 
-        const context = operation.getContext();
-        const oldHeaders = context.headers;
+        forwardOperation = fromPromise(
+          refreshAccessToken(apolloClient)
+            .then(() => {
+              resolvePendingRequests();
 
-        operation.setContext({
-          headers: {
-            ...oldHeaders,
-            authorization: generateTokenHeader(),
-          },
-        });
+              const context = operation.getContext();
+              const oldHeaders = context.headers;
 
-        return forward(operation);
-      });
+              operation.setContext({
+                headers: {
+                  ...oldHeaders,
+                  authorization: generateTokenHeader(),
+                },
+              });
+              return true;
+            })
+            .catch(() => {
+              pendingRequests = [];
+              logout(apolloClient);
+              return;
+            })
+            .finally(() => {
+              isRefreshing = false;
+            })
+        ).filter((value) => Boolean(value));
+      } else {
+        forwardOperation = fromPromise(
+          new Promise((resolve) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            pendingRequests.push(() => resolve());
+          })
+        );
+      }
+
+      return forwardOperation.flatMap(() => forward(operation));
     }
 
     if (graphQLErrors) {
@@ -171,41 +194,3 @@ export default new VueApollo({
     console.error(error);
   },
 });
-
-// Thanks: https://github.com/apollographql/apollo-link/issues/747#issuecomment-502676676
-const promiseToObservable = <T>(promise: Promise<T>) =>
-  new Observable<T>((subscriber) => {
-    promise.then(
-      (value) => {
-        if (subscriber.closed) {
-          return;
-        }
-        subscriber.next(value);
-        subscriber.complete();
-      },
-      (err) => {
-        console.error("Cannot refresh token.", err);
-
-        subscriber.error(err);
-        logout(apolloClient);
-      }
-    );
-  });
-
-// Manually call this when user log in
-// export function onLogin(apolloClient) {
-// if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
-// }
-
-// Manually call this when user log out
-// export async function onLogout() {
-// if (apolloClient.wsClient) restartWebsockets(apolloClient.wsClient);
-// We don't reset store because we rely on currentUser & currentActor
-// which are in the cache (even null). Maybe try to rerun cache init after resetStore?
-// try {
-//   await apolloClient.resetStore();
-// } catch (e) {
-//   // eslint-disable-next-line no-console
-//   console.log('%cError on cache reset (logout)', 'color: orange;', e.message);
-// }
-// }
