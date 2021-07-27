@@ -300,7 +300,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Web.ChangesetView,
         Mobilizon.Web.JsonLD.ObjectView,
         Mobilizon.Web.EmailView,
-        Mobilizon.Web.ErrorHelpers,
         Mobilizon.Web.ErrorView,
         Mobilizon.Web.LayoutView,
         Mobilizon.Web.PageView,

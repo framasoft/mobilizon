@@ -16,7 +16,6 @@ defmodule Mobilizon.Web.Email.Event do
   alias Mobilizon.Users.{Setting, User}
 
   alias Mobilizon.Web.Email
-  alias Mobilizon.Web.Gettext, as: GettextBackend
 
   @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
@@ -31,7 +30,7 @@ defmodule Mobilizon.Web.Email.Event do
         timezone \\ "Etc/UTC",
         locale \\ "en"
       ) do
-    GettextBackend.put_locale(locale)
+    Gettext.put_locale(locale)
 
     subject =
       gettext(

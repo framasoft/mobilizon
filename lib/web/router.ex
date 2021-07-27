@@ -7,10 +7,12 @@ defmodule Mobilizon.Web.Router do
   pipeline :graphql do
     #    plug(:accepts, ["json"])
     plug(Mobilizon.Web.Auth.Pipeline)
+    plug(Mobilizon.Web.Plugs.SetLocalePlug)
   end
 
   pipeline :graphiql do
     plug(Mobilizon.Web.Auth.Pipeline)
+    plug(Mobilizon.Web.Plugs.SetLocalePlug)
 
     plug(Mobilizon.Web.Plugs.HTTPSecurityPlug,
       script_src: ["cdn.jsdelivr.net"],
@@ -46,6 +48,8 @@ defmodule Mobilizon.Web.Router do
     plug(:accepts, ["html", "activity-json"])
     plug(:put_secure_browser_headers)
 
+    plug(Mobilizon.Web.Plugs.SetLocalePlug)
+
     plug(Cldr.Plug.AcceptLanguage,
       cldr_backend: Mobilizon.Cldr,
       no_match_log_level: :debug
@@ -59,6 +63,8 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :browser do
     plug(Plug.Static, at: "/", from: "priv/static")
+
+    plug(Mobilizon.Web.Plugs.SetLocalePlug)
 
     plug(Cldr.Plug.AcceptLanguage,
       cldr_backend: Mobilizon.Cldr,

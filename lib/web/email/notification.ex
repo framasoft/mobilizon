@@ -9,7 +9,7 @@ defmodule Mobilizon.Web.Email.Notification do
 
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users.{Setting, User}
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @spec before_event_notification(String.t(), Participant.t(), String.t()) ::
           Bamboo.Email.t()

@@ -13,7 +13,7 @@ defmodule Mobilizon.Web.Email.Admin do
   alias Mobilizon.Reports.Report
   alias Mobilizon.Users.User
 
-  alias Mobilizon.Web.{Email, Gettext}
+  alias Mobilizon.Web.Email
 
   @spec report(User.t(), Report.t(), String.t()) :: Bamboo.Email.t()
   def report(%User{email: email} = user, %Report{} = report, default_locale \\ "en") do

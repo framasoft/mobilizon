@@ -348,8 +348,7 @@ defmodule Mobilizon.Config do
   end
 
   def generate_terms(locale) do
-    import Mobilizon.Web.Gettext
-    put_locale(locale)
+    Gettext.put_locale(locale)
 
     Phoenix.View.render_to_string(
       Mobilizon.Web.APIView,
@@ -363,8 +362,7 @@ defmodule Mobilizon.Config do
   end
 
   def generate_privacy(locale) do
-    import Mobilizon.Web.Gettext
-    put_locale(locale)
+    Gettext.put_locale(locale)
 
     Phoenix.View.render_to_string(
       Mobilizon.Web.APIView,

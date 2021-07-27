@@ -6,7 +6,7 @@ defmodule Mobilizon.Service.Metadata.Utils do
   alias Mobilizon.Service.{Address, DateTime}
   alias Mobilizon.Service.Formatter.HTML, as: HTMLFormatter
   alias Phoenix.HTML
-  import Mobilizon.Web.Gettext
+  import Mobilizon.Web.Gettext, only: [gettext: 1]
 
   @slice_limit 200
 

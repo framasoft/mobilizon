@@ -308,6 +308,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
     test "create_user/3 doesn't allow two users with the same email", %{conn: conn} do
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @create_user_mutation,
           variables: @user_creation
@@ -397,6 +398,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
     test "register_person/3 doesn't register a profile from an unknown email", %{conn: conn} do
       conn
+      |> put_req_header("accept-language", "fr")
       |> AbsintheHelpers.graphql_query(
         query: @create_user_mutation,
         variables: @user_creation
@@ -416,6 +418,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
     test "register_person/3 can't be called with an existing profile", %{conn: conn} do
       conn
+      |> put_req_header("accept-language", "fr")
       |> AbsintheHelpers.graphql_query(
         query: @create_user_mutation,
         variables: @user_creation
@@ -423,6 +426,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       res =
         conn
+        |> put_req_header("accept-language", "fr")
         |> AbsintheHelpers.graphql_query(
           query: @register_person_mutation,
           variables: @user_creation
@@ -447,6 +451,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       insert(:actor, preferred_username: "myactor")
 
       conn
+      |> put_req_header("accept-language", "fr")
       |> AbsintheHelpers.graphql_query(
         query: @create_user_mutation,
         variables: @user_creation

@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Group do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.{Endpoint, Gettext}
+  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 

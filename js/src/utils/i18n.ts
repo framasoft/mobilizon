@@ -39,7 +39,17 @@ const loadedLanguages = [DEFAULT_LOCALE];
 
 function setI18nLanguage(lang: string): string {
   i18n.locale = lang;
+  setLanguageInDOM(lang);
   return lang;
+}
+
+function setLanguageInDOM(lang: string): void {
+  const fixedLang = lang.replaceAll("_", "-");
+  const html = document.documentElement;
+  const documentLang = html.getAttribute("lang");
+  if (documentLang !== fixedLang) {
+    html.setAttribute("lang", fixedLang);
+  }
 }
 
 function fileForLanguage(matches: Record<string, string>, lang: string) {

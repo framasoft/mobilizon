@@ -374,7 +374,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         )
 
       assert hd(res["errors"])["message"] == %{
-               "maximum_attendee_capacity" => ["must be greater than or equal to %{number}"]
+               "maximum_attendee_capacity" => ["must be greater than or equal to 0"]
              }
     end
 
