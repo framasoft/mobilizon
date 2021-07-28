@@ -531,6 +531,7 @@ defmodule Mobilizon.Events do
     |> events_for_ends_on(args)
     |> events_for_tags(args)
     |> events_for_location(args)
+    |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
     |> event_order_begins_on_asc()
