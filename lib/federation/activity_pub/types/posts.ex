@@ -91,9 +91,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   def group_actor(%Post{attributed_to_id: attributed_to_id}),
     do: Actors.get_actor(attributed_to_id)
 
-  def permissions(%Post{draft: draft}) do
+  def permissions(%Post{}) do
     %Permission{
-      access: if(draft, do: nil, else: :member),
+      access: :member,
       create: :moderator,
       update: :moderator,
       delete: :moderator
