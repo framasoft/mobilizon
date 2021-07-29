@@ -55,6 +55,10 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
       {:error, "Can't make a local actor from URL"}
     else
       case Fetcher.fetch_and_prepare_actor_from_url(url) do
+        # Just in case
+        {:ok, {:error, _e}} ->
+          raise ArgumentError, message: "Failed to make actor from url #{url}"
+
         {:ok, data} ->
           Actors.upsert_actor(data, preload)
 
@@ -67,7 +71,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
           {:error, :http_error}
 
         {:error, e} ->
-          Logger.warn("Failed to make actor from url")
+          Logger.warn("Failed to make actor from url #{url}")
           {:error, e}
       end
     end

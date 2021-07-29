@@ -476,6 +476,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       "type" => "Update",
       "to" => object["to"],
       "cc" => object["cc"],
+      "attributedTo" => object["attributedTo"] || object["actor"],
       "actor" => object["actor"],
       "object" => object,
       "id" => object["id"] <> "/activity"
