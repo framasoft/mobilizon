@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
          post_as_data <-
            Convertible.model_to_as(%{post | attributed_to: group, author: creator}),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(post) do
+           Audience.get_audience(post) do
       update_data = make_update_data(post_as_data, Map.merge(audience, additional))
 
       {:ok, post, update_data}

@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
          actor_as_data <- Convertible.model_to_as(new_actor),
          {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_actor),
+           Audience.get_audience(new_actor),
          additional <- Map.merge(additional, %{"actor" => old_actor.url}),
          update_data <- make_update_data(actor_as_data, Map.merge(audience, additional)) do
       {:ok, new_actor, update_data}
@@ -142,7 +142,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
            "object" => group.url
          },
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(member) do
+           Audience.get_audience(member) do
       approve_if_default_role_is_member(
         group,
         actor,

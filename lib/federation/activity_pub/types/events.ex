@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
            EventActivity.insert_activity(event, subject: "event_created"),
          event_as_data <- Convertible.model_to_as(event),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
+           Audience.get_audience(event),
          create_data <-
            make_create_data(event_as_data, Map.merge(audience, additional)) do
       {:ok, event, create_data}
@@ -46,7 +46,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
          {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
          event_as_data <- Convertible.model_to_as(new_event),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_event),
+           Audience.get_audience(new_event),
          update_data <- make_update_data(event_as_data, Map.merge(audience, additional)) do
       {:ok, new_event, update_data}
     else
@@ -69,7 +69,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     }
 
     with audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
+           Audience.get_audience(event),
          {:ok, %Event{} = event} <- EventsManager.delete_event(event),
          {:ok, _} <-
            EventActivity.insert_activity(event, subject: "event_deleted"),
@@ -124,7 +124,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
            }),
          join_data <- Convertible.model_to_as(participant),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(participant) do
+           Audience.get_audience(participant) do
       approve_if_default_role_is_participant(
         event,
         Map.merge(join_data, audience),

@@ -31,7 +31,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
          :ok <- maybe_publish_graphql_subscription(discussion),
          comment_as_data <- Convertible.model_to_as(last_comment),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(discussion),
+           Audience.get_audience(discussion),
          create_data <-
            make_create_data(comment_as_data, Map.merge(audience, additional)) do
       {:ok, discussion, create_data}
@@ -48,7 +48,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
            DiscussionActivity.insert_activity(discussion, subject: "discussion_created"),
          discussion_as_data <- Convertible.model_to_as(discussion),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(discussion),
+           Audience.get_audience(discussion),
          create_data <-
            make_create_data(discussion_as_data, Map.merge(audience, additional)) do
       {:ok, discussion, create_data}
@@ -68,7 +68,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
          {:ok, true} <- Cachex.del(:activity_pub, "discussion_#{new_discussion.slug}"),
          discussion_as_data <- Convertible.model_to_as(new_discussion),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_discussion),
+           Audience.get_audience(new_discussion),
          update_data <- make_update_data(discussion_as_data, Map.merge(audience, additional)) do
       {:ok, new_discussion, update_data}
     else

@@ -41,7 +41,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
           }
         } = post
       ) do
-    audience = Audience.calculate_to_and_cc_from_mentions(post)
+    audience = Audience.get_audience(post)
 
     %{
       "type" => "Article",

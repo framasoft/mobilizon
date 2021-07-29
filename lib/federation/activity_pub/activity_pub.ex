@@ -426,7 +426,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            "id" => "#{Endpoint.url()}/leave/event/#{participant.id}"
          },
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(participant),
+           Audience.get_audience(participant),
          {:ok, activity} <- create_activity(Map.merge(leave_data, audience), local),
          :ok <- maybe_federate(activity) do
       {:ok, activity, participant}
@@ -803,7 +803,7 @@ defmodule Mobilizon.Federation.ActivityPub do
            Scheduler.trigger_notifications_for_participant(participant),
          participant_as_data <- Convertible.model_to_as(participant),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(participant),
+           Audience.get_audience(participant),
          update_data <-
            make_accept_join_data(
              participant_as_data,
@@ -837,7 +837,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          ),
          member_as_data <- Convertible.model_to_as(member),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(member),
+           Audience.get_audience(member),
          update_data <-
            make_accept_join_data(
              member_as_data,
@@ -899,7 +899,7 @@ defmodule Mobilizon.Federation.ActivityPub do
          participant_as_data <- Convertible.model_to_as(participant),
          audience <-
            participant
-           |> Audience.calculate_to_and_cc_from_mentions()
+           |> Audience.get_audience()
            |> Map.merge(additional),
          reject_data <- %{
            "type" => "Reject",
@@ -925,7 +925,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     with {:ok, %Follower{} = follower} <- Actors.delete_follower(follower),
          follower_as_data <- Convertible.model_to_as(follower),
          audience <-
-           follower.actor |> Audience.calculate_to_and_cc_from_mentions() |> Map.merge(additional),
+           follower.actor |> Audience.get_audience() |> Map.merge(additional),
          reject_data <- %{
            "to" => [follower.actor.url],
            "type" => "Reject",
