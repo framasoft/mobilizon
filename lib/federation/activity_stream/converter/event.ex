@@ -37,6 +37,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
   @online_address_name "Website"
   @banner_picture_name "Banner"
+  @ap_public "https://www.w3.org/ns/activitystreams#Public"
 
   @doc """
   Converts an AP object data to our internal data structure.
@@ -92,15 +93,15 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @impl Converter
   @spec model_to_as(EventModel.t()) :: map
   def model_to_as(%EventModel{} = event) do
-    to =
+    {to, cc} =
       if event.visibility == :public,
-        do: ["https://www.w3.org/ns/activitystreams#Public"],
-        else: [attributed_to_or_default(event).followers_url]
+        do: {[@ap_public], []},
+        else: {[attributed_to_or_default(event).followers_url], [@ap_public]}
 
     %{
       "type" => "Event",
       "to" => to,
-      "cc" => [],
+      "cc" => cc,
       "attributedTo" => attributed_to_or_default(event).url,
       "name" => event.title,
       "actor" =>

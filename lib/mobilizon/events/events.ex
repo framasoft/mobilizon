@@ -88,6 +88,8 @@ defmodule Mobilizon.Events do
     :media
   ]
 
+  @participant_preloads [:event, :actor]
+
   @doc """
   Gets a single event.
   """
@@ -307,8 +309,9 @@ defmodule Mobilizon.Events do
   """
   @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Changeset.t()}
   def update_event(%Event{draft: old_draft} = old_event, attrs) do
-    with %Changeset{changes: changes} = changeset <-
-           Event.update_changeset(Repo.preload(old_event, [:tags, :media]), attrs),
+    with %Event{} = old_event <- Repo.preload(old_event, @event_preloads),
+         %Changeset{changes: changes} = changeset <-
+           Event.update_changeset(old_event, attrs),
          {:ok, %{update: %Event{} = new_event}} <-
            Multi.new()
            |> Multi.update(:update, changeset)
@@ -329,7 +332,8 @@ defmodule Mobilizon.Events do
                err -> err
              end
            end)
-           |> Repo.transaction() do
+           |> Repo.transaction(),
+         %Event{} = new_event <- Repo.preload(new_event, @event_preloads, force: true) do
       Cachex.del(:ics, "event_#{new_event.uuid}")
 
       Email.Event.calculate_event_diff_and_send_notifications(
@@ -341,7 +345,7 @@ defmodule Mobilizon.Events do
       unless new_event.draft,
         do: Workers.BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
 
-      {:ok, Repo.preload(new_event, @event_preloads)}
+      {:ok, new_event}
     end
   end
 
@@ -728,7 +732,7 @@ defmodule Mobilizon.Events do
   def get_participant(participant_id) do
     Participant
     |> where([p], p.id == ^participant_id)
-    |> preload([p], [:event, :actor])
+    |> preload([p], ^@participant_preloads)
     |> Repo.one()
   end
 
@@ -744,6 +748,7 @@ defmodule Mobilizon.Events do
     case Participant
          |> where([p], event_id: ^event_id, actor_id: ^actor_id)
          |> where([p], fragment("? ->>'email' = ?", p.metadata, ^email))
+         |> preload([p], ^@participant_preloads)
          |> Repo.one() do
       %Participant{} = participant ->
         {:ok, participant}
@@ -758,6 +763,7 @@ defmodule Mobilizon.Events do
     case Participant
          |> where([p], event_id: ^event_id, actor_id: ^actor_id)
          |> where([p], fragment("? ->>'cancellation_token' = ?", p.metadata, ^cancellation_token))
+         |> preload([p], ^@participant_preloads)
          |> Repo.one() do
       %Participant{} = participant ->
         {:ok, participant}
@@ -768,7 +774,9 @@ defmodule Mobilizon.Events do
   end
 
   def get_participant(event_id, actor_id, %{}) do
-    case Repo.get_by(Participant, event_id: event_id, actor_id: actor_id) do
+    case Participant
+         |> Repo.get_by(event_id: event_id, actor_id: actor_id)
+         |> Repo.preload(@participant_preloads) do
       %Participant{} = participant ->
         {:ok, participant}
 
@@ -781,7 +789,7 @@ defmodule Mobilizon.Events do
   def get_participant_by_confirmation_token(confirmation_token) do
     Participant
     |> where([p], fragment("? ->>'confirmation_token' = ?", p.metadata, ^confirmation_token))
-    |> preload([p], [:actor, :event])
+    |> preload([p], ^@participant_preloads)
     |> Repo.one()
   end
 
