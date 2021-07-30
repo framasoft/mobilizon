@@ -388,7 +388,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          %Actor{} = current_profile
        ) do
     # The organizer_actor has to be the current profile, because otherwise we're left with a possible remote organizer
-    args = Map.put(args, :organizer_actor, current_profile)
+    args =
+      args
+      |> Map.put(:organizer_actor, current_profile)
+      |> Map.put(:organizer_actor_id, current_profile.id)
+
     {:ok, args}
   end
 
@@ -403,7 +407,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          new_organizer_actor_id <- args |> Map.get(:organizer_actor_id, organizer_actor_id),
          {:new_actor, {:is_owned, %Actor{} = organizer_actor}} <-
            {:new_actor, User.owns_actor(user, new_organizer_actor_id)},
-         args <- Map.put(args, :organizer_actor, organizer_actor) do
+         args <-
+           args
+           |> Map.put(:organizer_actor, organizer_actor)
+           |> Map.put(:organizer_actor_id, organizer_actor.id) do
       {:ok, args}
     end
   end
