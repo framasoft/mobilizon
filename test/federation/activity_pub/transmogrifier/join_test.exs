@@ -64,6 +64,46 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
       # We don't accept already accepted Accept activities
       :error = Transmogrifier.handle_incoming(accept_data)
     end
+
+    test "it accepts Accept activities with an inline Join from same origin" do
+      %Actor{} = organizer = insert(:actor)
+
+      %Actor{url: participant_actor_url} =
+        insert(:actor, domain: "somewhere.else", url: "https://somewhere.else/@participant")
+
+      %Actor{} =
+        group = insert(:group, domain: "somewhere.else", url: "https://somewhere.else/@group")
+
+      insert(:member, actor: organizer, parent: group, role: :moderator)
+
+      %Actor{} =
+        actor_member_2 =
+        insert(:actor, domain: "somewhere.else", url: "https://somewhere.else/@member")
+
+      insert(:member, actor: actor_member_2, parent: group, role: :moderator)
+
+      %Event{url: event_url} =
+        insert(:event, organizer_actor: organizer, join_options: :restricted, attributed_to: group)
+
+      join_data =
+        File.read!("test/fixtures/mobilizon-join-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", participant_actor_url)
+        |> Map.put("object", event_url)
+        |> Map.put("participationMessage", @join_message)
+        |> Map.put("id", "https://somewhere.else/@participant/join/event/1")
+
+      accept_data =
+        File.read!("test/fixtures/mastodon-accept-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", actor_member_2.url)
+        |> Map.put("object", join_data)
+
+      {:ok, accept_activity, _} = Transmogrifier.handle_incoming(accept_data)
+      assert accept_activity.data["object"]["id"] == join_data["id"]
+      assert accept_activity.data["object"]["id"] =~ "/join/"
+      assert accept_activity.data["id"] =~ "/accept/join/"
+    end
   end
 
   describe "handle incoming reject join activities" do
