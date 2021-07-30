@@ -804,14 +804,14 @@ defmodule Mobilizon.Federation.ActivityPub do
          participant_as_data <- Convertible.model_to_as(participant),
          audience <-
            Audience.get_audience(participant),
-         update_data <-
+         accept_join_data <-
            make_accept_join_data(
              participant_as_data,
              Map.merge(Map.merge(audience, additional), %{
                "id" => "#{Endpoint.url()}/accept/join/#{participant.id}"
              })
            ) do
-      {:ok, participant, update_data}
+      {:ok, participant, accept_join_data}
     else
       err ->
         Logger.error("Something went wrong while creating an update activity")
@@ -838,14 +838,14 @@ defmodule Mobilizon.Federation.ActivityPub do
          member_as_data <- Convertible.model_to_as(member),
          audience <-
            Audience.get_audience(member),
-         update_data <-
+         accept_join_data <-
            make_accept_join_data(
              member_as_data,
              Map.merge(Map.merge(audience, additional), %{
                "id" => "#{Endpoint.url()}/accept/join/#{member.id}"
              })
            ) do
-      {:ok, member, update_data}
+      {:ok, member, accept_join_data}
     else
       err ->
         Logger.error("Something went wrong while creating an update activity")
