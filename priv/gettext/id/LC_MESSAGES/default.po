@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-07-23 23:41+0000\n"
-"PO-Revision-Date: 2021-07-24 18:15+0000\n"
+"PO-Revision-Date: 2021-07-31 03:15+0000\n"
 "Last-Translator: TA <alt3753.7@gmail.com>\n"
 "Language-Team: Indonesian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/id/>\n"
@@ -18,6 +18,9 @@ msgstr ""
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"Jika Anda tidak meminta ini, harap abaikan surel ini. Kata sandi Anda tidak "
+"akan berubah sampai Anda mengakses tautan di bawah dan membuat sandi yang "
+"baru."
 
 #: lib/web/templates/email/report.html.eex:74
 #, elixir-format
@@ -33,7 +36,7 @@ msgstr "Aktifkan akun saya"
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-format, fuzzy
 msgid "Ask the community on Framacolibri"
-msgstr "Bertanya kepada komunitas di Framacolibri"
+msgstr "Bertanya ke komunitas di Framacolibri"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-format
@@ -80,7 +83,7 @@ msgstr ""
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-format
 msgid "Go to event page"
-msgstr ""
+msgstr "Pergi ke halaman acara"
 
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-format
@@ -111,22 +114,22 @@ msgstr ""
 #: lib/web/email/participation.ex:112
 #, elixir-format
 msgid "Your participation to event %{title} has been approved"
-msgstr ""
+msgstr "Keikutsertaan Anda pada acara %{title} telah diterima"
 
 #: lib/web/email/participation.ex:70
 #, elixir-format
 msgid "Your participation to event %{title} has been rejected"
-msgstr ""
+msgstr "Keikutsertaan Anda pada acara %{title} telah ditolak"
 
 #: lib/web/email/event.ex:37
 #, elixir-format
 msgid "Event %{title} has been updated"
-msgstr ""
+msgstr "Acara %{title} telah diperbarui"
 
 #: lib/web/templates/email/event_updated.text.eex:15
 #, elixir-format
 msgid "New title: %{title}"
-msgstr ""
+msgstr "Judul baru: %{title}"
 
 #: lib/web/templates/email/password_reset.text.eex:5
 #, elixir-format
@@ -136,12 +139,12 @@ msgstr ""
 #: lib/web/templates/email/email.html.eex:86
 #, elixir-format
 msgid "Warning"
-msgstr ""
+msgstr "Peringatan"
 
 #: lib/web/email/participation.ex:135
 #, elixir-format
 msgid "Confirm your participation to event %{title}"
-msgstr ""
+msgstr "Konfirmasi keikutsertaan Anda pada acara %{title}"
 
 #: lib/web/templates/api/privacy.html.eex:75
 #, elixir-format
@@ -165,37 +168,37 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Basic account information"
-msgstr ""
+msgstr "Informasi akun dasar"
 
 #: lib/web/templates/api/privacy.html.eex:25
 #, elixir-format
 msgctxt "terms"
 msgid "Do not share any dangerous information over Mobilizon."
-msgstr ""
+msgstr "Dilarang membagikan informasi berbahaya melalui Mobilizon."
 
 #: lib/web/templates/api/privacy.html.eex:90
 #, elixir-format
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
-msgstr ""
+msgstr "Apakah kami mengungkapkan suatu informasi ke pihak luar?"
 
 #: lib/web/templates/api/privacy.html.eex:68
 #, elixir-format
 msgctxt "terms"
 msgid "Do we use cookies?"
-msgstr ""
+msgstr "Apakah kami menggunakan kuki?"
 
 #: lib/web/templates/api/privacy.html.eex:51
 #, elixir-format
 msgctxt "terms"
 msgid "How do we protect your information?"
-msgstr ""
+msgstr "Bagaimana cara kami melindungi informasi Anda?"
 
 #: lib/web/templates/api/privacy.html.eex:29
 #, elixir-format
 msgctxt "terms"
 msgid "IPs and other metadata"
-msgstr ""
+msgstr "IP dan metadata lain"
 
 #: lib/web/templates/api/privacy.html.eex:17
 #, elixir-format
@@ -213,13 +216,15 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Tokens to authenticate you"
-msgstr ""
+msgstr "Token untuk mengontentikasi Anda"
 
 #: lib/web/templates/api/privacy.html.eex:31
 #, elixir-format
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
+"Kami juga akan menyimpan log server yang mengandung alamat IP dari setiap "
+"permintaan (request) ke server kami."
 
 #: lib/web/templates/api/privacy.html.eex:70
 #, elixir-format
@@ -237,7 +242,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "What do we use your information for?"
-msgstr ""
+msgstr "Untuk apa kami menggunakan informasi Anda?"
 
 #: lib/web/templates/api/privacy.html.eex:57
 #, elixir-format
@@ -255,25 +260,37 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Changes to our Privacy Policy"
-msgstr ""
+msgstr "Perubahan pada Kebijakan Privasi kami"
 
 #: lib/web/templates/api/privacy.html.eex:106
 #, elixir-format
 msgctxt "terms"
 msgid "If this server is in the EU or the EEA: Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (<a href=\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General Data Protection Regulation</a>) do not use this site."
 msgstr ""
+"Jika server ini terletak di EU atau EEA: Situs, produk, dan layanan kami "
+"semuanya ditujukan kepada orang-orang yang berusia setidaknya 16 tahun. Jika "
+"Anda berusia di bawah 16 tahun, sesuai dengan persyaratan GDPR (<a href="
+"\"https://en.wikipedia.org/wiki/General_Data_Protection_Regulation\">General "
+"Data Protection Regulation</a>) jangan gunakan situs ini."
 
 #: lib/web/templates/api/privacy.html.eex:109
 #, elixir-format
 msgctxt "terms"
 msgid "If this server is in the USA: Our site, products and services are all directed to people who are at least 13 years old. If you are under the age of 13, per the requirements of COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection Act</a>) do not use this site."
 msgstr ""
+"Jika server terletak di USA: Situs, produk dan layanan kami semuanya "
+"ditujukan kepada orang-orang yang setidaknya berusia 13 tahun. Jika Anda "
+"berusia di bawah 13 tahun, sesuai dengan persyaratan COPPA (<a href=\"https"
+"://en.wikipedia.org/wiki/Children%27s_Online_Privacy_Protection_Act\""
+">Children's Online Privacy Protection Act</a>) jangan gunakan situs ini."
 
 #: lib/web/templates/api/privacy.html.eex:117
 #, elixir-format
 msgctxt "terms"
 msgid "If we decide to change our privacy policy, we will post those changes on this page."
 msgstr ""
+"Jika kami memutuskan untuk mengubah kebijakan privasi kami, kami akan "
+"memposting perubahan tersebut di halaman ini."
 
 #: lib/web/templates/api/privacy.html.eex:112
 #, elixir-format
@@ -285,7 +302,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Site usage by children"
-msgstr ""
+msgstr "Penggunaan situs oleh anak-anak"
 
 #: lib/web/templates/api/privacy.html.eex:47
 #, elixir-format
@@ -309,30 +326,30 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
-msgstr ""
+msgstr "Informasi apa yang kami kumpulkan?"
 
 #: lib/web/email/user.ex:176
 #, elixir-format
 msgid "Mobilizon on %{instance}: confirm your email address"
-msgstr ""
+msgstr "Mobilizon pada %{instance}: konfirmasi alamat surel Anda"
 
 #: lib/web/email/user.ex:152
 #, elixir-format
 msgid "Mobilizon on %{instance}: email changed"
-msgstr ""
+msgstr "Mobilizon pada %{instance}: surel diubah"
 
 #: lib/web/email/notification.ex:47
 #, elixir-format
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
-msgstr[0] ""
+msgstr[0] "%{nb_events} acara direncanakan hari ini"
 
 #: lib/web/templates/email/on_day_notification.html.eex:38
 #: lib/web/templates/email/on_day_notification.text.eex:4
 #, elixir-format
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
-msgstr[0] ""
+msgstr[0] "Anda memiliki %{total} acara hari ini:"
 
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-format
@@ -348,18 +365,18 @@ msgstr ""
 #: lib/web/email/notification.ex:24
 #, elixir-format
 msgid "Don't forget to go to %{title}"
-msgstr ""
+msgstr "Jangan lupa untuk pergi ke %{title}"
 
 #: lib/web/templates/email/before_event_notification.html.eex:38
 #: lib/web/templates/email/before_event_notification.text.eex:3
 #, elixir-format
 msgid "Get ready for %{title}"
-msgstr ""
+msgstr "Bersiaplah untuk %{title}"
 
 #: lib/web/templates/email/group_invite.html.eex:59
 #, elixir-format
 msgid "See my groups"
-msgstr ""
+msgstr "Lihat kelompok-kelompok saya"
 
 #: lib/web/templates/email/group_invite.html.eex:45
 #: lib/web/templates/email/group_invite.text.eex:5
@@ -370,18 +387,19 @@ msgstr ""
 #: lib/web/templates/email/before_event_notification.text.eex:5
 #, elixir-format
 msgid "View the event on: %{link}"
-msgstr ""
+msgstr "Lihat acara di: %{link}"
 
 #: lib/web/email/group.ex:33
 #, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr ""
+"Anda telah diundang oleh %{inviter} untuk bergabung ke kelompok %{group}"
 
 #: lib/web/email/notification.ex:71
 #, elixir-format
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
-msgstr[0] ""
+msgstr[0] "%{nb_events} acara direncanakan pekan ini"
 
 #: lib/web/email/notification.ex:93
 #, elixir-format
@@ -394,12 +412,12 @@ msgstr[0] ""
 #, elixir-format
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
-msgstr[0] ""
+msgstr[0] "Anda memiliki %{total} acara pekan ini:"
 
 #: lib/service/metadata/utils.ex:53
 #, elixir-format
 msgid "The event organizer didn't add any description."
-msgstr ""
+msgstr "Penyelenggara acara tidak menambahkan keterangan."
 
 #: lib/web/templates/api/privacy.html.eex:54
 #, elixir-format
@@ -417,13 +435,13 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
-msgstr ""
+msgstr "Menerima Persyaratan ini"
 
 #: lib/web/templates/api/terms.html.eex:27
 #, elixir-format
 msgctxt "terms"
 msgid "Changes to these Terms"
-msgstr ""
+msgstr "Perubahan pada Persyaratan ini"
 
 #: lib/web/templates/api/terms.html.eex:85
 #, elixir-format
@@ -507,7 +525,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Kebijakan Privasi"
 
 #: lib/web/templates/api/terms.html.eex:95
 #, elixir-format
@@ -550,6 +568,8 @@ msgstr ""
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
+"Untuk keterangan lebih lanjut tentang perangkat lunak Mobilizon <a href="
+"\"https://joinmobilizon.org\">lihat di sini</a>."
 
 #: lib/web/templates/api/terms.html.eex:18
 #, elixir-format
@@ -615,13 +635,16 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Source code"
-msgstr ""
+msgstr "Kode sumber"
 
 #: lib/web/templates/api/terms.html.eex:93
 #, elixir-format
 msgctxt "terms"
 msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
+"Kami mencintai umpan balik. Harap beritahu kami apa yang Anda pikirkan "
+"tentang Layanan, dan Persyaratan ini dan, secara umum, "
+"<b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.eex:74
 #, elixir-format
@@ -634,6 +657,8 @@ msgstr ""
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> will not use or transmit or resell your personal data"
 msgstr ""
+"<b>%{instance_name}</b> tidak akan mentransmisikan atau menjual ulang data "
+"pribadi Anda"
 
 #: lib/web/templates/api/terms.html.eex:44
 #, elixir-format
@@ -663,7 +688,7 @@ msgstr ""
 #, elixir-format
 msgctxt "terms"
 msgid "Short version"
-msgstr ""
+msgstr "Versi pendek"
 
 #: lib/web/templates/api/terms.html.eex:9
 #, elixir-format
@@ -676,52 +701,62 @@ msgstr ""
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 18, 2020."
 msgstr ""
+"Dokumen ini dilisensikan di bawah <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>. Dokumen ini terakhir diperbarui pada 18 "
+"Juni 2020."
 
 #: lib/web/templates/api/terms.html.eex:97
 #, elixir-format
 msgctxt "terms"
 msgid "This document is licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 22, 2020."
 msgstr ""
+"Dokumen ini dilisensikan di bawah <a href=\"https://creativecommons.org/"
+"licenses/by-sa/4.0/\">CC BY-SA</a>. Dokumen ini terakhir diperbarui pada 22 "
+"Juni 2020."
 
 #: lib/web/templates/api/terms.html.eex:8
 #, elixir-format
 msgctxt "terms"
 msgid "You must respect other people and <b>%{instance_name}</b>'s rules when using the service"
 msgstr ""
+"Anda harus menghormati orang lain dan peraturan <b>%{instance_name}</b> saat "
+"menggunakan layanan"
 
 #: lib/web/templates/api/terms.html.eex:7
 #, elixir-format
 msgctxt "terms"
 msgid "You must respect the law when using <b>%{instance_name}</b>"
-msgstr ""
+msgstr "Anda harus menghormati hukum saat menggunakan <b>%{instance_name}</b>"
 
 #: lib/web/templates/api/terms.html.eex:5
 #, elixir-format
 msgctxt "terms"
 msgid "Your content is yours"
-msgstr ""
+msgstr "Konten Anda milik Anda"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:51
 #, elixir-format
 msgid "Confirm my e-mail address"
-msgstr ""
+msgstr "Konfirmasi alamat surel saya"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.eex:13
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:1
 #, elixir-format
 msgid "Confirm your e-mail"
-msgstr ""
+msgstr "Konfirmasi surel Anda"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:3
 #, elixir-format
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Hai! Anda baru saja mendaftar untuk bergabung ke acara ini: « %{title} ». "
+"Harap konfirmasi alamat surel yang Anda berikan:"
 
 #: lib/web/templates/email/email.html.eex:115
 #: lib/web/templates/email/email.text.eex:8
 #, elixir-format
 msgid "Need help? Is something not working as expected?"
-msgstr ""
+msgstr "Butuh bantuan? Ada yang tidak bekerja sesuai ekspektasi?"
 
 #: lib/web/templates/email/registration_confirmation.html.eex:38
 #, elixir-format
@@ -731,12 +766,12 @@ msgstr ""
 #: lib/web/templates/email/report.html.eex:13
 #, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr ""
+msgstr "Laporan baru di <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.eex:38
 #, elixir-format
 msgid "The email address for your account on <b>%{host}</b> is being changed to:"
-msgstr ""
+msgstr "Alamat surel pada akun Anda di <b>%{host}</b> sedang diubah menjadi:"
 
 #: lib/web/templates/email/password_reset.html.eex:38
 #, elixir-format
@@ -768,12 +803,12 @@ msgstr[0] ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "%{instance} is powered by Mobilizon."
-msgstr ""
+msgstr "%{instance} didukung oleh Mobilizon."
 
 #: lib/web/templates/email/email.html.eex:143
 #, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
-msgstr ""
+msgstr "<b>%{instance}</b> didukung oleh Mobilizon."
 
 #: lib/web/templates/email/pending_participation_notification.html.eex:13
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
@@ -791,7 +826,7 @@ msgstr ""
 #: lib/web/templates/email/email_changed_new.text.eex:1
 #, elixir-format
 msgid "Confirm new email"
-msgstr ""
+msgstr "Konfirmasi surel baru"
 
 #: lib/web/templates/email/event_updated.html.eex:84
 #, elixir-format
@@ -858,12 +893,12 @@ msgstr ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
 msgid "Learn more about Mobilizon here!"
-msgstr ""
+msgstr "Pelajari lebih lanjut tentang Mobilizon di sini!"
 
 #: lib/web/templates/email/event_updated.html.eex:94
 #, elixir-format
 msgid "Location"
-msgstr ""
+msgstr "Lokasi"
 
 #: lib/web/templates/email/event_updated.html.eex:104
 #, elixir-format
@@ -880,13 +915,13 @@ msgstr ""
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-format
 msgid "Nearly there!"
-msgstr ""
+msgstr "Hampir di sana!"
 
 #: lib/web/templates/email/email_changed_old.html.eex:13
 #: lib/web/templates/email/email_changed_old.text.eex:1
 #, elixir-format
 msgid "New email confirmation"
-msgstr ""
+msgstr "Konfirmasi surel baru"
 
 #: lib/web/templates/email/report.html.eex:106
 #, elixir-format
@@ -902,7 +937,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
 #, elixir-format
 msgid "Sorry! You're not going."
-msgstr ""
+msgstr "Maaf! Anda tidak ikut."
 
 #: lib/web/templates/email/event_updated.html.eex:74
 #, elixir-format
@@ -918,18 +953,20 @@ msgstr ""
 #, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr ""
+"Terjadi perubahan pada %{title} sehingga kami pikir kami harus memberitahu "
+"Anda."
 
 #: lib/web/templates/email/event_updated.html.eex:55
 #: lib/web/templates/email/event_updated.text.eex:11
 #, elixir-format
 msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
+msgstr "Acara ini sudah dibatalkan oleh para penyelenggaranya. Maaf!"
 
 #: lib/web/templates/email/event_updated.html.eex:51
 #: lib/web/templates/email/event_updated.text.eex:7
 #, elixir-format
 msgid "This event has been confirmed"
-msgstr ""
+msgstr "Acara ini sudah dikonfirmasi"
 
 #: lib/web/templates/email/event_updated.html.eex:53
 #: lib/web/templates/email/event_updated.text.eex:9
@@ -941,17 +978,17 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
-msgstr ""
+msgstr "Sayangnya, para penyelenggara menolak permintaan Anda."
 
 #: lib/web/templates/email/email_changed_new.html.eex:51
 #, elixir-format
 msgid "Verify your email address"
-msgstr ""
+msgstr "Verifikasi alamat surel Anda"
 
 #: lib/web/templates/email/report.html.eex:126
 #, elixir-format
 msgid "View report"
-msgstr ""
+msgstr "Lihat laporan"
 
 #: lib/web/templates/email/report.text.eex:24
 #, elixir-format
@@ -962,29 +999,29 @@ msgstr ""
 #: lib/web/templates/email/event_participation_approved.html.eex:58 lib/web/templates/email/event_participation_confirmed.html.eex:58
 #, elixir-format
 msgid "Visit event page"
-msgstr ""
+msgstr "Kunjungi halaman acara"
 
 #: lib/web/templates/email/event_updated.html.eex:121
 #, elixir-format
 msgid "Visit the updated event page"
-msgstr ""
+msgstr "Kunjungi halaman acara yang sudah diperbarui"
 
 #: lib/web/templates/email/event_updated.text.eex:23
 #, elixir-format
 msgid "Visit the updated event page: %{link}"
-msgstr ""
+msgstr "Kunjungi halaman acara yang sudah diperbarui: %{link}"
 
 #: lib/web/templates/email/notification_each_week.html.eex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
 #, elixir-format
 msgid "What's up this week?"
-msgstr ""
+msgstr "Ada apa pekan ini?"
 
 #: lib/web/templates/email/on_day_notification.html.eex:13
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-format
 msgid "What's up today?"
-msgstr ""
+msgstr "Ada apa hari ini?"
 
 #: lib/web/templates/email/event_participation_approved.html.eex:70
 #: lib/web/templates/email/event_participation_approved.text.eex:11 lib/web/templates/email/event_participation_confirmed.html.eex:70
@@ -1014,7 +1051,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.html.eex:13 lib/web/templates/email/event_participation_confirmed.text.eex:1
 #, elixir-format
 msgid "You're going!"
-msgstr ""
+msgstr "Anda ikut!"
 
 #: lib/web/templates/email/email_changed_new.html.eex:64
 #: lib/web/templates/email/email_changed_new.text.eex:5
@@ -1032,17 +1069,20 @@ msgstr ""
 #, elixir-format
 msgid "If you feel this is an error, you may contact the group's administrators so that they can add you back."
 msgstr ""
+"Jika Anda rasa ini adalah sebuah kesalahan, Anda dipersilakan untuk "
+"menghubungi administrator kelompok sehingga mereka dapat menambahkan Anda "
+"kembali."
 
 #: lib/web/templates/email/group_member_removal.html.eex:13
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-format
 msgid "So long, and thanks for the fish!"
-msgstr ""
+msgstr "Sampai jumpa, dan terima kasih atas ikannya!"
 
 #: lib/web/email/group.ex:63
 #, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Anda telah dikeluarkan dari kelompok %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-format
