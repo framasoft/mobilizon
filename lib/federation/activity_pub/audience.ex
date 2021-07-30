@@ -66,16 +66,20 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   end
 
   def get_audience(%Participant{} = participant) do
-    event = Events.get_event_with_preload!(participant.event_id)
+    %Event{} = event = Events.get_event_with_preload!(participant.event_id)
+    %Actor{} = organizer = group_or_organizer_event(event)
 
-    actor_participants_urls =
+    cc =
       event.id
       |> Mobilizon.Events.list_actors_participants_for_event()
       |> Enum.map(& &1.url)
+      |> Enum.filter(&(&1 != participant.actor.url))
+      |> maybe_add_group_members(organizer)
+      |> maybe_add_followers(organizer)
 
     %{
-      "to" => [participant.actor.url, group_or_organizer_event(event).url],
-      "cc" => actor_participants_urls
+      "to" => [participant.actor.url, organizer.url],
+      "cc" => cc
     }
   end
 
@@ -155,6 +159,13 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   end
 
   defp maybe_add_group_members(collection, %Actor{type: _}), do: collection
+
+  @spec maybe_add_followers(List.t(), Actor.t()) :: List.t()
+  defp maybe_add_followers(collection, %Actor{type: :Group, followers_url: followers_url}) do
+    [followers_url | collection]
+  end
+
+  defp maybe_add_followers(collection, %Actor{type: _}), do: collection
 
   def get_addressed_actors(mentioned_users, _), do: mentioned_users
 

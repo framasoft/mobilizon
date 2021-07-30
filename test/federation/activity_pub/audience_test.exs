@@ -257,7 +257,7 @@ defmodule Mobilizon.Federation.ActivityPub.AudienceTest do
 
       assert %{
                "to" => [participant.actor.url, participant.event.organizer_actor.url],
-               "cc" => [participant2.actor.url, participant.actor.url]
+               "cc" => [participant2.actor.url]
              } == Audience.get_audience(participant)
     end
 
@@ -271,7 +271,7 @@ defmodule Mobilizon.Federation.ActivityPub.AudienceTest do
 
       assert %{
                "to" => [participant.actor.url, participant.event.attributed_to.url],
-               "cc" => [participant2.actor.url, participant.actor.url]
+               "cc" => [group.followers_url, group.members_url, participant2.actor.url]
              } == Audience.get_audience(participant)
     end
   end
