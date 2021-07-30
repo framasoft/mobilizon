@@ -147,28 +147,48 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   # Set the participant to approved if the default role for new participants is :participant
   defp approve_if_default_role_is_participant(event, activity_data, participant, role) do
-    if event.local do
-      cond do
-        Mobilizon.Events.get_default_participant_role(event) === :participant &&
-            role == :participant ->
-          {:accept,
-           ActivityPub.accept(
-             :join,
-             participant,
-             true,
-             %{"actor" => event.organizer_actor.url}
-           )}
+    case event do
+      %Event{attributed_to: %Actor{id: group_id, url: group_url}} ->
+        case Actors.get_single_group_moderator_actor(group_id) do
+          %Actor{} = actor ->
+            do_approve(event, activity_data, participant, role, %{
+              "actor" => actor.url,
+              "attributedTo" => group_url
+            })
 
-        Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
-            role == :not_approved ->
-          Scheduler.pending_participation_notification(event)
-          {:ok, activity_data, participant}
+          _ ->
+            {:ok, activity_data, participant}
+        end
 
-        true ->
-          {:ok, activity_data, participant}
-      end
-    else
-      {:ok, activity_data, participant}
+      %Event{local: true} ->
+        do_approve(event, activity_data, participant, role, %{
+          "actor" => event.organizer_actor.url
+        })
+
+      _ ->
+        {:ok, activity_data, participant}
+    end
+  end
+
+  defp do_approve(event, activity_data, participant, role, additionnal) do
+    cond do
+      Mobilizon.Events.get_default_participant_role(event) === :participant &&
+          role == :participant ->
+        {:accept,
+         ActivityPub.accept(
+           :join,
+           participant,
+           true,
+           additionnal
+         )}
+
+      Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
+          role == :not_approved ->
+        Scheduler.pending_participation_notification(event)
+        {:ok, activity_data, participant}
+
+      true ->
+        {:ok, activity_data, participant}
     end
   end
 
