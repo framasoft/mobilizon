@@ -584,8 +584,6 @@ export default class EditEvent extends Vue {
 
   EventVisibility = EventVisibility;
 
-  needsApproval = false;
-
   canPromote = true;
 
   limitedPlaces = false;
@@ -949,9 +947,12 @@ export default class EditEvent extends Vue {
     }
   }
 
-  @Watch("needsApproval")
-  updateEventJoinOptions(needsApproval: boolean): void {
-    if (needsApproval === true) {
+  get needsApproval(): boolean {
+    return this.event?.joinOptions == EventJoinOptions.RESTRICTED;
+  }
+
+  set needsApproval(value: boolean) {
+    if (value === true) {
       this.event.joinOptions = EventJoinOptions.RESTRICTED;
     } else {
       this.event.joinOptions = EventJoinOptions.FREE;
