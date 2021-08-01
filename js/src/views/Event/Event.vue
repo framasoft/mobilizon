@@ -120,7 +120,7 @@
                       <b-icon icon="link" />
                     </p>
                   </template>
-                  <template v-if="!event.local && organizer">
+                  <template v-if="!event.local && organizer.domain">
                     <a :href="event.url">
                       <tag>{{ organizer.domain }}</tag>
                     </a>
