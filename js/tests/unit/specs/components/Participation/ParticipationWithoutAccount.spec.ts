@@ -229,11 +229,7 @@ describe("ParticipationWithoutAccount", () => {
         eventData.participantStats.notConfirmed + 1
       );
     }
-    // lots of things to await
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.find("form").exists()).toBeFalsy();
     expect(wrapper.find("h1.title").text()).toBe(
       "Request for participation confirmation sent"

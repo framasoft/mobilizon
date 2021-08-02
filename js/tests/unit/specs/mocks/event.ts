@@ -108,6 +108,7 @@ export const eventCommentThreadsMock = {
             summary: "I am the senate",
           },
           deletedAt: null,
+          insertedAt: "2020-12-03T09:02:00Z",
           isAnnouncement: false,
         },
         {
@@ -137,6 +138,7 @@ export const eventCommentThreadsMock = {
             summary: "I am the senate",
           },
           deletedAt: null,
+          insertedAt: "2020-12-03T11:02:00Z",
           isAnnouncement: false,
         },
       ],
@@ -180,6 +182,7 @@ export const newCommentForEventResponse: DataMock = {
         summary: "I am the senate",
       },
       deletedAt: null,
+      insertedAt: "2020-12-03T13:02:00Z",
       isAnnouncement: false,
     },
   },

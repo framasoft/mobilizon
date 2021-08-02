@@ -20,7 +20,6 @@ import {
   newCommentForEventResponse,
 } from "../../mocks/event";
 import flushPromises from "flush-promises";
-import { InMemoryCache } from "@apollo/client/core";
 import { defaultResolvers } from "../../common";
 const localVue = createLocalVue();
 localVue.use(Buefy);
@@ -39,11 +38,9 @@ describe("CommentTree", () => {
   let mockClient: MockApolloClient | null;
   let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
-  const cache = new InMemoryCache({ addTypename: false });
 
   const generateWrapper = (handlers = {}, baseData = {}) => {
     mockClient = createMockClient({
-      cache,
       resolvers: defaultResolvers,
     });
 
@@ -83,6 +80,21 @@ describe("CommentTree", () => {
       },
     });
   };
+
+  afterEach(() => {
+    mockClient = null;
+    requestHandlers = {};
+    apolloProvider = null;
+    wrapper.destroy();
+  });
+
+  it("renders a loading comment tree", async () => {
+    generateWrapper();
+
+    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
 
   it("renders a comment tree with comments", async () => {
     generateWrapper();
@@ -144,12 +156,11 @@ describe("CommentTree", () => {
         .fn()
         .mockResolvedValue(eventNoCommentThreadsMock),
     });
-    expect(requestHandlers.eventCommentThreadsQueryHandler).toHaveBeenCalled();
-
-    expect(wrapper.exists()).toBe(true);
-    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
 
     await flushPromises();
+    expect(
+      requestHandlers.eventCommentThreadsQueryHandler
+    ).toHaveBeenCalledWith({ eventUUID: eventData.uuid });
 
     expect(wrapper.find(".no-comments").text()).toBe("No comments yet");
     expect(wrapper.html()).toMatchSnapshot();
