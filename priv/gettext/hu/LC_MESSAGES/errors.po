@@ -131,7 +131,7 @@ msgid "Error while saving user settings"
 msgstr "Hiba a felhasználói beállítások mentésekor"
 
 #, elixir-format
-#: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:203
+#: lib/graphql/error.ex:91 lib/graphql/resolvers/group.ex:203
 #: lib/graphql/resolvers/group.ex:234 lib/graphql/resolvers/group.ex:269 lib/graphql/resolvers/member.ex:80
 msgid "Group not found"
 msgstr "Nem található a csoport"
@@ -372,7 +372,7 @@ msgid "Comment is already deleted"
 msgstr "A hozzászólást már törölték"
 
 #, elixir-format
-#: lib/graphql/error.ex:92 lib/graphql/resolvers/discussion.ex:62
+#: lib/graphql/error.ex:93 lib/graphql/resolvers/discussion.ex:62
 msgid "Discussion not found"
 msgstr "Nem található a megbeszélés"
 
@@ -392,8 +392,8 @@ msgid "Event id not found"
 msgstr "Nem található az eseményazonosító"
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:284
-#: lib/graphql/resolvers/event.ex:328
+#: lib/graphql/error.ex:90 lib/graphql/resolvers/event.ex:313
+#: lib/graphql/resolvers/event.ex:358
 msgid "Event not found"
 msgstr "Nem található az esemény"
 
@@ -521,7 +521,7 @@ msgid "Token is not a valid UUID"
 msgstr "A token nem érvényes UUID"
 
 #, elixir-format
-#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:356
+#: lib/graphql/error.ex:88 lib/graphql/resolvers/person.ex:356
 msgid "User not found"
 msgstr "Nem található a felhasználó"
 
@@ -590,7 +590,7 @@ msgid "You cannot delete this comment"
 msgstr "Nem tudja törölni ezt a hozzászólást"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:324
+#: lib/graphql/resolvers/event.ex:354
 msgid "You cannot delete this event"
 msgstr "Nem tudja törölni ezt az eseményt"
 
@@ -664,7 +664,7 @@ msgid "You need to be logged-in to access resources"
 msgstr "Bejelentkezve kell lennie az erőforrásokhoz való hozzáféréshez"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:259
+#: lib/graphql/resolvers/event.ex:283
 msgid "You need to be logged-in to create events"
 msgstr "Bejelentkezve kell lennie az események létrehozásához"
 
@@ -684,7 +684,7 @@ msgid "You need to be logged-in to create resources"
 msgstr "Bejelentkezve kell lennie az erőforrások létrehozásához"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:333
+#: lib/graphql/resolvers/event.ex:363
 msgid "You need to be logged-in to delete an event"
 msgstr "Bejelentkezve kell lennie egy esemény törléséhez"
 
@@ -709,7 +709,7 @@ msgid "You need to be logged-in to leave an event"
 msgstr "Bejelentkezve kell lennie egy esemény elhagyásához"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:298
+#: lib/graphql/resolvers/event.ex:327
 msgid "You need to be logged-in to update an event"
 msgstr "Bejelentkezve kell lennie egy esemény frissítéséhez"
 
@@ -750,47 +750,47 @@ msgid "This email is already used."
 msgstr "Ez az e-mail-cím már használatban van."
 
 #, elixir-format
-#: lib/graphql/error.ex:88
+#: lib/graphql/error.ex:89
 msgid "Post not found"
 msgstr "Nem található a hozzászólás"
 
 #, elixir-format
-#: lib/graphql/error.ex:75
+#: lib/graphql/error.ex:76
 msgid "Invalid arguments passed"
 msgstr "Érvénytelen argumentumok lettek átadva"
 
 #, elixir-format
-#: lib/graphql/error.ex:81
+#: lib/graphql/error.ex:82
 msgid "Invalid credentials"
 msgstr "Érvénytelen hitelesítési adatok"
 
 #, elixir-format
-#: lib/graphql/error.ex:79
+#: lib/graphql/error.ex:80
 msgid "Reset your password to login"
 msgstr "Állítsa vissza a jelszavát a bejelentkezéshez"
 
 #, elixir-format
-#: lib/graphql/error.ex:86 lib/graphql/error.ex:91
+#: lib/graphql/error.ex:87 lib/graphql/error.ex:92
 msgid "Resource not found"
 msgstr "Nem található az erőforrás"
 
 #, elixir-format
-#: lib/graphql/error.ex:93
+#: lib/graphql/error.ex:94
 msgid "Something went wrong"
 msgstr "Valami elromlott"
 
 #, elixir-format
-#: lib/graphql/error.ex:74
+#: lib/graphql/error.ex:75
 msgid "Unknown Resource"
 msgstr "Ismeretlen erőforrás"
 
 #, elixir-format
-#: lib/graphql/error.ex:84
+#: lib/graphql/error.ex:85
 msgid "You don't have permission to do this"
 msgstr "Nincs jogosultsága, hogy ezt tegye"
 
 #, elixir-format
-#: lib/graphql/error.ex:76
+#: lib/graphql/error.ex:77
 msgid "You need to be logged in"
 msgstr "Bejelentkezve kell lennie"
 
@@ -815,12 +815,12 @@ msgid "Profile is not administrator for the group"
 msgstr "A profil nem adminisztrátor ennél a csoportnál"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:287
+#: lib/graphql/resolvers/event.ex:316
 msgid "You can't edit this event."
 msgstr "Nem tudja szerkeszteni ezt az eseményt."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:290
+#: lib/graphql/resolvers/event.ex:319
 msgid "You can't attribute this event to this profile."
 msgstr "Nem tudja ezt az eseményt ennek a profilnak tulajdonítani."
 
@@ -852,7 +852,7 @@ msgstr ""
 "megbeszéléshez való hozzáféréshez"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:248
+#: lib/graphql/resolvers/event.ex:272
 msgid "Organizer profile is not owned by the user"
 msgstr "A szervező profilját nem a felhasználó birtokolja"
 
@@ -888,6 +888,16 @@ msgid "Unable to fetch resource details from this URL."
 msgstr "Nem lehet lekérni az erőforrás részleteit erről az URL-ről."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:148 lib/graphql/resolvers/participant.ex:234
+#: lib/graphql/resolvers/event.ex:164 lib/graphql/resolvers/participant.ex:234
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "A megadott moderátorprofilnak nincs jogosultsága ezen az eseményen"
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:266
+msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:307
+msgid "This profile doesn't have permission to update an event on behalf of this group"
+msgstr ""
