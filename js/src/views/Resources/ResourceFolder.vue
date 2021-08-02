@@ -244,7 +244,6 @@ import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import Draggable from "vuedraggable";
-import { RefetchQueryDescription } from "@apollo/client/core/watchQueryOptions";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IActor, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
@@ -264,7 +263,11 @@ import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import ResourceMixin from "../../mixins/resource";
 import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
-import { ApolloCache, FetchResult } from "@apollo/client/core";
+import {
+  ApolloCache,
+  FetchResult,
+  InternalRefetchQueriesInclude,
+} from "@apollo/client/core";
 import VueRouter from "vue-router";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
@@ -521,7 +524,7 @@ export default class Resources extends Mixins(ResourceMixin) {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private postRefreshQueries(): RefetchQueryDescription {
+  private postRefreshQueries(): InternalRefetchQueriesInclude {
     return [
       {
         query: GET_RESOURCE,

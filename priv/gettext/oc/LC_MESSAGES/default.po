@@ -120,7 +120,7 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "Vòstra participacion a l’eveniment %{title} es estada regetada"
 
 #, elixir-format
-#: lib/web/email/event.ex:37
+#: lib/web/email/event.ex:36
 msgid "Event %{title} has been updated"
 msgstr "L’eveniment %{title} es estat actualizat"
 
@@ -344,12 +344,12 @@ msgid "What information do we collect?"
 msgstr "Quinas informacions reculem ?"
 
 #, elixir-format
-#: lib/web/email/user.ex:176
+#: lib/web/email/user.ex:180
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon sus %{instance} : confirmatz vòstra adreça electronica"
 
 #, elixir-format
-#: lib/web/email/user.ex:152
+#: lib/web/email/user.ex:156
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon sus %{instance} : adreça electronica cambiada"
 
@@ -1508,4 +1508,14 @@ msgstr ""
 #, elixir-format
 #: lib/service/export/feed.ex:73
 msgid "Public feed for %{instance}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/user.ex:114
+msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/user.ex:120
+msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""

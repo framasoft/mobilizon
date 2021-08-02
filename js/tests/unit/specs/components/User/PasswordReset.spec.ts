@@ -76,8 +76,7 @@ describe("Reset page", () => {
       token: "some-token",
     });
 
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(wrapper.find("article.message.is-danger").text()).toContain(
       "The token you provided is invalid"

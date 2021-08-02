@@ -18,312 +18,312 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.6.2\n"
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:38
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:19 lib/web/templates/email/activity/_member_activity_item.text.eex:12
-#, elixir-format
 msgid "%{member} accepted the invitation to join the group."
 msgstr "%{member} hyväksyi kutsun liittyä ryhmään."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:42
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:26 lib/web/templates/email/activity/_member_activity_item.text.eex:17
-#, elixir-format
 msgid "%{member} rejected the invitation to join the group."
 msgstr "%{member} hylkäsi kutsun liittyä ryhmään."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:30
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:4 lib/web/templates/email/activity/_member_activity_item.text.eex:1
-#, elixir-format
 msgid "%{member} requested to join the group."
 msgstr "%{member} haluaa liittyä ryhmään."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:34
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:11 lib/web/templates/email/activity/_member_activity_item.text.eex:6
-#, elixir-format
 msgid "%{member} was invited by %{profile}."
 msgstr "%{profile} kutsui jäsenen %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:50
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:40 lib/web/templates/email/activity/_member_activity_item.text.eex:27
-#, elixir-format
 msgid "%{profile} added the member %{member}."
 msgstr "%{profile} lisäsi jäsenen %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:65
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
-#, elixir-format
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr "%{profile} arkistoi keskustelun %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:25
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:4 lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
-#, elixir-format
 msgid "%{profile} created the discussion %{discussion}."
 msgstr "%{profile} loi keskustelun %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:24
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:5 lib/web/templates/email/activity/_resource_activity_item.text.eex:2
-#, elixir-format
 msgid "%{profile} created the folder %{resource}."
 msgstr "%{profile} loi kansion %{resource}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_group_activity_item.html.eex:4
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:1
-#, elixir-format
 msgid "%{profile} created the group %{group}."
 msgstr "%{profile} loi ryhmän %{group}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:20 lib/web/templates/email/activity/_resource_activity_item.text.eex:8
-#, elixir-format
 msgid "%{profile} created the resource %{resource}."
 msgstr "%{profile} loi resurssin %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:75
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
-#, elixir-format
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} poisti keskustelun %{discussion}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:97
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:103 lib/web/templates/email/activity/_resource_activity_item.text.eex:40
-#, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
 msgstr "%{profile} poisti kansion %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:106
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:111 lib/web/templates/email/activity/_resource_activity_item.text.eex:45
-#, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} poisti resurssin %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:58
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:56 lib/web/templates/email/activity/_member_activity_item.text.eex:39
-#, elixir-format
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} hylkäsi jäsenen %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:76
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:71 lib/web/templates/email/activity/_resource_activity_item.text.eex:28
-#, elixir-format
 msgid "%{profile} moved the folder %{resource}."
 msgstr "%{profile} siirsi kansion %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:85
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:86 lib/web/templates/email/activity/_resource_activity_item.text.eex:34
-#, elixir-format
 msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} siirsi resurssin %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:62
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:64 lib/web/templates/email/activity/_member_activity_item.text.eex:45
-#, elixir-format
 msgid "%{profile} quit the group."
 msgstr "%{profile} poistui ryhmästä."
 
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:55
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
-#, elixir-format
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} muutti keskustelun %{discussion} nimer."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:37 lib/web/templates/email/activity/_resource_activity_item.text.eex:14
-#, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr "%{profile} muutti kansion %{old_resource_title} nimeksi %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:59
 #: lib/web/templates/email/activity/_resource_activity_item.html.eex:53 lib/web/templates/email/activity/_resource_activity_item.text.eex:21
-#, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
 msgstr "%{profile} muutti resurssin %{old_resource_title} nimeksi %{resource}."
 
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:35
 #: lib/web/templates/email/activity/_discussion_activity_item.html.eex:18 lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
-#, elixir-format
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} vastasi keskusteluun %{discussion}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_group_activity_item.html.eex:19
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:7
-#, elixir-format
 msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} päivitti ryhmää %{group}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:54
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:48 lib/web/templates/email/activity/_member_activity_item.text.eex:33
-#, elixir-format
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} päivitti jäsentä %{member}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:23
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:4 lib/web/templates/email/activity/_event_activity_item.text.eex:1
-#, elixir-format
 msgid "The event %{event} was created by %{profile}."
 msgstr "%{profile} loi tapahtuman %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:43
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:34 lib/web/templates/email/activity/_event_activity_item.text.eex:13
-#, elixir-format
 msgid "The event %{event} was deleted by %{profile}."
 msgstr "%{profile} poisti tapahtuman %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:33
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:19 lib/web/templates/email/activity/_event_activity_item.text.eex:7
-#, elixir-format
 msgid "The event %{event} was updated by %{profile}."
 msgstr "%{profile} päivitti tapahtumaa %{event}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:4
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:1
-#, elixir-format
 msgid "The post %{post} was created by %{profile}."
 msgstr "%{profile} loi julkaisun %{post}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:34
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:13
-#, elixir-format
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "%{profile} poisti julkaisun %{post}."
 
+#, elixir-format
 #: lib/web/templates/email/activity/_post_activity_item.html.eex:19
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:7
-#, elixir-format
 msgid "The post %{post} was updated by %{profile}."
 msgstr "%{profile} päivitti julkaisun %{post}."
 
+#, elixir-format
 #: lib/service/activity/renderer/member.ex:46
 #: lib/web/templates/email/activity/_member_activity_item.html.eex:33 lib/web/templates/email/activity/_member_activity_item.text.eex:22
-#, elixir-format
 msgid "%{member} joined the group."
 msgstr "%{member} liittyi ryhmään."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:63
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:58 lib/web/templates/email/activity/_event_activity_item.text.eex:25
-#, elixir-format
 msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} kommentoi tapahtumaa %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/event.ex:54
 #: lib/web/templates/email/activity/_event_activity_item.html.eex:43 lib/web/templates/email/activity/_event_activity_item.text.eex:19
-#, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} vastasi tapahtuman %{event} kommenttiin."
 
-#: lib/web/templates/email/email_direct_activity.text.eex:27
 #, elixir-format
+#: lib/web/templates/email/email_direct_activity.text.eex:27
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
 msgstr ""
 "Jos et halua vastaanottaa toimenpideilmoituksia, voit muuttaa "
 "ilmoitustiheyttä tai poistaa ilmoitukset käytöstä asetuksista."
 
+#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:135
 #: lib/web/templates/email/email_direct_activity.text.eex:23
-#, elixir-format
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
 msgstr[0] "Näytä seuraava toimenpide"
 msgstr[1] "Näytä %{count} seuraavaa toimenpidettä"
 
+#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:44
 #: lib/web/templates/email/email_direct_activity.html.eex:46 lib/web/templates/email/email_direct_activity.text.eex:6
 #: lib/web/templates/email/email_direct_activity.text.eex:7
-#, elixir-format
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
 msgstr[0] "Toimenpide!"
 msgstr[1] "Toimenpiteitä!"
 
-#: lib/service/activity/renderer/renderer.ex:38
 #, elixir-format
+#: lib/service/activity/renderer/renderer.ex:38
 msgid "Activity on %{instance}"
 msgstr "Toimenpide palvelimella %{instance}"
 
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:38
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:19 lib/web/templates/email/activity/_comment_activity_item.text.eex:7
 #: lib/web/templates/email/email_anonymous_activity.html.eex:41 lib/web/templates/email/email_anonymous_activity.text.eex:5
-#, elixir-format
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} on julkaissut ilmoituksen tapahtumassa %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
-#, elixir-format
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} mainitsi sinut tapahtuman %{event} kommentissa."
 
-#: lib/service/activity/renderer/discussion.ex:45
 #, elixir-format
+#: lib/service/activity/renderer/discussion.ex:45
 msgid "%{profile} mentionned you in the discussion %{discussion}."
 msgstr "%{profile} mainitsi sinut keskustelussa %{discussion}."
 
-#: lib/web/templates/email/email_direct_activity.html.eex:155
 #, elixir-format
+#: lib/web/templates/email/email_direct_activity.html.eex:155
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
 "Jos et halua vastaanottaa toimenpideilmoituksia, voit muuttaa "
 "ilmoitustiheyttä tai poistaa ilmoitukset käytöstä asetuksista."
 
+#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:42
 #: lib/web/templates/email/email_direct_activity.text.eex:5
-#, elixir-format
 msgid "Here's your weekly activity recap"
 msgstr "Tässä on viikoittainen kertaus toiminnastasi"
 
-#: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
 #, elixir-format
+#: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
 msgid "Activity notification for %{instance}"
 msgstr "Toimenpide palvelimella %{instance}"
 
-#: lib/web/email/activity.ex:126
 #, elixir-format
+#: lib/web/email/activity.ex:126
 msgid "Daily activity recap for %{instance}"
 msgstr "Päivittäinen toiminnan kertaus instanssille %{instance}"
 
+#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.eex:40
 #: lib/web/templates/email/email_direct_activity.text.eex:4
-#, elixir-format
 msgid "Here's your daily activity recap"
 msgstr "Tässä on päivittäinen kertaus toiminnastasi"
 
-#: lib/web/email/activity.ex:133
 #, elixir-format
+#: lib/web/email/activity.ex:133
 msgid "Weekly activity recap for %{instance}"
 msgstr "Viikoittainen toiminnan kertaus instanssille %{instance}"
 
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
-#, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr "%{profile} on lähettänyt uuden kommentin tapahtumaasi %{event}."
 
+#, elixir-format
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.eex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
-#, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr "%{profiili} on lähettänyt uuden vastauksen tapahtumaasi %{event}."
 
-#: lib/web/email/activity.ex:46
 #, elixir-format
+#: lib/web/email/activity.ex:46
 msgid "Announcement for your event %{event}"
 msgstr "Ilmoitus tapahtumaasi %{event}"
 
-#: lib/service/activity/renderer/group.ex:23
 #, elixir-format
+#: lib/service/activity/renderer/group.ex:23
 msgid "The group %{group} was updated by %{profile}."
 msgstr "%{profile} päivitti julkaisun %{post}."
 
-#: lib/service/activity/renderer/post.ex:47
 #, elixir-format
+#: lib/service/activity/renderer/post.ex:47
 msgid "The post %{post} from group %{group} was deleted by %{profile}."
 msgstr "Viestin %{post} ryhmästä %{group} poisti %{profile}."
 
-#: lib/service/activity/renderer/post.ex:31
 #, elixir-format
+#: lib/service/activity/renderer/post.ex:31
 msgid "The post %{post} from group %{group} was published by %{profile}."
 msgstr "Viestin %{post} ryhmästä %{group} julkaisi %{profile}."
 
-#: lib/service/activity/renderer/post.ex:39
 #, elixir-format
+#: lib/service/activity/renderer/post.ex:39
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr "Viestin %{post} ryhmästä %{group} päivitti %{profile}."

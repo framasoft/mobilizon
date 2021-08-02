@@ -44,7 +44,7 @@ function setI18nLanguage(lang: string): string {
 }
 
 function setLanguageInDOM(lang: string): void {
-  const fixedLang = lang.replaceAll("_", "-");
+  const fixedLang = lang.replace(/_/g, "-");
   const html = document.documentElement;
   const documentLang = html.getAttribute("lang");
   if (documentLang !== fixedLang) {

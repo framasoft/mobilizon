@@ -304,17 +304,17 @@ msgstr ""
 msgid "The group %{group} was updated by %{profile}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/post.ex:47
 msgid "The post %{post} from group %{group} was deleted by %{profile}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/post.ex:31
 msgid "The post %{post} from group %{group} was published by %{profile}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/post.ex:39
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr ""

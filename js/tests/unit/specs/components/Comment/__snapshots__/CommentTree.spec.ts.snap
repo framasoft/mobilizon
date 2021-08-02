@@ -33,6 +33,15 @@ exports[`CommentTree renders a comment tree with comments 1`] = `
 </div>
 `;
 
+exports[`CommentTree renders a loading comment tree 1`] = `
+<div>
+  <!---->
+  <p class="loading has-text-centered">
+    Loading comments…
+  </p>
+</div>
+`;
+
 exports[`CommentTree renders an empty comment tree 1`] = `
 <div>
   <form class="new-comment">

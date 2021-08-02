@@ -447,7 +447,6 @@ section {
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { RefetchQueryDescription } from "@apollo/client/core/watchQueryOptions";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
@@ -498,7 +497,11 @@ import RouteName from "../../router/name";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
-import { ApolloCache, FetchResult } from "@apollo/client/core";
+import {
+  ApolloCache,
+  FetchResult,
+  InternalRefetchQueriesInclude,
+} from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
@@ -865,7 +868,9 @@ export default class EditEvent extends Vue {
    * Refresh drafts or participation cache depending if the event is still draft or not
    */
   // eslint-disable-next-line class-methods-use-this
-  private postRefetchQueries(updateEvent: IEvent): RefetchQueryDescription {
+  private postRefetchQueries(
+    updateEvent: IEvent
+  ): InternalRefetchQueriesInclude {
     if (updateEvent.draft) {
       return [
         {

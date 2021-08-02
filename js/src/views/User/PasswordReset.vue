@@ -6,7 +6,7 @@
           {{ $t("Password reset") }}
         </h1>
         <b-message
-          title="Error"
+          :title="$t('Error')"
           type="is-danger"
           v-for="error in errors"
           :key="error"

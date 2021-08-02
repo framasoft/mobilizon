@@ -7,7 +7,7 @@ defmodule Mobilizon.Web.Email.User do
 
   import Bamboo.Phoenix
 
-  import Mobilizon.Web.Gettext, only: [gettext: 2]
+  import Mobilizon.Web.Gettext, only: [gettext: 1, gettext: 2]
 
   alias Mobilizon.{Config, Crypto, Users}
   alias Mobilizon.Storage.Repo
@@ -111,11 +111,15 @@ defmodule Mobilizon.Web.Email.User do
     else
       {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
         {:error,
-         "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."}
+         gettext(
+           "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+         )}
 
       _err ->
         {:error,
-         "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."}
+         gettext(
+           "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
+         )}
     end
   end
 

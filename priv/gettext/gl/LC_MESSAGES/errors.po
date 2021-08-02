@@ -115,7 +115,7 @@ msgid "Error while saving user settings"
 msgstr "Erro ó gardar os axustes de usuaria"
 
 #, elixir-format
-#: lib/graphql/error.ex:90 lib/graphql/resolvers/group.ex:203
+#: lib/graphql/error.ex:91 lib/graphql/resolvers/group.ex:203
 #: lib/graphql/resolvers/group.ex:234 lib/graphql/resolvers/group.ex:269 lib/graphql/resolvers/member.ex:80
 msgid "Group not found"
 msgstr "Grupo non atopado"
@@ -355,7 +355,7 @@ msgid "Comment is already deleted"
 msgstr "O comentario xa foi eliminado"
 
 #, elixir-format
-#: lib/graphql/error.ex:92 lib/graphql/resolvers/discussion.ex:62
+#: lib/graphql/error.ex:93 lib/graphql/resolvers/discussion.ex:62
 msgid "Discussion not found"
 msgstr "Non se atopa a conversa"
 
@@ -375,8 +375,8 @@ msgid "Event id not found"
 msgstr "Non se atopou o ID do evento"
 
 #, elixir-format
-#: lib/graphql/error.ex:89 lib/graphql/resolvers/event.ex:284
-#: lib/graphql/resolvers/event.ex:328
+#: lib/graphql/error.ex:90 lib/graphql/resolvers/event.ex:313
+#: lib/graphql/resolvers/event.ex:358
 msgid "Event not found"
 msgstr "Evento non atopado"
 
@@ -504,7 +504,7 @@ msgid "Token is not a valid UUID"
 msgstr "O token non é un UUID válido"
 
 #, elixir-format
-#: lib/graphql/error.ex:87 lib/graphql/resolvers/person.ex:356
+#: lib/graphql/error.ex:88 lib/graphql/resolvers/person.ex:356
 msgid "User not found"
 msgstr "Usuaria non atopada"
 
@@ -573,7 +573,7 @@ msgid "You cannot delete this comment"
 msgstr "Non podes eliminar este comentario"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:324
+#: lib/graphql/resolvers/event.ex:354
 msgid "You cannot delete this event"
 msgstr "Non podes eliminar este evento"
 
@@ -641,7 +641,7 @@ msgid "You need to be logged-in to access resources"
 msgstr "Tes que estar conectada para acceder ós recursos"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:259
+#: lib/graphql/resolvers/event.ex:283
 msgid "You need to be logged-in to create events"
 msgstr "Tes que estar conectada para crear eventos"
 
@@ -661,7 +661,7 @@ msgid "You need to be logged-in to create resources"
 msgstr "Tes que estar conectada para crear recursos"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:333
+#: lib/graphql/resolvers/event.ex:363
 msgid "You need to be logged-in to delete an event"
 msgstr "Tes que estar conectada para eliminar un evento"
 
@@ -686,7 +686,7 @@ msgid "You need to be logged-in to leave an event"
 msgstr "Tes que estar conectada para saír dun evento"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:298
+#: lib/graphql/resolvers/event.ex:327
 msgid "You need to be logged-in to update an event"
 msgstr "Tes que estar conectada para actualizar un evento"
 
@@ -727,47 +727,47 @@ msgid "This email is already used."
 msgstr "Este email xa se está a usar."
 
 #, elixir-format
-#: lib/graphql/error.ex:88
+#: lib/graphql/error.ex:89
 msgid "Post not found"
 msgstr "Non se atopa a publicación"
 
 #, elixir-format
-#: lib/graphql/error.ex:75
+#: lib/graphql/error.ex:76
 msgid "Invalid arguments passed"
 msgstr "Argumentos proporcionados non válidos"
 
 #, elixir-format
-#: lib/graphql/error.ex:81
+#: lib/graphql/error.ex:82
 msgid "Invalid credentials"
 msgstr "Credenciais non válidas"
 
 #, elixir-format
-#: lib/graphql/error.ex:79
+#: lib/graphql/error.ex:80
 msgid "Reset your password to login"
 msgstr "Restablece o teu contrasinal para conectar"
 
 #, elixir-format
-#: lib/graphql/error.ex:86 lib/graphql/error.ex:91
+#: lib/graphql/error.ex:87 lib/graphql/error.ex:92
 msgid "Resource not found"
 msgstr "Recurso non atopado"
 
 #, elixir-format
-#: lib/graphql/error.ex:93
+#: lib/graphql/error.ex:94
 msgid "Something went wrong"
 msgstr "Algo foi mal"
 
 #, elixir-format
-#: lib/graphql/error.ex:74
+#: lib/graphql/error.ex:75
 msgid "Unknown Resource"
 msgstr "Recurso descoñecido"
 
 #, elixir-format
-#: lib/graphql/error.ex:84
+#: lib/graphql/error.ex:85
 msgid "You don't have permission to do this"
 msgstr "Non tes permiso para facer isto"
 
 #, elixir-format
-#: lib/graphql/error.ex:76
+#: lib/graphql/error.ex:77
 msgid "You need to be logged in"
 msgstr "Tes que estar conectada"
 
@@ -792,12 +792,12 @@ msgid "Profile is not administrator for the group"
 msgstr "O perfil non é administrador do grupo"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:287
+#: lib/graphql/resolvers/event.ex:316
 msgid "You can't edit this event."
 msgstr "Non podes editar este evento."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:290
+#: lib/graphql/resolvers/event.ex:319
 msgid "You can't attribute this event to this profile."
 msgstr "Non podes atribuír este evento a este perfil."
 
@@ -827,7 +827,7 @@ msgid "You must provide either an ID or a slug to access a discussion"
 msgstr "Debes proporcionar ou ben un ID ou nome para acceder á conversa"
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:248
+#: lib/graphql/resolvers/event.ex:272
 msgid "Organizer profile is not owned by the user"
 msgstr "O perfil da organización non pertence á usuaria"
 
@@ -863,6 +863,16 @@ msgid "Unable to fetch resource details from this URL."
 msgstr "Non se puideron obter os detalles do recurso desde o URL."
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:148 lib/graphql/resolvers/participant.ex:234
+#: lib/graphql/resolvers/event.ex:164 lib/graphql/resolvers/participant.ex:234
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "O perfil da moderadora proporcionado non ten permisos neste evento"
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:266
+msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/event.ex:307
+msgid "This profile doesn't have permission to update an event on behalf of this group"
+msgstr ""

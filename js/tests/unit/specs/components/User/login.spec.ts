@@ -115,13 +115,14 @@ describe("Render login form", () => {
     expect(requestHandlers.loginMutationHandler).toHaveBeenCalledWith({
       ...loginMock,
     });
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     const currentUser = mockClient?.cache.readQuery<{
       currentUser: ICurrentUser;
     }>({
       query: CURRENT_USER_CLIENT,
     })?.currentUser;
+
+    await flushPromises();
     expect(currentUser?.email).toBe("some@email.tld");
     expect(currentUser?.id).toBe("1");
     expect(jest.isMockFunction(wrapper.vm.$router.push)).toBe(true);
