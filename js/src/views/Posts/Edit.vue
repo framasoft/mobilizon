@@ -207,7 +207,7 @@ import { FETCH_GROUP } from "@/graphql/group";
       variables() {
         return {
           id: this.currentActor.id,
-          group: this.actualGroup.preferredUsername,
+          group: usernameWithDomain(this.actualGroup),
         };
       },
       skip() {

@@ -41,7 +41,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
           }
         } = post
       ) do
-    audience = Audience.calculate_to_and_cc_from_mentions(post)
+    audience = Audience.get_audience(post)
 
     %{
       "type" => "Article",
@@ -65,10 +65,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   @impl Converter
   @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
   def as_to_model_data(
-        %{"type" => "Article", "actor" => creator, "attributedTo" => group} = object
+        %{"type" => "Article", "actor" => creator, "attributedTo" => group_uri} = object
       ) do
-    with {:ok, %Actor{id: attributed_to_id}} <- get_actor(group),
+    with {:ok, %Actor{id: attributed_to_id} = group} <- get_actor(group_uri),
          {:ok, %Actor{id: author_id}} <- get_actor(creator),
+         {:visibility, visibility} <- {:visibility, get_visibility(object, group)},
          [description: description, picture_id: picture_id, medias: medias] <-
            process_pictures(object, attributed_to_id) do
       %{
@@ -81,6 +82,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
         publish_at: object["published"],
         picture_id: picture_id,
         medias: medias,
+        visibility: visibility,
         draft: object["draft"] == true
       }
     else
@@ -127,5 +129,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       [],
       &(&1 ++ medias)
     )
+  end
+
+  @ap_public "https://www.w3.org/ns/activitystreams#Public"
+
+  defp get_visibility(%{"to" => to}, %Actor{
+         followers_url: followers_url,
+         members_url: members_url
+       }) do
+    cond do
+      @ap_public in to -> :public
+      followers_url in to -> :unlisted
+      members_url in to -> :private
+    end
   end
 end

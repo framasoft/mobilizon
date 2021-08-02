@@ -297,7 +297,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
           }
         )
 
-      assert is_nil(res["errors"])
+      assert res["errors"] == nil
 
       assert res["data"]["post"]["title"] == post_draft.title
       assert res["data"]["post"]["draft"] == true

@@ -192,9 +192,6 @@ export default class ParticipationSection extends Vue {
     if (this.event.draft || this.event.status === EventStatus.CANCELLED)
       return false;
 
-    // Organizer can't participate
-    if (this.actorIsOrganizer) return false;
-
     // If capacity is OK
     if (this.eventCapacityOK) return true;
 

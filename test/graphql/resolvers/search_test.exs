@@ -205,6 +205,19 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       assert hd(res["data"]["searchEvents"]["elements"])["uuid"] ==
                event.uuid
     end
+
+    test "doesn't find drafts", %{conn: conn} do
+      insert(:event, title: "A draft event", draft: true)
+
+      res =
+        AbsintheHelpers.graphql_query(conn,
+          query: @search_events_query,
+          variables: %{term: "draft"}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["searchEvents"]["total"] == 0
+    end
   end
 
   describe "search_persons/3" do

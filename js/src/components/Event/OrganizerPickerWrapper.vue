@@ -77,12 +77,12 @@
                       </div>
                       <div class="media-content" v-if="actor.name">
                         <p class="is-4">{{ actor.name }}</p>
-                        <p class="is-6 has-text-grey">
-                          {{ `@${actor.preferredUsername}` }}
+                        <p class="is-6 has-text-grey-dark">
+                          {{ `@${usernameWithDomain(actor)}` }}
                         </p>
                       </div>
                       <div class="media-content" v-else>
-                        {{ `@${actor.preferredUsername}` }}
+                        {{ `@${usernameWithDomain(actor)}` }}
                       </div>
                     </div>
                   </b-checkbox>
@@ -166,6 +166,8 @@ export default class OrganizerPickerWrapper extends Vue {
   identities!: IPerson[];
 
   isComponentModalActive = false;
+
+  usernameWithDomain = usernameWithDomain;
 
   @Prop({ type: Array, required: false, default: () => [] })
   contacts!: IActor[];

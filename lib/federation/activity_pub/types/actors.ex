@@ -3,7 +3,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Audience, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
          actor_as_data <- Convertible.model_to_as(new_actor),
          {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_actor),
+           Audience.get_audience(new_actor),
          additional <- Map.merge(additional, %{"actor" => old_actor.url}),
          update_data <- make_update_data(actor_as_data, Map.merge(audience, additional)) do
       {:ok, new_actor, update_data}
@@ -104,8 +104,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   def group_actor(%Actor{} = actor), do: actor
 
-  def role_needed_to_update(%Actor{} = _group), do: :administrator
-  def role_needed_to_delete(%Actor{} = _group), do: :administrator
+  def permissions(%Actor{} = _group) do
+    %Permission{
+      access: :member,
+      create: nil,
+      update: :administrator,
+      delete: :administrator
+    }
+  end
 
   @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, map(), Member.t()}
   def join(%Actor{type: :Group} = group, %Actor{} = actor, _local, additional) do
@@ -136,7 +142,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
            "object" => group.url
          },
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(member) do
+           Audience.get_audience(member) do
       approve_if_default_role_is_member(
         group,
         actor,

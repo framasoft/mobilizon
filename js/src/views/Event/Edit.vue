@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="container" v-if="isCurrentActorOrganizer">
+    <div class="container" v-if="hasCurrentActorPermissionsToEdit">
       <h1 class="title" v-if="isUpdate === true">
         {{ $t("Update event {name}", { name: event.title }) }}
       </h1>
@@ -269,6 +269,11 @@
         </b-field>
       </form>
     </div>
+    <div class="container section" v-else>
+      <b-message type="is-danger">
+        {{ $t("Only group moderators can create, edit and delete events.") }}
+      </b-message>
+    </div>
     <b-modal v-model="dateSettingsIsOpen" has-modal-card trap-focus>
       <form action>
         <div class="modal-card" style="width: auto">
@@ -305,7 +310,7 @@
       aria-label="main navigation"
       class="navbar save__navbar"
       :class="{ 'is-fixed-bottom': showFixedNavbar }"
-      v-if="isCurrentActorOrganizer"
+      v-if="hasCurrentActorPermissionsToEdit"
     >
       <div class="container">
         <div class="navbar-menu">
@@ -457,6 +462,7 @@ import {
   EventJoinOptions,
   EventStatus,
   EventVisibility,
+  MemberRole,
   ParticipantRole,
 } from "@/types/enums";
 import OrganizerPickerWrapper from "../../components/Event/OrganizerPickerWrapper.vue";
@@ -472,8 +478,15 @@ import {
   IDENTITIES,
   LOGGED_USER_DRAFTS,
   LOGGED_USER_PARTICIPATIONS,
+  PERSON_MEMBERSHIP_GROUP,
 } from "../../graphql/actor";
-import { displayNameAndUsername, IActor, IGroup } from "../../types/actor";
+import {
+  displayNameAndUsername,
+  IActor,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "../../types/actor";
 import { TAGS } from "../../graphql/tags";
 import { ITag } from "../../types/tag.model";
 import {
@@ -519,6 +532,22 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
         return !this.eventId;
       },
     },
+    person: {
+      query: PERSON_MEMBERSHIP_GROUP,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          id: this.currentActor.id,
+          group: usernameWithDomain(this.event?.attributedTo),
+        };
+      },
+      skip() {
+        return (
+          !this.event?.attributedTo ||
+          !this.event?.attributedTo?.preferredUsername
+        );
+      },
+    },
   },
   metaInfo() {
     return {
@@ -545,6 +574,8 @@ export default class EditEvent extends Vue {
 
   identities: IActor[] = [];
 
+  person!: IPerson;
+
   config!: IConfig;
 
   pictureFile: File | null = null;
@@ -552,8 +583,6 @@ export default class EditEvent extends Vue {
   EventStatus = EventStatus;
 
   EventVisibility = EventVisibility;
-
-  needsApproval = false;
 
   canPromote = true;
 
@@ -749,13 +778,23 @@ export default class EditEvent extends Vue {
     }
   }
 
-  get isCurrentActorOrganizer(): boolean {
+  get hasCurrentActorPermissionsToEdit(): boolean {
     return !(
       this.eventId &&
       this.event.organizerActor?.id !== undefined &&
       !this.identities
         .map(({ id }) => id)
-        .includes(this.event.organizerActor?.id)
+        .includes(this.event.organizerActor?.id) &&
+      !this.hasGroupPrivileges
+    );
+  }
+
+  get hasGroupPrivileges(): boolean {
+    return (
+      this.person?.memberships?.total > 0 &&
+      [MemberRole.MODERATOR, MemberRole.ADMINISTRATOR].includes(
+        this.person?.memberships?.elements[0].role
+      )
     );
   }
 
@@ -908,9 +947,12 @@ export default class EditEvent extends Vue {
     }
   }
 
-  @Watch("needsApproval")
-  updateEventJoinOptions(needsApproval: boolean): void {
-    if (needsApproval === true) {
+  get needsApproval(): boolean {
+    return this.event?.joinOptions == EventJoinOptions.RESTRICTED;
+  }
+
+  set needsApproval(value: boolean) {
+    if (value === true) {
       this.event.joinOptions = EventJoinOptions.RESTRICTED;
     } else {
       this.event.joinOptions = EventJoinOptions.FREE;

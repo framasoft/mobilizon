@@ -158,6 +158,7 @@ defmodule Mobilizon.Factory do
       deleted_at: nil,
       tags: build_list(3, :tag),
       in_reply_to_comment: nil,
+      origin_comment: nil,
       is_announcement: false,
       published_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :comment, uuid)
@@ -448,6 +449,14 @@ defmodule Mobilizon.Factory do
       auth: "",
       p256dh: "",
       user: build(:user)
+    }
+  end
+
+  def share_factory do
+    %Mobilizon.Share{
+      actor: build(:actor),
+      owner_actor: build(:actor),
+      uri: sequence("https://someshare.uri/p/12")
     }
   end
 end

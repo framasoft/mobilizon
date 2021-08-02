@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Permission, Relay, Utils}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -409,7 +409,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data) ||
-              Utils.can_update_group_object?(actor, old_event)},
+              Permission.can_update_group_object?(actor, old_event)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
            ActivityPub.update(old_event, object_data, false) do
       {:ok, activity, new_event}
@@ -454,7 +454,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data["object"]) ||
-              Utils.can_update_group_object?(actor, old_post)},
+              Permission.can_update_group_object?(actor, old_post)},
          {:ok, %Activity{} = activity, %Post{} = new_post} <-
            ActivityPub.update(old_post, object_data, false) do
       {:ok, activity, new_post}
@@ -482,7 +482,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, update_data) ||
-              Utils.can_update_group_object?(actor, old_resource)},
+              Permission.can_update_group_object?(actor, old_resource)},
          {:ok, %Activity{} = activity, %Resource{} = new_resource} <-
            ActivityPub.update(old_resource, object_data, false) do
       {:ok, activity, new_resource}
@@ -585,7 +585,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
-              Utils.can_delete_group_object?(actor, object)},
+              Permission.can_delete_group_object?(actor, object)},
          {:ok, activity, object} <- ActivityPub.delete(object, actor, false) do
       {:ok, activity, object}
     else
@@ -629,7 +629,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:origin_check, true} <-
            {:origin_check,
             Utils.origin_check?(actor_url, data) ||
-              Utils.can_update_group_object?(actor, old_resource)},
+              Permission.can_update_group_object?(actor, old_resource)},
          {:ok, activity, new_resource} <- ActivityPub.move(:resource, old_resource, object_data) do
       {:ok, activity, new_resource}
     else
@@ -837,7 +837,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   # Handle incoming `Accept` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
-    case get_participant(join_object) do
+    case get_participant(join_object, actor_accepting) do
       {:ok, participant} ->
         do_handle_incoming_accept_join_event(participant, actor_accepting)
 
@@ -868,9 +868,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          %Actor{} = actor_accepting
        )
        when role in [:not_approved, :rejected] do
-    # TODO: The actor that accepts the Join activity may another one that the event organizer ?
-    # Or maybe for groups it's the group that sends the Accept activity
-    with {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
+    with %Event{} = event <- Events.get_event_with_preload!(event.id),
+         {:can_accept_event_join, true} <-
+           {:can_accept_event_join, can_accept_event_join?(actor_accepting, event)},
          {:ok, %Activity{} = activity, %Participant{role: :participant} = participant} <-
            ActivityPub.accept(
              :join,
@@ -881,8 +881,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
-      {:same_actor} ->
-        {:error, "Actor who accepted the join wasn't the event organizer. Quite odd."}
+      {:can_accept_event_join, false} ->
+        {:error, "Actor who accepted the join didn't have permission to do so."}
 
       {:ok, %Participant{role: :participant} = _follow} ->
         {:error, "Participant"}
@@ -902,7 +902,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          type
        )
        when role in [:not_approved, :rejected, :invited] and type in [:join, :invite] do
-    # TODO: The actor that accepts the Join activity may another one that the event organizer ?
     # Or maybe for groups it's the group that sends the Accept activity
     with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
            ActivityPub.accept(
@@ -918,7 +917,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   defp do_handle_incoming_reject_join(join_object, %Actor{} = actor_accepting) do
     with {:join_event, {:ok, %Participant{event: event, role: role} = participant}}
          when role != :rejected <-
-           {:join_event, get_participant(join_object)},
+           {:join_event, get_participant(join_object, actor_accepting)},
          # TODO: The actor that accepts the Join activity may another one that the event organizer ?
          # Or maybe for groups it's the group that sends the Accept activity
          {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
@@ -1026,14 +1025,22 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp get_participant(join_object) do
+  defp get_participant(join_object, %Actor{} = actor_accepting, loop \\ 1) do
     with join_object_id when not is_nil(join_object_id) <- Utils.get_url(join_object),
          {:not_found, %Participant{} = participant} <-
            {:not_found, Events.get_participant_by_url(join_object_id)} do
       {:ok, participant}
     else
       {:not_found, _err} ->
-        {:error, "Participant URL not found"}
+        with true <- is_map(join_object),
+             true <- loop < 2,
+             true <- Utils.are_same_origin?(actor_accepting.url, join_object["id"]),
+             {:ok, _activity, %Participant{url: participant_url}} <- handle_incoming(join_object) do
+          get_participant(participant_url, actor_accepting, 2)
+        else
+          _ ->
+            {:error, "Participant URL not found"}
+        end
 
       _ ->
         {:error, "ActivityPub ID not found in Accept Join object"}
@@ -1129,5 +1136,23 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, %Actor{id: person_id}} -> {:ok, person_id}
       _ -> {:error, :remove_object_not_found}
     end
+  end
+
+  defp can_accept_event_join?(
+         %Actor{url: actor_url} = actor,
+         %Event{attributed_to: %Actor{type: :Group, url: group_url} = _group} = event
+       ) do
+    actor_url == group_url || Permission.can_update_group_object?(actor, event)
+  end
+
+  defp can_accept_event_join?(
+         %Actor{id: actor_id},
+         %Event{organizer_actor: %Actor{id: organizer_actor_id}}
+       ) do
+    organizer_actor_id == actor_id
+  end
+
+  defp can_accept_event_join?(_actor, _event) do
+    false
   end
 end

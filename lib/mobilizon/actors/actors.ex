@@ -794,11 +794,18 @@ defmodule Mobilizon.Actors do
 
   @spec get_single_group_member_actor(integer() | String.t()) :: Actor.t() | nil
   def get_single_group_member_actor(group_id) do
+    do_get_single_group_member_actor(group_id, [:member, :moderator, :administrator, :creator])
+  end
+
+  @spec get_single_group_moderator_actor(integer() | String.t()) :: Actor.t() | nil
+  def get_single_group_moderator_actor(group_id) do
+    do_get_single_group_member_actor(group_id, [:moderator, :administrator, :creator])
+  end
+
+  @spec do_get_single_group_member_actor(integer() | String.t(), list(atom())) :: Actor.t() | nil
+  defp do_get_single_group_member_actor(group_id, roles) do
     Member
-    |> where(
-      [m],
-      m.parent_id == ^group_id and m.role in [^:member, ^:moderator, ^:administrator, ^:creator]
-    )
+    |> where([m], m.parent_id == ^group_id and m.role in ^roles)
     |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
     |> where([_m, a], is_nil(a.domain))
     |> limit(1)

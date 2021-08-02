@@ -14,7 +14,7 @@ defmodule Mobilizon.Federation.ActivityPub.Preloader do
 
   @spec maybe_preload(struct()) :: {:ok, struct()} | {:error, struct()}
   def maybe_preload(%Event{url: url}),
-    do: {:ok, Events.get_public_event_by_url_with_preload!(url)}
+    do: {:ok, Events.get_event_by_url!(url)}
 
   def maybe_preload(%Comment{url: url}),
     do: {:ok, Discussions.get_comment_from_url_with_preload!(url)}

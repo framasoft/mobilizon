@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.GraphQL.API
 
   alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Federation.ActivityPub.Permission
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
 
@@ -75,13 +76,28 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   defp find_private_event(
          _parent,
          %{uuid: uuid},
-         %{context: %{current_user: %User{id: user_id}}} = _resolution
+         %{context: %{current_user: %User{} = user}} = _resolution
        ) do
-    case {:has_event, Events.get_own_event_by_uuid_with_preload(uuid, user_id)} do
-      {:has_event, %Event{} = event} ->
-        {:ok, event}
+    %Actor{} = profile = Users.get_actor_for_user(user)
 
-      {:has_event, _} ->
+    case Events.get_event_by_uuid_with_preload(uuid) do
+      # Event attributed to group
+      %Event{attributed_to: %Actor{}} = event ->
+        if Permission.can_access_group_object?(profile, event) do
+          {:ok, event}
+        else
+          {:error, :event_not_found}
+        end
+
+      # Own event
+      %Event{organizer_actor: %Actor{id: actor_id}} = event ->
+        if actor_id == profile.id do
+          {:ok, event}
+        else
+          {:error, :event_not_found}
+        end
+
+      _ ->
         {:error, :event_not_found}
     end
   end
@@ -239,11 +255,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          args <- Map.put(args, :options, args[:options] || %{}),
+         {:group_check, true} <- {:group_check, is_organizer_group_member?(args)},
          args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            API.Events.create_event(args_with_organizer) do
       {:ok, event}
     else
+      {:group_check, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Organizer profile doesn't have permission to create an event on behalf of this group"
+         )}
+
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Organizer profile is not owned by the user")}
 
@@ -270,16 +294,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
     with args <- Map.put(args, :options, args[:options] || %{}),
          {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
-         {:old_actor, {:is_owned, %Actor{}}} <-
-           {:old_actor, User.owns_actor(user, event.organizer_actor_id)},
-         new_organizer_actor_id <- args |> Map.get(:organizer_actor_id, event.organizer_actor_id),
-         {:new_actor, {:is_owned, %Actor{} = organizer_actor}} <-
-           {:new_actor, User.owns_actor(user, new_organizer_actor_id)},
-         args <- Map.put(args, :organizer_actor, organizer_actor),
+         %Actor{} = actor <- Users.get_actor_for_user(user),
+         {:ok, args} <- verify_profile_change(args, event, user, actor),
+         {:event_can_be_managed, true} <-
+           {:event_can_be_managed, can_event_be_updated_by?(event, actor)},
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            API.Events.update_event(args, event) do
       {:ok, event}
     else
+      {:event_can_be_managed, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "This profile doesn't have permission to update an event on behalf of this group"
+         )}
+
       {:error, :event_not_found} ->
         {:error, dgettext("errors", "Event not found")}
 
@@ -309,7 +338,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     with {:ok, %Event{local: is_local} = event} <- Events.get_event_with_preload(event_id),
          %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user) do
       cond do
-        {:event_can_be_managed, true} == Event.can_be_managed_by(event, actor_id) ->
+        {:event_can_be_managed, true} ==
+            {:event_can_be_managed, can_event_be_deleted_by?(event, actor)} ->
           do_delete_event(event, actor)
 
         role in [:moderator, :administrator] ->
@@ -338,5 +368,75 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     with {:ok, _activity, event} <- API.Events.delete_event(event, actor) do
       {:ok, %{id: event.id}}
     end
+  end
+
+  defp is_organizer_group_member?(%{
+         attributed_to_id: attributed_to_id,
+         organizer_actor_id: organizer_actor_id
+       })
+       when not is_nil(attributed_to_id) do
+    Actors.is_member?(organizer_actor_id, attributed_to_id) &&
+      Permission.can_create_group_object?(organizer_actor_id, attributed_to_id, %Event{})
+  end
+
+  defp is_organizer_group_member?(_), do: true
+
+  defp verify_profile_change(
+         args,
+         %Event{attributed_to: %Actor{}},
+         %User{} = _user,
+         %Actor{} = current_profile
+       ) do
+    # The organizer_actor has to be the current profile, because otherwise we're left with a possible remote organizer
+    args =
+      args
+      |> Map.put(:organizer_actor, current_profile)
+      |> Map.put(:organizer_actor_id, current_profile.id)
+
+    {:ok, args}
+  end
+
+  defp verify_profile_change(
+         args,
+         %Event{organizer_actor: %Actor{id: organizer_actor_id}},
+         %User{} = user,
+         %Actor{} = _actor
+       ) do
+    with {:old_actor, {:is_owned, %Actor{}}} <-
+           {:old_actor, User.owns_actor(user, organizer_actor_id)},
+         new_organizer_actor_id <- args |> Map.get(:organizer_actor_id, organizer_actor_id),
+         {:new_actor, {:is_owned, %Actor{} = organizer_actor}} <-
+           {:new_actor, User.owns_actor(user, new_organizer_actor_id)},
+         args <-
+           args
+           |> Map.put(:organizer_actor, organizer_actor)
+           |> Map.put(:organizer_actor_id, organizer_actor.id) do
+      {:ok, args}
+    end
+  end
+
+  defp can_event_be_updated_by?(
+         %Event{attributed_to: %Actor{type: :Group}} = event,
+         %Actor{} = actor_member
+       ) do
+    Permission.can_update_group_object?(actor_member, event)
+  end
+
+  defp can_event_be_updated_by?(
+         %Event{} = event,
+         %Actor{id: actor_member_id}
+       ) do
+    Event.can_be_managed_by?(event, actor_member_id)
+  end
+
+  defp can_event_be_deleted_by?(
+         %Event{attributed_to: %Actor{type: :Group}} = event,
+         %Actor{} = actor_member
+       ) do
+    Permission.can_delete_group_object?(actor_member, event)
+  end
+
+  defp can_event_be_deleted_by?(%Event{} = event, %Actor{id: actor_member_id}) do
+    Event.can_be_managed_by?(event, actor_member_id)
   end
 end

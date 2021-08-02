@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.{Actors, Discussions}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -31,7 +31,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
          :ok <- maybe_publish_graphql_subscription(discussion),
          comment_as_data <- Convertible.model_to_as(last_comment),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(discussion),
+           Audience.get_audience(discussion),
          create_data <-
            make_create_data(comment_as_data, Map.merge(audience, additional)) do
       {:ok, discussion, create_data}
@@ -48,7 +48,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
            DiscussionActivity.insert_activity(discussion, subject: "discussion_created"),
          discussion_as_data <- Convertible.model_to_as(discussion),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(discussion),
+           Audience.get_audience(discussion),
          create_data <-
            make_create_data(discussion_as_data, Map.merge(audience, additional)) do
       {:ok, discussion, create_data}
@@ -68,7 +68,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
          {:ok, true} <- Cachex.del(:activity_pub, "discussion_#{new_discussion.slug}"),
          discussion_as_data <- Convertible.model_to_as(new_discussion),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_discussion),
+           Audience.get_audience(new_discussion),
          update_data <- make_update_data(discussion_as_data, Map.merge(audience, additional)) do
       {:ok, new_discussion, update_data}
     else
@@ -110,8 +110,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
 
   def group_actor(%Discussion{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
-  def role_needed_to_update(%Discussion{}), do: :moderator
-  def role_needed_to_delete(%Discussion{}), do: :moderator
+  def permissions(%Discussion{}) do
+    %Permission{access: :member, create: :member, update: :moderator, delete: :moderator}
+  end
 
   @spec maybe_publish_graphql_subscription(Discussion.t()) :: :ok
   defp maybe_publish_graphql_subscription(%Discussion{} = discussion) do

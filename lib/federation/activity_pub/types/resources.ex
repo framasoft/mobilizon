@@ -2,6 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   @moduledoc false
   alias Mobilizon.{Actors, Resources}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.Permission
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Resources.Resource
@@ -170,6 +171,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
 
   def group_actor(%Resource{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
-  def role_needed_to_update(%Resource{}), do: :member
-  def role_needed_to_delete(%Resource{}), do: :member
+  def permissions(%Resource{}) do
+    %Permission{access: :member, create: :member, update: :member, delete: :member}
+  end
 end

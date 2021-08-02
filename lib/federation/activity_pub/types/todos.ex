@@ -2,6 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
   @moduledoc false
   alias Mobilizon.{Actors, Todos}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.Permission
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Todos.{Todo, TodoList}
@@ -80,6 +81,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
     end
   end
 
-  def role_needed_to_update(%Todo{}), do: :member
-  def role_needed_to_delete(%Todo{}), do: :member
+  def permissions(%Todo{}) do
+    %Permission{access: :member, create: :member, update: :member, delete: :member}
+  end
 end

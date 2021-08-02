@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Events, as: EventsManager
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
            EventActivity.insert_activity(event, subject: "event_created"),
          event_as_data <- Convertible.model_to_as(event),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
+           Audience.get_audience(event),
          create_data <-
            make_create_data(event_as_data, Map.merge(audience, additional)) do
       {:ok, event, create_data}
@@ -46,7 +46,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
          {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
          event_as_data <- Convertible.model_to_as(new_event),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_event),
+           Audience.get_audience(new_event),
          update_data <- make_update_data(event_as_data, Map.merge(audience, additional)) do
       {:ok, new_event, update_data}
     else
@@ -69,7 +69,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     }
 
     with audience <-
-           Audience.calculate_to_and_cc_from_mentions(event),
+           Audience.get_audience(event),
          {:ok, %Event{} = event} <- EventsManager.delete_event(event),
          {:ok, _} <-
            EventActivity.insert_activity(event, subject: "event_deleted"),
@@ -95,9 +95,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   def group_actor(_), do: nil
 
-  def role_needed_to_update(%Event{attributed_to: %Actor{} = _group}), do: :moderator
-  def role_needed_to_delete(%Event{attributed_to_id: _attributed_to_id}), do: :moderator
-  def role_needed_to_delete(_), do: nil
+  def permissions(%Event{draft: draft, attributed_to_id: _attributed_to_id}) do
+    %Permission{
+      access: if(draft, do: nil, else: :member),
+      create: :moderator,
+      update: :moderator,
+      delete: :moderator
+    }
+  end
 
   def join(%Event{} = event, %Actor{} = actor, _local, additional) do
     with {:maximum_attendee_capacity, true} <-
@@ -119,7 +124,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
            }),
          join_data <- Convertible.model_to_as(participant),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(participant) do
+           Audience.get_audience(participant) do
       approve_if_default_role_is_participant(
         event,
         Map.merge(join_data, audience),
@@ -142,28 +147,48 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   # Set the participant to approved if the default role for new participants is :participant
   defp approve_if_default_role_is_participant(event, activity_data, participant, role) do
-    if event.local do
-      cond do
-        Mobilizon.Events.get_default_participant_role(event) === :participant &&
-            role == :participant ->
-          {:accept,
-           ActivityPub.accept(
-             :join,
-             participant,
-             true,
-             %{"actor" => event.organizer_actor.url}
-           )}
+    case event do
+      %Event{attributed_to: %Actor{id: group_id, url: group_url}} ->
+        case Actors.get_single_group_moderator_actor(group_id) do
+          %Actor{} = actor ->
+            do_approve(event, activity_data, participant, role, %{
+              "actor" => actor.url,
+              "attributedTo" => group_url
+            })
 
-        Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
-            role == :not_approved ->
-          Scheduler.pending_participation_notification(event)
-          {:ok, activity_data, participant}
+          _ ->
+            {:ok, activity_data, participant}
+        end
 
-        true ->
-          {:ok, activity_data, participant}
-      end
-    else
-      {:ok, activity_data, participant}
+      %Event{local: true} ->
+        do_approve(event, activity_data, participant, role, %{
+          "actor" => event.organizer_actor.url
+        })
+
+      _ ->
+        {:ok, activity_data, participant}
+    end
+  end
+
+  defp do_approve(event, activity_data, participant, role, additionnal) do
+    cond do
+      Mobilizon.Events.get_default_participant_role(event) === :participant &&
+          role == :participant ->
+        {:accept,
+         ActivityPub.accept(
+           :join,
+           participant,
+           true,
+           additionnal
+         )}
+
+      Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
+          role == :not_approved ->
+        Scheduler.pending_participation_notification(event)
+        {:ok, activity_data, participant}
+
+      true ->
+        {:ok, activity_data, participant}
     end
   end
 

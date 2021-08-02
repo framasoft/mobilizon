@@ -28,14 +28,24 @@ defmodule Mobilizon.GraphQL.AbsintheHelpers do
   @spec graphql_query(Conn.t(), Keyword.t()) :: map | no_return
   def graphql_query(conn, options) do
     conn
-    |> post("/api", build_query(options[:query], Keyword.get(options, :variables, %{})))
+    |> post(
+      "/api",
+      build_query(
+        options[:query],
+        Keyword.get(options, :variables, %{}),
+        Keyword.get(options, :uploads, %{})
+      )
+    )
     |> json_response(200)
   end
 
-  defp build_query(query, variables) do
-    %{
-      "query" => query,
-      "variables" => variables
-    }
+  defp build_query(query, variables, uploads) do
+    Map.merge(
+      %{
+        "query" => query,
+        "variables" => variables
+      },
+      uploads
+    )
   end
 end

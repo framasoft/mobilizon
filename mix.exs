@@ -163,6 +163,7 @@ defmodule Mobilizon.Mixfile do
       {:web_push_encryption,
        git: "https://github.com/tcitworld/elixir-web-push-encryption", branch: "otp-24"},
       {:eblurhash, "~> 1.2"},
+      {:struct_access, "~> 1.1.2"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

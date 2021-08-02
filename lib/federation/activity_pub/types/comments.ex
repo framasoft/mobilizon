@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, EventOptions}
-  alias Mobilizon.Federation.ActivityPub.Audience
+  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -32,7 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
          :ok <- maybe_publish_graphql_subscription(discussion_id),
          comment_as_data <- Convertible.model_to_as(comment),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(comment),
+           Audience.get_audience(comment),
          create_data <-
            make_create_data(comment_as_data, Map.merge(audience, additional)) do
       {:ok, comment, create_data}
@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
          {:ok, true} <- Cachex.del(:activity_pub, "comment_#{new_comment.uuid}"),
          comment_as_data <- Convertible.model_to_as(new_comment),
          audience <-
-           Audience.calculate_to_and_cc_from_mentions(new_comment),
+           Audience.get_audience(new_comment),
          update_data <- make_update_data(comment_as_data, Map.merge(audience, additional)) do
       {:ok, new_comment, update_data}
     else
@@ -79,7 +79,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     force_deletion = Map.get(options, :force, false)
 
     with audience <-
-           Audience.calculate_to_and_cc_from_mentions(comment),
+           Audience.get_audience(comment),
          {:ok, %Comment{} = updated_comment} <-
            Discussions.delete_comment(comment, force: force_deletion),
          {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
@@ -104,8 +104,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
-  def role_needed_to_update(%Comment{attributed_to: %Actor{} = _group}), do: :administrator
-  def role_needed_to_delete(%Comment{attributed_to_id: _attributed_to_id}), do: :administrator
+  def permissions(%Comment{}),
+    do: %Permission{
+      access: :member,
+      create: :member,
+      update: :administrator,
+      delete: :administrator
+    }
 
   # Prepare and sanitize arguments for comments
   defp prepare_args_for_comment(args) do

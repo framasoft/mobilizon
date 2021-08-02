@@ -15,7 +15,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
-  alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
   alias Mobilizon.Web.Endpoint
@@ -291,43 +290,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   def origin_check_from_id?(id, %{"id" => other_id} = _params) when is_binary(other_id),
     do: origin_check_from_id?(id, other_id)
 
-  def activity_actor_is_group_member?(
-        %Actor{id: actor_id, url: actor_url},
-        object,
-        role \\ :member
-      ) do
-    case Ownable.group_actor(object) do
-      %Actor{type: :Group, id: group_id, url: group_url} ->
-        Logger.debug("Group object url is #{group_url}")
-
-        case role do
-          :moderator ->
-            Logger.debug(
-              "Checking if activity actor #{actor_url} is a moderator from group from #{object.url}"
-            )
-
-            Actors.is_moderator?(actor_id, group_id)
-
-          :administrator ->
-            Logger.debug(
-              "Checking if activity actor #{actor_url} is an administrator from group from #{object.url}"
-            )
-
-            Actors.is_administrator?(actor_id, group_id)
-
-          _ ->
-            Logger.debug(
-              "Checking if activity actor #{actor_url} is a member from group from #{object.url}"
-            )
-
-            Actors.is_member?(actor_id, group_id)
-        end
-
-      _ ->
-        false
-    end
-  end
-
   @doc """
   Return AS Link data from
 
@@ -514,6 +476,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       "type" => "Update",
       "to" => object["to"],
       "cc" => object["cc"],
+      "attributedTo" => object["attributedTo"] || object["actor"],
       "actor" => object["actor"],
       "object" => object,
       "id" => object["id"] <> "/activity"
@@ -660,41 +623,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
 
     :ok
-  end
-
-  def can_update_group_object?(%Actor{} = actor, object) do
-    can_manage_group_object?(:role_needed_to_update, actor, object)
-  end
-
-  def can_delete_group_object?(%Actor{} = actor, object) do
-    can_manage_group_object?(:role_needed_to_delete, actor, object)
-  end
-
-  @spec can_manage_group_object?(
-          :role_needed_to_update | :role_needed_to_delete,
-          Actor.t(),
-          any()
-        ) :: boolean()
-  defp can_manage_group_object?(action_function, %Actor{url: actor_url} = actor, object) do
-    if Ownable.group_actor(object) != nil do
-      case apply(Ownable, action_function, [object]) do
-        role when role in [:member, :moderator, :administrator] ->
-          activity_actor_is_group_member?(actor, object, role)
-
-        _ ->
-          case action_function do
-            :role_needed_to_update ->
-              Logger.warn("Actor #{actor_url} can't update #{object.url}")
-
-            :role_needed_to_delete ->
-              Logger.warn("Actor #{actor_url} can't delete #{object.url}")
-          end
-
-          false
-      end
-    else
-      true
-    end
   end
 
   @spec label_in_collection?(any(), any()) :: boolean()
