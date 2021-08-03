@@ -129,6 +129,7 @@ import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
 import identityEditionMixin from "../../mixins/identityEdition";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
+import { ActorType } from "@/types/enums";
 
 @Component({
   apollo: {
@@ -180,8 +181,18 @@ export default class Register extends mixins(identityEditionMixin) {
             });
 
             if (identitiesData && localData) {
-              identitiesData.identities.push(localData.registerPerson);
-              store.writeQuery({ query: IDENTITIES, data: identitiesData });
+              const newPersonData = {
+                ...localData.registerPerson,
+                type: ActorType.PERSON,
+              };
+
+              store.writeQuery({
+                query: IDENTITIES,
+                data: {
+                  ...identitiesData,
+                  identities: [...identitiesData.identities, newPersonData],
+                },
+              });
             }
           }
         },
