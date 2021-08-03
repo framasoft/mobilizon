@@ -1309,29 +1309,6 @@ export default class Event extends EventMixin {
     }
     return null;
   }
-
-  get shouldShowParticipationButton(): boolean {
-    // So that people can cancel their participation
-    if (
-      this.actorIsParticipant ||
-      (this.config.anonymous.participation.allowed &&
-        this.anonymousParticipation)
-    )
-      return true;
-
-    // You can participate to draft or cancelled events
-    if (this.event.draft || this.event.status === EventStatus.CANCELLED)
-      return false;
-
-    // Organizer can't participate
-    if (this.actorIsOrganizer) return false;
-
-    // If capacity is OK
-    if (this.eventCapacityOK) return true;
-
-    // Else
-    return false;
-  }
 }
 </script>
 <style lang="scss" scoped>
