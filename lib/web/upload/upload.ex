@@ -69,7 +69,10 @@ defmodule Mobilizon.Web.Upload do
     opts = get_opts(opts)
 
     with {:ok, upload} <- prepare_upload(upload, opts),
-         upload = %__MODULE__{upload | path: upload.path || "#{upload.id}/#{upload.name}"},
+         %__MODULE__{} = upload <- %__MODULE__{
+           upload
+           | path: upload.path || "#{upload.id}/#{upload.name}"
+         },
          {:ok, upload} <- Filter.filter(opts.filters, upload),
          {:ok, url_spec} <- Uploader.put_file(opts.uploader, upload) do
       {:ok,
