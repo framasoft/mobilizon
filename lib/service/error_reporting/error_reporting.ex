@@ -7,12 +7,22 @@ defmodule Mobilizon.Service.ErrorReporting do
 
   @callback configure :: any()
 
+  @callback attach :: any()
+
   @callback handle_event(list(atom()), map(), map(), any()) :: any()
 
   @spec adapter :: module() | nil
   def adapter do
     adapter = Mobilizon.Config.get([__MODULE__, :adapter])
     if adapter && adapter.enabled?(), do: adapter, else: nil
+  end
+
+  def attach do
+    adapter = adapter()
+
+    if adapter do
+      adapter.attach()
+    end
   end
 
   @spec handle_event(list(atom()), map(), map(), any()) :: any()
