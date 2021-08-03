@@ -273,8 +273,7 @@ defmodule Mobilizon.Factory do
     %{
       content_type: "image/jpeg",
       name: "image.jpg",
-      url: url,
-      size: 13_227
+      url: url
     } = data
 
     %Mobilizon.Medias.File{
