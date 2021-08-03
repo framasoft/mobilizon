@@ -215,6 +215,9 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
         :ok ->
           :ok
 
+        {:error, :tls_already_started} ->
+          :ok
+
         error ->
           Logger.error("Could not start TLS: #{inspect(error)}")
       end

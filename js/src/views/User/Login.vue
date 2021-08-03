@@ -259,7 +259,7 @@ export default class Login extends Vue {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);
     } catch (err) {
       if (err instanceof NoIdentitiesException) {
-        this.$router.push({
+        await this.$router.push({
           name: RouteName.REGISTER_PROFILE,
           params: {
             email: this.currentUser.email,
