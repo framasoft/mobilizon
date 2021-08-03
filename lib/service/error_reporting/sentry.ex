@@ -29,6 +29,16 @@ defmodule Mobilizon.Service.ErrorReporting.Sentry do
   end
 
   @impl ErrorReporting
+  def attach do
+    :telemetry.attach(
+      "oban-errors",
+      [:oban, :job, :exception],
+      &handle_event/4,
+      []
+    )
+  end
+
+  @impl ErrorReporting
   def handle_event([:oban, :job, :exception], measure, %{job: job} = meta, _) do
     extra =
       job
@@ -42,4 +52,6 @@ defmodule Mobilizon.Service.ErrorReporting.Sentry do
   def handle_event([:oban, :circuit, :trip], _measure, meta, _) do
     Sentry.capture_exception(meta.error, stacktrace: meta.stacktrace, extra: meta)
   end
+
+  def handle_event(_, _, _, _), do: :ok
 end

@@ -68,14 +68,11 @@ defmodule Mobilizon do
 
     ErrorReporting.configure()
 
-    :ok = Oban.Telemetry.attach_default_logger()
-
-    :telemetry.attach_many(
-      "oban-errors",
-      [[:oban, :job, :exception], [:oban, :circuit, :trip]],
-      &ErrorReporting.handle_event/4,
-      %{}
-    )
+    # Only attach the telemetry logger when we aren't in an IEx shell
+    unless Code.ensure_loaded?(IEx) && IEx.started?() do
+      Oban.Telemetry.attach_default_logger(:info)
+      ErrorReporting.attach()
+    end
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Mobilizon.Supervisor)
   end
