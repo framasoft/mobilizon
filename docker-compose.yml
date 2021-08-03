@@ -35,16 +35,7 @@ services:
       MOBILIZON_DATABASE_DBNAME: ${POSTGRES_DB}
       MOBILIZON_DATABASE_HOST: postgres
       MOBILIZON_DATABASE_PORT: ${POSTGRES_PORT}
-    command: >
-      sh -c "cd js &&
-      yarn --cwd "js" install &&
-      yarn --cwd "js" run build:pictures &&
-      cd ../ &&
-      mix deps.get &&
-      mix compile &&
-      mix ecto.create &&
-      mix ecto.migrate &&
-      mix phx.server"
+    command: sh -c "mix phx.server"
 volumes:
   pgdata:
   .:
