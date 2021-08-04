@@ -22,6 +22,7 @@
           </li>
         </ul>
       </nav>
+      <b-loading :active.sync="$apollo.loading"></b-loading>
       <invitations
         v-if="isCurrentActorAnInvitedGroupMember"
         :invitations="[groupMember]"
