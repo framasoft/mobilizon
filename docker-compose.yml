@@ -1,13 +1,14 @@
-version: "3"
-
+version: "3.2"
 services:
   postgres:
     container_name: mobilizon_db
     restart: unless-stopped
-    image: postgis/postgis:13-3.0
+    image: postgis/postgis
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mobilizon_dev
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_PORT
     volumes:
       - pgdata:/var/lib/postgresql/data
   api:
@@ -17,29 +18,24 @@ services:
     volumes:
       - ".:/app"
     ports:
-      - "4000:4000"
+      - 4000:4000
     depends_on:
       - postgres
     environment:
       MIX_ENV: "dev"
       DOCKER: "true"
       MOBILIZON_INSTANCE_NAME: My Mobilizon Instance
-      MOBILIZON_INSTANCE_HOST: mobilizon.me
+      MOBILIZON_INSTANCE_HOST: localhost
+      MOBILIZON_INSTANCE_HOST_PORT: 4000
+      MOBILIZON_INSTANCE_PORT: 4000
       MOBILIZON_INSTANCE_EMAIL: noreply@mobilizon.me
       MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
-      MOBILIZON_DATABASE_PASSWORD: postgres
-      MOBILIZON_DATABASE_USERNAME: postgres
-      MOBILIZON_DATABASE_DBNAME: mobilizon_dev
+      MOBILIZON_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      MOBILIZON_DATABASE_USERNAME: ${POSTGRES_USER}
+      MOBILIZON_DATABASE_DBNAME: ${POSTGRES_DB}
       MOBILIZON_DATABASE_HOST: postgres
-    command: >
-      sh -c "cd js &&
-      yarn install &&
-      cd ../ &&
-      mix deps.get &&
-      mix compile &&
-      mix ecto.create &&
-      mix ecto.migrate &&
-      mix phx.server"
+      MOBILIZON_DATABASE_PORT: ${POSTGRES_PORT}
+    command: sh -c "mix phx.server"
 volumes:
   pgdata:
   .:

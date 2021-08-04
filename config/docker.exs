@@ -2,7 +2,7 @@
 
 import Config
 
-listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "::")
+listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "127.0.0.1")
 
 listen_ip =
   case listen_ip |> to_charlist() |> :inet.parse_address() do

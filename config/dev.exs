@@ -1,21 +1,15 @@
 import Config
 
-# For development, we disable any cache and enable
-# debugging and code reloading.
-#
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with brunch.io to recompile .js and .css sources.
 config :mobilizon, Mobilizon.Web.Endpoint,
   http: [
-    ip: {127, 0, 0, 1},
-    port: 4000
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "4000"))
   ],
   url: [
     host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.local"),
-    port: 80,
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_HOST_PORT", "80")),
     scheme: "http"
   ],
+  secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis"),
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -90,6 +84,9 @@ config :mobilizon, :instance,
   email_reply_to: System.get_env("MOBILIZON_INSTANCE_EMAIL"),
   registrations_open: System.get_env("MOBILIZON_INSTANCE_REGISTRATIONS_OPEN") == "true",
   groups: true
+
+config :mobilizon, Mobilizon.Web.Auth.Guardian,
+  secret_key: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY", "changethis")
 
 # config :mobilizon, :activitypub, sign_object_fetches: false
 
