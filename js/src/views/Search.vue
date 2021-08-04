@@ -85,6 +85,7 @@
       >
     </section>
     <b-tabs v-else v-model="activeTab" type="is-boxed" class="searchTabs">
+      <b-loading :active.sync="$apollo.loading"></b-loading>
       <b-tab-item>
         <template slot="header">
           <b-icon icon="calendar"></b-icon>
@@ -119,12 +120,6 @@
         <b-message v-else-if="$apollo.loading === false" type="is-danger">{{
           $t("No events found")
         }}</b-message>
-        <b-loading
-          v-else-if="$apollo.loading"
-          :is-full-page="false"
-          v-model="$apollo.loading"
-          :can-cancel="false"
-        />
       </b-tab-item>
       <b-tab-item v-if="!tag">
         <template slot="header">
@@ -162,12 +157,6 @@
         <b-message v-else-if="$apollo.loading === false" type="is-danger">
           {{ $t("No groups found") }}
         </b-message>
-        <b-loading
-          v-else-if="$apollo.loading"
-          :is-full-page="false"
-          v-model="$apollo.loading"
-          :can-cancel="false"
-        />
       </b-tab-item>
     </b-tabs>
   </div>
