@@ -12,12 +12,13 @@ defmodule Mobilizon.Service.MetadataTest do
   import Mobilizon.Factory
 
   describe "build_tags/2 for an actor" do
+    # TODO : Refactor me with DOM assertions, like the event test below
     test "that is a group gives tags" do
-      %Actor{} = group = insert(:group, name: "My group")
+      %Actor{} = group = insert(:group, name: "My group", domain: "remote.domain")
 
       assert group |> Metadata.build_tags() |> Metadata.Utils.stringify_tags() ==
                String.trim("""
-               <meta content="#{group.name} (@#{group.preferred_username})" property="og:title"><meta content="#{group.url}" property="og:url"><meta content="The event organizer didn&#39;t add any description." property="og:description"><meta content="profile" property="og:type"><meta content="#{group.preferred_username}" property="profile:username"><meta content="summary" property="twitter:card"><meta content="#{group.avatar.url}" property="og:image"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","address":null,"name":"#{group.name}","url":"#{group.url}"}</script><link href="#{Routes.feed_url(Endpoint, :actor, group.preferred_username, "atom")}" rel="alternate" title="#{group.name}'s feed" type="application/atom+xml"><link href="#{Routes.feed_url(Endpoint, :actor, group.preferred_username, "ics")}" rel="alternate" title="#{group.name}'s feed" type="text/calendar">
+               <meta content="#{group.name} (@#{group.preferred_username}@#{group.domain})" property="og:title"><meta content="#{group.url}" property="og:url"><meta content="The event organizer didn&#39;t add any description." property="og:description"><meta content="profile" property="og:type"><meta content="#{Actor.preferred_username_and_domain(group)}" property="profile:username"><meta content="summary" property="twitter:card"><meta content="#{group.avatar.url}" property="og:image"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","address":null,"name":"#{group.name}","url":"#{group.url}"}</script><link href="#{Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), "atom")}" rel="alternate" title="#{group.name}'s feed" type="application/atom+xml"><link href="#{Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), "ics")}" rel="alternate" title="#{group.name}'s feed" type="text/calendar"><link href=\"#{group.url}\" rel=\"alternate\" type=\"application/activity+json\"><link href=\"#{group.url}\" rel=\"canonical\"><meta content=\"noindex\" name=\"robots\">
                """)
 
       assert group
@@ -25,7 +26,7 @@ defmodule Mobilizon.Service.MetadataTest do
              |> Metadata.build_tags()
              |> Metadata.Utils.stringify_tags() ==
                String.trim("""
-               <meta content="#{group.name} (@#{group.preferred_username})" property="og:title"><meta content="#{group.url}" property="og:url"><meta content="The event organizer didn&#39;t add any description." property="og:description"><meta content="profile" property="og:type"><meta content="#{group.preferred_username}" property="profile:username"><meta content="summary" property="twitter:card"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","address":null,"name":"#{group.name}","url":"#{group.url}"}</script><link href="#{Routes.feed_url(Endpoint, :actor, group.preferred_username, "atom")}" rel="alternate" title="#{group.name}'s feed" type="application/atom+xml"><link href="#{Routes.feed_url(Endpoint, :actor, group.preferred_username, "ics")}" rel="alternate" title="#{group.name}'s feed" type="text/calendar">
+               <meta content="#{group.name} (@#{group.preferred_username}@#{group.domain})" property="og:title"><meta content="#{group.url}" property="og:url"><meta content="The event organizer didn&#39;t add any description." property="og:description"><meta content="profile" property="og:type"><meta content="#{Actor.preferred_username_and_domain(group)}" property="profile:username"><meta content="summary" property="twitter:card"><script type="application/ld+json">{"@context":"http://schema.org","@type":"Organization","address":null,"name":"#{group.name}","url":"#{group.url}"}</script><link href="#{Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), "atom")}" rel="alternate" title="#{group.name}'s feed" type="application/atom+xml"><link href="#{Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), "ics")}" rel="alternate" title="#{group.name}'s feed" type="text/calendar"><link href=\"#{group.url}\" rel=\"alternate\" type=\"application/activity+json\"><link href=\"#{group.url}\" rel=\"canonical\"><meta content=\"noindex\" name=\"robots\">
                """)
     end
 
