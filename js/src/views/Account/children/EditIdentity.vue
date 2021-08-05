@@ -218,6 +218,7 @@ import {
   DELETE_PERSON,
   FETCH_PERSON,
   IDENTITIES,
+  PERSON_FRAGMENT,
   UPDATE_PERSON,
 } from "../../../graphql/actor";
 import { IPerson, Person } from "../../../types/actor";
@@ -236,6 +237,8 @@ import { IConfig } from "@/types/config.model";
 import { CONFIG } from "@/graphql/config";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import pick from "lodash/pick";
+import { ActorType } from "@/types/enums";
 
 @Component({
   components: {
@@ -345,11 +348,14 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           });
 
           if (data) {
-            data.identities = data.identities.filter(
-              (i) => i.id !== this.identity.id
-            );
-
-            store.writeQuery({ query: IDENTITIES, data });
+            store.writeQuery({
+              query: IDENTITIES,
+              data: {
+                identities: data.identities.filter(
+                  (i) => i.id !== this.identity.id
+                ),
+              },
+            });
           }
         },
       });
@@ -392,14 +398,16 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           });
 
           if (data && updateData?.updatePerson) {
-            const index = data.identities.findIndex(
-              (i) => i.id === this.identity.id
-            );
-
-            this.$set(data.identities, index, updateData?.updatePerson);
             this.maybeUpdateCurrentActorCache(updateData?.updatePerson);
 
-            store.writeQuery({ query: IDENTITIES, data });
+            store.writeFragment({
+              fragment: PERSON_FRAGMENT,
+              id: `Person:${updateData?.updatePerson.id}`,
+              data: {
+                ...updateData?.updatePerson,
+                type: ActorType.PERSON,
+              },
+            });
           }
         },
       });
@@ -430,9 +438,15 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
           });
 
           if (data && updateData?.createPerson) {
-            data.identities.push(updateData?.createPerson);
-
-            store.writeQuery({ query: IDENTITIES, data });
+            store.writeQuery({
+              query: IDENTITIES,
+              data: {
+                identities: [
+                  ...data.identities,
+                  { ...updateData?.createPerson, type: ActorType.PERSON },
+                ],
+              },
+            });
           }
         },
       });
@@ -582,7 +596,7 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     }
   }
 
-  private async buildVariables() {
+  private async buildVariables(): Promise<Record<string, unknown>> {
     /**
      * We set the avatar only if user has selected one
      */
@@ -594,8 +608,13 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
         `${this.identity.preferredUsername}'s avatar`
       );
     }
-    const res = { ...this.identity, ...avatarObj };
-    return res;
+    return pick({ ...this.identity, ...avatarObj }, [
+      "id",
+      "preferredUsername",
+      "name",
+      "summary",
+      "avatar",
+    ]);
   }
 
   private async redirectIfNoIdentitySelected(identityParam?: string) {

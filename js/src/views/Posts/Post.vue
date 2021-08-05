@@ -1,5 +1,5 @@
 <template>
-  <article class="container" v-if="post">
+  <article class="container post" v-if="post">
     <header>
       <div class="banner-container">
         <lazy-image-wrapper :picture="post.picture" />
@@ -78,6 +78,24 @@
         </div>
       </div>
     </header>
+    <b-message
+      :title="$t('Members-only post')"
+      class="mx-4"
+      type="is-warning"
+      :closable="false"
+      v-if="
+        !$apollo.loading &&
+        isInstanceModerator &&
+        !isCurrentActorAGroupMember &&
+        post.visibility === PostVisibility.PRIVATE
+      "
+    >
+      {{
+        $t(
+          "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator."
+        )
+      }}
+    </b-message>
 
     <section v-html="post.body" class="content" />
     <section class="tags">
@@ -96,7 +114,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
-import { PostVisibility } from "@/types/enums";
+import { ICurrentUserRole, PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import {
   CURRENT_ACTOR_CLIENT,
@@ -111,9 +129,12 @@ import Tag from "../../components/Tag.vue";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import ActorInline from "../../components/Account/ActorInline.vue";
 import { formatDistanceToNowStrict } from "date-fns";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import { ICurrentUser } from "@/types/current-user.model";
 
 @Component({
   apollo: {
+    currentUser: CURRENT_USER_CLIENT,
     currentActor: CURRENT_ACTOR_CLIENT,
     memberships: {
       query: PERSON_MEMBERSHIPS,
@@ -187,6 +208,8 @@ export default class Post extends mixins(GroupMixin) {
 
   RouteName = RouteName;
 
+  currentUser!: ICurrentUser;
+
   usernameWithDomain = usernameWithDomain;
 
   formatDistanceToNowStrict = formatDistanceToNowStrict;
@@ -205,10 +228,17 @@ export default class Post extends mixins(GroupMixin) {
       .map(({ parent: { id } }) => id)
       .includes(this.post.attributedTo.id);
   }
+
+  get isInstanceModerator(): boolean {
+    return [
+      ICurrentUserRole.ADMINISTRATOR,
+      ICurrentUserRole.MODERATOR,
+    ].includes(this.currentUser.role);
+  }
 }
 </script>
 <style lang="scss" scoped>
-article {
+article.post {
   background: $white !important;
   header {
     display: flex;

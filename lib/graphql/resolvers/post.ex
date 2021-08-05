@@ -65,7 +65,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{slug: slug},
         %{
           context: %{
-            current_user: %User{} = user
+            current_user: %User{role: user_role} = user
           }
         } = _resolution
       ) do
@@ -73,7 +73,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            {:current_actor, Users.get_actor_for_user(user)},
          {:post, %Post{attributed_to: %Actor{}} = post} <-
            {:post, Posts.get_post_by_slug_with_preloads(slug)},
-         {:member, true} <- {:member, Permission.can_access_group_object?(current_profile, post)} do
+         {:member, true} <-
+           {:member,
+            Permission.can_access_group_object?(current_profile, post) or is_moderator(user_role)} do
       {:ok, post}
     else
       {:member, false} -> get_post(parent, %{slug: slug}, nil)

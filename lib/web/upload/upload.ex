@@ -60,9 +60,11 @@ defmodule Mobilizon.Web.Upload do
           tempfile: String.t(),
           content_type: String.t(),
           path: String.t(),
-          size: integer()
+          size: integer(),
+          width: integer(),
+          height: integer()
         }
-  defstruct [:id, :name, :tempfile, :content_type, :path, :size]
+  defstruct [:id, :name, :tempfile, :content_type, :path, :size, :width, :height]
 
   @spec store(source, options :: [option()]) :: {:ok, map()} | {:error, any()}
   def store(upload, opts \\ []) do

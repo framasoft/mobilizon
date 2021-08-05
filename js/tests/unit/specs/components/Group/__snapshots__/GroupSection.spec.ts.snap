@@ -8,7 +8,7 @@ exports[`GroupSection renders group section with basic informations 1`] = `
   <div class="main-slot">
     <div>A list of elements</div>
   </div>
-  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Post a public message</a></div>
+  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Create a post</a></div>
 </section>
 `;
 
@@ -20,6 +20,6 @@ exports[`GroupSection renders public group section 1`] = `
   <div class="main-slot">
     <div>A list of elements</div>
   </div>
-  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Post a public message</a></div>
+  <div class="create-slot"><a href="/@my_group@remotedomain.net/p/new" class="button is-primary">+ Create a post</a></div>
 </section>
 `;

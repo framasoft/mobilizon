@@ -117,6 +117,19 @@ export const GET_PERSON = gql`
   }
 `;
 
+export const PERSON_FRAGMENT = gql`
+  fragment PersonFragment on Person {
+    id
+    avatar {
+      id
+      url
+    }
+    type
+    preferredUsername
+    name
+  }
+`;
+
 export const LIST_PROFILES = gql`
   query ListProfiles(
     $preferredUsername: String

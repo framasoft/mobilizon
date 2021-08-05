@@ -16,7 +16,7 @@ const groupDomain = "remotedomain.net";
 const groupUsername = `${groupPreferredUsername}@${groupDomain}`;
 
 const defaultSlotText = "A list of elements";
-const createSlotButtonText = "+ Post a public message";
+const createSlotButtonText = "+ Create a post";
 
 type Props = {
   title?: string;

@@ -67,6 +67,7 @@ config :mobilizon, Mobilizon.Web.Upload,
   filters: [
     Mobilizon.Web.Upload.Filter.Dedupe,
     Mobilizon.Web.Upload.Filter.AnalyzeMetadata,
+    Mobilizon.Web.Upload.Filter.Resize,
     Mobilizon.Web.Upload.Filter.Optimize
   ],
   allow_list_mime_types: ["image/gif", "image/jpeg", "image/png", "image/webp"],
