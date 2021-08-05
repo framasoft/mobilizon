@@ -1067,5 +1067,10 @@
   "View less": "View less",
   "View more": "View more",
   "Breadcrumbs": "Breadcrumbs",
-  "Other actions": "Other actions"
+  "Other actions": "Other actions",
+  "Only group moderators can create, edit and delete events.": "Only group moderators can create, edit and delete events.",
+  "+ Create a post": "+ Create a post",
+  "Edited {relative_time} ago": "Edited {relative_time} ago",
+  "Members-only post": "Members-only post",
+  "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator.": "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator."
 }

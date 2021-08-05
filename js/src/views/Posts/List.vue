@@ -45,7 +45,7 @@
             params: { preferredUsername: usernameWithDomain(group) },
           }"
           class="button is-primary"
-          >{{ $t("+ Post a public message") }}</router-link
+          >{{ $t("+ Create a post") }}</router-link
         >
       </div>
       <div class="post-list">

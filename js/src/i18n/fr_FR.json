@@ -1158,5 +1158,10 @@
   "View less": "Voir moins",
   "View more": "Voir plus",
   "Breadcrumbs": "Fil d'Ariane",
-  "Other actions": "Autres actions"
+  "Other actions": "Autres actions",
+  "Only group moderators can create, edit and delete events.": "Seule⋅s les modérateur⋅ices de groupe peuvent créer, éditer et supprimer des événements.",
+  "+ Create a post": "+ Créer un billet",
+  "Edited {relative_time} ago": "Édité il y a {relative_time}",
+  "Members-only post": "Billet reservé aux membres",
+  "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator.": "Ce billet est accessible uniquement aux membres. Vous y avez accès à des fins de modération car vous êtes modérateur⋅ice de l'instance."
 }

@@ -404,7 +404,7 @@
                 params: { preferredUsername: usernameWithDomain(group) },
               }"
               class="button is-primary"
-              >{{ $t("+ Post a public message") }}</router-link
+              >{{ $t("+ Create a post") }}</router-link
             >
           </template>
         </group-section>
@@ -800,29 +800,9 @@ export default class Group extends mixins(GroupMixin) {
     return undefined;
   }
 
-  get groupMemberships(): (string | undefined)[] {
-    return this.person?.memberships?.elements
-      .filter(
-        (membership: IMember) =>
-          ![
-            MemberRole.REJECTED,
-            MemberRole.NOT_APPROVED,
-            MemberRole.INVITED,
-          ].includes(membership.role)
-      )
-      .map(({ parent: { id } }) => id);
-  }
-
   @Watch("isCurrentActorAGroupMember")
   refetchGroupData(): void {
     this.$apollo.queries.group.refetch();
-  }
-
-  get isCurrentActorAGroupMember(): boolean {
-    return (
-      this.groupMemberships !== undefined &&
-      this.groupMemberships.includes(this.group.id)
-    );
   }
 
   get isCurrentActorARejectedGroupMember(): boolean {
