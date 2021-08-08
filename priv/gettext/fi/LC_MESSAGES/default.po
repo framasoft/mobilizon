@@ -1657,7 +1657,7 @@ msgid "This is a demonstration site to test Mobilizon."
 msgstr "Tämä on koekäyttöön tarkoitettu Mobilizonin esittelysivu."
 
 #, elixir-format
-#: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
+#: lib/service/metadata/actor.ex:67 lib/service/metadata/actor.ex:75
 #: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
 msgid "%{name}'s feed"
 msgstr "%{name} – syöte"

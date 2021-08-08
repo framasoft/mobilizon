@@ -396,6 +396,64 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registration_email_allowlist], [])
     end
 
+    test "create_user/3 doesn't allow registration when user email domain is on the denylist", %{
+      conn: conn
+    } do
+      Config.put([:instance, :registration_email_denylist], ["demo.tld"])
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Your e-mail has been denied registration or uses a disallowed e-mail provider"
+
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_denylist], [])
+    end
+
+    test "create_user/3 doesn't allow registration when user email is on the denylist", %{
+      conn: conn
+    } do
+      Config.put([:instance, :registration_email_denylist], [@user_creation.email])
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: @user_creation
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Your e-mail has been denied registration or uses a disallowed e-mail provider"
+
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_denylist], [])
+    end
+
+    test "create_user/3 doesn't allow registration when user email is on the denylist, even when plus addressing is used",
+         %{
+           conn: conn
+         } do
+      Config.put([:instance, :registration_email_denylist], [@user_creation.email])
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: Map.put(@user_creation, :email, "test+alias@demo.tld")
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Your e-mail has been denied registration or uses a disallowed e-mail provider"
+
+      Config.put([:instance, :registrations_open], true)
+      Config.put([:instance, :registration_email_denylist], [])
+    end
+
     test "register_person/3 doesn't register a profile from an unknown email", %{conn: conn} do
       conn
       |> put_req_header("accept-language", "fr")

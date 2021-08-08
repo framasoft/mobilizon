@@ -134,8 +134,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     - send a validation email to the user
   """
   @spec create_user(any, map, any) :: tuple
-  def create_user(_parent, args, _resolution) do
-    with :registration_ok <- check_registration_config(args),
+  def create_user(_parent, %{email: email} = args, _resolution) do
+    with :registration_ok <- check_registration_config(email),
+         :not_deny_listed <- check_registration_denylist(email),
          {:ok, %User{} = user} <- Users.register(args),
          %Bamboo.Email{} <-
            Email.User.send_confirmation_email(user, Map.get(args, :locale, "en")) do
@@ -147,13 +148,20 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       :not_allowlisted ->
         {:error, dgettext("errors", "Your email is not on the allowlist")}
 
+      :deny_listed ->
+        {:error,
+         dgettext(
+           "errors",
+           "Your e-mail has been denied registration or uses a disallowed e-mail provider"
+         )}
+
       {:error, error} ->
         {:error, error}
     end
   end
 
   @spec check_registration_config(map) :: atom
-  defp check_registration_config(%{email: email}) do
+  defp check_registration_config(email) do
     cond do
       Config.instance_registrations_open?() ->
         :registration_ok
@@ -166,14 +174,26 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
+  defp check_registration_denylist(email) do
+    # Remove everything behind the +
+    email = String.replace(email, ~r/(\+.*)(?=\@)/, "")
+
+    if email_in_list(email, Config.instance_registrations_denylist()),
+      do: :deny_listed,
+      else: :not_deny_listed
+  end
+
   @spec check_allow_listed_email?(String.t()) :: :registration_ok | :not_allowlisted
   defp check_allow_listed_email?(email) do
+    if email_in_list(email, Config.instance_registrations_allowlist()),
+      do: :registration_ok,
+      else: :not_allowlisted
+  end
+
+  defp email_in_list(email, list) do
     [_, domain] = String.split(email, "@", parts: 2, trim: true)
 
-    if domain in Config.instance_registrations_allowlist() or
-         email in Config.instance_registrations_allowlist(),
-       do: :registration_ok,
-       else: :not_allowlisted
+    domain in list or email in list
   end
 
   @doc """

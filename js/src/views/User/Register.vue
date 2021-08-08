@@ -224,7 +224,7 @@ export default class Register extends Vue {
     locale: "en",
   };
 
-  errors: Record<string, unknown> = {};
+  errors: string[] = [];
 
   sendingForm = false;
 
@@ -245,7 +245,7 @@ export default class Register extends Vue {
     this.sendingForm = true;
     this.credentials.locale = this.$i18n.locale;
     try {
-      this.errors = {};
+      this.errors = [];
 
       await this.$apollo.mutate({
         mutation: CREATE_USER,
@@ -259,11 +259,11 @@ export default class Register extends Vue {
     } catch (error) {
       console.error(error);
       this.errors = error.graphQLErrors.reduce(
-        (acc: { [key: string]: any }, localError: any) => {
-          acc[localError.field] = localError.message;
+        (acc: string[], localError: any) => {
+          acc.push(localError.message);
           return acc;
         },
-        {}
+        []
       );
       this.sendingForm = false;
     }
