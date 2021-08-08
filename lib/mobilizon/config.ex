@@ -117,6 +117,9 @@ defmodule Mobilizon.Config do
   @spec instance_registrations_allowlist? :: boolean
   def instance_registrations_allowlist?, do: length(instance_registrations_allowlist()) > 0
 
+  @spec instance_registrations_denylist :: list(String.t())
+  def instance_registrations_denylist, do: instance_config()[:registration_email_denylist]
+
   @spec instance_demo_mode? :: boolean
   def instance_demo_mode?, do: to_boolean(instance_config()[:demo])
 

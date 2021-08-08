@@ -1388,7 +1388,7 @@ msgstr ""
 "Detta är en webbplats för att visa upp och testa beta-versionen av Mobilizon."
 
 #, elixir-format
-#: lib/service/metadata/actor.ex:53 lib/service/metadata/actor.ex:60
+#: lib/service/metadata/actor.ex:67 lib/service/metadata/actor.ex:75
 #: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
 msgid "%{name}'s feed"
 msgstr ""
