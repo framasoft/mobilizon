@@ -294,104 +294,11 @@
       <div class="event-description-wrapper">
         <aside class="event-metadata">
           <div class="sticky">
-            <event-metadata-block
-              :title="$t('Location')"
-              :icon="
-                physicalAddress
-                  ? physicalAddress.poiInfos.poiIcon.icon
-                  : 'earth'
-              "
-            >
-              <div class="address-wrapper">
-                <span v-if="!physicalAddress">{{
-                  $t("No address defined")
-                }}</span>
-                <div class="address" v-if="physicalAddress">
-                  <div>
-                    <address>
-                      <p
-                        class="addressDescription"
-                        :title="physicalAddress.poiInfos.name"
-                      >
-                        {{ physicalAddress.poiInfos.name }}
-                      </p>
-                      <p class="has-text-grey-dark">
-                        {{ physicalAddress.poiInfos.alternativeName }}
-                      </p>
-                    </address>
-                  </div>
-                  <span
-                    class="map-show-button"
-                    @click="showMap = !showMap"
-                    v-if="physicalAddress.geom"
-                    >{{ $t("Show map") }}</span
-                  >
-                </div>
-              </div>
-            </event-metadata-block>
-            <event-metadata-block :title="$t('Date and time')" icon="calendar">
-              <event-full-date
-                :beginsOn="event.beginsOn"
-                :show-start-time="event.options.showStartTime"
-                :show-end-time="event.options.showEndTime"
-                :endsOn="event.endsOn"
-              />
-            </event-metadata-block>
-            <event-metadata-block
-              class="metadata-organized-by"
-              :title="$t('Organized by')"
-            >
-              <popover-actor-card
-                :actor="event.organizerActor"
-                v-if="!event.attributedTo"
-              >
-                <actor-card :actor="event.organizerActor" />
-              </popover-actor-card>
-              <router-link
-                v-if="event.attributedTo"
-                :to="{
-                  name: RouteName.GROUP,
-                  params: {
-                    preferredUsername: usernameWithDomain(event.attributedTo),
-                  },
-                }"
-              >
-                <popover-actor-card
-                  :actor="event.attributedTo"
-                  v-if="
-                    !event.attributedTo ||
-                    !event.options.hideOrganizerWhenGroupEvent
-                  "
-                >
-                  <actor-card :actor="event.attributedTo" />
-                </popover-actor-card>
-              </router-link>
-
-              <popover-actor-card
-                :actor="contact"
-                v-for="contact in event.contacts"
-                :key="contact.id"
-              >
-                <actor-card :actor="contact" />
-              </popover-actor-card>
-            </event-metadata-block>
-            <event-metadata-block
-              v-if="event.onlineAddress && urlToHostname(event.onlineAddress)"
-              icon="link"
-              :title="$t('Website')"
-            >
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                :href="event.onlineAddress"
-                :title="
-                  $t('View page on {hostname} (in a new window)', {
-                    hostname: urlToHostname(event.onlineAddress),
-                  })
-                "
-                >{{ urlToHostname(event.onlineAddress) }}</a
-              >
-            </event-metadata-block>
+            <event-metadata-sidebar
+              v-if="event && config"
+              :event="event"
+              :config="config"
+            />
           </div>
         </aside>
         <div class="event-description-comments">
@@ -407,6 +314,14 @@
                 v-html="event.description"
               />
             </div>
+          </section>
+          <section class="integration-wrappers">
+            <component
+              v-for="(metadata, integration) in integrations"
+              :is="integration"
+              :key="integration"
+              :metadata="metadata"
+            />
           </section>
           <section class="comments" ref="commentsObserver">
             <a href="#comments">
@@ -531,80 +446,6 @@
           </section>
         </div>
       </b-modal>
-      <b-modal
-        class="map-modal"
-        v-if="physicalAddress && physicalAddress.geom"
-        :active.sync="showMap"
-        has-modal-card
-        full-screen
-      >
-        <div class="modal-card">
-          <header class="modal-card-head">
-            <button type="button" class="delete" @click="showMap = false" />
-          </header>
-          <div class="modal-card-body">
-            <section class="map">
-              <map-leaflet
-                :coords="physicalAddress.geom"
-                :marker="{
-                  text: physicalAddress.fullName,
-                  icon: physicalAddress.poiInfos.poiIcon.icon,
-                }"
-              />
-            </section>
-            <section class="columns is-centered map-footer">
-              <div class="column is-half has-text-centered">
-                <p class="address">
-                  <i class="mdi mdi-map-marker"></i>
-                  {{ physicalAddress.fullName }}
-                </p>
-                <p class="getting-there">{{ $t("Getting there") }}</p>
-                <div
-                  class="buttons"
-                  v-if="
-                    addressLinkToRouteByCar ||
-                    addressLinkToRouteByBike ||
-                    addressLinkToRouteByFeet
-                  "
-                >
-                  <a
-                    class="button"
-                    target="_blank"
-                    v-if="addressLinkToRouteByFeet"
-                    :href="addressLinkToRouteByFeet"
-                  >
-                    <i class="mdi mdi-walk"></i
-                  ></a>
-                  <a
-                    class="button"
-                    target="_blank"
-                    v-if="addressLinkToRouteByBike"
-                    :href="addressLinkToRouteByBike"
-                  >
-                    <i class="mdi mdi-bike"></i
-                  ></a>
-                  <a
-                    class="button"
-                    target="_blank"
-                    v-if="addressLinkToRouteByTransit"
-                    :href="addressLinkToRouteByTransit"
-                  >
-                    <i class="mdi mdi-bus"></i
-                  ></a>
-                  <a
-                    class="button"
-                    target="_blank"
-                    v-if="addressLinkToRouteByCar"
-                    :href="addressLinkToRouteByCar"
-                  >
-                    <i class="mdi mdi-car"></i>
-                  </a>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      </b-modal>
     </div>
   </div>
 </template>
@@ -618,8 +459,6 @@ import {
   EventVisibility,
   MemberRole,
   ParticipantRole,
-  RoutingTransportationType,
-  RoutingType,
 } from "@/types/enums";
 import {
   EVENT_PERSON_PARTICIPATION,
@@ -636,7 +475,6 @@ import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
 import EventCard from "../../components/Event/EventCard.vue";
-import EventFullDate from "../../components/Event/EventFullDate.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
 import { CREATE_REPORT } from "../../graphql/report";
@@ -644,7 +482,6 @@ import EventMixin from "../../mixins/event";
 import IdentityPicker from "../Account/IdentityPicker.vue";
 import ParticipationSection from "../../components/Participation/ParticipationSection.vue";
 import RouteName from "../../router/name";
-import { Address } from "../../types/address.model";
 import CommentTree from "../../components/Comment/CommentTree.vue";
 import "intersection-observer";
 import { CONFIG } from "../../graphql/config";
@@ -657,19 +494,18 @@ import {
 import { IConfig } from "../../types/config.model";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import Tag from "../../components/Tag.vue";
-import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
+import EventMetadataSidebar from "../../components/Event/EventMetadataSidebar.vue";
 import EventBanner from "../../components/Event/EventBanner.vue";
-import ActorCard from "../../components/Account/ActorCard.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
+import { IEventMetadataDescription } from "@/types/event-metadata";
+import { eventMetaDataList } from "../../services/EventMetadata";
 
 // noinspection TypeScriptValidateTypes
 @Component({
   components: {
-    EventMetadataBlock,
     Subtitle,
-    EventFullDate,
     EventCard,
     BIcon,
     DateCalendarIcon,
@@ -678,14 +514,24 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
     ParticipationSection,
     CommentTree,
     Tag,
-    ActorCard,
     PopoverActorCard,
     EventBanner,
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
+    EventMetadataSidebar,
     ShareEventModal: () =>
       import(
         /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
+      ),
+    "integration-twitch": () =>
+      import(
+        /* webpackChunkName: "twitchIntegration" */ "../../components/Event/Integrations/Twitch.vue"
+      ),
+    "integration-peertube": () =>
+      import(
+        /* webpackChunkName: "PeerTubeIntegration" */ "../../components/Event/Integrations/PeerTube.vue"
+      ),
+    "integration-youtube": () =>
+      import(
+        /* webpackChunkName: "YouTubeIntegration" */ "../../components/Event/Integrations/YouTube.vue"
       ),
   },
   apollo: {
@@ -783,8 +629,6 @@ export default class Event extends EventMixin {
 
   oldParticipationRole!: string;
 
-  showMap = false;
-
   isReportModalActive = false;
 
   isShareModalActive = false;
@@ -812,65 +656,6 @@ export default class Event extends EventMixin {
   actorForConfirmation!: IPerson;
 
   messageForConfirmation = "";
-
-  RoutingParamType = {
-    [RoutingType.OPENSTREETMAP]: {
-      [RoutingTransportationType.FOOT]: "engine=fossgis_osrm_foot",
-      [RoutingTransportationType.BIKE]: "engine=fossgis_osrm_bike",
-      [RoutingTransportationType.TRANSIT]: null,
-      [RoutingTransportationType.CAR]: "engine=fossgis_osrm_car",
-    },
-    [RoutingType.GOOGLE_MAPS]: {
-      [RoutingTransportationType.FOOT]: "dirflg=w",
-      [RoutingTransportationType.BIKE]: "dirflg=b",
-      [RoutingTransportationType.TRANSIT]: "dirflg=r",
-      [RoutingTransportationType.CAR]: "driving",
-    },
-  };
-
-  makeNavigationPath(
-    transportationType: RoutingTransportationType
-  ): string | undefined {
-    const geometry = this.physicalAddress?.geom;
-    if (geometry) {
-      const routingType = this.config.maps.routing.type;
-      /**
-       * build urls to routing map
-       */
-      if (!this.RoutingParamType[routingType][transportationType]) {
-        return;
-      }
-
-      const urlGeometry = geometry.split(";").reverse().join(",");
-
-      switch (routingType) {
-        case RoutingType.GOOGLE_MAPS:
-          return `https://maps.google.com/?saddr=Current+Location&daddr=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}`;
-        case RoutingType.OPENSTREETMAP:
-        default: {
-          const bboxX = geometry.split(";").reverse()[0];
-          const bboxY = geometry.split(";").reverse()[1];
-          return `https://www.openstreetmap.org/directions?from=&to=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}#map=14/${bboxX}/${bboxY}`;
-        }
-      }
-    }
-  }
-
-  get addressLinkToRouteByCar(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.CAR);
-  }
-
-  get addressLinkToRouteByBike(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.BIKE);
-  }
-
-  get addressLinkToRouteByFeet(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.FOOT);
-  }
-
-  get addressLinkToRouteByTransit(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.TRANSIT);
-  }
 
   get eventTitle(): undefined | string {
     if (!this.event) return undefined;
@@ -1262,12 +1047,6 @@ export default class Event extends EventMixin {
     );
   }
 
-  get physicalAddress(): Address | null {
-    if (!this.event.physicalAddress) return null;
-
-    return new Address(this.event.physicalAddress);
-  }
-
   async anonymousParticipationConfirmed(): Promise<boolean> {
     return isParticipatingInThisEvent(this.uuid);
   }
@@ -1301,6 +1080,32 @@ export default class Event extends EventMixin {
       return this.organizer.domain;
     }
     return null;
+  }
+
+  metadataToComponent: Record<string, string> = {
+    "mz:live:twitch:url": "integration-twitch",
+    "mz:live:peertube:url": "integration-peertube",
+    "mz:live:youtube:url": "integration-youtube",
+  };
+
+  get integrations(): Record<string, IEventMetadataDescription> {
+    return this.event.metadata
+      .map((val) => {
+        const def = eventMetaDataList.find((dat) => dat.key === val.key);
+        return {
+          ...def,
+          ...val,
+        };
+      })
+      .reduce((acc: Record<string, IEventMetadataDescription>, metadata) => {
+        const component = this.metadataToComponent[metadata.key];
+        if (component !== undefined) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          acc[component] = metadata;
+        }
+        return acc;
+      }, {});
   }
 }
 </script>
@@ -1402,60 +1207,6 @@ div.sidebar {
       top: 50px;
       padding: 1rem;
     }
-
-    div.address-wrapper {
-      display: flex;
-      flex: 1;
-      flex-wrap: wrap;
-
-      div.address {
-        flex: 1;
-
-        .map-show-button {
-          cursor: pointer;
-        }
-
-        address {
-          font-style: normal;
-          flex-wrap: wrap;
-          display: flex;
-          justify-content: flex-start;
-
-          span.addressDescription {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex: 1 0 auto;
-            min-width: 100%;
-            max-width: 4rem;
-            overflow: hidden;
-          }
-
-          :not(.addressDescription) {
-            flex: 1;
-            min-width: 100%;
-          }
-        }
-      }
-    }
-
-    span.online-address {
-      display: flex;
-    }
-  }
-
-  ::v-deep .metadata-organized-by {
-    .v-popover.popover .trigger {
-      width: 100%;
-      .media-content {
-        width: calc(100% - 32px - 1rem);
-        max-width: 80vw;
-
-        p.has-text-grey-dark {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-      }
-    }
   }
 
   div.event-description-comments {
@@ -1545,29 +1296,6 @@ a.participations-link {
 
 .event-status .tag {
   font-size: 1rem;
-}
-
-.map-modal {
-  .modal-card-head {
-    justify-content: flex-end;
-    button.delete {
-      margin-right: 1rem;
-    }
-  }
-
-  section.map {
-    height: calc(100% - 8rem);
-    width: calc(100% - 20px);
-  }
-
-  section.map-footer {
-    p.address {
-      margin: 1rem auto;
-    }
-    div.buttons {
-      justify-content: center;
-    }
-  }
 }
 
 .no-border {

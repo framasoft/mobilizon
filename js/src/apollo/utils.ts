@@ -165,12 +165,13 @@ function doMerge<T = any>(
   args: Record<string, any> | null
 ): Array<T> {
   const merged = existing && Array.isArray(existing) ? existing.slice(0) : [];
+  const previous = incoming && Array.isArray(incoming) ? incoming.slice(0) : [];
   let res;
   if (args) {
     // Assume an page of 1 if args.page omitted.
     const { page = 1, limit = 10 } = args;
-    for (let i = 0; i < incoming.length; ++i) {
-      merged[(page - 1) * limit + i] = incoming[i];
+    for (let i = 0; i < previous.length; ++i) {
+      merged[(page - 1) * limit + i] = previous[i];
     }
     res = merged;
   } else {
@@ -178,7 +179,7 @@ function doMerge<T = any>(
     // to receive any arguments, so you might prefer to throw an
     // exception here, instead of recovering by appending incoming
     // onto the existing array.
-    res = [...merged, ...incoming];
+    res = [...merged, ...previous];
     // eslint-disable-next-line no-underscore-dangle
     res = uniqBy(res, (elem: any) => elem.__ref);
   }

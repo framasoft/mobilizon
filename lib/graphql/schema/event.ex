@@ -103,6 +103,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:updated_at, :datetime, description: "When the event was last updated")
     field(:inserted_at, :datetime, description: "When the event was created")
     field(:options, :event_options, description: "The event options")
+    field(:metadata, list_of(:event_metadata), description: "A key-value list of metadata")
   end
 
   @desc "The list of visibility options for an event"
@@ -290,6 +291,26 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     )
   end
 
+  enum :event_metadata_type do
+    value(:string, description: "A string")
+    value(:integer, description: "An integer")
+    value(:boolean, description: "A boolean")
+  end
+
+  object :event_metadata do
+    field(:key, :string, description: "The key for the metadata")
+    field(:title, :string, description: "The title for the metadata")
+    field(:value, :string, description: "The value for the metadata")
+    field(:type, :event_metadata_type, description: "The metadata type")
+  end
+
+  input_object :event_metadata_input do
+    field(:key, non_null(:string), description: "The key for the metadata")
+    field(:title, :string, description: "The title for the metadata")
+    field(:value, non_null(:string), description: "The value for the metadata")
+    field(:type, :event_metadata_type, description: "The metadata type")
+  end
+
   @desc """
   A event contact
   """
@@ -372,6 +393,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:category, :string, default_value: "meeting", description: "The event's category")
       arg(:physical_address, :address_input, description: "The event's physical address")
       arg(:options, :event_options_input, description: "The event options")
+      arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")
 
       arg(:draft, :boolean,
         default_value: false,
@@ -419,6 +441,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:category, :string, description: "The event's category")
       arg(:physical_address, :address_input, description: "The event's physical address")
       arg(:options, :event_options_input, description: "The event options")
+      arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")
       arg(:draft, :boolean, description: "Whether or not the event is a draft")
       arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
 

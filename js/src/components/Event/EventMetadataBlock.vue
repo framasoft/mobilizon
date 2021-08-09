@@ -2,7 +2,18 @@
   <div>
     <h2>{{ title }}</h2>
     <div class="eventMetadataBlock">
-      <b-icon v-if="icon" :icon="icon" size="is-medium" />
+      <!-- Custom icons -->
+      <span
+        class="icon is-medium"
+        v-if="icon && icon.substring(0, 7) === 'mz:icon'"
+      >
+        <img
+          :src="`/img/${icon.substring(8)}_monochrome.svg`"
+          width="32"
+          height="32"
+        />
+      </span>
+      <b-icon v-else-if="icon" :icon="icon" size="is-medium" />
       <p :class="{ 'padding-left': icon }">
         <slot></slot>
       </p>
@@ -36,6 +47,13 @@ div.eventMetadataBlock {
 
     &.padding-left {
       padding: 0 20px;
+
+      a {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
 }

@@ -171,6 +171,12 @@ const FULL_EVENT_FRAGMENT = gql`
     options {
       ...EventOptions
     }
+    metadata {
+      key
+      title
+      value
+      type
+    }
   }
   ${ADDRESS_FRAGMENT}
   ${TAG_FRAGMENT}
@@ -326,6 +332,7 @@ export const EDIT_EVENT = gql`
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]
+    $metadata: EventMetadataInput
   ) {
     updateEvent(
       eventId: $id
@@ -347,6 +354,7 @@ export const EDIT_EVENT = gql`
       physicalAddress: $physicalAddress
       options: $options
       contacts: $contacts
+      metadata: $metadata
     ) {
       ...FullEvent
     }

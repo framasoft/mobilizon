@@ -36,6 +36,11 @@ defmodule Mobilizon.Service.Formatter.DefaultScrubbler do
     "ugc"
   ])
 
+  # Rel attributes are separated by spaces
+  Meta.allow_tag_with_this_attribute_values(:a, "rel", [
+    "noopener noreferrer ugc"
+  ])
+
   Meta.allow_tag_with_these_attributes(:a, ["name", "title", "target"])
 
   Meta.allow_tag_with_these_attributes(:abbr, ["title"])
