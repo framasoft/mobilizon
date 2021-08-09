@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { Route } from "vue-router";
 import { ICurrentUser } from "@/types/current-user.model";
 import { LoginError, LoginErrorCode } from "@/types/enums";
@@ -267,6 +267,13 @@ export default class Login extends Vue {
           },
         });
       }
+    }
+  }
+
+  @Watch("currentUser")
+  redirectToHomepageIfAlreadyLoggedIn(): Promise<Route> | void {
+    if (this.currentUser.isLoggedIn) {
+      return this.$router.push("/");
     }
   }
 }
