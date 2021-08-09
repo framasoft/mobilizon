@@ -122,6 +122,15 @@
             </span>
           </p>
         </div>
+        <subtitle>{{ $t("Event metadata") }}</subtitle>
+        <p>
+          {{
+            $t(
+              "Integrate this event with 3rd-party tools and show metadata for the event."
+            )
+          }}
+        </p>
+        <event-metadata-list v-model="event.metadata" />
         <subtitle>{{ $t("Who can view this event and participate") }}</subtitle>
         <div class="field">
           <b-radio
@@ -451,6 +460,7 @@ import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
+import EventMetadataList from "@/components/Event/EventMetadataList.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import { Route } from "vue-router";
@@ -515,6 +525,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
     TagInput,
     PictureUpload,
     Editor: EditorComponent,
+    EventMetadataList,
   },
   apollo: {
     currentActor: CURRENT_ACTOR_CLIENT,

@@ -16,6 +16,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Discussions.Comment
 
   alias Mobilizon.Events.{
+    EventMetadata,
     EventOptions,
     EventParticipantStats,
     EventStatus,
@@ -108,6 +109,7 @@ defmodule Mobilizon.Events.Event do
 
     embeds_one(:options, EventOptions, on_replace: :delete)
     embeds_one(:participant_stats, EventParticipantStats, on_replace: :update)
+    embeds_many(:metadata, EventMetadata, on_replace: :delete)
     belongs_to(:organizer_actor, Actor, foreign_key: :organizer_actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)
     belongs_to(:physical_address, Address, on_replace: :nilify)
@@ -151,6 +153,7 @@ defmodule Mobilizon.Events.Event do
   defp common_changeset(%Changeset{} = changeset, attrs) do
     changeset
     |> cast_embed(:options)
+    |> cast_embed(:metadata)
     |> put_assoc(:contacts, Map.get(attrs, :contacts, []))
     |> put_assoc(:media, Map.get(attrs, :media, []))
     |> put_tags(attrs)

@@ -251,3 +251,27 @@ export enum SortDirection {
   ASC = "ASC",
   DESC = "DESC",
 }
+
+export enum EventMetadataType {
+  STRING = "STRING",
+  INTEGER = "INTEGER",
+  FLOAT = "FLOAT",
+  BOOLEAN = "BOOLEAN",
+}
+
+export enum EventMetadataKeyType {
+  PLAIN = "PLAIN",
+  URL = "URL",
+  CHOICE = "CHOICE",
+  HANDLE = "HANDLE",
+}
+
+export enum EventMetadataCategories {
+  ACCESSIBILITY = "ACCESSIBILITY",
+  LIVE = "LIVE",
+  REPLAY = "REPLAY",
+  SOCIAL = "SOCIAL",
+  TOOLS = "TOOLS",
+  DETAILS = "DETAILS",
+  BOOKING = "BOOKING",
+}

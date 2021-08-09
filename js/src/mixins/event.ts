@@ -193,13 +193,4 @@ export default class EventMixin extends mixins(Vue) {
       console.error(error);
     }
   }
-
-  // eslint-disable-next-line class-methods-use-this
-  urlToHostname(url: string): string | null {
-    try {
-      return new URL(url).hostname;
-    } catch (e) {
-      return null;
-    }
-  }
 }

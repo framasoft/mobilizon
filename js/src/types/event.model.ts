@@ -10,6 +10,7 @@ import type { IParticipant } from "./participant.model";
 import { EventOptions } from "./event-options.model";
 import type { IEventOptions } from "./event-options.model";
 import { EventJoinOptions, EventStatus, EventVisibility } from "./enums";
+import { IEventMetadata } from "./event-metadata";
 
 export interface IEventCardOptions {
   hideDate: boolean;
@@ -49,6 +50,7 @@ interface IEventEditJSON {
   tags: string[];
   options: IEventOptions;
   contacts: { id?: string }[];
+  metadata: IEventMetadata[];
 }
 
 export interface IEvent {
@@ -84,6 +86,7 @@ export interface IEvent {
 
   tags: ITag[];
   options: IEventOptions;
+  metadata: IEventMetadata[];
   contacts: IActor[];
 
   toEditJSON(): IEventEditJSON;
@@ -153,6 +156,8 @@ export class EventModel implements IEvent {
 
   options: IEventOptions = new EventOptions();
 
+  metadata: IEventMetadata[] = [];
+
   constructor(hash?: IEvent) {
     if (!hash) return;
 
@@ -193,6 +198,7 @@ export class EventModel implements IEvent {
     this.contacts = hash.contacts;
 
     this.tags = hash.tags;
+    this.metadata = hash.metadata;
     if (hash.options) this.options = hash.options;
   }
 
@@ -212,6 +218,12 @@ export class EventModel implements IEvent {
       phoneAddress: this.phoneAddress,
       physicalAddress: this.removeTypeName(this.physicalAddress),
       options: this.removeTypeName(this.options),
+      metadata: this.metadata.map(({ key, value, type, title }) => ({
+        key,
+        value,
+        type,
+        title,
+      })),
       attributedToId:
         this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
       contacts: this.contacts.map(({ id }) => ({
