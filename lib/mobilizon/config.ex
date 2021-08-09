@@ -111,6 +111,9 @@ defmodule Mobilizon.Config do
         instance_config()[:languages]
       )
 
+  @spec default_language :: String.t()
+  def default_language, do: instance_config()[:default_language]
+
   @spec instance_registrations_allowlist :: list(String.t())
   def instance_registrations_allowlist, do: instance_config()[:registration_email_allowlist]
 

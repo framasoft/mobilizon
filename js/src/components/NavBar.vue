@@ -258,13 +258,17 @@ export default class NavBar extends Vue {
       // If we don't have any identities, the user has validated their account,
       // is logging for the first time but didn't create an identity somehow
       if (this.identities.length === 0) {
-        await this.$router.push({
-          name: RouteName.REGISTER_PROFILE,
-          params: {
-            email: this.currentUser.email,
-            userAlreadyActivated: "true",
-          },
-        });
+        try {
+          await this.$router.push({
+            name: RouteName.REGISTER_PROFILE,
+            params: {
+              email: this.currentUser.email,
+              userAlreadyActivated: "true",
+            },
+          });
+        } catch (err) {
+          return undefined;
+        }
       }
     }
   }
@@ -272,6 +276,7 @@ export default class NavBar extends Vue {
   @Watch("loggedUser")
   setSavedLanguage(): void {
     if (this.loggedUser?.locale) {
+      console.debug("Setting locale from navbar");
       loadLanguageAsync(this.loggedUser.locale);
     }
   }

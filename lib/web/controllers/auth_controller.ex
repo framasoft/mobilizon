@@ -30,7 +30,8 @@ defmodule Mobilizon.Web.AuthController do
   end
 
   def callback(
-        %{assigns: %{ueberauth_auth: %Ueberauth.Auth{strategy: strategy} = auth}} = conn,
+        %{assigns: %{ueberauth_auth: %Ueberauth.Auth{strategy: strategy} = auth, locale: locale}} =
+          conn,
         _params
       ) do
     email = email_from_ueberauth(auth)
@@ -40,7 +41,7 @@ defmodule Mobilizon.Web.AuthController do
     user =
       with {:valid_email, false} <- {:valid_email, is_nil(email) or email == ""},
            {:error, :user_not_found} <- Users.get_user_by_email(email),
-           {:ok, %User{} = user} <- Users.create_external(email, strategy) do
+           {:ok, %User{} = user} <- Users.create_external(email, strategy, %{locale: locale}) do
         user
       else
         {:ok, %User{} = user} ->
