@@ -69,13 +69,27 @@
     >
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
-      <div v-if="events.elements.length > 0" class="columns is-multiline">
-        <div
-          class="column is-one-third-desktop"
-          v-for="event in events.elements"
-          :key="event.uuid"
-        >
-          <EventCard :event="event" />
+      <div v-if="events.elements.length > 0">
+        <div class="columns is-multiline">
+          <div
+            class="column is-one-third-desktop"
+            v-for="event in events.elements"
+            :key="event.uuid"
+          >
+            <EventCard :event="event" />
+          </div>
+        </div>
+        <div class="pagination" v-if="events.total > EVENT_PAGE_LIMIT">
+          <b-pagination
+            :total="events.total"
+            v-model="eventPage"
+            :per-page="EVENT_PAGE_LIMIT"
+            :aria-next-label="$t('Next page')"
+            :aria-previous-label="$t('Previous page')"
+            :aria-page-label="$t('Page')"
+            :aria-current-label="$t('Current page')"
+          >
+          </b-pagination>
         </div>
       </div>
       <b-message
@@ -104,7 +118,7 @@
               <EventCard :event="event" />
             </div>
           </div>
-          <div class="pagination">
+          <div class="pagination" v-if="searchEvents.total > EVENT_PAGE_LIMIT">
             <b-pagination
               :total="searchEvents.total"
               v-model="eventPage"
@@ -218,7 +232,15 @@ const THROTTLE = 2000; // minimum interval in ms between two requests
   },
   apollo: {
     config: CONFIG,
-    events: FETCH_EVENTS,
+    events: {
+      query: FETCH_EVENTS,
+      variables() {
+        return {
+          page: this.eventPage,
+          limit: EVENT_PAGE_LIMIT,
+        };
+      },
+    },
     searchEvents: {
       query: SEARCH_EVENTS,
       fetchPolicy: "cache-and-network",
@@ -278,8 +300,6 @@ export default class Search extends Vue {
   };
 
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
-
-  eventPage = 1;
 
   groupPage = 1;
 
@@ -353,6 +373,17 @@ export default class Search extends Vue {
 
   submit(): void {
     this.$apollo.queries.searchEvents.refetch();
+  }
+
+  get eventPage(): number {
+    return parseInt(this.$route.query.eventPage as string, 10) || 1;
+  }
+
+  set eventPage(page: number) {
+    this.$router.push({
+      name: RouteName.SEARCH,
+      query: { ...this.$route.query, eventPage: page.toString() },
+    });
   }
 
   get search(): string | undefined {
