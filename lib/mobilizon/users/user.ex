@@ -8,7 +8,7 @@ defmodule Mobilizon.Users.User do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Crypto
+  alias Mobilizon.{Config, Crypto}
   alias Mobilizon.Events.FeedToken
   alias Mobilizon.Users.{ActivitySetting, Setting, UserRole}
   alias Mobilizon.Web.Email.Checker
@@ -78,7 +78,7 @@ defmodule Mobilizon.Users.User do
     field(:reset_password_sent_at, :utc_datetime)
     field(:reset_password_token, :string)
     field(:unconfirmed_email, :string)
-    field(:locale, :string, default: "en")
+    field(:locale, :string, default: Config.default_language())
     field(:disabled, :boolean, default: false)
     field(:provider, :string)
     field(:last_sign_in_at, :utc_datetime)

@@ -1,3 +1,6 @@
+<template>
+  <p>{{ $t("Redirecting in progress…") }}</p>
+</template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { ICurrentUserRole } from "@/types/enums";
@@ -52,11 +55,7 @@ export default class ProviderValidate extends Vue {
         );
         await this.$router.push({ name: RouteName.HOME });
       } else {
-        // If the user didn't register any profile yet, let's create one for them
-        await this.$router.push({
-          name: RouteName.REGISTER_PROFILE,
-          params: { email: loggedUser.email, userAlreadyActivated: "true" },
-        });
+        // No need to push to REGISTER_PROFILE, the navbar will do it for us
       }
     }
   }

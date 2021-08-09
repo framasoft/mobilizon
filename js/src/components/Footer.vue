@@ -88,6 +88,7 @@ export default class Footer extends Vue {
   // eslint-disable-next-line class-methods-use-this
   async updateLocale(locale: string): Promise<void> {
     if (locale) {
+      console.debug("Setting locale from footer");
       await loadLanguageAsync(locale);
       saveLocaleData(locale);
     }

@@ -8,8 +8,18 @@ import pluralizationRules from "../i18n/pluralRules";
 
 const DEFAULT_LOCALE = "en_US";
 
+const localeInLocalStorage = getLocaleData();
+
+console.debug("localeInLocalStorage", localeInLocalStorage);
+
 let language =
-  getLocaleData() || (document.documentElement.getAttribute("lang") as string);
+  localeInLocalStorage ||
+  (document.documentElement.getAttribute("lang") as string);
+
+console.debug(
+  "localeInLocalStorage or fallback to lang html attribute",
+  language
+);
 
 language =
   language ||
@@ -18,10 +28,14 @@ language =
     "_"
   );
 
+console.debug("language or fallback to window.navigator language", language);
+
 export const locale =
   language && Object.prototype.hasOwnProperty.call(langs, language)
     ? language
     : language.split("-")[0];
+
+console.debug("chosen locale", locale);
 
 Vue.use(VueI18n);
 
@@ -35,9 +49,12 @@ export const i18n = new VueI18n({
   pluralizationRules,
 });
 
+console.debug("set VueI18n with default locale", DEFAULT_LOCALE);
+
 const loadedLanguages = [DEFAULT_LOCALE];
 
 function setI18nLanguage(lang: string): string {
+  console.debug("setting i18n locale to", lang);
   i18n.locale = lang;
   setLanguageInDOM(lang);
   return lang;
@@ -80,14 +97,17 @@ Vue.use(DateFnsPlugin, { locale: dateFnsfileForLanguage(locale) });
 export async function loadLanguageAsync(lang: string): Promise<string> {
   // If the same language
   if (i18n.locale === lang) {
+    console.debug("already using language", lang);
     return Promise.resolve(setI18nLanguage(lang));
   }
 
   // If the language was already loaded
   if (loadedLanguages.includes(lang)) {
+    console.debug("language already loaded", lang);
     return Promise.resolve(setI18nLanguage(lang));
   }
   // If the language hasn't been loaded yet
+  console.debug("loading language", lang);
   const newMessages = await import(
     /* webpackChunkName: "lang-[request]" */ `@/i18n/${vueI18NfileForLanguage(
       lang
@@ -98,7 +118,9 @@ export async function loadLanguageAsync(lang: string): Promise<string> {
   return setI18nLanguage(lang);
 }
 
+console.debug("loading async locale", locale);
 loadLanguageAsync(locale);
+console.debug("loaded async locale", locale);
 
 export function formatList(list: string[]): string {
   if (window.Intl && Intl.ListFormat) {
