@@ -250,7 +250,9 @@ export default class EditorComponent extends Vue {
         Mention.configure(MentionOptions),
         CustomImage,
         Underline,
-        Link,
+        Link.configure({
+          HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
+        }),
         CharacterCount.configure({
           limit: this.maxSize,
         }),
