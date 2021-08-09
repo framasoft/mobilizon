@@ -209,8 +209,18 @@ export const FETCH_EVENT_BASIC = gql`
 `;
 
 export const FETCH_EVENTS = gql`
-  query FetchEvents($orderBy: EventOrderBy, $direction: SortDirection) {
-    events(orderBy: $orderBy, direction: $direction) {
+  query FetchEvents(
+    $orderBy: EventOrderBy
+    $direction: SortDirection
+    $page: Int
+    $limit: Int
+  ) {
+    events(
+      orderBy: $orderBy
+      direction: $direction
+      page: $page
+      limit: $limit
+    ) {
       total
       elements {
         id
@@ -246,14 +256,14 @@ export const FETCH_EVENTS = gql`
           domain
           name
         }
-        #      attributedTo {
-        #        avatar {
-        #          id
-        #          url
-        #        },
-        #        preferredUsername,
-        #        name,
-        #      },
+        attributedTo {
+          avatar {
+            id
+            url
+          }
+          preferredUsername
+          name
+        }
         category
         tags {
           ...TagFragment
