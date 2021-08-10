@@ -1110,6 +1110,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:error, error_message, object} when error_message in ["Gone", "Not found"] ->
         {:ok, object}
 
+      # comments are just emptied
+      {:ok, %Comment{deleted_at: deleted_at} = object} when not is_nil(deleted_at) ->
+        {:ok, object}
+
       {:ok, %{url: url} = object} ->
         if Utils.are_same_origin?(url, Endpoint.url()),
           do: {:ok, object},

@@ -37,6 +37,11 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     %{"to" => maybe_add_group_members([], actor), "cc" => []}
   end
 
+  # Deleted comments are just like tombstones
+  def get_audience(%Comment{deleted_at: deleted_at}) when not is_nil(deleted_at) do
+    %{"to" => [@ap_public], "cc" => []}
+  end
+
   def get_audience(%Comment{discussion: %Discussion{} = discussion}) do
     get_audience(discussion)
   end
