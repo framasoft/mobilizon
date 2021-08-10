@@ -239,6 +239,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   Takes the actor or attributedTo attributes (considers only the first elem if they're an array)
   """
+  def origin_check?(id, %{"type" => "Tombstone", "id" => tombstone_id}), do: id == tombstone_id
+
   def origin_check?(id, %{"actor" => actor, "attributedTo" => _attributed_to} = params)
       when not is_nil(actor) and actor != "" do
     params = Map.delete(params, "attributedTo")
