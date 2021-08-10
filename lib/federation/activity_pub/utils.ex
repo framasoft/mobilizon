@@ -88,7 +88,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "participationMessage" => %{
             "@id" => "mz:participationMessage",
             "@type" => "sc:Text"
-          }
+          },
+          "PropertyValue" => "sc:PropertyValue",
+          "value" => "sc:value",
+          "propertyID" => "sc:propertyID"
         }
       ]
     }

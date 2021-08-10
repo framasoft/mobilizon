@@ -7,7 +7,7 @@ defmodule Mobilizon.Events.EventMetadata do
   import Ecto.Changeset
   import EctoEnum
 
-  defenum(EventMetadataTypeEnum, string: 0, integer: 1, boolean: 2)
+  defenum(EventMetadataTypeEnum, string: 0, integer: 1, boolean: 2, float: 3)
 
   @type t :: %__MODULE__{
           key: String.t(),
