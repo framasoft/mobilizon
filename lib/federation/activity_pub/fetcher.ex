@@ -142,7 +142,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
       true
     else
       Sentry.capture_message("Object origin check failed", extra: %{url: url, data: data})
-      Logger.debug("Object origin check failed")
+      Logger.debug("Object origin check failed between #{inspect(url)} and #{inspect(data)}")
       false
     end
   end

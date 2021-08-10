@@ -5,6 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.Converter
 
   alias Mobilizon.Web.Endpoint
@@ -49,6 +50,15 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
       assert comment_data["content"] == reply.text
       assert comment_data["actor"] == reply.actor.url
       assert comment_data["inReplyTo"] == comment.url
+    end
+  end
+
+  describe "origin_check?" do
+    test "origin_check? with a tombstone" do
+      assert Utils.origin_check?("http://an_uri", %{
+               "type" => "Tombstone",
+               "id" => "http://an_uri"
+             })
     end
   end
 end
