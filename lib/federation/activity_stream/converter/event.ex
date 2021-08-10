@@ -10,9 +10,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
+  alias Mobilizon.Medias.Media
 
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
+  alias Mobilizon.Federation.ActivityStream.Converter.EventMetadata, as: EventMetadataConverter
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
   alias Mobilizon.Web.Endpoint
 
@@ -53,6 +55,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
          {:mentions, mentions} <- {:mentions, fetch_mentions(object["tag"])},
          {:visibility, visibility} <- {:visibility, get_visibility(object)},
          {:options, options} <- {:options, get_options(object)},
+         {:metadata, metadata} <- {:metadata, get_metdata(object)},
          [description: description, picture_id: picture_id, medias: medias] <-
            process_pictures(object, actor_id) do
       %{
@@ -69,6 +72,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         join_options: Map.get(object, "joinMode", "free"),
         local: is_local(object["id"]),
         options: options,
+        metadata: metadata,
         status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
         online_address: object |> Map.get("attachment", []) |> get_online_address(),
         phone_address: object["phoneAddress"],
@@ -120,7 +124,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "repliesModerationOption" => event.options.comment_moderation,
       "commentsEnabled" => event.options.comment_moderation == :allow_all,
       "anonymousParticipationEnabled" => event.options.anonymous_participation,
-      "attachment" => [],
+      "attachment" => Enum.map(event.metadata, &EventMetadataConverter.metadata_to_as/1),
       "draft" => event.draft,
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
@@ -132,8 +136,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     |> maybe_add_inline_media(event)
   end
 
-  @spec attributed_to_or_default(Event.t()) :: Actor.t()
-  defp attributed_to_or_default(event) do
+  @spec attributed_to_or_default(EventModel.t()) :: Actor.t()
+  defp attributed_to_or_default(%EventModel{} = event) do
     if(is_nil(event.attributed_to) or not Ecto.assoc_loaded?(event.attributed_to),
       do: nil,
       else: event.attributed_to
@@ -155,6 +159,14 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         )
     }
   end
+
+  defp get_metdata(%{"attachment" => attachments}) do
+    attachments
+    |> Enum.filter(&(&1["type"] == "PropertyValue"))
+    |> Enum.map(&EventMetadataConverter.as_to_metadata/1)
+  end
+
+  defp get_metdata(_), do: []
 
   @spec get_address(map | binary | nil) :: integer | nil
   defp get_address(address_url) when is_binary(address_url) do
@@ -219,55 +231,56 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     end)
   end
 
-  @spec maybe_add_physical_address(map(), Event.t()) :: map()
-  defp maybe_add_physical_address(res, event) do
-    if is_nil(event.physical_address),
-      do: res,
-      else: Map.put(res, "location", AddressConverter.model_to_as(event.physical_address))
+  @spec maybe_add_physical_address(map(), EventModel.t()) :: map()
+  defp maybe_add_physical_address(res, %EventModel{
+         physical_address: %Address{} = physical_address
+       }) do
+    Map.put(res, "location", AddressConverter.model_to_as(physical_address))
   end
 
-  @spec maybe_add_event_picture(map(), Event.t()) :: map()
-  defp maybe_add_event_picture(res, event) do
-    if is_nil(event.picture),
-      do: res,
-      else:
-        Map.update(
-          res,
-          "attachment",
-          [],
-          &(&1 ++
-              [
-                event.picture
-                |> MediaConverter.model_to_as()
-                |> Map.put("name", @banner_picture_name)
-              ])
-        )
+  defp maybe_add_physical_address(res, %EventModel{physical_address: _}), do: res
+
+  @spec maybe_add_event_picture(map(), EventModel.t()) :: map()
+  defp maybe_add_event_picture(res, %EventModel{picture: %Media{} = picture}) do
+    Map.update(
+      res,
+      "attachment",
+      [],
+      &(&1 ++
+          [
+            picture
+            |> MediaConverter.model_to_as()
+            |> Map.put("name", @banner_picture_name)
+          ])
+    )
   end
 
-  @spec maybe_add_online_address(map(), Event.t()) :: map()
-  defp maybe_add_online_address(res, event) do
-    if is_nil(event.online_address),
-      do: res,
-      else:
-        Map.update(
-          res,
-          "attachment",
-          [],
-          &(&1 ++
-              [
-                %{
-                  "type" => "Link",
-                  "href" => event.online_address,
-                  "mediaType" => "text/html",
-                  "name" => @online_address_name
-                }
-              ])
-        )
+  defp maybe_add_event_picture(res, %EventModel{picture: _}), do: res
+
+  @spec maybe_add_online_address(map(), EventModel.t()) :: map()
+  defp maybe_add_online_address(res, %EventModel{online_address: online_address})
+       when is_binary(online_address) do
+    Map.update(
+      res,
+      "attachment",
+      [],
+      &(&1 ++
+          [
+            %{
+              "type" => "Link",
+              "href" => online_address,
+              "mediaType" => "text/html",
+              "name" => @online_address_name
+            }
+          ])
+    )
   end
 
-  @spec maybe_add_inline_media(map(), Event.t()) :: map()
-  defp maybe_add_inline_media(res, event) do
-    medias = Enum.map(event.media, &MediaConverter.model_to_as/1)
+  defp maybe_add_online_address(res, %EventModel{online_address: _}), do: res
+
+  @spec maybe_add_inline_media(map(), EventModel.t()) :: map()
+  defp maybe_add_inline_media(res, %EventModel{media: media}) do
+    medias = Enum.map(media, &MediaConverter.model_to_as/1)
 
     Map.update(
       res,

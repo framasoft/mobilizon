@@ -183,6 +183,7 @@ defmodule Mobilizon.Factory do
       visibility: :public,
       tags: build_list(3, :tag),
       mentions: [],
+      metadata: build_list(2, :event_metadata),
       local: true,
       publish_at: DateTime.utc_now(),
       url: Routes.page_url(Endpoint, :event, uuid),
@@ -456,6 +457,14 @@ defmodule Mobilizon.Factory do
       actor: build(:actor),
       owner_actor: build(:actor),
       uri: sequence("https://someshare.uri/p/12")
+    }
+  end
+
+  def event_metadata_factory do
+    %Mobilizon.Events.EventMetadata{
+      key: sequence("mz:custom:something"),
+      value: sequence("a value"),
+      type: :string
     }
   end
 end

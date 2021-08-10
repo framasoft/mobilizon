@@ -52,16 +52,14 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
       }) do
     with {to, cc} <-
            extract_actors_from_mentions(mentions, actor, visibility),
-         {to, cc} <- {Enum.uniq(to ++ add_in_reply_to(in_reply_to_comment)), cc},
-         {to, cc} <- {Enum.uniq(to ++ add_event_author(event)), cc},
+         {to, cc} <- {to ++ add_in_reply_to(in_reply_to_comment), cc},
+         {to, cc} <- add_event_organizers(event, to, cc),
          {to, cc} <-
            {to,
-            Enum.uniq(
-              cc ++
-                add_comments_authors([origin_comment]) ++
-                add_shares_actors_followers(url)
-            )} do
-      %{"to" => to, "cc" => cc}
+            cc ++
+              add_comments_authors([origin_comment]) ++
+              add_shares_actors_followers(url)} do
+      %{"to" => Enum.uniq(to), "cc" => Enum.uniq(cc)}
     end
   end
 
@@ -173,11 +171,22 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   defp add_in_reply_to(%Event{organizer_actor: %Actor{url: url}} = _event), do: [url]
   defp add_in_reply_to(_), do: []
 
-  defp add_event_author(%Event{} = event) do
-    [Repo.preload(event, [:organizer_actor]).organizer_actor.url]
+  defp add_event_organizers(%Event{} = event, to, cc) do
+    event = Repo.preload(event, [:organizer_actor, :attributed_to])
+
+    case event do
+      %Event{
+        attributed_to: %Actor{members_url: members_url, followers_url: followers_url},
+        organizer_actor: %Actor{url: organizer_actor_url}
+      } ->
+        {to ++ [organizer_actor_url, members_url], cc ++ [followers_url]}
+
+      %Event{organizer_actor: %Actor{url: organizer_actor_url}} ->
+        {to ++ [organizer_actor_url], cc}
+    end
   end
 
-  defp add_event_author(_), do: []
+  defp add_event_organizers(_, to, cc), do: {to, cc}
 
   defp add_comment_author(%Comment{} = comment) do
     case Repo.preload(comment, [:actor]) do

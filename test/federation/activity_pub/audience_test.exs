@@ -247,6 +247,32 @@ defmodule Mobilizon.Federation.ActivityPub.AudienceTest do
       assert %{"to" => [members_url], "cc" => []} ==
                Audience.get_audience(comment)
     end
+
+    test "reply to a remote comment" do
+      %Actor{id: remote_actor_id, url: remote_actor_url} =
+        remote_actor =
+        insert(:actor, domain: "somewhere.else", url: "https://somewhere.else/@someone")
+
+      %Actor{id: remote_group_id, url: remote_group_url} =
+        remote_group =
+        insert(:group, domain: "somewhere.else", url: "https://somewhere.else/@somegroup")
+
+      %Event{} =
+        event =
+        insert(:event, local: false, organizer_actor: remote_actor, attributed_to: remote_group)
+
+      %Comment{} = comment = insert(:comment, event: event)
+
+      assert %{
+               "cc" => [comment.actor.followers_url, comment.event.attributed_to.followers_url],
+               "to" => [
+                 @ap_public,
+                 comment.event.organizer_actor.url,
+                 comment.event.attributed_to.members_url
+               ]
+             } ==
+               Audience.get_audience(comment)
+    end
   end
 
   describe "participant" do
