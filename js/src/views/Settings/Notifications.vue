@@ -686,10 +686,15 @@ export default class Notifications extends Vue {
   }
 
   async checkCanShowWebPush(): Promise<boolean> {
-    if (!window.isSecureContext || !("serviceWorker" in navigator))
+    try {
+      if (!window.isSecureContext || !("serviceWorker" in navigator))
+        return Promise.resolve(false);
+      const registration = await navigator.serviceWorker.getRegistration();
+      return registration !== undefined;
+    } catch (e) {
+      console.error(e);
       return Promise.resolve(false);
-    const registration = await navigator.serviceWorker.getRegistration();
-    return registration !== undefined;
+    }
   }
 
   async created(): Promise<void> {
@@ -713,9 +718,14 @@ export default class Notifications extends Vue {
   }
 
   private async isSubscribed(): Promise<boolean> {
-    if (!("serviceWorker" in navigator)) return Promise.resolve(false);
-    const registration = await navigator.serviceWorker.getRegistration();
-    return (await registration?.pushManager?.getSubscription()) != null;
+    try {
+      if (!("serviceWorker" in navigator)) return Promise.resolve(false);
+      const registration = await navigator.serviceWorker.getRegistration();
+      return (await registration?.pushManager?.getSubscription()) != null;
+    } catch (e) {
+      console.error(e);
+      return Promise.resolve(false);
+    }
   }
 
   private async deleteFeedToken(token: string): Promise<void> {
