@@ -203,41 +203,47 @@ export class EventModel implements IEvent {
   }
 
   toEditJSON(): IEventEditJSON {
-    return {
-      id: this.id,
-      title: this.title,
-      description: this.description,
-      beginsOn: this.beginsOn.toISOString(),
-      endsOn: this.endsOn ? this.endsOn.toISOString() : null,
-      status: this.status,
-      visibility: this.visibility,
-      joinOptions: this.joinOptions,
-      draft: this.draft,
-      tags: this.tags.map((t) => t.title),
-      onlineAddress: this.onlineAddress,
-      phoneAddress: this.phoneAddress,
-      physicalAddress: this.removeTypeName(this.physicalAddress),
-      options: this.removeTypeName(this.options),
-      metadata: this.metadata.map(({ key, value, type, title }) => ({
-        key,
-        value,
-        type,
-        title,
-      })),
-      attributedToId:
-        this.attributedTo && this.attributedTo.id ? this.attributedTo.id : null,
-      contacts: this.contacts.map(({ id }) => ({
-        id,
-      })),
-    };
+    return toEditJSON(this);
   }
+}
 
-  private removeTypeName(entity: any): any {
-    if (entity?.__typename) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { __typename, ...purgedEntity } = entity;
-      return purgedEntity;
-    }
-    return entity;
+function removeTypeName(entity: any): any {
+  if (entity?.__typename) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { __typename, ...purgedEntity } = entity;
+    return purgedEntity;
   }
+  return entity;
+}
+
+export function toEditJSON(event: IEvent): IEventEditJSON {
+  return {
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    beginsOn: event.beginsOn.toISOString(),
+    endsOn: event.endsOn ? event.endsOn.toISOString() : null,
+    status: event.status,
+    visibility: event.visibility,
+    joinOptions: event.joinOptions,
+    draft: event.draft,
+    tags: event.tags.map((t) => t.title),
+    onlineAddress: event.onlineAddress,
+    phoneAddress: event.phoneAddress,
+    physicalAddress: removeTypeName(event.physicalAddress),
+    options: removeTypeName(event.options),
+    metadata: event.metadata.map(({ key, value, type, title }) => ({
+      key,
+      value,
+      type,
+      title,
+    })),
+    attributedToId:
+      event.attributedTo && event.attributedTo.id
+        ? event.attributedTo.id
+        : null,
+    contacts: event.contacts.map(({ id }) => ({
+      id,
+    })),
+  };
 }
