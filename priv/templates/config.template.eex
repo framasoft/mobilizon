@@ -6,7 +6,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
    server: <%= release %>,
    url: [host: "<%= instance_domain %>"],
    http: [
-     ip: {0, 0, 0, 0, 0, 0, 0, 1},
+     ip: {127,0,0,1},
      port: <%= listen_port %>
     ],
    secret_key_base: "<%= instance_secret %>"
