@@ -1,11 +1,14 @@
 <template>
   <div class="list is-hoverable">
+    <b-input
+      :placeholder="$t('Filter by profile or group name')"
+      v-model="actorFilter"
+    />
     <b-radio-button
       v-model="selectedActor"
       :native-value="availableActor"
       class="list-item"
-      v-for="availableActor in actualAvailableActors"
-      :class="{ 'is-active': availableActor.id === selectedActor.id }"
+      v-for="availableActor in actualFilteredAvailableActors"
       :key="availableActor.id"
     >
       <div class="media">
@@ -61,6 +64,8 @@ export default class OrganizerPicker extends Vue {
 
   currentActor!: IPerson;
 
+  actorFilter = "";
+
   get selectedActor(): IActor | undefined {
     if (this.value?.id) {
       return this.value;
@@ -102,6 +107,16 @@ export default class OrganizerPicker extends Vue {
       ),
       ...this.actualMemberships.map((member) => member.parent),
     ].filter((elem) => elem);
+  }
+
+  get actualFilteredAvailableActors(): IActor[] {
+    return this.actualAvailableActors.filter((actor) => {
+      return [
+        actor.preferredUsername.toLowerCase(),
+        actor.name?.toLowerCase(),
+        actor.domain?.toLowerCase(),
+      ].some((match) => match?.includes(this.actorFilter.toLowerCase()));
+    });
   }
 }
 </script>

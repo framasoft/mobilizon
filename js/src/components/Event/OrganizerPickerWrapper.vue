@@ -52,17 +52,25 @@
         </header>
         <section class="modal-card-body">
           <div class="columns">
-            <div class="column">
+            <div class="column actor-picker">
               <organizer-picker
                 v-model="selectedActor"
                 @input="relay"
                 :restrict-moderator-level="true"
               />
             </div>
-            <div class="column">
-              <div v-if="actorMembers.length > 0">
+            <div class="column contact-picker">
+              <div v-if="isSelectedActorAGroup && actorMembers.length > 0">
                 <p>{{ $t("Add a contact") }}</p>
-                <p class="field" v-for="actor in actorMembers" :key="actor.id">
+                <b-input
+                  :placeholder="$t('Filter by name')"
+                  v-model="contactFilter"
+                />
+                <p
+                  class="field"
+                  v-for="actor in filteredActorMembers"
+                  :key="actor.id"
+                >
                   <b-checkbox v-model="actualContacts" :native-value="actor.id">
                     <div class="media">
                       <div class="media-left">
@@ -88,7 +96,7 @@
                   </b-checkbox>
                 </p>
               </div>
-              <div v-else class="content has-text-grey has-text-centered">
+              <div v-else class="content has-text-grey-dark has-text-centered">
                 <p>{{ $t("Your profile will be shown as contact.") }}</p>
               </div>
             </div>
@@ -167,6 +175,8 @@ export default class OrganizerPickerWrapper extends Vue {
 
   isComponentModalActive = false;
 
+  contactFilter = "";
+
   usernameWithDomain = usernameWithDomain;
 
   @Prop({ type: Array, required: false, default: () => [] })
@@ -226,19 +236,33 @@ export default class OrganizerPickerWrapper extends Vue {
   }
 
   get actorMembers(): IActor[] {
-    if (this.selectedActor?.type === ActorType.GROUP) {
+    if (this.isSelectedActorAGroup) {
       return this.members.elements.map(({ actor }: { actor: IActor }) => actor);
     }
     return [];
   }
+
+  get filteredActorMembers(): IActor[] {
+    return this.actorMembers.filter((actor) => {
+      return [
+        actor.preferredUsername.toLowerCase(),
+        actor.name?.toLowerCase(),
+        actor.domain?.toLowerCase(),
+      ].some((match) => match?.includes(this.contactFilter.toLowerCase()));
+    });
+  }
+
+  get isSelectedActorAGroup(): boolean {
+    return this.selectedActor?.type === ActorType.GROUP;
+  }
 }
 </script>
 <style lang="scss" scoped>
-.group-picker {
-  .block,
-  .no-group,
-  .inline {
-    cursor: pointer;
+.modal-card-body .columns .column {
+  &.actor-picker,
+  &.contact-picker {
+    overflow-y: auto;
+    max-height: 400px;
   }
 }
 </style>
