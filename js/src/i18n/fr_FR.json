@@ -1213,5 +1213,8 @@
   "Tools": "Outils",
   "Social": "Social",
   "Details": "Détails",
-  "Booking": "Réservations"
+  "Booking": "Réservations",
+  "Filter by profile or group name": "Filter par nom du profil ou du groupe",
+  "Filter by name": "Filtrer par nom",
+  "Redirecting in progress…": "Redirection en cours…"
 }
