@@ -15,8 +15,8 @@ defmodule Mobilizon.Web.Router do
     plug(Mobilizon.Web.Plugs.SetLocalePlug)
 
     plug(Mobilizon.Web.Plugs.HTTPSecurityPlug,
-      script_src: ["cdn.jsdelivr.net"],
-      style_src: ["cdn.jsdelivr.net"],
+      script_src: ["cdn.jsdelivr.net 'sha256-zkCwvTwqwJMew/8TKv7bTLh94XRSNBvT/o/NZCuf5Kc='"],
+      style_src: ["cdn.jsdelivr.net 'unsafe-inline'"],
       font_src: ["cdn.jsdelivr.net"]
     )
   end
