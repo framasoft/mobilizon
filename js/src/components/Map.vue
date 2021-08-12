@@ -7,12 +7,18 @@
       :center="[lat, lon]"
       @click="clickMap"
       @update:zoom="updateZoom"
+      :options="{ zoomControl: false }"
     >
       <l-tile-layer
         :url="config.maps.tiles.endpoint"
         :attribution="attribution"
       >
       </l-tile-layer>
+      <l-control-zoom
+        position="topleft"
+        :zoomInTitle="$t('Zoom in')"
+        :zoomOutTitle="$t('Zoom out')"
+      ></l-control-zoom>
       <v-locatecontrol :options="{ icon: 'mdi mdi-map-marker' }" />
       <l-marker
         :lat-lng="[lat, lon]"
@@ -34,7 +40,14 @@
 import { Icon, LatLng, LeafletMouseEvent, LeafletEvent } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "vue2-leaflet";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LIcon,
+  LControlZoom,
+} from "vue2-leaflet";
 import Vue2LeafletLocateControl from "@/components/Map/Vue2LeafletLocateControl.vue";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
@@ -46,6 +59,7 @@ import { IConfig } from "../types/config.model";
     LMarker,
     LPopup,
     LIcon,
+    LControlZoom,
     "v-locatecontrol": Vue2LeafletLocateControl,
   },
   apollo: {

@@ -9,6 +9,7 @@
 </template>
 <script lang="ts">
 import { IMedia } from "@/types/media.model";
+import { PropType } from "vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import LazyImage from "../Image/LazyImage.vue";
 
@@ -31,7 +32,7 @@ const DEFAULT_PICTURE = {
   },
 })
 export default class LazyImageWrapper extends Vue {
-  @Prop({ required: true })
+  @Prop({ required: false, type: Object as PropType<IMedia | null> })
   picture!: IMedia | null;
 
   get pictureOrDefault(): Partial<IMedia> {

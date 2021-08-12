@@ -5,6 +5,7 @@
 </template>
 <script lang="ts">
 import { IMedia } from "@/types/media.model";
+import { PropType } from "vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import LazyImageWrapper from "../Image/LazyImageWrapper.vue";
 
@@ -14,7 +15,7 @@ import LazyImageWrapper from "../Image/LazyImageWrapper.vue";
   },
 })
 export default class EventBanner extends Vue {
-  @Prop({ required: true, default: null })
+  @Prop({ required: true, default: null, type: Object as PropType<IMedia> })
   picture!: IMedia | null;
 }
 </script>

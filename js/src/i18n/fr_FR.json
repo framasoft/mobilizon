@@ -99,7 +99,7 @@
   "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> cet événement ? Cette action n'est pas réversible. Vous voulez peut-être engager la discussion avec le créateur de l'événement ou bien modifier son événement à la place.",
   "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>.": "Êtes-vous certain·e de vouloir <b>suspendre</b> ce groupe ? Tous les membres - y compris ceux·elles sur d'autres instances - seront notifié·e·s et supprimé·e·s du groupe, et <b>toutes les données associées au groupe (événements, billets, discussions, todos…) seront irrémédiablement détruites</b>.",
   "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.": "Êtes-vous certain·e de vouloir <b>suspendre</b> ce groupe ? Comme ce groupe provient de l'instance {instance}, cela supprimera seulement les membres locaux et supprimera les données locales, et rejettera également toutes les données futures.",
-  "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Étes-vous certain⋅e de vouloir annuler la création de l'événement ? Vous allez perdre toutes vos modifications.",
+  "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Êtes-vous certain⋅e de vouloir annuler la création de l'événement ? Vous allez perdre toutes vos modifications.",
   "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Êtes-vous certain⋅e de vouloir annuler la modification de l'événement ? Vous allez perdre toutes vos modifications.",
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Êtes-vous certain⋅e de vouloir annuler votre participation à l'événement « {title} » ?",
   "Are you sure you want to delete this entire discussion?": "Êtes-vous certain⋅e de vouloir supprimer l'entièreté de cette discussion ?",
@@ -1216,5 +1216,8 @@
   "Booking": "Réservations",
   "Filter by profile or group name": "Filter par nom du profil ou du groupe",
   "Filter by name": "Filtrer par nom",
-  "Redirecting in progress…": "Redirection en cours…"
+  "Redirecting in progress…": "Redirection en cours…",
+  "Zoom in": "Zoomer",
+  "Zoom out": "Dézoomer",
+  "Show me where I am": "Afficher ma position"
 }

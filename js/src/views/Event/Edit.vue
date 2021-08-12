@@ -463,7 +463,7 @@ import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.
 import EventMetadataList from "@/components/Event/EventMetadataList.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import Subtitle from "@/components/Utils/Subtitle.vue";
-import { Route } from "vue-router";
+import { RawLocation, Route } from "vue-router";
 import { formatList } from "@/utils/i18n";
 import {
   ActorType,
@@ -481,7 +481,7 @@ import {
   EVENT_PERSON_PARTICIPATION,
   FETCH_EVENT,
 } from "../../graphql/event";
-import { EventModel, IEvent } from "../../types/event.model";
+import { EventModel, IEvent, toEditJSON } from "../../types/event.model";
 import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
@@ -586,6 +586,8 @@ export default class EditEvent extends Vue {
 
   event: IEvent = new EventModel();
 
+  unmodifiedEvent: IEvent = new EventModel();
+
   identities: IActor[] = [];
 
   person!: IPerson;
@@ -687,12 +689,13 @@ export default class EditEvent extends Vue {
     if (!(this.isUpdate || this.isDuplicate)) {
       this.initializeEvent();
     } else {
-      this.event = {
+      this.event = new EventModel({
         ...this.event,
         options: cloneDeep(this.event.options),
         description: this.event.description || "",
-      };
+      });
     }
+    this.unmodifiedEvent = cloneDeep(this.event);
   }
 
   createOrUpdateDraft(e: Event): void {
@@ -813,8 +816,8 @@ export default class EditEvent extends Vue {
   }
 
   get updateEventMessage(): string {
-    // if (this.unmodifiedEvent.draft && !this.event.draft)
-    //   return this.$i18n.t("The event has been updated and published") as string;
+    if (this.unmodifiedEvent.draft && !this.event.draft)
+      return this.$i18n.t("The event has been updated and published") as string;
     return (
       this.event.draft
         ? this.$i18n.t("The draft event has been updated")
@@ -910,7 +913,7 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
-    let res = new EventModel(this.event).toEditJSON();
+    let res = toEditJSON(new EventModel(this.event));
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor
       : this.organizerActor;
@@ -984,10 +987,12 @@ export default class EditEvent extends Vue {
   /**
    * Confirm cancel
    */
-  confirmGoElsewhere(callback: () => any): void {
-    if (!this.isEventModified) {
-      callback();
-    }
+  confirmGoElsewhere(): Promise<boolean> {
+    // TODO: Make calculation of changes work again and bring this back
+    // If the event wasn't modified, no need to warn
+    // if (!this.isEventModified) {
+    //   return Promise.resolve(true);
+    // }
     const title: string = this.isUpdate
       ? (this.$t("Cancel edition") as string)
       : (this.$t("Cancel creation") as string);
@@ -1001,14 +1006,17 @@ export default class EditEvent extends Vue {
           { title: this.event.title }
         ) as string);
 
-    this.$buefy.dialog.confirm({
-      title,
-      message,
-      confirmText: this.$t("Abandon editing") as string,
-      cancelText: this.$t("Continue editing") as string,
-      type: "is-warning",
-      hasIcon: true,
-      onConfirm: callback,
+    return new Promise((resolve) => {
+      this.$buefy.dialog.confirm({
+        title,
+        message,
+        confirmText: this.$t("Abandon editing") as string,
+        cancelText: this.$t("Continue editing") as string,
+        type: "is-warning",
+        hasIcon: true,
+        onConfirm: () => resolve(true),
+        onCancel: () => resolve(false),
+      });
     });
   }
 
@@ -1016,21 +1024,29 @@ export default class EditEvent extends Vue {
    * Confirm cancel
    */
   confirmGoBack(): void {
-    this.confirmGoElsewhere(() => this.$router.go(-1));
+    this.$router.go(-1);
   }
 
   // eslint-disable-next-line consistent-return
-  beforeRouteLeave(to: Route, from: Route, next: () => void): void {
+  async beforeRouteLeave(
+    to: Route,
+    from: Route,
+    next: (to?: RawLocation | false | ((vm: any) => void)) => void
+  ): Promise<void> {
     if (to.name === RouteName.EVENT) return next();
-    this.confirmGoElsewhere(() => next());
+    if (await this.confirmGoElsewhere()) {
+      return next();
+    }
+    return next(false);
   }
 
   get isEventModified(): boolean {
-    // return (
-    //   JSON.stringify(this.event.toEditJSON()) !==
-    //   JSON.stringify(this.unmodifiedEvent)
-    // );
-    return false;
+    return (
+      this.event &&
+      this.unmodifiedEvent &&
+      JSON.stringify(toEditJSON(this.event)) !==
+        JSON.stringify(this.unmodifiedEvent)
+    );
   }
 
   get beginsOn(): Date {
