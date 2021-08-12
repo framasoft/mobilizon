@@ -6,22 +6,27 @@ defmodule Mobilizon.Web.Upload.Filter.Resize do
   """
 
   @behaviour Mobilizon.Web.Upload.Filter
+  alias Mobilizon.Web.Upload
 
   @maximum_width 1_920
   @maximum_height 1_080
 
-  def filter(%Mobilizon.Web.Upload{
-        tempfile: file,
-        content_type: "image" <> _,
-        width: width,
-        height: height
-      }) do
+  def filter(
+        %Upload{
+          tempfile: file,
+          content_type: "image" <> _,
+          width: width,
+          height: height
+        } = upload
+      ) do
+    {new_width, new_height} = sizes = limit_sizes({width, height})
+
     file
     |> Mogrify.open()
-    |> Mogrify.resize(string(limit_sizes({width, height})))
+    |> Mogrify.resize(string(sizes))
     |> Mogrify.save(in_place: true)
 
-    {:ok, :filtered}
+    {:ok, :filtered, %Upload{upload | width: new_width, height: new_height}}
   end
 
   def filter(_), do: {:ok, :noop}
