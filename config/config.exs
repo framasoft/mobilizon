@@ -66,10 +66,11 @@ config :mime, :types, %{
 config :mobilizon, Mobilizon.Web.Upload,
   uploader: Mobilizon.Web.Upload.Uploader.Local,
   filters: [
-    Mobilizon.Web.Upload.Filter.Dedupe,
     Mobilizon.Web.Upload.Filter.AnalyzeMetadata,
     Mobilizon.Web.Upload.Filter.Resize,
-    Mobilizon.Web.Upload.Filter.Optimize
+    Mobilizon.Web.Upload.Filter.Optimize,
+    Mobilizon.Web.Upload.Filter.BlurHash,
+    Mobilizon.Web.Upload.Filter.Dedupe
   ],
   allow_list_mime_types: ["image/gif", "image/jpeg", "image/png", "image/webp"],
   link_name: true,

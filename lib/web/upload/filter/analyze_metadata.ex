@@ -20,13 +20,7 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
       |> Mogrify.open()
       |> Mogrify.verbose()
 
-    upload =
-      upload
-      |> Map.put(:width, image.width)
-      |> Map.put(:height, image.height)
-      |> Map.put(:blurhash, get_blurhash(file))
-
-    {:ok, :filtered, upload}
+    {:ok, :filtered, %Upload{upload | width: image.width, height: image.height}}
   rescue
     e in ErlangError ->
       Logger.warn("#{__MODULE__}: #{inspect(e)}")
@@ -34,14 +28,4 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
   end
 
   def filter(_), do: {:ok, :noop}
-
-  defp get_blurhash(file) do
-    case :eblurhash.magick(to_charlist(file)) do
-      {:ok, blurhash} ->
-        to_string(blurhash)
-
-      _ ->
-        nil
-    end
-  end
 end
