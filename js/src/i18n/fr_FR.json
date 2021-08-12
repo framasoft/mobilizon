@@ -1216,5 +1216,8 @@
   "Booking": "Réservations",
   "Filter by profile or group name": "Filter par nom du profil ou du groupe",
   "Filter by name": "Filtrer par nom",
-  "Redirecting in progress…": "Redirection en cours…"
+  "Redirecting in progress…": "Redirection en cours…",
+  "Zoom in": "Zoomer",
+  "Zoom out": "Dézoomer",
+  "Show me where I am": "Afficher ma position"
 }
