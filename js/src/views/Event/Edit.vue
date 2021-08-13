@@ -161,7 +161,7 @@
           v-if="config && config.anonymous.participation.allowed"
         >
           <label class="label">{{ $t("Anonymous participations") }}</label>
-          <b-switch v-model="event.options.anonymousParticipation">
+          <b-switch v-model="eventOptions.anonymousParticipation">
             {{
               $t("I want to allow people to participate without an account.")
             }}
@@ -200,18 +200,18 @@
             <b-numberinput
               controls-position="compact"
               min="1"
-              v-model="event.options.maximumAttendeeCapacity"
+              v-model="eventOptions.maximumAttendeeCapacity"
             />
           </b-field>
           <!--
           <b-field>
-            <b-switch v-model="event.options.showRemainingAttendeeCapacity">
+            <b-switch v-model="eventOptions.showRemainingAttendeeCapacity">
               {{ $t('Show remaining number of places') }}
             </b-switch>
           </b-field>
 
           <b-field>
-            <b-switch v-model="event.options.showParticipationPrice">
+            <b-switch v-model="eventOptions.showParticipationPrice">
               {{ $t('Display participation price') }}
             </b-switch>
           </b-field>-->
@@ -221,7 +221,7 @@
 
         <div class="field">
           <b-radio
-            v-model="event.options.commentModeration"
+            v-model="eventOptions.commentModeration"
             name="commentModeration"
             :native-value="CommentModeration.ALLOW_ALL"
             >{{ $t("Allow all comments from users with accounts") }}</b-radio
@@ -229,7 +229,7 @@
         </div>
 
         <!--          <div class="field">-->
-        <!--            <b-radio v-model="event.options.commentModeration"-->
+        <!--            <b-radio v-model="eventOptions.commentModeration"-->
         <!--                     name="commentModeration"-->
         <!--                     :native-value="CommentModeration.MODERATED">-->
         <!--              {{ $t('Moderated comments (shown after approval)') }}-->
@@ -238,7 +238,7 @@
 
         <div class="field">
           <b-radio
-            v-model="event.options.commentModeration"
+            v-model="eventOptions.commentModeration"
             name="commentModeration"
             :native-value="CommentModeration.CLOSED"
             >{{ $t("Close comments for all (except for admins)") }}</b-radio
@@ -291,12 +291,12 @@
           </header>
           <section class="modal-card-body">
             <b-field :label="$t('Event page settings')">
-              <b-switch v-model="event.options.showStartTime">{{
+              <b-switch v-model="eventOptions.showStartTime">{{
                 $t("Show the time when the event begins")
               }}</b-switch>
             </b-field>
             <b-field>
-              <b-switch v-model="event.options.showEndTime">{{
+              <b-switch v-model="eventOptions.showEndTime">{{
                 $t("Show the time when the event ends")
               }}</b-switch>
             </b-field>
@@ -481,7 +481,12 @@ import {
   EVENT_PERSON_PARTICIPATION,
   FETCH_EVENT,
 } from "../../graphql/event";
-import { EventModel, IEvent, toEditJSON } from "../../types/event.model";
+import {
+  EventModel,
+  IEvent,
+  removeTypeName,
+  toEditJSON,
+} from "../../types/event.model";
 import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
@@ -513,6 +518,7 @@ import {
   InternalRefetchQueriesInclude,
 } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
+import { IEventOptions } from "@/types/event-options.model";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -668,6 +674,14 @@ export default class EditEvent extends Vue {
     return this.event.attributedTo?.id !== undefined;
   }
 
+  get eventOptions(): IEventOptions {
+    return removeTypeName(cloneDeep(this.event.options));
+  }
+
+  set eventOptions(options: IEventOptions) {
+    this.event.options = options;
+  }
+
   async mounted(): Promise<void> {
     this.observer = new IntersectionObserver(
       (entries) => {
@@ -685,7 +699,7 @@ export default class EditEvent extends Vue {
     this.observer.observe(this.$refs.bottomObserver as Element);
 
     this.pictureFile = await buildFileFromIMedia(this.event.picture);
-    this.limitedPlaces = this.event.options.maximumAttendeeCapacity > 0;
+    this.limitedPlaces = this.eventOptions.maximumAttendeeCapacity > 0;
     if (!(this.isUpdate || this.isDuplicate)) {
       this.initializeEvent();
     } else {
@@ -913,7 +927,10 @@ export default class EditEvent extends Vue {
    * Build variables for Event GraphQL creation query
    */
   private async buildVariables() {
-    let res = toEditJSON(new EventModel(this.event));
+    let res = {
+      ...toEditJSON(new EventModel(this.event)),
+      options: this.eventOptions,
+    };
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor
       : this.organizerActor;
@@ -956,12 +973,12 @@ export default class EditEvent extends Vue {
   @Watch("limitedPlaces")
   updatedEventCapacityOptions(limitedPlaces: boolean): void {
     if (!limitedPlaces) {
-      this.event.options.maximumAttendeeCapacity = 0;
-      this.event.options.remainingAttendeeCapacity = 0;
-      this.event.options.showRemainingAttendeeCapacity = false;
+      this.eventOptions.maximumAttendeeCapacity = 0;
+      this.eventOptions.remainingAttendeeCapacity = 0;
+      this.eventOptions.showRemainingAttendeeCapacity = false;
     } else {
-      this.event.options.maximumAttendeeCapacity =
-        this.event.options.maximumAttendeeCapacity ||
+      this.eventOptions.maximumAttendeeCapacity =
+        this.eventOptions.maximumAttendeeCapacity ||
         DEFAULT_LIMIT_NUMBER_OF_PLACES;
     }
   }
