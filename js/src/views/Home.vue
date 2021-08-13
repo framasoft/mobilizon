@@ -62,14 +62,21 @@
           <b-loading :active.sync="$apollo.loading" />
         </p>
         <b-loading :active.sync="$apollo.loading" />
-        <div v-if="this.events.total > 0" class="columns is-multiline">
-          <div
-            class="column is-one-third-desktop"
-            v-for="event in this.events.elements.slice(0, 6)"
-            :key="event.uuid"
-          >
-            <EventCard :event="event" />
+        <div v-if="this.events.total > 0">
+          <div class="columns is-multiline">
+            <div
+              class="column is-one-third-desktop"
+              v-for="event in this.events.elements.slice(0, 6)"
+              :key="event.uuid"
+            >
+              <EventCard :event="event" />
+            </div>
           </div>
+          <span class="view-all">
+            <router-link :to="{ name: RouteName.SEARCH }"
+              >{{ $t("View everything") }} >></router-link
+            >
+          </span>
         </div>
         <b-message v-else type="is-danger">{{
           $t("No events found")
@@ -308,14 +315,21 @@
           <b-loading :active.sync="$apollo.loading" />
         </p>
 
-        <div v-if="this.events.total > 0" class="columns is-multiline">
-          <div
-            class="column is-one-third-desktop"
-            v-for="event in this.events.elements.slice(0, 6)"
-            :key="event.uuid"
-          >
-            <recent-event-card-wrapper :event="event" />
+        <div v-if="this.events.total > 0">
+          <div class="columns is-multiline">
+            <div
+              class="column is-one-third-desktop"
+              v-for="event in this.events.elements.slice(0, 6)"
+              :key="event.uuid"
+            >
+              <recent-event-card-wrapper :event="event" />
+            </div>
           </div>
+          <span class="view-all">
+            <router-link :to="{ name: RouteName.SEARCH }"
+              >{{ $t("View everything") }} >></router-link
+            >
+          </span>
         </div>
         <b-message v-else type="is-danger"
           >{{ $t("No events found") }}<br />
@@ -635,7 +649,7 @@ main > div > .container {
   }
 
   .columns {
-    margin: 1rem auto 3rem;
+    margin: 1rem auto 0;
   }
 }
 
