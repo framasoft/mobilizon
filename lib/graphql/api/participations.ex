@@ -75,6 +75,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
            ActivityPub.reject(
              :join,
              participation,
+             true,
              %{"actor" => moderator.url}
            ),
          :ok <- Participation.send_emails_to_local_user(participation) do

@@ -15,6 +15,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   alias Mobilizon.Federation.ActivityPub.Permission
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
+  import Mobilizon.GraphQL.Resolvers.Event.Utils
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -133,14 +134,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   List participants for event (through an event request)
   """
   def list_participants_for_event(
-        %Event{id: event_id},
+        %Event{id: event_id} = event,
         %{page: page, limit: limit, roles: roles},
         %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
+    with %Actor{} = actor <- Users.get_actor_for_user(user),
          # Check that moderator has right
-         {:actor_approve_permission, true} <-
-           {:actor_approve_permission, Events.moderator_for_event?(event_id, actor_id)} do
+         {:event_can_be_managed, true} <-
+           {:event_can_be_managed, can_event_be_updated_by?(event, actor)} do
       roles =
         case roles do
           nil ->
@@ -159,7 +160,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       participants = Events.list_participants_for_event(event_id, roles, page, limit)
       {:ok, participants}
     else
-      {:actor_approve_permission, _} ->
+      {:event_can_be_managed, _} ->
         {:error,
          dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
     end
@@ -413,30 +414,5 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            |> Map.put(:organizer_actor_id, organizer_actor.id) do
       {:ok, args}
     end
-  end
-
-  defp can_event_be_updated_by?(
-         %Event{attributed_to: %Actor{type: :Group}} = event,
-         %Actor{} = actor_member
-       ) do
-    Permission.can_update_group_object?(actor_member, event)
-  end
-
-  defp can_event_be_updated_by?(
-         %Event{} = event,
-         %Actor{id: actor_member_id}
-       ) do
-    Event.can_be_managed_by?(event, actor_member_id)
-  end
-
-  defp can_event_be_deleted_by?(
-         %Event{attributed_to: %Actor{type: :Group}} = event,
-         %Actor{} = actor_member
-       ) do
-    Permission.can_delete_group_object?(actor_member, event)
-  end
-
-  defp can_event_be_deleted_by?(%Event{} = event, %Actor{id: actor_member_id}) do
-    Event.can_be_managed_by?(event, actor_member_id)
   end
 end
