@@ -95,14 +95,17 @@ export async function initializeCurrentActor(
 }
 
 export async function logout(
-  apollo: ApolloClient<NormalizedCacheObject>
+  apollo: ApolloClient<NormalizedCacheObject>,
+  performServerLogout = true
 ): Promise<void> {
-  await apollo.mutate({
-    mutation: LOGOUT,
-    variables: {
-      refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
-    },
-  });
+  if (performServerLogout) {
+    await apollo.mutate({
+      mutation: LOGOUT,
+      variables: {
+        refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
+      },
+    });
+  }
 
   await apollo.mutate({
     mutation: UPDATE_CURRENT_USER_CLIENT,

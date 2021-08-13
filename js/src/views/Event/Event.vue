@@ -592,6 +592,7 @@ import { eventMetaDataList } from "../../services/EventMetadata";
       },
       skip() {
         return (
+          !this.currentActor.id ||
           !this.event?.attributedTo ||
           !this.event?.attributedTo?.preferredUsername
         );

@@ -216,7 +216,7 @@ import RouteName from "../router/name";
     loggedUser: {
       query: USER_SETTINGS,
       skip() {
-        return this.currentUser.isLoggedIn === false;
+        return !this.currentUser || this.currentUser.isLoggedIn === false;
       },
     },
   },

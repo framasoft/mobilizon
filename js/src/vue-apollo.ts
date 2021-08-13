@@ -11,8 +11,8 @@ import {
   NormalizedCacheObject,
   split,
 } from "@apollo/client/core";
+import { RetryLink } from "@apollo/client/link/retry";
 import buildCurrentUserResolver from "@/apollo/user";
-import { isServerError } from "@/types/apollo";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
 import { logout } from "@/utils/auth";
 import { Socket as PhoenixSocket } from "phoenix";
@@ -61,9 +61,17 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return null;
 });
 
+const customFetch = async (uri: string, options: any) => {
+  const response = await fetch(uri, options);
+  if (response.status >= 400) {
+    return Promise.reject(response.status);
+  }
+  return response;
+};
+
 const uploadLink = createLink({
   uri: httpEndpoint,
-  fetch,
+  fetch: customFetch,
 });
 
 const phoenixSocket = new PhoenixSocket(wsEndpoint, {
@@ -97,17 +105,35 @@ const resolvePendingRequests = () => {
   pendingRequests = [];
 };
 
+const isAuthError = (graphQLError: GraphQLError | undefined) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return graphQLError && [403, 401].includes(graphQLError.status_code);
+};
+
 const errorLink = onError(
   ({ graphQLErrors, networkError, forward, operation }) => {
-    if (isServerError(networkError) && networkError?.statusCode === 401) {
+    console.debug("We have an apollo error", [graphQLErrors, networkError]);
+    if (
+      graphQLErrors?.some((graphQLError) => isAuthError(graphQLError)) ||
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      networkError === 401
+    ) {
+      console.debug("It's a authorization error (statusCode 401)");
       let forwardOperation;
 
       if (!isRefreshing) {
+        console.debug("Setting isRefreshing to true");
         isRefreshing = true;
 
         forwardOperation = fromPromise(
           refreshAccessToken(apolloClient)
-            .then(() => {
+            .then((res) => {
+              if (res !== true) {
+                // failed to refresh the token
+                throw "Failed to refresh the token";
+              }
               resolvePendingRequests();
 
               const context = operation.getContext();
@@ -121,9 +147,11 @@ const errorLink = onError(
               });
               return true;
             })
-            .catch(() => {
+            .catch((e) => {
+              console.debug("Something failed, let's logout", e);
               pendingRequests = [];
-              logout(apolloClient);
+              // don't perform a logout since we don't have any working access/refresh tokens
+              logout(apolloClient, false);
               return;
             })
             .finally(() => {
@@ -161,7 +189,12 @@ const errorLink = onError(
   }
 );
 
-const fullLink = authMiddleware.concat(errorLink).concat(link);
+const retryLink = new RetryLink();
+
+const fullLink = authMiddleware
+  .concat(retryLink)
+  .concat(errorLink)
+  .concat(link);
 
 const cache = new InMemoryCache({
   addTypename: true,

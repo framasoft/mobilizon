@@ -38,7 +38,7 @@
           }}
         </p>
         <!--  The following should just be replaced with the SearchField component but it fails for some reason  -->
-        <form @submit="enter">
+        <form @submit.prevent="enter">
           <b-field class="search">
             <b-input
               expanded
