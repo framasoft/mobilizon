@@ -15,7 +15,7 @@ import LazyImageWrapper from "../Image/LazyImageWrapper.vue";
   },
 })
 export default class EventBanner extends Vue {
-  @Prop({ required: true, default: null, type: Object as PropType<IMedia> })
+  @Prop({ default: null, type: Object as PropType<IMedia> })
   picture!: IMedia | null;
 }
 </script>
