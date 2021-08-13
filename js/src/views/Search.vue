@@ -212,9 +212,9 @@ interface ISearchTimeOption {
   end?: Date | null;
 }
 
-const EVENT_PAGE_LIMIT = 10;
+const EVENT_PAGE_LIMIT = 12;
 
-const GROUP_PAGE_LIMIT = 10;
+const GROUP_PAGE_LIMIT = 12;
 
 const DEFAULT_RADIUS = 25; // value to set if radius is null but location set
 
