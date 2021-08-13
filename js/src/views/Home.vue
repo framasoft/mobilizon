@@ -372,7 +372,9 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     currentUser: CURRENT_USER_CLIENT,
     loggedUser: {
       query: USER_SETTINGS,
-      fetchPolicy: "no-cache",
+      skip() {
+        return !this.currentUser || this.currentUser.isLoggedIn === false;
+      },
       error() {
         return null;
       },
