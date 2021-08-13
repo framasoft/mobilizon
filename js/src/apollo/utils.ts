@@ -104,6 +104,11 @@ export async function refreshAccessToken(
 
   const refreshToken = localStorage.getItem(AUTH_REFRESH_TOKEN);
 
+  if (!refreshToken) {
+    console.debug("Refresh token not found");
+    return false;
+  }
+
   console.log("Refreshing access token.");
 
   try {
@@ -118,6 +123,7 @@ export async function refreshAccessToken(
 
     return true;
   } catch (err) {
+    console.debug("Failed to refresh token");
     return false;
   }
 }
