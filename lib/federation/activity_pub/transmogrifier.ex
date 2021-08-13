@@ -870,7 +870,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
        when role in [:not_approved, :rejected] do
     with %Event{} = event <- Events.get_event_with_preload!(event.id),
          {:can_accept_event_join, true} <-
-           {:can_accept_event_join, can_accept_event_join?(actor_accepting, event)},
+           {:can_accept_event_join, can_manage_event?(actor_accepting, event)},
          {:ok, %Activity{} = activity, %Participant{role: :participant} = participant} <-
            ActivityPub.accept(
              :join,
@@ -918,9 +918,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with {:join_event, {:ok, %Participant{event: event, role: role} = participant}}
          when role != :rejected <-
            {:join_event, get_participant(join_object, actor_accepting)},
-         # TODO: The actor that accepts the Join activity may another one that the event organizer ?
-         # Or maybe for groups it's the group that sends the Accept activity
-         {:same_actor, true} <- {:same_actor, actor_accepting.id == event.organizer_actor_id},
+         {:event, %Event{} = event} <- {:event, Events.get_event_with_preload!(event.id)},
+         {:can_accept_event_reject, true} <-
+           {:can_accept_event_reject, can_manage_event?(actor_accepting, event)},
          {:ok, activity, participant} <-
            ActivityPub.reject(:join, participant, false),
          :ok <- Participation.send_emails_to_local_user(participant) do
@@ -1142,21 +1142,21 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp can_accept_event_join?(
+  defp can_manage_event?(
          %Actor{url: actor_url} = actor,
          %Event{attributed_to: %Actor{type: :Group, url: group_url} = _group} = event
        ) do
     actor_url == group_url || Permission.can_update_group_object?(actor, event)
   end
 
-  defp can_accept_event_join?(
+  defp can_manage_event?(
          %Actor{id: actor_id},
          %Event{organizer_actor: %Actor{id: organizer_actor_id}}
        ) do
     organizer_actor_id == actor_id
   end
 
-  defp can_accept_event_join?(_actor, _event) do
+  defp can_manage_event?(_actor, _event) do
     false
   end
 end

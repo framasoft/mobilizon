@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   alias Mobilizon.Web.Email.Checker
   require Logger
   import Mobilizon.Web.Gettext
+  import Mobilizon.GraphQL.Resolvers.Event.Utils
 
   @doc """
   Join an event for an regular or anonymous actor
@@ -213,15 +214,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         }
       ) do
     # Check that moderator provided is rightly authenticated
-    with %Actor{id: moderator_actor_id} = moderator_actor <- Users.get_actor_for_user(user),
+    with %Actor{} = moderator_actor <- Users.get_actor_for_user(user),
          # Check that participation already exists
-         {:has_participation, %Participant{role: old_role} = participation} <-
+         {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
            {:has_participation, Events.get_participant(participation_id)},
          {:same_role, false} <- {:same_role, new_role == old_role},
          # Check that moderator has right
-         {:actor_approve_permission, true} <-
-           {:actor_approve_permission,
-            Events.moderator_for_event?(participation.event.id, moderator_actor_id)},
+         {:event, %Event{} = event} <- {:event, Events.get_event_with_preload!(event_id)},
+         {:event_can_be_managed, true} <-
+           {:event_can_be_managed, can_event_be_updated_by?(event, moderator_actor)},
          {:ok, _activity, participation} <-
            Participations.update(participation, moderator_actor, new_role) do
       {:ok, participation}
@@ -229,7 +230,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:has_participation, nil} ->
         {:error, dgettext("errors", "Participant not found")}
 
-      {:actor_approve_permission, _} ->
+      {:event_can_be_managed, _} ->
         {:error,
          dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
 
