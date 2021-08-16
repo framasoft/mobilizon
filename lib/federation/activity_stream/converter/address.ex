@@ -40,7 +40,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
       res
     else
       geo = %Geo.Point{
-        coordinates: {object["latitude"], object["longitude"]},
+        coordinates: {object["longitude"], object["latitude"]},
         srid: 4326
       }
 
@@ -72,8 +72,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
       res
     else
       res
-      |> Map.put("latitude", address.geom.coordinates |> elem(0))
       |> Map.put("longitude", address.geom.coordinates |> elem(1))
+      |> Map.put("latitude", address.geom.coordinates |> elem(0))
     end
   end
 end
