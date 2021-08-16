@@ -20,7 +20,7 @@ defmodule Mobilizon.Federation.ActivityPub.Visibility do
   def is_public?(%Activity{data: data}), do: is_public?(data)
 
   def is_public?(data) when is_map(data) do
-    @public in (make_list(Map.get(data, "to", [])) ++ make_list(Map.get(data, "cc", [])))
+    @public in make_list(Map.get(data, "to", []))
   end
 
   def is_public?(%Comment{deleted_at: deleted_at}), do: !is_nil(deleted_at)
