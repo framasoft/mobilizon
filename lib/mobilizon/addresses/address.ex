@@ -76,7 +76,7 @@ defmodule Mobilizon.Addresses.Address do
   def coords(nil), do: nil
 
   def coords(%__MODULE__{} = address) do
-    with %Geo.Point{coordinates: {latitude, longitude}, srid: 4326} <- address.geom do
+    with %Geo.Point{coordinates: {longitude, latitude}, srid: 4326} <- address.geom do
       {latitude, longitude}
     end
   end
