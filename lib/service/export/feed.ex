@@ -19,6 +19,8 @@ defmodule Mobilizon.Service.Export.Feed do
 
   require Logger
 
+  @item_limit 500
+
   def version, do: Config.instance_version()
 
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
@@ -55,7 +57,7 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @spec fetch_instance_feed :: {:ok, String.t()}
   defp fetch_instance_feed do
-    case Common.fetch_instance_public_content() do
+    case Common.fetch_instance_public_content(@item_limit) do
       {:ok, events, posts} ->
         {:ok, build_instance_feed(events, posts)}
 
@@ -88,9 +90,9 @@ defmodule Mobilizon.Service.Export.Feed do
     |> Atomex.generate_document()
   end
 
-  @spec fetch_actor_event_feed(String.t()) :: String.t()
-  defp fetch_actor_event_feed(name) do
-    case Common.fetch_actor_event_feed(name) do
+  @spec fetch_actor_event_feed(String.t(), integer()) :: String.t()
+  defp fetch_actor_event_feed(name, limit \\ @item_limit) do
+    case Common.fetch_actor_event_feed(name, limit) do
       {:ok, actor, events, posts} ->
         {:ok, build_actor_feed(actor, events, posts)}
 
@@ -198,9 +200,9 @@ defmodule Mobilizon.Service.Export.Feed do
 
   # Only events, not posts
   @spec fetch_events_from_token(String.t()) :: String.t()
-  defp fetch_events_from_token(token) do
+  defp fetch_events_from_token(token, limit \\ @item_limit) do
     with %{events: events, token: token, user: user, actor: actor, type: type} <-
-           Common.fetch_events_from_token(token) do
+           Common.fetch_events_from_token(token, limit) do
       case type do
         :user -> {:ok, build_user_feed(events, user, token)}
         :actor -> {:ok, build_actor_feed(actor, events, [], false)}

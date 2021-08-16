@@ -10,6 +10,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.Service.Export.Common
   alias Mobilizon.Service.Formatter.HTML
 
+  @item_limit 500
+
   @doc """
   Create cache for an actor, an event or an user token
   """
@@ -55,7 +57,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   @spec fetch_instance_feed :: {:ok, String.t()}
   defp fetch_instance_feed do
-    case Common.fetch_instance_public_content() do
+    case Common.fetch_instance_public_content(@item_limit) do
       {:ok, events, _posts} ->
         {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
 
@@ -90,8 +92,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
   The actor must have a visibility of `:public` or `:unlisted`, as well as the events
   """
   @spec export_public_actor(String.t()) :: String.t()
-  def export_public_actor(name) do
-    case Common.fetch_actor_event_feed(name) do
+  def export_public_actor(name, limit \\ @item_limit) do
+    case Common.fetch_actor_event_feed(name, limit) do
       {:ok, _actor, events, _posts} ->
         {:ok, events_to_ics(events)}
 
@@ -101,15 +103,15 @@ defmodule Mobilizon.Service.Export.ICalendar do
   end
 
   @spec export_private_actor(Actor.t()) :: String.t()
-  def export_private_actor(%Actor{} = actor) do
-    with events <- Common.fetch_actor_private_events(actor) do
+  def export_private_actor(%Actor{} = actor, limit \\ @item_limit) do
+    with events <- Common.fetch_actor_private_events(actor, limit) do
       {:ok, events_to_ics(events)}
     end
   end
 
   @spec fetch_events_from_token(String.t()) :: String.t()
-  defp fetch_events_from_token(token) do
-    with %{events: events} <- Common.fetch_events_from_token(token) do
+  defp fetch_events_from_token(token, limit \\ @item_limit) do
+    with %{events: events} <- Common.fetch_events_from_token(token, limit) do
       {:ok, events_to_ics(events)}
     end
   end

@@ -48,6 +48,18 @@ defmodule Mobilizon.Service.ICalendarTest do
       refute ics =~ event2.title
       assert ics =~ event3.title
     end
+
+    test "with 50 events" do
+      Enum.each(0..50, fn i ->
+        %Event{} = insert(:event, title: "Event #{i}")
+      end)
+
+      {:commit, ics} = ICalendarService.create_cache("instance")
+
+      Enum.each(0..50, fn i ->
+        assert ics =~ "Event #{i}"
+      end)
+    end
   end
 
   describe "export an actor's events from a token" do
