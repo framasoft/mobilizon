@@ -4,6 +4,69 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.3.0 - 2021-08-12
+
+### Added
+
+- **Allow remote group moderators to edit group events and posts**
+- **Allow events to hold metadata information, either preconfigured (live video URL, price details, accessibility informations,…), either through a free key/value form.** Metadata concerning live video feeds linking to PeerTube, YouTube & Twitch will benefit from iframe integration.
+- Add the possibility to create profiles and groups from CLI
+- Add the possibility to create a profile at the same time when creating an user from CLI
+- Add the possibility to create users with LDAP provider from CLI
+- Added back support for Docker-compose based development
+- Added rel=canonical and meta robots noindex tags to public pages from remote groups, in order to avoid them being indexed by Google
+- Allow members-restricted posts to be viewable by instance moderators (for moderation purposes)
+- Added a filter to resize pictures bigger than 1920x1080
+- Allow to deny registration by email or email domain
+- Added missing index on participants url
+- Added a loading wheel to show that events are loading on some views
+
+### Changed
+
+- Made server only listen on IPv4 in the install template
+- Improve identity picker to have a fixed height and allow filtering between your identities and group contacts
+- Leaflet map controls (zoom/locate) are now translatable
+- Show exactly 12 events on the Explore page
+
+### Fixed
+
+- Fixed links contained in event & post description that didn't open in new tabs
+- Add back missing RSS/ical links on public group pages 
+- Fixed links to Framacolibri forum
+- Fixed drafts and restricted visibility events & posts listed on group page
+- Fixed notification page on Safari
+- Fixed profile edition
+- Fixed Feed Token recreation
+- Fixed media cleaner job
+- Fixed english being always used as a language instead of the default one set when the request has no `Accept-Language` header (such as Google index bots)
+- Fixed Ecto validation errors not being translated and interpolated
+- Fixed <html> `lang` attribute not being properly set with the language currently used
+- Fixed federated posts having wrong visibility setting
+- Fixed unused CSS filter on homepage rendering wrong on Webkit
+- Fixed handling SSL being already started in LDAP connection
+- Fixed an Apollo cache issue when registrering your first profile
+- Fixed the Docker image missing ca-certificates
+- Fixed missing pagination on Explore page featured events
+- Fixed broken popup warning when editing an event
+- Fixed GraphQL Playground (again)
+- Fixed Coordinates mixmatch between latitude and longitude in iCalendar export and federation
+- Fixed token refreshment issues
+- Fixed search from 404 page
+
+
+### Translations
+
+- Catalan
+- Chinese (Traditional)
+- Finnish
+- French
+- Gaelic
+- Galician
+- German
+- Indonesian
+- Russian
+- Spanish
+
 ## 1.2.3 - 2021-07-02
 
 ### Changed
