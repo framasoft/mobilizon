@@ -150,6 +150,21 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     category: EventMetadataCategories.TOOLS,
   },
   {
+    icon: "file-document-edit",
+    key: "mz:notes:etherpad:url",
+    label: i18n.t("Etherpad notes") as string,
+    description: i18n.t(
+      "The URL of a pad where notes are being taken collaboratively"
+    ) as string,
+    value: "",
+    placeholder: i18n.t(
+      "https://mensuel.framapad.org/p/some-secret-token"
+    ) as string,
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.TOOLS,
+  },
+  {
     icon: "twitter",
     key: "mz:social:twitter:account",
     label: i18n.t("Twitter account") as string,

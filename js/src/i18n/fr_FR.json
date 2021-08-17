@@ -1230,5 +1230,8 @@
   "Google Meet": "Google Meet",
   "The Google Meet video teleconference URL": "L'URL de visio-conférence Google Meet",
   "Big Blue Button": "Big Blue Button",
-  "The Big Blue Button video teleconference URL": "L'URL de visio-conférence Big Blue Button"
+  "The Big Blue Button video teleconference URL": "L'URL de visio-conférence Big Blue Button",
+  "Etherpad notes": "Notes sur Etherpad",
+  "The URL of a pad where notes are being taken collaboratively": "L'URL d'un pad où les notes sont prises collaborativement",
+  "https://mensuel.framapad.org/p/some-secret-token": "https://mensuel.framapad.org/p/un-jeton-secret"
 }
