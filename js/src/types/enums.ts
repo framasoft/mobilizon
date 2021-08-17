@@ -274,4 +274,5 @@ export enum EventMetadataCategories {
   TOOLS = "TOOLS",
   DETAILS = "DETAILS",
   BOOKING = "BOOKING",
+  VIDEO_CONFERENCE = "VIDEO_CONFERENCE",
 }

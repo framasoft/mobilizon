@@ -1219,5 +1219,19 @@
   "Redirecting in progress…": "Redirection en cours…",
   "Zoom in": "Zoomer",
   "Zoom out": "Dézoomer",
-  "Show me where I am": "Afficher ma position"
+  "Show me where I am": "Afficher ma position",
+  "Video Conference": "Visio-conférence",
+  "Jisti Meet": "Jitsi Meet",
+  "The Jitsi Meet video teleconference URL": "L'URL de visio-conférence Jitsi Meet",
+  "Zoom": "Zoom",
+  "The Zoom video teleconference URL": "L'URL de visio-conférence Zoom",
+  "Microsoft Teams": "Microsoft Teams",
+  "The Microsoft Teams video teleconference URL": "L'URL de visio-conférence Microsoft Teams",
+  "Google Meet": "Google Meet",
+  "The Google Meet video teleconference URL": "L'URL de visio-conférence Google Meet",
+  "Big Blue Button": "Big Blue Button",
+  "The Big Blue Button video teleconference URL": "L'URL de visio-conférence Big Blue Button",
+  "Etherpad notes": "Notes sur Etherpad",
+  "The URL of a pad where notes are being taken collaboratively": "L'URL d'un pad où les notes sont prises collaborativement",
+  "https://mensuel.framapad.org/p/some-secret-token": "https://mensuel.framapad.org/p/un-jeton-secret"
 }

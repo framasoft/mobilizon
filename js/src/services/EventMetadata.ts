@@ -150,6 +150,21 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     category: EventMetadataCategories.TOOLS,
   },
   {
+    icon: "file-document-edit",
+    key: "mz:notes:etherpad:url",
+    label: i18n.t("Etherpad notes") as string,
+    description: i18n.t(
+      "The URL of a pad where notes are being taken collaboratively"
+    ) as string,
+    value: "",
+    placeholder: i18n.t(
+      "https://mensuel.framapad.org/p/some-secret-token"
+    ) as string,
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.TOOLS,
+  },
+  {
     icon: "twitter",
     key: "mz:social:twitter:account",
     label: i18n.t("Twitter account") as string,
@@ -208,5 +223,63 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
     category: EventMetadataCategories.DETAILS,
+  },
+  {
+    icon: "webcam",
+    key: "mz:visio:jitsi_meet",
+    label: i18n.t("Jisti Meet") as string,
+    description: i18n.t("The Jitsi Meet video teleconference URL") as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.VIDEO_CONFERENCE,
+    placeholder: "https://meet.jit.si/AFewWords",
+  },
+  {
+    icon: "webcam",
+    key: "mz:visio:zoom",
+    label: i18n.t("Zoom") as string,
+    description: i18n.t("The Zoom video teleconference URL") as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.VIDEO_CONFERENCE,
+    pattern: /https:\/\/.*\.?zoom.us\/.*/,
+  },
+  {
+    icon: "microsoft-teams",
+    key: "mz:visio:microsoft_teams",
+    label: i18n.t("Microsoft Teams") as string,
+    description: i18n.t(
+      "The Microsoft Teams video teleconference URL"
+    ) as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.VIDEO_CONFERENCE,
+    pattern: /https:\/\/teams\.live\.com\/meet\/.+/,
+  },
+  {
+    icon: "google-hangouts",
+    key: "mz:visio:google_meet",
+    label: i18n.t("Google Meet") as string,
+    description: i18n.t("The Google Meet video teleconference URL") as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.VIDEO_CONFERENCE,
+    pattern: /https:\/\/meet\.google\.com\/.+/,
+  },
+  {
+    icon: "webcam",
+    key: "mz:visio:big_blue_button",
+    label: i18n.t("Big Blue Button") as string,
+    description: i18n.t(
+      "The Big Blue Button video teleconference URL"
+    ) as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    category: EventMetadataCategories.VIDEO_CONFERENCE,
   },
 ];

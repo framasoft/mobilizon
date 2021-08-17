@@ -533,6 +533,14 @@ import { eventMetaDataList } from "../../services/EventMetadata";
       import(
         /* webpackChunkName: "YouTubeIntegration" */ "../../components/Event/Integrations/YouTube.vue"
       ),
+    "integration-jitsi-meet": () =>
+      import(
+        /* webpackChunkName: "JitsiMeetIntegration" */ "../../components/Event/Integrations/JitsiMeet.vue"
+      ),
+    "integration-etherpad": () =>
+      import(
+        /* webpackChunkName: "EtherpadIntegration" */ "../../components/Event/Integrations/Etherpad.vue"
+      ),
   },
   apollo: {
     event: {
@@ -1087,6 +1095,8 @@ export default class Event extends EventMixin {
     "mz:live:twitch:url": "integration-twitch",
     "mz:live:peertube:url": "integration-peertube",
     "mz:live:youtube:url": "integration-youtube",
+    "mz:visio:jitsi_meet": "integration-jitsi-meet",
+    "mz:notes:etherpad:url": "integration-etherpad",
   };
 
   get integrations(): Record<string, IEventMetadataDescription> {
