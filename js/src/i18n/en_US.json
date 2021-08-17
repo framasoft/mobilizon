@@ -1128,5 +1128,16 @@
   "Redirecting in progress…": "Redirecting in progress…",
   "Zoom in": "Zoom in",
   "Zoom out": "Zoom out",
-  "Show me where I am": "Show me where I am"
+  "Show me where I am": "Show me where I am",
+  "Video Conference": "Video Conference",
+  "Jisti Meet": "Jisti Meet",
+  "The Jitsi Meet video teleconference URL": "The Jitsi Meet video teleconference URL",
+  "Zoom": "Zoom",
+  "The Zoom video teleconference URL": "The Zoom video teleconference URL",
+  "Microsoft Teams": "Microsoft Teams",
+  "The Microsoft Teams video teleconference URL": "The Microsoft Teams video teleconference URL",
+  "Google Meet": "Google Meet",
+  "The Google Meet video teleconference URL": "The Google Meet video teleconference URL",
+  "Big Blue Button": "Big Blue Button",
+  "The Big Blue Button video teleconference URL": "The Big Blue Button video teleconference URL"
 }

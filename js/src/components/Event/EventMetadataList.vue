@@ -140,6 +140,9 @@ export default class EventMetadataList extends Vue {
     [EventMetadataCategories.SOCIAL]: this.$t("Social") as string,
     [EventMetadataCategories.DETAILS]: this.$t("Details") as string,
     [EventMetadataCategories.BOOKING]: this.$t("Booking") as string,
+    [EventMetadataCategories.VIDEO_CONFERENCE]: this.$t(
+      "Video Conference"
+    ) as string,
   };
 
   get filteredDataArray(): GroupedIEventMetadata {
