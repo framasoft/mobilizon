@@ -104,6 +104,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:inserted_at, :datetime, description: "When the event was created")
     field(:options, :event_options, description: "The event options")
     field(:metadata, list_of(:event_metadata), description: "A key-value list of metadata")
+    field(:language, non_null(:string), description: "The event language")
   end
 
   @desc "The list of visibility options for an event"
@@ -401,6 +402,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       )
 
       arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
+      arg(:language, :string, description: "The event language", default_value: "und")
 
       resolve(&Event.create_event/3)
     end
@@ -444,6 +446,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")
       arg(:draft, :boolean, description: "Whether or not the event is a draft")
       arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
+      arg(:language, :string, description: "The event language", default_value: "und")
 
       resolve(&Event.update_event/3)
     end

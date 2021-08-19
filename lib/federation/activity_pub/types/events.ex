@@ -12,6 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Activity.Event, as: EventActivity
   alias Mobilizon.Service.Formatter.HTML
+  alias Mobilizon.Service.LanguageDetection
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Share
   alias Mobilizon.Tombstone
@@ -234,6 +235,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
     args
     |> Map.put(:options, options)
+    |> Map.put_new(:language, "und")
+    |> Map.update!(:language, fn lang ->
+      if lang == "und", do: LanguageDetection.detect(:event, args), else: lang
+    end)
     |> Map.update(:tags, [], &ConverterUtils.fetch_tags/1)
     |> Map.update(:contacts, [], &ConverterUtils.fetch_actors/1)
   end

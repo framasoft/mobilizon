@@ -62,7 +62,8 @@ defmodule Mobilizon.Events.Event do
           mentions: [Mention.t()],
           tags: [Tag.t()],
           participants: [Actor.t()],
-          contacts: [Actor.t()]
+          contacts: [Actor.t()],
+          language: String.t()
         }
 
   @update_required_attrs [:title, :begins_on, :organizer_actor_id]
@@ -83,7 +84,8 @@ defmodule Mobilizon.Events.Event do
     :phone_address,
     :picture_id,
     :physical_address_id,
-    :attributed_to_id
+    :attributed_to_id,
+    :language
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -106,6 +108,7 @@ defmodule Mobilizon.Events.Event do
     field(:online_address, :string)
     field(:phone_address, :string)
     field(:category, :string)
+    field(:language, :string, default: "und")
 
     embeds_one(:options, EventOptions, on_replace: :delete)
     embeds_one(:participant_stats, EventParticipantStats, on_replace: :update)

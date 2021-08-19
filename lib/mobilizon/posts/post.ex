@@ -43,7 +43,8 @@ defmodule Mobilizon.Posts.Post do
           attributed_to: Actor.t(),
           picture: Media.t(),
           media: [Media.t()],
-          tags: [Tag.t()]
+          tags: [Tag.t()],
+          language: String.t()
         }
 
   @primary_key {:id, Ecto.UUID, autogenerate: true}
@@ -57,6 +58,7 @@ defmodule Mobilizon.Posts.Post do
     field(:url, :string)
     field(:publish_at, :utc_datetime)
     field(:visibility, PostVisibility, default: :public)
+    field(:language, :string, default: "und")
     belongs_to(:author, Actor)
     belongs_to(:attributed_to, Actor)
     belongs_to(:picture, Media, on_replace: :update)
@@ -76,7 +78,7 @@ defmodule Mobilizon.Posts.Post do
     :author_id,
     :attributed_to_id
   ]
-  @optional_attrs [:picture_id, :local, :publish_at, :visibility]
+  @optional_attrs [:picture_id, :local, :publish_at, :visibility, :language]
   @attrs @required_attrs ++ @optional_attrs
 
   @doc false

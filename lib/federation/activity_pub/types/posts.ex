@@ -8,6 +8,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Posts.Post
   alias Mobilizon.Service.Activity.Post, as: PostsActivity
+  alias Mobilizon.Service.LanguageDetection
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
 
@@ -17,7 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
 
   @impl Entity
   def create(args, additional) do
-    with args <- Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1),
+    with args <- prepare_args(args),
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
            Posts.create_post(args),
          {:ok, _} <- PostsActivity.insert_activity(post, subject: "post_created"),
@@ -37,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
 
   @impl Entity
   def update(%Post{} = post, args, additional) do
-    with args <- Map.update(args, :tags, [], &ConverterUtils.fetch_tags/1),
+    with args <- prepare_args(args),
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
            Posts.update_post(post, args),
          {:ok, _} <- PostsActivity.insert_activity(post, subject: "post_updated"),
@@ -98,5 +99,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
       update: :moderator,
       delete: :moderator
     }
+  end
+
+  defp prepare_args(args) do
+    args
+    |> Map.update(:tags, [], &ConverterUtils.fetch_tags/1)
+    |> Map.put_new(:language, "und")
+    |> Map.update!(:language, fn lang ->
+      if lang == "und", do: LanguageDetection.detect(:post, args), else: lang
+    end)
   end
 end

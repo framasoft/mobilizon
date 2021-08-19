@@ -30,7 +30,8 @@ defmodule Mobilizon.Discussions.Comment do
           mentions: [Mention.t()],
           media: [Media.t()],
           in_reply_to_comment: t,
-          origin_comment: t
+          origin_comment: t,
+          language: String.t()
         }
 
   # When deleting an event we only nihilify everything
@@ -46,7 +47,8 @@ defmodule Mobilizon.Discussions.Comment do
     :deleted_at,
     :local,
     :is_announcement,
-    :discussion_id
+    :discussion_id,
+    :language
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -60,6 +62,7 @@ defmodule Mobilizon.Discussions.Comment do
     field(:deleted_at, :utc_datetime)
     field(:published_at, :utc_datetime)
     field(:is_announcement, :boolean, default: false)
+    field(:language, :string, default: "und")
 
     belongs_to(:actor, Actor, foreign_key: :actor_id)
     belongs_to(:attributed_to, Actor, foreign_key: :attributed_to_id)

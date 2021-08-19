@@ -10,6 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Activity.Comment, as: CommentActivity
+  alias Mobilizon.Service.LanguageDetection
   alias Mobilizon.Share
   alias Mobilizon.Tombstone
   alias Mobilizon.Web.Endpoint
@@ -127,6 +128,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
            ),
          tags <- ConverterUtils.fetch_tags(tags),
          mentions <- Map.get(args, :mentions, []) ++ ConverterUtils.fetch_mentions(mentions),
+         lang <- Map.get(args, :language, "und"),
          args <-
            Map.merge(args, %{
              actor_id: Map.get(args, :actor_id),
@@ -141,7 +143,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
                if(is_nil(in_reply_to_comment),
                  do: nil,
                  else: Comment.get_thread_id(in_reply_to_comment)
-               )
+               ),
+             language: if(lang == "und", do: LanguageDetection.detect(:comment, args), else: lang)
            }) do
       args
     end

@@ -84,7 +84,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       $attributed_to_id: ID,
       $online_address: String,
       $options: EventOptionsInput,
-      $draft: Boolean
+      $draft: Boolean,
+      $language: String
       ) {
       createEvent(
           title: $title,
@@ -97,7 +98,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           attributed_to_id: $attributed_to_id,
           online_address: $online_address,
           options: $options,
-          draft: $draft
+          draft: $draft,
+          language: $language
       ) {
         id,
         uuid,
@@ -113,7 +115,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         online_address,
         phone_address,
         category,
-        draft,
+        draft
+        language
         options {
           maximumAttendeeCapacity,
           showRemainingAttendeeCapacity,
@@ -635,6 +638,51 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["name"] == media.name
 
       assert json_response(res, 200)["data"]["createEvent"]["picture"]["url"]
+    end
+
+    test "create_event/3 creates an event with detected language", %{
+      conn: conn,
+      actor: %Actor{id: actor_id},
+      user: user
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "Come to my event",
+            description: "This should be long enough to get detected",
+            organizer_actor_id: actor_id,
+            begins_on: "2021-07-26T09:00:00Z"
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["createEvent"]["language"] == "en"
+    end
+
+    test "create_event/3 creates an event with manually set language", %{
+      conn: conn,
+      actor: %Actor{id: actor_id},
+      user: user
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "Come to my event",
+            description: "This should be long enough to get detected",
+            organizer_actor_id: actor_id,
+            begins_on: "2021-07-26T09:00:00Z",
+            language: "it"
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["createEvent"]["language"] == "it"
     end
   end
 

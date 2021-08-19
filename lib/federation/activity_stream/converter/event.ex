@@ -83,7 +83,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         mentions: mentions,
         physical_address_id: address_id,
         updated_at: object["updated"],
-        publish_at: object["published"]
+        publish_at: object["published"],
+        language: object["inLanguage"]
       }
     else
       {:ok, %Actor{suspended: true}} ->
@@ -128,7 +129,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "draft" => event.draft,
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
-      "url" => event.url
+      "url" => event.url,
+      "inLanguage" => event.language
     }
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
