@@ -170,7 +170,6 @@ defmodule Mobilizon.Events.Event do
     |> validate_length(:online_address, min: 3, max: 2000)
     |> validate_length(:phone_address, min: 3, max: 200)
     |> validate_length(:category, min: 2, max: 100)
-    # |> validate_length(:category, min: 2, max: 100)
     |> validate_length(:slug, min: 3, max: 200)
   end
 
