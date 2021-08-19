@@ -2,7 +2,7 @@
 
 import Config
 
-listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "127.0.0.1")
+listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "0.0.0.0")
 
 listen_ip =
   case listen_ip |> to_charlist() |> :inet.parse_address() do
@@ -14,7 +14,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   server: true,
   url: [host: System.get_env("MOBILIZON_INSTANCE_HOST", "mobilizon.lan")],
   http: [
-    port: System.get_env("MOBILIZON_INSTANCE_PORT", "4000"),
+    port: String.to_integer(System.get_env("MOBILIZON_INSTANCE_PORT", "4000")),
     ip: listen_ip
   ],
   secret_key_base: System.get_env("MOBILIZON_INSTANCE_SECRET_KEY_BASE", "changethis")
