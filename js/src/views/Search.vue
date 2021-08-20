@@ -381,7 +381,7 @@ export default class Search extends Vue {
 
   set eventPage(page: number) {
     this.$router.push({
-      name: RouteName.SEARCH,
+      name: this.$route.name || RouteName.SEARCH,
       query: { ...this.$route.query, eventPage: page.toString() },
     });
   }
