@@ -21,6 +21,7 @@
           }}
         </span>
         <span
+          v-if="config"
           v-html="
             $t(
               'This instance, <b>{instanceName} ({domain})</b>, hosts your profile, so remember its name.',
