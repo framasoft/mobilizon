@@ -20,6 +20,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     field(:publish_at, :datetime, description: "When the post was published")
     field(:inserted_at, :datetime, description: "The post's creation date")
     field(:updated_at, :datetime, description: "The post's last update date")
+    field(:language, non_null(:string), description: "The post language")
 
     field(:tags, list_of(:tag),
       resolve: &Tag.list_tags_for_post/3,
@@ -71,6 +72,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
       arg(:draft, :boolean, default_value: false, description: "Whether the post is a draft")
       arg(:visibility, :post_visibility, description: "The post's visibility")
       arg(:publish_at, :datetime, description: "The post's publish date")
+      arg(:language, :string, description: "The post language", default_value: "und")
 
       arg(:tags, list_of(:string),
         default_value: [],
@@ -93,6 +95,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
       arg(:attributed_to_id, :id, description: "The group the post is attributed to")
       arg(:draft, :boolean, description: "Whether the post is a draft")
       arg(:visibility, :post_visibility, description: "The post's visibility")
+      arg(:language, :string, description: "The post language", default_value: "und")
 
       arg(:publish_at, :datetime,
         description: "The time when the posts is going to be or has been published"

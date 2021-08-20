@@ -54,6 +54,8 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     field(:is_announcement, non_null(:boolean),
       description: "Whether this comment needs to be announced to participants"
     )
+
+    field(:language, non_null(:string), description: "The comment language")
   end
 
   @desc "The list of visibility options for a comment"
@@ -89,6 +91,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       arg(:text, non_null(:string), description: "The comment's body")
       arg(:event_id, non_null(:id), description: "The event under which this comment is")
       arg(:in_reply_to_comment_id, :id, description: "The comment ID this one replies to")
+      arg(:language, :string, description: "The comment language", default_value: "und")
 
       arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
 
@@ -99,6 +102,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     field :update_comment, type: :comment do
       arg(:text, non_null(:string), description: "The comment updated body")
       arg(:comment_id, non_null(:id), description: "The comment ID")
+      arg(:language, :string, description: "The comment language", default_value: "und")
 
       arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
 

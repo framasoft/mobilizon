@@ -36,6 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         "https://www.w3.org/ns/activitystreams",
         "https://litepub.social/context.jsonld",
         %{
+          "@language" => "und",
           "sc" => "http://schema.org#",
           "ical" => "http://www.w3.org/2002/12/cal/ical#",
           "pt" => "https://joinpeertube.org/ns#",
@@ -91,7 +92,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           },
           "PropertyValue" => "sc:PropertyValue",
           "value" => "sc:value",
-          "propertyID" => "sc:propertyID"
+          "propertyID" => "sc:propertyID",
+          "inLanguage" => "sc:inLanguage"
         }
       ]
     }
