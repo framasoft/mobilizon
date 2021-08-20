@@ -62,7 +62,7 @@ defmodule Mobilizon.Service.DateTime do
   def calculate_next_day_notification(%Date{} = day, options \\ []) do
     compare_to = Keyword.get(options, :compare_to, DateTime.utc_now())
     notification_time = Keyword.get(options, :notification_time, ~T[18:00:00])
-    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    timezone = Keyword.get(options, :timezone, "Etc/UTC") || "Etc/UTC"
 
     send_at = DateTime.new!(day, notification_time, timezone)
 
