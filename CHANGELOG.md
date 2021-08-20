@@ -4,7 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.3.0 - 2021-08-12
+## 1.3.1 - 2021-08-20
+
+### Fixed
+
+- Fixed default listen IP and sitemap creation for Docker configurations
+- Fixed issues related to user timezone setting being shown as set when it wasn't, leading to timezone sometimes missing and causing issues (#746, #815)
+- Fixed issues with managing resources (#837, #838)
+
+### Translations
+
+- Gaelic
+- Finnish
+- Spanish
+
+## 1.3.0 - 2021-08-17
 
 ### Added
 
