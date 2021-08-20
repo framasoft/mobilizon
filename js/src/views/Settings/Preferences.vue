@@ -144,7 +144,11 @@ export default class Preferences extends Vue {
     if (this.loggedUser?.settings?.timezone) {
       return this.loggedUser.settings.timezone;
     }
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (this.loggedUser?.settings?.timezone === null) {
+      this.updateUserSettings({ timezone: detectedTimezone });
+    }
+    return detectedTimezone;
   }
 
   set selectedTimezone(selectedTimezone: string) {

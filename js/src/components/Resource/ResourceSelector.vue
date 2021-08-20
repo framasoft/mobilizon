@@ -59,7 +59,7 @@
         {{ $t("No resources in this folder") }}
       </p>
       <b-pagination
-        v-if="resource.children.total > RESOURCES_PER_PAGE"
+        v-if="resource.children && resource.children.total > RESOURCES_PER_PAGE"
         :total="resource.children.total"
         v-model="page"
         size="is-small"

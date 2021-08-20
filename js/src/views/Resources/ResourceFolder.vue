@@ -531,6 +531,8 @@ export default class Resources extends Mixins(ResourceMixin) {
         variables: {
           path: this.actualPath,
           username: this.$route.params.preferredUsername,
+          page: this.page,
+          limit: this.RESOURCES_PER_PAGE,
         },
       },
     ];
@@ -620,8 +622,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           }
           const updatedResource: IResource = data.updateResource;
 
-          // eslint-disable-next-line vue/max-len
-          oldParentCachedResource.children.elements =
+          const updatedElementList =
             oldParentCachedResource.children.elements.filter(
               (cachedResource) => cachedResource.id !== updatedResource.id
             );
@@ -632,7 +633,15 @@ export default class Resources extends Mixins(ResourceMixin) {
               path: parentPath,
               username: this.resource.actor.preferredUsername,
             },
-            data: { oldParentCachedResource },
+            data: {
+              resource: {
+                ...oldParentCachedResource,
+                children: {
+                  ...oldParentCachedResource.children,
+                  elements: [...updatedElementList],
+                },
+              },
+            },
           });
           console.log("Finished removing ressource from old parent");
 
@@ -657,15 +666,24 @@ export default class Resources extends Mixins(ResourceMixin) {
             return;
           }
 
-          newParentCachedResource.children.elements.push(resource);
-
           store.writeQuery({
             query: GET_RESOURCE,
             variables: {
               path: updatedResource.parent.path,
               username: this.resource.actor.preferredUsername,
             },
-            data: { newParentCachedResource },
+            data: {
+              resource: {
+                ...newParentCachedResource,
+                children: {
+                  ...newParentCachedResource.children,
+                  elements: [
+                    ...newParentCachedResource.children.elements,
+                    resource,
+                  ],
+                },
+              },
+            },
           });
           console.log("Finished adding resource to new parent");
         },
