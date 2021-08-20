@@ -386,6 +386,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     currentUser: CURRENT_USER_CLIENT,
     loggedUser: {
       query: USER_SETTINGS,
+      fetchPolicy: "network-only",
       skip() {
         return !this.currentUser || this.currentUser.isLoggedIn === false;
       },
