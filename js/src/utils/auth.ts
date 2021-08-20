@@ -47,6 +47,7 @@ export function deleteUserData(): void {
     AUTH_USER_EMAIL,
     AUTH_ACCESS_TOKEN,
     AUTH_REFRESH_TOKEN,
+    AUTH_USER_ACTOR_ID,
     AUTH_USER_ROLE,
   ].forEach((key) => {
     localStorage.removeItem(key);
