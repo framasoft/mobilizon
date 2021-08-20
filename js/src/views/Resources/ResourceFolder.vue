@@ -531,6 +531,8 @@ export default class Resources extends Mixins(ResourceMixin) {
         variables: {
           path: this.actualPath,
           username: this.$route.params.preferredUsername,
+          page: this.page,
+          limit: this.RESOURCES_PER_PAGE,
         },
       },
     ];
