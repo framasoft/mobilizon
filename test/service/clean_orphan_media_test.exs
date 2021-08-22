@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.CleanOrphanMediaTest do
       refute is_nil(Medias.get_media(media_id))
       refute is_nil(Medias.get_media(media_2_id))
 
-      assert {:ok, [found_media]} = CleanOrphanMedia.clean()
+      assert {:ok, [[found_media]]} = CleanOrphanMedia.clean()
       assert found_media.id == media_id
 
       assert is_nil(Medias.get_media(media_id))
@@ -31,7 +31,7 @@ defmodule Mobilizon.Service.CleanOrphanMediaTest do
       refute is_nil(Medias.get_media(media_id))
       refute is_nil(Medias.get_media(media_2_id))
 
-      assert {:ok, [found_media]} = CleanOrphanMedia.clean(dry_run: true)
+      assert {:ok, [[found_media]]} = CleanOrphanMedia.clean(dry_run: true)
       assert found_media.id == media_id
 
       refute is_nil(Medias.get_media(media_id))
@@ -46,7 +46,7 @@ defmodule Mobilizon.Service.CleanOrphanMediaTest do
       refute is_nil(Medias.get_media(media_id))
       refute is_nil(Medias.get_media(media_2_id))
 
-      assert {:ok, [found_media]} = CleanOrphanMedia.clean(grace_period: 12)
+      assert {:ok, [[found_media]]} = CleanOrphanMedia.clean(grace_period: 12)
       assert found_media.id == media_id
 
       assert is_nil(Medias.get_media(media_id))

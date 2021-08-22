@@ -4,6 +4,7 @@ defmodule Mobilizon.Medias do
   """
 
   import Ecto.Query
+  import Mobilizon.Storage.CustomFunctions
 
   alias Ecto.Multi
 
@@ -40,23 +41,15 @@ defmodule Mobilizon.Medias do
   end
 
   @doc """
-  Get an unattached media by it's URL
+  Get all media by an URL.
   """
-  def get_unattached_media_by_url(url) do
+  @spec get_all_media_by_url(String.t()) :: Media.t() | nil
+  def get_all_media_by_url(url) do
     url
+    |> String.split("?", parts: 2)
+    |> hd
     |> media_by_url_query()
-    |> join(:left, [m], e in assoc(m, :events))
-    |> join(:left, [m], ep in assoc(m, :event_picture))
-    |> join(:left, [m], p in assoc(m, :posts))
-    |> join(:left, [m], pp in assoc(m, :posts_picture))
-    |> join(:left, [m], c in assoc(m, :comments))
-    |> where([_m, e], is_nil(e.id))
-    |> where([_m, _e, ep], is_nil(ep.id))
-    |> where([_m, _e, _ep, p], is_nil(p.id))
-    |> where([_m, _e, _ep, _p, pp], is_nil(pp.id))
-    |> where([_m, _e, _ep, _p, _pp, c], is_nil(c.id))
-    |> limit(1)
-    |> Repo.one()
+    |> Repo.all()
   end
 
   @doc """
@@ -163,7 +156,7 @@ defmodule Mobilizon.Medias do
   defp media_by_url_query(url) do
     from(
       p in Media,
-      where: fragment("? @> ?", p.file, ~s|{"url": "#{url}"}|)
+      where: split_part(fragment("file->>'url'"), "?", 1) == ^url
     )
   end
 

@@ -31,6 +31,7 @@ priv/cert/
 cover/
 site/
 test/fixtures/image_tmp.jpg
+test/fixtures/picture_tmp.png
 test/fixtures/DSCN0010_tmp.jpg
 test/uploads/
 uploads/*
