@@ -64,7 +64,9 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanOrphan do
     end
 
     Enum.each(medias, fn media ->
-      shell_info("ID: #{media.id}, Actor: #{media.actor_id}, URL: #{media.file.url}")
+      shell_info(
+        "ID: #{hd(media).id}, Actor: #{hd(media).actor_id}, Deduplicated #{length(media)} times, URL: #{hd(media).file.url}"
+      )
     end)
   end
 
