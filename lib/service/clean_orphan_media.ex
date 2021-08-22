@@ -5,6 +5,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Medias
+  alias Mobilizon.Medias.File
   alias Mobilizon.Medias.Media
   alias Mobilizon.Storage.Repo
   import Ecto.Query
@@ -25,8 +26,10 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
     if Keyword.get(opts, :dry_run, false) do
       {:ok, medias}
     else
-      Enum.each(medias, fn media ->
-        Medias.delete_media(media, ignore_file_not_found: true)
+      Enum.each(medias, fn media_list ->
+        Enum.each(media_list, fn media ->
+          Medias.delete_media(media, ignore_file_not_found: true)
+        end)
       end)
 
       {:ok, medias}
@@ -49,7 +52,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
                |> Enum.join(" UNION ")
                |> (&"NOT EXISTS(#{&1})").()
 
-  @spec find_media(Keyword.t()) :: list(Media.t())
+  @spec find_media(Keyword.t()) :: list(list(Media.t()))
   defp find_media(opts) do
     default_grace_period =
       Mobilizon.Config.get([:instance, :orphan_upload_grace_period_hours], 48)
@@ -68,6 +71,38 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
         where: fragment(@union_query)
       )
 
-    Repo.all(query)
+    query
+    |> Repo.all()
+    |> Enum.filter(fn %Media{file: %File{url: url}} ->
+      is_all_media_orphan?(url, expiration_date)
+    end)
+    |> Enum.chunk_by(fn %Media{file: %File{url: url}} ->
+      url
+      |> String.split("?", parts: 2)
+      |> hd
+    end)
+  end
+
+  def is_all_media_orphan?(url, expiration_date) do
+    url
+    |> Medias.get_all_media_by_url()
+    |> Enum.all?(&is_media_orphan?(&1, expiration_date))
+  end
+
+  @spec is_media_orphan?(Media.t(), DateTime.t()) :: boolean()
+  def is_media_orphan?(%Media{id: media_id}, expiration_date) do
+    query =
+      from(m in Media,
+        as: :media,
+        distinct: true,
+        join: a in Actor,
+        on: a.id == m.actor_id,
+        where: m.id == ^media_id,
+        where: is_nil(a.domain),
+        where: m.inserted_at < ^expiration_date,
+        where: fragment(@union_query)
+      )
+
+    Repo.exists?(query)
   end
 end

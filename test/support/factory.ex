@@ -280,7 +280,7 @@ defmodule Mobilizon.Factory do
     %Mobilizon.Medias.File{
       name: "My Media",
       url: url,
-      content_type: "image/png",
+      content_type: "image/jpg",
       size: 13_120
     }
   end
