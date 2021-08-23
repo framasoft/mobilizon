@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.3.2 - 2021-08-23
+
+### Fixed
+
+- Fixed deduplicated files from orphan media being cleanup as well
+- Fixed config onboarding after initial connection
+- Fixed current actor ID not being deleted from localstorage after logout
+- Fixed missing pagination on tag exploring page
+- Fixed deleting own account
+- Fixed user profiles that could show up in group search
+- Fixed accessibility issues on the account settings page
+
 ## 1.3.1 - 2021-08-20
 
 ### Fixed
