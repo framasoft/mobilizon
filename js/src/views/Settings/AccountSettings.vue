@@ -51,20 +51,22 @@
         class="form"
         v-if="canChangeEmail"
       >
-        <b-field :label="$t('New email')">
+        <b-field :label="$t('New email')" label-for="account-email">
           <b-input
             aria-required="true"
             required
             type="email"
+            id="account-email"
             v-model="newEmail"
           />
         </b-field>
         <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
-        <b-field :label="$t('Password')">
+        <b-field :label="$t('Password')" label-for="account-password">
           <b-input
             aria-required="true"
             required
             type="password"
+            id="account-password"
             password-reveal
             minlength="6"
             v-model="passwordForEmailChange"
@@ -105,23 +107,25 @@
         class="form"
         v-if="canChangePassword"
       >
-        <b-field :label="$t('Old password')">
+        <b-field :label="$t('Old password')" label-for="account-old-password">
           <b-input
             aria-required="true"
             required
             type="password"
             password-reveal
             minlength="6"
+            id="account-old-password"
             v-model="oldPassword"
           />
         </b-field>
-        <b-field :label="$t('New password')">
+        <b-field :label="$t('New password')" label-for="account-new-password">
           <b-input
             aria-required="true"
             required
             type="password"
             password-reveal
             minlength="6"
+            id="account-new-password"
             v-model="newPassword"
           />
         </b-field>
@@ -409,6 +413,12 @@ export default class AccountSettings extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.modal.is-active.is-full-screen {
+  .help.is-danger {
+    font-size: 1rem;
+  }
+}
+
 .cancel-button {
   margin-top: 2rem;
 }
