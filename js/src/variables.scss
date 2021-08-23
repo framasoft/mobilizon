@@ -54,7 +54,7 @@ $success-invert: findColorInvert($success);
 $info: #36bcd4;
 $info-invert: findColorInvert($info);
 $danger: #ff2e54;
-$danger-invert: findColorInvert($danger);
+$danger-invert: #000;
 $link: $primary;
 $link-invert: $primary-invert;
 $text: $violet-1;
