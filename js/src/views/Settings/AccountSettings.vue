@@ -180,14 +180,29 @@
                     }}
                   </p>
                   <form @submit.prevent="deleteAccount">
-                    <b-field v-if="hasUserGotAPassword">
+                    <b-field
+                      :type="deleteAccountPasswordFieldType"
+                      v-if="hasUserGotAPassword"
+                      label-for="account-deletion-password"
+                    >
                       <b-input
                         type="password"
                         v-model="passwordForAccountDeletion"
                         password-reveal
+                        id="account-deletion-password"
+                        :aria-label="$t('Password')"
                         icon="lock"
                         :placeholder="$t('Password')"
                       />
+                      <template #message>
+                        <b-message
+                          type="is-danger"
+                          v-for="message in deletePasswordErrors"
+                          :key="message"
+                        >
+                          {{ message }}
+                        </b-message>
+                      </template>
                     </b-field>
                     <b-button
                       native-type="submit"
@@ -217,6 +232,7 @@
 
 <script lang="ts">
 import { IAuthProvider } from "@/types/enums";
+import { GraphQLError } from "graphql/error/GraphQLError";
 import { Component, Vue, Ref } from "vue-property-decorator";
 import { Route } from "vue-router";
 import {
@@ -255,6 +271,8 @@ export default class AccountSettings extends Vue {
   newPassword = "";
 
   changePasswordErrors: string[] = [];
+
+  deletePasswordErrors: string[] = [];
 
   isDeleteAccountModalActive = false;
 
@@ -313,6 +331,8 @@ export default class AccountSettings extends Vue {
 
   async deleteAccount(): Promise<Route | void> {
     try {
+      this.deletePasswordErrors = [];
+      console.debug("Asking to delete account...");
       await this.$apollo.mutate({
         mutation: DELETE_ACCOUNT,
         variables: {
@@ -321,7 +341,8 @@ export default class AccountSettings extends Vue {
             : null,
         },
       });
-      await logout(this.$apollo.provider.defaultClient);
+      console.debug("Deleted account, logging out client...");
+      await logout(this.$apollo.provider.defaultClient, false);
       this.$buefy.notification.open({
         message: this.$t(
           "Your account has been successfully deleted"
@@ -333,7 +354,9 @@ export default class AccountSettings extends Vue {
 
       return await this.$router.push({ name: RouteName.HOME });
     } catch (err) {
-      return this.handleErrors("delete", err);
+      this.deletePasswordErrors = err.graphQLErrors.map(
+        ({ message }: GraphQLError) => message
+      );
     }
   }
 
@@ -359,6 +382,10 @@ export default class AccountSettings extends Vue {
       (this.loggedUser.provider == null ||
         this.loggedUser.provider === IAuthProvider.LDAP)
     );
+  }
+
+  get deleteAccountPasswordFieldType(): string | null {
+    return this.deletePasswordErrors.length > 0 ? "is-danger" : null;
   }
 
   private handleErrors(type: string, err: any) {
