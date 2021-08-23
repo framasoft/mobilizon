@@ -16,9 +16,11 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
 
   test "search an user by username" do
     with_mock ActivityPubActor,
-      find_or_make_actor_from_nickname: fn "toto@domain.tld" -> {:ok, %Actor{id: 42}} end do
-      assert {:ok, %Page{total: 1, elements: [%Actor{id: 42}]}} ==
-               Search.search_actors(%{term: "toto@domain.tld"}, 1, 10, :Person)
+      find_or_make_actor_from_nickname: fn "toto@domain.tld" ->
+        {:ok, %Actor{id: 42, type: :Group}}
+      end do
+      assert {:ok, %Page{total: 1, elements: [%Actor{id: 42, type: :Group}]}} ==
+               Search.search_actors(%{term: "toto@domain.tld"}, 1, 10, :Group)
 
       assert_called(ActivityPubActor.find_or_make_actor_from_nickname("toto@domain.tld"))
     end
