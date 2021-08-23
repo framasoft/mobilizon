@@ -94,8 +94,12 @@ defmodule Mobilizon.GraphQL.API.Search do
   @spec process_from_username(String.t()) :: Page.t()
   defp process_from_username(search) do
     case ActivityPubActor.find_or_make_actor_from_nickname(search) do
-      {:ok, actor} ->
+      {:ok, %Actor{type: :Group} = actor} ->
         %Page{total: 1, elements: [actor]}
+
+      # Don't return anything else than groups
+      {:ok, %Actor{}} ->
+        %Page{total: 0, elements: []}
 
       {:error, _err} ->
         Logger.debug(fn -> "Unable to find or make actor '#{search}'" end)
