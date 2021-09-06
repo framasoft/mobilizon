@@ -458,7 +458,7 @@
   "Invited": "Kutsuttu",
   "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "Sisältö ei ole käytettävissä tämän palvelimen kautta mahdollisesti siksi, että tämä instanssi on estänyt sisällön taustalla olevat profiilit tai ryhmät.",
   "Italic": "Kursivoitu",
-  "Jisti Meet": "Jitsi-tapaaminen",
+  "Jitsi Meet": "Jitsi-tapaaminen",
   "Join <b>{instance}</b>, a Mobilizon instance": "Liity Mobilizon- instanssille <b>{instance}</b>",
   "Join group": "Liity ryhmään",
   "Join group {group}": "Liity ryhmään {group}",
