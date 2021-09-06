@@ -227,7 +227,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "webcam",
     key: "mz:visio:jitsi_meet",
-    label: i18n.t("Jisti Meet") as string,
+    label: i18n.t("Jitsi Meet") as string,
     description: i18n.t("The Jitsi Meet video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
