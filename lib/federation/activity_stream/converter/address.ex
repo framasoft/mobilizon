@@ -36,15 +36,16 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
         })
       end
 
-    if is_nil(object["latitude"]) or is_nil(object["longitude"]) do
-      res
-    else
-      geo = %Geo.Point{
-        coordinates: {object["longitude"], object["latitude"]},
-        srid: 4326
-      }
+    latitude = Map.get(object, "latitude")
+    longitude = Map.get(object, "longitude")
 
-      Map.put(res, "geom", geo)
+    if is_float(latitude) and is_float(longitude) do
+      Map.put(res, "geom", %Geo.Point{
+        coordinates: {longitude, latitude},
+        srid: 4326
+      })
+    else
+      res
     end
   end
 
@@ -72,8 +73,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
       res
     else
       res
-      |> Map.put("longitude", address.geom.coordinates |> elem(1))
-      |> Map.put("latitude", address.geom.coordinates |> elem(0))
+      |> Map.put("longitude", address.geom.coordinates |> elem(0))
+      |> Map.put("latitude", address.geom.coordinates |> elem(1))
     end
   end
 end

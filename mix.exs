@@ -98,7 +98,7 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.15.3"},
-      {:phoenix_html, "~> 2.10"},
+      {:phoenix_html, "~> 3.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
