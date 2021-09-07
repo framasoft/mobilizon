@@ -36,12 +36,17 @@
         class="picture-upload"
       />
 
-      <b-field horizontal :label="$t('Display name')">
+      <b-field
+        horizontal
+        :label="$t('Display name')"
+        label-for="identity-display-name"
+      >
         <b-input
           aria-required="true"
           required
           v-model="identity.name"
           @input="autoUpdateUsername($event)"
+          id="identity-display-name"
         />
       </b-field>
 
@@ -50,6 +55,7 @@
         custom-class="username-field"
         expanded
         :label="$t('Username')"
+        label-for="identity-username"
         :message="message"
       >
         <b-field expanded>
@@ -60,6 +66,7 @@
             :disabled="isUpdate"
             :use-html5-validation="!isUpdate"
             pattern="[a-z0-9_]+"
+            id="identity-username"
           />
 
           <p class="control">
@@ -68,11 +75,16 @@
         </b-field>
       </b-field>
 
-      <b-field horizontal :label="$t('Description')">
+      <b-field
+        horizontal
+        :label="$t('Description')"
+        label-for="identity-summary"
+      >
         <b-input
           type="textarea"
           aria-required="false"
           v-model="identity.summary"
+          id="identity-summary"
         />
       </b-field>
 
@@ -94,11 +106,15 @@
         </div>
       </b-field>
 
-      <div class="delete-identity" v-if="isUpdate">
-        <span @click="openDeleteIdentityConfirmation()">{{
-          $t("Delete this identity")
-        }}</span>
-      </div>
+      <b-field class="delete-identity">
+        <b-button
+          v-if="isUpdate"
+          @click="openDeleteIdentityConfirmation()"
+          type="is-text"
+        >
+          {{ $t("Delete this identity") }}
+        </b-button>
+      </b-field>
 
       <section v-if="isUpdate">
         <div class="setting-title">
@@ -192,12 +208,6 @@ h1 {
 
 .submit {
   margin: 30px 0;
-}
-
-.delete-identity {
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 15px;
 }
 
 .username-field + .field {

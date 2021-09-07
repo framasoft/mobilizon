@@ -9,6 +9,7 @@
           :src="`/img/${metadataItem.icon.substring(8)}_monochrome.svg`"
           width="24"
           height="24"
+          alt=""
         />
 
         <b-icon v-else-if="metadataItem.icon" :icon="metadataItem.icon" />

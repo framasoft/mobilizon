@@ -31,7 +31,7 @@
                 $t("About this instance")
               }}</router-link>
             </p>
-            <p class="menu-label">
+            <p class="menu-label has-text-grey-dark">
               {{ $t("Legal") }}
             </p>
             <ul class="menu-list">
@@ -64,8 +64,10 @@
       </div>
     </main>
 
-    <!-- We hide the "Find an instance button until https://joinmobilizon.org gets a instance picker -->
-    <div class="hero register is-primary is-medium">
+    <div
+      class="hero register is-primary is-medium"
+      v-if="!currentUser || !currentUser.id"
+    >
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="columns">

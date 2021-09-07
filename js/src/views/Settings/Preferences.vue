@@ -15,22 +15,28 @@
       </ul>
     </nav>
     <div>
-      <b-field :label="$t('Language')">
+      <b-field :label="$t('Language')" label-for="setting-language">
         <b-select
           :loading="!config || !loggedUser"
           v-model="locale"
           :placeholder="$t('Select a language')"
+          id="setting-language"
         >
           <option v-for="(language, lang) in langs" :value="lang" :key="lang">
             {{ language }}
           </option>
         </b-select>
       </b-field>
-      <b-field :label="$t('Timezone')" v-if="selectedTimezone">
+      <b-field
+        :label="$t('Timezone')"
+        v-if="selectedTimezone"
+        label-for="setting-timezone"
+      >
         <b-select
           :placeholder="$t('Select a timezone')"
           :loading="!config || !loggedUser"
           v-model="selectedTimezone"
+          id="setting-timezone"
         >
           <optgroup
             :label="group"
@@ -57,19 +63,25 @@
       }}</b-message>
       <hr />
       <b-field grouped>
-        <b-field :label="$t('City or region')" expanded>
+        <b-field
+          :label="$t('City or region')"
+          expanded
+          label-for="setting-city"
+        >
           <address-auto-complete
             v-if="loggedUser && loggedUser.settings"
             :type="AddressSearchType.ADMINISTRATIVE"
             :doGeoLocation="false"
             v-model="address"
+            id="setting-city"
           >
           </address-auto-complete>
         </b-field>
-        <b-field :label="$t('Radius')">
+        <b-field :label="$t('Radius')" label-for="setting-radius">
           <b-select
             :placeholder="$t('Select a radius')"
             v-model="locationRange"
+            id="setting-radius"
           >
             <option
               v-for="index in [1, 5, 10, 25, 50, 100]"
@@ -85,6 +97,7 @@
           @click="resetArea"
           class="reset-area"
           icon-left="close"
+          :aria-label="$t('Reset')"
         />
       </b-field>
       <p>

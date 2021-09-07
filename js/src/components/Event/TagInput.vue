@@ -1,5 +1,5 @@
 <template>
-  <b-field>
+  <b-field :label-for="id">
     <template slot="label">
       {{ $t("Add some tags") }}
       <b-tooltip
@@ -22,6 +22,7 @@
       maxtags="10"
       :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
       @typing="getFilteredTags"
+      :id="id"
     >
     </b-taginput>
   </b-field>
@@ -58,6 +59,16 @@ export default class TagInput extends Vue {
   @Prop({ required: true }) value!: ITag[];
 
   filteredTags: ITag[] = [];
+
+  private static componentId = 0;
+
+  created(): void {
+    TagInput.componentId += 1;
+  }
+
+  get id(): string {
+    return `tag-input-${TagInput.componentId}`;
+  }
 
   getFilteredTags(text: string): void {
     this.filteredTags = differenceBy(this.data, this.value, "id").filter(

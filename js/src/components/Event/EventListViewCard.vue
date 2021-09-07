@@ -12,7 +12,7 @@
             <h2 class="title">{{ event.title }}</h2>
           </router-link>
         </div>
-        <div class="participation-actor has-text-grey">
+        <div class="participation-actor has-text-grey-dark">
           <span v-if="event.physicalAddress && event.physicalAddress.locality">
             {{ event.physicalAddress.locality }}
           </span>

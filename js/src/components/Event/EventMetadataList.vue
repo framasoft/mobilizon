@@ -9,7 +9,11 @@
         />
       </div>
     </div>
-    <b-field grouped :label="$t('Find or add an element')">
+    <b-field
+      grouped
+      :label="$t('Find or add an element')"
+      label-for="event-metadata-autocomplete"
+    >
       <b-autocomplete
         expanded
         v-model="search"
@@ -19,6 +23,7 @@
         group-options="items"
         open-on-focus
         :placeholder="$t('e.g. Accessibility, Twitch, PeerTube')"
+        id="event-metadata-autocomplete"
         @select="(option) => addElement(option)"
       >
         <template slot-scope="props">
@@ -32,6 +37,7 @@
                 :src="`/img/${props.option.icon.substring(8)}_monochrome.svg`"
                 width="24"
                 height="24"
+                alt=""
               />
               <b-icon v-else-if="props.option.icon" :icon="props.option.icon" />
               <b-icon v-else icon="help-circle" />

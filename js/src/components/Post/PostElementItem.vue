@@ -22,13 +22,13 @@
                 post.visibility === PostVisibility.PUBLIC &&
                 isCurrentActorMember
               "
-              class="has-text-grey"
+              class="has-text-grey-dark"
             >
               <b-icon icon="earth" size="is-small" />{{ $t("Public") }}</small
             >
             <small
               v-else-if="post.visibility === PostVisibility.UNLISTED"
-              class="has-text-grey"
+              class="has-text-grey-dark"
             >
               <b-icon icon="link" size="is-small" />{{
                 $t("Accessible through link")
@@ -36,7 +36,7 @@
             >
             <small
               v-else-if="post.visibility === PostVisibility.PRIVATE"
-              class="has-text-grey"
+              class="has-text-grey-dark"
             >
               <b-icon icon="lock" size="is-small" />{{
                 $t("Accessible only to members", {
@@ -44,13 +44,13 @@
                 })
               }}</small
             >
-            <small class="has-text-grey">{{
+            <small class="has-text-grey-dark">{{
               $options.filters.formatDateTimeString(
                 new Date(post.insertedAt),
                 false
               )
             }}</small>
-            <small class="has-text-grey" v-if="isCurrentActorMember">{{
+            <small class="has-text-grey-dark" v-if="isCurrentActorMember">{{
               $t("Created by {username}", {
                 username: `@${usernameWithDomain(post.author)}`,
               })

@@ -87,7 +87,7 @@
                   props.row.actor.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey"
+                <span class="is-size-7 has-text-grey-dark"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
                 >
               </div>

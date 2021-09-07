@@ -86,6 +86,7 @@
 
       <b-field
         :label="$t('Send notification e-mails')"
+        label-for="groupNotifications"
         :message="
           $t(
             'Announcements and mentions notifications are always sent straight away.'
@@ -95,6 +96,7 @@
         <b-select
           v-model="groupNotifications"
           @input="updateSetting({ groupNotifications })"
+          id="groupNotifications"
         >
           <option
             v-for="(value, key) in groupNotificationsValues"
@@ -186,9 +188,13 @@
         <h2>{{ $t("Organizer notifications") }}</h2>
       </div>
       <div class="field is-primary">
-        <strong>{{
-          $t("Notifications for manually approved participations to an event")
-        }}</strong>
+        <label
+          class="has-text-weight-bold"
+          for="notificationPendingParticipation"
+          >{{
+            $t("Notifications for manually approved participations to an event")
+          }}</label
+        >
         <p>
           {{
             $t(
@@ -198,6 +204,7 @@
         </p>
         <b-select
           v-model="notificationPendingParticipation"
+          id="notificationPendingParticipation"
           @input="updateSetting({ notificationPendingParticipation })"
         >
           <option

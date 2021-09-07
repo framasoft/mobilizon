@@ -16,11 +16,11 @@
     </nav>
     <section v-if="adminSettings">
       <form @submit.prevent="updateSettings">
-        <b-field :label="$t('Instance Name')">
-          <b-input v-model="adminSettings.instanceName" />
+        <b-field :label="$t('Instance Name')" label-for="instance-name">
+          <b-input v-model="adminSettings.instanceName" id="instance-name" />
         </b-field>
         <div class="field">
-          <label class="label has-help">{{
+          <label class="label has-help" for="instance-description">{{
             $t("Instance Short Description")
           }}</label>
           <small>
@@ -34,10 +34,13 @@
             type="textarea"
             v-model="adminSettings.instanceDescription"
             rows="2"
+            id="instance-name"
           />
         </div>
         <div class="field">
-          <label class="label has-help">{{ $t("Instance Slogan") }}</label>
+          <label class="label has-help" for="instance-slogan">{{
+            $t("Instance Slogan")
+          }}</label>
           <small>
             {{
               $t(
@@ -48,14 +51,17 @@
           <b-input
             v-model="adminSettings.instanceSlogan"
             :placeholder="$t('Gather ⋅ Organize ⋅ Mobilize')"
+            id="instance-slogan"
           />
         </div>
         <div class="field">
-          <label class="label has-help">{{ $t("Contact") }}</label>
+          <label class="label has-help" for="instance-contact">{{
+            $t("Contact")
+          }}</label>
           <small>
             {{ $t("Can be an email or a link, or just plain text.") }}
           </small>
-          <b-input v-model="adminSettings.contact" />
+          <b-input v-model="adminSettings.contact" id="instance-contact" />
         </div>
         <b-field :label="$t('Allow registrations')">
           <b-switch v-model="adminSettings.registrationsOpen">
@@ -66,7 +72,9 @@
           </b-switch>
         </b-field>
         <div class="field">
-          <label class="label has-help">{{ $t("Instance languages") }}</label>
+          <label class="label has-help" for="instance-languages">{{
+            $t("Instance languages")
+          }}</label>
           <small>
             {{ $t("Main languages you/your moderators speak") }}
           </small>
@@ -79,12 +87,13 @@
             icon="label"
             :placeholder="$t('Select languages')"
             @typing="getFilteredLanguages"
+            id="instance-languages"
           >
             <template slot="empty">{{ $t("No languages found") }}</template>
           </b-taginput>
         </div>
         <div class="field">
-          <label class="label has-help">{{
+          <label class="label has-help" for="instance-long-description">{{
             $t("Instance Long Description")
           }}</label>
           <small>
@@ -98,10 +107,13 @@
             type="textarea"
             v-model="adminSettings.instanceLongDescription"
             rows="4"
+            id="instance-long-description"
           />
         </div>
         <div class="field">
-          <label class="label has-help">{{ $t("Instance Rules") }}</label>
+          <label class="label has-help" for="instance-rules">{{
+            $t("Instance Rules")
+          }}</label>
           <small>
             {{
               $t(
@@ -109,35 +121,44 @@
               )
             }}
           </small>
-          <b-input type="textarea" v-model="adminSettings.instanceRules" />
+          <b-input
+            type="textarea"
+            v-model="adminSettings.instanceRules"
+            id="instance-rules"
+          />
         </div>
         <b-field :label="$t('Instance Terms Source')">
           <div class="columns">
             <div class="column is-one-third-desktop">
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instanceTermsType"
-                  name="instanceTermsType"
-                  :native-value="InstanceTermsType.DEFAULT"
-                  >{{ $t("Default Mobilizon terms") }}</b-radio
-                >
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instanceTermsType"
-                  name="instanceTermsType"
-                  :native-value="InstanceTermsType.URL"
-                  >{{ $t("Custom URL") }}</b-radio
-                >
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instanceTermsType"
-                  name="instanceTermsType"
-                  :native-value="InstanceTermsType.CUSTOM"
-                  >{{ $t("Custom text") }}</b-radio
-                >
-              </b-field>
+              <fieldset>
+                <legend>
+                  {{ $t("Choose the source of the instance's Terms") }}
+                </legend>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instanceTermsType"
+                    name="instanceTermsType"
+                    :native-value="InstanceTermsType.DEFAULT"
+                    >{{ $t("Default Mobilizon terms") }}</b-radio
+                  >
+                </b-field>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instanceTermsType"
+                    name="instanceTermsType"
+                    :native-value="InstanceTermsType.URL"
+                    >{{ $t("Custom URL") }}</b-radio
+                  >
+                </b-field>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instanceTermsType"
+                    name="instanceTermsType"
+                    :native-value="InstanceTermsType.CUSTOM"
+                    >{{ $t("Custom text") }}</b-radio
+                  >
+                </b-field>
+              </fieldset>
             </div>
             <div class="column">
               <div
@@ -215,30 +236,35 @@
         <b-field :label="$t('Instance Privacy Policy Source')">
           <div class="columns">
             <div class="column is-one-third-desktop">
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instancePrivacyPolicyType"
-                  name="instancePrivacyType"
-                  :native-value="InstancePrivacyType.DEFAULT"
-                  >{{ $t("Default Mobilizon privacy policy") }}</b-radio
-                >
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instancePrivacyPolicyType"
-                  name="instancePrivacyType"
-                  :native-value="InstancePrivacyType.URL"
-                  >{{ $t("Custom URL") }}</b-radio
-                >
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="adminSettings.instancePrivacyPolicyType"
-                  name="instancePrivacyType"
-                  :native-value="InstancePrivacyType.CUSTOM"
-                  >{{ $t("Custom text") }}</b-radio
-                >
-              </b-field>
+              <fieldset>
+                <legend>
+                  {{ $t("Choose the source of the instance's Privacy Policy") }}
+                </legend>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instancePrivacyPolicyType"
+                    name="instancePrivacyType"
+                    :native-value="InstancePrivacyType.DEFAULT"
+                    >{{ $t("Default Mobilizon privacy policy") }}</b-radio
+                  >
+                </b-field>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instancePrivacyPolicyType"
+                    name="instancePrivacyType"
+                    :native-value="InstancePrivacyType.URL"
+                    >{{ $t("Custom URL") }}</b-radio
+                  >
+                </b-field>
+                <b-field>
+                  <b-radio
+                    v-model="adminSettings.instancePrivacyPolicyType"
+                    name="instancePrivacyType"
+                    :native-value="InstancePrivacyType.CUSTOM"
+                    >{{ $t("Custom text") }}</b-radio
+                  >
+                </b-field>
+              </fieldset>
             </div>
             <div class="column">
               <div
@@ -430,13 +456,6 @@ export default class Settings extends Vue {
 }
 </script>
 <style lang="scss" scoped>
-.notification a {
-  color: $primary !important;
-  text-decoration: underline !important;
-  text-decoration-color: #fea72b !important;
-  text-decoration-thickness: 2px !important;
-}
-
 label.label.has-help {
   margin-bottom: 0;
 }

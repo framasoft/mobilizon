@@ -278,13 +278,11 @@
               }
             )
           }}
-          <router-link :to="{ name: RouteName.PREFERENCES }">
-            <b-icon
-              class="clickable"
-              icon="pencil"
-              :title="$t('Change')"
-              size="is-small"
-            />
+          <router-link
+            :to="{ name: RouteName.PREFERENCES }"
+            :title="$t('Change')"
+          >
+            <b-icon class="clickable" icon="pencil" size="is-small" />
           </router-link>
           <b-loading :active.sync="$apollo.loading" />
         </p>

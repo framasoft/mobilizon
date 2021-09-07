@@ -41,9 +41,9 @@
           <template #searchable="props">
             <b-input
               v-model="props.filters.email"
-              :placeholder="$t('Search…')"
+              :aria-label="$t('Filter')"
+              :placeholder="$t('Filter')"
               icon="magnify"
-              size="is-small"
             />
           </template>
           <template v-slot:default="props">

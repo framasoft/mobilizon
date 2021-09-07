@@ -16,6 +16,7 @@
           :class="{ 'is-active': editor.isActive('bold') }"
           @click="editor.chain().focus().toggleBold().run()"
           type="button"
+          :title="$t('Bold')"
         >
           <b-icon icon="format-bold" />
         </button>
@@ -25,6 +26,7 @@
           :class="{ 'is-active': editor.isActive('italic') }"
           @click="editor.chain().focus().toggleItalic().run()"
           type="button"
+          :title="$t('Italic')"
         >
           <b-icon icon="format-italic" />
         </button>
@@ -34,6 +36,7 @@
           :class="{ 'is-active': editor.isActive('underline') }"
           @click="editor.chain().focus().toggleUnderline().run()"
           type="button"
+          :title="$t('Underline')"
         >
           <b-icon icon="format-underline" />
         </button>
@@ -44,6 +47,7 @@
           :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
           @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
           type="button"
+          :title="$t('Heading Level 1')"
         >
           <b-icon icon="format-header-1" />
         </button>
@@ -54,6 +58,7 @@
           :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
           @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
           type="button"
+          :title="$t('Heading Level 2')"
         >
           <b-icon icon="format-header-2" />
         </button>
@@ -64,6 +69,7 @@
           :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
           @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
           type="button"
+          :title="$t('Heading Level 3')"
         >
           <b-icon icon="format-header-3" />
         </button>
@@ -73,6 +79,7 @@
           @click="showLinkMenu()"
           :class="{ 'is-active': editor.isActive('link') }"
           type="button"
+          :title="$t('Add link')"
         >
           <b-icon icon="link" />
         </button>
@@ -82,6 +89,7 @@
           class="menubar__button"
           @click="editor.chain().focus().unsetLink().run()"
           type="button"
+          :title="$t('Remove link')"
         >
           <b-icon icon="link-off" />
         </button>
@@ -91,6 +99,7 @@
           v-if="!isBasicMode"
           @click="showImagePrompt()"
           type="button"
+          :title="$t('Add picture')"
         >
           <b-icon icon="image" />
         </button>
@@ -101,6 +110,7 @@
           :class="{ 'is-active': editor.isActive('bulletList') }"
           @click="editor.chain().focus().toggleBulletList().run()"
           type="button"
+          :title="$t('Bullet list')"
         >
           <b-icon icon="format-list-bulleted" />
         </button>
@@ -111,6 +121,7 @@
           :class="{ 'is-active': editor.isActive('orderedList') }"
           @click="editor.chain().focus().toggleOrderedList().run()"
           type="button"
+          :title="$t('Ordered list')"
         >
           <b-icon icon="format-list-numbered" />
         </button>
@@ -121,6 +132,7 @@
           :class="{ 'is-active': editor.isActive('blockquote') }"
           @click="editor.chain().focus().toggleBlockquote().run()"
           type="button"
+          :title="$t('Quote')"
         >
           <b-icon icon="format-quote-close" />
         </button>
@@ -130,6 +142,7 @@
           class="menubar__button"
           @click="editor.chain().focus().undo().run()"
           type="button"
+          :title="$t('Undo')"
         >
           <b-icon icon="undo" />
         </button>
@@ -139,6 +152,7 @@
           class="menubar__button"
           @click="editor.chain().focus().redo().run()"
           type="button"
+          :title="$t('Redo')"
         >
           <b-icon icon="redo" />
         </button>
@@ -155,6 +169,7 @@
           :class="{ 'is-active': editor.isActive('bold') }"
           @click="editor.chain().focus().toggleBold().run()"
           type="button"
+          :title="$t('Bold')"
         >
           <b-icon icon="format-bold" />
           <span class="visually-hidden">{{ $t("Bold") }}</span>
@@ -165,6 +180,7 @@
           :class="{ 'is-active': editor.isActive('italic') }"
           @click="editor.chain().focus().toggleItalic().run()"
           type="button"
+          :title="$t('Italic')"
         >
           <b-icon icon="format-italic" />
           <span class="visually-hidden">{{ $t("Italic") }}</span>

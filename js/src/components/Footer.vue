@@ -20,6 +20,7 @@
     <ul>
       <li>
         <b-select
+          :aria-label="$t('Language')"
           v-if="$i18n"
           v-model="locale"
           :placeholder="$t('Select a language')"
