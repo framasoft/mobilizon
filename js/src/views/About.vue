@@ -103,12 +103,13 @@ import { Component, Vue } from "vue-property-decorator";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import RouteName from "../router/name";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import { ICurrentUser } from "@/types/current-user.model";
 
 @Component({
   apollo: {
-    config: {
-      query: CONFIG,
-    },
+    config: CONFIG,
+    currentUser: CURRENT_USER_CLIENT,
   },
   metaInfo() {
     return {
@@ -122,6 +123,7 @@ import RouteName from "../router/name";
 })
 export default class About extends Vue {
   config!: IConfig;
+  currentUser!: ICurrentUser;
 
   RouteName = RouteName;
 }
