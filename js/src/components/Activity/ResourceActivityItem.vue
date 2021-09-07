@@ -172,7 +172,8 @@ export default class ResourceActivityItem extends mixins(ActivityMixin) {
     if (this.subjectParams.resource_path) {
       const parentPath = this.parentPath(this.subjectParams.resource_path);
       const directory = parentPath.split("/");
-      return directory.pop();
+      const res = directory.pop();
+      res === "" ? null : res;
     }
     return null;
   }
