@@ -33,24 +33,7 @@ import get from "lodash/get";
 import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
 
-@Component({
-  computed: {
-    tagsStrings: {
-      get() {
-        return this.$props.value.map((tag: ITag) => tag.title);
-      },
-      set(tagStrings) {
-        const tagEntities = tagStrings.map((tag: string | ITag) => {
-          if (typeof tag !== "string") {
-            return tag;
-          }
-          return { title: tag, slug: tag } as ITag;
-        });
-        this.$emit("input", tagEntities);
-      },
-    },
-  },
-})
+@Component
 export default class TagInput extends Vue {
   @Prop({ required: false, default: () => [] }) data!: ITag[];
 
@@ -78,6 +61,20 @@ export default class TagInput extends Vue {
           .toLowerCase()
           .indexOf(text.toLowerCase()) >= 0
     );
+  }
+
+  get tagsStrings(): string[] {
+    return (this.value || []).map((tag: ITag) => tag.title);
+  }
+
+  set tagsStrings(tagsStrings: string[]) {
+    const tagEntities = tagsStrings.map((tag: string | ITag) => {
+      if (typeof tag !== "string") {
+        return tag;
+      }
+      return { title: tag, slug: tag } as ITag;
+    });
+    this.$emit("input", tagEntities);
   }
 }
 </script>
