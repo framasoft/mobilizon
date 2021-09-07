@@ -11,6 +11,7 @@
         icon="map-marker"
         expanded
         @select="updateSelected"
+        v-bind="$attrs"
       >
         <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />
@@ -20,7 +21,11 @@
         </template>
       </b-autocomplete>
     </b-field>
-    <b-field v-if="canDoGeoLocation">
+    <b-field
+      v-if="canDoGeoLocation"
+      :message="fieldErrors"
+      :type="{ 'is-danger': fieldErrors.length }"
+    >
       <b-button
         type="is-text"
         v-if="!gettingLocation"
@@ -52,26 +57,16 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { LatLng } from "leaflet";
-import debounce from "lodash/debounce";
-import { DebouncedFunc } from "lodash";
+import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
 import { Address, IAddress } from "../../types/address.model";
-import { ADDRESS, REVERSE_GEOCODE } from "../../graphql/address";
-import { CONFIG } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
+import AddressAutoCompleteMixin from "@/mixins/AddressAutoCompleteMixin";
 
 @Component({
-  components: {
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
-  },
-  apollo: {
-    config: CONFIG,
-  },
+  inheritAttrs: false,
 })
-export default class AddressAutoComplete extends Vue {
-  @Prop({ required: true }) value!: IAddress;
+export default class AddressAutoComplete extends Mixins(
+  AddressAutoCompleteMixin
+) {
   @Prop({ required: false, default: false }) type!: string | false;
   @Prop({ required: false, default: true, type: Boolean })
   doGeoLocation!: boolean;
@@ -80,84 +75,20 @@ export default class AddressAutoComplete extends Vue {
 
   selected: IAddress = new Address();
 
-  isFetching = false;
-
   initialQueryText = "";
 
   addressModalActive = false;
 
   showmap = false;
 
-  private gettingLocation = false;
-
-  // eslint-disable-next-line no-undef
-  private location!: GeolocationPosition;
-
-  private gettingLocationError: any;
-
-  private mapDefaultZoom = 15;
-
-  config!: IConfig;
-
-  fetchAsyncData!: DebouncedFunc<(query: string) => Promise<void>>;
-
-  // We put this in data because of issues like
-  // https://github.com/vuejs/vue-class-component/issues/263
-  data(): Record<string, unknown> {
-    return {
-      fetchAsyncData: debounce(this.asyncData, 200),
-    };
-  }
-
-  async asyncData(query: string): Promise<void> {
-    if (!query.length) {
-      this.addressData = [];
-      this.selected = new Address();
-      return;
-    }
-
-    if (query.length < 3) {
-      this.addressData = [];
-      return;
-    }
-
-    this.isFetching = true;
-    const variables: { query: string; locale: string; type?: string } = {
-      query,
-      locale: this.$i18n.locale,
-    };
-    if (this.type) {
-      variables.type = this.type;
-    }
-    const result = await this.$apollo.query({
-      query: ADDRESS,
-      fetchPolicy: "network-only",
-      variables,
-    });
-
-    this.addressData = result.data.searchAddress.map(
-      (address: IAddress) => new Address(address)
-    );
-    this.isFetching = false;
-  }
-
-  @Watch("config")
-  watchConfig(config: IConfig): void {
-    if (!config.geocoding.autocomplete) {
-      // If autocomplete is disabled, we put a larger debounce value
-      // so that we don't request with incomplete address
-      this.fetchAsyncData = debounce(this.asyncData, 2000);
-    }
-  }
-
-  get queryText(): string {
+  get queryText2(): string {
     if (this.value !== undefined) {
       return new Address(this.value).fullName;
     }
     return this.initialQueryText;
   }
 
-  set queryText(queryText: string) {
+  set queryText2(queryText: string) {
     this.initialQueryText = queryText;
   }
 
@@ -184,80 +115,6 @@ export default class AddressAutoComplete extends Vue {
 
   togglemap(): void {
     this.showmap = !this.showmap;
-  }
-
-  async reverseGeoCode(e: LatLng, zoom: number): Promise<void> {
-    // If the position has been updated through autocomplete selection, no need to geocode it!
-    if (this.checkCurrentPosition(e)) return;
-    const result = await this.$apollo.query({
-      query: REVERSE_GEOCODE,
-      variables: {
-        latitude: e.lat,
-        longitude: e.lng,
-        zoom,
-        locale: this.$i18n.locale,
-      },
-    });
-
-    this.addressData = result.data.reverseGeocode.map(
-      (address: IAddress) => new Address(address)
-    );
-    if (this.addressData.length > 0) {
-      const defaultAddress = new Address(this.addressData[0]);
-      this.selected = defaultAddress;
-      this.$emit("input", this.selected);
-      this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
-    }
-  }
-
-  checkCurrentPosition(e: LatLng): boolean {
-    if (!this.selected || !this.selected.geom) return false;
-    const lat = parseFloat(this.selected.geom.split(";")[1]);
-    const lon = parseFloat(this.selected.geom.split(";")[0]);
-
-    return e.lat === lat && e.lng === lon;
-  }
-
-  async locateMe(): Promise<void> {
-    this.gettingLocation = true;
-    try {
-      this.location = await AddressAutoComplete.getLocation();
-      this.mapDefaultZoom = 12;
-      this.reverseGeoCode(
-        new LatLng(
-          this.location.coords.latitude,
-          this.location.coords.longitude
-        ),
-        12
-      );
-    } catch (e) {
-      console.error(e);
-      this.gettingLocationError = e.message;
-    }
-    this.gettingLocation = false;
-  }
-
-  // eslint-disable-next-line no-undef
-  static async getLocation(): Promise<GeolocationPosition> {
-    return new Promise((resolve, reject) => {
-      if (!("geolocation" in navigator)) {
-        reject(new Error("Geolocation is not available."));
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          resolve(pos);
-        },
-        (err) => {
-          reject(err);
-        }
-      );
-    });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get isSecureContext(): boolean {
-    return window.isSecureContext;
   }
 
   get canDoGeoLocation(): boolean {

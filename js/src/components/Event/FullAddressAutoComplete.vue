@@ -1,6 +1,11 @@
 <template>
   <div class="address-autocomplete">
-    <b-field expanded>
+    <b-field
+      :label-for="id"
+      expanded
+      :message="fieldErrors"
+      :type="{ 'is-danger': fieldErrors.length }"
+    >
       <template slot="label">
         {{ actualLabel }}
         <b-button
@@ -8,8 +13,13 @@
           size="is-small"
           icon-right="map-marker"
           @click="locateMe"
+          :title="$t('Use my location')"
         />
-        <span v-else-if="gettingLocation">{{ $t("Getting location") }}</span>
+        <span
+          class="is-size-6 has-text-weight-normal"
+          v-else-if="gettingLocation"
+          >{{ $t("Getting location") }}</span
+        >
       </template>
       <b-autocomplete
         :data="addressData"
@@ -21,6 +31,8 @@
         icon="map-marker"
         expanded
         @select="updateSelected"
+        v-bind="$attrs"
+        :id="id"
       >
         <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />
@@ -51,6 +63,7 @@
         @click="resetAddress"
         class="reset-area"
         icon-left="close"
+        :title="$t('Clear address field')"
       />
     </b-field>
     <div class="map" v-if="selected && selected.geom && selected.poiInfos">
@@ -109,95 +122,29 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch, Mixins } from "vue-property-decorator";
 import { LatLng } from "leaflet";
-import debounce from "lodash/debounce";
-import { DebouncedFunc } from "lodash";
 import { Address, IAddress } from "../../types/address.model";
-import { ADDRESS, REVERSE_GEOCODE } from "../../graphql/address";
-import { CONFIG } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
+import AddressAutoCompleteMixin from "../../mixins/AddressAutoCompleteMixin";
 
 @Component({
-  components: {
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "@/components/Map.vue"),
-  },
-  apollo: {
-    config: CONFIG,
-  },
+  inheritAttrs: false,
 })
-export default class FullAddressAutoComplete extends Vue {
-  @Prop({ required: true }) value!: IAddress;
-
+export default class FullAddressAutoComplete extends Mixins(
+  AddressAutoCompleteMixin
+) {
   @Prop({ required: false, default: "" }) label!: string;
-
-  addressData: IAddress[] = [];
-
-  selected: IAddress = new Address();
-
-  isFetching = false;
-
-  queryText: string = (this.value && new Address(this.value).fullName) || "";
 
   addressModalActive = false;
 
-  private gettingLocation = false;
+  private static componentId = 0;
 
-  // eslint-disable-next-line no-undef
-  private location!: GeolocationPosition;
-
-  private gettingLocationError: any;
-
-  private mapDefaultZoom = 15;
-
-  config!: IConfig;
-
-  fetchAsyncData!: DebouncedFunc<(query: string) => Promise<void>>;
-
-  // We put this in data because of issues like
-  // https://github.com/vuejs/vue-class-component/issues/263
-  data(): Record<string, unknown> {
-    return {
-      fetchAsyncData: debounce(this.asyncData, 200),
-    };
+  created(): void {
+    FullAddressAutoComplete.componentId += 1;
   }
 
-  async asyncData(query: string): Promise<void> {
-    if (!query.length) {
-      this.addressData = [];
-      this.selected = new Address();
-      return;
-    }
-
-    if (query.length < 3) {
-      this.addressData = [];
-      return;
-    }
-
-    this.isFetching = true;
-    const result = await this.$apollo.query({
-      query: ADDRESS,
-      fetchPolicy: "network-only",
-      variables: {
-        query,
-        locale: this.$i18n.locale,
-      },
-    });
-
-    this.addressData = result.data.searchAddress.map(
-      (address: IAddress) => new Address(address)
-    );
-    this.isFetching = false;
-  }
-
-  @Watch("config")
-  watchConfig(config: IConfig): void {
-    if (!config.geocoding.autocomplete) {
-      // If autocomplete is disabled, we put a larger debounce value
-      // so that we don't request with incomplete address
-      this.fetchAsyncData = debounce(this.asyncData, 2000);
-    }
+  get id(): string {
+    return `full-address-autocomplete-${FullAddressAutoComplete.componentId}`;
   }
 
   @Watch("value")
@@ -225,55 +172,12 @@ export default class FullAddressAutoComplete extends Vue {
     this.addressModalActive = true;
   }
 
-  async reverseGeoCode(e: LatLng, zoom: number): Promise<void> {
-    // If the position has been updated through autocomplete selection, no need to geocode it!
-    if (this.checkCurrentPosition(e)) return;
-    const result = await this.$apollo.query({
-      query: REVERSE_GEOCODE,
-      variables: {
-        latitude: e.lat,
-        longitude: e.lng,
-        zoom,
-        locale: this.$i18n.locale,
-      },
-    });
-
-    this.addressData = result.data.reverseGeocode.map(
-      (address: IAddress) => new Address(address)
-    );
-    if (this.addressData.length > 0) {
-      const defaultAddress = new Address(this.addressData[0]);
-      this.selected = defaultAddress;
-      this.$emit("input", this.selected);
-      this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
-    }
-  }
-
   checkCurrentPosition(e: LatLng): boolean {
     if (!this.selected || !this.selected.geom) return false;
     const lat = parseFloat(this.selected.geom.split(";")[1]);
     const lon = parseFloat(this.selected.geom.split(";")[0]);
 
     return e.lat === lat && e.lng === lon;
-  }
-
-  async locateMe(): Promise<void> {
-    this.gettingLocation = true;
-    try {
-      this.gettingLocation = false;
-      this.location = await FullAddressAutoComplete.getLocation();
-      this.mapDefaultZoom = 12;
-      this.reverseGeoCode(
-        new LatLng(
-          this.location.coords.latitude,
-          this.location.coords.longitude
-        ),
-        12
-      );
-    } catch (e) {
-      this.gettingLocation = false;
-      this.gettingLocationError = e.message;
-    }
   }
 
   get actualLabel(): string {
@@ -283,24 +187,6 @@ export default class FullAddressAutoComplete extends Vue {
   // eslint-disable-next-line class-methods-use-this
   get canShowLocateMeButton(): boolean {
     return window.isSecureContext;
-  }
-
-  // eslint-disable-next-line no-undef
-  static async getLocation(): Promise<GeolocationPosition> {
-    return new Promise((resolve, reject) => {
-      if (!("geolocation" in navigator)) {
-        reject(new Error("Geolocation is not available."));
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          resolve(pos);
-        },
-        (err) => {
-          reject(err);
-        }
-      );
-    });
   }
 
   @Watch("queryText")
