@@ -416,6 +416,7 @@
   "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content.": "Контент может быть недоступен на этом узле, потому что узел заблокировал профили или группы, которым этот контент принадлежит.",
   "Italic": "Курсив",
   "Jisti Meet": "Jitsi Meet",
+  "Jitsi Meet": "Jitsi Meet",
   "Join <b>{instance}</b>, a Mobilizon instance": "Присоединиться к <b>{instance}</b>, узлу Mobilizon",
   "Join group": "Вступить в группу",
   "Join group {group}": "Вступить в группу {group}",
