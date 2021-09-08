@@ -29,9 +29,11 @@ export interface IUserSettings {
   location?: IUserPreferredLocation;
 }
 
+export type IActivitySettingMethod = "email" | "push";
+
 export interface IActivitySetting {
   key: string;
-  method: string;
+  method: IActivitySettingMethod;
   enabled: boolean;
 }
 

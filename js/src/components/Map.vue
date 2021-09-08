@@ -19,7 +19,10 @@
         :zoomInTitle="$t('Zoom in')"
         :zoomOutTitle="$t('Zoom out')"
       ></l-control-zoom>
-      <v-locatecontrol :options="{ icon: 'mdi mdi-map-marker' }" />
+      <v-locatecontrol
+        v-if="canDoGeoLocation"
+        :options="{ icon: 'mdi mdi-map-marker' }"
+      />
       <l-marker
         :lat-lng="[lat, lon]"
         @add="openPopup"
@@ -151,6 +154,10 @@ export default class Map extends Vue {
       this.config.maps.tiles.attribution ||
       (this.$t("© The OpenStreetMap Contributors") as string)
     );
+  }
+
+  get canDoGeoLocation(): boolean {
+    return window.isSecureContext;
   }
 }
 </script>

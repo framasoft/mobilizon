@@ -54,6 +54,7 @@
 
         <b-field
           :label="$t('Title')"
+          label-for="post-title"
           :type="errors.title ? 'is-danger' : null"
           :message="errors.title"
         >
@@ -62,6 +63,7 @@
             aria-required="true"
             required
             v-model="editablePost.title"
+            id="post-title"
           />
         </b-field>
 
@@ -73,30 +75,39 @@
           <editor v-model="editablePost.body" />
         </div>
         <subtitle>{{ $t("Who can view this post") }}</subtitle>
-        <div class="field">
-          <b-radio
-            v-model="editablePost.visibility"
-            name="postVisibility"
-            :native-value="PostVisibility.PUBLIC"
-            >{{ $t("Visible everywhere on the web") }}</b-radio
-          >
-        </div>
-        <div class="field">
-          <b-radio
-            v-model="editablePost.visibility"
-            name="postVisibility"
-            :native-value="PostVisibility.UNLISTED"
-            >{{ $t("Only accessible through link") }}</b-radio
-          >
-        </div>
-        <div class="field">
-          <b-radio
-            v-model="editablePost.visibility"
-            name="postVisibility"
-            :native-value="PostVisibility.PRIVATE"
-            >{{ $t("Only accessible to members of the group") }}</b-radio
-          >
-        </div>
+        <fieldset>
+          <legend>
+            {{
+              $t(
+                "When the post is private, you'll need to share the link around."
+              )
+            }}
+          </legend>
+          <div class="field">
+            <b-radio
+              v-model="editablePost.visibility"
+              name="postVisibility"
+              :native-value="PostVisibility.PUBLIC"
+              >{{ $t("Visible everywhere on the web") }}</b-radio
+            >
+          </div>
+          <div class="field">
+            <b-radio
+              v-model="editablePost.visibility"
+              name="postVisibility"
+              :native-value="PostVisibility.UNLISTED"
+              >{{ $t("Only accessible through link") }}</b-radio
+            >
+          </div>
+          <div class="field">
+            <b-radio
+              v-model="editablePost.visibility"
+              name="postVisibility"
+              :native-value="PostVisibility.PRIVATE"
+              >{{ $t("Only accessible to members of the group") }}</b-radio
+            >
+          </div>
+        </fieldset>
       </div>
       <nav class="navbar">
         <div class="container">
@@ -413,6 +424,13 @@ form {
         margin-left: auto;
       }
     }
+  }
+  h2 {
+    margin: 15px 0 7.5px;
+  }
+
+  legend {
+    margin-bottom: 0.75rem;
   }
 }
 

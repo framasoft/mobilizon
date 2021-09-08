@@ -3,6 +3,7 @@ import { routes } from "@/router";
 import App from "@/App.vue";
 import VueRouter from "vue-router";
 import Buefy from "buefy";
+import flushPromises from "flush-promises";
 
 const localVue = createLocalVue();
 config.mocks.$t = (key: string): string => key;
@@ -36,8 +37,7 @@ describe("routing", () => {
     });
 
     router.push("/about");
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.vm.$route.path).toBe("/about/instance");
     expect(wrapper.html()).toContain(
       '<a href="/about/instance" aria-current="page"'

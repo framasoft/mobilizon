@@ -37,8 +37,8 @@
       v-if="group && isCurrentActorAGroupAdmin"
     >
       <form @submit.prevent="updateGroup">
-        <b-field :label="$t('Group name')">
-          <b-input v-model="editableGroup.name" />
+        <b-field :label="$t('Group name')" label-for="group-settings-name">
+          <b-input v-model="editableGroup.name" id="group-settings-name" />
         </b-field>
         <b-field :label="$t('Group short description')">
           <editor mode="basic" v-model="editableGroup.summary" :maxSize="500"

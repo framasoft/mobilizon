@@ -114,7 +114,6 @@ import { ABOUT } from "../../graphql/config";
 import { STATISTICS } from "../../graphql/statistics";
 import { IConfig } from "../../types/config.model";
 import { IStatistics } from "../../types/statistics.model";
-import langs from "../../i18n/langs.json";
 
 @Component({
   apollo: {
@@ -158,12 +157,6 @@ export default class AboutInstance extends Vue {
       return formatList(list);
     }
     return "";
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getLanguageNameForCode(code: string): string {
-    const languageMaps = langs as Record<string, any>;
-    return languageMaps[code];
   }
 }
 </script>

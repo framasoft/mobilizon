@@ -12,14 +12,14 @@
             <img
               class="image is-rounded"
               :src="selectedActor.avatar.url"
-              :alt="selectedActor.avatar.alt"
+              :alt="selectedActor.avatar.alt || ''"
             />
           </figure>
           <b-icon v-else size="is-large" icon="account-circle" />
         </div>
         <div class="media-content" v-if="selectedActor.name">
           <p class="is-4">{{ selectedActor.name }}</p>
-          <p class="is-6 has-text-grey">
+          <p class="is-6 has-text-grey-dark">
             {{ `@${selectedActor.preferredUsername}` }}
           </p>
         </div>

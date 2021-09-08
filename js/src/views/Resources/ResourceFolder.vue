@@ -187,8 +187,12 @@
       <div class="modal-card">
         <section class="modal-card-body">
           <form @submit.prevent="createResource">
-            <b-field :label="$t('Title')">
-              <b-input aria-required="true" v-model="newResource.title" />
+            <b-field :label="$t('Title')" label-for="new-resource-title">
+              <b-input
+                aria-required="true"
+                v-model="newResource.title"
+                id="new-resource-title"
+              />
             </b-field>
 
             <b-button native-type="submit">{{
@@ -202,6 +206,7 @@
       :active.sync="createLinkResourceModal"
       has-modal-card
       class="link-resource-modal"
+      aria-modal
     >
       <div class="modal-card">
         <section class="modal-card-body">
@@ -209,8 +214,9 @@
             {{ modalError }}
           </b-message>
           <form @submit.prevent="createResource">
-            <b-field :label="$t('URL')">
+            <b-field :label="$t('URL')" label-for="new-resource-url">
               <b-input
+                id="new-resource-url"
                 type="url"
                 required
                 v-model="newResource.resourceUrl"
@@ -222,12 +228,23 @@
               <resource-item :resource="newResource" :preview="true" />
             </div>
 
-            <b-field :label="$t('Title')">
-              <b-input aria-required="true" v-model="newResource.title" />
+            <b-field :label="$t('Title')" label-for="new-resource-link-title">
+              <b-input
+                aria-required="true"
+                v-model="newResource.title"
+                id="new-resource-link-title"
+              />
             </b-field>
 
-            <b-field :label="$t('Text')">
-              <b-input type="textarea" v-model="newResource.summary" />
+            <b-field
+              :label="$t('Description')"
+              label-for="new-resource-summary"
+            >
+              <b-input
+                type="textarea"
+                v-model="newResource.summary"
+                id="new-resource-summary"
+              />
             </b-field>
 
             <b-button native-type="submit">{{

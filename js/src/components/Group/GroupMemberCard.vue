@@ -24,8 +24,8 @@
                 },
               }"
             >
-              <h3>{{ member.parent.name }}</h3>
-              <p class="is-6 has-text-grey">
+              <h2>{{ member.parent.name }}</h2>
+              <p class="is-6 has-text-grey-dark">
                 <span v-if="member.parent.domain">{{
                   `@${member.parent.preferredUsername}@${member.parent.domain}`
                 }}</span>

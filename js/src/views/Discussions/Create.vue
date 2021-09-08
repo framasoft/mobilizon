@@ -1,14 +1,57 @@
 <template>
   <section class="section container">
-    <h1>{{ $t("Create a discussion") }}</h1>
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul v-if="group">
+        <li>
+          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
+            $t("My groups")
+          }}</router-link>
+        </li>
+        <li>
+          <router-link
+            :to="{
+              name: RouteName.GROUP,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ group.name }}</router-link
+          >
+        </li>
+        <li>
+          <router-link
+            :to="{
+              name: RouteName.DISCUSSION_LIST,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ $t("Discussions") }}</router-link
+          >
+        </li>
+        <li class="is-active">
+          <router-link
+            :to="{
+              name: RouteName.CREATE_DISCUSSION,
+              params: { preferredUsername: usernameWithDomain(group) },
+            }"
+            >{{ $t("Create") }}</router-link
+          >
+        </li>
+      </ul>
+      <b-skeleton v-else-if="$apollo.loading" :animated="animated"></b-skeleton>
+    </nav>
+    <h1 class="title">{{ $t("Create a discussion") }}</h1>
 
     <form @submit.prevent="createDiscussion">
       <b-field
         :label="$t('Title')"
+        label-for="discussion-title"
         :message="errors.title"
         :type="errors.title ? 'is-danger' : undefined"
       >
-        <b-input aria-required="true" required v-model="discussion.title" />
+        <b-input
+          aria-required="true"
+          required
+          v-model="discussion.title"
+          id="discussion-title"
+        />
       </b-field>
 
       <b-field :label="$t('Text')">
@@ -24,7 +67,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IPerson } from "@/types/actor";
+import { IGroup, IPerson, usernameWithDomain } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import { CREATE_DISCUSSION } from "@/graphql/discussion";
@@ -66,6 +109,10 @@ export default class CreateDiscussion extends Vue {
 
   errors = { title: "" };
 
+  RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
+
   async createDiscussion(): Promise<void> {
     this.errors = { title: "" };
     try {
@@ -100,7 +147,11 @@ export default class CreateDiscussion extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.container.section {
+  background: $white;
+}
+
 .markdown-render h1 {
   font-size: 2em;
 }

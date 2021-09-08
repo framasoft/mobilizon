@@ -41,9 +41,9 @@
           <template #searchable="props">
             <b-input
               v-model="props.filters.email"
-              :placeholder="$t('Search…')"
+              :aria-label="$t('Filter')"
+              :placeholder="$t('Filter')"
               icon="magnify"
-              size="is-small"
             />
           </template>
           <template v-slot:default="props">
@@ -78,7 +78,7 @@
           :centered="true"
           v-slot="props"
         >
-          {{ props.row.locale }}
+          {{ getLanguageNameForCode(props.row.locale) }}
         </b-table-column>
 
         <template #detail="props">
@@ -114,6 +114,9 @@ import { Component, Vue } from "vue-property-decorator";
 import { LIST_USERS } from "../../graphql/user";
 import RouteName from "../../router/name";
 import VueRouter from "vue-router";
+import { LANGUAGES_CODES } from "@/graphql/admin";
+import { IUser } from "@/types/current-user.model";
+import { Paginate } from "@/types/paginate";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const USERS_PER_PAGE = 10;
@@ -131,6 +134,17 @@ const USERS_PER_PAGE = 10;
         };
       },
     },
+    languages: {
+      query: LANGUAGES_CODES,
+      variables() {
+        return {
+          codes: this.languagesCodes,
+        };
+      },
+      skip() {
+        return this.languagesCodes.length < 1;
+      },
+    },
   },
   metaInfo() {
     return {
@@ -142,6 +156,9 @@ export default class Users extends Vue {
   USERS_PER_PAGE = USERS_PER_PAGE;
 
   RouteName = RouteName;
+
+  users!: Paginate<IUser>;
+  languages!: Array<{ code: string; name: string }>;
 
   get page(): number {
     return parseInt((this.$route.query.page as string) || "1", 10);
@@ -157,6 +174,18 @@ export default class Users extends Vue {
 
   set email(email: string) {
     this.pushRouter({ email });
+  }
+
+  get languagesCodes(): string[] {
+    return (this.users?.elements || []).map((user: IUser) => user.locale);
+  }
+
+  getLanguageNameForCode(code: string): string {
+    return (
+      (this.languages || []).find(({ code: languageCode }) => {
+        return languageCode === code;
+      })?.name || code
+    );
   }
 
   async onPageChange(page: number): Promise<void> {

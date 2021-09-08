@@ -66,14 +66,14 @@
               <th v-for="(method, key) in notificationMethods" :key="key">
                 {{ method }}
               </th>
-              <th></th>
+              <th>{{ $t("Description") }}</th>
             </tr>
             <tr v-for="subType in notificationType.subtypes" :key="subType.id">
               <td v-for="(method, key) in notificationMethods" :key="key">
                 <b-checkbox
-                  :value="notificationValues[subType.id][key]"
+                  :value="notificationValues[subType.id][key].enabled"
                   @input="(e) => updateNotificationValue(subType.id, key, e)"
-                  :disabled="notificationValues[subType.id].disabled"
+                  :disabled="notificationValues[subType.id][key].disabled"
                 />
               </td>
               <td>
@@ -86,6 +86,7 @@
 
       <b-field
         :label="$t('Send notification e-mails')"
+        label-for="groupNotifications"
         :message="
           $t(
             'Announcements and mentions notifications are always sent straight away.'
@@ -95,6 +96,7 @@
         <b-select
           v-model="groupNotifications"
           @input="updateSetting({ groupNotifications })"
+          id="groupNotifications"
         >
           <option
             v-for="(value, key) in groupNotificationsValues"
@@ -186,9 +188,13 @@
         <h2>{{ $t("Organizer notifications") }}</h2>
       </div>
       <div class="field is-primary">
-        <strong>{{
-          $t("Notifications for manually approved participations to an event")
-        }}</strong>
+        <label
+          class="has-text-weight-bold"
+          for="notificationPendingParticipation"
+          >{{
+            $t("Notifications for manually approved participations to an event")
+          }}</label
+        >
         <p>
           {{
             $t(
@@ -198,6 +204,7 @@
         </p>
         <b-select
           v-model="notificationPendingParticipation"
+          id="notificationPendingParticipation"
           @input="updateSetting({ notificationPendingParticipation })"
         >
           <option
@@ -291,7 +298,7 @@ import {
   USER_NOTIFICATIONS,
   UPDATE_ACTIVITY_SETTING,
 } from "../../graphql/user";
-import { IUser } from "../../types/current-user.model";
+import { IActivitySettingMethod, IUser } from "../../types/current-user.model";
 import RouteName from "../../router/name";
 import { IFeedToken } from "@/types/feedtoken.model";
 import { CREATE_FEED_TOKEN, DELETE_FEED_TOKEN } from "@/graphql/feed_tokens";
@@ -367,70 +374,68 @@ export default class Notifications extends Vue {
 
   defaultNotificationValues = {
     participation_event_updated: {
-      email: true,
-      push: true,
-      disabled: true,
+      email: { enabled: true, disabled: true },
+      push: { enabled: true, disabled: true },
     },
     participation_event_comment: {
-      email: true,
-      push: true,
+      email: { enabled: true, disabled: false },
+      push: { enabled: true, disabled: false },
     },
     event_new_pending_participation: {
-      email: true,
-      push: true,
+      email: { enabled: true, disabled: false },
+      push: { enabled: true, disabled: false },
     },
     event_new_participation: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     event_created: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     event_updated: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     discussion_updated: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     post_published: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     post_updated: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     resource_updated: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     member_request: {
-      email: true,
-      push: true,
+      email: { enabled: true, disabled: false },
+      push: { enabled: true, disabled: false },
     },
     member_updated: {
-      email: false,
-      push: false,
+      email: { enabled: false, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     user_email_password_updated: {
-      email: true,
-      push: false,
-      disabled: true,
+      email: { enabled: true, disabled: true },
+      push: { enabled: false, disabled: true },
     },
     event_comment_mention: {
-      email: true,
-      push: true,
+      email: { enabled: true, disabled: false },
+      push: { enabled: true, disabled: false },
     },
     discussion_mention: {
-      email: true,
-      push: false,
+      email: { enabled: true, disabled: false },
+      push: { enabled: false, disabled: false },
     },
     event_new_comment: {
-      email: true,
-      push: false,
+      email: { enabled: true, disabled: false },
+      push: { enabled: false, disabled: false },
     },
   };
 
@@ -542,17 +547,34 @@ export default class Notifications extends Vue {
     },
   ];
 
-  get userNotificationValues(): Record<string, Record<string, boolean>> {
+  get userNotificationValues(): Record<
+    string,
+    Record<IActivitySettingMethod, { enabled: boolean; disabled: boolean }>
+  > {
     return this.loggedUser.activitySettings.reduce((acc, activitySetting) => {
       acc[activitySetting.key] = acc[activitySetting.key] || {};
       acc[activitySetting.key][activitySetting.method] =
+        acc[activitySetting.key][activitySetting.method] || {};
+      acc[activitySetting.key][activitySetting.method].enabled =
         activitySetting.enabled;
       return acc;
-    }, {} as Record<string, Record<string, boolean>>);
+    }, {} as Record<string, Record<IActivitySettingMethod, { enabled: boolean; disabled: boolean }>>);
   }
 
-  get notificationValues(): Record<string, Record<string, boolean>> {
-    return merge(this.defaultNotificationValues, this.userNotificationValues);
+  get notificationValues(): Record<
+    string,
+    Record<IActivitySettingMethod, { enabled: boolean; disabled: boolean }>
+  > {
+    const values = merge(
+      this.defaultNotificationValues,
+      this.userNotificationValues
+    );
+    for (const value in values) {
+      if (!this.canShowWebPush) {
+        values[value].push.disabled = true;
+      }
+    }
+    return values;
   }
 
   async mounted(): Promise<void> {

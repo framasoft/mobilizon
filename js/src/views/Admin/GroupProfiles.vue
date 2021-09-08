@@ -41,10 +41,10 @@
         >
           <template #searchable="props">
             <b-input
+              :aria-label="$t('Filter')"
               v-model="props.filters.preferredUsername"
-              placeholder="Search..."
+              :placeholder="$t('Filter')"
               icon="magnify"
-              size="is-small"
             />
           </template>
           <template v-slot:default="props">
@@ -58,7 +58,10 @@
               <article class="media">
                 <figure class="media-left" v-if="props.row.avatar">
                   <p class="image is-48x48">
-                    <img :src="props.row.avatar.url" />
+                    <img
+                      :src="props.row.avatar.url"
+                      :alt="props.row.avatar.alt || ''"
+                    />
                   </p>
                 </figure>
                 <div class="media-content">
@@ -76,10 +79,10 @@
         <b-table-column field="domain" :label="$t('Domain')" searchable>
           <template #searchable="props">
             <b-input
+              :aria-label="$t('Filter')"
               v-model="props.filters.domain"
-              placeholder="Search..."
+              :placeholder="$t('Filter')"
               icon="magnify"
-              size="is-small"
             />
           </template>
           <template v-slot:default="props">

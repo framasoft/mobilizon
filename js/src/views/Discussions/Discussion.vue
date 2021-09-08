@@ -46,23 +46,27 @@
     </b-message>
     <section>
       <div class="discussion-title">
-        <h2 class="title" v-if="discussion.title && !editTitleMode">
+        <h1 class="title" v-if="discussion.title && !editTitleMode">
           {{ discussion.title }}
-          <span
-            v-if="
-              currentActor.id === discussion.creator.id ||
-              isCurrentActorAGroupModerator
-            "
-            @click="
-              () => {
-                newTitle = discussion.title;
-                editTitleMode = true;
-              }
-            "
-          >
-            <b-icon icon="pencil" />
-          </span>
-        </h2>
+        </h1>
+        <b-button
+          icon-right="pencil"
+          size="is-small"
+          :title="$t('Update discussion title')"
+          v-if="
+            discussion.creator &&
+            !editTitleMode &&
+            (currentActor.id === discussion.creator.id ||
+              isCurrentActorAGroupModerator)
+          "
+          @click="
+            () => {
+              newTitle = discussion.title;
+              editTitleMode = true;
+            }
+          "
+        >
+        </b-button>
         <b-skeleton
           v-else-if="!editTitleMode && $apollo.loading"
           height="50px"
@@ -73,12 +77,19 @@
           @submit.prevent="updateDiscussion"
           class="title-edit"
         >
-          <b-input :value="discussion.title" v-model="newTitle" />
+          <b-field :label="$t('Title')" label-for="discussion-title">
+            <b-input
+              :value="discussion.title"
+              v-model="newTitle"
+              id="discussion-title"
+            />
+          </b-field>
           <div class="buttons">
             <b-button
               type="is-primary"
               native-type="submit"
               icon-right="check"
+              :title="$t('Update discussion title')"
             />
             <b-button
               @click="
@@ -88,6 +99,7 @@
                 }
               "
               icon-right="close"
+              :title="$t('Cancel discussion title edition')"
             />
             <b-button
               @click="openDeleteDiscussionConfirmation"
@@ -489,15 +501,17 @@ div.container.section {
   padding: 1rem 5% 4rem;
 
   div.discussion-title {
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
 
-    h2.title {
-      span {
-        cursor: pointer;
-      }
+    h1.title {
+      margin-bottom: 0;
+      margin-right: 10px;
     }
 
     form.title-edit {
+      flex: 1;
       div.control {
         margin-bottom: 0.75rem;
       }

@@ -128,7 +128,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Ref } from "vue-property-decorator";
+import { Component, Mixins } from "vue-property-decorator";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -172,8 +172,6 @@ export default class Followers extends Mixins(RelayMixin) {
   checkedRows: IFollower[] = [];
 
   FOLLOWERS_PER_PAGE = FOLLOWERS_PER_PAGE;
-
-  @Ref("table") readonly table!: any;
 
   toggle(row: Record<string, unknown>): void {
     this.table.toggleDetails(row);

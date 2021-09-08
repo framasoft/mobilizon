@@ -31,7 +31,7 @@
                 $t("About this instance")
               }}</router-link>
             </p>
-            <p class="menu-label">
+            <p class="menu-label has-text-grey-dark">
               {{ $t("Legal") }}
             </p>
             <ul class="menu-list">
@@ -64,8 +64,10 @@
       </div>
     </main>
 
-    <!-- We hide the "Find an instance button until https://joinmobilizon.org gets a instance picker -->
-    <div class="hero register is-primary is-medium">
+    <div
+      class="hero register is-primary is-medium"
+      v-if="!currentUser || !currentUser.id"
+    >
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="columns">
@@ -101,12 +103,13 @@ import { Component, Vue } from "vue-property-decorator";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import RouteName from "../router/name";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import { ICurrentUser } from "@/types/current-user.model";
 
 @Component({
   apollo: {
-    config: {
-      query: CONFIG,
-    },
+    config: CONFIG,
+    currentUser: CURRENT_USER_CLIENT,
   },
   metaInfo() {
     return {
@@ -120,6 +123,7 @@ import RouteName from "../router/name";
 })
 export default class About extends Vue {
   config!: IConfig;
+  currentUser!: ICurrentUser;
 
   RouteName = RouteName;
 }

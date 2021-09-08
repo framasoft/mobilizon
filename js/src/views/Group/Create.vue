@@ -7,12 +7,19 @@
     </b-message>
 
     <form @submit.prevent="createGroup">
-      <b-field :label="$t('Group display name')">
-        <b-input aria-required="true" required v-model="group.name" />
+      <b-field :label="$t('Group display name')" label-for="group-display-name">
+        <b-input
+          aria-required="true"
+          required
+          v-model="group.name"
+          id="group-display-name"
+        />
       </b-field>
 
       <div class="field">
-        <label class="label">{{ $t("Federated Group Name") }}</label>
+        <label class="label" for="group-preferred-username">{{
+          $t("Federated Group Name")
+        }}</label>
         <div class="field-body">
           <b-field
             :message="
@@ -28,6 +35,7 @@
               expanded
               v-model="group.preferredUsername"
               pattern="[a-z0-9_]+"
+              id="group-preferred-username"
               :useHtml5Validation="true"
               :validation-message="
                 group.preferredUsername
@@ -52,8 +60,8 @@
         />
       </div>
 
-      <b-field :label="$t('Description')">
-        <b-input v-model="group.summary" type="textarea" />
+      <b-field :label="$t('Description')" label-for="group-summary">
+        <b-input v-model="group.summary" type="textarea" id="group-summary" />
       </b-field>
 
       <div>

@@ -18,6 +18,7 @@
 
         <b-field
           :label="$t('Title')"
+          label-for="title"
           :type="checkTitleLength[0]"
           :message="checkTitleLength[1]"
         >
@@ -26,12 +27,18 @@
             aria-required="true"
             required
             v-model="event.title"
+            id="title"
           />
         </b-field>
 
         <tag-input v-model="event.tags" :data="tags" path="title" />
 
-        <b-field horizontal :label="$t('Starts on…')" class="begins-on-field">
+        <b-field
+          horizontal
+          :label="$t('Starts on…')"
+          class="begins-on-field"
+          label-for="begins-on-field"
+        >
           <b-datetimepicker
             class="datepicker starts-on"
             :placeholder="$t('Type or select a date…')"
@@ -40,11 +47,16 @@
             v-model="event.beginsOn"
             horizontal-time-picker
             editable
+            :datepicker="{
+              id: 'begins-on-field',
+              'aria-next-label': $t('Next month'),
+              'aria-previous-label': $t('Previous month'),
+            }"
           >
           </b-datetimepicker>
         </b-field>
 
-        <b-field horizontal :label="$t('Ends on…')">
+        <b-field horizontal :label="$t('Ends on…')" label-for="ends-on-field">
           <b-datetimepicker
             class="datepicker ends-on"
             :placeholder="$t('Type or select a date…')"
@@ -54,6 +66,11 @@
             horizontal-time-picker
             :min-datetime="event.beginsOn"
             editable
+            :datepicker="{
+              id: 'ends-on-field',
+              'aria-next-label': $t('Next month'),
+              'aria-previous-label': $t('Previous month'),
+            }"
           >
           </b-datetimepicker>
         </b-field>
@@ -70,12 +87,13 @@
           <editor v-model="event.description" />
         </div>
 
-        <b-field :label="$t('Website / URL')">
+        <b-field :label="$t('Website / URL')" label-for="website-url">
           <b-input
             icon="link"
             type="url"
             v-model="event.onlineAddress"
             placeholder="URL"
+            id="website-url"
           />
         </b-field>
 
@@ -132,22 +150,31 @@
         </p>
         <event-metadata-list v-model="event.metadata" />
         <subtitle>{{ $t("Who can view this event and participate") }}</subtitle>
-        <div class="field">
-          <b-radio
-            v-model="event.visibility"
-            name="eventVisibility"
-            :native-value="EventVisibility.PUBLIC"
-            >{{ $t("Visible everywhere on the web (public)") }}</b-radio
-          >
-        </div>
-        <div class="field">
-          <b-radio
-            v-model="event.visibility"
-            name="eventVisibility"
-            :native-value="EventVisibility.UNLISTED"
-            >{{ $t("Only accessible through link (private)") }}</b-radio
-          >
-        </div>
+        <fieldset>
+          <legend>
+            {{
+              $t(
+                "When the event is private, you'll need to share the link around."
+              )
+            }}
+          </legend>
+          <div class="field">
+            <b-radio
+              v-model="event.visibility"
+              name="eventVisibility"
+              :native-value="EventVisibility.PUBLIC"
+              >{{ $t("Visible everywhere on the web (public)") }}</b-radio
+            >
+          </div>
+          <div class="field">
+            <b-radio
+              v-model="event.visibility"
+              name="eventVisibility"
+              :native-value="EventVisibility.UNLISTED"
+              >{{ $t("Only accessible through link (private)") }}</b-radio
+            >
+          </div>
+        </fieldset>
         <!-- <div class="field">
           <b-radio v-model="event.visibility"
                    name="eventVisibility"
@@ -196,11 +223,14 @@
         </div>
 
         <div class="box" v-if="limitedPlaces">
-          <b-field :label="$t('Number of places')">
+          <b-field :label="$t('Number of places')" label-for="number-of-places">
             <b-numberinput
               controls-position="compact"
+              :aria-minus-label="$t('Decrease')"
+              :aria-plus-label="$t('Increase')"
               min="1"
               v-model="eventOptions.maximumAttendeeCapacity"
+              id="number-of-places"
             />
           </b-field>
           <!--
@@ -219,63 +249,75 @@
 
         <subtitle>{{ $t("Public comment moderation") }}</subtitle>
 
-        <div class="field">
-          <b-radio
-            v-model="eventOptions.commentModeration"
-            name="commentModeration"
-            :native-value="CommentModeration.ALLOW_ALL"
-            >{{ $t("Allow all comments from users with accounts") }}</b-radio
-          >
-        </div>
+        <fieldset>
+          <legend>{{ $t("Who can post a comment?") }}</legend>
+          <div class="field">
+            <b-radio
+              v-model="eventOptions.commentModeration"
+              name="commentModeration"
+              :native-value="CommentModeration.ALLOW_ALL"
+              >{{ $t("Allow all comments from users with accounts") }}</b-radio
+            >
+          </div>
 
-        <!--          <div class="field">-->
-        <!--            <b-radio v-model="eventOptions.commentModeration"-->
-        <!--                     name="commentModeration"-->
-        <!--                     :native-value="CommentModeration.MODERATED">-->
-        <!--              {{ $t('Moderated comments (shown after approval)') }}-->
-        <!--            </b-radio>-->
-        <!--          </div>-->
+          <!--          <div class="field">-->
+          <!--            <b-radio v-model="eventOptions.commentModeration"-->
+          <!--                     name="commentModeration"-->
+          <!--                     :native-value="CommentModeration.MODERATED">-->
+          <!--              {{ $t('Moderated comments (shown after approval)') }}-->
+          <!--            </b-radio>-->
+          <!--          </div>-->
 
-        <div class="field">
-          <b-radio
-            v-model="eventOptions.commentModeration"
-            name="commentModeration"
-            :native-value="CommentModeration.CLOSED"
-            >{{ $t("Close comments for all (except for admins)") }}</b-radio
-          >
-        </div>
+          <div class="field">
+            <b-radio
+              v-model="eventOptions.commentModeration"
+              name="commentModeration"
+              :native-value="CommentModeration.CLOSED"
+              >{{ $t("Close comments for all (except for admins)") }}</b-radio
+            >
+          </div>
+        </fieldset>
 
         <subtitle>{{ $t("Status") }}</subtitle>
 
-        <b-field class="event__status__field">
-          <b-radio-button
-            v-model="event.status"
-            name="status"
-            type="is-warning"
-            :native-value="EventStatus.TENTATIVE"
-          >
-            <b-icon icon="calendar-question" />
-            {{ $t("Tentative: Will be confirmed later") }}
-          </b-radio-button>
-          <b-radio-button
-            v-model="event.status"
-            name="status"
-            type="is-success"
-            :native-value="EventStatus.CONFIRMED"
-          >
-            <b-icon icon="calendar-check" />
-            {{ $t("Confirmed: Will happen") }}
-          </b-radio-button>
-          <b-radio-button
-            v-model="event.status"
-            name="status"
-            type="is-danger"
-            :native-value="EventStatus.CANCELLED"
-          >
-            <b-icon icon="calendar-remove" />
-            {{ $t("Cancelled: Won't happen") }}
-          </b-radio-button>
-        </b-field>
+        <fieldset>
+          <legend>
+            {{
+              $t(
+                "Does the event needs to be confirmed later or is it cancelled?"
+              )
+            }}
+          </legend>
+          <b-field class="event__status__field">
+            <b-radio-button
+              v-model="event.status"
+              name="status"
+              type="is-warning"
+              :native-value="EventStatus.TENTATIVE"
+            >
+              <b-icon icon="calendar-question" />
+              {{ $t("Tentative: Will be confirmed later") }}
+            </b-radio-button>
+            <b-radio-button
+              v-model="event.status"
+              name="status"
+              type="is-success"
+              :native-value="EventStatus.CONFIRMED"
+            >
+              <b-icon icon="calendar-check" />
+              {{ $t("Confirmed: Will happen") }}
+            </b-radio-button>
+            <b-radio-button
+              v-model="event.status"
+              name="status"
+              type="is-danger"
+              :native-value="EventStatus.CANCELLED"
+            >
+              <b-icon icon="calendar-remove" />
+              {{ $t("Cancelled: Won't happen") }}
+            </b-radio-button>
+          </b-field>
+        </fieldset>
       </form>
     </div>
     <div class="container section" v-else>
@@ -370,6 +412,16 @@
 <style lang="scss" scoped>
 main section > .container {
   background: $white;
+
+  form {
+    h2 {
+      margin: 15px 0 7.5px;
+    }
+
+    legend {
+      margin-bottom: 0.75rem;
+    }
+  }
 }
 
 .save__navbar {
@@ -412,6 +464,9 @@ h2.subtitle {
 section {
   & > .container {
     padding: 2rem 1.5rem;
+    @media screen and (max-width: 768px) {
+      padding: 2rem 0.5rem;
+    }
   }
 
   .begins-on-field {

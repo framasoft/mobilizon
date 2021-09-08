@@ -382,7 +382,7 @@ defmodule Mobilizon.Config do
 
     cond do
       is_nil(contact) ->
-        nil
+        "<b>Contact information not filled</b>"
 
       String.contains?(contact, "@") ->
         "<a href=\"mailto:#{contact}\">#{contact}</a>"

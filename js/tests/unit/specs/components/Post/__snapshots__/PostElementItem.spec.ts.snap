@@ -9,7 +9,7 @@ exports[`PostElementItem renders post with basic informations 1`] = `
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata">
           <!---->
-          <!----> <small class="has-text-grey">December 2, 2020</small>
+          <!----> <small class="has-text-grey-dark">December 2, 2020</small>
           <!---->
         </div>
       </div>
@@ -26,7 +26,7 @@ exports[`PostElementItem shows the author if actor is a group member 1`] = `
       <div class="media-content">
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata">
-          <!----> <small class="has-text-grey"><span class="icon is-small"><i class="mdi mdi-earth"></i></span>Public</small> <small class="has-text-grey">December 2, 2020</small> <small class="has-text-grey">Created by {username}</small>
+          <!----> <small class="has-text-grey-dark"><span class="icon is-small"><i class="mdi mdi-earth"></i></span>Public</small> <small class="has-text-grey-dark">December 2, 2020</small> <small class="has-text-grey-dark">Created by {username}</small>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@ exports[`PostElementItem shows the draft tag if post is a draft 1`] = `
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata"><span class="tag is-warning is-small"><span class="">Draft</span>
           <!----></span>
-          <!----> <small class="has-text-grey">December 2, 2020</small>
+          <!----> <small class="has-text-grey-dark">December 2, 2020</small>
           <!---->
         </div>
       </div>
@@ -60,7 +60,7 @@ exports[`PostElementItem tells if the post is accessible only through link 1`] =
       <div class="media-content">
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata">
-          <!----> <small class="has-text-grey"><span class="icon is-small"><i class="mdi mdi-link"></i></span>Accessible through link</small> <small class="has-text-grey">December 2, 2020</small>
+          <!----> <small class="has-text-grey-dark"><span class="icon is-small"><i class="mdi mdi-link"></i></span>Accessible through link</small> <small class="has-text-grey-dark">December 2, 2020</small>
           <!---->
         </div>
       </div>
@@ -77,7 +77,7 @@ exports[`PostElementItem tells if the post is accessible only to members 1`] = `
       <div class="media-content">
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata">
-          <!----> <small class="has-text-grey"><span class="icon is-small"><i class="mdi mdi-lock"></i></span>Accessible only to members</small> <small class="has-text-grey">December 2, 2020</small>
+          <!----> <small class="has-text-grey-dark"><span class="icon is-small"><i class="mdi mdi-lock"></i></span>Accessible only to members</small> <small class="has-text-grey-dark">December 2, 2020</small>
           <!---->
         </div>
       </div>
@@ -94,7 +94,7 @@ exports[`PostElementItem tells if the post is public when the actor is a group m
       <div class="media-content">
         <p class="post-minimalist-title">My Blog Post</p>
         <div class="metadata">
-          <!----> <small class="has-text-grey"><span class="icon is-small"><i class="mdi mdi-earth"></i></span>Public</small> <small class="has-text-grey">December 2, 2020</small> <small class="has-text-grey">Created by {username}</small>
+          <!----> <small class="has-text-grey-dark"><span class="icon is-small"><i class="mdi mdi-earth"></i></span>Public</small> <small class="has-text-grey-dark">December 2, 2020</small> <small class="has-text-grey-dark">Created by {username}</small>
         </div>
       </div>
     </div>

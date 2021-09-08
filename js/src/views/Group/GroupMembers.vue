@@ -39,6 +39,7 @@
         <b-field
           :label="$t('Invite a new member')"
           custom-class="add-relay"
+          label-for="new-member-field"
           horizontal
         >
           <b-field
@@ -50,6 +51,7 @@
           >
             <p class="control">
               <b-input
+                id="new-member-field"
                 v-model="newMemberUsername"
                 :placeholder="$t('Ex: someone@mobilizon.org')"
               />
@@ -63,8 +65,12 @@
         </b-field>
       </form>
       <h1>{{ $t("Group Members") }} ({{ group.members.total }})</h1>
-      <b-field :label="$t('Status')" horizontal>
-        <b-select v-model="roles">
+      <b-field
+        :label="$t('Status')"
+        horizontal
+        label-for="group-members-status-filter"
+      >
+        <b-select v-model="roles" id="group-members-status-filter">
           <option value="">
             {{ $t("Everything") }}
           </option>
@@ -122,7 +128,7 @@
               <img
                 class="is-rounded"
                 :src="props.row.actor.avatar.url"
-                alt=""
+                :alt="props.row.actor.avatar.alt || ''"
               />
             </figure>
             <b-icon
@@ -137,7 +143,7 @@
                   props.row.actor.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey"
+                <span class="is-size-7 has-text-grey-dark"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
                 >
               </div>

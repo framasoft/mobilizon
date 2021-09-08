@@ -21,6 +21,7 @@
             <img
               class="image"
               :src="log.actor.avatar.url"
+              :alt="log.actor.avatar.alt || ''"
               v-if="log.actor.avatar"
             />
             <i18n
