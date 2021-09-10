@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Posts, Users}
+  alias Mobilizon.{Actors, Posts}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Permission, Utils}
@@ -27,12 +27,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{page: page, limit: limit} = args,
         %{
           context: %{
-            current_user: %User{role: user_role} = user
+            current_user: %User{role: user_role},
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <-
+    with {:member, true} <-
            {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
          %Page{} = page <- Posts.get_posts_for_group(group, page, limit) do
       {:ok, page}
@@ -65,13 +65,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{slug: slug},
         %{
           context: %{
-            current_user: %User{role: user_role} = user
+            current_user: %User{role: user_role},
+            current_actor: %Actor{} = current_profile
           }
         } = _resolution
       ) do
-    with {:current_actor, %Actor{} = current_profile} <-
-           {:current_actor, Users.get_actor_for_user(user)},
-         {:post, %Post{attributed_to: %Actor{}} = post} <-
+    with {:post, %Post{attributed_to: %Actor{}} = post} <-
            {:post, Posts.get_post_by_slug_with_preloads(slug)},
          {:member, true} <-
            {:member,
@@ -107,12 +106,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{attributed_to_id: group_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Actor{} = group <- Actors.get_actor(group_id),
          args <-
            Map.update(args, :picture, nil, fn picture ->
@@ -147,12 +145,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{id: id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id, url: actor_url}
           }
         } = _resolution
       ) do
     with {:uuid, {:ok, _uuid}} <- {:uuid, Ecto.UUID.cast(id)},
-         %Actor{id: actor_id, url: actor_url} <- Users.get_actor_for_user(user),
          {:post, %Post{attributed_to: %Actor{id: group_id} = group} = post} <-
            {:post, Posts.get_post_with_preloads(id)},
          args <-
@@ -185,12 +182,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{id: post_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id} = actor
           }
         } = _resolution
       ) do
     with {:uuid, {:ok, _uuid}} <- {:uuid, Ecto.UUID.cast(post_id)},
-         %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
          {:post, %Post{attributed_to: %Actor{id: group_id}} = post} <-
            {:post, Posts.get_post_with_preloads(post_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},

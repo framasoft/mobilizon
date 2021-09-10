@@ -33,8 +33,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   """
   @spec get_current_user(any, map(), Absinthe.Resolution.t()) ::
           {:error, :unauthenticated} | {:ok, Mobilizon.Users.User.t()}
-  def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user} = context}) do
-    # Logger.error(inspect(context))
+  def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user}}) do
     {:ok, user}
   end
 
@@ -204,23 +203,27 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   """
   @spec validate_user(map(), %{token: String.t()}, map()) :: {:ok, map()} | {:error, String.t()}
   def validate_user(_parent, %{token: token}, _resolution) do
-    with {:check_confirmation_token, {:ok, %User{} = user}} <-
-           {:check_confirmation_token, Email.User.check_confirmation_token(token)},
-         {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)} do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token}} =
-        Authenticator.generate_tokens(user)
+    case Email.User.check_confirmation_token(token) do
+      {:ok, %User{} = user} ->
+        actor = Users.get_actor_for_user(user)
 
-      {:ok,
-       %{
-         access_token: access_token,
-         refresh_token: refresh_token,
-         user: Map.put(user, :default_actor, actor)
-       }}
-    else
-      error ->
+        {:ok, %{access_token: access_token, refresh_token: refresh_token}} =
+          Authenticator.generate_tokens(user)
+
+        {:ok,
+         %{
+           access_token: access_token,
+           refresh_token: refresh_token,
+           user: Map.put(user, :default_actor, actor)
+         }}
+
+      {:error, :invalid_token} ->
+        Logger.info("Invalid token #{token} to validate user")
+        {:error, dgettext("errors", "Unable to validate user")}
+
+      {:error, %Ecto.Changeset{} = err} ->
         Logger.info("Unable to validate user with token #{token}")
-        Logger.debug(inspect(error))
-
+        Logger.debug(inspect(err))
         {:error, dgettext("errors", "Unable to validate user")}
     end
   end
@@ -280,8 +283,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         {:ok, tokens} = Authenticator.authenticate(email, password)
         {:ok, Map.put(tokens, :user, user)}
 
-      {:error, error} ->
-        {:error, error}
+      {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
+        {:error,
+         gettext(
+           "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+         )}
+
+      {:error, _err} ->
+        {:error,
+         gettext(
+           "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
+         )}
     end
   end
 
@@ -289,12 +301,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def change_default_actor(
         _parent,
         %{preferred_username: username},
-        %{context: %{current_user: user}}
+        %{context: %{current_user: %User{id: user_id} = user}}
       ) do
-    with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
+    with %Actor{id: actor_id} = actor <- Actors.get_local_actor_by_name(username),
          {:user_actor, true} <-
            {:user_actor, actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id)},
-         %User{} = user <- Users.update_user_default_actor(user.id, actor_id) do
+         %User{} = user <- Users.update_user_default_actor(user_id, actor) do
       {:ok, user}
     else
       {:user_actor, _} ->
@@ -459,19 +471,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   def delete_account(_parent, %{user_id: user_id}, %{
-        context: %{current_user: %User{role: role} = moderator_user}
+        context: %{
+          current_user: %User{role: role},
+          current_actor: %Actor{} = moderator_actor
+        }
       })
       when is_moderator(role) do
-    with {:moderator_actor, %Actor{} = moderator_actor} <-
-           {:moderator_actor, Users.get_actor_for_user(moderator_user)},
-         %User{disabled: false} = user <- Users.get_user(user_id),
+    with %User{disabled: false} = user <- Users.get_user(user_id),
          {:ok, %User{}} <-
            do_delete_account(%User{} = user, actor_performing: Relay.get_actor()) do
       Admin.log_action(moderator_actor, "delete", user)
     else
-      {:moderator_actor, nil} ->
-        {:error, dgettext("errors", "No profile found for the moderator user")}
-
       %User{disabled: true} ->
         {:error, dgettext("errors", "User already disabled")}
     end

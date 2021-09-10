@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Events}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
@@ -23,13 +23,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %{preferred_username: name} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
     with {:group, {:ok, %Actor{id: group_id, suspended: false} = group}} <-
            {:group, ActivityPubActor.find_or_make_group_from_nickname(name)},
-         {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
       {:ok, group}
     else
@@ -119,12 +118,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         args,
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{id: creator_actor_id} = creator_actor
           }
         }
       ) do
-    with %Actor{id: creator_actor_id} = creator_actor <- Users.get_actor_for_user(user),
-         args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
+    with args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
          args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
          {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
@@ -152,12 +150,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %{id: group_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{} = updater_actor
           }
         }
       ) do
-    with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
-         {:administrator, true} <-
+    with {:administrator, true} <-
            {:administrator, Actors.is_administrator?(updater_actor.id, group_id)},
          args when is_map(args) <- Map.put(args, :updater_actor, updater_actor),
          {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
@@ -188,12 +185,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %{group_id: group_id},
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{id: actor_id} = actor
           }
         }
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+    with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
          {:is_admin, true} <- {:is_admin, Member.is_administrator(member)},
          {:ok, _activity, group} <- ActivityPub.delete(group, actor, true) do
@@ -219,10 +215,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   Join an existing group
   """
   def join_group(_parent, %{group_id: group_id} = args, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{} = actor}
       }) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{type: :Group} = group} <-
+    with {:ok, %Actor{type: :Group} = group} <-
            Actors.get_group_by_actor_id(group_id),
          {:error, :member_not_found} <- Actors.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
@@ -253,12 +248,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %{group_id: group_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{} = actor
           }
         }
       ) do
-    with {:actor, %Actor{} = actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:group, %Actor{type: :Group} = group} <- {:group, Actors.get_actor(group_id)},
+    with {:group, %Actor{type: :Group} = group} <- {:group, Actors.get_actor(group_id)},
          {:ok, _activity, %Member{} = member} <- ActivityPub.leave(group, actor, true) do
       {:ok, member}
     else
@@ -286,13 +280,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         } = args,
         %{
           context: %{
-            current_user: %User{role: user_role} = user
+            current_user: %User{role: user_role},
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
+    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
       # TODO : Handle public / restricted to group members events
       {:ok,
        Events.list_organized_events_for_group(
@@ -304,8 +297,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
          limit
        )}
     else
-      {:member, false} ->
-        find_events_for_group(group, args, nil)
+      find_events_for_group(group, args, nil)
     end
   end
 

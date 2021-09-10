@@ -7,7 +7,7 @@ defmodule Mobilizon.Web.Email.User do
 
   import Bamboo.Phoenix
 
-  import Mobilizon.Web.Gettext, only: [gettext: 1, gettext: 2]
+  import Mobilizon.Web.Gettext, only: [gettext: 2]
 
   alias Mobilizon.{Config, Crypto, Users}
   alias Mobilizon.Storage.Repo
@@ -57,20 +57,26 @@ defmodule Mobilizon.Web.Email.User do
     |> render(:password_reset)
   end
 
-  @spec check_confirmation_token(String.t()) :: {:ok, User.t()} | {:error, :invalid_token}
+  @spec check_confirmation_token(String.t()) ::
+          {:ok, User.t()} | {:error, :invalid_token | Ecto.Changeset.t()}
   def check_confirmation_token(token) when is_binary(token) do
-    with %User{} = user <- Users.get_user_by_activation_token(token),
-         {:ok, %User{} = user} <-
-           Users.update_user(user, %{
-             confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
-             confirmation_sent_at: nil,
-             confirmation_token: nil,
-             email: user.unconfirmed_email || user.email
-           }) do
-      Logger.info("User #{user.email} has been confirmed")
-      {:ok, user}
-    else
-      _err ->
+    case Users.get_user_by_activation_token(token) do
+      %User{} = user ->
+        case Users.update_user(user, %{
+               confirmed_at: DateTime.utc_now() |> DateTime.truncate(:second),
+               confirmation_sent_at: nil,
+               confirmation_token: nil,
+               email: user.unconfirmed_email || user.email
+             }) do
+          {:ok, %User{} = user} ->
+            Logger.info("User #{user.email} has been confirmed")
+            {:ok, user}
+
+          {:error, %Ecto.Changeset{} = err} ->
+            {:error, err}
+        end
+
+      nil ->
         {:error, :invalid_token}
     end
   end
@@ -98,30 +104,20 @@ defmodule Mobilizon.Web.Email.User do
   Check that the provided token is correct and update provided password
   """
   @spec check_reset_password_token(String.t(), String.t()) ::
-          {:ok, User.t()} | {:error, String.t()}
+          {:ok, User.t()} | {:error, :user_not_found | Ecto.Changeset.t()}
   def check_reset_password_token(password, token) do
-    with %User{} = user <- Users.get_user_by_reset_password_token(token),
-         {:ok, %User{} = user} <-
-           Repo.update(
-             User.password_reset_changeset(user, %{
-               "password" => password,
-               "reset_password_sent_at" => nil,
-               "reset_password_token" => nil
-             })
-           ) do
-      {:ok, user}
-    else
-      {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
-        {:error,
-         gettext(
-           "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
-         )}
+    case Users.get_user_by_reset_password_token(token) do
+      %User{} = user ->
+        user
+        |> User.password_reset_changeset(%{
+          "password" => password,
+          "reset_password_sent_at" => nil,
+          "reset_password_token" => nil
+        })
+        |> Repo.update()
 
-      _err ->
-        {:error,
-         gettext(
-           "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
-         )}
+      nil ->
+        {:error, :user_not_found}
     end
   end
 

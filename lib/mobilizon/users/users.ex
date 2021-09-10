@@ -117,7 +117,7 @@ defmodule Mobilizon.Users do
   @doc """
   Get an user by its reset password token.
   """
-  @spec get_user_by_reset_password_token(String.t()) :: Actor.t()
+  @spec get_user_by_reset_password_token(String.t()) :: Actor.t() | nil
   def get_user_by_reset_password_token(token) do
     token
     |> user_by_reset_password_token_query()
@@ -263,22 +263,26 @@ defmodule Mobilizon.Users do
   Updates user's default actor.
   Raises `Ecto.NoResultsError` if the user does not exist.
   """
-  @spec update_user_default_actor(integer | String.t(), integer | String.t()) :: User.t()
-  def update_user_default_actor(user_id, actor_id) do
-    with _ <-
-           user_id
-           |> update_user_default_actor_query(actor_id)
-           |> Repo.update_all([]) do
-      user_id
-      |> get_user!()
-      |> Repo.preload([:default_actor])
-    end
+  @spec update_user_default_actor(integer | String.t(), Actor.t() | nil) :: User.t()
+  def update_user_default_actor(user_id, actor) do
+    actor_id = if is_nil(actor), do: nil, else: actor.id
+
+    user_id
+    |> update_user_default_actor_query(actor_id)
+    |> Repo.update_all([])
+
+    Cachex.put(:default_actors, to_string(user_id), actor)
+
+    user_id
+    |> get_user!()
+    |> Repo.preload([:default_actor])
   end
 
   @doc """
   Returns the list of users.
   """
-  @spec list_users(String.t(), integer | nil, integer | nil, atom | nil, atom | nil) :: Page.t()
+  @spec list_users(String.t(), integer | nil, integer | nil, atom | nil, atom | nil) ::
+          Page.t(User.t())
   def list_users(email \\ "", page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil)
 
   def list_users("", page, limit, sort, direction) do
@@ -596,7 +600,7 @@ defmodule Mobilizon.Users do
     from(a in Actor, where: a.user_id == ^user_id)
   end
 
-  @spec update_user_default_actor_query(integer | String.t(), integer | String.t()) ::
+  @spec update_user_default_actor_query(integer | String.t(), integer | String.t() | nil) ::
           Ecto.Query.t()
   defp update_user_default_actor_query(user_id, actor_id) do
     from(

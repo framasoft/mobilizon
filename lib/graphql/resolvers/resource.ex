@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   Handles the resources-related GraphQL calls
   """
 
-  alias Mobilizon.{Actors, Resources, Users}
+  alias Mobilizon.{Actors, Resources}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Resources.Resource
@@ -26,12 +26,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{page: page, limit: limit},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_group(group, page, limit) do
       {:ok, page}
     else
@@ -53,12 +52,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{page: page, limit: limit},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_folder(parent, page, limit) do
       {:ok, page}
     end
@@ -72,13 +70,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{path: path, username: username},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with {:current_actor, %Actor{id: actor_id}} <-
-           {:current_actor, Users.get_actor_for_user(user)},
-         {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
+    with {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:resource, %Resource{} = resource} <-
            {:resource, Resources.get_resource_by_group_and_path_with_preloads(group_id, path)} do
@@ -99,12 +95,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{actor_id: group_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          parent <- get_eventual_parent(args),
          {:own_check, true} <- {:own_check, check_resource_owned_by_group(parent, group_id)},
          {:ok, _, %Resource{} = resource} <-
@@ -138,12 +133,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{id: resource_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id, url: actor_url}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id, url: actor_url} <- Users.get_actor_for_user(user),
-         {:resource, %Resource{actor_id: group_id} = resource} <-
+    with {:resource, %Resource{actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
@@ -167,12 +161,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
         %{id: resource_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id} = actor
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
+    with {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-

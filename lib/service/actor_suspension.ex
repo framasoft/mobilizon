@@ -197,13 +197,12 @@ defmodule Mobilizon.Service.ActorSuspension do
   defp reset_default_actor_id(%Actor{type: :Person, user: %User{id: user_id} = user, id: actor_id}) do
     Logger.debug("reset_default_actor_id")
 
-    new_actor_id =
+    new_actor =
       user
       |> Users.get_actors_for_user()
-      |> Enum.map(& &1.id)
-      |> Enum.find(&(&1 !== actor_id))
+      |> Enum.find(&(&1.id !== actor_id))
 
-    {:ok, Users.update_user_default_actor(user_id, new_actor_id)}
+    {:ok, Users.update_user_default_actor(user_id, new_actor)}
   rescue
     _e in Ecto.NoResultsError ->
       {:error, :user_not_found}

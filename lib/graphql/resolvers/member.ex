@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
@@ -21,12 +21,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
         %Actor{id: group_id} = group,
         %{page: page, limit: limit, roles: roles},
         %{
-          context: %{current_user: %User{role: user_role} = user}
+          context: %{current_user: %User{role: user_role}, current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
+    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
       roles =
         case roles do
           "" ->
@@ -42,11 +40,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       %Page{} = page = Actors.list_members_for_group(group, roles, page, limit)
       {:ok, page}
     else
-      {:member, false} ->
-        # Actor is not member of group, fallback to public
-        with %Page{} = page <- Actors.list_members_for_group(group) do
-          {:ok, %Page{page | elements: []}}
-        end
+      # Actor is not member of group, fallback to public
+      %Page{} = page = Actors.list_members_for_group(group)
+      {:ok, %Page{page | elements: []}}
     end
   end
 
@@ -59,10 +55,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   def invite_member(
         _parent,
         %{group_id: group_id, target_actor_username: target_actor_username},
-        %{context: %{current_user: %User{} = user}}
+        %{context: %{current_actor: %Actor{id: actor_id} = actor}}
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+    with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:has_rights_to_invite, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
            {:has_rights_to_invite, Actors.get_member(actor_id, group_id)},
@@ -97,9 +92,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
-  def accept_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         %Member{actor: %Actor{id: member_actor_id}} = member <-
+  def accept_invitation(_parent, %{id: member_id}, %{
+        context: %{current_actor: %Actor{id: actor_id}}
+      }) do
+    with %Member{actor: %Actor{id: member_actor_id}} = member <-
            Actors.get_member(member_id),
          {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
@@ -115,9 +111,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
-  def reject_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
+  def reject_invitation(_parent, %{id: member_id}, %{
+        context: %{current_actor: %Actor{id: actor_id}}
+      }) do
+    with {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
            {:invitation_exists, Actors.get_member(member_id)},
          {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
@@ -137,10 +134,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   end
 
   def update_member(_parent, %{member_id: member_id, role: role}, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{} = moderator}
       }) do
-    with %Actor{} = moderator <- Users.get_actor_for_user(user),
-         %Member{} = member <- Actors.get_member(member_id),
+    with %Member{} = member <- Actors.get_member(member_id),
          {:ok, _activity, %Member{} = member} <-
            ActivityPub.update(member, %{role: role}, true, %{moderator: moderator}) do
       {:ok, member}
@@ -161,10 +157,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     do: {:error, "You must be logged-in to update a member"}
 
   def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{id: moderator_id} = moderator}
       }) do
-    with %Actor{id: moderator_id} = moderator <- Users.get_actor_for_user(user),
-         %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
+    with %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
          %Actor{type: :Group} = group <- Actors.get_actor(group_id),
          {:has_rights_to_remove, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-

@@ -2,7 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @moduledoc """
   Handles the participation-related GraphQL calls.
   """
-  alias Mobilizon.{Actors, Config, Crypto, Events, Users}
+  alias Mobilizon.{Actors, Config, Crypto, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.API.Participations
@@ -225,14 +225,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         %{id: participation_id, role: new_role},
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{} = moderator_actor
           }
         }
       ) do
-    # Check that moderator provided is rightly authenticated
-    with %Actor{} = moderator_actor <- Users.get_actor_for_user(user),
-         # Check that participation already exists
-         {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
+    # Check that participation already exists
+    with {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
            {:has_participation, Events.get_participant(participation_id)},
          {:same_role, false} <- {:same_role, new_role == old_role},
          # Check that moderator has right

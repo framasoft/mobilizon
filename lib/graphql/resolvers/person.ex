@@ -91,8 +91,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns the current actor for the currently logged-in user
   """
-  def get_current_person(_parent, _args, %{context: %{current_user: user}}) do
-    {:ok, Users.get_actor_for_user(user)}
+  @spec get_current_person(any, any, Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated} | {:ok, Actor.t()}
+  def get_current_person(_parent, _args, %{context: %{current_actor: %Actor{} = actor}}) do
+    {:ok, actor}
+  end
+
+  def get_current_person(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :no_current_person}
   end
 
   def get_current_person(_parent, _args, _resolution) do
@@ -102,6 +108,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns the list of identities for the logged-in user
   """
+  @spec identities(any, any, Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated} | {:ok, list(Actor.t())}
   def identities(_parent, _args, %{context: %{current_user: user}}) do
     {:ok, Users.get_actors_for_user(user)}
   end
@@ -148,21 +156,24 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     require Logger
     args = Map.put(args, :user_id, user.id)
 
-    with {:find_actor, %Actor{} = actor} <-
-           {:find_actor, Actors.get_actor(id)},
-         {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
-         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
-         {:ok, _activity, %Actor{} = actor} <- ActivityPub.update(actor, args, true) do
-      {:ok, actor}
-    else
-      {:picture, {:error, :file_too_large}} ->
-        {:error, dgettext("errors", "The provided picture is too heavy")}
+    case owned_actor(user, id) do
+      {:ok, %Actor{} = actor} ->
+        case save_attached_pictures(args) do
+          args when is_map(args) ->
+            case ActivityPub.update(actor, args, true) do
+              {:ok, _activity, %Actor{} = actor} ->
+                {:ok, actor}
 
-      {:find_actor, nil} ->
-        {:error, dgettext("errors", "Profile not found")}
+              {:error, err} ->
+                {:error, err}
+            end
 
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+          {:error, :file_too_large} ->
+            {:error, dgettext("errors", "The provided picture is too heavy")}
+        end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -176,27 +187,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   def delete_person(
         _parent,
         %{id: id} = _args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    with {:find_actor, %Actor{} = actor} <-
-           {:find_actor, Actors.get_actor(id)},
-         {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id),
-         {:last_identity, false} <- {:last_identity, last_identity?(user)},
-         {:last_admin, false} <- {:last_admin, last_admin_of_a_group?(actor.id)},
-         {:ok, actor} <- Actors.delete_actor(actor) do
-      {:ok, actor}
-    else
-      {:find_actor, nil} ->
-        {:error, dgettext("errors", "Profile not found")}
+    case owned_actor(user, id) do
+      {:ok, %Actor{} = actor} ->
+        if last_identity?(user) do
+          {:error, dgettext("errors", "Cannot remove the last identity of a user")}
+        else
+          if last_admin_of_a_group?(actor.id) do
+            {:error, dgettext("errors", "Cannot remove the last administrator of a group")}
+          else
+            Actors.delete_actor(actor)
+          end
+        end
 
-      {:last_identity, true} ->
-        {:error, dgettext("errors", "Cannot remove the last identity of a user")}
-
-      {:last_admin, true} ->
-        {:error, dgettext("errors", "Cannot remove the last administrator of a group")}
-
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -204,31 +210,65 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     {:error, :unauthenticated}
   end
 
+  @spec owned_actor(User.t(), integer() | String.t()) :: {:error, String.t()} | {:ok, Actor.t()}
+  defp owned_actor(%User{} = user, actor_id) do
+    with {:find_actor, %Actor{} = actor} <-
+           {:find_actor, Actors.get_actor(actor_id)},
+         {:is_owned, %Actor{}} <- User.owns_actor(user, actor.id) do
+      {:ok, actor}
+    else
+      {:find_actor, nil} ->
+        {:error, dgettext("errors", "Profile not found")}
+
+      {:is_owned, nil} ->
+        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+    end
+  end
+
   defp last_identity?(user) do
     length(Users.get_actors_for_user(user)) <= 1
   end
 
+  @spec save_attached_pictures(map()) :: map() | {:error, any()}
   defp save_attached_pictures(args) do
-    with args when is_map(args) <- save_attached_picture(args, :avatar),
-         args when is_map(args) <- save_attached_picture(args, :banner) do
-      args
+    case save_attached_picture(args, :avatar) do
+      {:error, err} ->
+        {:error, err}
+
+      args when is_map(args) ->
+        case save_attached_picture(args, :banner) do
+          {:error, err} ->
+            {:error, err}
+
+          args when is_map(args) ->
+            args
+        end
     end
   end
 
+  @spec save_attached_picture(map(), :avatar | :banner) :: map() | {:error, any}
   defp save_attached_picture(args, key) do
     if Map.has_key?(args, key) && !is_nil(args[key][:media]) do
-      with media when is_map(media) <- save_picture(args[key][:media], key) do
-        Map.put(args, key, media)
+      case save_picture(args[key][:media], key) do
+        {:error, err} ->
+          {:error, err}
+
+        media when is_map(media) ->
+          Map.put(args, key, media)
       end
     else
       args
     end
   end
 
+  @spec save_picture(map(), :avatar | :banner) :: {:ok, map()} | {:error, any()}
   defp save_picture(media, key) do
-    with {:ok, %{name: name, url: url, content_type: content_type, size: size}} <-
-           Upload.store(media.file, type: key, description: media.alt) do
-      %{"name" => name, "url" => url, "content_type" => content_type, "size" => size}
+    case Upload.store(media.file, type: key, description: media.alt) do
+      {:ok, %{name: name, url: url, content_type: content_type, size: size}} ->
+        %{"name" => name, "url" => url, "content_type" => content_type, "size" => size}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -237,28 +277,35 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   """
   def register_person(_parent, args, _resolution) do
     # When registering, email is assumed confirmed (unlike changing email)
-    with {:ok, %User{} = user} <- Users.get_user_by_email(args.email, unconfirmed: false),
-         user_actor <- Users.get_actor_for_user(user),
-         no_actor <- is_nil(user_actor),
-         {:no_actor, true} <- {:no_actor, no_actor},
-         args <- Map.update(args, :preferred_username, "", &String.downcase/1),
-         args <- Map.put(args, :user_id, user.id),
-         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
-         {:ok, %Actor{} = new_person} <- Actors.new_person(args, true) do
-      {:ok, new_person}
-    else
-      {:picture, {:error, :file_too_large}} ->
-        {:error, dgettext("errors", "The provided picture is too heavy")}
+    case Users.get_user_by_email(args.email, unconfirmed: false) do
+      {:ok, %User{} = user} ->
+        if is_nil(Users.get_actor_for_user(user)) do
+          # No profile yet, we can create one
+          case prepare_args(args, user) do
+            args when is_map(args) ->
+              Actors.new_person(args, true)
+
+            {:error, :file_too_large} ->
+              {:error, dgettext("errors", "The provided picture is too heavy")}
+
+            {:error, _err} ->
+              {:error, dgettext("errors", "Error while uploading pictures")}
+          end
+        else
+          {:error, dgettext("errors", "You already have a profile for this user")}
+        end
 
       {:error, :user_not_found} ->
         {:error, dgettext("errors", "No user with this email was found")}
-
-      {:no_actor, _} ->
-        {:error, dgettext("errors", "You already have a profile for this user")}
-
-      {:error, %Ecto.Changeset{} = e} ->
-        {:error, e}
     end
+  end
+
+  @spec prepare_args(map(), User.t()) :: map() | {:error, any()}
+  defp prepare_args(args, %User{} = user) do
+    args
+    |> Map.update(:preferred_username, "", &String.downcase/1)
+    |> Map.put(:user_id, user.id)
+    |> save_attached_pictures()
   end
 
   @doc """
@@ -269,17 +316,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         %{event_id: event_id},
         %{context: %{current_user: %User{} = user}}
       ) do
-    with {:can_get_participations, true} <-
-           {:can_get_participations, user_can_access_person_details?(person, user)},
-         {:no_participant, {:ok, %Participant{} = participant}} <-
-           {:no_participant, Events.get_participant(event_id, actor_id)} do
-      {:ok, %Page{elements: [participant], total: 1}}
+    if user_can_access_person_details?(person, user) do
+      case Events.get_participant(event_id, actor_id) do
+        {:ok, %Participant{} = participant} -> {:ok, %Page{elements: [participant], total: 1}}
+        {:error, :participant_not_found} -> {:ok, %Page{elements: [], total: 0}}
+      end
     else
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
-
-      {:no_participant, _} ->
-        {:ok, %Page{elements: [], total: 0}}
+      {:error, :unauthorized}
     end
   end
 

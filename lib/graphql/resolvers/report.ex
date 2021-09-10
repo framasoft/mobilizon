@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Config, Reports, Users}
+  alias Mobilizon.{Actors, Config, Reports}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -47,13 +47,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   def create_report(
         _parent,
         args,
-        %{context: %{current_user: %User{} = user}} = _resolution
+        %{context: %{current_actor: %Actor{id: reporter_id}}} = _resolution
       ) do
-    with %Actor{id: reporter_id} <- Users.get_actor_for_user(user),
-         {:ok, _, %Report{} = report} <-
-           args |> Map.put(:reporter_id, reporter_id) |> API.Reports.report() do
-      {:ok, report}
-    else
+    case args |> Map.put(:reporter_id, reporter_id) |> API.Reports.report() do
+      {:ok, _, %Report{} = report} ->
+        {:ok, report}
+
       _error ->
         {:error, dgettext("errors", "Error while saving report")}
     end
@@ -84,11 +83,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   def update_report(
         _parent,
         %{report_id: report_id, status: status},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{} = actor}}
       )
       when is_moderator(role) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         %Report{} = report <- Mobilizon.Reports.get_report(report_id),
+    with %Report{} = report <- Mobilizon.Reports.get_report(report_id),
          {:ok, %Report{} = report} <- API.Reports.update_report_status(actor, report, status) do
       {:ok, report}
     else
@@ -104,11 +102,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   def create_report_note(
         _parent,
         %{report_id: report_id, content: content},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{id: moderator_id}}}
       )
       when is_moderator(role) do
-    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
-         %Report{} = report <- Reports.get_report(report_id),
+    with %Report{} = report <- Reports.get_report(report_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.create_report_note(report, moderator, content) do
       {:ok, note}
@@ -118,11 +115,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   def delete_report_note(
         _parent,
         %{note_id: note_id},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{id: moderator_id}}}
       )
       when is_moderator(role) do
-    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
-         %Note{} = note <- Reports.get_note(note_id),
+    with %Note{} = note <- Reports.get_note(note_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.delete_report_note(note, moderator) do
       {:ok, %{id: note.id}}

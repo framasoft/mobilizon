@@ -739,6 +739,8 @@ defmodule Mobilizon.Events do
 
   """
   @spec get_participant(integer) :: Participant.t() | nil
+  @spec get_participant(integer | String.t(), integer | String.t(), map()) ::
+          {:ok, Participant.t()} | {:error, :participant_not_found}
   def get_participant(participant_id) do
     Participant
     |> where([p], p.id == ^participant_id)
@@ -749,8 +751,6 @@ defmodule Mobilizon.Events do
   @doc """
   Gets a single participation for an event and actor.
   """
-  @spec get_participant(integer | String.t(), integer | String.t(), map()) ::
-          {:ok, Participant.t()} | {:error, :participant_not_found}
   def get_participant(event_id, actor_id, params \\ %{})
 
   # This one if to check someone doesn't go to the same event twice

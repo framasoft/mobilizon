@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Medias, Users}
+  alias Mobilizon.Medias
   alias Mobilizon.Medias.Media
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -44,10 +44,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
   def upload_media(
         _parent,
         %{file: %Plug.Upload{} = file} = args,
-        %{context: %{current_user: %User{} = user}}
+        %{context: %{current_actor: %Actor{id: actor_id}}}
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:ok,
+    with {:ok,
           %{
             name: _name,
             url: url,

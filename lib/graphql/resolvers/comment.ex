@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   Handles the comment-related GraphQL calls.
   """
 
-  alias Mobilizon.{Actors, Admin, Discussions, Events, Users}
+  alias Mobilizon.{Actors, Admin, Discussions, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Events.{Event, EventOptions}
@@ -23,12 +23,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         %{event_id: event_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:find_event,
+    with {:find_event,
           {:ok,
            %Event{
              options: %EventOptions{comment_moderation: comment_moderation},
@@ -59,12 +58,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         %{text: text, comment_id: comment_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         %CommentModel{actor_id: comment_actor_id} = comment <-
+    with %CommentModel{actor_id: comment_actor_id} = comment <-
            Mobilizon.Discussions.get_comment_with_preload(comment_id),
          true <- actor_id == comment_actor_id,
          {:ok, _, %CommentModel{} = comment} <- Comments.update_comment(comment, %{text: text}) do
@@ -81,31 +79,34 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         %{comment_id: comment_id},
         %{
           context: %{
-            current_user: %User{role: role} = user
+            current_user: %User{role: role},
+            current_actor: %Actor{id: actor_id} = actor
           }
         }
       ) do
-    with {:actor, %Actor{id: actor_id} = actor} <- {:actor, Users.get_actor_for_user(user)},
-         %CommentModel{deleted_at: nil} = comment <-
-           Discussions.get_comment_with_preload(comment_id) do
-      cond do
-        {:comment_can_be_managed, true} == CommentModel.can_be_managed_by(comment, actor_id) ->
-          do_delete_comment(comment, actor)
+    case Discussions.get_comment_with_preload(comment_id) do
+      %CommentModel{deleted_at: nil} = comment ->
+        cond do
+          {:comment_can_be_managed, true} == CommentModel.can_be_managed_by(comment, actor_id) ->
+            do_delete_comment(comment, actor)
 
-        role in [:moderator, :administrator] ->
-          with {:ok, res} <- do_delete_comment(comment, actor),
-               %Actor{} = actor <- Actors.get_actor(actor_id) do
-            Admin.log_action(actor, "delete", comment)
+          role in [:moderator, :administrator] ->
+            with {:ok, res} <- do_delete_comment(comment, actor),
+                 %Actor{} = actor <- Actors.get_actor(actor_id) do
+              Admin.log_action(actor, "delete", comment)
 
-            {:ok, res}
-          end
+              {:ok, res}
+            end
 
-        true ->
-          {:error, dgettext("errors", "You cannot delete this comment")}
-      end
-    else
+          true ->
+            {:error, dgettext("errors", "You cannot delete this comment")}
+        end
+
       %CommentModel{deleted_at: deleted_at} when not is_nil(deleted_at) ->
         {:error, dgettext("errors", "Comment is already deleted")}
+
+      nil ->
+        {:error, dgettext("errors", "Comment not found")}
     end
   end
 

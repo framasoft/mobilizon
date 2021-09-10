@@ -3,12 +3,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
   Handles the todos related GraphQL calls
   """
 
-  alias Mobilizon.{Actors, Todos, Users}
+  alias Mobilizon.{Actors, Todos}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Storage.Page
   alias Mobilizon.Todos.{Todo, TodoList}
-  alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
   require Logger
@@ -22,11 +21,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         %Actor{id: group_id} = group,
         _args,
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Todos.get_todo_lists_for_group(group) do
       {:ok, page}
     else
@@ -45,11 +43,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         %TodoList{actor_id: group_id} = todo_list,
         _args,
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Todos.get_todos_for_todo_list(todo_list) do
       {:ok, page}
     else
@@ -62,11 +59,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         _parent,
         %{id: todo_list_id},
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:actor, %Actor{id: actor_id}} <- {:actor, Users.get_actor_for_user(user)},
-         {:todo, %TodoList{actor_id: group_id} = todo} <-
+    with {:todo, %TodoList{actor_id: group_id} = todo} <-
            {:todo, Todos.get_todo_list(todo_list_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
       {:ok, todo}
@@ -86,11 +82,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         _parent,
         %{group_id: group_id} = args,
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %TodoList{} = todo_list} <-
            ActivityPub.create(:todo_list, Map.put(args, :actor_id, group_id), true, %{}) do
       {:ok, todo_list}
@@ -153,11 +148,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         _parent,
         %{id: todo_id},
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:actor, %Actor{id: actor_id}} <- {:actor, Users.get_actor_for_user(user)},
-         {:todo, %Todo{todo_list_id: todo_list_id} = todo} <-
+    with {:todo, %Todo{todo_list_id: todo_list_id} = todo} <-
            {:todo, Todos.get_todo(todo_id)},
          {:todo_list, %TodoList{actor_id: group_id}} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},
@@ -179,11 +173,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         _parent,
         %{todo_list_id: todo_list_id} = args,
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:todo_list, %TodoList{actor_id: group_id} = _todo_list} <-
+    with {:todo_list, %TodoList{actor_id: group_id} = _todo_list} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Todo{} = todo} <-
@@ -205,11 +198,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
         _parent,
         %{id: todo_id} = args,
         %{
-          context: %{current_user: %User{} = user}
+          context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:todo, %Todo{todo_list_id: todo_list_id} = todo} <-
+    with {:todo, %Todo{todo_list_id: todo_list_id} = todo} <-
            {:todo, Todos.get_todo(todo_id)},
          {:todo_list, %TodoList{actor_id: group_id}} <-
            {:todo_list, Todos.get_todo_list(todo_list_id)},

@@ -12,7 +12,9 @@ defmodule Mobilizon.Service.ActorSuspensionTest do
 
   describe "suspend a person" do
     setup do
-      %Actor{} = actor = insert(:actor)
+      user = insert(:user)
+      %Actor{} = actor = insert(:actor, user: user)
+      insert(:actor, user: user)
 
       %Comment{} = comment = insert(:comment, actor: actor)
       %Event{} = event = insert(:event, organizer_actor: actor)

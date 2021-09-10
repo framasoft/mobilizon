@@ -1225,7 +1225,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       %Actor{} = administrator_actor = insert(:actor, user: user)
       insert(:member, parent: group, actor: administrator_actor, role: :administrator)
 
-      %Actor{id: not_member_actor_id} = insert(:actor, user: user)
+      %Actor{id: not_member_actor_id} = not_member_actor = insert(:actor, user: user)
 
       %Event{} =
         event = insert(:event, attributed_to: group, organizer_actor: administrator_actor)
@@ -1235,7 +1235,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> Map.put(:attributed_to_id, "#{group_id}")
         |> Map.put(:eventId, to_string(event.id))
 
-      Users.update_user_default_actor(user.id, member_not_approved_actor_id)
+      Users.update_user_default_actor(user.id, member_not_approved_actor)
 
       res =
         conn
@@ -1250,7 +1250,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, not_member_actor_id)
+      Users.update_user_default_actor(user.id, not_member_actor)
 
       res =
         conn
@@ -1265,7 +1265,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, member_actor_id)
+      Users.update_user_default_actor(user.id, member_actor)
 
       res =
         conn
@@ -1280,7 +1280,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, moderator_actor_id)
+      Users.update_user_default_actor(user.id, moderator_actor)
 
       res =
         conn
