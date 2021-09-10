@@ -29,19 +29,28 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import get from "lodash/get";
 import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
+import { FILTER_TAGS } from "@/graphql/tags";
 
-@Component
+@Component({
+  apollo: {
+    tags: {
+      query: FILTER_TAGS,
+      variables() {
+        return {
+          filter: this.text,
+        };
+      },
+    },
+  },
+})
 export default class TagInput extends Vue {
-  @Prop({ required: false, default: () => [] }) data!: ITag[];
-
-  @Prop({ required: true, default: "value" }) path!: string;
-
   @Prop({ required: true }) value!: ITag[];
 
-  filteredTags: ITag[] = [];
+  tags!: ITag[];
+
+  text = "";
 
   private static componentId = 0;
 
@@ -53,13 +62,20 @@ export default class TagInput extends Vue {
     return `tag-input-${TagInput.componentId}`;
   }
 
-  getFilteredTags(text: string): void {
-    this.filteredTags = differenceBy(this.data, this.value, "id").filter(
+  async getFilteredTags(text: string): Promise<void> {
+    this.text = text;
+    await this.$apollo.queries.tags.refetch();
+  }
+
+  get filteredTags(): ITag[] {
+    return differenceBy(this.tags, this.value, "id").filter(
       (option) =>
-        get(option, this.path)
+        option.title
           .toString()
           .toLowerCase()
-          .indexOf(text.toLowerCase()) >= 0
+          .indexOf(this.text.toLowerCase()) >= 0 ||
+        option.slug.toString().toLowerCase().indexOf(this.text.toLowerCase()) >=
+          0
     );
   }
 

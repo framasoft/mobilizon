@@ -242,6 +242,12 @@ defmodule Mobilizon.EventsTest do
       assert [tag.id] == Events.list_tags() |> Enum.map(& &1.id)
     end
 
+    test "list_tags/1 filters tags by title or slug" do
+      tag1 = insert(:tag, title: "PineApple", slug: "pineapple")
+      tag2 = insert(:tag, title: "sexy pineapple", slug: "sexy-pineapple")
+      assert [tag1.id, tag2.id] == Events.list_tags("apple") |> Enum.map(& &1.id)
+    end
+
     test "get_tag!/1 returns the tag with given id" do
       tag = insert(:tag)
       assert Events.get_tag!(tag.id).id == tag.id

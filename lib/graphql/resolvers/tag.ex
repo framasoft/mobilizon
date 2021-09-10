@@ -7,8 +7,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   alias Mobilizon.Events.{Event, Tag}
   alias Mobilizon.Posts.Post
 
-  def list_tags(_parent, %{page: page, limit: limit}, _resolution) do
-    tags = Mobilizon.Events.list_tags(page, limit)
+  def list_tags(_parent, %{page: page, limit: limit} = args, _resolution) do
+    filter = Map.get(args, :filter)
+    tags = Mobilizon.Events.list_tags(filter, page, limit)
 
     {:ok, tags}
   end
