@@ -179,6 +179,8 @@ config :phoenix, :filter_parameters, ["password", "token"]
 config :absinthe, schema: Mobilizon.GraphQL.Schema
 config :absinthe, Absinthe.Logger, filter_variables: ["token", "password", "secret"]
 
+config :mobilizon, Mobilizon.Web.Gettext, one_module_per_locale: true
+
 config :ex_cldr,
   default_locale: "en",
   default_backend: Mobilizon.Cldr

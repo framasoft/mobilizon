@@ -77,6 +77,8 @@ config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
 
 config :mobilizon, :activitypub, sign_object_fetches: false
 
+config :mobilizon, Mobilizon.Web.Gettext, allowed_locales: ["fr", "en"]
+
 config :junit_formatter, report_dir: "."
 
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
