@@ -25,11 +25,26 @@ defmodule Mobilizon.Web.Auth.Context do
   defp set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
+    user_agent = Plug.Conn.get_req_header(conn, "user-agent") |> List.first()
+
     {conn, context} =
       case Guardian.Plug.current_resource(conn) do
         %User{id: user_id, email: user_email} = user ->
           if SentryAdapter.enabled?() do
             Sentry.Context.set_user_context(%{id: user_id, name: user_email})
+
+            Sentry.Context.set_request_context(%{
+              url: Plug.Conn.request_url(conn),
+              method: conn.method,
+              headers: %{
+                "User-Agent": user_agent
+              },
+              query_string: conn.query_string,
+              env: %{
+                REQUEST_ID: Plug.Conn.get_resp_header(conn, "x-request-id") |> List.first(),
+                SERVER_NAME: conn.host
+              }
+            })
           end
 
           context = Map.put(context, :current_user, user)
@@ -40,14 +55,7 @@ defmodule Mobilizon.Web.Auth.Context do
           {conn, context}
       end
 
-    context =
-      case get_req_header(conn, "user-agent") do
-        [user_agent | _] ->
-          Map.put(context, :user_agent, user_agent)
-
-        _ ->
-          context
-      end
+    context = if is_nil(user_agent), do: context, else: Map.put(context, :user_agent, user_agent)
 
     put_private(conn, :absinthe, %{context: context})
   end
