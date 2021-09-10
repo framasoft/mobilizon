@@ -19,13 +19,13 @@ defmodule Mobilizon.Web.Endpoint do
   end
 
   # For e2e tests
-  if Application.get_env(:mobilizon, :sql_sandbox) do
-    plug(Phoenix.Ecto.SQL.Sandbox,
-      at: "/sandbox",
-      header: "x-session-id",
-      repo: Mobilizon.Storage.Repo
-    )
-  end
+  # if Application.get_env(:mobilizon, :sql_sandbox) do
+  #   plug(Phoenix.Ecto.SQL.Sandbox,
+  #     at: "/sandbox",
+  #     header: "x-session-id",
+  #     repo: Mobilizon.Storage.Repo
+  #   )
+  # end
 
   socket("/graphql_socket", Mobilizon.Web.GraphQLSocket,
     websocket: true,
