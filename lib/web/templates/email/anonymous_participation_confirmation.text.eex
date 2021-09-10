@@ -2,5 +2,5 @@
 ==
 <%= gettext "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:", title: @participant.event.title %>
 <%= gettext "If you didn't trigger this email, you may safely ignore it." %>
-<%= page_url(Mobilizon.Web.Endpoint, :participation_email_confirmation, @participant.metadata.confirmation_token) %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :participation_email_confirmation, @participant.metadata.confirmation_token) %>
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>

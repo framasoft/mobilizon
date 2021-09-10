@@ -19,9 +19,17 @@ defmodule Mobilizon.Service.Activity.Renderer do
   require Logger
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
-  @type render :: %{body: String.t(), url: String.t()}
+  @type render :: %{
+          body: String.t(),
+          url: String.t(),
+          timestamp: String.t(),
+          locale: String.t(),
+          title: String.t()
+        }
 
-  @callback render(entity :: Activity.t(), Keyword.t()) :: render()
+  @type common_render :: %{body: String.t(), url: String.t()}
+
+  @callback render(entity :: Activity.t(), Keyword.t()) :: common_render()
 
   @spec render(Activity.t()) :: render()
   def render(%Activity{} = activity, options \\ []) do
@@ -43,6 +51,7 @@ defmodule Mobilizon.Service.Activity.Renderer do
     res
   end
 
+  @spec do_render(Activity.t(), Keyword.t()) :: common_render()
   defp do_render(%Activity{type: type} = activity, options) do
     case type do
       :discussion -> Discussion.render(activity, options)

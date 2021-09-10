@@ -127,7 +127,8 @@ defmodule Mobilizon.UploadTest do
         filename: "test.txt"
       }
 
-      assert {:error, :mime_type_not_allowed} == Upload.store(file)
+      res = Upload.store(file)
+      assert match?({:error, :mime_type_not_allowed}, res)
     end
 
     test "copies the file to the configured folder with anonymizing filename" do
@@ -189,7 +190,7 @@ defmodule Mobilizon.UploadTest do
 
       refute File.exists?(file)
 
-      assert {:error, "File not_existing/definitely.jpg doesn't exist"} =
+      assert {:error, :enofile} =
                Upload.remove("https://mobilizon.test/media/not_existing/definitely.jpg")
     end
   end

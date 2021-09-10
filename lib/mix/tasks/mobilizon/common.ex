@@ -61,7 +61,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
       else: IO.puts(message)
   end
 
-  @spec shell_error(String.t()) :: :ok
+  @spec shell_error(String.t(), Keyword.t()) :: nil | no_return
   def shell_error(message, options \\ []) do
     if mix_shell?() do
       Mix.shell().error(message)

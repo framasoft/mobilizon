@@ -11,6 +11,7 @@ defmodule Mobilizon.Web.Upload.Filter.Resize do
   @maximum_width 1_920
   @maximum_height 1_080
 
+  @spec filter(Upload.t()) :: {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(
         %Upload{
           tempfile: file,
@@ -31,6 +32,7 @@ defmodule Mobilizon.Web.Upload.Filter.Resize do
 
   def filter(_), do: {:ok, :noop}
 
+  @spec limit_sizes({non_neg_integer, non_neg_integer}) :: {non_neg_integer, non_neg_integer}
   def limit_sizes({width, height}) when width > @maximum_width do
     new_height = round(@maximum_width * height / width)
     limit_sizes({@maximum_width, new_height})
@@ -43,5 +45,6 @@ defmodule Mobilizon.Web.Upload.Filter.Resize do
 
   def limit_sizes({width, height}), do: {width, height}
 
+  @spec string({non_neg_integer, non_neg_integer}) :: String.t()
   defp string({width, height}), do: "#{width}x#{height}"
 end

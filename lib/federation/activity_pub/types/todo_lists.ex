@@ -13,7 +13,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) ::
+          {:ok, TodoList.t(), ActivityStream.t()}
+          | {:error, :group_not_found | Ecto.Changeset.t()}
   def create(args, additional) do
     with {:ok, %TodoList{actor_id: group_id} = todo_list} <- Todos.create_todo_list(args),
          {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
@@ -26,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
   end
 
   @impl Entity
-  @spec update(TodoList.t(), map, map) :: {:ok, TodoList.t(), Activity.t()} | any
+  @spec update(TodoList.t(), map, map) :: {:ok, TodoList.t(), ActivityStream.t()} | any
   def update(%TodoList{} = old_todo_list, args, additional) do
     with {:ok, %TodoList{actor_id: group_id} = todo_list} <-
            Todos.update_todo_list(old_todo_list, args),
@@ -65,10 +67,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
     end
   end
 
+  @spec actor(TodoList.t()) :: nil
   def actor(%TodoList{}), do: nil
 
+  @spec group_actor(TodoList.t()) :: Actor.t() | nil
   def group_actor(%TodoList{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  @spec permissions(TodoList.t()) :: Permission.t()
   def permissions(%TodoList{}) do
     %Permission{access: :member, create: :member, update: :member, delete: :member}
   end

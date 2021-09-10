@@ -13,6 +13,8 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
 
   @member_roles [:member, :moderator, :administrator]
 
+  @type object :: %{id: String.t(), url: String.t()}
+
   @doc """
   Check that actor can access the object
   """
@@ -66,8 +68,8 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
 
   @spec can_manage_group_object?(
           existing_object_permissions(),
-          Actor.t(),
-          any()
+          %Actor{url: String.t()},
+          object()
         ) :: boolean()
   defp can_manage_group_object?(permission, %Actor{url: actor_url} = actor, object) do
     if Ownable.group_actor(object) != nil do
@@ -94,7 +96,7 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
     end
   end
 
-  @spec activity_actor_is_group_member?(Actor.t(), Entity.t(), atom()) :: boolean()
+  @spec activity_actor_is_group_member?(Actor.t(), object(), atom()) :: boolean()
   defp activity_actor_is_group_member?(
          %Actor{id: actor_id, url: actor_url},
          object,

@@ -12,6 +12,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
   alias Mobilizon.Federation.ActivityStream.Converter.Discussion, as: DiscussionConverter
   alias Mobilizon.Storage.Repo
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
   require Logger
 
@@ -45,20 +46,27 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
   end
 
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
-  def as_to_model_data(%{"type" => "Note", "name" => name} = object) when not is_nil(name) do
-    with creator_url <- Map.get(object, "actor"),
-         {:ok, %Actor{id: creator_id, suspended: false}} <-
+  @spec as_to_model_data(map) :: map() | {:error, any()}
+  def as_to_model_data(%{"type" => "Note", "name" => name} = object) when is_valid_string(name) do
+    case extract_actors(object) do
+      %{actor_id: actor_id, creator_id: creator_id} ->
+        %{actor_id: actor_id, creator_id: creator_id, title: name, url: object["id"]}
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  @spec extract_actors(map()) :: %{actor_id: String.t(), creator_id: String.t()} | {:error, any()}
+  defp extract_actors(%{"actor" => creator_url, "attributedTo" => actor_url} = _object)
+       when is_valid_string(creator_url) and is_valid_string(actor_url) do
+    with {:ok, %Actor{id: creator_id, suspended: false}} <-
            ActivityPubActor.get_or_fetch_actor_by_url(creator_url),
-         actor_url <- Map.get(object, "attributedTo"),
          {:ok, %Actor{id: actor_id, suspended: false}} <-
            ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
-      %{
-        title: name,
-        actor_id: actor_id,
-        creator_id: creator_id,
-        url: object["id"]
-      }
+      %{actor_id: actor_id, creator_id: creator_id}
+    else
+      {:error, error} -> {:error, error}
     end
   end
 end

@@ -51,7 +51,7 @@ defmodule Mobilizon.Medias.Media do
   end
 
   @doc false
-  @spec changeset(struct(), map) :: Ecto.Changeset.t()
+  @spec metadata_changeset(Metadata.t(), map) :: Ecto.Changeset.t()
   def metadata_changeset(metadata, attrs) do
     metadata
     |> cast(attrs, @metadata_attrs)

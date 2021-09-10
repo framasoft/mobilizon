@@ -16,6 +16,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
     options
   end
 
+  @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
   def call(%{assigns: %{valid_signature: true}} = conn, _opts) do
     conn
   end

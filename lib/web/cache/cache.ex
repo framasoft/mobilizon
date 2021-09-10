@@ -4,16 +4,19 @@ defmodule Mobilizon.Web.Cache do
   """
 
   alias Mobilizon.Actors.Actor
-
   alias Mobilizon.Web.Cache.ActivityPub
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
   @caches [:activity_pub, :feed, :ics]
 
+  @type local_actor :: %Actor{domain: nil}
+
   @doc """
-  Clears all caches for an actor.
+  Clears all caches for a local actor.
   """
-  @spec clear_cache(Actor.t()) :: {:ok, true}
-  def clear_cache(%Actor{preferred_username: preferred_username, domain: nil}) do
+  @spec clear_cache(%Actor{domain: nil, preferred_username: String.t()}) :: :ok
+  def clear_cache(%Actor{preferred_username: preferred_username, domain: nil})
+      when is_valid_string(preferred_username) do
     Enum.each(@caches, &Cachex.del(&1, "actor_" <> preferred_username))
   end
 

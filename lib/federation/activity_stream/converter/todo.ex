@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, any()}
   def as_to_model_data(
         %{"type" => "Todo", "actor" => actor_url, "todoList" => todo_list_url} = object
       ) do

@@ -15,12 +15,13 @@ defmodule Mobilizon.GraphQL.API.Reports do
   @doc """
   Create a report/flag on an actor, and optionally on an event or on comments.
   """
+  @spec report(map()) :: {:ok, Activity.t(), Report.t()} | {:error, any()}
   def report(args) do
-    case {:make_activity, ActivityPub.flag(args, Map.get(args, :forward, false) == true)} do
-      {:make_activity, {:ok, %Activity{} = activity, %Report{} = report}} ->
+    case ActivityPub.flag(args, Map.get(args, :forward, false) == true) do
+      {:ok, %Activity{} = activity, %Report{} = report} ->
         {:ok, activity, report}
 
-      {:make_activity, err} ->
+      err ->
         {:error, err}
     end
   end
@@ -28,10 +29,12 @@ defmodule Mobilizon.GraphQL.API.Reports do
   @doc """
   Update the state of a report
   """
+  @spec update_report_status(Actor.t(), Report.t(), ReportStatus.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     with {:valid_state, true} <-
            {:valid_state, ReportStatus.valid_value?(state)},
-         {:ok, report} <- ReportsAction.update_report(report, %{"status" => state}),
+         {:ok, %Report{} = report} <- ReportsAction.update_report(report, %{"status" => state}),
          {:ok, _} <- Admin.log_action(actor, "update", report) do
       {:ok, report}
     else
@@ -42,7 +45,8 @@ defmodule Mobilizon.GraphQL.API.Reports do
   @doc """
   Create a note on a report
   """
-  @spec create_report_note(Report.t(), Actor.t(), String.t()) :: {:ok, Note.t()}
+  @spec create_report_note(Report.t(), Actor.t(), String.t()) ::
+          {:ok, Note.t()} | {:error, String.t()}
   def create_report_note(
         %Report{id: report_id},
         %Actor{id: moderator_id, user_id: user_id} = moderator,
@@ -67,7 +71,7 @@ defmodule Mobilizon.GraphQL.API.Reports do
   @doc """
   Delete a report note
   """
-  @spec delete_report_note(Note.t(), Actor.t()) :: {:ok, Note.t()}
+  @spec delete_report_note(Note.t(), Actor.t()) :: {:ok, Note.t()} | {:error, String.t()}
   def delete_report_note(
         %Note{moderator_id: note_moderator_id} = note,
         %Actor{id: moderator_id, user_id: user_id} = moderator

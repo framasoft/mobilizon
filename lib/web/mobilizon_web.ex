@@ -21,8 +21,8 @@ defmodule Mobilizon.Web do
     quote do
       use Phoenix.Controller, namespace: Mobilizon.Web
       import Plug.Conn
-      import Mobilizon.Web.Router.Helpers
       import Mobilizon.Web.Gettext
+      alias Mobilizon.Web.Router.Helpers, as: Routes
     end
   end
 
@@ -33,14 +33,13 @@ defmodule Mobilizon.Web do
         pattern: "**/*",
         namespace: Mobilizon.Web
 
-      # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
-
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Mobilizon.Web.Router.Helpers
+      import Phoenix.View
+      import Mobilizon.Web.ErrorHelpers
       import Mobilizon.Web.Gettext
+      alias Mobilizon.Web.Router.Helpers, as: Routes
     end
   end
 

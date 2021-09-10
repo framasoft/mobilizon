@@ -951,7 +951,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   defp do_handle_incoming_reject_invite(invite_object, %Actor{} = actor_rejecting) do
     with {:invite, {:ok, %Member{role: :invited, actor_id: actor_id} = member}} <-
            {:invite, get_member(invite_object)},
-         {:same_actor, true} <- {:same_actor, actor_rejecting.id === actor_id},
+         {:same_actor, true} <- {:same_actor, actor_rejecting.id == actor_id},
          {:ok, activity, member} <-
            ActivityPub.reject(:invite, member, false) do
       {:ok, activity, member}

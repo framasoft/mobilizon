@@ -45,11 +45,13 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
 
     config = Config.get([Upload])
 
-    with uploader <- Keyword.fetch!(config, :uploader),
-         proxy_remote = Keyword.get(config, :proxy_remote, false),
-         {:ok, get_method} <- uploader.get_file(file) do
-      get_media(conn, get_method, proxy_remote, opts)
-    else
+    uploader = Keyword.fetch!(config, :uploader)
+    proxy_remote = Keyword.get(config, :proxy_remote, false)
+
+    case uploader.get_file(file) do
+      {:ok, get_method} ->
+        get_media(conn, get_method, proxy_remote, opts)
+
       _ ->
         conn
         |> send_resp(500, "Failed")
@@ -59,6 +61,12 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
 
   def call(conn, _opts), do: conn
 
+  @spec get_media(
+          Plug.Conn.t(),
+          {:static_dir, String.t()} | {:url, String.t()} | any(),
+          boolean,
+          any()
+        ) :: Plug.Conn.t()
   defp get_media(conn, {:static_dir, directory}, _, opts) do
     static_opts =
       opts

@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map | {:error, any()}
   def as_to_model_data(object) do
     Logger.debug("We're converting raw ActivityStream data to a comment entity")
     Logger.debug(inspect(object))

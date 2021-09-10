@@ -4,7 +4,6 @@ defmodule Mobilizon.Config do
   """
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.GitStatus
 
   @spec instance_config :: keyword
@@ -317,14 +316,14 @@ defmodule Mobilizon.Config do
 
   @spec create_cache(atom()) :: integer()
   defp create_cache(:anonymous_actor_id) do
-    with {:ok, %Actor{id: actor_id}} <- Actors.get_or_create_internal_actor("anonymous") do
+    with {:ok, %{id: actor_id}} <- Actors.get_or_create_internal_actor("anonymous") do
       actor_id
     end
   end
 
   @spec create_cache(atom()) :: integer()
   defp create_cache(:relay_actor_id) do
-    with {:ok, %Actor{id: actor_id}} <- Actors.get_or_create_internal_actor("relay") do
+    with {:ok, %{id: actor_id}} <- Actors.get_or_create_internal_actor("relay") do
       actor_id
     end
   end

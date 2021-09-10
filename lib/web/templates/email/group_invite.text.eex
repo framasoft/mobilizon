@@ -3,4 +3,4 @@
 <%= gettext "%{inviter} just invited you to join their group %{group}", group: @group.name, inviter: @inviter.name %>
 <%= @group.url %>
 <%= gettext "To accept this invitation, head over to your groups." %>
-<%= page_url(Mobilizon.Web.Endpoint, :my_groups) %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :my_groups) %>

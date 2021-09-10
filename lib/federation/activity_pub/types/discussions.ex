@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Activity.Discussion, as: DiscussionActivity
@@ -16,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Discussion.t(), ActivityStream.t()}
   def create(%{discussion_id: discussion_id} = args, additional) when not is_nil(discussion_id) do
     with args <- prepare_args(args),
          %Discussion{} = discussion <- Discussions.get_discussion(discussion_id),
@@ -39,7 +40,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   end
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Discussion.t(), ActivityStream.t()}
   def create(args, additional) do
     with args <- prepare_args(args),
          {:ok, %Discussion{} = discussion} <-
@@ -56,7 +57,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   end
 
   @impl Entity
-  @spec update(Discussion.t(), map(), map()) :: {:ok, Discussion.t(), Activity.t()} | any()
+  @spec update(Discussion.t(), map(), map()) :: {:ok, Discussion.t(), ActivityStream.t()}
   def update(%Discussion{} = old_discussion, args, additional) do
     with {:ok, %Discussion{} = new_discussion} <-
            Discussions.update_discussion(old_discussion, args),
@@ -80,7 +81,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
   end
 
   @impl Entity
-  @spec delete(Discussion.t(), Actor.t(), boolean, map()) :: {:ok, Discussion.t()}
+  @spec delete(Discussion.t(), Actor.t(), boolean, map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Discussion.t()}
   def delete(
         %Discussion{actor: group, url: url} = discussion,
         %Actor{} = actor,
@@ -106,10 +108,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
     end
   end
 
+  @spec actor(Discussion.t()) :: Actor.t() | nil
   def actor(%Discussion{creator_id: creator_id}), do: Actors.get_actor(creator_id)
 
+  @spec group_actor(Discussion.t()) :: Actor.t() | nil
   def group_actor(%Discussion{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  @spec permissions(Discussion.t()) :: Permission.t()
   def permissions(%Discussion{}) do
     %Permission{access: :member, create: :member, update: :moderator, delete: :moderator}
   end
@@ -123,6 +128,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
     :ok
   end
 
+  @spec prepare_args(map) :: map
   defp prepare_args(args) do
     {text, _mentions, _tags} =
       APIUtils.make_content_html(

@@ -9,17 +9,20 @@ defmodule Mobilizon.Web.Auth.Context do
   alias Mobilizon.Service.ErrorReporting.Sentry, as: SentryAdapter
   alias Mobilizon.Users.User
 
+  @spec init(Plug.opts()) :: Plug.opts()
   def init(opts) do
     opts
   end
 
+  @spec call(Plug.Conn.t(), Plug.opts()) :: Plug.Conn.t()
   def call(%{assigns: %{ip: _}} = conn, _opts), do: conn
 
   def call(conn, _opts) do
     set_user_information_in_context(conn)
   end
 
-  def set_user_information_in_context(conn) do
+  @spec set_user_information_in_context(Plug.Conn.t()) :: Plug.Conn.t()
+  defp set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
     {conn, context} =

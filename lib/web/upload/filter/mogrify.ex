@@ -15,7 +15,7 @@ defmodule Mobilizon.Web.Upload.Filter.Mogrify do
   @type conversion :: action :: String.t() | {action :: String.t(), opts :: String.t()}
   @type conversions :: conversion() | [conversion()]
 
-  @spec filter(Mobilizon.Web.Upload.t()) :: {:ok, :atom} | {:error, String.t()}
+  @spec filter(Mobilizon.Web.Upload.t()) :: {:ok, :filtered | :noop} | {:error, String.t()}
   def filter(%Mobilizon.Web.Upload{tempfile: file, content_type: "image" <> _}) do
     do_filter(file, Config.get!([__MODULE__, :args]))
     {:ok, :filtered}

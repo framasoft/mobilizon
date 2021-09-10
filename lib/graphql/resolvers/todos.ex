@@ -95,6 +95,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            ActivityPub.create(:todo_list, Map.put(args, :actor_id, group_id), true, %{}) do
       {:ok, todo_list}
     else
+      {:actor, nil} ->
+        {:error, dgettext("errors", "No profile found for user")}
+
       {:member, _} ->
         {:error, dgettext("errors", "Profile is not member of group")}
     end
@@ -187,6 +190,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            ActivityPub.create(:todo, Map.put(args, :creator_id, actor_id), true, %{}) do
       {:ok, todo}
     else
+      {:actor, nil} ->
+        {:error, dgettext("errors", "No profile found for user")}
+
       {:todo_list, _} ->
         {:error, dgettext("errors", "Todo list doesn't exist")}
 
@@ -212,6 +218,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
            ActivityPub.update(todo, args, true, %{}) do
       {:ok, todo}
     else
+      {:actor, nil} ->
+        {:error, dgettext("errors", "No profile found for user")}
+
       {:todo_list, _} ->
         {:error, dgettext("errors", "Todo list doesn't exist")}
 

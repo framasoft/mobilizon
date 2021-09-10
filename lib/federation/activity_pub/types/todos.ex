@@ -4,6 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Permission
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Todos.{Todo, TodoList}
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
@@ -12,7 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Todo.t(), ActivityStream.t()}
   def create(args, additional) do
     with {:ok, %Todo{todo_list_id: todo_list_id, creator_id: creator_id} = todo} <-
            Todos.create_todo(args),
@@ -30,7 +31,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
   end
 
   @impl Entity
-  @spec update(Todo.t(), map, map) :: {:ok, Todo.t(), Activity.t()} | any
+  @spec update(Todo.t(), map, map) :: {:ok, Todo.t(), ActivityStream.t()}
   def update(%Todo{} = old_todo, args, additional) do
     with {:ok, %Todo{todo_list_id: todo_list_id} = todo} <- Todos.update_todo(old_todo, args),
          %TodoList{actor_id: group_id} = todo_list <- Todos.get_todo_list(todo_list_id),
@@ -69,8 +70,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
     end
   end
 
+  @spec actor(Todo.t()) :: Actor.t() | nil
   def actor(%Todo{creator_id: creator_id}), do: Actors.get_actor(creator_id)
 
+  @spec group_actor(Todo.t()) :: Actor.t() | nil
   def group_actor(%Todo{todo_list_id: todo_list_id}) do
     case Todos.get_todo_list(todo_list_id) do
       %TodoList{actor_id: group_id} ->
@@ -81,6 +84,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
     end
   end
 
+  @spec permissions(TodoList.t()) :: Permission.t()
   def permissions(%Todo{}) do
     %Permission{access: :member, create: :member, update: :member, delete: :member}
   end

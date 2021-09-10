@@ -41,7 +41,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
-  alias Mobilizon.Federation.ActivityPub.Types.{Managable, Ownable}
+  alias Mobilizon.Federation.ActivityPub.Types.{Entity, Managable, Ownable}
 
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Federation.HTTPSignatures.Signature
@@ -56,11 +56,9 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   @public_ap_adress "https://www.w3.org/ns/activitystreams#Public"
 
-  @doc """
-  Wraps an object into an activity
-  """
+  # Wraps an object into an activity
   @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
-  def create_activity(map, local \\ true) when is_map(map) do
+  defp create_activity(map, local) when is_map(map) do
     with map <- lazy_put_activity_defaults(map) do
       {:ok,
        %Activity{
@@ -168,7 +166,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     * Federates (asynchronously) the activity
     * Returns the activity
   """
-  @spec create(atom(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
+  @spec create(atom(), map(), boolean, map()) :: {:ok, Activity.t(), Entity.entities()} | any()
   def create(type, args, local \\ false, additional \\ %{}) do
     Logger.debug("creating an activity")
     Logger.debug(inspect(args))
@@ -206,7 +204,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     * Federates (asynchronously) the activity
     * Returns the activity
   """
-  @spec update(struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
+  @spec update(Entity.entities(), map(), boolean, map()) ::
+          {:ok, Activity.t(), Entity.entities()} | any()
   def update(old_entity, args, local \\ false, additional \\ %{}) do
     Logger.debug("updating an activity")
     Logger.debug(inspect(args))
@@ -224,6 +223,12 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @type acceptable_types :: :join | :follow | :invite
+  @type acceptable_entities ::
+          accept_join_entities | accept_follow_entities | accept_invite_entities
+
+  @spec accept(acceptable_types, acceptable_entities, boolean, map) ::
+          {:ok, ActivityStream.t(), acceptable_entities}
   def accept(type, entity, local \\ true, additional \\ %{}) do
     Logger.debug("We're accepting something")
 
@@ -246,6 +251,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec reject(acceptable_types, acceptable_entities, boolean, map) ::
+          {:ok, ActivityStream.t(), acceptable_entities}
   def reject(type, entity, local \\ true, additional \\ %{}) do
     {:ok, entity, update_data} =
       case type do
@@ -266,6 +273,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec announce(Actor.t(), ActivityStream.t(), String.t() | nil, boolean, boolean) ::
+          {:ok, Activity.t(), ActivityStream.t()}
   def announce(
         %Actor{} = actor,
         object,
@@ -286,6 +295,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec unannounce(Actor.t(), ActivityStream.t(), String.t() | nil, String.t() | nil, boolean) ::
+          {:ok, Activity.t(), ActivityStream.t()}
   def unannounce(
         %Actor{} = actor,
         object,
@@ -306,6 +317,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Make an actor follow another
   """
+  @spec follow(Actor.t(), Actor.t(), String.t() | nil, boolean, map) ::
+          {:ok, Activity.t(), Follower.t()} | {:error, String.t()}
   def follow(
         %Actor{} = follower,
         %Actor{} = followed,
@@ -336,7 +349,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Make an actor unfollow another
   """
-  @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
+  @spec unfollow(Actor.t(), Actor.t(), String.t() | nil, boolean()) ::
+          {:ok, Activity.t(), Follower.t()}
   def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{id: follow_id} = follow} <- Actors.unfollow(followed, follower),
          # We recreate the follow activity
@@ -357,6 +371,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec delete(Entity.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Entity.t()}
   def delete(object, actor, local \\ true, additional \\ %{}) do
     with {:ok, activity_data, actor, object} <-
            Managable.delete(object, actor, local, additional),
@@ -369,6 +384,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec join(Event.t(), Actor.t(), boolean, map) ::
+          {:ok, Activity.t(), Participant.t()} | {:maximum_attendee_capacity, any}
+  @spec join(Actor.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Member.t()}
   def join(entity_to_join, actor_joining, local \\ true, additional \\ %{})
 
   def join(%Event{} = event, %Actor{} = actor, local, additional) do
@@ -397,6 +415,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec leave(Event.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Participant.t()}
+  @spec leave(Actor.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Member.t()}
   def leave(object, actor, local \\ true, additional \\ %{})
 
   @doc """
@@ -462,6 +482,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec remove(Member.t(), Actor.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Member.t()}
   def remove(
         %Member{} = member,
         %Actor{type: :Group, url: group_url, members_url: group_members_url},
@@ -502,7 +523,7 @@ defmodule Mobilizon.Federation.ActivityPub do
       ) do
     Logger.debug("Handling #{actor_url} invite to #{group_url} sent to #{target_actor_url}")
 
-    with {:is_able_to_invite, true} <- {:is_able_to_invite, is_able_to_invite(actor, group)},
+    with {:is_able_to_invite, true} <- {:is_able_to_invite, is_able_to_invite?(actor, group)},
          {:ok, %Member{url: member_url} = member} <-
            Actors.create_member(%{
              parent_id: group_id,
@@ -538,7 +559,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  defp is_able_to_invite(%Actor{domain: actor_domain, id: actor_id}, %Actor{
+  @spec is_able_to_invite?(Actor.t(), Actor.t()) :: boolean
+  defp is_able_to_invite?(%Actor{domain: actor_domain, id: actor_id}, %Actor{
          domain: group_domain,
          id: group_id
        }) do
@@ -547,12 +569,17 @@ defmodule Mobilizon.Federation.ActivityPub do
       true
     else
       # If local group, we'll send the invite
-      with {:ok, %Member{} = admin_member} <- Actors.get_member(actor_id, group_id) do
-        Member.is_administrator(admin_member)
+      case Actors.get_member(actor_id, group_id) do
+        {:ok, %Member{} = admin_member} ->
+          Member.is_administrator(admin_member)
+
+        _ ->
+          false
       end
     end
   end
 
+  @spec move(:resource, Resource.t(), map, boolean, map) :: {:ok, Activity.t(), Resource.t()}
   def move(type, old_entity, args, local \\ false, additional \\ %{}) do
     Logger.debug("We're moving something")
     Logger.debug(inspect(args))
@@ -572,6 +599,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec flag(map, boolean, map) :: {:ok, Activity.t(), Report.t()}
   def flag(args, local \\ false, additional \\ %{}) do
     with {report, report_as_data} <- Types.Reports.flag(args, local, additional),
          {:ok, activity} <- create_activity(report_as_data, local),
@@ -615,6 +643,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end)
   end
 
+  @spec convert_followers_in_recipients(list(String.t())) :: {list(String.t()), list(String.t())}
   defp convert_followers_in_recipients(recipients) do
     Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, follower_actors} = acc ->
       case Actors.get_actor_by_followers_url(recipient) do
@@ -678,6 +707,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Publish an activity to a specific inbox
   """
+  @spec publish_one(%{inbox: String.t(), json: String.t(), actor: Actor.t(), id: String.t()}) ::
+          Tesla.Env.result()
   def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
     Logger.info("Federating #{id} to #{inbox}")
     %URI{host: host, path: path} = URI.parse(inbox)
@@ -711,7 +742,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   @doc """
   Return all public activities (events & comments) for an actor
   """
-  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
+  @spec fetch_public_activities_for_actor(Actor.t(), pos_integer(), pos_integer()) :: map()
   def fetch_public_activities_for_actor(%Actor{id: actor_id} = actor, page \\ 1, limit \\ 10) do
     %Actor{id: relay_actor_id} = Relay.get_actor()
 
@@ -769,6 +800,8 @@ defmodule Mobilizon.Federation.ActivityPub do
   defp check_for_tombstones(%{url: url}), do: Tombstone.find_tombstone(url)
   defp check_for_tombstones(_), do: nil
 
+  @typep accept_follow_entities :: Follower.t()
+
   @spec accept_follow(Follower.t(), map) :: {:ok, Follower.t(), Activity.t()} | any
   defp accept_follow(%Follower{} = follower, additional) do
     with {:ok, %Follower{} = follower} <- Actors.update_follower(follower, %{approved: true}),
@@ -792,7 +825,10 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec accept_join(Participant.t(), map) :: {:ok, Participant.t(), Activity.t()} | any
+  @typep accept_join_entities :: Participant.t() | Member.t()
+
+  @spec accept_join(Participant.t(), map) :: {:ok, Participant.t(), Activity.t()}
+  @spec accept_join(Member.t(), map) :: {:ok, Member.t(), Activity.t()}
   defp accept_join(%Participant{} = participant, additional) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participant, %{role: :participant}),
@@ -820,7 +856,6 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec accept_join(Member.t(), map) :: {:ok, Member.t(), Activity.t()} | any
   defp accept_join(%Member{} = member, additional) do
     with {:ok, %Member{} = member} <-
            Actors.update_member(member, %{role: :member}),
@@ -854,6 +889,8 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @typep accept_invite_entities :: Member.t()
+
   @spec accept_invite(Member.t(), map()) :: {:ok, Member.t(), Activity.t()} | any
   defp accept_invite(
          %Member{invited_by_id: invited_by_id, actor_id: actor_id} = member,
@@ -881,6 +918,7 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
+  @spec maybe_refresh_group(Member.t()) :: :ok | nil
   defp maybe_refresh_group(%Member{
          parent: %Actor{domain: parent_domain, url: parent_url},
          actor: %Actor{} = actor

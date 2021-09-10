@@ -6,7 +6,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]
@@ -21,7 +21,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]
@@ -38,7 +38,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]
@@ -54,7 +54,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]
@@ -72,7 +72,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]
@@ -87,7 +87,7 @@
                     %{
                         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                         resource: "<a href=\"#{
-                            page_url(
+                            Routes.page_url(
                                 Mobilizon.Web.Endpoint,
                                 :resource,
                                 @activity.subject_params["resource_uuid"]

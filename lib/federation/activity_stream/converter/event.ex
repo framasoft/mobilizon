@@ -45,7 +45,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map()} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, any()} | :error
   def as_to_model_data(object) do
     with {%Actor{id: actor_id}, attributed_to} <-
            maybe_fetch_actor_and_attributed_to_id(object),

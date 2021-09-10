@@ -108,7 +108,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
       {:ok, url} when is_binary(url) ->
         make_actor_from_url(url, preload)
 
-      _e ->
+      {:error, _e} ->
         {:error, "No ActivityPub URL found in WebFinger"}
     end
   end

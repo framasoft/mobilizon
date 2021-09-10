@@ -65,9 +65,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
             refresh_token: _refresh_token,
             user: %User{} = user
           } = user_and_tokens} <- Authenticator.authenticate(email, password),
-         {:ok, %User{} = user} <- update_user_login_information(user, context),
-         user_and_tokens <- Map.put(user_and_tokens, :user, user) do
-      {:ok, user_and_tokens}
+         {:ok, %User{} = user} <- update_user_login_information(user, context) do
+      {:ok, %{user_and_tokens | user: user}}
     else
       {:error, :user_not_found} ->
         {:error, :user_not_found}
@@ -133,7 +132,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     - create the user
     - send a validation email to the user
   """
-  @spec create_user(any, map, any) :: tuple
+  @spec create_user(any, %{email: String.t()}, any) :: tuple
   def create_user(_parent, %{email: email} = args, _resolution) do
     with :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
@@ -160,20 +159,21 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
-  @spec check_registration_config(map) :: atom
+  @spec check_registration_config(String.t()) :: atom
   defp check_registration_config(email) do
     cond do
       Config.instance_registrations_open?() ->
         :registration_ok
 
       Config.instance_registrations_allowlist?() ->
-        check_allow_listed_email?(email)
+        check_allow_listed_email(email)
 
       true ->
         :registration_closed
     end
   end
 
+  @spec check_registration_denylist(String.t()) :: :deny_listed | :not_deny_listed
   defp check_registration_denylist(email) do
     # Remove everything behind the +
     email = String.replace(email, ~r/(\+.*)(?=\@)/, "")
@@ -183,8 +183,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       else: :not_deny_listed
   end
 
-  @spec check_allow_listed_email?(String.t()) :: :registration_ok | :not_allowlisted
-  defp check_allow_listed_email?(email) do
+  @spec check_allow_listed_email(String.t()) :: :registration_ok | :not_allowlisted
+  defp check_allow_listed_email(email) do
     if email_in_list(email, Config.instance_registrations_allowlist()),
       do: :registration_ok,
       else: :not_allowlisted
@@ -199,12 +199,14 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Validate an user, get its actor and a token
   """
+  @spec validate_user(map(), %{token: String.t()}, map()) :: {:ok, map()}
   def validate_user(_parent, %{token: token}, _resolution) do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
            {:check_confirmation_token, Email.User.check_confirmation_token(token)},
-         {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Authenticator.generate_tokens(user) do
+         {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)} do
+      {:ok, %{access_token: access_token, refresh_token: refresh_token}} =
+        Authenticator.generate_tokens(user)
+
       {:ok,
        %{
          access_token: access_token,
@@ -267,12 +269,16 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Reset the password from an user
   """
+  @spec reset_password(map(), %{password: String.t(), token: String.t()}, map()) ::
+          {:ok, map()} | {:error, String.t()}
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
-    with {:ok, %User{email: email} = user} <-
-           Email.User.check_reset_password_token(password, token),
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Authenticator.authenticate(email, password) do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
+    case Email.User.check_reset_password_token(password, token) do
+      {:ok, %User{email: email} = user} ->
+        {:ok, tokens} = Authenticator.authenticate(email, password)
+        {:ok, Map.put(tokens, :user, user)}
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
@@ -369,6 +375,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            |> Repo.update() do
       {:ok, user}
     else
+      {:can_change_password, false} ->
+        {:error, dgettext("errors", "You cannot change your password.")}
+
       {:current_password, _} ->
         {:error, dgettext("errors", "The current password is invalid")}
 
@@ -408,14 +417,18 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:ok, user}
     else
-      {:current_password, _} ->
+      {:current_password, {:error, _}} ->
         {:error, dgettext("errors", "The password provided is invalid")}
 
       {:same_email, true} ->
         {:error, dgettext("errors", "The new email must be different")}
 
-      {:email_valid, _} ->
+      {:email_valid, false} ->
         {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.debug(inspect(err))
+        {:error, dgettext("errors", "Failed to update user email")}
     end
   end
 
@@ -423,12 +436,21 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to be logged-in to change your email")}
   end
 
+  @spec validate_email(map(), %{token: String.t()}, map()) ::
+          {:ok, User.t()} | {:error, String.t()}
   def validate_email(_parent, %{token: token}, _resolution) do
-    with {:get, %User{} = user} <- {:get, Users.get_user_by_activation_token(token)},
-         {:ok, %User{} = user} <- Users.validate_email(user) do
-      {:ok, user}
-    else
-      {:get, nil} ->
+    case Users.get_user_by_activation_token(token) do
+      %User{} = user ->
+        case Users.validate_email(user) do
+          {:ok, %User{} = user} ->
+            {:ok, user}
+
+          {:error, %Ecto.Changeset{} = err} ->
+            Logger.debug(inspect(err))
+            {:error, dgettext("errors", "Failed to validate user email")}
+        end
+
+      nil ->
         {:error, dgettext("errors", "Invalid activation token")}
     end
   end
@@ -547,12 +569,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def update_locale(_parent, %{locale: locale}, %{
         context: %{current_user: %User{locale: current_locale} = user}
       }) do
-    with true <- current_locale != locale,
-         {:ok, %User{} = updated_user} <- Users.update_user(user, %{locale: locale}) do
-      {:ok, updated_user}
+    if current_locale != locale do
+      case Users.update_user(user, %{locale: locale}) do
+        {:ok, %User{} = updated_user} ->
+          {:ok, updated_user}
+
+        {:error, %Ecto.Changeset{} = err} ->
+          Logger.debug(err)
+          {:error, dgettext("errors", "Error while updating locale")}
+      end
     else
-      false ->
-        {:ok, user}
+      {:ok, user}
     end
   end
 

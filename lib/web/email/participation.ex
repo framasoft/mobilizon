@@ -50,7 +50,6 @@ defmodule Mobilizon.Web.Email.Participation do
           Bamboo.Email.t()
   def participation_updated(user, participant, locale \\ "en")
 
-  @spec participation_updated(User.t(), Participant.t(), String.t()) :: Bamboo.Email.t()
   def participation_updated(
         %User{email: email},
         %Participant{} = participant,
@@ -58,7 +57,6 @@ defmodule Mobilizon.Web.Email.Participation do
       ),
       do: participation_updated(email, participant, locale)
 
-  @spec participation_updated(String.t(), Participant.t(), String.t()) :: Bamboo.Email.t()
   def participation_updated(
         email,
         %Participant{event: event, role: :rejected},
@@ -79,7 +77,6 @@ defmodule Mobilizon.Web.Email.Participation do
     |> render(:event_participation_rejected)
   end
 
-  @spec participation_updated(String.t(), Participant.t(), String.t()) :: Bamboo.Email.t()
   def participation_updated(
         email,
         %Participant{event: %Event{join_options: :free} = event, role: :participant},
@@ -100,7 +97,6 @@ defmodule Mobilizon.Web.Email.Participation do
     |> render(:event_participation_confirmed)
   end
 
-  @spec participation_updated(String.t(), Participant.t(), String.t()) :: Bamboo.Email.t()
   def participation_updated(
         email,
         %Participant{event: event, role: :participant},

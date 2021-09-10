@@ -8,6 +8,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter do
 
   @type model_data :: map()
 
-  @callback as_to_model_data(as_data :: ActivityStream.t()) :: model_data()
+  @callback as_to_model_data(as_data :: ActivityStream.t()) :: model_data() | {:error, any()}
   @callback model_to_as(model :: struct()) :: ActivityStream.t()
 end

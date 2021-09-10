@@ -4,6 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Posts.Post
@@ -17,6 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   @public_ap "https://www.w3.org/ns/activitystreams#Public"
 
   @impl Entity
+  @spec create(map(), map()) :: {:ok, Post.t(), ActivityStream.t()}
   def create(args, additional) do
     with args <- prepare_args(args),
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
@@ -37,6 +39,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   end
 
   @impl Entity
+  @spec update(Post.t(), map(), map()) :: {:ok, Post.t(), ActivityStream.t()}
   def update(%Post{} = post, args, additional) do
     with args <- prepare_args(args),
          {:ok, %Post{attributed_to_id: group_id, author_id: creator_id} = post} <-
@@ -60,6 +63,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
   end
 
   @impl Entity
+  @spec delete(Post.t(), Actor.t(), boolean, map) ::
+          {:ok, ActivityStream.t(), Actor.t(), Post.t()}
   def delete(
         %Post{
           url: url,
@@ -86,12 +91,15 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
     end
   end
 
+  @spec actor(Post.t()) :: Actor.t() | nil
   def actor(%Post{author_id: author_id}),
     do: Actors.get_actor(author_id)
 
+  @spec group_actor(Post.t()) :: Actor.t() | nil
   def group_actor(%Post{attributed_to_id: attributed_to_id}),
     do: Actors.get_actor(attributed_to_id)
 
+  @spec permissions(Post.t()) :: Permission.t()
   def permissions(%Post{}) do
     %Permission{
       access: :member,
@@ -101,6 +109,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
     }
   end
 
+  @spec prepare_args(map()) :: map
   defp prepare_args(args) do
     args
     |> Map.update(:tags, [], &ConverterUtils.fetch_tags/1)

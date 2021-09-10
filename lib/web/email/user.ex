@@ -57,6 +57,7 @@ defmodule Mobilizon.Web.Email.User do
     |> render(:password_reset)
   end
 
+  @spec check_confirmation_token(String.t()) :: {:ok, User.t()} | {:error, :invalid_token}
   def check_confirmation_token(token) when is_binary(token) do
     with %User{} = user <- Users.get_user_by_activation_token(token),
          {:ok, %User{} = user} <-
@@ -86,7 +87,7 @@ defmodule Mobilizon.Web.Email.User do
     end
   end
 
-  @spec send_confirmation_email(User.t(), String.t()) :: {:ok, Bamboo.Email.t()} | {:error, any()}
+  @spec send_confirmation_email(User.t(), String.t()) :: Bamboo.Email.t()
   def send_confirmation_email(%User{} = user, locale \\ "en") do
     user
     |> Email.User.confirmation_email(locale)
@@ -96,7 +97,8 @@ defmodule Mobilizon.Web.Email.User do
   @doc """
   Check that the provided token is correct and update provided password
   """
-  @spec check_reset_password_token(String.t(), String.t()) :: tuple
+  @spec check_reset_password_token(String.t(), String.t()) ::
+          {:ok, User.t()} | {:error, String.t()}
   def check_reset_password_token(password, token) do
     with %User{} = user <- Users.get_user_by_reset_password_token(token),
          {:ok, %User{} = user} <-

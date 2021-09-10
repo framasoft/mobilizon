@@ -1466,7 +1466,7 @@ defmodule Mobilizon.Actors do
 
   @spec actors_for_location(Ecto.Query.t(), String.t(), integer()) :: Ecto.Query.t()
   defp actors_for_location(query, location, radius)
-       when is_valid_string?(location) and not is_nil(radius) do
+       when is_valid_string(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
       query

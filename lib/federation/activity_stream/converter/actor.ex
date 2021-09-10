@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map()) :: {:ok, map()}
+  @spec as_to_model_data(map()) :: map() | {:error, :actor_not_allowed_type}
   def as_to_model_data(%{"type" => type} = data) when type in @allowed_types do
     avatar =
       download_picture(get_in(data, ["icon", "url"]), get_in(data, ["icon", "name"]), "avatar")
@@ -64,7 +64,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     }
   end
 
-  def as_to_model_data(_), do: :error
+  def as_to_model_data(_), do: {:error, :actor_not_allowed_type}
 
   @doc """
   Convert an actor struct to an ActivityStream representation.
@@ -135,7 +135,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     end
   end
 
-  @spec download_picture(String.t() | nil, String.t(), String.t()) :: map()
+  @spec download_picture(String.t() | nil, String.t(), String.t()) :: map() | nil
   defp download_picture(nil, _name, _default_name), do: nil
 
   defp download_picture(url, name, default_name) do

@@ -13,7 +13,7 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
   @behaviour Mobilizon.Web.Upload.Filter
 
   @spec filter(Upload.t()) ::
-          {:ok, :filtered, Upload.t()} | {:ok, :noop} | {:error, String.t()}
+          {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{tempfile: file, content_type: "image" <> _} = upload) do
     image =
       file

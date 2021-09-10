@@ -70,7 +70,18 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
     }
   end
 
-  @spec fetch_collection(atom(), Actor.t(), integer()) :: Page.t()
+  @type collection ::
+          :following
+          | :followers
+          | :members
+          | :resources
+          | :discussions
+          | :posts
+          | :events
+          | :todos
+          | :outbox
+
+  @spec fetch_collection(collection(), Actor.t(), integer()) :: Page.t()
   defp fetch_collection(:following, actor, page) do
     Actors.build_followings_for_actor(actor, page)
   end
@@ -103,7 +114,6 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
     Todos.get_todo_lists_for_group(actor, page)
   end
 
-  @spec fetch_collection(atom(), Actor.t(), integer()) :: %{total: integer(), elements: Enum.t()}
   defp fetch_collection(:outbox, actor, page) do
     ActivityPub.fetch_public_activities_for_actor(actor, page)
   end
@@ -179,8 +189,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   def item(%Event{} = event), do: Convertible.model_to_as(event)
   def item(%TodoList{} = todo_list), do: Convertible.model_to_as(todo_list)
 
-  defp actor_applicant_group_member?(%Actor{}, nil), do: false
-
+  @spec actor_applicant_group_member?(Actor.t(), Actor.t()) :: boolean()
   defp actor_applicant_group_member?(%Actor{id: group_id}, %Actor{id: actor_applicant_id}),
     do:
       Actors.get_member(actor_applicant_id, group_id, [

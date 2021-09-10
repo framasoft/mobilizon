@@ -23,6 +23,7 @@ defmodule Mobilizon.GraphQL.Schema.TagType do
   object :tag_queries do
     @desc "Get the list of tags"
     field :tags, non_null(list_of(:tag)) do
+      arg(:filter, :string, description: "The filter to apply to the search")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated tags list")
       arg(:limit, :integer, default_value: 10, description: "The limit of tags per page")
       resolve(&Tag.list_tags/3)

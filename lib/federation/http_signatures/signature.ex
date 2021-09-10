@@ -19,7 +19,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
   @spec key_id_to_actor_url(String.t()) :: String.t()
   def key_id_to_actor_url(key_id) do
-    %{path: path} =
+    %URI{path: path} =
       uri =
       key_id
       |> URI.parse()
@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
       if is_nil(path) do
         uri
       else
-        Map.put(uri, :path, String.trim_trailing(path, "/publickey"))
+        %URI{uri | path: String.trim_trailing(path, "/publickey")}
       end
 
     URI.to_string(uri)
@@ -78,6 +78,9 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     end
   end
 
+  @spec fetch_public_key(Plug.Conn.t()) ::
+          {:ok, String.t()}
+          | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error}
   def fetch_public_key(conn) do
     with %{"keyId" => kid} <- HTTPSignatures.signature_for_conn(conn),
          actor_id <- key_id_to_actor_url(kid),
@@ -87,6 +90,9 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     end
   end
 
+  @spec refetch_public_key(Plug.Conn.t()) ::
+          {:ok, String.t()}
+          | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error}
   def refetch_public_key(conn) do
     with %{"keyId" => kid} <- HTTPSignatures.signature_for_conn(conn),
          actor_id <- key_id_to_actor_url(kid),
@@ -97,6 +103,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     end
   end
 
+  @spec sign(Actor.t(), map()) :: String.t()
   def sign(%Actor{domain: domain, keys: keys} = actor, headers) when is_nil(domain) do
     Logger.debug("Signing a payload on behalf of #{actor.url}")
     Logger.debug("headers")
@@ -112,14 +119,17 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     raise ArgumentError, message: "Can't do a signature on remote actor #{url}"
   end
 
+  @spec generate_date_header :: String.t()
   def generate_date_header, do: generate_date_header(NaiveDateTime.utc_now())
 
   def generate_date_header(%NaiveDateTime{} = date) do
     Timex.format!(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT")
   end
 
+  @spec generate_request_target(String.t(), String.t()) :: String.t()
   def generate_request_target(method, path), do: "#{method} #{path}"
 
+  @spec build_digest(String.t()) :: String.t()
   def build_digest(body) do
     "SHA-256=#{:sha256 |> :crypto.hash(body) |> Base.encode64()}"
   end

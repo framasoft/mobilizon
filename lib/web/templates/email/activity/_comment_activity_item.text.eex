@@ -4,22 +4,22 @@
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :participation_event_comment -> %><%= dgettext("activity", "%{profile} has posted an announcement under event %{event}.",
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :participation_event_comment -> %><%= dgettext("activity", "%{profile} has posted an announcement under event %{event}.",
     %{
         profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_new_comment -> %><%= if @activity.subject_params["comment_reply_to"] do %><%=dgettext("activity", "%{profile} has posted a new reply under your event %{event}.",
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_new_comment -> %><%= if @activity.subject_params["comment_reply_to"] do %><%=dgettext("activity", "%{profile} has posted a new reply under your event %{event}.",
     %{
         profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= "#{page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_reply_to_uuid"]}-#{@activity.subject_params["comment_uuid"]}" %><% else %><%= dgettext("activity", "%{profile} has posted a new comment under your event %{event}.", 
+<%= "#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_reply_to_uuid"]}-#{@activity.subject_params["comment_uuid"]}" %><% else %><%= dgettext("activity", "%{profile} has posted a new comment under your event %{event}.", 
 %{
     profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
     event: @activity.subject_params["event_title"]
 }
 ) %>
-<%= "#{page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_uuid"]}"%><% end %><% end %>
+<%= "#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_uuid"]}"%><% end %><% end %>

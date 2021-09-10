@@ -19,12 +19,13 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     if Config.get([:http_security, :enabled]) do
       conn
       |> merge_resp_headers(headers(options))
-      |> maybe_send_sts_header(Config.get([:http_security, :sts]))
+      |> maybe_send_sts_header(Config.get([:http_security, :sts], false))
     else
       conn
     end
   end
 
+  @spec headers(Keyword.t()) :: list({String.t(), String.t()})
   defp headers(options) do
     referrer_policy =
       Keyword.get(options, :referrer_policy, Config.get([:http_security, :referrer_policy]))
@@ -55,6 +56,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   @style_src "style-src 'self' "
   @font_src "font-src 'self' "
 
+  @spec csp_string(Keyword.t()) :: String.t()
   defp csp_string(options) do
     scheme = Keyword.get(options, :scheme, Config.get([Pleroma.Web.Endpoint, :url])[:scheme])
     static_url = Mobilizon.Web.Endpoint.static_url()
@@ -115,10 +117,11 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     |> to_string()
   end
 
+  @spec add_csp_param(list(), list(String.t()) | String.t() | nil) :: list()
   defp add_csp_param(csp_iodata, nil), do: csp_iodata
-
   defp add_csp_param(csp_iodata, param), do: [[param, ?;] | csp_iodata]
 
+  @spec maybe_send_sts_header(Plug.Conn.t(), boolean()) :: Plug.Conn.t()
   defp maybe_send_sts_header(conn, true) do
     max_age_sts = Config.get([:http_security, :sts_max_age])
 
@@ -127,8 +130,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     ])
   end
 
-  defp maybe_send_sts_header(conn, _), do: conn
+  defp maybe_send_sts_header(conn, false), do: conn
 
+  @spec get_csp_config(atom(), Keyword.t()) :: String.t()
   defp get_csp_config(type, options) do
     options
     |> Keyword.get(type, Config.get([:http_security, :csp_policy, type]))

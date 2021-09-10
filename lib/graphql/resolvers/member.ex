@@ -101,7 +101,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          %Member{actor: %Actor{id: member_actor_id}} = member <-
            Actors.get_member(member_id),
-         {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
+         {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
            ActivityPub.accept(
              :invite,
@@ -119,7 +119,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
            {:invitation_exists, Actors.get_member(member_id)},
-         {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
+         {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
            ActivityPub.reject(
              :invite,

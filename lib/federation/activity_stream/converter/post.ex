@@ -18,6 +18,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
       process_pictures: 2
     ]
 
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
+
   @behaviour Converter
 
   defimpl Convertible, for: Post do
@@ -63,15 +65,15 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, any()}
   def as_to_model_data(
         %{"type" => "Article", "actor" => creator, "attributedTo" => group_uri} = object
       ) do
     with {:ok, %Actor{id: attributed_to_id} = group} <- get_actor(group_uri),
-         {:ok, %Actor{id: author_id}} <- get_actor(creator),
-         {:visibility, visibility} <- {:visibility, get_visibility(object, group)},
-         [description: description, picture_id: picture_id, medias: medias] <-
-           process_pictures(object, attributed_to_id) do
+         {:ok, %Actor{id: author_id}} <- get_actor(creator) do
+      [description: description, picture_id: picture_id, medias: medias] =
+        process_pictures(object, attributed_to_id)
+
       %{
         title: object["name"],
         body: description,
@@ -82,7 +84,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
         publish_at: object["published"],
         picture_id: picture_id,
         medias: medias,
-        visibility: visibility,
+        visibility: get_visibility(object, group),
         draft: object["draft"] == true
       }
     else
@@ -92,11 +94,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Post do
   end
 
   @spec get_actor(String.t() | map() | nil) :: {:ok, Actor.t()} | {:error, String.t()}
-  defp get_actor(nil), do: {:error, "nil property found for actor data"}
-
-  defp get_actor(actor),
+  defp get_actor(actor) when is_valid_string(actor),
     do: actor |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url()
 
+  defp get_actor(_), do: {:error, "nil property found for actor data"}
+
+  @spec to_date(DateTime.t() | NaiveDateTime.t() | nil) :: String.t() | nil
   defp to_date(nil), do: nil
   defp to_date(%DateTime{} = date), do: DateTime.to_iso8601(date)
   defp to_date(%NaiveDateTime{} = date), do: NaiveDateTime.to_iso8601(date)

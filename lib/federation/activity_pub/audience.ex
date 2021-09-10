@@ -99,6 +99,8 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     }
   end
 
+  @spec get_to_and_cc(Actor.t(), list(), :direct | :private | :public | :unlisted | {:list, any}) ::
+          {list(), list()}
   @doc """
   Determines the full audience based on mentions for an audience
 
@@ -118,7 +120,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     * `to` : the mentioned actors and the eventual actor we're replying to
     * `cc` : none
   """
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :public) do
     to = [@ap_public | mentions]
     cc = [actor.followers_url]
@@ -128,7 +129,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :unlisted) do
     to = [actor.followers_url | mentions]
     cc = [@ap_public]
@@ -138,7 +138,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :private) do
     {to, cc} = get_to_and_cc(actor, mentions, :direct)
 
@@ -147,7 +146,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(_actor, mentions, :direct) do
     {mentions, []}
   end

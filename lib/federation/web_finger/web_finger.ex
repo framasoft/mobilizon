@@ -66,10 +66,10 @@ defmodule Mobilizon.Federation.WebFinger do
     end
   end
 
-  @spec represent_actor(Actor.t()) :: struct()
+  @spec represent_actor(Actor.t()) :: map()
+  @spec represent_actor(Actor.t(), String.t()) :: map()
   def represent_actor(%Actor{} = actor), do: represent_actor(actor, "JSON")
 
-  @spec represent_actor(Actor.t(), String.t()) :: struct()
   def represent_actor(%Actor{} = actor, "JSON") do
     links =
       [
@@ -141,11 +141,15 @@ defmodule Mobilizon.Federation.WebFinger do
   @doc """
   Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`)
   """
-  @spec find_webfinger_endpoint(String.t()) :: String.t()
+  @spec find_webfinger_endpoint(String.t()) ::
+          {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   def find_webfinger_endpoint(domain) when is_binary(domain) do
     with {:ok, %{body: body}} <- fetch_document("http://#{domain}/.well-known/host-meta"),
          link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}
+    else
+      {:error, :link_not_found} -> {:error, :link_not_found}
+      {:error, error} -> {:error, error}
     end
   end
 

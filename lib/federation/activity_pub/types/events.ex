@@ -3,8 +3,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events, as: EventsManager
-  alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
+  alias Mobilizon.Federation.{ActivityPub, ActivityStream}
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
@@ -22,7 +22,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Event.t(), ActivityStream.t()}
   def create(args, additional) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = event} <- EventsManager.create_event(args),
@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   end
 
   @impl Entity
-  @spec update(Event.t(), map(), map()) :: {:ok, Event.t(), Activity.t()} | any()
+  @spec update(Event.t(), map(), map()) :: {:ok, Event.t(), ActivityStream.t()}
   def update(%Event{} = old_event, args, additional) do
     with args <- prepare_args_for_event(args),
          {:ok, %Event{} = new_event} <- EventsManager.update_event(old_event, args),
@@ -59,7 +59,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   end
 
   @impl Entity
-  @spec delete(Event.t(), Actor.t(), boolean, map()) :: {:ok, Event.t()}
+  @spec delete(Event.t(), Actor.t(), boolean, map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Event.t()}
   def delete(%Event{url: url} = event, %Actor{} = actor, _local, _additionnal) do
     activity_data = %{
       "type" => "Delete",
@@ -82,6 +83,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     end
   end
 
+  @spec actor(Event.t()) :: Actor.t() | nil
   def actor(%Event{organizer_actor: %Actor{} = actor}), do: actor
 
   def actor(%Event{organizer_actor_id: organizer_actor_id}),
@@ -89,6 +91,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   def actor(_), do: nil
 
+  @spec group_actor(Event.t()) :: Actor.t() | nil
   def group_actor(%Event{attributed_to: %Actor{} = group}), do: group
 
   def group_actor(%Event{attributed_to_id: attributed_to_id}) when not is_nil(attributed_to_id),
@@ -96,6 +99,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   def group_actor(_), do: nil
 
+  @spec permissions(Event.t()) :: Permission.t()
   def permissions(%Event{draft: draft, attributed_to_id: _attributed_to_id}) do
     %Permission{
       access: if(draft, do: nil, else: :member),
@@ -105,9 +109,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     }
   end
 
+  @spec join(Event.t(), Actor.t(), boolean, map) ::
+          {:ok, ActivityStreams.t(), Participant.t()}
+          | {:error, :maximum_attendee_capacity_reached}
   def join(%Event{} = event, %Actor{} = actor, _local, additional) do
     with {:maximum_attendee_capacity, true} <-
-           {:maximum_attendee_capacity, check_attendee_capacity(event)},
+           {:maximum_attendee_capacity, check_attendee_capacity?(event)},
          role <-
            additional
            |> Map.get(:metadata, %{})
@@ -133,12 +140,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         role
       )
     else
-      {:maximum_attendee_capacity, err} ->
-        {:maximum_attendee_capacity, err}
+      {:maximum_attendee_capacity, false} ->
+        {:error, :maximum_attendee_capacity_reached}
     end
   end
 
-  defp check_attendee_capacity(%Event{options: options} = event) do
+  @spec check_attendee_capacity?(Event.t()) :: boolean
+  defp check_attendee_capacity?(%Event{options: options} = event) do
     with maximum_attendee_capacity <-
            Map.get(options, :maximum_attendee_capacity) || 0 do
       maximum_attendee_capacity == 0 ||
@@ -147,6 +155,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   end
 
   # Set the participant to approved if the default role for new participants is :participant
+  @spec approve_if_default_role_is_participant(
+          Event.t(),
+          ActivityStreams.t(),
+          Participant.t(),
+          ParticipantRole.t()
+        ) :: {:ok, ActivityStreams.t(), Participant.t()}
   defp approve_if_default_role_is_participant(event, activity_data, participant, role) do
     case event do
       %Event{attributed_to: %Actor{id: group_id, url: group_url}} ->
@@ -171,9 +185,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     end
   end
 
+  @spec do_approve(Event.t(), ActivityStreams.t(), Particpant.t(), ParticipantRole.t(), map()) ::
+          {:accept, any} | {:ok, ActivityStreams.t(), Participant.t()}
   defp do_approve(event, activity_data, participant, role, additionnal) do
     cond do
-      Mobilizon.Events.get_default_participant_role(event) === :participant &&
+      Mobilizon.Events.get_default_participant_role(event) == :participant &&
           role == :participant ->
         {:accept,
          ActivityPub.accept(
@@ -183,7 +199,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
            additionnal
          )}
 
-      Mobilizon.Events.get_default_participant_role(event) === :not_approved &&
+      Mobilizon.Events.get_default_participant_role(event) == :not_approved &&
           role == :not_approved ->
         Scheduler.pending_participation_notification(event)
         {:ok, activity_data, participant}
@@ -194,6 +210,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   end
 
   # Prepare and sanitize arguments for events
+  @spec prepare_args_for_event(map) :: map
   defp prepare_args_for_event(args) do
     # If title is not set: we are not updating it
     args =

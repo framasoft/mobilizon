@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.Activity.Utils do
     |> add_activity_object()
   end
 
-  @spec add_activity_object(Activity.t()) :: Activity.t()
+  @spec add_activity_object(Activity.t()) :: map()
   def add_activity_object(%Activity{} = activity) do
     Map.put(activity, :object, ActivityService.object(activity))
   end

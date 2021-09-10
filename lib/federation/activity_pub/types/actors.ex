@@ -1,10 +1,11 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Follower, Member}
+  alias Mobilizon.Actors.{Actor, Follower, Member, MemberRole}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
   alias Mobilizon.Service.Activity.Group, as: GroupActivity
@@ -17,7 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Actor.t(), ActivityStream.t()}
   def create(args, additional) do
     with args <- prepare_args_for_actor(args),
          {:ok, %Actor{} = actor} <- Actors.create_actor(args),
@@ -35,7 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   end
 
   @impl Entity
-  @spec update(Actor.t(), map, map) :: {:ok, Actor.t(), Activity.t()} | any
+  @spec update(Actor.t(), map, map) :: {:ok, Actor.t(), ActivityStream.t()}
   def update(%Actor{} = old_actor, args, additional) do
     with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
          {:ok, _} <-
@@ -57,6 +58,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @public_ap "https://www.w3.org/ns/activitystreams#Public"
 
   @impl Entity
+  @spec delete(Actor.t(), Actor.t(), boolean, map) ::
+          {:ok, ActivityStream.t(), Actor.t(), Actor.t()}
   def delete(
         %Actor{
           followers_url: followers_url,
@@ -100,10 +103,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
+  @spec actor(Actor.t()) :: Actor.t() | nil
   def actor(%Actor{} = actor), do: actor
 
+  @spec actor(Actor.t()) :: Actor.t() | nil
   def group_actor(%Actor{} = actor), do: actor
 
+  @spec permissions(Actor.t()) :: Permission.t()
   def permissions(%Actor{} = _group) do
     %Permission{
       access: :member,
@@ -113,7 +119,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     }
   end
 
-  @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, map(), Member.t()}
+  @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, ActivityStreams.t(), Member.t()}
   def join(%Actor{type: :Group} = group, %Actor{} = actor, _local, additional) do
     with role <-
            additional
@@ -153,6 +159,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
+  @spec follow(Actor.t(), Actor.t(), boolean, map) ::
+          {:accept, any}
+          | {:ok, ActivityStreams.t(), Follower.t()}
+          | {:error, :no_person, String.t()}
   def follow(%Actor{} = follower_actor, %Actor{type: type} = followed, _local, additional)
       when type != :Person do
     with {:ok, %Follower{} = follower} <-
@@ -165,6 +175,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   def follow(_, _, _, _), do: {:error, :no_person, "Only group and instances can be followed"}
 
+  @spec prepare_args_for_actor(map) :: map
   defp prepare_args_for_actor(args) do
     args
     |> maybe_sanitize_username()
@@ -191,8 +202,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   defp maybe_sanitize_summary(args), do: args
 
   # Set the participant to approved if the default role for new participants is :participant
-  @spec approve_if_default_role_is_member(Actor.t(), Actor.t(), map(), Member.t(), atom()) ::
-          {:ok, map(), Member.t()}
+  @spec approve_if_default_role_is_member(
+          Actor.t(),
+          Actor.t(),
+          ActivityStreams.t(),
+          Member.t(),
+          MemberRole.t()
+        ) ::
+          {:ok, ActivityStreams.t(), Member.t()}
   defp approve_if_default_role_is_member(
          %Actor{type: :Group} = group,
          %Actor{} = actor,
@@ -202,7 +219,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
        ) do
     if is_nil(group.domain) && !is_nil(actor.domain) do
       cond do
-        Mobilizon.Actors.get_default_member_role(group) === :member &&
+        Mobilizon.Actors.get_default_member_role(group) == :member &&
             role == :member ->
           {:accept,
            ActivityPub.accept(
@@ -212,7 +229,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
              %{"actor" => group.url}
            )}
 
-        Mobilizon.Actors.get_default_member_role(group) === :not_approved &&
+        Mobilizon.Actors.get_default_member_role(group) == :not_approved &&
             role == :not_approved ->
           Scheduler.pending_membership_notification(group)
           {:ok, activity_data, member}
@@ -225,6 +242,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
+  @spec approve_if_manually_approves_followers(Follower.t(), ActivityStreams.t()) ::
+          {:accept, any} | {:ok, ActivityStreams.t(), Follower.t()}
   defp approve_if_manually_approves_followers(
          %Follower{} = follower,
          follow_as_data

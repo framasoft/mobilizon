@@ -5,7 +5,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     group: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :actor,
                             @activity.subject_params["group_federated_username"]
@@ -20,7 +20,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     group: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :actor,
                             @activity.subject_params["group_federated_username"]

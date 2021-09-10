@@ -53,6 +53,7 @@ defmodule Mobilizon.Web.Upload do
           | {:size_limit, nil | non_neg_integer()}
           | {:uploader, module()}
           | {:filters, [module()]}
+          | {:allow_list_mime_types, boolean()}
 
   @type t :: %__MODULE__{
           id: String.t(),
@@ -65,33 +66,36 @@ defmodule Mobilizon.Web.Upload do
           height: integer(),
           blurhash: String.t()
         }
-  defstruct [:id, :name, :tempfile, :content_type, :path, :size, :width, :height, :blurhash]
+  defstruct [:id, :name, :url, :tempfile, :content_type, :path, :size, :width, :height, :blurhash]
 
-  @spec store(source, options :: [option()]) :: {:ok, map()} | {:error, any()}
+  @typep internal_options :: %{
+           activity_type: String.t() | nil,
+           size_limit: integer(),
+           uploader: module(),
+           filters: [module()],
+           description: String.t(),
+           allow_list_mime_types: list(String.t()),
+           base_url: String.t()
+         }
+
+  @spec store(source, options :: [option()]) ::
+          {:ok, map()} | {:error, String.t()} | {:error, atom()}
   def store(upload, opts \\ []) do
     opts = get_opts(opts)
 
-    with {:ok, upload} <- prepare_upload(upload, opts),
-         %__MODULE__{} = upload <- %__MODULE__{
-           upload
-           | path: upload.path || "#{upload.id}/#{upload.name}"
-         },
-         {:ok, upload} <- Filter.filter(opts.filters, upload),
-         {:ok, url_spec} <- Uploader.put_file(opts.uploader, upload) do
-      {:ok,
-       upload
-       |> Map.put(:name, Map.get(opts, :description) || upload.name)
-       |> Map.put(:url, url_from_spec(upload, opts.base_url, url_spec))}
-    else
-      {:error, error} ->
-        Logger.error(
-          "#{__MODULE__} store (using #{inspect(opts.uploader)}) failed: #{inspect(error)}"
-        )
+    case prepare_upload(upload, opts) do
+      {:ok, upload} ->
+        upload
+        |> set_default_upload_path()
+        |> perform_filter_and_put_file(opts)
 
-        {:error, error}
+      {:error, error} ->
+        error
     end
   end
 
+  @spec remove(String.t(), Keyword.t()) ::
+          {:ok, String.t()} | {:error, atom} | {:error, String.t()}
   def remove(url, opts \\ []) do
     with opts <- get_opts(opts),
          %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
@@ -106,10 +110,52 @@ defmodule Mobilizon.Web.Upload do
     end
   end
 
-  def char_unescaped?(char) do
+  @spec char_unescaped?(byte()) :: boolean()
+  defp char_unescaped?(char) do
     URI.char_unreserved?(char) or char == ?/
   end
 
+  @spec set_default_upload_path(t) :: t
+  defp set_default_upload_path(%__MODULE__{} = upload) do
+    %__MODULE__{
+      upload
+      | path: upload.path || "#{upload.id}/#{upload.name}"
+    }
+  end
+
+  @spec perform_filter_and_put_file(t, map) ::
+          {:ok, t} | {:error, String.t()} | {:error, atom()}
+  defp perform_filter_and_put_file(%__MODULE__{} = upload, opts) do
+    case Filter.filter(opts.filters, upload) do
+      {:ok, upload} ->
+        perform_put_file(upload, opts)
+
+      {:error, error} ->
+        {:error, error}
+    end
+  end
+
+  @spec perform_put_file(t, map) :: {:ok, t} | {:error, atom()}
+  defp perform_put_file(%__MODULE__{} = upload, opts) do
+    case Uploader.put_file(opts.uploader, upload) do
+      {:ok, url_spec} ->
+        {:ok,
+         %__MODULE__{
+           upload
+           | name: Map.get(opts, :description) || upload.name,
+             url: url_from_spec(upload, opts.base_url, url_spec)
+         }}
+
+      {:error, error} ->
+        Logger.error(
+          "#{__MODULE__} store (using #{inspect(opts.uploader)}) failed: #{inspect(error)}"
+        )
+
+        {:error, error}
+    end
+  end
+
+  @spec get_opts(Keyword.t()) :: internal_options()
   defp get_opts(opts) do
     {size_limit, activity_type} =
       case Keyword.get(opts, :type) do
@@ -144,6 +190,7 @@ defmodule Mobilizon.Web.Upload do
     }
   end
 
+  @spec prepare_upload(t(), internal_options()) :: {:ok, t()}
   defp prepare_upload(%Plug.Upload{} = file, opts) do
     with {:ok, size} <- check_file_size(file.path, opts.size_limit),
          {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename),
@@ -159,6 +206,7 @@ defmodule Mobilizon.Web.Upload do
     end
   end
 
+  @spec prepare_upload(%{body: String.t(), name: String.t()}, internal_options()) :: {:ok, t()}
   defp prepare_upload(%{body: body, name: name} = _file, opts) do
     with :ok <- check_binary_size(body, opts.size_limit),
          tmp_path <- tempfile_for_image(body),
@@ -175,8 +223,10 @@ defmodule Mobilizon.Web.Upload do
     end
   end
 
+  @spec check_file_size(String.t(), non_neg_integer()) ::
+          {:ok, non_neg_integer()} | {:error, :file_too_large} | {:error, :file.posix()}
   defp check_file_size(path, size_limit) when is_integer(size_limit) and size_limit > 0 do
-    with {:ok, %{size: size}} <- File.stat(path),
+    with {:ok, %File.Stat{size: size}} <- File.stat(path),
          true <- size <= size_limit do
       {:ok, size}
     else
@@ -185,8 +235,7 @@ defmodule Mobilizon.Web.Upload do
     end
   end
 
-  defp check_file_size(_, _), do: :ok
-
+  @spec check_binary_size(String.t(), non_neg_integer()) :: :ok | {:error, :file_too_large}
   defp check_binary_size(binary, size_limit)
        when is_integer(size_limit) and size_limit > 0 and byte_size(binary) >= size_limit do
     {:error, :file_too_large}
@@ -196,6 +245,7 @@ defmodule Mobilizon.Web.Upload do
 
   # Creates a tempfile using the Plug.Upload Genserver which cleans them up
   # automatically.
+  @spec tempfile_for_image(iodata) :: String.t()
   defp tempfile_for_image(data) do
     {:ok, tmp_path} = Plug.Upload.random_file("temp_files")
     {:ok, tmp_file} = File.open(tmp_path, [:write, :raw, :binary])
@@ -204,6 +254,7 @@ defmodule Mobilizon.Web.Upload do
     tmp_path
   end
 
+  @spec url_from_spec(t, String.t(), {:file | :url, String.t()}) :: String.t()
   defp url_from_spec(%__MODULE__{name: name}, base_url, {:file, path}) do
     path =
       URI.encode(path, &char_unescaped?/1) <>

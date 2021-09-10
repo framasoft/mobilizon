@@ -20,11 +20,10 @@ defmodule Mobilizon.Web.Upload.Filter do
               {:ok, :filtered}
               | {:ok, :noop}
               | {:ok, :filtered, Mobilizon.Web.Upload.t()}
-              | {:error, any()}
+              | {:error, String.t() | atom}
 
   @spec filter([module()], Mobilizon.Web.Upload.t()) ::
-          {:ok, Mobilizon.Web.Upload.t()} | {:error, any()}
-
+          {:ok, Mobilizon.Web.Upload.t()} | {:error, String.t() | atom}
   def filter([], upload) do
     {:ok, upload}
   end

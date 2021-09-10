@@ -4,6 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Permission
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Service.Activity.Resource, as: ResourceActivity
@@ -16,6 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   @behaviour Entity
 
   @impl Entity
+  @spec create(map(), map()) :: {:ok, Resource.t(), ActivityStream.t()}
   def create(%{type: type} = args, additional) do
     args =
       case type do
@@ -66,6 +68,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   end
 
   @impl Entity
+  @spec update(Resource.t(), map(), map()) :: {:ok, Resource.t(), ActivityStream.t()}
   def update(
         %Resource{parent_id: old_parent_id} = old_resource,
         %{parent_id: parent_id} = args,
@@ -104,6 +107,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     end
   end
 
+  @spec update(Resource.t(), map(), map()) :: {:ok, Resource.t(), ActivityStream.t()}
   def move(
         %Resource{parent_id: old_parent_id} = old_resource,
         %{parent_id: _new_parent_id} = args,
@@ -142,6 +146,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   end
 
   @impl Entity
+  @spec delete(Resource.t(), Actor.t(), boolean, map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Resource.t()}
   def delete(
         %Resource{url: url, actor: %Actor{url: group_url, members_url: members_url}} = resource,
         %Actor{url: actor_url} = actor,
@@ -166,11 +172,14 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     end
   end
 
+  @spec actor(Todo.t()) :: Actor.t() | nil
   def actor(%Resource{creator_id: creator_id}),
     do: Actors.get_actor(creator_id)
 
+  @spec group_actor(Todo.t()) :: Actor.t() | nil
   def group_actor(%Resource{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  @spec permissions(TodoList.t()) :: Permission.t()
   def permissions(%Resource{}) do
     %Permission{access: :member, create: :member, update: :member, delete: :member}
   end

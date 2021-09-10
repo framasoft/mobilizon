@@ -66,7 +66,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
     with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
          %CommentModel{actor_id: comment_actor_id} = comment <-
            Mobilizon.Discussions.get_comment_with_preload(comment_id),
-         true <- actor_id === comment_actor_id,
+         true <- actor_id == comment_actor_id,
          {:ok, _, %CommentModel{} = comment} <- Comments.update_comment(comment, %{text: text}) do
       {:ok, comment}
     end

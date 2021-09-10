@@ -11,7 +11,7 @@ defmodule Mobilizon.Web.Upload.Filter.Exiftool do
 
   @behaviour Mobilizon.Web.Upload.Filter
 
-  @spec filter(Upload.t()) :: {:ok, any()} | {:error, String.t()}
+  @spec filter(Upload.t()) :: {:ok, :filtered | :noop} | {:error, String.t()}
 
   # webp is not compatible with exiftool at this time
   def filter(%Upload{content_type: "image/webp"}), do: {:ok, :noop}

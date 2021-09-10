@@ -67,7 +67,7 @@ defmodule Mobilizon.Service.Geospatial.Provider do
   @doc """
   Returns a `Geo.Point` for given coordinates
   """
-  @spec coordinates([number], number) :: Geo.Point.t()
+  @spec coordinates([number], number) :: Geo.Point.t() | nil
   def coordinates(coords, srid \\ 4326)
 
   def coordinates([x, y], srid) when is_number(x) and is_number(y) do
@@ -78,7 +78,6 @@ defmodule Mobilizon.Service.Geospatial.Provider do
     %Geo.Point{coordinates: {String.to_float(x), String.to_float(y)}, srid: srid}
   end
 
-  @spec coordinates(any) :: nil
   def coordinates(_, _), do: nil
 
   @spec endpoint(atom()) :: String.t()

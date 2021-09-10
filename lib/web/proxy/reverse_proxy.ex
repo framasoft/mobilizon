@@ -381,6 +381,10 @@ defmodule Mobilizon.Web.ReverseProxy do
 
   defp body_size_constraint(_, _), do: :ok
 
+  @spec check_read_duration(any(), integer()) ::
+          {:ok, {integer(), integer()}}
+          | {:ok, :no_duration_limit, :no_duration_limit}
+          | {:error, :read_duration_exceeded}
   defp check_read_duration(duration, max)
        when is_integer(duration) and is_integer(max) and max > 0 do
     if duration > max do

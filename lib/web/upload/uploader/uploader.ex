@@ -33,9 +33,9 @@ defmodule Mobilizon.Web.Upload.Uploader do
   """
   @type file_spec :: {:file | :url, String.t()}
   @callback put_file(Mobilizon.Web.Upload.t()) ::
-              :ok | {:ok, file_spec()} | {:error, String.t()} | :wait_callback
+              :ok | {:ok, file_spec()} | {:error, atom()} | :wait_callback
 
-  @callback remove_file(file_spec()) :: :ok | {:ok, file_spec()} | {:error, String.t()}
+  @callback remove_file(file_spec()) :: :ok | {:ok, file_spec()} | {:error, atom()}
 
   @callback http_callback(Plug.Conn.t(), map()) ::
               {:ok, Plug.Conn.t()}
@@ -43,7 +43,7 @@ defmodule Mobilizon.Web.Upload.Uploader do
               | {:error, Plug.Conn.t(), String.t()}
   @optional_callbacks http_callback: 2
 
-  @spec put_file(module(), Mobilizon.Web.Upload.t()) :: {:ok, file_spec()} | {:error, String.t()}
+  @spec put_file(module(), Mobilizon.Web.Upload.t()) :: {:ok, file_spec()} | {:error, atom()}
   def put_file(uploader, upload) do
     case uploader.put_file(upload) do
       :ok -> {:ok, {:file, upload.path}}
@@ -53,6 +53,7 @@ defmodule Mobilizon.Web.Upload.Uploader do
     end
   end
 
+  @spec remove_file(module(), String.t()) :: {:ok, String.t()} | {:error, atom()}
   def remove_file(uploader, path) do
     uploader.remove_file(path)
   end

@@ -631,9 +631,10 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of tags.
   """
-  @spec list_tags(integer | nil, integer | nil) :: [Tag.t()]
-  def list_tags(page \\ nil, limit \\ nil) do
+  @spec list_tags(String.t() | nil, integer | nil, integer | nil) :: [Tag.t()]
+  def list_tags(filter \\ nil, page \\ nil, limit \\ nil) do
     Tag
+    |> tag_filter(filter)
     |> Page.paginate(page, limit)
     |> Repo.all()
   end
@@ -1396,7 +1397,7 @@ defmodule Mobilizon.Events do
   end
 
   @spec events_for_tags(Ecto.Query.t(), map()) :: Ecto.Query.t()
-  defp events_for_tags(query, %{tags: tags}) when is_valid_string?(tags) do
+  defp events_for_tags(query, %{tags: tags}) when is_valid_string(tags) do
     query
     |> join(:inner, [q], te in "events_tags", on: q.id == te.event_id)
     |> join(:inner, [q, ..., te], t in Tag, on: te.tag_id == t.id)
@@ -1410,7 +1411,7 @@ defmodule Mobilizon.Events do
     do: query
 
   defp events_for_location(query, %{location: location, radius: radius})
-       when is_valid_string?(location) and not is_nil(radius) do
+       when is_valid_string(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
       query
@@ -1469,6 +1470,16 @@ defmodule Mobilizon.Events do
   @spec tag_by_title_query(String.t()) :: Ecto.Query.t()
   defp tag_by_title_query(title) do
     from(t in Tag, where: t.title == ^title, limit: 1)
+  end
+
+  @spec tag_filter(Ecto.Query.t(), String.t() | nil) :: Ecto.Query.t()
+  defp tag_filter(query, nil), do: query
+  defp tag_filter(query, ""), do: query
+
+  defp tag_filter(query, filter) when is_binary(filter) do
+    query
+    |> where([q], ilike(q.slug, ^"%#{filter}%"))
+    |> or_where([q], ilike(q.title, ^"%#{filter}%"))
   end
 
   @spec tags_for_event_query(integer) :: Ecto.Query.t()

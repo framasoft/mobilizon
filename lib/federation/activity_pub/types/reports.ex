@@ -2,11 +2,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
   @moduledoc false
   alias Mobilizon.{Actors, Discussions, Reports}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Reports.Report
   alias Mobilizon.Service.Formatter.HTML
   require Logger
 
+  @spec flag(map(), boolean(), map()) :: {Report.t(), ActivityStream.t()}
   def flag(args, local \\ false, _additional \\ %{}) do
     with {:build_args, args} <- {:build_args, prepare_args_for_report(args)},
          {:create_report, {:ok, %Report{} = report}} <-
@@ -18,6 +20,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
     end
   end
 
+  @spec prepare_args_for_report(map()) :: map()
   defp prepare_args_for_report(args) do
     with {:reporter, %Actor{} = reporter_actor} <-
            {:reporter, Actors.get_actor!(args.reporter_id)},

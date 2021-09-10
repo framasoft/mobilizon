@@ -20,5 +20,5 @@
 <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
   <%= gettext "End %{ends_on}", ends_on: @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
 <% end %>
-<%= gettext "Visit the updated event page: %{link}", link: page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
+<%= gettext "Visit the updated event page: %{link}", link: Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>

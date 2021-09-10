@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -20,7 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) :: {:ok, Comment.t(), ActivityStream.t()}
   def create(args, additional) do
     with args <- prepare_args_for_comment(args),
          :ok <- make_sure_event_allows_commenting(args),
@@ -41,7 +42,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   end
 
   @impl Entity
-  @spec update(Comment.t(), map(), map()) :: {:ok, Comment.t(), Activity.t()} | any()
+  @spec update(Comment.t(), map(), map()) :: {:ok, Comment.t(), ActivityStream.t()}
   def update(%Comment{} = old_comment, args, additional) do
     with args <- prepare_args_for_comment_update(args),
          {:ok, %Comment{} = new_comment} <- Discussions.update_comment(old_comment, args),
@@ -60,7 +61,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   end
 
   @impl Entity
-  @spec delete(Comment.t(), Actor.t(), boolean, map()) :: {:ok, Comment.t()}
+  @spec delete(Comment.t(), Actor.t(), boolean, map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Comment.t()}
   def delete(
         %Comment{url: url, id: comment_id},
         %Actor{} = actor,
@@ -91,6 +93,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     end
   end
 
+  @spec actor(Comment.t()) :: Actor.t() | nil
   def actor(%Comment{actor: %Actor{} = actor}), do: actor
 
   def actor(%Comment{actor_id: actor_id}) when not is_nil(actor_id),
@@ -98,6 +101,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def actor(_), do: nil
 
+  @spec group_actor(Comment.t()) :: Actor.t() | nil
   def group_actor(%Comment{attributed_to: %Actor{} = group}), do: group
 
   def group_actor(%Comment{attributed_to_id: attributed_to_id}) when not is_nil(attributed_to_id),
@@ -105,6 +109,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
+  @spec permissions(Comment.t()) :: Permission.t()
   def permissions(%Comment{}),
     do: %Permission{
       access: :member,
@@ -114,6 +119,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     }
 
   # Prepare and sanitize arguments for comments
+  @spec prepare_args_for_comment(map) :: map
   defp prepare_args_for_comment(args) do
     with in_reply_to_comment <-
            args |> Map.get(:in_reply_to_comment_id) |> Discussions.get_comment_with_preload(),
@@ -150,6 +156,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     end
   end
 
+  @spec prepare_args_for_comment_update(map) :: map
   defp prepare_args_for_comment_update(args) do
     with {text, mentions, tags} <-
            APIUtils.make_content_html(
@@ -174,6 +181,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   defp handle_event_for_comment(nil), do: nil
 
+  @spec maybe_publish_graphql_subscription(String.t() | integer() | nil) :: :ok
   defp maybe_publish_graphql_subscription(nil), do: :ok
 
   defp maybe_publish_graphql_subscription(discussion_id) do
@@ -186,6 +194,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     end
   end
 
+  @spec make_sure_event_allows_commenting(%{actor_id: String.t() | integer, event: Event.t()}) ::
+          :ok | {:error, :event_comments_are_closed}
   defp make_sure_event_allows_commenting(%{
          actor_id: actor_id,
          event: %Event{

@@ -1,14 +1,15 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Actors.{Actor, Member, MemberRole}
+  alias Mobilizon.Federation.{ActivityPub, ActivityStream}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.Activity.Member, as: MemberActivity
   alias Mobilizon.Web.Endpoint
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_update_data: 2]
 
+  @spec update(Member.t(), map, map) :: {:ok, Member.t(), ActivityStream.t()}
   def update(
         %Member{
           parent: %Actor{id: group_id} = group,
@@ -24,7 +25,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
          when moderator_role in [:moderator, :administrator, :creator] <-
            {:has_rights_to_update_role, Actors.get_member(moderator_id, group_id)},
          {:is_only_admin, false} <-
-           {:is_only_admin, check_admins_left(member_id, group_id, current_role, updated_role)},
+           {:is_only_admin, check_admins_left?(member_id, group_id, current_role, updated_role)},
          {:ok, %Member{} = member} <-
            Actors.update_member(old_member, args),
          {:ok, _} <-
@@ -56,6 +57,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   end
 
   # Used only when a group is suspended
+  @spec delete(Member.t(), Actor.t(), boolean(), map()) :: {:ok, Activity.t(), Member.t()}
   def delete(
         %Member{parent: %Actor{} = group, actor: %Actor{} = actor} = _member,
         %Actor{},
@@ -66,13 +68,21 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
     ActivityPub.leave(group, actor, local, %{force_member_removal: true})
   end
 
+  @spec actor(Member.t()) :: Actor.t() | nil
   def actor(%Member{actor_id: actor_id}),
     do: Actors.get_actor(actor_id)
 
+  @spec group_actor(Member.t()) :: Actor.t() | nil
   def group_actor(%Member{parent_id: parent_id}),
     do: Actors.get_actor(parent_id)
 
-  defp check_admins_left(member_id, group_id, current_role, updated_role) do
+  @spec check_admins_left?(
+          String.t() | integer,
+          String.t() | integer,
+          MemberRole.t(),
+          MemberRole.t()
+        ) :: boolean
+  defp check_admins_left?(member_id, group_id, current_role, updated_role) do
     Actors.is_only_administrator?(member_id, group_id) && current_role == :administrator &&
       updated_role != :administrator
   end

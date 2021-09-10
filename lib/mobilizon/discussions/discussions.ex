@@ -249,8 +249,7 @@ defmodule Mobilizon.Discussions do
         {:ok, comment}
       end
     else
-      comment
-      |> Repo.delete()
+      Repo.delete(comment)
     end
   end
 

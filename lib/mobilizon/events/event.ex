@@ -206,6 +206,7 @@ defmodule Mobilizon.Events.Event do
 
   defp put_tags(%Changeset{} = changeset, _), do: changeset
 
+  @spec process_tag(map() | Tag.t()) :: Tag.t() | Ecto.Changeset.t()
   # We need a changeset instead of a raw struct because of slug which is generated in changeset
   defp process_tag(%{id: id} = _tag) do
     Events.get_tag(id)
@@ -248,13 +249,8 @@ defmodule Mobilizon.Events.Event do
   # In case the provided picture is an existing one
   @spec put_picture(Changeset.t(), map) :: Changeset.t()
   defp put_picture(%Changeset{} = changeset, %{picture: %{media_id: id} = _picture}) do
-    case Medias.get_media!(id) do
-      %Media{} = picture ->
-        put_assoc(changeset, :picture, picture)
-
-      _ ->
-        changeset
-    end
+    %Media{} = picture = Medias.get_media!(id)
+    put_assoc(changeset, :picture, picture)
   end
 
   # In case it's a new picture

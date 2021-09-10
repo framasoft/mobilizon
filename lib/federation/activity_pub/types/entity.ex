@@ -15,7 +15,7 @@ alias Mobilizon.Federation.ActivityPub.Types.{
 }
 
 alias Mobilizon.Actors.{Actor, Member}
-alias Mobilizon.Events.Event
+alias Mobilizon.Events.{Event, Participant}
 alias Mobilizon.Discussions.{Comment, Discussion}
 alias Mobilizon.Federation.ActivityPub.Permission
 alias Mobilizon.Posts.Post
@@ -28,7 +28,19 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Entity do
   @moduledoc """
   ActivityPub entity behaviour
   """
-  @type t :: %{id: String.t()}
+  @type t :: %{id: String.t(), url: String.t()}
+
+  @type entities ::
+          Actor.t()
+          | Member.t()
+          | Event.t()
+          | Participant.t()
+          | Comment.t()
+          | Discussion.t()
+          | Post.t()
+          | Resource.t()
+          | Todo.t()
+          | TodoList.t()
 
   @callback create(data :: any(), additionnal :: map()) ::
               {:ok, t(), ActivityStream.t()}

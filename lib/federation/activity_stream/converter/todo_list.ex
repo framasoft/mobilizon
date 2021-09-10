@@ -37,7 +37,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.TodoList do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, :group_not_found}
   def as_to_model_data(%{"type" => "TodoList", "actor" => actor_url} = object) do
     case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
       {:ok, %Actor{type: :Group, id: group_id} = _group} ->
