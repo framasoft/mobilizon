@@ -202,7 +202,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
-            @mobilizon_group_url -> {:error, "Not found"}
+            @mobilizon_group_url -> {:error, :http_not_found}
             ^actor_url -> {:ok, actor}
           end
         end do
@@ -308,7 +308,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
-            @mobilizon_group_url -> {:error, "Not found"}
+            @mobilizon_group_url -> {:error, :http_not_found}
             ^actor_url -> {:ok, actor}
           end
         end do

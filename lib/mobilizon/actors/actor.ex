@@ -324,7 +324,7 @@ defmodule Mobilizon.Actors.Actor do
   Changeset for group creation
   """
   @spec group_creation_changeset(t, map) :: Ecto.Changeset.t()
-  def group_creation_changeset(%__MODULE__{} = actor, params) do
+  def group_creation_changeset(actor, params) do
     actor
     |> cast(params, @group_creation_attrs)
     |> build_urls(:Group)

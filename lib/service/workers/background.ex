@@ -6,6 +6,7 @@ defmodule Mobilizon.Service.Workers.Background do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Refresher
+  alias Mobilizon.Service.ActorSuspension
 
   use Mobilizon.Service.Workers.Helper, queue: "background"
 
@@ -14,7 +15,7 @@ defmodule Mobilizon.Service.Workers.Background do
     with reserve_username when is_boolean(reserve_username) <-
            Map.get(args, "reserve_username", true),
          %Actor{} = actor <- Actors.get_actor(actor_id) do
-      Actors.perform(:delete_actor, actor, reserve_username: reserve_username)
+      ActorSuspension.suspend_actor(actor, reserve_username: reserve_username)
     end
   end
 

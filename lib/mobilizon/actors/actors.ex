@@ -12,16 +12,12 @@ defmodule Mobilizon.Actors do
 
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.{Crypto, Events}
+  alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Medias.File
-  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.Email.Group
   alias Mobilizon.Web.Upload
 
   require Logger
@@ -61,7 +57,6 @@ defmodule Mobilizon.Actors do
   @administrator_roles [:creator, :administrator]
   @moderator_roles [:moderator] ++ @administrator_roles
   @member_roles [:member] ++ @moderator_roles
-  @actor_preloads [:user, :organized_events, :comments]
 
   @doc """
   Gets a single actor.
@@ -151,7 +146,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets an actor by name.
   """
-  @spec get_actor_by_name(String.t(), atom | nil) :: Actor.t() | nil
+  @spec get_actor_by_name(String.t(), ActorType.t() | nil) :: Actor.t() | nil
   def get_actor_by_name(name, type \\ nil) do
     query = from(a in Actor)
 
@@ -311,98 +306,6 @@ defmodule Mobilizon.Actors do
     })
   end
 
-  @doc """
-  Deletes an actor.
-  """
-  @spec perform(atom(), Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def perform(:delete_actor, %Actor{type: type} = actor, options \\ @delete_actor_default_options) do
-    Logger.info("Going to delete actor #{actor.url}")
-    actor = Repo.preload(actor, @actor_preloads)
-
-    delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
-    Logger.debug(inspect(delete_actor_options))
-
-    if type == :Group do
-      delete_eventual_local_members(actor, delete_actor_options)
-    end
-
-    multi =
-      Multi.new()
-      |> Multi.run(:delete_organized_events, fn _, _ -> delete_actor_organized_events(actor) end)
-      |> Multi.run(:empty_comments, fn _, _ -> delete_actor_empty_comments(actor) end)
-      |> Multi.run(:remove_banner, fn _, _ -> remove_banner(actor) end)
-      |> Multi.run(:remove_avatar, fn _, _ -> remove_avatar(actor) end)
-
-    multi =
-      case type do
-        :Group ->
-          multi
-          |> Multi.run(:delete_remote_members, fn _, _ ->
-            delete_group_elements(actor, :remote_members)
-          end)
-          |> Multi.run(:delete_group_organized_events, fn _, _ ->
-            delete_group_elements(actor, :events)
-          end)
-          |> Multi.run(:delete_group_posts, fn _, _ ->
-            delete_group_elements(actor, :posts)
-          end)
-          |> Multi.run(:delete_group_resources, fn _, _ ->
-            delete_group_elements(actor, :resources)
-          end)
-          |> Multi.run(:delete_group_todo_lists, fn _, _ ->
-            delete_group_elements(actor, :todo_lists)
-          end)
-          |> Multi.run(:delete_group_discussions, fn _, _ ->
-            delete_group_elements(actor, :discussions)
-          end)
-
-        :Person ->
-          # When deleting a profile, reset default_actor_id
-          Multi.run(multi, :reset_default_actor_id, fn _, _ ->
-            reset_default_actor_id(actor)
-          end)
-
-        _ ->
-          multi
-      end
-
-    multi =
-      if Keyword.get(delete_actor_options, :reserve_username, true) do
-        Multi.update(multi, :actor, Actor.delete_changeset(actor))
-      else
-        Multi.delete(multi, :actor, actor)
-      end
-
-    Logger.debug("Going to run the transaction")
-
-    case Repo.transaction(multi) do
-      {:ok, %{actor: %Actor{} = actor}} ->
-        {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
-        Logger.info("Deleted actor #{actor.url}")
-        {:ok, actor}
-
-      {:error, remove, error, _} when remove in [:remove_banner, :remove_avatar] ->
-        Logger.error("Error while deleting actor's banner or avatar")
-
-        Sentry.capture_message("Error while deleting actor's banner or avatar",
-          extra: %{err: error}
-        )
-
-        Logger.debug(inspect(error, pretty: true))
-        {:error, error}
-
-      err ->
-        Logger.error("Unknown error while deleting actor")
-
-        Sentry.capture_message("Error while deleting actor's banner or avatar",
-          extra: %{err: err}
-        )
-
-        Logger.debug(inspect(err, pretty: true))
-        {:error, err}
-    end
-  end
-
   @spec actor_key_rotation(Actor.t()) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def actor_key_rotation(%Actor{} = actor) do
     actor
@@ -536,8 +439,9 @@ defmodule Mobilizon.Actors do
         limit \\ nil
       ) do
     anonymous_actor_id = Mobilizon.Config.anonymous_actor_id()
+    query = from(a in Actor)
 
-    Actor
+    query
     |> actor_by_username_or_name_query(term)
     |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
     |> filter_by_types(Keyword.get(options, :actor_type, :Group))
@@ -610,21 +514,25 @@ defmodule Mobilizon.Actors do
   """
   @spec create_group(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_group(attrs \\ %{}) do
-    local = Map.get(attrs, :local, true)
+    if Map.get(attrs, :local, true) do
+      multi =
+        Multi.new()
+        |> Multi.insert(:insert_group, Actor.group_creation_changeset(%Actor{}, attrs))
+        |> Multi.insert(:add_admin_member, fn %{insert_group: group} ->
+          Member.changeset(%Member{}, %{
+            parent_id: group.id,
+            actor_id: attrs.creator_actor_id,
+            role: :administrator
+          })
+        end)
+        |> Repo.transaction()
 
-    if local do
-      with {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} <-
-             Multi.new()
-             |> Multi.insert(:insert_group, Actor.group_creation_changeset(%Actor{}, attrs))
-             |> Multi.insert(:add_admin_member, fn %{insert_group: group} ->
-               Member.changeset(%Member{}, %{
-                 parent_id: group.id,
-                 actor_id: attrs.creator_actor_id,
-                 role: :administrator
-               })
-             end)
-             |> Repo.transaction() do
-        {:ok, group}
+      case multi do
+        {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} ->
+          {:ok, group}
+
+        {:error, %Ecto.Changeset{} = err} ->
+          {:error, err}
       end
     else
       %Actor{}
@@ -818,18 +726,21 @@ defmodule Mobilizon.Actors do
   """
   @spec create_member(map) :: {:ok, Member.t()} | {:error, Ecto.Changeset.t()}
   def create_member(attrs \\ %{}) do
-    with {:ok, %Member{} = member} <-
-           %Member{}
-           |> Member.changeset(attrs)
-           |> Repo.insert(
-             on_conflict: {:replace_all_except, [:id, :url, :actor_id, :parent_id]},
-             conflict_target: [:actor_id, :parent_id],
-             # See https://hexdocs.pm/ecto/Ecto.Repo.html#c:insert/2-upserts,
-             # when doing an upsert with on_conflict, PG doesn't return whether it's an insert or upsert
-             # so we need to refresh the fields
-             returning: true
-           ) do
-      {:ok, Repo.preload(member, [:actor, :parent, :invited_by])}
+    case %Member{}
+         |> Member.changeset(attrs)
+         |> Repo.insert(
+           on_conflict: {:replace_all_except, [:id, :url, :actor_id, :parent_id]},
+           conflict_target: [:actor_id, :parent_id],
+           # See https://hexdocs.pm/ecto/Ecto.Repo.html#c:insert/2-upserts,
+           # when doing an upsert with on_conflict, PG doesn't return whether it's an insert or upsert
+           # so we need to refresh the fields
+           returning: true
+         ) do
+      {:ok, %Member{} = member} ->
+        {:ok, Repo.preload(member, [:actor, :parent, :invited_by])}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
@@ -879,6 +790,13 @@ defmodule Mobilizon.Actors do
     actor_id
     |> members_for_actor_query()
     |> Page.build_page(page, limit)
+  end
+
+  @spec list_all_local_members_for_group(Actor.t()) :: Member.t()
+  def list_all_local_members_for_group(%Actor{id: group_id, type: :Group} = _group) do
+    group_id
+    |> group_internal_member_query()
+    |> Repo.all()
   end
 
   @spec list_local_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
@@ -995,7 +913,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Creates a bot.
   """
-  @spec create_bot(map) :: {:ok, Bot.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_bot(attrs :: map) :: {:ok, Bot.t()} | {:error, Ecto.Changeset.t()}
   def create_bot(attrs \\ %{}) do
     %Bot{}
     |> Bot.changeset(attrs)
@@ -1005,7 +923,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Registers a new bot.
   """
-  @spec register_bot(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  @spec register_bot(%{name: String.t(), summary: String.t()}) ::
+          {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def register_bot(%{name: name, summary: summary}) do
     attrs = %{
       preferred_username: name,
@@ -1020,7 +939,8 @@ defmodule Mobilizon.Actors do
     |> Repo.insert()
   end
 
-  @spec get_or_create_internal_actor(String.t()) :: {:ok, Actor.t()}
+  @spec get_or_create_internal_actor(String.t()) ::
+          {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def get_or_create_internal_actor(username) do
     case username |> Actor.build_url(:page) |> get_actor_by_url() do
       {:ok, %Actor{} = actor} ->
@@ -1105,13 +1025,16 @@ defmodule Mobilizon.Actors do
   @doc """
   Creates a follower.
   """
-  @spec create_follower(map) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_follower(attrs :: map) :: {:ok, Follower.t()} | {:error, Ecto.Changeset.t()}
   def create_follower(attrs \\ %{}) do
-    with {:ok, %Follower{} = follower} <-
-           %Follower{}
-           |> Follower.changeset(attrs)
-           |> Repo.insert() do
-      {:ok, Repo.preload(follower, [:actor, :target_actor])}
+    case %Follower{}
+         |> Follower.changeset(attrs)
+         |> Repo.insert() do
+      {:ok, %Follower{} = follower} ->
+        {:ok, Repo.preload(follower, [:actor, :target_actor])}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
@@ -1345,43 +1268,14 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  @spec schedule_key_rotation(Actor.t(), integer()) :: nil
+  # TODO: Move me otherwhere
+  @spec schedule_key_rotation(Actor.t(), integer()) :: :ok
   def schedule_key_rotation(%Actor{id: actor_id} = actor, delay) do
     Cachex.put(:actor_key_rotation, actor_id, true)
 
     Workers.Background.enqueue("actor_key_rotation", %{"actor_id" => actor.id}, schedule_in: delay)
 
     :ok
-  end
-
-  @spec remove_banner(Actor.t()) :: {:ok, Actor.t()}
-  defp remove_banner(%Actor{banner: nil} = actor), do: {:ok, actor}
-
-  defp remove_banner(%Actor{banner: %File{url: url}} = actor) do
-    safe_remove_file(url, actor)
-    {:ok, actor}
-  end
-
-  @spec remove_avatar(Actor.t()) :: {:ok, Actor.t()}
-  defp remove_avatar(%Actor{avatar: nil} = actor), do: {:ok, actor}
-
-  defp remove_avatar(%Actor{avatar: %File{url: url}} = actor) do
-    safe_remove_file(url, actor)
-    {:ok, actor}
-  end
-
-  @spec safe_remove_file(String.t(), Actor.t()) :: {:ok, Actor.t()}
-  defp safe_remove_file(url, %Actor{} = actor) do
-    case Upload.remove(url) do
-      {:ok, _value} ->
-        {:ok, actor}
-
-      {:error, error} ->
-        Logger.error("Error while removing an upload file")
-        Logger.debug(inspect(error))
-
-        {:ok, actor}
-    end
   end
 
   @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
@@ -1748,9 +1642,9 @@ defmodule Mobilizon.Actors do
     from(a in query, where: a.visibility == ^:public)
   end
 
-  @spec filter_by_name(Ecto.Query.t(), [String.t()]) :: Ecto.Query.t()
+  @spec filter_by_name(query :: Ecto.Query.t(), [String.t()]) :: Ecto.Query.t()
   defp filter_by_name(query, [name]) do
-    from(a in query, where: a.preferred_username == ^name and is_nil(a.domain))
+    where(query, [a], a.preferred_username == ^name and is_nil(a.domain))
   end
 
   defp filter_by_name(query, [name, domain]) do
@@ -1761,6 +1655,7 @@ defmodule Mobilizon.Actors do
     end
   end
 
+  @spec filter_followed_by_approved_status(Ecto.Query.t(), boolean() | nil) :: Ecto.Query.t()
   defp filter_followed_by_approved_status(query, nil), do: query
 
   defp filter_followed_by_approved_status(query, approved) do
@@ -1770,141 +1665,4 @@ defmodule Mobilizon.Actors do
   @spec preload_followers(Actor.t(), boolean) :: Actor.t()
   defp preload_followers(actor, true), do: Repo.preload(actor, [:followers])
   defp preload_followers(actor, false), do: actor
-
-  defp delete_actor_organized_events(%Actor{organized_events: organized_events} = actor) do
-    res =
-      Enum.map(organized_events, fn event ->
-        event =
-          Repo.preload(event, [
-            :organizer_actor,
-            :participants,
-            :picture,
-            :mentions,
-            :comments,
-            :attributed_to,
-            :tags,
-            :physical_address,
-            :contacts,
-            :media
-          ])
-
-        ActivityPub.delete(event, actor, false)
-      end)
-
-    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
-      {:ok, res}
-    else
-      {:error, res}
-    end
-  end
-
-  defp delete_actor_empty_comments(%Actor{comments: comments} = actor) do
-    res =
-      Enum.map(comments, fn comment ->
-        comment =
-          Repo.preload(comment, [
-            :actor,
-            :mentions,
-            :event,
-            :in_reply_to_comment,
-            :origin_comment,
-            :attributed_to,
-            :tags
-          ])
-
-        ActivityPub.delete(comment, actor, false)
-      end)
-
-    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
-      {:ok, res}
-    else
-      {:error, res}
-    end
-  end
-
-  defp delete_group_elements(%Actor{type: :Group} = actor, type) do
-    Logger.debug("delete_group_elements #{inspect(type)}")
-
-    method =
-      case type do
-        :remote_members -> &list_remote_members_for_group/3
-        :events -> &Events.list_simple_organized_events_for_group/3
-        :posts -> &Mobilizon.Posts.get_posts_for_group/3
-        :resources -> &Mobilizon.Resources.get_resources_for_group/3
-        :todo_lists -> &Mobilizon.Todos.get_todo_lists_for_group/3
-        :discussions -> &Mobilizon.Discussions.find_discussions_for_actor/3
-      end
-
-    res =
-      actor
-      |> accumulate_paginated_elements(method)
-      |> Enum.map(fn element -> ActivityPub.delete(element, actor, false) end)
-
-    if Enum.all?(res, fn {status, _, _} -> status == :ok end) do
-      Logger.debug("Return OK for all #{to_string(type)}")
-      {:ok, res}
-    else
-      Logger.debug("Something failed #{inspect(res)}")
-      {:error, res}
-    end
-  end
-
-  @spec reset_default_actor_id(Actor.t()) :: {:ok, User.t()} | {:error, :user_not_found}
-  defp reset_default_actor_id(%Actor{type: :Person, user: %User{id: user_id} = user, id: actor_id}) do
-    Logger.debug("reset_default_actor_id")
-
-    new_actor_id =
-      user
-      |> Users.get_actors_for_user()
-      |> Enum.map(& &1.id)
-      |> Enum.find(&(&1 !== actor_id))
-
-    {:ok, Users.update_user_default_actor(user_id, new_actor_id)}
-  rescue
-    _e in Ecto.NoResultsError ->
-      {:error, :user_not_found}
-  end
-
-  defp reset_default_actor_id(%Actor{type: :Person, user: nil}), do: {:ok, nil}
-
-  defp accumulate_paginated_elements(
-         %Actor{} = actor,
-         method,
-         elements \\ [],
-         page \\ 1,
-         limit \\ 10
-       ) do
-    Logger.debug("accumulate_paginated_elements")
-    %Page{total: total, elements: new_elements} = method.(actor, page, limit)
-    elements = elements ++ new_elements
-    count = length(elements)
-
-    if count < total do
-      accumulate_paginated_elements(actor, method, elements, page + 1, limit)
-    else
-      Logger.debug("Found #{count} group elements to delete")
-      elements
-    end
-  end
-
-  # This one is not in the Multi transaction because it sends activities
-  defp delete_eventual_local_members(%Actor{} = group, options) do
-    suspended? = Keyword.get(options, :suspension, false)
-
-    group
-    |> accumulate_paginated_elements(&list_local_members_for_group/3)
-    |> Enum.map(fn member ->
-      if suspended? do
-        Group.send_group_suspension_notification(member)
-      else
-        with author_id when not is_nil(author_id) <- Keyword.get(options, :author_id),
-             %Actor{} = author <- get_actor(author_id) do
-          Group.send_group_deletion_notification(member, author)
-        end
-      end
-
-      member
-    end)
-    |> Enum.map(fn member -> ActivityPub.delete(member, group, false) end)
-  end
 end

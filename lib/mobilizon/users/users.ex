@@ -42,7 +42,7 @@ defmodule Mobilizon.Users do
     end
   end
 
-  @spec create_external(String.t(), String.t(), Map.t()) ::
+  @spec create_external(String.t(), String.t(), map()) ::
           {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   def create_external(email, provider, args \\ %{}) do
     with {:ok, %User{} = user} <-

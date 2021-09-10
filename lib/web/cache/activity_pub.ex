@@ -21,7 +21,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   Gets a actor by username and eventually domain.
   """
   @spec get_actor_by_name(String.t()) ::
-          {:commit, Actor.t()} | {:ignore, nil}
+          {:commit, ActorModel.t()} | {:ignore, nil}
   def get_actor_by_name(name) do
     Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
       case Actor.find_or_make_actor_from_nickname(name) do
@@ -38,7 +38,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   Gets a local actor by username.
   """
   @spec get_local_actor_by_name(String.t()) ::
-          {:commit, Actor.t()} | {:ignore, nil}
+          {:commit, ActorModel.t()} | {:ignore, nil}
   def get_local_actor_by_name(name) do
     Cachex.fetch(@cache, "local_actor_" <> name, fn "local_actor_" <> name ->
       case Actors.get_local_actor_by_name(name) do
@@ -195,7 +195,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   @doc """
   Gets a relay.
   """
-  @spec get_relay :: {:commit, Actor.t()} | {:ignore, nil}
+  @spec get_relay :: {:commit, ActorModel.t()} | {:ignore, nil}
   def get_relay do
     Cachex.fetch(@cache, "relay_actor", &Relay.get_actor/0)
   end

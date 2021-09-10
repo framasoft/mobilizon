@@ -19,6 +19,10 @@ defmodule Mobilizon.Federation.WebFinger do
   require Logger
   import SweetXml
 
+  @doc """
+  Returns the Web Host Metadata (for `/.well-known/host-meta`) representation for the instance, following RFC6414.
+  """
+  @spec host_meta :: String.t()
   def host_meta do
     base_url = Endpoint.url()
     %URI{host: host} = URI.parse(base_url)
@@ -47,6 +51,10 @@ defmodule Mobilizon.Federation.WebFinger do
     |> XmlBuilder.to_doc()
   end
 
+  @doc """
+  Returns the Webfinger representation for the instance, following RFC7033.
+  """
+  @spec webfinger(String.t(), String.t()) :: {:ok, map} | {:error, :actor_not_found}
   def webfinger(resource, "JSON") do
     host = Endpoint.host()
     regex = ~r/(acct:)?(?<name>\w+)@#{host}/
@@ -61,11 +69,14 @@ defmodule Mobilizon.Federation.WebFinger do
             {:ok, represent_actor(actor, "JSON")}
 
           _e ->
-            {:error, "Couldn't find actor"}
+            {:error, :actor_not_found}
         end
     end
   end
 
+  @doc """
+  Return an `Mobilizon.Actors.Actor` Webfinger representation (as JSON)
+  """
   @spec represent_actor(Actor.t()) :: map()
   @spec represent_actor(Actor.t(), String.t()) :: map()
   def represent_actor(%Actor{} = actor), do: represent_actor(actor, "JSON")
@@ -89,6 +100,7 @@ defmodule Mobilizon.Federation.WebFinger do
     }
   end
 
+  @spec maybe_add_avatar(list(map()), Actor.t()) :: list(map())
   defp maybe_add_avatar(data, %Actor{avatar: avatar}) when not is_nil(avatar) do
     data ++
       [
@@ -102,6 +114,7 @@ defmodule Mobilizon.Federation.WebFinger do
 
   defp maybe_add_avatar(data, _actor), do: data
 
+  @spec maybe_add_profile_page(list(map()), Actor.t()) :: list(map())
   defp maybe_add_profile_page(data, %Actor{type: :Group, url: url}) do
     data ++
       [
@@ -115,35 +128,69 @@ defmodule Mobilizon.Federation.WebFinger do
 
   defp maybe_add_profile_page(data, _actor), do: data
 
+  @type finger_errors ::
+          :host_not_found | :address_invalid | :http_error | :webfinger_information_not_json
+
   @doc """
   Finger an actor to retreive it's ActivityPub ID/URL
 
-  Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`) with `find_webfinger_endpoint/1` and then performs a Webfinger query to get the ActivityPub ID associated to an actor.
+  Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`) and then performs a Webfinger query to get the ActivityPub ID associated to an actor.
   """
-  @spec finger(String.t()) :: {:ok, String.t()} | {:error, atom()}
+  @spec finger(String.t()) ::
+          {:ok, String.t()}
+          | {:error, finger_errors}
   def finger(actor) do
     actor = String.trim_leading(actor, "@")
 
-    with address when is_binary(address) <- apply_webfinger_endpoint(actor),
-         false <- address_invalid(address),
-         {:ok, %{body: body, status: code}} when code in 200..299 <-
-           WebfingerClient.get(address),
-         {:ok, %{"url" => url}} <- webfinger_from_json(body) do
-      {:ok, url}
-    else
-      e ->
-        Logger.debug("Couldn't finger #{actor}")
-        Logger.debug(inspect(e))
-        {:error, e}
+    case validate_endpoint(actor) do
+      {:ok, address} ->
+        case fetch_webfinger_data(address) do
+          {:ok, %{"url" => url}} ->
+            {:ok, url}
+
+          {:error, err} ->
+            Logger.debug("Couldn't process webfinger data for #{actor}")
+            err
+        end
+
+      {:error, err} ->
+        Logger.debug("Couldn't find webfinger endpoint for #{actor}")
+        {:error, err}
     end
   end
 
-  @doc """
-  Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`)
-  """
+  @spec fetch_webfinger_data(String.t()) ::
+          {:ok, map()} | {:error, :webfinger_information_not_json | :http_error}
+  defp fetch_webfinger_data(address) do
+    case WebfingerClient.get(address) do
+      {:ok, %{body: body, status: code}} when code in 200..299 ->
+        webfinger_from_json(body)
+
+      _ ->
+        {:error, :http_error}
+    end
+  end
+
+  @spec validate_endpoint(String.t()) ::
+          {:ok, String.t()} | {:error, :address_invalid | :host_not_found}
+  defp validate_endpoint(actor) do
+    case apply_webfinger_endpoint(actor) do
+      address when is_binary(address) ->
+        if address_invalid(address) do
+          {:error, :address_invalid}
+        else
+          {:ok, address}
+        end
+
+      _ ->
+        {:error, :host_not_found}
+    end
+  end
+
+  # Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`)
   @spec find_webfinger_endpoint(String.t()) ::
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
-  def find_webfinger_endpoint(domain) when is_binary(domain) do
+  defp find_webfinger_endpoint(domain) when is_binary(domain) do
     with {:ok, %{body: body}} <- fetch_document("http://#{domain}/.well-known/host-meta"),
          link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}

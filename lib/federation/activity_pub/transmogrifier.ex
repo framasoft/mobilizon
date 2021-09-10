@@ -32,6 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   @doc """
   Handle incoming activities
   """
+  @spec handle_incoming(map()) :: :error | {:ok, any(), struct()}
   def handle_incoming(%{"id" => nil}), do: :error
   def handle_incoming(%{"id" => ""}), do: :error
 
@@ -1107,7 +1108,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   defp is_group_object_gone(object_id) do
     case ActivityPub.fetch_object_from_url(object_id, force: true) do
-      {:error, error_message, object} when error_message in ["Gone", "Not found"] ->
+      {:error, error_message, object} when error_message in [:http_gone, :http_not_found] ->
         {:ok, object}
 
       # comments are just emptied

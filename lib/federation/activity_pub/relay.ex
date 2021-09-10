@@ -138,7 +138,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   defp fetch_object(object) when is_binary(object), do: {object, object}
 
-  @spec fetch_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec fetch_actor(String.t()) ::
+          {:ok, String.t()} | {:error, WebFinger.finger_errors() | :bad_url}
   # Dirty hack
   defp fetch_actor("https://" <> address), do: fetch_actor(address)
   defp fetch_actor("http://" <> address), do: fetch_actor(address)
@@ -154,26 +155,15 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
         check_actor("relay@#{host}")
 
       true ->
-        {:error, "Bad URL"}
+        {:error, :bad_url}
     end
   end
 
-  @spec check_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec check_actor(String.t()) :: {:ok, String.t()} | {:error, WebFinger.finger_errors()}
   defp check_actor(username_and_domain) do
     case Actors.get_actor_by_name(username_and_domain) do
       %Actor{url: url} -> {:ok, url}
-      nil -> finger_actor(username_and_domain)
-    end
-  end
-
-  @spec finger_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
-  defp finger_actor(nickname) do
-    case WebFinger.finger(nickname) do
-      {:ok, url} when is_binary(url) ->
-        {:ok, url}
-
-      _e ->
-        {:error, "No ActivityPub URL found in WebFinger"}
+      nil -> WebFinger.finger(username_and_domain)
     end
   end
 end

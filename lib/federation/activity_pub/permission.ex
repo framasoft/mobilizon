@@ -15,6 +15,15 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
 
   @type object :: %{id: String.t(), url: String.t()}
 
+  @type permissions_member_role :: nil | :member | :moderator | :administrator
+
+  @type t :: %__MODULE__{
+          access: permissions_member_role,
+          create: permissions_member_role,
+          update: permissions_member_role,
+          delete: permissions_member_role
+        }
+
   @doc """
   Check that actor can access the object
   """

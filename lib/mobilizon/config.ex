@@ -5,6 +5,7 @@ defmodule Mobilizon.Config do
 
   alias Mobilizon.Actors
   alias Mobilizon.Service.GitStatus
+  require Logger
 
   @spec instance_config :: keyword
   def instance_config, do: Application.get_env(:mobilizon, :instance)
@@ -35,10 +36,10 @@ defmodule Mobilizon.Config do
         "instance_long_description"
       )
 
-  @spec instance_slogan :: String.t()
+  @spec instance_slogan :: String.t() | nil
   def instance_slogan, do: Mobilizon.Admin.get_admin_setting_value("instance", "instance_slogan")
 
-  @spec contact :: String.t()
+  @spec contact :: String.t() | nil
   def contact do
     Mobilizon.Admin.get_admin_setting_value("instance", "contact")
   end
@@ -53,7 +54,7 @@ defmodule Mobilizon.Config do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_type", "DEFAULT")
   end
 
-  @spec instance_terms_url :: String.t()
+  @spec instance_terms_url :: String.t() | nil
   def instance_terms_url do
     Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_url")
   end
@@ -225,6 +226,7 @@ defmodule Mobilizon.Config do
   @spec ldap_enabled? :: boolean()
   def ldap_enabled?, do: get([:ldap, :enabled], false)
 
+  @spec instance_resource_providers :: list(%{type: atom, software: atom, endpoint: String.t()})
   def instance_resource_providers do
     types = get_in(Application.get_env(:mobilizon, Mobilizon.Service.ResourceProviders), [:types])
 
@@ -248,20 +250,25 @@ defmodule Mobilizon.Config do
     end
   end
 
+  @spec instance_group_feature_enabled? :: boolean
   def instance_group_feature_enabled?,
     do: :mobilizon |> Application.get_env(:groups) |> Keyword.get(:enabled)
 
+  @spec instance_event_creation_enabled? :: boolean
   def instance_event_creation_enabled?,
     do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:creation)
 
+  @spec anonymous_actor_id :: binary | integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
+  @spec relay_actor_id :: binary | integer
   def relay_actor_id, do: get_cached_value(:relay_actor_id)
+  @spec admin_settings :: map
   def admin_settings, do: get_cached_value(:admin_config)
 
-  @spec get(module | atom) :: any
+  @spec get(key :: module | atom) :: any
   def get(key), do: get(key, nil)
 
-  @spec get([module | atom]) :: any
+  @spec get(keys :: [module | atom], default :: any) :: any
   def get([key], default), do: get(key, default)
 
   def get([parent_key | keys], default) do
@@ -271,10 +278,10 @@ defmodule Mobilizon.Config do
     end
   end
 
-  @spec get(module | atom, any) :: any
+  @spec get(key :: module | atom, default :: any) :: any
   def get(key, default), do: Application.get_env(:mobilizon, key, default)
 
-  @spec get!(module | atom) :: any
+  @spec get!(key :: module | atom) :: any
   def get!(key) do
     value = get(key, nil)
 
@@ -285,6 +292,7 @@ defmodule Mobilizon.Config do
     end
   end
 
+  @spec put(keys :: [module | atom], value :: any) :: :ok
   def put([key], value), do: put(key, value)
 
   def put([parent_key | keys], value) do
@@ -295,6 +303,7 @@ defmodule Mobilizon.Config do
     Application.put_env(:mobilizon, parent_key, parent)
   end
 
+  @spec put(keys :: module | atom, value :: any) :: :ok
   def put(key, value) do
     Application.put_env(:mobilizon, key, value)
   end
@@ -302,11 +311,16 @@ defmodule Mobilizon.Config do
   @spec to_boolean(boolean | String.t()) :: boolean
   defp to_boolean(boolean), do: "true" == String.downcase("#{boolean}")
 
+  @spec get_cached_value(atom) :: String.t() | integer | map
   defp get_cached_value(key) do
     case Cachex.fetch(:config, key, fn key ->
            case create_cache(key) do
-             value when not is_nil(value) -> {:commit, value}
-             err -> {:ignore, err}
+             {:ok, value} when not is_nil(value) ->
+               {:commit, value}
+
+             {:error, err} ->
+               Logger.debug("Failed to cache config value, returned: #{inspect(err)}")
+               {:ignore, err}
            end
          end) do
       {status, value} when status in [:ok, :commit] -> value
@@ -314,23 +328,29 @@ defmodule Mobilizon.Config do
     end
   end
 
-  @spec create_cache(atom()) :: integer()
+  @spec create_cache(atom()) :: {:ok, integer() | map()} | {:error, Ecto.Changeset.t()}
   defp create_cache(:anonymous_actor_id) do
-    with {:ok, %{id: actor_id}} <- Actors.get_or_create_internal_actor("anonymous") do
-      actor_id
+    case Actors.get_or_create_internal_actor("anonymous") do
+      {:ok, %{id: actor_id}} ->
+        {:ok, actor_id}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
-  @spec create_cache(atom()) :: integer()
   defp create_cache(:relay_actor_id) do
-    with {:ok, %{id: actor_id}} <- Actors.get_or_create_internal_actor("relay") do
-      actor_id
+    case Actors.get_or_create_internal_actor("relay") do
+      {:ok, %{id: actor_id}} ->
+        {:ok, actor_id}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
-  @spec create_cache(atom()) :: map()
   defp create_cache(:admin_config) do
-    %{
+    data = %{
       instance_description: instance_description(),
       instance_long_description: instance_long_description(),
       instance_name: instance_name(),
@@ -346,12 +366,16 @@ defmodule Mobilizon.Config do
       instance_rules: instance_rules(),
       instance_languages: instance_languages()
     }
+
+    {:ok, data}
   end
 
+  @spec clear_config_cache :: {:ok | :error, integer}
   def clear_config_cache do
     Cachex.clear(:config)
   end
 
+  @spec generate_terms(String.t()) :: String.t()
   def generate_terms(locale) do
     Gettext.put_locale(locale)
 
@@ -366,6 +390,7 @@ defmodule Mobilizon.Config do
     )
   end
 
+  @spec generate_privacy(String.t()) :: String.t()
   def generate_privacy(locale) do
     Gettext.put_locale(locale)
 
@@ -376,6 +401,7 @@ defmodule Mobilizon.Config do
     )
   end
 
+  @spec instance_contact_html :: String.t()
   defp instance_contact_html do
     contact = contact()
 

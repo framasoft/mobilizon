@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Activity do
   """
 
   @type t :: %__MODULE__{
-          data: String.t(),
+          data: map(),
           local: boolean,
           actor: Actor.t(),
           recipients: [String.t()]

@@ -143,11 +143,11 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, _activity, entity} ->
           {:ok, entity}
 
-        {:error, "Gone"} ->
-          {:error, "Gone", entity}
+        {:error, :http_gone} ->
+          {:error, :http_gone, entity}
 
-        {:error, "Not found"} ->
-          {:error, "Not found", entity}
+        {:error, :http_not_found} ->
+          {:error, :http_not_found, entity}
 
         {:error, "Object origin check failed"} ->
           {:error, "Object origin check failed"}
