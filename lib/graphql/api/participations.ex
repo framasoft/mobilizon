@@ -11,23 +11,23 @@ defmodule Mobilizon.GraphQL.API.Participations do
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Web.Email.Participation
 
-  @spec join(Event.t(), Actor.t(), map()) :: {:ok, Activity.t(), Participant.t()}
+  @spec join(Event.t(), Actor.t(), map()) ::
+          {:ok, Activity.t(), Participant.t()} | {:error, :already_participant}
   def join(%Event{id: event_id} = event, %Actor{id: actor_id} = actor, args \\ %{}) do
-    with {:error, :participant_not_found} <-
-           Mobilizon.Events.get_participant(event_id, actor_id, args),
-         {:ok, activity, participant} <-
-           ActivityPub.join(event, actor, Map.get(args, :local, true), %{metadata: args}) do
-      {:ok, activity, participant}
+    case Mobilizon.Events.get_participant(event_id, actor_id, args) do
+      {:ok, %Participant{}} ->
+        {:error, :already_participant}
+
+      {:error, :participant_not_found} ->
+        ActivityPub.join(event, actor, Map.get(args, :local, true), %{metadata: args})
     end
   end
 
-  @spec leave(Event.t(), Actor.t()) :: {:ok, Activity.t(), Participant.t()}
-  def leave(%Event{} = event, %Actor{} = actor, args \\ %{}) do
-    with {:ok, activity, participant} <-
-           ActivityPub.leave(event, actor, Map.get(args, :local, true), %{metadata: args}) do
-      {:ok, activity, participant}
-    end
-  end
+  @spec leave(Event.t(), Actor.t(), map()) ::
+          {:ok, Activity.t(), Participant.t()}
+          | {:error, :is_only_organizer | :participant_not_found | Ecto.Changeset.t()}
+  def leave(%Event{} = event, %Actor{} = actor, args \\ %{}),
+    do: ActivityPub.leave(event, actor, Map.get(args, :local, true), %{metadata: args})
 
   @doc """
   Update participation status
@@ -36,7 +36,6 @@ defmodule Mobilizon.GraphQL.API.Participations do
   def update(%Participant{} = participation, %Actor{} = moderator, :participant),
     do: accept(participation, moderator)
 
-  @spec update(Participant.t(), Actor.t(), atom()) :: {:ok, Activity.t(), Participant.t()}
   def update(%Participant{} = participation, %Actor{} = _moderator, :not_approved) do
     with {:ok, %Participant{} = participant} <-
            Events.update_participant(participation, %{role: :not_approved}) do
@@ -45,7 +44,6 @@ defmodule Mobilizon.GraphQL.API.Participations do
     end
   end
 
-  @spec update(Participant.t(), Actor.t(), atom()) :: {:ok, Activity.t(), Participant.t()}
   def update(%Participant{} = participation, %Actor{} = moderator, :rejected),
     do: reject(participation, moderator)
 

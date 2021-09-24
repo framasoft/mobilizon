@@ -6,56 +6,99 @@ defmodule Mobilizon.Service.Export.Common do
   alias Mobilizon.{Actors, Events, Posts, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
-  @spec fetch_actor_event_feed(String.t(), integer()) :: String.t()
+  @spec fetch_actor_event_feed(String.t(), integer()) ::
+          {:ok, Actor.t(), [Event.t()], [Post.t()]}
+          | {:error, :actor_not_public | :actor_not_found}
   def fetch_actor_event_feed(name, limit) do
-    with %Actor{} = actor <- Actors.get_actor_by_name(name),
-         {:visibility, true} <- {:visibility, Actor.is_public_visibility?(actor)},
-         %Page{elements: events} <- Events.list_public_events_for_actor(actor, 1, limit),
-         %Page{elements: posts} <- Posts.get_public_posts_for_group(actor, 1, limit) do
-      {:ok, actor, events, posts}
-    else
-      err ->
-        {:error, err}
+    case Actors.get_actor_by_name(name) do
+      %Actor{} = actor ->
+        if Actor.is_public_visibility?(actor) do
+          %Page{elements: events} = Events.list_public_events_for_actor(actor, 1, limit)
+          %Page{elements: posts} = Posts.get_public_posts_for_group(actor, 1, limit)
+          {:ok, actor, events, posts}
+        else
+          {:error, :actor_not_public}
+        end
+
+      nil ->
+        {:error, :actor_not_found}
     end
   end
 
-  # Only events, not posts
-  @spec fetch_events_from_token(String.t(), integer()) :: String.t()
-  def fetch_events_from_token(token, limit) do
-    with {:ok, uuid} <- ShortUUID.decode(token),
-         {:ok, _uuid} <- Ecto.UUID.cast(uuid),
-         %FeedToken{actor: actor, user: %User{} = user} <- Events.get_feed_token(uuid) do
-      case actor do
-        %Actor{} = actor ->
-          %{
-            type: :actor,
-            actor: actor,
-            events: fetch_actor_private_events(actor, limit),
-            user: user,
-            token: token
-          }
+  @typep token_feed_data :: %{
+           type: :actor | :user,
+           actor: Actor.t() | nil,
+           user: User.t(),
+           events: [Event.t()],
+           token: String.t()
+         }
 
-        nil ->
-          with actors <- Users.get_actors_for_user(user),
-               events <-
-                 actors
-                 |> Enum.map(&fetch_actor_private_events(&1, limit))
-                 |> Enum.concat() do
-            %{type: :user, events: events, user: user, token: token, actor: nil}
-          end
-      end
+  # Only events, not posts
+  @spec fetch_events_from_token(String.t(), integer()) ::
+          token_feed_data | {:error, :bad_token | :token_not_found}
+  def fetch_events_from_token(token, limit) do
+    case uuid_from_token(token) do
+      {:ok, uuid} ->
+        case Events.get_feed_token(uuid) do
+          nil ->
+            {:error, :token_not_found}
+
+          %FeedToken{actor: actor, user: %User{} = user} ->
+            produce_actor_feed(actor, user, token, limit)
+        end
+
+      {:error, :bad_token} ->
+        {:error, :bad_token}
+    end
+  end
+
+  @spec uuid_from_token(String.t()) :: {:ok, String.t()} | {:error, :bad_token}
+  defp uuid_from_token(token) do
+    case ShortUUID.decode(token) do
+      {:ok, uuid} ->
+        case Ecto.UUID.cast(uuid) do
+          {:ok, _uuid} ->
+            {:ok, uuid}
+
+          :error ->
+            {:error, :bad_token}
+        end
+
+      {:error, _err} ->
+        {:error, :bad_token}
+    end
+  end
+
+  @spec produce_actor_feed(Actor.t() | nil, User.t(), String.t(), integer()) :: token_feed_data
+  defp produce_actor_feed(%Actor{} = actor, %User{} = user, token, limit) do
+    %{
+      type: :actor,
+      actor: actor,
+      events: fetch_actor_private_events(actor, limit),
+      user: user,
+      token: token
+    }
+  end
+
+  defp produce_actor_feed(nil, %User{} = user, token, limit) do
+    with actors <- Users.get_actors_for_user(user),
+         events <-
+           actors
+           |> Enum.map(&fetch_actor_private_events(&1, limit))
+           |> Enum.concat() do
+      %{type: :user, events: events, user: user, token: token, actor: nil}
     end
   end
 
   @spec fetch_instance_public_content(integer()) :: {:ok, list(Event.t()), list(Post.t())}
   def fetch_instance_public_content(limit) do
-    with %Page{elements: events} <- Events.list_public_local_events(1, limit),
-         %Page{elements: posts} <- Posts.list_public_local_posts(1, limit) do
-      {:ok, events, posts}
-    end
+    %Page{elements: events} = Events.list_public_local_events(1, limit)
+    %Page{elements: posts} = Posts.list_public_local_posts(1, limit)
+    {:ok, events, posts}
   end
 
   @spec fetch_actor_private_events(Actor.t(), integer()) :: list(Event.t())

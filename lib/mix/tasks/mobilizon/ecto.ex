@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Mobilizon.Ecto do
   @doc """
   Ensures the given repository's migrations path exists on the file system.
   """
-  @spec ensure_migrations_path(Ecto.Repo.t(), Keyword.t()) :: String.t()
+  @spec ensure_migrations_path(Ecto.Repo.t(), Keyword.t()) :: String.t() | no_return
   def ensure_migrations_path(repo, opts) do
     path = opts[:migrations_path] || Path.join(source_repo_priv(repo), "migrations")
 
@@ -39,6 +39,7 @@ defmodule Mix.Tasks.Mobilizon.Ecto do
     Path.join(Application.app_dir(:mobilizon), priv)
   end
 
+  @spec raise_missing_migrations(String.t(), Ecto.Repo.t()) :: no_return
   defp raise_missing_migrations(path, repo) do
     raise("""
     Could not find migrations directory #{inspect(path)}

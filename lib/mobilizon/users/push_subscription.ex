@@ -25,6 +25,7 @@ defmodule Mobilizon.Users.PushSubscription do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(push_subscription, attrs) do
     push_subscription
     |> cast(attrs, [:user_id, :endpoint, :auth, :p256dh])

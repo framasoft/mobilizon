@@ -424,7 +424,7 @@ defmodule Mobilizon.EventsTest do
     end
 
     test "delete_participant/1 deletes the participant", %{participant: participant} do
-      assert {:ok, %Participant{}} = Events.delete_participant(participant)
+      assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
     end
   end
 

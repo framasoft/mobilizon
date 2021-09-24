@@ -56,7 +56,7 @@ defmodule Mobilizon.Events.Session do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = session, attrs) do
     session
     |> cast(attrs, @attrs)

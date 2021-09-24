@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Clean do
     end)
   end
 
-  @spec result(boolean(), boolean()) :: :ok
+  @spec result(boolean(), non_neg_integer()) :: :ok
   defp result(dry_run, nb_deleted_users) do
     if dry_run do
       shell_info("#{nb_deleted_users} users would have been deleted")

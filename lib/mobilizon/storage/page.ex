@@ -12,9 +12,9 @@ defmodule Mobilizon.Storage.Page do
     :elements
   ]
 
-  @type t :: %__MODULE__{
+  @type t(structure) :: %__MODULE__{
           total: integer,
-          elements: struct
+          elements: list(structure)
         }
 
   @doc """
@@ -23,7 +23,7 @@ defmodule Mobilizon.Storage.Page do
   `field` is use to define the field that will be used for the count aggregate, which should be the same as the field used for order_by
     See https://stackoverflow.com/q/12693089/10204399
   """
-  @spec build_page(Ecto.Query.t(), integer | nil, integer | nil, atom()) :: t
+  @spec build_page(Ecto.Queryable.t(), integer | nil, integer | nil, atom()) :: t(any)
   def build_page(query, page, limit, field \\ :id) do
     [total, elements] =
       [
@@ -39,7 +39,7 @@ defmodule Mobilizon.Storage.Page do
   @doc """
   Add limit and offset to the query.
   """
-  @spec paginate(Ecto.Query.t() | struct, integer | nil, integer | nil) :: Ecto.Query.t()
+  @spec paginate(Ecto.Queryable.t() | struct, integer | nil, integer | nil) :: Ecto.Query.t()
   def paginate(query, page \\ 1, size \\ 10)
 
   def paginate(query, page, _size) when is_nil(page), do: paginate(query)

@@ -338,10 +338,10 @@ defmodule Mobilizon.Users do
   """
   def get_setting!(user_id), do: Repo.get!(Setting, user_id)
 
-  @spec get_setting(User.t()) :: Setting.t()
+  @spec get_setting(User.t()) :: Setting.t() | nil
   def get_setting(%User{id: user_id}), do: get_setting(user_id)
 
-  @spec get_setting(String.t() | integer()) :: Setting.t()
+  @spec get_setting(String.t() | integer()) :: Setting.t() | nil
   def get_setting(user_id), do: Repo.get(Setting, user_id)
 
   @doc """
@@ -356,6 +356,7 @@ defmodule Mobilizon.Users do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_setting(map()) :: {:ok, Setting.t()} | {:error, Ecto.Changeset.t()}
   def create_setting(attrs \\ %{}) do
     %Setting{}
     |> Setting.changeset(attrs)
@@ -445,6 +446,8 @@ defmodule Mobilizon.Users do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_push_subscription(map()) ::
+          {:ok, PushSubscription.t()} | {:error, Ecto.Changeset.t()}
   def create_push_subscription(attrs \\ %{}) do
     %PushSubscription{}
     |> PushSubscription.changeset(attrs)

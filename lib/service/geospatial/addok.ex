@@ -93,7 +93,8 @@ defmodule Mobilizon.Service.Geospatial.Addok do
     if is_nil(value), do: url, else: do_add_parameter(url, key, value)
   end
 
-  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  @spec do_add_parameter(String.t(), :coords | :type, %{lat: float, lon: float} | :administrative) ::
+          String.t()
   defp do_add_parameter(url, :coords, coords),
     do: "#{url}&lat=#{coords.lat}&lon=#{coords.lon}"
 

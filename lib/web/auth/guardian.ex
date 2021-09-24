@@ -23,6 +23,8 @@ defmodule Mobilizon.Web.Auth.Guardian do
     {:error, :unknown_resource}
   end
 
+  @spec resource_from_claims(any) ::
+          {:error, :invalid_id | :no_result | :no_claims} | {:ok, Mobilizon.Users.User.t()}
   def resource_from_claims(%{"sub" => "User:" <> uid_str}) do
     Logger.debug(fn -> "Receiving claim for user #{uid_str}" end)
 
@@ -40,7 +42,7 @@ defmodule Mobilizon.Web.Auth.Guardian do
   end
 
   def resource_from_claims(_) do
-    {:error, :reason_for_error}
+    {:error, :no_claims}
   end
 
   def after_encode_and_sign(resource, claims, token, _options) do

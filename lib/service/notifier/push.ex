@@ -66,12 +66,14 @@ defmodule Mobilizon.Service.Notifier.Push do
     Map.get(@default_behavior, activity_setting, false)
   end
 
+  @spec send_subscription(Activity.t(), any, Keyword.t()) :: no_return
   defp send_subscription(activity, subscription, options) do
     activity
     |> payload(options)
     |> WebPushEncryption.send_web_push(subscription)
   end
 
+  @spec payload(Activity.t(), Keyword.t()) :: String.t()
   defp payload(%Activity{} = activity, options) do
     activity
     |> Utils.add_activity_object()

@@ -25,7 +25,7 @@ defmodule Mobilizon.Web.Auth.Context do
   defp set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
 
-    user_agent = Plug.Conn.get_req_header(conn, "user-agent") |> List.first()
+    user_agent = conn |> Plug.Conn.get_req_header("user-agent") |> List.first()
 
     {conn, context} =
       case Guardian.Plug.current_resource(conn) do
@@ -41,7 +41,7 @@ defmodule Mobilizon.Web.Auth.Context do
               },
               query_string: conn.query_string,
               env: %{
-                REQUEST_ID: Plug.Conn.get_resp_header(conn, "x-request-id") |> List.first(),
+                REQUEST_ID: conn |> Plug.Conn.get_resp_header("x-request-id") |> List.first(),
                 SERVER_NAME: conn.host
               }
             })

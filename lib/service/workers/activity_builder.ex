@@ -12,15 +12,22 @@ defmodule Mobilizon.Service.Workers.ActivityBuilder do
   use Mobilizon.Service.Workers.Helper, queue: "activity"
 
   @impl Oban.Worker
+  @spec perform(Job.t()) :: {:ok, Activity.t()} | {:error, Ecto.Changeset.t()}
   def perform(%Job{args: args}) do
-    with {"build_activity", args} <- Map.pop(args, "op"),
-         {:ok, %Activity{} = activity} <- build_activity(args),
-         preloaded_activity <- Activities.preload_activity(activity) do
-      notify_activity(preloaded_activity)
+    {"build_activity", args} = Map.pop(args, "op")
+
+    case build_activity(args) do
+      {:ok, %Activity{} = activity} ->
+        activity
+        |> Activities.preload_activity()
+        |> notify_activity()
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
-  @spec build_activity(map()) :: {:ok, Activity.t()}
+  @spec build_activity(map()) :: {:ok, Activity.t()} | {:error, Ecto.Changeset.t()}
   def build_activity(args) do
     Activities.create_activity(args)
   end

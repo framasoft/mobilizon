@@ -75,11 +75,18 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets an actor with preloaded relations.
   """
-  @spec get_actor_with_preload(integer | String.t()) :: Actor.t() | nil
+  @spec get_actor_with_preload(integer | String.t(), boolean) :: Actor.t() | nil
   def get_actor_with_preload(id, include_suspended \\ false) do
     id
     |> actor_with_preload_query(include_suspended)
     |> Repo.one()
+  end
+
+  @spec get_actor_with_preload!(integer | String.t(), boolean) :: Actor.t()
+  def get_actor_with_preload!(id, include_suspended \\ false) do
+    id
+    |> actor_with_preload_query(include_suspended)
+    |> Repo.one!()
   end
 
   @doc """
@@ -148,9 +155,7 @@ defmodule Mobilizon.Actors do
   """
   @spec get_actor_by_name(String.t(), ActorType.t() | nil) :: Actor.t() | nil
   def get_actor_by_name(name, type \\ nil) do
-    query = from(a in Actor)
-
-    query
+    Actor
     |> filter_by_type(type)
     |> filter_by_name(name |> String.trim() |> String.trim_leading("@") |> String.split("@"))
     |> Repo.one()
@@ -161,9 +166,7 @@ defmodule Mobilizon.Actors do
   """
   @spec get_local_actor_by_name(String.t()) :: Actor.t() | nil
   def get_local_actor_by_name(name) do
-    query = from(a in Actor)
-
-    query
+    Actor
     |> filter_by_name([name])
     |> Repo.one()
   end
@@ -210,7 +213,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Creates a new person actor.
   """
-  @spec new_person(map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
+  @spec new_person(map, default_actor :: boolean()) ::
+          {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def new_person(args, default_actor \\ false) do
     args = Map.put(args, :keys, Crypto.generate_rsa_2048_private_key())
 
@@ -323,8 +327,8 @@ defmodule Mobilizon.Actors do
           String.t(),
           boolean,
           boolean,
-          integer,
-          integer
+          integer | nil,
+          integer | nil
         ) :: Page.t()
   def list_actors(
         type \\ :Person,
@@ -367,7 +371,23 @@ defmodule Mobilizon.Actors do
     |> Page.build_page(page, limit)
   end
 
-  @spec filter_actors(Ecto.Query.t(), String.t(), String.t(), String.t(), boolean(), boolean()) ::
+  @spec list_suspended_actors_to_purge(Keyword.t()) :: list(Actors.t())
+  def list_suspended_actors_to_purge(options) do
+    suspension_days = Keyword.get(options, :suspension, 30)
+
+    Actor
+    |> filter_suspended_days(suspension_days)
+    |> Repo.all()
+  end
+
+  @spec filter_actors(
+          Ecto.Queryable.t(),
+          String.t(),
+          String.t(),
+          String.t(),
+          boolean(),
+          boolean()
+        ) ::
           Ecto.Query.t()
   defp filter_actors(
          query,
@@ -403,13 +423,26 @@ defmodule Mobilizon.Actors do
   defp filter_remote(query, true), do: filter_local(query)
   defp filter_remote(query, false), do: filter_external(query)
 
-  @spec filter_suspended(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  @spec filter_suspended(Ecto.Queryable.t(), boolean()) :: Ecto.Query.t()
   defp filter_suspended(query, true), do: where(query, [a], a.suspended)
   defp filter_suspended(query, false), do: where(query, [a], not a.suspended)
 
-  @spec filter_out_anonymous_actor_id(Ecto.Query.t(), integer() | String.t()) :: Ecto.Query.t()
+  @spec filter_out_anonymous_actor_id(Ecto.Queryable.t(), integer() | String.t()) ::
+          Ecto.Query.t()
   defp filter_out_anonymous_actor_id(query, anonymous_actor_id),
     do: where(query, [a], a.id != ^anonymous_actor_id)
+
+  @spec filter_suspended_days(Ecto.Queryable.t(), integer()) :: Ecto.Query.t()
+  defp filter_suspended_days(query, suspended_days) do
+    expiration_date = DateTime.add(DateTime.utc_now(), suspended_days * 24 * -3600)
+
+    where(
+      query,
+      [a],
+      a.suspended and
+        a.updated_at > ^expiration_date
+    )
+  end
 
   @doc """
   Returns the list of local actors by their username.
@@ -486,14 +519,14 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  @spec get_local_group_by_url(String.t()) :: Actor.t()
+  @spec get_local_group_by_url(String.t()) :: Actor.t() | nil
   def get_local_group_by_url(group_url) do
     group_query()
     |> where([q], q.url == ^group_url and is_nil(q.domain))
     |> Repo.one()
   end
 
-  @spec get_group_by_members_url(String.t()) :: Actor.t()
+  @spec get_group_by_members_url(String.t()) :: Actor.t() | nil
   def get_group_by_members_url(members_url) do
     group_query()
     |> where([q], q.members_url == ^members_url)
@@ -531,7 +564,7 @@ defmodule Mobilizon.Actors do
         {:ok, %{insert_group: %Actor{} = group, add_admin_member: %Member{} = _admin_member}} ->
           {:ok, group}
 
-        {:error, %Ecto.Changeset{} = err} ->
+        {:error, _err, %Ecto.Changeset{} = err, _} ->
           {:error, err}
       end
     else
@@ -606,7 +639,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets a single member.
   """
-  @spec get_member(integer | String.t()) :: {:ok, Member.t()} | nil
+  @spec get_member(integer | String.t()) :: Member.t() | nil
   def get_member(id) do
     Member
     |> Repo.get(id)
@@ -623,7 +656,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets a single member of an actor (for example a group).
   """
-  @spec get_member(integer | String.t(), integer | String.t()) ::
+  @spec get_member(actor_id :: integer | String.t(), parent_id :: integer | String.t()) ::
           {:ok, Member.t()} | {:error, :member_not_found}
   def get_member(actor_id, parent_id) do
     case Repo.get_by(Member, actor_id: actor_id, parent_id: parent_id) do
@@ -1190,31 +1223,35 @@ defmodule Mobilizon.Actors do
   @doc """
   Makes an actor following another actor.
   """
-  @spec follow(Actor.t(), Actor.t(), String.t() | nil, boolean | nil) ::
-          {:ok, Follower.t()} | {:error, atom, String.t()}
+  @spec follow(
+          followed :: Actor.t(),
+          follower :: Actor.t(),
+          url :: String.t() | nil,
+          approved :: boolean | nil
+        ) ::
+          {:ok, Follower.t()}
+          | {:error, :already_following | :followed_suspended | Ecto.Changeset.t()}
   def follow(%Actor{} = followed, %Actor{} = follower, url \\ nil, approved \\ true) do
-    with {:suspended, false} <- {:suspended, followed.suspended},
-         # Check if followed has blocked follower
-         {:already_following, nil} <- {:already_following, is_following(follower, followed)} do
-      Logger.info(
-        "Making #{Actor.preferred_username_and_domain(follower)} follow #{Actor.preferred_username_and_domain(followed)} " <>
-          "(approved: #{approved})"
-      )
-
-      create_follower(%{
-        "actor_id" => follower.id,
-        "target_actor_id" => followed.id,
-        "approved" => approved,
-        "url" => url
-      })
+    if followed.suspended do
+      {:error, :followed_suspended}
     else
-      {:already_following, %Follower{}} ->
-        {:error, :already_following,
-         "Could not follow actor: you are already following #{Actor.preferred_username_and_domain(followed)}"}
+      case is_following(follower, followed) do
+        %Follower{} ->
+          {:error, :already_following}
 
-      {:suspended, _} ->
-        {:error, :suspended,
-         "Could not follow actor: #{Actor.preferred_username_and_domain(followed)} has been suspended"}
+        nil ->
+          Logger.info(
+            "Making #{Actor.preferred_username_and_domain(follower)} follow #{Actor.preferred_username_and_domain(followed)} " <>
+              "(approved: #{approved})"
+          )
+
+          create_follower(%{
+            "actor_id" => follower.id,
+            "target_actor_id" => followed.id,
+            "approved" => approved,
+            "url" => url
+          })
+      end
     end
   end
 
@@ -1331,7 +1368,7 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @spec actor_by_username_or_name_query(Ecto.Query.t(), String.t()) :: Ecto.Query.t()
+  @spec actor_by_username_or_name_query(Ecto.Queryable.t(), String.t()) :: Ecto.Query.t()
   defp actor_by_username_or_name_query(query, ""), do: query
 
   defp actor_by_username_or_name_query(query, username) do
@@ -1358,7 +1395,7 @@ defmodule Mobilizon.Actors do
     )
   end
 
-  @spec actors_for_location(Ecto.Query.t(), String.t(), integer()) :: Ecto.Query.t()
+  @spec actors_for_location(Ecto.Queryable.t(), String.t(), integer()) :: Ecto.Query.t()
   defp actors_for_location(query, location, radius)
        when is_valid_string(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
@@ -1474,7 +1511,7 @@ defmodule Mobilizon.Actors do
     |> select([m, _a], m)
   end
 
-  @spec filter_member_role(Ecto.Query.t(), list(atom()) | atom()) :: Ecto.Query.t()
+  @spec filter_member_role(Ecto.Queryable.t(), list(atom()) | atom()) :: Ecto.Query.t()
   defp filter_member_role(query, []), do: query
 
   defp filter_member_role(query, roles) when is_list(roles) do
@@ -1597,24 +1634,24 @@ defmodule Mobilizon.Actors do
     |> order_by(desc: :updated_at)
   end
 
-  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_local(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_local(query) do
     from(a in query, where: is_nil(a.domain))
   end
 
-  @spec filter_external(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_external(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_external(query) do
     from(a in query, where: not is_nil(a.domain))
   end
 
-  @spec filter_follower_actors_external(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_follower_actors_external(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_follower_actors_external(query) do
     query
     |> where([_f, a], not is_nil(a.domain))
     |> preload([f, a], [:target_actor, :actor])
   end
 
-  @spec filter_by_type(Ecto.Query.t(), ActorType.t()) :: Ecto.Query.t()
+  @spec filter_by_type(Ecto.Queryable.t(), ActorType.t() | nil) :: Ecto.Queryable.t()
   defp filter_by_type(query, type)
        when type in [:Person, :Group, :Application, :Service, :Organisation] do
     from(a in query, where: a.type == ^type)
@@ -1622,12 +1659,12 @@ defmodule Mobilizon.Actors do
 
   defp filter_by_type(query, _type), do: query
 
-  @spec filter_by_types(Ecto.Query.t(), [ActorType.t()]) :: Ecto.Query.t()
+  @spec filter_by_types(Ecto.Queryable.t(), [ActorType.t()]) :: Ecto.Query.t()
   defp filter_by_types(query, types) do
     from(a in query, where: a.type in ^types)
   end
 
-  @spec filter_by_minimum_visibility(Ecto.Query.t(), atom()) :: Ecto.Query.t()
+  @spec filter_by_minimum_visibility(Ecto.Queryable.t(), atom()) :: Ecto.Query.t()
   defp filter_by_minimum_visibility(query, :private), do: query
 
   defp filter_by_minimum_visibility(query, :restricted) do
@@ -1642,7 +1679,7 @@ defmodule Mobilizon.Actors do
     from(a in query, where: a.visibility == ^:public)
   end
 
-  @spec filter_by_name(query :: Ecto.Query.t(), [String.t()]) :: Ecto.Query.t()
+  @spec filter_by_name(query :: Ecto.Queryable.t(), [String.t()]) :: Ecto.Query.t()
   defp filter_by_name(query, [name]) do
     where(query, [a], a.preferred_username == ^name and is_nil(a.domain))
   end
@@ -1655,7 +1692,7 @@ defmodule Mobilizon.Actors do
     end
   end
 
-  @spec filter_followed_by_approved_status(Ecto.Query.t(), boolean() | nil) :: Ecto.Query.t()
+  @spec filter_followed_by_approved_status(Ecto.Queryable.t(), boolean() | nil) :: Ecto.Query.t()
   defp filter_followed_by_approved_status(query, nil), do: query
 
   defp filter_followed_by_approved_status(query, approved) do

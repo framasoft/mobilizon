@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.Workers.Helper do
   alias Mobilizon.Config
   alias Mobilizon.Service.Workers.Helper
 
+  @spec worker_args(atom()) :: Keyword.t()
   def worker_args(queue) do
     case Config.get([:workers, :retries, queue]) do
       nil -> []
@@ -18,6 +19,7 @@ defmodule Mobilizon.Service.Workers.Helper do
     end
   end
 
+  @spec sidekiq_backoff(integer, integer, integer) :: integer
   def sidekiq_backoff(attempt, pow \\ 4, base_backoff \\ 15) do
     backoff =
       :math.pow(attempt, pow) +
@@ -39,6 +41,8 @@ defmodule Mobilizon.Service.Workers.Helper do
 
       alias Oban.Job
 
+      @spec enqueue(String.t(), map(), Keyword.t()) ::
+              {:ok, Job.t()} | {:error, Ecto.Changeset.t()}
       def enqueue(operation, params, worker_args \\ []) do
         params = Map.merge(%{"op" => operation}, params)
         queue_atom = String.to_existing_atom(unquote(queue))

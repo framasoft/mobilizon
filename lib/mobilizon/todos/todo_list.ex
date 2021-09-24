@@ -34,6 +34,7 @@ defmodule Mobilizon.Todos.TodoList do
   @attrs @required_attrs ++ @optional_attrs
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(todo_list, attrs) do
     todo_list
     |> cast(attrs, @attrs)

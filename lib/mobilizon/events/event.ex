@@ -35,6 +35,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   @type t :: %__MODULE__{
+          id: String.t(),
           url: String.t(),
           local: boolean,
           begins_on: DateTime.t(),
@@ -53,7 +54,7 @@ defmodule Mobilizon.Events.Event do
           category: String.t(),
           options: EventOptions.t(),
           organizer_actor: Actor.t(),
-          attributed_to: Actor.t(),
+          attributed_to: Actor.t() | nil,
           physical_address: Address.t(),
           picture: Media.t(),
           media: [Media.t()],
@@ -130,7 +131,7 @@ defmodule Mobilizon.Events.Event do
   end
 
   @doc false
-  @spec changeset(t, map) :: Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Changeset.t()
   def changeset(%__MODULE__{} = event, attrs) do
     attrs = Map.update(attrs, :uuid, Ecto.UUID.generate(), & &1)
     attrs = Map.update(attrs, :url, Routes.page_url(Endpoint, :event, attrs.uuid), & &1)
@@ -289,4 +290,12 @@ defmodule Mobilizon.Events.Event do
 
   defp put_creator_if_published(%Changeset{} = changeset, _),
     do: cast_embed(changeset, :participant_stats)
+
+  @doc """
+  Whether we can show the event. Returns false if the organizer actor or group is suspended
+  """
+  @spec show?(t) :: boolean()
+  def show?(%__MODULE__{attributed_to: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{organizer_actor: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{}), do: true
 end

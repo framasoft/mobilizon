@@ -29,7 +29,7 @@ defmodule Mobilizon.Medias.File do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = file, attrs) do
     file
     |> cast(attrs, @attrs)

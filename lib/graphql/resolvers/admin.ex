@@ -311,7 +311,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, err} when is_binary(err) ->
+      {:error, err} ->
         {:error, err}
     end
   end
@@ -322,7 +322,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_binary(err) ->
+      {:error, err} ->
         {:error, err}
     end
   end
@@ -337,10 +337,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_binary(err) ->
-        {:error, err}
-
-      {:error, err} when is_binary(err) ->
+      {:error, err} ->
         {:error, err}
     end
   end
@@ -355,10 +352,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       {:ok, _activity, follow} ->
         {:ok, follow}
 
-      {:error, {:error, err}} when is_binary(err) ->
-        {:error, err}
-
-      {:error, err} when is_binary(err) ->
+      {:error, err} ->
         {:error, err}
     end
   end
@@ -385,16 +379,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         do: Map.put(args, :name, new_instance_name),
         else: args
 
-    with {:changes, true} <- {:changes, args != %{}},
-         %Actor{} = instance_actor <- Relay.get_actor(),
-         {:ok, _activity, _actor} <- ActivityPub.update(instance_actor, args, true) do
-      :ok
-    else
-      {:changes, false} ->
-        :ok
+    if args != %{} do
+      %Actor{} = instance_actor = Relay.get_actor()
 
-      err ->
-        err
+      case ActivityPub.update(instance_actor, args, true) do
+        {:ok, _activity, _actor} ->
+          :ok
+
+        {:error, _err} ->
+          {:error, :instance_actor_update_failure}
+      end
+    else
+      :ok
     end
   end
 end

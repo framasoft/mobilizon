@@ -199,14 +199,14 @@ defmodule Mobilizon.Web.Email.User do
         :ok
 
       _ ->
-        case Timex.before?(
-               Timex.shift(Map.get(user, key), hours: 1),
+        case DateTime.compare(
+               DateTime.add(Map.get(user, key), 3600),
                DateTime.utc_now() |> DateTime.truncate(:second)
              ) do
-          true ->
+          :lt ->
             :ok
 
-          false ->
+          _ ->
             {:error, :email_too_soon}
         end
     end

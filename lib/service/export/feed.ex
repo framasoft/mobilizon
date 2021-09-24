@@ -96,13 +96,13 @@ defmodule Mobilizon.Service.Export.Feed do
       {:ok, actor, events, posts} ->
         {:ok, build_actor_feed(actor, events, posts)}
 
-      err ->
+      {:error, err} ->
         {:error, err}
     end
   end
 
   # Build an atom feed from actor and its public events and posts
-  @spec build_actor_feed(Actor.t(), list(), list(), boolean()) :: String.t()
+  @spec build_actor_feed(Actor.t(), list(Event.t()), list(Post.t()), boolean()) :: String.t()
   defp build_actor_feed(%Actor{} = actor, events, posts, public \\ true) do
     display_name = Actor.display_name(actor)
 
@@ -199,19 +199,22 @@ defmodule Mobilizon.Service.Export.Feed do
   end
 
   # Only events, not posts
-  @spec fetch_events_from_token(String.t()) :: String.t()
+  @spec fetch_events_from_token(String.t(), integer()) :: {:ok, String.t()} | {:error, atom()}
   defp fetch_events_from_token(token, limit \\ @item_limit) do
-    with %{events: events, token: token, user: user, actor: actor, type: type} <-
-           Common.fetch_events_from_token(token, limit) do
-      case type do
-        :user -> {:ok, build_user_feed(events, user, token)}
-        :actor -> {:ok, build_actor_feed(actor, events, [], false)}
-      end
+    case Common.fetch_events_from_token(token, limit) do
+      %{events: events, token: token, user: user, actor: actor, type: type} ->
+        case type do
+          :user -> {:ok, build_user_feed(events, user, token)}
+          :actor -> {:ok, build_actor_feed(actor, events, [], false)}
+        end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   # Build an atom feed from actor and its public events
-  @spec build_user_feed(list(), User.t(), String.t()) :: String.t()
+  @spec build_user_feed(list(Event.t()), User.t(), String.t()) :: String.t()
   defp build_user_feed(events, %User{email: email}, token) do
     self_url = Endpoint |> Routes.feed_url(:going, token, "atom") |> URI.decode()
 

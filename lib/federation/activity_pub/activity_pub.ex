@@ -75,7 +75,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   """
   # TODO: Make database calls parallel
   @spec fetch_object_from_url(String.t(), Keyword.t()) ::
-          {:ok, struct()} | {:error, any()}
+          {:ok, struct()} | {:ok, atom(), struct()} | {:error, any()}
   def fetch_object_from_url(url, options \\ []) do
     Logger.info("Fetching object from url #{url}")
 
@@ -111,7 +111,7 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   @spec handle_existing_entity(String.t(), struct(), Keyword.t()) ::
           {:ok, struct()}
-          | {:ok, struct()}
+          | {:ok, atom(), struct()}
           | {:error, String.t(), struct()}
           | {:error, String.t()}
   defp handle_existing_entity(url, entity, options) do
@@ -126,13 +126,13 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, entity} = Preloader.maybe_preload(entity)
         {:error, status, entity}
 
-      err ->
-        err
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   @spec refresh_entity(String.t(), struct(), Keyword.t()) ::
-          {:ok, struct()} | {:error, String.t(), struct()} | {:error, String.t()}
+          {:ok, struct()} | {:error, atom(), struct()} | {:error, String.t()}
   defp refresh_entity(url, entity, options) do
     force_fetch = Keyword.get(options, :force, false)
 
@@ -205,21 +205,22 @@ defmodule Mobilizon.Federation.ActivityPub do
     * Returns the activity
   """
   @spec update(Entity.entities(), map(), boolean, map()) ::
-          {:ok, Activity.t(), Entity.entities()} | any()
+          {:ok, Activity.t(), Entity.entities()} | {:error, any()}
   def update(old_entity, args, local \\ false, additional \\ %{}) do
     Logger.debug("updating an activity")
     Logger.debug(inspect(args))
 
-    with {:ok, entity, update_data} <- Managable.update(old_entity, args, additional),
-         {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
+    case Managable.update(old_entity, args, additional) do
+      {:ok, entity, update_data} ->
+        {:ok, activity} = create_activity(update_data, local)
+        maybe_federate(activity)
+        maybe_relay_if_group_activity(activity)
+        {:ok, activity, entity}
+
+      {:error, err} ->
         Logger.error("Something went wrong while creating an activity")
         Logger.debug(inspect(err))
-        err
+        {:error, err}
     end
   end
 
@@ -274,7 +275,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   @spec announce(Actor.t(), ActivityStream.t(), String.t() | nil, boolean, boolean) ::
-          {:ok, Activity.t(), ActivityStream.t()}
+          {:ok, Activity.t(), ActivityStream.t()} | {:error, any()}
   def announce(
         %Actor{} = actor,
         object,
@@ -318,7 +319,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   Make an actor follow another
   """
   @spec follow(Actor.t(), Actor.t(), String.t() | nil, boolean, map) ::
-          {:ok, Activity.t(), Follower.t()} | {:error, String.t()}
+          {:ok, Activity.t(), Follower.t()} | {:error, atom | Ecto.Changeset.t() | String.t()}
   def follow(
         %Actor{} = follower,
         %Actor{} = followed,
@@ -326,23 +327,23 @@ defmodule Mobilizon.Federation.ActivityPub do
         local \\ true,
         additional \\ %{}
       ) do
-    with {:different_actors, true} <- {:different_actors, followed.id != follower.id},
-         {:ok, activity_data, %Follower{} = follower} <-
-           Types.Actors.follow(
+    if followed.id != follower.id do
+      case Types.Actors.follow(
              follower,
              followed,
              local,
              Map.merge(additional, %{"activity_id" => activity_id})
-           ),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, follower}
-    else
-      {:error, err, msg} when err in [:already_following, :suspended, :no_person] ->
-        {:error, msg}
+           ) do
+        {:ok, activity_data, %Follower{} = follower} ->
+          {:ok, activity} = create_activity(activity_data, local)
+          maybe_federate(activity)
+          {:ok, activity, follower}
 
-      {:different_actors, _} ->
-        {:error, "Can't follow yourself"}
+        {:error, err} ->
+          {:error, err}
+      end
+    else
+      {:error, "Can't follow yourself"}
     end
   end
 
@@ -350,7 +351,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   Make an actor unfollow another
   """
   @spec unfollow(Actor.t(), Actor.t(), String.t() | nil, boolean()) ::
-          {:ok, Activity.t(), Follower.t()}
+          {:ok, Activity.t(), Follower.t()} | {:error, String.t()}
   def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
     with {:ok, %Follower{id: follow_id} = follow} <- Actors.unfollow(followed, follower),
          # We recreate the follow activity
@@ -385,18 +386,19 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   @spec join(Event.t(), Actor.t(), boolean, map) ::
-          {:ok, Activity.t(), Participant.t()} | {:maximum_attendee_capacity, any}
+          {:ok, Activity.t(), Participant.t()} | {:error, :maximum_attendee_capacity}
   @spec join(Actor.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Member.t()}
   def join(entity_to_join, actor_joining, local \\ true, additional \\ %{})
 
   def join(%Event{} = event, %Actor{} = actor, local, additional) do
-    with {:ok, activity_data, participant} <- Types.Events.join(event, actor, local, additional),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, participant}
-    else
-      {:maximum_attendee_capacity, err} ->
-        {:maximum_attendee_capacity, err}
+    case Types.Events.join(event, actor, local, additional) do
+      {:ok, activity_data, participant} ->
+        {:ok, activity} = create_activity(activity_data, local)
+        maybe_federate(activity)
+        {:ok, activity, participant}
+
+      {:error, :maximum_attendee_capacity_reached} ->
+        {:error, :maximum_attendee_capacity_reached}
 
       {:accept, accept} ->
         accept
@@ -415,7 +417,9 @@ defmodule Mobilizon.Federation.ActivityPub do
     end
   end
 
-  @spec leave(Event.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Participant.t()}
+  @spec leave(Event.t(), Actor.t(), boolean, map) ::
+          {:ok, Activity.t(), Participant.t()}
+          | {:error, :is_only_organizer | :participant_not_found | Ecto.Changeset.t()}
   @spec leave(Actor.t(), Actor.t(), boolean, map) :: {:ok, Activity.t(), Member.t()}
   def leave(object, actor, local \\ true, additional \\ %{})
 
@@ -428,28 +432,37 @@ defmodule Mobilizon.Federation.ActivityPub do
         local,
         additional
       ) do
-    with {:only_organizer, false} <-
-           {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
-         {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.get_participant(
+    if Participant.is_not_only_organizer(event_id, actor_id) do
+      {:error, :is_only_organizer}
+    else
+      case Mobilizon.Events.get_participant(
              event_id,
              actor_id,
              Map.get(additional, :metadata, %{})
-           ),
-         {:ok, %Participant{} = participant} <-
-           Events.delete_participant(participant),
-         leave_data <- %{
-           "type" => "Leave",
-           # If it's an exclusion it should be something else
-           "actor" => actor_url,
-           "object" => event_url,
-           "id" => "#{Endpoint.url()}/leave/event/#{participant.id}"
-         },
-         audience <-
-           Audience.get_audience(participant),
-         {:ok, activity} <- create_activity(Map.merge(leave_data, audience), local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, participant}
+           ) do
+        {:ok, %Participant{} = participant} ->
+          case Events.delete_participant(participant) do
+            {:ok, %{participant: %Participant{} = participant}} ->
+              leave_data = %{
+                "type" => "Leave",
+                # If it's an exclusion it should be something else
+                "actor" => actor_url,
+                "object" => event_url,
+                "id" => "#{Endpoint.url()}/leave/event/#{participant.id}"
+              }
+
+              audience = Audience.get_audience(participant)
+              {:ok, activity} = create_activity(Map.merge(leave_data, audience), local)
+              maybe_federate(activity)
+              {:ok, activity, participant}
+
+            {:error, _type, %Ecto.Changeset{} = err, _} ->
+              {:error, err}
+          end
+
+        {:error, :participant_not_found} ->
+          {:error, :participant_not_found}
+      end
     end
   end
 

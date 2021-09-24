@@ -87,7 +87,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:existing_comment, {:ok, %Comment{} = comment}} ->
         {:ok, nil, comment}
 
-      {:error, :event_comments_are_closed} ->
+      {:error, :event_not_allow_commenting} ->
         Logger.debug("Tried to reply to an event for which comments are closed")
         :error
     end
@@ -210,7 +210,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
       {:ok, activity, object}
     else
-      e ->
+      {:error, :person_no_follow} ->
+        Logger.warn("Only group and instances can be followed")
+        :error
+
+      {:error, e} ->
         Logger.warn("Unable to handle Follow activity #{inspect(e)}")
         :error
     end
@@ -578,6 +582,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
+    Logger.info("Handle incoming to delete an object")
+
     with actor_url <- Utils.get_actor(data),
          {:actor, {:ok, %Actor{} = actor}} <-
            {:actor, ActivityPubActor.get_or_fetch_actor_by_url(actor_url)},
@@ -594,7 +600,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Logger.warn("Object origin check failed")
         :error
 
-      {:actor, {:error, "Could not fetch by AP id"}} ->
+      {:actor, {:error, _err}} ->
         {:error, :unknown_actor}
 
       {:error, e} ->
@@ -993,7 +999,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   # Comment initiates a whole discussion only if it has full title
-  @spec is_data_for_comment_or_discussion?(map()) :: boolean()
   defp is_data_a_discussion_initialization?(object_data) do
     not Map.has_key?(object_data, :title) or
       is_nil(object_data.title) or object_data.title == ""
@@ -1107,21 +1112,21 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   defp is_group_object_gone(object_id) do
-    case ActivityPub.fetch_object_from_url(object_id, force: true) do
-      {:error, error_message, object} when error_message in [:http_gone, :http_not_found] ->
-        {:ok, object}
+    Logger.debug("is_group_object_gone #{object_id}")
 
+    case ActivityPub.fetch_object_from_url(object_id, force: true) do
       # comments are just emptied
       {:ok, %Comment{deleted_at: deleted_at} = object} when not is_nil(deleted_at) ->
+        {:ok, object}
+
+      {:error, :http_gone, object} ->
+        Logger.debug("object is really gone")
         {:ok, object}
 
       {:ok, %{url: url} = object} ->
         if Utils.are_same_origin?(url, Endpoint.url()),
           do: {:ok, object},
           else: {:error, "Group object URL remote"}
-
-      {:error, {:error, err}} ->
-        {:error, err}
 
       {:error, err} ->
         {:error, err}

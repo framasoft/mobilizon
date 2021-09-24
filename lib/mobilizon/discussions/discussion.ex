@@ -59,7 +59,7 @@ defmodule Mobilizon.Discussions.Discussion do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = discussion, attrs) do
     discussion
     |> cast(attrs, @attrs)

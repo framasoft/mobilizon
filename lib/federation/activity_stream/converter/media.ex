@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   internal one, and back.
   """
 
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Medias
   alias Mobilizon.Medias.Media, as: MediaModel
 
@@ -18,7 +19,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   @doc """
   Convert a media struct to an ActivityStream representation.
   """
-  @spec model_to_as(MediaModel.t()) :: map
+  @spec model_to_as(MediaModel.t()) :: ActivityStream.t()
   def model_to_as(%MediaModel{file: file}) do
     %{
       "type" => "Document",
@@ -31,29 +32,53 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   @doc """
   Save media data from raw data and return AS Link data.
   """
+  @spec find_or_create_media(map(), String.t() | integer()) ::
+          {:ok, MediaModel.t()} | {:error, atom() | String.t() | Ecto.Changeset.t()}
   def find_or_create_media(%{"type" => "Link", "href" => url}, actor_id),
-    do: find_or_create_media(url, actor_id)
+    do:
+      find_or_create_media(
+        %{"type" => "Document", "url" => url, "name" => "External media"},
+        actor_id
+      )
 
   def find_or_create_media(
         %{"type" => "Document", "url" => media_url, "name" => name},
         actor_id
       )
       when is_binary(media_url) do
-    with {:ok, %{body: body}} <- Tesla.get(media_url, opts: @http_options),
-         {:ok, %{url: url} = uploaded} <-
-           Upload.store(%{body: body, name: name}),
-         {:media_exists, nil} <- {:media_exists, Medias.get_media_by_url(url)} do
-      Medias.create_media(%{
-        file: Map.take(uploaded, [:url, :name, :content_type, :size]),
-        metadata: Map.take(uploaded, [:width, :height, :blurhash]),
-        actor_id: actor_id
-      })
-    else
-      {:media_exists, %MediaModel{file: _file} = media} ->
-        {:ok, media}
+    case upload_media(media_url, name) do
+      {:error, err} ->
+        {:error, err}
 
-      err ->
-        err
+      {:ok, %{url: url} = uploaded} ->
+        case Medias.get_media_by_url(url) do
+          %MediaModel{file: _file} = media ->
+            {:ok, media}
+
+          nil ->
+            Medias.create_media(%{
+              file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+              metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+              actor_id: actor_id
+            })
+        end
+    end
+  end
+
+  @spec upload_media(String.t(), String.t()) :: {:ok, map()} | {:error, atom() | String.t()}
+  defp upload_media(media_url, name) do
+    case Tesla.get(media_url, opts: @http_options) do
+      {:ok, %{body: body}} ->
+        case Upload.store(%{body: body, name: name}) do
+          {:ok, %{url: _url} = uploaded} ->
+            {:ok, uploaded}
+
+          {:error, err} ->
+            {:error, err}
+        end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 end

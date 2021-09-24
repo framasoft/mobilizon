@@ -15,23 +15,27 @@ defmodule Mobilizon.GraphQL.Resolvers.Activity do
   def group_activity(%Actor{type: :Group, id: group_id}, %{page: page, limit: limit} = args, %{
         context: %{current_user: %User{role: role} = user}
       }) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id) or is_moderator(role)} do
-      %Page{total: total, elements: elements} =
-        Activities.list_group_activities_for_member(
-          group_id,
-          actor_id,
-          [type: Map.get(args, :type), author: Map.get(args, :author)],
-          page,
-          limit
-        )
+    case Users.get_actor_for_user(user) do
+      %Actor{id: actor_id} = _actor ->
+        if Actors.is_member?(actor_id, group_id) or is_moderator(role) do
+          %Page{total: total, elements: elements} =
+            Activities.list_group_activities_for_member(
+              group_id,
+              actor_id,
+              [type: Map.get(args, :type), author: Map.get(args, :author)],
+              page,
+              limit
+            )
 
-      elements = Enum.map(elements, &Utils.transform_activity/1)
+          elements = Enum.map(elements, &Utils.transform_activity/1)
 
-      {:ok, %Page{total: total, elements: elements}}
-    else
-      {:member, false} ->
-        {:error, :unauthorized}
+          {:ok, %Page{total: total, elements: elements}}
+        else
+          {:error, :unauthorized}
+        end
+
+      nil ->
+        {:error, :user_actor_not_found}
     end
   end
 

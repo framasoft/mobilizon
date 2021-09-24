@@ -19,6 +19,12 @@ defmodule Mobilizon.Users.Setting do
           user: User.t()
         }
 
+  @type location :: %{
+          name: String.t(),
+          range: integer,
+          geohash: String.t()
+        }
+
   @required_attrs [:user_id]
 
   @optional_attrs [
@@ -66,6 +72,7 @@ defmodule Mobilizon.Users.Setting do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(setting, attrs) do
     setting
     |> cast(attrs, @attrs)
@@ -73,6 +80,7 @@ defmodule Mobilizon.Users.Setting do
     |> validate_required(@required_attrs)
   end
 
+  @spec location_changeset(location, map) :: Ecto.Changeset.t()
   def location_changeset(schema, params) do
     schema
     |> cast(params, @location_attrs)

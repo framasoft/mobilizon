@@ -31,7 +31,7 @@ defmodule Mobilizon.Service.CleanOldActivity do
     end
   end
 
-  @spec find_activities(Keyword.t()) :: {Ecto.Query.t(), list()}
+  @spec find_activities(Keyword.t()) :: {Ecto.Query.t(), integer()}
   defp find_activities(opts) do
     grace_period =
       Keyword.get(opts, :grace_period, Config.get([:instance, :activity_expire_days], 365))

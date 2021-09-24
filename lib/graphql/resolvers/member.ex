@@ -145,10 +145,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
            ActivityPub.update(member, %{role: role}, true, %{moderator: moderator}) do
       {:ok, member}
     else
-      {:has_rights_to_update_role, {:error, :member_not_found}} ->
+      {:error, :member_not_found} ->
         {:error, dgettext("errors", "You are not a moderator or admin for this group")}
 
-      {:is_only_admin, true} ->
+      {:error, :only_admin_left} ->
         {:error,
          dgettext(
            "errors",

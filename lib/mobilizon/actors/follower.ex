@@ -38,7 +38,7 @@ defmodule Mobilizon.Actors.Follower do
   end
 
   @doc false
-  @spec changeset(follower :: t, attrs :: map) :: Ecto.Changeset.t()
+  @spec changeset(follower :: t | Ecto.Schema.t(), attrs :: map) :: Ecto.Changeset.t()
   def changeset(follower, attrs) do
     follower
     |> cast(attrs, @attrs)

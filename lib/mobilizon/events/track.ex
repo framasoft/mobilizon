@@ -33,7 +33,7 @@ defmodule Mobilizon.Events.Track do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = track, attrs) do
     track
     |> cast(attrs, @attrs)

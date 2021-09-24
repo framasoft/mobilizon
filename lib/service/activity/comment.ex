@@ -51,11 +51,11 @@ defmodule Mobilizon.Service.Activity.Comment do
     "object_type" => :comment
   }
 
+  @spec handle_notification(Keyword.t(), notification_type, Comment.t(), Event.t(), Keyword.t()) ::
+          Keyword.t()
   defp handle_notification(global_res, function, comment, event, options) do
-    case notify(function, comment, event, options) do
-      {:ok, res} -> Keyword.put(global_res, function, res)
-      _ -> Keyword.put(global_res, function, :error)
-    end
+    {:ok, res} = notify(function, comment, event, options)
+    Keyword.put(global_res, function, res)
   end
 
   @spec legacy_notifier_enqueue(map()) :: :ok
@@ -66,11 +66,11 @@ defmodule Mobilizon.Service.Activity.Comment do
     )
   end
 
-  @type notification_type :: atom()
+  @type notification_type :: :mentionned | :announcement | :organizer
 
   # An actor is mentionned
   @spec notify(notification_type(), Comment.t(), Event.t(), Keyword.t()) ::
-          {:ok, Oban.Job.t()} | {:ok, :skipped}
+          {:ok, :enqueued} | {:ok, :skipped}
   defp notify(
          :mentionned,
          %Comment{actor_id: actor_id, id: comment_id, mentions: mentions},

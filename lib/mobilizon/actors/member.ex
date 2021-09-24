@@ -59,7 +59,7 @@ defmodule Mobilizon.Actors.Member do
   def is_administrator(%__MODULE__{}), do: false
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = member, attrs) do
     member
     |> cast(attrs, @attrs)

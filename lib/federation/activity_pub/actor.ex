@@ -24,22 +24,17 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   def get_or_fetch_actor_by_url(nil, _preload), do: {:error, :url_nil}
 
   def get_or_fetch_actor_by_url("https://www.w3.org/ns/activitystreams#Public", _preload) do
-    case Relay.get_actor() do
-      %Actor{url: url} ->
-        get_or_fetch_actor_by_url(url)
-
-      {:error, %Ecto.Changeset{}} ->
-        {:error, :no_internal_relay_actor}
-    end
+    %Actor{url: url} = Relay.get_actor()
+    get_or_fetch_actor_by_url(url)
   end
 
   def get_or_fetch_actor_by_url(url, preload) do
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = cached_actor} ->
-        unless Actors.needs_update?(cached_actor) do
-          {:ok, cached_actor}
-        else
+        if Actors.needs_update?(cached_actor) do
           __MODULE__.make_actor_from_url(url, preload)
+        else
+          {:ok, cached_actor}
         end
 
       {:error, :actor_not_found} ->

@@ -10,31 +10,35 @@ defmodule Mobilizon.Service.Activity.Group do
   @behaviour Activity
 
   @impl Activity
+  @spec insert_activity(Actor.t(), Keyword.t()) ::
+          {:ok, Job.t()} | {:ok, nil} | {:error, Ecto.Changeset.t()}
   def insert_activity(group, options \\ [])
 
   def insert_activity(
         %Actor{type: :Group, id: group_id},
         options
       ) do
-    with %Actor{type: :Group} = group <- Actors.get_actor(group_id),
-         subject when not is_nil(subject) <- Keyword.get(options, :subject),
-         actor_id <- Keyword.get(options, :actor_id),
-         default_updater_actor <- Actors.get_actor(actor_id),
-         %Actor{id: actor_id} <-
-           Keyword.get(options, :updater_actor, default_updater_actor),
-         old_group <- Keyword.get(options, :old_group) do
-      ActivityBuilder.enqueue(:build_activity, %{
-        "type" => "group",
-        "subject" => subject,
-        "subject_params" => subject_params(group, subject, old_group),
-        "group_id" => group.id,
-        "author_id" => actor_id,
-        "object_type" => "group",
-        "object_id" => to_string(group.id),
-        "inserted_at" => DateTime.utc_now()
-      })
-    else
-      _ -> {:ok, nil}
+    subject = Keyword.get(options, :subject)
+    actor_id = Keyword.get(options, :actor_id)
+    default_updater_actor = Actors.get_actor(actor_id)
+    %Actor{id: actor_id} = Keyword.get(options, :updater_actor, default_updater_actor)
+    old_group = Keyword.get(options, :old_group)
+
+    case Actors.get_actor(group_id) do
+      %Actor{type: :Group} = group ->
+        ActivityBuilder.enqueue(:build_activity, %{
+          "type" => "group",
+          "subject" => subject,
+          "subject_params" => subject_params(group, subject, old_group),
+          "group_id" => group.id,
+          "author_id" => actor_id,
+          "object_type" => "group",
+          "object_id" => to_string(group.id),
+          "inserted_at" => DateTime.utc_now()
+        })
+
+      nil ->
+        {:ok, nil}
     end
   end
 

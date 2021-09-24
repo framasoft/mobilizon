@@ -126,7 +126,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
 
       %Comment{id: comment_1_id} = _comment_1 = insert(:comment, actor: reported)
 
-      assert {:ok, %Activity{} = flag_activity, %Report{id: report_id} = _report} =
+      assert {:ok, %Activity{}, %Report{id: report_id} = _report} =
                Reports.report(%{
                  reporter_id: reporter_id,
                  reported_id: reported_id,
@@ -152,7 +152,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
 
       %Comment{id: comment_1_id} = _comment_1 = insert(:comment, actor: reported)
 
-      assert {:ok, %Activity{} = flag_activity, %Report{id: report_id} = _report} =
+      assert {:ok, %Activity{}, %Report{id: report_id} = _report} =
                Reports.report(%{
                  reporter_id: reporter_id,
                  reported_id: reported_id,

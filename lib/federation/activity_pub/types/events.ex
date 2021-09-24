@@ -22,45 +22,53 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, Event.t(), ActivityStream.t()}
+  @spec create(map(), map()) ::
+          {:ok, Event.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def create(args, additional) do
-    with args <- prepare_args_for_event(args),
-         {:ok, %Event{} = event} <- EventsManager.create_event(args),
-         {:ok, _} <-
-           EventActivity.insert_activity(event, subject: "event_created"),
-         event_as_data <- Convertible.model_to_as(event),
-         audience <-
-           Audience.get_audience(event),
-         create_data <-
-           make_create_data(event_as_data, Map.merge(audience, additional)) do
-      {:ok, event, create_data}
+    args = prepare_args_for_event(args)
+
+    case EventsManager.create_event(args) do
+      {:ok, %Event{} = event} ->
+        EventActivity.insert_activity(event, subject: "event_created")
+        event_as_data = Convertible.model_to_as(event)
+        audience = Audience.get_audience(event)
+        create_data = make_create_data(event_as_data, Map.merge(audience, additional))
+        {:ok, event, create_data}
+
+      {:error, _step, %Ecto.Changeset{} = err, _} ->
+        {:error, err}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   @impl Entity
-  @spec update(Event.t(), map(), map()) :: {:ok, Event.t(), ActivityStream.t()}
+  @spec update(Event.t(), map(), map()) ::
+          {:ok, Event.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def update(%Event{} = old_event, args, additional) do
-    with args <- prepare_args_for_event(args),
-         {:ok, %Event{} = new_event} <- EventsManager.update_event(old_event, args),
-         {:ok, _} <-
-           EventActivity.insert_activity(new_event, subject: "event_updated"),
-         {:ok, true} <- Cachex.del(:activity_pub, "event_#{new_event.uuid}"),
-         event_as_data <- Convertible.model_to_as(new_event),
-         audience <-
-           Audience.get_audience(new_event),
-         update_data <- make_update_data(event_as_data, Map.merge(audience, additional)) do
-      {:ok, new_event, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
+    args = prepare_args_for_event(args)
+
+    case EventsManager.update_event(old_event, args) do
+      {:ok, %Event{} = new_event} ->
+        EventActivity.insert_activity(new_event, subject: "event_updated")
+        Cachex.del(:activity_pub, "event_#{new_event.uuid}")
+        event_as_data = Convertible.model_to_as(new_event)
+        audience = Audience.get_audience(new_event)
+        update_data = make_update_data(event_as_data, Map.merge(audience, additional))
+        {:ok, new_event, update_data}
+
+      {:error, _step, %Ecto.Changeset{} = err, _} ->
+        {:error, err}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   @impl Entity
   @spec delete(Event.t(), Actor.t(), boolean, map()) ::
-          {:ok, ActivityStream.t(), Actor.t(), Event.t()}
+          {:ok, ActivityStream.t(), Actor.t(), Event.t()} | {:error, Ecto.Changeset.t()}
   def delete(%Event{url: url} = event, %Actor{} = actor, _local, _additionnal) do
     activity_data = %{
       "type" => "Delete",
@@ -70,16 +78,23 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
       "id" => url <> "/delete"
     }
 
-    with audience <-
-           Audience.get_audience(event),
-         {:ok, %Event{} = event} <- EventsManager.delete_event(event),
-         {:ok, _} <-
-           EventActivity.insert_activity(event, subject: "event_deleted"),
-         {:ok, true} <- Cachex.del(:activity_pub, "event_#{event.uuid}"),
-         {:ok, %Tombstone{} = _tombstone} <-
-           Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}) do
-      Share.delete_all_by_uri(event.url)
-      {:ok, Map.merge(activity_data, audience), actor, event}
+    audience = Audience.get_audience(event)
+
+    case EventsManager.delete_event(event) do
+      {:ok, %Event{} = event} ->
+        case Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}) do
+          {:ok, %Tombstone{} = _tombstone} ->
+            EventActivity.insert_activity(event, subject: "event_deleted")
+            Cachex.del(:activity_pub, "event_#{event.uuid}")
+            Share.delete_all_by_uri(event.url)
+            {:ok, Map.merge(activity_data, audience), actor, event}
+
+          {:error, err} ->
+            {:error, err}
+        end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -111,16 +126,16 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   @spec join(Event.t(), Actor.t(), boolean, map) ::
           {:ok, ActivityStreams.t(), Participant.t()}
+          | {:accept, any()}
           | {:error, :maximum_attendee_capacity_reached}
   def join(%Event{} = event, %Actor{} = actor, _local, additional) do
-    with {:maximum_attendee_capacity, true} <-
-           {:maximum_attendee_capacity, check_attendee_capacity?(event)},
-         role <-
-           additional
-           |> Map.get(:metadata, %{})
-           |> Map.get(:role, Mobilizon.Events.get_default_participant_role(event)),
-         {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.create_participant(%{
+    if check_attendee_capacity?(event) do
+      role =
+        additional
+        |> Map.get(:metadata, %{})
+        |> Map.get(:role, Mobilizon.Events.get_default_participant_role(event))
+
+      case Mobilizon.Events.create_participant(%{
              role: role,
              event_id: event.id,
              actor_id: actor.id,
@@ -129,19 +144,23 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
                additional
                |> Map.get(:metadata, %{})
                |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
-           }),
-         join_data <- Convertible.model_to_as(participant),
-         audience <-
-           Audience.get_audience(participant) do
-      approve_if_default_role_is_participant(
-        event,
-        Map.merge(join_data, audience),
-        participant,
-        role
-      )
+           }) do
+        {:ok, %Participant{} = participant} ->
+          join_data = Convertible.model_to_as(participant)
+          audience = Audience.get_audience(participant)
+
+          approve_if_default_role_is_participant(
+            event,
+            Map.merge(join_data, audience),
+            participant,
+            role
+          )
+
+        {:error, %Ecto.Changeset{} = err} ->
+          {:error, err}
+      end
     else
-      {:maximum_attendee_capacity, false} ->
-        {:error, :maximum_attendee_capacity_reached}
+      {:error, :maximum_attendee_capacity_reached}
     end
   end
 
@@ -160,7 +179,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
           ActivityStreams.t(),
           Participant.t(),
           ParticipantRole.t()
-        ) :: {:ok, ActivityStreams.t(), Participant.t()}
+        ) :: {:ok, ActivityStreams.t(), Participant.t()} | {:accept, any()}
   defp approve_if_default_role_is_participant(event, activity_data, participant, role) do
     case event do
       %Event{attributed_to: %Actor{id: group_id, url: group_url}} ->
@@ -175,12 +194,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
             {:ok, activity_data, participant}
         end
 
-      %Event{local: true} ->
+      %Event{attributed_to: nil, local: true} ->
         do_approve(event, activity_data, participant, role, %{
           "actor" => event.organizer_actor.url
         })
 
-      _ ->
+      %Event{} ->
         {:ok, activity_data, participant}
     end
   end

@@ -45,7 +45,8 @@ defmodule Mobilizon.Admin do
   @doc """
   Log an admin action
   """
-  @spec log_action(Actor.t(), String.t(), String.t()) :: {:ok, ActionLog.t()}
+  @spec log_action(Actor.t(), String.t(), struct()) ::
+          {:ok, ActionLog.t()} | {:error, Ecto.Changeset.t() | :user_not_moderator}
   def log_action(%Actor{user_id: user_id, id: actor_id}, action, target) do
     with %User{role: role} <- Users.get_user!(user_id),
          {:role, true} <- {:role, role in [:administrator, :moderator]},
@@ -58,6 +59,9 @@ defmodule Mobilizon.Admin do
              "changes" => stringify_struct(target)
            }) do
       {:ok, create_action_log}
+    else
+      {:role, false} ->
+        {:error, :user_not_moderator}
     end
   end
 
@@ -109,12 +113,7 @@ defmodule Mobilizon.Admin do
     end
   end
 
-  def set_admin_setting_value(group, name, value) do
-    Setting
-    |> Setting.changeset(%{group: group, name: name, value: value})
-    |> Repo.insert(on_conflict: :replace_all, conflict_target: [:group, :name])
-  end
-
+  @spec save_settings(String.t(), map()) :: {:ok, any} | {:error, any}
   def save_settings(group, args) do
     Multi.new()
     |> do_save_setting(group, args)
@@ -125,6 +124,7 @@ defmodule Mobilizon.Admin do
     Setting |> where([s], s.group == ^group) |> Repo.delete_all()
   end
 
+  @spec do_save_setting(Ecto.Multi.t(), String.t(), map()) :: Ecto.Multi.t()
   defp do_save_setting(transaction, _group, args) when args == %{}, do: transaction
 
   defp do_save_setting(transaction, group, args) do
@@ -147,6 +147,7 @@ defmodule Mobilizon.Admin do
     do_save_setting(transaction, group, rest)
   end
 
+  @spec convert_to_string(any()) :: String.t()
   defp convert_to_string(val) do
     case val do
       val when is_list(val) -> Jason.encode!(val)

@@ -87,12 +87,16 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
          :ok <- Logger.debug("Fetching public key for #{actor_id}"),
          {:ok, public_key} <- get_public_key_for_url(actor_id) do
       {:ok, public_key}
+    else
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   @spec refetch_public_key(Plug.Conn.t()) ::
           {:ok, String.t()}
-          | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error}
+          | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error,
+             :actor_is_local}
   def refetch_public_key(conn) do
     with %{"keyId" => kid} <- HTTPSignatures.signature_for_conn(conn),
          actor_id <- key_id_to_actor_url(kid),
@@ -100,10 +104,13 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
          {:ok, _actor} <- ActivityPubActor.make_actor_from_url(actor_id),
          {:ok, public_key} <- get_public_key_for_url(actor_id) do
       {:ok, public_key}
+    else
+      {:error, err} ->
+        {:error, err}
     end
   end
 
-  @spec sign(Actor.t(), map()) :: String.t()
+  @spec sign(Actor.t(), map()) :: String.t() | {:error, :pem_decode_error} | no_return
   def sign(%Actor{domain: domain, keys: keys} = actor, headers) when is_nil(domain) do
     Logger.debug("Signing a payload on behalf of #{actor.url}")
     Logger.debug("headers")

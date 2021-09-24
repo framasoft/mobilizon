@@ -79,6 +79,7 @@ defmodule Mobilizon.Web.Email.Group do
   # TODO : def send_confirmation_to_inviter()
 
   @member_roles [:administrator, :moderator, :member]
+  @spec send_group_suspension_notification(Member.t()) :: :ok
   def send_group_suspension_notification(%Member{actor: %Actor{user_id: nil}}), do: :ok
 
   def send_group_suspension_notification(%Member{role: role}) when role not in @member_roles,
@@ -111,65 +112,5 @@ defmodule Mobilizon.Web.Email.Group do
 
       :ok
     end
-  end
-
-  def send_group_deletion_notification(%Member{actor: %Actor{user_id: nil}}, _author), do: :ok
-
-  def send_group_deletion_notification(%Member{role: role}, _author)
-      when role not in @member_roles,
-      do: :ok
-
-  @spec send_group_deletion_notification(Member.t(), Actor.t()) :: :ok
-  def send_group_deletion_notification(
-        %Member{
-          actor: %Actor{user_id: user_id, id: actor_id} = member
-        },
-        %Actor{id: author_id} = author
-      ) do
-    with %User{email: email, locale: locale} <- Users.get_user!(user_id),
-         {:member_not_author, true} <- {:member_not_author, author_id !== actor_id} do
-      do_send_group_deletion_notification(member, author: author, email: email, locale: locale)
-    else
-      # Skip if it's the author itself
-      {:member_not_author, _} ->
-        :ok
-    end
-  end
-
-  @spec send_group_deletion_notification(Member.t()) :: :ok
-  def send_group_deletion_notification(%Member{actor: %Actor{user_id: user_id}} = member) do
-    case Users.get_user!(user_id) do
-      %User{email: email, locale: locale} ->
-        do_send_group_deletion_notification(member, email: email, locale: locale)
-    end
-  end
-
-  defp do_send_group_deletion_notification(
-         %Member{role: member_role, parent: %Actor{domain: nil} = group},
-         options
-       ) do
-    locale = Keyword.get(options, :locale)
-    Gettext.put_locale(locale)
-    instance = Config.instance_name()
-    author = Keyword.get(options, :author)
-
-    subject =
-      gettext(
-        "The group %{group} has been deleted on %{instance}",
-        group: group.name,
-        instance: instance
-      )
-
-    Email.base_email(to: Keyword.get(options, :email), subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:group, group)
-    |> assign(:role, member_role)
-    |> assign(:subject, subject)
-    |> assign(:instance, instance)
-    |> assign(:author, author)
-    |> render(:group_deletion)
-    |> Email.Mailer.send_email_later()
-
-    :ok
   end
 end

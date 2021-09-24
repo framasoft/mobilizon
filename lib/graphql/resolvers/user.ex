@@ -31,7 +31,10 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Return current logged-in user
   """
-  def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user}}) do
+  @spec get_current_user(any, map(), Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated} | {:ok, Mobilizon.Users.User.t()}
+  def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user} = context}) do
+    # Logger.error(inspect(context))
     {:ok, user}
   end
 
@@ -199,7 +202,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Validate an user, get its actor and a token
   """
-  @spec validate_user(map(), %{token: String.t()}, map()) :: {:ok, map()}
+  @spec validate_user(map(), %{token: String.t()}, map()) :: {:ok, map()} | {:error, String.t()}
   def validate_user(_parent, %{token: token}, _resolution) do
     with {:check_confirmation_token, {:ok, %User{} = user}} <-
            {:check_confirmation_token, Email.User.check_confirmation_token(token)},

@@ -34,7 +34,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 creates a comment", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do
@@ -51,7 +50,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 doesn't allow creating events if it's disabled", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do
@@ -93,8 +91,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
       conn: conn,
       event: event
     } do
-      actor = insert(:actor)
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
@@ -108,7 +104,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 creates a reply to a comment", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do

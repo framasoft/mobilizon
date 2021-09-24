@@ -12,8 +12,8 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+  alias Mobilizon.Federation.ActivityPub.Transmogrifier
 
   require Logger
 
@@ -57,9 +57,6 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
     case Transmogrifier.handle_incoming(params) do
       {:ok, activity, _data} ->
         {:ok, activity}
-
-      %Activity{} ->
-        Logger.info("Already had #{params["id"]}")
 
       e ->
         # Just drop those for now

@@ -73,9 +73,6 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
       "" ->
         meta
 
-      descriptions when is_list(descriptions) and length(descriptions) > 0 ->
-        Map.put_new(meta, :description, hd(descriptions))
-
       description ->
         Map.put_new(meta, :description, description)
     end
@@ -99,8 +96,8 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
     with {:ok, document} <- Floki.parse_document(html),
          elem when not is_nil(elem) <-
            document |> Floki.find("html head meta[name='description']") |> List.first(),
-         description when is_binary(description) <- Floki.attribute(elem, "content") do
-      description
+         [_ | _] = descriptions <- Floki.attribute(elem, "content") do
+      hd(descriptions)
     else
       _ -> ""
     end

@@ -23,15 +23,18 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   @spec get_actor_by_name(String.t()) ::
           {:commit, ActorModel.t()} | {:ignore, nil}
   def get_actor_by_name(name) do
-    Cachex.fetch(@cache, "actor_" <> name, fn "actor_" <> name ->
-      case Actor.find_or_make_actor_from_nickname(name) do
-        {:ok, %ActorModel{} = actor} ->
-          {:commit, actor}
+    Cachex.fetch(@cache, "actor_" <> name, &do_get_actor/1)
+  end
 
-        nil ->
-          {:ignore, nil}
-      end
-    end)
+  @spec do_get_actor(String.t()) :: {:commit, Actor.t()} | {:ignore, nil}
+  defp do_get_actor("actor_" <> name) do
+    case Actor.find_or_make_actor_from_nickname(name) do
+      {:ok, %ActorModel{} = actor} ->
+        {:commit, actor}
+
+      {:error, _err} ->
+        {:ignore, nil}
+    end
   end
 
   @doc """
@@ -179,7 +182,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   Gets a member by its UUID, with all associations loaded.
   """
   @spec get_member_by_uuid_with_preload(String.t()) ::
-          {:commit, Todo.t()} | {:ignore, nil}
+          {:commit, Member.t()} | {:ignore, nil}
   def get_member_by_uuid_with_preload(uuid) do
     Cachex.fetch(@cache, "member_" <> uuid, fn "member_" <> uuid ->
       case Actors.get_member(uuid) do

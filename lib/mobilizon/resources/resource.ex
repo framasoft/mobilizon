@@ -79,6 +79,7 @@ defmodule Mobilizon.Resources.Resource do
   ]
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(resource, attrs) do
     resource
     |> cast(attrs, @attrs)

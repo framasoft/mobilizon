@@ -79,7 +79,7 @@ defmodule Mobilizon.Web.Upload do
          }
 
   @spec store(source, options :: [option()]) ::
-          {:ok, map()} | {:error, String.t()} | {:error, atom()}
+          {:ok, t()} | {:error, String.t()} | {:error, atom()}
   def store(upload, opts \\ []) do
     opts = get_opts(opts)
 
@@ -90,7 +90,7 @@ defmodule Mobilizon.Web.Upload do
         |> perform_filter_and_put_file(opts)
 
       {:error, error} ->
-        error
+        {:error, error}
     end
   end
 
@@ -169,28 +169,38 @@ defmodule Mobilizon.Web.Upload do
           {Config.get!([:instance, :upload_limit]), nil}
       end
 
+    activity_type = Keyword.get(opts, :activity_type, activity_type)
+    size_limit = Keyword.get(opts, :size_limit, size_limit)
+    uploader = Keyword.get(opts, :uploader, Config.get([__MODULE__, :uploader]))
+    filters = Keyword.get(opts, :filters, Config.get([__MODULE__, :filters]))
+    description = Keyword.get(opts, :description)
+
+    allow_list_mime_types =
+      Keyword.get(
+        opts,
+        :allow_list_mime_types,
+        Config.get([__MODULE__, :allow_list_mime_types])
+      )
+
+    base_url =
+      Keyword.get(
+        opts,
+        :base_url,
+        Config.get([__MODULE__, :base_url], Endpoint.url())
+      )
+
     %{
-      activity_type: Keyword.get(opts, :activity_type, activity_type),
-      size_limit: Keyword.get(opts, :size_limit, size_limit),
-      uploader: Keyword.get(opts, :uploader, Config.get([__MODULE__, :uploader])),
-      filters: Keyword.get(opts, :filters, Config.get([__MODULE__, :filters])),
-      description: Keyword.get(opts, :description),
-      allow_list_mime_types:
-        Keyword.get(
-          opts,
-          :allow_list_mime_types,
-          Config.get([__MODULE__, :allow_list_mime_types])
-        ),
-      base_url:
-        Keyword.get(
-          opts,
-          :base_url,
-          Config.get([__MODULE__, :base_url], Endpoint.url())
-        )
+      activity_type: activity_type,
+      size_limit: size_limit,
+      uploader: uploader,
+      filters: filters,
+      description: description,
+      allow_list_mime_types: allow_list_mime_types,
+      base_url: base_url
     }
   end
 
-  @spec prepare_upload(t(), internal_options()) :: {:ok, t()}
+  @spec prepare_upload(t(), internal_options()) :: {:ok, t()} | {:error, atom()}
   defp prepare_upload(%Plug.Upload{} = file, opts) do
     with {:ok, size} <- check_file_size(file.path, opts.size_limit),
          {:ok, content_type, name} <- MIME.file_mime_type(file.path, file.filename),
@@ -203,10 +213,14 @@ defmodule Mobilizon.Web.Upload do
          content_type: content_type,
          size: size
        }}
+    else
+      {:error, err} ->
+        {:error, err}
     end
   end
 
-  @spec prepare_upload(%{body: String.t(), name: String.t()}, internal_options()) :: {:ok, t()}
+  @spec prepare_upload(%{body: String.t(), name: String.t()}, internal_options()) ::
+          {:ok, t()} | {:error, :mime_type_not_allowed}
   defp prepare_upload(%{body: body, name: name} = _file, opts) do
     with :ok <- check_binary_size(body, opts.size_limit),
          tmp_path <- tempfile_for_image(body),
@@ -270,7 +284,7 @@ defmodule Mobilizon.Web.Upload do
 
   defp url_from_spec(_upload, _base_url, {:url, url}), do: url
 
-  @spec check_allowed_mime_type(String.t(), List.t()) :: :ok | {:error, :atom}
+  @spec check_allowed_mime_type(String.t(), List.t()) :: :ok | {:error, :mime_type_not_allowed}
   defp check_allowed_mime_type(content_type, allow_list_mime_types) do
     if Enum.any?(allow_list_mime_types, &(&1 == content_type)),
       do: :ok,

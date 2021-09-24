@@ -7,6 +7,7 @@ defmodule Mobilizon.Service.Address do
 
   @type address :: %{name: String.t(), alternative_name: String.t()}
 
+  @spec render_address(AddressModel.t()) :: String.t() | no_return
   def render_address(%AddressModel{} = address) do
     %{name: name, alternative_name: alternative_name} = render_names(address)
 

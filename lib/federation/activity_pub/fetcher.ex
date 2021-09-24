@@ -20,7 +20,6 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   @spec fetch(String.t(), Keyword.t()) ::
           {:ok, map()}
           | {:ok, Tesla.Env.t()}
-          | {:error, String.t()}
           | {:error, any()}
           | {:error, :invalid_url}
   def fetch(url, options \\ []) do
@@ -109,7 +108,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
     end
   end
 
-  @type fetch_actor_errors :: :json_decode_error | :actor_deleted | :http_error
+  @type fetch_actor_errors ::
+          :json_decode_error | :actor_deleted | :http_error | :actor_not_allowed_type
 
   @doc """
   Fetching a remote actor's information through its AP ID
@@ -130,7 +130,14 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
         case Jason.decode(body) do
           {:ok, data} when is_map(data) ->
             Logger.debug("Got activity+json response at actor's endpoint, now converting data")
-            {:ok, ActorConverter.as_to_model_data(data)}
+
+            case ActorConverter.as_to_model_data(data) do
+              {:error, :actor_not_allowed_type} ->
+                {:error, :actor_not_allowed_type}
+
+              map when is_map(map) ->
+                {:ok, map}
+            end
 
           {:error, %Jason.DecodeError{} = e} ->
             Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
@@ -164,12 +171,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
   @spec address_valid?(String.t()) :: boolean
   defp address_valid?(address) do
-    case URI.parse(address) do
-      %URI{host: host, scheme: scheme} ->
-        is_valid_string(host) and is_valid_string(scheme)
-
-      _ ->
-        false
-    end
+    %URI{host: host, scheme: scheme} = URI.parse(address)
+    is_valid_string(host) and is_valid_string(scheme)
   end
 end

@@ -25,6 +25,7 @@ defmodule Mobilizon.Users.ActivitySetting do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(activity_setting, attrs) do
     activity_setting
     |> cast(attrs, @attrs)

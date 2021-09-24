@@ -7,7 +7,24 @@ defmodule Mobilizon.Config do
   alias Mobilizon.Service.GitStatus
   require Logger
 
-  @spec instance_config :: keyword
+  @type mobilizon_config :: [
+          name: String.t(),
+          description: String.t(),
+          hostname: String.t(),
+          registrations_open: boolean(),
+          languages: list(String.t()),
+          default_language: String.t(),
+          registration_email_allowlist: list(String.t()),
+          registration_email_denylist: list(String.t()),
+          demo: boolean(),
+          repository: String.t(),
+          email_from: String.t(),
+          email_reply_to: String.t(),
+          federating: boolean(),
+          remove_orphan_uploads: boolean()
+        ]
+
+  @spec instance_config :: mobilizon_config
   def instance_config, do: Application.get_env(:mobilizon, :instance)
 
   @spec instance_name :: String.t()
@@ -139,10 +156,10 @@ defmodule Mobilizon.Config do
   def instance_user_agent,
     do: "#{instance_hostname()} - Mobilizon #{instance_version()}"
 
-  @spec instance_federating :: String.t()
+  @spec instance_federating :: boolean()
   def instance_federating, do: instance_config()[:federating]
 
-  @spec instance_geocoding_provider :: atom()
+  @spec instance_geocoding_provider :: module()
   def instance_geocoding_provider,
     do: get_in(Application.get_env(:mobilizon, Mobilizon.Service.Geospatial), [:service])
 
@@ -150,63 +167,90 @@ defmodule Mobilizon.Config do
   def instance_geocoding_autocomplete,
     do: instance_geocoding_provider() !== Mobilizon.Service.Geospatial.Nominatim
 
+  @spec maps_config :: [
+          tiles: [endpoint: String.t(), attribution: String.t()],
+          rounting: [type: atom]
+        ]
+  defp maps_config, do: Application.get_env(:mobilizon, :maps)
+
   @spec instance_maps_tiles_endpoint :: String.t()
-  def instance_maps_tiles_endpoint, do: Application.get_env(:mobilizon, :maps)[:tiles][:endpoint]
+  def instance_maps_tiles_endpoint, do: maps_config()[:tiles][:endpoint]
 
   @spec instance_maps_tiles_attribution :: String.t()
   def instance_maps_tiles_attribution,
-    do: Application.get_env(:mobilizon, :maps)[:tiles][:attribution]
+    do: maps_config()[:tiles][:attribution]
 
   @spec instance_maps_routing_type :: atom()
   def instance_maps_routing_type,
-    do: Application.get_env(:mobilizon, :maps)[:routing][:type]
+    do: maps_config()[:routing][:type]
+
+  @typep anonymous_config_type :: [
+           participation: [
+             allowed: boolean,
+             validation: [
+               email: [enabled: boolean(), confirmation_required: boolean()],
+               captcha: [enabled: boolean()]
+             ]
+           ],
+           event_creation: [
+             allowed: boolean,
+             validation: [
+               email: [enabled: boolean(), confirmation_required: boolean()],
+               captcha: [enabled: boolean()]
+             ]
+           ],
+           reports: [
+             allowed: boolean()
+           ]
+         ]
+
+  @spec anonymous_config :: anonymous_config_type
+  defp anonymous_config, do: Application.get_env(:mobilizon, :anonymous)
 
   @spec anonymous_participation? :: boolean
   def anonymous_participation?,
-    do: Application.get_env(:mobilizon, :anonymous)[:participation][:allowed]
+    do: anonymous_config()[:participation][:allowed]
 
   @spec anonymous_participation_email_required? :: boolean
   def anonymous_participation_email_required?,
-    do: Application.get_env(:mobilizon, :anonymous)[:participation][:validation][:email][:enabled]
+    do: anonymous_config()[:participation][:validation][:email][:enabled]
 
   @spec anonymous_participation_email_confirmation_required? :: boolean
   def anonymous_participation_email_confirmation_required?,
     do:
-      Application.get_env(:mobilizon, :anonymous)[:participation][:validation][:email][
+      anonymous_config()[:participation][:validation][:email][
         :confirmation_required
       ]
 
   @spec anonymous_participation_email_captcha_required? :: boolean
   def anonymous_participation_email_captcha_required?,
-    do:
-      Application.get_env(:mobilizon, :anonymous)[:participation][:validation][:captcha][:enabled]
+    do: anonymous_config()[:participation][:validation][:captcha][:enabled]
 
   @spec anonymous_event_creation? :: boolean
   def anonymous_event_creation?,
-    do: Application.get_env(:mobilizon, :anonymous)[:event_creation][:allowed]
+    do: anonymous_config()[:event_creation][:allowed]
 
   @spec anonymous_event_creation_email_required? :: boolean
   def anonymous_event_creation_email_required?,
-    do:
-      Application.get_env(:mobilizon, :anonymous)[:event_creation][:validation][:email][:enabled]
+    do: anonymous_config()[:event_creation][:validation][:email][:enabled]
 
   @spec anonymous_event_creation_email_confirmation_required? :: boolean
   def anonymous_event_creation_email_confirmation_required?,
     do:
-      Application.get_env(:mobilizon, :anonymous)[:event_creation][:validation][:email][
+      anonymous_config()[:event_creation][:validation][:email][
         :confirmation_required
       ]
 
   @spec anonymous_event_creation_email_captcha_required? :: boolean
   def anonymous_event_creation_email_captcha_required?,
     do:
-      Application.get_env(:mobilizon, :anonymous)[:event_creation][:validation][:captcha][
+      anonymous_config()[:event_creation][:validation][:captcha][
         :enabled
       ]
 
   @spec anonymous_reporting? :: boolean
   def anonymous_reporting?,
-    do: Application.get_env(:mobilizon, :anonymous)[:reports][:allowed]
+    do: anonymous_config()[:reports][:allowed]
 
   @spec oauth_consumer_strategies() :: list({atom(), String.t()})
   def oauth_consumer_strategies do
@@ -265,7 +309,7 @@ defmodule Mobilizon.Config do
   @spec admin_settings :: map
   def admin_settings, do: get_cached_value(:admin_config)
 
-  @spec get(key :: module | atom) :: any
+  @spec get(keys :: module | atom | [module | atom]) :: any
   def get(key), do: get(key, nil)
 
   @spec get(keys :: [module | atom], default :: any) :: any
@@ -281,7 +325,7 @@ defmodule Mobilizon.Config do
   @spec get(key :: module | atom, default :: any) :: any
   def get(key, default), do: Application.get_env(:mobilizon, key, default)
 
-  @spec get!(key :: module | atom) :: any
+  @spec get!(key :: module | atom) :: any | no_return
   def get!(key) do
     value = get(key, nil)
 

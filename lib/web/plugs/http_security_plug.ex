@@ -117,7 +117,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     |> to_string()
   end
 
-  @spec add_csp_param(list(), list(String.t()) | String.t() | nil) :: list()
+  @spec add_csp_param(iodata(), iodata() | nil) :: list()
   defp add_csp_param(csp_iodata, nil), do: csp_iodata
   defp add_csp_param(csp_iodata, param), do: [[param, ?;] | csp_iodata]
 
@@ -132,7 +132,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   defp maybe_send_sts_header(conn, false), do: conn
 
-  @spec get_csp_config(atom(), Keyword.t()) :: String.t()
+  @spec get_csp_config(atom(), Keyword.t()) :: iodata()
   defp get_csp_config(type, options) do
     options
     |> Keyword.get(type, Config.get([:http_security, :csp_policy, type]))

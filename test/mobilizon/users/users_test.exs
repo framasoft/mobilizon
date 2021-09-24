@@ -19,13 +19,13 @@ defmodule Mobilizon.UsersTest do
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = insert(:user)
-      assert user = Users.get_user!(user.id)
+      %User{id: user_id} = user = insert(:user)
+      assert user == Users.get_user!(user_id)
     end
 
     # There's no create_user/1, just register/1
     test "register/1 with valid data creates a user" do
-      assert {:ok, %User{email: email} = user} = Users.register(@valid_attrs)
+      assert {:ok, %User{email: email}} = Users.register(@valid_attrs)
 
       assert email == @valid_attrs.email
     end
@@ -48,9 +48,9 @@ defmodule Mobilizon.UsersTest do
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = insert(:user)
+      %User{id: user_id} = user = insert(:user)
       assert {:error, %Ecto.Changeset{}} = Users.update_user(user, @invalid_attrs)
-      assert user = Users.get_user!(user.id)
+      assert user == Users.get_user!(user_id)
     end
 
     test "delete_user/1 empties the user" do
@@ -64,11 +64,6 @@ defmodule Mobilizon.UsersTest do
       assert {:ok, %User{}} = Users.delete_user(user, reserve_email: false)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
-
-    # test "change_user/1 returns a user changeset" do
-    #   user = insert(:user)
-    #   assert %Ecto.Changeset{} = Users.change_user(user)
-    # end
 
     @email "email@domain.tld"
     @password "password"

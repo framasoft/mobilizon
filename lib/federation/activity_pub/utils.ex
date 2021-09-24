@@ -106,6 +106,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Enqueues an activity for federation if it's local
   """
+  @spec maybe_federate(activity :: Activity.t()) :: :ok
   def maybe_federate(%Activity{local: true} = activity) do
     Logger.debug("Maybe federate an activity")
 
@@ -165,12 +166,12 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
             Logger.info("Forwarded activity to external members of the group")
             :ok
 
-          _ ->
+          {:error, _err} ->
             Logger.info("Failed to forward activity to external members of the group")
             :error
         end
 
-      _ ->
+      nil ->
         :ok
     end
   end
@@ -311,7 +312,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       {:ok, media} ->
         media
 
-      _ ->
+      {:error, _err} ->
         nil
     end
   end
@@ -509,7 +510,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Make add activity data
   """
-  @spec make_add_data(map(), map()) :: map()
+  @spec make_add_data(map(), map(), map()) :: map()
   def make_add_data(object, target, additional \\ %{}) do
     Logger.debug("Making add data")
     Logger.debug(inspect(object))
@@ -530,7 +531,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Make move activity data
   """
-  @spec make_add_data(map(), map()) :: map()
+  @spec make_move_data(map(), map(), map(), map()) :: map()
   def make_move_data(object, origin, target, additional \\ %{}) do
     Logger.debug("Making move data")
     Logger.debug(inspect(object))

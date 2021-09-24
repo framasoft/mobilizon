@@ -26,21 +26,25 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
           Relay.get_actor()
       end
 
-    with :ok <- fetch_group(url, on_behalf_of) do
-      {:ok, group}
+    case fetch_group(url, on_behalf_of) do
+      {:error, error} ->
+        {:error, error}
+
+      :ok ->
+        {:ok, group}
     end
   end
 
   def refresh_profile(%Actor{type: type, url: url}) when type in [:Person, :Application] do
     case ActivityPubActor.make_actor_from_url(url) do
+      {:error, error} ->
+        {:error, error}
+
       {:ok, %Actor{outbox_url: outbox_url} = actor} ->
         case fetch_collection(outbox_url, Relay.get_actor()) do
           :ok -> {:ok, actor}
           {:error, error} -> {:error, error}
         end
-
-      {:error, error} ->
-        {:error, error}
     end
   end
 
@@ -49,6 +53,11 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   @spec fetch_group(String.t(), Actor.t()) :: :ok | {:error, fetch_actor_errors}
   def fetch_group(group_url, %Actor{} = on_behalf_of) do
     case ActivityPubActor.make_actor_from_url(group_url) do
+      {:error, err}
+      when err in [:actor_deleted, :http_error, :json_decode_error, :actor_is_local] ->
+        Logger.debug("Error while making actor")
+        {:error, err}
+
       {:ok,
        %Actor{
          outbox_url: outbox_url,
@@ -75,11 +84,6 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
             Logger.debug("Error while fetching actor collection")
             {:error, err}
         end
-
-      {:error, err}
-      when err in [:actor_deleted, :http_error, :json_decode_error, :actor_is_local] ->
-        Logger.debug("Error while making actor")
-        {:error, err}
     end
   end
 
@@ -113,7 +117,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
     end
   end
 
-  @spec fetch_element(String.t(), Actor.t()) :: any()
+  @spec fetch_element(String.t(), Actor.t()) :: {:ok, struct()} | {:error, any()}
   def fetch_element(url, %Actor{} = on_behalf_of) do
     with {:ok, data} <- Fetcher.fetch(url, on_behalf_of: on_behalf_of) do
       case handling_element(data) do
@@ -122,6 +126,9 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
 
         {:ok, entity} ->
           {:ok, entity}
+
+        :error ->
+          {:error, :err_fetching_element}
 
         err ->
           {:error, err}

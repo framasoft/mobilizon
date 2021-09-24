@@ -21,6 +21,7 @@ defmodule Mobilizon.Posts do
     :private
   ])
 
+  @spec list_public_local_posts(integer | nil, integer | nil) :: Page.t(Post.t())
   def list_public_local_posts(page \\ nil, limit \\ nil) do
     Post
     |> filter_public()
@@ -144,12 +145,12 @@ defmodule Mobilizon.Posts do
     )
   end
 
-  @spec filter_public(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_public(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_public(query) do
     where(query, [p], p.visibility == ^:public and not p.draft)
   end
 
-  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_local(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_local(query) do
     where(query, [q], q.local == true)
   end
@@ -161,7 +162,7 @@ defmodule Mobilizon.Posts do
     |> preload_post_associations()
   end
 
-  @spec preload_post_associations(Ecto.Query.t(), list()) :: Ecto.Query.t()
+  @spec preload_post_associations(Ecto.Queryable.t(), list()) :: Ecto.Query.t()
   defp preload_post_associations(query, associations \\ @post_preloads) do
     preload(query, ^associations)
   end

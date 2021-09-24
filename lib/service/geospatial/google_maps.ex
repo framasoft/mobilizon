@@ -31,7 +31,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
   """
-  @spec geocode(String.t(), keyword()) :: list(Address.t())
+  @spec geocode(String.t(), keyword()) :: list(Address.t()) | no_return
   def geocode(lon, lat, options \\ []) do
     url = build_url(:geocode, %{lon: lon, lat: lat}, options)
 
@@ -50,7 +50,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.search/2`.
   """
-  @spec search(String.t(), keyword()) :: list(Address.t())
+  @spec search(String.t(), keyword()) :: list(Address.t()) | no_return
   def search(q, options \\ []) do
     url = build_url(:search, %{q: q}, options)
 
@@ -68,7 +68,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     end
   end
 
-  @spec build_url(atom(), map(), list()) :: String.t()
+  @spec build_url(atom(), map(), list()) :: String.t() | no_return
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
@@ -148,6 +148,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     end
   end
 
+  @spec do_fetch_place_details(String.t() | nil, Keyword.t()) :: String.t() | no_return
   defp do_fetch_place_details(place_id, options) do
     url = build_url(:place_details, %{place_id: place_id}, options)
 

@@ -57,7 +57,7 @@ defmodule Mobilizon.Events.Participant do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = participant, attrs) do
     participant
     |> cast(attrs, @attrs)

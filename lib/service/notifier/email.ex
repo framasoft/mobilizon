@@ -12,7 +12,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   import Mobilizon.Service.DateTime,
     only: [
-      is_delay_ok_since_last_notification_sent: 1
+      is_delay_ok_since_last_notification_sent?: 1
     ]
 
   require Logger
@@ -116,7 +116,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   # Delay ok since last notification
   defp match_group_notifications_setting(:one_hour, _, %DateTime{} = last_notification_sent, _) do
-    is_delay_ok_since_last_notification_sent(last_notification_sent)
+    is_delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
   # This is a recap

@@ -28,7 +28,7 @@ defmodule Mobilizon.Events.TagRelation do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = tag, attrs) do
     # Return if tag_id or link_id are not set because it will fail later otherwise
     with %Ecto.Changeset{errors: [], changes: changes} = changeset <-

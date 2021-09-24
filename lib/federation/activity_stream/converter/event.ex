@@ -47,7 +47,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @impl Converter
   @spec as_to_model_data(map) :: map() | {:error, any()} | :error
   def as_to_model_data(object) do
-    with {%Actor{id: actor_id}, attributed_to} <-
+    with {:ok, %Actor{id: actor_id}, attributed_to} <-
            maybe_fetch_actor_and_attributed_to_id(object),
          {:address, address_id} <-
            {:address, get_address(object["location"])},
@@ -87,7 +87,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         language: object["inLanguage"]
       }
     else
-      {:ok, %Actor{suspended: true}} ->
+      {:error, _err} ->
         :error
     end
   end

@@ -94,6 +94,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
     else
       {:media, nil} -> {:error, :not_found}
       {:is_owned, _} -> {:error, :unauthorized}
+      {:error, :enofile} -> {:error, "File not found"}
     end
   end
 

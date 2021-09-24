@@ -43,13 +43,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Entity do
           | TodoList.t()
 
   @callback create(data :: any(), additionnal :: map()) ::
-              {:ok, t(), ActivityStream.t()}
+              {:ok, t(), ActivityStream.t()} | {:error, any()}
 
   @callback update(struct :: t(), attrs :: map(), additionnal :: map()) ::
-              {:ok, t(), ActivityStream.t()}
+              {:ok, t(), ActivityStream.t()} | {:error, any()}
 
   @callback delete(struct :: t(), Actor.t(), local :: boolean(), map()) ::
-              {:ok, ActivityStream.t(), Actor.t(), t()}
+              {:ok, ActivityStream.t(), Actor.t(), t()} | {:error, any()}
 end
 
 defprotocol Mobilizon.Federation.ActivityPub.Types.Managable do
@@ -57,14 +57,15 @@ defprotocol Mobilizon.Federation.ActivityPub.Types.Managable do
   ActivityPub entity Managable protocol.
   """
 
-  @spec update(Entity.t(), map(), map()) :: {:ok, Entity.t(), ActivityStream.t()}
+  @spec update(Entity.t(), map(), map()) ::
+          {:ok, Entity.t(), ActivityStream.t()} | {:error, any()}
   @doc """
   Updates a `Managable` entity with the appropriate attributes and returns the updated entity and an activitystream representation for it
   """
   def update(entity, attrs, additionnal)
 
   @spec delete(Entity.t(), Actor.t(), boolean(), map()) ::
-          {:ok, ActivityStream.t(), Actor.t(), Entity.t()}
+          {:ok, ActivityStream.t(), Actor.t(), Entity.t()} | {:error, any()}
   @doc "Deletes an entity and returns the activitystream representation for it"
   def delete(entity, actor, local, additionnal)
 end

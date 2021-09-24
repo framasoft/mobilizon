@@ -249,11 +249,11 @@ defmodule Mobilizon.Federation.ActivityPub.AudienceTest do
     end
 
     test "reply to a remote comment" do
-      %Actor{id: remote_actor_id, url: remote_actor_url} =
+      %Actor{} =
         remote_actor =
         insert(:actor, domain: "somewhere.else", url: "https://somewhere.else/@someone")
 
-      %Actor{id: remote_group_id, url: remote_group_url} =
+      %Actor{} =
         remote_group =
         insert(:group, domain: "somewhere.else", url: "https://somewhere.else/@somegroup")
 

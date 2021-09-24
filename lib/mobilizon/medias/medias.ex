@@ -130,7 +130,7 @@ defmodule Mobilizon.Medias do
       |> Multi.run(:remove, fn _repo, %{media: %Media{file: %File{url: url}} = media} ->
         case Upload.remove(url) do
           {:error, err} ->
-            if err =~ "doesn't exist" and Keyword.get(opts, :ignore_file_not_found, false) do
+            if err == :enofile and Keyword.get(opts, :ignore_file_not_found, false) do
               Logger.info("Deleting media and ignoring absent file.")
               {:ok, media}
             else

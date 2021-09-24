@@ -9,7 +9,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   require Logger
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_update_data: 2]
 
-  @spec update(Member.t(), map, map) :: {:ok, Member.t(), ActivityStream.t()}
+  @spec update(Member.t(), map, map) ::
+          {:ok, Member.t(), ActivityStream.t()}
+          | {:error, :member_not_found | :only_admin_left | Ecto.Changeset.t()}
   def update(
         %Member{
           parent: %Actor{id: group_id} = group,
@@ -20,39 +22,46 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
         %{role: updated_role} = args,
         %{moderator: %Actor{url: moderator_url, id: moderator_id} = moderator} = additional
       ) do
-    with additional <- Map.delete(additional, :moderator),
-         {:has_rights_to_update_role, {:ok, %Member{role: moderator_role}}}
-         when moderator_role in [:moderator, :administrator, :creator] <-
-           {:has_rights_to_update_role, Actors.get_member(moderator_id, group_id)},
-         {:is_only_admin, false} <-
-           {:is_only_admin, check_admins_left?(member_id, group_id, current_role, updated_role)},
-         {:ok, %Member{} = member} <-
-           Actors.update_member(old_member, args),
-         {:ok, _} <-
-           MemberActivity.insert_activity(member,
-             old_member: old_member,
-             moderator: moderator,
-             subject: "member_updated"
-           ),
-         Absinthe.Subscription.publish(Endpoint, actor,
-           group_membership_changed: [Actor.preferred_username_and_domain(group), actor_id]
-         ),
-         {:ok, true} <- Cachex.del(:activity_pub, "member_#{member_id}"),
-         member_as_data <-
-           Convertible.model_to_as(member),
-         audience <- %{
-           "to" => [member.parent.members_url, member.actor.url],
-           "cc" => [member.parent.url],
-           "actor" => moderator_url,
-           "attributedTo" => [member.parent.url]
-         } do
-      update_data = make_update_data(member_as_data, Map.merge(audience, additional))
+    additional = Map.delete(additional, :moderator)
 
-      {:ok, member, update_data}
-    else
-      err ->
-        Logger.debug(inspect(err))
-        err
+    case Actors.get_member(moderator_id, group_id) do
+      {:error, :member_not_found} ->
+        {:error, :member_not_found}
+
+      {:ok, %Member{role: moderator_role}}
+      when moderator_role in [:moderator, :administrator, :creator] ->
+        if check_admins_left?(member_id, group_id, current_role, updated_role) do
+          {:error, :only_admin_left}
+        else
+          case Actors.update_member(old_member, args) do
+            {:error, %Ecto.Changeset{} = err} ->
+              {:error, err}
+
+            {:ok, %Member{} = member} ->
+              MemberActivity.insert_activity(member,
+                old_member: old_member,
+                moderator: moderator,
+                subject: "member_updated"
+              )
+
+              Absinthe.Subscription.publish(Endpoint, actor,
+                group_membership_changed: [Actor.preferred_username_and_domain(group), actor_id]
+              )
+
+              Cachex.del(:activity_pub, "member_#{member_id}")
+              member_as_data = Convertible.model_to_as(member)
+
+              audience = %{
+                "to" => [member.parent.members_url, member.actor.url],
+                "cc" => [member.parent.url],
+                "actor" => moderator_url,
+                "attributedTo" => [member.parent.url]
+              }
+
+              update_data = make_update_data(member_as_data, Map.merge(audience, additional))
+              {:ok, member, update_data}
+          end
+        end
     end
   end
 

@@ -18,40 +18,49 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, Actor.t(), ActivityStream.t()}
+  @spec create(map(), map()) ::
+          {:ok, Actor.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def create(args, additional) do
-    with args <- prepare_args_for_actor(args),
-         {:ok, %Actor{} = actor} <- Actors.create_actor(args),
-         {:ok, _} <-
-           GroupActivity.insert_activity(actor,
-             subject: "group_created",
-             actor_id: args.creator_actor_id
-           ),
-         actor_as_data <- Convertible.model_to_as(actor),
-         audience <- %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []},
-         create_data <-
-           make_create_data(actor_as_data, Map.merge(audience, additional)) do
-      {:ok, actor, create_data}
+    args = prepare_args_for_actor(args)
+
+    case Actors.create_actor(args) do
+      {:ok, %Actor{} = actor} ->
+        GroupActivity.insert_activity(actor,
+          subject: "group_created",
+          actor_id: args.creator_actor_id
+        )
+
+        actor_as_data = Convertible.model_to_as(actor)
+        audience = %{"to" => ["https://www.w3.org/ns/activitystreams#Public"], "cc" => []}
+        create_data = make_create_data(actor_as_data, Map.merge(audience, additional))
+        {:ok, actor, create_data}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
   @impl Entity
-  @spec update(Actor.t(), map, map) :: {:ok, Actor.t(), ActivityStream.t()}
+  @spec update(Actor.t(), map, map) ::
+          {:ok, Actor.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def update(%Actor{} = old_actor, args, additional) do
-    with {:ok, %Actor{} = new_actor} <- Actors.update_actor(old_actor, args),
-         {:ok, _} <-
-           GroupActivity.insert_activity(new_actor,
-             subject: "group_updated",
-             old_group: old_actor,
-             updater_actor: Map.get(args, :updater_actor)
-           ),
-         actor_as_data <- Convertible.model_to_as(new_actor),
-         {:ok, true} <- Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}"),
-         audience <-
-           Audience.get_audience(new_actor),
-         additional <- Map.merge(additional, %{"actor" => old_actor.url}),
-         update_data <- make_update_data(actor_as_data, Map.merge(audience, additional)) do
-      {:ok, new_actor, update_data}
+    case Actors.update_actor(old_actor, args) do
+      {:ok, %Actor{} = new_actor} ->
+        GroupActivity.insert_activity(new_actor,
+          subject: "group_updated",
+          old_group: old_actor,
+          updater_actor: Map.get(args, :updater_actor)
+        )
+
+        actor_as_data = Convertible.model_to_as(new_actor)
+        Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}")
+        audience = Audience.get_audience(new_actor)
+        additional = Map.merge(additional, %{"actor" => old_actor.url})
+        update_data = make_update_data(actor_as_data, Map.merge(audience, additional))
+        {:ok, new_actor, update_data}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
@@ -92,21 +101,24 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
     suspension = Map.get(additionnal, :suspension, false)
 
-    with {:ok, %Oban.Job{}} <-
-           Actors.delete_actor(target_actor,
-             # We completely delete the actor if the actor is remote
-             reserve_username: is_nil(domain),
-             suspension: suspension,
-             author_id: author_id
-           ) do
-      {:ok, activity_data, actor, target_actor}
+    case Actors.delete_actor(target_actor,
+           # We completely delete the actor if the actor is remote
+           reserve_username: is_nil(domain),
+           suspension: suspension,
+           author_id: author_id
+         ) do
+      {:ok, %Oban.Job{}} ->
+        {:ok, activity_data, actor, target_actor}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
   @spec actor(Actor.t()) :: Actor.t() | nil
   def actor(%Actor{} = actor), do: actor
 
-  @spec actor(Actor.t()) :: Actor.t() | nil
+  @spec group_actor(Actor.t()) :: Actor.t() | nil
   def group_actor(%Actor{} = actor), do: actor
 
   @spec permissions(Actor.t()) :: Permission.t()
@@ -121,59 +133,70 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   @spec join(Actor.t(), Actor.t(), boolean(), map()) :: {:ok, ActivityStreams.t(), Member.t()}
   def join(%Actor{type: :Group} = group, %Actor{} = actor, _local, additional) do
-    with role <-
-           additional
-           |> Map.get(:metadata, %{})
-           |> Map.get(:role, Mobilizon.Actors.get_default_member_role(group)),
-         {:ok, %Member{} = member} <-
-           Mobilizon.Actors.create_member(%{
-             role: role,
-             parent_id: group.id,
-             actor_id: actor.id,
-             url: Map.get(additional, :url),
-             metadata:
-               additional
-               |> Map.get(:metadata, %{})
-               |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
-           }),
-         {:ok, _} <-
-           Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_joined"),
-         Absinthe.Subscription.publish(Endpoint, actor,
-           group_membership_changed: [Actor.preferred_username_and_domain(group), actor.id]
-         ),
-         join_data <- %{
-           "type" => "Join",
-           "id" => member.url,
-           "actor" => actor.url,
-           "object" => group.url
-         },
-         audience <-
-           Audience.get_audience(member) do
-      approve_if_default_role_is_member(
-        group,
-        actor,
-        Map.merge(join_data, audience),
-        member,
-        role
-      )
+    role =
+      additional
+      |> Map.get(:metadata, %{})
+      |> Map.get(:role, Mobilizon.Actors.get_default_member_role(group))
+
+    case Mobilizon.Actors.create_member(%{
+           role: role,
+           parent_id: group.id,
+           actor_id: actor.id,
+           url: Map.get(additional, :url),
+           metadata:
+             additional
+             |> Map.get(:metadata, %{})
+             |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
+         }) do
+      {:ok, %Member{} = member} ->
+        Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_joined")
+
+        Absinthe.Subscription.publish(Endpoint, actor,
+          group_membership_changed: [Actor.preferred_username_and_domain(group), actor.id]
+        )
+
+        join_data = %{
+          "type" => "Join",
+          "id" => member.url,
+          "actor" => actor.url,
+          "object" => group.url
+        }
+
+        audience = Audience.get_audience(member)
+
+        approve_if_default_role_is_member(
+          group,
+          actor,
+          Map.merge(join_data, audience),
+          member,
+          role
+        )
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
   @spec follow(Actor.t(), Actor.t(), boolean, map) ::
           {:accept, any}
           | {:ok, ActivityStreams.t(), Follower.t()}
-          | {:error, :no_person, String.t()}
+          | {:error,
+             :person_no_follow | :already_following | :followed_suspended | Ecto.Changeset.t()}
   def follow(%Actor{} = follower_actor, %Actor{type: type} = followed, _local, additional)
       when type != :Person do
-    with {:ok, %Follower{} = follower} <-
-           Mobilizon.Actors.follow(followed, follower_actor, additional["activity_id"], false),
-         :ok <- FollowMailer.send_notification_to_admins(follower),
-         follower_as_data <- Convertible.model_to_as(follower) do
-      approve_if_manually_approves_followers(follower, follower_as_data)
+    case Mobilizon.Actors.follow(followed, follower_actor, additional["activity_id"], false) do
+      {:ok, %Follower{} = follower} ->
+        FollowMailer.send_notification_to_admins(follower)
+        follower_as_data = Convertible.model_to_as(follower)
+        approve_if_manually_approves_followers(follower, follower_as_data)
+
+      {:error, error} ->
+        {:error, error}
     end
   end
 
-  def follow(_, _, _, _), do: {:error, :no_person, "Only group and instances can be followed"}
+  # "Only group and instances can be followed"
+  def follow(_, _, _, _), do: {:error, :person_no_follow}
 
   @spec prepare_args_for_actor(map) :: map
   defp prepare_args_for_actor(args) do
@@ -242,7 +265,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     end
   end
 
-  @spec approve_if_manually_approves_followers(Follower.t(), ActivityStreams.t()) ::
+  @spec approve_if_manually_approves_followers(
+          follower :: Follower.t(),
+          follow_as_data :: ActivityStreams.t()
+        ) ::
           {:accept, any} | {:ok, ActivityStreams.t(), Follower.t()}
   defp approve_if_manually_approves_followers(
          %Follower{} = follower,

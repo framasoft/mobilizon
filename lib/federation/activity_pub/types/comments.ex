@@ -21,48 +21,56 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, Comment.t(), ActivityStream.t()}
+  @spec create(map(), map()) ::
+          {:ok, Comment.t(), ActivityStream.t()}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, :event_not_allow_commenting}
   def create(args, additional) do
-    with args <- prepare_args_for_comment(args),
-         :ok <- make_sure_event_allows_commenting(args),
-         {:ok, %Comment{discussion_id: discussion_id} = comment} <-
-           Discussions.create_comment(args),
-         {:ok, _} <-
-           CommentActivity.insert_activity(comment,
-             subject: "comment_posted"
-           ),
-         :ok <- maybe_publish_graphql_subscription(discussion_id),
-         comment_as_data <- Convertible.model_to_as(comment),
-         audience <-
-           Audience.get_audience(comment),
-         create_data <-
-           make_create_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, comment, create_data}
+    args = prepare_args_for_comment(args)
+
+    if event_allows_commenting?(args) do
+      case Discussions.create_comment(args) do
+        {:ok, %Comment{discussion_id: discussion_id} = comment} ->
+          CommentActivity.insert_activity(comment,
+            subject: "comment_posted"
+          )
+
+          maybe_publish_graphql_subscription(discussion_id)
+          comment_as_data = Convertible.model_to_as(comment)
+          audience = Audience.get_audience(comment)
+          create_data = make_create_data(comment_as_data, Map.merge(audience, additional))
+          {:ok, comment, create_data}
+
+        {:error, %Ecto.Changeset{} = err} ->
+          {:error, err}
+      end
+    else
+      {:error, :event_not_allow_commenting}
     end
   end
 
   @impl Entity
-  @spec update(Comment.t(), map(), map()) :: {:ok, Comment.t(), ActivityStream.t()}
+  @spec update(Comment.t(), map(), map()) ::
+          {:ok, Comment.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def update(%Comment{} = old_comment, args, additional) do
-    with args <- prepare_args_for_comment_update(args),
-         {:ok, %Comment{} = new_comment} <- Discussions.update_comment(old_comment, args),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{new_comment.uuid}"),
-         comment_as_data <- Convertible.model_to_as(new_comment),
-         audience <-
-           Audience.get_audience(new_comment),
-         update_data <- make_update_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, new_comment, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
+    args = prepare_args_for_comment_update(args)
+
+    case Discussions.update_comment(old_comment, args) do
+      {:ok, %Comment{} = new_comment} ->
+        {:ok, true} = Cachex.del(:activity_pub, "comment_#{new_comment.uuid}")
+        comment_as_data = Convertible.model_to_as(new_comment)
+        audience = Audience.get_audience(new_comment)
+        update_data = make_update_data(comment_as_data, Map.merge(audience, additional))
+        {:ok, new_comment, update_data}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
   @impl Entity
   @spec delete(Comment.t(), Actor.t(), boolean, map()) ::
-          {:ok, ActivityStream.t(), Actor.t(), Comment.t()}
+          {:ok, ActivityStream.t(), Actor.t(), Comment.t()} | {:error, Ecto.Changeset.t()}
   def delete(
         %Comment{url: url, id: comment_id},
         %Actor{} = actor,
@@ -81,15 +89,17 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
     force_deletion = Map.get(options, :force, false)
 
-    with audience <-
-           Audience.get_audience(comment),
-         {:ok, %Comment{} = updated_comment} <-
-           Discussions.delete_comment(comment, force: force_deletion),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
-         {:ok, %Tombstone{} = _tombstone} <-
-           Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}) do
-      Share.delete_all_by_uri(comment.url)
-      {:ok, Map.merge(activity_data, audience), actor, updated_comment}
+    audience = Audience.get_audience(comment)
+
+    case Discussions.delete_comment(comment, force: force_deletion) do
+      {:ok, %Comment{} = updated_comment} ->
+        Cachex.del(:activity_pub, "comment_#{comment.uuid}")
+        Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id})
+        Share.delete_all_by_uri(comment.url)
+        {:ok, Map.merge(activity_data, audience), actor, updated_comment}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
@@ -185,31 +195,31 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   defp maybe_publish_graphql_subscription(nil), do: :ok
 
   defp maybe_publish_graphql_subscription(discussion_id) do
-    with %Discussion{} = discussion <- Discussions.get_discussion(discussion_id) do
-      Absinthe.Subscription.publish(Endpoint, discussion,
-        discussion_comment_changed: discussion.slug
-      )
+    case Discussions.get_discussion(discussion_id) do
+      %Discussion{} = discussion ->
+        Absinthe.Subscription.publish(Endpoint, discussion,
+          discussion_comment_changed: discussion.slug
+        )
 
-      :ok
+        :ok
+
+      nil ->
+        :ok
     end
   end
 
-  @spec make_sure_event_allows_commenting(%{actor_id: String.t() | integer, event: Event.t()}) ::
-          :ok | {:error, :event_comments_are_closed}
-  defp make_sure_event_allows_commenting(%{
+  @spec event_allows_commenting?(%{actor_id: String.t() | integer, event: Event.t()}) :: boolean
+  defp event_allows_commenting?(%{
          actor_id: actor_id,
          event: %Event{
            options: %EventOptions{comment_moderation: comment_moderation},
            organizer_actor_id: organizer_actor_id
          }
        }) do
-    if comment_moderation != :closed ||
-         to_string(actor_id) == to_string(organizer_actor_id) do
-      :ok
-    else
-      {:error, :event_comments_are_closed}
-    end
+    comment_moderation != :closed ||
+      to_string(actor_id) == to_string(organizer_actor_id)
   end
 
-  defp make_sure_event_allows_commenting(_), do: :ok
+  # Comments not attached to events
+  defp event_allows_commenting?(_), do: true
 end

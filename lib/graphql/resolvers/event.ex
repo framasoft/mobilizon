@@ -293,8 +293,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         %{context: %{current_user: %User{} = user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
-    with args <- Map.put(args, :options, args[:options] || %{}),
-         {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
+    args = Map.put(args, :options, args[:options] || %{})
+
+    with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          %Actor{} = actor <- Users.get_actor_for_user(user),
          {:ok, args} <- verify_profile_change(args, event, user, actor),
          {:event_can_be_managed, true} <-
@@ -319,7 +320,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:new_actor, _} ->
         {:error, dgettext("errors", "You can't attribute this event to this profile.")}
 
-      {:error, _, %Ecto.Changeset{} = error, _} ->
+      {:error, %Ecto.Changeset{} = error} ->
         {:error, error}
     end
   end

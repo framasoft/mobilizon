@@ -150,7 +150,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MediaTest do
           variables: %{id: media_id}
         )
 
-      assert is_nil(res["errors"])
+      assert res["errors"] == nil
       assert res["data"]["removeMedia"]["id"] == to_string(media_id)
 
       res =

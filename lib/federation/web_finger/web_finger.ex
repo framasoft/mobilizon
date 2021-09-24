@@ -27,7 +27,7 @@ defmodule Mobilizon.Federation.WebFinger do
     base_url = Endpoint.url()
     %URI{host: host} = URI.parse(base_url)
 
-    {
+    XmlBuilder.to_doc({
       :XRD,
       %{
         xmlns: "http://docs.oasis-open.org/ns/xri/xrd-1.0",
@@ -47,8 +47,7 @@ defmodule Mobilizon.Federation.WebFinger do
           }
         }
       ]
-    }
-    |> XmlBuilder.to_doc()
+    })
   end
 
   @doc """
@@ -150,7 +149,7 @@ defmodule Mobilizon.Federation.WebFinger do
 
           {:error, err} ->
             Logger.debug("Couldn't process webfinger data for #{actor}")
-            err
+            {:error, err}
         end
 
       {:error, err} ->
@@ -187,7 +186,8 @@ defmodule Mobilizon.Federation.WebFinger do
     end
   end
 
-  # Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta` to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`)
+  # Fetches the Extensible Resource Descriptor endpoint `/.well-known/host-meta`
+  # to find the Webfinger endpoint (usually `/.well-known/webfinger?resource=`)
   @spec find_webfinger_endpoint(String.t()) ::
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   defp find_webfinger_endpoint(domain) when is_binary(domain) do

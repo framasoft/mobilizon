@@ -111,7 +111,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     acc ++ [%{actor_id: actor_id}]
   end
 
-  @spec create_mention(map(), list()) :: list()
   defp create_mention(mention, acc) when is_map(mention) do
     with true <- mention["type"] == "Mention",
          {:ok, %Actor{id: actor_id}} <-
@@ -128,22 +127,34 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     create_mention(mention, acc)
   end
 
-  @spec maybe_fetch_actor_and_attributed_to_id(map()) :: {Actor.t() | nil, Actor.t() | nil}
+  @spec maybe_fetch_actor_and_attributed_to_id(map()) ::
+          {:ok, Actor.t(), Actor.t() | nil} | {:error, atom()}
   def maybe_fetch_actor_and_attributed_to_id(%{
         "actor" => actor_url,
         "attributedTo" => attributed_to_url
       })
       when is_nil(attributed_to_url) do
-    {fetch_actor(actor_url), nil}
+    case fetch_actor(actor_url) do
+      {:ok, %Actor{} = actor} ->
+        {:ok, actor, nil}
+
+      {:error, err} ->
+        {:error, err}
+    end
   end
 
-  @spec maybe_fetch_actor_and_attributed_to_id(map()) :: {Actor.t() | nil, Actor.t() | nil}
   def maybe_fetch_actor_and_attributed_to_id(%{
         "actor" => actor_url,
         "attributedTo" => attributed_to_url
       })
       when is_nil(actor_url) do
-    {fetch_actor(attributed_to_url), nil}
+    case fetch_actor(attributed_to_url) do
+      {:ok, %Actor{} = actor} ->
+        {:ok, actor, nil}
+
+      {:error, err} ->
+        {:error, err}
+    end
   end
 
   # Only when both actor and attributedTo fields are both filled is when we can return both
@@ -152,9 +163,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
         "attributedTo" => attributed_to_url
       })
       when actor_url != attributed_to_url do
-    with actor <- fetch_actor(actor_url),
-         attributed_to <- fetch_actor(attributed_to_url) do
-      {actor, attributed_to}
+    with {:ok, %Actor{} = actor} <- fetch_actor(actor_url),
+         {:ok, %Actor{} = attributed_to} <- fetch_actor(attributed_to_url) do
+      {:ok, actor, attributed_to}
+    else
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -162,16 +176,25 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   def maybe_fetch_actor_and_attributed_to_id(%{
         "attributedTo" => attributed_to_url
       }) do
-    {fetch_actor(attributed_to_url), nil}
+    case fetch_actor(attributed_to_url) do
+      {:ok, %Actor{} = attributed_to} -> {:ok, attributed_to, nil}
+      {:error, err} -> {:error, err}
+    end
   end
 
-  def maybe_fetch_actor_and_attributed_to_id(_), do: {nil, nil}
+  def maybe_fetch_actor_and_attributed_to_id(_), do: {:error, :no_actor_found}
 
-  @spec fetch_actor(String.t()) :: Actor.t()
+  @spec fetch_actor(String.t()) :: {:ok, Actor.t()} | {:error, atom()}
   defp fetch_actor(actor_url) do
-    with {:ok, %Actor{suspended: false} = actor} <-
-           ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
-      actor
+    case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
+      {:ok, %Actor{suspended: false} = actor} ->
+        {:ok, actor}
+
+      {:ok, %Actor{suspended: true} = _actor} ->
+        {:error, :actor_suspended}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -203,12 +226,17 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
       |> Map.new()
 
     picture_id =
-      with banner when is_map(banner) <- get_banner_picture(attachements),
-           {:ok, %Media{id: picture_id}} <-
-             MediaConverter.find_or_create_media(banner, actor_id) do
-        picture_id
-      else
-        _err ->
+      case get_banner_picture(attachements) do
+        banner when is_map(banner) ->
+          case MediaConverter.find_or_create_media(banner, actor_id) do
+            {:error, _err} ->
+              nil
+
+            {:ok, %Media{id: picture_id}} ->
+              picture_id
+          end
+
+        _ ->
           nil
       end
 

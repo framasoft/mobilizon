@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker do
+defmodule Mobilizon.Service.Workers.CleanSuspendedActors do
   @moduledoc """
   Worker to clean unattached media
   """
