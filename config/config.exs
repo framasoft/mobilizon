@@ -191,7 +191,8 @@ config :http_signatures,
 config :mobilizon, :cldr,
   locales: [
     "fr",
-    "en"
+    "en",
+    "ru"
   ]
 
 config :mobilizon, :activitypub,
