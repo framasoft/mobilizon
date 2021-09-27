@@ -8,6 +8,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
 
+  @spec render(String.t(), map()) :: map()
   def render("group.json", %{group: %Actor{} = group}) do
     %{
       "@context" => "http://schema.org",
@@ -93,6 +94,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     }
   end
 
+  @spec render_location(map()) :: map() | nil
   defp render_location(%{physical_address: %Address{} = address}),
     do: render_one(address, ObjectView, "place.json", as: :address)
 

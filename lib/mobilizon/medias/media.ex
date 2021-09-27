@@ -5,7 +5,7 @@ defmodule Mobilizon.Medias.Media do
 
   use Ecto.Schema
 
-  import Ecto.Changeset, only: [cast: 3, cast_embed: 2, cast_embed: 3]
+  import Ecto.Changeset, only: [cast: 3, cast_embed: 2]
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
@@ -20,16 +20,12 @@ defmodule Mobilizon.Medias.Media do
           actor: Actor.t()
         }
 
-  @metadata_attrs [:height, :width, :blurhash]
+  @attrs [:actor_id]
 
   schema "medias" do
     embeds_one(:file, File, on_replace: :update)
 
-    embeds_one :metadata, Metadata, on_replace: :update do
-      field(:height, :integer)
-      field(:width, :integer)
-      field(:blurhash, :string)
-    end
+    embeds_one(:metadata, Metadata, on_replace: :update)
 
     belongs_to(:actor, Actor)
     has_many(:event_picture, Event, foreign_key: :picture_id)
@@ -45,15 +41,8 @@ defmodule Mobilizon.Medias.Media do
   @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = media, attrs) do
     media
-    |> cast(attrs, [:actor_id])
+    |> cast(attrs, @attrs)
     |> cast_embed(:file)
-    |> cast_embed(:metadata, with: &metadata_changeset/2)
-  end
-
-  @doc false
-  @spec metadata_changeset(Metadata.t(), map) :: Ecto.Changeset.t()
-  def metadata_changeset(metadata, attrs) do
-    metadata
-    |> cast(attrs, @metadata_attrs)
+    |> cast_embed(:metadata)
   end
 end

@@ -8,18 +8,19 @@ defmodule Mobilizon.Actors.Member do
   import Ecto.Changeset
 
   alias Mobilizon.Actors.{Actor, MemberRole}
+  alias Mobilizon.Actors.Member.Metadata
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
           role: MemberRole.t(),
           parent: Actor.t(),
-          actor: Actor.t()
+          actor: Actor.t(),
+          metadata: Metadata.t()
         }
 
   @required_attrs [:parent_id, :actor_id, :url]
   @optional_attrs [:role, :invited_by_id]
   @attrs @required_attrs ++ @optional_attrs
-  @metadata_attrs []
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "members" do
@@ -27,9 +28,7 @@ defmodule Mobilizon.Actors.Member do
     field(:url, :string)
     field(:member_since, :utc_datetime)
 
-    embeds_one :metadata, Metadata, on_replace: :delete do
-      # TODO : Use this space to put notes when someone is invited / requested to join
-    end
+    embeds_one(:metadata, Metadata, on_replace: :delete)
 
     belongs_to(:invited_by, Actor)
     belongs_to(:parent, Actor)
@@ -63,18 +62,13 @@ defmodule Mobilizon.Actors.Member do
   def changeset(%__MODULE__{} = member, attrs) do
     member
     |> cast(attrs, @attrs)
-    |> cast_embed(:metadata, with: &metadata_changeset/2)
+    |> cast_embed(:metadata)
     |> ensure_url()
     |> update_member_since()
     |> validate_required(@required_attrs)
     # On both parent_id and actor_id
     |> unique_constraint(:parent_id, name: :members_actor_parent_unique_index)
     |> unique_constraint(:url, name: :members_url_index)
-  end
-
-  defp metadata_changeset(schema, params) do
-    schema
-    |> cast(params, @metadata_attrs)
   end
 
   # If there's a blank URL that's because we're doing the first insert

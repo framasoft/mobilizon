@@ -11,6 +11,7 @@ defmodule Mobilizon.Factory do
   alias Mobilizon.Web.{Endpoint, Upload}
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
+  @spec user_factory :: Mobilizon.Users.User.t()
   def user_factory do
     %Mobilizon.Users.User{
       password_hash: "Jane Smith",
@@ -23,6 +24,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec settings_factory :: Mobilizon.Users.Setting.t()
   def settings_factory do
     %Mobilizon.Users.Setting{
       timezone: nil,
@@ -37,6 +39,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec actor_factory :: Mobilizon.Actors.Actor.t()
   def actor_factory do
     preferred_username = sequence("thomas")
 
@@ -62,6 +65,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec group_factory :: Mobilizon.Actors.Actor.t()
   def group_factory do
     preferred_username = sequence("myGroup")
 
@@ -82,6 +86,7 @@ defmodule Mobilizon.Factory do
     )
   end
 
+  @spec instance_actor_factory :: Mobilizon.Actors.Actor.t()
   def instance_actor_factory do
     preferred_username = "relay"
     domain = "#{sequence("mydomain")}.com"
@@ -104,6 +109,7 @@ defmodule Mobilizon.Factory do
     )
   end
 
+  @spec follower_factory :: Mobilizon.Actors.Follower.t()
   def follower_factory do
     uuid = Ecto.UUID.generate()
 
@@ -116,6 +122,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec tag_factory :: Mobilizon.Events.Tag.t()
   def tag_factory do
     %Mobilizon.Events.Tag{
       title: sequence("MyTag"),
@@ -123,6 +130,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec tag_relation_factory :: Mobilizon.Events.TagRelation.t()
   def tag_relation_factory do
     %Mobilizon.Events.TagRelation{
       tag: build(:tag),
@@ -130,6 +138,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec address_factory :: Mobilizon.Addresses.Address.t()
   def address_factory do
     %Mobilizon.Addresses.Address{
       description: sequence("MyAddress"),
@@ -143,6 +152,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec comment_factory :: Mobilizon.Discussions.Comment.t()
   def comment_factory do
     uuid = Ecto.UUID.generate()
 
@@ -165,6 +175,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec event_factory :: Mobilizon.Events.Event.t()
   def event_factory do
     actor = build(:actor)
     start = Timex.shift(DateTime.utc_now(), hours: 2)
@@ -198,6 +209,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec participant_factory :: Mobilizon.Events.Participant.t()
   def participant_factory do
     uuid = Ecto.UUID.generate()
 
@@ -214,6 +226,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec session_factory :: Mobilizon.Events.Session.t()
   def session_factory do
     %Mobilizon.Events.Session{
       title: sequence("MySession"),
@@ -222,6 +235,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec track_factory :: Mobilizon.Events.Track.t()
   def track_factory do
     %Mobilizon.Events.Track{
       name: sequence("MyTrack"),
@@ -229,6 +243,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec bot_factory :: Mobilizon.Actors.Bot.t()
   def bot_factory do
     %Mobilizon.Actors.Bot{
       source: "https://mysource.tld/feed.ics",
@@ -238,6 +253,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec member_factory :: Mobilizon.Actors.Member.t()
   def member_factory do
     uuid = Ecto.UUID.generate()
 
@@ -250,6 +266,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec feed_token_factory :: Mobilizon.Events.FeedToken.t()
   def feed_token_factory do
     user = build(:user)
 
@@ -260,6 +277,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec file_factory :: Mobilizon.Medias.File.t()
   def file_factory do
     File.cp!("test/fixtures/image.jpg", "test/fixtures/image_tmp.jpg")
 
@@ -285,6 +303,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec media_factory :: Mobilizon.Medias.Media.t()
   def media_factory do
     %Mobilizon.Medias.Media{
       file: build(:file),
@@ -292,6 +311,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec report_factory :: Mobilizon.Reports.Report.t()
   def report_factory do
     %Mobilizon.Reports.Report{
       content: "This is problematic",
@@ -304,6 +324,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec report_note_factory :: Mobilizon.Reports.Note.t()
   def report_note_factory do
     %Mobilizon.Reports.Note{
       content: "My opinion",
@@ -312,6 +333,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec todo_list_factory :: Mobilizon.Todos.TodoList.t()
   def todo_list_factory do
     uuid = Ecto.UUID.generate()
 
@@ -324,6 +346,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec todo_factory :: Mobilizon.Todos.Todo.t()
   def todo_factory do
     uuid = Ecto.UUID.generate()
 
@@ -340,6 +363,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec resource_factory :: Mobilizon.Resources.Resource.t()
   def resource_factory do
     uuid = Ecto.UUID.generate()
     title = sequence("my resource")
@@ -358,6 +382,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec admin_setting_factory :: Mobilizon.Admin.Setting.t()
   def admin_setting_factory do
     %Mobilizon.Admin.Setting{
       group: sequence("group"),
@@ -366,6 +391,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec post_factory :: Mobilizon.Posts.Post.t()
   def post_factory do
     uuid = Ecto.UUID.generate()
 
@@ -386,6 +412,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec tombstone_factory :: Mobilizon.Tombstone.t()
   def tombstone_factory do
     uuid = Ecto.UUID.generate()
 
@@ -395,6 +422,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec discussion_factory :: Mobilizon.Discussions.Discussion.t()
   def discussion_factory do
     uuid = Ecto.UUID.generate()
     actor = build(:actor)
@@ -413,6 +441,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec mobilizon_activity_factory :: Mobilizon.Activities.Activity.t()
   def mobilizon_activity_factory do
     group = build(:group)
     actor = build(:actor)
@@ -433,6 +462,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec mobilizon_activity_setting_factory :: Mobilizon.Users.ActivitySetting.t()
   def mobilizon_activity_setting_factory do
     %Mobilizon.Users.ActivitySetting{
       key: "event_created",
@@ -442,6 +472,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec push_subscription_factory :: Mobilizon.Users.PushSubscription.t()
   def push_subscription_factory do
     %Mobilizon.Users.PushSubscription{
       digest: "",
@@ -452,6 +483,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec share_factory :: Mobilizon.Share.t()
   def share_factory do
     %Mobilizon.Share{
       actor: build(:actor),
@@ -460,6 +492,7 @@ defmodule Mobilizon.Factory do
     }
   end
 
+  @spec event_metadata_factory :: Mobilizon.Events.EventMetadata.t()
   def event_metadata_factory do
     %Mobilizon.Events.EventMetadata{
       key: sequence("mz:custom:something"),

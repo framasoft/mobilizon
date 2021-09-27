@@ -3,6 +3,7 @@ defmodule Mobilizon.Web.ActivityPub.ObjectView do
 
   alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
 
+  @spec render(String.t(), map()) :: map()
   def render("activity.json", %{activity: %Activity{local: local, data: data} = activity}) do
     %{
       "id" => data["id"],

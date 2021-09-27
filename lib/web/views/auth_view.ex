@@ -8,6 +8,7 @@ defmodule Mobilizon.Web.AuthView do
   alias Phoenix.HTML.Tag
   import Mobilizon.Web.Views.Utils
 
+  @spec render(String.t(), map()) :: String.t() | Plug.Conn.t()
   def render("callback.html", %{
         conn: conn,
         access_token: access_token,

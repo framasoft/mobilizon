@@ -62,9 +62,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     static_url = Mobilizon.Web.Endpoint.static_url()
     websocket_url = Mobilizon.Web.Endpoint.websocket_url()
 
-    img_src = [@img_src | get_csp_config(:img_src, options)]
+    img_src = [@img_src] ++ [get_csp_config(:img_src, options)]
 
-    media_src = [@media_src | get_csp_config(:media_src, options)]
+    media_src = [@media_src] ++ [get_csp_config(:media_src, options)]
 
     connect_src = [
       @connect_src,
@@ -85,22 +85,22 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
         ]
       end
 
-    script_src = [script_src | get_csp_config(:script_src, options)]
+    script_src = [script_src] ++ [get_csp_config(:script_src, options)]
 
     style_src =
       if Config.get(:env) == :dev, do: [@style_src | "'unsafe-inline' "], else: @style_src
 
-    style_src = [style_src | get_csp_config(:style_src, options)]
+    style_src = [style_src] ++ [get_csp_config(:style_src, options)]
 
-    font_src = [@font_src | get_csp_config(:font_src, options)]
+    font_src = [@font_src] ++ [get_csp_config(:font_src, options)]
 
     frame_src = if Config.get(:env) == :dev, do: "frame-src 'self' ", else: "frame-src 'none' "
-    frame_src = [frame_src | get_csp_config(:frame_src, options)]
+    frame_src = [frame_src] ++ [get_csp_config(:frame_src, options)]
 
     frame_ancestors =
       if Config.get(:env) == :dev, do: "frame-ancestors 'self' ", else: "frame-ancestors 'none' "
 
-    frame_ancestors = [frame_ancestors | get_csp_config(:frame_ancestors, options)]
+    frame_ancestors = [frame_ancestors] ++ [get_csp_config(:frame_ancestors, options)]
 
     insecure = if scheme == "https", do: "upgrade-insecure-requests"
 

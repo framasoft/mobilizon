@@ -25,11 +25,13 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
+  @spec get_url(map() | String.t() | list(String.t()) | any()) :: String.t() | nil
   def get_url(%{"id" => id}), do: id
   def get_url(id) when is_binary(id), do: id
   def get_url(ids) when is_list(ids), do: get_url(hd(ids))
   def get_url(_), do: nil
 
+  @spec make_json_ld_header :: map()
   def make_json_ld_header do
     %{
       "@context" => [
@@ -99,6 +101,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     }
   end
 
+  @spec make_date :: String.t()
   def make_date do
     DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
   end
@@ -130,6 +133,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Applies to activities sent by group members from outside this instance to a group of this instance,
   we then need to relay (`Announce`) the object to other members on other instances.
   """
+  @spec maybe_relay_if_group_activity(Activity.t(), Actor.t() | nil | list(Actor.t())) :: :ok
   def maybe_relay_if_group_activity(activity, attributed_to \\ nil)
 
   def maybe_relay_if_group_activity(
@@ -153,6 +157,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     :ok
   end
 
+  @spec do_maybe_relay_if_group_activity(map(), list(String.t()) | String.t()) :: :ok
   defp do_maybe_relay_if_group_activity(object, attributed_to) when is_list(attributed_to),
     do: do_maybe_relay_if_group_activity(object, hd(attributed_to))
 
@@ -199,6 +204,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Adds an id and a published data if they aren't there,
   also adds it to an included object
   """
+  @spec lazy_put_activity_defaults(map()) :: map()
   def lazy_put_activity_defaults(%{"object" => _object} = map) do
     if is_map(map["object"]) do
       object = lazy_put_object_defaults(map["object"])
@@ -215,6 +221,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     Map.put_new_lazy(map, "published", &make_date/0)
   end
 
+  @spec get_actor(map()) :: String.t() | nil
   def get_actor(%{"actor" => actor}) when is_binary(actor) do
     actor
   end
@@ -242,6 +249,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   Takes the actor or attributedTo attributes (considers only the first elem if they're an array)
   """
+  @spec origin_check?(String.t(), map()) :: boolean()
   def origin_check?(id, %{"type" => "Tombstone", "id" => tombstone_id}), do: id == tombstone_id
 
   def origin_check?(id, %{"actor" => actor, "attributedTo" => _attributed_to} = params)
@@ -283,6 +291,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     compare_uris?(uri_1, uri_2)
   end
 
+  @spec compare_uris?(URI.t(), URI.t()) :: boolean()
   defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri),
     do: id_uri.host == other_uri.host && id_uri.port == other_uri.port
 

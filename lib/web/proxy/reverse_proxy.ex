@@ -165,6 +165,11 @@ defmodule Mobilizon.Web.ReverseProxy do
     |> halt()
   end
 
+  @spec request(String.t(), String.t(), list(tuple()), Keyword.t()) ::
+          {:ok, 200 | 206 | 304, list(tuple()), any()}
+          | {:ok, 200 | 206 | 304, list(tuple())}
+          | {:error, {:invalid_http_response, pos_integer()}}
+          | {:error, any()}
   defp request(method, url, headers, hackney_opts) do
     Logger.debug("#{__MODULE__} #{method} #{url} #{inspect(headers)}")
     method = method |> String.downcase() |> String.to_existing_atom()
@@ -184,6 +189,8 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec response(Plug.Conn.t(), any(), String.t(), pos_integer(), list(tuple()), Keyword.t()) ::
+          Plug.Conn.t()
   defp response(conn, client, url, status, headers, opts) do
     result =
       conn
@@ -209,18 +216,26 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec chunk_reply(
+          Plug.Conn.t(),
+          any(),
+          Keyword.t(),
+          non_neg_integer(),
+          non_neg_integer() | :no_duration_limit
+        ) ::
+          {:ok, Plug.Conn.t()} | {:error, any(), Plug.Conn.t()}
   defp chunk_reply(conn, client, opts) do
     chunk_reply(conn, client, opts, 0, 0)
   end
 
   defp chunk_reply(conn, client, opts, sent_so_far, duration) do
-    with {:ok, duration} <-
+    with {:ok, {duration, now}} <-
            check_read_duration(
              duration,
              Keyword.get(opts, :max_read_duration, @max_read_duration)
            ),
          {:ok, data} <- @hackney.stream_body(client),
-         {:ok, duration} <- increase_read_duration(duration),
+         {:ok, duration} <- increase_read_duration({duration, now}),
          sent_so_far = sent_so_far + byte_size(data),
          :ok <- body_size_constraint(sent_so_far, Keyword.get(opts, :max_body_size)),
          {:ok, conn} <- chunk(conn, data) do
@@ -231,6 +246,8 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec head_response(Plug.Conn.t(), any(), pos_integer(), list(tuple()), Keyword.t()) ::
+          Plug.Conn.t() | no_return()
   defp head_response(conn, _url, code, headers, opts) do
     conn
     |> put_resp_headers(build_resp_headers(headers, opts))
@@ -238,6 +255,8 @@ defmodule Mobilizon.Web.ReverseProxy do
   end
 
   # sobelow_skip ["XSS.SendResp"]
+  @spec error_or_redirect(Plug.Conn.t(), String.t(), pos_integer(), String.t(), Keyword.t()) ::
+          Plug.Conn.t()
   defp error_or_redirect(conn, url, code, body, opts) do
     if Keyword.get(opts, :redirect_on_failure, false) do
       conn
@@ -250,12 +269,14 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec downcase_headers(list(tuple())) :: list(tuple())
   defp downcase_headers(headers) do
     Enum.map(headers, fn {k, v} ->
       {String.downcase(k), v}
     end)
   end
 
+  @spec get_content_type(list(tuple())) :: String.t()
   defp get_content_type(headers) do
     {_, content_type} =
       List.keyfind(headers, "content-type", 0, {"content-type", "application/octet-stream"})
@@ -264,12 +285,14 @@ defmodule Mobilizon.Web.ReverseProxy do
     content_type
   end
 
+  @spec put_resp_headers(Plug.Conn.t(), list(tuple())) :: Plug.Conn.t()
   defp put_resp_headers(conn, headers) do
     Enum.reduce(headers, conn, fn {k, v}, conn ->
       put_resp_header(conn, k, v)
     end)
   end
 
+  @spec build_req_headers(list(tuple()), Keyword.t()) :: list(tuple())
   defp build_req_headers(headers, opts) do
     headers
     |> downcase_headers()
@@ -290,6 +313,7 @@ defmodule Mobilizon.Web.ReverseProxy do
         end).()
   end
 
+  @spec build_resp_headers(list(tuple()), Keyword.t()) :: list(tuple())
   defp build_resp_headers(headers, opts) do
     headers
     |> Enum.filter(fn {k, _} -> k in @keep_resp_headers end)
@@ -298,6 +322,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     |> (fn headers -> headers ++ Keyword.get(opts, :resp_headers, []) end).()
   end
 
+  @spec build_resp_cache_headers(list(tuple()), Keyword.t()) :: list(tuple())
   defp build_resp_cache_headers(headers, _opts) do
     has_cache? = Enum.any?(headers, fn {k, _} -> k in @resp_cache_headers end)
     has_cache_control? = List.keymember?(headers, "cache-control", 0)
@@ -321,6 +346,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec build_resp_content_disposition_header(list(tuple()), Keyword.t()) :: list(tuple())
   defp build_resp_content_disposition_header(headers, opts) do
     opt = Keyword.get(opts, :inline_content_types, @inline_content_types)
 
@@ -359,6 +385,8 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
+  @spec header_length_constraint(list(tuple()), non_neg_integer()) ::
+          :ok | {:error, :body_too_large}
   defp header_length_constraint(headers, limit) when is_integer(limit) and limit > 0 do
     with {_, size} <- List.keyfind(headers, "content-length", 0),
          {size, _} <- Integer.parse(size),
@@ -375,15 +403,16 @@ defmodule Mobilizon.Web.ReverseProxy do
 
   defp header_length_constraint(_, _), do: :ok
 
+  @spec body_size_constraint(integer(), integer()) :: :ok | {:error, :body_too_large}
   defp body_size_constraint(size, limit) when is_integer(limit) and limit > 0 and size >= limit do
     {:error, :body_too_large}
   end
 
   defp body_size_constraint(_, _), do: :ok
 
-  @spec check_read_duration(any(), integer()) ::
+  @spec check_read_duration(any(), integer() | :no_duration_limit) ::
           {:ok, {integer(), integer()}}
-          | {:ok, :no_duration_limit, :no_duration_limit}
+          | {:ok, {:no_duration_limit, :no_duration_limit}}
           | {:error, :read_duration_exceeded}
   defp check_read_duration(duration, max)
        when is_integer(duration) and is_integer(max) and max > 0 do
@@ -394,8 +423,12 @@ defmodule Mobilizon.Web.ReverseProxy do
     end
   end
 
-  defp check_read_duration(_, _), do: {:ok, :no_duration_limit, :no_duration_limit}
+  defp check_read_duration(_, _), do: {:ok, {:no_duration_limit, :no_duration_limit}}
 
+  @spec increase_read_duration(
+          {previous_duration :: pos_integer | :no_duration_limit,
+           started :: pos_integer | :no_duration_limit}
+        ) :: {:ok, pos_integer()} | {:ok, :no_duration_limit}
   defp increase_read_duration({previous_duration, started})
        when is_integer(previous_duration) and is_integer(started) do
     duration = :erlang.system_time(:millisecond) - started
@@ -403,9 +436,10 @@ defmodule Mobilizon.Web.ReverseProxy do
   end
 
   defp increase_read_duration(_) do
-    {:ok, :no_duration_limit, :no_duration_limit}
+    {:ok, :no_duration_limit}
   end
 
+  @spec filename(String.t()) :: String.t() | nil
   def filename(url_or_path) do
     if path = URI.parse(url_or_path).path, do: Path.basename(path)
   end

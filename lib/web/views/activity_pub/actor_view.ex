@@ -17,6 +17,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   @json_ld_header Utils.make_json_ld_header()
   @selected_member_roles ~w(creator administrator moderator member)a
 
+  @spec render(String.t(), map()) :: map()
   def render("actor.json", %{actor: actor}) do
     actor
     |> Convertible.model_to_as()
