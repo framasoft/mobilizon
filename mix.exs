@@ -179,7 +179,8 @@ defmodule Mobilizon.Mixfile do
       {:elixir_feed_parser, "~> 2.1.0", only: :test},
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
-      {:sobelow, "~> 0.8", only: [:dev, :test]}
+      {:sobelow, "~> 0.8", only: [:dev, :test]},
+      {:doctor, "~> 0.18.0", only: :dev}
     ] ++ oauth_deps()
   end
 
