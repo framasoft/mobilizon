@@ -5,8 +5,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
   alias Mobilizon.GraphQL.API.Utils
 
   @doc """
@@ -15,7 +14,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @spec create_comment(map) :: {:ok, Activity.t(), Comment.t()} | any
   def create_comment(args) do
     args = extract_pictures_from_comment_body(args)
-    ActivityPub.create(:comment, args, true)
+    Actions.Create.create(:comment, args, true)
   end
 
   @doc """
@@ -24,7 +23,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @spec update_comment(Comment.t(), map()) :: {:ok, Activity.t(), Comment.t()} | any
   def update_comment(%Comment{} = comment, args) do
     args = extract_pictures_from_comment_body(args)
-    ActivityPub.update(comment, args, true)
+    Actions.Update.update(comment, args, true)
   end
 
   @doc """
@@ -32,7 +31,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   """
   @spec delete_comment(Comment.t(), Actor.t()) :: {:ok, Activity.t(), Comment.t()} | any
   def delete_comment(%Comment{} = comment, %Actor{} = actor) do
-    ActivityPub.delete(comment, actor, true)
+    Actions.Delete.delete(comment, actor, true)
   end
 
   @doc """
@@ -42,7 +41,7 @@ defmodule Mobilizon.GraphQL.API.Comments do
   def create_discussion(args) do
     args = extract_pictures_from_comment_body(args)
 
-    ActivityPub.create(
+    Actions.Create.create(
       :discussion,
       args,
       true

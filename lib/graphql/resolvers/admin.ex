@@ -6,14 +6,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   import Mobilizon.Users.Guards
 
   alias Mobilizon.{Actors, Admin, Config, Events}
-  alias Mobilizon.Actors.Actor
+  alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Cldr.Language
   alias Mobilizon.Config
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
@@ -21,6 +20,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   import Mobilizon.Web.Gettext
   require Logger
 
+  @spec list_action_logs(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(ActionLog.t())} | {:error, String.t()}
   def list_action_logs(
         _parent,
         %{page: page, limit: limit},
@@ -38,10 +39,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
                          id: id,
                          inserted_at: inserted_at
                        } = action_log ->
-          with data when is_map(data) <-
-                 transform_action_log(String.to_existing_atom(target_type), action, action_log) do
-            Map.merge(data, %{actor: actor, id: id, inserted_at: inserted_at})
-          end
+          target_type
+          |> String.to_existing_atom()
+          |> transform_action_log(action, action_log)
+          |> Map.merge(%{actor: actor, id: id, inserted_at: inserted_at})
         end)
         |> Enum.filter(& &1)
 
@@ -53,6 +54,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to list action logs")}
   end
 
+  @spec transform_action_log(module(), atom(), ActionLog.t()) :: map()
   defp transform_action_log(
          Report,
          :update,
@@ -123,6 +125,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
+  @spec convert_changes_to_struct(module(), map()) :: struct()
   defp convert_changes_to_struct(struct, %{"report_id" => _report_id} = changes) do
     with data <- for({key, val} <- changes, into: %{}, do: {String.to_existing_atom(key), val}),
          data <- Map.put(data, :report, Mobilizon.Reports.get_report(data.report_id)) do
@@ -143,6 +146,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   # datetimes are not unserialized as DateTime/NaiveDateTime so we do it manually with changeset data
+  @spec process_eventual_type(Ecto.Changeset.t(), String.t(), String.t() | nil) ::
+          DateTime.t() | NaiveDateTime.t() | any()
   defp process_eventual_type(changeset, key, val) do
     cond do
       changeset[String.to_existing_atom(key)] == :utc_datetime and not is_nil(val) ->
@@ -158,6 +163,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  @spec get_list_of_languages(any(), any(), any()) :: {:ok, String.t()} | {:error, any()}
   def get_list_of_languages(_parent, %{codes: codes}, _resolution) when is_list(codes) do
     locale = Gettext.get_locale()
     locale = if Cldr.known_locale_name?(locale), do: locale, else: "en"
@@ -187,6 +193,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  @spec get_dashboard(any(), any(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def get_dashboard(_parent, _args, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     last_public_event_published =
@@ -225,6 +233,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
      )}
   end
 
+  @spec get_settings(any(), any(), Absinthe.Resolution.t()) :: {:ok, map()} | {:error, String.t()}
   def get_settings(_parent, _args, %{
         context: %{current_user: %User{role: role}}
       })
@@ -237,6 +246,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
      dgettext("errors", "You need to be logged-in and an administrator to access admin settings")}
   end
 
+  @spec save_settings(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def save_settings(_parent, args, %{
         context: %{current_user: %User{role: role}}
       })
@@ -261,6 +272,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
      dgettext("errors", "You need to be logged-in and an administrator to save admin settings")}
   end
 
+  @spec list_relay_followers(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Follower.t())} | {:error, :unauthorized | :unauthenticated}
   def list_relay_followers(
         _parent,
         %{page: page, limit: limit},
@@ -283,6 +296,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  @spec list_relay_followings(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Follower.t())} | {:error, :unauthorized | :unauthenticated}
   def list_relay_followings(
         _parent,
         %{page: page, limit: limit},
@@ -305,6 +320,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  @spec create_relay(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, any()}
   def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     case Relay.follow(address) do
@@ -316,6 +333,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  @spec remove_relay(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, any()}
   def remove_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     case Relay.unfollow(address) do
@@ -327,6 +346,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  @spec accept_subscription(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, any()}
   def accept_subscription(
         _parent,
         %{address: address},
@@ -342,6 +363,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
+  @spec reject_subscription(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, any()}
   def reject_subscription(
         _parent,
         %{address: address},
@@ -357,7 +380,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
-  @spec eventually_update_instance_actor(map()) :: :ok
+  @spec eventually_update_instance_actor(map()) :: :ok | {:error, :instance_actor_update_failure}
   defp eventually_update_instance_actor(admin_setting_args) do
     args = %{}
     new_instance_description = Map.get(admin_setting_args, :instance_description)
@@ -382,7 +405,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     if args != %{} do
       %Actor{} = instance_actor = Relay.get_actor()
 
-      case ActivityPub.update(instance_actor, args, true) do
+      case Actions.Update.update(instance_actor, args, true) do
         {:ok, _activity, _actor} ->
           :ok
 

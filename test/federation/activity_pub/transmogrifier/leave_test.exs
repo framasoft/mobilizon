@@ -5,8 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.LeaveTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Transmogrifier
+  alias Mobilizon.Federation.ActivityPub.{Actions, Transmogrifier}
 
   describe "handle incoming leave activities on events" do
     test "it accepts Leave activities" do
@@ -19,7 +18,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.LeaveTest do
       organizer_participation =
         %Participant{} = insert(:participant, event: event, actor: organizer, role: :creator)
 
-      {:ok, _join_activity, _participation} = ActivityPub.join(event, participant_actor)
+      {:ok, _join_activity, _participation} = Actions.Join.join(event, participant_actor)
 
       join_data =
         File.read!("test/fixtures/mobilizon-leave-activity.json")

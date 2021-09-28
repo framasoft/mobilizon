@@ -19,7 +19,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
   require Logger
 
-  @spec trigger_notifications_for_participant(Participant.t()) :: {:ok, nil}
+  @spec trigger_notifications_for_participant(Participant.t()) :: {:ok, Oban.Job.t() | nil}
   def trigger_notifications_for_participant(%Participant{} = participant) do
     before_event_notification(participant)
     on_day_notification(participant)
@@ -27,6 +27,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
     {:ok, nil}
   end
 
+  @spec before_event_notification(Participant.t()) :: {:ok, nil}
   def before_event_notification(%Participant{
         id: participant_id,
         event: %Event{begins_on: begins_on},
@@ -46,6 +47,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
   def before_event_notification(_), do: {:ok, nil}
 
+  @spec on_day_notification(Participant.t()) :: {:ok, Oban.Job.t() | nil | String.t()}
   def on_day_notification(%Participant{
         event: %Event{begins_on: begins_on},
         actor: %Actor{user_id: user_id}
@@ -90,6 +92,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
   def on_day_notification(_), do: {:ok, nil}
 
+  @spec weekly_notification(Participant.t()) :: {:ok, Oban.Job.t() | nil | String.t()}
   def weekly_notification(%Participant{
         event: %Event{begins_on: begins_on},
         actor: %Actor{user_id: user_id}
@@ -144,6 +147,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
   def weekly_notification(_), do: {:ok, nil}
 
+  @spec pending_participation_notification(Event.t(), Keyword.t()) :: {:ok, Oban.Job.t() | nil}
   def pending_participation_notification(event, options \\ [])
 
   def pending_participation_notification(

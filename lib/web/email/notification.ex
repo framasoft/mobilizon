@@ -34,6 +34,8 @@ defmodule Mobilizon.Web.Email.Notification do
     |> render(:before_event_notification)
   end
 
+  @spec on_day_notification(User.t(), list(Participant.t()), pos_integer(), String.t()) ::
+          Bamboo.Email.t()
   def on_day_notification(
         %User{email: email, settings: %Setting{timezone: timezone}},
         participations,
@@ -58,6 +60,8 @@ defmodule Mobilizon.Web.Email.Notification do
     |> render(:on_day_notification)
   end
 
+  @spec weekly_notification(User.t(), list(Participant.t()), pos_integer(), String.t()) ::
+          Bamboo.Email.t()
   def weekly_notification(
         %User{email: email, settings: %Setting{timezone: timezone}},
         participations,
@@ -82,6 +86,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> render(:notification_each_week)
   end
 
+  @spec pending_participation_notification(User.t(), Event.t(), pos_integer()) :: Bamboo.Email.t()
   def pending_participation_notification(
         %User{locale: locale, email: email},
         %Event{} = event,

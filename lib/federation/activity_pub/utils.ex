@@ -12,8 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Medias.Media
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Federator, Relay}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
@@ -22,6 +21,26 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   require Logger
 
   @actor_types ["Group", "Person", "Application"]
+
+  # Wraps an object into an activity
+  @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
+  def create_activity(map, local) when is_map(map) do
+    with map <- lazy_put_activity_defaults(map) do
+      {:ok,
+       %Activity{
+         data: map,
+         local: local,
+         actor: map["actor"],
+         recipients: get_recipients(map)
+       }}
+    end
+  end
+
+  # Get recipients for an activity or object
+  @spec get_recipients(map()) :: list()
+  defp get_recipients(data) do
+    Map.get(data, "to", []) ++ Map.get(data, "cc", [])
+  end
 
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
@@ -149,7 +168,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         %Activity{data: %{"object" => object}},
         %Actor{url: attributed_to_url}
       )
-      when is_binary(object) do
+      when is_binary(object) and is_binary(attributed_to_url) do
     do_maybe_relay_if_group_activity(object, attributed_to_url)
   end
 
@@ -166,7 +185,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
     case Actors.get_local_group_by_url(attributed_to) do
       %Actor{} = group ->
-        case ActivityPub.announce(group, object, id, true, false) do
+        case Actions.Announce.announce(group, object, id, true, false) do
           {:ok, _activity, _object} ->
             Logger.info("Forwarded activity to external members of the group")
             :ok
@@ -564,6 +583,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Converts PEM encoded keys to a public key representation
   """
+  @spec pem_to_public_key(String.t()) :: {:RSAPublicKey, any(), any()}
   def pem_to_public_key(pem) do
     [key_code] = :public_key.pem_decode(pem)
     key = :public_key.pem_entry_decode(key_code)
@@ -577,6 +597,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
+  @spec pem_to_public_key_pem(String.t()) :: String.t()
   def pem_to_public_key_pem(pem) do
     public_key = pem_to_public_key(pem)
     public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)

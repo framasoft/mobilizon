@@ -7,7 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Transmogrifier
+  alias Mobilizon.Federation.ActivityPub.{Actions, Transmogrifier}
 
   describe "handle incoming join activities" do
     @join_message "I want to get in!"
@@ -48,7 +48,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
       %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
 
       {:ok, join_activity, participation} =
-        ActivityPub.join(event, participant_actor, false, %{metadata: %{role: :not_approved}})
+        Actions.Join.join(event, participant_actor, false, %{
+          metadata: %{role: :not_approved}
+        })
 
       accept_data =
         File.read!("test/fixtures/mastodon-accept-activity.json")
@@ -113,7 +115,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
 
       %Event{} = event = insert(:event, organizer_actor: organizer, join_options: :restricted)
 
-      {:ok, join_activity, participation} = ActivityPub.join(event, participant_actor)
+      {:ok, join_activity, participation} = Actions.Join.join(event, participant_actor)
 
       reject_data =
         File.read!("test/fixtures/mastodon-reject-activity.json")

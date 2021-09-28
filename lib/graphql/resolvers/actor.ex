@@ -6,13 +6,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
   import Mobilizon.Users.Guards
   alias Mobilizon.{Actors, Admin}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Service.Workers.Background
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
   require Logger
 
+  @spec refresh_profile(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def refresh_profile(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
     case Actors.get_actor(id) do
@@ -31,6 +33,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
     end
   end
 
+  @spec suspend_profile(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def suspend_profile(_parent, %{id: id}, %{
         context: %{
           current_user: %User{role: role},
@@ -39,28 +43,28 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
       })
       when is_moderator(role) do
     case Actors.get_actor_with_preload(id) do
-      %Actor{suspended: false} = actor ->
-        case actor do
-          # Suspend a group on this instance
-          %Actor{type: :Group, domain: nil} ->
-            Logger.debug("We're suspending a group on this very instance")
-            ActivityPub.delete(actor, moderator_actor, true, %{suspension: true})
-            Admin.log_action(moderator_actor, "suspend", actor)
-            {:ok, actor}
+      # Suspend a group on this instance
+      %Actor{suspended: false, type: :Group, domain: nil} = actor ->
+        Logger.debug("We're suspending a group on this very instance")
+        Actions.Delete.delete(actor, moderator_actor, true, %{suspension: true})
+        Admin.log_action(moderator_actor, "suspend", actor)
+        {:ok, actor}
 
-          # Delete a remote actor
-          %Actor{domain: domain} when not is_nil(domain) ->
-            Logger.debug("We're just deleting a remote instance")
-            Actors.delete_actor(actor, suspension: true)
-            Admin.log_action(moderator_actor, "suspend", actor)
-            {:ok, actor}
+      # Delete a remote actor
+      %Actor{suspended: false, domain: domain} = actor when not is_nil(domain) ->
+        Logger.debug("We're just deleting a remote instance")
+        Actors.delete_actor(actor, suspension: true)
+        Admin.log_action(moderator_actor, "suspend", actor)
+        {:ok, actor}
 
-          %Actor{domain: nil} ->
-            {:error, dgettext("errors", "No remote profile found with this ID")}
-        end
+      %Actor{suspended: false, domain: nil} ->
+        {:error, dgettext("errors", "No remote profile found with this ID")}
 
       %Actor{suspended: true} ->
         {:error, dgettext("errors", "Profile already suspended")}
+
+      nil ->
+        {:error, dgettext("errors", "Profile not found")}
     end
   end
 
@@ -68,6 +72,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Actor do
     {:error, dgettext("errors", "Only moderators and administrators can suspend a profile")}
   end
 
+  @spec unsuspend_profile(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def unsuspend_profile(_parent, %{id: id}, %{
         context: %{
           current_user: %User{role: role},

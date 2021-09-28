@@ -46,7 +46,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
   end
 
   @impl Converter
-  @spec as_to_model_data(map) :: map() | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, atom()}
   def as_to_model_data(%{"type" => "Note", "name" => name} = object) when is_valid_string(name) do
     case extract_actors(object) do
       %{actor_id: actor_id, creator_id: creator_id} ->
@@ -57,7 +57,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
     end
   end
 
-  @spec extract_actors(map()) :: %{actor_id: String.t(), creator_id: String.t()} | {:error, any()}
+  @spec extract_actors(map()) ::
+          %{actor_id: String.t(), creator_id: String.t()} | {:error, atom()}
   defp extract_actors(%{"actor" => creator_url, "attributedTo" => actor_url} = _object)
        when is_valid_string(creator_url) and is_valid_string(actor_url) do
     with {:ok, %Actor{id: creator_id, suspended: false}} <-

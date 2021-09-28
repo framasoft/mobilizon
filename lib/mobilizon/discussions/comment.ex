@@ -20,6 +20,7 @@ defmodule Mobilizon.Discussions.Comment do
   @type t :: %__MODULE__{
           text: String.t(),
           url: String.t(),
+          id: integer(),
           local: boolean,
           visibility: CommentVisibility.t(),
           uuid: Ecto.UUID.t(),

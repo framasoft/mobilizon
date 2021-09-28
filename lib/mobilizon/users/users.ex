@@ -107,7 +107,7 @@ defmodule Mobilizon.Users do
   @doc """
   Get an user by its activation token.
   """
-  @spec get_user_by_activation_token(String.t()) :: Actor.t() | nil
+  @spec get_user_by_activation_token(String.t()) :: User.t() | nil
   def get_user_by_activation_token(token) do
     token
     |> user_by_activation_token_query()
@@ -117,7 +117,7 @@ defmodule Mobilizon.Users do
   @doc """
   Get an user by its reset password token.
   """
-  @spec get_user_by_reset_password_token(String.t()) :: Actor.t() | nil
+  @spec get_user_by_reset_password_token(String.t()) :: User.t() | nil
   def get_user_by_reset_password_token(token) do
     token
     |> user_by_reset_password_token_query()

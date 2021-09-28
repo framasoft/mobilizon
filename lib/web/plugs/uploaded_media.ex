@@ -21,6 +21,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
   # no slashes
   @path "media"
 
+  @spec init(any()) :: map()
   def init(_opts) do
     static_plug_opts =
       []
@@ -31,6 +32,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
     %{static_plug_opts: static_plug_opts}
   end
 
+  @spec call(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def call(%{request_path: <<"/", @path, "/", file::binary>>} = conn, opts) do
     conn =
       case fetch_query_params(conn) do

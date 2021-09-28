@@ -4,9 +4,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.EventMetadata do
   """
 
   alias Mobilizon.Events.EventMetadata
+  alias Mobilizon.Federation.ActivityStream
 
   @property_value "PropertyValue"
 
+  @spec metadata_to_as(EventMetadata.t()) :: map()
   def metadata_to_as(%EventMetadata{type: :boolean, value: value, key: key})
       when value in ["true", "false"] do
     %{
@@ -47,6 +49,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.EventMetadata do
     )
   end
 
+  @spec as_to_metadata(ActivityStream.t()) :: map()
   def as_to_metadata(%{"type" => @property_value, "propertyID" => key, "value" => value})
       when is_boolean(value) do
     %{type: :boolean, key: key, value: to_string(value)}

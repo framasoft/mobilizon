@@ -12,7 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   require Logger
 
@@ -21,6 +21,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Get a person
   """
+  @spec get_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t() | :unauthorized}
   def get_person(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}}) do
     with %Actor{suspended: suspended} = actor <- Actors.get_actor_with_preload(id, true),
          true <- suspended == false or is_moderator(role) do
@@ -36,6 +38,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Find a person
   """
+  @spec fetch_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t() | :unauthorized | :unauthenticated}
   def fetch_person(_parent, %{preferred_username: preferred_username}, %{
         context: %{current_user: %User{} = user}
       }) do
@@ -57,6 +61,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   def fetch_person(_parent, _args, _resolution), do: {:error, :unauthenticated}
 
+  @spec list_persons(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Actor.t())} | {:error, :unauthorized | :unauthenticated}
   def list_persons(
         _parent,
         %{
@@ -92,7 +98,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   Returns the current actor for the currently logged-in user
   """
   @spec get_current_person(any, any, Absinthe.Resolution.t()) ::
-          {:error, :unauthenticated} | {:ok, Actor.t()}
+          {:error, :unauthenticated | :no_current_person} | {:ok, Actor.t()}
   def get_current_person(_parent, _args, %{context: %{current_actor: %Actor{} = actor}}) do
     {:ok, actor}
   end
@@ -121,6 +127,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   This function is used to create more identities from an existing user
   """
+  @spec create_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t() | :unauthenticated}
   def create_person(
         _parent,
         %{preferred_username: _preferred_username} = args,
@@ -148,6 +156,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   This function is used to update an existing identity
   """
+  @spec update_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t() | :unauthenticated}
   def update_person(
         _parent,
         %{id: id} = args,
@@ -160,7 +170,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, %Actor{} = actor} ->
         case save_attached_pictures(args) do
           args when is_map(args) ->
-            case ActivityPub.update(actor, args, true) do
+            case Actions.Update.update(actor, args, true) do
               {:ok, _activity, %Actor{} = actor} ->
                 {:ok, actor}
 
@@ -184,6 +194,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   This function is used to delete an existing identity
   """
+  @spec delete_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t() | :unauthenticated}
   def delete_person(
         _parent,
         %{id: id} = _args,
@@ -225,6 +237,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
+  @spec last_identity?(User.t()) :: boolean
   defp last_identity?(user) do
     length(Users.get_actors_for_user(user)) <= 1
   end
@@ -275,6 +288,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   This function is used to register a person afterwards the user has been created (but not activated)
   """
+  @spec register_person(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def register_person(_parent, args, _resolution) do
     # When registering, email is assumed confirmed (unlike changing email)
     case Users.get_user_by_email(args.email, unconfirmed: false) do
@@ -311,6 +326,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns the participations, optionally restricted to an event
   """
+  @spec person_participations(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Participant.t())} | {:error, :unauthorized | String.t()}
   def person_participations(
         %Actor{id: actor_id} = person,
         %{event_id: event_id},
@@ -329,13 +346,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   def person_participations(%Actor{} = person, %{page: page, limit: limit}, %{
         context: %{current_user: %User{} = user}
       }) do
-    with {:can_get_participations, true} <-
-           {:can_get_participations, user_can_access_person_details?(person, user)},
-         %Page{} = page <- Events.list_event_participations_for_actor(person, page, limit) do
+    if user_can_access_person_details?(person, user) do
+      %Page{} = page = Events.list_event_participations_for_actor(person, page, limit)
       {:ok, page}
     else
-      {:can_get_participations, false} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+      {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -346,24 +361,23 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   def person_memberships(%Actor{id: actor_id} = person, %{group: group}, %{
         context: %{current_user: %User{} = user}
       }) do
-    with {:can_get_memberships, true} <-
-           {:can_get_memberships, user_can_access_person_details?(person, user)},
-         {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(group, :Group)},
-         {:ok, %Member{} = membership} <- Actors.get_member(actor_id, group_id),
-         memberships <- %Page{
+    if user_can_access_person_details?(person, user) do
+      with {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(group, :Group)},
+           {:ok, %Member{} = membership} <- Actors.get_member(actor_id, group_id) do
+        {:ok,
+         %Page{
            total: 1,
            elements: [Repo.preload(membership, [:actor, :parent, :invited_by])]
-         } do
-      {:ok, memberships}
+         }}
+      else
+        {:error, :member_not_found} ->
+          {:ok, %Page{total: 0, elements: []}}
+
+        {:group, nil} ->
+          {:error, :group_not_found}
+      end
     else
-      {:error, :member_not_found} ->
-        {:ok, %Page{total: 0, elements: []}}
-
-      {:group, nil} ->
-        {:error, :group_not_found}
-
-      {:can_get_memberships, _} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+      {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 
@@ -384,6 +398,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     end
   end
 
+  @spec user_for_person(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, User.t() | nil} | {:error, String.t() | nil}
   def user_for_person(%Actor{type: :Person, user_id: user_id}, _args, %{
         context: %{current_user: %User{role: role}}
       })
@@ -402,6 +418,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
 
   def user_for_person(_, _args, _resolution), do: {:error, nil}
 
+  @spec organized_events_for_person(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Event.t())} | {:error, :unauthorized}
   def organized_events_for_person(
         %Actor{} = person,
         %{page: page, limit: limit},
@@ -409,13 +427,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
           context: %{current_user: %User{} = user}
         }
       ) do
-    with {:can_get_events, true} <-
-           {:can_get_events, user_can_access_person_details?(person, user)},
-         %Page{} = page <- Events.list_organized_events_for_actor(person, page, limit) do
+    if user_can_access_person_details?(person, user) do
+      %Page{} = page = Events.list_organized_events_for_actor(person, page, limit)
       {:ok, page}
     else
-      {:can_get_events, false} ->
-        {:error, :unauthorized}
+      {:error, :unauthorized}
     end
   end
 

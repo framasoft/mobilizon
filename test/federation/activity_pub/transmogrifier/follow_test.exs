@@ -6,7 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Follower
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
 
   describe "handle incoming follow requests" do
     test "it works only for groups" do
@@ -80,7 +80,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       refute Actors.is_following(follower, followed)
 
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
       assert Actors.is_following(follower, followed)
 
       follow_object_id = follow_activity.data["id"]
@@ -112,7 +112,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       refute Actors.is_following(follower, followed)
 
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
       assert Actors.is_following(follower, followed)
 
       follow_object_id = follow_activity.data["id"]
@@ -145,7 +145,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
       follower = insert(:actor)
       followed = insert(:group, manually_approves_followers: true)
 
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
 
       accept_data =
         File.read!("test/fixtures/mastodon-accept-activity.json")
@@ -207,7 +207,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
       follower = insert(:actor)
       followed = insert(:group)
 
-      {:ok, follow_activity, _} = ActivityPub.follow(follower, followed)
+      {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
 
       assert Actors.is_following(follower, followed)
 

@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
     recv_timeout: 20_000
   ]
 
+  @spec client(Keyword.t()) :: Tesla.Client.t()
   def client(options \\ []) do
     headers = Keyword.get(options, :headers, [])
     adapter = Application.get_env(:tesla, __MODULE__, [])[:adapter] || Tesla.Adapter.Hackney
@@ -27,10 +28,12 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
     Tesla.client(middleware, {adapter, opts})
   end
 
+  @spec get(Tesla.Client.t(), String.t()) :: Tesla.Env.t()
   def get(client, url) do
     Tesla.get(client, url)
   end
 
+  @spec post(Tesla.Client.t(), String.t(), map() | String.t()) :: Tesla.Env.t()
   def post(client, url, data) do
     Tesla.post(client, url, data)
   end

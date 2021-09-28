@@ -4,9 +4,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events, as: EventsManager
   alias Mobilizon.Events.{Event, Participant, ParticipantRole}
-  alias Mobilizon.Federation.{ActivityPub, ActivityStream}
-  alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
       {:error, _step, %Ecto.Changeset{} = err, _} ->
         {:error, err}
 
-      {:error, err} ->
+      {:error, %Ecto.Changeset{} = err} ->
         {:error, err}
     end
   end
@@ -89,11 +89,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
             Share.delete_all_by_uri(event.url)
             {:ok, Map.merge(activity_data, audience), actor, event}
 
-          {:error, err} ->
+          {:error, %Ecto.Changeset{} = err} ->
             {:error, err}
         end
 
-      {:error, err} ->
+      {:error, %Ecto.Changeset{} = err} ->
         {:error, err}
     end
   end
@@ -166,11 +166,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   @spec check_attendee_capacity?(Event.t()) :: boolean
   defp check_attendee_capacity?(%Event{options: options} = event) do
-    with maximum_attendee_capacity <-
-           Map.get(options, :maximum_attendee_capacity) || 0 do
-      maximum_attendee_capacity == 0 ||
-        Mobilizon.Events.count_participant_participants(event.id) < maximum_attendee_capacity
-    end
+    maximum_attendee_capacity = Map.get(options, :maximum_attendee_capacity) || 0
+
+    maximum_attendee_capacity == 0 ||
+      Mobilizon.Events.count_participant_participants(event.id) < maximum_attendee_capacity
   end
 
   # Set the participant to approved if the default role for new participants is :participant
@@ -211,7 +210,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
       Mobilizon.Events.get_default_participant_role(event) == :participant &&
           role == :participant ->
         {:accept,
-         ActivityPub.accept(
+         Actions.Accept.accept(
            :join,
            participant,
            true,

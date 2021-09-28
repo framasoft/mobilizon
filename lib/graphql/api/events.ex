@@ -6,8 +6,7 @@ defmodule Mobilizon.GraphQL.API.Events do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Utils}
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
 
   @doc """
@@ -16,7 +15,7 @@ defmodule Mobilizon.GraphQL.API.Events do
   @spec create_event(map) :: {:ok, Activity.t(), Event.t()} | any
   def create_event(args) do
     # For now we don't federate drafts but it will be needed if we want to edit them as groups
-    ActivityPub.create(:event, prepare_args(args), should_federate(args))
+    Actions.Create.create(:event, prepare_args(args), should_federate(args))
   end
 
   @doc """
@@ -24,7 +23,7 @@ defmodule Mobilizon.GraphQL.API.Events do
   """
   @spec update_event(map, Event.t()) :: {:ok, Activity.t(), Event.t()} | any
   def update_event(args, %Event{} = event) do
-    ActivityPub.update(event, prepare_args(args), should_federate(args))
+    Actions.Update.update(event, prepare_args(args), should_federate(args))
   end
 
   @doc """
@@ -32,7 +31,7 @@ defmodule Mobilizon.GraphQL.API.Events do
   """
   @spec delete_event(Event.t(), Actor.t(), boolean()) :: {:ok, Activity.t(), Entity.t()} | any()
   def delete_event(%Event{} = event, %Actor{} = actor, federate \\ true) do
-    ActivityPub.delete(event, actor, federate)
+    Actions.Delete.delete(event, actor, federate)
   end
 
   @spec prepare_args(map) :: map

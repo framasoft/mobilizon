@@ -10,6 +10,8 @@ defmodule Mobilizon.Todos.TodoList do
   alias Mobilizon.Todos.Todo
 
   @type t :: %__MODULE__{
+          id: String.t(),
+          url: String.t(),
           title: String.t(),
           todos: [Todo.t()],
           actor: Actor.t(),

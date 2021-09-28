@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.API.Follows do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
 
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
 
   require Logger
 
@@ -14,27 +14,27 @@ defmodule Mobilizon.GraphQL.API.Follows do
   Make an actor (`follower`) follow another (`followed`).
   """
   @spec follow(follower :: Actor.t(), followed :: Actor.t()) ::
-          {:ok, Mobilizon.Federation.ActivityPub.Activity.t(), Mobilizon.Actors.Follower.t()}
+          {:ok, Activity.t(), Mobilizon.Actors.Follower.t()}
           | {:error, String.t()}
   def follow(%Actor{} = follower, %Actor{} = followed) do
-    ActivityPub.follow(follower, followed)
+    Actions.Follow.follow(follower, followed)
   end
 
   @doc """
   Make an actor (`follower`) unfollow another (`followed`).
   """
   @spec unfollow(follower :: Actor.t(), followed :: Actor.t()) ::
-          {:ok, Mobilizon.Federation.ActivityPub.Activity.t(), Mobilizon.Actors.Follower.t()}
+          {:ok, Activity.t(), Mobilizon.Actors.Follower.t()}
           | {:error, String.t()}
   def unfollow(%Actor{} = follower, %Actor{} = followed) do
-    ActivityPub.unfollow(follower, followed)
+    Actions.Follow.unfollow(follower, followed)
   end
 
   @doc """
   Make an actor (`followed`) accept the follow from another (`follower`).
   """
   @spec accept(follower :: Actor.t(), followed :: Actor.t()) ::
-          {:ok, Mobilizon.Federation.ActivityPub.Activity.t(), Mobilizon.Actors.Follower.t()}
+          {:ok, Activity.t(), Mobilizon.Actors.Follower.t()}
           | {:error, String.t()}
   def accept(%Actor{url: follower_url} = follower, %Actor{url: followed_url} = followed) do
     Logger.debug(
@@ -43,7 +43,7 @@ defmodule Mobilizon.GraphQL.API.Follows do
 
     case Actors.is_following(follower, followed) do
       %Follower{approved: false} = follow ->
-        ActivityPub.accept(
+        Actions.Accept.accept(
           :follow,
           follow,
           true
@@ -61,7 +61,7 @@ defmodule Mobilizon.GraphQL.API.Follows do
   Make an actor (`followed`) reject the follow from another (`follower`).
   """
   @spec reject(follower :: Actor.t(), followed :: Actor.t()) ::
-          {:ok, Mobilizon.Federation.ActivityPub.Activity.t(), Mobilizon.Actors.Follower.t()}
+          {:ok, Activity.t(), Mobilizon.Actors.Follower.t()}
           | {:error, String.t()}
   def reject(%Actor{url: follower_url} = follower, %Actor{url: followed_url} = followed) do
     Logger.debug(
@@ -73,7 +73,7 @@ defmodule Mobilizon.GraphQL.API.Follows do
         {:error, "Follow already accepted"}
 
       %Follower{} = follow ->
-        ActivityPub.reject(
+        Actions.Reject.reject(
           :follow,
           follow,
           true

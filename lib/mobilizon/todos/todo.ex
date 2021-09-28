@@ -10,6 +10,8 @@ defmodule Mobilizon.Todos.Todo do
   alias Mobilizon.Todos.TodoList
 
   @type t :: %__MODULE__{
+          id: String.t(),
+          url: String.t(),
           status: boolean(),
           title: String.t(),
           due_date: DateTime.t(),

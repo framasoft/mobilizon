@@ -15,6 +15,7 @@ defmodule Mobilizon.Reports.Report do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: integer(),
           content: String.t(),
           status: ReportStatus.t(),
           url: String.t(),

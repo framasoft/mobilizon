@@ -9,6 +9,7 @@ defmodule Mobilizon.Web.AuthController do
 
   plug(Ueberauth)
 
+  @spec request(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def request(conn, %{"provider" => provider_name} = _params) do
     case provider_config(provider_name) do
       {:ok, provider_config} ->
@@ -20,6 +21,7 @@ defmodule Mobilizon.Web.AuthController do
     end
   end
 
+  @spec callback(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, any()}
   def callback(
         %{assigns: %{ueberauth_failure: fails}} = conn,
         %{"provider" => provider} = _params
@@ -85,6 +87,7 @@ defmodule Mobilizon.Web.AuthController do
 
   # Github only give public emails as part of the user profile,
   # so we explicitely request all user emails and filter on the primary one
+  @spec email_from_ueberauth(Ueberauth.Auth.t()) :: String.t() | nil
   defp email_from_ueberauth(%Ueberauth.Auth{
          strategy: Ueberauth.Strategy.Github,
          extra: %Ueberauth.Auth.Extra{raw_info: %{user: %{"emails" => emails}}}
@@ -100,6 +103,7 @@ defmodule Mobilizon.Web.AuthController do
 
   defp email_from_ueberauth(_), do: nil
 
+  @spec provider_config(String.t()) :: {:ok, any()} | {:error, :not_supported | :unknown_error}
   defp provider_config(provider_name) do
     with ueberauth when is_list(ueberauth) <- Application.get_env(:ueberauth, Ueberauth),
          providers when is_list(providers) <- Keyword.get(ueberauth, :providers),

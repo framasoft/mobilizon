@@ -299,6 +299,7 @@ defmodule Mobilizon.Actors do
 
   @delete_actor_default_options [reserve_username: true, suspension: false]
 
+  @spec delete_actor(Actor.t(), Keyword.t()) :: {:error, Ecto.Changeset.t()} | {:ok, Oban.Job.t()}
   def delete_actor(%Actor{} = actor, options \\ @delete_actor_default_options) do
     delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
 
@@ -533,7 +534,7 @@ defmodule Mobilizon.Actors do
     |> Repo.one()
   end
 
-  @spec get_actor_by_followers_url(String.t()) :: Actor.t()
+  @spec get_actor_by_followers_url(String.t()) :: Actor.t() | nil
   def get_actor_by_followers_url(followers_url) do
     Actor
     |> where([q], q.followers_url == ^followers_url)

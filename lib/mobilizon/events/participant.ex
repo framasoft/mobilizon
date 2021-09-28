@@ -15,6 +15,7 @@ defmodule Mobilizon.Events.Participant do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: String.t(),
           role: ParticipantRole.t(),
           url: String.t(),
           event: Event.t(),

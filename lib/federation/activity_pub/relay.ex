@@ -11,8 +11,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger
   alias Mobilizon.Service.Workers.Background
@@ -118,7 +117,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
           {:ok, Oban.Job.t()}
           | {:error, Ecto.Changeset.t()}
           | {:error, :bad_url}
-          | {:error, Mobilizon.Federation.ActivityPub.Actor.make_actor_errors()}
+          | {:error, ActivityPubActor.make_actor_errors()}
           | {:error, :no_internal_relay_actor}
           | {:error, :url_nil}
   def refresh(address) do
@@ -145,7 +144,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
          {object, object_id} <- fetch_object(object),
          id <- "#{object_id}/announces/#{actor_id}" do
       Logger.info("Publishing activity #{id} to all relays")
-      ActivityPub.announce(actor, object, id, true, false)
+      Actions.Announce.announce(actor, object, id, true, false)
     else
       e ->
         Logger.error("Error while getting local instance actor: #{inspect(e)}")

@@ -16,6 +16,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @doc """
   Join an event for an regular or anonymous actor
   """
+  @spec actor_join_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Participant.t()} | {:error, String.t()}
   def actor_join_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id} = args,
@@ -157,6 +159,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @doc """
   Leave an event for an anonymous actor
   """
+  @spec actor_leave_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def actor_leave_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id, token: token},
@@ -220,6 +224,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     {:error, dgettext("errors", "You need to be logged-in to leave an event")}
   end
 
+  @spec update_participation(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Participation.t()} | {:error, String.t()}
   def update_participation(
         _parent,
         %{id: participation_id, role: new_role},

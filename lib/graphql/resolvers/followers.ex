@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   import Mobilizon.Users.Guards
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
@@ -43,9 +43,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
            {:member, Actors.is_moderator?(actor_id, group_id)},
          {:ok, _activity, %Follower{} = follower} <-
            (if approved do
-              ActivityPub.accept(:follow, follower)
+              Actions.Accept.accept(:follow, follower)
             else
-              ActivityPub.reject(:follow, follower)
+              Actions.Reject.reject(:follow, follower)
             end) do
       {:ok, follower}
     else

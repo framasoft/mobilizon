@@ -194,6 +194,7 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:discussion_subscriptions)
   end
 
+  @spec middleware(list(module()), any(), map()) :: list(module())
   def middleware(middleware, _field, %{identifier: type}) when type in [:query, :mutation] do
     [CurrentActorProvider] ++ middleware ++ [ErrorHandler]
   end

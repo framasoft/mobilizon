@@ -19,9 +19,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
   @spec fetch(String.t(), Keyword.t()) ::
           {:ok, map()}
-          | {:ok, Tesla.Env.t()}
-          | {:error, any()}
-          | {:error, :invalid_url}
+          | {:error,
+             :invalid_url | :http_gone | :http_error | :http_not_found | :content_not_json}
   def fetch(url, options \\ []) do
     on_behalf_of = Keyword.get(options, :on_behalf_of, Relay.get_actor())
     date = Signature.generate_date_header()
@@ -35,7 +34,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
     if address_valid?(url) do
       case ActivityPubClient.get(client, url) do
-        {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 ->
+        {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 and is_map(data) ->
           {:ok, data}
 
         {:ok, %Tesla.Env{status: 410}} ->
@@ -46,8 +45,12 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
           Logger.debug("Resource at #{url} is 404 Gone")
           {:error, :http_not_found}
 
+        {:ok, %Tesla.Env{body: data}} when is_binary(data) ->
+          {:error, :content_not_json}
+
         {:ok, %Tesla.Env{} = res} ->
-          {:error, res}
+          Logger.debug("Resource returned bad HTTP code inspect #{res}")
+          {:error, :http_error}
       end
     else
       {:error, :invalid_url}
@@ -55,30 +58,32 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   end
 
   @spec fetch_and_create(String.t(), Keyword.t()) ::
-          {:ok, map(), struct()} | {:error, :invalid_url} | {:error, String.t()} | {:error, any}
+          {:ok, map(), struct()} | {:error, atom()} | :error
   def fetch_and_create(url, options \\ []) do
-    with {:ok, data} when is_map(data) <- fetch(url, options),
-         {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
-         params <- %{
-           "type" => "Create",
-           "to" => data["to"],
-           "cc" => data["cc"],
-           "actor" => data["actor"] || data["attributedTo"],
-           "attributedTo" => data["attributedTo"] || data["actor"],
-           "object" => data
-         } do
-      Transmogrifier.handle_incoming(params)
-    else
-      {:origin_check, false} ->
-        Logger.warn("Object origin check failed")
-        {:error, "Object origin check failed"}
+    case fetch(url, options) do
+      {:ok, data} when is_map(data) ->
+        if origin_check?(url, data) do
+          case Transmogrifier.handle_incoming(%{
+                 "type" => "Create",
+                 "to" => data["to"],
+                 "cc" => data["cc"],
+                 "actor" => data["actor"] || data["attributedTo"],
+                 "attributedTo" => data["attributedTo"] || data["actor"],
+                 "object" => data
+               }) do
+            {:ok, entity, structure} ->
+              {:ok, entity, structure}
 
-      # Returned content is not JSON
-      {:ok, data} when is_binary(data) ->
-        {:error, "Failed to parse content as JSON"}
+            {:error, error} when is_atom(error) ->
+              {:error, error}
 
-      {:error, :invalid_url} ->
-        {:error, :invalid_url}
+            :error ->
+              {:error, :transmogrifier_error}
+          end
+        else
+          Logger.warn("Object origin check failed")
+          {:error, :object_origin_check_failed}
+        end
 
       {:error, err} ->
         {:error, err}
@@ -86,22 +91,23 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   end
 
   @spec fetch_and_update(String.t(), Keyword.t()) ::
-          {:ok, map(), struct()} | {:error, String.t()} | :error | {:error, any}
+          {:ok, map(), struct()} | {:error, atom()}
   def fetch_and_update(url, options \\ []) do
-    with {:ok, data} when is_map(data) <- fetch(url, options),
-         {:origin_check, true} <- {:origin_check, origin_check(url, data)},
-         params <- %{
-           "type" => "Update",
-           "to" => data["to"],
-           "cc" => data["cc"],
-           "actor" => data["actor"] || data["attributedTo"],
-           "attributedTo" => data["attributedTo"] || data["actor"],
-           "object" => data
-         } do
-      Transmogrifier.handle_incoming(params)
-    else
-      {:origin_check, false} ->
-        {:error, "Object origin check failed"}
+    case fetch(url, options) do
+      {:ok, data} when is_map(data) ->
+        if origin_check(url, data) do
+          Transmogrifier.handle_incoming(%{
+            "type" => "Update",
+            "to" => data["to"],
+            "cc" => data["cc"],
+            "actor" => data["actor"] || data["attributedTo"],
+            "attributedTo" => data["attributedTo"] || data["actor"],
+            "object" => data
+          })
+        else
+          Logger.warn("Object origin check failed")
+          {:error, :object_origin_check_failed}
+        end
 
       {:error, err} ->
         {:error, err}

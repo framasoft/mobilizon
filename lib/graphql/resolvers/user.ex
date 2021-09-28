@@ -7,8 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   alias Mobilizon.{Actors, Admin, Config, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
@@ -21,6 +20,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Find an user by its ID
   """
+  @spec find_user(any(), map(), Absinthe.Resolution.t()) :: {:ok, User.t()} | {:error, String.t()}
   def find_user(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
     with {:ok, %User{} = user} <- Users.get_user_with_actors(id) do
@@ -44,6 +44,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   List instance users
   """
+  @spec list_users(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(User.t())} | {:error, :unauthorized}
   def list_users(
         _parent,
         %{email: email, page: page, limit: limit, sort: sort, direction: direction},
@@ -60,6 +62,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Login an user. Returns a token and the user
   """
+  @spec login_user(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, :user_not_found | String.t()}
   def login_user(_parent, %{email: email, password: password}, %{context: context}) do
     with {:ok,
           %{
@@ -88,6 +92,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Refresh a token
   """
+  @spec refresh_token(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def refresh_token(_parent, %{refresh_token: refresh_token}, _resolution) do
     with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
@@ -106,6 +112,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to have an existing token to get a refresh token")}
   end
 
+  @spec logout(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, String.t()}
+          | {:error, :token_not_found | :unable_to_logout | :unauthenticated | :invalid_argument}
   def logout(_parent, %{refresh_token: refresh_token}, %{context: %{current_user: %User{}}}) do
     with {:ok, _claims} <- Auth.Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}),
          {:ok, _claims} <- Auth.Guardian.revoke(refresh_token) do
@@ -134,7 +143,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     - create the user
     - send a validation email to the user
   """
-  @spec create_user(any, %{email: String.t()}, any) :: tuple
+  @spec create_user(any, %{email: String.t()}, any) :: {:ok, User.t()} | {:error, String.t()}
   def create_user(_parent, %{email: email} = args, _resolution) do
     with :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
@@ -161,7 +170,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
-  @spec check_registration_config(String.t()) :: atom
+  @spec check_registration_config(String.t()) ::
+          :registration_ok | :registration_closed | :not_allowlisted
   defp check_registration_config(email) do
     cond do
       Config.instance_registrations_open?() ->
@@ -523,7 +533,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          :ok <-
            Enum.each(actors, fn actor ->
              actor_performing = Keyword.get(options, :actor_performing, actor)
-             ActivityPub.delete(actor, actor_performing, true)
+             Actions.Delete.delete(actor, actor_performing, true)
            end),
          # Delete user
          {:ok, user} <-

@@ -12,6 +12,8 @@ defmodule Mobilizon.Actors.Member do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: String.t(),
+          url: String.t(),
           role: MemberRole.t(),
           parent: Actor.t(),
           actor: Actor.t(),

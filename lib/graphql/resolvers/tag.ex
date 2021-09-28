@@ -6,7 +6,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   alias Mobilizon.{Events, Posts}
   alias Mobilizon.Events.{Event, Tag}
   alias Mobilizon.Posts.Post
+  alias Mobilizon.Storage.Page
 
+  @spec list_tags(any(), map(), Absinthe.Resolution.t()) :: {:ok, Page.t(Tag.t())}
   def list_tags(_parent, %{page: page, limit: limit} = args, _resolution) do
     filter = Map.get(args, :filter)
     tags = Mobilizon.Events.list_tags(filter, page, limit)
@@ -19,6 +21,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
 
   From an event or a struct with an url
   """
+  @spec list_tags_for_event(Event.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Tag.t())}
   def list_tags_for_event(%Event{id: id}, _args, _resolution) do
     {:ok, Events.list_tags_for_event(id)}
   end
@@ -33,6 +36,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   @doc """
   Retrieve the list of tags for a post
   """
+  @spec list_tags_for_post(Post.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Tag.t())}
   def list_tags_for_post(%Post{id: id}, _args, _resolution) do
     {:ok, Posts.list_tags_for_post(id)}
   end
@@ -50,9 +54,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   @doc """
   Retrieve the list of related tags for a parent tag
   """
+  @spec list_tags_for_post(Tag.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Tag.t())}
   def get_related_tags(%Tag{} = tag, _args, _resolution) do
-    with tags <- Events.list_tag_neighbors(tag) do
-      {:ok, tags}
-    end
+    {:ok, Events.list_tag_neighbors(tag)}
   end
 end

@@ -57,7 +57,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "A group with this name already exists"
+               "A profile or group with that name already exists"
     end
   end
 

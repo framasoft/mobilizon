@@ -377,8 +377,8 @@ defmodule Mobilizon.Discussions do
   @doc """
   Creates a discussion.
   """
-  @spec create_discussion(map) :: {:ok, Comment.t()} | {:error, Changeset.t()}
-  def create_discussion(attrs \\ %{}) do
+  @spec create_discussion(map()) :: {:ok, Discussion.t()} | {:error, atom(), Changeset.t(), map()}
+  def create_discussion(attrs) do
     with {:ok, %{comment: %Comment{} = _comment, discussion: %Discussion{} = discussion}} <-
            Multi.new()
            |> Multi.insert(
@@ -412,19 +412,26 @@ defmodule Mobilizon.Discussions do
   @doc """
   Create a response to a discussion
   """
-  @spec reply_to_discussion(Discussion.t(), map()) :: {:ok, Discussion.t()}
+  @spec reply_to_discussion(Discussion.t(), map()) ::
+          {:ok, Discussion.t()} | {:error, atom(), Ecto.Changeset.t(), map()}
   def reply_to_discussion(%Discussion{id: discussion_id} = discussion, attrs \\ %{}) do
+    attrs =
+      Map.merge(attrs, %{
+        discussion_id: discussion_id,
+        actor_id: Map.get(attrs, :creator_id, Map.get(attrs, :actor_id))
+      })
+
+    changeset =
+      Comment.changeset(
+        %Comment{},
+        attrs
+      )
+
     with {:ok, %{comment: %Comment{} = comment, discussion: %Discussion{} = discussion}} <-
            Multi.new()
            |> Multi.insert(
              :comment,
-             Comment.changeset(
-               %Comment{},
-               Map.merge(attrs, %{
-                 discussion_id: discussion_id,
-                 actor_id: Map.get(attrs, :creator_id, attrs.actor_id)
-               })
-             )
+             changeset
            )
            |> Multi.update(:discussion, fn %{comment: %Comment{id: comment_id}} ->
              Discussion.changeset(
@@ -435,7 +442,7 @@ defmodule Mobilizon.Discussions do
            |> Repo.transaction(),
          # Discussion is not updated
          %Comment{} = comment <- Repo.preload(comment, @comment_preloads) do
-      {:ok, Map.put(discussion, :last_comment, comment)}
+      {:ok, %Discussion{discussion | last_comment: comment}}
     end
   end
 
@@ -453,7 +460,8 @@ defmodule Mobilizon.Discussions do
   @doc """
   Delete a discussion.
   """
-  @spec delete_discussion(Discussion.t()) :: {:ok, Discussion.t()} | {:error, Changeset.t()}
+  @spec delete_discussion(Discussion.t()) ::
+          {:ok, %{comments: {integer() | nil, any()}}} | {:error, :comments, Changeset.t(), map()}
   def delete_discussion(%Discussion{id: discussion_id}) do
     Multi.new()
     |> Multi.delete_all(:comments, fn _ ->
@@ -463,7 +471,7 @@ defmodule Mobilizon.Discussions do
     |> Repo.transaction()
   end
 
-  @spec public_comments_for_actor_query(String.t() | integer()) :: [Comment.t()]
+  @spec public_comments_for_actor_query(String.t() | integer()) :: Ecto.Query.t()
   defp public_comments_for_actor_query(actor_id) do
     Comment
     |> where([c], c.actor_id == ^actor_id and c.visibility in ^@public_visibility)
@@ -471,7 +479,7 @@ defmodule Mobilizon.Discussions do
     |> preload_for_comment()
   end
 
-  @spec public_replies_for_thread_query(String.t() | integer()) :: [Comment.t()]
+  @spec public_replies_for_thread_query(String.t() | integer()) :: Ecto.Query.t()
   defp public_replies_for_thread_query(comment_id) do
     Comment
     |> where([c], c.origin_comment_id == ^comment_id and c.visibility in ^@public_visibility)

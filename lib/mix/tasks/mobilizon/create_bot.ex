@@ -13,11 +13,12 @@ defmodule Mix.Tasks.Mobilizon.CreateBot do
   require Logger
 
   @shortdoc "Create bot"
+  @spec run(list(String.t())) :: Bot.t() | :ok
   def run([email, name, summary, type, url]) do
     start_mobilizon()
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email, activated: true),
-         actor <- Actors.register_bot(%{name: name, summary: summary}),
+         {:ok, actor} <- Actors.register_bot(%{name: name, summary: summary}),
          {:ok, %Bot{} = bot} <-
            Actors.create_bot(%{
              "type" => type,

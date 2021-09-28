@@ -2,8 +2,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower, Member, MemberRole}
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Audience, Permission, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -68,7 +67,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
 
   @impl Entity
   @spec delete(Actor.t(), Actor.t(), boolean, map) ::
-          {:ok, ActivityStream.t(), Actor.t(), Actor.t()}
+          {:ok, ActivityStream.t(), Actor.t(), Actor.t()} | {:error, Ecto.Changeset.t()}
   def delete(
         %Actor{
           followers_url: followers_url,
@@ -245,7 +244,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
         Mobilizon.Actors.get_default_member_role(group) == :member &&
             role == :member ->
           {:accept,
-           ActivityPub.accept(
+           Actions.Accept.accept(
              :join,
              member,
              true,
@@ -282,7 +281,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
       Logger.debug("Target doesn't manually approves followers, we can accept right away")
 
       {:accept,
-       ActivityPub.accept(
+       Actions.Accept.accept(
          :follow,
          follower,
          true,

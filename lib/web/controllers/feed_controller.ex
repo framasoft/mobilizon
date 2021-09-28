@@ -7,6 +7,7 @@ defmodule Mobilizon.Web.FeedController do
   action_fallback(Mobilizon.Web.FallbackController)
   alias Mobilizon.Config
 
+  @spec instance(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def instance(conn, %{"format" => format}) do
     if Config.get([:instance, :enable_instance_feeds], false) do
       return_data(conn, format, "instance", Config.instance_name())
@@ -15,6 +16,7 @@ defmodule Mobilizon.Web.FeedController do
     end
   end
 
+  @spec actor(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
   def actor(conn, %{"format" => format, "name" => name}) do
     return_data(conn, format, "actor_" <> name, name)
   end
@@ -23,14 +25,17 @@ defmodule Mobilizon.Web.FeedController do
     {:error, :not_found}
   end
 
+  @spec event(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
   def event(conn, %{"uuid" => uuid, "format" => "ics"}) do
     return_data(conn, "ics", "event_" <> uuid, "event")
   end
 
+  @spec instance(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def event(_conn, _) do
     {:error, :not_found}
   end
 
+  @spec going(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
   def going(conn, %{"token" => token, "format" => format}) do
     return_data(conn, format, "token_" <> token, "events")
   end
@@ -39,6 +44,8 @@ defmodule Mobilizon.Web.FeedController do
     {:error, :not_found}
   end
 
+  @spec return_data(Plug.Conn.t(), String.t(), String.t(), String.t()) ::
+          Plug.Conn.t() | {:error, :not_found}
   defp return_data(conn, "atom", type, filename) do
     case Cachex.fetch(:feed, type) do
       {status, data} when status in [:commit, :ok] ->

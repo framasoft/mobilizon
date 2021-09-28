@@ -4,6 +4,7 @@ defmodule Mobilizon.Discussions.Discussion.TitleSlug do
   """
   use EctoAutoslugField.Slug, from: [:title, :id], to: :slug
 
+  @spec build_slug([String.t()], Ecto.Changeset.t()) :: String.t()
   def build_slug([title, id], %Ecto.Changeset{valid?: true}) do
     [title, ShortUUID.encode!(id)]
     |> Enum.join("-")
@@ -31,6 +32,7 @@ defmodule Mobilizon.Discussions.Discussion do
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
   @type t :: %__MODULE__{
+          id: String.t(),
           creator: Actor.t(),
           actor: Actor.t(),
           title: String.t(),

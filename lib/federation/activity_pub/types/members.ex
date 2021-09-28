@@ -2,7 +2,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   @moduledoc false
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member, MemberRole}
-  alias Mobilizon.Federation.{ActivityPub, ActivityStream}
+  alias Mobilizon.Federation.ActivityPub.Actions
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.Activity.Member, as: MemberActivity
   alias Mobilizon.Web.Endpoint
@@ -74,7 +75,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
         _additionnal
       ) do
     Logger.debug("Deleting a member")
-    ActivityPub.leave(group, actor, local, %{force_member_removal: true})
+    Actions.Leave.leave(group, actor, local, %{force_member_removal: true})
   end
 
   @spec actor(Member.t()) :: Actor.t() | nil

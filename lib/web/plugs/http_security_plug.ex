@@ -13,8 +13,10 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   require Logger
 
+  @spec init(any()) :: any()
   def init(opts), do: opts
 
+  @spec call(Plug.Conn.t(), Keyword.t()) :: Plug.Conn.t()
   def call(conn, options \\ []) do
     if Config.get([:http_security, :enabled]) do
       conn

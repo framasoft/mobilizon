@@ -4,6 +4,7 @@ defmodule Mobilizon.Posts.Post.TitleSlug do
   """
   use EctoAutoslugField.Slug, from: [:title, :id], to: :slug
 
+  @spec build_slug([String.t()], any()) :: String.t() | nil
   def build_slug([title, id], _changeset) do
     [title, ShortUUID.encode!(id)]
     |> Enum.join("-")
@@ -31,6 +32,7 @@ defmodule Mobilizon.Posts.Post do
   import Mobilizon.Web.Gettext
 
   @type t :: %__MODULE__{
+          id: String.t(),
           url: String.t(),
           local: boolean,
           slug: String.t(),

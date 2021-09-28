@@ -23,6 +23,7 @@ defmodule Mobilizon.Actors.Actor do
   require Logger
 
   @type t :: %__MODULE__{
+          id: integer(),
           url: String.t(),
           outbox_url: String.t(),
           inbox_url: String.t(),

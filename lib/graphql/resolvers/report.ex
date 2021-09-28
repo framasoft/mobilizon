@@ -13,6 +13,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   alias Mobilizon.GraphQL.API
 
+  @spec list_reports(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Report.t())} | {:error, String.t()}
   def list_reports(
         _parent,
         %{page: page, limit: limit, status: status},
@@ -26,6 +28,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to list reports")}
   end
 
+  @spec get_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def get_report(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
     case Mobilizon.Reports.get_report(id) do
@@ -44,6 +48,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   @doc """
   Create a report, either logged-in or anonymously
   """
+  @spec create_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def create_report(
         _parent,
         args,
@@ -80,6 +86,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   @doc """
   Update a report's status
   """
+  @spec update_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def update_report(
         _parent,
         %{report_id: report_id, status: status},
@@ -99,6 +107,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to update a report")}
   end
 
+  @spec create_report_note(any(), map(), Absinthe.Resolution.t()) :: {:ok, Note.t()}
   def create_report_note(
         _parent,
         %{report_id: report_id, content: content},
@@ -112,6 +121,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     end
   end
 
+  @spec delete_report_note(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def delete_report_note(
         _parent,
         %{note_id: note_id},

@@ -66,6 +66,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
 
           nil ->
             case ActivityPub.fetch_object_from_url(todo_list_url) do
+              {:ok, _, %TodoList{}} ->
+                as_to_model_data(object)
+
               {:ok, %TodoList{}} ->
                 as_to_model_data(object)
 

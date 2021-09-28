@@ -6,8 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
   import Mobilizon.Users.Guards
   alias Mobilizon.{Actors, Posts}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Permission, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Permission, Utils}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
@@ -22,6 +21,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
 
   Returns only if actor requesting is a member of the group
   """
+  @spec find_posts_for_group(Actor.t(), map(), Absinthe.Resolution.t()) :: {:ok, Page.t(Post.t())}
   def find_posts_for_group(
         %Actor{id: group_id} = group,
         %{page: page, limit: limit} = args,
@@ -32,13 +32,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
           }
         } = _resolution
       ) do
-    with {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
-         %Page{} = page <- Posts.get_posts_for_group(group, page, limit) do
+    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
+      %Page{} = page = Posts.get_posts_for_group(group, page, limit)
       {:ok, page}
     else
-      {:member, _} ->
-        find_posts_for_group(group, args, nil)
+      find_posts_for_group(group, args, nil)
     end
   end
 
@@ -47,9 +45,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
         %{page: page, limit: limit},
         _resolution
       ) do
-    with %Page{} = page <- Posts.get_public_posts_for_group(group, page, limit) do
-      {:ok, page}
-    end
+    %Page{} = page = Posts.get_public_posts_for_group(group, page, limit)
+    {:ok, page}
   end
 
   def find_posts_for_group(
@@ -60,6 +57,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     {:ok, %Page{total: 0, elements: []}}
   end
 
+  @spec get_post(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Post.t()} | {:error, :post_not_found}
   def get_post(
         parent,
         %{slug: slug},
@@ -101,6 +100,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     {:error, :post_not_found}
   end
 
+  @spec create_post(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Post.t()} | {:error, String.t()}
   def create_post(
         _parent,
         %{attributed_to_id: group_id} = args,
@@ -118,7 +119,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            end),
          args <- extract_pictures_from_post_body(args, actor_id),
          {:ok, _, %Post{} = post} <-
-           ActivityPub.create(
+           Actions.Create.create(
              :post,
              args
              |> Map.put(:author_id, actor_id)
@@ -140,6 +141,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     {:error, dgettext("errors", "You need to be logged-in to create posts")}
   end
 
+  @spec update_post(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Post.t()} | {:error, String.t()}
   def update_post(
         _parent,
         %{id: id} = args,
@@ -159,7 +162,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
          args <- extract_pictures_from_post_body(args, actor_id),
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
-           ActivityPub.update(post, args, true, %{"actor" => actor_url}) do
+           Actions.Update.update(post, args, true, %{"actor" => actor_url}) do
       {:ok, post}
     else
       {:uuid, :error} ->
@@ -177,6 +180,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     {:error, dgettext("errors", "You need to be logged-in to update posts")}
   end
 
+  @spec delete_post(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Post.t()} | {:error, String.t()}
   def delete_post(
         _parent,
         %{id: post_id},
@@ -191,7 +196,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
            {:post, Posts.get_post_with_preloads(post_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Post{} = post} <-
-           ActivityPub.delete(post, actor) do
+           Actions.Delete.delete(post, actor) do
       {:ok, post}
     else
       {:uuid, :error} ->
@@ -209,6 +214,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Post do
     {:error, dgettext("errors", "You need to be logged-in to delete posts")}
   end
 
+  @spec process_picture(map() | nil, Actor.t()) :: nil | map()
   defp process_picture(nil, _), do: nil
   defp process_picture(%{media_id: _picture_id} = args, _), do: args
 

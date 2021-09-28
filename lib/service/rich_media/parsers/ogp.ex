@@ -30,6 +30,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
     :"image:alt"
   ]
 
+  @spec parse(String.t(), map()) :: {:ok, map()}
   def parse(html, data) do
     Logger.debug("Using OpenGraph card parser")
 
@@ -49,6 +50,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
     end
   end
 
+  @spec transform_tags(map()) :: map()
   defp transform_tags(data) do
     data
     |> Enum.reject(fn {_, v} -> is_nil(v) end)

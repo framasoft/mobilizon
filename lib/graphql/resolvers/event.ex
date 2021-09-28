@@ -21,6 +21,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @event_max_limit 100
   @number_of_related_events 3
 
+  @spec organizer_for_event(Event.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t() | nil} | {:error, String.t()}
   def organizer_for_event(
         %Event{attributed_to_id: attributed_to_id, organizer_actor_id: organizer_actor_id},
         _args,
@@ -62,6 +64,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
+  @spec list_events(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Event.t())} | {:error, :events_max_limit_reached}
   def list_events(
         _parent,
         %{page: page, limit: limit, order_by: order_by, direction: direction},
@@ -75,6 +79,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, :events_max_limit_reached}
   end
 
+  @spec find_private_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, :event_not_found}
   defp find_private_event(
          _parent,
          %{uuid: uuid},
@@ -106,6 +112,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, :event_not_found}
   end
 
+  @spec find_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, :event_not_found}
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
     with {:has_event, %Event{} = event} <-
            {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
@@ -132,6 +140,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   List participants for event (through an event request)
   """
+  @spec list_participants_for_event(Event.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Participant.t())} | {:error, String.t()}
   def list_participants_for_event(
         %Event{id: event_id} = event,
         %{page: page, limit: limit, roles: roles},
@@ -166,6 +176,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, %{total: 0, elements: []}}
   end
 
+  @spec stats_participants(Event.t(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def stats_participants(
         %Event{participant_stats: %EventParticipantStats{} = stats, id: event_id} = _event,
         _args,
@@ -198,6 +209,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   List related events
   """
+  @spec list_related_events(Event.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Event.t())}
   def list_related_events(
         %Event{tags: tags, organizer_actor: organizer_actor, uuid: uuid},
         _args,
@@ -239,11 +251,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, events}
   end
 
+  @spec uniq_events(list(Event.t())) :: list(Event.t())
   defp uniq_events(events), do: Enum.uniq_by(events, fn event -> event.uuid end)
 
   @doc """
   Create an event
   """
+  @spec create_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def create_event(
         _parent,
         %{organizer_actor_id: organizer_actor_id} = args,
@@ -283,6 +298,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   Update an event
   """
+  @spec update_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def update_event(
         _parent,
         %{event_id: event_id} = args,
@@ -327,6 +344,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   Delete an event
   """
+  @spec delete_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def delete_event(
         _parent,
         %{event_id: event_id},
@@ -365,6 +384,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, dgettext("errors", "You need to be logged-in to delete an event")}
   end
 
+  @spec do_delete_event(Event.t(), Actor.t(), boolean()) :: {:ok, map()}
   defp do_delete_event(%Event{} = event, %Actor{} = actor, federate \\ true)
        when is_boolean(federate) do
     with {:ok, _activity, event} <- API.Events.delete_event(event, actor) do
@@ -372,6 +392,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
+  @spec is_organizer_group_member?(map()) :: boolean()
   defp is_organizer_group_member?(%{
          attributed_to_id: attributed_to_id,
          organizer_actor_id: organizer_actor_id
@@ -383,6 +404,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   defp is_organizer_group_member?(_), do: true
 
+  @spec verify_profile_change(map(), Event.t(), User.t(), Actor.t()) :: {:ok, map()}
   defp verify_profile_change(
          args,
          %Event{attributed_to: %Actor{}},

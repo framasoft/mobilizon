@@ -17,6 +17,7 @@ defmodule Mobilizon.Web.WebFingerController do
   @doc """
   Provides /.well-known/host-meta
   """
+  @spec host_meta(Plug.Conn.t(), any()) :: Plug.Conn.t() | no_return
   def host_meta(conn, _params) do
     xml = WebFinger.host_meta()
 
@@ -28,6 +29,7 @@ defmodule Mobilizon.Web.WebFingerController do
   @doc """
   Provides /.well-known/webfinger
   """
+  @spec webfinger(Plug.Conn.t(), any()) :: Plug.Conn.t() | no_return
   def webfinger(conn, %{"resource" => resource}) do
     case WebFinger.webfinger(resource, "JSON") do
       {:ok, response} -> json(conn, response)

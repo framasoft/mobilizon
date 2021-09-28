@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.FallbackController do
   """
   use Mobilizon.Web, :controller
 
+  @spec call(Plug.Conn.t(), {:error, :not_found}) :: Plug.Conn.t()
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)

@@ -3,5 +3,5 @@ defmodule Mobilizon.Federation.ActivityStream do
   The ActivityStream Type
   """
 
-  @type t :: map()
+  @type t :: %{String.t() => String.t() | list(String.t()) | map() | nil}
 end

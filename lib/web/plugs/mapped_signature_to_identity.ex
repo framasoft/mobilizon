@@ -18,6 +18,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
 
   require Logger
 
+  @spec init(any()) :: any()
   def init(options), do: options
 
   @spec key_id_from_conn(Plug.Conn.t()) :: String.t() | nil
@@ -42,6 +43,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
     end
   end
 
+  @spec call(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def call(%{assigns: %{actor: _}} = conn, _opts), do: conn
 
   # if this has payload make sure it is signed by the same actor that made it

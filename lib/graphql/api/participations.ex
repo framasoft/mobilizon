@@ -6,8 +6,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Activity
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Web.Email.Participation
 
@@ -19,7 +18,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
         {:error, :already_participant}
 
       {:error, :participant_not_found} ->
-        ActivityPub.join(event, actor, Map.get(args, :local, true), %{metadata: args})
+        Actions.Join.join(event, actor, Map.get(args, :local, true), %{metadata: args})
     end
   end
 
@@ -27,7 +26,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
           {:ok, Activity.t(), Participant.t()}
           | {:error, :is_only_organizer | :participant_not_found | Ecto.Changeset.t()}
   def leave(%Event{} = event, %Actor{} = actor, args \\ %{}),
-    do: ActivityPub.leave(event, actor, Map.get(args, :local, true), %{metadata: args})
+    do: Actions.Leave.leave(event, actor, Map.get(args, :local, true), %{metadata: args})
 
   @doc """
   Update participation status
@@ -52,15 +51,18 @@ defmodule Mobilizon.GraphQL.API.Participations do
          %Participant{} = participation,
          %Actor{} = moderator
        ) do
-    with {:ok, activity, %Participant{role: :participant} = participation} <-
-           ActivityPub.accept(
-             :join,
-             participation,
-             true,
-             %{"actor" => moderator.url}
-           ),
-         :ok <- Participation.send_emails_to_local_user(participation) do
-      {:ok, activity, participation}
+    case Actions.Accept.accept(
+           :join,
+           participation,
+           true,
+           %{"actor" => moderator.url}
+         ) do
+      {:ok, activity, %Participant{role: :participant} = participation} ->
+        Participation.send_emails_to_local_user(participation)
+        {:ok, activity, participation}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -70,7 +72,7 @@ defmodule Mobilizon.GraphQL.API.Participations do
          %Actor{} = moderator
        ) do
     with {:ok, activity, %Participant{role: :rejected} = participation} <-
-           ActivityPub.reject(
+           Actions.Reject.reject(
              :join,
              participation,
              true,

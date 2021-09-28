@@ -302,9 +302,9 @@ defmodule Mobilizon.Config do
   def instance_event_creation_enabled?,
     do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:creation)
 
-  @spec anonymous_actor_id :: binary | integer
+  @spec anonymous_actor_id :: integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
-  @spec relay_actor_id :: binary | integer
+  @spec relay_actor_id :: integer
   def relay_actor_id, do: get_cached_value(:relay_actor_id)
   @spec admin_settings :: map
   def admin_settings, do: get_cached_value(:admin_config)

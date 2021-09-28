@@ -8,6 +8,8 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
   Module to parse meta tags data in HTML pages
   """
 
+  @spec parse(String.t(), map(), String.t(), String.t(), atom(), atom(), list(atom())) ::
+          {:ok, map()} | {:error, String.t()}
   def parse(
         html,
         data,
@@ -35,10 +37,12 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
     end
   end
 
+  @spec get_elements(String.t(), atom(), String.t()) :: Floki.html_tree()
   defp get_elements(html, key_name, prefix) do
     html |> Floki.parse_document!() |> Floki.find("meta[#{to_string(key_name)}^='#{prefix}:']")
   end
 
+  @spec normalize_attributes(Floki.html_node(), String.t(), atom(), atom(), list(atom())) :: map()
   defp normalize_attributes(html_node, prefix, key_name, value_name, allowed_attributes) do
     {_tag, attributes, _children} = html_node
 
@@ -55,6 +59,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
     end
   end
 
+  @spec maybe_put_title(map(), String.t()) :: map()
   defp maybe_put_title(%{title: _} = meta, _), do: meta
 
   defp maybe_put_title(meta, html) when meta != %{} do
@@ -66,6 +71,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
 
   defp maybe_put_title(meta, _), do: meta
 
+  @spec maybe_put_description(map(), String.t()) :: map()
   defp maybe_put_description(%{description: _} = meta, _), do: meta
 
   defp maybe_put_description(meta, html) when meta != %{} do

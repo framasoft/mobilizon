@@ -282,7 +282,7 @@ defmodule Mobilizon.Events do
 
   # We start by inserting the event and then insert a first participant if the event is not a draft
   @spec do_create_event(map) ::
-          {:ok, Event.t()}
+          {:ok, %{insert: Event.t(), write: Participant.t() | nil}}
           | {:error, Changeset.t()}
           | {:error, :update | :write, Changeset.t(), map()}
   defp do_create_event(attrs) do
@@ -368,7 +368,7 @@ defmodule Mobilizon.Events do
   Deletes an event.
   Raises an exception if it fails.
   """
-  @spec delete_event(Event.t()) :: Event.t()
+  @spec delete_event!(Event.t()) :: Event.t()
   def delete_event!(%Event{} = event), do: Repo.delete!(event)
 
   @doc """
@@ -457,6 +457,7 @@ defmodule Mobilizon.Events do
 
   @spec list_organized_events_for_group(
           Actor.t(),
+          EventVisibility.t(),
           DateTime.t() | nil,
           DateTime.t() | nil,
           integer | nil,

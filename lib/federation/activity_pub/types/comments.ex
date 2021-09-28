@@ -70,7 +70,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   @impl Entity
   @spec delete(Comment.t(), Actor.t(), boolean, map()) ::
-          {:ok, ActivityStream.t(), Actor.t(), Comment.t()} | {:error, Ecto.Changeset.t()}
+          {:error, Ecto.Changeset.t()} | {:ok, ActivityStream.t(), Actor.t(), Comment.t()}
   def delete(
         %Comment{url: url, id: comment_id},
         %Actor{} = actor,
@@ -208,7 +208,11 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     end
   end
 
-  @spec event_allows_commenting?(%{actor_id: String.t() | integer, event: Event.t()}) :: boolean
+  @spec event_allows_commenting?(%{
+          required(:actor_id) => String.t() | integer,
+          required(:event) => Event.t() | nil,
+          optional(atom) => any()
+        }) :: boolean
   defp event_allows_commenting?(%{
          actor_id: actor_id,
          event: %Event{
