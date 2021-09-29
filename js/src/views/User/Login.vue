@@ -233,7 +233,7 @@ export default class Login extends Vue {
       }
       this.$router.push({ name: RouteName.HOME });
       return;
-    } catch (err) {
+    } catch (err: any) {
       this.submitted = false;
       if (err.graphQLErrors) {
         err.graphQLErrors.forEach(({ message }: { message: string }) => {
@@ -257,7 +257,7 @@ export default class Login extends Vue {
     });
     try {
       await initializeCurrentActor(this.$apollo.provider.defaultClient);
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof NoIdentitiesException) {
         await this.$router.push({
           name: RouteName.REGISTER_PROFILE,

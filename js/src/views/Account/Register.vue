@@ -210,7 +210,7 @@ export default class Register extends mixins(identityEditionMixin) {
           await this.$router.push({ name: RouteName.HOME });
         }
       }
-    } catch (errorCatched) {
+    } catch (errorCatched: any) {
       this.errors = errorCatched.graphQLErrors.reduce(
         (acc: { [key: string]: string }, error: any) => {
           acc[error.details || error.field] = error.message;

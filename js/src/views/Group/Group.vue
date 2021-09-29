@@ -704,7 +704,7 @@ export default class Group extends mixins(GroupMixin) {
           },
         ],
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);
       }
@@ -754,7 +754,7 @@ export default class Group extends mixins(GroupMixin) {
       this.$notifier.success(
         this.$t("Group {groupTitle} reported", { groupTitle }) as string
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       this.$notifier.error(
         this.$t("Error while reporting group {groupTitle}", {

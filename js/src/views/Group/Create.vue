@@ -174,7 +174,7 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
           displayName: this.group.displayName(),
         }) as string
       );
-    } catch (err) {
+    } catch (err: any) {
       this.handleError(err);
     }
   }

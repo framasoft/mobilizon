@@ -213,7 +213,7 @@ export default class CommentTree extends Vue {
 
       // and reset the new comment field
       this.newComment = new CommentModel();
-    } catch (errors) {
+    } catch (errors: any) {
       console.error(errors);
       if (errors.graphQLErrors && errors.graphQLErrors.length > 0) {
         const error = errors.graphQLErrors[0];
@@ -295,7 +295,7 @@ export default class CommentTree extends Vue {
         },
       });
       // this.comments = this.comments.filter(commentItem => commentItem.id !== comment.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);

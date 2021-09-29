@@ -246,7 +246,7 @@ export default class GroupFollowers extends mixins(GroupMixin) {
             username: follower.actor.preferredUsername,
           });
       this.$notifier.success(message as string);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);

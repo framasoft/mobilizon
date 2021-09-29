@@ -117,13 +117,15 @@ export default class SendPasswordReset extends Vue {
       });
 
       this.validationSent = true;
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      err.graphQLErrors.forEach(({ message }: { message: string }) => {
-        if (this.errors.indexOf(message) < 0) {
-          this.errors.push(message);
-        }
-      });
+      if (err.graphQLErrors) {
+        err.graphQLErrors.forEach(({ message }: { message: string }) => {
+          if (this.errors.indexOf(message) < 0) {
+            this.errors.push(message);
+          }
+        });
+      }
     }
   }
 

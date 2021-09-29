@@ -55,7 +55,7 @@ export default class Todo extends Vue {
         },
       });
       this.editMode = false;
-    } catch (e) {
+    } catch (e: any) {
       Snackbar.open({
         message: e.message,
         type: "is-danger",

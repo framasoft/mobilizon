@@ -322,12 +322,14 @@ export default class Comment extends Vue {
         position: "is-bottom-right",
         duration: 5000,
       });
-    } catch (e) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
     }
   }
 }

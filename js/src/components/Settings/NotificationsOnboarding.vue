@@ -60,7 +60,7 @@ export default class NotificationsOnboarding extends mixins(Onboarding) {
   async updateSetting(variables: Record<string, unknown>): Promise<void> {
     try {
       this.doUpdateSetting(variables);
-    } catch (e) {
+    } catch (e: any) {
       Snackbar.open({
         message: e.message,
         type: "is-danger",

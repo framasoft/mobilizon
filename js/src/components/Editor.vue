@@ -331,7 +331,7 @@ export default class EditorComponent extends Vue {
           })
           .run();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);
