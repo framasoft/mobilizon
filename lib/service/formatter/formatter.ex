@@ -18,18 +18,20 @@ defmodule Mobilizon.Service.Formatter do
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
 
-  def escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
+  @spec escape_mention_handler(String.t(), String.t(), any(), any()) :: String.t()
+  defp escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
     case Actors.get_actor_by_name(nickname) do
       %Actor{} ->
         # escape markdown characters with `\\`
         # (we don't want something like @user__name to be parsed by markdown)
         String.replace(mention, @markdown_characters_regex, "\\\\\\1")
 
-      _ ->
+      nil ->
         buffer
     end
   end
 
+  @spec mention_handler(String.t(), String.t(), any(), map()) :: {String.t(), map()}
   def mention_handler("@" <> nickname, buffer, _opts, acc) do
     case Actors.get_actor_by_name(nickname) do
       #      %Actor{preferred_username: preferred_username} = actor ->
@@ -58,11 +60,12 @@ defmodule Mobilizon.Service.Formatter do
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
-      _ ->
+      nil ->
         {buffer, acc}
     end
   end
 
+  @spec hashtag_handler(String.t(), String.t(), any(), map()) :: {String.t(), map()}
   def hashtag_handler("#" <> tag = tag_text, _buffer, _opts, acc) do
     tag = String.downcase(tag)
     url = "#{Endpoint.url()}/tag/#{tag}"
@@ -98,6 +101,7 @@ defmodule Mobilizon.Service.Formatter do
   @doc """
   Escapes a special characters in mention names.
   """
+  @spec mentions_escape(String.t(), Keyword.t()) :: String.t()
   def mentions_escape(text, options \\ []) do
     options =
       Keyword.merge(options,
@@ -109,6 +113,11 @@ defmodule Mobilizon.Service.Formatter do
     Linkify.link(text, options)
   end
 
+  @spec html_escape(
+          {text :: String.t(), mentions :: list(), hashtags :: list()},
+          type :: String.t()
+        ) :: {String.t(), list(), list()}
+  @spec html_escape(text :: String.t(), type :: String.t()) :: String.t()
   def html_escape({text, mentions, hashtags}, type) do
     {html_escape(text, type), mentions, hashtags}
   end
@@ -129,6 +138,7 @@ defmodule Mobilizon.Service.Formatter do
     |> Enum.join("")
   end
 
+  @spec truncate(String.t(), non_neg_integer(), String.t()) :: String.t()
   def truncate(text, max_length \\ 200, omission \\ "...") do
     # Remove trailing whitespace
     text = Regex.replace(~r/([^ \t\r\n])([ \t]+$)/u, text, "\\g{1}")
@@ -141,6 +151,7 @@ defmodule Mobilizon.Service.Formatter do
     end
   end
 
+  @spec linkify_opts :: Keyword.t()
   defp linkify_opts do
     Mobilizon.Config.get(__MODULE__) ++
       [
@@ -184,5 +195,6 @@ defmodule Mobilizon.Service.Formatter do
     |> (&" #{&1}").()
   end
 
+  @spec tag_text_strip(String.t()) :: String.t()
   defp tag_text_strip(tag), do: tag |> String.trim("#") |> String.downcase()
 end

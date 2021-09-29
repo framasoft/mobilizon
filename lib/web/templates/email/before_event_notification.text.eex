@@ -2,5 +2,5 @@
 ==
 <%= gettext "Get ready for %{title}", title: @participant.event.title %>
 <%= gettext "Go to event page" %>
-<%= gettext "View the event on: %{link}", link: page_url(Mobilizon.Web.Endpoint, :event, @participant.event.uuid) %>
+<%= gettext "View the event on: %{link}", link: Routes.page_url(Mobilizon.Web.Endpoint, :event, @participant.event.uuid) %>
 <%= gettext "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button." %>

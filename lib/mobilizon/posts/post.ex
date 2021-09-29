@@ -4,6 +4,7 @@ defmodule Mobilizon.Posts.Post.TitleSlug do
   """
   use EctoAutoslugField.Slug, from: [:title, :id], to: :slug
 
+  @spec build_slug([String.t()], any()) :: String.t() | nil
   def build_slug([title, id], _changeset) do
     [title, ShortUUID.encode!(id)]
     |> Enum.join("-")
@@ -31,6 +32,7 @@ defmodule Mobilizon.Posts.Post do
   import Mobilizon.Web.Gettext
 
   @type t :: %__MODULE__{
+          id: String.t(),
           url: String.t(),
           local: boolean,
           slug: String.t(),
@@ -82,6 +84,7 @@ defmodule Mobilizon.Posts.Post do
   @attrs @required_attrs ++ @optional_attrs
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = post, attrs) do
     post
     |> cast(attrs, @attrs)
@@ -153,17 +156,20 @@ defmodule Mobilizon.Posts.Post do
   # In case the provided picture is an existing one
   @spec put_picture(Changeset.t(), map) :: Changeset.t()
   defp put_picture(%Changeset{} = changeset, %{picture: %{picture_id: id} = _picture}) do
-    case Medias.get_media!(id) do
-      %Media{} = picture ->
-        put_assoc(changeset, :picture, picture)
-
-      _ ->
-        changeset
-    end
+    %Media{} = picture = Medias.get_media!(id)
+    put_assoc(changeset, :picture, picture)
   end
 
   # In case it's a new picture
   defp put_picture(%Changeset{} = changeset, _attrs) do
     cast_assoc(changeset, :picture)
   end
+
+  @doc """
+  Whether we can show the post. Returns false if the organizer actor or group is suspended
+  """
+  @spec show?(t) :: boolean()
+  def show?(%__MODULE__{attributed_to: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{author: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{}), do: true
 end

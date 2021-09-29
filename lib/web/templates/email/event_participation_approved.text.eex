@@ -6,6 +6,6 @@
 
 <%= gettext "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!" %>
 
-<%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 
 <%= gettext "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button." %>

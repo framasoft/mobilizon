@@ -13,9 +13,9 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
 
   import Mobilizon.Service.DateTime,
     only: [
-      is_between_hours: 1,
-      is_between_hours_on_first_day: 1,
-      is_delay_ok_since_last_notification_sent: 1
+      is_between_hours?: 1,
+      is_between_hours_on_first_day?: 1,
+      is_delay_ok_since_last_notification_sent?: 1
     ]
 
   @impl Oban.Worker
@@ -86,7 +86,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            group_notifications: :one_hour
          }
        }) do
-    is_delay_ok_since_last_notification_sent(last_notification_sent)
+    is_delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
   # If we're between notification hours
@@ -96,7 +96,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
-    is_between_hours(timezone: timezone || "Etc/UTC")
+    is_between_hours?(timezone: timezone || "Etc/UTC")
   end
 
   # If we're on the first day of the week between notification hours
@@ -107,6 +107,6 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
-    is_between_hours_on_first_day(timezone: timezone || "Etc/UTC", locale: locale)
+    is_between_hours_on_first_day?(timezone: timezone || "Etc/UTC", locale: locale)
   end
 end

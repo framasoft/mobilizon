@@ -16,7 +16,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Utils
+  alias Mobilizon.Federation.ActivityPub.{Actions, Utils}
   alias Mobilizon.Federation.HTTPSignatures.Signature
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
@@ -117,7 +117,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
     test "it creates a delete activity and deletes the original event" do
       event = insert(:event)
       event = Events.get_public_event_by_url_with_preload!(event.url)
-      {:ok, delete, _} = ActivityPub.delete(event, event.organizer_actor)
+      {:ok, delete, _} = Actions.Delete.delete(event, event.organizer_actor)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == event.organizer_actor.url
@@ -133,7 +133,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         lazy_put_activity_defaults: fn args -> args end do
         event = insert(:event)
         event = Events.get_public_event_by_url_with_preload!(event.url)
-        {:ok, delete, _} = ActivityPub.delete(event, event.organizer_actor, false)
+        {:ok, delete, _} = Actions.Delete.delete(event, event.organizer_actor, false)
 
         assert delete.data["type"] == "Delete"
         assert delete.data["actor"] == event.organizer_actor.url
@@ -151,7 +151,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       comment = insert(:comment)
       comment = Discussions.get_comment_from_url_with_preload!(comment.url)
       assert is_nil(Discussions.get_comment_from_url(comment.url).deleted_at)
-      {:ok, delete, _} = ActivityPub.delete(comment, comment.actor)
+      {:ok, delete, _} = Actions.Delete.delete(comment, comment.actor)
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
@@ -169,7 +169,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       actor = insert(:actor)
       actor_data = %{summary: @updated_actor_summary}
 
-      {:ok, update, _} = ActivityPub.update(actor, actor_data, false)
+      {:ok, update, _} = Actions.Update.update(actor, actor_data, false)
 
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]
@@ -185,7 +185,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       event = insert(:event, organizer_actor: actor)
       event_data = %{begins_on: @updated_start_time}
 
-      {:ok, update, _} = ActivityPub.update(event, event_data)
+      {:ok, update, _} = Actions.Update.update(event, event_data)
 
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]
@@ -200,7 +200,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       group = insert(:group)
       member = insert(:member, parent: group)
       moderator = insert(:actor)
-      {:ok, activity, _member} = ActivityPub.remove(member, group, moderator, true)
+      {:ok, activity, _member} = Actions.Remove.remove(member, group, moderator, true)
       assert activity.data["type"] == "Remove"
       assert activity.data["actor"] == moderator.url
       assert activity.data["to"] == [group.members_url]
@@ -217,9 +217,14 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         group = insert(:group)
 
         {:ok, create_data, %TodoList{url: todo_list_url}} =
-          ActivityPub.create(:todo_list, %{title: @todo_list_title, actor_id: group.id}, true, %{
-            "actor" => actor.url
-          })
+          Actions.Create.create(
+            :todo_list,
+            %{title: @todo_list_title, actor_id: group.id},
+            true,
+            %{
+              "actor" => actor.url
+            }
+          )
 
         assert create_data.local
         assert create_data.data["object"]["id"] == todo_list_url
@@ -242,7 +247,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         todo_list = insert(:todo_list)
 
         {:ok, create_data, %Todo{url: todo_url}} =
-          ActivityPub.create(
+          Actions.Create.create(
             :todo,
             %{title: @todo_title, todo_list_id: todo_list.id, creator_id: actor.id},
             true,
@@ -272,7 +277,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         group = insert(:group)
 
         {:ok, create_data, %Resource{url: url}} =
-          ActivityPub.create(
+          Actions.Create.create(
             :resource,
             %{
               title: @resource_title,
@@ -307,7 +312,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         group = insert(:group)
 
         {:ok, create_data, %Resource{url: url}} =
-          ActivityPub.create(
+          Actions.Create.create(
             :resource,
             %{
               title: @folder_title,
@@ -341,7 +346,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           insert(:resource, type: :folder, resource_url: nil, actor: group)
 
         {:ok, create_data, %Resource{url: url}} =
-          ActivityPub.create(
+          Actions.Create.create(
             :resource,
             %{
               title: @resource_title,
@@ -388,7 +393,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           )
 
         {:ok, update_data, %Resource{url: url}} =
-          ActivityPub.update(
+          Actions.Update.update(
             resource,
             %{
               title: @updated_resource_title
@@ -430,7 +435,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           insert(:resource, type: :folder, resource_url: nil, actor: group)
 
         {:ok, update_data, %Resource{url: url}} =
-          ActivityPub.move(
+          Actions.Move.move(
             :resource,
             resource,
             %{
@@ -473,7 +478,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           )
 
         {:ok, update_data, %Resource{url: url}} =
-          ActivityPub.delete(
+          Actions.Delete.delete(
             resource,
             actor,
             true

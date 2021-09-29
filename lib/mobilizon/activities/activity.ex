@@ -15,7 +15,8 @@ defmodule Mobilizon.Activities.Activity do
     :message,
     :message_params,
     :object_type,
-    :object_id
+    :object_id,
+    :object
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -28,6 +29,7 @@ defmodule Mobilizon.Activities.Activity do
           message_params: map(),
           object_type: ObjectType.t(),
           object_id: String.t(),
+          object: map(),
           author: Actor.t(),
           group: Actor.t()
         }
@@ -41,12 +43,14 @@ defmodule Mobilizon.Activities.Activity do
     field(:message_params, :map, default: %{})
     field(:object_type, ObjectType)
     field(:object_id, :string)
+    field(:object, :map, virtual: true)
     field(:inserted_at, :utc_datetime)
     belongs_to(:author, Actor)
     belongs_to(:group, Actor)
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(activity, attrs) do
     activity
     |> cast(attrs, @attrs)

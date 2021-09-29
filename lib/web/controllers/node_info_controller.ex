@@ -15,6 +15,7 @@ defmodule Mobilizon.Web.NodeInfoController do
   @node_info_supported_versions ["2.0", "2.1"]
   @node_info_schema_uri "http://nodeinfo.diaspora.software/ns/schema/"
 
+  @spec schemas(Plug.Conn.t(), any) :: Plug.Conn.t()
   def schemas(conn, _params) do
     links =
       @node_info_supported_versions
@@ -31,6 +32,7 @@ defmodule Mobilizon.Web.NodeInfoController do
   end
 
   # Schema definition: https://github.com/jhass/nodeinfo/blob/master/schemas/2.1/schema.json
+  @spec nodeinfo(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def nodeinfo(conn, %{"version" => version}) when version in @node_info_supported_versions do
     response = %{
       version: version,

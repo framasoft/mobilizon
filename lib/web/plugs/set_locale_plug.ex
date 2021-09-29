@@ -11,8 +11,10 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
   import Plug.Conn, only: [assign: 3]
   alias Mobilizon.Web.Gettext, as: GettextBackend
 
+  @spec init(any()) :: nil
   def init(_), do: nil
 
+  @spec call(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def call(conn, _) do
     locale =
       [
@@ -29,17 +31,22 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
     assign(conn, :locale, locale)
   end
 
+  @spec supported_locale?(String.t()) :: boolean()
   defp supported_locale?(locale) do
     GettextBackend
     |> Gettext.known_locales()
     |> Enum.member?(locale)
   end
 
+  @spec default_locale :: String.t()
   defp default_locale do
     Keyword.get(Mobilizon.Config.instance_config(), :default_language, "en")
   end
 
-  @spec determine_best_locale(String.t()) :: String.t()
+  @doc """
+  Determine the best available locale for a given locale ID
+  """
+  @spec determine_best_locale(String.t()) :: String.t() | nil
   def determine_best_locale(locale) when is_binary(locale) do
     locale = String.trim(locale)
     locales = Gettext.known_locales(GettextBackend)
@@ -58,5 +65,6 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
   def determine_best_locale(_), do: nil
 
   # Keep only the first part of the locale
+  @spec split_locale(String.t()) :: String.t()
   defp split_locale(locale), do: locale |> String.split("_", trim: true, parts: 2) |> hd
 end

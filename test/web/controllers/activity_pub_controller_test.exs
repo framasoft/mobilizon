@@ -5,6 +5,7 @@
 
 defmodule Mobilizon.Web.ActivityPubControllerTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+  import Mox
 
   use Mobilizon.Web.ConnCase
 
@@ -14,7 +15,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
   alias Mobilizon.Actors.Actor
 
   alias Mobilizon.Federation.ActivityPub
-
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Web.ActivityPub.ActorView
   alias Mobilizon.Web.{Endpoint, PageView}
   alias Mobilizon.Web.Router.Helpers, as: Routes
@@ -119,18 +120,55 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
   describe "/@:preferred_username/inbox" do
     test "it inserts an incoming event into the database", %{conn: conn} do
-      use_cassette "activity_pub_controller/mastodon-post-activity_actor_call" do
-        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
+      # use_cassette "activity_pub_controller/mastodon-post-activity_actor_call" do
+      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-        conn =
-          conn
-          |> assign(:valid_signature, true)
-          |> post("#{Endpoint.url()}/inbox", data)
+      %Actor{url: remote_actor_url} =
+        remote_actor =
+        insert(:actor,
+          domain: "framapiaf.org",
+          url: "https://framapiaf.org/users/admin",
+          preferred_username: "admin"
+        )
 
-        assert "ok" == json_response(conn, 200)
-        :timer.sleep(500)
-        assert ActivityPub.fetch_object_from_url(data["object"]["id"])
-      end
+      remote_actor_data =
+        Mobilizon.Federation.ActivityStream.Converter.Actor.model_to_as(remote_actor)
+
+      %Actor{url: local_actor_url} =
+        local_actor =
+        insert(:actor, domain: nil, url: "http://mobilizon.com/@tcit", preferred_username: "tcit")
+
+      local_actor_data =
+        Mobilizon.Federation.ActivityStream.Converter.Actor.model_to_as(local_actor)
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: url}, _opts ->
+          case url do
+            ^remote_actor_url ->
+              {:ok, %Tesla.Env{status: 200, body: remote_actor_data}}
+
+            ^local_actor_url ->
+              {:ok, %Tesla.Env{status: 200, body: local_actor_data}}
+
+            "https://framapiaf.org/users/admin/statuses/99512778738411822" ->
+              {:ok, %Tesla.Env{status: 404, body: ""}}
+          end
+      end)
+
+      conn =
+        conn
+        |> assign(:valid_signature, true)
+        |> post("#{Endpoint.url()}/inbox", data)
+
+      assert "ok" == json_response(conn, 200)
+      :timer.sleep(500)
+
+      assert {:ok, %Mobilizon.Discussions.Comment{} = comment} =
+               ActivityPub.fetch_object_from_url(data["object"]["id"])
+
+      assert comment.actor.id == remote_actor.id
+      # end
     end
   end
 

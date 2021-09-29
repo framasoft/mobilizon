@@ -1,5 +1,0 @@
-<%= gettext "The group %{group} was deleted on %{instance}!", group: (@group.name || @group.preferred_username), instance: @instance %>
-==
-<%= gettext "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted.",
-  author: Mobilizon.Actors.Actor.display_name_and_username(@author),
-  group: Mobilizon.Actors.Actor.display_name_and_username(@group) %>

@@ -8,4 +8,4 @@
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %>

@@ -56,7 +56,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       actor = Map.put(participant.actor, :user, user)
       participant = Map.put(participant, :actor, actor)
 
-      assert {:ok, %Participant{}} = Events.delete_participant(participant)
+      assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "before_event_notification", "participant_id" => participant_id}
@@ -131,7 +131,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       actor = Map.put(participant.actor, :user, user)
       participant = Map.put(participant, :actor, actor)
 
-      assert {:ok, %Participant{}} = Events.delete_participant(participant)
+      assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "on_day_notification", "user_id" => user_id}
@@ -243,7 +243,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       actor = Map.put(participant.actor, :user, user)
       participant = Map.put(participant, :actor, actor)
 
-      assert {:ok, %Participant{}} = Events.delete_participant(participant)
+      assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "weekly_notification", "user_id" => user_id}

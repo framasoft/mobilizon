@@ -9,16 +9,22 @@ export const TAG_FRAGMENT = gql`
 `;
 
 export const TAGS = gql`
-  query {
+  query Tags {
     tags {
-      id
       related {
-        id
-        slug
-        title
+        ...TagFragment
       }
-      slug
-      title
+      ...TagFragment
     }
   }
+  ${TAG_FRAGMENT}
+`;
+
+export const FILTER_TAGS = gql`
+  query FilterTags($filter: String) {
+    tags(filter: $filter) {
+      ...TagFragment
+    }
+  }
+  ${TAG_FRAGMENT}
 `;

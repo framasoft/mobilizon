@@ -20,6 +20,7 @@ defmodule Mobilizon.Discussions.Comment do
   @type t :: %__MODULE__{
           text: String.t(),
           url: String.t(),
+          id: integer(),
           local: boolean,
           visibility: CommentVisibility.t(),
           uuid: Ecto.UUID.t(),
@@ -87,7 +88,7 @@ defmodule Mobilizon.Discussions.Comment do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = comment, attrs) do
     comment
     |> common_changeset(attrs)

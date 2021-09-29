@@ -120,7 +120,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
         )
 
       group = insert(:group)
-      %Member{} = member = insert(:member, actor: remote_actor, parent: group, role: :moderator)
+      %Member{} = _member = insert(:member, actor: remote_actor, parent: group, role: :moderator)
       %Post{} = post = insert(:post, attributed_to: group)
 
       data = Convertible.model_to_as(post)
@@ -157,7 +157,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
         )
 
       group = insert(:group)
-      %Member{} = member = insert(:member, actor: remote_actor, parent: group)
+      %Member{} = _member = insert(:member, actor: remote_actor, parent: group)
       %Post{} = post = insert(:post, attributed_to: group)
 
       data = Convertible.model_to_as(post)

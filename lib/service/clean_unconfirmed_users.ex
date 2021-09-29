@@ -3,9 +3,10 @@ defmodule Mobilizon.Service.CleanUnconfirmedUsers do
   Service to clean unconfirmed users
   """
 
-  alias Mobilizon.{Actors, Users}
   alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Service.ActorSuspension
   alias Mobilizon.Storage.Repo
+  alias Mobilizon.Users
   alias Mobilizon.Users.User
   import Ecto.Query
 
@@ -27,21 +28,21 @@ defmodule Mobilizon.Service.CleanUnconfirmedUsers do
     end
   end
 
-  @spec delete_user(User.t()) :: {:ok, User.t()}
+  @spec delete_user(User.t()) :: User.t() | {:error, Ecto.Changeset.t()} | no_return
   defp delete_user(%User{} = user) do
-    with actors <- Users.get_actors_for_user(user),
-         :ok <-
-           Enum.each(actors, fn actor ->
-             actor_performing = Relay.get_actor()
+    actors = Users.get_actors_for_user(user)
+    %{id: actor_performing_id} = Relay.get_actor()
 
-             Actors.perform(:delete_actor, actor,
-               author_id: actor_performing.id,
-               reserve_username: false
-             )
-           end),
-         {:ok, %User{} = user} <- Users.delete_user(user, reserve_email: false),
-         %User{} = user <- %User{user | actors: actors} do
-      user
+    Enum.each(actors, fn actor ->
+      ActorSuspension.suspend_actor(actor,
+        author_id: actor_performing_id,
+        reserve_username: false
+      )
+    end)
+
+    case Users.delete_user(user, reserve_email: false) do
+      {:ok, %User{} = user} ->
+        %User{user | actors: actors}
     end
   end
 

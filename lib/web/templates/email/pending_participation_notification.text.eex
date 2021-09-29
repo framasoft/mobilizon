@@ -3,6 +3,6 @@
 
 <%= ngettext "You have one pending attendance request to process:", "You have %{number_participation_requests} attendance requests to process:", @total, number_participation_requests: @total %>
 
-<%= gettext "Manage pending requests" %> <%= page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
+<%= gettext "Manage pending requests" %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
 
 <%= gettext "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »." %>s

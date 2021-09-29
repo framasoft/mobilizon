@@ -56,18 +56,17 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Resource do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, any()}
   def as_to_model_data(%{"type" => type, "actor" => creator, "attributedTo" => group} = object) do
     with {:ok, %Actor{id: actor_id, resources_url: resources_url}} <- get_actor(group),
-         {:ok, %Actor{id: creator_id}} <- get_actor(creator),
-         parent_id <- get_parent_id(object["context"], resources_url) do
+         {:ok, %Actor{id: creator_id}} <- get_actor(creator) do
       data = %{
         title: object["name"],
         summary: object["summary"],
         url: object["id"],
         actor_id: actor_id,
         creator_id: creator_id,
-        parent_id: parent_id,
+        parent_id: get_parent_id(object["context"], resources_url),
         published_at: object["published"]
       }
 

@@ -15,6 +15,7 @@ defmodule Mobilizon.Web.Auth.Guardian do
 
   require Logger
 
+  @spec subject_for_token(any(), any()) :: {:ok, String.t()} | {:error, :unknown_resource}
   def subject_for_token(%User{} = user, _claims) do
     {:ok, "User:" <> to_string(user.id)}
   end
@@ -23,6 +24,8 @@ defmodule Mobilizon.Web.Auth.Guardian do
     {:error, :unknown_resource}
   end
 
+  @spec resource_from_claims(any) ::
+          {:error, :invalid_id | :no_result | :no_claims} | {:ok, Mobilizon.Users.User.t()}
   def resource_from_claims(%{"sub" => "User:" <> uid_str}) do
     Logger.debug(fn -> "Receiving claim for user #{uid_str}" end)
 
@@ -40,33 +43,38 @@ defmodule Mobilizon.Web.Auth.Guardian do
   end
 
   def resource_from_claims(_) do
-    {:error, :reason_for_error}
+    {:error, :no_claims}
   end
 
+  @spec after_encode_and_sign(any(), any(), any(), any()) :: {:ok, String.t()}
   def after_encode_and_sign(resource, claims, token, _options) do
     with {:ok, _} <- Guardian.DB.after_encode_and_sign(resource, claims["typ"], claims, token) do
       {:ok, token}
     end
   end
 
+  @spec on_verify(any(), any(), any()) :: {:ok, any()}
   def on_verify(claims, token, _options) do
     with {:ok, _} <- Guardian.DB.on_verify(claims, token) do
       {:ok, claims}
     end
   end
 
+  @spec on_revoke(any(), any(), any()) :: {:ok, any()}
   def on_revoke(claims, token, _options) do
     with {:ok, _} <- Guardian.DB.on_revoke(claims, token) do
       {:ok, claims}
     end
   end
 
+  @spec on_refresh({any(), any()}, {any(), any()}, any()) :: {:ok, {any(), any()}, {any(), any()}}
   def on_refresh({old_token, old_claims}, {new_token, new_claims}, _options) do
     with {:ok, _, _} <- Guardian.DB.on_refresh({old_token, old_claims}, {new_token, new_claims}) do
       {:ok, {old_token, old_claims}, {new_token, new_claims}}
     end
   end
 
+  @spec on_exchange(any(), any(), any()) :: {:ok, {any(), any()}, {any(), any()}}
   def on_exchange(old_stuff, new_stuff, options), do: on_refresh(old_stuff, new_stuff, options)
 
   #  def build_claims(claims, _resource, opts) do

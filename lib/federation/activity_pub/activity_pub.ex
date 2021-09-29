@@ -12,108 +12,75 @@ defmodule Mobilizon.Federation.ActivityPub do
 
   alias Mobilizon.{
     Actors,
-    Config,
     Discussions,
     Events,
     Posts,
-    Resources,
-    Share,
-    Users
+    Resources
   }
 
-  alias Mobilizon.Actors.{Actor, Follower, Member}
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
-  alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Events.Event
   alias Mobilizon.Tombstone
 
   alias Mobilizon.Federation.ActivityPub.{
     Activity,
-    Audience,
-    Federator,
     Fetcher,
     Preloader,
-    Refresher,
-    Relay,
-    Transmogrifier,
-    Types,
-    Visibility
+    Relay
   }
 
-  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
-
-  alias Mobilizon.Federation.ActivityPub.Types.{Managable, Ownable}
-
   alias Mobilizon.Federation.ActivityStream.Convertible
-  alias Mobilizon.Federation.HTTPSignatures.Signature
 
-  alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Storage.Page
 
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Email.{Admin, Group, Mailer}
 
   require Logger
 
   @public_ap_adress "https://www.w3.org/ns/activitystreams#Public"
 
   @doc """
-  Wraps an object into an activity
-  """
-  @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
-  def create_activity(map, local \\ true) when is_map(map) do
-    with map <- lazy_put_activity_defaults(map) do
-      {:ok,
-       %Activity{
-         data: map,
-         local: local,
-         actor: map["actor"],
-         recipients: get_recipients(map)
-       }}
-    end
-  end
-
-  @doc """
   Fetch an object from an URL, from our local database of events and comments, then eventually remote
   """
   # TODO: Make database calls parallel
   @spec fetch_object_from_url(String.t(), Keyword.t()) ::
-          {:ok, struct()} | {:error, any()}
+          {:ok, struct()} | {:ok, atom(), struct()} | {:error, any()}
   def fetch_object_from_url(url, options \\ []) do
     Logger.info("Fetching object from url #{url}")
 
-    with {:not_http, true} <- {:not_http, String.starts_with?(url, "http")},
-         {:existing, nil} <-
-           {:existing, Tombstone.find_tombstone(url)},
-         {:existing, nil} <- {:existing, Events.get_event_by_url(url)},
-         {:existing, nil} <-
-           {:existing, Discussions.get_discussion_by_url(url)},
-         {:existing, nil} <- {:existing, Discussions.get_comment_from_url(url)},
-         {:existing, nil} <- {:existing, Resources.get_resource_by_url(url)},
-         {:existing, nil} <- {:existing, Posts.get_post_by_url(url)},
-         {:existing, nil} <-
-           {:existing, Actors.get_actor_by_url_2(url)},
-         {:existing, nil} <- {:existing, Actors.get_member_by_url(url)},
-         :ok <- Logger.info("Data for URL not found anywhere, going to fetch it"),
-         {:ok, _activity, entity} <- Fetcher.fetch_and_create(url, options) do
-      Logger.debug("Going to preload the new entity")
-      Preloader.maybe_preload(entity)
+    if String.starts_with?(url, "http") do
+      with {:existing, nil} <-
+             {:existing, Tombstone.find_tombstone(url)},
+           {:existing, nil} <- {:existing, Events.get_event_by_url(url)},
+           {:existing, nil} <-
+             {:existing, Discussions.get_discussion_by_url(url)},
+           {:existing, nil} <- {:existing, Discussions.get_comment_from_url(url)},
+           {:existing, nil} <- {:existing, Resources.get_resource_by_url(url)},
+           {:existing, nil} <- {:existing, Posts.get_post_by_url(url)},
+           {:existing, nil} <-
+             {:existing, Actors.get_actor_by_url_2(url)},
+           {:existing, nil} <- {:existing, Actors.get_member_by_url(url)},
+           :ok <- Logger.info("Data for URL not found anywhere, going to fetch it"),
+           {:ok, _activity, entity} <- Fetcher.fetch_and_create(url, options) do
+        Logger.debug("Going to preload the new entity")
+        Preloader.maybe_preload(entity)
+      else
+        {:existing, entity} ->
+          handle_existing_entity(url, entity, options)
+
+        {:error, e} ->
+          Logger.warn("Something failed while fetching url #{url} #{inspect(e)}")
+          {:error, e}
+      end
     else
-      {:existing, entity} ->
-        handle_existing_entity(url, entity, options)
-
-      {:error, e} ->
-        Logger.warn("Something failed while fetching url #{url} #{inspect(e)}")
-        {:error, e}
-
-      e ->
-        Logger.warn("Something failed while fetching url #{url} #{inspect(e)}")
-        {:error, e}
+      {:error, :url_not_http}
     end
   end
 
   @spec handle_existing_entity(String.t(), struct(), Keyword.t()) ::
           {:ok, struct()}
-          | {:ok, struct()}
+          | {:ok, atom(), struct()}
           | {:error, String.t(), struct()}
           | {:error, String.t()}
   defp handle_existing_entity(url, entity, options) do
@@ -128,13 +95,13 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, entity} = Preloader.maybe_preload(entity)
         {:error, status, entity}
 
-      err ->
-        err
+      {:error, err} ->
+        {:error, err}
     end
   end
 
   @spec refresh_entity(String.t(), struct(), Keyword.t()) ::
-          {:ok, struct()} | {:error, String.t(), struct()} | {:error, String.t()}
+          {:ok, struct()} | {:error, atom(), struct()} | {:error, atom()}
   defp refresh_entity(url, entity, options) do
     force_fetch = Keyword.get(options, :force, false)
 
@@ -145,14 +112,14 @@ defmodule Mobilizon.Federation.ActivityPub do
         {:ok, _activity, entity} ->
           {:ok, entity}
 
-        {:error, "Gone"} ->
-          {:error, "Gone", entity}
+        {:error, :http_gone} ->
+          {:error, :http_gone, entity}
 
-        {:error, "Not found"} ->
-          {:error, "Not found", entity}
+        {:error, :http_not_found} ->
+          {:error, :http_not_found, entity}
 
-        {:error, "Object origin check failed"} ->
-          {:error, "Object origin check failed"}
+        {:error, err} ->
+          {:error, err}
       end
     else
       {:ok, entity}
@@ -160,558 +127,9 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   @doc """
-  Create an activity of type `Create`
-
-    * Creates the object, which returns AS data
-    * Wraps ActivityStreams data into a `Create` activity
-    * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
-    * Federates (asynchronously) the activity
-    * Returns the activity
-  """
-  @spec create(atom(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
-  def create(type, args, local \\ false, additional \\ %{}) do
-    Logger.debug("creating an activity")
-    Logger.debug(inspect(args))
-
-    with {:tombstone, nil} <- {:tombstone, check_for_tombstones(args)},
-         {:ok, entity, create_data} <-
-           (case type do
-              :event -> Types.Events.create(args, additional)
-              :comment -> Types.Comments.create(args, additional)
-              :discussion -> Types.Discussions.create(args, additional)
-              :actor -> Types.Actors.create(args, additional)
-              :todo_list -> Types.TodoLists.create(args, additional)
-              :todo -> Types.Todos.create(args, additional)
-              :resource -> Types.Resources.create(args, additional)
-              :post -> Types.Posts.create(args, additional)
-            end),
-         {:ok, activity} <- create_activity(create_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @doc """
-  Create an activity of type `Update`
-
-    * Updates the object, which returns AS data
-    * Wraps ActivityStreams data into a `Update` activity
-    * Creates an `Mobilizon.Federation.ActivityPub.Activity` from this
-    * Federates (asynchronously) the activity
-    * Returns the activity
-  """
-  @spec update(struct(), map(), boolean, map()) :: {:ok, Activity.t(), struct()} | any()
-  def update(old_entity, args, local \\ false, additional \\ %{}) do
-    Logger.debug("updating an activity")
-    Logger.debug(inspect(args))
-
-    with {:ok, entity, update_data} <- Managable.update(old_entity, args, additional),
-         {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  def accept(type, entity, local \\ true, additional \\ %{}) do
-    Logger.debug("We're accepting something")
-
-    {:ok, entity, update_data} =
-      case type do
-        :join -> accept_join(entity, additional)
-        :follow -> accept_follow(entity, additional)
-        :invite -> accept_invite(entity, additional)
-      end
-
-    with {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  def reject(type, entity, local \\ true, additional \\ %{}) do
-    {:ok, entity, update_data} =
-      case type do
-        :join -> reject_join(entity, additional)
-        :follow -> reject_follow(entity, additional)
-        :invite -> reject_invite(entity, additional)
-      end
-
-    with {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  def announce(
-        %Actor{} = actor,
-        object,
-        activity_id \\ nil,
-        local \\ true,
-        public \\ true
-      ) do
-    with {:ok, %Actor{id: object_owner_actor_id}} <-
-           ActivityPubActor.get_or_fetch_actor_by_url(object["actor"]),
-         {:ok, %Share{} = _share} <- Share.create(object["id"], actor.id, object_owner_actor_id),
-         announce_data <- make_announce_data(actor, object, activity_id, public),
-         {:ok, activity} <- create_activity(announce_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, object}
-    else
-      error ->
-        {:error, error}
-    end
-  end
-
-  def unannounce(
-        %Actor{} = actor,
-        object,
-        activity_id \\ nil,
-        cancelled_activity_id \\ nil,
-        local \\ true
-      ) do
-    with announce_activity <- make_announce_data(actor, object, cancelled_activity_id),
-         unannounce_data <- make_unannounce_data(actor, announce_activity, activity_id),
-         {:ok, unannounce_activity} <- create_activity(unannounce_data, local),
-         :ok <- maybe_federate(unannounce_activity) do
-      {:ok, unannounce_activity, object}
-    else
-      _e -> {:ok, object}
-    end
-  end
-
-  @doc """
-  Make an actor follow another
-  """
-  def follow(
-        %Actor{} = follower,
-        %Actor{} = followed,
-        activity_id \\ nil,
-        local \\ true,
-        additional \\ %{}
-      ) do
-    with {:different_actors, true} <- {:different_actors, followed.id != follower.id},
-         {:ok, activity_data, %Follower{} = follower} <-
-           Types.Actors.follow(
-             follower,
-             followed,
-             local,
-             Map.merge(additional, %{"activity_id" => activity_id})
-           ),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, follower}
-    else
-      {:error, err, msg} when err in [:already_following, :suspended, :no_person] ->
-        {:error, msg}
-
-      {:different_actors, _} ->
-        {:error, "Can't follow yourself"}
-    end
-  end
-
-  @doc """
-  Make an actor unfollow another
-  """
-  @spec unfollow(Actor.t(), Actor.t(), String.t(), boolean()) :: {:ok, map()} | any()
-  def unfollow(%Actor{} = follower, %Actor{} = followed, activity_id \\ nil, local \\ true) do
-    with {:ok, %Follower{id: follow_id} = follow} <- Actors.unfollow(followed, follower),
-         # We recreate the follow activity
-         follow_as_data <-
-           Convertible.model_to_as(%{follow | actor: follower, target_actor: followed}),
-         {:ok, follow_activity} <- create_activity(follow_as_data, local),
-         activity_unfollow_id <-
-           activity_id || "#{Endpoint.url()}/unfollow/#{follow_id}/activity",
-         unfollow_data <-
-           make_unfollow_data(follower, followed, follow_activity, activity_unfollow_id),
-         {:ok, activity} <- create_activity(unfollow_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, follow}
-    else
-      err ->
-        Logger.debug("Error while unfollowing an actor #{inspect(err)}")
-        err
-    end
-  end
-
-  def delete(object, actor, local \\ true, additional \\ %{}) do
-    with {:ok, activity_data, actor, object} <-
-           Managable.delete(object, actor, local, additional),
-         group <- Ownable.group_actor(object),
-         :ok <- check_for_actor_key_rotation(actor),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity, group) do
-      {:ok, activity, object}
-    end
-  end
-
-  def join(entity_to_join, actor_joining, local \\ true, additional \\ %{})
-
-  def join(%Event{} = event, %Actor{} = actor, local, additional) do
-    with {:ok, activity_data, participant} <- Types.Events.join(event, actor, local, additional),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, participant}
-    else
-      {:maximum_attendee_capacity, err} ->
-        {:maximum_attendee_capacity, err}
-
-      {:accept, accept} ->
-        accept
-    end
-  end
-
-  def join(%Actor{type: :Group} = group, %Actor{} = actor, local, additional) do
-    with {:ok, activity_data, %Member{} = member} <-
-           Types.Actors.join(group, actor, local, additional),
-         {:ok, activity} <- create_activity(activity_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, member}
-    else
-      {:accept, accept} ->
-        accept
-    end
-  end
-
-  def leave(object, actor, local \\ true, additional \\ %{})
-
-  @doc """
-  Leave an event or a group
-  """
-  def leave(
-        %Event{id: event_id, url: event_url} = _event,
-        %Actor{id: actor_id, url: actor_url} = _actor,
-        local,
-        additional
-      ) do
-    with {:only_organizer, false} <-
-           {:only_organizer, Participant.is_not_only_organizer(event_id, actor_id)},
-         {:ok, %Participant{} = participant} <-
-           Mobilizon.Events.get_participant(
-             event_id,
-             actor_id,
-             Map.get(additional, :metadata, %{})
-           ),
-         {:ok, %Participant{} = participant} <-
-           Events.delete_participant(participant),
-         leave_data <- %{
-           "type" => "Leave",
-           # If it's an exclusion it should be something else
-           "actor" => actor_url,
-           "object" => event_url,
-           "id" => "#{Endpoint.url()}/leave/event/#{participant.id}"
-         },
-         audience <-
-           Audience.get_audience(participant),
-         {:ok, activity} <- create_activity(Map.merge(leave_data, audience), local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, participant}
-    end
-  end
-
-  def leave(
-        %Actor{type: :Group, id: group_id, url: group_url, members_url: group_members_url},
-        %Actor{id: actor_id, url: actor_url},
-        local,
-        additional
-      ) do
-    with {:member, {:ok, %Member{id: member_id} = member}} <-
-           {:member, Actors.get_member(actor_id, group_id)},
-         {:is_not_only_admin, true} <-
-           {:is_not_only_admin,
-            Map.get(additional, :force_member_removal, false) ||
-              !Actors.is_only_administrator?(member_id, group_id)},
-         {:delete, {:ok, %Member{} = member}} <- {:delete, Actors.delete_member(member)},
-         Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_quit"),
-         leave_data <- %{
-           "to" => [group_members_url],
-           "cc" => [group_url],
-           "attributedTo" => group_url,
-           "type" => "Leave",
-           "actor" => actor_url,
-           "object" => group_url
-         },
-         {:ok, activity} <- create_activity(leave_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, member}
-    end
-  end
-
-  def remove(
-        %Member{} = member,
-        %Actor{type: :Group, url: group_url, members_url: group_members_url},
-        %Actor{url: moderator_url} = moderator,
-        local,
-        _additional \\ %{}
-      ) do
-    with {:ok, %Member{id: member_id}} <- Actors.update_member(member, %{role: :rejected}),
-         %Member{} = member <- Actors.get_member(member_id),
-         {:ok, _} <-
-           Mobilizon.Service.Activity.Member.insert_activity(member,
-             moderator: moderator,
-             subject: "member_removed"
-           ),
-         :ok <- Group.send_notification_to_removed_member(member),
-         remove_data <- %{
-           "to" => [group_members_url],
-           "type" => "Remove",
-           "actor" => moderator_url,
-           "object" => member.url,
-           "origin" => group_url
-         },
-         {:ok, activity} <- create_activity(remove_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, member}
-    end
-  end
-
-  @spec invite(Actor.t(), Actor.t(), Actor.t(), boolean, map()) ::
-          {:ok, map(), Member.t()} | {:error, :member_not_found}
-  def invite(
-        %Actor{url: group_url, id: group_id, members_url: members_url} = group,
-        %Actor{url: actor_url, id: actor_id} = actor,
-        %Actor{url: target_actor_url, id: target_actor_id} = _target_actor,
-        local \\ true,
-        additional \\ %{}
-      ) do
-    Logger.debug("Handling #{actor_url} invite to #{group_url} sent to #{target_actor_url}")
-
-    with {:is_able_to_invite, true} <- {:is_able_to_invite, is_able_to_invite(actor, group)},
-         {:ok, %Member{url: member_url} = member} <-
-           Actors.create_member(%{
-             parent_id: group_id,
-             actor_id: target_actor_id,
-             role: :invited,
-             invited_by_id: actor_id,
-             url: Map.get(additional, :url)
-           }),
-         {:ok, _} <-
-           Mobilizon.Service.Activity.Member.insert_activity(member,
-             moderator: actor,
-             subject: "member_invited"
-           ),
-         invite_data <- %{
-           "type" => "Invite",
-           "attributedTo" => group_url,
-           "actor" => actor_url,
-           "object" => group_url,
-           "target" => target_actor_url,
-           "id" => member_url
-         },
-         {:ok, activity} <-
-           create_activity(
-             invite_data
-             |> Map.merge(%{"to" => [target_actor_url, members_url], "cc" => [group_url]})
-             |> Map.merge(additional),
-             local
-           ),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity),
-         :ok <- Group.send_invite_to_user(member) do
-      {:ok, activity, member}
-    end
-  end
-
-  defp is_able_to_invite(%Actor{domain: actor_domain, id: actor_id}, %Actor{
-         domain: group_domain,
-         id: group_id
-       }) do
-    # If the actor comes from the same domain we trust it
-    if actor_domain == group_domain do
-      true
-    else
-      # If local group, we'll send the invite
-      with {:ok, %Member{} = admin_member} <- Actors.get_member(actor_id, group_id) do
-        Member.is_administrator(admin_member)
-      end
-    end
-  end
-
-  def move(type, old_entity, args, local \\ false, additional \\ %{}) do
-    Logger.debug("We're moving something")
-    Logger.debug(inspect(args))
-
-    with {:ok, entity, update_data} <-
-           (case type do
-              :resource -> Types.Resources.move(old_entity, args, additional)
-            end),
-         {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating a Move activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  def flag(args, local \\ false, additional \\ %{}) do
-    with {report, report_as_data} <- Types.Reports.flag(args, local, additional),
-         {:ok, activity} <- create_activity(report_as_data, local),
-         :ok <- maybe_federate(activity) do
-      Enum.each(Users.list_moderators(), fn moderator ->
-        moderator
-        |> Admin.report(report)
-        |> Mailer.send_email_later()
-      end)
-
-      {:ok, activity, report}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec is_create_activity?(Activity.t()) :: boolean
-  defp is_create_activity?(%Activity{data: %{"type" => "Create"}}), do: true
-  defp is_create_activity?(_), do: false
-
-  @spec convert_members_in_recipients(list(String.t())) :: {list(String.t()), list(Actor.t())}
-  defp convert_members_in_recipients(recipients) do
-    Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, member_actors} = acc ->
-      case Actors.get_group_by_members_url(recipient) do
-        # If the group is local just add external members
-        %Actor{domain: domain} = group when is_nil(domain) ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
-           member_actors ++ Actors.list_external_actors_members_for_group(group)}
-
-        # If it's remote add the remote group actor as well
-        %Actor{} = group ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
-           member_actors ++ Actors.list_external_actors_members_for_group(group) ++ [group]}
-
-        _ ->
-          acc
-      end
-    end)
-  end
-
-  defp convert_followers_in_recipients(recipients) do
-    Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, follower_actors} = acc ->
-      case Actors.get_actor_by_followers_url(recipient) do
-        %Actor{} = group ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.followers_url end),
-           follower_actors ++ Actors.list_external_followers_for_actor(group)}
-
-        _ ->
-          acc
-      end
-    end)
-  end
-
-  # @spec is_announce_activity?(Activity.t()) :: boolean
-  # defp is_announce_activity?(%Activity{data: %{"type" => "Announce"}}), do: true
-  # defp is_announce_activity?(_), do: false
-
-  @doc """
-  Publish an activity to all appropriated audiences inboxes
-  """
-  # credo:disable-for-lines:47
-  @spec publish(Actor.t(), Activity.t()) :: :ok
-  def publish(actor, %Activity{recipients: recipients} = activity) do
-    Logger.debug("Publishing an activity")
-    Logger.debug(inspect(activity, pretty: true))
-
-    public = Visibility.is_public?(activity)
-    Logger.debug("is public ? #{public}")
-
-    if public && is_create_activity?(activity) && Config.get([:instance, :allow_relay]) do
-      Logger.info(fn -> "Relaying #{activity.data["id"]} out" end)
-
-      Relay.publish(activity)
-    end
-
-    recipients = Enum.uniq(recipients)
-
-    {recipients, followers} = convert_followers_in_recipients(recipients)
-
-    {recipients, members} = convert_members_in_recipients(recipients)
-
-    remote_inboxes =
-      (remote_actors(recipients) ++ followers ++ members)
-      |> Enum.map(fn actor -> actor.shared_inbox_url || actor.inbox_url end)
-      |> Enum.uniq()
-
-    {:ok, data} = Transmogrifier.prepare_outgoing(activity.data)
-    json = Jason.encode!(data)
-    Logger.debug(fn -> "Remote inboxes are : #{inspect(remote_inboxes)}" end)
-
-    Enum.each(remote_inboxes, fn inbox ->
-      Federator.enqueue(:publish_single_ap, %{
-        inbox: inbox,
-        json: json,
-        actor: actor,
-        id: activity.data["id"]
-      })
-    end)
-  end
-
-  @doc """
-  Publish an activity to a specific inbox
-  """
-  def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
-    Logger.info("Federating #{id} to #{inbox}")
-    %URI{host: host, path: path} = URI.parse(inbox)
-
-    digest = Signature.build_digest(json)
-    date = Signature.generate_date_header()
-
-    # request_target = Signature.generate_request_target("POST", path)
-
-    signature =
-      Signature.sign(actor, %{
-        "(request-target)": "post #{path}",
-        host: host,
-        "content-length": byte_size(json),
-        digest: digest,
-        date: date
-      })
-
-    Tesla.post(
-      inbox,
-      json,
-      headers: [
-        {"Content-Type", "application/activity+json"},
-        {"signature", signature},
-        {"digest", digest},
-        {"date", date}
-      ]
-    )
-  end
-
-  @doc """
   Return all public activities (events & comments) for an actor
   """
-  @spec fetch_public_activities_for_actor(Actor.t(), integer(), integer()) :: map()
+  @spec fetch_public_activities_for_actor(Actor.t(), pos_integer(), pos_integer()) :: map()
   def fetch_public_activities_for_actor(%Actor{id: actor_id} = actor, page \\ 1, limit \\ 10) do
     %Actor{id: relay_actor_id} = Relay.get_actor()
 
@@ -757,218 +175,5 @@ defmodule Mobilizon.Federation.ActivityPub do
         comment |> Convertible.model_to_as() |> make_create_data(%{"to" => @public_ap_adress}),
       local: local
     }
-  end
-
-  # Get recipients for an activity or object
-  @spec get_recipients(map()) :: list()
-  defp get_recipients(data) do
-    Map.get(data, "to", []) ++ Map.get(data, "cc", [])
-  end
-
-  @spec check_for_tombstones(map()) :: Tombstone.t() | nil
-  defp check_for_tombstones(%{url: url}), do: Tombstone.find_tombstone(url)
-  defp check_for_tombstones(_), do: nil
-
-  @spec accept_follow(Follower.t(), map) :: {:ok, Follower.t(), Activity.t()} | any
-  defp accept_follow(%Follower{} = follower, additional) do
-    with {:ok, %Follower{} = follower} <- Actors.update_follower(follower, %{approved: true}),
-         follower_as_data <- Convertible.model_to_as(follower),
-         update_data <-
-           make_accept_join_data(
-             follower_as_data,
-             Map.merge(additional, %{
-               "id" => "#{Endpoint.url()}/accept/follow/#{follower.id}",
-               "to" => [follower.actor.url],
-               "cc" => [],
-               "actor" => follower.target_actor.url
-             })
-           ) do
-      {:ok, follower, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec accept_join(Participant.t(), map) :: {:ok, Participant.t(), Activity.t()} | any
-  defp accept_join(%Participant{} = participant, additional) do
-    with {:ok, %Participant{} = participant} <-
-           Events.update_participant(participant, %{role: :participant}),
-         Absinthe.Subscription.publish(Endpoint, participant.actor,
-           event_person_participation_changed: participant.actor.id
-         ),
-         {:ok, _} <-
-           Scheduler.trigger_notifications_for_participant(participant),
-         participant_as_data <- Convertible.model_to_as(participant),
-         audience <-
-           Audience.get_audience(participant),
-         accept_join_data <-
-           make_accept_join_data(
-             participant_as_data,
-             Map.merge(Map.merge(audience, additional), %{
-               "id" => "#{Endpoint.url()}/accept/join/#{participant.id}"
-             })
-           ) do
-      {:ok, participant, accept_join_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec accept_join(Member.t(), map) :: {:ok, Member.t(), Activity.t()} | any
-  defp accept_join(%Member{} = member, additional) do
-    with {:ok, %Member{} = member} <-
-           Actors.update_member(member, %{role: :member}),
-         {:ok, _} <-
-           Mobilizon.Service.Activity.Member.insert_activity(member,
-             subject: "member_approved"
-           ),
-         _ <- maybe_refresh_group(member),
-         Absinthe.Subscription.publish(Endpoint, member.actor,
-           group_membership_changed: [
-             Actor.preferred_username_and_domain(member.parent),
-             member.actor.id
-           ]
-         ),
-         member_as_data <- Convertible.model_to_as(member),
-         audience <-
-           Audience.get_audience(member),
-         accept_join_data <-
-           make_accept_join_data(
-             member_as_data,
-             Map.merge(Map.merge(audience, additional), %{
-               "id" => "#{Endpoint.url()}/accept/join/#{member.id}"
-             })
-           ) do
-      {:ok, member, accept_join_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec accept_invite(Member.t(), map()) :: {:ok, Member.t(), Activity.t()} | any
-  defp accept_invite(
-         %Member{invited_by_id: invited_by_id, actor_id: actor_id} = member,
-         _additional
-       ) do
-    with %Actor{} = inviter <- Actors.get_actor(invited_by_id),
-         %Actor{url: actor_url} <- Actors.get_actor(actor_id),
-         {:ok, %Member{id: member_id} = member} <-
-           Actors.update_member(member, %{role: :member}),
-         {:ok, _} <-
-           Mobilizon.Service.Activity.Member.insert_activity(member,
-             subject: "member_accepted_invitation"
-           ),
-         _ <- maybe_refresh_group(member),
-         accept_data <- %{
-           "type" => "Accept",
-           "attributedTo" => member.parent.url,
-           "to" => [inviter.url, member.parent.members_url],
-           "cc" => [member.parent.url],
-           "actor" => actor_url,
-           "object" => Convertible.model_to_as(member),
-           "id" => "#{Endpoint.url()}/accept/invite/member/#{member_id}"
-         } do
-      {:ok, member, accept_data}
-    end
-  end
-
-  defp maybe_refresh_group(%Member{
-         parent: %Actor{domain: parent_domain, url: parent_url},
-         actor: %Actor{} = actor
-       }) do
-    unless is_nil(parent_domain),
-      do: Refresher.fetch_group(parent_url, actor)
-  end
-
-  @spec reject_join(Participant.t(), map()) :: {:ok, Participant.t(), Activity.t()} | any()
-  defp reject_join(%Participant{} = participant, additional) do
-    with {:ok, %Participant{} = participant} <-
-           Events.update_participant(participant, %{role: :rejected}),
-         Absinthe.Subscription.publish(Endpoint, participant.actor,
-           event_person_participation_changed: participant.actor.id
-         ),
-         participant_as_data <- Convertible.model_to_as(participant),
-         audience <-
-           participant
-           |> Audience.get_audience()
-           |> Map.merge(additional),
-         reject_data <- %{
-           "type" => "Reject",
-           "object" => participant_as_data
-         },
-         update_data <-
-           reject_data
-           |> Map.merge(audience)
-           |> Map.merge(%{
-             "id" => "#{Endpoint.url()}/reject/join/#{participant.id}"
-           }) do
-      {:ok, participant, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec reject_follow(Follower.t(), map()) :: {:ok, Follower.t(), Activity.t()} | any()
-  defp reject_follow(%Follower{} = follower, additional) do
-    with {:ok, %Follower{} = follower} <- Actors.delete_follower(follower),
-         follower_as_data <- Convertible.model_to_as(follower),
-         audience <-
-           follower.actor |> Audience.get_audience() |> Map.merge(additional),
-         reject_data <- %{
-           "to" => [follower.actor.url],
-           "type" => "Reject",
-           "actor" => follower.target_actor.url,
-           "object" => follower_as_data
-         },
-         update_data <-
-           audience
-           |> Map.merge(reject_data)
-           |> Map.merge(%{
-             "id" => "#{Endpoint.url()}/reject/follow/#{follower.id}"
-           }) do
-      {:ok, follower, update_data}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
-    end
-  end
-
-  @spec reject_invite(Member.t(), map()) :: {:ok, Member.t(), Activity.t()} | any
-  defp reject_invite(
-         %Member{invited_by_id: invited_by_id, actor_id: actor_id} = member,
-         _additional
-       ) do
-    with %Actor{} = inviter <- Actors.get_actor(invited_by_id),
-         %Actor{url: actor_url} <- Actors.get_actor(actor_id),
-         {:ok, %Member{url: member_url, id: member_id} = member} <-
-           Actors.delete_member(member),
-         Mobilizon.Service.Activity.Member.insert_activity(member,
-           subject: "member_rejected_invitation"
-         ),
-         accept_data <- %{
-           "type" => "Reject",
-           "actor" => actor_url,
-           "attributedTo" => member.parent.url,
-           "to" => [inviter.url, member.parent.members_url],
-           "cc" => [member.parent.url],
-           "object" => member_url,
-           "id" => "#{Endpoint.url()}/reject/invite/member/#{member_id}"
-         } do
-      {:ok, member, accept_data}
-    end
   end
 end

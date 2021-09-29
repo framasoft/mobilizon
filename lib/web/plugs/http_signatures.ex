@@ -8,7 +8,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
   Plug to check HTTP Signatures on every incoming request
   """
 
-  import Plug.Conn
+  import Plug.Conn, only: [get_req_header: 2, put_req_header: 3, assign: 3]
 
   require Logger
 
@@ -16,53 +16,67 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
     options
   end
 
+  @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
   def call(%{assigns: %{valid_signature: true}} = conn, _opts) do
     conn
   end
 
   def call(conn, _opts) do
-    case get_req_header(conn, "signature") do
-      [signature | _] ->
-        if signature do
-          # set (request-target) header to the appropriate value
-          # we also replace the digest header with the one we computed
-          conn =
-            conn
-            |> put_req_header(
-              "(request-target)",
-              String.downcase("#{conn.method}") <> " #{conn.request_path}"
-            )
+    signature = conn |> get_req_header("signature") |> List.first()
 
-          conn =
-            if conn.assigns[:digest] do
-              conn
-              |> put_req_header("digest", conn.assigns[:digest])
-            else
-              conn
-            end
+    if is_nil(signature) do
+      Logger.debug("No signature header!")
+      conn
+    else
+      # set (request-target) header to the appropriate value
+      # we also replace the digest header with the one we computed
+      conn =
+        conn
+        |> put_req_header(
+          "(request-target)",
+          String.downcase("#{conn.method}") <> " #{conn.request_path}"
+        )
 
-          signature_valid = HTTPSignatures.validate_conn(conn)
-          Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
-          date_valid = date_valid?(conn)
-          assign(conn, :valid_signature, signature_valid && date_valid)
+      conn =
+        if conn.assigns[:digest] do
+          conn
+          |> put_req_header("digest", conn.assigns[:digest])
         else
-          Logger.debug("No signature header!")
           conn
         end
 
-      _ ->
-        conn
+      signature_valid = HTTPSignatures.validate_conn(conn)
+      Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
+      date_valid = date_valid?(conn)
+      assign(conn, :valid_signature, signature_valid && date_valid)
     end
   end
 
   @spec date_valid?(Plug.Conn.t()) :: boolean()
   defp date_valid?(conn) do
-    with [date | _] <- get_req_header(conn, "date") || [""],
-         {:ok, date} <- Timex.parse(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT") do
-      Timex.diff(date, DateTime.utc_now(), :hours) <= 12 &&
-        Timex.diff(date, DateTime.utc_now(), :hours) >= -12
+    date = conn |> get_req_header("date") |> List.first()
+
+    if is_nil(date) do
+      false
     else
-      _ -> false
+      case Timex.parse(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT") do
+        {:ok, %NaiveDateTime{} = date} ->
+          date
+          |> DateTime.from_naive!("Etc/UTC")
+          |> date_diff_ok?()
+
+        {:ok, %DateTime{} = date} ->
+          date_diff_ok?(date)
+
+        {:error, _err} ->
+          false
+      end
     end
+  end
+
+  @spec date_diff_ok?(DateTime.t()) :: boolean()
+  defp date_diff_ok?(%DateTime{} = date) do
+    DateTime.diff(date, DateTime.utc_now()) <= 12 * 3600 &&
+      DateTime.diff(date, DateTime.utc_now()) >= -12 * 3600
   end
 end

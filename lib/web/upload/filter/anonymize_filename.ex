@@ -14,19 +14,27 @@ defmodule Mobilizon.Web.Upload.Filter.AnonymizeFilename do
 
   alias Mobilizon.Config
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
+  @impl Filter
+  @spec filter(any) :: {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{name: name} = upload) do
     extension = List.last(String.split(name, "."))
-    name = predefined_name(extension) || random(extension)
+    name = predefined_name(extension)
+    name = if is_nil(name), do: random(extension), else: name
     {:ok, :filtered, %Upload{upload | name: name}}
   end
 
+  @impl Filter
   def filter(_), do: {:ok, :noop}
 
   @spec predefined_name(String.t()) :: String.t() | nil
   defp predefined_name(extension) do
-    with name when not is_nil(name) <- Config.get([__MODULE__, :text]),
-         do: String.replace(name, "{extension}", extension)
+    case Config.get([__MODULE__, :text]) do
+      name when is_valid_string(name) -> String.replace(name, "{extension}", extension)
+      _ -> nil
+    end
   end
 
   defp random(extension) do

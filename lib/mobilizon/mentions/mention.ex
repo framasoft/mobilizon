@@ -31,6 +31,7 @@ defmodule Mobilizon.Mention do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(event, attrs) do
     event
     |> cast(attrs, @attrs)

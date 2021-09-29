@@ -7,6 +7,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Posts.Post
   alias Mobilizon.Storage.Repo
 
@@ -99,6 +100,8 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     }
   end
 
+  @spec get_to_and_cc(Actor.t(), list(), :direct | :private | :public | :unlisted | {:list, any}) ::
+          {list(), list()}
   @doc """
   Determines the full audience based on mentions for an audience
 
@@ -118,7 +121,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     * `to` : the mentioned actors and the eventual actor we're replying to
     * `cc` : none
   """
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :public) do
     to = [@ap_public | mentions]
     cc = [actor.followers_url]
@@ -128,7 +130,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :unlisted) do
     to = [actor.followers_url | mentions]
     cc = [@ap_public]
@@ -138,7 +139,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(%Actor{} = actor, mentions, :private) do
     {to, cc} = get_to_and_cc(actor, mentions, :direct)
 
@@ -147,7 +147,6 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc}
   end
 
-  @spec get_to_and_cc(Actor.t(), list(), String.t()) :: {list(), list()}
   def get_to_and_cc(_actor, mentions, :direct) do
     {mentions, []}
   end
@@ -156,21 +155,19 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {mentions, []}
   end
 
-  @spec maybe_add_group_members(List.t(), Actor.t()) :: List.t()
+  @spec maybe_add_group_members(list(String.t()), Actor.t()) :: list(String.t())
   defp maybe_add_group_members(collection, %Actor{type: :Group, members_url: members_url}) do
     [members_url | collection]
   end
 
   defp maybe_add_group_members(collection, %Actor{type: _}), do: collection
 
-  @spec maybe_add_followers(List.t(), Actor.t()) :: List.t()
+  @spec maybe_add_followers(list(String.t()), Actor.t()) :: list(String.t())
   defp maybe_add_followers(collection, %Actor{type: :Group, followers_url: followers_url}) do
     [followers_url | collection]
   end
 
   defp maybe_add_followers(collection, %Actor{type: _}), do: collection
-
-  def get_addressed_actors(mentioned_users, _), do: mentioned_users
 
   defp add_in_reply_to(%Comment{actor: %Actor{url: url}} = _comment), do: [url]
   defp add_in_reply_to(%Event{organizer_actor: %Actor{url: url}} = _event), do: [url]
@@ -239,29 +236,27 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   @spec extract_actors_from_mentions(list(), Actor.t(), atom()) :: {list(), list()}
   defp extract_actors_from_mentions(mentions, actor, visibility) do
-    with mentioned_actors <- Enum.map(mentions, &process_mention/1),
-         addressed_actors <- get_addressed_actors(mentioned_actors, nil) do
-      get_to_and_cc(actor, addressed_actors, visibility)
-    end
+    get_to_and_cc(actor, Enum.map(mentions, &process_mention/1), visibility)
   end
 
+  @spec extract_actors_from_event(Event.t()) :: %{
+          String.t() => list(String.t())
+        }
   defp extract_actors_from_event(%Event{} = event) do
-    with {to, cc} <-
-           extract_actors_from_mentions(
-             event.mentions,
-             group_or_organizer_event(event),
-             event.visibility
-           ),
-         {to, cc} <-
-           {to,
-            Enum.uniq(
-              cc ++ add_comments_authors(event.comments) ++ add_shares_actors_followers(event.url)
-            )} do
-      %{"to" => to, "cc" => cc}
-    else
-      _ ->
-        %{"to" => [], "cc" => []}
-    end
+    {to, cc} =
+      extract_actors_from_mentions(
+        event.mentions,
+        group_or_organizer_event(event),
+        event.visibility
+      )
+
+    {to, cc} =
+      {to,
+       Enum.uniq(
+         cc ++ add_comments_authors(event.comments) ++ add_shares_actors_followers(event.url)
+       )}
+
+    %{"to" => to, "cc" => cc}
   end
 
   @spec group_or_organizer_event(Event.t()) :: Actor.t()

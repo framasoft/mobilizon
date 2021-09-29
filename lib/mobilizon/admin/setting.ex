@@ -9,6 +9,12 @@ defmodule Mobilizon.Admin.Setting do
   @optional_attrs [:value]
   @attrs @required_attrs ++ @optional_attrs
 
+  @type t :: %{
+          group: String.t(),
+          name: String.t(),
+          value: String.t()
+        }
+
   schema "admin_settings" do
     field(:group, :string)
     field(:name, :string)
@@ -18,6 +24,7 @@ defmodule Mobilizon.Admin.Setting do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(setting, attrs) do
     setting
     |> cast(attrs, @attrs)

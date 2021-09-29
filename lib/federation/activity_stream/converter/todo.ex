@@ -47,27 +47,38 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Todo do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, any()}
   def as_to_model_data(
         %{"type" => "Todo", "actor" => actor_url, "todoList" => todo_list_url} = object
       ) do
-    with {:ok, %Actor{id: creator_id} = _creator} <-
-           ActivityPubActor.get_or_fetch_actor_by_url(actor_url),
-         {:todo_list, %TodoList{id: todo_list_id}} <-
-           {:todo_list, Todos.get_todo_list_by_url(todo_list_url)} do
-      %{
-        title: object["name"],
-        status: object["status"],
-        url: object["id"],
-        todo_list_id: todo_list_id,
-        creator_id: creator_id,
-        published_at: object["published"]
-      }
-    else
-      {:todo_list, nil} ->
-        with {:ok, %TodoList{}} <- ActivityPub.fetch_object_from_url(todo_list_url) do
-          as_to_model_data(object)
+    case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
+      {:ok, %Actor{id: creator_id} = _creator} ->
+        case Todos.get_todo_list_by_url(todo_list_url) do
+          %TodoList{id: todo_list_id} ->
+            %{
+              title: object["name"],
+              status: object["status"],
+              url: object["id"],
+              todo_list_id: todo_list_id,
+              creator_id: creator_id,
+              published_at: object["published"]
+            }
+
+          nil ->
+            case ActivityPub.fetch_object_from_url(todo_list_url) do
+              {:ok, _, %TodoList{}} ->
+                as_to_model_data(object)
+
+              {:ok, %TodoList{}} ->
+                as_to_model_data(object)
+
+              {:error, err} ->
+                {:error, err}
+            end
         end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 end

@@ -10,16 +10,26 @@ defmodule Mobilizon.Web.Upload.MIME do
   @default "application/octet-stream"
   @read_bytes 35
 
-  @spec file_mime_type(String.t()) ::
-          {:ok, content_type :: String.t(), filename :: String.t()} | {:error, any()} | :error
+  @spec file_mime_type(String.t(), String.t()) ::
+          {:ok, content_type :: String.t(), filename :: String.t()}
+          | {:error, :unknown_mime | :failed_to_fix_extension}
+  @spec file_mime_type(String.t()) :: {:ok, String.t()} | {:error, :unknown_mime}
   def file_mime_type(path, filename) do
-    with {:ok, content_type} <- file_mime_type(path),
-         filename when is_binary(filename) <- fix_extension(filename, content_type) do
-      {:ok, content_type, filename}
+    case file_mime_type(path) do
+      {:ok, content_type} ->
+        case fix_extension(filename, content_type) do
+          {:error, :failed_to_fix_extension} ->
+            {:error, :failed_to_fix_extension}
+
+          filename when is_binary(filename) ->
+            {:ok, content_type, filename}
+        end
+
+      {:error, :unknown_mime} ->
+        {:error, :unknown_mime}
     end
   end
 
-  @spec file_mime_type(String.t()) :: {:ok, String.t()} | {:error, any()} | :error
   def file_mime_type(filename) do
     File.open(filename, [:read], fn f ->
       check_mime_type(IO.binread(f, @read_bytes))
@@ -33,12 +43,12 @@ defmodule Mobilizon.Web.Upload.MIME do
     end
   end
 
-  @spec bin_mime_type(binary()) :: {:ok, String.t()} | :error
+  @spec bin_mime_type(binary()) :: {:ok, String.t()} | {:error, :unknown_mime}
   def bin_mime_type(<<head::binary-size(@read_bytes), _::binary>>) do
     {:ok, check_mime_type(head)}
   end
 
-  def bin_mime_type(_), do: :error
+  def bin_mime_type(_), do: {:error, :unknown_mime}
 
   def mime_type(<<_::binary>>), do: {:ok, @default}
 
@@ -67,8 +77,9 @@ defmodule Mobilizon.Web.Upload.MIME do
     end
   end
 
-  defp fix_extension(_, _), do: :error
+  defp fix_extension(_, _), do: {:error, :failed_to_fix_extension}
 
+  @spec check_mime_type(binary) :: String.t()
   defp check_mime_type(<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, _::binary>>) do
     "image/png"
   end

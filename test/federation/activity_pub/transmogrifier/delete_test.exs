@@ -88,10 +88,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
       %Actor{url: url} =
         actor = insert(:actor, url: "https://framapiaf.org/users/admin", domain: "framapiaf.org")
 
-      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
+      %Event{} = event1 = insert(:event, organizer_actor: actor)
       insert(:event, organizer_actor: actor)
 
-      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
+      %Comment{} = comment1 = insert(:comment, actor: actor)
       insert(:comment, actor: actor)
 
       data =

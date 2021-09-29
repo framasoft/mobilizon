@@ -873,6 +873,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
     test "test refresh_token/3 with an appropriate token", context do
       user = insert(:user)
+      insert(:actor, user: user)
       {:ok, refresh_token} = Authenticator.generate_refresh_token(user)
 
       mutation = """

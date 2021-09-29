@@ -5,7 +5,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     discussion: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :discussion,
                             Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
@@ -19,7 +19,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     discussion: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :discussion,
                             Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
@@ -33,7 +33,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     discussion: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :discussion,
                             Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]
@@ -47,7 +47,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     discussion: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :discussion,
                             Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]

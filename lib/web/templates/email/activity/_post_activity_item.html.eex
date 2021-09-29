@@ -5,7 +5,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     post: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :post,
                             @activity.subject_params["post_slug"]
@@ -20,7 +20,7 @@
                 %{
                     profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
                     post: "<a href=\"#{
-                        page_url(
+                        Routes.page_url(
                             Mobilizon.Web.Endpoint,
                             :post,
                             @activity.subject_params["post_slug"]

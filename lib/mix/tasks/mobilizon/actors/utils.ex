@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Utils do
   end
 
   # Profile from name
-  @spec username_and_name(String.t() | nil, String.t() | nil) :: String.t()
+  @spec username_and_name(String.t() | nil, String.t() | nil) :: {String.t(), String.t()}
   def username_and_name(nil, profile_name) do
     {generate_username(profile_name), profile_name}
   end
@@ -50,6 +50,8 @@ defmodule Mix.Tasks.Mobilizon.Actors.Utils do
     new_person
   end
 
+  @spec create_group(Actor.t(), String.t(), String.t(), Keyword.t()) ::
+          {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def create_group(%Actor{id: admin_id}, username, name, _options \\ []) do
     {username, name} = username_and_name(username, name)
 

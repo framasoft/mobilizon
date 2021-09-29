@@ -35,6 +35,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
   @preferred_cli_env "prod"
 
   @shortdoc "Generates a new config"
+  @spec run(list(binary())) :: no_return
   def run(["gen" | options]) do
     {options, [], []} =
       OptionParser.parse(

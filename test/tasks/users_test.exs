@@ -277,7 +277,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert {:ok, %User{confirmed_at: confirmed_at}} = Users.get_user_by_email(@email)
 
       assert output_received ==
-               "An user has been modified with the following information:\n  - email: #{user.email}\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
+               "An user has been modified with the following information:\n  - email: #{user.email}\n  - Role: #{user.role}\n  - account status: Activated on #{confirmed_at} (UTC)\n"
 
       refute is_nil(confirmed_at)
 
@@ -308,7 +308,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
                Users.get_user_by_email(@modified_email)
 
       assert output_received ==
-               "An user has been modified with the following information:\n  - email: #{@modified_email}\n  - Role: #{user.role}\n  - account status: activated on #{confirmed_at} (UTC)\n"
+               "An user has been modified with the following information:\n  - email: #{@modified_email}\n  - Role: #{user.role}\n  - account status: Activated on #{confirmed_at} (UTC)\n"
     end
   end
 end

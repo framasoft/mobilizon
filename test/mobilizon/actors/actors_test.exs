@@ -5,7 +5,7 @@ defmodule Mobilizon.ActorsTest do
 
   import Mobilizon.Factory
 
-  alias Mobilizon.{Actors, Config, Discussions, Events, Tombstone, Users}
+  alias Mobilizon.{Actors, Config, Discussions, Events, Users}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
@@ -292,66 +292,16 @@ defmodule Mobilizon.ActorsTest do
     test "update_actor/2 with invalid data returns error changeset", %{actor: actor} do
       assert {:error, %Ecto.Changeset{}} = Actors.update_actor(actor, @invalid_attrs)
       actor_fetched = Actors.get_actor!(actor.id)
-      assert actor = actor_fetched
-    end
-
-    test "perform delete the actor actually deletes the actor", %{
-      actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
-    } do
-      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
-      insert(:event, organizer_actor: actor)
-
-      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
-      insert(:comment, actor: actor)
-
-      %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
-      %URI{path: "/media/" <> banner_path} = URI.parse(banner_url)
-
-      assert File.exists?(
-               Config.get!([Uploader.Local, :uploads]) <>
-                 "/" <> avatar_path
-             )
-
-      assert File.exists?(
-               Config.get!([Uploader.Local, :uploads]) <>
-                 "/" <> banner_path
-             )
-
-      assert {:ok, %Actor{}} = Actors.perform(:delete_actor, actor)
-
-      assert %Actor{
-               name: nil,
-               summary: nil,
-               suspended: true,
-               avatar: nil,
-               banner: nil,
-               user_id: nil
-             } = Actors.get_actor(actor_id)
-
-      assert {:error, :event_not_found} = Events.get_event(event1.id)
-      assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
-      assert %Comment{deleted_at: deleted_at} = Discussions.get_comment(comment1.id)
-      refute is_nil(deleted_at)
-      assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
-
-      refute File.exists?(
-               Config.get!([Uploader.Local, :uploads]) <>
-                 "/" <> avatar_path
-             )
-
-      refute File.exists?(
-               Config.get!([Uploader.Local, :uploads]) <>
-                 "/" <> banner_path
-             )
+      assert actor.id == actor_fetched.id
     end
 
     test "delete_actor/1 deletes the actor", %{
       actor: %Actor{avatar: %{url: avatar_url}, banner: %{url: banner_url}, id: actor_id} = actor
     } do
-      %Event{url: event1_url} = event1 = insert(:event, organizer_actor: actor)
+      %Event{} = event1 = insert(:event, organizer_actor: actor)
       insert(:event, organizer_actor: actor)
 
-      %Comment{url: comment1_url} = comment1 = insert(:comment, actor: actor)
+      %Comment{} = comment1 = insert(:comment, actor: actor)
       insert(:comment, actor: actor)
 
       %URI{path: "/media/" <> avatar_path} = URI.parse(avatar_url)
@@ -392,10 +342,8 @@ defmodule Mobilizon.ActorsTest do
              } = Actors.get_actor(actor_id)
 
       assert {:error, :event_not_found} = Events.get_event(event1.id)
-      assert %Tombstone{} = Tombstone.find_tombstone(event1_url)
       assert %Comment{deleted_at: deleted_at} = Discussions.get_comment(comment1.id)
       refute is_nil(deleted_at)
-      assert %Tombstone{} = Tombstone.find_tombstone(comment1_url)
 
       refute File.exists?(
                Config.get!([Uploader.Local, :uploads]) <>
@@ -438,25 +386,25 @@ defmodule Mobilizon.ActorsTest do
     test "create_group/1 with an existing profile username fails" do
       _actor = insert(:actor, preferred_username: @valid_attrs.preferred_username)
 
-      assert {:error, :insert_group,
+      assert {:error,
               %Ecto.Changeset{
                 errors: [preferred_username: {"This username is already taken.", []}]
-              }, %{}} = Actors.create_group(@valid_attrs)
+              }} = Actors.create_group(@valid_attrs)
     end
 
     test "create_group/1 with an existing group username fails" do
       %Actor{id: actor_id} = insert(:actor)
       attrs = Map.put(@valid_attrs, :creator_actor_id, actor_id)
-      assert {:ok, %Actor{} = group} = Actors.create_group(attrs)
+      assert {:ok, %Actor{}} = Actors.create_group(attrs)
 
-      assert {:error, :insert_group,
+      assert {:error,
               %Ecto.Changeset{
                 errors: [preferred_username: {"This username is already taken.", []}]
-              }, %{}} = Actors.create_group(attrs)
+              }} = Actors.create_group(attrs)
     end
 
     test "create_group/1 with invalid data returns error changeset" do
-      assert {:error, :insert_group, %Ecto.Changeset{}, %{}} = Actors.create_group(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Actors.create_group(@invalid_attrs)
     end
   end
 
@@ -508,7 +456,7 @@ defmodule Mobilizon.ActorsTest do
     test "update_bot/2 with invalid data returns error changeset" do
       bot = insert(:bot)
       assert {:error, %Ecto.Changeset{}} = Actors.update_bot(bot, @invalid_attrs)
-      assert bot = Actors.get_bot!(bot.id)
+      assert bot.id == Actors.get_bot!(bot.id).id
     end
 
     test "delete_bot/1 deletes the bot" do
@@ -535,7 +483,7 @@ defmodule Mobilizon.ActorsTest do
 
     test "get_follower!/1 returns the follower with given id", context do
       follower = create_test_follower(context)
-      assert follower = Actors.get_follower!(follower.id)
+      assert follower.id == Actors.get_follower!(follower.id).id
     end
 
     test "create_follower/1 with valid data creates a follower", %{
@@ -550,8 +498,12 @@ defmodule Mobilizon.ActorsTest do
       assert {:ok, %Follower{} = follower} = Actors.create_follower(valid_attrs)
       assert follower.approved == true
 
-      assert %{total: 1, elements: [target_actor]} = Actors.build_followings_for_actor(actor)
-      assert %{total: 1, elements: [actor]} = Actors.build_followers_for_actor(target_actor)
+      assert %{total: 1, elements: followings} = Actors.build_followings_for_actor(actor)
+      followings_ids = Enum.map(followings, & &1.id)
+      assert followings_ids == [target_actor.id]
+      assert %{total: 1, elements: followers} = Actors.build_followers_for_actor(target_actor)
+      followers_ids = Enum.map(followers, & &1.id)
+      assert followers_ids == [actor.id]
     end
 
     test "create_follower/1 with valid data but same actors fails to create a follower", %{
@@ -590,7 +542,7 @@ defmodule Mobilizon.ActorsTest do
     test "update_follower/2 with invalid data returns error changeset", context do
       follower = create_test_follower(context)
       assert {:error, %Ecto.Changeset{}} = Actors.update_follower(follower, @invalid_attrs)
-      assert follower = Actors.get_follower!(follower.id)
+      assert follower.id == Actors.get_follower!(follower.id).id
     end
 
     test "delete_follower/1 deletes the follower", context do
@@ -615,13 +567,11 @@ defmodule Mobilizon.ActorsTest do
       assert actor.followings |> Enum.map(& &1.target_actor_id) == [target_actor.id]
 
       # Test if actor is already following target actor
-      assert {:error, :already_following, msg} = Actors.follow(target_actor, actor)
-      assert msg =~ "already following"
+      assert {:error, :already_following} = Actors.follow(target_actor, actor)
 
       # Test if target actor is suspended
       target_actor = %{target_actor | suspended: true}
-      assert {:error, :suspended, msg} = Actors.follow(target_actor, actor)
-      assert msg =~ "suspended"
+      assert {:error, :followed_suspended} = Actors.follow(target_actor, actor)
     end
   end
 
@@ -642,7 +592,7 @@ defmodule Mobilizon.ActorsTest do
 
     test "get_member!/1 returns the member with given id", context do
       member = create_test_member(context)
-      assert member = Actors.get_member!(member.id)
+      assert member.id == Actors.get_member!(member.id).id
     end
 
     test "create_member/1 with valid data creates a member", %{
@@ -658,7 +608,9 @@ defmodule Mobilizon.ActorsTest do
       assert member.role == :member
 
       assert [group] = Actors.list_groups_member_of(actor)
-      assert %Page{elements: [actor], total: 1} = Actors.list_members_for_group(group)
+      assert %Page{elements: members, total: 1} = Actors.list_members_for_group(group)
+      members_ids = Enum.map(members, & &1.id)
+      assert members_ids == [member.id]
     end
 
     test "create_member/1 with valid data but same actors just updates the member", %{

@@ -12,8 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Medias.Media
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Federator, Relay}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
@@ -23,13 +22,35 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   @actor_types ["Group", "Person", "Application"]
 
+  # Wraps an object into an activity
+  @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
+  def create_activity(map, local) when is_map(map) do
+    with map <- lazy_put_activity_defaults(map) do
+      {:ok,
+       %Activity{
+         data: map,
+         local: local,
+         actor: map["actor"],
+         recipients: get_recipients(map)
+       }}
+    end
+  end
+
+  # Get recipients for an activity or object
+  @spec get_recipients(map()) :: list()
+  defp get_recipients(data) do
+    Map.get(data, "to", []) ++ Map.get(data, "cc", [])
+  end
+
   # Some implementations send the actor URI as the actor field, others send the entire actor object,
   # so figure out what the actor's URI is based on what we have.
+  @spec get_url(map() | String.t() | list(String.t()) | any()) :: String.t() | nil
   def get_url(%{"id" => id}), do: id
   def get_url(id) when is_binary(id), do: id
   def get_url(ids) when is_list(ids), do: get_url(hd(ids))
   def get_url(_), do: nil
 
+  @spec make_json_ld_header :: map()
   def make_json_ld_header do
     %{
       "@context" => [
@@ -99,6 +120,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     }
   end
 
+  @spec make_date :: String.t()
   def make_date do
     DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
   end
@@ -106,6 +128,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Enqueues an activity for federation if it's local
   """
+  @spec maybe_federate(activity :: Activity.t()) :: :ok
   def maybe_federate(%Activity{local: true} = activity) do
     Logger.debug("Maybe federate an activity")
 
@@ -129,6 +152,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Applies to activities sent by group members from outside this instance to a group of this instance,
   we then need to relay (`Announce`) the object to other members on other instances.
   """
+  @spec maybe_relay_if_group_activity(Activity.t(), Actor.t() | nil | list(Actor.t())) :: :ok
   def maybe_relay_if_group_activity(activity, attributed_to \\ nil)
 
   def maybe_relay_if_group_activity(
@@ -144,7 +168,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         %Activity{data: %{"object" => object}},
         %Actor{url: attributed_to_url}
       )
-      when is_binary(object) do
+      when is_binary(object) and is_binary(attributed_to_url) do
     do_maybe_relay_if_group_activity(object, attributed_to_url)
   end
 
@@ -152,6 +176,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     :ok
   end
 
+  @spec do_maybe_relay_if_group_activity(map(), list(String.t()) | String.t()) :: :ok
   defp do_maybe_relay_if_group_activity(object, attributed_to) when is_list(attributed_to),
     do: do_maybe_relay_if_group_activity(object, hd(attributed_to))
 
@@ -160,17 +185,17 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
     case Actors.get_local_group_by_url(attributed_to) do
       %Actor{} = group ->
-        case ActivityPub.announce(group, object, id, true, false) do
+        case Actions.Announce.announce(group, object, id, true, false) do
           {:ok, _activity, _object} ->
             Logger.info("Forwarded activity to external members of the group")
             :ok
 
-          _ ->
+          {:error, _err} ->
             Logger.info("Failed to forward activity to external members of the group")
             :error
         end
 
-      _ ->
+      nil ->
         :ok
     end
   end
@@ -198,6 +223,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   Adds an id and a published data if they aren't there,
   also adds it to an included object
   """
+  @spec lazy_put_activity_defaults(map()) :: map()
   def lazy_put_activity_defaults(%{"object" => _object} = map) do
     if is_map(map["object"]) do
       object = lazy_put_object_defaults(map["object"])
@@ -214,6 +240,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     Map.put_new_lazy(map, "published", &make_date/0)
   end
 
+  @spec get_actor(map()) :: String.t() | nil
   def get_actor(%{"actor" => actor}) when is_binary(actor) do
     actor
   end
@@ -241,6 +268,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   Takes the actor or attributedTo attributes (considers only the first elem if they're an array)
   """
+  @spec origin_check?(String.t(), map()) :: boolean()
   def origin_check?(id, %{"type" => "Tombstone", "id" => tombstone_id}), do: id == tombstone_id
 
   def origin_check?(id, %{"actor" => actor, "attributedTo" => _attributed_to} = params)
@@ -282,6 +310,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     compare_uris?(uri_1, uri_2)
   end
 
+  @spec compare_uris?(URI.t(), URI.t()) :: boolean()
   defp compare_uris?(%URI{} = id_uri, %URI{} = other_uri),
     do: id_uri.host == other_uri.host && id_uri.port == other_uri.port
 
@@ -311,7 +340,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       {:ok, media} ->
         media
 
-      _ ->
+      {:error, _err} ->
         nil
     end
   end
@@ -509,7 +538,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Make add activity data
   """
-  @spec make_add_data(map(), map()) :: map()
+  @spec make_add_data(map(), map(), map()) :: map()
   def make_add_data(object, target, additional \\ %{}) do
     Logger.debug("Making add data")
     Logger.debug(inspect(object))
@@ -530,7 +559,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Make move activity data
   """
-  @spec make_add_data(map(), map()) :: map()
+  @spec make_move_data(map(), map(), map(), map()) :: map()
   def make_move_data(object, origin, target, additional \\ %{}) do
     Logger.debug("Making move data")
     Logger.debug(inspect(object))
@@ -554,6 +583,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Converts PEM encoded keys to a public key representation
   """
+  @spec pem_to_public_key(String.t()) :: {:RSAPublicKey, any(), any()}
   def pem_to_public_key(pem) do
     [key_code] = :public_key.pem_decode(pem)
     key = :public_key.pem_entry_decode(key_code)
@@ -567,6 +597,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
+  @spec pem_to_public_key_pem(String.t()) :: String.t()
   def pem_to_public_key_pem(pem) do
     public_key = pem_to_public_key(pem)
     public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)

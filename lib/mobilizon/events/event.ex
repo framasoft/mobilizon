@@ -35,6 +35,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   @type t :: %__MODULE__{
+          id: integer(),
           url: String.t(),
           local: boolean,
           begins_on: DateTime.t(),
@@ -46,16 +47,16 @@ defmodule Mobilizon.Events.Event do
           draft: boolean,
           visibility: EventVisibility.t(),
           join_options: JoinOptions.t(),
-          publish_at: DateTime.t(),
+          publish_at: DateTime.t() | nil,
           uuid: Ecto.UUID.t(),
-          online_address: String.t(),
+          online_address: String.t() | nil,
           phone_address: String.t(),
           category: String.t(),
           options: EventOptions.t(),
           organizer_actor: Actor.t(),
-          attributed_to: Actor.t(),
-          physical_address: Address.t(),
-          picture: Media.t(),
+          attributed_to: Actor.t() | nil,
+          physical_address: Address.t() | nil,
+          picture: Media.t() | nil,
           media: [Media.t()],
           tracks: [Track.t()],
           sessions: [Session.t()],
@@ -130,7 +131,7 @@ defmodule Mobilizon.Events.Event do
   end
 
   @doc false
-  @spec changeset(t, map) :: Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Changeset.t()
   def changeset(%__MODULE__{} = event, attrs) do
     attrs = Map.update(attrs, :uuid, Ecto.UUID.generate(), & &1)
     attrs = Map.update(attrs, :url, Routes.page_url(Endpoint, :event, attrs.uuid), & &1)
@@ -206,6 +207,7 @@ defmodule Mobilizon.Events.Event do
 
   defp put_tags(%Changeset{} = changeset, _), do: changeset
 
+  @spec process_tag(map() | Tag.t()) :: Tag.t() | Ecto.Changeset.t()
   # We need a changeset instead of a raw struct because of slug which is generated in changeset
   defp process_tag(%{id: id} = _tag) do
     Events.get_tag(id)
@@ -248,13 +250,8 @@ defmodule Mobilizon.Events.Event do
   # In case the provided picture is an existing one
   @spec put_picture(Changeset.t(), map) :: Changeset.t()
   defp put_picture(%Changeset{} = changeset, %{picture: %{media_id: id} = _picture}) do
-    case Medias.get_media!(id) do
-      %Media{} = picture ->
-        put_assoc(changeset, :picture, picture)
-
-      _ ->
-        changeset
-    end
+    %Media{} = picture = Medias.get_media!(id)
+    put_assoc(changeset, :picture, picture)
   end
 
   # In case it's a new picture
@@ -293,4 +290,12 @@ defmodule Mobilizon.Events.Event do
 
   defp put_creator_if_published(%Changeset{} = changeset, _),
     do: cast_embed(changeset, :participant_stats)
+
+  @doc """
+  Whether we can show the event. Returns false if the organizer actor or group is suspended
+  """
+  @spec show?(t) :: boolean()
+  def show?(%__MODULE__{attributed_to: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{organizer_actor: %Actor{suspended: true}}), do: false
+  def show?(%__MODULE__{}), do: true
 end

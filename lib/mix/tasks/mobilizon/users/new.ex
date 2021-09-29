@@ -78,6 +78,8 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
     shell_error("mobilizon.users.new requires an email as argument")
   end
 
+  @spec create_user(String.t(), String.t() | nil, String.t(), Keyword.t()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   defp create_user(email, provider, password, options) do
     role = get_role(options)
 
@@ -96,6 +98,8 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
     end
   end
 
+  @spec create_database_user(String.t(), String.t(), role()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   defp create_database_user(email, password, role) do
     Users.register(%{
       email: email,
@@ -107,6 +111,8 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
     })
   end
 
+  @spec create_user_from_provider(String.t(), String.t(), role()) ::
+          {:ok, User.t()} | {:error, Ecto.Changeset.t()}
   defp create_user_from_provider(email, provider, role) do
     Users.create_external(email, provider, %{role: role})
   end
@@ -137,6 +143,7 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
     end
   end
 
+  @spec check_password_and_provider_options(Keyword.t()) :: nil | no_return()
   defp check_password_and_provider_options(options) do
     if Keyword.get(options, :password) != nil && Keyword.get(options, :provider) != nil do
       shell_error("""

@@ -70,6 +70,7 @@ defmodule Mobilizon.Activities do
       [%Activity{}, ...]
 
   """
+  @spec list_activities :: list(Activity.t())
   def list_activities do
     Repo.all(Activity)
   end
@@ -161,6 +162,7 @@ defmodule Mobilizon.Activities do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_activity!(integer()) :: Activity.t()
   def get_activity!(id), do: Repo.get!(Activity, id)
 
   @doc """
@@ -175,6 +177,7 @@ defmodule Mobilizon.Activities do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_activity(map()) :: {:ok, Activity.t()} | {:error, Ecto.Changeset.t()}
   def create_activity(attrs \\ %{}) do
     %Activity{}
     |> Activity.changeset(attrs)
@@ -186,10 +189,13 @@ defmodule Mobilizon.Activities do
     Repo.preload(activity, @activity_preloads)
   end
 
+  @spec object_types :: list(String.t())
   def object_types, do: @object_type
 
+  @spec subjects :: list(String.t())
   def subjects, do: @subjects
 
+  @spec activity_types :: list(String.t())
   def activity_types, do: @activity_types
 
   @spec filter_object_type(Query.t(), atom() | nil) :: Query.t()

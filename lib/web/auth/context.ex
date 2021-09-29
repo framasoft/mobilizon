@@ -9,24 +9,42 @@ defmodule Mobilizon.Web.Auth.Context do
   alias Mobilizon.Service.ErrorReporting.Sentry, as: SentryAdapter
   alias Mobilizon.Users.User
 
+  @spec init(Plug.opts()) :: Plug.opts()
   def init(opts) do
     opts
   end
 
+  @spec call(Plug.Conn.t(), Plug.opts()) :: Plug.Conn.t()
   def call(%{assigns: %{ip: _}} = conn, _opts), do: conn
 
   def call(conn, _opts) do
     set_user_information_in_context(conn)
   end
 
-  def set_user_information_in_context(conn) do
+  @spec set_user_information_in_context(Plug.Conn.t()) :: Plug.Conn.t()
+  defp set_user_information_in_context(conn) do
     context = %{ip: conn.remote_ip |> :inet.ntoa() |> to_string()}
+
+    user_agent = conn |> Plug.Conn.get_req_header("user-agent") |> List.first()
 
     {conn, context} =
       case Guardian.Plug.current_resource(conn) do
         %User{id: user_id, email: user_email} = user ->
           if SentryAdapter.enabled?() do
             Sentry.Context.set_user_context(%{id: user_id, name: user_email})
+
+            Sentry.Context.set_request_context(%{
+              url: Plug.Conn.request_url(conn),
+              method: conn.method,
+              headers: %{
+                "User-Agent": user_agent
+              },
+              query_string: conn.query_string,
+              env: %{
+                REQUEST_ID: conn |> Plug.Conn.get_resp_header("x-request-id") |> List.first(),
+                SERVER_NAME: conn.host
+              }
+            })
           end
 
           context = Map.put(context, :current_user, user)
@@ -37,14 +55,7 @@ defmodule Mobilizon.Web.Auth.Context do
           {conn, context}
       end
 
-    context =
-      case get_req_header(conn, "user-agent") do
-        [user_agent | _] ->
-          Map.put(context, :user_agent, user_agent)
-
-        _ ->
-          context
-      end
+    context = if is_nil(user_agent), do: context, else: Map.put(context, :user_agent, user_agent)
 
     put_private(conn, :absinthe, %{context: context})
   end

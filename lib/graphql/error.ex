@@ -8,11 +8,19 @@ defmodule Mobilizon.GraphQL.Error do
   alias Mobilizon.Web.Gettext, as: GettextBackend
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
+  @type t :: %{code: atom(), message: String.t(), status_code: pos_integer(), field: atom()}
+
   defstruct [:code, :message, :status_code, :field]
 
+  @type error :: {:error, any()} | {:error, any(), any(), any()} | atom()
+
+  @doc """
+  Normalize an error to return `t`.
+  """
   # Error Tuples
   # ------------
   # Regular errors
+  @spec normalize(error | list(error) | String.t() | any()) :: t()
   def normalize({:error, reason}) do
     handle(reason)
   end

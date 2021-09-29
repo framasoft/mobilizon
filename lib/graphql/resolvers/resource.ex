@@ -3,9 +3,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   Handles the resources-related GraphQL calls
   """
 
-  alias Mobilizon.{Actors, Resources, Users}
+  alias Mobilizon.{Actors, Resources}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Resources.Resource.Metadata
   alias Mobilizon.Service.RichMedia.Parser
@@ -21,17 +21,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
 
   Returns only if actor requesting is a member of the group
   """
+  @spec find_resources_for_group(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Resource.t())}
   def find_resources_for_group(
         %Actor{id: group_id} = group,
         %{page: page, limit: limit},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_group(group, page, limit) do
       {:ok, page}
     else
@@ -48,17 +49,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:ok, %Page{total: 0, elements: []}}
   end
 
+  @spec find_resources_for_parent(Resource.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Resource.t())}
   def find_resources_for_parent(
         %Resource{actor_id: group_id} = parent,
         %{page: page, limit: limit},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          %Page{} = page <- Resources.get_resources_for_folder(parent, page, limit) do
       {:ok, page}
     end
@@ -67,18 +69,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
   def find_resources_for_parent(_parent, _args, _resolution),
     do: {:ok, %Page{total: 0, elements: []}}
 
+  @spec get_resource(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Resource.t()} | {:error, :group_not_found | :resource_not_found | String.t()}
   def get_resource(
         _parent,
         %{path: path, username: username},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with {:current_actor, %Actor{id: actor_id}} <-
-           {:current_actor, Users.get_actor_for_user(user)},
-         {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
+    with {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:resource, %Resource{} = resource} <-
            {:resource, Resources.get_resource_by_group_and_path_with_preloads(group_id, path)} do
@@ -94,21 +96,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to access resources")}
   end
 
+  @spec create_resource(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Resource.t()} | {:error, String.t()}
   def create_resource(
         _parent,
         %{actor_id: group_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
+    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          parent <- get_eventual_parent(args),
          {:own_check, true} <- {:own_check, check_resource_owned_by_group(parent, group_id)},
          {:ok, _, %Resource{} = resource} <-
-           ActivityPub.create(
+           Actions.Create.create(
              :resource,
              args
              |> Map.put(:actor_id, group_id)
@@ -133,28 +136,36 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to create resources")}
   end
 
+  @spec update_resource(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Resource.t()} | {:error, String.t()}
   def update_resource(
         _parent,
         %{id: resource_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id, url: actor_url}
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id, url: actor_url} <- Users.get_actor_for_user(user),
-         {:resource, %Resource{actor_id: group_id} = resource} <-
-           {:resource, Resources.get_resource_with_preloads(resource_id)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         {:ok, _, %Resource{} = resource} <-
-           ActivityPub.update(resource, args, true, %{"actor" => actor_url}) do
-      {:ok, resource}
-    else
-      {:resource, _} ->
-        {:error, dgettext("errors", "Resource doesn't exist")}
+    case Resources.get_resource_with_preloads(resource_id) do
+      %Resource{actor_id: group_id} = resource ->
+        if Actors.is_member?(actor_id, group_id) do
+          case Actions.Update.update(resource, args, true, %{"actor" => actor_url}) do
+            {:ok, _, %Resource{} = resource} ->
+              {:ok, resource}
 
-      {:member, _} ->
-        {:error, dgettext("errors", "Profile is not member of group")}
+            {:error, %Ecto.Changeset{} = err} ->
+              {:error, err}
+
+            {:error, err} when is_atom(err) ->
+              {:error, dgettext("errors", "Unknown error while updating resource")}
+          end
+        else
+          {:error, dgettext("errors", "Profile is not member of group")}
+        end
+
+      nil ->
+        {:error, dgettext("errors", "Resource doesn't exist")}
     end
   end
 
@@ -162,21 +173,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to update resources")}
   end
 
+  @spec delete_resource(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Resource.t()} | {:error, String.t()}
   def delete_resource(
         _parent,
         %{id: resource_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id} = actor
           }
         } = _resolution
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
+    with {:resource, %Resource{parent_id: _parent_id, actor_id: group_id} = resource} <-
            {:resource, Resources.get_resource_with_preloads(resource_id)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:ok, _, %Resource{} = resource} <-
-           ActivityPub.delete(resource, actor) do
+           Actions.Delete.delete(resource, actor) do
       {:ok, resource}
     else
       {:resource, _} ->
@@ -191,6 +203,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to delete resources")}
   end
 
+  @spec preview_resource_link(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Metadata.t()} | {:error, String.t() | :unknown_resource}
   def preview_resource_link(
         _parent,
         %{resource_url: resource_url},
@@ -218,6 +232,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
     {:error, dgettext("errors", "You need to be logged-in to view a resource preview")}
   end
 
+  @spec proxyify_pictures(Metadata.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, String.t() | nil} | {:error, String.t()}
   def proxyify_pictures(%Metadata{} = metadata, _args, %{
         definition: %{schema_node: %{name: name}}
       }) do

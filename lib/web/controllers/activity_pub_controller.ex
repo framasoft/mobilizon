@@ -24,6 +24,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   plug(Mobilizon.Web.Plugs.Federating when action in [:inbox, :relay])
   plug(:relay_active? when action in [:relay])
 
+  @spec relay_active?(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def relay_active?(conn, _) do
     if Config.get([:instance, :allow_relay]) do
       conn
@@ -35,34 +36,42 @@ defmodule Mobilizon.Web.ActivityPubController do
     end
   end
 
+  @spec following(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def following(conn, args) do
     actor_collection(conn, "following", args)
   end
 
+  @spec followers(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def followers(conn, args) do
     actor_collection(conn, "followers", args)
   end
 
+  @spec members(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def members(conn, args) do
     actor_collection(conn, "members", args)
   end
 
+  @spec resources(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def resources(conn, args) do
     actor_collection(conn, "resources", args)
   end
 
+  @spec posts(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def posts(conn, args) do
     actor_collection(conn, "posts", args)
   end
 
+  @spec todos(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def todos(conn, args) do
     actor_collection(conn, "todos", args)
   end
 
+  @spec events(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def events(conn, args) do
     actor_collection(conn, "events", args)
   end
 
+  @spec discussions(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def discussions(conn, args) do
     actor_collection(conn, "discussions", args)
   end
@@ -70,36 +79,43 @@ defmodule Mobilizon.Web.ActivityPubController do
   @ok_statuses [:ok, :commit]
   @spec member(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
   def member(conn, %{"uuid" => uuid}) do
-    with {status, %Member{parent: %Actor{} = group, actor: %Actor{domain: nil} = _actor} = member}
-         when status in @ok_statuses <-
-           Cache.get_member_by_uuid_with_preload(uuid),
-         actor <- Map.get(conn.assigns, :actor),
-         true <- actor_applicant_group_member?(group, actor) do
-      json(
-        conn,
-        ActorView.render("member.json", %{
-          member: member,
-          actor_applicant: actor
-        })
-      )
-    else
+    case Cache.get_member_by_uuid_with_preload(uuid) do
+      {status, %Member{parent: %Actor{} = group, actor: %Actor{domain: nil} = _actor} = member}
+      when status in @ok_statuses ->
+        actor = Map.get(conn.assigns, :actor)
+
+        if actor_applicant_group_member?(group, actor) do
+          json(
+            conn,
+            ActorView.render("member.json", %{
+              member: member,
+              actor_applicant: actor
+            })
+          )
+        else
+          not_found(conn)
+        end
+
       {status, %Member{actor: %Actor{url: domain}, parent: %Actor{} = group, url: url}}
       when status in @ok_statuses and not is_nil(domain) ->
-        with actor <- Map.get(conn.assigns, :actor),
-             true <- actor_applicant_group_member?(group, actor) do
+        actor = Map.get(conn.assigns, :actor)
+
+        if actor_applicant_group_member?(group, actor) do
           redirect(conn, external: url)
         else
-          _ ->
-            conn
-            |> put_status(404)
-            |> json("Not found")
+          not_found(conn)
         end
 
       _ ->
-        conn
-        |> put_status(404)
-        |> json("Not found")
+        not_found(conn)
     end
+  end
+
+  @spec not_found(Plug.Conn.t()) :: Plug.Conn.t()
+  defp not_found(conn) do
+    conn
+    |> put_status(404)
+    |> json("Not found")
   end
 
   def outbox(conn, args) do
@@ -201,6 +217,7 @@ defmodule Mobilizon.Web.ActivityPubController do
     end
   end
 
+  @spec actor_applicant_group_member?(Actor.t(), Actor.t() | nil) :: boolean()
   defp actor_applicant_group_member?(%Actor{}, nil), do: false
 
   defp actor_applicant_group_member?(%Actor{id: group_id}, %Actor{id: actor_applicant_id}),

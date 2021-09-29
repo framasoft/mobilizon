@@ -598,7 +598,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert is_nil(res["errors"])
+      assert res["errors"] == nil
 
       assert res["data"]["updateResource"]["path"] ==
                "#{root_folder.path}/#{@updated_resource_title}"

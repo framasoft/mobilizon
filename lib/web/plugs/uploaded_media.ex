@@ -21,6 +21,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
   # no slashes
   @path "media"
 
+  @spec init(any()) :: map()
   def init(_opts) do
     static_plug_opts =
       []
@@ -31,6 +32,7 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
     %{static_plug_opts: static_plug_opts}
   end
 
+  @spec call(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def call(%{request_path: <<"/", @path, "/", file::binary>>} = conn, opts) do
     conn =
       case fetch_query_params(conn) do
@@ -45,11 +47,13 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
 
     config = Config.get([Upload])
 
-    with uploader <- Keyword.fetch!(config, :uploader),
-         proxy_remote = Keyword.get(config, :proxy_remote, false),
-         {:ok, get_method} <- uploader.get_file(file) do
-      get_media(conn, get_method, proxy_remote, opts)
-    else
+    uploader = Keyword.fetch!(config, :uploader)
+    proxy_remote = Keyword.get(config, :proxy_remote, false)
+
+    case uploader.get_file(file) do
+      {:ok, get_method} ->
+        get_media(conn, get_method, proxy_remote, opts)
+
       _ ->
         conn
         |> send_resp(500, "Failed")
@@ -59,6 +63,12 @@ defmodule Mobilizon.Web.Plugs.UploadedMedia do
 
   def call(conn, _opts), do: conn
 
+  @spec get_media(
+          Plug.Conn.t(),
+          {:static_dir, String.t()} | {:url, String.t()} | any(),
+          boolean,
+          any()
+        ) :: Plug.Conn.t()
   defp get_media(conn, {:static_dir, directory}, _, opts) do
     static_opts =
       opts

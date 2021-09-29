@@ -54,13 +54,20 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
            ),
          {:makes_changes, true} <- {:makes_changes, attrs != %{}},
          {:ok, %User{} = user} <- Users.update_user(user, attrs) do
+      status =
+        case user.confirmed_at do
+          %DateTime{} = confirmed_at ->
+            "Activated on #{DateTime.to_string(confirmed_at)} (UTC)"
+
+          _ ->
+            "disabled"
+        end
+
       shell_info("""
       An user has been modified with the following information:
         - email: #{user.email}
         - Role: #{user.role}
-        - account status: #{if user.confirmed_at,
-        do: "activated on #{DateTime.to_string(user.confirmed_at)} (UTC)",
-        else: "disabled"}
+        - account status: #{status}
       """)
     else
       {:makes_changes, false} ->

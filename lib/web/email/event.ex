@@ -49,6 +49,7 @@ defmodule Mobilizon.Web.Email.Event do
     |> render(:event_updated)
   end
 
+  @spec calculate_event_diff_and_send_notifications(Event.t(), Event.t(), map()) :: {:ok, :ok}
   def calculate_event_diff_and_send_notifications(
         %Event{} = old_event,
         %Event{id: event_id} = event,
@@ -75,6 +76,12 @@ defmodule Mobilizon.Web.Email.Event do
     end
   end
 
+  @spec send_notification_for_event_update_to_participant(
+          {Participant.t(), Actor.t(), User.t() | nil, Setting.t() | nil},
+          Event.t(),
+          Event.t(),
+          MapSet.t()
+        ) :: Bamboo.Email.t()
   defp send_notification_for_event_update_to_participant(
          {%Participant{} = _participant, %Actor{} = actor,
           %User{locale: locale, email: email} = _user, %Setting{timezone: timezone}},
@@ -131,6 +138,15 @@ defmodule Mobilizon.Web.Email.Event do
     )
   end
 
+  @spec do_send_notification_for_event_update_to_participant(
+          String.t(),
+          Actor.t(),
+          Event.t(),
+          Event.t(),
+          MapSet.t(),
+          String.t(),
+          String.t()
+        ) :: Bamboo.Email.t()
   defp do_send_notification_for_event_update_to_participant(
          email,
          actor,

@@ -2,7 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @moduledoc """
   Handles the participation-related GraphQL calls.
   """
-  alias Mobilizon.{Actors, Config, Crypto, Events, Users}
+  alias Mobilizon.{Actors, Config, Crypto, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.API.Participations
@@ -16,6 +16,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @doc """
   Join an event for an regular or anonymous actor
   """
+  @spec actor_join_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Participant.t()} | {:error, String.t()}
   def actor_join_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id} = args,
@@ -117,7 +119,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
            |> Map.put(:actor, actor) do
       {:ok, participant}
     else
-      {:maximum_attendee_capacity, _} ->
+      {:error, :maximum_attendee_capacity_reached} ->
         {:error, dgettext("errors", "The event has already reached its maximum capacity")}
 
       {:has_event, _} ->
@@ -127,47 +129,65 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:error, :event_not_found} ->
         {:error, dgettext("errors", "Event id not found")}
 
-      {:ok, %Participant{}} ->
+      {:error, :already_participant} ->
         {:error, dgettext("errors", "You are already a participant of this event")}
+    end
+  end
+
+  @spec check_anonymous_participation(String.t(), String.t()) ::
+          {:ok, Event.t()} | {:error, String.t()}
+  defp check_anonymous_participation(actor_id, event_id) do
+    cond do
+      Config.anonymous_participation?() == false ->
+        {:error, dgettext("errors", "Anonymous participation is not enabled")}
+
+      to_string(Config.anonymous_actor_id()) != actor_id ->
+        {:error, dgettext("errors", "The anonymous actor ID is invalid")}
+
+      true ->
+        case Mobilizon.Events.get_event_with_preload(event_id) do
+          {:ok, %Event{} = event} ->
+            {:ok, event}
+
+          {:error, :event_not_found} ->
+            {:error,
+             dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
+        end
     end
   end
 
   @doc """
   Leave an event for an anonymous actor
   """
+  @spec actor_leave_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def actor_leave_event(
         _parent,
         %{actor_id: actor_id, event_id: event_id, token: token},
         _resolution
       )
       when not is_nil(token) do
-    with {:anonymous_participation_enabled, true} <-
-           {:anonymous_participation_enabled, Config.anonymous_participation?()},
-         {:anonymous_actor_id, true} <-
-           {:anonymous_actor_id, to_string(Config.anonymous_actor_id()) == actor_id},
-         {:has_event, {:ok, %Event{} = event}} <-
-           {:has_event, Mobilizon.Events.get_event_with_preload(event_id)},
-         %Actor{} = actor <- Actors.get_actor_with_preload(actor_id),
-         {:ok, _activity, %Participant{id: participant_id} = _participant} <-
-           Participations.leave(event, actor, %{local: false, cancellation_token: token}) do
-      {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}, id: participant_id}}
-    else
-      {:has_event, _} ->
-        {:error,
-         dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
+    case check_anonymous_participation(actor_id, event_id) do
+      {:ok, %Event{} = event} ->
+        %Actor{} = actor = Actors.get_actor_with_preload!(actor_id)
 
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+        case Participations.leave(event, actor, %{local: false, cancellation_token: token}) do
+          {:ok, _activity, %Participant{id: participant_id} = _participant} ->
+            {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}, id: participant_id}}
 
-      {:only_organizer, true} ->
-        {:error,
-         dgettext(
-           "errors",
-           "You can't leave event because you're the only event creator participant"
-         )}
+          {:error, :is_only_organizer} ->
+            {:error,
+             dgettext(
+               "errors",
+               "You can't leave event because you're the only event creator participant"
+             )}
 
-      {:error, :participant_not_found} ->
-        {:error, dgettext("errors", "Participant not found")}
+          {:error, :participant_not_found} ->
+            {:error, dgettext("errors", "Participant not found")}
+
+          {:error, _err} ->
+            {:error, dgettext("errors", "Failed to leave the event")}
+        end
     end
   end
 
@@ -188,7 +208,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
 
-      {:only_organizer, true} ->
+      {:error, :is_only_organizer} ->
         {:error,
          dgettext(
            "errors",
@@ -204,19 +224,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     {:error, dgettext("errors", "You need to be logged-in to leave an event")}
   end
 
+  @spec update_participation(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Participation.t()} | {:error, String.t()}
   def update_participation(
         _parent,
         %{id: participation_id, role: new_role},
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{} = moderator_actor
           }
         }
       ) do
-    # Check that moderator provided is rightly authenticated
-    with %Actor{} = moderator_actor <- Users.get_actor_for_user(user),
-         # Check that participation already exists
-         {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
+    # Check that participation already exists
+    with {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
            {:has_participation, Events.get_participant(participation_id)},
          {:same_role, false} <- {:same_role, new_role == old_role},
          # Check that moderator has right

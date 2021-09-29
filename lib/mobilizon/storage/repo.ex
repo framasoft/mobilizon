@@ -10,6 +10,7 @@ defmodule Mobilizon.Storage.Repo do
   @doc """
   Dynamically loads the repository url from the DATABASE_URL environment variable.
   """
+  @spec init(any(), any()) :: any()
   def init(_, opts) do
     {:ok, opts}
   end

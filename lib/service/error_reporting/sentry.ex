@@ -29,6 +29,7 @@ defmodule Mobilizon.Service.ErrorReporting.Sentry do
   end
 
   @impl ErrorReporting
+  @spec attach :: :ok | {:error, :already_exists}
   def attach do
     :telemetry.attach(
       "oban-errors",

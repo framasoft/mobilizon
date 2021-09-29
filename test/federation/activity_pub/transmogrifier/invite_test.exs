@@ -24,7 +24,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.InviteTest do
         |> Map.put("object", group_url)
         |> Map.put("target", invitee_url)
 
-      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
+      assert {:ok, _activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
       assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
       assert member.actor.id == invitee_id
       assert member.parent.id == group_id
@@ -49,7 +49,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.InviteTest do
         |> Map.put("object", group_url)
         |> Map.put("target", invitee_url)
 
-      assert {:ok, activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
+      assert {:ok, _activity, %Member{}} = Transmogrifier.handle_incoming(invite_data)
       assert %Member{} = member = Actors.get_member_by_url(invite_data["id"])
       assert member.actor.id == invitee_id
       assert member.parent.id == group_id

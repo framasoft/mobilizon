@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.Upload.Filter.Dedupe do
   @behaviour Mobilizon.Web.Upload.Filter
   alias Mobilizon.Web.Upload
 
+  @spec filter(Upload.t()) :: {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{name: name, tempfile: tempfile} = upload) do
     extension = name |> String.split(".") |> List.last()
     shasum = :crypto.hash(:sha256, File.read!(tempfile)) |> Base.encode16(case: :lower)

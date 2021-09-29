@@ -29,6 +29,7 @@ defmodule Mobilizon.Share do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map()) :: Ecto.Changeset.t()
   def changeset(share, attrs) do
     share
     |> cast(attrs, @attrs)

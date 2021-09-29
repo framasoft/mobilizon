@@ -15,6 +15,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
     ssl: [{:versions, [:"tlsv1.2"]}]
   ]
 
+  @spec parse(String.t(), map()) :: {:ok, map()} | {:error, String.t()}
   def parse(html, _data) do
     Logger.debug("Using OEmbed parser")
 

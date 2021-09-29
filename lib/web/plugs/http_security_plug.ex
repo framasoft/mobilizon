@@ -13,18 +13,21 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   require Logger
 
+  @spec init(any()) :: any()
   def init(opts), do: opts
 
+  @spec call(Plug.Conn.t(), Keyword.t()) :: Plug.Conn.t()
   def call(conn, options \\ []) do
     if Config.get([:http_security, :enabled]) do
       conn
       |> merge_resp_headers(headers(options))
-      |> maybe_send_sts_header(Config.get([:http_security, :sts]))
+      |> maybe_send_sts_header(Config.get([:http_security, :sts], false))
     else
       conn
     end
   end
 
+  @spec headers(Keyword.t()) :: list({String.t(), String.t()})
   defp headers(options) do
     referrer_policy =
       Keyword.get(options, :referrer_policy, Config.get([:http_security, :referrer_policy]))
@@ -55,14 +58,15 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   @style_src "style-src 'self' "
   @font_src "font-src 'self' "
 
+  @spec csp_string(Keyword.t()) :: String.t()
   defp csp_string(options) do
     scheme = Keyword.get(options, :scheme, Config.get([Pleroma.Web.Endpoint, :url])[:scheme])
     static_url = Mobilizon.Web.Endpoint.static_url()
     websocket_url = Mobilizon.Web.Endpoint.websocket_url()
 
-    img_src = [@img_src | get_csp_config(:img_src, options)]
+    img_src = [@img_src] ++ [get_csp_config(:img_src, options)]
 
-    media_src = [@media_src | get_csp_config(:media_src, options)]
+    media_src = [@media_src] ++ [get_csp_config(:media_src, options)]
 
     connect_src = [
       @connect_src,
@@ -83,22 +87,22 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
         ]
       end
 
-    script_src = [script_src | get_csp_config(:script_src, options)]
+    script_src = [script_src] ++ [get_csp_config(:script_src, options)]
 
     style_src =
       if Config.get(:env) == :dev, do: [@style_src | "'unsafe-inline' "], else: @style_src
 
-    style_src = [style_src | get_csp_config(:style_src, options)]
+    style_src = [style_src] ++ [get_csp_config(:style_src, options)]
 
-    font_src = [@font_src | get_csp_config(:font_src, options)]
+    font_src = [@font_src] ++ [get_csp_config(:font_src, options)]
 
     frame_src = if Config.get(:env) == :dev, do: "frame-src 'self' ", else: "frame-src 'none' "
-    frame_src = [frame_src | get_csp_config(:frame_src, options)]
+    frame_src = [frame_src] ++ [get_csp_config(:frame_src, options)]
 
     frame_ancestors =
       if Config.get(:env) == :dev, do: "frame-ancestors 'self' ", else: "frame-ancestors 'none' "
 
-    frame_ancestors = [frame_ancestors | get_csp_config(:frame_ancestors, options)]
+    frame_ancestors = [frame_ancestors] ++ [get_csp_config(:frame_ancestors, options)]
 
     insecure = if scheme == "https", do: "upgrade-insecure-requests"
 
@@ -115,10 +119,11 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     |> to_string()
   end
 
+  @spec add_csp_param(iodata(), iodata() | nil) :: list()
   defp add_csp_param(csp_iodata, nil), do: csp_iodata
-
   defp add_csp_param(csp_iodata, param), do: [[param, ?;] | csp_iodata]
 
+  @spec maybe_send_sts_header(Plug.Conn.t(), boolean()) :: Plug.Conn.t()
   defp maybe_send_sts_header(conn, true) do
     max_age_sts = Config.get([:http_security, :sts_max_age])
 
@@ -127,8 +132,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     ])
   end
 
-  defp maybe_send_sts_header(conn, _), do: conn
+  defp maybe_send_sts_header(conn, false), do: conn
 
+  @spec get_csp_config(atom(), Keyword.t()) :: iodata()
   defp get_csp_config(type, options) do
     options
     |> Keyword.get(type, Config.get([:http_security, :csp_policy, type]))

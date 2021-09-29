@@ -12,7 +12,7 @@ defmodule Mobilizon.Events.FeedToken do
 
   @type t :: %__MODULE__{
           token: Ecto.UUID.t(),
-          actor: Actor.t(),
+          actor: Actor.t() | nil,
           user: User.t()
         }
 
@@ -31,7 +31,7 @@ defmodule Mobilizon.Events.FeedToken do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = feed_token, attrs) do
     feed_token
     |> cast(attrs, @attrs)

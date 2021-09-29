@@ -406,7 +406,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
       %Actor{url: organizer_group_url, members_url: members_url, followers_url: followers_url} =
         organizer_group = insert(:group, domain: nil)
 
-      %Actor{url: organizer_actor_url} =
+      %Actor{url: _organizer_actor_url} =
         organizer_actor =
         insert(:actor, domain: "somewhere.else", url: "https://somewhere.else/@someone")
 

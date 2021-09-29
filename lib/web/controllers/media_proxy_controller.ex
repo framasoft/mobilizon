@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.MediaProxyController do
   alias Plug.Conn
 
   # sobelow_skip ["XSS.SendResp"]
+  @spec remote(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def remote(conn, %{"sig" => sig64, "url" => url64}) do
     with {_, true} <- {:enabled, MediaProxy.enabled?()},
          {:ok, url} <- MediaProxy.decode_url(sig64, url64),
@@ -27,6 +28,7 @@ defmodule Mobilizon.Web.MediaProxyController do
     end
   end
 
+  @spec media_proxy_opts :: Keyword.t()
   defp media_proxy_opts do
     Config.get([:media_proxy, :proxy_opts], [])
   end

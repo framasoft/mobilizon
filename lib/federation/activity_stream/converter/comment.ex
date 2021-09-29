@@ -38,52 +38,49 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map} | {:error, any()}
+  @spec as_to_model_data(map) :: map | {:error, atom}
   def as_to_model_data(object) do
     Logger.debug("We're converting raw ActivityStream data to a comment entity")
     Logger.debug(inspect(object))
 
-    with {%Actor{id: actor_id, domain: actor_domain}, attributed_to} <-
-           maybe_fetch_actor_and_attributed_to_id(object),
-         {:tags, tags} <- {:tags, fetch_tags(Map.get(object, "tag", []))},
-         {:mentions, mentions} <-
-           {:mentions, fetch_mentions(Map.get(object, "tag", []))},
-         discussion <-
-           Discussions.get_discussion_by_url(Map.get(object, "context")) do
-      Logger.debug("Inserting full comment")
-      Logger.debug(inspect(object))
+    tag_object = Map.get(object, "tag", [])
 
-      data = %{
-        text: object["content"],
-        url: object["id"],
-        # Will be used in conversations, ignored in basic comments
-        title: object["name"],
-        context: object["context"],
-        actor_id: actor_id,
-        attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
-        in_reply_to_comment_id: nil,
-        event_id: nil,
-        uuid: object["uuid"],
-        discussion_id: if(is_nil(discussion), do: nil, else: discussion.id),
-        tags: tags,
-        mentions: mentions,
-        local: is_nil(actor_domain),
-        visibility: if(Visibility.is_public?(object), do: :public, else: :private),
-        published_at: object["published"],
-        is_announcement: Map.get(object, "isAnnouncement", false)
-      }
+    case maybe_fetch_actor_and_attributed_to_id(object) do
+      {:ok, %Actor{id: actor_id, domain: actor_domain}, attributed_to} ->
+        Logger.debug("Inserting full comment")
+        Logger.debug(inspect(object))
 
-      Logger.debug("Converted object before fetching parents")
-      Logger.debug(inspect(data))
+        data = %{
+          text: object["content"],
+          url: object["id"],
+          # Will be used in conversations, ignored in basic comments
+          title: object["name"],
+          context: object["context"],
+          actor_id: actor_id,
+          attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
+          in_reply_to_comment_id: nil,
+          event_id: nil,
+          uuid: object["uuid"],
+          discussion_id: get_discussion_id(object),
+          tags: fetch_tags(tag_object),
+          mentions: fetch_mentions(tag_object),
+          local: is_nil(actor_domain),
+          visibility: if(Visibility.is_public?(object), do: :public, else: :private),
+          published_at: object["published"],
+          is_announcement: Map.get(object, "isAnnouncement", false)
+        }
 
-      data = maybe_fetch_parent_object(object, data)
+        Logger.debug("Converted object before fetching parents")
+        Logger.debug(inspect(data))
 
-      Logger.debug("Converted object after fetching parents")
-      Logger.debug(inspect(data))
-      data
-    else
-      {:ok, %Actor{suspended: true}} ->
-        :error
+        data = maybe_fetch_parent_object(object, data)
+
+        Logger.debug("Converted object after fetching parents")
+        Logger.debug(inspect(data))
+        data
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -94,8 +91,19 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   """
   @impl Converter
   @spec model_to_as(CommentModel.t()) :: map
-  def model_to_as(%CommentModel{deleted_at: nil} = comment) do
+  def model_to_as(
+        %CommentModel{
+          deleted_at: nil,
+          attributed_to: attributed_to,
+          actor: %Actor{url: comment_actor_url}
+        } = comment
+      ) do
     to = determine_to(comment)
+
+    attributed_to =
+      if is_nil(attributed_to),
+        do: comment_actor_url,
+        else: Map.get(attributed_to, :url, comment_actor_url)
 
     object = %{
       "type" => "Note",
@@ -104,9 +112,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
       "content" => comment.text,
       "mediaType" => "text/html",
       "actor" => comment.actor.url,
-      "attributedTo" =>
-        if(is_nil(comment.attributed_to), do: nil, else: comment.attributed_to.url) ||
-          comment.actor.url,
+      "attributedTo" => attributed_to,
       "uuid" => comment.uuid,
       "id" => comment.url,
       "tag" => build_mentions(comment.mentions) ++ build_tags(comment.tags),
@@ -132,7 +138,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   end
 
   @impl Converter
-  @spec model_to_as(CommentModel.t()) :: map
   def model_to_as(%CommentModel{} = comment) do
     Convertible.model_to_as(%TombstoneModel{
       uri: comment.url,
@@ -203,4 +208,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
       data
     end
   end
+
+  defp get_discussion_id(%{"context" => context}) do
+    case Discussions.get_discussion_by_url(context) do
+      %Discussion{id: discussion_id} -> discussion_id
+      nil -> nil
+    end
+  end
+
+  defp get_discussion_id(_object), do: nil
 end

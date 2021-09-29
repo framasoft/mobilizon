@@ -4,10 +4,14 @@ defmodule Mobilizon.Service.DateTime do
   """
   alias Cldr.DateTime.Relative
 
+  @typep to_string_format :: :short | :medium | :long | :full
+
+  @spec datetime_to_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_string(%DateTime{} = datetime, locale \\ "en", format \\ :medium) do
     Mobilizon.Cldr.DateTime.to_string!(datetime, format: format, locale: locale_or_default(locale))
   end
 
+  @spec datetime_to_time_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_time_string(%DateTime{} = datetime, locale \\ "en", format \\ :short) do
     Mobilizon.Cldr.Time.to_string!(datetime, format: format, locale: locale_or_default(locale))
   end
@@ -39,7 +43,8 @@ defmodule Mobilizon.Service.DateTime do
     end
   end
 
-  def is_first_day_of_week(%Date{} = date, locale \\ "en") do
+  @spec is_first_day_of_week(Date.t(), String.t()) :: boolean()
+  defp is_first_day_of_week(%Date{} = date, locale) do
     Date.day_of_week(date) == Cldr.Calendar.first_day_for_locale(locale)
   end
 
@@ -119,17 +124,18 @@ defmodule Mobilizon.Service.DateTime do
       compare_to
       |> DateTime.to_date()
       |> calculate_first_day_of_week(locale)
-      |> Timex.add(Timex.Duration.from_weeks(1))
+      |> Date.add(7)
       |> build_notification_datetime(options)
 
-    if Date.compare(datetime, next_first_day_of_week) == :gt do
+    if next_first_day_of_week != nil && DateTime.compare(datetime, next_first_day_of_week) == :gt do
       next_first_day_of_week
     else
       nil
     end
   end
 
-  def appropriate_first_day_of_week(%DateTime{} = datetime, options) do
+  @spec appropriate_first_day_of_week(DateTime.t(), keyword) :: DateTime.t() | nil
+  defp appropriate_first_day_of_week(%DateTime{} = datetime, options) do
     locale = Keyword.get(options, :locale, "en")
     timezone = Keyword.get(options, :timezone, "Etc/UTC")
 
@@ -141,15 +147,20 @@ defmodule Mobilizon.Service.DateTime do
     if DateTime.compare(local_datetime, first_datetime) == :gt do
       first_datetime
     else
-      next_first_day_of_week(local_datetime, options)
+      local_datetime
+      |> next_first_day_of_week(options)
+      |> build_notification_datetime(options)
     end
   end
 
   @spec build_notification_datetime(Date.t(), Keyword.t()) :: DateTime.t()
-  def build_notification_datetime(
-        %Date{} = date,
-        options
-      ) do
+  @spec build_notification_datetime(nil, Keyword.t()) :: nil
+  defp build_notification_datetime(nil, _options), do: nil
+
+  defp build_notification_datetime(
+         %Date{} = date,
+         options
+       ) do
     notification_time = Keyword.get(options, :notification_time, ~T[08:00:00])
     timezone = Keyword.get(options, :timezone, "Etc/UTC")
     DateTime.new!(date, notification_time, timezone)
@@ -158,8 +169,8 @@ defmodule Mobilizon.Service.DateTime do
   @start_time ~T[08:00:00]
   @end_time ~T[09:00:00]
 
-  @spec is_between_hours(Keyword.t()) :: boolean()
-  def is_between_hours(options \\ []) when is_list(options) do
+  @spec is_between_hours?(Keyword.t()) :: boolean()
+  def is_between_hours?(options \\ []) when is_list(options) do
     compare_to_day = Keyword.get(options, :compare_to_day, Date.utc_today())
     compare_to = Keyword.get(options, :compare_to_datetime, DateTime.utc_now())
     start_time = Keyword.get(options, :start_time, @start_time)
@@ -176,17 +187,16 @@ defmodule Mobilizon.Service.DateTime do
       ) == :lt
   end
 
-  @spec is_between_hours_on_first_day(Keyword.t()) :: boolean()
-  def is_between_hours_on_first_day(options) when is_list(options) do
+  @spec is_between_hours_on_first_day?(Keyword.t()) :: boolean()
+  def is_between_hours_on_first_day?(options) when is_list(options) do
     compare_to_day = Keyword.get(options, :compare_to_day, Date.utc_today())
     locale = Keyword.get(options, :locale, "en")
 
-    Mobilizon.Service.DateTime.is_first_day_of_week(compare_to_day, locale) &&
-      is_between_hours(options)
+    is_first_day_of_week(compare_to_day, locale) && is_between_hours?(options)
   end
 
-  @spec is_delay_ok_since_last_notification_sent(DateTime.t()) :: boolean()
-  def is_delay_ok_since_last_notification_sent(%DateTime{} = last_notification_sent) do
+  @spec is_delay_ok_since_last_notification_sent?(DateTime.t()) :: boolean()
+  def is_delay_ok_since_last_notification_sent?(%DateTime{} = last_notification_sent) do
     DateTime.compare(DateTime.add(last_notification_sent, 3_600), DateTime.utc_now()) ==
       :lt
   end

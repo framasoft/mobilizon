@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Federation.ActivityPub.{Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Converter.Utils, as: ConverterUtils
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
@@ -20,47 +21,56 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
   @behaviour Entity
 
   @impl Entity
-  @spec create(map(), map()) :: {:ok, map()}
+  @spec create(map(), map()) ::
+          {:ok, Comment.t(), ActivityStream.t()}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, :event_not_allow_commenting}
   def create(args, additional) do
-    with args <- prepare_args_for_comment(args),
-         :ok <- make_sure_event_allows_commenting(args),
-         {:ok, %Comment{discussion_id: discussion_id} = comment} <-
-           Discussions.create_comment(args),
-         {:ok, _} <-
-           CommentActivity.insert_activity(comment,
-             subject: "comment_posted"
-           ),
-         :ok <- maybe_publish_graphql_subscription(discussion_id),
-         comment_as_data <- Convertible.model_to_as(comment),
-         audience <-
-           Audience.get_audience(comment),
-         create_data <-
-           make_create_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, comment, create_data}
-    end
-  end
+    args = prepare_args_for_comment(args)
 
-  @impl Entity
-  @spec update(Comment.t(), map(), map()) :: {:ok, Comment.t(), Activity.t()} | any()
-  def update(%Comment{} = old_comment, args, additional) do
-    with args <- prepare_args_for_comment_update(args),
-         {:ok, %Comment{} = new_comment} <- Discussions.update_comment(old_comment, args),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{new_comment.uuid}"),
-         comment_as_data <- Convertible.model_to_as(new_comment),
-         audience <-
-           Audience.get_audience(new_comment),
-         update_data <- make_update_data(comment_as_data, Map.merge(audience, additional)) do
-      {:ok, new_comment, update_data}
+    if event_allows_commenting?(args) do
+      case Discussions.create_comment(args) do
+        {:ok, %Comment{discussion_id: discussion_id} = comment} ->
+          CommentActivity.insert_activity(comment,
+            subject: "comment_posted"
+          )
+
+          maybe_publish_graphql_subscription(discussion_id)
+          comment_as_data = Convertible.model_to_as(comment)
+          audience = Audience.get_audience(comment)
+          create_data = make_create_data(comment_as_data, Map.merge(audience, additional))
+          {:ok, comment, create_data}
+
+        {:error, %Ecto.Changeset{} = err} ->
+          {:error, err}
+      end
     else
-      err ->
-        Logger.error("Something went wrong while creating an update activity")
-        Logger.debug(inspect(err))
-        err
+      {:error, :event_not_allow_commenting}
     end
   end
 
   @impl Entity
-  @spec delete(Comment.t(), Actor.t(), boolean, map()) :: {:ok, Comment.t()}
+  @spec update(Comment.t(), map(), map()) ::
+          {:ok, Comment.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
+  def update(%Comment{} = old_comment, args, additional) do
+    args = prepare_args_for_comment_update(args)
+
+    case Discussions.update_comment(old_comment, args) do
+      {:ok, %Comment{} = new_comment} ->
+        {:ok, true} = Cachex.del(:activity_pub, "comment_#{new_comment.uuid}")
+        comment_as_data = Convertible.model_to_as(new_comment)
+        audience = Audience.get_audience(new_comment)
+        update_data = make_update_data(comment_as_data, Map.merge(audience, additional))
+        {:ok, new_comment, update_data}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
+    end
+  end
+
+  @impl Entity
+  @spec delete(Comment.t(), Actor.t(), boolean, map()) ::
+          {:error, Ecto.Changeset.t()} | {:ok, ActivityStream.t(), Actor.t(), Comment.t()}
   def delete(
         %Comment{url: url, id: comment_id},
         %Actor{} = actor,
@@ -79,18 +89,21 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
     force_deletion = Map.get(options, :force, false)
 
-    with audience <-
-           Audience.get_audience(comment),
-         {:ok, %Comment{} = updated_comment} <-
-           Discussions.delete_comment(comment, force: force_deletion),
-         {:ok, true} <- Cachex.del(:activity_pub, "comment_#{comment.uuid}"),
-         {:ok, %Tombstone{} = _tombstone} <-
-           Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id}) do
-      Share.delete_all_by_uri(comment.url)
-      {:ok, Map.merge(activity_data, audience), actor, updated_comment}
+    audience = Audience.get_audience(comment)
+
+    case Discussions.delete_comment(comment, force: force_deletion) do
+      {:ok, %Comment{} = updated_comment} ->
+        Cachex.del(:activity_pub, "comment_#{comment.uuid}")
+        Tombstone.create_tombstone(%{uri: comment.url, actor_id: actor.id})
+        Share.delete_all_by_uri(comment.url)
+        {:ok, Map.merge(activity_data, audience), actor, updated_comment}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
+  @spec actor(Comment.t()) :: Actor.t() | nil
   def actor(%Comment{actor: %Actor{} = actor}), do: actor
 
   def actor(%Comment{actor_id: actor_id}) when not is_nil(actor_id),
@@ -98,6 +111,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def actor(_), do: nil
 
+  @spec group_actor(Comment.t()) :: Actor.t() | nil
   def group_actor(%Comment{attributed_to: %Actor{} = group}), do: group
 
   def group_actor(%Comment{attributed_to_id: attributed_to_id}) when not is_nil(attributed_to_id),
@@ -105,6 +119,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   def group_actor(_), do: nil
 
+  @spec permissions(Comment.t()) :: Permission.t()
   def permissions(%Comment{}),
     do: %Permission{
       access: :member,
@@ -114,6 +129,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     }
 
   # Prepare and sanitize arguments for comments
+  @spec prepare_args_for_comment(map) :: map
   defp prepare_args_for_comment(args) do
     with in_reply_to_comment <-
            args |> Map.get(:in_reply_to_comment_id) |> Discussions.get_comment_with_preload(),
@@ -150,6 +166,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     end
   end
 
+  @spec prepare_args_for_comment_update(map) :: map
   defp prepare_args_for_comment_update(args) do
     with {text, mentions, tags} <-
            APIUtils.make_content_html(
@@ -174,32 +191,39 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
 
   defp handle_event_for_comment(nil), do: nil
 
+  @spec maybe_publish_graphql_subscription(String.t() | integer() | nil) :: :ok
   defp maybe_publish_graphql_subscription(nil), do: :ok
 
   defp maybe_publish_graphql_subscription(discussion_id) do
-    with %Discussion{} = discussion <- Discussions.get_discussion(discussion_id) do
-      Absinthe.Subscription.publish(Endpoint, discussion,
-        discussion_comment_changed: discussion.slug
-      )
+    case Discussions.get_discussion(discussion_id) do
+      %Discussion{} = discussion ->
+        Absinthe.Subscription.publish(Endpoint, discussion,
+          discussion_comment_changed: discussion.slug
+        )
 
-      :ok
+        :ok
+
+      nil ->
+        :ok
     end
   end
 
-  defp make_sure_event_allows_commenting(%{
+  @spec event_allows_commenting?(%{
+          required(:actor_id) => String.t() | integer,
+          required(:event) => Event.t() | nil,
+          optional(atom) => any()
+        }) :: boolean
+  defp event_allows_commenting?(%{
          actor_id: actor_id,
          event: %Event{
            options: %EventOptions{comment_moderation: comment_moderation},
            organizer_actor_id: organizer_actor_id
          }
        }) do
-    if comment_moderation != :closed ||
-         to_string(actor_id) == to_string(organizer_actor_id) do
-      :ok
-    else
-      {:error, :event_comments_are_closed}
-    end
+    comment_moderation != :closed ||
+      to_string(actor_id) == to_string(organizer_actor_id)
   end
 
-  defp make_sure_event_allows_commenting(_), do: :ok
+  # Comments not attached to events
+  defp event_allows_commenting?(_), do: true
 end

@@ -118,7 +118,7 @@ defmodule Mobilizon.Addresses do
     )
   end
 
-  @spec order_by_coords(Ecto.Query.t(), map | nil) :: Ecto.Query.t()
+  @spec order_by_coords(Ecto.Queryable.t(), map | nil) :: Ecto.Query.t()
   defp order_by_coords(query, nil), do: query
 
   defp order_by_coords(query, coords) do
@@ -128,7 +128,7 @@ defmodule Mobilizon.Addresses do
     )
   end
 
-  @spec filter_by_contry(Ecto.Query.t(), String.t() | nil) :: Ecto.Query.t()
+  @spec filter_by_contry(Ecto.Queryable.t(), String.t() | nil) :: Ecto.Query.t()
   defp filter_by_contry(query, nil), do: query
 
   defp filter_by_contry(query, country) do

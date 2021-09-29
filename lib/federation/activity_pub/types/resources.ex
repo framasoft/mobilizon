@@ -4,6 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Permission
   alias Mobilizon.Federation.ActivityPub.Types.Entity
+  alias alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Service.Activity.Resource, as: ResourceActivity
@@ -16,6 +17,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   @behaviour Entity
 
   @impl Entity
+  @spec create(map(), map()) ::
+          {:ok, Resource.t(), ActivityStream.t()}
+          | {:error, Ecto.Changeset.t() | :creator_not_found | :group_not_found}
   def create(%{type: type} = args, additional) do
     args =
       case type do
@@ -35,17 +39,18 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     with {:ok,
           %Resource{actor_id: group_id, creator_id: creator_id, parent_id: parent_id} = resource} <-
            Resources.create_resource(args),
-         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_created"),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} = creator <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group, creator: creator}),
-         audience <- %{
-           "to" => [group.members_url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         } do
+         {:ok, %Actor{} = group, %Actor{url: creator_url} = creator} <-
+           group_and_creator(group_id, creator_id) do
+      ResourceActivity.insert_activity(resource, subject: "resource_created")
+      resource_as_data = Convertible.model_to_as(%{resource | actor: group, creator: creator})
+
+      audience = %{
+        "to" => [group.members_url],
+        "cc" => [],
+        "actor" => creator_url,
+        "attributedTo" => [creator_url]
+      }
+
       create_data =
         case parent_id do
           nil ->
@@ -58,14 +63,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
         end
 
       {:ok, resource, create_data}
-    else
-      err ->
-        Logger.debug(inspect(err))
-        err
     end
   end
 
   @impl Entity
+  @spec update(Resource.t(), map(), map()) ::
+          {:ok, Resource.t(), ActivityStream.t()}
+          | {:error, Ecto.Changeset.t() | :creator_not_found | :group_not_found}
   def update(
         %Resource{parent_id: old_parent_id} = old_resource,
         %{parent_id: parent_id} = args,
@@ -79,31 +83,35 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   def update(%Resource{} = old_resource, %{title: title} = _args, additional) do
     with {:ok, %Resource{actor_id: group_id, creator_id: creator_id} = resource} <-
            Resources.update_resource(old_resource, %{title: title}),
-         {:ok, _} <-
-           ResourceActivity.insert_activity(resource,
-             subject: "resource_renamed",
-             old_resource: old_resource
-           ),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group}),
-         audience <- %{
-           "to" => [group.members_url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         },
-         update_data <-
-           make_update_data(resource_as_data, Map.merge(audience, additional)) do
+         {:ok, %Actor{} = group, %Actor{url: creator_url}} <-
+           group_and_creator(group_id, creator_id) do
+      ResourceActivity.insert_activity(resource,
+        subject: "resource_renamed",
+        old_resource: old_resource
+      )
+
+      resource_as_data = Convertible.model_to_as(%{resource | actor: group})
+
+      audience = %{
+        "to" => [group.members_url],
+        "cc" => [],
+        "actor" => creator_url,
+        "attributedTo" => [creator_url]
+      }
+
+      update_data = make_update_data(resource_as_data, Map.merge(audience, additional))
       {:ok, resource, update_data}
-    else
-      err ->
-        Logger.debug(inspect(err))
-        err
     end
   end
 
+  @spec move(Resource.t(), map(), map()) ::
+          {:ok, Resource.t(), ActivityStream.t()}
+          | {:error,
+             Ecto.Changeset.t()
+             | :creator_not_found
+             | :group_not_found
+             | :new_parent_not_found
+             | :old_parent_not_found}
   def move(
         %Resource{parent_id: old_parent_id} = old_resource,
         %{parent_id: _new_parent_id} = args,
@@ -113,35 +121,34 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
           %Resource{actor_id: group_id, creator_id: creator_id, parent_id: new_parent_id} =
             resource} <-
            Resources.update_resource(old_resource, args),
-         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_moved"),
-         old_parent <- Resources.get_resource(old_parent_id),
-         new_parent <- Resources.get_resource(new_parent_id),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
-         %Actor{url: creator_url} <- Actors.get_actor(creator_id),
-         resource_as_data <-
-           Convertible.model_to_as(%{resource | actor: group}),
-         audience <- %{
-           "to" => [group.members_url],
-           "cc" => [],
-           "actor" => creator_url,
-           "attributedTo" => [creator_url]
-         },
-         move_data <-
-           make_move_data(
-             resource_as_data,
-             old_parent,
-             new_parent,
-             Map.merge(audience, additional)
-           ) do
+         {:ok, old_parent, new_parent} <- parents(old_parent_id, new_parent_id),
+         {:ok, %Actor{} = group, %Actor{url: creator_url}} <-
+           group_and_creator(group_id, creator_id) do
+      ResourceActivity.insert_activity(resource, subject: "resource_moved")
+      resource_as_data = Convertible.model_to_as(%{resource | actor: group})
+
+      audience = %{
+        "to" => [group.members_url],
+        "cc" => [],
+        "actor" => creator_url,
+        "attributedTo" => [creator_url]
+      }
+
+      move_data =
+        make_move_data(
+          resource_as_data,
+          old_parent,
+          new_parent,
+          Map.merge(audience, additional)
+        )
+
       {:ok, resource, move_data}
-    else
-      err ->
-        Logger.debug(inspect(err))
-        err
     end
   end
 
   @impl Entity
+  @spec delete(Resource.t(), Actor.t(), boolean, map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Resource.t()} | {:error, Ecto.Changeset.t()}
   def delete(
         %Resource{url: url, actor: %Actor{url: group_url, members_url: members_url}} = resource,
         %Actor{url: actor_url} = actor,
@@ -159,19 +166,50 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
       "to" => [members_url]
     }
 
-    with {:ok, _resource} <- Resources.delete_resource(resource),
-         {:ok, _} <- ResourceActivity.insert_activity(resource, subject: "resource_deleted"),
-         {:ok, true} <- Cachex.del(:activity_pub, "resource_#{resource.id}") do
-      {:ok, activity_data, actor, resource}
+    case Resources.delete_resource(resource) do
+      {:ok, _resource} ->
+        ResourceActivity.insert_activity(resource, subject: "resource_deleted")
+        Cachex.del(:activity_pub, "resource_#{resource.id}")
+        {:ok, activity_data, actor, resource}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
+  @spec actor(Todo.t()) :: Actor.t() | nil
   def actor(%Resource{creator_id: creator_id}),
     do: Actors.get_actor(creator_id)
 
+  @spec group_actor(Todo.t()) :: Actor.t() | nil
   def group_actor(%Resource{actor_id: actor_id}), do: Actors.get_actor(actor_id)
 
+  @spec permissions(TodoList.t()) :: Permission.t()
   def permissions(%Resource{}) do
     %Permission{access: :member, create: :member, update: :member, delete: :member}
+  end
+
+  @spec group_and_creator(integer(), integer()) ::
+          {:ok, Actor.t(), Actor.t()} | {:error, :creator_not_found | :group_not_found}
+  defp group_and_creator(group_id, creator_id) do
+    case Actors.get_group_by_actor_id(group_id) do
+      {:ok, %Actor{} = group} ->
+        case Actors.get_actor(creator_id) do
+          %Actor{} = creator ->
+            {:ok, group, creator}
+
+          nil ->
+            {:error, :creator_not_found}
+        end
+
+      {:error, :group_not_found} ->
+        {:error, :group_not_found}
+    end
+  end
+
+  @spec parents(String.t(), String.t()) ::
+          {:ok, Resource.t(), Resource.t()}
+  defp parents(old_parent_id, new_parent_id) do
+    {:ok, Resources.get_resource(old_parent_id), Resources.get_resource(new_parent_id)}
   end
 end

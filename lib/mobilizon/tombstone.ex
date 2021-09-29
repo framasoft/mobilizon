@@ -26,20 +26,21 @@ defmodule Mobilizon.Tombstone do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = tombstone, attrs) do
     tombstone
     |> cast(attrs, @attrs)
     |> validate_required(@required_attrs)
   end
 
-  @spec create_tombstone(map) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_tombstone(map) :: {:ok, t()} | {:error, Ecto.Changeset.t()}
   def create_tombstone(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
     |> Repo.insert(on_conflict: :replace_all, conflict_target: :uri)
   end
 
-  @spec find_tombstone(String.t()) :: Ecto.Schema.t() | nil
+  @spec find_tombstone(String.t()) :: t() | nil
   def find_tombstone(uri) do
     __MODULE__
     |> Ecto.Query.where([t], t.uri == ^uri)
@@ -54,6 +55,7 @@ defmodule Mobilizon.Tombstone do
     |> Repo.delete_all()
   end
 
+  @spec delete_uri_tombstone(String.t()) :: {integer(), nil}
   def delete_uri_tombstone(uri) do
     __MODULE__
     |> Ecto.Query.where(uri: ^uri)

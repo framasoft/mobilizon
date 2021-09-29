@@ -10,11 +10,12 @@ defmodule Mobilizon.Events.Participant do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, ParticipantRole}
-  alias Mobilizon.Web.Email.Checker
+  alias Mobilizon.Events.Participant.Metadata
 
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: String.t(),
           role: ParticipantRole.t(),
           url: String.t(),
           event: Event.t(),
@@ -24,7 +25,6 @@ defmodule Mobilizon.Events.Participant do
 
   @required_attrs [:url, :role, :event_id, :actor_id]
   @attrs @required_attrs
-  @metadata_attrs [:email, :confirmation_token, :cancellation_token, :message, :locale]
 
   @timestamps_opts [type: :utc_datetime]
 
@@ -33,13 +33,7 @@ defmodule Mobilizon.Events.Participant do
     field(:role, ParticipantRole, default: :participant)
     field(:url, :string)
 
-    embeds_one :metadata, Metadata, on_replace: :delete do
-      field(:email, :string)
-      field(:confirmation_token, :string)
-      field(:cancellation_token, :string)
-      field(:message, :string)
-      field(:locale, :string)
-    end
+    embeds_one(:metadata, Metadata, on_replace: :delete)
 
     belongs_to(:event, Event, primary_key: true)
     belongs_to(:actor, Actor, primary_key: true)
@@ -64,20 +58,14 @@ defmodule Mobilizon.Events.Participant do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = participant, attrs) do
     participant
     |> cast(attrs, @attrs)
-    |> cast_embed(:metadata, with: &metadata_changeset/2)
+    |> cast_embed(:metadata)
     |> ensure_url()
     |> validate_required(@required_attrs)
     |> unique_constraint(:actor_id, name: :participants_event_id_actor_id_index)
-  end
-
-  defp metadata_changeset(schema, params) do
-    schema
-    |> cast(params, @metadata_attrs)
-    |> Checker.validate_changeset()
   end
 
   # If there's a blank URL that's because we're doing the first insert

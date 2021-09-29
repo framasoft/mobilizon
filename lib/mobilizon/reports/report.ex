@@ -15,6 +15,7 @@ defmodule Mobilizon.Reports.Report do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: integer(),
           content: String.t(),
           status: ReportStatus.t(),
           url: String.t(),
@@ -56,7 +57,7 @@ defmodule Mobilizon.Reports.Report do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = report, attrs) do
     report
     |> cast(attrs, @attrs)

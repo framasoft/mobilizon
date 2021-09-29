@@ -33,6 +33,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Member do
     }
   end
 
+  @spec as_to_model_data(map()) :: map()
   def as_to_model_data(%{
         "type" => "Member",
         "actor" => actor,

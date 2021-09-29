@@ -263,7 +263,10 @@ defmodule Mobilizon.Events do
   @doc """
   Creates an event.
   """
-  @spec create_event(map) :: {:ok, Event.t()} | {:error, Changeset.t()}
+  @spec create_event(map) ::
+          {:ok, Event.t()}
+          | {:error, Changeset.t()}
+          | {:error, :update | :write, Changeset.t(), map()}
   def create_event(attrs \\ %{}) do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
@@ -278,7 +281,10 @@ defmodule Mobilizon.Events do
   end
 
   # We start by inserting the event and then insert a first participant if the event is not a draft
-  @spec do_create_event(map) :: {:ok, Event.t()} | {:error, Changeset.t()}
+  @spec do_create_event(map) ::
+          {:ok, %{insert: Event.t(), write: Participant.t() | nil}}
+          | {:error, Changeset.t()}
+          | {:error, :update | :write, Changeset.t(), map()}
   defp do_create_event(attrs) do
     Multi.new()
     |> Multi.insert(:insert, Event.changeset(%Event{}, attrs))
@@ -307,7 +313,10 @@ defmodule Mobilizon.Events do
 
   We start by updating the event and then insert a first participant if the event is not a draft anymore
   """
-  @spec update_event(Event.t(), map) :: {:ok, Event.t()} | {:error, Changeset.t()}
+  @spec update_event(Event.t(), map) ::
+          {:ok, Event.t()}
+          | {:error, Changeset.t()}
+          | {:error, :update | :write, Changeset.t(), map()}
   def update_event(%Event{draft: old_draft} = old_event, attrs) do
     with %Event{} = old_event <- Repo.preload(old_event, @event_preloads),
          %Changeset{changes: changes} = changeset <-
@@ -359,7 +368,7 @@ defmodule Mobilizon.Events do
   Deletes an event.
   Raises an exception if it fails.
   """
-  @spec delete_event(Event.t()) :: Event.t()
+  @spec delete_event!(Event.t()) :: Event.t()
   def delete_event!(%Event{} = event), do: Repo.delete!(event)
 
   @doc """
@@ -394,7 +403,7 @@ defmodule Mobilizon.Events do
     |> Repo.stream()
   end
 
-  @spec list_public_local_events(integer | nil, integer | nil) :: Page.t()
+  @spec list_public_local_events(integer | nil, integer | nil) :: Page.t(Event.t())
   def list_public_local_events(page \\ nil, limit \\ nil) do
     Event
     |> filter_public_visibility()
@@ -448,11 +457,12 @@ defmodule Mobilizon.Events do
 
   @spec list_organized_events_for_group(
           Actor.t(),
+          EventVisibility.t(),
           DateTime.t() | nil,
           DateTime.t() | nil,
           integer | nil,
           integer | nil
-        ) :: Page.t()
+        ) :: Page.t(Event.t())
   def list_organized_events_for_group(
         %Actor{id: group_id},
         visibility \\ :public,
@@ -631,9 +641,10 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of tags.
   """
-  @spec list_tags(integer | nil, integer | nil) :: [Tag.t()]
-  def list_tags(page \\ nil, limit \\ nil) do
+  @spec list_tags(String.t() | nil, integer | nil, integer | nil) :: [Tag.t()]
+  def list_tags(filter \\ nil, page \\ nil, limit \\ nil) do
     Tag
+    |> tag_filter(filter)
     |> Page.paginate(page, limit)
     |> Repo.all()
   end
@@ -728,7 +739,9 @@ defmodule Mobilizon.Events do
       nil
 
   """
-  @spec get_participant(integer) :: Participant.t()
+  @spec get_participant(integer) :: Participant.t() | nil
+  @spec get_participant(integer | String.t(), integer | String.t(), map()) ::
+          {:ok, Participant.t()} | {:error, :participant_not_found}
   def get_participant(participant_id) do
     Participant
     |> where([p], p.id == ^participant_id)
@@ -739,8 +752,6 @@ defmodule Mobilizon.Events do
   @doc """
   Gets a single participation for an event and actor.
   """
-  @spec get_participant(integer | String.t(), integer | String.t(), map()) ::
-          {:ok, Participant.t()} | {:error, :participant_not_found}
   def get_participant(event_id, actor_id, params \\ %{})
 
   # This one if to check someone doesn't go to the same event twice
@@ -1039,21 +1050,18 @@ defmodule Mobilizon.Events do
   Deletes a participant.
   """
   @spec delete_participant(Participant.t()) ::
-          {:ok, Participant.t()} | {:error, Changeset.t()}
+          {:ok, %{participant: Participant.t()}}
+          | {:error, :participant | :update_event_participation_stats, Changeset.t(), map()}
   def delete_participant(%Participant{role: old_role} = participant) do
-    with {:ok, %{participant: %Participant{} = participant}} <-
-           Multi.new()
-           |> Multi.delete(:participant, participant)
-           |> Multi.run(:update_event_participation_stats, fn _repo,
-                                                              %{
-                                                                participant:
-                                                                  %Participant{} = participant
-                                                              } ->
-             update_participant_stats(participant, old_role, nil)
-           end)
-           |> Repo.transaction() do
-      {:ok, participant}
-    end
+    Multi.new()
+    |> Multi.delete(:participant, participant)
+    |> Multi.run(:update_event_participation_stats, fn _repo,
+                                                       %{
+                                                         participant: %Participant{} = participant
+                                                       } ->
+      update_participant_stats(participant, old_role, nil)
+    end)
+    |> Repo.transaction()
   end
 
   defp update_participant_stats(
@@ -1329,7 +1337,7 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec user_events_query(Ecto.Query.t(), number()) :: Ecto.Query.t()
+  @spec user_events_query(Ecto.Queryable.t(), number()) :: Ecto.Query.t()
   defp user_events_query(query, user_id) do
     from(
       e in query,
@@ -1372,7 +1380,7 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec events_for_begins_on(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  @spec events_for_begins_on(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_begins_on(query, args) do
     begins_on = Map.get(args, :begins_on, DateTime.utc_now())
 
@@ -1380,7 +1388,7 @@ defmodule Mobilizon.Events do
     |> where([q], q.begins_on >= ^begins_on)
   end
 
-  @spec events_for_ends_on(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  @spec events_for_ends_on(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_ends_on(query, args) do
     ends_on = Map.get(args, :ends_on)
 
@@ -1395,8 +1403,8 @@ defmodule Mobilizon.Events do
         )
   end
 
-  @spec events_for_tags(Ecto.Query.t(), map()) :: Ecto.Query.t()
-  defp events_for_tags(query, %{tags: tags}) when is_valid_string?(tags) do
+  @spec events_for_tags(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
+  defp events_for_tags(query, %{tags: tags}) when is_valid_string(tags) do
     query
     |> join(:inner, [q], te in "events_tags", on: q.id == te.event_id)
     |> join(:inner, [q, ..., te], t in Tag, on: te.tag_id == t.id)
@@ -1405,12 +1413,12 @@ defmodule Mobilizon.Events do
 
   defp events_for_tags(query, _args), do: query
 
-  @spec events_for_location(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  @spec events_for_location(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_location(query, %{radius: radius}) when is_nil(radius),
     do: query
 
   defp events_for_location(query, %{location: location, radius: radius})
-       when is_valid_string?(location) and not is_nil(radius) do
+       when is_valid_string(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
       query
@@ -1471,6 +1479,16 @@ defmodule Mobilizon.Events do
     from(t in Tag, where: t.title == ^title, limit: 1)
   end
 
+  @spec tag_filter(Ecto.Queryable.t(), String.t() | nil) :: Ecto.Query.t()
+  defp tag_filter(query, nil), do: query
+  defp tag_filter(query, ""), do: query
+
+  defp tag_filter(query, filter) when is_binary(filter) do
+    query
+    |> where([q], ilike(q.slug, ^"%#{filter}%"))
+    |> or_where([q], ilike(q.title, ^"%#{filter}%"))
+  end
+
   @spec tags_for_event_query(integer) :: Ecto.Query.t()
   defp tags_for_event_query(event_id) do
     from(
@@ -1500,7 +1518,7 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec tag_relation_union_subquery(Ecto.Query.t(), integer) :: Ecto.Query.t()
+  @spec tag_relation_union_subquery(Ecto.Queryable.t(), integer) :: Ecto.Query.t()
   defp tag_relation_union_subquery(subquery, tag_id) do
     from(
       tr in TagRelation,
@@ -1510,7 +1528,7 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec tag_neighbors_query(Ecto.Query.t(), integer, integer) :: Ecto.Query.t()
+  @spec tag_neighbors_query(Ecto.Queryable.t(), integer, integer) :: Ecto.Query.t()
   defp tag_neighbors_query(subquery, relation_minimum, limit) do
     from(
       t in Tag,
@@ -1662,38 +1680,34 @@ defmodule Mobilizon.Events do
     from(tk in FeedToken, where: tk.actor_id == ^actor_id, preload: [:actor, :user])
   end
 
-  @spec filter_public_visibility(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_public_visibility(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_public_visibility(query) do
     from(e in query, where: e.visibility == ^:public)
   end
 
-  @spec filter_unlisted_and_public_visibility(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_unlisted_and_public_visibility(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_unlisted_and_public_visibility(query) do
     from(q in query, where: q.visibility in ^@public_visibility)
   end
 
-  @spec filter_not_event_uuid(Ecto.Query.t(), String.t() | nil) :: Ecto.Query.t()
+  @spec filter_not_event_uuid(Ecto.Queryable.t(), String.t() | nil) :: Ecto.Query.t()
   defp filter_not_event_uuid(query, nil), do: query
 
   defp filter_not_event_uuid(query, not_event_uuid) do
     from(e in query, where: e.uuid != ^not_event_uuid)
   end
 
-  @spec filter_draft(Ecto.Query.t(), boolean) :: Ecto.Query.t()
+  @spec filter_draft(Ecto.Queryable.t(), boolean) :: Ecto.Query.t()
   defp filter_draft(query, is_draft \\ false) do
     from(e in query, where: e.draft == ^is_draft)
   end
 
-  @spec filter_cancelled_events(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
-  defp filter_cancelled_events(query, hide_cancelled \\ true)
-
-  defp filter_cancelled_events(query, false), do: query
-
-  defp filter_cancelled_events(query, true) do
+  @spec filter_cancelled_events(Ecto.Queryable.t()) :: Ecto.Query.t()
+  defp filter_cancelled_events(query) do
     from(e in query, where: e.status != ^:cancelled)
   end
 
-  @spec filter_future_events(Ecto.Query.t(), boolean) :: Ecto.Query.t()
+  @spec filter_future_events(Ecto.Queryable.t(), boolean) :: Ecto.Query.t()
   defp filter_future_events(query, true) do
     from(q in query,
       where: q.begins_on > ^DateTime.utc_now()
@@ -1702,12 +1716,12 @@ defmodule Mobilizon.Events do
 
   defp filter_future_events(query, false), do: query
 
-  @spec filter_local(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_local(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_local(query) do
     where(query, [q], q.local == true)
   end
 
-  @spec filter_local_or_from_followed_instances_events(Ecto.Query.t()) ::
+  @spec filter_local_or_from_followed_instances_events(Ecto.Queryable.t()) ::
           Ecto.Query.t()
   defp filter_local_or_from_followed_instances_events(query) do
     follower_actor_id = Mobilizon.Config.relay_actor_id()
@@ -1721,22 +1735,22 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec filter_approved_role(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_approved_role(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_approved_role(query) do
     filter_role(query, [:not_approved, :rejected])
   end
 
-  @spec filter_participant_role(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_participant_role(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_participant_role(query) do
     filter_role(query, :participant)
   end
 
-  @spec filter_rejected_role(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec filter_rejected_role(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_rejected_role(query) do
     filter_role(query, :rejected)
   end
 
-  @spec filter_role(Ecto.Query.t(), list(atom())) :: Ecto.Query.t()
+  @spec filter_role(Ecto.Queryable.t(), list(atom()) | atom()) :: Ecto.Query.t()
   def filter_role(query, []), do: query
 
   def filter_role(query, roles) when is_list(roles) do
@@ -1818,6 +1832,6 @@ defmodule Mobilizon.Events do
   defp participation_order_begins_on_desc(query),
     do: order_by(query, [_p, e, _a], desc: e.begins_on)
 
-  @spec preload_for_event(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec preload_for_event(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp preload_for_event(query), do: preload(query, ^@event_preloads)
 end

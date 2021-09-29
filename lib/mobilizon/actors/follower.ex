@@ -12,10 +12,13 @@ defmodule Mobilizon.Actors.Follower do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
+          id: String.t(),
           approved: boolean,
           url: String.t(),
           target_actor: Actor.t(),
-          actor: Actor.t()
+          actor: Actor.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
         }
 
   @required_attrs [:url, :approved, :target_actor_id, :actor_id]
@@ -35,7 +38,7 @@ defmodule Mobilizon.Actors.Follower do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(follower :: t | Ecto.Schema.t(), attrs :: map) :: Ecto.Changeset.t()
   def changeset(follower, attrs) do
     follower
     |> cast(attrs, @attrs)

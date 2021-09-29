@@ -14,6 +14,7 @@ defmodule Mobilizon.Service.Formatter.HTML do
 
   def filter_tags(html), do: Sanitizer.scrub(html, DefaultScrubbler)
 
+  @spec strip_tags(String.t()) :: String.t() | no_return()
   def strip_tags(html) do
     case FastSanitize.strip_tags(html) do
       {:ok, html} ->

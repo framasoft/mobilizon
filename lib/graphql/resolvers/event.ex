@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   Handles the event-related GraphQL calls.
   """
 
-  alias Mobilizon.{Actors, Admin, Events, Users}
+  alias Mobilizon.{Actors, Admin, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
   alias Mobilizon.Events.{Event, EventParticipantStats}
@@ -21,14 +21,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @event_max_limit 100
   @number_of_related_events 3
 
+  @spec organizer_for_event(Event.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t() | nil} | {:error, String.t()}
   def organizer_for_event(
         %Event{attributed_to_id: attributed_to_id, organizer_actor_id: organizer_actor_id},
         _args,
-        %{context: %{current_user: %User{role: user_role} = user}} = _resolution
+        %{
+          context: %{current_user: %User{role: user_role}, current_actor: %Actor{id: actor_id}}
+        } = _resolution
       )
       when not is_nil(attributed_to_id) do
     with %Actor{id: group_id} <- Actors.get_actor(attributed_to_id),
-         %Actor{id: actor_id} <- Users.get_actor_for_user(user),
          {:member, true} <-
            {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)},
          %Actor{} = actor <- Actors.get_actor(organizer_actor_id) do
@@ -61,6 +64,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
+  @spec list_events(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Event.t())} | {:error, :events_max_limit_reached}
   def list_events(
         _parent,
         %{page: page, limit: limit, order_by: order_by, direction: direction},
@@ -74,13 +79,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, :events_max_limit_reached}
   end
 
+  @spec find_private_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, :event_not_found}
   defp find_private_event(
          _parent,
          %{uuid: uuid},
-         %{context: %{current_user: %User{} = user}} = _resolution
+         %{context: %{current_actor: %Actor{} = profile}} = _resolution
        ) do
-    %Actor{} = profile = Users.get_actor_for_user(user)
-
     case Events.get_event_by_uuid_with_preload(uuid) do
       # Event attributed to group
       %Event{attributed_to: %Actor{}} = event ->
@@ -107,6 +112,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, :event_not_found}
   end
 
+  @spec find_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, :event_not_found}
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
     with {:has_event, %Event{} = event} <-
            {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
@@ -133,15 +140,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   List participants for event (through an event request)
   """
+  @spec list_participants_for_event(Event.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Participant.t())} | {:error, String.t()}
   def list_participants_for_event(
         %Event{id: event_id} = event,
         %{page: page, limit: limit, roles: roles},
-        %{context: %{current_user: %User{} = user}} = _resolution
+        %{context: %{current_actor: %Actor{} = actor}} = _resolution
       ) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         # Check that moderator has right
-         {:event_can_be_managed, true} <-
-           {:event_can_be_managed, can_event_be_updated_by?(event, actor)} do
+    # Check that moderator has right
+    if can_event_be_updated_by?(event, actor) do
       roles =
         case roles do
           nil ->
@@ -160,9 +167,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       participants = Events.list_participants_for_event(event_id, roles, page, limit)
       {:ok, participants}
     else
-      {:event_can_be_managed, _} ->
-        {:error,
-         dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
+      {:error,
+       dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
     end
   end
 
@@ -170,6 +176,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, %{total: 0, elements: []}}
   end
 
+  @spec stats_participants(Event.t(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def stats_participants(
         %Event{participant_stats: %EventParticipantStats{} = stats, id: event_id} = _event,
         _args,
@@ -202,6 +209,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   List related events
   """
+  @spec list_related_events(Event.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Event.t())}
   def list_related_events(
         %Event{tags: tags, organizer_actor: organizer_actor, uuid: uuid},
         _args,
@@ -243,11 +251,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, events}
   end
 
+  @spec uniq_events(list(Event.t())) :: list(Event.t())
   defp uniq_events(events), do: Enum.uniq_by(events, fn event -> event.uuid end)
 
   @doc """
   Create an event
   """
+  @spec create_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def create_event(
         _parent,
         %{organizer_actor_id: organizer_actor_id} = args,
@@ -287,15 +298,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   Update an event
   """
+  @spec update_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def update_event(
         _parent,
         %{event_id: event_id} = args,
-        %{context: %{current_user: %User{} = user}} = _resolution
+        %{context: %{current_user: %User{} = user, current_actor: %Actor{} = actor}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
-    with args <- Map.put(args, :options, args[:options] || %{}),
-         {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
-         %Actor{} = actor <- Users.get_actor_for_user(user),
+    args = Map.put(args, :options, args[:options] || %{})
+
+    with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          {:ok, args} <- verify_profile_change(args, event, user, actor),
          {:event_can_be_managed, true} <-
            {:event_can_be_managed, can_event_be_updated_by?(event, actor)},
@@ -319,7 +332,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       {:new_actor, _} ->
         {:error, dgettext("errors", "You can't attribute this event to this profile.")}
 
-      {:error, _, %Ecto.Changeset{} = error, _} ->
+      {:error, %Ecto.Changeset{} = error} ->
         {:error, error}
     end
   end
@@ -331,30 +344,37 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @doc """
   Delete an event
   """
+  @spec delete_event(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Event.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def delete_event(
         _parent,
         %{event_id: event_id},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{
+          context: %{
+            current_user: %User{role: role},
+            current_actor: %Actor{id: actor_id} = actor
+          }
+        }
       ) do
-    with {:ok, %Event{local: is_local} = event} <- Events.get_event_with_preload(event_id),
-         %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user) do
-      cond do
-        {:event_can_be_managed, true} ==
-            {:event_can_be_managed, can_event_be_deleted_by?(event, actor)} ->
-          do_delete_event(event, actor)
+    case Events.get_event_with_preload(event_id) do
+      {:ok, %Event{local: is_local} = event} ->
+        cond do
+          {:event_can_be_managed, true} ==
+              {:event_can_be_managed, can_event_be_deleted_by?(event, actor)} ->
+            do_delete_event(event, actor)
 
-        role in [:moderator, :administrator] ->
-          with {:ok, res} <- do_delete_event(event, actor, !is_local),
-               %Actor{} = actor <- Actors.get_actor(actor_id) do
-            Admin.log_action(actor, "delete", event)
+          role in [:moderator, :administrator] ->
+            with {:ok, res} <- do_delete_event(event, actor, !is_local),
+                 %Actor{} = actor <- Actors.get_actor(actor_id) do
+              Admin.log_action(actor, "delete", event)
 
-            {:ok, res}
-          end
+              {:ok, res}
+            end
 
-        true ->
-          {:error, dgettext("errors", "You cannot delete this event")}
-      end
-    else
+          true ->
+            {:error, dgettext("errors", "You cannot delete this event")}
+        end
+
       {:error, :event_not_found} ->
         {:error, dgettext("errors", "Event not found")}
     end
@@ -364,6 +384,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, dgettext("errors", "You need to be logged-in to delete an event")}
   end
 
+  @spec do_delete_event(Event.t(), Actor.t(), boolean()) :: {:ok, map()}
   defp do_delete_event(%Event{} = event, %Actor{} = actor, federate \\ true)
        when is_boolean(federate) do
     with {:ok, _activity, event} <- API.Events.delete_event(event, actor) do
@@ -371,6 +392,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
+  @spec is_organizer_group_member?(map()) :: boolean()
   defp is_organizer_group_member?(%{
          attributed_to_id: attributed_to_id,
          organizer_actor_id: organizer_actor_id
@@ -382,6 +404,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   defp is_organizer_group_member?(_), do: true
 
+  @spec verify_profile_change(map(), Event.t(), User.t(), Actor.t()) :: {:ok, map()}
   defp verify_profile_change(
          args,
          %Event{attributed_to: %Actor{}},

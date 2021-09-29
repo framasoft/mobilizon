@@ -156,30 +156,30 @@ defmodule Mobilizon.Service.DateTimeTest do
 
   describe "check if we're between hours" do
     test "basic" do
-      refute DateTimeTools.is_between_hours(
+      refute DateTimeTools.is_between_hours?(
                compare_to_datetime: ~U[2021-06-22 15:00:00Z],
                compare_to_day: ~D[2021-06-22]
              )
 
-      assert DateTimeTools.is_between_hours(
+      assert DateTimeTools.is_between_hours?(
                compare_to_datetime: ~U[2021-06-22 08:00:00Z],
                compare_to_day: ~D[2021-06-22]
              )
 
-      assert DateTimeTools.is_between_hours(
+      assert DateTimeTools.is_between_hours?(
                compare_to_datetime: ~U[2021-06-22 08:01:00Z],
                compare_to_day: ~D[2021-06-22]
              )
     end
 
     test "with special timezone" do
-      refute DateTimeTools.is_between_hours(
+      refute DateTimeTools.is_between_hours?(
                compare_to_datetime: ~U[2021-06-22 08:01:00Z],
                compare_to_day: ~D[2021-06-22],
                timezone: "Asia/Brunei"
              )
 
-      assert DateTimeTools.is_between_hours(
+      assert DateTimeTools.is_between_hours?(
                compare_to_datetime: ~U[2021-06-22 00:01:00Z],
                compare_to_day: ~D[2021-06-22],
                timezone: "Asia/Brunei"
@@ -189,12 +189,12 @@ defmodule Mobilizon.Service.DateTimeTest do
 
   describe "check if we're between hours on right day" do
     test "basic" do
-      assert DateTimeTools.is_between_hours_on_first_day(
+      assert DateTimeTools.is_between_hours_on_first_day?(
                compare_to_datetime: ~U[2021-06-20 08:00:00Z],
                compare_to_day: ~D[2021-06-20]
              )
 
-      assert DateTimeTools.is_between_hours_on_first_day(
+      assert DateTimeTools.is_between_hours_on_first_day?(
                compare_to_datetime: ~U[2021-06-21 08:00:00Z],
                compare_to_day: ~D[2021-06-21],
                locale: "fr"
@@ -202,14 +202,14 @@ defmodule Mobilizon.Service.DateTimeTest do
     end
 
     test "with special timezone" do
-      refute DateTimeTools.is_between_hours_on_first_day(
+      refute DateTimeTools.is_between_hours_on_first_day?(
                compare_to_datetime: ~U[2021-06-21 08:00:00Z],
                compare_to_day: ~D[2021-06-21],
                locale: "fr",
                timezone: "Asia/Srednekolymsk"
              )
 
-      assert DateTimeTools.is_between_hours_on_first_day(
+      assert DateTimeTools.is_between_hours_on_first_day?(
                compare_to_datetime: ~U[2021-06-20 21:00:00Z],
                compare_to_day: ~D[2021-06-21],
                locale: "fr",

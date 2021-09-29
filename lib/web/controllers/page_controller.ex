@@ -14,14 +14,25 @@ defmodule Mobilizon.Web.PageController do
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
 
+  @spec my_events(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate my_events(conn, params), to: PageController, as: :index
+  @spec create_event(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate create_event(conn, params), to: PageController, as: :index
+  @spec list_events(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate list_events(conn, params), to: PageController, as: :index
+  @spec edit_event(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate edit_event(conn, params), to: PageController, as: :index
+  @spec moderation_report(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate moderation_report(conn, params), to: PageController, as: :index
+  @spec participation_email_confirmation(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate participation_email_confirmation(conn, params), to: PageController, as: :index
+  @spec user_email_validation(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate user_email_validation(conn, params), to: PageController, as: :index
+  @spec my_groups(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate my_groups(conn, params), to: PageController, as: :index
+
+  @typep object_type ::
+           :actor | :event | :comment | :resource | :post | :discussion | :todo_list | :todo
 
   @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params), do: render(conn, :index)
@@ -62,36 +73,43 @@ defmodule Mobilizon.Web.PageController do
     render_or_error(conn, &checks?/3, status, :discussion, discussion)
   end
 
-  def resources(conn, %{"name" => _name}) do
-    handle_collection_route(conn, :resources)
-  end
-
-  def posts(conn, %{"name" => _name}) do
-    handle_collection_route(conn, :posts)
-  end
-
-  def discussions(conn, %{"name" => _name}) do
-    handle_collection_route(conn, :discussions)
-  end
-
-  def events(conn, %{"name" => _name}) do
-    handle_collection_route(conn, :events)
-  end
-
-  def todos(conn, %{"name" => _name}) do
-    handle_collection_route(conn, :todos)
-  end
-
-  @spec todo_list(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
+  @spec todo_list(Plug.Conn.t(), map) :: Plug.Conn.t() | {:error, :not_found}
   def todo_list(conn, %{"uuid" => uuid}) do
     {status, todo_list} = Cache.get_todo_list_by_uuid_with_preload(uuid)
     render_or_error(conn, &checks?/3, status, :todo_list, todo_list)
   end
 
-  @spec todo(Plug.Conn.t(), map) :: {:error, :not_found} | Plug.Conn.t()
+  @spec todo(Plug.Conn.t(), map) :: Plug.Conn.t() | {:error, :not_found}
   def todo(conn, %{"uuid" => uuid}) do
     {status, todo} = Cache.get_todo_by_uuid_with_preload(uuid)
     render_or_error(conn, &checks?/3, status, :todo, todo)
+  end
+
+  @typep collections :: :resources | :posts | :discussions | :events | :todos
+
+  @spec resources(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def resources(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :resources)
+  end
+
+  @spec posts(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def posts(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :posts)
+  end
+
+  @spec discussions(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def discussions(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :discussions)
+  end
+
+  @spec events(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def events(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :events)
+  end
+
+  @spec todos(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def todos(conn, %{"name" => _name}) do
+    handle_collection_route(conn, :todos)
   end
 
   @spec interact(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
@@ -103,6 +121,7 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
+  @spec handle_collection_route(Plug.Conn.t(), collections()) :: Plug.Conn.t()
   defp handle_collection_route(conn, collection) do
     case get_format(conn) do
       "html" ->
@@ -113,6 +132,8 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
+  @spec render_or_error(Plug.Conn.t(), function(), cache_status(), object_type(), any()) ::
+          Plug.Conn.t() | {:error, :not_found}
   defp render_or_error(conn, check_fn, status, object_type, object) do
     case check_fn.(conn, status, object) do
       true ->
@@ -136,12 +157,17 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
+  @spec is_visible?(map) :: boolean()
   defp is_visible?(%{visibility: v}), do: v in [:public, :unlisted]
   defp is_visible?(%Tombstone{}), do: true
   defp is_visible?(_), do: true
 
+  @spec ok_status?(cache_status) :: boolean()
   defp ok_status?(status), do: status in [:ok, :commit]
 
+  @typep cache_status :: :ok | :commit | :ignore
+
+  @spec ok_status_and_is_visible?(Plug.Conn.t(), cache_status, map()) :: boolean()
   defp ok_status_and_is_visible?(_conn, status, o),
     do: ok_status?(status) and is_visible?(o)
 
@@ -158,9 +184,11 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
+  @spec is_local?(map()) :: boolean | :remote
   defp is_local?(%{local: local}), do: if(local, do: true, else: :remote)
   defp is_local?(_), do: false
 
+  @spec maybe_add_noindex_header(Plug.Conn.t(), map()) :: Plug.Conn.t()
   defp maybe_add_noindex_header(conn, %{visibility: visibility})
        when visibility != :public do
     put_resp_header(conn, "x-robots-tag", "noindex")
@@ -168,6 +196,7 @@ defmodule Mobilizon.Web.PageController do
 
   defp maybe_add_noindex_header(conn, _), do: conn
 
+  @spec is_person?(Actor.t()) :: boolean()
   defp is_person?(%Actor{type: :Person}), do: true
   defp is_person?(_), do: false
 end

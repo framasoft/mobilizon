@@ -17,7 +17,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   alias Mobilizon.Todos.{Todo, TodoList}
 
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Permission, Relay, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Permission, Relay, Utils}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Types.Ownable
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -32,6 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   @doc """
   Handle incoming activities
   """
+  @spec handle_incoming(map()) :: :error | {:ok, any(), struct()}
   def handle_incoming(%{"id" => nil}), do: :error
   def handle_incoming(%{"id" => ""}), do: :error
 
@@ -49,7 +50,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         local: false
       }
 
-      ActivityPub.flag(params, false)
+      Actions.Flag.flag(params, false)
     end
   end
 
@@ -76,17 +77,17 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Activity{} = activity, entity} <-
            (if is_data_for_comment_or_discussion?(object_data) do
               Logger.debug("Chosing to create a regular comment")
-              ActivityPub.create(:comment, object_data, false)
+              Actions.Create.create(:comment, object_data, false)
             else
               Logger.debug("Chosing to initialize or add a comment to a conversation")
-              ActivityPub.create(:discussion, object_data, false)
+              Actions.Create.create(:discussion, object_data, false)
             end) do
       {:ok, activity, entity}
     else
       {:existing_comment, {:ok, %Comment{} = comment}} ->
         {:ok, nil, comment}
 
-      {:error, :event_comments_are_closed} ->
+      {:error, :event_not_allow_commenting} ->
         Logger.debug("Tried to reply to an event for which comments are closed")
         :error
     end
@@ -109,7 +110,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            object |> Converter.Event.as_to_model_data(),
          {:existing_event, nil} <- {:existing_event, Events.get_event_by_url(object_data.url)},
          {:ok, %Activity{} = activity, %Event{} = event} <-
-           ActivityPub.create(:event, object_data, false) do
+           Actions.Create.create(:event, object_data, false) do
       {:ok, activity, event}
     else
       {:existing_event, %Event{} = event} -> {:ok, nil, event}
@@ -145,7 +146,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            %Actor{type: :Group} = group <- Actors.get_actor(object_data.parent_id),
            %Actor{} = actor <- Actors.get_actor(object_data.actor_id),
            {:ok, %Activity{} = activity, %Member{} = member} <-
-             ActivityPub.join(group, actor, false, %{
+             Actions.Join.join(group, actor, false, %{
                url: object_data.url,
                metadata: %{role: object_data.role}
              }) do
@@ -172,7 +173,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:existing_post, nil} <-
            {:existing_post, Posts.get_post_by_url(object_data.url)},
          {:ok, %Activity{} = activity, %Post{} = post} <-
-           ActivityPub.create(:post, object_data, false) do
+           Actions.Create.create(:post, object_data, false) do
       {:ok, activity, post}
     else
       {:existing_post, %Post{} = post} ->
@@ -197,7 +198,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         {:ok, nil, comment}
 
       {:ok, entity} ->
-        ActivityPub.delete(entity, Relay.get_actor(), false)
+        Actions.Delete.delete(entity, Relay.get_actor(), false)
     end
   end
 
@@ -206,10 +207,15 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     with {:ok, %Actor{} = followed} <- ActivityPubActor.get_or_fetch_actor_by_url(followed, true),
          {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
-         {:ok, activity, object} <- ActivityPub.follow(follower, followed, id, false) do
+         {:ok, activity, object} <-
+           Actions.Follow.follow(follower, followed, id, false) do
       {:ok, activity, object}
     else
-      e ->
+      {:error, :person_no_follow} ->
+        Logger.warn("Only group and instances can be followed")
+        :error
+
+      {:error, e} ->
         Logger.warn("Unable to handle Follow activity #{inspect(e)}")
         :error
     end
@@ -228,7 +234,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data when is_map(object_data) <-
            object |> Converter.TodoList.as_to_model_data(),
          {:ok, %Activity{} = activity, %TodoList{} = todo_list} <-
-           ActivityPub.create(:todo_list, object_data, false, %{"actor" => actor_url}) do
+           Actions.Create.create(:todo_list, object_data, false, %{
+             "actor" => actor_url
+           }) do
       {:ok, activity, todo_list}
     else
       {:error, :group_not_found} -> :error
@@ -247,7 +255,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data <-
            object |> Converter.Todo.as_to_model_data(),
          {:ok, %Activity{} = activity, %Todo{} = todo} <-
-           ActivityPub.create(:todo, object_data, false) do
+           Actions.Create.create(:todo, object_data, false) do
       {:ok, activity, todo}
     else
       {:existing_todo, %Todo{} = todo} -> {:ok, nil, todo}
@@ -272,7 +280,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:member, true} <-
            {:member, Actors.is_member?(object_data.creator_id, object_data.actor_id)},
          {:ok, %Activity{} = activity, %Resource{} = resource} <-
-           ActivityPub.create(:resource, object_data, false) do
+           Actions.Create.create(:resource, object_data, false) do
       {:ok, activity, resource}
     else
       {:existing_resource, %Resource{} = resource} ->
@@ -383,7 +391,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
-           ActivityPub.update(old_actor, object_data, false) do
+           Actions.Update.update(old_actor, object_data, false) do
       {:ok, activity, new_actor}
     else
       e ->
@@ -411,7 +419,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             Utils.origin_check?(actor_url, update_data) ||
               Permission.can_update_group_object?(actor, old_event)},
          {:ok, %Activity{} = activity, %Event{} = new_event} <-
-           ActivityPub.update(old_event, object_data, false) do
+           Actions.Update.update(old_event, object_data, false) do
       {:ok, activity, new_event}
     else
       _e ->
@@ -433,7 +441,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          object_data <- transform_object_data_for_discussion(object_data),
          {:ok, %Activity{} = activity, new_entity} <-
-           ActivityPub.update(old_entity, object_data, false) do
+           Actions.Update.update(old_entity, object_data, false) do
       {:ok, activity, new_entity}
     else
       _e ->
@@ -456,7 +464,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             Utils.origin_check?(actor_url, update_data["object"]) ||
               Permission.can_update_group_object?(actor, old_post)},
          {:ok, %Activity{} = activity, %Post{} = new_post} <-
-           ActivityPub.update(old_post, object_data, false) do
+           Actions.Update.update(old_post, object_data, false) do
       {:ok, activity, new_post}
     else
       {:origin_check, _} ->
@@ -484,7 +492,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             Utils.origin_check?(actor_url, update_data) ||
               Permission.can_update_group_object?(actor, old_resource)},
          {:ok, %Activity{} = activity, %Resource{} = new_resource} <-
-           ActivityPub.update(old_resource, object_data, false) do
+           Actions.Update.update(old_resource, object_data, false) do
       {:ok, activity, new_resource}
     else
       _e ->
@@ -505,7 +513,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object_data <- Converter.Member.as_to_model_data(object),
          {:ok, old_entity} <- object |> Utils.get_url() |> ActivityPub.fetch_object_from_url(),
          {:ok, %Activity{} = activity, new_entity} <-
-           ActivityPub.update(old_entity, object_data, false, %{moderator: actor}) do
+           Actions.Update.update(old_entity, object_data, false, %{moderator: actor}) do
       {:ok, activity, new_entity}
     else
       _e ->
@@ -522,7 +530,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
     with object_url <- Utils.get_url(object),
          {:ok, entity} <- ActivityPub.fetch_object_from_url(object_url) do
-      ActivityPub.delete(entity, Relay.get_actor(), false)
+      Actions.Delete.delete(entity, Relay.get_actor(), false)
     else
       {:ok, %Tombstone{} = tombstone} ->
         {:ok, nil, tombstone}
@@ -545,7 +553,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor),
          {:ok, object} <- fetch_obj_helper_as_activity_streams(object_id),
          {:ok, activity, object} <-
-           ActivityPub.unannounce(actor, object, id, cancelled_activity_id, false) do
+           Actions.Announce.unannounce(
+             actor,
+             object,
+             id,
+             cancelled_activity_id,
+             false
+           ) do
       {:ok, activity, object}
     else
       _e -> :error
@@ -563,7 +577,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     with {:ok, %Actor{domain: nil} = followed} <-
            ActivityPubActor.get_or_fetch_actor_by_url(followed),
          {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
-         {:ok, activity, object} <- ActivityPub.unfollow(follower, followed, id, false) do
+         {:ok, activity, object} <-
+           Actions.Follow.unfollow(follower, followed, id, false) do
       {:ok, activity, object}
     else
       e ->
@@ -577,6 +592,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Delete", "object" => object, "actor" => _actor, "id" => _id} = data
       ) do
+    Logger.info("Handle incoming to delete an object")
+
     with actor_url <- Utils.get_actor(data),
          {:actor, {:ok, %Actor{} = actor}} <-
            {:actor, ActivityPubActor.get_or_fetch_actor_by_url(actor_url)},
@@ -586,14 +603,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:origin_check,
             Utils.origin_check_from_id?(actor_url, object_id) ||
               Permission.can_delete_group_object?(actor, object)},
-         {:ok, activity, object} <- ActivityPub.delete(object, actor, false) do
+         {:ok, activity, object} <- Actions.Delete.delete(object, actor, false) do
       {:ok, activity, object}
     else
       {:origin_check, false} ->
         Logger.warn("Object origin check failed")
         :error
 
-      {:actor, {:error, "Could not fetch by AP id"}} ->
+      {:actor, {:error, _err}} ->
         {:error, :unknown_actor}
 
       {:error, e} ->
@@ -630,7 +647,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:origin_check,
             Utils.origin_check?(actor_url, data) ||
               Permission.can_update_group_object?(actor, old_resource)},
-         {:ok, activity, new_resource} <- ActivityPub.move(:resource, old_resource, object_data) do
+         {:ok, activity, new_resource} <-
+           Actions.Move.move(:resource, old_resource, object_data) do
       {:ok, activity, new_resource}
     else
       e ->
@@ -658,7 +676,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
          {:ok, activity, object} <-
-           ActivityPub.join(object, actor, false, %{
+           Actions.Join.join(object, actor, false, %{
              url: id,
              metadata: %{message: Map.get(data, "participationMessage")}
            }) do
@@ -675,7 +693,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(actor),
          object <- Utils.get_url(object),
          {:ok, object} <- ActivityPub.fetch_object_from_url(object),
-         {:ok, activity, object} <- ActivityPub.leave(object, actor, false) do
+         {:ok, activity, object} <- Actions.Leave.leave(object, actor, false) do
       {:ok, activity, object}
     else
       {:only_organizer, true} ->
@@ -707,7 +725,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:ok, %Actor{} = target} <-
            target |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:ok, activity, %Member{} = member} <-
-           ActivityPub.invite(object, actor, target, false, %{url: id}) do
+           Actions.Invite.invite(object, actor, target, false, %{url: id}) do
       {:ok, activity, member}
     end
   end
@@ -727,7 +745,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:is_admin, Actors.get_member(moderator_id, group_id)},
          {:is_member, {:ok, %Member{role: role} = member}} when role != :rejected <-
            {:is_member, Actors.get_member(person_id, group_id)} do
-      ActivityPub.remove(member, group, moderator, false)
+      Actions.Remove.remove(member, group, moderator, false)
     else
       {:is_admin, {:ok, %Member{}}} ->
         Logger.warn(
@@ -779,7 +797,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},
          {:ok, %Activity{} = activity, %Follower{approved: true} = follow} <-
-           ActivityPub.accept(
+           Actions.Accept.accept(
              :follow,
              follow,
              false
@@ -817,7 +835,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            {:follow, get_follow(follow_object)},
          {:same_actor, true} <- {:same_actor, actor.id == followed.id},
          {:ok, activity, _} <-
-           ActivityPub.reject(:follow, follow) do
+           Actions.Reject.reject(:follow, follow) do
       {:ok, activity, follow}
     else
       {:follow, _err} ->
@@ -872,7 +890,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:can_accept_event_join, true} <-
            {:can_accept_event_join, can_manage_event?(actor_accepting, event)},
          {:ok, %Activity{} = activity, %Participant{role: :participant} = participant} <-
-           ActivityPub.accept(
+           Actions.Accept.accept(
              :join,
              participant,
              false
@@ -904,7 +922,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
        when role in [:not_approved, :rejected, :invited] and type in [:join, :invite] do
     # Or maybe for groups it's the group that sends the Accept activity
     with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
-           ActivityPub.accept(
+           Actions.Accept.accept(
              type,
              member,
              false
@@ -922,7 +940,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          {:can_accept_event_reject, true} <-
            {:can_accept_event_reject, can_manage_event?(actor_accepting, event)},
          {:ok, activity, participant} <-
-           ActivityPub.reject(:join, participant, false),
+           Actions.Reject.reject(:join, participant, false),
          :ok <- Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
@@ -951,9 +969,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   defp do_handle_incoming_reject_invite(invite_object, %Actor{} = actor_rejecting) do
     with {:invite, {:ok, %Member{role: :invited, actor_id: actor_id} = member}} <-
            {:invite, get_member(invite_object)},
-         {:same_actor, true} <- {:same_actor, actor_rejecting.id === actor_id},
+         {:same_actor, true} <- {:same_actor, actor_rejecting.id == actor_id},
          {:ok, activity, member} <-
-           ActivityPub.reject(:invite, member, false) do
+           Actions.Reject.reject(:invite, member, false) do
       {:ok, activity, member}
     end
   end
@@ -992,7 +1010,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   # Comment initiates a whole discussion only if it has full title
-  @spec is_data_for_comment_or_discussion?(map()) :: boolean()
   defp is_data_a_discussion_initialization?(object_data) do
     not Map.has_key?(object_data, :title) or
       is_nil(object_data.title) or object_data.title == ""
@@ -1106,21 +1123,21 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   defp is_group_object_gone(object_id) do
-    case ActivityPub.fetch_object_from_url(object_id, force: true) do
-      {:error, error_message, object} when error_message in ["Gone", "Not found"] ->
-        {:ok, object}
+    Logger.debug("is_group_object_gone #{object_id}")
 
+    case ActivityPub.fetch_object_from_url(object_id, force: true) do
       # comments are just emptied
       {:ok, %Comment{deleted_at: deleted_at} = object} when not is_nil(deleted_at) ->
+        {:ok, object}
+
+      {:error, :http_gone, object} ->
+        Logger.debug("object is really gone")
         {:ok, object}
 
       {:ok, %{url: url} = object} ->
         if Utils.are_same_origin?(url, Endpoint.url()),
           do: {:ok, object},
           else: {:error, "Group object URL remote"}
-
-      {:error, {:error, err}} ->
-        {:error, err}
 
       {:error, err} ->
         {:error, err}
@@ -1133,7 +1150,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   # Before 1.0.4 the object of a "Remove" activity was an actor's URL
   # instead of the member's URL.
   # TODO: Remove in 1.2
-  @spec get_remove_object(map() | String.t()) :: {:ok, String.t() | integer()}
+  @spec get_remove_object(map() | String.t()) :: {:ok, integer()}
   defp get_remove_object(object) do
     case object |> Utils.get_url() |> ActivityPub.fetch_object_from_url() do
       {:ok, %Member{actor: %Actor{id: person_id}}} -> {:ok, person_id}
@@ -1156,7 +1173,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     organizer_actor_id == actor_id
   end
 
-  defp can_manage_event?(_actor, _event) do
+  defp can_manage_event?(%Actor{} = _actor, %Event{} = _event) do
     false
   end
 end

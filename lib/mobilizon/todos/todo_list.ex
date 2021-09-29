@@ -10,6 +10,8 @@ defmodule Mobilizon.Todos.TodoList do
   alias Mobilizon.Todos.Todo
 
   @type t :: %__MODULE__{
+          id: String.t(),
+          url: String.t(),
           title: String.t(),
           todos: [Todo.t()],
           actor: Actor.t(),
@@ -34,6 +36,7 @@ defmodule Mobilizon.Todos.TodoList do
   @attrs @required_attrs ++ @optional_attrs
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(todo_list, attrs) do
     todo_list
     |> cast(attrs, @attrs)

@@ -143,15 +143,13 @@ defmodule Mobilizon.Service.Geospatial.Nominatim do
     if is_nil(value), do: url, else: do_add_parameter(url, key, value)
   end
 
-  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
+  @spec do_add_parameter(String.t(), :zoom | :country_code | :api_key, any()) :: String.t()
   defp do_add_parameter(url, :zoom, zoom),
     do: "#{url}&zoom=#{zoom}"
 
-  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
   defp do_add_parameter(url, :country_code, country_code),
     do: "#{url}&countrycodes=#{country_code}"
 
-  @spec do_add_parameter(String.t(), atom(), any()) :: String.t()
   defp do_add_parameter(url, :api_key, api_key),
     do: "#{url}&key=#{api_key}"
 

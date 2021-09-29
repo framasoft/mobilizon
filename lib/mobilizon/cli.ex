@@ -9,6 +9,7 @@ defmodule Mobilizon.CLI do
   """
   alias Mix.Tasks.Mobilizon.Ecto.{Migrate, Rollback}
 
+  @spec run(String.t()) :: any()
   def run(args) do
     [task | args] = String.split(args)
 
@@ -43,11 +44,13 @@ defmodule Mobilizon.CLI do
     end
   end
 
-  def migrate(args) do
+  @spec migrate(String.t()) :: any()
+  defp migrate(args) do
     Migrate.run(args)
   end
 
-  def rollback(args) do
+  @spec rollback(String.t()) :: any()
+  defp rollback(args) do
     Rollback.run(args)
   end
 end

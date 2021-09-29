@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.ErrorView do
   alias Mobilizon.Service.Metadata.Instance
   import Mobilizon.Web.Views.Utils
 
+  @spec render(String.t(), map()) :: map() | String.t() | Plug.Conn.t()
   def render("404.html", %{conn: conn}) do
     with tags <- Instance.build_tags(),
          {:ok, html} <- inject_tags(tags, get_locale(conn)) do

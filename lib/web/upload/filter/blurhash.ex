@@ -8,7 +8,7 @@ defmodule Mobilizon.Web.Upload.Filter.BlurHash do
   @behaviour Mobilizon.Web.Upload.Filter
 
   @spec filter(Upload.t()) ::
-          {:ok, :filtered, Upload.t()} | {:ok, :noop} | {:error, String.t()}
+          {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{tempfile: file, content_type: "image" <> _} = upload) do
     {:ok, :filtered, %Upload{upload | blurhash: generate_blurhash(file)}}
   rescue

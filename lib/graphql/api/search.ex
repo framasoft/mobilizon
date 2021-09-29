@@ -59,8 +59,8 @@ defmodule Mobilizon.GraphQL.API.Search do
   @doc """
   Search events
   """
-  @spec search_events(String.t(), integer | nil, integer | nil) ::
-          {:ok, Page.t()} | {:error, String.t()}
+  @spec search_events(map(), integer | nil, integer | nil) ::
+          {:ok, Page.t()}
   def search_events(%{term: term} = args, page \\ 1, limit \\ 10) do
     term = String.trim(term)
 
@@ -78,6 +78,7 @@ defmodule Mobilizon.GraphQL.API.Search do
     end
   end
 
+  @spec interact(String.t()) :: {:ok, struct()} | {:error, :not_found}
   def interact(uri) do
     case ActivityPub.fetch_object_from_url(uri) do
       {:ok, object} ->

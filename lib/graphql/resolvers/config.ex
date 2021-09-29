@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
   @doc """
   Gets config.
   """
+  @spec get_config(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def get_config(_parent, _params, %{context: %{ip: ip}}) do
     geolix = Geolix.lookup(ip)
 
@@ -28,6 +29,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
     {:ok, data}
   end
 
+  @spec terms(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def terms(_parent, %{locale: locale}, _resolution) do
     type = Config.instance_terms_type()
 
@@ -41,6 +43,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
     {:ok, %{body_html: body_html, type: type, url: url}}
   end
 
+  @spec privacy(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def privacy(_parent, %{locale: locale}, _resolution) do
     type = Config.instance_privacy_type()
 
@@ -54,6 +57,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
     {:ok, %{body_html: body_html, type: type, url: url}}
   end
 
+  @spec config_cache :: map()
   defp config_cache do
     case Cachex.fetch(:config, "full_config", fn _key ->
            case build_config_cache() do
@@ -62,10 +66,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
            end
          end) do
       {status, value} when status in [:ok, :commit] -> value
-      _err -> nil
+      _err -> %{}
     end
   end
 
+  @spec build_config_cache :: map()
   defp build_config_cache do
     %{
       name: Config.instance_name(),

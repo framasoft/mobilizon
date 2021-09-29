@@ -12,7 +12,7 @@ defmodule Mobilizon.Web.Email.Activity do
   alias Mobilizon.Config
   alias Mobilizon.Web.Email
 
-  @spec direct_activity(String.t(), list(), String.t()) ::
+  @spec direct_activity(String.t(), list(), Keyword.t()) ::
           Bamboo.Email.t()
   def direct_activity(
         email,

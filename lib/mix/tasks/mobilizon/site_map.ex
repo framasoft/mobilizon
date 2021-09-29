@@ -11,6 +11,7 @@ defmodule Mix.Tasks.Mobilizon.SiteMap do
   @preferred_cli_env "prod"
 
   @shortdoc "Generates a new Sitemap"
+  @spec run(list(String.t())) :: :ok
   def run(["generate"]) do
     start_mobilizon()
 

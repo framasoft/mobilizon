@@ -18,6 +18,7 @@ defmodule Mobilizon.Service.Notifier do
 
   @callback send(User.t(), list(Activity.t()), Keyword.t()) :: {:ok, any()} | {:error, String.t()}
 
+  @spec notify(User.t(), Activity.t(), Keyword.t()) :: :ok
   def notify(%User{} = user, %Activity{} = activity, opts \\ []) do
     Enum.each(providers(opts), & &1.send(user, activity, opts))
   end

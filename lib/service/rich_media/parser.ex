@@ -192,7 +192,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end
   end
 
-  @spec maybe_parse(String.t()) :: {:halt, map()} | {:cont, map()}
+  @spec maybe_parse(String.t()) :: map()
   defp maybe_parse(html) do
     Enum.reduce_while(parsers(), %{}, fn parser, acc ->
       case parser.parse(html, acc) do
@@ -286,7 +286,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     end
   end
 
-  @spec check_remote_picture_path(map()) :: map()
+  @spec check_remote_picture_path(map()) :: {:ok, map()}
   defp check_remote_picture_path(%{image_remote_url: image_remote_url, url: url} = data)
        when is_binary(image_remote_url) and is_binary(url) do
     Logger.debug("Checking image_remote_url #{image_remote_url}")

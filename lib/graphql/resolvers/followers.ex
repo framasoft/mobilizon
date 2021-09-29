@@ -4,9 +4,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
@@ -16,17 +16,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
         %{page: page, limit: limit} = args,
         %{
           context: %{
-            current_user: %User{role: user_role} = user
+            current_user: %User{role: user_role},
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <-
-           {:member, Actors.is_moderator?(actor_id, group_id) or is_moderator(user_role)} do
+    if Actors.is_moderator?(actor_id, group_id) or is_moderator(user_role) do
       {:ok,
        Actors.list_paginated_followers_for_actor(group, Map.get(args, :approved), page, limit)}
     else
-      _ -> {:error, :unauthorized}
+      {:error, :unauthorized}
     end
   end
 
@@ -35,19 +34,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   @spec update_follower(any(), map(), map()) :: {:ok, Follower.t()} | {:error, any()}
   def update_follower(_, %{id: follower_id, approved: approved}, %{
         context: %{
-          current_user: %User{} = user
+          current_actor: %Actor{id: actor_id}
         }
       }) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         %Follower{target_actor: %Actor{type: :Group, id: group_id}} = follower <-
+    with %Follower{target_actor: %Actor{type: :Group, id: group_id}} = follower <-
            Actors.get_follower(follower_id),
          {:member, true} <-
            {:member, Actors.is_moderator?(actor_id, group_id)},
          {:ok, _activity, %Follower{} = follower} <-
            (if approved do
-              ActivityPub.accept(:follow, follower)
+              Actions.Accept.accept(:follow, follower)
             else
-              ActivityPub.reject(:follow, follower)
+              Actions.Reject.reject(:follow, follower)
             end) do
       {:ok, follower}
     else

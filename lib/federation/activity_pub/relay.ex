@@ -11,8 +11,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Follower}
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger
   alias Mobilizon.Service.Workers.Background
@@ -27,76 +26,100 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     get_actor()
   end
 
-  @spec get_actor() :: Actor.t() | {:error, Ecto.Changeset.t()}
+  @spec get_actor() :: Actor.t() | no_return
   def get_actor do
-    with {:ok, %Actor{} = actor} <-
-           Actors.get_or_create_internal_actor("relay") do
-      actor
+    case Actors.get_or_create_internal_actor("relay") do
+      {:ok, %Actor{} = actor} ->
+        actor
+
+      {:error, %Ecto.Changeset{} = _err} ->
+        raise("Relay actor not found")
     end
   end
 
-  @spec follow(String.t()) :: {:ok, Activity.t(), Follower.t()}
+  @spec follow(String.t()) ::
+          {:ok, Activity.t(), Follower.t()} | {:error, atom()} | {:error, String.t()}
   def follow(address) do
+    %Actor{} = local_actor = get_actor()
+
     with {:ok, target_instance} <- fetch_actor(address),
-         %Actor{} = local_actor <- get_actor(),
          {:ok, %Actor{} = target_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.follow(local_actor, target_actor) do
       Logger.info("Relay: followed instance #{target_instance}; id=#{activity.data["id"]}")
       {:ok, activity, follow}
     else
-      {:error, e} ->
-        Logger.warn("Error while following remote instance: #{inspect(e)}")
-        {:error, e}
+      {:error, :person_no_follow} ->
+        Logger.warn("Only group and instances can be followed")
+        {:error, :person_no_follow}
 
-      e ->
+      {:error, e} ->
         Logger.warn("Error while following remote instance: #{inspect(e)}")
         {:error, e}
     end
   end
 
-  @spec unfollow(String.t()) :: {:ok, Activity.t(), Follower.t()}
+  @spec unfollow(String.t()) ::
+          {:ok, Activity.t(), Follower.t()} | {:error, atom()} | {:error, String.t()}
   def unfollow(address) do
+    %Actor{} = local_actor = get_actor()
+
     with {:ok, target_instance} <- fetch_actor(address),
-         %Actor{} = local_actor <- get_actor(),
          {:ok, %Actor{} = target_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.unfollow(local_actor, target_actor) do
       Logger.info("Relay: unfollowed instance #{target_instance}: id=#{activity.data["id"]}")
       {:ok, activity, follow}
     else
-      e ->
+      {:error, e} ->
         Logger.warn("Error while unfollowing remote instance: #{inspect(e)}")
         {:error, e}
     end
   end
 
-  @spec accept(String.t()) :: {:ok, Activity.t(), Follower.t()}
+  @spec accept(String.t()) ::
+          {:ok, Activity.t(), Follower.t()} | {:error, atom()} | {:error, String.t()}
   def accept(address) do
     Logger.debug("We're trying to accept a relay subscription")
+    %Actor{} = local_actor = get_actor()
 
     with {:ok, target_instance} <- fetch_actor(address),
-         %Actor{} = local_actor <- get_actor(),
          {:ok, %Actor{} = target_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.accept(target_actor, local_actor) do
       {:ok, activity, follow}
+    else
+      {:error, e} ->
+        Logger.warn("Error while accepting remote instance follow: #{inspect(e)}")
+        {:error, e}
     end
   end
 
+  @spec reject(String.t()) ::
+          {:ok, Activity.t(), Follower.t()} | {:error, atom()} | {:error, String.t()}
   def reject(address) do
     Logger.debug("We're trying to reject a relay subscription")
+    %Actor{} = local_actor = get_actor()
 
     with {:ok, target_instance} <- fetch_actor(address),
-         %Actor{} = local_actor <- get_actor(),
          {:ok, %Actor{} = target_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.reject(target_actor, local_actor) do
       {:ok, activity, follow}
+    else
+      {:error, e} ->
+        Logger.warn("Error while rejecting remote instance follow: #{inspect(e)}")
+        {:error, e}
     end
   end
 
-  @spec refresh(String.t()) :: {:ok, any()}
+  @spec refresh(String.t()) ::
+          {:ok, Oban.Job.t()}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, :bad_url}
+          | {:error, ActivityPubActor.make_actor_errors()}
+          | {:error, :no_internal_relay_actor}
+          | {:error, :url_nil}
   def refresh(address) do
     Logger.debug("We're trying to refresh a remote instance")
 
@@ -106,6 +129,10 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       Background.enqueue("refresh_profile", %{
         "actor_id" => target_actor_id
       })
+    else
+      {:error, e} ->
+        Logger.warn("Error while refreshing remote instance: #{inspect(e)}")
+        {:error, e}
     end
   end
 
@@ -117,7 +144,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
          {object, object_id} <- fetch_object(object),
          id <- "#{object_id}/announces/#{actor_id}" do
       Logger.info("Publishing activity #{id} to all relays")
-      ActivityPub.announce(actor, object, id, true, false)
+      Actions.Announce.announce(actor, object, id, true, false)
     else
       e ->
         Logger.error("Error while getting local instance actor: #{inspect(e)}")
@@ -138,7 +165,8 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
 
   defp fetch_object(object) when is_binary(object), do: {object, object}
 
-  @spec fetch_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec fetch_actor(String.t()) ::
+          {:ok, String.t()} | {:error, WebFinger.finger_errors() | :bad_url}
   # Dirty hack
   defp fetch_actor("https://" <> address), do: fetch_actor(address)
   defp fetch_actor("http://" <> address), do: fetch_actor(address)
@@ -154,26 +182,15 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
         check_actor("relay@#{host}")
 
       true ->
-        {:error, "Bad URL"}
+        {:error, :bad_url}
     end
   end
 
-  @spec check_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec check_actor(String.t()) :: {:ok, String.t()} | {:error, WebFinger.finger_errors()}
   defp check_actor(username_and_domain) do
     case Actors.get_actor_by_name(username_and_domain) do
       %Actor{url: url} -> {:ok, url}
-      nil -> finger_actor(username_and_domain)
-    end
-  end
-
-  @spec finger_actor(String.t()) :: {:ok, String.t()} | {:error, String.t()}
-  defp finger_actor(nickname) do
-    case WebFinger.finger(nickname) do
-      {:ok, url} when is_binary(url) ->
-        {:ok, url}
-
-      _e ->
-        {:error, "No ActivityPub URL found in WebFinger"}
+      nil -> WebFinger.finger(username_and_domain)
     end
   end
 end

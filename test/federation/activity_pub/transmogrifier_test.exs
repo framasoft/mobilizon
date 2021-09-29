@@ -173,7 +173,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:ok, group}
-            actor_url -> {:ok, actor}
+            ^actor_url -> {:ok, actor}
           end
         end do
         activity = %{
@@ -202,7 +202,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
-            @mobilizon_group_url -> {:error, "Not found"}
+            @mobilizon_group_url -> {:error, :http_not_found}
             ^actor_url -> {:ok, actor}
           end
         end do
@@ -279,7 +279,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         get_or_fetch_actor_by_url: fn url ->
           case url do
             @mobilizon_group_url -> {:ok, group}
-            actor_url -> {:ok, actor}
+            ^actor_url -> {:ok, actor}
           end
         end do
         activity = %{
@@ -308,7 +308,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       with_mock ActivityPubActor, [:passthrough],
         get_or_fetch_actor_by_url: fn url ->
           case url do
-            @mobilizon_group_url -> {:error, "Not found"}
+            @mobilizon_group_url -> {:error, :http_not_found}
             ^actor_url -> {:ok, actor}
           end
         end do
@@ -379,7 +379,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         }
       }
 
-      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+      assert {:ok, %Activity{data: _data, local: false}, %Resource{} = resource} =
                Transmogrifier.handle_incoming(activity)
 
       assert resource.actor_id == group.id
@@ -420,7 +420,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         }
       }
 
-      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+      assert {:ok, %Activity{data: _data, local: false}, %Resource{} = resource} =
                Transmogrifier.handle_incoming(activity)
 
       assert resource.actor_id == group.id
@@ -475,7 +475,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         }
       }
 
-      assert {:ok, %Activity{data: data, local: false}, %Resource{} = resource} =
+      assert {:ok, %Activity{data: _data, local: false}, %Resource{} = resource} =
                Transmogrifier.handle_incoming(activity)
 
       assert resource.actor_id == group.id
@@ -643,7 +643,7 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
       Mock
       |> expect(:call, fn
-        %{method: :get, url: actor_url}, _opts ->
+        %{method: :get, url: ^actor_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 

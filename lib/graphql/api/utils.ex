@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.API.Utils do
   @doc """
   Creates HTML content from text and mentions
   """
-  @spec make_content_html(String.t(), list(), String.t()) :: String.t()
+  @spec make_content_html(String.t(), list(), String.t()) :: {String.t(), list(), list()}
   def make_content_html(text, additional_tags, content_type) do
     with {text, mentions, tags} <- format_input(text, content_type, []) do
       {text, mentions, additional_tags ++ Enum.map(tags, fn {_, tag} -> tag end)}

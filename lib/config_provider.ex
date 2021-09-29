@@ -4,8 +4,10 @@ defmodule Mobilizon.ConfigProvider do
   """
   @behaviour Config.Provider
 
+  @spec init(String.t()) :: String.t()
   def init(path) when is_binary(path), do: path
 
+  @spec load(Keyword.t(), String.t()) :: Keyword.t()
   def load(config, path) do
     config_path = System.get_env("MOBILIZON_CONFIG_PATH") || path
 

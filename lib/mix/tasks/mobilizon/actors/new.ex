@@ -94,7 +94,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.New do
       {:admin, nil} ->
         shell_error("Profile with username #{Keyword.get(options, :group_admin)} wasn't found")
 
-      {:error, :insert_group, %Ecto.Changeset{errors: errors}, _} ->
+      {:error, %Ecto.Changeset{errors: errors}} ->
         shell_error(inspect(errors))
         shell_error("Error while creating group because of the above reason")
     end

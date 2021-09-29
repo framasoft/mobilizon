@@ -10,10 +10,12 @@ defmodule Mobilizon.Web.Plugs.Federating do
 
   import Plug.Conn
 
+  @spec init(any()) :: any()
   def init(options) do
     options
   end
 
+  @spec call(Plug.Conn.t(), Keyword.t()) :: Plug.Conn.t()
   def call(conn, _opts) do
     if Mobilizon.Config.get([:instance, :federating]) do
       conn

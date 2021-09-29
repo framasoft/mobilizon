@@ -34,7 +34,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 creates a comment", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do
@@ -51,7 +50,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 doesn't allow creating events if it's disabled", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do
@@ -93,8 +91,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
       conn: conn,
       event: event
     } do
-      actor = insert(:actor)
-
       res =
         conn
         |> AbsintheHelpers.graphql_query(
@@ -108,7 +104,6 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
     test "create_comment/3 creates a reply to a comment", %{
       conn: conn,
-      actor: actor,
       user: user,
       event: event
     } do
@@ -175,7 +170,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
       # Change the current actor for user
       actor2 = insert(:actor, user: user)
-      Mobilizon.Users.update_user_default_actor(user.id, actor2.id)
+      Mobilizon.Users.update_user_default_actor(user.id, actor2)
 
       res =
         conn
@@ -188,7 +183,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
       assert hd(res["errors"])["message"] ==
                "You cannot delete this comment"
 
-      Mobilizon.Users.update_user_default_actor(user.id, actor.id)
+      Mobilizon.Users.update_user_default_actor(user.id, actor)
 
       res =
         conn

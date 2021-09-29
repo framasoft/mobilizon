@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.GraphQLSocket do
 
   alias Mobilizon.Users.User
 
+  @spec connect(map, Phoenix.Socket.t()) :: {:ok, Phoenix.Socket.t()} | :error
   def connect(%{"token" => token}, socket) do
     with {:ok, authed_socket} <-
            Guardian.Phoenix.Socket.authenticate(socket, Mobilizon.Web.Auth.Guardian, token),
@@ -26,5 +27,6 @@ defmodule Mobilizon.Web.GraphQLSocket do
 
   def connect(_args, _socket), do: :error
 
+  @spec id(any) :: nil
   def id(_socket), do: nil
 end

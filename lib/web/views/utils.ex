@@ -8,7 +8,7 @@ defmodule Mobilizon.Web.Views.Utils do
   import Plug.Conn, only: [put_status: 2, halt: 1]
 
   # sobelow_skip ["Traversal.FileModule"]
-  @spec inject_tags(Enum.t(), String.t()) :: {:ok, {:safe, String.t()}}
+  @spec inject_tags(Enum.t(), String.t()) :: {:ok, {:safe, String.t()}} | {:error, atom()}
   def inject_tags(tags, locale \\ "en") do
     with path <- Path.join(Application.app_dir(:mobilizon, "priv/static"), "index.html"),
          {:exists, true} <- {:exists, File.exists?(path)},
@@ -17,6 +17,7 @@ defmodule Mobilizon.Web.Views.Utils do
       {:ok, {:safe, safe}}
     else
       {:exists, false} -> {:error, :index_not_found}
+      {:error, error} when is_atom(error) -> {:error, error}
     end
   end
 

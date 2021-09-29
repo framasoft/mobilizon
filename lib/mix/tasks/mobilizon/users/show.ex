@@ -17,11 +17,18 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
 
     with {:ok, %User{} = user} <- Users.get_user_by_email(email),
          actors <- Users.get_actors_for_user(user) do
+      status =
+        case user.confirmed_at do
+          %DateTime{} = confirmed_at ->
+            "Activated on #{DateTime.to_string(confirmed_at)} (UTC)"
+
+          _ ->
+            "disabled"
+        end
+
       shell_info("""
       Informations for the user #{user.email}:
-        - account status: #{if user.confirmed_at,
-        do: "Activated on #{DateTime.to_string(user.confirmed_at)} (UTC)",
-        else: "disabled"}
+        - account status: #{status}
         - Role: #{user.role}
         #{display_actors(actors)}
       """)

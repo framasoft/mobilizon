@@ -9,12 +9,13 @@ defmodule Mobilizon.Mixfile do
       version: @version,
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:gettext] ++ Mix.compilers(),
       xref: [exclude: [:eldap]],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
+      dialyzer: [plt_add_apps: [:mix]],
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -94,7 +95,7 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.0"},
+      {:phoenix, "~> 1.6.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.15.3"},
@@ -106,7 +107,7 @@ defmodule Mobilizon.Mixfile do
       {:guardian_phoenix, "~> 2.0"},
       {:argon2_elixir, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
-      {:ecto_autoslug_field, "~> 2.0"},
+      {:ecto_autoslug_field, "~> 3.0"},
       {:geo, "~> 3.0"},
       {:geo_postgis, "~> 3.1"},
       {:timex, "~> 3.0"},
@@ -160,9 +161,7 @@ defmodule Mobilizon.Mixfile do
       {:sentry, "~> 8.0"},
       {:html_entities, "~> 0.5"},
       {:sweet_xml, "~> 0.7"},
-      {:web_push_encryption,
-       git: "https://github.com/tcitworld/elixir-web-push-encryption",
-       ref: "4361bd02b0b7f2cb5f8ac302bcd1210b57964a51"},
+      {:web_push_encryption, "~> 0.3"},
       {:eblurhash, "~> 1.2"},
       {:struct_access, "~> 1.1.2"},
       {:paasaa, "~> 0.5.0"},
@@ -180,7 +179,8 @@ defmodule Mobilizon.Mixfile do
       {:elixir_feed_parser, "~> 2.1.0", only: :test},
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
-      {:sobelow, "~> 0.8", only: [:dev, :test]}
+      {:sobelow, "~> 0.8", only: [:dev, :test]},
+      {:doctor, "~> 0.18.0", only: :dev}
     ] ++ oauth_deps()
   end
 

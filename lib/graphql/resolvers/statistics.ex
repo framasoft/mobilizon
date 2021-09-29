@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Statistics do
   @doc """
   Gets config.
   """
+  @spec get_statistics(any(), any(), any()) :: {:ok, map()}
   def get_statistics(_parent, _params, _context) do
     {:ok,
      %{

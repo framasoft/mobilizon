@@ -15,125 +15,153 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   import Mobilizon.Federation.ActivityPub.Utils,
     only: [maybe_date_fetch: 2, sign_fetch: 4, origin_check?: 2]
 
-  @spec fetch(String.t(), Keyword.t()) :: {:ok, map()}
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
+
+  @spec fetch(String.t(), Keyword.t()) ::
+          {:ok, map()}
+          | {:error,
+             :invalid_url | :http_gone | :http_error | :http_not_found | :content_not_json}
   def fetch(url, options \\ []) do
     on_behalf_of = Keyword.get(options, :on_behalf_of, Relay.get_actor())
+    date = Signature.generate_date_header()
 
-    with false <- address_invalid(url),
-         date <- Signature.generate_date_header(),
-         headers <-
-           [{:Accept, "application/activity+json"}]
-           |> maybe_date_fetch(date)
-           |> sign_fetch(on_behalf_of, url, date),
-         client <-
-           ActivityPubClient.client(headers: headers),
-         {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 <-
-           ActivityPubClient.get(client, url) do
-      {:ok, data}
+    headers =
+      [{:Accept, "application/activity+json"}]
+      |> maybe_date_fetch(date)
+      |> sign_fetch(on_behalf_of, url, date)
+
+    client = ActivityPubClient.client(headers: headers)
+
+    if address_valid?(url) do
+      case ActivityPubClient.get(client, url) do
+        {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 and is_map(data) ->
+          {:ok, data}
+
+        {:ok, %Tesla.Env{status: 410}} ->
+          Logger.debug("Resource at #{url} is 410 Gone")
+          {:error, :http_gone}
+
+        {:ok, %Tesla.Env{status: 404}} ->
+          Logger.debug("Resource at #{url} is 404 Gone")
+          {:error, :http_not_found}
+
+        {:ok, %Tesla.Env{body: data}} when is_binary(data) ->
+          {:error, :content_not_json}
+
+        {:ok, %Tesla.Env{} = res} ->
+          Logger.debug("Resource returned bad HTTP code inspect #{res}")
+          {:error, :http_error}
+      end
     else
-      {:ok, %Tesla.Env{status: 410}} ->
-        Logger.debug("Resource at #{url} is 410 Gone")
-        {:error, "Gone"}
-
-      {:ok, %Tesla.Env{status: 404}} ->
-        Logger.debug("Resource at #{url} is 404 Gone")
-        {:error, "Not found"}
-
-      {:ok, %Tesla.Env{} = res} ->
-        {:error, res}
-
-      {:error, err} ->
-        {:error, err}
+      {:error, :invalid_url}
     end
   end
 
-  @spec fetch_and_create(String.t(), Keyword.t()) :: {:ok, map(), struct()}
+  @spec fetch_and_create(String.t(), Keyword.t()) ::
+          {:ok, map(), struct()} | {:error, atom()} | :error
   def fetch_and_create(url, options \\ []) do
-    with {:ok, data} when is_map(data) <- fetch(url, options),
-         {:origin_check, true} <- {:origin_check, origin_check?(url, data)},
-         params <- %{
-           "type" => "Create",
-           "to" => data["to"],
-           "cc" => data["cc"],
-           "actor" => data["actor"] || data["attributedTo"],
-           "attributedTo" => data["attributedTo"] || data["actor"],
-           "object" => data
-         } do
-      Transmogrifier.handle_incoming(params)
-    else
-      {:origin_check, false} ->
-        Logger.warn("Object origin check failed")
-        {:error, "Object origin check failed"}
+    case fetch(url, options) do
+      {:ok, data} when is_map(data) ->
+        if origin_check?(url, data) do
+          case Transmogrifier.handle_incoming(%{
+                 "type" => "Create",
+                 "to" => data["to"],
+                 "cc" => data["cc"],
+                 "actor" => data["actor"] || data["attributedTo"],
+                 "attributedTo" => data["attributedTo"] || data["actor"],
+                 "object" => data
+               }) do
+            {:ok, entity, structure} ->
+              {:ok, entity, structure}
 
-      # Returned content is not JSON
-      {:ok, data} when is_binary(data) ->
-        {:error, "Failed to parse content as JSON"}
+            {:error, error} when is_atom(error) ->
+              {:error, error}
+
+            :error ->
+              {:error, :transmogrifier_error}
+          end
+        else
+          Logger.warn("Object origin check failed")
+          {:error, :object_origin_check_failed}
+        end
 
       {:error, err} ->
         {:error, err}
     end
   end
 
-  @spec fetch_and_update(String.t(), Keyword.t()) :: {:ok, map(), struct()}
+  @spec fetch_and_update(String.t(), Keyword.t()) ::
+          {:ok, map(), struct()} | {:error, atom()}
   def fetch_and_update(url, options \\ []) do
-    with {:ok, data} when is_map(data) <- fetch(url, options),
-         {:origin_check, true} <- {:origin_check, origin_check(url, data)},
-         params <- %{
-           "type" => "Update",
-           "to" => data["to"],
-           "cc" => data["cc"],
-           "actor" => data["actor"] || data["attributedTo"],
-           "attributedTo" => data["attributedTo"] || data["actor"],
-           "object" => data
-         } do
-      Transmogrifier.handle_incoming(params)
-    else
-      {:origin_check, false} ->
-        {:error, "Object origin check failed"}
+    case fetch(url, options) do
+      {:ok, data} when is_map(data) ->
+        if origin_check(url, data) do
+          Transmogrifier.handle_incoming(%{
+            "type" => "Update",
+            "to" => data["to"],
+            "cc" => data["cc"],
+            "actor" => data["actor"] || data["attributedTo"],
+            "attributedTo" => data["attributedTo"] || data["actor"],
+            "object" => data
+          })
+        else
+          Logger.warn("Object origin check failed")
+          {:error, :object_origin_check_failed}
+        end
 
       {:error, err} ->
         {:error, err}
     end
   end
+
+  @type fetch_actor_errors ::
+          :json_decode_error | :actor_deleted | :http_error | :actor_not_allowed_type
 
   @doc """
   Fetching a remote actor's information through its AP ID
   """
-  @spec fetch_and_prepare_actor_from_url(String.t()) :: {:ok, map()} | {:error, atom()} | any()
+  @spec fetch_and_prepare_actor_from_url(String.t()) ::
+          {:ok, map()} | {:error, fetch_actor_errors}
   def fetch_and_prepare_actor_from_url(url) do
     Logger.debug("Fetching and preparing actor from url")
     Logger.debug(inspect(url))
 
-    res =
-      with {:ok, %{status: 200, body: body}} <-
-             Tesla.get(url,
-               headers: [{"Accept", "application/activity+json"}],
-               follow_redirect: true
-             ),
-           :ok <- Logger.debug("response okay, now decoding json"),
-           {:ok, data} <- Jason.decode(body) do
-        Logger.debug("Got activity+json response at actor's endpoint, now converting data")
-        {:ok, ActorConverter.as_to_model_data(data)}
-      else
-        # Actor is gone, probably deleted
-        {:ok, %{status: 410}} ->
-          Logger.info("Response HTTP 410")
-          {:error, :actor_deleted}
+    case Tesla.get(url,
+           headers: [{"Accept", "application/activity+json"}],
+           follow_redirect: true
+         ) do
+      {:ok, %{status: 200, body: body}} ->
+        Logger.debug("response okay, now decoding json")
 
-        {:ok, %Tesla.Env{}} ->
-          Logger.info("Non 200 HTTP Code")
-          {:error, :http_error}
+        case Jason.decode(body) do
+          {:ok, data} when is_map(data) ->
+            Logger.debug("Got activity+json response at actor's endpoint, now converting data")
 
-        {:error, e} ->
-          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-          {:error, e}
+            case ActorConverter.as_to_model_data(data) do
+              {:error, :actor_not_allowed_type} ->
+                {:error, :actor_not_allowed_type}
 
-        e ->
-          Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-          {:error, e}
-      end
+              map when is_map(map) ->
+                {:ok, map}
+            end
 
-    res
+          {:error, %Jason.DecodeError{} = e} ->
+            Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
+            {:error, :json_decode_error}
+        end
+
+      {:ok, %{status: 410}} ->
+        Logger.info("Response HTTP 410")
+        {:error, :actor_deleted}
+
+      {:ok, %Tesla.Env{}} ->
+        Logger.info("Non 200 HTTP Code")
+        {:error, :http_error}
+
+      {:error, error} ->
+        Logger.warn("Could not fetch actor at fetch #{url}, #{inspect(error)}")
+        {:error, :http_error}
+    end
   end
 
   @spec origin_check(String.t(), map()) :: boolean()
@@ -147,11 +175,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
     end
   end
 
-  @spec address_invalid(String.t()) :: false | {:error, :invalid_url}
-  defp address_invalid(address) do
-    with %URI{host: host, scheme: scheme} <- URI.parse(address),
-         true <- is_nil(host) or is_nil(scheme) do
-      {:error, :invalid_url}
-    end
+  @spec address_valid?(String.t()) :: boolean
+  defp address_valid?(address) do
+    %URI{host: host, scheme: scheme} = URI.parse(address)
+    is_valid_string(host) and is_valid_string(scheme)
   end
 end

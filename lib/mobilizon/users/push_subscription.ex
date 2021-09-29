@@ -6,6 +6,14 @@ defmodule Mobilizon.Users.PushSubscription do
   alias Mobilizon.Users.User
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          digest: String.t(),
+          user: User.t(),
+          endpoint: String.t(),
+          auth: String.t(),
+          p256dh: String.t()
+        }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "user_push_subscriptions" do
     field(:digest, :string)
@@ -17,6 +25,7 @@ defmodule Mobilizon.Users.PushSubscription do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(push_subscription, attrs) do
     push_subscription
     |> cast(attrs, [:user_id, :endpoint, :auth, :p256dh])

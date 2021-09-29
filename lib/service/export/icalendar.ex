@@ -15,12 +15,13 @@ defmodule Mobilizon.Service.Export.ICalendar do
   @doc """
   Create cache for an actor, an event or an user token
   """
+  @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, atom()}
   def create_cache("actor_" <> name) do
     case export_public_actor(name) do
       {:ok, res} ->
         {:commit, res}
 
-      err ->
+      {:error, err} ->
         {:ignore, err}
     end
   end
@@ -30,8 +31,11 @@ defmodule Mobilizon.Service.Export.ICalendar do
          {:ok, res} <- export_public_event(event) do
       {:commit, res}
     else
-      err ->
+      {:error, err} ->
         {:ignore, err}
+
+      nil ->
+        {:ignore, :event_not_found}
     end
   end
 
@@ -40,30 +44,20 @@ defmodule Mobilizon.Service.Export.ICalendar do
       {:ok, res} ->
         {:commit, res}
 
-      err ->
+      {:error, err} ->
         {:ignore, err}
     end
   end
 
   def create_cache("instance") do
-    case fetch_instance_feed() do
-      {:ok, res} ->
-        {:commit, res}
-
-      err ->
-        {:ignore, err}
-    end
+    {:ok, res} = fetch_instance_feed()
+    {:commit, res}
   end
 
   @spec fetch_instance_feed :: {:ok, String.t()}
   defp fetch_instance_feed do
-    case Common.fetch_instance_public_content(@item_limit) do
-      {:ok, events, _posts} ->
-        {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
-
-      err ->
-        {:error, err}
-    end
+    {:ok, events, _posts} = Common.fetch_instance_public_content(@item_limit)
+    {:ok, %ICalendar{events: events |> Enum.map(&do_export_event/1)} |> ICalendar.to_ics()}
   end
 
   @doc """
@@ -77,13 +71,12 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   The event must have a visibility of `:public` or `:unlisted`
   """
-  @spec export_public_event(Event.t()) :: {:ok, String.t()}
+  @spec export_public_event(Event.t()) :: {:ok, String.t()} | {:error, :event_not_public}
   def export_public_event(%Event{visibility: visibility} = event)
       when visibility in [:public, :unlisted] do
     {:ok, events_to_ics([event])}
   end
 
-  @spec export_public_event(Event.t()) :: {:error, :event_not_public}
   def export_public_event(%Event{}), do: {:error, :event_not_public}
 
   @doc """
@@ -91,28 +84,33 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   The actor must have a visibility of `:public` or `:unlisted`, as well as the events
   """
-  @spec export_public_actor(String.t()) :: String.t()
+  @spec export_public_actor(String.t()) ::
+          {:ok, String.t()} | {:error, :actor_not_public | :actor_not_found}
   def export_public_actor(name, limit \\ @item_limit) do
     case Common.fetch_actor_event_feed(name, limit) do
       {:ok, _actor, events, _posts} ->
         {:ok, events_to_ics(events)}
 
-      err ->
+      {:error, err} ->
         {:error, err}
     end
   end
 
-  @spec export_private_actor(Actor.t()) :: String.t()
+  @spec export_private_actor(Actor.t(), integer()) :: {:ok, String.t()}
   def export_private_actor(%Actor{} = actor, limit \\ @item_limit) do
-    with events <- Common.fetch_actor_private_events(actor, limit) do
-      {:ok, events_to_ics(events)}
-    end
+    events = Common.fetch_actor_private_events(actor, limit)
+    {:ok, events_to_ics(events)}
   end
 
-  @spec fetch_events_from_token(String.t()) :: String.t()
+  @spec fetch_events_from_token(String.t(), integer()) ::
+          {:ok, String.t()} | {:error, :actor_not_public | :actor_not_found}
   defp fetch_events_from_token(token, limit \\ @item_limit) do
-    with %{events: events} <- Common.fetch_events_from_token(token, limit) do
-      {:ok, events_to_ics(events)}
+    case Common.fetch_events_from_token(token, limit) do
+      %{events: events} ->
+        {:ok, events_to_ics(events)}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -138,6 +136,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     }
   end
 
+  @spec vendor :: String.t()
   defp vendor do
     "Mobilizon #{Config.instance_version()}"
   end

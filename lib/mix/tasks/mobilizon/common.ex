@@ -9,6 +9,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
   """
   require Logger
 
+  @spec start_mobilizon :: any()
   def start_mobilizon do
     if mix_task?(), do: Mix.Task.run("app.config")
 
@@ -21,10 +22,12 @@ defmodule Mix.Tasks.Mobilizon.Common do
     {:ok, _} = Application.ensure_all_started(:mobilizon)
   end
 
+  @spec get_option(Keyword.t(), atom(), String.t(), String.t() | nil, String.t() | nil) :: any()
   def get_option(options, opt, prompt, defval \\ nil, defname \\ nil) do
     Keyword.get(options, opt) || shell_prompt(prompt, defval, defname)
   end
 
+  @spec shell_prompt(String.t(), String.t() | nil, String.t() | nil) :: String.t()
   def shell_prompt(prompt, defval \\ nil, defname \\ nil) do
     prompt_message = "#{prompt} [#{defname || defval}] "
 
@@ -48,6 +51,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
     end
   end
 
+  @spec shell_yes?(String.t()) :: boolean()
   def shell_yes?(message) do
     if mix_shell?(),
       do: Mix.shell().yes?("Continue?"),
@@ -61,7 +65,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
       else: IO.puts(message)
   end
 
-  @spec shell_error(String.t()) :: :ok
+  @spec shell_error(String.t(), Keyword.t()) :: nil | no_return
   def shell_error(message, options \\ []) do
     if mix_shell?() do
       Mix.shell().error(message)
@@ -75,10 +79,13 @@ defmodule Mix.Tasks.Mobilizon.Common do
   end
 
   @doc "Performs a safe check whether `Mix.shell/0` is available (does not raise if Mix is not loaded)"
+  @spec mix_shell? :: boolean
   def mix_shell?, do: :erlang.function_exported(Mix, :shell, 0)
 
+  @spec mix_task? :: boolean
   def mix_task?, do: :erlang.function_exported(Mix.Task, :run, 1)
 
+  @spec escape_sh_path(String.t()) :: String.t()
   def escape_sh_path(path) do
     ~S(') <> String.replace(path, ~S('), ~S(\')) <> ~S(')
   end
@@ -97,6 +104,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
     end
   end
 
+  @spec show_subtasks_for_module(module()) :: :ok
   def show_subtasks_for_module(module_name) do
     tasks = list_subtasks_for_module(module_name)
 
@@ -107,7 +115,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
     end)
   end
 
-  @spec list_subtasks_for_module(atom()) :: list({String.t(), String.t()})
+  @spec list_subtasks_for_module(module()) :: list({String.t(), String.t()})
   def list_subtasks_for_module(module_name) do
     Application.load(:mobilizon)
     {:ok, modules} = :application.get_key(:mobilizon, :modules)
@@ -121,10 +129,12 @@ defmodule Mix.Tasks.Mobilizon.Common do
     |> Enum.map(&format_module/1)
   end
 
+  @spec format_module(module()) :: {String.t(), String.t() | nil}
   defp format_module(module) do
     {format_name(to_string(module)), shortdoc(module)}
   end
 
+  @spec format_name(String.t()) :: String.t()
   defp format_name("Elixir.Mix.Tasks.Mobilizon." <> task_name) do
     String.downcase(task_name)
   end

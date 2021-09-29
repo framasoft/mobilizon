@@ -19,6 +19,8 @@ defmodule Mobilizon.Web.PageView do
   alias Mobilizon.Federation.ActivityStream.Convertible
   import Mobilizon.Web.Views.Utils
 
+  @doc false
+  @spec render(String.t(), %{conn: Plug.Conn.t()}) :: map() | String.t() | Plug.Conn.t()
   def render("actor.activity-json", %{conn: %{assigns: %{object: %Actor{} = actor}}}) do
     actor
     |> Convertible.model_to_as()

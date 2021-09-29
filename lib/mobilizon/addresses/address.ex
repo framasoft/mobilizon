@@ -57,7 +57,7 @@ defmodule Mobilizon.Addresses.Address do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = address, attrs) do
     address
     |> cast(attrs, @attrs)
@@ -73,6 +73,7 @@ defmodule Mobilizon.Addresses.Address do
     put_change(changeset, :url, url)
   end
 
+  @spec coords(nil | t) :: nil | {float, float}
   def coords(nil), do: nil
 
   def coords(%__MODULE__{} = address) do
@@ -81,6 +82,7 @@ defmodule Mobilizon.Addresses.Address do
     end
   end
 
+  @spec representation(nil | t) :: nil | String.t()
   def representation(nil), do: nil
 
   def representation(%__MODULE__{} = address) do

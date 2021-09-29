@@ -10,6 +10,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
   @doc """
   List all of an user's registered push subscriptions
   """
+  @spec list_user_push_subscriptions(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(PushSubscription.t())} | {:error, :unauthenticated}
   def list_user_push_subscriptions(_parent, %{page: page, limit: limit}, %{
         context: %{current_user: %User{id: user_id}}
       }) do
@@ -22,6 +24,8 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
   @doc """
   Register a push subscription
   """
+  @spec register_push_subscription(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, String.t()} | {:error, String.t()}
   def register_push_subscription(_parent, args, %{
         context: %{current_user: %User{id: user_id}}
       }) do

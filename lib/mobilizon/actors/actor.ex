@@ -11,7 +11,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Discussions.Comment
-  alias Mobilizon.Events.{Event, FeedToken}
+  alias Mobilizon.Events.{Event, FeedToken, Participant}
   alias Mobilizon.Medias.File
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -23,6 +23,7 @@ defmodule Mobilizon.Actors.Actor do
   require Logger
 
   @type t :: %__MODULE__{
+          id: integer(),
           url: String.t(),
           outbox_url: String.t(),
           inbox_url: String.t(),
@@ -33,8 +34,8 @@ defmodule Mobilizon.Actors.Actor do
           posts_url: String.t(),
           events_url: String.t(),
           type: ActorType.t(),
-          name: String.t(),
-          domain: String.t(),
+          name: String.t() | nil,
+          domain: String.t() | nil,
           summary: String.t(),
           preferred_username: String.t(),
           keys: String.t(),
@@ -42,12 +43,13 @@ defmodule Mobilizon.Actors.Actor do
           openness: ActorOpenness.t(),
           visibility: ActorVisibility.t(),
           suspended: boolean,
-          avatar: File.t(),
-          banner: File.t(),
+          avatar: File.t() | nil,
+          banner: File.t() | nil,
           user: User.t(),
           followers: [Follower.t()],
           followings: [Follower.t()],
           organized_events: [Event.t()],
+          participations: [Participant.t()],
           comments: [Comment.t()],
           feed_tokens: [FeedToken.t()],
           created_reports: [Report.t()],
@@ -184,6 +186,7 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:created_reports, Report, foreign_key: :reporter_id)
     has_many(:subject_reports, Report, foreign_key: :reported_id)
     has_many(:report_notes, Note, foreign_key: :moderator_id)
+    has_many(:participations, Participant, foreign_key: :actor_id)
     has_many(:mentions, Mention)
     has_many(:shares, Share, foreign_key: :actor_id)
     has_many(:owner_shares, Share, foreign_key: :owner_actor_id)
@@ -243,7 +246,7 @@ defmodule Mobilizon.Actors.Actor do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @attrs)
@@ -278,7 +281,7 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Changeset for person registration.
   """
-  @spec registration_changeset(t, map) :: Ecto.Changeset.t()
+  @spec registration_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def registration_changeset(%__MODULE__{} = actor, attrs) do
     actor
     |> cast(attrs, @registration_attrs)
@@ -293,19 +296,14 @@ defmodule Mobilizon.Actors.Actor do
   """
   @spec remote_actor_creation_changeset(map) :: Ecto.Changeset.t()
   def remote_actor_creation_changeset(attrs) do
-    changeset =
-      %__MODULE__{}
-      |> cast(attrs, @remote_actor_creation_attrs)
-      |> validate_required(@remote_actor_creation_required_attrs)
-      |> common_changeset(attrs)
-      |> unique_username_validator()
-      |> validate_required(:domain)
-      |> validate_length(:summary, max: 5000)
-      |> validate_length(:preferred_username, max: 100)
-
-    Logger.debug("Remote actor creation: #{inspect(changeset)}")
-
-    changeset
+    %__MODULE__{}
+    |> cast(attrs, @remote_actor_creation_attrs)
+    |> validate_required(@remote_actor_creation_required_attrs)
+    |> common_changeset(attrs)
+    |> unique_username_validator()
+    |> validate_required(:domain)
+    |> validate_length(:summary, max: 5000)
+    |> validate_length(:preferred_username, max: 100)
   end
 
   @spec common_changeset(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
@@ -323,8 +321,8 @@ defmodule Mobilizon.Actors.Actor do
   @doc """
   Changeset for group creation
   """
-  @spec group_creation_changeset(t, map) :: Ecto.Changeset.t()
-  def group_creation_changeset(%__MODULE__{} = actor, params) do
+  @spec group_creation_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
+  def group_creation_changeset(actor, params) do
     actor
     |> cast(params, @group_creation_attrs)
     |> build_urls(:Group)
@@ -416,12 +414,8 @@ defmodule Mobilizon.Actors.Actor do
   @spec build_relay_creation_attrs :: Ecto.Changeset.t()
   def build_relay_creation_attrs do
     data = %{
-      name: Config.get([:instance, :name], "Mobilizon"),
-      summary:
-        Config.get(
-          [:instance, :description],
-          "An internal service actor for this Mobilizon instance"
-        ),
+      name: Config.instance_name(),
+      summary: Config.instance_description(),
       keys: Crypto.generate_rsa_2048_private_key(),
       preferred_username: "relay",
       domain: nil,

@@ -6,6 +6,8 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
   @behaviour Mobilizon.Web.Upload.Filter
 
   alias Mobilizon.Config
+  alias Mobilizon.Web.Upload
+  require Logger
 
   @default_optimizers [
     JpegOptim,
@@ -16,24 +18,24 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
     Cwebp
   ]
 
-  def filter(%Mobilizon.Web.Upload{tempfile: file, content_type: "image" <> _}) do
+  @spec filter(Upload.t()) :: {:ok, :filtered | :noop} | {:error, :file_not_found}
+  def filter(%Upload{tempfile: file, content_type: "image" <> _}) do
     optimizers = Config.get([__MODULE__, :optimizers], @default_optimizers)
 
     case ExOptimizer.optimize(file, deps: optimizers) do
       {:ok, _res} ->
         {:ok, :filtered}
 
-      {:error, err} ->
-        require Logger
+      {:error, :file_not_found} ->
+        Logger.warn("Unable to optimize file #{file}. File was not found")
+        {:error, :file_not_found}
 
+      {:error, err} ->
         Logger.warn(
           "Unable to optimize file #{file}. The return from the process was #{inspect(err)}"
         )
 
         {:ok, :noop}
-
-      err ->
-        {:error, err}
     end
   end
 

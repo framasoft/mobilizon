@@ -71,9 +71,6 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
         Actor #{preferred_username} refreshed
         """)
 
-      {:actor, nil} ->
-        shell_error("Error: No such actor")
-
       {:error, err} when is_binary(err) ->
         shell_error(err)
 

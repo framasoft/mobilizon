@@ -28,16 +28,16 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Entity do
   @moduledoc """
   ActivityPub entity behaviour
   """
-  @type t :: %{id: String.t()}
+  @type t :: %{required(:id) => any(), optional(:url) => String.t(), optional(atom()) => any()}
 
   @callback create(data :: any(), additionnal :: map()) ::
-              {:ok, t(), ActivityStream.t()}
+              {:ok, t(), ActivityStream.t()} | {:error, any()}
 
-  @callback update(struct :: t(), attrs :: map(), additionnal :: map()) ::
-              {:ok, t(), ActivityStream.t()}
+  @callback update(structure :: t(), attrs :: map(), additionnal :: map()) ::
+              {:ok, t(), ActivityStream.t()} | {:error, any()}
 
-  @callback delete(struct :: t(), Actor.t(), local :: boolean(), map()) ::
-              {:ok, ActivityStream.t(), Actor.t(), t()}
+  @callback delete(structure :: t(), actor :: Actor.t(), local :: boolean(), additionnal :: map()) ::
+              {:ok, ActivityStream.t(), Actor.t(), t()} | {:error, any()}
 end
 
 defprotocol Mobilizon.Federation.ActivityPub.Types.Managable do
@@ -45,46 +45,61 @@ defprotocol Mobilizon.Federation.ActivityPub.Types.Managable do
   ActivityPub entity Managable protocol.
   """
 
-  @spec update(Entity.t(), map(), map()) :: {:ok, Entity.t(), ActivityStream.t()}
   @doc """
   Updates a `Managable` entity with the appropriate attributes and returns the updated entity and an activitystream representation for it
   """
+  @spec update(Entity.t(), map(), map()) ::
+          {:ok, Entity.t(), ActivityStream.t()} | {:error, any()}
   def update(entity, attrs, additionnal)
 
-  @spec delete(Entity.t(), Actor.t(), boolean(), map()) ::
-          {:ok, ActivityStream.t(), Actor.t(), Entity.t()}
   @doc "Deletes an entity and returns the activitystream representation for it"
+  @spec delete(Entity.t(), Actor.t(), boolean(), map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Entity.t()} | {:error, any()}
   def delete(entity, actor, local, additionnal)
 end
 
 defprotocol Mobilizon.Federation.ActivityPub.Types.Ownable do
-  @type group_role :: :member | :moderator | :administrator | nil
-
-  @spec group_actor(Entity.t()) :: Actor.t() | nil
   @doc "Returns an eventual group for the entity"
+  @spec group_actor(Entity.t()) :: Actor.t() | nil
   def group_actor(entity)
 
-  @spec actor(Entity.t()) :: Actor.t() | nil
   @doc "Returns the actor for the entity"
+  @spec actor(Entity.t()) :: Actor.t() | nil
   def actor(entity)
 
+  @doc """
+  Returns the list of permissions for an entity
+  """
   @spec permissions(Entity.t()) :: Permission.t()
   def permissions(entity)
 end
 
 defimpl Managable, for: Event do
+  @spec update(Event.t(), map, map) ::
+          {:error, atom() | Ecto.Changeset.t()} | {:ok, Event.t(), ActivityStream.t()}
   defdelegate update(entity, attrs, additionnal), to: Events
+
+  @spec delete(entity :: Event.t(), actor :: Actor.t(), local :: boolean(), additionnal :: map()) ::
+          {:ok, ActivityStream.t(), Actor.t(), Event.t()} | {:error, atom() | Ecto.Changeset.t()}
   defdelegate delete(entity, actor, local, additionnal), to: Events
 end
 
 defimpl Ownable, for: Event do
+  @spec group_actor(Event.t()) :: Actor.t() | nil
   defdelegate group_actor(entity), to: Events
+  @spec actor(Event.t()) :: Actor.t() | nil
   defdelegate actor(entity), to: Events
+  @spec permissions(Event.t()) :: Permission.t()
   defdelegate permissions(entity), to: Events
 end
 
 defimpl Managable, for: Comment do
+  @spec update(Comment.t(), map, map) ::
+          {:error, Ecto.Changeset.t()} | {:ok, Comment.t(), ActivityStream.t()}
   defdelegate update(entity, attrs, additionnal), to: Comments
+
+  @spec delete(Comment.t(), Actor.t(), boolean, map) ::
+          {:error, Ecto.Changeset.t()} | {:ok, ActivityStream.t(), Actor.t(), Comment.t()}
   defdelegate delete(entity, actor, local, additionnal), to: Comments
 end
 

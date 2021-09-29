@@ -19,7 +19,7 @@ defmodule Mobilizon.Users.User do
           password_hash: String.t(),
           password: String.t(),
           role: UserRole.t(),
-          confirmed_at: DateTime.t(),
+          confirmed_at: DateTime.t() | nil,
           confirmation_sent_at: DateTime.t(),
           confirmation_token: String.t(),
           reset_password_sent_at: DateTime.t(),
@@ -32,7 +32,10 @@ defmodule Mobilizon.Users.User do
           last_sign_in_at: DateTime.t(),
           last_sign_in_ip: String.t(),
           current_sign_in_ip: String.t(),
-          current_sign_in_at: DateTime.t()
+          current_sign_in_at: DateTime.t(),
+          activity_settings: [ActivitySetting.t()],
+          settings: Setting.t(),
+          unconfirmed_email: String.t() | nil
         }
 
   @required_attrs [:email]
@@ -96,7 +99,7 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec changeset(t, map) :: Ecto.Changeset.t()
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = user, attrs) do
     changeset =
       user
@@ -129,7 +132,6 @@ defmodule Mobilizon.Users.User do
   def registration_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
-    |> cast_assoc(:default_actor)
     |> validate_required(@registration_required_attrs)
     |> hash_password()
     |> save_confirmation_token()
@@ -148,7 +150,6 @@ defmodule Mobilizon.Users.User do
   def auth_provider_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
-    |> cast_assoc(:default_actor)
     |> put_change(:confirmed_at, DateTime.utc_now() |> DateTime.truncate(:second))
     |> validate_required(@auth_provider_required_attrs)
   end

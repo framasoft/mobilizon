@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Config, Reports, Users}
+  alias Mobilizon.{Actors, Config, Reports}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
@@ -13,6 +13,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
 
   alias Mobilizon.GraphQL.API
 
+  @spec list_reports(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Report.t())} | {:error, String.t()}
   def list_reports(
         _parent,
         %{page: page, limit: limit, status: status},
@@ -26,6 +28,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to list reports")}
   end
 
+  @spec get_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def get_report(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
     case Mobilizon.Reports.get_report(id) do
@@ -44,16 +48,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   @doc """
   Create a report, either logged-in or anonymously
   """
+  @spec create_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def create_report(
         _parent,
         args,
-        %{context: %{current_user: %User{} = user}} = _resolution
+        %{context: %{current_actor: %Actor{id: reporter_id}}} = _resolution
       ) do
-    with %Actor{id: reporter_id} <- Users.get_actor_for_user(user),
-         {:ok, _, %Report{} = report} <-
-           args |> Map.put(:reporter_id, reporter_id) |> API.Reports.report() do
-      {:ok, report}
-    else
+    case args |> Map.put(:reporter_id, reporter_id) |> API.Reports.report() do
+      {:ok, _, %Report{} = report} ->
+        {:ok, report}
+
       _error ->
         {:error, dgettext("errors", "Error while saving report")}
     end
@@ -81,14 +86,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
   @doc """
   Update a report's status
   """
+  @spec update_report(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Report.t()} | {:error, String.t()}
   def update_report(
         _parent,
         %{report_id: report_id, status: status},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{} = actor}}
       )
       when is_moderator(role) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         %Report{} = report <- Mobilizon.Reports.get_report(report_id),
+    with %Report{} = report <- Mobilizon.Reports.get_report(report_id),
          {:ok, %Report{} = report} <- API.Reports.update_report_status(actor, report, status) do
       {:ok, report}
     else
@@ -101,28 +107,28 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to update a report")}
   end
 
+  @spec create_report_note(any(), map(), Absinthe.Resolution.t()) :: {:ok, Note.t()}
   def create_report_note(
         _parent,
         %{report_id: report_id, content: content},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{id: moderator_id}}}
       )
       when is_moderator(role) do
-    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
-         %Report{} = report <- Reports.get_report(report_id),
+    with %Report{} = report <- Reports.get_report(report_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.create_report_note(report, moderator, content) do
       {:ok, note}
     end
   end
 
+  @spec delete_report_note(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def delete_report_note(
         _parent,
         %{note_id: note_id},
-        %{context: %{current_user: %User{role: role} = user}}
+        %{context: %{current_user: %User{role: role}, current_actor: %Actor{id: moderator_id}}}
       )
       when is_moderator(role) do
-    with %Actor{id: moderator_id} <- Users.get_actor_for_user(user),
-         %Note{} = note <- Reports.get_note(note_id),
+    with %Note{} = note <- Reports.get_note(note_id),
          %Actor{} = moderator <- Actors.get_local_actor_with_preload(moderator_id),
          {:ok, %Note{} = note} <- API.Reports.delete_report_note(note, moderator) do
       {:ok, %{id: note.id}}

@@ -6,33 +6,33 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   describe "Tag Resolver" do
-    test "list_tags/3 returns the list of tags", context do
+    @tags_query """
+    query Tags($filter: String) {
+      tags(filter: $filter) {
+        id
+        related {
+          id
+          slug
+          title
+        }
+        slug
+        title
+      }
+    }
+    """
+
+    test "list_tags/3 returns the list of tags", %{conn: conn} do
       tag1 = insert(:tag)
       tag2 = insert(:tag)
       tag3 = insert(:tag)
       insert(:tag_relation, tag: tag1, link: tag2)
       insert(:tag_relation, tag: tag3, link: tag1)
 
-      query = """
-      {
-        tags {
-          id,
-          slug,
-          title,
-          related {
-            id,
-            title,
-            slug
-          }
-        }
-      }
-      """
-
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "tags"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @tags_query)
 
-      tags = json_response(res, 200)["data"]["tags"]
+      tags = res["data"]["tags"]
       assert tags |> length == 3
 
       assert tags
@@ -44,6 +44,20 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
                [tag2, tag3]
                |> Enum.map(fn tag -> tag.slug end)
                |> MapSet.new()
+    end
+
+    test "list_tags/3 returns tags for a filter", %{conn: conn} do
+      tag1 = insert(:tag, title: "PineApple", slug: "pineapple")
+      tag2 = insert(:tag, title: "sexy pineapple", slug: "sexy-pineapple")
+      _tag3 = insert(:tag)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(query: @tags_query, variables: %{filter: "apple"})
+
+      tags = res["data"]["tags"]
+      assert tags |> length == 2
+      assert [tag1.id, tag2.id] == tags |> Enum.map(&String.to_integer(&1["id"]))
     end
   end
 end

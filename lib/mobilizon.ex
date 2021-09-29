@@ -59,6 +59,7 @@ defmodule Mobilizon do
         cachex_spec(:config, 10, 60, 60),
         cachex_spec(:rich_media_cache, 10, 60, 60),
         cachex_spec(:activity_pub, 2500, 3, 15),
+        cachex_spec(:default_actors, 2500, 3, 15),
         %{
           id: :cache_key_value,
           start: {Cachex, :start_link, [:key_value]}

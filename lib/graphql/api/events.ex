@@ -6,8 +6,7 @@ defmodule Mobilizon.GraphQL.API.Events do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
 
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Utils}
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
 
   @doc """
@@ -15,15 +14,8 @@ defmodule Mobilizon.GraphQL.API.Events do
   """
   @spec create_event(map) :: {:ok, Activity.t(), Event.t()} | any
   def create_event(args) do
-    with organizer_actor <- Map.get(args, :organizer_actor),
-         args <- extract_pictures_from_event_body(args, organizer_actor),
-         args <-
-           Map.update(args, :picture, nil, fn picture ->
-             process_picture(picture, organizer_actor)
-           end) do
-      # For now we don't federate drafts but it will be needed if we want to edit them as groups
-      ActivityPub.create(:event, args, should_federate(args))
-    end
+    # For now we don't federate drafts but it will be needed if we want to edit them as groups
+    Actions.Create.create(:event, prepare_args(args), should_federate(args))
   end
 
   @doc """
@@ -31,21 +23,26 @@ defmodule Mobilizon.GraphQL.API.Events do
   """
   @spec update_event(map, Event.t()) :: {:ok, Activity.t(), Event.t()} | any
   def update_event(args, %Event{} = event) do
-    with organizer_actor <- Map.get(args, :organizer_actor),
-         args <- extract_pictures_from_event_body(args, organizer_actor),
-         args <-
-           Map.update(args, :picture, nil, fn picture ->
-             process_picture(picture, organizer_actor)
-           end) do
-      ActivityPub.update(event, args, should_federate(args))
-    end
+    Actions.Update.update(event, prepare_args(args), should_federate(args))
   end
 
   @doc """
   Trigger the deletion of an event
   """
+  @spec delete_event(Event.t(), Actor.t(), boolean()) :: {:ok, Activity.t(), Entity.t()} | any()
   def delete_event(%Event{} = event, %Actor{} = actor, federate \\ true) do
-    ActivityPub.delete(event, actor, federate)
+    Actions.Delete.delete(event, actor, federate)
+  end
+
+  @spec prepare_args(map) :: map
+  defp prepare_args(args) do
+    organizer_actor = Map.get(args, :organizer_actor)
+
+    args
+    |> extract_pictures_from_event_body(organizer_actor)
+    |> Map.update(:picture, nil, fn picture ->
+      process_picture(picture, organizer_actor)
+    end)
   end
 
   defp process_picture(nil, _), do: nil
@@ -75,6 +72,7 @@ defmodule Mobilizon.GraphQL.API.Events do
 
   defp extract_pictures_from_event_body(args, _), do: args
 
+  @spec should_federate(map()) :: boolean
   defp should_federate(%{attributed_to_id: attributed_to_id}) when not is_nil(attributed_to_id),
     do: true
 

@@ -31,7 +31,7 @@
           />
         </b-field>
 
-        <tag-input v-model="event.tags" :data="tags" path="title" />
+        <tag-input v-model="event.tags" />
 
         <b-field
           horizontal
@@ -556,8 +556,6 @@ import {
   IPerson,
   usernameWithDomain,
 } from "../../types/actor";
-import { TAGS } from "../../graphql/tags";
-import { ITag } from "../../types/tag.model";
 import {
   buildFileFromIMedia,
   buildFileVariable,
@@ -590,7 +588,6 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
   },
   apollo: {
     currentActor: CURRENT_ACTOR_CLIENT,
-    tags: TAGS,
     config: CONFIG,
     identities: IDENTITIES,
     event: {
@@ -642,8 +639,6 @@ export default class EditEvent extends Vue {
   @Prop({ type: Boolean, default: false }) isDuplicate!: boolean;
 
   currentActor!: IActor;
-
-  tags: ITag[] = [];
 
   event: IEvent = new EventModel();
 

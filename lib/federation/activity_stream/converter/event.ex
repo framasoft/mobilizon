@@ -45,50 +45,51 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   Converts an AP object data to our internal data structure.
   """
   @impl Converter
-  @spec as_to_model_data(map) :: {:ok, map()} | {:error, any()}
+  @spec as_to_model_data(map) :: map() | {:error, atom()}
   def as_to_model_data(object) do
-    with {%Actor{id: actor_id}, attributed_to} <-
-           maybe_fetch_actor_and_attributed_to_id(object),
-         {:address, address_id} <-
-           {:address, get_address(object["location"])},
-         {:tags, tags} <- {:tags, fetch_tags(object["tag"])},
-         {:mentions, mentions} <- {:mentions, fetch_mentions(object["tag"])},
-         {:visibility, visibility} <- {:visibility, get_visibility(object)},
-         {:options, options} <- {:options, get_options(object)},
-         {:metadata, metadata} <- {:metadata, get_metdata(object)},
-         [description: description, picture_id: picture_id, medias: medias] <-
-           process_pictures(object, actor_id) do
-      %{
-        title: object["name"],
-        description: description,
-        organizer_actor_id: actor_id,
-        attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
-        picture_id: picture_id,
-        medias: medias,
-        begins_on: object["startTime"],
-        ends_on: object["endTime"],
-        category: object["category"],
-        visibility: visibility,
-        join_options: Map.get(object, "joinMode", "free"),
-        local: is_local(object["id"]),
-        options: options,
-        metadata: metadata,
-        status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
-        online_address: object |> Map.get("attachment", []) |> get_online_address(),
-        phone_address: object["phoneAddress"],
-        draft: object["draft"] == true,
-        url: object["id"],
-        uuid: object["uuid"],
-        tags: tags,
-        mentions: mentions,
-        physical_address_id: address_id,
-        updated_at: object["updated"],
-        publish_at: object["published"],
-        language: object["inLanguage"]
-      }
-    else
-      {:ok, %Actor{suspended: true}} ->
-        :error
+    case maybe_fetch_actor_and_attributed_to_id(object) do
+      {:ok, %Actor{id: actor_id}, attributed_to} ->
+        address_id = get_address(object["location"])
+        tags = fetch_tags(object["tag"])
+        mentions = fetch_mentions(object["tag"])
+        visibility = get_visibility(object)
+        options = get_options(object)
+        metadata = get_metdata(object)
+
+        [description: description, picture_id: picture_id, medias: medias] =
+          process_pictures(object, actor_id)
+
+        %{
+          title: object["name"],
+          description: description,
+          organizer_actor_id: actor_id,
+          attributed_to_id: if(is_nil(attributed_to), do: nil, else: attributed_to.id),
+          picture_id: picture_id,
+          medias: medias,
+          begins_on: object["startTime"],
+          ends_on: object["endTime"],
+          category: object["category"],
+          visibility: visibility,
+          join_options: Map.get(object, "joinMode", "free"),
+          local: is_local(object["id"]),
+          options: options,
+          metadata: metadata,
+          status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
+          online_address: object |> Map.get("attachment", []) |> get_online_address(),
+          phone_address: object["phoneAddress"],
+          draft: object["draft"] == true,
+          url: object["id"],
+          uuid: object["uuid"],
+          tags: tags,
+          mentions: mentions,
+          physical_address_id: address_id,
+          updated_at: object["updated"],
+          publish_at: object["published"],
+          language: object["inLanguage"]
+        }
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 

@@ -67,7 +67,7 @@
           />
         </b-field>
 
-        <tag-input v-model="editablePost.tags" :data="tags" path="title" />
+        <tag-input v-model="editablePost.tags" />
 
         <div class="field">
           <label class="label">{{ $t("Post") }}</label>
@@ -166,7 +166,6 @@ import {
 } from "@/utils/image";
 import GroupMixin from "@/mixins/group";
 import { PostVisibility } from "@/types/enums";
-import { TAGS } from "../../graphql/tags";
 import { CONFIG } from "../../graphql/config";
 import {
   FETCH_POST,
@@ -187,7 +186,6 @@ import { FETCH_GROUP } from "@/graphql/group";
 
 @Component({
   apollo: {
-    tags: TAGS,
     config: CONFIG,
     group: {
       query: FETCH_GROUP,

@@ -4,9 +4,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Users}
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
@@ -17,16 +17,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
 
   If actor requesting is not part of the group, we only return the number of members, not members
   """
+  @spec find_members_for_group(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Member.t())}
   def find_members_for_group(
         %Actor{id: group_id} = group,
         %{page: page, limit: limit, roles: roles},
         %{
-          context: %{current_user: %User{role: user_role} = user}
+          context: %{current_user: %User{role: user_role}, current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
+    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
       roles =
         case roles do
           "" ->
@@ -42,27 +42,25 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
       %Page{} = page = Actors.list_members_for_group(group, roles, page, limit)
       {:ok, page}
     else
-      {:member, false} ->
-        # Actor is not member of group, fallback to public
-        with %Page{} = page <- Actors.list_members_for_group(group) do
-          {:ok, %Page{page | elements: []}}
-        end
-    end
-  end
-
-  def find_members_for_group(%Actor{} = group, _args, _resolution) do
-    with %Page{} = page <- Actors.list_members_for_group(group) do
+      # Actor is not member of group, fallback to public
+      %Page{} = page = Actors.list_members_for_group(group)
       {:ok, %Page{page | elements: []}}
     end
   end
 
+  def find_members_for_group(%Actor{} = group, _args, _resolution) do
+    %Page{} = page = Actors.list_members_for_group(group)
+    {:ok, %Page{page | elements: []}}
+  end
+
+  @spec invite_member(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
   def invite_member(
         _parent,
         %{group_id: group_id, target_actor_username: target_actor_username},
-        %{context: %{current_user: %User{} = user}}
+        %{context: %{current_actor: %Actor{id: actor_id} = actor}}
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+    with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:has_rights_to_invite, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
            {:has_rights_to_invite, Actors.get_member(actor_id, group_id)},
@@ -73,7 +71,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
             ActivityPubActor.find_or_make_actor_from_nickname(target_actor_username)},
          {:existant, true} <-
            {:existant, check_member_not_existant_or_rejected(target_actor_id, group.id)},
-         {:ok, _activity, %Member{} = member} <- ActivityPub.invite(group, actor, target_actor) do
+         {:ok, _activity, %Member{} = member} <-
+           Actions.Invite.invite(group, actor, target_actor) do
       {:ok, member}
     else
       {:error, :group_not_found} ->
@@ -97,13 +96,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
-  def accept_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         %Member{actor: %Actor{id: member_actor_id}} = member <-
+  @spec accept_invitation(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
+  def accept_invitation(_parent, %{id: member_id}, %{
+        context: %{current_actor: %Actor{id: actor_id}}
+      }) do
+    with %Member{actor: %Actor{id: member_actor_id}} = member <-
            Actors.get_member(member_id),
-         {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
+         {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
-           ActivityPub.accept(
+           Actions.Accept.accept(
              :invite,
              member,
              true
@@ -115,13 +117,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
-  def reject_invitation(_parent, %{id: member_id}, %{context: %{current_user: %User{} = user}}) do
-    with %Actor{id: actor_id} <- Users.get_actor_for_user(user),
-         {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
+  @spec reject_invitation(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
+  def reject_invitation(_parent, %{id: member_id}, %{
+        context: %{current_actor: %Actor{id: actor_id}}
+      }) do
+    with {:invitation_exists, %Member{actor: %Actor{id: member_actor_id}} = member} <-
            {:invitation_exists, Actors.get_member(member_id)},
-         {:is_same_actor, true} <- {:is_same_actor, member_actor_id === actor_id},
+         {:is_same_actor, true} <- {:is_same_actor, member_actor_id == actor_id},
          {:ok, _activity, %Member{} = member} <-
-           ActivityPub.reject(
+           Actions.Reject.reject(
              :invite,
              member,
              true
@@ -136,19 +141,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
+  @spec update_member(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
   def update_member(_parent, %{member_id: member_id, role: role}, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{} = moderator}
       }) do
-    with %Actor{} = moderator <- Users.get_actor_for_user(user),
-         %Member{} = member <- Actors.get_member(member_id),
+    with %Member{} = member <- Actors.get_member(member_id),
          {:ok, _activity, %Member{} = member} <-
-           ActivityPub.update(member, %{role: role}, true, %{moderator: moderator}) do
+           Actions.Update.update(member, %{role: role}, true, %{moderator: moderator}) do
       {:ok, member}
     else
-      {:has_rights_to_update_role, {:error, :member_not_found}} ->
+      {:error, :member_not_found} ->
         {:error, dgettext("errors", "You are not a moderator or admin for this group")}
 
-      {:is_only_admin, true} ->
+      {:error, :only_admin_left} ->
         {:error,
          dgettext(
            "errors",
@@ -160,16 +166,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
   def update_member(_parent, _args, _resolution),
     do: {:error, "You must be logged-in to update a member"}
 
+  @spec remove_member(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
   def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{id: moderator_id} = moderator}
       }) do
-    with %Actor{id: moderator_id} = moderator <- Users.get_actor_for_user(user),
-         %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
+    with %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
          %Actor{type: :Group} = group <- Actors.get_actor(group_id),
          {:has_rights_to_remove, {:ok, %Member{role: role}}}
          when role in [:moderator, :administrator, :creator] <-
            {:has_rights_to_remove, Actors.get_member(moderator_id, group_id)},
-         {:ok, _activity, %Member{}} <- ActivityPub.remove(member, group, moderator, true) do
+         {:ok, _activity, %Member{}} <-
+           Actions.Remove.remove(member, group, moderator, true) do
       {:ok, member}
     else
       %Member{role: :rejected} ->

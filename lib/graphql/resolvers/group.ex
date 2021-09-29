@@ -4,9 +4,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   """
 
   import Mobilizon.Users.Guards
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Events}
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.GraphQL.API
   alias Mobilizon.Users.User
@@ -15,6 +15,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   require Logger
 
+  @spec find_group(
+          any,
+          %{:preferred_username => binary, optional(any) => any},
+          Absinthe.Resolution.t()
+        ) ::
+          {:error, :group_not_found} | {:ok, Actor.t()}
   @doc """
   Find a group
   """
@@ -23,34 +29,30 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %{preferred_username: name} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with {:group, {:ok, %Actor{id: group_id, suspended: false} = group}} <-
-           {:group, ActivityPubActor.find_or_make_group_from_nickname(name)},
-         {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)} do
-      {:ok, group}
-    else
-      {:member, false} ->
-        find_group(parent, args, nil)
+    case ActivityPubActor.find_or_make_group_from_nickname(name) do
+      {:ok, %Actor{id: group_id, suspended: false} = group} ->
+        if Actors.is_member?(actor_id, group_id) do
+          {:ok, group}
+        else
+          find_group(parent, args, nil)
+        end
 
-      {:group, _} ->
+      {:error, _err} ->
         {:error, :group_not_found}
-
-      _ ->
-        {:error, :unknown}
     end
   end
 
   def find_group(_parent, %{preferred_username: name}, _resolution) do
-    with {:ok, %Actor{suspended: false} = actor} <-
-           ActivityPubActor.find_or_make_group_from_nickname(name),
-         %Actor{} = actor <- restrict_fields_for_non_member_request(actor) do
-      {:ok, actor}
-    else
-      _ ->
+    case ActivityPubActor.find_or_make_group_from_nickname(name) do
+      {:ok, %Actor{suspended: false} = actor} ->
+        %Actor{} = actor = restrict_fields_for_non_member_request(actor)
+        {:ok, actor}
+
+      {:error, _err} ->
         {:error, :group_not_found}
     end
   end
@@ -58,13 +60,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Get a group
   """
+  @spec get_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def get_group(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}}) do
-    with %Actor{type: :Group, suspended: suspended} = actor <-
-           Actors.get_actor_with_preload(id, true),
-         true <- suspended == false or is_moderator(role) do
-      {:ok, actor}
-    else
-      _ ->
+    case Actors.get_actor_with_preload(id, true) do
+      %Actor{type: :Group, suspended: suspended} = actor ->
+        if suspended == false or is_moderator(role) do
+          {:ok, actor}
+        else
+          {:error, dgettext("errors", "Group with ID %{id} not found", id: id)}
+        end
+
+      nil ->
         {:error, dgettext("errors", "Group with ID %{id} not found", id: id)}
     end
   end
@@ -72,6 +79,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Lists all groups
   """
+  @spec list_groups(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Actor.t())} | {:error, String.t()}
   def list_groups(
         _parent,
         %{
@@ -96,6 +105,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     do: {:error, dgettext("errors", "You may not list groups unless moderator.")}
 
   # TODO Move me to somewhere cleaner
+  @spec save_attached_pictures(map()) :: map()
   defp save_attached_pictures(args) do
     Enum.reduce([:avatar, :banner], args, fn key, args ->
       if is_map(args) && Map.has_key?(args, key) && !is_nil(args[key][:media]) do
@@ -114,17 +124,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Create a new group. The creator is automatically added as admin
   """
+  @spec create_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def create_group(
         _parent,
         args,
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{id: creator_actor_id} = creator_actor
           }
         }
       ) do
-    with %Actor{id: creator_actor_id} = creator_actor <- Users.get_actor_for_user(user),
-         args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
+    with args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
          args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
          args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
          {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
@@ -147,32 +158,35 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Update a group. The creator is automatically added as admin
   """
+  @spec update_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Actor.t()} | {:error, String.t()}
   def update_group(
         _parent,
         %{id: group_id} = args,
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{} = updater_actor
           }
         }
       ) do
-    with %Actor{} = updater_actor <- Users.get_actor_for_user(user),
-         {:administrator, true} <-
-           {:administrator, Actors.is_administrator?(updater_actor.id, group_id)},
-         args when is_map(args) <- Map.put(args, :updater_actor, updater_actor),
-         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
-         {:ok, _activity, %Actor{type: :Group} = group} <-
-           API.Groups.update_group(args) do
-      {:ok, group}
+    if Actors.is_administrator?(updater_actor.id, group_id) do
+      args = Map.put(args, :updater_actor, updater_actor)
+
+      case save_attached_pictures(args) do
+        {:error, :file_too_large} ->
+          {:error, dgettext("errors", "The provided picture is too heavy")}
+
+        map when is_map(map) ->
+          case API.Groups.update_group(args) do
+            {:ok, _activity, %Actor{type: :Group} = group} ->
+              {:ok, group}
+
+            {:error, _err} ->
+              {:error, dgettext("errors", "Failed to update the group")}
+          end
+      end
     else
-      {:picture, {:error, :file_too_large}} ->
-        {:error, dgettext("errors", "The provided picture is too heavy")}
-
-      {:error, err} when is_binary(err) ->
-        {:error, err}
-
-      {:administrator, false} ->
-        {:error, dgettext("errors", "Profile is not administrator for the group")}
+      {:error, dgettext("errors", "Profile is not administrator for the group")}
     end
   end
 
@@ -183,20 +197,21 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Delete an existing group
   """
+  @spec delete_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, %{id: integer()}} | {:error, String.t()}
   def delete_group(
         _parent,
         %{group_id: group_id},
         %{
           context: %{
-            current_user: user
+            current_actor: %Actor{id: actor_id} = actor
           }
         }
       ) do
-    with %Actor{id: actor_id} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
+    with {:ok, %Actor{} = group} <- Actors.get_group_by_actor_id(group_id),
          {:ok, %Member{} = member} <- Actors.get_member(actor_id, group.id),
          {:is_admin, true} <- {:is_admin, Member.is_administrator(member)},
-         {:ok, _activity, group} <- ActivityPub.delete(group, actor, true) do
+         {:ok, _activity, group} <- Actions.Delete.delete(group, actor, true) do
       {:ok, %{id: group.id}}
     else
       {:error, :group_not_found} ->
@@ -218,16 +233,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Join an existing group
   """
+  @spec join_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
   def join_group(_parent, %{group_id: group_id} = args, %{
-        context: %{current_user: %User{} = user}
+        context: %{current_actor: %Actor{} = actor}
       }) do
-    with %Actor{} = actor <- Users.get_actor_for_user(user),
-         {:ok, %Actor{type: :Group} = group} <-
+    with {:ok, %Actor{type: :Group} = group} <-
            Actors.get_group_by_actor_id(group_id),
          {:error, :member_not_found} <- Actors.get_member(actor.id, group.id),
          {:is_able_to_join, true} <- {:is_able_to_join, Member.can_be_joined(group)},
          {:ok, _activity, %Member{} = member} <-
-           ActivityPub.join(group, actor, true, args) do
+           Actions.Join.join(group, actor, true, args) do
       {:ok, member}
     else
       {:error, :group_not_found} ->
@@ -248,18 +264,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   @doc """
   Leave a existing group
   """
+  @spec leave_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
   def leave_group(
         _parent,
         %{group_id: group_id},
         %{
           context: %{
-            current_user: %User{} = user
+            current_actor: %Actor{} = actor
           }
         }
       ) do
-    with {:actor, %Actor{} = actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:group, %Actor{type: :Group} = group} <- {:group, Actors.get_actor(group_id)},
-         {:ok, _activity, %Member{} = member} <- ActivityPub.leave(group, actor, true) do
+    with {:group, %Actor{type: :Group} = group} <- {:group, Actors.get_actor(group_id)},
+         {:ok, _activity, %Member{} = member} <-
+           Actions.Leave.leave(group, actor, true) do
       {:ok, member}
     else
       {:error, :member_not_found} ->
@@ -268,7 +286,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:group, nil} ->
         {:error, dgettext("errors", "Group not found")}
 
-      {:is_not_only_admin, false} ->
+      {:error, :is_not_only_admin} ->
         {:error,
          dgettext("errors", "You can't leave this group because you are the only administrator")}
     end
@@ -278,6 +296,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     {:error, dgettext("errors", "You need to be logged-in to leave a group")}
   end
 
+  @spec find_events_for_group(Actor.t(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(Event.t())}
   def find_events_for_group(
         %Actor{id: group_id} = group,
         %{
@@ -286,13 +306,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         } = args,
         %{
           context: %{
-            current_user: %User{role: user_role} = user
+            current_user: %User{role: user_role},
+            current_actor: %Actor{id: actor_id}
           }
         }
       ) do
-    with {:actor, %Actor{id: actor_id} = _actor} <- {:actor, Users.get_actor_for_user(user)},
-         {:member, true} <-
-           {:member, Actors.is_member?(actor_id, group_id) or is_moderator(user_role)} do
+    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
       # TODO : Handle public / restricted to group members events
       {:ok,
        Events.list_organized_events_for_group(
@@ -304,8 +323,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
          limit
        )}
     else
-      {:member, false} ->
-        find_events_for_group(group, args, nil)
+      find_events_for_group(group, args, nil)
     end
   end
 
@@ -328,16 +346,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
      )}
   end
 
+  @spec restrict_fields_for_non_member_request(Actor.t()) :: Actor.t()
   defp restrict_fields_for_non_member_request(%Actor{} = group) do
-    Map.merge(
-      group,
-      %{
-        followers: [],
+    %Actor{
+      group
+      | followers: [],
         followings: [],
         organized_events: [],
         comments: [],
         feed_tokens: []
-      }
-    )
+    }
   end
 end

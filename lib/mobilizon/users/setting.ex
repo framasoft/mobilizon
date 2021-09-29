@@ -6,6 +6,7 @@ defmodule Mobilizon.Users.Setting do
   use Ecto.Schema
   import Ecto.Changeset
   alias Mobilizon.Users.{NotificationPendingNotificationDelay, User}
+  alias Mobilizon.Users.Setting.Location
 
   @type t :: %__MODULE__{
           timezone: String.t(),
@@ -17,6 +18,12 @@ defmodule Mobilizon.Users.Setting do
           group_notifications: NotificationPendingNotificationDelay.t(),
           last_notification_sent: DateTime.t(),
           user: User.t()
+        }
+
+  @type location :: %{
+          name: String.t(),
+          range: integer,
+          geohash: String.t()
         }
 
   @required_attrs [:user_id]
@@ -33,8 +40,6 @@ defmodule Mobilizon.Users.Setting do
   ]
 
   @attrs @required_attrs ++ @optional_attrs
-
-  @location_attrs [:name, :range, :geohash]
 
   @primary_key {:user_id, :id, autogenerate: false}
   schema "user_settings" do
@@ -54,11 +59,7 @@ defmodule Mobilizon.Users.Setting do
     field(:group_notifications, NotificationPendingNotificationDelay, default: :one_day)
     field(:last_notification_sent, :utc_datetime)
 
-    embeds_one :location, Location, on_replace: :update, primary_key: false do
-      field(:name, :string)
-      field(:range, :integer)
-      field(:geohash, :string)
-    end
+    embeds_one(:location, Location, on_replace: :update)
 
     belongs_to(:user, User, primary_key: true, type: :id, foreign_key: :id, define_field: false)
 
@@ -66,15 +67,11 @@ defmodule Mobilizon.Users.Setting do
   end
 
   @doc false
+  @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def changeset(setting, attrs) do
     setting
     |> cast(attrs, @attrs)
-    |> cast_embed(:location, with: &location_changeset/2)
+    |> cast_embed(:location)
     |> validate_required(@required_attrs)
-  end
-
-  def location_changeset(schema, params) do
-    schema
-    |> cast(params, @location_attrs)
   end
 end

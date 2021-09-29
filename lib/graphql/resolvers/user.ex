@@ -7,8 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   alias Mobilizon.{Actors, Admin, Config, Events, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
@@ -21,6 +20,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Find an user by its ID
   """
+  @spec find_user(any(), map(), Absinthe.Resolution.t()) :: {:ok, User.t()} | {:error, String.t()}
   def find_user(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
     with {:ok, %User{} = user} <- Users.get_user_with_actors(id) do
@@ -31,6 +31,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Return current logged-in user
   """
+  @spec get_current_user(any, map(), Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated} | {:ok, Mobilizon.Users.User.t()}
   def get_current_user(_parent, _args, %{context: %{current_user: %User{} = user}}) do
     {:ok, user}
   end
@@ -42,6 +44,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   List instance users
   """
+  @spec list_users(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Page.t(User.t())} | {:error, :unauthorized}
   def list_users(
         _parent,
         %{email: email, page: page, limit: limit, sort: sort, direction: direction},
@@ -58,6 +62,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Login an user. Returns a token and the user
   """
+  @spec login_user(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, :user_not_found | String.t()}
   def login_user(_parent, %{email: email, password: password}, %{context: context}) do
     with {:ok,
           %{
@@ -65,9 +71,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
             refresh_token: _refresh_token,
             user: %User{} = user
           } = user_and_tokens} <- Authenticator.authenticate(email, password),
-         {:ok, %User{} = user} <- update_user_login_information(user, context),
-         user_and_tokens <- Map.put(user_and_tokens, :user, user) do
-      {:ok, user_and_tokens}
+         {:ok, %User{} = user} <- update_user_login_information(user, context) do
+      {:ok, %{user_and_tokens | user: user}}
     else
       {:error, :user_not_found} ->
         {:error, :user_not_found}
@@ -87,6 +92,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Refresh a token
   """
+  @spec refresh_token(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
   def refresh_token(_parent, %{refresh_token: refresh_token}, _resolution) do
     with {:ok, user, _claims} <- Auth.Guardian.resource_from_token(refresh_token),
          {:ok, _old, {exchanged_token, _claims}} <-
@@ -105,6 +112,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to have an existing token to get a refresh token")}
   end
 
+  @spec logout(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, String.t()}
+          | {:error, :token_not_found | :unable_to_logout | :unauthenticated | :invalid_argument}
   def logout(_parent, %{refresh_token: refresh_token}, %{context: %{current_user: %User{}}}) do
     with {:ok, _claims} <- Auth.Guardian.decode_and_verify(refresh_token, %{"typ" => "refresh"}),
          {:ok, _claims} <- Auth.Guardian.revoke(refresh_token) do
@@ -133,7 +143,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     - create the user
     - send a validation email to the user
   """
-  @spec create_user(any, map, any) :: tuple
+  @spec create_user(any, %{email: String.t()}, any) :: {:ok, User.t()} | {:error, String.t()}
   def create_user(_parent, %{email: email} = args, _resolution) do
     with :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
@@ -160,20 +170,22 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     end
   end
 
-  @spec check_registration_config(map) :: atom
+  @spec check_registration_config(String.t()) ::
+          :registration_ok | :registration_closed | :not_allowlisted
   defp check_registration_config(email) do
     cond do
       Config.instance_registrations_open?() ->
         :registration_ok
 
       Config.instance_registrations_allowlist?() ->
-        check_allow_listed_email?(email)
+        check_allow_listed_email(email)
 
       true ->
         :registration_closed
     end
   end
 
+  @spec check_registration_denylist(String.t()) :: :deny_listed | :not_deny_listed
   defp check_registration_denylist(email) do
     # Remove everything behind the +
     email = String.replace(email, ~r/(\+.*)(?=\@)/, "")
@@ -183,8 +195,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       else: :not_deny_listed
   end
 
-  @spec check_allow_listed_email?(String.t()) :: :registration_ok | :not_allowlisted
-  defp check_allow_listed_email?(email) do
+  @spec check_allow_listed_email(String.t()) :: :registration_ok | :not_allowlisted
+  defp check_allow_listed_email(email) do
     if email_in_list(email, Config.instance_registrations_allowlist()),
       do: :registration_ok,
       else: :not_allowlisted
@@ -199,23 +211,29 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Validate an user, get its actor and a token
   """
+  @spec validate_user(map(), %{token: String.t()}, map()) :: {:ok, map()} | {:error, String.t()}
   def validate_user(_parent, %{token: token}, _resolution) do
-    with {:check_confirmation_token, {:ok, %User{} = user}} <-
-           {:check_confirmation_token, Email.User.check_confirmation_token(token)},
-         {:get_actor, actor} <- {:get_actor, Users.get_actor_for_user(user)},
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Authenticator.generate_tokens(user) do
-      {:ok,
-       %{
-         access_token: access_token,
-         refresh_token: refresh_token,
-         user: Map.put(user, :default_actor, actor)
-       }}
-    else
-      error ->
-        Logger.info("Unable to validate user with token #{token}")
-        Logger.debug(inspect(error))
+    case Email.User.check_confirmation_token(token) do
+      {:ok, %User{} = user} ->
+        actor = Users.get_actor_for_user(user)
 
+        {:ok, %{access_token: access_token, refresh_token: refresh_token}} =
+          Authenticator.generate_tokens(user)
+
+        {:ok,
+         %{
+           access_token: access_token,
+           refresh_token: refresh_token,
+           user: Map.put(user, :default_actor, actor)
+         }}
+
+      {:error, :invalid_token} ->
+        Logger.info("Invalid token #{token} to validate user")
+        {:error, dgettext("errors", "Unable to validate user")}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.info("Unable to validate user with token #{token}")
+        Logger.debug(inspect(err))
         {:error, dgettext("errors", "Unable to validate user")}
     end
   end
@@ -267,12 +285,25 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @doc """
   Reset the password from an user
   """
+  @spec reset_password(map(), %{password: String.t(), token: String.t()}, map()) ::
+          {:ok, map()} | {:error, String.t()}
   def reset_password(_parent, %{password: password, token: token}, _resolution) do
-    with {:ok, %User{email: email} = user} <-
-           Email.User.check_reset_password_token(password, token),
-         {:ok, %{access_token: access_token, refresh_token: refresh_token}} <-
-           Authenticator.authenticate(email, password) do
-      {:ok, %{access_token: access_token, refresh_token: refresh_token, user: user}}
+    case Email.User.check_reset_password_token(password, token) do
+      {:ok, %User{email: email} = user} ->
+        {:ok, tokens} = Authenticator.authenticate(email, password)
+        {:ok, Map.put(tokens, :user, user)}
+
+      {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
+        {:error,
+         gettext(
+           "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+         )}
+
+      {:error, _err} ->
+        {:error,
+         gettext(
+           "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
+         )}
     end
   end
 
@@ -280,12 +311,12 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def change_default_actor(
         _parent,
         %{preferred_username: username},
-        %{context: %{current_user: user}}
+        %{context: %{current_user: %User{id: user_id} = user}}
       ) do
-    with %Actor{id: actor_id} <- Actors.get_local_actor_by_name(username),
+    with %Actor{id: actor_id} = actor <- Actors.get_local_actor_by_name(username),
          {:user_actor, true} <-
            {:user_actor, actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id)},
-         %User{} = user <- Users.update_user_default_actor(user.id, actor_id) do
+         %User{} = user <- Users.update_user_default_actor(user_id, actor) do
       {:ok, user}
     else
       {:user_actor, _} ->
@@ -369,6 +400,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            |> Repo.update() do
       {:ok, user}
     else
+      {:can_change_password, false} ->
+        {:error, dgettext("errors", "You cannot change your password.")}
+
       {:current_password, _} ->
         {:error, dgettext("errors", "The current password is invalid")}
 
@@ -408,14 +442,18 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:ok, user}
     else
-      {:current_password, _} ->
+      {:current_password, {:error, _}} ->
         {:error, dgettext("errors", "The password provided is invalid")}
 
       {:same_email, true} ->
         {:error, dgettext("errors", "The new email must be different")}
 
-      {:email_valid, _} ->
+      {:email_valid, false} ->
         {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.debug(inspect(err))
+        {:error, dgettext("errors", "Failed to update user email")}
     end
   end
 
@@ -423,30 +461,37 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     {:error, dgettext("errors", "You need to be logged-in to change your email")}
   end
 
+  @spec validate_email(map(), %{token: String.t()}, map()) ::
+          {:ok, User.t()} | {:error, String.t()}
   def validate_email(_parent, %{token: token}, _resolution) do
-    with {:get, %User{} = user} <- {:get, Users.get_user_by_activation_token(token)},
-         {:ok, %User{} = user} <- Users.validate_email(user) do
-      {:ok, user}
-    else
-      {:get, nil} ->
+    case Users.get_user_by_activation_token(token) do
+      %User{} = user ->
+        case Users.validate_email(user) do
+          {:ok, %User{} = user} ->
+            {:ok, user}
+
+          {:error, %Ecto.Changeset{} = err} ->
+            Logger.debug(inspect(err))
+            {:error, dgettext("errors", "Failed to validate user email")}
+        end
+
+      nil ->
         {:error, dgettext("errors", "Invalid activation token")}
     end
   end
 
   def delete_account(_parent, %{user_id: user_id}, %{
-        context: %{current_user: %User{role: role} = moderator_user}
+        context: %{
+          current_user: %User{role: role},
+          current_actor: %Actor{} = moderator_actor
+        }
       })
       when is_moderator(role) do
-    with {:moderator_actor, %Actor{} = moderator_actor} <-
-           {:moderator_actor, Users.get_actor_for_user(moderator_user)},
-         %User{disabled: false} = user <- Users.get_user(user_id),
+    with %User{disabled: false} = user <- Users.get_user(user_id),
          {:ok, %User{}} <-
            do_delete_account(%User{} = user, actor_performing: Relay.get_actor()) do
       Admin.log_action(moderator_actor, "delete", user)
     else
-      {:moderator_actor, nil} ->
-        {:error, dgettext("errors", "No profile found for the moderator user")}
-
       %User{disabled: true} ->
         {:error, dgettext("errors", "User already disabled")}
     end
@@ -488,7 +533,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          :ok <-
            Enum.each(actors, fn actor ->
              actor_performing = Keyword.get(options, :actor_performing, actor)
-             ActivityPub.delete(actor, actor_performing, true)
+             Actions.Delete.delete(actor, actor_performing, true)
            end),
          # Delete user
          {:ok, user} <-
@@ -547,12 +592,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def update_locale(_parent, %{locale: locale}, %{
         context: %{current_user: %User{locale: current_locale} = user}
       }) do
-    with true <- current_locale != locale,
-         {:ok, %User{} = updated_user} <- Users.update_user(user, %{locale: locale}) do
-      {:ok, updated_user}
+    if current_locale != locale do
+      case Users.update_user(user, %{locale: locale}) do
+        {:ok, %User{} = updated_user} ->
+          {:ok, updated_user}
+
+        {:error, %Ecto.Changeset{} = err} ->
+          Logger.debug(err)
+          {:error, dgettext("errors", "Error while updating locale")}
+      end
     else
-      false ->
-        {:ok, user}
+      {:ok, user}
     end
   end
 

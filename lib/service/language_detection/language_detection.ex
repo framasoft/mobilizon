@@ -64,7 +64,7 @@ defmodule Mobilizon.Service.LanguageDetection do
 
   def normalize(language) do
     case Cldr.AcceptLanguage.parse(language, Mobilizon.Cldr) do
-      {:ok, [{_, tag}]} ->
+      {:ok, [{_, %Cldr.LanguageTag{} = tag}]} ->
         tag.language
 
       _ ->

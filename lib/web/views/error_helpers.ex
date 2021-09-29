@@ -8,6 +8,7 @@ defmodule Mobilizon.Web.ErrorHelpers do
   @doc """
   Translates an error message using gettext.
   """
+  @spec translate_error({msg :: String.t(), opts :: map()}) :: String.t()
   def translate_error({msg, opts}) do
     # Because error messages were defined within Ecto, we must
     # call the Gettext module passing our Gettext backend. We

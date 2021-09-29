@@ -320,6 +320,8 @@ export default class AccountSettings extends Vue {
         },
       });
 
+      this.oldPassword = "";
+      this.newPassword = "";
       this.$notifier.success(
         this.$t("The password was successfully changed") as string
       );

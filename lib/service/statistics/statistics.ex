@@ -6,6 +6,7 @@ defmodule Mobilizon.Service.Statistics do
   alias Mobilizon.{Actors, Discussions, Events, Users}
   alias Mobilizon.Federation.ActivityPub.Relay
 
+  @spec get_cached_value(String.t()) :: any() | nil
   def get_cached_value(key) do
     case Cachex.fetch(:statistics, key, fn key ->
            case create_cache(key) do

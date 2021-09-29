@@ -10,6 +10,7 @@ defmodule Mobilizon.Service.SiteMap do
 
   @default_static_frequency :monthly
 
+  @spec generate_sitemap :: {:ok, :ok}
   def generate_sitemap do
     static_routes = [
       {Routes.page_url(Endpoint, :index, []), :daily},
@@ -60,6 +61,7 @@ defmodule Mobilizon.Service.SiteMap do
   end
 
   # Sometimes we use naive datetimes
+  @spec check_date_time(any()) :: DateTime.t() | nil
   defp check_date_time(%NaiveDateTime{} = datetime), do: DateTime.from_naive!(datetime, "Etc/UTC")
   defp check_date_time(%DateTime{} = datetime), do: datetime
   defp check_date_time(_), do: nil
