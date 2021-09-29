@@ -14,10 +14,10 @@
         </li>
       </ul>
     </nav>
-    <section v-if="adminSettings">
+    <section v-if="settingsToWrite">
       <form @submit.prevent="updateSettings">
         <b-field :label="$t('Instance Name')" label-for="instance-name">
-          <b-input v-model="adminSettings.instanceName" id="instance-name" />
+          <b-input v-model="settingsToWrite.instanceName" id="instance-name" />
         </b-field>
         <div class="field">
           <label class="label has-help" for="instance-description">{{
@@ -32,9 +32,9 @@
           </small>
           <b-input
             type="textarea"
-            v-model="adminSettings.instanceDescription"
+            v-model="settingsToWrite.instanceDescription"
             rows="2"
-            id="instance-name"
+            id="instance-description"
           />
         </div>
         <div class="field">
@@ -49,7 +49,7 @@
             }}
           </small>
           <b-input
-            v-model="adminSettings.instanceSlogan"
+            v-model="settingsToWrite.instanceSlogan"
             :placeholder="$t('Gather ⋅ Organize ⋅ Mobilize')"
             id="instance-slogan"
           />
@@ -61,11 +61,11 @@
           <small>
             {{ $t("Can be an email or a link, or just plain text.") }}
           </small>
-          <b-input v-model="adminSettings.contact" id="instance-contact" />
+          <b-input v-model="settingsToWrite.contact" id="instance-contact" />
         </div>
         <b-field :label="$t('Allow registrations')">
-          <b-switch v-model="adminSettings.registrationsOpen">
-            <p class="content" v-if="adminSettings.registrationsOpen">
+          <b-switch v-model="settingsToWrite.registrationsOpen">
+            <p class="content" v-if="settingsToWrite.registrationsOpen">
               {{ $t("Registration is allowed, anyone can register.") }}
             </p>
             <p class="content" v-else>{{ $t("Registration is closed.") }}</p>
@@ -105,7 +105,7 @@
           </small>
           <b-input
             type="textarea"
-            v-model="adminSettings.instanceLongDescription"
+            v-model="settingsToWrite.instanceLongDescription"
             rows="4"
             id="instance-long-description"
           />
@@ -123,7 +123,7 @@
           </small>
           <b-input
             type="textarea"
-            v-model="adminSettings.instanceRules"
+            v-model="settingsToWrite.instanceRules"
             id="instance-rules"
           />
         </div>
@@ -136,7 +136,7 @@
                 </legend>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instanceTermsType"
+                    v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.DEFAULT"
                     >{{ $t("Default Mobilizon terms") }}</b-radio
@@ -144,7 +144,7 @@
                 </b-field>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instanceTermsType"
+                    v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.URL"
                     >{{ $t("Custom URL") }}</b-radio
@@ -152,7 +152,7 @@
                 </b-field>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instanceTermsType"
+                    v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.CUSTOM"
                     >{{ $t("Custom text") }}</b-radio
@@ -164,7 +164,8 @@
               <div
                 class="notification"
                 v-if="
-                  adminSettings.instanceTermsType === InstanceTermsType.DEFAULT
+                  settingsToWrite.instanceTermsType ===
+                  InstanceTermsType.DEFAULT
                 "
               >
                 <b>{{ $t("Default") }}</b>
@@ -189,7 +190,9 @@
               </div>
               <div
                 class="notification"
-                v-if="adminSettings.instanceTermsType === InstanceTermsType.URL"
+                v-if="
+                  settingsToWrite.instanceTermsType === InstanceTermsType.URL
+                "
               >
                 <b>{{ $t("URL") }}</b>
                 <p class="content">
@@ -199,7 +202,7 @@
               <div
                 class="notification"
                 v-if="
-                  adminSettings.instanceTermsType === InstanceTermsType.CUSTOM
+                  settingsToWrite.instanceTermsType === InstanceTermsType.CUSTOM
                 "
               >
                 <b>{{ $t("Custom") }}</b>
@@ -223,15 +226,25 @@
         </b-field>
         <b-field
           :label="$t('Instance Terms URL')"
-          v-if="adminSettings.instanceTermsType === InstanceTermsType.URL"
+          label-for="instanceTermsUrl"
+          v-if="settingsToWrite.instanceTermsType === InstanceTermsType.URL"
         >
-          <b-input type="URL" v-model="adminSettings.instanceTermsUrl" />
+          <b-input
+            type="URL"
+            v-model="settingsToWrite.instanceTermsUrl"
+            id="instanceTermsUrl"
+          />
         </b-field>
         <b-field
           :label="$t('Instance Terms')"
-          v-if="adminSettings.instanceTermsType === InstanceTermsType.CUSTOM"
+          label-for="instanceTerms"
+          v-if="settingsToWrite.instanceTermsType === InstanceTermsType.CUSTOM"
         >
-          <b-input type="textarea" v-model="adminSettings.instanceTerms" />
+          <b-input
+            type="textarea"
+            v-model="settingsToWrite.instanceTerms"
+            id="instanceTerms"
+          />
         </b-field>
         <b-field :label="$t('Instance Privacy Policy Source')">
           <div class="columns">
@@ -242,7 +255,7 @@
                 </legend>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instancePrivacyPolicyType"
+                    v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.DEFAULT"
                     >{{ $t("Default Mobilizon privacy policy") }}</b-radio
@@ -250,7 +263,7 @@
                 </b-field>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instancePrivacyPolicyType"
+                    v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.URL"
                     >{{ $t("Custom URL") }}</b-radio
@@ -258,7 +271,7 @@
                 </b-field>
                 <b-field>
                   <b-radio
-                    v-model="adminSettings.instancePrivacyPolicyType"
+                    v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.CUSTOM"
                     >{{ $t("Custom text") }}</b-radio
@@ -270,7 +283,7 @@
               <div
                 class="notification"
                 v-if="
-                  adminSettings.instancePrivacyPolicyType ===
+                  settingsToWrite.instancePrivacyPolicyType ===
                   InstancePrivacyType.DEFAULT
                 "
               >
@@ -292,7 +305,7 @@
               <div
                 class="notification"
                 v-if="
-                  adminSettings.instancePrivacyPolicyType ===
+                  settingsToWrite.instancePrivacyPolicyType ===
                   InstancePrivacyType.URL
                 "
               >
@@ -304,7 +317,7 @@
               <div
                 class="notification"
                 v-if="
-                  adminSettings.instancePrivacyPolicyType ===
+                  settingsToWrite.instancePrivacyPolicyType ===
                   InstancePrivacyType.CUSTOM
                 "
               >
@@ -329,25 +342,30 @@
         </b-field>
         <b-field
           :label="$t('Instance Privacy Policy URL')"
+          label-for="instancePrivacyPolicyUrl"
           v-if="
-            adminSettings.instancePrivacyPolicyType === InstancePrivacyType.URL
+            settingsToWrite.instancePrivacyPolicyType ===
+            InstancePrivacyType.URL
           "
         >
           <b-input
             type="URL"
-            v-model="adminSettings.instancePrivacyPolicyUrl"
+            v-model="settingsToWrite.instancePrivacyPolicyUrl"
+            id="instancePrivacyPolicyUrl"
           />
         </b-field>
         <b-field
           :label="$t('Instance Privacy Policy')"
+          label-for="instancePrivacyPolicy"
           v-if="
-            adminSettings.instancePrivacyPolicyType ===
+            settingsToWrite.instancePrivacyPolicyType ===
             InstancePrivacyType.CUSTOM
           "
         >
           <b-input
             type="textarea"
-            v-model="adminSettings.instancePrivacyPolicy"
+            v-model="settingsToWrite.instancePrivacyPolicy"
+            id="instancePrivacyPolicy"
           />
         </b-field>
         <b-button native-type="submit" type="is-primary">{{
@@ -358,7 +376,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import {
   ADMIN_SETTINGS,
   SAVE_ADMIN_SETTINGS,
@@ -380,7 +398,29 @@ import RouteName from "../../router/name";
   },
 })
 export default class Settings extends Vue {
-  adminSettings!: IAdminSettings;
+  adminSettings: IAdminSettings = {
+    instanceName: "",
+    instanceDescription: "",
+    instanceSlogan: "",
+    instanceLongDescription: "",
+    contact: "",
+    instanceTerms: "",
+    instanceTermsType: InstanceTermsType.DEFAULT,
+    instanceTermsUrl: null,
+    instancePrivacyPolicy: "",
+    instancePrivacyPolicyType: InstanceTermsType.DEFAULT,
+    instancePrivacyPolicyUrl: null,
+    instanceRules: "",
+    registrationsOpen: false,
+    instanceLanguages: [],
+  };
+
+  settingsToWrite: IAdminSettings = { ...this.adminSettings };
+
+  @Watch("adminSettings")
+  updateSettingsToWrite(): void {
+    this.settingsToWrite = { ...this.adminSettings };
+  }
 
   languages!: ILanguage[];
 
@@ -408,7 +448,7 @@ export default class Settings extends Vue {
   }
 
   async updateSettings(): Promise<void> {
-    const variables = { ...this.adminSettings };
+    const variables = { ...this.settingsToWrite };
     try {
       await this.$apollo.mutate({
         mutation: SAVE_ADMIN_SETTINGS,
