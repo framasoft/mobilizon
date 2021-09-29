@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2021-09-25 10:16+0000\n"
+"PO-Revision-Date: 2021-09-29 08:16+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -98,7 +98,7 @@ msgstr "Deltakinga er godkjend"
 
 #: lib/web/templates/email/password_reset.html.eex:13
 #: lib/web/templates/email/password_reset.text.eex:1
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "Password reset"
 msgstr "Nullstill passord"
 
