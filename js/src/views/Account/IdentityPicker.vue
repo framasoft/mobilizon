@@ -9,7 +9,9 @@
           class="list-item"
           v-for="identity in identities"
           :key="identity.id"
-          :class="{ 'is-active': identity.id === currentIdentity.id }"
+          :class="{
+            'is-active': currentIdentity && identity.id === currentIdentity.id,
+          }"
           @click="changeCurrentIdentity(identity)"
         >
           <div class="media">

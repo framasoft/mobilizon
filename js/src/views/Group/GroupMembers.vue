@@ -335,7 +335,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
         }) as string
       );
       this.newMemberUsername = "";
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.inviteError = error.graphQLErrors[0].message;
@@ -402,7 +402,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
           group: this.group.name || usernameWithDomain(this.group),
         }) as string
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);
@@ -458,7 +458,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
           successMessage = "The member role was updated to simple member";
       }
       this.$notifier.success(this.$t(successMessage) as string);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);

@@ -12,14 +12,14 @@ import {
   split,
 } from "@apollo/client/core";
 import { RetryLink } from "@apollo/client/link/retry";
-import buildCurrentUserResolver from "@/apollo/user";
-import { AUTH_ACCESS_TOKEN } from "@/constants";
-import { logout } from "@/utils/auth";
 import { Socket as PhoenixSocket } from "phoenix";
 import * as AbsintheSocket from "@absinthe/socket";
 import { createAbsintheSocketLink } from "@absinthe/socket-apollo-link";
 import { getMainDefinition } from "@apollo/client/utilities";
 import fetch from "unfetch";
+import buildCurrentUserResolver from "@/apollo/user";
+import { AUTH_ACCESS_TOKEN } from "@/constants";
+import { logout } from "@/utils/auth";
 import { GRAPHQL_API_ENDPOINT, GRAPHQL_API_FULL_PATH } from "./api/_entrypoint";
 import {
   possibleTypes,

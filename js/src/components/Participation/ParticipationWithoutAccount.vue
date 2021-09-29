@@ -249,7 +249,7 @@ export default class ParticipationWithoutAccount extends Vue {
           data.joinEvent.metadata.cancellationToken
         );
       }
-    } catch (e) {
+    } catch (e: any) {
       if (
         ["TextEncoder is not defined", "crypto.subtle is undefined"].includes(
           e.message

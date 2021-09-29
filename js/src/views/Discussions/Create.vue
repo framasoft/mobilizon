@@ -133,7 +133,7 @@ export default class CreateDiscussion extends Vue {
           slug: data.createDiscussion.slug,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         if (error.graphQLErrors[0].field == "title") {

@@ -21,7 +21,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Leave do
           {:ok, Activity.t(), Participant.t()}
           | {:error, :is_only_organizer | :participant_not_found | Ecto.Changeset.t()}
   @spec leave(Actor.t(), Actor.t(), boolean, map) ::
-          {:ok, Activity.t(), Member.t()} | {:error, atom() | Ecto.Changeset.t()}
+          {:ok, Activity.t(), Member.t()}
+          | {:error, :is_not_only_admin | :member_not_found | Ecto.Changeset.t()}
   def leave(object, actor, local \\ true, additional \\ %{})
 
   @doc """
@@ -73,32 +74,33 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Leave do
         local,
         additional
       ) do
-    with {:member, {:ok, %Member{id: member_id} = member}} <-
-           {:member, Actors.get_member(actor_id, group_id)},
-         {:is_not_only_admin, true} <-
-           {:is_not_only_admin,
-            Map.get(additional, :force_member_removal, false) ||
-              !Actors.is_only_administrator?(member_id, group_id)},
-         {:delete, {:ok, %Member{} = member}} <- {:delete, Actors.delete_member(member)} do
-      Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_quit")
+    case Actors.get_member(actor_id, group_id) do
+      {:ok, %Member{id: member_id} = member} ->
+        if Map.get(additional, :force_member_removal, false) ||
+             !Actors.is_only_administrator?(member_id, group_id) do
+          with {:ok, %Member{} = member} <- Actors.delete_member(member) do
+            Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_quit")
 
-      leave_data = %{
-        "to" => [group_members_url],
-        "cc" => [group_url],
-        "attributedTo" => group_url,
-        "type" => "Leave",
-        "actor" => actor_url,
-        "object" => group_url
-      }
+            leave_data = %{
+              "to" => [group_members_url],
+              "cc" => [group_url],
+              "attributedTo" => group_url,
+              "type" => "Leave",
+              "actor" => actor_url,
+              "object" => group_url
+            }
 
-      {:ok, activity} = create_activity(leave_data, local)
-      maybe_federate(activity)
-      maybe_relay_if_group_activity(activity)
-      {:ok, activity, member}
-    else
-      {:member, nil} -> {:error, :member_not_found}
-      {:is_not_only_admin, false} -> {:error, :is_not_only_admin}
-      {:error, %Ecto.Changeset{} = err} -> {:error, err}
+            {:ok, activity} = create_activity(leave_data, local)
+            maybe_federate(activity)
+            maybe_relay_if_group_activity(activity)
+            {:ok, activity, member}
+          end
+        else
+          {:error, :is_not_only_admin}
+        end
+
+      {:error, :member_not_found} ->
+        nil
     end
   end
 end

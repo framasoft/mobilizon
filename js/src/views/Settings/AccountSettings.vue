@@ -303,7 +303,7 @@ export default class AccountSettings extends Vue {
       );
       this.newEmail = "";
       this.passwordForEmailChange = "";
-    } catch (err) {
+    } catch (err: any) {
       this.handleErrors("email", err);
     }
   }
@@ -325,7 +325,7 @@ export default class AccountSettings extends Vue {
       this.$notifier.success(
         this.$t("The password was successfully changed") as string
       );
-    } catch (err) {
+    } catch (err: any) {
       this.handleErrors("password", err);
     }
   }
@@ -359,7 +359,7 @@ export default class AccountSettings extends Vue {
       });
 
       return await this.$router.push({ name: RouteName.HOME });
-    } catch (err) {
+    } catch (err: any) {
       this.deletePasswordErrors = err.graphQLErrors.map(
         ({ message }: GraphQLError) => message
       );

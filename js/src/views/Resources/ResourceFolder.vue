@@ -441,7 +441,7 @@ export default class Resources extends Mixins(ResourceMixin) {
       this.newResource.title = "";
       this.newResource.summary = "";
       this.newResource.resourceUrl = "";
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       this.modalError = err.graphQLErrors[0].message;
     }
@@ -461,7 +461,7 @@ export default class Resources extends Mixins(ResourceMixin) {
       this.newResource.summary = data.previewResourceLink.description;
       this.newResource.metadata = data.previewResourceLink;
       this.newResource.type = "link";
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       this.modalError = err.graphQLErrors[0].message;
     }
@@ -568,7 +568,7 @@ export default class Resources extends Mixins(ResourceMixin) {
         (id) => id !== resourceID
       );
       delete this.checkedResources[resourceID];
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
     }
   }
@@ -705,7 +705,7 @@ export default class Resources extends Mixins(ResourceMixin) {
           console.log("Finished adding resource to new parent");
         },
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
     }
   }
@@ -740,7 +740,7 @@ export default class Resources extends Mixins(ResourceMixin) {
         params: { path },
         query: { ...this.$route.query, ...args },
       });
-    } catch (e) {
+    } catch (e: any) {
       if (isNavigationFailure(e, NavigationFailureType.redirected)) {
         throw Error(e.toString());
       }

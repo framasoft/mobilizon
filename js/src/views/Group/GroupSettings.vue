@@ -238,7 +238,7 @@ export default class GroupSettings extends mixins(GroupMixin) {
         variables,
       });
       this.$notifier.success(this.$t("Group settings saved") as string);
-    } catch (err) {
+    } catch (err: any) {
       this.handleError(err);
     }
   }

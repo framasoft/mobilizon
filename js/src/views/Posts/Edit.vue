@@ -323,7 +323,7 @@ export default class EditPost extends mixins(GroupMixin) {
             params: { slug: data.createPost.slug },
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
         this.errors = error.graphQLErrors.reduce(
           (acc: { [key: string]: any }, localError: any) => {
@@ -384,7 +384,7 @@ export default class EditPost extends mixins(GroupMixin) {
           obj.picture = { mediaId: this.editablePost.picture.id };
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
     }
     return obj;

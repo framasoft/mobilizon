@@ -101,7 +101,7 @@ export default class EventMixin extends mixins(Vue) {
       if (resultData) {
         this.participationCancelledMessage();
       }
-    } catch (error) {
+    } catch (error: any) {
       Snackbar.open({
         message: error.message,
         type: "is-danger",
@@ -183,7 +183,7 @@ export default class EventMixin extends mixins(Vue) {
         position: "is-bottom-right",
         duration: 5000,
       });
-    } catch (error) {
+    } catch (error: any) {
       Snackbar.open({
         message: error.message,
         type: "is-danger",

@@ -203,7 +203,7 @@ export default class Followings extends Mixins(RelayMixin) {
           limit: FOLLOWINGS_PER_PAGE,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     }
   }
@@ -254,12 +254,14 @@ export default class Followings extends Mixins(RelayMixin) {
         },
       });
       this.newRelayAddress = "";
-    } catch (err) {
-      Snackbar.open({
-        message: err.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
+    } catch (err: any) {
+      if (err.message) {
+        Snackbar.open({
+          message: err.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
     }
   }
 
@@ -295,12 +297,14 @@ export default class Followings extends Mixins(RelayMixin) {
       });
       await this.$apollo.queries.relayFollowings.refetch();
       this.checkedRows = [];
-    } catch (e) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
     }
   }
 }

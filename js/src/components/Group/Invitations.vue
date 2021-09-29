@@ -38,7 +38,7 @@ export default class Invitations extends Vue {
       if (data) {
         this.$emit("accept-invitation", data.acceptInvitation);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);
@@ -60,7 +60,7 @@ export default class Invitations extends Vue {
       if (data) {
         this.$emit("reject-invitation", data.rejectInvitation);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);

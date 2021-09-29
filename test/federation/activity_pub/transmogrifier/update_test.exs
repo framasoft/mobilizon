@@ -51,7 +51,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
           args: %{event_id: event_id, op: :insert_search_event}
         )
 
-        assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :search)
+        assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
 
         update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
@@ -77,7 +77,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
           args: %{event_id: event_id, op: :update_search_event}
         )
 
-        assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :search)
+        assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
 
         assert event.title == "My updated event"
 

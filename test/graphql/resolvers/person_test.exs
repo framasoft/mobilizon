@@ -519,7 +519,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         }
       )
 
-      assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :background)
 
       query = """
       {
@@ -719,7 +719,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert is_nil(res["errors"])
       assert res["data"]["suspendProfile"]["id"] == to_string(remote_profile_id)
 
-      assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :background)
 
       res =
         conn

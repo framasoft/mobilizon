@@ -209,12 +209,14 @@ export default class Followers extends Mixins(RelayMixin) {
       });
       await this.$apollo.queries.relayFollowers.refetch();
       this.checkedRows = [];
-    } catch (e) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
     }
   }
 
@@ -228,12 +230,14 @@ export default class Followers extends Mixins(RelayMixin) {
       });
       await this.$apollo.queries.relayFollowers.refetch();
       this.checkedRows = [];
-    } catch (e) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
     }
   }
 
@@ -250,7 +254,7 @@ export default class Followers extends Mixins(RelayMixin) {
           limit: FOLLOWERS_PER_PAGE,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     }
   }

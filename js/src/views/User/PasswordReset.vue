@@ -95,7 +95,7 @@ export default class PasswordReset extends Vue {
       saveUserData(data.resetPassword);
       this.$router.push({ name: RouteName.HOME });
       return;
-    } catch (err) {
+    } catch (err: any) {
       err.graphQLErrors.forEach(({ message }: { message: any }) => {
         this.errors.push(message);
       });

@@ -110,7 +110,7 @@ export default class FolderItem extends Mixins(ResourceMixin) {
         return undefined;
       }
       return data.updateResource;
-    } catch (e) {
+    } catch (e: any) {
       Snackbar.open({
         message: e.message,
         type: "is-danger",

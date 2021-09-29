@@ -256,7 +256,7 @@ export default class Register extends Vue {
         name: RouteName.REGISTER_PROFILE,
         params: { email: this.credentials.email },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       this.errors = error.graphQLErrors.reduce(
         (acc: string[], localError: any) => {

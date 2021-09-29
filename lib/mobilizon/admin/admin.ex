@@ -80,6 +80,8 @@ defmodule Mobilizon.Admin do
 
   defp stringify_struct(struct), do: struct
 
+  @spec get_admin_setting_value(String.t(), String.t(), String.t() | nil) ::
+          String.t() | boolean() | nil | map() | list()
   def get_admin_setting_value(group, name, fallback \\ nil)
       when is_binary(group) and is_binary(name) do
     case Repo.get_by(Setting, group: group, name: name) do
@@ -97,6 +99,7 @@ defmodule Mobilizon.Admin do
     end
   end
 
+  @spec get_setting_value(String.t() | nil) :: map() | list() | nil | boolean() | String.t()
   def get_setting_value(nil), do: nil
 
   def get_setting_value(value) do

@@ -156,7 +156,7 @@ export default class MyGroups extends Vue {
           },
         ],
       });
-    } catch (error) {
+    } catch (error: any) {
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
         this.$notifier.error(error.graphQLErrors[0].message);
       }

@@ -384,7 +384,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
 
       # Can't be used right now, probably because we try to run a transaction in a Oban Job while using Ecto Sandbox
 
-      # assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
+      # assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :background)
 
       # res =
       #   conn

@@ -105,7 +105,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
       end)
 
       {:ok, _activity, _actor} = Transmogrifier.handle_incoming(data)
-      assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :background)
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :background)
 
       assert {:error, :actor_not_found} = Actors.get_actor_by_url(url)
       assert {:error, :event_not_found} = Events.get_event(event1.id)

@@ -1,7 +1,7 @@
 <template>
   <div class="identity-picker">
     <div
-      v-if="inline"
+      v-if="inline && currentIdentity"
       class="inline box"
       :class="{
         'has-background-grey-lighter': masked,
@@ -39,14 +39,14 @@
         </b-button>
       </div>
     </div>
-    <span v-else class="block" @click="activateModal">
+    <span v-else-if="currentIdentity" class="block" @click="activateModal">
       <figure class="image is-48x48" v-if="currentIdentity.avatar">
         <img class="is-rounded" :src="currentIdentity.avatar.url" alt="" />
       </figure>
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
     <b-modal v-model="isComponentModalActive" has-modal-card>
-      <identity-picker v-model="currentIdentity" @input="relay" />
+      <identity-picker v-model="currentIdentity" />
     </b-modal>
   </div>
 </template>
@@ -69,21 +69,22 @@ export default class IdentityPickerWrapper extends Vue {
 
   @Prop({ default: true, type: Boolean }) inline!: boolean;
 
-  @Prop({ type: Boolean, required: false, default: false }) masked = false;
+  @Prop({ type: Boolean, required: false, default: false }) masked!: boolean;
 
   isComponentModalActive = false;
 
   identities: IActor[] = [];
-
-  currentIdentity: IActor = this.value;
 
   @Watch("value")
   updateCurrentActor(value: IActor): void {
     this.currentIdentity = value;
   }
 
-  relay(identity: IActor): void {
-    this.currentIdentity = identity;
+  get currentIdentity(): IActor | undefined {
+    return this.value;
+  }
+
+  set currentIdentity(identity: IActor | undefined) {
     this.$emit("input", identity);
     this.isComponentModalActive = false;
   }
