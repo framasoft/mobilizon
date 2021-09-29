@@ -32,7 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   @doc """
   Handle incoming activities
   """
-  @spec handle_incoming(map()) :: :error | {:ok, any(), struct()}
+  @spec handle_incoming(map()) :: :error | {:error, atom()} | {:ok, any(), struct()}
   def handle_incoming(%{"id" => nil}), do: :error
   def handle_incoming(%{"id" => ""}), do: :error
 
