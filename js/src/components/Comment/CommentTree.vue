@@ -12,7 +12,7 @@
         >{{ $t("Comments are closed for everybody else.") }}</b-notification
       >
       <article class="media">
-        <figure class="media-left">
+        <figure class="media-left" v-if="newComment.actor">
           <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
         </figure>
         <div class="media-content">
