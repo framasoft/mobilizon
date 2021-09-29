@@ -16,7 +16,7 @@
       :data="filteredTags"
       autocomplete
       :allow-new="true"
-      :field="path"
+      :field="'title'"
       icon="label"
       maxlength="20"
       maxtags="10"
