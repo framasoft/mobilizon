@@ -400,6 +400,7 @@ a.comment-link {
     color: $white;
     .reply-btn,
     small,
+    span,
     strong,
     .icons button {
       color: $white;
