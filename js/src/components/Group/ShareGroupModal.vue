@@ -83,11 +83,13 @@
           /></a>
           <a
             :href="telegramShareUrl"
+            class="telegram"
             target="_blank"
             rel="nofollow noopener"
             title="Telegram"
-            ><b-icon icon="telegram" size="is-large" type="is-primary"
-          /></a>
+          >
+            <telegram-logo />
+          </a>
           <a
             title="Diaspora"
             :href="diasporaShareUrl"
@@ -115,12 +117,14 @@ import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { GroupVisibility } from "@/types/enums";
 import DiasporaLogo from "../Share/DiasporaLogo.vue";
 import MastodonLogo from "../Share/MastodonLogo.vue";
+import TelegramLogo from "../Share/MastodonLogo.vue";
 import { displayName, IGroup } from "@/types/actor";
 
 @Component({
   components: {
     DiasporaLogo,
     MastodonLogo,
+    TelegramLogo,
   },
 })
 export default class ShareGroupModal extends Vue {
@@ -194,7 +198,8 @@ export default class ShareGroupModal extends Vue {
 </script>
 <style lang="scss" scoped>
 .diaspora,
-.mastodon {
+.mastodon,
+.telegram {
   ::v-deep span svg {
     width: 2.25rem;
   }

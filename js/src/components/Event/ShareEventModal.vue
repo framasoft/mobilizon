@@ -86,11 +86,13 @@
           /></a>
           <a
             :href="telegramShareUrl"
+            class="telegram"
             target="_blank"
             rel="nofollow noopener"
             title="Telegram"
-            ><b-icon icon="telegram" size="is-large" type="is-primary"
-          /></a>
+          >
+            <telegram-logo />
+          </a>
           <a
             :href="linkedInShareUrl"
             target="_blank"
@@ -126,11 +128,13 @@ import { EventStatus, EventVisibility } from "@/types/enums";
 import { IEvent } from "../../types/event.model";
 import DiasporaLogo from "../Share/DiasporaLogo.vue";
 import MastodonLogo from "../Share/MastodonLogo.vue";
+import TelegramLogo from "../Share/TelegramLogo.vue";
 
 @Component({
   components: {
     DiasporaLogo,
     MastodonLogo,
+    TelegramLogo,
   },
 })
 export default class ShareEventModal extends Vue {
@@ -207,7 +211,8 @@ export default class ShareEventModal extends Vue {
 </script>
 <style lang="scss" scoped>
 .diaspora,
-.mastodon {
+.mastodon,
+.telegram {
   ::v-deep span svg {
     width: 2.25rem;
   }
