@@ -181,7 +181,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
 
       event = insert(:event, attributed_to: group, organizer_actor: actor)
       EventActivity.insert_activity(event, subject: "event_created")
-      assert %{success: 1, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :activity)
       assert Activities.list_activities() |> length() == 1
 
       [%Activity{author_id: author_id, group_id: activity_group_id}] =
@@ -230,7 +230,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       post = insert(:post, author: actor, attributed_to: group)
       EventActivity.insert_activity(event, subject: "event_created")
       PostActivity.insert_activity(post, subject: "post_created")
-      assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert %{success: 2, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :activity)
       assert Activities.list_activities() |> length() == 2
 
       res =
@@ -274,7 +274,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       post = insert(:post, attributed_to: group)
       EventActivity.insert_activity(event, subject: "event_created")
       PostActivity.insert_activity(post, subject: "post_created")
-      assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert %{success: 2, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :activity)
       assert Activities.list_activities() |> length() == 2
 
       res =
@@ -318,7 +318,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       Process.sleep(1000)
       Posts.delete_post(post)
       PostActivity.insert_activity(post, subject: "post_deleted")
-      assert %{success: 2, failure: 0} == Oban.drain_queue(queue: :activity)
+      assert %{success: 2, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :activity)
       assert Activities.list_activities() |> length() == 2
 
       res =
