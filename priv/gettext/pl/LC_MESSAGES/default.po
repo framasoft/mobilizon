@@ -120,12 +120,12 @@ msgstr ""
 "e-mail."
 
 #, elixir-format
-#: lib/web/email/participation.ex:112
+#: lib/web/email/participation.ex:108
 msgid "Your participation to event %{title} has been approved"
 msgstr "Twój udział w wydarzeniu %{title} został zatwierdzony"
 
 #, elixir-format
-#: lib/web/email/participation.ex:70
+#: lib/web/email/participation.ex:68
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Twój udział w wydarzeniu %(title} został odrzucony"
 
@@ -150,7 +150,7 @@ msgid "Warning"
 msgstr "Ostrzeżenie"
 
 #, elixir-format
-#: lib/web/email/participation.ex:135
+#: lib/web/email/participation.ex:131
 msgid "Confirm your participation to event %{title}"
 msgstr "Potwierdź swoje uczestnictwo w wydarzeniu %{title}"
 
@@ -343,17 +343,17 @@ msgid "What information do we collect?"
 msgstr "Jakie informacje zbieramy?"
 
 #, elixir-format
-#: lib/web/email/user.ex:180
+#: lib/web/email/user.ex:178
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon na %{instance}: potwierdź swój adres e-mail"
 
 #, elixir-format
-#: lib/web/email/user.ex:156
+#: lib/web/email/user.ex:154
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon na %{instance}: zmieniono e-mail"
 
 #, elixir-format
-#: lib/web/email/notification.ex:47
+#: lib/web/email/notification.ex:49
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Jedno wydarzenie zaplanowane na dzisiaj"
@@ -414,7 +414,7 @@ msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Dostałeś(-aś) zaproszenie od %{inviter}, aby dołączyć do grupy %{group}"
 
 #, elixir-format
-#: lib/web/email/notification.ex:71
+#: lib/web/email/notification.ex:75
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Jedno wydarzenie zaplanowane na ten tydzień"
@@ -422,7 +422,7 @@ msgstr[1] "%{nb_events} wydarzenia zaplanowane na ten tydzień"
 msgstr[2] "%{nb_events} wydarzeń zaplanowanych na ten tydzień"
 
 #, elixir-format
-#: lib/web/email/notification.ex:93
+#: lib/web/email/notification.ex:98
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Jedno zgłoszenie uczestnictwa dla wydarzenia %{title} do zatwierdzenia"
@@ -1192,24 +1192,10 @@ msgstr ""
 "została bezpowrotnie usunięta."
 
 #, elixir-format
-#: lib/web/templates/email/group_deletion.html.eex:38
-#: lib/web/templates/email/group_deletion.text.eex:3
-msgid "The administrator %{author} deleted group %{group}. All of the group's events, discussions, posts and todos have been deleted."
-msgstr ""
-"Administrator %{author} usunął grupę %{group}. Wszystkie wydarzenia, "
-"dyskusje, wpisy i do-zrobienia z niej zostały usunięte."
-
-#, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:13
 #: lib/web/templates/email/group_suspension.text.eex:1
 msgid "The group %{group} has been suspended on %{instance}!"
 msgstr "Grupa %{group} została zawieszona na %{instance}!"
-
-#, elixir-format
-#: lib/web/templates/email/group_deletion.html.eex:13
-#: lib/web/templates/email/group_deletion.text.eex:1
-msgid "The group %{group} was deleted on %{instance}!"
-msgstr "Grupa %{group} została usunięta na %{instance}!"
 
 #, elixir-format
 #: lib/web/templates/email/group_suspension.html.eex:38
@@ -1218,12 +1204,7 @@ msgid "Your instance's moderation team has decided to suspend %{group_name} (%{g
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/group.ex:136
-msgid "The group %{group} has been deleted on %{instance}"
-msgstr "Grupa %{group} została usunięta na %{instance}"
-
-#, elixir-format
-#: lib/web/email/group.ex:97
+#: lib/web/email/group.ex:98
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Grupa %{group} została zawieszona na %{instance}"
 
@@ -1348,7 +1329,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Poprosiłeś(-aś) o uczestnictwo w wydarzeniu %{title}."
 
 #, elixir-format
-#: lib/web/email/participation.ex:91
+#: lib/web/email/participation.ex:88
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Twój udział w wydarzeniu %{title} został zatwierdzony"
 
@@ -1384,12 +1365,12 @@ msgid "You have now confirmed your participation. Update your calendar, because 
 msgstr ""
 
 #, elixir-format
-#: lib/mobilizon/posts/post.ex:94
+#: lib/mobilizon/posts/post.ex:99
 msgid "A text is required for the post"
 msgstr "Wpis wymaga tekstu"
 
 #, elixir-format
-#: lib/mobilizon/posts/post.ex:93
+#: lib/mobilizon/posts/post.ex:98
 msgid "A title is required for the post"
 msgstr "Wpis wymaga tytułu"
 
@@ -1487,17 +1468,17 @@ msgid "%{name}'s feed"
 msgstr ""
 
 #, elixir-format
-#: lib/service/export/feed.ex:120
+#: lib/service/export/feed.ex:122
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/service/export/feed.ex:115
+#: lib/service/export/feed.ex:117
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/service/export/feed.ex:220
+#: lib/service/export/feed.ex:225
 msgid "Feed for %{email} on %{instance}"
 msgstr ""
 
@@ -1522,16 +1503,28 @@ msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr "Serwer Mobilizon wydaje się tymczasowo nie działać."
 
 #, elixir-format
-#: lib/service/export/feed.ex:73
+#: lib/service/export/feed.ex:75
 msgid "Public feed for %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/user.ex:114
+#: lib/graphql/resolvers/user.ex:298
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/user.ex:120
+#: lib/graphql/resolvers/user.ex:304
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/actor_suspension_participants.html.eex:38
+#: lib/web/templates/email/actor_suspension_participants.text.eex:3
+msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation cancelled."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/email/actor.ex:45
+#: lib/web/templates/email/actor_suspension_participants.html.eex:13 lib/web/templates/email/actor_suspension_participants.text.eex:1
+msgid "Your participation to %{event} has been cancelled!"
+msgstr "Twój udział w wydarzeniu %{title} został zatwierdzony"
