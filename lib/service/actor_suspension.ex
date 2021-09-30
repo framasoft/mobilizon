@@ -34,7 +34,13 @@ defmodule Mobilizon.Service.ActorSuspension do
     Logger.debug(inspect(delete_actor_options))
 
     send_suspension_notification(actor)
+
+    Logger.debug(
+      "Sending suspension notifications to participants from events created by this actor"
+    )
+
     notify_event_participants_from_suspension(actor)
+    Logger.debug("Delete participations from events created by this actor")
     delete_participations(actor)
 
     multi =
@@ -144,26 +150,32 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   @spec delete_actor_events(Ecto.Multi.t(), Actor.t()) :: Ecto.Multi.t()
   defp delete_actor_events(%Multi{} = multi, %Actor{type: :Person, id: actor_id}) do
+    Logger.debug("Delete profile's events")
     Multi.delete_all(multi, :delete_events, where(Event, [e], e.organizer_actor_id == ^actor_id))
   end
 
   defp delete_actor_events(%Multi{} = multi, %Actor{type: :Group, id: actor_id}) do
+    Logger.debug("Delete group's events")
     Multi.delete_all(multi, :delete_events, where(Event, [e], e.attributed_to_id == ^actor_id))
   end
 
   defp delete_posts(%Multi{} = multi, %Actor{type: :Person, id: actor_id}) do
+    Logger.debug("Delete profile's posts")
     Multi.delete_all(multi, :delete_posts, where(Post, [e], e.author_id == ^actor_id))
   end
 
   defp delete_posts(%Multi{} = multi, %Actor{type: :Group, id: actor_id}) do
+    Logger.debug("Delete group's posts")
     Multi.delete_all(multi, :delete_posts, where(Post, [e], e.attributed_to_id == ^actor_id))
   end
 
   defp delete_ressources(%Multi{} = multi, %Actor{type: :Person, id: actor_id}) do
+    Logger.debug("Delete profile's resources")
     Multi.delete_all(multi, :delete_resources, where(Resource, [e], e.creator_id == ^actor_id))
   end
 
   defp delete_ressources(%Multi{} = multi, %Actor{type: :Group, id: actor_id}) do
+    Logger.debug("Delete group's resources")
     Multi.delete_all(multi, :delete_resources, where(Resource, [e], e.actor_id == ^actor_id))
   end
 
@@ -173,6 +185,7 @@ defmodule Mobilizon.Service.ActorSuspension do
   end
 
   defp delete_discussions(%Multi{} = multi, %Actor{type: :Group, id: actor_id}) do
+    Logger.debug("Delete group's discussions")
     Multi.delete_all(multi, :delete_discussions, where(Discussion, [e], e.actor_id == ^actor_id))
   end
 
@@ -246,6 +259,8 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   @spec send_suspension_notification(Actor.t()) :: :ok
   defp send_suspension_notification(%Actor{type: :Group} = group) do
+    Logger.debug("Sending suspension notifications to group members")
+
     group
     |> Actors.list_all_local_members_for_group()
     |> Enum.each(&Group.send_group_suspension_notification/1)
