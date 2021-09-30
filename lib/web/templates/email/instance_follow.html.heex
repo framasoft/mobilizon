@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "Confirm new email" %>
+            <%= gettext "Want to connect?" %>
           </h1>
         </td>
       </tr>
@@ -35,10 +35,25 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address.", %{instance: @instance_name}) |> raw %>
+            <%= gettext("<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events.", name: @follower.name, domain: @follower.domain) |> raw %>
           </p>
         </td>
       </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0;">
+            <%= gettext("Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: @follower.name, domain: @follower.domain) %>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0">
+            <%= gettext "To accept this invitation, head over to the instance's admin settings." %>
+          </p>
+        </td>
+      </tr>
+      <!-- BULLETPROOF BUTTON -->
       <tr>
         <td bgcolor="#ffffff" align="left">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -47,8 +62,8 @@
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
-                      <a href="<%= Routes.page_url(Mobilizon.Web.Endpoint, :user_email_validation, @token) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "Verify your email address" %>
+                      <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/settings/admin/relays/followers" }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "See the federation settings" %>
                       </a>
                     </td>
                   </tr>
@@ -56,13 +71,6 @@
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
-          <p style="margin: 0">
-            <%= gettext "If you didn't trigger the change yourself, please ignore this message." %>
-          </p>
         </td>
       </tr>
     </table>

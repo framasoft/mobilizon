@@ -100,6 +100,7 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.15.3"},
       {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_view, "~> 0.16.4"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
