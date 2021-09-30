@@ -35,7 +35,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group.", group_name: @group.name, group_address: if @group.domain, do: "@#{@group.preferred_username}@#{@group.domain}", else: "@#{@group.preferred_username}" %>
+            <%= gettext("Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group.", group_name: @group.name, group_address: (if @group.domain, do: "@#{@group.preferred_username}@#{@group.domain}", else: "@#{@group.preferred_username}")) |> raw %>
           </p>
         </td>
       </tr>
