@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "A request is pending!" %>
+            <%= gettext "Nearly there!" %>
           </h1>
         </td>
       </tr>
@@ -35,34 +35,33 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= ngettext "You have one pending attendance request to process:", "You have %{number_participation_requests} attendance requests to process:", @total, number_participation_requests: @total %>
+            <%= gettext("You created an account on <b>%{host}</b> with this email address. You are one click away from activating it.", host: @instance_name) |> raw %>
           </p>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-          <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
-                <table border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
-                      <a href="<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "Manage pending requests" %>
-                      </a>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
         </td>
       </tr>
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
           <p style="margin: 0">
-            <%= gettext "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »." %>
+            <%= gettext "If you didn't trigger this email, you may safely ignore it." %>
           </p>
+        </td>
+      </tr>
+      <!-- BULLETPROOF BUTTON -->
+      <tr>
+        <td bgcolor="#ffffff" align="left">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/validate/#{@token}" }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "Activate my account" %>
+                      </a></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
