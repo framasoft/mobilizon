@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "Want to connect?" %>
+            <%= gettext "You're going!" %>
           </h1>
         </td>
       </tr>
@@ -35,21 +35,14 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events.", name: @follower.name, domain: @follower.domain) |> raw %>
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
-          <p style="margin: 0;">
-            <%= gettext("Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: @follower.name, domain: @follower.domain) %>
+            <%= gettext("You recently requested to attend <b>%{title}</b>.", title: @event.title) |> raw %>
           </p>
         </td>
       </tr>
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0">
-            <%= gettext "To accept this invitation, head over to the instance's admin settings." %>
+            <%= gettext "You have now confirmed your participation. Update your calendar, because you're on the guest list now!" %>
           </p>
         </td>
       </tr>
@@ -61,16 +54,21 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
-                      <a href="<%= "#{Mobilizon.Web.Endpoint.url()}/settings/admin/relays/followers" %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "See the federation settings" %>
-                      </a>
-                    </td>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "Visit event page" %>
+                      </a></td>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0">
+            <%= gettext "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button." %>
+          </p>
         </td>
       </tr>
     </table>

@@ -49,7 +49,7 @@
             <p style="margin: 0;">
               <%= if @report.reported.type == :Group do %>
                 <h3><%= gettext "Group reported" %></h3>
-                <a href="<%= "#{Mobilizon.Web.Endpoint.url()}/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reported)}" %>" target="_blank">
+                <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reported)}" }"} target="_blank">
                   <b><%= Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %></b>
                 </a>
               <% else %>
@@ -70,7 +70,7 @@
           <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
             <p style="margin: 0;">
               <h3><%= gettext "Event" %></h3>
-              <a href="<%= "#{Mobilizon.Web.Endpoint.url()}/events/#{@report.event.uuid}" %>" target="_blank">
+              <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/events/#{@report.event.uuid}" }"} target="_blank">
                 <%= gettext "%{title} by %{creator}", title: @report.event.title, creator: Mobilizon.Actors.Actor.preferred_username_and_domain(@report.reported) %>
               </a>
             </p>
@@ -122,7 +122,7 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href="<%= Routes.page_url(Mobilizon.Web.Endpoint, :moderation_report, @report.id) %>" target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :moderation_report, @report.id) }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
                         <%= gettext "View report" %>
                       </a></td>
                   </tr>

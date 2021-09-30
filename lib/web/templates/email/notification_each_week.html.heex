@@ -1,0 +1,81 @@
+<!-- HERO -->
+<tr>
+  <td bgcolor="#474467" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <tr>
+        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+          <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
+            <%= gettext "What's up this week?" %>
+          </h1>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
+<!-- COPY BLOCK -->
+<tr>
+  <td bgcolor="#E6E4F4" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <!-- COPY -->
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <p style="margin: 0;">
+            <%= ngettext "You have one event this week:", "You have %{total} events this week:", @total, total: @total %>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <%= if @total > 1 do %>
+            <ul style="margin: 0;">
+              <%= for participation <- @participations do %>
+                <li>
+                  <strong>
+                    <%= participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
+                  </strong>
+                  <a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, participation.event.uuid) }"} target="_blank">
+                    <%= participation.event.title %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <strong>
+              <%= @participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
+            </strong>
+            <a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) }"} target="_blank">
+              <%= @participation.event.title %>
+            </a>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
+          <p style="margin: 0">
+            <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", @total %>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
