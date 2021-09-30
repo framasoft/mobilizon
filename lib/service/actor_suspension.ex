@@ -40,7 +40,6 @@ defmodule Mobilizon.Service.ActorSuspension do
     )
 
     notify_event_participants_from_suspension(actor)
-    Logger.debug("Delete participations from events created by this actor")
     delete_participations(actor)
 
     multi =
@@ -126,7 +125,11 @@ defmodule Mobilizon.Service.ActorSuspension do
     |> Enum.filter(fn %Participant{actor: %Actor{id: participant_actor_id}} ->
       participant_actor_id != actor_id
     end)
-    |> Enum.each(&ActorEmail.send_notification_event_participants_from_suspension(&1, actor))
+    |> Enum.map(fn %Participant{} = participant ->
+      ActorEmail.send_notification_event_participants_from_suspension(participant, actor)
+      participant
+    end)
+    |> Enum.each(&Events.delete_participant/1)
   end
 
   @spec get_actor_organizer_events_participations(Actor.t()) :: Ecto.Query.t()
@@ -191,6 +194,7 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   @spec delete_participations(Actor.t()) :: :ok
   defp delete_participations(%Actor{type: :Person} = actor) do
+    Logger.debug("Delete participations from events created by this actor")
     %Actor{participations: participations} = Repo.preload(actor, [:participations])
     Enum.each(participations, &Events.delete_participant/1)
   end
