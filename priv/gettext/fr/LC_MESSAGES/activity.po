@@ -235,7 +235,7 @@ msgstr[0] "Il y a eu une activité !"
 msgstr[1] "Il y a eu de l'activité !"
 
 #, elixir-format
-#: lib/service/activity/renderer/renderer.ex:38
+#: lib/service/activity/renderer/renderer.ex:46
 msgid "Activity on %{instance}"
 msgstr "Activité sur %{instance}"
 

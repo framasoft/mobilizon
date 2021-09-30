@@ -41,6 +41,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           find_group(parent, args, nil)
         end
 
+      {:ok, %Actor{}} ->
+        {:error, :group_not_found}
+
       {:error, _err} ->
         {:error, :group_not_found}
     end
@@ -51,6 +54,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, %Actor{suspended: false} = actor} ->
         %Actor{} = actor = restrict_fields_for_non_member_request(actor)
         {:ok, actor}
+
+      {:ok, %Actor{}} ->
+        {:error, :group_not_found}
 
       {:error, _err} ->
         {:error, :group_not_found}

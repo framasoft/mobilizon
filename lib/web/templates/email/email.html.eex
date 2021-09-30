@@ -56,7 +56,7 @@
             <tr>
               <td align="center" valign="top" style="padding: 40px 10px 40px 10px;">
                 <a href="<%= Mobilizon.Web.Endpoint.url() %>" target="_blank">
-                  <img alt="<%= Mobilizon.Config.instance_name() %>" src="<%= "#{Mobilizon.Web.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
+                  <img alt="<%= @instance_name %>" src="<%= "#{Mobilizon.Web.Endpoint.url()}/img/mobilizon_logo.png" %>" width="366" height="108" style="display: block; width: 366px; max-width: 366px; min-width: 366px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; font-size: 18px;" border="0">
                 </a>
               </td>
             </tr>
@@ -140,7 +140,7 @@
             <tr>
               <td bgcolor="#ECEBF2" align="center" style="padding: 30px 30px 30px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;" >
                 <p style="margin: 0;">
-                  <%= gettext("<b>%{instance}</b> is powered by Mobilizon.", instance: @instance[:name]) |> raw %><br />
+                  <%= gettext("<b>%{instance}</b> is powered by Mobilizon.", instance: @instance_name) |> raw %><br />
                   <a href="https://joinmobilizon.org"><%= gettext "Learn more about Mobilizon here!" %></a>
                 </p>
               </td>

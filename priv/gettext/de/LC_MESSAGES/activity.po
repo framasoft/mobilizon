@@ -236,7 +236,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, elixir-format
-#: lib/service/activity/renderer/renderer.ex:38
+#: lib/service/activity/renderer/renderer.ex:46
 msgid "Activity on %{instance}"
 msgstr ""
 

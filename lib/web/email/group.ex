@@ -92,13 +92,12 @@ defmodule Mobilizon.Web.Email.Group do
       }) do
     with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
       Gettext.put_locale(locale)
-      instance = Config.instance_name()
 
       subject =
         gettext(
           "The group %{group} has been suspended on %{instance}",
           group: group.name,
-          instance: instance
+          instance: Config.instance_name()
         )
 
       Email.base_email(to: email, subject: subject)
@@ -106,7 +105,6 @@ defmodule Mobilizon.Web.Email.Group do
       |> assign(:group, group)
       |> assign(:role, member_role)
       |> assign(:subject, subject)
-      |> assign(:instance, instance)
       |> render(:group_suspension)
       |> Email.Mailer.send_email_later()
 

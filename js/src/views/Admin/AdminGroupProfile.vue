@@ -27,7 +27,16 @@
       </ul>
     </nav>
     <div class="actor-card">
+      <p v-if="group.suspended">
+        <actor-card
+          :actor="group"
+          :full="true"
+          :popover="false"
+          :limit="false"
+        />
+      </p>
       <router-link
+        v-else
         :to="{
           name: RouteName.GROUP,
           params: { preferredUsername: usernameWithDomain(group) },

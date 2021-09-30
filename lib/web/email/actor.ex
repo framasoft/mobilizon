@@ -8,8 +8,8 @@ defmodule Mobilizon.Web.Email.Actor do
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Config, Users}
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.Users
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
 
@@ -40,7 +40,6 @@ defmodule Mobilizon.Web.Email.Actor do
       ) do
     with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
       Gettext.put_locale(locale)
-      instance = Config.instance_name()
 
       subject = gettext("Your participation to %{event} has been cancelled!", event: event.title)
 
@@ -50,7 +49,6 @@ defmodule Mobilizon.Web.Email.Actor do
       |> assign(:event, event)
       |> assign(:role, member_role)
       |> assign(:subject, subject)
-      |> assign(:instance, instance)
       |> render(:actor_suspension_participants)
       |> Email.Mailer.send_email_later()
 

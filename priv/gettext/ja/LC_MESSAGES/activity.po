@@ -224,7 +224,7 @@ msgid_plural "There has been some activity!"
 msgstr[0] ""
 
 #, elixir-format
-#: lib/service/activity/renderer/renderer.ex:38
+#: lib/service/activity/renderer/renderer.ex:46
 msgid "Activity on %{instance}"
 msgstr ""
 
