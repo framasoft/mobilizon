@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "The group %{group} has been suspended on %{instance}!", group: (@group.name || @group.preferred_username), instance: @instance %>
+            <%= gettext "The group %{group} has been suspended on %{instance}!", group: (@group.name || @group.preferred_username), instance: @instance_name %>
           </h1>
         </td>
       </tr>

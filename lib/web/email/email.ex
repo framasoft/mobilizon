@@ -12,15 +12,13 @@ defmodule Mobilizon.Web.Email do
 
   @spec base_email(keyword()) :: Bamboo.Email.t()
   def base_email(args) do
-    instance = Config.instance_config()
-
     args
     |> new_email()
     |> from({Config.instance_name(), Config.instance_email_from()})
     |> put_header("Reply-To", Config.instance_email_reply_to())
     |> maybe_put_date_header()
     |> maybe_put_message_id()
-    |> assign(:instance, instance)
+    |> assign(:instance_name, Config.instance_name())
     |> put_html_layout({EmailView, "email.html"})
     |> put_text_layout({EmailView, "email.text"})
   end

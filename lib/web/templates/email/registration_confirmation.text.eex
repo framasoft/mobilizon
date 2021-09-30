@@ -2,6 +2,6 @@
 
 ==
 
-<%= gettext "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email.", host: @instance[:name] %>
+<%= gettext "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email.", host: @instance_name %>
 
 <%= Mobilizon.Web.Endpoint.url() <> "/validate/#{@token}" %>

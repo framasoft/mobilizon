@@ -1,3 +1,3 @@
-<%= gettext "Your participation to %{event} has been cancelled!", event: (@event.title), instance: @instance %>
+<%= gettext "Your participation to %{event} has been cancelled!", event: (@event.title), instance: @instance_name %>
 ==
 <%= gettext "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation cancelled.", group_name: @actor.name || @actor.preferred_username, actor_address: if @actor.domain, do: "@#{@actor.preferred_username}@#{@actor.domain}", else: "@#{@actor.preferred_username}" %>

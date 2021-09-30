@@ -1,4 +1,4 @@
-<%= gettext "New report from %{reporter} on %{instance}", reporter: Mobilizon.Actors.Actor.display_name_and_username(@report.reporter), instance: @instance[:name] %>
+<%= gettext "New report from %{reporter} on %{instance}", reporter: Mobilizon.Actors.Actor.display_name_and_username(@report.reporter), instance: @instance_name %>
 --
 <%= if @report.reported do %>
   <%= if @report.reported.type == :Group do %>
