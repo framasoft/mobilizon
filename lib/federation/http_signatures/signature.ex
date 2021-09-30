@@ -54,19 +54,19 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
           {:ok, String.t()}
           | {:error, :actor_fetch_error | :pem_decode_error | :actor_not_fetchable}
   defp get_public_key_for_url(url) do
-    with {:ok, %Actor{keys: keys}} <- ActivityPubActor.get_or_fetch_actor_by_url(url),
-         {:ok, public_key} <- prepare_public_key(keys) do
-      {:ok, public_key}
-    else
-      {:error, :pem_decode_error} ->
-        Logger.error("Error while decoding PEM")
+    case ActivityPubActor.get_or_fetch_actor_by_url(url) do
+      {:ok, %Actor{keys: keys}} ->
+        case prepare_public_key(keys) do
+          {:ok, public_key} ->
+            {:ok, public_key}
 
-        {:error, :pem_decode_error}
+          {:error, :pem_decode_error} ->
+            Logger.error("Error while decoding PEM")
 
-      {:error, "Could not fetch by AP id"} ->
-        {:error, :actor_not_fetchable}
+            {:error, :pem_decode_error}
+        end
 
-      err ->
+      {:error, err} ->
         Sentry.capture_message("Unable to fetch actor, so no keys for you",
           extra: %{url: url}
         )
@@ -80,16 +80,17 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
   @spec fetch_public_key(Plug.Conn.t()) ::
           {:ok, String.t()}
-          | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error}
+          | {:error,
+             :actor_fetch_error | :actor_not_fetchable | :pem_decode_error | :no_signature_in_conn}
   def fetch_public_key(conn) do
-    with %{"keyId" => kid} <- HTTPSignatures.signature_for_conn(conn),
-         actor_id <- key_id_to_actor_url(kid),
-         :ok <- Logger.debug("Fetching public key for #{actor_id}"),
-         {:ok, public_key} <- get_public_key_for_url(actor_id) do
-      {:ok, public_key}
-    else
-      {:error, err} ->
-        {:error, err}
+    case HTTPSignatures.signature_for_conn(conn) do
+      %{"keyId" => kid} ->
+        actor_id = key_id_to_actor_url(kid)
+        Logger.debug("Fetching public key for #{actor_id}")
+        get_public_key_for_url(actor_id)
+
+      _ ->
+        {:error, :no_signature_in_conn}
     end
   end
 
@@ -98,15 +99,12 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
           | {:error, :actor_fetch_error | :actor_not_fetchable | :pem_decode_error,
              :actor_is_local}
   def refetch_public_key(conn) do
-    with %{"keyId" => kid} <- HTTPSignatures.signature_for_conn(conn),
-         actor_id <- key_id_to_actor_url(kid),
-         :ok <- Logger.debug("Refetching public key for #{actor_id}"),
-         {:ok, _actor} <- ActivityPubActor.make_actor_from_url(actor_id),
-         {:ok, public_key} <- get_public_key_for_url(actor_id) do
-      {:ok, public_key}
-    else
-      {:error, err} ->
-        {:error, err}
+    %{"keyId" => kid} = HTTPSignatures.signature_for_conn(conn)
+    actor_id = key_id_to_actor_url(kid)
+    Logger.debug("Refetching public key for #{actor_id}")
+
+    with {:ok, _actor} <- ActivityPubActor.make_actor_from_url(actor_id) do
+      get_public_key_for_url(actor_id)
     end
   end
 
@@ -129,6 +127,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
   @spec generate_date_header :: String.t()
   def generate_date_header, do: generate_date_header(NaiveDateTime.utc_now())
 
+  @spec generate_date_header(NaiveDateTime.t()) :: String.t()
   def generate_date_header(%NaiveDateTime{} = date) do
     Timex.format!(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT")
   end
