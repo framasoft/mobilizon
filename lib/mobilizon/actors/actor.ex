@@ -45,7 +45,7 @@ defmodule Mobilizon.Actors.Actor do
           suspended: boolean,
           avatar: File.t() | nil,
           banner: File.t() | nil,
-          user: User.t(),
+          user: User.t() | nil,
           followers: [Follower.t()],
           followings: [Follower.t()],
           organized_events: [Event.t()],

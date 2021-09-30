@@ -819,21 +819,22 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns the list of members for an actor.
   """
-  @spec list_members_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_members_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t(Member.t())
   def list_members_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> members_for_actor_query()
     |> Page.build_page(page, limit)
   end
 
-  @spec list_all_local_members_for_group(Actor.t()) :: Member.t()
+  @spec list_all_local_members_for_group(Actor.t()) :: list(Member.t())
   def list_all_local_members_for_group(%Actor{id: group_id, type: :Group} = _group) do
     group_id
     |> group_internal_member_query()
     |> Repo.all()
   end
 
-  @spec list_local_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_local_members_for_group(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Member.t())
   def list_local_members_for_group(
         %Actor{id: group_id, type: :Group} = _group,
         page \\ nil,
@@ -844,7 +845,8 @@ defmodule Mobilizon.Actors do
     |> Page.build_page(page, limit)
   end
 
-  @spec list_remote_members_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_remote_members_for_group(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Member.t())
   def list_remote_members_for_group(
         %Actor{id: group_id, type: :Group} = _group,
         page \\ nil,
@@ -858,7 +860,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns a paginated list of members for a group.
   """
-  @spec list_members_for_group(Actor.t(), list(atom()), integer | nil, integer | nil) :: Page.t()
+  @spec list_members_for_group(Actor.t(), list(atom()), integer | nil, integer | nil) ::
+          Page.t(Member.t())
   def list_members_for_group(
         %Actor{id: group_id, type: :Group},
         roles \\ [],
