@@ -347,7 +347,7 @@ msgid "What information do we collect?"
 msgstr "Kva opplysingar samlar me?"
 
 #, elixir-format
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:177
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon på %{instance}: stadfest epostadressa di"
 
@@ -1284,7 +1284,6 @@ msgid "The group %{group} has been suspended on %{instance}!"
 msgstr "Gruppa %{group} på %{instance} er sperra!"
 
 #, elixir-format
-#: lib/web/templates/email/group_suspension.html.eex:38
 #: lib/web/templates/email/group_suspension.text.eex:3
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
@@ -1292,7 +1291,7 @@ msgstr ""
 "(%{group_address}). Du er ikkje lenger medlem av gruppa."
 
 #, elixir-format
-#: lib/web/email/group.ex:98
+#: lib/web/email/group.ex:97
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Gruppa %{group} på %{instance} er sperra"
 
@@ -1694,16 +1693,28 @@ msgstr ""
 "Godkjenningsteiknet er ugyldig. Pass på at adressa er heilt lik den du fekk "
 "i eposten."
 
+#, elixir-format
+#: lib/web/email/actor.ex:44
+msgid "Your participation to %{event} has been cancelled!"
+msgstr "Me har stadfesta at du deltek på hendinga %{title}"
+
 #, elixir-format, fuzzy
 #: lib/web/templates/email/actor_suspension_participants.html.eex:38
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
-msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation cancelled."
+msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation to event %{event} cancelled."
 msgstr ""
 "Styrarane på nettstaden din har avgjort å sperra gruppa %{group_name} "
 "(%{group_address}). Du er ikkje lenger medlem av gruppa."
 
 #, elixir-format, fuzzy
-#: lib/web/email/actor.ex:45
-#: lib/web/templates/email/actor_suspension_participants.html.eex:13 lib/web/templates/email/actor_suspension_participants.text.eex:1
-msgid "Your participation to %{event} has been cancelled!"
+#: lib/web/templates/email/group_suspension.html.eex:38
+msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
+msgstr ""
+"Styrarane på nettstaden din har avgjort å sperra gruppa %{group_name} "
+"(%{group_address}). Du er ikkje lenger medlem av gruppa."
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/actor_suspension_participants.html.eex:13
+#: lib/web/templates/email/actor_suspension_participants.text.eex:1
+msgid "Your participation to %{event} on %{instance} has been cancelled!"
 msgstr "Me har stadfesta at du deltek på hendinga %{title}"

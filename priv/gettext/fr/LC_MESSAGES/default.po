@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-09-30 08:36+0200\n"
+"PO-Revision-Date: 2021-09-30 15:35+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -274,7 +274,7 @@ msgctxt "terms"
 msgid "What information do we collect?"
 msgstr "Quelles informations collectons-nous ?"
 
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:177
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon sur %{instance} : confirmez votre adresse email"
 
@@ -870,11 +870,11 @@ msgstr "Comme ce groupe était originaire de cette instance, toutes ses données
 msgid "The group %{group} has been suspended on %{instance}!"
 msgstr "Le groupe %{group} a été suspendu sur %{instance} !"
 
-#: lib/web/templates/email/group_suspension.html.eex:38 lib/web/templates/email/group_suspension.text.eex:3
+#: lib/web/templates/email/group_suspension.text.eex:3
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr "L'équipe de modération de votre instance a décidé de suspendre %{group_name} (%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
 
-#: lib/web/email/group.ex:98
+#: lib/web/email/group.ex:97
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Le groupe %{group} a été suspendu sur %{instance}"
 
@@ -1122,10 +1122,18 @@ msgstr "Le mot de passe que vous avez choisi est trop court. Assurez-vous que vo
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr "Le jeton que vous avez fourni est invalide. Assurez-vous que l'URL est exactement la même que celle contenue dans le message que vous avez reçu."
 
-#: lib/web/templates/email/actor_suspension_participants.html.eex:38 lib/web/templates/email/actor_suspension_participants.text.eex:3
-msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation cancelled."
-msgstr "L'équipe de modération de votre instance a décidé de suspendre %{actor_name} (%{actor_address}). Tous leurs événements ont été supprimés et votre participation annulée."
-
-#: lib/web/email/actor.ex:45 lib/web/templates/email/actor_suspension_participants.html.eex:13 lib/web/templates/email/actor_suspension_participants.text.eex:1
+#: lib/web/email/actor.ex:44
 msgid "Your participation to %{event} has been cancelled!"
 msgstr "Votre participation à l'événement %{title} a été annulée !"
+
+#: lib/web/templates/email/actor_suspension_participants.html.eex:38 lib/web/templates/email/actor_suspension_participants.text.eex:3
+msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation to event %{event} cancelled."
+msgstr "L'équipe de modération de votre instance a décidé de suspendre %{actor_name} (%{actor_address}). Tous leurs événements ont été supprimés et votre participation à %{event} annulée."
+
+#: lib/web/templates/email/group_suspension.html.eex:38
+msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
+msgstr "L'équipe de modération de votre instance a décidé de suspendre <b>%{group_name}</b> (%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
+
+#: lib/web/templates/email/actor_suspension_participants.html.eex:13 lib/web/templates/email/actor_suspension_participants.text.eex:1
+msgid "Your participation to %{event} on %{instance} has been cancelled!"
+msgstr "Votre participation à l'événement %{event} sur %{instance} a été annulée !"

@@ -355,7 +355,7 @@ msgid "What information do we collect?"
 msgstr "Какую информацию мы собираем?"
 
 #, elixir-format
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:177
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon на %{instance}: подтвердите свой адрес электронной почты"
 
@@ -1320,7 +1320,6 @@ msgid "The group %{group} has been suspended on %{instance}!"
 msgstr "Группа %{group} заблокирована на %{instance}!"
 
 #, elixir-format
-#: lib/web/templates/email/group_suspension.html.eex:38
 #: lib/web/templates/email/group_suspension.text.eex:3
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
@@ -1329,7 +1328,7 @@ msgstr ""
 "группы."
 
 #, elixir-format
-#: lib/web/email/group.ex:98
+#: lib/web/email/group.ex:97
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Группа %{group} заблокирована на %{instance}"
 
@@ -1737,17 +1736,30 @@ msgstr ""
 "Предоставленный вами токен недействителен. Убедитесь, что URL-адрес - именно "
 "тот, который указан в полученном вами электронном письме."
 
+#, elixir-format
+#: lib/web/email/actor.ex:44
+msgid "Your participation to %{event} has been cancelled!"
+msgstr "Ваше участие в мероприятии %{title} одобрено"
+
 #, elixir-format, fuzzy
 #: lib/web/templates/email/actor_suspension_participants.html.eex:38
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
-msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation cancelled."
+msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation to event %{event} cancelled."
 msgstr ""
 "Команда модераторов вашего узла приняла решение приостановить работу "
 "%{group_name} (%{group_address}). Вы больше не являетесь участником этой "
 "группы."
 
 #, elixir-format, fuzzy
-#: lib/web/email/actor.ex:45
-#: lib/web/templates/email/actor_suspension_participants.html.eex:13 lib/web/templates/email/actor_suspension_participants.text.eex:1
-msgid "Your participation to %{event} has been cancelled!"
+#: lib/web/templates/email/group_suspension.html.eex:38
+msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
+msgstr ""
+"Команда модераторов вашего узла приняла решение приостановить работу "
+"%{group_name} (%{group_address}). Вы больше не являетесь участником этой "
+"группы."
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/actor_suspension_participants.html.eex:13
+#: lib/web/templates/email/actor_suspension_participants.text.eex:1
+msgid "Your participation to %{event} on %{instance} has been cancelled!"
 msgstr "Ваше участие в мероприятии %{title} одобрено"
