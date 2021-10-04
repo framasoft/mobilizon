@@ -70,6 +70,12 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     value(:rejected, description: "The participant has been rejected from this event")
   end
 
+  enum :export_format_enum do
+    value(:csv, description: "CSV format")
+    value(:pdf, description: "PDF format")
+    value(:ods, description: "ODS format")
+  end
+
   @desc "Represents a deleted participant"
   object :deleted_participant do
     field(:id, :id, description: "The participant ID")
@@ -110,6 +116,21 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     field :confirm_participation, :participant do
       arg(:confirmation_token, non_null(:string), description: "The participation token")
       resolve(&Participant.confirm_participation_from_token/3)
+    end
+
+    @desc "Export the event participants as a file"
+    field :export_event_participants, :string do
+      arg(:event_id, non_null(:id),
+        description: "The ID from the event for which to export participants"
+      )
+
+      arg(:roles, list_of(:participant_role_enum),
+        default_value: [],
+        description: "The participant roles to include"
+      )
+
+      arg(:format, :export_format_enum, description: "The format in which to return the file")
+      resolve(&Participant.export_event_participants/3)
     end
   end
 end

@@ -27,6 +27,7 @@ priv/data/*
 priv/errors/*
 !priv/errors/.gitkeep
 priv/cert/
+priv/python/__pycache__/
 .vscode/
 cover/
 site/
@@ -37,6 +38,7 @@ test/uploads/
 uploads/*
 release/
 !uploads/.gitkeep
+!uploads/exports/.gitkeep
 .idea
 *.mo
 *.po~

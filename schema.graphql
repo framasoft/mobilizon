@@ -453,6 +453,9 @@ type Comment implements ActivityObject & ActionLogObject {
 
   "Whether this comment needs to be announced to participants"
   isAnnouncement: Boolean!
+
+  "The comment language"
+  language: String!
 }
 
 "An attached media or a link to a media"
@@ -681,6 +684,14 @@ type Location {
   name: String
 }
 
+enum ExportFormatEnum {
+  "CSV format"
+  CSV
+
+  "PDF format"
+  PDF
+}
+
 "The list of visibility options for a comment"
 enum CommentVisibility {
   "Publicly listed and federated. Can be shared."
@@ -759,6 +770,17 @@ interface Interactable {
   url: String
 }
 
+enum EventMetadataType {
+  "A string"
+  STRING
+
+  "An integer"
+  INTEGER
+
+  "A boolean"
+  BOOLEAN
+}
+
 enum RoutingType {
   "Redirect to openstreetmap.org's direction endpoint"
   OPENSTREETMAP
@@ -827,6 +849,9 @@ type Post implements ActivityObject {
 
   "The post's last update date"
   updatedAt: DateTime
+
+  "The post language"
+  language: String!
 
   "The post's tags"
   tags: [Tag]
@@ -1424,11 +1449,17 @@ type RootMutationType {
     "The event options"
     options: EventOptionsInput
 
+    "The event metadata"
+    metadata: [EventMetadataInput]
+
     "Whether or not the event is a draft"
     draft: Boolean
 
     "The events contacts"
     contacts: [Contact]
+
+    "The event language"
+    language: String
   ): Event
 
   "Update an event"
@@ -1484,11 +1515,17 @@ type RootMutationType {
     "The event options"
     options: EventOptionsInput
 
+    "The event metadata"
+    metadata: [EventMetadataInput]
+
     "Whether or not the event is a draft"
     draft: Boolean
 
     "The events contacts"
     contacts: [Contact]
+
+    "The event language"
+    language: String
   ): Event
 
   "Delete an event"
@@ -1508,6 +1545,9 @@ type RootMutationType {
     "The comment ID this one replies to"
     inReplyToCommentId: ID
 
+    "The comment language"
+    language: String
+
     "Should this comment be announced to everyone?"
     isAnnouncement: Boolean
   ): Comment
@@ -1519,6 +1559,9 @@ type RootMutationType {
 
     "The comment ID"
     commentId: ID!
+
+    "The comment language"
+    language: String
 
     "Should this comment be announced to everyone?"
     isAnnouncement: Boolean
@@ -1574,6 +1617,18 @@ type RootMutationType {
     "The participation token"
     confirmationToken: String!
   ): Participant
+
+  "Export the event participants as a file"
+  exportEventParticipants(
+    "The ID from the event for which to export participants"
+    eventId: ID!
+
+    "The participant roles to include"
+    roles: [ParticipantRoleEnum]
+
+    "The format in which to return the file"
+    format: ExportFormatEnum
+  ): String
 
   "Join a group"
   joinGroup(
@@ -1922,6 +1977,9 @@ type RootMutationType {
     "The post's publish date"
     publishAt: DateTime
 
+    "The post language"
+    language: String
+
     "The list of tags associated to the post"
     tags: [String]
 
@@ -1948,6 +2006,9 @@ type RootMutationType {
 
     "The post's visibility"
     visibility: PostVisibility
+
+    "The post language"
+    language: String
 
     "The time when the posts is going to be or has been published"
     publishAt: DateTime
@@ -2220,6 +2281,9 @@ type RootQueryType {
 
   "Get the list of tags"
   tags(
+    "The filter to apply to the search"
+    filter: String
+
     "The page in the paginated tags list"
     page: Int
 
@@ -2561,6 +2625,20 @@ input EventParticipationConditionInput {
   url: String
 }
 
+input EventMetadataInput {
+  "The key for the metadata"
+  key: String!
+
+  "The title for the metadata"
+  title: String
+
+  "The value for the metadata"
+  value: String!
+
+  "The metadata type"
+  type: EventMetadataType
+}
+
 "A paginated list of participants"
 type PaginatedParticipantList {
   "A list of participants"
@@ -2682,6 +2760,12 @@ type Event implements ActivityObject & Interactable & ActionLogObject {
 
   "The event options"
   options: EventOptions
+
+  "A key-value list of metadata"
+  metadata: [EventMetadata]
+
+  "The event language"
+  language: String!
 }
 
 "An event offer"
@@ -2879,6 +2963,20 @@ type Follower {
 
   "When the follow was updated"
   updatedAt: DateTime
+}
+
+type EventMetadata {
+  "The key for the metadata"
+  key: String
+
+  "The title for the metadata"
+  title: String
+
+  "The value for the metadata"
+  value: String
+
+  "The metadata type"
+  type: EventMetadataType
 }
 
 "A discussion"

@@ -61,6 +61,9 @@ defmodule Mobilizon.Web.Router do
     plug(:accepts, ["atom", "ics", "html"])
   end
 
+  pipeline :exports do
+  end
+
   pipeline :browser do
     plug(Plug.Static, at: "/", from: "priv/static")
 
@@ -76,6 +79,11 @@ defmodule Mobilizon.Web.Router do
   end
 
   pipeline :remote_media do
+  end
+
+  scope "/exports", Mobilizon.Web do
+    pipe_through(:browser)
+    get("/:format/:file", ExportController, :export)
   end
 
   scope "/api" do

@@ -7,6 +7,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
 
   alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Service.Auth.MobilizonAuthenticator
   alias Mobilizon.Users.User
 
   Mix.shell(Mix.Shell.Process)
@@ -317,13 +318,11 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       insert(:user, email: @email)
       Modify.run([@email, "--password", @modified_password])
 
-      assert {:ok, %User{}} =
-               Mobilizon.Service.Auth.MobilizonAuthenticator.login(@email, @modified_password)
+      assert {:ok, %User{}} = MobilizonAuthenticator.login(@email, @modified_password)
 
       Modify.run([@email, "--password", "changed again"])
 
-      assert {:error, :bad_password} =
-               Mobilizon.Service.Auth.MobilizonAuthenticator.login(@email, @modified_password)
+      assert {:error, :bad_password} = MobilizonAuthenticator.login(@email, @modified_password)
     end
   end
 end

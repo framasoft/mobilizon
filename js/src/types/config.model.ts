@@ -102,4 +102,7 @@ export interface IConfig {
     enabled: boolean;
     publicKey: string;
   };
+  exportFormats: {
+    eventParticipants: string[];
+  };
 }

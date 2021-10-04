@@ -796,7 +796,7 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @spec get_participant_by_confirmation_token(String.t()) :: Participant.t()
+  @spec get_participant_by_confirmation_token(String.t()) :: Participant.t() | nil
   def get_participant_by_confirmation_token(confirmation_token) do
     Participant
     |> where([p], fragment("? ->>'confirmation_token' = ?", p.metadata, ^confirmation_token))
@@ -857,9 +857,8 @@ defmodule Mobilizon.Events do
         limit \\ nil
       ) do
     id
-    |> list_participants_for_event_query()
-    |> filter_role(roles)
-    |> order_by(asc: :role)
+    |> participants_for_event_query(roles)
+    |> preload([:actor, :event])
     |> Page.build_page(page, limit)
   end
 
@@ -1604,11 +1603,8 @@ defmodule Mobilizon.Events do
 
   @spec list_participants_for_event_query(String.t()) :: Ecto.Query.t()
   defp list_participants_for_event_query(event_id) do
-    from(
-      p in Participant,
-      where: p.event_id == ^event_id,
-      preload: [:actor, :event]
-    )
+    Participant
+    |> where([p], p.event_id == ^event_id)
   end
 
   @spec list_participant_actors_for_event_query(String.t()) :: Ecto.Query.t()
@@ -1619,6 +1615,21 @@ defmodule Mobilizon.Events do
       on: p.actor_id == a.id,
       where: p.event_id == ^event_id
     )
+  end
+
+  @spec participants_for_event_query(String.t(), list(atom())) :: Ecto.Query.t()
+  def participants_for_event_query(id, roles \\ []) do
+    id
+    |> list_participants_for_event_query()
+    |> filter_role(roles)
+    |> order_by(asc: :role)
+  end
+
+  def participant_for_event_export_query(id, roles) do
+    id
+    |> participants_for_event_query(roles)
+    |> join(:inner, [p], a in Actor, on: p.actor_id == a.id)
+    |> select([p, a], {p, a})
   end
 
   @doc """

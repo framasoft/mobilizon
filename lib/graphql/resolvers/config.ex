@@ -153,7 +153,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         enabled: !is_nil(Application.get_env(:web_push_encryption, :vapid_details)),
         public_key:
           get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
-      }
+      },
+      export_formats: Config.instance_export_formats()
     }
   end
 end

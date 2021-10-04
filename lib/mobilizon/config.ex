@@ -6,6 +6,7 @@ defmodule Mobilizon.Config do
   alias Mobilizon.Actors
   alias Mobilizon.Service.GitStatus
   require Logger
+  import Mobilizon.Service.Export.Participants.Common, only: [enabled_formats: 0]
 
   @type mobilizon_config :: [
           name: String.t(),
@@ -301,6 +302,13 @@ defmodule Mobilizon.Config do
   @spec instance_event_creation_enabled? :: boolean
   def instance_event_creation_enabled?,
     do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:creation)
+
+  @spec instance_export_formats :: %{event_participants: list(String.t())}
+  def instance_export_formats do
+    %{
+      event_participants: enabled_formats()
+    }
+  end
 
   @spec anonymous_actor_id :: integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)

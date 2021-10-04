@@ -47,6 +47,7 @@ defmodule Mobilizon do
         # workers
         Guardian.DB.Token.SweeperServer,
         ActivityPub.Federator,
+        Mobilizon.PythonWorker,
         cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
         cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
         cachex_spec(

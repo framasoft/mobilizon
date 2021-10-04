@@ -574,3 +574,13 @@ export const CLOSE_EVENTS = gql`
     }
   }
 `;
+
+export const EXPORT_EVENT_PARTICIPATIONS = gql`
+  mutation ExportEventParticipants(
+    $eventId: ID!
+    $format: ExportFormatEnum
+    $roles: [ParticipantRoleEnum]
+  ) {
+    exportEventParticipants(eventId: $eventId, format: $format, roles: $roles)
+  }
+`;

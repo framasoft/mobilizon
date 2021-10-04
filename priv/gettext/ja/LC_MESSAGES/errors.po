@@ -139,7 +139,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:28
-#: lib/graphql/resolvers/participant.ex:31 lib/graphql/resolvers/participant.ex:209 lib/graphql/resolvers/person.ex:236
+#: lib/graphql/resolvers/participant.ex:32 lib/graphql/resolvers/participant.ex:210 lib/graphql/resolvers/person.ex:236
 #: lib/graphql/resolvers/person.ex:353 lib/graphql/resolvers/person.ex:380 lib/graphql/resolvers/person.ex:397
 msgid "Profile is not owned by authenticated user"
 msgstr ""
@@ -311,13 +311,13 @@ msgid "Profile already suspended"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:95
+#: lib/graphql/resolvers/participant.ex:96
 msgid "A valid email is required by your instance"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:89
-#: lib/graphql/resolvers/participant.ex:142
+#: lib/graphql/resolvers/participant.ex:90
+#: lib/graphql/resolvers/participant.ex:143
 msgid "Anonymous participation is not enabled"
 msgstr ""
 
@@ -352,7 +352,7 @@ msgid "Error while updating report"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:130
+#: lib/graphql/resolvers/participant.ex:131
 msgid "Event id not found"
 msgstr ""
 
@@ -363,13 +363,14 @@ msgid "Event not found"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:86
-#: lib/graphql/resolvers/participant.ex:127 lib/graphql/resolvers/participant.ex:154
+#: lib/graphql/resolvers/participant.ex:87
+#: lib/graphql/resolvers/participant.ex:128 lib/graphql/resolvers/participant.ex:155
+#: lib/graphql/resolvers/participant.ex:349
 msgid "Event with this ID %{id} doesn't exist"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:102
+#: lib/graphql/resolvers/participant.ex:103
 msgid "Internal Error"
 msgstr ""
 
@@ -390,14 +391,13 @@ msgid "No such feed token"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:258
+#: lib/graphql/resolvers/participant.ex:259
 msgid "Participant already has role %{role}"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:186
-#: lib/graphql/resolvers/participant.ex:219 lib/graphql/resolvers/participant.ex:251
-#: lib/graphql/resolvers/participant.ex:261
+#: lib/graphql/resolvers/participant.ex:187
+#: lib/graphql/resolvers/participant.ex:220 lib/graphql/resolvers/participant.ex:263
 msgid "Participant not found"
 msgstr ""
 
@@ -456,12 +456,12 @@ msgid "Resource doesn't exist"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:123
+#: lib/graphql/resolvers/participant.ex:124
 msgid "The event has already reached its maximum capacity"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:281
+#: lib/graphql/resolvers/participant.ex:283
 msgid "This token is invalid"
 msgstr ""
 
@@ -497,7 +497,7 @@ msgid "You already have a profile for this user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:133
+#: lib/graphql/resolvers/participant.ex:134
 msgid "You are already a participant of this event"
 msgstr ""
 
@@ -537,8 +537,8 @@ msgid "You are not allowed to update a comment if not connected"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:180
-#: lib/graphql/resolvers/participant.ex:213
+#: lib/graphql/resolvers/participant.ex:181
+#: lib/graphql/resolvers/participant.ex:214
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 
@@ -648,12 +648,12 @@ msgid "You need to be logged-in to delete resources"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:107
+#: lib/graphql/resolvers/participant.ex:108
 msgid "You need to be logged-in to join an event"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:224
+#: lib/graphql/resolvers/participant.ex:225
 msgid "You need to be logged-in to leave an event"
 msgstr ""
 
@@ -803,7 +803,7 @@ msgid "Organizer profile is not owned by the user"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:92
+#: lib/graphql/resolvers/participant.ex:93
 msgid "Profile ID provided is not the anonymous profile one"
 msgstr ""
 
@@ -834,7 +834,8 @@ msgid "Unable to fetch resource details from this URL."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/event.ex:171 lib/graphql/resolvers/participant.ex:255
+#: lib/graphql/resolvers/event.ex:171 lib/graphql/resolvers/participant.ex:253
+#: lib/graphql/resolvers/participant.ex:341
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr ""
 
@@ -874,7 +875,7 @@ msgid "Error while uploading pictures"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:189
+#: lib/graphql/resolvers/participant.ex:190
 msgid "Failed to leave the event"
 msgstr ""
 
@@ -894,7 +895,7 @@ msgid "Failed to validate user email"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/participant.ex:145
+#: lib/graphql/resolvers/participant.ex:146
 msgid "The anonymous actor ID is invalid"
 msgstr ""
 
@@ -911,4 +912,24 @@ msgstr ""
 #, elixir-format
 #: lib/graphql/resolvers/user.ex:404
 msgid "You cannot change your password."
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/participant.ex:310
+msgid "Format not supported"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/participant.ex:322
+msgid "A dependency needed to export to %{format} is not installed"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/participant.ex:330
+msgid "An error occured while saving export"
+msgstr ""
+
+#, elixir-format
+#: lib/web/controllers/export_controller.ex:30
+msgid "Export to format %{format} is not enabled on this instance"
 msgstr ""

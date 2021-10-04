@@ -26,7 +26,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
           accept_join_entities | accept_follow_entities | accept_invite_entities
 
   @spec accept(acceptable_types, acceptable_entities, boolean, map) ::
-          {:ok, ActivityStream.t(), acceptable_entities}
+          {:ok, ActivityStream.t(), acceptable_entities} | {:error, Ecto.Changeset.t()}
   def accept(type, entity, local \\ true, additional \\ %{}) do
     Logger.debug("We're accepting something")
 
