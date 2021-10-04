@@ -310,5 +310,20 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       assert output_received ==
                "An user has been modified with the following information:\n  - email: #{@modified_email}\n  - Role: #{user.role}\n  - account status: Activated on #{confirmed_at} (UTC)\n"
     end
+
+    @modified_password "new one"
+
+    test "change an user's password" do
+      insert(:user, email: @email)
+      Modify.run([@email, "--password", @modified_password])
+
+      assert {:ok, %User{}} =
+               Mobilizon.Service.Auth.MobilizonAuthenticator.login(@email, @modified_password)
+
+      Modify.run([@email, "--password", "changed again"])
+
+      assert {:error, :bad_password} =
+               Mobilizon.Service.Auth.MobilizonAuthenticator.login(@email, @modified_password)
+    end
   end
 end

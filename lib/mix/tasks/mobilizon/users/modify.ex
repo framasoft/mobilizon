@@ -16,6 +16,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
         rest,
         strict: [
           email: :string,
+          password: :string,
           disable: :boolean,
           enable: :boolean,
           user: :boolean,
@@ -30,6 +31,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
     disable? = Keyword.get(options, :disable, false)
     enable? = Keyword.get(options, :enable, false)
     new_email = Keyword.get(options, :email)
+    new_password = Keyword.get(options, :password)
 
     if disable? && enable? do
       shell_error("Can't use both --enable and --disable options at the same time.")
@@ -41,6 +43,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Modify do
          attrs <- %{},
          role <- calculate_role(admin?, moderator?, user?),
          attrs <- process_new_value(attrs, :email, new_email, user.email),
+         attrs <- process_new_value(attrs, :password, new_password, nil),
          attrs <- process_new_value(attrs, :role, role, user.role),
          attrs <-
            if(disable? && !is_nil(user.confirmed_at),

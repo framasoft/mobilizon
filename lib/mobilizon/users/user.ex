@@ -107,6 +107,7 @@ defmodule Mobilizon.Users.User do
       |> validate_required(@required_attrs)
       |> unique_constraint(:email, message: dgettext("errors", "This email is already used."))
       |> Checker.validate_changeset()
+      |> hash_password()
       |> validate_length(:password,
         min: 6,
         max: 200,
