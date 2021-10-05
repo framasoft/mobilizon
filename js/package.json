@@ -93,7 +93,7 @@
     "eslint-plugin-vue": "^7.6.0",
     "flush-promises": "^1.0.2",
     "jest": "^27.1.0",
-    "jest-junit": "^12.0.0",
+    "jest-junit": "^13.0.0",
     "mock-apollo-client": "^1.1.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^13.0.0",
