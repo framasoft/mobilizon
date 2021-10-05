@@ -1,5 +1,5 @@
 defmodule Mobilizon.Service.ICalendarTest do
-  use Mobilizon.DataCase
+  use Mobilizon.DataCase, async: true
 
   import Mobilizon.Factory
 

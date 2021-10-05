@@ -5,7 +5,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   import Mobilizon.Factory
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Follower
-  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
 
   describe "handle incoming follow requests" do

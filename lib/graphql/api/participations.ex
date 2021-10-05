@@ -31,7 +31,8 @@ defmodule Mobilizon.GraphQL.API.Participations do
   @doc """
   Update participation status
   """
-  @spec update(Participant.t(), Actor.t(), atom()) :: {:ok, Activity.t(), Participant.t()}
+  @spec update(Participant.t(), Actor.t(), atom()) ::
+          {:ok, Activity.t(), Participant.t()} | {:error, Ecto.Changeset.t()}
   def update(%Participant{} = participation, %Actor{} = moderator, :participant),
     do: accept(participation, moderator)
 
@@ -46,7 +47,8 @@ defmodule Mobilizon.GraphQL.API.Participations do
   def update(%Participant{} = participation, %Actor{} = moderator, :rejected),
     do: reject(participation, moderator)
 
-  @spec accept(Participant.t(), Actor.t()) :: {:ok, Activity.t(), Participant.t()}
+  @spec accept(Participant.t(), Actor.t()) ::
+          {:ok, Activity.t(), Participant.t()} | {:error, Ecto.Changeset.t()}
   defp accept(
          %Participant{} = participation,
          %Actor{} = moderator

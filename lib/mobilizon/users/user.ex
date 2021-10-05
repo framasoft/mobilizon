@@ -107,6 +107,7 @@ defmodule Mobilizon.Users.User do
       |> validate_required(@required_attrs)
       |> unique_constraint(:email, message: dgettext("errors", "This email is already used."))
       |> Checker.validate_changeset()
+      |> hash_password()
       |> validate_length(:password,
         min: 6,
         max: 200,
@@ -128,7 +129,7 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec registration_changeset(t, map) :: Ecto.Changeset.t()
+  @spec registration_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def registration_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
@@ -146,7 +147,7 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec auth_provider_changeset(t, map) :: Ecto.Changeset.t()
+  @spec auth_provider_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def auth_provider_changeset(%__MODULE__{} = user, attrs) do
     user
     |> changeset(attrs)
@@ -155,13 +156,13 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc false
-  @spec send_password_reset_changeset(t, map) :: Ecto.Changeset.t()
+  @spec send_password_reset_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def send_password_reset_changeset(%__MODULE__{} = user, attrs) do
     cast(user, attrs, [:reset_password_token, :reset_password_sent_at])
   end
 
   @doc false
-  @spec password_reset_changeset(t, map) :: Ecto.Changeset.t()
+  @spec password_reset_changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
   def password_reset_changeset(%__MODULE__{} = user, attrs) do
     password_change_changeset(user, attrs, @password_reset_required_attrs)
   end

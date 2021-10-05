@@ -285,6 +285,7 @@ config :mobilizon, Oban,
        {"17 4 * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background},
+       {"@hourly", Mobilizon.Service.Workers.ExportCleanerWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.SendActivityRecapWorker, queue: :notifications},
        {"@daily", Mobilizon.Service.Workers.CleanOldActivityWorker, queue: :background}
      ]},
@@ -319,6 +320,11 @@ config :mobilizon, Mobilizon.Service.Notifier,
 config :mobilizon, Mobilizon.Service.Notifier.Email, enabled: true
 
 config :mobilizon, Mobilizon.Service.Notifier.Push, enabled: true
+
+config :mobilizon, :exports,
+  formats: [
+    Mobilizon.Service.Export.Participants.CSV
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

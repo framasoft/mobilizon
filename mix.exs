@@ -166,6 +166,8 @@ defmodule Mobilizon.Mixfile do
       {:eblurhash, "~> 1.2"},
       {:struct_access, "~> 1.1.2"},
       {:paasaa, "~> 0.5.0"},
+      {:nimble_csv, "~> 1.1"},
+      {:export, "~> 0.1.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

@@ -175,3 +175,13 @@ export const WEB_PUSH = gql`
     }
   }
 `;
+
+export const EVENT_PARTICIPANTS = gql`
+  query EventParticipants {
+    config {
+      exportFormats {
+        eventParticipants
+      }
+    }
+  }
+`;

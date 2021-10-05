@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+        <style>
+                table {
+        border: 1px solid #bdbdbd;
+        border-collapse: collapse;
+        width: 100%; }
+
+        th,
+        td,
+        table caption {
+        padding: 0.75rem;
+        text-align: left;
+        text-align: start;
+        /* 1 */ }
+
+        [dir="rtl"] th,
+        [dir="rtl"] td,
+        [dir="rtl"] table caption {
+        text-align: right;
+        text-align: start;
+        /* 1 */ }
+        
+        td {
+  vertical-align: text-top;
+}
+
+        th {
+        vertical-align: bottom; }
+        th[scope="col"] {
+            background-color: #024488;
+            color: #fff; }
+            
+
+	dl {
+        display: flex;
+        flex-flow: row wrap;
+      }
+      dt {
+        flex-basis: 20%;
+        padding: 2px 4px;
+        text-align: right;
+      }
+      dd {
+        flex-basis: 70%;
+        flex-grow: 1;
+        margin: 0;
+        padding: 2px 4px;
+      }
+	
+	dl dt {
+        font-weight: bold; }
+        
+        dl dd + dt {
+        margin-top: 0.5em; }
+        
+        dl dt + dd,
+        dl dd + dd {
+  margin-top: 0.25em; }
+	
+	tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+th {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+@media print {
+  body {
+    /*font-size: 6pt;*/
+    color: #000;
+    background-color: #fff;
+    background-image: none;
+  }
+  body,
+  main {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border: none;
+  }
+  table {
+    page-break-inside: avoid;
+  }
+  div {
+    overflow: visible;
+  }
+  th {
+    color: #000;
+    background-color: #fff;
+    border-bottom: 1pt solid #000;
+  }
+  tr {
+    border-top: 1pt solid #000;
+  }
+}
+
+@media print and (max-width: 5in) {
+  caption {
+    color: #000;
+    background-color: #fff;
+    border-bottom: 1pt solid #000;
+  }
+  table {
+    page-break-inside: auto;
+  }
+  tr {
+    page-break-inside: avoid;
+  }
+}
+        </style>
+        <%# <title><%= gettext("Participants for %{event}") ></title> %>
+    </head>
+    <body>
+        <h1><%= gettext("Participants for %{event}", event: @event.title) %></h1>
+        <dl>
+            <dt><%= gettext("Begins on") %></dt>
+            <dd><%= datetime_to_string(@event.begins_on, @locale, :long) %></dd>
+            <%= if @event.ends_on do %>
+                <dt><%= gettext("Ends on") %></dt>
+                <dd><%= datetime_to_string(@event.ends_on, @locale, :long) %></dd>
+            <% end %>
+            <%= if @event.physical_address do %>
+                <dt><%= gettext("Location") %></dt>
+                <dd><%= render_address(@event.physical_address) %></dd>
+            <% end %>
+            <dt><%= gettext("Number of participants") %></dt>
+            <dd><%= @event.participant_stats.participant + @event.participant_stats.moderator + @event.participant_stats.administrator + @event.participant_stats.creator %></dd>
+        </dl>
+        <table>
+            <thead>
+                <tr>
+                    <%= for column <- @columns do %>
+                        <th><%= column %></th>
+                    <% end %>
+                </tr>
+            </thead>
+            <tbody>
+                <%= for line <- @data do %>
+                    <tr>
+                        <%= for cell <- line do %>
+                            <td><%= cell %></td>
+                        <% end %>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+    </body>
+</html>

@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.API.Participations
+  alias Mobilizon.Service.Export.Participants.{CSV, ODS, PDF}
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
   alias Mobilizon.Web.Email.Checker
@@ -225,7 +226,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   end
 
   @spec update_participation(any(), map(), Absinthe.Resolution.t()) ::
-          {:ok, Participation.t()} | {:error, String.t()}
+          {:ok, Participation.t()} | {:error, String.t() | Ecto.Changeset.t()}
   def update_participation(
         _parent,
         %{id: participation_id, role: new_role},
@@ -236,28 +237,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         }
       ) do
     # Check that participation already exists
-    with {:has_participation, %Participant{role: old_role, event_id: event_id} = participation} <-
-           {:has_participation, Events.get_participant(participation_id)},
-         {:same_role, false} <- {:same_role, new_role == old_role},
-         # Check that moderator has right
-         {:event, %Event{} = event} <- {:event, Events.get_event_with_preload!(event_id)},
-         {:event_can_be_managed, true} <-
-           {:event_can_be_managed, can_event_be_updated_by?(event, moderator_actor)},
-         {:ok, _activity, participation} <-
-           Participations.update(participation, moderator_actor, new_role) do
-      {:ok, participation}
-    else
-      {:has_participation, nil} ->
-        {:error, dgettext("errors", "Participant not found")}
 
-      {:event_can_be_managed, _} ->
-        {:error,
-         dgettext("errors", "Provided profile doesn't have moderator permissions on this event")}
+    case Events.get_participant(participation_id) do
+      %Participant{role: old_role, event_id: event_id} = participation ->
+        if new_role != old_role do
+          %Event{} = event = Events.get_event_with_preload!(event_id)
 
-      {:same_role, true} ->
-        {:error, dgettext("errors", "Participant already has role %{role}", role: new_role)}
+          if can_event_be_updated_by?(event, moderator_actor) do
+            with {:ok, _activity, participation} <-
+                   Participations.update(participation, moderator_actor, new_role) do
+              {:ok, participation}
+            end
+          else
+            {:error,
+             dgettext(
+               "errors",
+               "Provided profile doesn't have moderator permissions on this event"
+             )}
+          end
+        else
+          {:error, dgettext("errors", "Participant already has role %{role}", role: new_role)}
+        end
 
-      {:error, :participant_not_found} ->
+      nil ->
         {:error, dgettext("errors", "Participant not found")}
     end
   end
@@ -272,15 +274,70 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     with {:has_participant,
           %Participant{actor: actor, role: :not_confirmed, event: event} = participant} <-
            {:has_participant, Events.get_participant_by_confirmation_token(confirmation_token)},
-         default_role <- Events.get_default_participant_role(event),
          {:ok, _activity, %Participant{} = participant} <-
-           Participations.update(participant, actor, default_role) do
+           Participations.update(participant, actor, Events.get_default_participant_role(event)) do
       {:ok, participant}
     else
-      {:has_participant, _} ->
+      {:has_participant, nil} ->
         {:error, dgettext("errors", "This token is invalid")}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
+
+  @spec export_event_participants(any(), map(), Absinthe.Resolution.t()) :: {:ok, String.t()}
+  def export_event_participants(_parent, %{event_id: event_id, roles: roles, format: format}, %{
+        context: %{
+          current_user: %User{locale: locale},
+          current_actor: %Actor{} = moderator_actor
+        }
+      }) do
+    case Events.get_event_with_preload(event_id) do
+      {:ok, %Event{} = event} ->
+        if can_event_be_updated_by?(event, moderator_actor) do
+          case export_format(format, event, roles, locale) do
+            {:ok, path} ->
+              {:ok, path}
+
+            {:error, :export_dependency_not_installed} ->
+              {:error,
+               dgettext(
+                 "errors",
+                 "A dependency needed to export to %{format} is not installed",
+                 format: format
+               )}
+
+            {:error, :failed_to_save_upload} ->
+              {:error,
+               dgettext(
+                 "errors",
+                 "An error occured while saving export",
+                 format: format
+               )}
+
+            {:error, :format_not_supported} ->
+              {:error,
+               dgettext(
+                 "errors",
+                 "Format not supported"
+               )}
+          end
+        else
+          {:error,
+           dgettext(
+             "errors",
+             "Provided profile doesn't have moderator permissions on this event"
+           )}
+        end
+
+      {:error, :event_not_found} ->
+        {:error,
+         dgettext("errors", "Event with this ID %{id} doesn't exist", id: inspect(event_id))}
+    end
+  end
+
+  def export_event_participants(_, _, _), do: {:error, :unauthorized}
 
   @spec valid_email?(String.t() | nil) :: boolean
   defp valid_email?(email) when is_nil(email), do: false
@@ -289,5 +346,25 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     email
     |> String.trim()
     |> Checker.valid?()
+  end
+
+  @spec export_format(atom(), Event.t(), list(), String.t()) ::
+          {:ok, String.t()}
+          | {:error,
+             :format_not_supported | :export_dependency_not_installed | :failed_to_save_upload}
+  defp export_format(format, event, roles, locale) do
+    case format do
+      :csv ->
+        CSV.export(event, roles: roles, locale: locale)
+
+      :pdf ->
+        PDF.export(event, roles: roles, locale: locale)
+
+      :ods ->
+        ODS.export(event, roles: roles, locale: locale)
+
+      _ ->
+        {:error, :format_not_supported}
+    end
   end
 end

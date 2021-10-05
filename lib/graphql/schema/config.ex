@@ -65,6 +65,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:auth, :auth, description: "The instance auth methods")
     field(:instance_feeds, :instance_feeds, description: "The instance's feed settings")
     field(:web_push, :web_push, description: "Web Push settings for the instance")
+
+    field(:export_formats, :export_formats, description: "The instance list of export formats")
   end
 
   @desc """
@@ -305,6 +307,15 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :web_push do
     field(:enabled, :boolean, description: "Whether the WebPush feature is enabled")
     field(:public_key, :string, description: "The server's public WebPush VAPID key")
+  end
+
+  @desc """
+  Export formats configuration
+  """
+  object :export_formats do
+    field(:event_participants, list_of(:string),
+      description: "The list of formats the event participants can be exported to"
+    )
   end
 
   object :config_queries do

@@ -6,7 +6,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.{Actions, Transmogrifier}
 
   describe "handle incoming join activities" do

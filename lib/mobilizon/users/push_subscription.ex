@@ -34,6 +34,7 @@ defmodule Mobilizon.Users.PushSubscription do
     |> unique_constraint([:digest, :user_id], name: :user_push_subscriptions_user_id_digest_index)
   end
 
+  @spec compute_digest(map()) :: String.t()
   defp compute_digest(attrs) do
     data =
       Jason.encode!(%{endpoint: attrs.endpoint, keys: %{auth: attrs.auth, p256dh: attrs.p256dh}})

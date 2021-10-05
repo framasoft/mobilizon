@@ -281,9 +281,9 @@ defmodule Mobilizon.Users do
   @doc """
   Returns the list of users.
   """
-  @spec list_users(String.t(), integer | nil, integer | nil, atom | nil, atom | nil) ::
+  @spec list_users(String.t(), integer | nil, integer | nil, atom, atom) ::
           Page.t(User.t())
-  def list_users(email \\ "", page \\ nil, limit \\ nil, sort \\ nil, direction \\ nil)
+  def list_users(email, page, limit \\ nil, sort, direction)
 
   def list_users("", page, limit, sort, direction) do
     User
@@ -452,7 +452,7 @@ defmodule Mobilizon.Users do
   """
   @spec create_push_subscription(map()) ::
           {:ok, PushSubscription.t()} | {:error, Ecto.Changeset.t()}
-  def create_push_subscription(attrs \\ %{}) do
+  def create_push_subscription(attrs) do
     %PushSubscription{}
     |> PushSubscription.changeset(attrs)
     |> Repo.insert()

@@ -28,6 +28,7 @@ variables:
   # Release elements
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}"
   ARCH: "amd64"
+  EXPORT_FORMATS: "csv,ods,pdf"
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"

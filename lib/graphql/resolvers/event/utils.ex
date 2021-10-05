@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event.Utils do
   alias Mobilizon.Federation.ActivityPub.Permission
   import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
-  @spec can_event_be_updated_by?(%Event{id: String.t()}, Actor.t()) ::
+  @spec can_event_be_updated_by?(Event.t(), Actor.t()) ::
           boolean
   def can_event_be_updated_by?(
         %Event{attributed_to: %Actor{type: :Group}} = event,
@@ -24,7 +24,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event.Utils do
     Event.can_be_managed_by?(event, actor_member_id)
   end
 
-  @spec can_event_be_deleted_by?(%Event{id: String.t(), url: String.t()}, Actor.t()) ::
+  @spec can_event_be_deleted_by?(Event.t(), Actor.t()) ::
           boolean
   def can_event_be_deleted_by?(
         %Event{attributed_to: %Actor{type: :Group}, id: event_id, url: event_url} = event,
