@@ -30,7 +30,6 @@ defmodule Mobilizon.Web.FeedController do
     return_data(conn, "ics", "event_" <> uuid, "event")
   end
 
-  @spec instance(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def event(_conn, _) do
     {:error, :not_found}
   end
