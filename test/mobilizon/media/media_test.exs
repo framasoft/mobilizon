@@ -17,12 +17,6 @@ defmodule Mobilizon.MediaTest do
         name: "something old"
       }
     }
-    @update_attrs %{
-      file: %{
-        url: "https://something.tld/media/something_updated",
-        name: "something new"
-      }
-    }
 
     test "get_media!/1 returns the media with given id" do
       media = insert(:media)
@@ -34,18 +28,6 @@ defmodule Mobilizon.MediaTest do
                Medias.create_media(Map.put(@valid_attrs, :actor_id, insert(:actor).id))
 
       assert media.file.name == "something old"
-    end
-
-    test "update_media/2 with valid data updates the media" do
-      media = insert(:media)
-
-      assert {:ok, %Media{} = media} =
-               Medias.update_media(
-                 media,
-                 Map.put(@update_attrs, :actor_id, insert(:actor).id)
-               )
-
-      assert media.file.name == "something new"
     end
 
     test "delete_media/1 deletes the media" do

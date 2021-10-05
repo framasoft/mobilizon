@@ -128,12 +128,6 @@ defmodule Mobilizon.UsersTest do
       setting
     end
 
-    test "get_setting!/1 returns the setting with given id" do
-      %User{id: user_id} = insert(:user)
-      setting = setting_fixture(user_id: user_id)
-      assert Users.get_setting!(setting.user_id) == setting
-    end
-
     test "create_setting/1 with valid data creates a setting" do
       %User{id: user_id} = insert(:user)
 
@@ -154,19 +148,6 @@ defmodule Mobilizon.UsersTest do
       assert {:ok, %Setting{} = setting} = Users.update_setting(setting, @update_attrs)
       assert setting.timezone == "Atlantic/Cape_Verde"
       assert setting.notification_each_week == false
-    end
-
-    test "delete_setting/1 deletes the setting" do
-      %User{id: user_id} = insert(:user)
-      setting = setting_fixture(user_id: user_id)
-      assert {:ok, %Setting{}} = Users.delete_setting(setting)
-      assert_raise Ecto.NoResultsError, fn -> Users.get_setting!(setting.user_id) end
-    end
-
-    test "change_setting/1 returns a setting changeset" do
-      %User{id: user_id} = insert(:user)
-      setting = setting_fixture(user_id: user_id)
-      assert %Ecto.Changeset{} = Users.change_setting(setting)
     end
   end
 end

@@ -38,14 +38,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
 
   def fetch_mentions(_), do: []
 
-  def fetch_address(%{id: id}) do
-    with {id, ""} <- Integer.parse(id), do: %{id: id}
-  end
-
-  def fetch_address(address) when is_map(address) do
-    address
-  end
-
   def fetch_actors(actors) when is_list(actors) do
     Logger.debug("fetching contacts")
     actors |> Enum.map(& &1.id) |> Enum.filter(& &1) |> Enum.map(&Actors.get_actor/1)

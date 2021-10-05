@@ -8,9 +8,15 @@ defmodule Mobilizon.Web.Upload.Filter.ExiftoolTest do
   alias Mobilizon.Web.Upload
   alias Mobilizon.Web.Upload.Filter
 
-  test "apply exiftool filter" do
-    assert Mobilizon.Utils.command_available?("exiftool")
+  setup do
+    if command_available?("exiftool") do
+      {:ok, skip: true}
+    else
+      :ok
+    end
+  end
 
+  test "apply exiftool filter" do
     File.cp!(
       "test/fixtures/DSCN0010.jpg",
       "test/fixtures/DSCN0010_tmp.jpg"

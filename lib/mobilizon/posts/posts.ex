@@ -69,10 +69,6 @@ defmodule Mobilizon.Posts do
     |> Repo.preload(@post_preloads)
   end
 
-  @spec get_post_by_slug(String.t()) :: Post.t() | nil
-  def get_post_by_slug(nil), do: nil
-  def get_post_by_slug(slug), do: Repo.get_by(Post, slug: slug)
-
   @spec get_post_by_slug_with_preloads(String.t()) :: Post.t() | nil
   def get_post_by_slug_with_preloads(slug) do
     Post

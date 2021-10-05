@@ -28,12 +28,12 @@ defmodule Mobilizon.Service.HTTP.ActivityPub do
     Tesla.client(middleware, {adapter, opts})
   end
 
-  @spec get(Tesla.Client.t(), String.t()) :: Tesla.Env.t()
+  @spec get(Tesla.Client.t(), String.t()) :: Tesla.Env.result()
   def get(client, url) do
     Tesla.get(client, url)
   end
 
-  @spec post(Tesla.Client.t(), String.t(), map() | String.t()) :: Tesla.Env.t()
+  @spec post(Tesla.Client.t(), String.t(), map() | String.t()) :: Tesla.Env.result()
   def post(client, url, data) do
     Tesla.post(client, url, data)
   end

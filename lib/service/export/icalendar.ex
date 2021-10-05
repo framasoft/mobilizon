@@ -3,7 +3,6 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Export an event to iCalendar format.
   """
 
-  alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Config, Events}
   alias Mobilizon.Events.Event
@@ -79,14 +78,11 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   def export_public_event(%Event{}), do: {:error, :event_not_public}
 
-  @doc """
-  Export a public actor's events to iCalendar format.
-
-  The actor must have a visibility of `:public` or `:unlisted`, as well as the events
-  """
+  # Export a public actor's events to iCalendar format.
+  # The actor must have a visibility of `:public` or `:unlisted`, as well as the events
   @spec export_public_actor(String.t()) ::
           {:ok, String.t()} | {:error, :actor_not_public | :actor_not_found}
-  def export_public_actor(name, limit \\ @item_limit) do
+  defp export_public_actor(name, limit \\ @item_limit) do
     case Common.fetch_actor_event_feed(name, limit) do
       {:ok, _actor, events, _posts} ->
         {:ok, events_to_ics(events)}
@@ -94,12 +90,6 @@ defmodule Mobilizon.Service.Export.ICalendar do
       {:error, err} ->
         {:error, err}
     end
-  end
-
-  @spec export_private_actor(Actor.t(), integer()) :: {:ok, String.t()}
-  def export_private_actor(%Actor{} = actor, limit \\ @item_limit) do
-    events = Common.fetch_actor_private_events(actor, limit)
-    {:ok, events_to_ics(events)}
   end
 
   @spec fetch_events_from_token(String.t(), integer()) ::

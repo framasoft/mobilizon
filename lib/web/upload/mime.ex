@@ -36,22 +36,6 @@ defmodule Mobilizon.Web.Upload.MIME do
     end)
   end
 
-  def bin_mime_type(binary, filename) do
-    with {:ok, content_type} <- bin_mime_type(binary),
-         filename <- fix_extension(filename, content_type) do
-      {:ok, content_type, filename}
-    end
-  end
-
-  @spec bin_mime_type(binary()) :: {:ok, String.t()} | {:error, :unknown_mime}
-  def bin_mime_type(<<head::binary-size(@read_bytes), _::binary>>) do
-    {:ok, check_mime_type(head)}
-  end
-
-  def bin_mime_type(_), do: {:error, :unknown_mime}
-
-  def mime_type(<<_::binary>>), do: {:ok, @default}
-
   defp fix_extension(filename, content_type)
        when is_binary(filename) and is_binary(content_type) do
     parts = String.split(filename, ".")

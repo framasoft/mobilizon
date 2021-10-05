@@ -9,7 +9,7 @@ defmodule Mobilizon.Mixfile do
       version: @version,
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: [:gettext, :unused] ++ Mix.compilers(),
       xref: [exclude: [:eldap]],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -36,6 +36,44 @@ defmodule Mobilizon.Mixfile do
           applications: [eldap: :transient],
           config_providers: [{Mobilizon.ConfigProvider, "/etc/mobilizon/config.exs"}],
           steps: [:assemble, &copy_files/1, &copy_config/1]
+        ]
+      ],
+      unused: [
+        ignore: [
+          Mobilizon.Storage.Repo,
+          Mobilizon.Storage.PostgresTypes,
+          Mobilizon.Factory,
+          Mobilizon.Web.Router.Helpers,
+          Mobilizon.Web.Email.Mailer,
+          Mobilizon.Web.Auth.Guardian.Plug,
+          Mobilizon.Web.Gettext,
+          Mobilizon.Web.Endpoint,
+          Mobilizon.Web.Auth.Guardian,
+          Mobilizon.Web,
+          Mobilizon.GraphQL.Schema.Compiled,
+          Mobilizon.GraphQL.Schema,
+          Mobilizon.Web.Router,
+          Mobilizon.Users.Setting.Location,
+          {:_, :start_link, 1},
+          {:_, :child_spec, 1},
+          {:_, :__impl__, 1},
+          {:_, :__schema__, :_},
+          {:_, :__struct__, 0..1},
+          {:_, :__changeset__, 0},
+          {:_, :create_type, 0},
+          {:_, :drop_type, 0},
+          {:_, :schema, 0},
+          {:_, :schemaless_type, 0},
+          {:_, :valid_value?, 0..1},
+          {:_, :__enum_map__, 0},
+          {:_, :__absinthe_blueprint__, :_},
+          {:_, :__absinthe_function__, :_},
+          {~r/^Mobilizon.Web.*Controller/, :_, 2},
+          {~r/^Mobilizon.Web.*View/, :_, :_},
+          {~r/^Mobilizon.Web.Email.*/, :render, 3},
+          {~r/^Mobilizon.Service.HTTP.*Client/, :_, :_},
+          {~r/^Mobilizon.Cldr.*/, :_, :_},
+          {Mobilizon.Web.GraphQLSocket, :__channel__, 1}
         ]
       ]
     ]
@@ -183,7 +221,8 @@ defmodule Mobilizon.Mixfile do
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
       {:sobelow, "~> 0.8", only: [:dev, :test]},
-      {:doctor, "~> 0.18.0", only: :dev}
+      {:doctor, "~> 0.18.0", only: :dev},
+      {:mix_unused, "~> 0.2.0"}
     ] ++ oauth_deps()
   end
 

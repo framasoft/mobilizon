@@ -94,19 +94,21 @@ defmodule Mobilizon.Web.Upload do
     end
   end
 
-  @spec remove(String.t(), Keyword.t()) ::
-          {:ok, String.t()} | {:error, atom} | {:error, String.t()}
-  def remove(url, opts \\ []) do
-    with opts <- get_opts(opts),
-         %URI{path: "/media/" <> path, host: host} <- URI.parse(url),
-         {:same_host, true} <- {:same_host, host == Endpoint.host()} do
-      Uploader.remove_file(opts.uploader, path)
-    else
-      %URI{} = _uri ->
-        {:error, "URL doesn't match pattern"}
+  @spec remove(String.t()) :: {:ok, String.t()} | {:error, atom}
+  def remove(url) do
+    %{uploader: uploader} = get_opts([])
 
-      {:same_host, _} ->
-        Logger.error("Media can't be deleted because its URL doesn't match current host")
+    case URI.parse(url) do
+      %URI{path: "/media/" <> path, host: host} ->
+        if host == Endpoint.host() do
+          Uploader.remove_file(uploader, path)
+        else
+          Logger.error("Media can't be deleted because its URL doesn't match current host")
+          {:error, :not_same_host}
+        end
+
+      %URI{} = _uri ->
+        {:error, :url_invalid}
     end
   end
 

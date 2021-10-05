@@ -12,12 +12,6 @@ defmodule Mobilizon.DiscussionsTest do
     @update_attrs %{text: "some updated text"}
     @invalid_attrs %{text: nil, url: nil}
 
-    test "list_comments/0 returns all comments" do
-      %Comment{id: comment_id} = insert(:comment)
-      comment_ids = Discussions.list_comments() |> Enum.map(& &1.id)
-      assert comment_ids == [comment_id]
-    end
-
     test "get_comment!/1 returns the comment with given id" do
       %Comment{id: comment_id} = insert(:comment)
       comment_fetched = Discussions.get_comment!(comment_id)

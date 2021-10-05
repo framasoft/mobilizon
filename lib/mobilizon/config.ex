@@ -223,10 +223,6 @@ defmodule Mobilizon.Config do
         :confirmation_required
       ]
 
-  @spec anonymous_participation_email_captcha_required? :: boolean
-  def anonymous_participation_email_captcha_required?,
-    do: anonymous_config()[:participation][:validation][:captcha][:enabled]
-
   @spec anonymous_event_creation? :: boolean
   def anonymous_event_creation?,
     do: anonymous_config()[:event_creation][:allowed]
@@ -264,9 +260,6 @@ defmodule Mobilizon.Config do
       end
     end)
   end
-
-  @spec oauth_consumer_enabled? :: boolean()
-  def oauth_consumer_enabled?, do: oauth_consumer_strategies() != []
 
   @spec ldap_enabled? :: boolean()
   def ldap_enabled?, do: get([:ldap, :enabled], false)

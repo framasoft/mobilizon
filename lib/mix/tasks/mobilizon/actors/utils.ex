@@ -50,9 +50,9 @@ defmodule Mix.Tasks.Mobilizon.Actors.Utils do
     new_person
   end
 
-  @spec create_group(Actor.t(), String.t(), String.t(), Keyword.t()) ::
+  @spec create_group(Actor.t(), String.t(), String.t()) ::
           {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
-  def create_group(%Actor{id: admin_id}, username, name, _options \\ []) do
+  def create_group(%Actor{id: admin_id}, username, name) do
     {username, name} = username_and_name(username, name)
 
     Actors.create_group(%{creator_actor_id: admin_id, preferred_username: username, name: name})

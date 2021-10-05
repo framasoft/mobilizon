@@ -3,7 +3,7 @@ defmodule Mobilizon.GraphQL.API.Utils do
   Utils for API.
   """
 
-  alias Mobilizon.{Config, Medias}
+  alias Mobilizon.Medias
   alias Mobilizon.Medias.Media
   alias Mobilizon.Service.Formatter
 
@@ -28,18 +28,6 @@ defmodule Mobilizon.GraphQL.API.Utils do
     text
     |> Formatter.html_escape("text/html")
     |> Formatter.linkify(options)
-  end
-
-  def make_report_content_text(nil), do: {:ok, nil}
-
-  def make_report_content_text(comment) do
-    max_size = Config.get([:instance, :max_report_comment_size], 1000)
-
-    if String.length(comment) <= max_size do
-      {:ok, Formatter.html_escape(comment, "text/plain")}
-    else
-      {:error, "Comment must be up to #{max_size} characters"}
-    end
   end
 
   @doc """

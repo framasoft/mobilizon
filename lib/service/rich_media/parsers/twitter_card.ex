@@ -25,19 +25,29 @@ defmodule Mobilizon.Service.RichMedia.Parsers.TwitterCard do
     Logger.debug("Using Twitter card parser")
 
     with {:ok, data} <- parse_name_attrs(data, html),
-         {:ok, data} <- parse_property_attrs(data, html),
-         data <- transform_tags(data) do
+         {:ok, data} <- parse_property_attrs(data, html) do
+      data = transform_tags(data)
       Logger.debug("Data found with Twitter card parser")
       Logger.debug(inspect(data))
       data
     end
   end
 
+  @spec parse_name_attrs(map(), String.t()) :: {:ok, map()} | {:error, String.t()}
   defp parse_name_attrs(data, html) do
-    MetaTagsParser.parse(html, data, "twitter", %{}, :name, :content, [:"twitter:card"])
+    MetaTagsParser.parse(
+      html,
+      data,
+      "twitter",
+      "No twitter card metadata found",
+      :name,
+      :content,
+      [:"twitter:card"]
+    )
   end
 
-  defp parse_property_attrs({_, data}, html) do
+  @spec parse_property_attrs(map(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  defp parse_property_attrs(data, html) do
     MetaTagsParser.parse(
       html,
       data,
@@ -49,6 +59,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.TwitterCard do
     )
   end
 
+  @spec transform_tags(map()) :: map()
   defp transform_tags(data) do
     data
     |> Enum.reject(fn {_, v} -> is_nil(v) end)

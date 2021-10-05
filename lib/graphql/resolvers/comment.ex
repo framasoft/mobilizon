@@ -89,7 +89,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
     end
   end
 
-  def edit_comment(_parent, _args, _context) do
+  def update_comment(_parent, _args, _context) do
     {:error, dgettext("errors", "You are not allowed to update a comment if not connected")}
   end
 

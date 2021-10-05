@@ -44,12 +44,12 @@ defmodule Mobilizon.CLI do
     end
   end
 
-  @spec migrate(String.t()) :: any()
+  @spec migrate(any()) :: any()
   defp migrate(args) do
     Migrate.run(args)
   end
 
-  @spec rollback(String.t()) :: any()
+  @spec rollback(any()) :: any()
   defp rollback(args) do
     Rollback.run(args)
   end

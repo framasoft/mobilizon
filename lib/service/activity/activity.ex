@@ -16,11 +16,6 @@ defmodule Mobilizon.Service.Activity do
     do_get_object(object_type, object_id)
   end
 
-  @spec has_object?(Activity.t()) :: boolean()
-  def has_object?(%Activity{} = activity) do
-    !is_nil(object(activity))
-  end
-
   defp do_get_object(_, nil), do: nil
 
   defp do_get_object(:event, event_id) do
