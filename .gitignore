@@ -39,6 +39,7 @@ uploads/*
 release/
 !uploads/.gitkeep
 !uploads/exports/.gitkeep
+!uploads/exports/**/.gitkeep
 .idea
 *.mo
 *.po~
