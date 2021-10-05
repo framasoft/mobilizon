@@ -301,8 +301,8 @@ defmodule Mobilizon.EventsTest do
       assert {:ok, %TagRelation{}} =
                Events.create_tag_relation(%{tag_id: tag1_id, link_id: tag2_id})
 
-      assert Events.are_tags_linked(tag1, tag2)
-      assert Events.are_tags_linked(tag2, tag1)
+      assert Events.are_tags_linked?(tag1, tag2)
+      assert Events.are_tags_linked?(tag2, tag1)
     end
 
     test "create_tag_relation/1 with invalid data returns error changeset", %{
@@ -312,7 +312,7 @@ defmodule Mobilizon.EventsTest do
       assert {:error, %Ecto.Changeset{}} =
                Events.create_tag_relation(%{tag_id: nil, link_id: nil})
 
-      refute Events.are_tags_linked(tag1, tag2)
+      refute Events.are_tags_linked?(tag1, tag2)
     end
 
     test "delete_tag_relation/1 deletes the tag relation" do

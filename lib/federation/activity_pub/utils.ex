@@ -12,7 +12,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Medias.Media
 
-  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Federator, Relay}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Federator}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityStream.Converter
   alias Mobilizon.Federation.HTTPSignatures
@@ -345,10 +345,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
-  def make_media_data(%Media{} = media) do
-    Converter.Media.model_to_as(media)
-  end
-
   def make_media_data(media) when is_map(media) do
     with {:ok, %{url: url} = uploaded} <-
            Mobilizon.Web.Upload.store(media.file),
@@ -616,16 +612,6 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       })
 
     [{:Signature, signature}]
-  end
-
-  @doc """
-  Sign a request with the instance Relay actor.
-  """
-  @spec sign_fetch_relay(Enum.t(), String.t(), String.t()) :: Enum.t()
-  def sign_fetch_relay(headers, id, date) do
-    with %Actor{} = actor <- Relay.get_actor() do
-      sign_fetch(headers, actor, id, date)
-    end
   end
 
   @doc """

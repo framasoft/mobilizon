@@ -102,7 +102,7 @@ defmodule Mobilizon.Service.Export.Common do
   end
 
   @spec fetch_actor_private_events(Actor.t(), integer()) :: list(Event.t())
-  def fetch_actor_private_events(%Actor{} = actor, limit) do
+  defp fetch_actor_private_events(%Actor{} = actor, limit) do
     actor |> fetch_identity_participations(limit) |> participations_to_events()
   end
 

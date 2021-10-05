@@ -126,13 +126,6 @@ defmodule Mobilizon.Discussions do
   def get_comment_from_url(url), do: Repo.get_by(Comment, url: url)
 
   @doc """
-  Gets a comment by its URL.
-  Raises `Ecto.NoResultsError` if the comment does not exist.
-  """
-  @spec get_comment_from_url!(String.t()) :: Comment.t()
-  def get_comment_from_url!(url), do: Repo.get_by!(Comment, url: url)
-
-  @doc """
   Gets a comment by its URL, with all associations loaded.
   """
   @spec get_comment_from_url_with_preload(String.t()) ::
@@ -176,19 +169,6 @@ defmodule Mobilizon.Discussions do
   end
 
   @doc """
-  Get all comment threads under an event
-  """
-  @spec get_threads(String.t() | integer()) :: [Comment.t()]
-  def get_threads(event_id) do
-    Comment
-    |> where([c, _], c.event_id == ^event_id and is_nil(c.origin_comment_id))
-    |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
-    |> group_by([c], c.id)
-    |> select([c, r], %{c | total_replies: count(r.id)})
-    |> Repo.all()
-  end
-
-  @doc """
   Gets paginated replies for root comment
   """
   @spec get_thread_replies(integer()) :: [Comment.t()]
@@ -196,17 +176,6 @@ defmodule Mobilizon.Discussions do
     parent_id
     |> public_replies_for_thread_query()
     |> Repo.all()
-  end
-
-  @doc """
-  Get a comment or create it
-  """
-  @spec get_or_create_comment(map()) :: {:ok, Comment.t()}
-  def get_or_create_comment(%{"url" => url} = attrs) do
-    case Repo.get_by(Comment, url: url) do
-      %Comment{} = comment -> {:ok, Repo.preload(comment, @comment_preloads)}
-      nil -> create_comment(attrs)
-    end
   end
 
   @doc """
@@ -251,14 +220,6 @@ defmodule Mobilizon.Discussions do
     else
       Repo.delete(comment)
     end
-  end
-
-  @doc """
-  Returns the list of public comments.
-  """
-  @spec list_comments :: [Comment.t()]
-  def list_comments do
-    Repo.all(from(c in Comment, where: c.visibility == ^:public))
   end
 
   @doc """

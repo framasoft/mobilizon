@@ -189,13 +189,6 @@ defmodule Mobilizon.Users.User do
   end
 
   @doc """
-  Checks whether an user is confirmed.
-  """
-  @spec is_confirmed(t) :: boolean
-  def is_confirmed(%__MODULE__{confirmed_at: nil}), do: false
-  def is_confirmed(%__MODULE__{}), do: true
-
-  @doc """
   Returns whether an user owns an actor.
   """
   @spec owns_actor(t, integer | String.t()) :: {:is_owned, Actor.t() | nil}

@@ -144,10 +144,11 @@ defmodule Mobilizon.Web.Email.User do
     end
   end
 
-  def send_email_reset_old_email(
-        %User{locale: user_locale, email: email, unconfirmed_email: unconfirmed_email} = _user,
-        _locale \\ "en"
-      ) do
+  def send_email_reset_old_email(%User{
+        locale: user_locale,
+        email: email,
+        unconfirmed_email: unconfirmed_email
+      }) do
     Gettext.put_locale(user_locale)
 
     subject =
@@ -163,14 +164,11 @@ defmodule Mobilizon.Web.Email.User do
     |> render(:email_changed_old)
   end
 
-  def send_email_reset_new_email(
-        %User{
-          locale: user_locale,
-          unconfirmed_email: unconfirmed_email,
-          confirmation_token: confirmation_token
-        } = _user,
-        _locale \\ "en"
-      ) do
+  def send_email_reset_new_email(%User{
+        locale: user_locale,
+        unconfirmed_email: unconfirmed_email,
+        confirmation_token: confirmation_token
+      }) do
     Gettext.put_locale(user_locale)
 
     subject =

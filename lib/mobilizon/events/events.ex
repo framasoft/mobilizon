@@ -161,32 +161,9 @@ defmodule Mobilizon.Events do
 
   @doc """
   Gets an event by its URL, with all associations loaded.
-  """
-  @spec get_public_event_by_url_with_preload(String.t()) ::
-          {:ok, Event.t()} | {:error, :event_not_found}
-  def get_public_event_by_url_with_preload(url) do
-    event =
-      url
-      |> event_by_url_query()
-      |> filter_unlisted_and_public_visibility()
-      |> filter_draft()
-      |> preload_for_event()
-      |> Repo.one()
-
-    case event do
-      %Event{} = event ->
-        {:ok, event}
-
-      nil ->
-        {:error, :event_not_found}
-    end
-  end
-
-  @doc """
-  Gets an event by its URL, with all associations loaded.
   Raises `Ecto.NoResultsError` if the event does not exist.
   """
-  @spec get_public_event_by_url_with_preload(String.t()) :: Event.t()
+  @spec get_public_event_by_url_with_preload!(String.t()) :: Event.t()
   def get_public_event_by_url_with_preload!(url) do
     url
     |> event_by_url_query()
@@ -229,18 +206,6 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Gets an event by its UUID, with all associations loaded.
-  """
-  @spec get_own_event_by_uuid_with_preload(String.t(), integer()) :: Event.t() | nil
-  def get_own_event_by_uuid_with_preload(uuid, user_id) do
-    uuid
-    |> event_by_uuid_query()
-    |> user_events_query(user_id)
-    |> preload_for_event()
-    |> Repo.one()
-  end
-
-  @doc """
   Gets an actor's eventual upcoming public event.
   """
   @spec get_upcoming_public_event_for_actor(Actor.t(), String.t() | nil) :: Event.t() | nil
@@ -251,13 +216,6 @@ defmodule Mobilizon.Events do
     |> filter_not_event_uuid(not_event_uuid)
     |> filter_draft()
     |> Repo.one()
-  end
-
-  def get_or_create_event(%{"url" => url} = attrs) do
-    case Repo.get_by(Event, url: url) do
-      %Event{} = event -> {:ok, Repo.preload(event, @event_preloads)}
-      nil -> create_event(attrs)
-    end
   end
 
   @doc """
@@ -502,9 +460,9 @@ defmodule Mobilizon.Events do
   Finds close events to coordinates.
   Radius is in meters and defaults to 50km.
   """
-  @spec find_close_events(number, number, number, number) :: [Event.t()]
-  def find_close_events(lon, lat, radius \\ 50_000, srid \\ 4326) do
-    "SRID=#{srid};POINT(#{lon} #{lat})"
+  @spec find_close_events(float(), float(), non_neg_integer()) :: [Event.t()]
+  def find_close_events(lon, lat, radius \\ 50_000) do
+    "SRID=#{4326};POINT(#{lon} #{lat})"
     |> Geo.WKT.decode!()
     |> close_events_query(radius)
     |> filter_draft()
@@ -586,33 +544,6 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Gets an existing tag or creates the new one.
-
-  From a map containing a %{"name" => "#mytag"} or a direct binary
-  """
-  @spec get_or_create_tag(map) :: {:ok, Tag.t()} | {:error, Changeset.t()}
-  def get_or_create_tag(%{"name" => "#" <> title}) do
-    case Repo.get_by(Tag, title: title) do
-      %Tag{} = tag ->
-        {:ok, tag}
-
-      nil ->
-        create_tag(%{"title" => title})
-    end
-  end
-
-  @spec get_or_create_tag(String.t()) :: {:ok, Tag.t()} | {:error, Changeset.t()}
-  def get_or_create_tag(title) do
-    case Repo.get_by(Tag, title: title) do
-      %Tag{} = tag ->
-        {:ok, tag}
-
-      nil ->
-        create_tag(%{"title" => title})
-    end
-  end
-
-  @doc """
   Creates a tag.
   """
   @spec create_tag(map) :: {:ok, Tag.t()} | {:error, Changeset.t()}
@@ -663,8 +594,8 @@ defmodule Mobilizon.Events do
   @doc """
   Checks whether two tags are linked or not.
   """
-  @spec are_tags_linked(Tag.t(), Tag.t()) :: boolean
-  def are_tags_linked(%Tag{id: tag1_id}, %Tag{id: tag2_id}) do
+  @spec are_tags_linked?(Tag.t(), Tag.t()) :: boolean
+  def are_tags_linked?(%Tag{id: tag1_id}, %Tag{id: tag2_id}) do
     tag_relation =
       tag1_id
       |> tags_linked_query(tag2_id)
@@ -833,8 +764,6 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
-  @moderator_roles [:moderator, :administrator, :creator]
-
   @doc """
   Returns the number of participations for all local events
   """
@@ -895,28 +824,6 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Returns the list of moderator participants for an event.
-
-  ## Examples
-
-      iex> moderator_for_event?(5, 3)
-      true
-
-  """
-  @spec moderator_for_event?(integer, integer) :: boolean
-  def moderator_for_event?(event_id, actor_id) do
-    !(Repo.one(
-        from(
-          p in Participant,
-          where:
-            p.event_id == ^event_id and
-              p.actor_id ==
-                ^actor_id and p.role in ^@moderator_roles
-        )
-      ) == nil)
-  end
-
-  @doc """
   Returns the list of organizers participants for an event.
 
   ## Examples
@@ -958,17 +865,6 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Counts approved participants.
-  """
-  @spec count_approved_participants(integer | String.t()) :: integer
-  def count_approved_participants(event_id) do
-    event_id
-    |> count_participants_query()
-    |> filter_approved_role()
-    |> Repo.aggregate(:count, :id)
-  end
-
-  @doc """
   Counts participant participants (participants with no extra role)
   """
   @spec count_participant_participants(integer | String.t()) :: integer
@@ -976,17 +872,6 @@ defmodule Mobilizon.Events do
     event_id
     |> count_participants_query()
     |> filter_participant_role()
-    |> Repo.aggregate(:count, :id)
-  end
-
-  @doc """
-  Counts rejected participants.
-  """
-  @spec count_rejected_participants(integer | String.t()) :: integer
-  def count_rejected_participants(event_id) do
-    event_id
-    |> count_participants_query()
-    |> filter_rejected_role()
     |> Repo.aggregate(:count, :id)
   end
 
@@ -1222,17 +1107,6 @@ defmodule Mobilizon.Events do
   end
 
   @doc """
-  Gets a single feed token.
-  Raises `Ecto.NoResultsError` if the feed token does not exist.
-  """
-  @spec get_feed_token!(String.t()) :: FeedToken.t()
-  def get_feed_token!(token) do
-    token
-    |> feed_token_query()
-    |> Repo.one!()
-  end
-
-  @doc """
   Creates a feed token.
   """
   @spec create_feed_token(map) :: {:ok, FeedToken.t()} | {:error, Changeset.t()}
@@ -1242,17 +1116,6 @@ defmodule Mobilizon.Events do
     %FeedToken{}
     |> FeedToken.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a feed token.
-  """
-  @spec update_feed_token(FeedToken.t(), map) ::
-          {:ok, FeedToken.t()} | {:error, Changeset.t()}
-  def update_feed_token(%FeedToken{} = feed_token, attrs) do
-    feed_token
-    |> FeedToken.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -1746,19 +1609,9 @@ defmodule Mobilizon.Events do
     )
   end
 
-  @spec filter_approved_role(Ecto.Queryable.t()) :: Ecto.Query.t()
-  defp filter_approved_role(query) do
-    filter_role(query, [:not_approved, :rejected])
-  end
-
   @spec filter_participant_role(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_participant_role(query) do
     filter_role(query, :participant)
-  end
-
-  @spec filter_rejected_role(Ecto.Queryable.t()) :: Ecto.Query.t()
-  defp filter_rejected_role(query) do
-    filter_role(query, :rejected)
   end
 
   @spec filter_role(Ecto.Queryable.t(), list(atom()) | atom()) :: Ecto.Query.t()

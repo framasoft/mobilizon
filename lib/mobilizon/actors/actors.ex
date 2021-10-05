@@ -82,10 +82,10 @@ defmodule Mobilizon.Actors do
     |> Repo.one()
   end
 
-  @spec get_actor_with_preload!(integer | String.t(), boolean) :: Actor.t()
-  def get_actor_with_preload!(id, include_suspended \\ false) do
+  @spec get_actor_with_preload!(integer | String.t()) :: Actor.t()
+  def get_actor_with_preload!(id) do
     id
-    |> actor_with_preload_query(include_suspended)
+    |> actor_with_preload_query(false)
     |> Repo.one!()
   end
 
@@ -97,14 +97,6 @@ defmodule Mobilizon.Actors do
     id
     |> actor_with_preload_query()
     |> filter_local()
-    |> Repo.one()
-  end
-
-  @spec get_remote_actor_with_preload(integer | String.t(), boolean()) :: Actor.t() | nil
-  def get_remote_actor_with_preload(id, include_suspended \\ false) do
-    id
-    |> actor_with_preload_query(include_suspended)
-    |> filter_external()
     |> Repo.one()
   end
 
@@ -131,11 +123,9 @@ defmodule Mobilizon.Actors do
   New function to replace `Mobilizon.Actors.get_actor_by_url/1` with
   better signature
   """
-  @spec get_actor_by_url_2(String.t(), boolean) :: Actor.t() | nil
-  def get_actor_by_url_2(url, preload \\ false) do
-    Actor
-    |> Repo.get_by(url: url)
-    |> preload_followers(preload)
+  @spec get_actor_by_url_2(String.t()) :: Actor.t() | nil
+  def get_actor_by_url_2(url) do
+    Repo.get_by(Actor, url: url)
   end
 
   @doc """
@@ -496,16 +486,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Gets a local group by its title.
-  """
-  @spec get_local_group_by_title(String.t()) :: Actor.t() | nil
-  def get_local_group_by_title(title) do
-    group_query()
-    |> filter_by_name([title])
-    |> Repo.one()
-  end
-
-  @doc """
   Gets a group by its actor id.
   """
   @spec get_group_by_actor_id(integer | String.t()) ::
@@ -576,11 +556,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Deletes a group.
-  """
-  def delete_group!(%Actor{type: :Group} = group), do: Repo.delete!(group)
-
-  @doc """
   Counts the local groups
   """
   @spec count_local_groups :: integer()
@@ -602,15 +577,6 @@ defmodule Mobilizon.Actors do
   @doc """
   Lists the groups.
   """
-  @spec list_groups(integer | nil, integer | nil) :: Page.t()
-  def list_groups(page \\ nil, limit \\ nil) do
-    groups_query()
-    |> Page.build_page(page, limit)
-  end
-
-  @doc """
-  Lists the groups.
-  """
   @spec list_groups_for_stream :: Enum.t()
   def list_groups_for_stream do
     groups_query()
@@ -620,10 +586,10 @@ defmodule Mobilizon.Actors do
   @doc """
   Lists the groups.
   """
-  @spec list_external_groups(non_neg_integer()) :: list(Actor.t())
-  def list_external_groups(limit \\ 100) when limit > 0 do
+  @spec list_external_groups :: list(Actor.t())
+  def list_external_groups do
     external_groups_query()
-    |> limit(^limit)
+    |> limit(100)
     |> Repo.all()
   end
 
@@ -833,30 +799,6 @@ defmodule Mobilizon.Actors do
     |> Repo.all()
   end
 
-  @spec list_local_members_for_group(Actor.t(), integer | nil, integer | nil) ::
-          Page.t(Member.t())
-  def list_local_members_for_group(
-        %Actor{id: group_id, type: :Group} = _group,
-        page \\ nil,
-        limit \\ nil
-      ) do
-    group_id
-    |> group_internal_member_query()
-    |> Page.build_page(page, limit)
-  end
-
-  @spec list_remote_members_for_group(Actor.t(), integer | nil, integer | nil) ::
-          Page.t(Member.t())
-  def list_remote_members_for_group(
-        %Actor{id: group_id, type: :Group} = _group,
-        page \\ nil,
-        limit \\ nil
-      ) do
-    group_id
-    |> group_external_member_query()
-    |> Page.build_page(page, limit)
-  end
-
   @doc """
   Returns a paginated list of members for a group.
   """
@@ -886,17 +828,6 @@ defmodule Mobilizon.Actors do
     group_id
     |> group_internal_member_actor_query(roles)
     |> Repo.all()
-  end
-
-  @doc """
-  Returns a paginated list of administrator members for a group.
-  """
-  @spec list_administrator_members_for_group(integer | String.t(), integer | nil, integer | nil) ::
-          Page.t()
-  def list_administrator_members_for_group(id, page \\ nil, limit \\ nil) do
-    id
-    |> administrator_members_for_group_query()
-    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -1013,12 +944,6 @@ defmodule Mobilizon.Actors do
   def delete_bot(%Bot{} = bot), do: Repo.delete(bot)
 
   @doc """
-  Returns the list of bots.
-  """
-  @spec list_bots :: [Bot.t()]
-  def list_bots, do: Repo.all(Bot)
-
-  @doc """
   Gets a single follower.
   """
   @spec get_follower(integer | String.t()) :: Follower.t() | nil
@@ -1106,17 +1031,6 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns the list of followers for an actor.
-  If actor A and C both follow actor B, actor B's followers are A and C.
-  """
-  @spec list_followers_actors_for_actor(Actor.t()) :: [Actor.t()]
-  def list_followers_actors_for_actor(%Actor{id: actor_id}) do
-    actor_id
-    |> follower_actors_for_actor_query()
-    |> Repo.all()
-  end
-
-  @doc """
   Returns the list of external followers for an actor.
   """
   @spec list_external_followers_for_actor(Actor.t()) :: [Follower.t()]
@@ -1175,17 +1089,6 @@ defmodule Mobilizon.Actors do
     |> order_by(desc: :updated_at)
     |> preload([:actor, :target_actor])
     |> Page.build_page(page, limit)
-  end
-
-  @doc """
-  Returns the list of followings for an actor.
-  If actor A follows actor B and C, actor A's followings are B and C.
-  """
-  @spec list_followings_for_actor(Actor.t()) :: [Follower.t()]
-  def list_followings_for_actor(%Actor{id: actor_id}) do
-    actor_id
-    |> followings_actors_for_actor_query()
-    |> Repo.all()
   end
 
   @doc """
@@ -1483,16 +1386,6 @@ defmodule Mobilizon.Actors do
     |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
     |> where([_m, a], not is_nil(a.domain))
     |> select([_m, a], a)
-  end
-
-  @spec group_external_member_query(integer()) :: Ecto.Query.t()
-  defp group_external_member_query(group_id) do
-    Member
-    |> where([m], m.parent_id == ^group_id)
-    |> join(:inner, [m], a in Actor, on: m.actor_id == a.id)
-    |> where([_m, a], not is_nil(a.domain))
-    |> preload([m], [:parent, :actor])
-    |> select([m, _a], m)
   end
 
   @spec group_internal_member_actor_query(integer(), list()) :: Ecto.Query.t()

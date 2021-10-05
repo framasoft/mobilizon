@@ -129,6 +129,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     end
 
     field :todo_lists, :paginated_todo_list_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated todo-lists list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of todo-lists per page")
       resolve(&Todos.find_todo_lists_for_group/3)
       description("A paginated list of the todo lists this group has")
     end

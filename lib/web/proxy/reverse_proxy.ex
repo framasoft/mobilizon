@@ -17,9 +17,6 @@ defmodule Mobilizon.Web.ReverseProxy do
   @max_body_length :infinity
   @methods ~w(GET HEAD)
 
-  def max_read_duration_default, do: @max_read_duration
-  def default_cache_control_header, do: @default_cache_control_header
-
   @moduledoc """
   A reverse proxy.
 

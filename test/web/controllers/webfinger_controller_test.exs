@@ -31,7 +31,7 @@ defmodule Mobilizon.Web.WebFingerControllerTest do
   test "GET /.well-known/webfinger with local actor", %{conn: conn} do
     %Actor{preferred_username: username} = actor = insert(:actor)
     conn = get(conn, "/.well-known/webfinger?resource=acct:#{username}@mobilizon.test")
-    assert json_response(conn, 200) == WebFinger.represent_actor(actor)
+    assert json_response(conn, 200) == WebFinger.represent_actor(actor, "JSON")
   end
 
   test "GET /.well-known/webfinger with non existent actor", %{conn: conn} do

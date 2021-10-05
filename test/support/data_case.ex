@@ -74,6 +74,21 @@ defmodule Mobilizon.DataCase do
     :ok
   end
 
+  @doc """
+  POSIX-compliant check if command is available in the system
+
+  ## Examples
+      iex> command_available?("git")
+      true
+      iex> command_available?("wrongcmd")
+      false
+
+  """
+  @spec command_available?(String.t()) :: boolean()
+  def command_available?(command) do
+    match?({_output, 0}, System.cmd("sh", ["-c", "command -v #{command}"]))
+  end
+
   Mox.defmock(Mobilizon.Service.HTTP.ActivityPub.Mock, for: Tesla.Adapter)
 
   Mox.defmock(Mobilizon.Service.HTTP.GeospatialClient.Mock,

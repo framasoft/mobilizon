@@ -189,12 +189,6 @@ defmodule Mobilizon.Activities do
     Repo.preload(activity, @activity_preloads)
   end
 
-  @spec object_types :: list(String.t())
-  def object_types, do: @object_type
-
-  @spec subjects :: list(String.t())
-  def subjects, do: @subjects
-
   @spec activity_types :: list(String.t())
   def activity_types, do: @activity_types
 

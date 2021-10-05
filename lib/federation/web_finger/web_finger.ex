@@ -76,10 +76,7 @@ defmodule Mobilizon.Federation.WebFinger do
   @doc """
   Return an `Mobilizon.Actors.Actor` Webfinger representation (as JSON)
   """
-  @spec represent_actor(Actor.t()) :: map()
   @spec represent_actor(Actor.t(), String.t()) :: map()
-  def represent_actor(%Actor{} = actor), do: represent_actor(actor, "JSON")
-
   def represent_actor(%Actor{} = actor, "JSON") do
     links =
       [

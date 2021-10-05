@@ -21,17 +21,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
           {:ok, Page.t(TodoList.t())}
   def find_todo_lists_for_group(
         %Actor{id: group_id} = group,
-        _args,
+        %{page: page, limit: limit},
         %{
           context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
     with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         %Page{} = page <- Todos.get_todo_lists_for_group(group) do
+         %Page{} = page <- Todos.get_todo_lists_for_group(group, page, limit) do
       {:ok, page}
     else
       {:member, _} ->
-        with %Page{} = page <- Todos.get_todo_lists_for_group(group) do
+        with %Page{} = page <- Todos.get_todo_lists_for_group(group, page, limit) do
           {:ok, %Page{page | elements: []}}
         end
     end
@@ -41,17 +41,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Todos do
     {:ok, %Page{total: 0, elements: []}}
   end
 
-  @spec find_todo_lists_for_group(TodoList.t(), map(), Absinthe.Resolution.t()) ::
+  @spec find_todos_for_todo_list(TodoList.t(), map(), Absinthe.Resolution.t()) ::
           {:ok, Page.t(Todo.t())} | {:error, String.t()}
   def find_todos_for_todo_list(
         %TodoList{actor_id: group_id} = todo_list,
-        _args,
+        %{page: page, limit: limit},
         %{
           context: %{current_actor: %Actor{id: actor_id}}
         } = _resolution
       ) do
     with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         %Page{} = page <- Todos.get_todos_for_todo_list(todo_list) do
+         %Page{} = page <- Todos.get_todos_for_todo_list(todo_list, page, limit) do
       {:ok, page}
     else
       {:member, _} ->

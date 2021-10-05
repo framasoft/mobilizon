@@ -92,19 +92,6 @@ defmodule Mobilizon.Users do
   end
 
   @doc """
-  Gets an user by its email.
-  """
-  @spec get_user_by_email!(String.t(), Keyword.t()) :: User.t()
-  def get_user_by_email!(email, options \\ []) do
-    activated = Keyword.get(options, :activated, nil)
-    unconfirmed = Keyword.get(options, :unconfirmed, true)
-
-    email
-    |> user_by_email_query(activated, unconfirmed)
-    |> Repo.one!()
-  end
-
-  @doc """
   Get an user by its activation token.
   """
   @spec get_user_by_activation_token(String.t()) :: User.t() | nil
@@ -326,22 +313,6 @@ defmodule Mobilizon.Users do
   @spec count_users :: integer
   def count_users, do: Repo.one(from(u in User, select: count(u.id), where: u.disabled == false))
 
-  @doc """
-  Gets a settings for an user.
-
-  Raises `Ecto.NoResultsError` if the Setting does not exist.
-
-  ## Examples
-
-      iex> get_setting!(123)
-      %Setting{}
-
-      iex> get_setting!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_setting!(user_id), do: Repo.get!(Setting, user_id)
-
   @spec get_setting(User.t()) :: Setting.t() | nil
   def get_setting(%User{id: user_id}), do: get_setting(user_id)
 
@@ -389,35 +360,6 @@ defmodule Mobilizon.Users do
   end
 
   @doc """
-  Deletes a setting.
-
-  ## Examples
-
-      iex> delete_setting(setting)
-      {:ok, %Setting{}}
-
-      iex> delete_setting(setting)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_setting(%Setting{} = setting) do
-    Repo.delete(setting)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking setting changes.
-
-  ## Examples
-
-      iex> change_setting(setting)
-      %Ecto.Changeset{source: %Setting{}}
-
-  """
-  def change_setting(%Setting{} = setting) do
-    Setting.changeset(setting, %{})
-  end
-
-  @doc """
   Get a paginated list of all of a user's subscriptions
   """
   @spec list_user_push_subscriptions(String.t() | integer(), integer() | nil, integer() | nil) ::
@@ -456,24 +398,6 @@ defmodule Mobilizon.Users do
     %PushSubscription{}
     |> PushSubscription.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a push subscription.
-
-  ## Examples
-
-      iex> update_push_subscription(push_subscription, %{field: new_value})
-      {:ok, %PushSubscription{}}
-
-      iex> update_push_subscription(push_subscription, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_push_subscription(%PushSubscription{} = push_subscription, attrs) do
-    push_subscription
-    |> PushSubscription.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """

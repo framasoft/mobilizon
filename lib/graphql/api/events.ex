@@ -29,9 +29,9 @@ defmodule Mobilizon.GraphQL.API.Events do
   @doc """
   Trigger the deletion of an event
   """
-  @spec delete_event(Event.t(), Actor.t(), boolean()) :: {:ok, Activity.t(), Entity.t()} | any()
-  def delete_event(%Event{} = event, %Actor{} = actor, federate \\ true) do
-    Actions.Delete.delete(event, actor, federate)
+  @spec delete_event(Event.t(), Actor.t()) :: {:ok, Activity.t(), Entity.t()} | any()
+  def delete_event(%Event{} = event, %Actor{} = actor) do
+    Actions.Delete.delete(event, actor, true)
   end
 
   @spec prepare_args(map) :: map

@@ -17,10 +17,20 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
       description: "The actor that owns this todo list"
     )
 
-    field(:todos, :paginated_todo_list,
-      resolve: &Todos.find_todos_for_todo_list/3,
-      description: "The todo-list's todos"
-    )
+    field :todos, :paginated_todo_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated todos list"
+      )
+
+      arg(:limit, :integer,
+        default_value: 10,
+        description: "The limit of todos per page"
+      )
+
+      resolve(&Todos.find_todos_for_todo_list/3)
+      description("The todo-list's todos")
+    end
   end
 
   @desc """

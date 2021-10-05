@@ -413,12 +413,6 @@ defmodule Mobilizon.ActorsTest do
     @update_attrs %{source: "some updated source", type: "some updated type"}
     @invalid_attrs %{source: nil, type: nil}
 
-    test "list_bots/0 returns all bots" do
-      bot = insert(:bot)
-      bot_found_id = Actors.list_bots() |> hd |> Map.get(:id)
-      assert bot_found_id == bot.id
-    end
-
     test "get_bot!/1 returns the bot with given id" do
       %Bot{id: bot_id} = bot = insert(:bot)
       assert bot_id == Actors.get_bot!(bot.id).id

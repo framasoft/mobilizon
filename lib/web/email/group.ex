@@ -15,17 +15,15 @@ defmodule Mobilizon.Web.Email.Group do
   @doc """
   Send emails to local user
   """
-  @spec send_invite_to_user(Member.t(), String.t()) :: :ok
-  def send_invite_to_user(member, locale \\ "en")
-  def send_invite_to_user(%Member{actor: %Actor{user_id: nil}}, _locale), do: :ok
+  @spec send_invite_to_user(Member.t()) :: :ok
+  def send_invite_to_user(%Member{actor: %Actor{user_id: nil}}), do: :ok
 
   def send_invite_to_user(
         %Member{actor: %Actor{user_id: user_id}, parent: %Actor{} = group, role: :invited} =
-          member,
-        locale
+          member
       ) do
     with %User{email: email} = user <- Users.get_user!(user_id) do
-      locale = Map.get(user, :locale, locale)
+      locale = Map.get(user, :locale, "en")
       Gettext.put_locale(locale)
       %Actor{name: invited_by_name} = inviter = Actors.get_actor(member.invited_by_id)
 

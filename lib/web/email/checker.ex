@@ -11,11 +11,11 @@ defmodule Mobilizon.Web.Email.Checker do
   @spec valid?(String.t()) :: boolean
   def valid?(email), do: email =~ @email_regex
 
-  @spec validate_changeset(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
-  def validate_changeset(%Ecto.Changeset{} = changeset, key \\ :email) do
+  @spec validate_changeset(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def validate_changeset(%Ecto.Changeset{} = changeset) do
     changeset = Ecto.Changeset.validate_length(changeset, :email, min: 3, max: 250)
 
-    case Ecto.Changeset.fetch_change(changeset, key) do
+    case Ecto.Changeset.fetch_change(changeset, :email) do
       {:ok, email} ->
         if valid?(email),
           do: changeset,

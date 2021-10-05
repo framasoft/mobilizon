@@ -28,13 +28,6 @@ defmodule Mobilizon.Resources do
   end
 
   @doc """
-  Returns the list of top-level resources for a group
-  """
-  def get_top_level_resources_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
-    get_resources_for_folder(%Resource{id: "root_something", actor_id: group_id}, page, limit)
-  end
-
-  @doc """
   Returns the list of resources for a resource folder.
   """
   @spec get_resources_for_folder(Resource.t(), integer | nil, integer | nil) :: Page.t()

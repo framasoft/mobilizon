@@ -53,16 +53,6 @@ defmodule Mobilizon.Medias do
   end
 
   @doc """
-  List the paginated media for an actor
-  """
-  @spec medias_for_actor(integer | String.t(), integer | nil, integer | nil) :: Page.t()
-  def medias_for_actor(actor_id, page, limit) do
-    actor_id
-    |> medias_for_actor_query()
-    |> Page.build_page(page, limit)
-  end
-
-  @doc """
   List the paginated media for user
   """
   @spec medias_for_user(integer | String.t(), integer | nil, integer | nil) :: Page.t()
@@ -107,16 +97,6 @@ defmodule Mobilizon.Medias do
     %Media{}
     |> Media.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a media.
-  """
-  @spec update_media(Media.t(), map) :: {:ok, Media.t()} | {:error, Ecto.Changeset.t()}
-  def update_media(%Media{} = media, attrs) do
-    media
-    |> Media.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
