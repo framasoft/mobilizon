@@ -66,8 +66,10 @@
               :key="format"
               @click="exportParticipants(format)"
               aria-role="listitem"
-              >{{ format }}</b-dropdown-item
             >
+              <b-icon :icon="formatToIcon(format)"></b-icon>
+              {{ format }}
+            </b-dropdown-item>
           </b-dropdown>
         </div>
       </div>
@@ -275,6 +277,8 @@ const { isNavigationFailure, NavigationFailureType } = VueRouter;
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
 
+type exportFormat = "CSV" | "PDF" | "ODS";
+
 @Component({
   apollo: {
     currentActor: {
@@ -414,7 +418,7 @@ export default class Participants extends Vue {
     this.checkedRows = [];
   }
 
-  async exportParticipants(type: "CSV" | "PDF" | "ODS"): Promise<void> {
+  async exportParticipants(type: exportFormat): Promise<void> {
     try {
       const {
         data: { exportEventParticipants },
@@ -452,6 +456,17 @@ export default class Participants extends Vue {
     return (this.config?.exportFormats?.eventParticipants || []).map((key) =>
       key.toUpperCase()
     );
+  }
+
+  formatToIcon(format: exportFormat): string {
+    switch (format) {
+      case "CSV":
+        return "file-delimited";
+      case "PDF":
+        return "file-pdf-box";
+      case "ODS":
+        return "google-spreadsheet";
+    }
   }
 
   /**
