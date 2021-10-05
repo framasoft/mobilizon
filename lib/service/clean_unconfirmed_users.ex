@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.CleanUnconfirmedUsers do
 
   Remove media that is not attached to an entity, such as media uploads that were never used in entities.
   """
-  @spec clean(Keyword.t()) :: {:ok, list(Media.t())} | {:error, String.t()}
+  @spec clean(Keyword.t()) :: {:ok, list(Media.t())}
   def clean(opts \\ []) do
     users_to_delete = find_unconfirmed_users_to_clean(opts)
 

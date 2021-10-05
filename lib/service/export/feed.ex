@@ -21,49 +21,41 @@ defmodule Mobilizon.Service.Export.Feed do
 
   @item_limit 500
 
-  def version, do: Config.instance_version()
+  @spec version :: String.t()
+  defp version, do: Config.instance_version()
 
-  @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
+  @spec create_cache(String.t()) ::
+          {:commit, String.t()}
+          | {:ignore, :actor_not_found | :actor_not_public | :bad_token | :token_not_found}
   def create_cache("actor_" <> name) do
     case fetch_actor_event_feed(name) do
       {:ok, res} ->
         {:commit, res}
 
-      err ->
+      {:error, err} ->
         {:ignore, err}
     end
   end
 
-  @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, any()}
   def create_cache("token_" <> token) do
     case fetch_events_from_token(token) do
       {:ok, res} ->
         {:commit, res}
 
-      err ->
+      {:error, err} ->
         {:ignore, err}
     end
   end
 
   def create_cache("instance") do
-    case fetch_instance_feed() do
-      {:ok, res} ->
-        {:commit, res}
-
-      err ->
-        {:ignore, err}
-    end
+    {:ok, res} = fetch_instance_feed()
+    {:commit, res}
   end
 
   @spec fetch_instance_feed :: {:ok, String.t()}
   defp fetch_instance_feed do
-    case Common.fetch_instance_public_content(@item_limit) do
-      {:ok, events, posts} ->
-        {:ok, build_instance_feed(events, posts)}
-
-      err ->
-        {:error, err}
-    end
+    {:ok, events, posts} = Common.fetch_instance_public_content(@item_limit)
+    {:ok, build_instance_feed(events, posts)}
   end
 
   # Build an atom feed from the whole instance and its public events and posts
@@ -90,7 +82,8 @@ defmodule Mobilizon.Service.Export.Feed do
     |> Atomex.generate_document()
   end
 
-  @spec fetch_actor_event_feed(String.t(), integer()) :: String.t()
+  @spec fetch_actor_event_feed(String.t(), integer()) ::
+          {:ok, String.t()} | {:error, :actor_not_found | :actor_not_public}
   defp fetch_actor_event_feed(name, limit \\ @item_limit) do
     case Common.fetch_actor_event_feed(name, limit) do
       {:ok, actor, events, posts} ->
@@ -199,7 +192,8 @@ defmodule Mobilizon.Service.Export.Feed do
   end
 
   # Only events, not posts
-  @spec fetch_events_from_token(String.t(), integer()) :: {:ok, String.t()} | {:error, atom()}
+  @spec fetch_events_from_token(String.t(), integer()) ::
+          {:ok, String.t()} | {:error, :bad_token | :token_not_found}
   defp fetch_events_from_token(token, limit \\ @item_limit) do
     case Common.fetch_events_from_token(token, limit) do
       %{events: events, token: token, user: user, actor: actor, type: type} ->

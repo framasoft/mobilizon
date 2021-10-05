@@ -572,7 +572,7 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of tags.
   """
-  @spec list_tags(String.t() | nil, integer | nil, integer | nil) :: [Tag.t()]
+  @spec list_tags(String.t() | nil, integer | nil, integer | nil) :: Page.t(Tag.t())
   def list_tags(filter \\ nil, page \\ nil, limit \\ nil) do
     Tag
     |> tag_filter(filter)
@@ -608,7 +608,7 @@ defmodule Mobilizon.Events do
   Creates a relation between two tags.
   """
   @spec create_tag_relation(map) :: {:ok, TagRelation.t()} | {:error, Changeset.t()}
-  def create_tag_relation(attrs \\ {}) do
+  def create_tag_relation(attrs) do
     %TagRelation{}
     |> TagRelation.changeset(attrs)
     |> Repo.insert(

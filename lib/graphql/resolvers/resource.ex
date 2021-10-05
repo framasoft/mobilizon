@@ -107,28 +107,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
-    with {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
-         parent <- get_eventual_parent(args),
-         {:own_check, true} <- {:own_check, check_resource_owned_by_group(parent, group_id)},
-         {:ok, _, %Resource{} = resource} <-
-           Actions.Create.create(
-             :resource,
-             args
-             |> Map.put(:actor_id, group_id)
-             |> Map.put(:creator_id, actor_id),
-             true,
-             %{}
-           ) do
-      {:ok, resource}
-    else
-      {:error, _} ->
-        {:error, dgettext("errors", "Error while creating resource")}
+    if Actors.is_member?(actor_id, group_id) do
+      parent = get_eventual_parent(args)
 
-      {:own_check, _} ->
+      if check_resource_owned_by_group(parent, group_id) do
+        case Actions.Create.create(
+               :resource,
+               args
+               |> Map.put(:actor_id, group_id)
+               |> Map.put(:creator_id, actor_id),
+               true,
+               %{}
+             ) do
+          {:ok, _, %Resource{} = resource} ->
+            {:ok, resource}
+
+          {:error, _err} ->
+            {:error, dgettext("errors", "Error while creating resource")}
+        end
+      else
         {:error, dgettext("errors", "Parent resource doesn't belong to this group")}
-
-      {:member, _} ->
-        {:error, dgettext("errors", "Profile is not member of group")}
+      end
+    else
+      {:error, dgettext("errors", "Profile is not member of group")}
     end
   end
 

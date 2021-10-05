@@ -6,8 +6,8 @@ defmodule Mobilizon.Service.Activity do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Service.Activity.{Comment, Discussion, Event, Group, Member, Post, Resource}
 
-  @callback insert_activity(entity :: struct(), options :: map()) ::
-              {:ok, Oban.Job.t()} | {:ok, any()}
+  @callback insert_activity(entity :: struct(), options :: Keyword.t()) ::
+              {:ok, Oban.Job.t()} | {:ok, any()} | {:error, Ecto.Changeset.t()}
 
   @callback get_object(object_id :: String.t() | integer()) :: struct()
 

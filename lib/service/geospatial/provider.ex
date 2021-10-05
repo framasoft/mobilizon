@@ -43,7 +43,7 @@ defmodule Mobilizon.Service.Geospatial.Provider do
       %Address{}
   """
   @callback geocode(longitude :: number, latitude :: number, options :: keyword) ::
-              [Address.t()] | {:error, atom()}
+              [Address.t()]
 
   @doc """
   Search for an address
@@ -63,23 +63,21 @@ defmodule Mobilizon.Service.Geospatial.Provider do
       iex> search("10 rue Jangot")
       %Address{}
   """
-  @callback search(address :: String.t(), options :: keyword) :: [Address.t()] | {:error, atom()}
+  @callback search(address :: String.t(), options :: keyword) :: [Address.t()]
 
   @doc """
   Returns a `Geo.Point` for given coordinates
   """
-  @spec coordinates([number | String.t()], number) :: Geo.Point.t() | nil
-  def coordinates(coords, srid \\ 4326)
-
-  def coordinates([x, y], srid) when is_number(x) and is_number(y) do
-    %Geo.Point{coordinates: {x, y}, srid: srid}
+  @spec coordinates([number | String.t()]) :: Geo.Point.t() | nil
+  def coordinates([x, y]) when is_number(x) and is_number(y) do
+    %Geo.Point{coordinates: {x, y}, srid: 4326}
   end
 
-  def coordinates([x, y], srid) when is_binary(x) and is_binary(y) do
-    %Geo.Point{coordinates: {String.to_float(x), String.to_float(y)}, srid: srid}
+  def coordinates([x, y]) when is_binary(x) and is_binary(y) do
+    %Geo.Point{coordinates: {String.to_float(x), String.to_float(y)}, srid: 4326}
   end
 
-  def coordinates(_, _), do: nil
+  def coordinates(_), do: nil
 
   @spec endpoint(atom()) :: String.t()
   def endpoint(provider) do

@@ -1016,6 +1016,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   # Comment and conversations have different attributes for actor and groups
+  @spec transform_object_data_for_discussion(map()) :: map()
   defp transform_object_data_for_discussion(object_data) do
     # Basic comment
     if is_data_a_discussion_initialization?(object_data) do

@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Mobilizon.Relay.Accept do
     start_mobilizon()
 
     case Relay.accept(target) do
-      {:ok, _activity} ->
+      {:ok, _activity, _follow} ->
         # put this task to sleep to allow the genserver to push out the messages
         :timer.sleep(500)
 

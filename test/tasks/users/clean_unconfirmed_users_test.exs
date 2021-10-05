@@ -117,15 +117,4 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanUnconfirmedUsersTest do
       end
     end
   end
-
-  describe "returns an error" do
-    test "for some reason" do
-      with_mock CleanUnconfirmedUsers,
-        clean: fn [dry_run: false, grace_period: 48] -> {:error, "Some error"} end do
-        Clean.run([])
-        assert_received {:mix_shell, :error, [output_received]}
-        assert output_received == "Error while cleaning unconfirmed users"
-      end
-    end
-  end
 end

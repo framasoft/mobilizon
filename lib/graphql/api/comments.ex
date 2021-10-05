@@ -11,7 +11,9 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @doc """
   Create a comment
   """
-  @spec create_comment(map) :: {:ok, Activity.t(), Comment.t()} | any
+  @spec create_comment(map) ::
+          {:ok, Activity.t(), Comment.t()}
+          | {:error, :entity_tombstoned | atom() | Ecto.Changeset.t()}
   def create_comment(args) do
     args = extract_pictures_from_comment_body(args)
     Actions.Create.create(:comment, args, true)
@@ -20,7 +22,8 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @doc """
   Updates a comment
   """
-  @spec update_comment(Comment.t(), map()) :: {:ok, Activity.t(), Comment.t()} | any
+  @spec update_comment(Comment.t(), map()) ::
+          {:ok, Activity.t(), Comment.t()} | {:error, atom() | Ecto.Changeset.t()}
   def update_comment(%Comment{} = comment, args) do
     args = extract_pictures_from_comment_body(args)
     Actions.Update.update(comment, args, true)
@@ -37,7 +40,9 @@ defmodule Mobilizon.GraphQL.API.Comments do
   @doc """
   Creates a discussion (or reply to a discussion)
   """
-  @spec create_discussion(map()) :: map()
+  @spec create_discussion(map()) ::
+          {:ok, Activity.t(), Discussion.t()}
+          | {:error, :entity_tombstoned | atom | Ecto.Changeset.t()}
   def create_discussion(args) do
     args = extract_pictures_from_comment_body(args)
 

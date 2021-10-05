@@ -30,16 +30,10 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Reject do
         :invite -> reject_invite(entity, additional)
       end
 
-    with {:ok, activity} <- create_activity(update_data, local),
-         :ok <- maybe_federate(activity),
-         :ok <- maybe_relay_if_group_activity(activity) do
-      {:ok, activity, entity}
-    else
-      err ->
-        Logger.error("Something went wrong while creating an activity")
-        Logger.debug(inspect(err))
-        err
-    end
+    {:ok, activity} = create_activity(update_data, local)
+    maybe_federate(activity)
+    maybe_relay_if_group_activity(activity)
+    {:ok, activity, entity}
   end
 
   @spec reject_join(Participant.t(), map()) :: {:ok, Participant.t(), Activity.t()} | any()

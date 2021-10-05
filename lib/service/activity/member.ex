@@ -40,7 +40,7 @@ defmodule Mobilizon.Service.Activity.Member do
     Actors.get_member(member_id)
   end
 
-  @spec get_author(Member.t(), Member.t() | nil) :: integer()
+  @spec get_author(Member.t(), Keyword.t()) :: integer()
   defp get_author(%Member{actor_id: actor_id}, options) do
     moderator = Keyword.get(options, :moderator)
 

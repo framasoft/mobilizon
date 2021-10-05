@@ -187,35 +187,29 @@ defmodule Mix.Tasks.Mobilizon.Instance do
     end
   end
 
+  @spec write_config(String.t(), String.t()) :: :ok | {:error, atom()}
   defp write_config(config_path, result_config) do
     shell_info("Writing config to #{config_path}.")
 
-    case File.write(config_path, result_config) do
-      :ok ->
-        :ok
+    with {:error, err} <- File.write(config_path, result_config) do
+      shell_error(
+        "\nERROR: Unable to write config file to #{config_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
+      )
 
-      {:error, err} ->
-        shell_error(
-          "\nERROR: Unable to write config file to #{config_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
-        )
-
-        {:error, err}
+      {:error, err}
     end
   end
 
+  @spec write_psql(String.t(), String.t()) :: :ok | {:error, atom()}
   defp write_psql(psql_path, result_psql) do
     shell_info("Writing #{psql_path}.")
 
-    case File.write(psql_path, result_psql) do
-      :ok ->
-        :ok
+    with {:error, err} <- File.write(psql_path, result_psql) do
+      shell_error(
+        "\nERROR: Unable to write psql file to #{psql_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
+      )
 
-      {:error, err} ->
-        shell_error(
-          "\nERROR: Unable to write psql file to #{psql_path}. Make sure you have permissions on the destination and that the parent path exists.\n"
-        )
-
-        {:error, err}
+      {:error, err}
     end
   end
 end

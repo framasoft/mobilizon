@@ -131,7 +131,7 @@ defmodule Mobilizon.Posts do
     |> Repo.all()
   end
 
-  @spec tags_for_post_query(integer) :: Ecto.Query.t()
+  @spec tags_for_post_query(String.t()) :: Ecto.Query.t()
   defp tags_for_post_query(post_id) do
     from(
       t in Tag,

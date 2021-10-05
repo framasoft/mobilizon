@@ -191,14 +191,10 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
     ])
   end
 
-  @spec register_user(String.t()) :: User.t() | any()
+  @spec register_user(String.t()) :: User.t() | {:error, Ecto.Changeset.t()}
   defp register_user(email) do
-    case Users.create_external(email, "ldap") do
-      {:ok, %User{} = user} ->
-        user
-
-      error ->
-        error
+    with {:ok, %User{} = user} <- Users.create_external(email, "ldap") do
+      user
     end
   end
 

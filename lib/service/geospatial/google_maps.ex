@@ -31,16 +31,18 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
   """
-  @spec geocode(String.t(), keyword()) :: list(Address.t()) | no_return
+  @spec geocode(float(), float(), keyword()) :: list(Address.t())
   def geocode(lon, lat, options \\ []) do
     url = build_url(:geocode, %{lon: lon, lat: lat}, options)
 
     Logger.debug("Asking Google Maps for reverse geocode with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
-         %{"results" => results, "status" => "OK"} <- body do
-      Enum.map(results, fn entry -> process_data(entry, options) end)
-    else
+    %Tesla.Env{status: 200, body: body} = GeospatialClient.get!(url)
+
+    case body do
+      %{"results" => results, "status" => "OK"} ->
+        Enum.map(results, &process_data(&1, options))
+
       %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
     end
@@ -50,16 +52,18 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
   @doc """
   Google Maps implementation for `c:Mobilizon.Service.Geospatial.Provider.search/2`.
   """
-  @spec search(String.t(), keyword()) :: list(Address.t()) | no_return
+  @spec search(String.t(), keyword()) :: list(Address.t())
   def search(q, options \\ []) do
     url = build_url(:search, %{q: q}, options)
 
     Logger.debug("Asking Google Maps for addresses with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
-         %{"results" => results, "status" => "OK"} <- body do
-      results |> Enum.map(fn entry -> process_data(entry, options) end)
-    else
+    %Tesla.Env{status: 200, body: body} = GeospatialClient.get!(url)
+
+    case body do
+      %{"results" => results, "status" => "OK"} ->
+        results |> Enum.map(fn entry -> process_data(entry, options) end)
+
       %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
 
@@ -68,7 +72,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     end
   end
 
-  @spec build_url(atom(), map(), list()) :: String.t() | no_return
+  @spec build_url(:search | :geocode, map(), list()) :: String.t() | no_return
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")
@@ -97,6 +101,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     URI.encode(uri)
   end
 
+  @spec process_data(map(), Keyword.t()) :: Address.t()
   defp process_data(
          %{
            "formatted_address" => description,
@@ -148,16 +153,18 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     end
   end
 
-  @spec do_fetch_place_details(String.t() | nil, Keyword.t()) :: String.t() | no_return
+  @spec do_fetch_place_details(String.t() | nil, Keyword.t()) :: String.t() | nil
   defp do_fetch_place_details(place_id, options) do
     url = build_url(:place_details, %{place_id: place_id}, options)
 
     Logger.debug("Asking Google Maps for details with #{url}")
 
-    with {:ok, %{status: 200, body: body}} <- GeospatialClient.get(url),
-         %{"result" => %{"name" => name}, "status" => "OK"} <- body do
-      name
-    else
+    %Tesla.Env{status: 200, body: body} = GeospatialClient.get!(url)
+
+    case body do
+      %{"result" => %{"name" => name}, "status" => "OK"} ->
+        name
+
       %{"status" => "REQUEST_DENIED", "error_message" => error_message} ->
         raise ArgumentError, message: to_string(error_message)
 
