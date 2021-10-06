@@ -84,6 +84,10 @@ export interface IConfig {
     groups: boolean;
     koenaConnect: boolean;
   };
+  restrictions: {
+    onlyAdminCanCreateGroups: boolean;
+    onlyGroupsCanCreateEvents: boolean;
+  };
   federating: boolean;
   version: string;
   auth: {

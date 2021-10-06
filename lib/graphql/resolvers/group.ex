@@ -4,6 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   """
 
   import Mobilizon.Users.Guards
+  alias Mobilizon.Config
   alias Mobilizon.{Actors, Events}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub.Actions
@@ -137,23 +138,29 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         args,
         %{
           context: %{
-            current_actor: %Actor{id: creator_actor_id} = creator_actor
+            current_actor: %Actor{id: creator_actor_id} = creator_actor,
+            current_user: %User{role: role} = _resolution
           }
         }
       ) do
-    with args when is_map(args) <- Map.update(args, :preferred_username, "", &String.downcase/1),
-         args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
-         args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
-         {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
-         {:ok, _activity, %Actor{type: :Group} = group} <-
-           API.Groups.create_group(args) do
-      {:ok, group}
+    if Config.only_admin_can_create_groups?() and not is_admin(role) do
+      {:error, "only admins can create groups"}
     else
-      {:picture, {:error, :file_too_large}} ->
-        {:error, dgettext("errors", "The provided picture is too heavy")}
+      with args when is_map(args) <-
+             Map.update(args, :preferred_username, "", &String.downcase/1),
+           args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
+           args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
+           {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
+           {:ok, _activity, %Actor{type: :Group} = group} <-
+             API.Groups.create_group(args) do
+        {:ok, group}
+      else
+        {:picture, {:error, :file_too_large}} ->
+          {:error, dgettext("errors", "The provided picture is too heavy")}
 
-      {:error, err} when is_binary(err) ->
-        {:error, err}
+        {:error, err} when is_binary(err) ->
+          {:error, err}
+      end
     end
   end
 

@@ -37,6 +37,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
     field(:timezones, list_of(:string), description: "The instance's available timezones")
     field(:features, :features, description: "The instance's features")
+    field(:restrictions, :restrictions, description: "The instance's restrictions")
     field(:version, :string, description: "The instance's version")
     field(:federating, :boolean, description: "Whether this instance is federation")
 
@@ -273,6 +274,19 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     )
 
     field(:koena_connect, :boolean, description: "Activate link to Koena Connect")
+  end
+
+  @desc """
+  The instance's restrictions
+  """
+  object :restrictions do
+    field(:only_admin_can_create_groups, :boolean,
+      description: "Whether groups creation is allowed only for admin, not for all users"
+    )
+
+    field(:only_groups_can_create_events, :boolean,
+      description: "Whether events creation is allowed only for groups, not for persons"
+    )
   end
 
   @desc """

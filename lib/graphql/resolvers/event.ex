@@ -265,29 +265,33 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         %{context: %{current_user: user}} = _resolution
       ) do
     # See https://github.com/absinthe-graphql/absinthe/issues/490
-    with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
-         args <- Map.put(args, :options, args[:options] || %{}),
-         {:group_check, true} <- {:group_check, is_organizer_group_member?(args)},
-         args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
-         {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
-           API.Events.create_event(args_with_organizer) do
-      {:ok, event}
+    if Config.only_groups_can_create_events?() and Map.get(args, :attributed_to_id) == nil do
+      {:error, "only groups can create events"}
     else
-      {:group_check, false} ->
-        {:error,
-         dgettext(
-           "errors",
-           "Organizer profile doesn't have permission to create an event on behalf of this group"
-         )}
+      with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+           args <- Map.put(args, :options, args[:options] || %{}),
+           {:group_check, true} <- {:group_check, is_organizer_group_member?(args)},
+           args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
+           {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
+             API.Events.create_event(args_with_organizer) do
+        {:ok, event}
+      else
+        {:group_check, false} ->
+          {:error,
+           dgettext(
+             "errors",
+             "Organizer profile doesn't have permission to create an event on behalf of this group"
+           )}
 
-      {:is_owned, nil} ->
-        {:error, dgettext("errors", "Organizer profile is not owned by the user")}
+        {:is_owned, nil} ->
+          {:error, dgettext("errors", "Organizer profile is not owned by the user")}
 
-      {:error, _, %Ecto.Changeset{} = error, _} ->
-        {:error, error}
+        {:error, _, %Ecto.Changeset{} = error, _} ->
+          {:error, error}
 
-      {:error, %Ecto.Changeset{} = error} ->
-        {:error, error}
+        {:error, %Ecto.Changeset{} = error} ->
+          {:error, error}
+      end
     end
   end
 

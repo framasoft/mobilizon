@@ -44,6 +44,7 @@
         "
       >
         <b-button
+          v-if="!hideCreateEventsButton"
           tag="router-link"
           :to="{ name: RouteName.CREATE_EVENT }"
           type="is-primary"
@@ -312,6 +313,10 @@ export default class NavBar extends Vue {
       },
     });
     return changeIdentity(this.$apollo.provider.defaultClient, identity);
+  }
+
+  get hideCreateEventsButton(): boolean {
+    return !!this.config?.restrictions?.onlyGroupsCanCreateEvents;
   }
 }
 </script>

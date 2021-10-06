@@ -10,7 +10,7 @@
         )
       }}
     </p>
-    <div class="buttons">
+    <div class="buttons" v-if="!hideCreateEventButton">
       <router-link
         class="button is-primary"
         :to="{ name: RouteName.CREATE_EVENT }"
@@ -126,6 +126,8 @@
 </template>
 
 <script lang="ts">
+import { CONFIG } from "../../graphql/config";
+import { IConfig } from "../../types/config.model";
 import { Component, Vue } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
@@ -147,6 +149,7 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
     EventListCard,
   },
   apollo: {
+    config: CONFIG,
     futureParticipations: {
       query: LOGGED_USER_PARTICIPATIONS,
       fetchPolicy: "cache-and-network",
@@ -196,6 +199,8 @@ export default class MyEvents extends Vue {
   pastPage = 1;
 
   limit = 10;
+
+  config!: IConfig;
 
   futureParticipations: IParticipant[] = [];
 
@@ -285,6 +290,10 @@ export default class MyEvents extends Vue {
     this.pastParticipations = this.pastParticipations.filter(
       (participation) => participation.event.id !== eventid
     );
+  }
+
+  get hideCreateEventButton(): boolean {
+    return !!this.config?.restrictions?.onlyGroupsCanCreateEvents;
   }
 }
 </script>
