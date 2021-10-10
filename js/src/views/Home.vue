@@ -241,6 +241,7 @@
         </span>
       </section>
       <hr
+        role="presentation"
         class="home-separator"
         v-if="canShowMyUpcomingEvents && canShowLastWeekEvents"
       />
@@ -259,6 +260,7 @@
         </div>
       </section>
       <hr
+        role="presentation"
         class="home-separator"
         v-if="canShowLastWeekEvents && canShowCloseEvents"
       />
@@ -297,6 +299,7 @@
         </div>
       </section>
       <hr
+        role="presentation"
         class="home-separator"
         v-if="
           canShowMyUpcomingEvents || canShowLastWeekEvents || canShowCloseEvents

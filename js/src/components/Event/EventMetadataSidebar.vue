@@ -7,25 +7,15 @@
       <div class="address-wrapper">
         <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
         <div class="address" v-if="physicalAddress">
-          <div>
-            <address>
-              <p
-                class="addressDescription"
-                :title="physicalAddress.poiInfos.name"
-              >
-                {{ physicalAddress.poiInfos.name }}
-              </p>
-              <p class="has-text-grey-dark">
-                {{ physicalAddress.poiInfos.alternativeName }}
-              </p>
-            </address>
-          </div>
-          <span
+          <address-info :address="physicalAddress" />
+          <b-button
+            type="is-text"
             class="map-show-button"
             @click="showMap = !showMap"
             v-if="physicalAddress.geom"
-            >{{ $t("Show map") }}</span
           >
+            {{ $t("Show map") }}
+          </b-button>
         </div>
       </div>
     </event-metadata-block>

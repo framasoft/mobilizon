@@ -82,7 +82,7 @@ export interface IEvent {
 
   onlineAddress?: string;
   phoneAddress?: string;
-  physicalAddress?: IAddress;
+  physicalAddress: IAddress | null;
 
   tags: ITag[];
   options: IEventOptions;
@@ -115,7 +115,7 @@ export class EventModel implements IEvent {
 
   phoneAddress: string | undefined = "";
 
-  physicalAddress?: IAddress;
+  physicalAddress: IAddress | null = null;
 
   picture: IMedia | null = null;
 
@@ -192,7 +192,7 @@ export class EventModel implements IEvent {
     this.phoneAddress = hash.phoneAddress;
     this.physicalAddress = hash.physicalAddress
       ? new Address(hash.physicalAddress)
-      : undefined;
+      : null;
     this.participantStats = hash.participantStats;
 
     this.contacts = hash.contacts;

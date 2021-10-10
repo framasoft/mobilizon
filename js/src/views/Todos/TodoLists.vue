@@ -82,6 +82,16 @@ import RouteName from "../../router/name";
   components: {
     CompactTodo,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { group } = this;
+    return {
+      title: this.$t("{group}'s todolists", {
+        group: group.name || usernameWithDomain(group),
+      }) as string,
+    };
+  },
 })
 export default class TodoLists extends Vue {
   @Prop({ type: String, required: true }) preferredUsername!: string;

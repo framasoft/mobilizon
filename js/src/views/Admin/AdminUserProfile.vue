@@ -96,6 +96,14 @@ import { IPerson } from "../../types/actor";
       },
     },
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { user } = this;
+    return {
+      title: user.email,
+    };
+  },
 })
 export default class AdminUserProfile extends Vue {
   @Prop({ required: true }) id!: string;

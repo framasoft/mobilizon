@@ -18,12 +18,16 @@
       <div class="setting-title">
         <h2>{{ $t("Browser notifications") }}</h2>
       </div>
-      <b-button v-if="subscribed" @click="unsubscribeToWebPush()">{{
-        $t("Unsubscribe to browser push notifications")
-      }}</b-button>
+      <b-button
+        v-if="subscribed"
+        @click="unsubscribeToWebPush()"
+        @keyup.enter="unsubscribeToWebPush()"
+        >{{ $t("Unsubscribe to browser push notifications") }}</b-button
+      >
       <b-button
         icon-left="rss"
         @click="subscribeToWebPush"
+        @keyup.enter="subscribeToWebPush"
         v-else-if="canShowWebPush && webPushEnabled"
         >{{ $t("Activate browser push notifications") }}</b-button
       >
@@ -247,6 +251,9 @@
               @click="
                 (e) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
               "
+              @keyup.enter="
+                (e) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+              "
               :href="tokenToURL(feedToken.token, 'atom')"
               target="_blank"
               >{{ $t("RSS/Atom Feed") }}</b-button
@@ -264,6 +271,9 @@
               @click="
                 (e) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
               "
+              @keyup.enter="
+                (e) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+              "
               icon-left="calendar-sync"
               :href="tokenToURL(feedToken.token, 'ics')"
               target="_blank"
@@ -274,6 +284,7 @@
             icon-left="refresh"
             type="is-text"
             @click="openRegenerateFeedTokensConfirmation"
+            @keyup.enter="openRegenerateFeedTokensConfirmation"
             >{{ $t("Regenerate new links") }}</b-button
           >
         </div>
@@ -283,6 +294,7 @@
           icon-left="refresh"
           type="is-text"
           @click="generateFeedTokens"
+          @keyup.enter="generateFeedTokens"
           >{{ $t("Create new links") }}</b-button
         >
       </div>
@@ -333,7 +345,7 @@ type NotificationType = { label: string; subtypes: NotificationSubType[] };
   },
   metaInfo() {
     return {
-      title: this.$t("Notifications") as string,
+      title: this.$t("Notification settings") as string,
     };
   },
 })

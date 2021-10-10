@@ -84,7 +84,10 @@
 
         <div class="field">
           <label class="label">{{ $t("Description") }}</label>
-          <editor v-model="event.description" />
+          <editor
+            v-model="event.description"
+            :aria-label="$t('Event description body')"
+          />
         </div>
 
         <b-field :label="$t('Website / URL')" label-for="website-url">

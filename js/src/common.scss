@@ -135,3 +135,23 @@ a.list-item {
     font-size: 1.25rem;
   }
 }
+
+@mixin focus() {
+  &:focus {
+    border: 2px solid black;
+    border-radius: 5px;
+  }
+}
+
+ul.menu-list > li,
+p {
+  @include focus;
+}
+.navbar-item {
+  @include focus;
+}
+
+.navbar-dropdown span.navbar-item:hover {
+  background-color: whitesmoke;
+  color: #0a0a0a;
+}

@@ -24,7 +24,13 @@ import { VALIDATE_EMAIL } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { ICurrentUser } from "../../types/current-user.model";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Validating email") as string,
+    };
+  },
+})
 export default class Validate extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 

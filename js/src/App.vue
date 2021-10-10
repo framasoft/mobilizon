@@ -1,5 +1,7 @@
 <template>
   <div id="mobilizon">
+    <VueAnnouncer />
+    <VueSkipTo to="#main" :label="$t('Skip to main content')" />
     <NavBar />
     <div v-if="config && config.demoMode">
       <b-message
@@ -22,9 +24,9 @@
     </div>
     <error v-if="error" :error="error" />
 
-    <main v-else>
+    <main id="main" v-else>
       <transition name="fade" mode="out-in">
-        <router-view />
+        <router-view ref="routerView" />
       </transition>
     </main>
     <mobilizon-footer />
@@ -32,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue, Watch } from "vue-property-decorator";
 import NavBar from "./components/NavBar.vue";
 import {
   AUTH_ACCESS_TOKEN,
@@ -52,6 +54,7 @@ import { IConfig } from "./types/config.model";
 import { ICurrentUser } from "./types/current-user.model";
 import jwt_decode, { JwtPayload } from "jwt-decode";
 import { refreshAccessToken } from "./apollo/utils";
+import { Route } from "vue-router";
 
 @Component({
   apollo: {
@@ -81,6 +84,8 @@ export default class App extends Vue {
   online = true;
 
   interval: number | undefined = undefined;
+
+  @Ref("routerView") routerView!: Vue;
 
   async created(): Promise<void> {
     if (await this.initializeCurrentUser()) {
@@ -197,6 +202,39 @@ export default class App extends Vue {
     clearInterval(this.interval);
     this.interval = undefined;
   }
+
+  @Watch("$route", { immediate: true })
+  updateAnnouncement(route: Route): void {
+    const pageTitle = this.extractPageTitleFromRoute(route);
+    if (pageTitle) {
+      this.$announcer.polite(
+        this.$t("Navigated to {pageTitle}", {
+          pageTitle,
+        }) as string
+      );
+    }
+    // Set the focus to the router view
+    // https://marcus.io/blog/accessible-routing-vuejs
+    setTimeout(() => {
+      const focusTarget = this.routerView.$el as HTMLElement;
+      // Make focustarget programmatically focussable
+      focusTarget.setAttribute("tabindex", "-1");
+
+      // Focus element
+      focusTarget.focus();
+
+      // Remove tabindex from focustarget.
+      // Reason: https://axesslab.com/skip-links/#update-3-a-comment-from-gov-uk
+      focusTarget.removeAttribute("tabindex");
+    }, 0);
+  }
+
+  extractPageTitleFromRoute(route: Route): string {
+    if (route.meta?.announcer?.message) {
+      return route.meta?.announcer?.message();
+    }
+    return document.title;
+  }
 }
 </script>
 
@@ -217,5 +255,9 @@ $mdi-font-path: "~@mdi/font/fonts";
   main {
     flex-grow: 1;
   }
+}
+
+.vue-skip-to {
+  z-index: 40;
 }
 </style>

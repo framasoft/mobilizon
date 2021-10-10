@@ -69,6 +69,14 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
     },
     currentActor: CURRENT_ACTOR_CLIENT,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { todoList } = this;
+    return {
+      title: todoList.title,
+    };
+  },
 })
 export default class TodoList extends Vue {
   @Prop({ type: String, required: true }) id!: string;

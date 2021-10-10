@@ -9,7 +9,13 @@ import RouteName from "../../router/name";
 import { saveUserData, changeIdentity } from "../../utils/auth";
 import { IUser } from "../../types/current-user.model";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Redirecting to Mobilizon") as string,
+    };
+  },
+})
 export default class ProviderValidate extends Vue {
   async mounted(): Promise<void> {
     const accessToken = this.getValueFromMeta("auth-access-token");

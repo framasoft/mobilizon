@@ -1,5 +1,6 @@
 <template>
   <b-navbar
+    id="navbar"
     type="is-secondary"
     wrapper-class="container"
     :active.sync="mobileNavbarActive"
@@ -58,6 +59,7 @@
         href="https://mediation.koena.net/framasoft/mobilizon/"
         target="_blank"
         rel="noopener"
+        hreflang="fr"
       >
         <img
           src="/img/koena-a11y.svg"
@@ -75,6 +77,10 @@
         v-if="currentActor.id && currentUser.isLoggedIn"
         right
         collapsible
+        ref="user-dropdown"
+        tabindex="0"
+        tag="span"
+        @keyup.enter="toggleMenu"
       >
         <template
           slot="label"
@@ -109,8 +115,11 @@
           v-else
           :active="identity.id === currentActor.id"
           :key="identity.id"
+          tabindex="0"
+          @click="setIdentity(identity)"
+          @keyup.enter="setIdentity(identity)"
         >
-          <span @click="setIdentity(identity)">
+          <span>
             <div class="media-left">
               <figure class="image is-32x32" v-if="identity.avatar">
                 <img
@@ -131,7 +140,7 @@
             </div>
           </span>
 
-          <hr class="navbar-divider" />
+          <hr class="navbar-divider" role="presentation" />
         </b-navbar-item>
 
         <b-navbar-item
@@ -146,8 +155,13 @@
           >{{ $t("Administration") }}</b-navbar-item
         >
 
-        <b-navbar-item tag="span">
-          <span @click="logout">{{ $t("Log out") }}</span>
+        <b-navbar-item
+          tag="span"
+          tabindex="0"
+          @click="logout"
+          @keyup.enter="logout"
+        >
+          <span>{{ $t("Log out") }}</span>
         </b-navbar-item>
       </b-navbar-dropdown>
 

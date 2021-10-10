@@ -245,12 +245,14 @@
                     aria-role="listitem"
                     v-if="canManageEvent || event.draft"
                     @click="openDeleteEventModalWrapper"
+                    @keyup.enter="openDeleteEventModalWrapper"
                   >
                     {{ $t("Delete") }}
                     <b-icon icon="delete" />
                   </b-dropdown-item>
 
                   <hr
+                    role="presentation"
                     class="dropdown-divider"
                     aria-role="menuitem"
                     v-if="canManageEvent || event.draft"
@@ -259,6 +261,7 @@
                     aria-role="listitem"
                     v-if="!event.draft"
                     @click="triggerShare()"
+                    @keyup.enter="triggerShare()"
                   >
                     <span>
                       {{ $t("Share this event") }}
@@ -268,6 +271,7 @@
                   <b-dropdown-item
                     aria-role="listitem"
                     @click="downloadIcsEvent()"
+                    @keyup.enter="downloadIcsEvent()"
                     v-if="!event.draft"
                   >
                     <span>
@@ -279,6 +283,7 @@
                     aria-role="listitem"
                     v-if="ableToReport"
                     @click="isReportModalActive = true"
+                    @keyup.enter="isReportModalActive = true"
                   >
                     <span>
                       {{ $t("Report") }}
@@ -379,6 +384,7 @@
                 class="button"
                 ref="cancelButton"
                 @click="isJoinModalActive = false"
+                @keyup.enter="isJoinModalActive = false"
               >
                 {{ $t("Cancel") }}
               </button>
@@ -386,6 +392,11 @@
                 class="button is-primary"
                 ref="confirmButton"
                 @click="
+                  event.joinOptions === EventJoinOptions.RESTRICTED
+                    ? joinEventWithConfirmation(identity)
+                    : joinEvent(identity)
+                "
+                @keyup.enter="
                   event.joinOptions === EventJoinOptions.RESTRICTED
                     ? joinEventWithConfirmation(identity)
                     : joinEvent(identity)
@@ -436,6 +447,7 @@
                   class="button"
                   ref="cancelButton"
                   @click="isJoinConfirmationModalActive = false"
+                  @keyup.enter="isJoinConfirmationModalActive = false"
                   >{{ $t("Cancel") }}
                 </b-button>
                 <b-button type="is-primary" native-type="submit">

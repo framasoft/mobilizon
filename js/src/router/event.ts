@@ -1,5 +1,6 @@
 import { RouteConfig, Route } from "vue-router";
 import { ImportedComponent } from "vue/types/options";
+import { i18n } from "@/utils/i18n";
 
 const participations = (): Promise<ImportedComponent> =>
   import(
@@ -33,25 +34,34 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EVENT_LIST,
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "EventList" */ "@/views/Event/EventList.vue"),
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Event list") as string },
+    },
   },
   {
     path: "/events/create",
     name: EventRouteName.CREATE_EVENT,
     component: editEvent,
-    meta: { requiredAuth: true },
+    meta: {
+      requiredAuth: true,
+      announcer: { message: (): string => i18n.t("Create event") as string },
+    },
   },
   {
     path: "/events/me",
     name: EventRouteName.MY_EVENTS,
     component: myEvents,
-    meta: { requiredAuth: true },
+    meta: {
+      requiredAuth: true,
+      announcer: { message: (): string => i18n.t("My events") as string },
+    },
   },
   {
     path: "/events/edit/:eventId",
     name: EventRouteName.EDIT_EVENT,
     component: editEvent,
-    meta: { requiredAuth: true },
+    meta: { requiredAuth: true, announcer: { skip: true } },
     props: (route: Route): Record<string, unknown> => {
       return { ...route.params, ...{ isUpdate: true } };
     },
@@ -60,7 +70,7 @@ export const eventRoutes: RouteConfig[] = [
     path: "/events/duplicate/:eventId",
     name: EventRouteName.DUPLICATE_EVENT,
     component: editEvent,
-    meta: { requiredAuth: true },
+    meta: { requiredAuth: true, announce: { skip: true } },
     props: (route: Route): Record<string, unknown> => ({
       ...route.params,
       ...{ isDuplicate: true },
@@ -70,7 +80,7 @@ export const eventRoutes: RouteConfig[] = [
     path: "/events/:eventId/participations",
     name: EventRouteName.PARTICIPATIONS,
     component: participations,
-    meta: { requiredAuth: true },
+    meta: { requiredAuth: true, announcer: { skip: true } },
     props: true,
   },
   {
@@ -78,7 +88,7 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EVENT,
     component: event,
     props: true,
-    meta: { requiredAuth: false },
+    meta: { requiredAuth: false, announcer: { skip: true } },
   },
   {
     path: "/events/:uuid/participate",
@@ -86,12 +96,22 @@ export const eventRoutes: RouteConfig[] = [
     component: (): Promise<ImportedComponent> =>
       import("../components/Participation/UnloggedParticipation.vue"),
     props: true,
+    meta: {
+      announcer: {
+        message: (): string => i18n.t("Unlogged participation") as string,
+      },
+    },
   },
   {
     path: "/events/:uuid/participate/with-account",
     name: EventRouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
     component: (): Promise<ImportedComponent> =>
       import("../components/Participation/ParticipationWithAccount.vue"),
+    meta: {
+      announcer: {
+        message: (): string => i18n.t("Participation with account") as string,
+      },
+    },
     props: true,
   },
   {
@@ -99,6 +119,12 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EVENT_PARTICIPATE_WITHOUT_ACCOUNT,
     component: (): Promise<ImportedComponent> =>
       import("../components/Participation/ParticipationWithoutAccount.vue"),
+    meta: {
+      announcer: {
+        message: (): string =>
+          i18n.t("Participation without account") as string,
+      },
+    },
     props: true,
   },
   {
@@ -106,6 +132,11 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EVENT_PARTICIPATE_CONFIRM,
     component: (): Promise<ImportedComponent> =>
       import("../components/Participation/ConfirmParticipation.vue"),
+    meta: {
+      announcer: {
+        message: (): string => i18n.t("Confirm participation") as string,
+      },
+    },
     props: true,
   },
   {
@@ -114,6 +145,9 @@ export const eventRoutes: RouteConfig[] = [
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
     props: true,
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Tag search") as string },
+    },
   },
 ];

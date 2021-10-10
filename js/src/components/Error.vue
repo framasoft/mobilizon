@@ -103,9 +103,11 @@
             :active="copied !== false"
             always
           >
-            <b-button @click="copyErrorToClipboard">{{
-              $t("Copy details to clipboard")
-            }}</b-button>
+            <b-button
+              @click="copyErrorToClipboard"
+              @keyup.enter="copyErrorToClipboard"
+              >{{ $t("Copy details to clipboard") }}</b-button
+            >
           </b-tooltip>
         </div>
       </section>

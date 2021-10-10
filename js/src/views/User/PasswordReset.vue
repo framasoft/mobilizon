@@ -50,7 +50,13 @@ import { saveUserData } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
 import RouteName from "../../router/name";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Password reset") as string,
+    };
+  },
+})
 export default class PasswordReset extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 

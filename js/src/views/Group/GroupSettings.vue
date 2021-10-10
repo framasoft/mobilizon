@@ -41,7 +41,11 @@
           <b-input v-model="editableGroup.name" id="group-settings-name" />
         </b-field>
         <b-field :label="$t('Group short description')">
-          <editor mode="basic" v-model="editableGroup.summary" :maxSize="500"
+          <editor
+            mode="basic"
+            v-model="editableGroup.summary"
+            :maxSize="500"
+            :aria-label="$t('Group description body')"
         /></b-field>
         <b-field :label="$t('Avatar')">
           <picture-upload

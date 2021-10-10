@@ -72,7 +72,7 @@
         <div class="field">
           <label class="label">{{ $t("Post") }}</label>
           <p v-if="errors.body" class="help is-danger">{{ errors.body }}</p>
-          <editor v-model="editablePost.body" />
+          <editor v-model="editablePost.body" :aria-label="$t('Post body')" />
         </div>
         <subtitle>{{ $t("Who can view this post") }}</subtitle>
         <fieldset>

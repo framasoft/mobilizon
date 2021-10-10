@@ -1,5 +1,6 @@
 import { RouteConfig } from "vue-router";
 import { ImportedComponent } from "vue/types/options";
+import { i18n } from "@/utils/i18n";
 
 export enum DiscussionRouteName {
   DISCUSSION_LIST = "DISCUSSION_LIST",
@@ -16,7 +17,12 @@ export const discussionRoutes: RouteConfig[] = [
         /* webpackChunkName: "DiscussionsList" */ "@/views/Discussions/DiscussionsList.vue"
       ),
     props: true,
-    meta: { requiredAuth: true },
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => i18n.t("Discussions list") as string,
+      },
+    },
   },
   {
     path: "/@:preferredUsername/discussions/new",
@@ -26,7 +32,12 @@ export const discussionRoutes: RouteConfig[] = [
         /* webpackChunkName: "CreateDiscussion" */ "@/views/Discussions/Create.vue"
       ),
     props: true,
-    meta: { requiredAuth: true },
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => i18n.t("Create discussion") as string,
+      },
+    },
   },
   {
     path: "/@:preferredUsername/c/:slug/:comment_id?",
@@ -36,6 +47,6 @@ export const discussionRoutes: RouteConfig[] = [
         /* webpackChunkName: "Discussion" */ "@/views/Discussions/Discussion.vue"
       ),
     props: true,
-    meta: { requiredAuth: true },
+    meta: { requiredAuth: true, announcer: { skip: true } },
   },
 ];

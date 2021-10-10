@@ -56,7 +56,13 @@ import {
 import { RESEND_CONFIRMATION_EMAIL } from "../../graphql/auth";
 import RouteName from "../../router/name";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Resend confirmation email") as string,
+    };
+  },
+})
 export default class ResendConfirmation extends Vue {
   @Prop({ type: String, required: false, default: "" }) email!: string;
 

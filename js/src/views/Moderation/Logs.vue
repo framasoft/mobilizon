@@ -395,6 +395,11 @@ import { Paginate } from "@/types/paginate";
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Moderation logs") as string,
+    };
+  },
 })
 export default class ReportList extends Vue {
   actionLogs?: Paginate<IActionLog> = { total: 0, elements: [] };

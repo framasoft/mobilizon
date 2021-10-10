@@ -88,7 +88,7 @@
         {{ $t("[This comment has been deleted by it's author]") }}
       </div>
       <form v-else class="edition" @submit.prevent="updateComment">
-        <editor v-model="updatedComment" />
+        <editor v-model="updatedComment" :aria-label="$t('Comment body')" />
         <div class="buttons">
           <b-button
             native-type="submit"

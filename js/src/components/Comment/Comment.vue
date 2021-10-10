@@ -137,6 +137,7 @@
                 ref="commentEditor"
                 v-model="newComment.text"
                 mode="comment"
+                :aria-label="$t('Comment body')"
               />
               <b-button
                 :disabled="newComment.text.trim().length === 0"

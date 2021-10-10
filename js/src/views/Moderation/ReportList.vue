@@ -111,6 +111,11 @@ const REPORT_PAGE_LIMIT = 10;
       pollInterval: 120000, // 2 minutes
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Reports") as string,
+    };
+  },
 })
 export default class ReportList extends Vue {
   reports?: Paginate<IReport> = { elements: [], total: 0 };

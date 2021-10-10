@@ -25,7 +25,12 @@
           v-model="locale"
           :placeholder="$t('Select a language')"
         >
-          <option v-for="(language, lang) in langs" :value="lang" :key="lang">
+          <option
+            v-for="(language, lang) in langs"
+            :value="lang"
+            :key="lang"
+            :selected="isLangSelected(lang)"
+          >
             {{ language }}
           </option>
         </b-select>
@@ -47,6 +52,9 @@
         >
           {{ $t("License") }}
         </a>
+      </li>
+      <li>
+        <a href="#navbar">{{ $t("Back to top") }}</a>
       </li>
     </ul>
     <div class="content has-text-centered">
@@ -101,6 +109,10 @@ export default class Footer extends Vue {
       this.locale = locale;
     }
   }
+
+  isLangSelected(lang: string): boolean {
+    return lang === this.locale;
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -145,6 +157,13 @@ footer.footer {
     color: $white;
     text-decoration: underline;
     text-decoration-color: $secondary;
+
+    &:focus {
+      background-color: #000;
+      color: #fff;
+      outline: 3px solid #000;
+      text-decoration: none;
+    }
   }
 
   ::v-deep span.select {

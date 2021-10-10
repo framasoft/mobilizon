@@ -130,6 +130,11 @@ import RouteName from "../../router/name";
     },
     config: CONFIG,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Unlogged participation") as string,
+    };
+  },
 })
 export default class UnloggedParticipation extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;

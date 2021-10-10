@@ -38,7 +38,12 @@
           </span>
         </b-upload>
       </b-field>
-      <b-button type="is-text" v-if="imageSrc" @click="removeOrClearPicture">
+      <b-button
+        type="is-text"
+        v-if="imageSrc"
+        @click="removeOrClearPicture"
+        @keyup.enter="removeOrClearPicture"
+      >
         {{ $t("Clear") }}
       </b-button>
     </div>

@@ -13,6 +13,7 @@ import { groupsRoutes } from "./groups";
 import { discussionRoutes } from "./discussion";
 import { userRoutes } from "./user";
 import RouteName from "./name";
+import { i18n } from "@/utils/i18n";
 
 Vue.use(Router);
 
@@ -49,13 +50,19 @@ export const routes = [
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
     props: true,
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Search") as string },
+    },
   },
   {
     path: "/",
     name: RouteName.HOME,
     component: Home,
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Homepage") as string },
+    },
   },
   {
     path: "/about",
@@ -72,27 +79,41 @@ export const routes = [
           import(
             /* webpackChunkName: "about" */ "@/views/About/AboutInstance.vue"
           ),
+        meta: {
+          announcer: {
+            message: (): string => i18n.t("About instance") as string,
+          },
+        },
       },
       {
         path: "/terms",
         name: RouteName.TERMS,
         component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Terms.vue"),
-        meta: { requiredAuth: false },
+        meta: {
+          requiredAuth: false,
+          announcer: { message: (): string => i18n.t("Terms") as string },
+        },
       },
       {
         path: "/privacy",
         name: RouteName.PRIVACY,
         component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Privacy.vue"),
-        meta: { requiredAuth: false },
+        meta: {
+          requiredAuth: false,
+          announcer: { message: (): string => i18n.t("Privacy") as string },
+        },
       },
       {
         path: "/rules",
         name: RouteName.RULES,
         component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "cookies" */ "@/views/About/Rules.vue"),
-        meta: { requiredAuth: false },
+        meta: {
+          requiredAuth: false,
+          announcer: { message: (): string => i18n.t("Rules") as string },
+        },
       },
       {
         path: "/glossary",
@@ -101,7 +122,10 @@ export const routes = [
           import(
             /* webpackChunkName: "cookies" */ "@/views/About/Glossary.vue"
           ),
-        meta: { requiredAuth: false },
+        meta: {
+          requiredAuth: false,
+          announcer: { message: (): string => i18n.t("Glossary") as string },
+        },
       },
     ],
   },
@@ -110,7 +134,10 @@ export const routes = [
     name: RouteName.INTERACT,
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "interact" */ "@/views/Interact.vue"),
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Interact") as string },
+    },
   },
   {
     path: "/auth/:provider/callback",
@@ -119,6 +146,11 @@ export const routes = [
       import(
         /* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"
       ),
+    meta: {
+      announcer: {
+        message: (): string => i18n.t("Redirecting to Mobilizon") as string,
+      },
+    },
   },
   {
     path: "/welcome/:step?",
@@ -127,7 +159,10 @@ export const routes = [
       import(
         /* webpackChunkName: "WelcomeScreen" */ "@/views/User/SettingsOnboard.vue"
       ),
-    meta: { requiredAuth: true },
+    meta: {
+      requiredAuth: true,
+      announcer: { message: (): string => i18n.t("First steps") as string },
+    },
     props: (route: Route): Record<string, unknown> => {
       const step = Number.parseInt(route.params.step, 10);
       if (Number.isNaN(step)) {
@@ -143,7 +178,10 @@ export const routes = [
       import(
         /* webpackChunkName: "PageNotFound" */ "../views/PageNotFound.vue"
       ),
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Page not found") as string },
+    },
   },
   {
     path: "*",

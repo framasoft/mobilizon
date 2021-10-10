@@ -59,7 +59,7 @@
           <router-link class="out" :to="{ name: RouteName.ABOUT }">{{
             $t("Learn more")
           }}</router-link>
-          <hr />
+          <hr role="presentation" />
           <div class="content">
             <subtitle>{{
               $t("About {instance}", { instance: config.name })
@@ -170,7 +170,7 @@
               >
             </p>
 
-            <hr />
+            <hr role="presentation" />
             <div
               class="control"
               v-if="config && config.auth.oauthProviders.length > 0"
