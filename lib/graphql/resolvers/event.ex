@@ -13,9 +13,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.Federation.ActivityPub.Activity
   alias Mobilizon.Federation.ActivityPub.Permission
+  alias Mobilizon.Service.TimezoneDetector
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
   import Mobilizon.GraphQL.Resolvers.Event.Utils
+  require Logger
 
   # We limit the max number of events that can be retrieved
   @event_max_limit 100
@@ -262,35 +264,47 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   def create_event(
         _parent,
         %{organizer_actor_id: organizer_actor_id} = args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    # See https://github.com/absinthe-graphql/absinthe/issues/490
     if Config.only_groups_can_create_events?() and Map.get(args, :attributed_to_id) == nil do
-      {:error, "only groups can create events"}
+      {:error,
+       dgettext(
+         "errors",
+         "Only groups can create events"
+       )}
     else
-      with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
-           args <- Map.put(args, :options, args[:options] || %{}),
-           {:group_check, true} <- {:group_check, is_organizer_group_member?(args)},
-           args_with_organizer <- Map.put(args, :organizer_actor, organizer_actor),
-           {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
-             API.Events.create_event(args_with_organizer) do
-        {:ok, event}
-      else
-        {:group_check, false} ->
-          {:error,
-           dgettext(
-             "errors",
-             "Organizer profile doesn't have permission to create an event on behalf of this group"
-           )}
+      case User.owns_actor(user, organizer_actor_id) do
+        {:is_owned, %Actor{} = organizer_actor} ->
+          if is_organizer_group_member?(args) do
+            args_with_organizer =
+              args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id)
+
+            case API.Events.create_event(args_with_organizer) do
+              {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} ->
+                {:ok, event}
+
+              {:error, %Ecto.Changeset{} = error} ->
+                {:error, error}
+
+              {:error, err} ->
+                Logger.warning("Unknown error while creating event: #{inspect(err)}")
+
+                {:error,
+                 dgettext(
+                   "errors",
+                   "Unknown error while creating event"
+                 )}
+            end
+          else
+            {:error,
+             dgettext(
+               "errors",
+               "Organizer profile doesn't have permission to create an event on behalf of this group"
+             )}
+          end
 
         {:is_owned, nil} ->
           {:error, dgettext("errors", "Organizer profile is not owned by the user")}
-
-        {:error, _, %Ecto.Changeset{} = error, _} ->
-          {:error, error}
-
-        {:error, %Ecto.Changeset{} = error} ->
-          {:error, error}
       end
     end
   end
@@ -314,6 +328,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          {:ok, args} <- verify_profile_change(args, event, user, actor),
+         args <- extract_timezone(args, user.id),
          {:event_can_be_managed, true} <-
            {:event_can_be_managed, can_event_be_updated_by?(event, actor)},
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
@@ -440,6 +455,44 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            |> Map.put(:organizer_actor, organizer_actor)
            |> Map.put(:organizer_actor_id, organizer_actor.id) do
       {:ok, args}
+    end
+  end
+
+  @spec extract_timezone(map(), String.t() | integer()) :: map()
+  defp extract_timezone(args, user_id) do
+    event_options = Map.get(args, :options, %{})
+    timezone = Map.get(event_options, :timezone)
+    physical_address = Map.get(args, :physical_address)
+
+    fallback_tz =
+      case Mobilizon.Users.get_setting(user_id) do
+        nil -> nil
+        setting -> setting |> Map.from_struct() |> get_in([:timezone])
+      end
+
+    timezone = determine_timezone(timezone, physical_address, fallback_tz)
+
+    event_options = Map.put(event_options, :timezone, timezone)
+
+    Map.put(args, :options, event_options)
+  end
+
+  @spec determine_timezone(
+          String.t() | nil,
+          any(),
+          String.t() | nil
+        ) :: String.t() | nil
+  defp determine_timezone(timezone, physical_address, fallback_tz) do
+    case physical_address do
+      physical_address when is_map(physical_address) ->
+        TimezoneDetector.detect(
+          timezone,
+          physical_address.geom,
+          fallback_tz
+        )
+
+      _ ->
+        timezone || fallback_tz
     end
   end
 end

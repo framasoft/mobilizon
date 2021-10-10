@@ -303,6 +303,8 @@
               v-if="event && config"
               :event="event"
               :config="config"
+              :user="loggedUser"
+              @showMapModal="showMap = true"
             />
           </div>
         </aside>
@@ -458,6 +460,22 @@
           </section>
         </div>
       </b-modal>
+      <b-modal
+        class="map-modal"
+        v-if="event.physicalAddress && event.physicalAddress.geom"
+        :active.sync="showMap"
+        has-modal-card
+        full-screen
+        :can-cancel="['escape', 'outside']"
+      >
+        <template #default="props">
+          <event-map
+            :routingType="routingType"
+            :address="event.physicalAddress"
+            @close="props.close"
+          />
+        </template>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -508,11 +526,14 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
 import Tag from "../../components/Tag.vue";
 import EventMetadataSidebar from "../../components/Event/EventMetadataSidebar.vue";
 import EventBanner from "../../components/Event/EventBanner.vue";
+import EventMap from "../../components/Event/EventMap.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
+import { USER_SETTINGS } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -529,6 +550,7 @@ import { eventMetaDataList } from "../../services/EventMetadata";
     PopoverActorCard,
     EventBanner,
     EventMetadataSidebar,
+    EventMap,
     ShareEventModal: () =>
       import(
         /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
@@ -567,9 +589,8 @@ import { eventMetaDataList } from "../../services/EventMetadata";
         this.handleErrors(graphQLErrors);
       },
     },
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
+    currentActor: CURRENT_ACTOR_CLIENT,
+    loggedUser: USER_SETTINGS,
     participations: {
       query: EVENT_PERSON_PARTICIPATION,
       fetchPolicy: "cache-and-network",
@@ -645,6 +666,8 @@ export default class Event extends EventMixin {
   config!: IConfig;
 
   person!: IPerson;
+
+  loggedUser!: IUser;
 
   participations: IParticipant[] = [];
 
@@ -1129,6 +1152,12 @@ export default class Event extends EventMixin {
         }
         return acc;
       }, {});
+  }
+
+  showMap = false;
+
+  get routingType(): string | undefined {
+    return this.config?.maps?.routing?.type;
   }
 }
 </script>

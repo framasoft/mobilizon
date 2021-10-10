@@ -26,6 +26,7 @@ export interface IEventOptions {
   showParticipationPrice: boolean;
   showStartTime: boolean;
   showEndTime: boolean;
+  timezone: string | null;
 }
 
 export class EventOptions implements IEventOptions {
@@ -54,4 +55,6 @@ export class EventOptions implements IEventOptions {
   showStartTime = true;
 
   showEndTime = true;
+
+  timezone = null;
 }

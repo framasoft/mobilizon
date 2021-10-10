@@ -12,7 +12,8 @@ defmodule Mobilizon.GraphQL.API.Events do
   @doc """
   Create an event
   """
-  @spec create_event(map) :: {:ok, Activity.t(), Event.t()} | any
+  @spec create_event(map) ::
+          {:ok, Activity.t(), Event.t()} | {:error, atom() | Ecto.Changeset.t()}
   def create_event(args) do
     # For now we don't federate drafts but it will be needed if we want to edit them as groups
     Actions.Create.create(:event, prepare_args(args), should_federate(args))
@@ -21,7 +22,8 @@ defmodule Mobilizon.GraphQL.API.Events do
   @doc """
   Update an event
   """
-  @spec update_event(map, Event.t()) :: {:ok, Activity.t(), Event.t()} | any
+  @spec update_event(map, Event.t()) ::
+          {:ok, Activity.t(), Event.t()} | {:error, atom | Ecto.Changeset.t()}
   def update_event(args, %Event{} = event) do
     Actions.Update.update(event, prepare_args(args), should_federate(args))
   end

@@ -38,6 +38,7 @@
     "bulma-divider": "^0.2.0",
     "core-js": "^3.6.4",
     "date-fns": "^2.16.0",
+    "date-fns-tz": "^1.1.6",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "intersection-observer": "^0.12.0",

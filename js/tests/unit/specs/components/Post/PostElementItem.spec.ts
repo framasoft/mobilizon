@@ -59,7 +59,7 @@ describe("PostElementItem", () => {
       postData.title
     );
     expect(wrapper.find(".metadata").text()).toContain(
-      formatDateTimeString(postData.insertedAt, false)
+      formatDateTimeString(postData.insertedAt, undefined, false)
     );
 
     expect(wrapper.find(".metadata small").text()).not.toContain("Public");

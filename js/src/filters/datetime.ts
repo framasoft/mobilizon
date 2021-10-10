@@ -14,10 +14,11 @@ function formatDateString(value: string): string {
   });
 }
 
-function formatTimeString(value: string): string {
+function formatTimeString(value: string, timeZone: string): string {
   return parseDateTime(value).toLocaleTimeString(locale(), {
     hour: "numeric",
     minute: "numeric",
+    timeZone,
   });
 }
 
@@ -55,6 +56,7 @@ const SHORT_TIME_FORMAT_OPTIONS: DateTimeFormatOptions = {
 
 function formatDateTimeString(
   value: string,
+  timeZone: string | undefined = undefined,
   showTime = true,
   dateFormat = "long"
 ): string {
@@ -66,6 +68,7 @@ function formatDateTimeString(
     options = {
       ...options,
       ...(isLongFormat ? LONG_TIME_FORMAT_OPTIONS : SHORT_TIME_FORMAT_OPTIONS),
+      timeZone,
     };
   }
   const format = new Intl.DateTimeFormat(locale(), options);

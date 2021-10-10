@@ -98,12 +98,15 @@ defmodule Mobilizon.Service.Geospatial.MapQuest do
   end
 
   defp produce_address(address, lat, lng) do
+    coordinates = Provider.coordinates([lng, lat])
+
     %Address{
       country: Map.get(address, "adminArea1"),
       locality: Map.get(address, "adminArea5"),
       region: Map.get(address, "adminArea3"),
       description: Map.get(address, "street"),
-      geom: [lng, lat] |> Provider.coordinates(),
+      geom: coordinates,
+      timezone: Provider.timezone(coordinates),
       postal_code: Map.get(address, "postalCode"),
       street: Map.get(address, "street")
     }

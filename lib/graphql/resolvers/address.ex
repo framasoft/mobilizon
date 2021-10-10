@@ -11,7 +11,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
   @doc """
   Search an address
   """
-  @spec search(map, map, map) :: {:ok, [Address.t()]}
+  @spec search(map, map, map) :: {:ok, [map()]}
   def search(
         _parent,
         %{query: query, locale: locale, page: _page, limit: _limit} = args,

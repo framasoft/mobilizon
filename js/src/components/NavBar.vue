@@ -187,7 +187,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Ref, Vue, Watch } from "vue-property-decorator";
 import Logo from "@/components/Logo.vue";
 import { GraphQLError } from "graphql";
 import { loadLanguageAsync } from "@/utils/i18n";
@@ -258,6 +258,13 @@ export default class NavBar extends Vue {
   mobileNavbarActive = false;
 
   displayName = displayName;
+
+  @Ref("user-dropdown") userDropDown!: any;
+
+  toggleMenu(): void {
+    console.debug("called toggleMenu");
+    this.userDropDown.showMenu();
+  }
 
   @Watch("currentActor")
   async initializeListOfIdentities(): Promise<void> {

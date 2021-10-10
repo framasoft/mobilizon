@@ -69,12 +69,15 @@ defmodule Mobilizon.Service.Geospatial.Photon do
   defp process_data(features) do
     features
     |> Enum.map(fn %{"geometry" => geometry, "properties" => properties} ->
+      coordinates = geometry |> Map.get("coordinates") |> Provider.coordinates()
+
       %Address{
         country: Map.get(properties, "country"),
         locality: Map.get(properties, "city"),
         region: Map.get(properties, "state"),
         description: Map.get(properties, "name") || street_address(properties),
-        geom: geometry |> Map.get("coordinates") |> Provider.coordinates(),
+        geom: coordinates,
+        timezone: Provider.timezone(coordinates),
         postal_code: Map.get(properties, "postcode"),
         street: properties |> street_address()
       }

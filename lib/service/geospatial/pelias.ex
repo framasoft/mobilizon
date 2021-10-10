@@ -76,7 +76,8 @@ defmodule Mobilizon.Service.Geospatial.Pelias do
                      "properties" => properties
                    } ->
       address = process_address(properties)
-      %Address{address | geom: Provider.coordinates(coordinates)}
+      coordinates = Provider.coordinates(coordinates)
+      %Address{address | geom: coordinates, timezone: Provider.timezone(coordinates)}
     end)
   end
 

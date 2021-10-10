@@ -401,7 +401,8 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
-  @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Event.t())
   def list_organized_events_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> event_for_actor_query(desc: :begins_on)
@@ -409,13 +410,15 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
+  @spec list_simple_organized_events_for_group(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Event.t())
   def list_simple_organized_events_for_group(%Actor{} = actor, page \\ nil, limit \\ nil) do
     list_organized_events_for_group(actor, :all, nil, nil, page, limit)
   end
 
   @spec list_organized_events_for_group(
           Actor.t(),
-          EventVisibility.t(),
+          EventVisibility.t() | :all,
           DateTime.t() | nil,
           DateTime.t() | nil,
           integer | nil,
@@ -885,7 +888,9 @@ defmodule Mobilizon.Events do
   @doc """
   Creates a participant.
   """
-  @spec create_participant(map) :: {:ok, Participant.t()} | {:error, Changeset.t()}
+  @spec create_participant(map) ::
+          {:ok, Participant.t()}
+          | {:error, :participant | :update_event_participation_stats, Changeset.t(), map()}
   def create_participant(attrs \\ %{}, update_event_participation_stats \\ true) do
     with {:ok, %{participant: %Participant{} = participant}} <-
            Multi.new()
@@ -912,7 +917,8 @@ defmodule Mobilizon.Events do
   Updates a participant.
   """
   @spec update_participant(Participant.t(), map) ::
-          {:ok, Participant.t()} | {:error, Changeset.t()}
+          {:ok, Participant.t()}
+          | {:error, :participant | :update_event_participation_stats, Changeset.t(), map()}
   def update_participant(%Participant{role: old_role} = participant, attrs) do
     with {:ok, %{participant: %Participant{} = participant}} <-
            Multi.new()
@@ -1625,11 +1631,12 @@ defmodule Mobilizon.Events do
     from(p in query, where: p.role == ^role)
   end
 
+  @spec event_filter_visibility(Ecto.Queryable.t(), :public | :all) ::
+          Ecto.Queryable.t() | Ecto.Query.t()
   defp event_filter_visibility(query, :all), do: query
 
   defp event_filter_visibility(query, :public) do
-    query
-    |> where(visibility: ^:public, draft: false)
+    where(query, visibility: ^:public, draft: false)
   end
 
   defp event_filter_begins_on(query, nil, nil),

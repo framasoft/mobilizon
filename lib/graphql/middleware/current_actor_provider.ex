@@ -16,7 +16,9 @@ defmodule Mobilizon.GraphQL.Middleware.CurrentActorProvider do
         _config
       ) do
     case Cachex.fetch(:default_actors, to_string(user_id), fn -> default(user) end) do
-      {status, %Actor{} = current_actor} when status in [:ok, :commit] ->
+      {status, %Actor{preferred_username: preferred_username} = current_actor}
+      when status in [:ok, :commit] ->
+        Sentry.Context.set_user_context(%{name: preferred_username})
         context = Map.put(context, :current_actor, current_actor)
         %Absinthe.Resolution{resolution | context: context}
 
