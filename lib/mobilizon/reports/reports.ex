@@ -49,7 +49,8 @@ defmodule Mobilizon.Reports do
   @doc """
   Returns the list of reports.
   """
-  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus) :: Page.t()
+  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus.t()) ::
+          Page.t(Report.t())
   def list_reports(
         page \\ nil,
         limit \\ nil,

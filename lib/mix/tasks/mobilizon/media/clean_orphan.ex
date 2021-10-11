@@ -34,22 +34,16 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanOrphan do
 
     start_mobilizon()
 
-    case CleanOrphanMedia.clean(dry_run: dry_run, grace_period: grace_period) do
-      {:ok, medias} ->
-        if length(medias) > 0 do
-          if dry_run or verbose do
-            details(medias, dry_run, verbose)
-          end
+    {:ok, medias} = CleanOrphanMedia.clean(dry_run: dry_run, grace_period: grace_period)
 
-          result(dry_run, length(medias))
-        else
-          empty_result(dry_run)
-        end
+    if length(medias) > 0 do
+      if dry_run or verbose do
+        details(medias, dry_run, verbose)
+      end
 
-        :ok
-
-      _err ->
-        shell_error("Error while cleaning orphan media files")
+      result(dry_run, length(medias))
+    else
+      empty_result(dry_run)
     end
   end
 
@@ -70,7 +64,7 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanOrphan do
     end)
   end
 
-  @spec result(boolean(), boolean()) :: :ok
+  @spec result(boolean(), non_neg_integer()) :: :ok
   defp result(dry_run, nb_medias) do
     if dry_run do
       shell_info("#{nb_medias} files would have been deleted")

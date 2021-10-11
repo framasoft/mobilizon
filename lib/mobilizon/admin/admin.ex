@@ -48,20 +48,18 @@ defmodule Mobilizon.Admin do
   @spec log_action(Actor.t(), String.t(), struct()) ::
           {:ok, ActionLog.t()} | {:error, Ecto.Changeset.t() | :user_not_moderator}
   def log_action(%Actor{user_id: user_id, id: actor_id}, action, target) do
-    with %User{role: role} <- Users.get_user!(user_id),
-         {:role, true} <- {:role, role in [:administrator, :moderator]},
-         {:ok, %ActionLog{} = create_action_log} <-
-           Admin.create_action_log(%{
-             "actor_id" => actor_id,
-             "target_type" => to_string(target.__struct__),
-             "target_id" => target.id,
-             "action" => action,
-             "changes" => stringify_struct(target)
-           }) do
-      {:ok, create_action_log}
+    %User{role: role} = Users.get_user!(user_id)
+
+    if role in [:administrator, :moderator] do
+      Admin.create_action_log(%{
+        "actor_id" => actor_id,
+        "target_type" => to_string(target.__struct__),
+        "target_id" => target.id,
+        "action" => action,
+        "changes" => stringify_struct(target)
+      })
     else
-      {:role, false} ->
-        {:error, :user_not_moderator}
+      {:error, :user_not_moderator}
     end
   end
 

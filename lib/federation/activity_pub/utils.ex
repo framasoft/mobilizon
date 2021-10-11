@@ -176,7 +176,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     :ok
   end
 
-  @spec do_maybe_relay_if_group_activity(map(), list(String.t()) | String.t()) :: :ok
+  # TODO: Is this a map or a String?
+  @spec do_maybe_relay_if_group_activity(map() | String.t(), list(String.t()) | String.t()) :: :ok
   defp do_maybe_relay_if_group_activity(object, attributed_to) when is_list(attributed_to),
     do: do_maybe_relay_if_group_activity(object, hd(attributed_to))
 

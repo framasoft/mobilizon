@@ -54,7 +54,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Tag do
   @doc """
   Retrieve the list of related tags for a parent tag
   """
-  @spec list_tags_for_post(Tag.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Tag.t())}
+  @spec get_related_tags(Tag.t(), map(), Absinthe.Resolution.t()) :: {:ok, list(Tag.t())}
   def get_related_tags(%Tag{} = tag, _args, _resolution) do
     {:ok, Events.list_tag_neighbors(tag)}
   end

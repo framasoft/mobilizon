@@ -68,6 +68,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Discussion do
       %{actor_id: actor_id, creator_id: creator_id}
     else
       {:error, error} -> {:error, error}
+      {:ok, %Actor{url: ^creator_url}} -> {:error, :creator_suspended}
+      {:ok, %Actor{url: ^actor_url}} -> {:error, :actor_suspended}
     end
   end
 end

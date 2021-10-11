@@ -20,7 +20,7 @@ defmodule Mobilizon.GraphQL.Error do
   # Error Tuples
   # ------------
   # Regular errors
-  @spec normalize(error | list(error) | String.t() | any()) :: t()
+  @spec normalize(any()) :: t() | list(t())
   def normalize({:error, reason}) do
     handle(reason)
   end

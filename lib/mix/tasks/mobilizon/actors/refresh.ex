@@ -71,10 +71,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
         Actor #{preferred_username} refreshed
         """)
 
-      {:error, err} when is_binary(err) ->
-        shell_error(err)
-
-      _err ->
+      {:error, _err} ->
         shell_error("Error while refreshing actor #{preferred_username}")
     end
   end

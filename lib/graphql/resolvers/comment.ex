@@ -106,7 +106,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
     case Discussions.get_comment_with_preload(comment_id) do
       %CommentModel{deleted_at: nil} = comment ->
         cond do
-          {:comment_can_be_managed, true} == CommentModel.can_be_managed_by(comment, actor_id) ->
+          {:comment_can_be_managed, true} ==
+              {:comment_can_be_managed, CommentModel.can_be_managed_by?(comment, actor_id)} ->
             do_delete_comment(comment, actor)
 
           role in [:moderator, :administrator] ->

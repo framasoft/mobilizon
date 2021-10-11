@@ -115,13 +115,13 @@ defmodule Mobilizon.Discussions.Comment do
   @doc """
   Checks whether an comment can be managed.
   """
-  @spec can_be_managed_by(t, integer | String.t()) :: boolean
-  def can_be_managed_by(%__MODULE__{actor_id: creator_actor_id}, actor_id)
+  @spec can_be_managed_by?(t, integer | String.t()) :: boolean()
+  def can_be_managed_by?(%__MODULE__{actor_id: creator_actor_id}, actor_id)
       when creator_actor_id == actor_id do
-    {:comment_can_be_managed, true}
+    creator_actor_id == actor_id
   end
 
-  def can_be_managed_by(_comment, _actor), do: {:comment_can_be_managed, false}
+  def can_be_managed_by?(_comment, _actor), do: false
 
   defp common_changeset(%__MODULE__{} = comment, attrs) do
     comment

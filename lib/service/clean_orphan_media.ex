@@ -19,7 +19,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
    * `grace_period` how old in hours can the media be before it's taken into account for deletion
    * `dry_run` just return the media that would have been deleted, don't actually delete it
   """
-  @spec clean(Keyword.t()) :: {:ok, list(Media.t())} | {:error, String.t()}
+  @spec clean(Keyword.t()) :: {:ok, list(Media.t())}
   def clean(opts \\ []) do
     medias = find_media(opts)
 

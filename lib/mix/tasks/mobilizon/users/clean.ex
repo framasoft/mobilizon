@@ -35,23 +35,20 @@ defmodule Mix.Tasks.Mobilizon.Users.Clean do
 
     start_mobilizon()
 
-    case CleanUnconfirmedUsers.clean(dry_run: dry_run, grace_period: grace_period) do
-      {:ok, deleted_users} ->
-        if length(deleted_users) > 0 do
-          if dry_run or verbose do
-            details(deleted_users, dry_run, verbose)
-          end
+    {:ok, deleted_users} =
+      CleanUnconfirmedUsers.clean(dry_run: dry_run, grace_period: grace_period)
 
-          result(dry_run, length(deleted_users))
-        else
-          empty_result(dry_run)
-        end
+    if length(deleted_users) > 0 do
+      if dry_run or verbose do
+        details(deleted_users, dry_run, verbose)
+      end
 
-        :ok
-
-      _err ->
-        shell_error("Error while cleaning unconfirmed users")
+      result(dry_run, length(deleted_users))
+    else
+      empty_result(dry_run)
     end
+
+    :ok
   end
 
   @spec details(list(Media.t()), boolean(), boolean()) :: :ok

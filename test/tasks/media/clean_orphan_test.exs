@@ -113,17 +113,6 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanOrphanTest do
     end
   end
 
-  describe "returns an error" do
-    test "for some reason" do
-      with_mock CleanOrphanMedia,
-        clean: fn [dry_run: false, grace_period: 48] -> {:error, "Some error"} end do
-        CleanOrphan.run([])
-        assert_received {:mix_shell, :error, [output_received]}
-        assert output_received == "Error while cleaning orphan media files"
-      end
-    end
-  end
-
   defp create_file do
     File.cp!("test/fixtures/picture.png", "test/fixtures/picture_tmp.png")
 

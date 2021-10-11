@@ -425,35 +425,39 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def change_email(_parent, %{email: new_email, password: password}, %{
         context: %{current_user: %User{email: old_email} = user}
       }) do
-    with {:can_change_password, true} <-
-           {:can_change_password, Authenticator.can_change_email?(user)},
-         {:current_password, {:ok, %User{}}} <-
-           {:current_password, Authenticator.login(user.email, password)},
-         {:same_email, false} <- {:same_email, new_email == old_email},
-         {:email_valid, true} <- {:email_valid, Email.Checker.valid?(new_email)},
-         {:ok, %User{} = user} <- Users.update_user_email(user, new_email) do
-      user
-      |> Email.User.send_email_reset_old_email()
-      |> Email.Mailer.send_email_later()
+    if Authenticator.can_change_email?(user) do
+      case Authenticator.login(old_email, password) do
+        {:ok, %User{}} ->
+          if new_email != old_email do
+            if Email.Checker.valid?(new_email) do
+              case Users.update_user_email(user, new_email) do
+                {:ok, %User{} = user} ->
+                  user
+                  |> Email.User.send_email_reset_old_email()
+                  |> Email.Mailer.send_email_later()
 
-      user
-      |> Email.User.send_email_reset_new_email()
-      |> Email.Mailer.send_email_later()
+                  user
+                  |> Email.User.send_email_reset_new_email()
+                  |> Email.Mailer.send_email_later()
 
-      {:ok, user}
+                  {:ok, user}
+
+                {:error, %Ecto.Changeset{} = err} ->
+                  Logger.debug(inspect(err))
+                  {:error, dgettext("errors", "Failed to update user email")}
+              end
+            else
+              {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+            end
+          else
+            {:error, dgettext("errors", "The new email must be different")}
+          end
+
+        {:error, _} ->
+          {:error, dgettext("errors", "The password provided is invalid")}
+      end
     else
-      {:current_password, {:error, _}} ->
-        {:error, dgettext("errors", "The password provided is invalid")}
-
-      {:same_email, true} ->
-        {:error, dgettext("errors", "The new email must be different")}
-
-      {:email_valid, false} ->
-        {:error, dgettext("errors", "The new email doesn't seem to be valid")}
-
-      {:error, %Ecto.Changeset{} = err} ->
-        Logger.debug(inspect(err))
-        {:error, dgettext("errors", "Failed to update user email")}
+      {:error, dgettext("errors", "User cannot change email")}
     end
   end
 
@@ -635,14 +639,14 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            user,
          context
        ) do
-    with current_ip <- Map.get(context, :ip),
-         now <- DateTime.utc_now() do
-      Users.update_user(user, %{
-        last_sign_in_at: current_sign_in_at || now,
-        last_sign_in_ip: current_sign_in_ip || current_ip,
-        current_sign_in_ip: current_ip,
-        current_sign_in_at: now
-      })
-    end
+    current_ip = Map.get(context, :ip)
+    now = DateTime.utc_now()
+
+    Users.update_user(user, %{
+      last_sign_in_at: current_sign_in_at || now,
+      last_sign_in_ip: current_sign_in_ip || current_ip,
+      current_sign_in_ip: current_ip,
+      current_sign_in_at: now
+    })
   end
 end

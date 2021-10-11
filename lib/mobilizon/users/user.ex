@@ -31,8 +31,8 @@ defmodule Mobilizon.Users.User do
           feed_tokens: [FeedToken.t()],
           last_sign_in_at: DateTime.t(),
           last_sign_in_ip: String.t(),
-          current_sign_in_ip: String.t(),
-          current_sign_in_at: DateTime.t(),
+          current_sign_in_ip: String.t() | nil,
+          current_sign_in_at: DateTime.t() | nil,
           activity_settings: [ActivitySetting.t()],
           settings: Setting.t(),
           unconfirmed_email: String.t() | nil
