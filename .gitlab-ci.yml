@@ -101,24 +101,6 @@ deps:
   needs:
     - install
 
-exunit-1.11:
-  stage: test
-  image: tcitworld/mobilizon-ci:legacy
-  services:
-    - name: postgis/postgis:11-3.0
-      alias: postgres
-  variables:
-    MIX_ENV: test
-  before_script:
-    - mix deps.clean --all
-    - mix deps.get
-    - mix tz_world.update
-    - mix ecto.create
-    - mix ecto.migrate
-  script:
-    - mix coveralls
-  allow_failure: true
-
 exunit:
   stage: test
   services:
