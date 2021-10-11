@@ -266,15 +266,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
         %{organizer_actor_id: organizer_actor_id} = args,
         %{context: %{current_user: %User{} = user}} = _resolution
       ) do
-    if Config.only_groups_can_create_events?() and Map.get(args, :attributed_to_id) == nil do
-      {:error,
-       dgettext(
-         "errors",
-         "Only groups can create events"
-       )}
-    else
-      case User.owns_actor(user, organizer_actor_id) do
-        {:is_owned, %Actor{} = organizer_actor} ->
+    case User.owns_actor(user, organizer_actor_id) do
+      {:is_owned, %Actor{} = organizer_actor} ->
+        if can_create_event?(args) do
           if is_organizer_group_member?(args) do
             args_with_organizer =
               args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id)
@@ -302,15 +296,30 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
                "Organizer profile doesn't have permission to create an event on behalf of this group"
              )}
           end
+        else
+          {:error,
+           dgettext(
+             "errors",
+             "Only groups can create events"
+           )}
+        end
 
-        {:is_owned, nil} ->
-          {:error, dgettext("errors", "Organizer profile is not owned by the user")}
-      end
+      {:is_owned, nil} ->
+        {:error, dgettext("errors", "Organizer profile is not owned by the user")}
     end
   end
 
   def create_event(_parent, _args, _resolution) do
     {:error, dgettext("errors", "You need to be logged-in to create events")}
+  end
+
+  @spec can_create_event?(map()) :: boolean()
+  defp can_create_event?(args) do
+    if Config.only_groups_can_create_events?() do
+      Map.get(args, :attributed_to_id) != nil
+    else
+      true
+    end
   end
 
   @doc """

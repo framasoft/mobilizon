@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.GraphQL.API
-  alias Mobilizon.Users.User
+  alias Mobilizon.Users.{User, UserRole}
   alias Mobilizon.Web.Upload
   import Mobilizon.Web.Gettext
 
@@ -143,14 +143,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    if Config.only_admin_can_create_groups?() and not is_admin(role) do
-      {:error, "only admins can create groups"}
-    else
-      with args when is_map(args) <-
-             Map.update(args, :preferred_username, "", &String.downcase/1),
-           args when is_map(args) <- Map.put(args, :creator_actor, creator_actor),
-           args when is_map(args) <- Map.put(args, :creator_actor_id, creator_actor_id),
-           {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
+    if can_create_group?(role) do
+      args =
+        args
+        |> Map.update(:preferred_username, "", &String.downcase/1)
+        |> Map.put(:creator_actor, creator_actor)
+        |> Map.put(:creator_actor_id, creator_actor_id)
+
+      with {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
            {:ok, _activity, %Actor{type: :Group} = group} <-
              API.Groups.create_group(args) do
         {:ok, group}
@@ -161,11 +161,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         {:error, err} when is_binary(err) ->
           {:error, err}
       end
+    else
+      {:error, dgettext("errors", "Only admins can create groups")}
     end
   end
 
   def create_group(_parent, _args, _resolution) do
     {:error, "You need to be logged-in to create a group"}
+  end
+
+  @spec can_create_group?(UserRole.t()) :: boolean()
+  defp can_create_group?(role) do
+    if Config.only_admin_can_create_groups?() do
+      is_admin(role)
+    else
+      true
+    end
   end
 
   @doc """
