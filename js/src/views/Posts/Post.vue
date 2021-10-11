@@ -29,6 +29,7 @@
                 :title="
                   $options.filters.formatDateTimeString(
                     post.updatedAt,
+                    undefined,
                     true,
                     'short'
                   )

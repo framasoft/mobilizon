@@ -47,6 +47,7 @@
             <small class="has-text-grey-dark">{{
               $options.filters.formatDateTimeString(
                 new Date(post.insertedAt),
+                undefined,
                 false
               )
             }}</small>

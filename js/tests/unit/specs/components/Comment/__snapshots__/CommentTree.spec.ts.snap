@@ -12,7 +12,7 @@ exports[`CommentTree renders a comment tree with comments 1`] = `
         <div class="field">
           <div class="field">
             <p class="control">
-              <editor-stub mode="comment" value=""></editor-stub>
+              <editor-stub mode="comment" aria-label="Comment body" value=""></editor-stub>
             </p>
             <!---->
           </div>
@@ -54,7 +54,7 @@ exports[`CommentTree renders an empty comment tree 1`] = `
         <div class="field">
           <div class="field">
             <p class="control">
-              <editor-stub mode="comment" value=""></editor-stub>
+              <editor-stub mode="comment" aria-label="Comment body" value=""></editor-stub>
             </p>
             <!---->
           </div>

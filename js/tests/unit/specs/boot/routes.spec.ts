@@ -4,11 +4,15 @@ import App from "@/App.vue";
 import VueRouter from "vue-router";
 import Buefy from "buefy";
 import flushPromises from "flush-promises";
+import VueAnnouncer from "@vue-a11y/announcer";
+import VueSkipTo from "@vue-a11y/skip-to";
 
 const localVue = createLocalVue();
 config.mocks.$t = (key: string): string => key;
 localVue.use(VueRouter);
 localVue.use(Buefy);
+localVue.use(VueAnnouncer);
+localVue.use(VueSkipTo);
 
 describe("routing", () => {
   test("Homepage", async () => {
