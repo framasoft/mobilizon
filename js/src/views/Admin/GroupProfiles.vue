@@ -14,6 +14,13 @@
         </li>
       </ul>
     </nav>
+    <div class="buttons" v-if="showCreateGroupsButton">
+      <router-link
+        class="button is-primary"
+        :to="{ name: RouteName.CREATE_GROUP }"
+        >{{ $t("Create group") }}</router-link
+      >
+    </div>
     <div v-if="groups">
       <b-switch v-model="local">{{ $t("Local") }}</b-switch>
       <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
@@ -100,6 +107,8 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 import { LIST_GROUPS } from "@/graphql/group";
 import RouteName from "../../router/name";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
@@ -110,6 +119,7 @@ const PROFILES_PER_PAGE = 10;
 
 @Component({
   apollo: {
+    config: CONFIG,
     groups: {
       query: LIST_GROUPS,
       variables() {
@@ -139,6 +149,7 @@ export default class GroupProfiles extends Vue {
 
   PROFILES_PER_PAGE = PROFILES_PER_PAGE;
 
+  config!: IConfig;
   RouteName = RouteName;
 
   async onPageChange(): Promise<void> {
@@ -183,6 +194,10 @@ export default class GroupProfiles extends Vue {
 
   set suspended(suspended: boolean) {
     this.pushRouter({ suspended: suspended ? "1" : "0" });
+  }
+
+  get showCreateGroupsButton(): boolean {
+    return !!this.config?.restrictions?.onlyAdminCanCreateGroups;
   }
 
   onFiltersChange({

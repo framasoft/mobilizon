@@ -56,6 +56,11 @@ export const configMock = {
         groups: true,
         koenaConnect: false,
       },
+      restrictions: {
+        __typename: "Restrictions",
+        onlyAdminCanCreateGroups: false,
+        onlyGroupsCanCreateEvents: false,
+      },
       geocoding: {
         __typename: "Geocoding",
         autocomplete: true,

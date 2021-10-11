@@ -8,7 +8,7 @@
         )
       }}
     </p>
-    <div class="buttons">
+    <div class="buttons" v-if="!hideCreateGroupButton">
       <router-link
         class="button is-primary"
         :to="{ name: RouteName.CREATE_GROUP }"
@@ -72,6 +72,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
@@ -90,6 +92,9 @@ import RouteName from "../../router/name";
     Invitations,
   },
   apollo: {
+    config: {
+      query: CONFIG,
+    },
     membershipsPages: {
       query: LOGGED_USER_MEMBERSHIPS,
       fetchPolicy: "cache-and-network",
@@ -113,6 +118,8 @@ export default class MyGroups extends Vue {
   membershipsPages!: Paginate<IMember>;
 
   RouteName = RouteName;
+
+  config!: IConfig;
 
   page = 1;
 
@@ -176,6 +183,10 @@ export default class MyGroups extends Vue {
       (member: IMember) =>
         ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
     );
+  }
+
+  get hideCreateGroupButton(): boolean {
+    return !!this.config?.restrictions?.onlyAdminCanCreateGroups;
   }
 }
 </script>

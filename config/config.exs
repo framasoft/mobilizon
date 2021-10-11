@@ -40,8 +40,10 @@ config :mobilizon, :instance,
   email_reply_to: "noreply@localhost"
 
 config :mobilizon, :groups, enabled: true
-
 config :mobilizon, :events, creation: true
+
+config :mobilizon, :restrictions, only_admin_can_create_groups: false
+config :mobilizon, :restrictions, only_groups_can_create_events: false
 
 # Configures the endpoint
 config :mobilizon, Mobilizon.Web.Endpoint,

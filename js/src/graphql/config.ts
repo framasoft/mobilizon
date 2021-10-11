@@ -69,6 +69,10 @@ export const CONFIG = gql`
         eventCreation
         koenaConnect
       }
+      restrictions {
+        onlyAdminCanCreateGroups
+        onlyGroupsCanCreateEvents
+      }
       auth {
         ldap
         oauthProviders {

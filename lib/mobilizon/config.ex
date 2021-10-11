@@ -288,6 +288,9 @@ defmodule Mobilizon.Config do
     end
   end
 
+  # config :mobilizon, :groups, enabled: true
+  # config :mobilizon, :events, creation: true
+
   @spec instance_group_feature_enabled? :: boolean
   def instance_group_feature_enabled?,
     do: :mobilizon |> Application.get_env(:groups) |> Keyword.get(:enabled)
@@ -302,6 +305,20 @@ defmodule Mobilizon.Config do
       event_participants: enabled_formats()
     }
   end
+
+  @spec only_admin_can_create_groups? :: boolean
+  def only_admin_can_create_groups?,
+    do:
+      :mobilizon
+      |> Application.get_env(:restrictions)
+      |> Keyword.get(:only_admin_can_create_groups)
+
+  @spec only_groups_can_create_events? :: boolean
+  def only_groups_can_create_events?,
+    do:
+      :mobilizon
+      |> Application.get_env(:restrictions)
+      |> Keyword.get(:only_groups_can_create_events)
 
   @spec anonymous_actor_id :: integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)

@@ -134,6 +134,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         event_creation: Config.instance_event_creation_enabled?(),
         koena_connect: Config.get([:instance, :koena_connect_link], false)
       },
+      restrictions: %{
+        only_admin_can_create_groups: Config.only_admin_can_create_groups?(),
+        only_groups_can_create_events: Config.only_groups_can_create_events?()
+      },
       rules: Config.instance_rules(),
       version: Config.instance_version(),
       federating: Config.instance_federating(),
