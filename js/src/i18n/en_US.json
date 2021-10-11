@@ -1163,10 +1163,7 @@
   "Time in your timezone ({timezone})": "Time in your timezone ({timezone})",
   "Export": "Export",
   "Times in your timezone ({timezone})": "Times in your timezone ({timezone})",
-  "Skip to main": "Skip to main",
   "Comment body": "Comment body",
-  "has loaded": "has loaded",
-  "Follows": "Follows",
   "Event description body": "Event description body",
   "Event timezone will default to the timezone of the event's address if there is one, or to your own timezone setting.": "Event timezone will default to the timezone of the event's address if there is one, or to your own timezone setting.",
   "Clear timezone field": "Clear timezone field",
@@ -1200,5 +1197,10 @@
   "Create identity": "Create identity",
   "Resent confirmation email": "Resent confirmation email",
   "Send password reset": "Send password reset",
-  "Email validate": "Email validate"
+  "Email validate": "Email validate",
+  "Skip to main content": "Skip to main content",
+  "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
+  "Back to top": "Back to top",
+  "Powered by Mobilizon": "Powered by Mobilizon",
+  "Instance follows": "Instance follows"
 }
