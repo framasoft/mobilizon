@@ -112,6 +112,7 @@ exunit-1.11:
   before_script:
     - mix deps.clean --all
     - mix deps.get
+    - mix tz_world.update
     - mix ecto.create
     - mix ecto.migrate
   script:
@@ -127,6 +128,7 @@ exunit:
     MIX_ENV: test
   before_script:
     - mix deps.get
+    - mix tz_world.update
     - mix ecto.create
     - mix ecto.migrate
   script:
