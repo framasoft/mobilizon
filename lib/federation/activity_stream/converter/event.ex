@@ -16,6 +16,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
   alias Mobilizon.Federation.ActivityStream.Converter.EventMetadata, as: EventMetadataConverter
   alias Mobilizon.Federation.ActivityStream.Converter.Media, as: MediaConverter
+  alias Mobilizon.Service.TimezoneDetector
   alias Mobilizon.Web.Endpoint
 
   import Mobilizon.Federation.ActivityStream.Converter.Utils,
@@ -49,11 +50,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   def as_to_model_data(object) do
     case maybe_fetch_actor_and_attributed_to_id(object) do
       {:ok, %Actor{id: actor_id}, attributed_to} ->
-        address_id = get_address(object["location"])
+        address = get_address(object["location"])
         tags = fetch_tags(object["tag"])
         mentions = fetch_mentions(object["tag"])
         visibility = get_visibility(object)
-        options = get_options(object)
+        options = get_options(object, address)
         metadata = get_metdata(object)
 
         [description: description, picture_id: picture_id, medias: medias] =
@@ -82,7 +83,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           uuid: object["uuid"],
           tags: tags,
           mentions: mentions,
-          physical_address_id: address_id,
+          physical_address_id: if(address, do: address.id, else: nil),
           updated_at: object["updated"],
           publish_at: object["published"],
           language: object["inLanguage"]
@@ -118,9 +119,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "published" => (event.publish_at || event.inserted_at) |> date_to_string(),
       "updated" => event.updated_at |> date_to_string(),
       "mediaType" => "text/html",
-      "startTime" => event.begins_on |> date_to_string(),
+      "startTime" => event.begins_on |> shift_tz(event.options.timezone) |> date_to_string(),
       "joinMode" => to_string(event.join_options),
-      "endTime" => event.ends_on |> date_to_string(),
+      "endTime" => event.ends_on |> shift_tz(event.options.timezone) |> date_to_string(),
       "tag" => event.tags |> build_tags(),
       "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
       "repliesModerationOption" => event.options.comment_moderation,
@@ -131,7 +132,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "ical:status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
       "url" => event.url,
-      "inLanguage" => event.language
+      "inLanguage" => event.language,
+      "timezone" => event.options.timezone
     }
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
@@ -149,8 +151,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   end
 
   # Get only elements that we have in EventOptions
-  @spec get_options(map) :: map
-  defp get_options(object) do
+  @spec get_options(map, Address.t() | nil) :: map
+  defp get_options(object, address) do
     %{
       maximum_attendee_capacity: object["maximumAttendeeCapacity"],
       anonymous_participation: object["anonymousParticipationEnabled"],
@@ -159,8 +161,27 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           object,
           "repliesModerationOption",
           if(Map.get(object, "commentsEnabled", true), do: :allow_all, else: :closed)
-        )
+        ),
+      timezone: calculate_timezone(object, address)
     }
+  end
+
+  defp calculate_timezone(%{"timezone" => timezone}, %Address{geom: geom}) do
+    TimezoneDetector.detect(
+      timezone,
+      geom,
+      "Etc/UTC"
+    )
+  end
+
+  defp calculate_timezone(_object, nil), do: nil
+
+  defp calculate_timezone(_object, %Address{geom: geom}) do
+    TimezoneDetector.detect(
+      nil,
+      geom,
+      "Etc/UTC"
+    )
   end
 
   defp get_metdata(%{"attachment" => attachments}) do
@@ -171,7 +192,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
   defp get_metdata(_), do: []
 
-  @spec get_address(map | binary | nil) :: integer | nil
+  @spec get_address(map | binary | nil) :: Address.t() | nil
   defp get_address(address_url) when is_binary(address_url) do
     get_address(%{"id" => address_url})
   end
@@ -180,8 +201,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     Logger.debug("Address with an URL, let's check against our own database")
 
     case Addresses.get_address_by_url(url) do
-      %Address{id: address_id} ->
-        address_id
+      %Address{} = address ->
+        address
 
       _ ->
         Logger.debug("not in our database, let's try to create it")
@@ -196,13 +217,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
 
   defp get_address(nil), do: nil
 
-  @spec do_get_address(map) :: integer | nil
+  @spec do_get_address(map) :: Address.t() | nil
   defp do_get_address(map) do
     map = AddressConverter.as_to_model_data(map)
 
     case Addresses.create_address(map) do
-      {:ok, %Address{id: address_id}} ->
-        address_id
+      {:ok, %Address{} = address} ->
+        address
 
       _ ->
         nil
@@ -216,6 +237,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   @spec date_to_string(DateTime.t() | nil) :: String.t()
   defp date_to_string(nil), do: nil
   defp date_to_string(%DateTime{} = date), do: DateTime.to_iso8601(date)
+
+  @spec shift_tz(DateTime.t(), String.t() | nil) :: DateTime.t()
+  defp shift_tz(%DateTime{} = date, timezone) when is_binary(timezone) do
+    DateTime.shift_zone!(date, timezone)
+  end
+
+  defp shift_tz(datetime, _tz), do: datetime
 
   defp get_online_address(attachments) do
     Enum.find_value(attachments, fn attachment ->
