@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Config, Events}
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Service.Export.Common
   alias Mobilizon.Service.Formatter.HTML
 
@@ -114,9 +114,9 @@ defmodule Mobilizon.Service.Export.ICalendar do
   defp do_export_event(%Event{} = event) do
     %ICalendar.Event{
       summary: event.title,
-      dtstart: event.begins_on,
+      dtstart: begins_on(event),
       dtstamp: event.publish_at || DateTime.utc_now(),
-      dtend: event.ends_on,
+      dtend: ends_on(event),
       description: HTML.strip_tags(event.description),
       uid: event.uuid,
       url: event.url,
@@ -130,4 +130,18 @@ defmodule Mobilizon.Service.Export.ICalendar do
   defp vendor do
     "Mobilizon #{Config.instance_version()}"
   end
+
+  defp begins_on(%Event{begins_on: begins_on, options: %EventOptions{timezone: timezone}}) do
+    shift_tz(begins_on, timezone)
+  end
+
+  defp ends_on(%Event{ends_on: ends_on, options: %EventOptions{timezone: timezone}}) do
+    shift_tz(ends_on, timezone)
+  end
+
+  defp shift_tz(%DateTime{} = date, timezone) when is_binary(timezone) do
+    DateTime.shift_zone!(date, timezone)
+  end
+
+  defp shift_tz(%DateTime{} = date, _), do: date
 end
