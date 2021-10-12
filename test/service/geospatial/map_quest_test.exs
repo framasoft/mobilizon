@@ -55,6 +55,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
                country: "FR",
                postal_code: "69007",
                street: "10 Rue Jangot",
+               timezone: "Europe/Paris",
                geom: %Geo.Point{
                  coordinates: {4.842566, 45.751714},
                  properties: %{},
@@ -88,6 +89,7 @@ defmodule Mobilizon.Service.Geospatial.MapQuestTest do
                country: "FR",
                postal_code: "69007",
                street: "10 Rue Jangot",
+               timezone: "Europe/Paris",
                geom: %Geo.Point{
                  coordinates: {4.842569, 45.751718},
                  properties: %{},

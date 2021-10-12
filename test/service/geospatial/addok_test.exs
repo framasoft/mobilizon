@@ -28,6 +28,7 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
                region: "69, Rhône, Auvergne-Rhône-Alpes",
                locality: "Lyon",
                description: "10 Rue Jangot",
+               timezone: "Europe/Paris",
                postal_code: "69007",
                street: "10 Rue Jangot",
                geom: %Geo.Point{coordinates: {4.842569, 45.751718}, properties: %{}, srid: 4326}
@@ -54,6 +55,7 @@ defmodule Mobilizon.Service.Geospatial.AddokTest do
                region: "69, Rhône, Auvergne-Rhône-Alpes",
                locality: "Lyon",
                description: "10 Rue Jangot",
+               timezone: "Europe/Paris",
                postal_code: "69007",
                street: "10 Rue Jangot",
                geom: %Geo.Point{coordinates: {4.842569, 45.751718}, properties: %{}, srid: 4326}

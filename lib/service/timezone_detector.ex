@@ -8,7 +8,9 @@ defmodule Mobilizon.Service.TimezoneDetector do
   @doc """
   Detect the most appropriate timezone from a value, a geographic set of coordinates and a fallback
   """
-  @spec detect(String.t() | nil, detectable(), String.t()) :: String.t()
+  @spec detect(String.t() | nil, detectable() | nil, String.t()) :: String.t()
+  def detect(tz, nil, fallback), do: detect(tz, fallback)
+
   def detect(nil, geo, fallback) do
     case TzWorld.timezone_at(geo) do
       {:ok, timezone} ->

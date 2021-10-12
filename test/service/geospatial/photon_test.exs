@@ -30,6 +30,7 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
                country: "France",
                postal_code: "69007",
                street: "10 Rue Jangot",
+               timezone: "Europe/Paris",
                geom: %Geo.Point{
                  coordinates: {4.8425657, 45.7517141},
                  properties: %{},

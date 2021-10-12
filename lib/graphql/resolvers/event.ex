@@ -496,7 +496,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
       physical_address when is_map(physical_address) ->
         TimezoneDetector.detect(
           timezone,
-          physical_address.geom,
+          Map.get(physical_address, :geom),
           fallback_tz
         )
 
