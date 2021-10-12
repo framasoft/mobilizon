@@ -155,6 +155,11 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
     },
     config: CONFIG,
   },
+  metaInfo() {
+    return {
+      title: this.$t("Participation without account") as string,
+    };
+  },
 })
 export default class ParticipationWithoutAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;

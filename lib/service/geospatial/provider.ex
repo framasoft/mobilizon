@@ -79,6 +79,19 @@ defmodule Mobilizon.Service.Geospatial.Provider do
 
   def coordinates(_), do: nil
 
+  @doc """
+  Returns the timezone for a Geo.Point
+  """
+  @spec timezone(nil | Geo.Point.t()) :: nil | String.t()
+  def timezone(nil), do: nil
+
+  def timezone(%Geo.Point{} = point) do
+    case TzWorld.timezone_at(point) do
+      {:ok, tz} -> tz
+      {:error, _err} -> nil
+    end
+  end
+
   @spec endpoint(atom()) :: String.t()
   def endpoint(provider) do
     Application.get_env(:mobilizon, provider) |> get_in([:endpoint])

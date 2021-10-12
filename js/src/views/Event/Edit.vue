@@ -44,9 +44,10 @@
             :placeholder="$t('Type or select a date…')"
             icon="calendar-today"
             :locale="$i18n.locale"
-            v-model="event.beginsOn"
+            v-model="beginsOn"
             horizontal-time-picker
             editable
+            :tz-offset="tzOffset(beginsOn)"
             :datepicker="{
               id: 'begins-on-field',
               'aria-next-label': $t('Next month'),
@@ -62,9 +63,10 @@
             :placeholder="$t('Type or select a date…')"
             icon="calendar-today"
             :locale="$i18n.locale"
-            v-model="event.endsOn"
+            v-model="endsOn"
             horizontal-time-picker
-            :min-datetime="event.beginsOn"
+            :min-datetime="beginsOn"
+            :tz-offset="tzOffset(endsOn)"
             editable
             :datepicker="{
               id: 'ends-on-field',
@@ -75,16 +77,21 @@
           </b-datetimepicker>
         </b-field>
 
-        <!--          <b-switch v-model="endsOnNull">{{ $t('No end date') }}</b-switch>-->
         <b-button type="is-text" @click="dateSettingsIsOpen = true">
           {{ $t("Date parameters") }}
         </b-button>
 
-        <full-address-auto-complete v-model="event.physicalAddress" />
+        <full-address-auto-complete
+          v-model="eventPhysicalAddress"
+          :user-timezone="userActualTimezone"
+        />
 
         <div class="field">
           <label class="label">{{ $t("Description") }}</label>
-          <editor v-model="event.description" />
+          <editor
+            v-model="event.description"
+            :aria-label="$t('Event description body')"
+          />
         </div>
 
         <b-field :label="$t('Website / URL')" label-for="website-url">
@@ -329,9 +336,45 @@
       <form action>
         <div class="modal-card" style="width: auto">
           <header class="modal-card-head">
-            <p class="modal-card-title">{{ $t("Date and time settings") }}</p>
+            <h3 class="modal-card-title">{{ $t("Date and time settings") }}</h3>
           </header>
           <section class="modal-card-body">
+            <p>
+              {{
+                $t(
+                  "Event timezone will default to the timezone of the event's address if there is one, or to your own timezone setting."
+                )
+              }}
+            </p>
+            <b-field :label="$t('Timezone')" label-for="timezone" expanded>
+              <b-select
+                :placeholder="$t('Select a timezone')"
+                :loading="!config"
+                v-model="timezone"
+                id="timezone"
+              >
+                <optgroup
+                  :label="group"
+                  v-for="(groupTimezones, group) in timezones"
+                  :key="group"
+                >
+                  <option
+                    v-for="timezone in groupTimezones"
+                    :value="`${group}/${timezone}`"
+                    :key="timezone"
+                  >
+                    {{ sanitizeTimezone(timezone) }}
+                  </option>
+                </optgroup>
+              </b-select>
+              <b-button
+                :disabled="!timezone"
+                @click="timezone = null"
+                class="reset-area"
+                icon-left="close"
+                :title="$t('Clear timezone field')"
+              />
+            </b-field>
             <b-field :label="$t('Event page settings')">
               <b-switch v-model="eventOptions.showStartTime">{{
                 $t("Show the time when the event begins")
@@ -511,6 +554,7 @@ section {
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { getTimezoneOffset } from "date-fns-tz";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/Editor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
@@ -538,6 +582,7 @@ import {
 } from "../../graphql/event";
 import {
   EventModel,
+  IEditableEvent,
   IEvent,
   removeTypeName,
   toEditJSON,
@@ -563,7 +608,7 @@ import {
 } from "../../utils/image";
 import RouteName from "../../router/name";
 import "intersection-observer";
-import { CONFIG } from "../../graphql/config";
+import { CONFIG_EDIT_EVENT } from "../../graphql/config";
 import { IConfig } from "../../types/config.model";
 import {
   ApolloCache,
@@ -572,6 +617,9 @@ import {
 } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import { IEventOptions } from "@/types/event-options.model";
+import { USER_SETTINGS } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
+import { IAddress } from "@/types/address.model";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -588,7 +636,8 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
   },
   apollo: {
     currentActor: CURRENT_ACTOR_CLIENT,
-    config: CONFIG,
+    loggedUser: USER_SETTINGS,
+    config: CONFIG_EDIT_EVENT,
     identities: IDENTITIES,
     event: {
       query: FETCH_EVENT,
@@ -640,9 +689,11 @@ export default class EditEvent extends Vue {
 
   currentActor!: IActor;
 
-  event: IEvent = new EventModel();
+  loggedUser!: IUser;
 
-  unmodifiedEvent: IEvent = new EventModel();
+  event: IEditableEvent = new EventModel();
+
+  unmodifiedEvent: IEditableEvent = new EventModel();
 
   identities: IActor[] = [];
 
@@ -667,8 +718,6 @@ export default class EditEvent extends Vue {
   observer!: IntersectionObserver;
 
   dateSettingsIsOpen = false;
-
-  endsOnNull = false;
 
   saving = false;
 
@@ -905,7 +954,7 @@ export default class EditEvent extends Vue {
    */
   private postCreateOrUpdate(store: any, updateEvent: IEvent) {
     const resultEvent: IEvent = { ...updateEvent };
-    console.log(resultEvent);
+    console.debug("resultEvent", resultEvent);
     if (!updateEvent.draft) {
       store.writeQuery({
         query: EVENT_PERSON_PARTICIPATION,
@@ -981,6 +1030,23 @@ export default class EditEvent extends Vue {
       ...toEditJSON(new EventModel(this.event)),
       options: this.eventOptions,
     };
+
+    console.debug(this.event.beginsOn?.toISOString());
+
+    // if (this.event.beginsOn && this.timezone) {
+    //   console.debug(
+    //     "begins on should be",
+    //     zonedTimeToUtc(this.event.beginsOn, this.timezone).toISOString()
+    //   );
+    // }
+
+    // if (this.event.beginsOn && this.timezone) {
+    //   res.beginsOn = zonedTimeToUtc(
+    //     this.event.beginsOn,
+    //     this.timezone
+    //   ).toISOString();
+    // }
+
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor
       : this.organizerActor;
@@ -991,10 +1057,6 @@ export default class EditEvent extends Vue {
       ? this.event.attributedTo.id
       : null;
     res = { ...res, attributedToId };
-
-    if (this.endsOnNull) {
-      res.endsOn = null;
-    }
 
     if (this.pictureFile) {
       const pictureObj = buildFileVariable(this.pictureFile, "picture");
@@ -1116,13 +1178,16 @@ export default class EditEvent extends Vue {
     );
   }
 
-  get beginsOn(): Date {
+  get beginsOn(): Date | null {
+    // if (this.timezone && this.event.beginsOn) {
+    //   return utcToZonedTime(this.event.beginsOn, this.timezone);
+    // }
     return this.event.beginsOn;
   }
 
-  @Watch("beginsOn", { deep: true })
-  onBeginsOnChanged(beginsOn: string): void {
-    if (!this.event.endsOn) return;
+  set beginsOn(beginsOn: Date | null) {
+    this.event.beginsOn = beginsOn;
+    if (!this.event.endsOn || !beginsOn) return;
     const dateBeginsOn = new Date(beginsOn);
     const dateEndsOn = new Date(this.event.endsOn);
     if (dateEndsOn < dateBeginsOn) {
@@ -1134,13 +1199,94 @@ export default class EditEvent extends Vue {
     }
   }
 
-  /**
-   * In event endsOn datepicker, we lock starting with the day before the beginsOn date
-   */
-  get minDateForEndsOn(): Date {
-    const minDate = new Date(this.event.beginsOn);
-    minDate.setDate(minDate.getDate() - 1);
-    return minDate;
+  get endsOn(): Date | null {
+    // if (this.event.endsOn && this.timezone) {
+    //   return utcToZonedTime(this.event.endsOn, this.timezone);
+    // }
+    return this.event.endsOn;
+  }
+
+  set endsOn(endsOn: Date | null) {
+    this.event.endsOn = endsOn;
+  }
+
+  get timezones(): Record<string, string[]> {
+    if (!this.config || !this.config.timezones) return {};
+    return this.config.timezones.reduce(
+      (acc: { [key: string]: Array<string> }, val: string) => {
+        const components = val.split("/");
+        const [prefix, suffix] = [
+          components.shift() as string,
+          components.join("/"),
+        ];
+        const pushOrCreate = (
+          acc2: { [key: string]: Array<string> },
+          prefix2: string,
+          suffix2: string
+        ) => {
+          // eslint-disable-next-line no-param-reassign
+          (acc2[prefix2] = acc2[prefix2] || []).push(suffix2);
+          return acc2;
+        };
+        if (suffix) {
+          return pushOrCreate(acc, prefix, suffix);
+        }
+        return pushOrCreate(acc, this.$t("Other") as string, prefix);
+      },
+      {}
+    );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  sanitizeTimezone(timezone: string): string {
+    return timezone
+      .split("_")
+      .join(" ")
+      .replace("St ", "St. ")
+      .split("/")
+      .join(" - ");
+  }
+
+  get timezone(): string | null {
+    return this.event.options.timezone;
+  }
+
+  set timezone(timezone: string | null) {
+    this.event.options = {
+      ...this.event.options,
+      timezone,
+    };
+  }
+
+  get userTimezone(): string | undefined {
+    return this.loggedUser?.settings?.timezone;
+  }
+
+  get userActualTimezone(): string {
+    if (this.userTimezone) {
+      return this.userTimezone;
+    }
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  tzOffset(date: Date): number {
+    if (this.timezone && date) {
+      const eventUTCOffset = getTimezoneOffset(this.timezone, date);
+      const localUTCOffset = getTimezoneOffset(this.userActualTimezone);
+      return (eventUTCOffset - localUTCOffset) / (60 * 1000);
+    }
+    return 0;
+  }
+
+  get eventPhysicalAddress(): IAddress | null {
+    return this.event.physicalAddress;
+  }
+
+  set eventPhysicalAddress(address: IAddress | null) {
+    if (address && address.timezone) {
+      this.timezone = address.timezone;
+    }
+    this.event.physicalAddress = address;
   }
 }
 </script>

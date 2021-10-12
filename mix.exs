@@ -7,7 +7,7 @@ defmodule Mobilizon.Mixfile do
     [
       app: :mobilizon,
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:gettext] ++ Mix.compilers(),
       xref: [exclude: [:eldap]],
@@ -206,6 +206,7 @@ defmodule Mobilizon.Mixfile do
       {:paasaa, "~> 0.5.0"},
       {:nimble_csv, "~> 1.1"},
       {:export, "~> 0.1.0"},
+      {:tz_world, "~> 0.5.0"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

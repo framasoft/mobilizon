@@ -354,12 +354,12 @@ msgid "What information do we collect?"
 msgstr "Quina informació recollim?"
 
 #, elixir-format
-#: lib/web/email/user.ex:177
+#: lib/web/email/user.ex:175
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon a %{instance}: confirma la teva adreça de correu"
 
 #, elixir-format
-#: lib/web/email/user.ex:154
+#: lib/web/email/user.ex:155
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon a %{instance}: s'ha canviat l'adreça de correu"
 
@@ -417,7 +417,7 @@ msgid "View the event on: %{link}"
 msgstr "Vés a l'activitat actualitzada a %{link}"
 
 #, elixir-format
-#: lib/web/email/group.ex:33
+#: lib/web/email/group.ex:31
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} t'ha convidat al grup %{group}"
 
@@ -1251,7 +1251,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Salut i canya al forçut!"
 
 #, elixir-format
-#: lib/web/email/group.ex:63
+#: lib/web/email/group.ex:61
 msgid "You have been removed from group %{group}"
 msgstr "T'han tret del grup %{group}"
 
@@ -1305,7 +1305,7 @@ msgstr ""
 "%{group_name} (%{group_address}). Ja no formes part del grup."
 
 #, elixir-format
-#: lib/web/email/group.ex:97
+#: lib/web/email/group.ex:95
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "El grup %{group} ha estat suspès a %{instance}"
 
@@ -1608,17 +1608,17 @@ msgid "%{name}'s feed"
 msgstr "El flux de %{name}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:122
+#: lib/service/export/feed.ex:115
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "El flux d'activitats privades de %{actor} a %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:117
+#: lib/service/export/feed.ex:110
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "El flux d'activitats públiques de %{actor} a %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:225
+#: lib/service/export/feed.ex:219
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flux de %{email} a %{instance}"
 
@@ -1643,7 +1643,7 @@ msgid "The Mobilizon server %{instance} seems to be temporarily down."
 msgstr "Sembla ser que el servidor de Mobilizon està temporalment inaccessible."
 
 #, elixir-format
-#: lib/service/export/feed.ex:75
+#: lib/service/export/feed.ex:67
 msgid "Public feed for %{instance}"
 msgstr ""
 

@@ -7,25 +7,15 @@
       <div class="address-wrapper">
         <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
         <div class="address" v-if="physicalAddress">
-          <div>
-            <address>
-              <p
-                class="addressDescription"
-                :title="physicalAddress.poiInfos.name"
-              >
-                {{ physicalAddress.poiInfos.name }}
-              </p>
-              <p class="has-text-grey-dark">
-                {{ physicalAddress.poiInfos.alternativeName }}
-              </p>
-            </address>
-          </div>
-          <span
+          <address-info :address="physicalAddress" />
+          <b-button
+            type="is-text"
             class="map-show-button"
-            @click="showMap = !showMap"
+            @click="$emit('showMapModal', true)"
             v-if="physicalAddress.geom"
-            >{{ $t("Show map") }}</span
           >
+            {{ $t("Show map") }}
+          </b-button>
         </div>
       </div>
     </event-metadata-block>
@@ -34,6 +24,8 @@
         :beginsOn="event.beginsOn"
         :show-start-time="event.options.showStartTime"
         :show-end-time="event.options.showEndTime"
+        :timezone="event.options.timezone"
+        :userTimezone="userTimezone"
         :endsOn="event.endsOn"
       />
     </event-metadata-block>
@@ -140,91 +132,12 @@
       >
       <span v-else>{{ extra.value }}</span>
     </event-metadata-block>
-    <b-modal
-      class="map-modal"
-      v-if="physicalAddress && physicalAddress.geom"
-      :active.sync="showMap"
-      has-modal-card
-      full-screen
-    >
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <button type="button" class="delete" @click="showMap = false" />
-        </header>
-        <div class="modal-card-body">
-          <section class="map">
-            <map-leaflet
-              :coords="physicalAddress.geom"
-              :marker="{
-                text: physicalAddress.fullName,
-                icon: physicalAddress.poiInfos.poiIcon.icon,
-              }"
-            />
-          </section>
-          <section class="columns is-centered map-footer">
-            <div class="column is-half has-text-centered">
-              <p class="address">
-                <i class="mdi mdi-map-marker"></i>
-                {{ physicalAddress.fullName }}
-              </p>
-              <p class="getting-there">{{ $t("Getting there") }}</p>
-              <div
-                class="buttons"
-                v-if="
-                  addressLinkToRouteByCar ||
-                  addressLinkToRouteByBike ||
-                  addressLinkToRouteByFeet
-                "
-              >
-                <a
-                  class="button"
-                  target="_blank"
-                  v-if="addressLinkToRouteByFeet"
-                  :href="addressLinkToRouteByFeet"
-                >
-                  <i class="mdi mdi-walk"></i
-                ></a>
-                <a
-                  class="button"
-                  target="_blank"
-                  v-if="addressLinkToRouteByBike"
-                  :href="addressLinkToRouteByBike"
-                >
-                  <i class="mdi mdi-bike"></i
-                ></a>
-                <a
-                  class="button"
-                  target="_blank"
-                  v-if="addressLinkToRouteByTransit"
-                  :href="addressLinkToRouteByTransit"
-                >
-                  <i class="mdi mdi-bus"></i
-                ></a>
-                <a
-                  class="button"
-                  target="_blank"
-                  v-if="addressLinkToRouteByCar"
-                  :href="addressLinkToRouteByCar"
-                >
-                  <i class="mdi mdi-car"></i>
-                </a>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    </b-modal>
   </div>
 </template>
 <script lang="ts">
 import { Address } from "@/types/address.model";
 import { IConfig } from "@/types/config.model";
-import {
-  EventMetadataKeyType,
-  EventMetadataType,
-  RoutingTransportationType,
-  RoutingType,
-} from "@/types/enums";
+import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import { PropType } from "vue";
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -234,11 +147,13 @@ import EventMetadataBlock from "./EventMetadataBlock.vue";
 import EventFullDate from "./EventFullDate.vue";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
+import AddressInfo from "../../components/Address/AddressInfo.vue";
 import {
   IEventMetadata,
   IEventMetadataDescription,
 } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
+import { IUser } from "@/types/current-user.model";
 
 @Component({
   components: {
@@ -246,15 +161,14 @@ import { eventMetaDataList } from "../../services/EventMetadata";
     EventFullDate,
     PopoverActorCard,
     ActorCard,
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
+    AddressInfo,
   },
 })
 export default class EventMetadataSidebar extends Vue {
   @Prop({ type: Object as PropType<IEvent>, required: true }) event!: IEvent;
   @Prop({ type: Object as PropType<IConfig>, required: true }) config!: IConfig;
-
-  showMap = false;
+  @Prop({ required: true }) user!: IUser | undefined;
+  @Prop({ required: false, default: false }) showMap!: boolean;
 
   RouteName = RouteName;
 
@@ -264,21 +178,6 @@ export default class EventMetadataSidebar extends Vue {
 
   EventMetadataType = EventMetadataType;
   EventMetadataKeyType = EventMetadataKeyType;
-
-  RoutingParamType = {
-    [RoutingType.OPENSTREETMAP]: {
-      [RoutingTransportationType.FOOT]: "engine=fossgis_osrm_foot",
-      [RoutingTransportationType.BIKE]: "engine=fossgis_osrm_bike",
-      [RoutingTransportationType.TRANSIT]: null,
-      [RoutingTransportationType.CAR]: "engine=fossgis_osrm_car",
-    },
-    [RoutingType.GOOGLE_MAPS]: {
-      [RoutingTransportationType.FOOT]: "dirflg=w",
-      [RoutingTransportationType.BIKE]: "dirflg=b",
-      [RoutingTransportationType.TRANSIT]: "dirflg=r",
-      [RoutingTransportationType.CAR]: "driving",
-    },
-  };
 
   get physicalAddress(): Address | null {
     if (!this.event.physicalAddress) return null;
@@ -294,50 +193,6 @@ export default class EventMetadataSidebar extends Vue {
         ...val,
       };
     });
-  }
-
-  makeNavigationPath(
-    transportationType: RoutingTransportationType
-  ): string | undefined {
-    const geometry = this.physicalAddress?.geom;
-    if (geometry) {
-      const routingType = this.config.maps.routing.type;
-      /**
-       * build urls to routing map
-       */
-      if (!this.RoutingParamType[routingType][transportationType]) {
-        return;
-      }
-
-      const urlGeometry = geometry.split(";").reverse().join(",");
-
-      switch (routingType) {
-        case RoutingType.GOOGLE_MAPS:
-          return `https://maps.google.com/?saddr=Current+Location&daddr=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}`;
-        case RoutingType.OPENSTREETMAP:
-        default: {
-          const bboxX = geometry.split(";").reverse()[0];
-          const bboxY = geometry.split(";").reverse()[1];
-          return `https://www.openstreetmap.org/directions?from=&to=${urlGeometry}&${this.RoutingParamType[routingType][transportationType]}#map=14/${bboxX}/${bboxY}`;
-        }
-      }
-    }
-  }
-
-  get addressLinkToRouteByCar(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.CAR);
-  }
-
-  get addressLinkToRouteByBike(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.BIKE);
-  }
-
-  get addressLinkToRouteByFeet(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.FOOT);
-  }
-
-  get addressLinkToRouteByTransit(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.TRANSIT);
   }
 
   urlToHostname(url: string): string | null {
@@ -372,6 +227,10 @@ export default class EventMetadataSidebar extends Vue {
       }
     }
   }
+
+  get userTimezone(): string | undefined {
+    return this.user?.settings?.timezone;
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -400,50 +259,6 @@ div.address-wrapper {
 
     .map-show-button {
       cursor: pointer;
-    }
-
-    address {
-      font-style: normal;
-      flex-wrap: wrap;
-      display: flex;
-      justify-content: flex-start;
-
-      span.addressDescription {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1 0 auto;
-        min-width: 100%;
-        max-width: 4rem;
-        overflow: hidden;
-      }
-
-      :not(.addressDescription) {
-        flex: 1;
-        min-width: 100%;
-      }
-    }
-  }
-}
-
-.map-modal {
-  .modal-card-head {
-    justify-content: flex-end;
-    button.delete {
-      margin-right: 1rem;
-    }
-  }
-
-  section.map {
-    height: calc(100% - 8rem);
-    width: calc(100% - 20px);
-  }
-
-  section.map-footer {
-    p.address {
-      margin: 1rem auto;
-    }
-    div.buttons {
-      justify-content: center;
     }
   }
 }

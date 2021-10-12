@@ -35,7 +35,7 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
   @doc """
   Check that actor can create such an object
   """
-  @spec can_create_group_object?(String.t() | integer(), String.t() | integer(), Entity.t()) ::
+  @spec can_create_group_object?(String.t() | integer(), String.t() | integer(), struct()) ::
           boolean()
   def can_create_group_object?(
         actor_id,

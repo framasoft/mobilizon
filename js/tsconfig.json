@@ -18,7 +18,14 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost", "webworker"]
+    "lib": [
+      "esnext",
+      "dom",
+      "es2017.intl",
+      "dom.iterable",
+      "scripthost",
+      "webworker"
+    ]
   },
   "include": [
     "src/**/*.ts",

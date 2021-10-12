@@ -71,7 +71,13 @@ import {
 import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 import RouteName from "../../router/name";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Reset password") as string,
+    };
+  },
+})
 export default class SendPasswordReset extends Vue {
   @Prop({ type: String, required: false, default: "" }) email!: string;
 

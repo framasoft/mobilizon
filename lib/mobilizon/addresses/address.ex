@@ -12,17 +12,18 @@ defmodule Mobilizon.Addresses.Address do
   alias Mobilizon.Web.Endpoint
 
   @type t :: %__MODULE__{
-          country: String.t(),
-          locality: String.t(),
-          region: String.t(),
-          description: String.t(),
-          geom: Geo.PostGIS.Geometry.t(),
-          postal_code: String.t(),
-          street: String.t(),
-          type: String.t(),
+          country: String.t() | nil,
+          locality: String.t() | nil,
+          region: String.t() | nil,
+          description: String.t() | nil,
+          geom: Geo.PostGIS.Geometry.t() | nil,
+          postal_code: String.t() | nil,
+          street: String.t() | nil,
+          type: String.t() | nil,
           url: String.t(),
-          origin_id: String.t(),
-          events: [Event.t()]
+          origin_id: String.t() | nil,
+          events: [Event.t()],
+          timezone: String.t() | nil
         }
 
   @required_attrs [:url]
@@ -35,7 +36,8 @@ defmodule Mobilizon.Addresses.Address do
     :postal_code,
     :street,
     :origin_id,
-    :type
+    :type,
+    :timezone
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -50,6 +52,7 @@ defmodule Mobilizon.Addresses.Address do
     field(:type, :string)
     field(:url, :string)
     field(:origin_id, :string)
+    field(:timezone, :string)
 
     has_many(:events, Event, foreign_key: :physical_address_id)
 
@@ -61,6 +64,7 @@ defmodule Mobilizon.Addresses.Address do
   def changeset(%__MODULE__{} = address, attrs) do
     address
     |> cast(attrs, @attrs)
+    |> maybe_set_timezone()
     |> set_url()
     |> validate_required(@required_attrs)
     |> unique_constraint(:url, name: :addresses_url_index)
@@ -89,5 +93,30 @@ defmodule Mobilizon.Addresses.Address do
     String.trim(
       "#{address.street} #{address.postal_code} #{address.locality} #{address.region} #{address.country}"
     )
+  end
+
+  @spec maybe_set_timezone(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp maybe_set_timezone(%Ecto.Changeset{} = changeset) do
+    case get_change(changeset, :geom) do
+      nil ->
+        changeset
+
+      geom ->
+        case get_field(changeset, :timezone) do
+          # Only update the timezone if the geom has change and we don't already have a set timezone
+          nil -> put_change(changeset, :timezone, timezone(geom))
+          _ -> changeset
+        end
+    end
+  end
+
+  @spec timezone(Geo.PostGIS.Geometry.t() | nil) :: String.t() | nil
+  defp timezone(nil), do: nil
+
+  defp timezone(geom) do
+    case TzWorld.timezone_at(geom) do
+      {:ok, tz} -> tz
+      {:error, _err} -> nil
+    end
   end
 end

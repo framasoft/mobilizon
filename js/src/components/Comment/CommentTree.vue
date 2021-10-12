@@ -23,6 +23,7 @@
                   ref="commenteditor"
                   mode="comment"
                   v-model="newComment.text"
+                  :aria-label="$t('Comment body')"
                 />
               </p>
               <p class="help is-danger" v-if="emptyCommentError">
@@ -30,9 +31,11 @@
               </p>
             </div>
             <div class="field notify-participants" v-if="isEventOrganiser">
-              <b-switch v-model="newComment.isAnnouncement">{{
-                $t("Notify participants")
-              }}</b-switch>
+              <b-switch
+                aria-labelledby="notify-participants-toggle"
+                v-model="newComment.isAnnouncement"
+                >{{ $t("Notify participants") }}</b-switch
+              >
             </div>
           </div>
         </div>

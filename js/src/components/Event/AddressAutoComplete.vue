@@ -31,6 +31,7 @@
         v-if="!gettingLocation"
         icon-right="target"
         @click="locateMe"
+        @keyup.enter="locateMe"
         >{{ $t("Use my location") }}</b-button
       >
       <span v-else>{{ $t("Getting location") }}</span>

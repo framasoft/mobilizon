@@ -147,6 +147,17 @@ export const USER_SETTINGS = gql`
   ${USER_SETTINGS_FRAGMENT}
 `;
 
+export const LOGGED_USER_TIMEZONE = gql`
+  query LoggedUserTimezone {
+    loggedUser {
+      id
+      settings {
+        timezone
+      }
+    }
+  }
+`;
+
 export const SET_USER_SETTINGS = gql`
   mutation SetUserSettings(
     $timezone: String

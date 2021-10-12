@@ -245,12 +245,14 @@
                     aria-role="listitem"
                     v-if="canManageEvent || event.draft"
                     @click="openDeleteEventModalWrapper"
+                    @keyup.enter="openDeleteEventModalWrapper"
                   >
                     {{ $t("Delete") }}
                     <b-icon icon="delete" />
                   </b-dropdown-item>
 
                   <hr
+                    role="presentation"
                     class="dropdown-divider"
                     aria-role="menuitem"
                     v-if="canManageEvent || event.draft"
@@ -259,6 +261,7 @@
                     aria-role="listitem"
                     v-if="!event.draft"
                     @click="triggerShare()"
+                    @keyup.enter="triggerShare()"
                   >
                     <span>
                       {{ $t("Share this event") }}
@@ -268,6 +271,7 @@
                   <b-dropdown-item
                     aria-role="listitem"
                     @click="downloadIcsEvent()"
+                    @keyup.enter="downloadIcsEvent()"
                     v-if="!event.draft"
                   >
                     <span>
@@ -279,6 +283,7 @@
                     aria-role="listitem"
                     v-if="ableToReport"
                     @click="isReportModalActive = true"
+                    @keyup.enter="isReportModalActive = true"
                   >
                     <span>
                       {{ $t("Report") }}
@@ -298,6 +303,8 @@
               v-if="event && config"
               :event="event"
               :config="config"
+              :user="loggedUser"
+              @showMapModal="showMap = true"
             />
           </div>
         </aside>
@@ -379,6 +386,7 @@
                 class="button"
                 ref="cancelButton"
                 @click="isJoinModalActive = false"
+                @keyup.enter="isJoinModalActive = false"
               >
                 {{ $t("Cancel") }}
               </button>
@@ -386,6 +394,11 @@
                 class="button is-primary"
                 ref="confirmButton"
                 @click="
+                  event.joinOptions === EventJoinOptions.RESTRICTED
+                    ? joinEventWithConfirmation(identity)
+                    : joinEvent(identity)
+                "
+                @keyup.enter="
                   event.joinOptions === EventJoinOptions.RESTRICTED
                     ? joinEventWithConfirmation(identity)
                     : joinEvent(identity)
@@ -436,6 +449,7 @@
                   class="button"
                   ref="cancelButton"
                   @click="isJoinConfirmationModalActive = false"
+                  @keyup.enter="isJoinConfirmationModalActive = false"
                   >{{ $t("Cancel") }}
                 </b-button>
                 <b-button type="is-primary" native-type="submit">
@@ -445,6 +459,22 @@
             </form>
           </section>
         </div>
+      </b-modal>
+      <b-modal
+        class="map-modal"
+        v-if="event.physicalAddress && event.physicalAddress.geom"
+        :active.sync="showMap"
+        has-modal-card
+        full-screen
+        :can-cancel="['escape', 'outside']"
+      >
+        <template #default="props">
+          <event-map
+            :routingType="routingType"
+            :address="event.physicalAddress"
+            @close="props.close"
+          />
+        </template>
       </b-modal>
     </div>
   </div>
@@ -496,11 +526,14 @@ import Subtitle from "../../components/Utils/Subtitle.vue";
 import Tag from "../../components/Tag.vue";
 import EventMetadataSidebar from "../../components/Event/EventMetadataSidebar.vue";
 import EventBanner from "../../components/Event/EventBanner.vue";
+import EventMap from "../../components/Event/EventMap.vue";
 import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
 import { IParticipant } from "../../types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
+import { USER_SETTINGS } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -517,6 +550,7 @@ import { eventMetaDataList } from "../../services/EventMetadata";
     PopoverActorCard,
     EventBanner,
     EventMetadataSidebar,
+    EventMap,
     ShareEventModal: () =>
       import(
         /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
@@ -555,9 +589,8 @@ import { eventMetaDataList } from "../../services/EventMetadata";
         this.handleErrors(graphQLErrors);
       },
     },
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
+    currentActor: CURRENT_ACTOR_CLIENT,
+    loggedUser: USER_SETTINGS,
     participations: {
       query: EVENT_PERSON_PARTICIPATION,
       fetchPolicy: "cache-and-network",
@@ -633,6 +666,8 @@ export default class Event extends EventMixin {
   config!: IConfig;
 
   person!: IPerson;
+
+  loggedUser!: IUser;
 
   participations: IParticipant[] = [];
 
@@ -1117,6 +1152,12 @@ export default class Event extends EventMixin {
         }
         return acc;
       }, {});
+  }
+
+  showMap = false;
+
+  get routingType(): string | undefined {
+    return this.config?.maps?.routing?.type;
   }
 }
 </script>

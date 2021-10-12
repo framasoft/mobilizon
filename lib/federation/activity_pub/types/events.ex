@@ -156,7 +156,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
             role
           )
 
-        {:error, %Ecto.Changeset{} = err} ->
+        {:error, _, %Ecto.Changeset{} = err, _} ->
           {:error, err}
       end
     else

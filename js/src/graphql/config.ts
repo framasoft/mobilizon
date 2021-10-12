@@ -96,6 +96,31 @@ export const CONFIG = gql`
   }
 `;
 
+export const CONFIG_EDIT_EVENT = gql`
+  query EditEventConfig {
+    config {
+      timezones
+      features {
+        groups
+      }
+      anonymous {
+        participation {
+          allowed
+          validation {
+            email {
+              enabled
+              confirmationRequired
+            }
+            captcha {
+              enabled
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const TERMS = gql`
   query Terms($locale: String) {
     config {

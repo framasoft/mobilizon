@@ -35,7 +35,7 @@ interface IEventEditJSON {
   id?: string;
   title: string;
   description: string;
-  beginsOn: string;
+  beginsOn: string | null;
   endsOn: string | null;
   status: EventStatus;
   visibility: EventVisibility;
@@ -82,7 +82,7 @@ export interface IEvent {
 
   onlineAddress?: string;
   phoneAddress?: string;
-  physicalAddress?: IAddress;
+  physicalAddress: IAddress | null;
 
   tags: ITag[];
   options: IEventOptions;
@@ -92,6 +92,9 @@ export interface IEvent {
   toEditJSON(): IEventEditJSON;
 }
 
+export interface IEditableEvent extends Omit<IEvent, "beginsOn"> {
+  beginsOn: Date | null;
+}
 export class EventModel implements IEvent {
   id?: string;
 
@@ -115,7 +118,7 @@ export class EventModel implements IEvent {
 
   phoneAddress: string | undefined = "";
 
-  physicalAddress?: IAddress;
+  physicalAddress: IAddress | null = null;
 
   picture: IMedia | null = null;
 
@@ -158,7 +161,7 @@ export class EventModel implements IEvent {
 
   metadata: IEventMetadata[] = [];
 
-  constructor(hash?: IEvent) {
+  constructor(hash?: IEvent | IEditableEvent) {
     if (!hash) return;
 
     this.id = hash.id;
@@ -170,8 +173,14 @@ export class EventModel implements IEvent {
     this.slug = hash.slug;
     this.description = hash.description || "";
 
-    this.beginsOn = new Date(hash.beginsOn);
-    if (hash.endsOn) this.endsOn = new Date(hash.endsOn);
+    if (hash.beginsOn) {
+      this.beginsOn = new Date(hash.beginsOn);
+    }
+    if (hash.endsOn) {
+      this.endsOn = new Date(hash.endsOn);
+    } else {
+      this.endsOn = null;
+    }
 
     this.publishAt = new Date(hash.publishAt);
 
@@ -192,7 +201,7 @@ export class EventModel implements IEvent {
     this.phoneAddress = hash.phoneAddress;
     this.physicalAddress = hash.physicalAddress
       ? new Address(hash.physicalAddress)
-      : undefined;
+      : null;
     this.participantStats = hash.participantStats;
 
     this.contacts = hash.contacts;
@@ -217,12 +226,12 @@ export function removeTypeName(entity: any): any {
   return entity;
 }
 
-export function toEditJSON(event: IEvent): IEventEditJSON {
+export function toEditJSON(event: IEditableEvent): IEventEditJSON {
   return {
     id: event.id,
     title: event.title,
     description: event.description,
-    beginsOn: event.beginsOn.toISOString(),
+    beginsOn: event.beginsOn ? event.beginsOn.toISOString() : null,
     endsOn: event.endsOn ? event.endsOn.toISOString() : null,
     status: event.status,
     visibility: event.visibility,

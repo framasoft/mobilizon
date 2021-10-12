@@ -13,6 +13,7 @@ export interface IAddress {
   geom?: string;
   url?: string;
   originId?: string;
+  timezone?: string;
 }
 
 export interface IPoiInfo {
@@ -44,20 +45,23 @@ export class Address implements IAddress {
 
   geom?: string = "";
 
+  timezone?: string = "";
+
   constructor(hash?: IAddress) {
     if (!hash) return;
 
     this.id = hash.id;
-    this.description = hash.description;
-    this.street = hash.street;
-    this.locality = hash.locality;
-    this.postalCode = hash.postalCode;
-    this.region = hash.region;
-    this.country = hash.country;
+    this.description = hash.description?.trim();
+    this.street = hash.street?.trim();
+    this.locality = hash.locality?.trim();
+    this.postalCode = hash.postalCode?.trim();
+    this.region = hash.region?.trim();
+    this.country = hash.country?.trim();
     this.type = hash.type;
     this.geom = hash.geom;
     this.url = hash.url;
     this.originId = hash.originId;
+    this.timezone = hash.timezone;
   }
 
   get poiInfos(): IPoiInfo {

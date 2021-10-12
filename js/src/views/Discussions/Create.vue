@@ -55,7 +55,7 @@
       </b-field>
 
       <b-field :label="$t('Text')">
-        <editor v-model="discussion.text" />
+        <editor v-model="discussion.text" :aria-label="$t('Comment body')" />
       </b-field>
 
       <button class="button is-primary" type="submit">

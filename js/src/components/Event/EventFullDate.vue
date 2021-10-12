@@ -18,64 +18,97 @@
 </docs>
 
 <template>
-  <span v-if="!endsOn">{{
-    beginsOn | formatDateTimeString(showStartTime)
-  }}</span>
-  <span v-else-if="isSameDay() && showStartTime && showEndTime">
-    {{
+  <p v-if="!endsOn">
+    <span>{{
+      formatDateTimeString(beginsOn, timezoneToShow, showStartTime)
+    }}</span>
+    <br />
+    <b-switch
+      size="is-small"
+      v-model="showLocalTimezone"
+      v-if="differentFromUserTimezone"
+    >
+      {{ singleTimeZone }}
+    </b-switch>
+  </p>
+  <p v-else-if="isSameDay() && showStartTime && showEndTime">
+    <span>{{
       $t("On {date} from {startTime} to {endTime}", {
         date: formatDate(beginsOn),
-        startTime: formatTime(beginsOn),
-        endTime: formatTime(endsOn),
+        startTime: formatTime(beginsOn, timezoneToShow),
+        endTime: formatTime(endsOn, timezoneToShow),
       })
-    }}
-  </span>
-  <span v-else-if="isSameDay() && !showStartTime && showEndTime">
-    {{
-      $t("On {date} ending at {endTime}", {
-        date: formatDate(beginsOn),
-        endTime: formatTime(endsOn),
-      })
-    }}
-  </span>
-  <span v-else-if="isSameDay() && showStartTime && !showEndTime">
+    }}</span>
+    <br />
+    <b-switch
+      size="is-small"
+      v-model="showLocalTimezone"
+      v-if="differentFromUserTimezone"
+    >
+      {{ singleTimeZone }}
+    </b-switch>
+  </p>
+  <p v-else-if="isSameDay() && showStartTime && !showEndTime">
     {{
       $t("On {date} starting at {startTime}", {
         date: formatDate(beginsOn),
         startTime: formatTime(beginsOn),
       })
     }}
-  </span>
-  <span v-else-if="isSameDay()">{{
-    $t("On {date}", { date: formatDate(beginsOn) })
-  }}</span>
-  <span v-else-if="endsOn && showStartTime && showEndTime">
-    {{
-      $t("From the {startDate} at {startTime} to the {endDate} at {endTime}", {
-        startDate: formatDate(beginsOn),
-        startTime: formatTime(beginsOn),
-        endDate: formatDate(endsOn),
-        endTime: formatTime(endsOn),
-      })
-    }}
-  </span>
-  <span v-else-if="endsOn && showStartTime">
-    {{
-      $t("From the {startDate} at {startTime} to the {endDate}", {
-        startDate: formatDate(beginsOn),
-        startTime: formatTime(beginsOn),
-        endDate: formatDate(endsOn),
-      })
-    }}
-  </span>
-  <span v-else-if="endsOn">
+  </p>
+  <p v-else-if="isSameDay()">
+    {{ $t("On {date}", { date: formatDate(beginsOn) }) }}
+  </p>
+  <p v-else-if="endsOn && showStartTime && showEndTime">
+    <span>
+      {{
+        $t(
+          "From the {startDate} at {startTime} to the {endDate} at {endTime}",
+          {
+            startDate: formatDate(beginsOn),
+            startTime: formatTime(beginsOn, timezoneToShow),
+            endDate: formatDate(endsOn),
+            endTime: formatTime(endsOn, timezoneToShow),
+          }
+        )
+      }}
+    </span>
+    <br />
+    <b-switch
+      size="is-small"
+      v-model="showLocalTimezone"
+      v-if="differentFromUserTimezone"
+    >
+      {{ multipleTimeZones }}
+    </b-switch>
+  </p>
+  <p v-else-if="endsOn && showStartTime">
+    <span>
+      {{
+        $t("From the {startDate} at {startTime} to the {endDate}", {
+          startDate: formatDate(beginsOn),
+          startTime: formatTime(beginsOn, timezoneToShow),
+          endDate: formatDate(endsOn),
+        })
+      }}
+    </span>
+    <br />
+    <b-switch
+      size="is-small"
+      v-model="showLocalTimezone"
+      v-if="differentFromUserTimezone"
+    >
+      {{ singleTimeZone }}
+    </b-switch>
+  </p>
+  <p v-else-if="endsOn">
     {{
       $t("From the {startDate} to the {endDate}", {
         startDate: formatDate(beginsOn),
         endDate: formatDate(endsOn),
       })
     }}
-  </span>
+  </p>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -90,14 +123,47 @@ export default class EventFullDate extends Vue {
 
   @Prop({ required: false, default: true }) showEndTime!: boolean;
 
+  @Prop({ required: false }) timezone!: string;
+
+  @Prop({ required: false }) userTimezone!: string;
+
+  showLocalTimezone = true;
+
+  get timezoneToShow(): string {
+    if (this.showLocalTimezone) {
+      return this.timezone;
+    }
+    return this.userActualTimezone;
+  }
+
+  get userActualTimezone(): string {
+    if (this.userTimezone) {
+      return this.userTimezone;
+    }
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
   formatDate(value: Date): string | undefined {
     if (!this.$options.filters) return undefined;
     return this.$options.filters.formatDateString(value);
   }
 
-  formatTime(value: Date): string | undefined {
+  formatTime(value: Date, timezone: string): string | undefined {
     if (!this.$options.filters) return undefined;
-    return this.$options.filters.formatTimeString(value);
+    return this.$options.filters.formatTimeString(value, timezone || undefined);
+  }
+
+  formatDateTimeString(
+    value: Date,
+    timezone: string,
+    showTime: boolean
+  ): string | undefined {
+    if (!this.$options.filters) return undefined;
+    return this.$options.filters.formatDateTimeString(
+      value,
+      timezone,
+      showTime
+    );
   }
 
   isSameDay(): boolean {
@@ -105,6 +171,36 @@ export default class EventFullDate extends Vue {
       new Date(this.beginsOn).toDateString() ===
       new Date(this.endsOn).toDateString();
     return this.endsOn !== undefined && sameDay;
+  }
+
+  get differentFromUserTimezone(): boolean {
+    return (
+      !!this.timezone &&
+      !!this.userActualTimezone &&
+      this.timezone !== this.userActualTimezone
+    );
+  }
+
+  get singleTimeZone(): string {
+    if (this.showLocalTimezone) {
+      return this.$t("Local time ({timezone})", {
+        timezone: this.timezoneToShow,
+      }) as string;
+    }
+    return this.$t("Time in your timezone ({timezone})", {
+      timezone: this.timezoneToShow,
+    }) as string;
+  }
+
+  get multipleTimeZones(): string {
+    if (this.showLocalTimezone) {
+      return this.$t("Local time ({timezone})", {
+        timezone: this.timezoneToShow,
+      }) as string;
+    }
+    return this.$t("Times in your timezone ({timezone})", {
+      timezone: this.timezoneToShow,
+    }) as string;
   }
 }
 </script>

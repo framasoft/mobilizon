@@ -227,6 +227,8 @@ export default class EditorComponent extends Vue {
 
   @Prop({ required: false, default: 100_000_000 }) maxSize!: number;
 
+  @Prop({ required: false }) ariaLabel!: string;
+
   currentActor!: IPerson;
 
   editor: Editor | null = null;
@@ -256,6 +258,13 @@ export default class EditorComponent extends Vue {
 
   mounted(): void {
     this.editor = new Editor({
+      editorProps: {
+        attributes: {
+          "aria-multiline": this.isShortMode.toString(),
+          "aria-label": this.ariaLabel,
+          role: "textbox",
+        },
+      },
       extensions: [
         StarterKit,
         Document,

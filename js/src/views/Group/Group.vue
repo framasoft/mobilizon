@@ -203,6 +203,7 @@
                   </span>
                 </b-dropdown-item>
                 <hr
+                  role="presentation"
                   class="dropdown-divider"
                   v-if="isCurrentActorAGroupMember"
                 />
@@ -224,7 +225,7 @@
                     {{ $t("ICS/WebCal Feed") }}
                   </a>
                 </b-dropdown-item>
-                <hr class="dropdown-divider" />
+                <hr role="presentation" class="dropdown-divider" />
                 <b-dropdown-item
                   v-if="ableToReport"
                   aria-role="menuitem"

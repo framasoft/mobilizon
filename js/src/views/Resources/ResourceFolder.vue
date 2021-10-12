@@ -58,6 +58,7 @@
               {{ $t("New link") }}
             </b-dropdown-item>
             <hr
+              role="presentation"
               class="dropdown-divider"
               v-if="config.resourceProviders.length"
             />

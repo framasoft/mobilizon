@@ -1,5 +1,6 @@
 import { Route, RouteConfig } from "vue-router";
 import { ImportedComponent } from "vue/types/options";
+import { i18n } from "@/utils/i18n";
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -34,7 +35,7 @@ export const settingsRoutes: RouteConfig[] = [
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Settings" */ "@/views/Settings.vue"),
     props: true,
-    meta: { requiredAuth: true },
+    meta: { requiredAuth: true, announcer: { skip: true } },
     redirect: { name: SettingsRouteName.ACCOUNT_SETTINGS },
     name: SettingsRouteName.SETTINGS,
     children: [
@@ -42,7 +43,10 @@ export const settingsRoutes: RouteConfig[] = [
         path: "account",
         name: SettingsRouteName.ACCOUNT_SETTINGS,
         redirect: { name: SettingsRouteName.ACCOUNT_SETTINGS_GENERAL },
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { skip: true },
+        },
       },
       {
         path: "account/general",
@@ -52,7 +56,12 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AccountSettings" */ "@/views/Settings/AccountSettings.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Account settings") as string,
+          },
+        },
       },
       {
         path: "preferences",
@@ -62,7 +71,10 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "Preferences" */ "@/views/Settings/Preferences.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { message: (): string => i18n.t("Preferences") as string },
+        },
       },
       {
         path: "notifications",
@@ -72,13 +84,18 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "Notifications" */ "@/views/Settings/Notifications.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Notifications") as string,
+          },
+        },
       },
       {
         path: "admin",
         name: SettingsRouteName.ADMIN,
         redirect: { name: SettingsRouteName.ADMIN_DASHBOARD },
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "admin/dashboard",
@@ -87,7 +104,12 @@ export const settingsRoutes: RouteConfig[] = [
           import(
             /* webpackChunkName: "Dashboard" */ "@/views/Admin/Dashboard.vue"
           ),
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Admin dashboard") as string,
+          },
+        },
       },
       {
         path: "admin/settings",
@@ -97,7 +119,12 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AdminSettings" */ "@/views/Admin/Settings.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Admin settings") as string,
+          },
+        },
       },
       {
         path: "admin/users",
@@ -105,7 +132,10 @@ export const settingsRoutes: RouteConfig[] = [
         component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "Users" */ "@/views/Admin/Users.vue"),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { message: (): string => i18n.t("Users") as string },
+        },
       },
       {
         path: "admin/users/:id",
@@ -115,7 +145,10 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AdminUserProfile" */ "@/views/Admin/AdminUserProfile.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { skip: true },
+        },
       },
       {
         path: "admin/profiles",
@@ -125,7 +158,10 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AdminProfiles" */ "@/views/Admin/Profiles.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { message: (): string => i18n.t("Profiles") as string },
+        },
       },
       {
         path: "admin/profiles/:id",
@@ -135,7 +171,7 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AdminProfile" */ "@/views/Admin/AdminProfile.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "admin/groups",
@@ -145,7 +181,12 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "GroupProfiles" */ "@/views/Admin/GroupProfiles.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Group profiles") as string,
+          },
+        },
       },
       {
         path: "admin/groups/:id",
@@ -155,7 +196,7 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "AdminGroupProfile" */ "@/views/Admin/AdminGroupProfile.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "admin/relays",
@@ -163,7 +204,7 @@ export const settingsRoutes: RouteConfig[] = [
         redirect: { name: SettingsRouteName.RELAY_FOLLOWINGS },
         component: (): Promise<ImportedComponent> =>
           import(/* webpackChunkName: "Follows" */ "@/views/Admin/Follows.vue"),
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
         children: [
           {
             path: "followings",
@@ -172,7 +213,12 @@ export const settingsRoutes: RouteConfig[] = [
               import(
                 /* webpackChunkName: "Followings" */ "@/components/Admin/Followings.vue"
               ),
-            meta: { requiredAuth: true },
+            meta: {
+              requiredAuth: true,
+              announcer: {
+                message: (): string => i18n.t("Followings") as string,
+              },
+            },
           },
           {
             path: "followers",
@@ -181,7 +227,12 @@ export const settingsRoutes: RouteConfig[] = [
               import(
                 /* webpackChunkName: "Followers" */ "@/components/Admin/Followers.vue"
               ),
-            meta: { requiredAuth: true },
+            meta: {
+              requiredAuth: true,
+              announcer: {
+                message: (): string => i18n.t("Followers") as string,
+              },
+            },
           },
         ],
         props: true,
@@ -190,7 +241,7 @@ export const settingsRoutes: RouteConfig[] = [
         path: "/moderation",
         name: SettingsRouteName.MODERATION,
         redirect: { name: SettingsRouteName.REPORTS },
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "/moderation/reports/:filter?",
@@ -200,7 +251,12 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "ReportList" */ "@/views/Moderation/ReportList.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Reports list") as string,
+          },
+        },
       },
       {
         path: "/moderation/report/:reportId",
@@ -210,7 +266,10 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "Report" */ "@/views/Moderation/Report.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: { message: (): string => i18n.t("Report") as string },
+        },
       },
       {
         path: "/moderation/logs",
@@ -220,13 +279,18 @@ export const settingsRoutes: RouteConfig[] = [
             /* webpackChunkName: "ModerationLogs" */ "@/views/Moderation/Logs.vue"
           ),
         props: true,
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Moderation logs") as string,
+          },
+        },
       },
       {
         path: "/identity",
         name: SettingsRouteName.IDENTITIES,
         redirect: { name: SettingsRouteName.UPDATE_IDENTITY },
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "/identity/create",
@@ -239,7 +303,12 @@ export const settingsRoutes: RouteConfig[] = [
           identityName: route.params.identityName,
           isUpdate: false,
         }),
-        meta: { requiredAuth: true },
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Create identity") as string,
+          },
+        },
       },
       {
         path: "/identity/update/:identityName?",
@@ -252,7 +321,7 @@ export const settingsRoutes: RouteConfig[] = [
           identityName: route.params.identityName,
           isUpdate: true,
         }),
-        meta: { requiredAuth: true },
+        meta: { requiredAuth: true, announcer: { skip: true } },
       },
     ],
   },

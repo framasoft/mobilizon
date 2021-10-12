@@ -11,7 +11,7 @@
           )
         }}
       </p>
-      <hr />
+      <hr role="presentation" />
       <p class="content">
         <span>
           {{
@@ -33,7 +33,7 @@
           "
         />
       </p>
-      <hr />
+      <hr role="presentation" />
       <p class="content">
         {{
           $t(

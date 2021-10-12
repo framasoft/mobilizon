@@ -62,13 +62,17 @@
             </template>
 
             <b-dropdown-item
+              has-link
               v-for="format in exportFormats"
               :key="format"
-              @click="exportParticipants(format)"
               aria-role="listitem"
+              @click="exportParticipants(format)"
+              @keyup.enter="exportParticipants(format)"
             >
-              <b-icon :icon="formatToIcon(format)"></b-icon>
-              {{ format }}
+              <button class="dropdown-button">
+                <b-icon :icon="formatToIcon(format)"></b-icon>
+                {{ format }}
+              </button>
             </b-dropdown-item>
           </b-dropdown>
         </div>
@@ -565,5 +569,22 @@ nav.breadcrumb {
   a {
     text-decoration: none;
   }
+}
+
+button.dropdown-button {
+  &:hover {
+    background-color: #f5f5f5;
+    color: #0a0a0a;
+  }
+  width: 100%;
+  display: flex;
+  flex: 1;
+  background: white;
+  border: none;
+  cursor: pointer;
+  color: #4a4a4a;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: 0.375rem 1rem;
 }
 </style>

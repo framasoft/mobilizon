@@ -1,28 +1,6 @@
 <template>
   <div>
-    <div class="hero intro is-small is-primary">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title">{{ $t("About Mobilizon") }}</h1>
-          <p>
-            {{
-              $t(
-                "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising."
-              )
-            }}
-          </p>
-          <b-button
-            icon-left="open-in-new"
-            size="is-large"
-            type="is-secondary"
-            tag="a"
-            href="https://joinmobilizon.org"
-            >{{ $t("Learn more") }}</b-button
-          >
-        </div>
-      </div>
-    </div>
-    <main class="container">
+    <section class="container">
       <div class="columns">
         <div class="column is-one-quarter-desktop">
           <aside class="menu">
@@ -62,8 +40,29 @@
           <router-view />
         </div>
       </div>
-    </main>
-
+    </section>
+    <div class="hero intro is-small is-secondary">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">{{ $t("Powered by Mobilizon") }}</h1>
+          <p>
+            {{
+              $t(
+                "A user-friendly, emancipatory and ethical tool for gathering, organising, and mobilising."
+              )
+            }}
+          </p>
+          <b-button
+            icon-left="open-in-new"
+            size="is-large"
+            type="is-primary"
+            tag="a"
+            href="https://joinmobilizon.org"
+            >{{ $t("Learn more") }}</b-button
+          >
+        </div>
+      </div>
+    </div>
     <div
       class="hero register is-primary is-medium"
       v-if="!currentUser || !currentUser.id"

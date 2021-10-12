@@ -352,12 +352,12 @@ msgid "What information do we collect?"
 msgstr "Que información recollemos?"
 
 #, elixir-format
-#: lib/web/email/user.ex:177
+#: lib/web/email/user.ex:175
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon en %{instance}: confirma o enderezo de email"
 
 #, elixir-format
-#: lib/web/email/user.ex:154
+#: lib/web/email/user.ex:155
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon en %{instance}: email cambiado"
 
@@ -415,7 +415,7 @@ msgid "View the event on: %{link}"
 msgstr "Ver o evento en: %{link}"
 
 #, elixir-format
-#: lib/web/email/group.ex:33
+#: lib/web/email/group.ex:31
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} convidoute a unirte ó grupo %{group}"
 
@@ -1242,7 +1242,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Ata aquí, e grazas pola atención!"
 
 #, elixir-format
-#: lib/web/email/group.ex:63
+#: lib/web/email/group.ex:61
 msgid "You have been removed from group %{group}"
 msgstr "Foches eliminada do grupo %{group}"
 
@@ -1297,7 +1297,7 @@ msgstr ""
 "(%{group_address}). Xa non pertences a este grupo."
 
 #, elixir-format
-#: lib/web/email/group.ex:97
+#: lib/web/email/group.ex:95
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "O grupo %{group} foi suspendido en %{instance}"
 
@@ -1639,17 +1639,17 @@ msgid "%{name}'s feed"
 msgstr "fonte de %{name}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:122
+#: lib/service/export/feed.ex:115
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "fonte dos eventos privados de %{actor} en %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:117
+#: lib/service/export/feed.ex:110
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "fonte dos eventos públicos de %{actor} en %{instance}"
 
 #, elixir-format
-#: lib/service/export/feed.ex:225
+#: lib/service/export/feed.ex:219
 msgid "Feed for %{email} on %{instance}"
 msgstr "Fonte para %{email} en %{instance}"
 
@@ -1677,7 +1677,7 @@ msgstr ""
 "O servidor Mobilizon %{instance} semella estar temporalmente fóra de servizo."
 
 #, elixir-format
-#: lib/service/export/feed.ex:75
+#: lib/service/export/feed.ex:67
 msgid "Public feed for %{instance}"
 msgstr "Fonte pública de %{instance}"
 

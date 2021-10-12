@@ -49,7 +49,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   Create an actor locally by its URL (AP ID)
   """
   @spec make_actor_from_url(url :: String.t(), preload :: boolean()) ::
-          {:ok, Actor.t()} | {:error, make_actor_errors}
+          {:ok, Actor.t()} | {:error, make_actor_errors | Ecto.Changeset.t()}
   def make_actor_from_url(url, preload \\ false) do
     if are_same_origin?(url, Endpoint.url()) do
       {:error, :actor_is_local}
@@ -63,7 +63,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
           Logger.info("Actor #{url} was deleted")
           {:error, :actor_deleted}
 
-        {:error, err} when err in [:http_error, :json_decode_error] ->
+        {:error, err} ->
           {:error, err}
       end
     end

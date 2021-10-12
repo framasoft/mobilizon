@@ -28,6 +28,11 @@ import { IEvent } from "@/types/event.model";
       },
     },
   },
+  metaInfo() {
+    return {
+      title: this.$t("Participation with account") as string,
+    };
+  },
 })
 export default class ParticipationWithAccount extends Vue {
   @Prop({ type: String, required: true }) uuid!: string;

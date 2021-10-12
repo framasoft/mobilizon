@@ -1,72 +1,89 @@
 <template>
-  <div class="address-autocomplete">
-    <b-field
-      :label-for="id"
-      expanded
-      :message="fieldErrors"
-      :type="{ 'is-danger': fieldErrors.length }"
-    >
-      <template slot="label">
-        {{ actualLabel }}
-        <b-button
-          v-if="canShowLocateMeButton && !gettingLocation"
-          size="is-small"
-          icon-right="map-marker"
-          @click="locateMe"
-          :title="$t('Use my location')"
-        />
-        <span
-          class="is-size-6 has-text-weight-normal"
-          v-else-if="gettingLocation"
-          >{{ $t("Getting location") }}</span
-        >
-      </template>
-      <b-autocomplete
-        :data="addressData"
-        v-model="queryText"
-        :placeholder="$t('e.g. 10 Rue Jangot')"
-        field="fullName"
-        :loading="isFetching"
-        @typing="fetchAsyncData"
-        icon="map-marker"
+  <div class="address-autocomplete columns is-desktop">
+    <div class="column">
+      <b-field
+        :label-for="id"
         expanded
-        @select="updateSelected"
-        v-bind="$attrs"
-        :id="id"
+        :message="fieldErrors"
+        :type="{ 'is-danger': fieldErrors.length }"
       >
-        <template #default="{ option }">
-          <b-icon :icon="option.poiInfos.poiIcon.icon" />
-          <b>{{ option.poiInfos.name }}</b
-          ><br />
-          <small>{{ option.poiInfos.alternativeName }}</small>
+        <template slot="label">
+          {{ actualLabel }}
+          <b-button
+            v-if="canShowLocateMeButton && !gettingLocation"
+            size="is-small"
+            icon-right="map-marker"
+            @click="locateMe"
+            :title="$t('Use my location')"
+          />
+          <span
+            class="is-size-6 has-text-weight-normal"
+            v-else-if="gettingLocation"
+            >{{ $t("Getting location") }}</span
+          >
         </template>
-        <template slot="empty">
-          <span v-if="isFetching">{{ $t("Searching…") }}</span>
-          <div v-else-if="queryText.length >= 3" class="is-enabled">
-            <span>{{ $t('No results for "{queryText}"', { queryText }) }}</span>
-            <span>{{
-              $t(
-                "You can try another search term or drag and drop the marker on the map",
-                {
-                  queryText,
-                }
-              )
-            }}</span>
-            <!--                        <p class="control" @click="openNewAddressModal">-->
-            <!--                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>-->
-            <!--                        </p>-->
-          </div>
-        </template>
-      </b-autocomplete>
-      <b-button
-        :disabled="!queryText"
-        @click="resetAddress"
-        class="reset-area"
-        icon-left="close"
-        :title="$t('Clear address field')"
-      />
-    </b-field>
-    <div class="map" v-if="selected && selected.geom && selected.poiInfos">
+        <b-autocomplete
+          :data="addressData"
+          v-model="queryText"
+          :placeholder="$t('e.g. 10 Rue Jangot')"
+          field="fullName"
+          :loading="isFetching"
+          @typing="fetchAsyncData"
+          icon="map-marker"
+          expanded
+          @select="updateSelected"
+          v-bind="$attrs"
+          :id="id"
+        >
+          <template #default="{ option }">
+            <b-icon :icon="option.poiInfos.poiIcon.icon" />
+            <b>{{ option.poiInfos.name }}</b
+            ><br />
+            <small>{{ option.poiInfos.alternativeName }}</small>
+          </template>
+          <template slot="empty">
+            <span v-if="isFetching">{{ $t("Searching…") }}</span>
+            <div v-else-if="queryText.length >= 3" class="is-enabled">
+              <span>{{
+                $t('No results for "{queryText}"', { queryText })
+              }}</span>
+              <span>{{
+                $t(
+                  "You can try another search term or drag and drop the marker on the map",
+                  {
+                    queryText,
+                  }
+                )
+              }}</span>
+              <!--                        <p class="control" @click="openNewAddressModal">-->
+              <!--                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>-->
+              <!--                        </p>-->
+            </div>
+          </template>
+        </b-autocomplete>
+        <b-button
+          :disabled="!queryText"
+          @click="resetAddress"
+          class="reset-area"
+          icon-left="close"
+          :title="$t('Clear address field')"
+        />
+      </b-field>
+      <div class="card" v-if="selected.originId || selected.url">
+        <div class="card-content">
+          <address-info
+            :address="selected"
+            :show-icon="true"
+            :show-timezone="true"
+            :user-timezone="userTimezone"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="map column"
+      v-if="selected && selected.geom && selected.poiInfos"
+    >
       <map-leaflet
         :coords="selected.geom"
         :marker="{
@@ -126,14 +143,19 @@ import { Component, Prop, Watch, Mixins } from "vue-property-decorator";
 import { LatLng } from "leaflet";
 import { Address, IAddress } from "../../types/address.model";
 import AddressAutoCompleteMixin from "../../mixins/AddressAutoCompleteMixin";
+import AddressInfo from "../../components/Address/AddressInfo.vue";
 
 @Component({
   inheritAttrs: false,
+  components: {
+    AddressInfo,
+  },
 })
 export default class FullAddressAutoComplete extends Mixins(
   AddressAutoCompleteMixin
 ) {
   @Prop({ required: false, default: "" }) label!: string;
+  @Prop({ required: false }) userTimezone!: string;
 
   addressModalActive = false;
 

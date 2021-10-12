@@ -3,7 +3,7 @@
     <section class="hero is-primary">
       <div class="hero-body">
         <div class="container">
-          <h2 class="title">{{ config.name }}</h2>
+          <h1 class="title">{{ config.name }}</h1>
           <p>{{ config.description }}</p>
         </div>
       </div>
@@ -24,7 +24,7 @@
         </i18n>
       </div>
       <div class="column contact">
-        <h4>{{ $t("Contact") }}</h4>
+        <p class="has-text-weight-bold">{{ $t("Contact") }}</p>
         <instance-contact-link
           v-if="config && config.contact"
           :contact="config.contact"
@@ -32,13 +32,13 @@
         <p v-else>{{ $t("No information") }}</p>
       </div>
     </section>
-    <hr />
+    <hr role="presentation" />
     <section class="long-description content">
       <div v-html="config.longDescription" />
     </section>
-    <hr />
+    <hr role="presentation" />
     <section class="config">
-      <h3 class="subtitle">{{ $t("Instance configuration") }}</h3>
+      <h2 class="subtitle">{{ $t("Instance configuration") }}</h2>
       <table class="table is-fullwidth">
         <tr>
           <td>{{ $t("Instance languages") }}</td>
@@ -168,7 +168,7 @@ section {
   }
 
   &.hero {
-    h2.title {
+    h1.title {
       margin: auto;
     }
   }
@@ -195,7 +195,7 @@ section {
       }
     }
     .contact {
-      h4 {
+      h3 {
         font-weight: bold;
       }
       p {

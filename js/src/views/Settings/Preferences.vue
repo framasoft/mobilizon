@@ -61,7 +61,7 @@
       <b-message v-else type="is-danger">{{
         $t("Unable to detect timezone.")
       }}</b-message>
-      <hr />
+      <hr role="presentation" />
       <b-field grouped>
         <b-field
           :label="$t('City or region')"
@@ -95,6 +95,7 @@
         <b-button
           :disabled="address == undefined"
           @click="resetArea"
+          @keyup.enter="resetArea"
           class="reset-area"
           icon-left="close"
           :aria-label="$t('Reset')"

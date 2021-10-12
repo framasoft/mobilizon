@@ -71,7 +71,13 @@ import { IParticipant } from "../../types/participant.model";
 import RouteName from "../../router/name";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Confirm participation") as string,
+    };
+  },
+})
 export default class ConfirmParticipation extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 

@@ -125,7 +125,7 @@
       >
       <form @submit.prevent="reply" v-if="!error">
         <b-field :label="$t('Text')">
-          <editor v-model="newComment" />
+          <editor v-model="newComment" :aria-label="$t('Comment body')" />
         </b-field>
         <b-button
           native-type="submit"

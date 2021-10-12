@@ -4,6 +4,8 @@ import Component from "vue-class-component";
 import VueScrollTo from "vue-scrollto";
 import VueMeta from "vue-meta";
 import VTooltip from "v-tooltip";
+import VueAnnouncer from "@vue-a11y/announcer";
+import VueSkipTo from "@vue-a11y/skip-to";
 import App from "./App.vue";
 import router from "./router";
 import { NotifierPlugin } from "./plugins/notifier";
@@ -20,6 +22,8 @@ Vue.use(filters);
 Vue.use(VueMeta);
 Vue.use(VueScrollTo);
 Vue.use(VTooltip);
+Vue.use(VueAnnouncer);
+Vue.use(VueSkipTo);
 
 // Register the router hooks with their names
 Component.registerHooks([

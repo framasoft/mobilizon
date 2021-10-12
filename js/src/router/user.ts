@@ -1,6 +1,7 @@
 import { beforeRegisterGuard } from "@/router/guards/register-guard";
 import { Route, RouteConfig } from "vue-router";
 import { ImportedComponent } from "vue/types/options";
+import { i18n } from "@/utils/i18n";
 
 export enum UserRouteName {
   REGISTER = "Register",
@@ -22,7 +23,10 @@ export const userRoutes: RouteConfig[] = [
         /* webpackChunkName: "RegisterUser" */ "@/views/User/Register.vue"
       ),
     props: true,
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Register") as string },
+    },
     beforeEnter: beforeRegisterGuard,
   },
   {
@@ -37,7 +41,10 @@ export const userRoutes: RouteConfig[] = [
       email: route.params.email,
       userAlreadyActivated: route.params.userAlreadyActivated === "true",
     }),
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Register") as string },
+    },
   },
   {
     path: "/resend-instructions",
@@ -47,7 +54,12 @@ export const userRoutes: RouteConfig[] = [
         /* webpackChunkName: "ResendConfirmation" */ "@/views/User/ResendConfirmation.vue"
       ),
     props: true,
-    meta: { requiresAuth: false },
+    meta: {
+      requiresAuth: false,
+      announcer: {
+        message: (): string => i18n.t("Resent confirmation email") as string,
+      },
+    },
   },
   {
     path: "/password-reset/send",
@@ -57,7 +69,12 @@ export const userRoutes: RouteConfig[] = [
         /* webpackChunkName: "SendPasswordReset" */ "@/views/User/SendPasswordReset.vue"
       ),
     props: true,
-    meta: { requiresAuth: false },
+    meta: {
+      requiresAuth: false,
+      announcer: {
+        message: (): string => i18n.t("Send password reset") as string,
+      },
+    },
   },
   {
     path: "/password-reset/:token",
@@ -66,7 +83,10 @@ export const userRoutes: RouteConfig[] = [
       import(
         /* webpackChunkName: "PasswordReset" */ "@/views/User/PasswordReset.vue"
       ),
-    meta: { requiresAuth: false },
+    meta: {
+      requiresAuth: false,
+      announcer: { message: (): string => i18n.t("Password reset") as string },
+    },
     props: true,
   },
   {
@@ -77,7 +97,10 @@ export const userRoutes: RouteConfig[] = [
         /* webpackChunkName: "EmailValidate" */ "@/views/User/EmailValidate.vue"
       ),
     props: true,
-    meta: { requiresAuth: false },
+    meta: {
+      requiresAuth: false,
+      announcer: { message: (): string => i18n.t("Email validate") as string },
+    },
   },
   {
     path: "/validate/:token",
@@ -85,7 +108,12 @@ export const userRoutes: RouteConfig[] = [
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Validate" */ "@/views/User/Validate.vue"),
     props: true,
-    meta: { requiresAuth: false },
+    meta: {
+      requiresAuth: false,
+      announcer: {
+        message: (): string => i18n.t("Validating account") as string,
+      },
+    },
   },
   {
     path: "/login",
@@ -93,6 +121,9 @@ export const userRoutes: RouteConfig[] = [
     component: (): Promise<ImportedComponent> =>
       import(/* webpackChunkName: "Login" */ "@/views/User/Login.vue"),
     props: true,
-    meta: { requiredAuth: false },
+    meta: {
+      requiredAuth: false,
+      announcer: { message: (): string => i18n.t("Login") as string },
+    },
   },
 ];

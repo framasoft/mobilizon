@@ -39,6 +39,11 @@ import SettingMenuItem from "../../components/Settings/SettingMenuItem.vue";
 
 @Component({
   components: { SettingMenuSection, SettingMenuItem },
+  metaInfo() {
+    return {
+      title: this.$t("Group settings") as string,
+    };
+  },
 })
 export default class Settings extends mixins(GroupMixin) {
   RouteName = RouteName;

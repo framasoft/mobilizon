@@ -237,6 +237,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
 
+    field(:timezone, :string, description: "The event's timezone")
+
     field(:hide_organizer_when_group_event, :boolean,
       description:
         "Whether to show or hide the person organizer when event is organized by a group"
@@ -285,6 +287,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
+
+    field(:timezone, :string, description: "The event's timezone")
 
     field(:hide_organizer_when_group_event, :boolean,
       description:
@@ -393,7 +397,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
       arg(:category, :string, default_value: "meeting", description: "The event's category")
       arg(:physical_address, :address_input, description: "The event's physical address")
-      arg(:options, :event_options_input, description: "The event options")
+      arg(:options, :event_options_input, default_value: %{}, description: "The event options")
       arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")
 
       arg(:draft, :boolean,

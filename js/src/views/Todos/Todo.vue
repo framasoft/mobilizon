@@ -55,6 +55,14 @@ import RouteName from "../../router/name";
       },
     },
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { todo } = this;
+    return {
+      title: todo.title,
+    };
+  },
 })
 export default class Todo extends Vue {
   @Prop({ type: String, required: true }) todoId!: string;

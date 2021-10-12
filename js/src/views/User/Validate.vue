@@ -29,7 +29,13 @@ import RouteName from "../../router/name";
 import { saveUserData, saveTokenData, changeIdentity } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
 
-@Component
+@Component({
+  metaInfo() {
+    return {
+      title: this.$t("Validating account") as string,
+    };
+  },
+})
 export default class Validate extends Vue {
   @Prop({ type: String, required: true }) token!: string;
 

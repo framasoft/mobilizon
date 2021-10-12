@@ -46,6 +46,7 @@ const EVENT_OPTIONS_FRAGMENT = gql`
     anonymousParticipation
     showStartTime
     showEndTime
+    timezone
     offers {
       price
       priceCurrency

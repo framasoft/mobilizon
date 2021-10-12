@@ -75,7 +75,8 @@ defmodule Mobilizon.Service.Geospatial.Mimirsbrunn do
                      "properties" => %{"geocoding" => geocoding}
                    } ->
       address = process_address(geocoding)
-      %Address{address | geom: Provider.coordinates(coordinates)}
+      coordinates = Provider.coordinates(coordinates)
+      %Address{address | geom: coordinates, timezone: Provider.timezone(coordinates)}
     end)
   end
 

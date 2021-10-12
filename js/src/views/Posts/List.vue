@@ -127,11 +127,13 @@ const POSTS_PAGE_LIMIT = 10;
     PostElementItem,
   },
   metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { group } = this;
     return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.$t("My groups") as string,
-      titleTemplate: "%s | Mobilizon",
+      title: this.$t("{group} posts", {
+        group: group.name || usernameWithDomain(group),
+      }) as string,
     };
   },
 })

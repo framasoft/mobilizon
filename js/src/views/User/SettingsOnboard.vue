@@ -66,6 +66,11 @@ import { IConfig } from "../../types/config.model";
   apollo: {
     config: TIMEZONES,
   },
+  metaInfo() {
+    return {
+      title: this.$t("First steps") as string,
+    };
+  },
 })
 export default class SettingsOnboard extends Vue {
   @Prop({ required: false, default: 1, type: Number }) step!: number;

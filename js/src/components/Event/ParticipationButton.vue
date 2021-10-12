@@ -30,18 +30,22 @@ A button to set your participation
       position="is-bottom-left"
       v-if="participation && participation.role === ParticipantRole.PARTICIPANT"
     >
-      <button class="button is-success is-large" type="button" slot="trigger">
-        <b-icon icon="check" />
-        <template>
-          <span>{{ $t("I participate") }}</span>
-        </template>
-        <b-icon icon="menu-down" />
-      </button>
+      <template #trigger="{ active }">
+        <b-button
+          type="is-success"
+          size="is-large"
+          icon-left="check"
+          :icon-right="active ? 'menu-up' : 'menu-down'"
+        >
+          {{ $t("I participate") }}
+        </b-button>
+      </template>
 
       <b-dropdown-item
         :value="false"
         aria-role="listitem"
         @click="confirmLeave"
+        @keyup.enter="confirmLeave"
         class="has-text-danger"
         >{{ $t("Cancel my participation…") }}</b-dropdown-item
       >
@@ -73,6 +77,7 @@ A button to set your participation
           :value="false"
           aria-role="listitem"
           @click="confirmLeave"
+          @keyup.enter="confirmLeave"
           class="has-text-danger"
           >{{ $t("Cancel my participation request…") }}</b-dropdown-item
         >
@@ -101,17 +106,21 @@ A button to set your participation
       position="is-bottom-left"
       v-else-if="!participation && currentActor.id"
     >
-      <button class="button is-primary is-large" type="button" slot="trigger">
-        <template>
-          <span>{{ $t("Participate") }}</span>
-        </template>
-        <b-icon icon="menu-down" />
-      </button>
+      <template #trigger="{ active }">
+        <b-button
+          type="is-primary"
+          size="is-large"
+          :icon-right="active ? 'menu-up' : 'menu-down'"
+        >
+          {{ $t("Participate") }}
+        </b-button>
+      </template>
 
       <b-dropdown-item
         :value="true"
         aria-role="listitem"
         @click="joinEvent(currentActor)"
+        @keyup.enter="joinEvent(currentActor)"
       >
         <div class="media">
           <div class="media-left">
@@ -136,6 +145,7 @@ A button to set your participation
         :value="false"
         aria-role="listitem"
         @click="joinModal"
+        @keyup.enter="joinModal"
         v-if="identities.length > 1"
         >{{ $t("with another identity…") }}</b-dropdown-item
       >

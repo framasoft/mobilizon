@@ -2254,6 +2254,16 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
+"@vue-a11y/announcer@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@vue-a11y/announcer/-/announcer-2.1.0.tgz#ed725e90b91870c76285840e0aaa637cfafbf27f"
+  integrity sha512-7V1osiJQxZPBA+2duF2nZugwgbIba/yvKLsHWvGIBJGY0VZhR4vYyFH3VFyFH2Yi46tHEVBN+X+a0uQaJMhCsQ==
+
+"@vue-a11y/skip-to@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@vue-a11y/skip-to/-/skip-to-2.1.2.tgz#a50f5b97605f5054ca7a7e222bdc721405e38f38"
+  integrity sha512-oKx0YE/nfWSBI48RKHoRsUmpY0//rDPBZTGk1LxhkkUsXPwzuMlJBFrWGIswdd+3DiIE5OyiDaM45ZldYjtDIA==
+
 "@vue/apollo-option@4.0.0-alpha.11":
   version "4.0.0-alpha.11"
   resolved "https://registry.yarnpkg.com/@vue/apollo-option/-/apollo-option-4.0.0-alpha.11.tgz#b4ecac2d1ac40271cb7f20683fb8e4c85974329a"
@@ -4210,6 +4220,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns-tz@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/date-fns-tz/-/date-fns-tz-1.1.6.tgz#93cbf354e2aeb2cd312ffa32e462c1943cf20a8e"
+  integrity sha512-nyy+URfFI3KUY7udEJozcoftju+KduaqkVfwyTIE0traBiVye09QnyWKLZK7drRr5h9B7sPJITmQnS3U6YOdQg==
 
 date-fns@^2.16.0:
   version "2.25.0"

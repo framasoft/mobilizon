@@ -13,6 +13,7 @@ export const ADDRESS_FRAGMENT = gql`
     type
     url
     originId
+    timezone
   }
 `;
 

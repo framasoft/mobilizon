@@ -307,6 +307,14 @@ const MEMBERSHIPS_PER_PAGE = 10;
     ActorCard,
     EmptyContent,
   },
+  metaInfo() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const { person } = this;
+    return {
+      title: person ? person.name || usernameWithDomain(person) : "",
+    };
+  },
 })
 export default class AdminProfile extends Vue {
   @Prop({ required: true }) id!: string;

@@ -2,7 +2,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Web.JsonLD.ObjectView
 
   import Mobilizon.Service.Metadata.Utils,
@@ -53,20 +53,52 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
          %Event{
            description: description,
            begins_on: begins_on,
-           physical_address: %Address{} = address
+           physical_address: address,
+           options: %EventOptions{timezone: timezone},
+           language: language
          },
          locale
        ) do
-    "#{datetime_to_string(begins_on, locale)} - #{render_address(address)} - #{process_description(description, locale)}"
+    language = build_language(language, locale)
+    begins_on = build_begins_on(begins_on, timezone)
+
+    begins_on
+    |> datetime_to_string(language)
+    |> (&[&1]).()
+    |> add_timezone(begins_on)
+    |> maybe_build_address(address)
+    |> build_description(description, language)
+    |> Enum.join(" - ")
   end
 
-  defp description(
-         %Event{
-           description: description,
-           begins_on: begins_on
-         },
-         locale
-       ) do
-    "#{datetime_to_string(begins_on, locale)} - #{process_description(description, locale)}"
+  @spec build_language(String.t() | nil, String.t()) :: String.t()
+  defp build_language(language, locale), do: language || locale
+
+  @spec build_begins_on(DateTime.t(), String.t() | nil) :: DateTime.t()
+  defp build_begins_on(begins_on, timezone) do
+    if timezone do
+      case DateTime.shift_zone(begins_on, timezone) do
+        {:ok, begins_on} -> begins_on
+        {:error, _err} -> begins_on
+      end
+    else
+      begins_on
+    end
+  end
+
+  defp add_timezone(elements, %DateTime{} = begins_on) do
+    elements ++ [Cldr.DateTime.Formatter.zone_gmt(begins_on)]
+  end
+
+  @spec maybe_build_address(list(String.t()), Address.t() | nil) :: list(String.t())
+  defp maybe_build_address(elements, %Address{} = address) do
+    elements ++ [render_address(address)]
+  end
+
+  defp maybe_build_address(elements, _address), do: elements
+
+  @spec build_description(list(String.t()), String.t(), String.t()) :: list(String.t())
+  defp build_description(elements, description, language) do
+    elements ++ [process_description(description, language)]
   end
 end
