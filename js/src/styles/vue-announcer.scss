@@ -1,0 +1,15 @@
+/**
+ * Taken from https://github.com/vue-a11y/vue-announcer/blob/master/src/vue-announcer.vue because styles are inlined there
+ */
+
+.announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
