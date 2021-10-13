@@ -932,11 +932,11 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
     test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
       event = insert(:event, organizer_actor: actor)
-      _creator = insert(:participant, event: event, actor: actor, role: :creator)
+      creator = insert(:participant, event: event, actor: actor, role: :creator)
       participant_user = insert(:user)
       participant_actor = insert(:actor, user: participant_user)
 
-      _participant =
+      participant =
         insert(:participant, event: event, actor: participant_actor, role: :participant)
 
       address = insert(:address)
@@ -1009,6 +1009,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
+          creator,
           user.email,
           actor,
           event,
@@ -1019,6 +1020,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
+          participant,
           participant_user.email,
           participant_actor,
           event,

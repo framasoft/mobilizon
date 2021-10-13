@@ -59,7 +59,7 @@ defmodule Mobilizon.Web.Email.Participation do
 
   def participation_updated(
         email,
-        %Participant{event: event, role: :rejected},
+        %Participant{event: event, role: :rejected} = participant,
         locale
       ) do
     Gettext.put_locale(locale)
@@ -73,13 +73,15 @@ defmodule Mobilizon.Web.Email.Participation do
     Email.base_email(to: email, subject: subject)
     |> assign(:locale, locale)
     |> assign(:event, event)
+    |> assign(:jsonLDMetadata, json_ld(participant))
     |> assign(:subject, subject)
     |> render(:event_participation_rejected)
   end
 
   def participation_updated(
         email,
-        %Participant{event: %Event{join_options: :free} = event, role: :participant},
+        %Participant{event: %Event{join_options: :free} = event, role: :participant} =
+          participant,
         locale
       ) do
     Gettext.put_locale(locale)
@@ -94,12 +96,13 @@ defmodule Mobilizon.Web.Email.Participation do
     |> assign(:locale, locale)
     |> assign(:event, event)
     |> assign(:subject, subject)
+    |> assign(:jsonLDMetadata, json_ld(participant))
     |> render(:event_participation_confirmed)
   end
 
   def participation_updated(
         email,
-        %Participant{event: event, role: :participant},
+        %Participant{event: event, role: :participant} = participant,
         locale
       ) do
     Gettext.put_locale(locale)
