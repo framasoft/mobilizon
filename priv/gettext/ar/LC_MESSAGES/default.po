@@ -776,8 +776,8 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
-#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.heex:70
+#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:147
+#: lib/web/templates/email/event_updated.text.eex:29 lib/web/templates/email/notification_each_week.html.heex:70
 #: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -830,12 +830,12 @@ msgid "Confirm new email"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:84
+#: lib/web/templates/email/event_updated.html.heex:98
 msgid "End"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:21
+#: lib/web/templates/email/event_updated.text.eex:26
 msgid "End %{ends_on}"
 msgstr ""
 
@@ -897,13 +897,13 @@ msgid "Learn more about Mobilizon here!"
 msgstr "تعلّم المزيد عن Mobilizon."
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:94
+#: lib/web/templates/email/event_updated.html.heex:108
 #: lib/web/templates/export/event_participants.html.heex:129
 msgid "Location"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:104
+#: lib/web/templates/email/event_updated.html.heex:118
 msgid "Location address was removed"
 msgstr ""
 
@@ -947,7 +947,7 @@ msgid "Start"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:18
+#: lib/web/templates/email/event_updated.text.eex:22
 msgid "Start %{begins_on}"
 msgstr ""
 
@@ -1002,12 +1002,12 @@ msgid "Visit event page"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:121
+#: lib/web/templates/email/event_updated.html.heex:135
 msgid "Visit the updated event page"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:23
+#: lib/web/templates/email/event_updated.text.eex:28
 msgid "Visit the updated event page: %{link}"
 msgstr ""
 
@@ -1533,4 +1533,24 @@ msgstr "تم قبول المشاركة"
 #, elixir-format
 #: lib/service/export/participants/common.ex:88
 msgid "Anonymous participant"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.heex:88
+msgid "In your timezone (%{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:20
+msgid "Start %{begins_on} (your timezone)"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:18
+msgid "Start %{begins_on} (🌐 %{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.heex:84
+msgid "🌐 %{timezone} %{offset}"
 msgstr ""

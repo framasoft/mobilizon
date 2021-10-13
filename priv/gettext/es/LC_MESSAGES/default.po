@@ -937,8 +937,8 @@ msgid "Please do not use it for real purposes."
 msgstr "Por favor no lo use de ninguna manera real."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
-#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.heex:70
+#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:147
+#: lib/web/templates/email/event_updated.text.eex:29 lib/web/templates/email/notification_each_week.html.heex:70
 #: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:70
 #: lib/web/templates/email/on_day_notification.text.eex:14
 #, elixir-format
@@ -1837,3 +1837,23 @@ msgstr "Participación aprobada"
 #, elixir-format
 msgid "Anonymous participant"
 msgstr "Participante anónimo"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.heex:88
+msgid "In your timezone (%{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:20
+msgid "Start %{begins_on} (your timezone)"
+msgstr "Inicio %{begins_on}"
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:18
+msgid "Start %{begins_on} (🌐 %{timezone} %{offset})"
+msgstr "Inicio %{begins_on}"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.html.heex:84
+msgid "🌐 %{timezone} %{offset}"
+msgstr ""

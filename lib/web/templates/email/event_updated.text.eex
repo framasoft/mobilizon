@@ -14,8 +14,13 @@
 <%= if MapSet.member?(@changes, :title) do %>
   <%= gettext "New title: %{title}", title: @event.title %>
 <% end %>
-<%= if MapSet.member?(@changes, :begins_on) do %>
+<%= if MapSet.member?(@changes, :begins_on) do %><%= cond do %><% @event.options.timezone != nil and @event.options.timezone != @timezone -> %><%# Event with different timezone than user %>
+  <%= gettext "Start %{begins_on} (🌐 %{timezone} %{offset})", begins_on: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale), timezone: @event.options.timezone, offset: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> Cldr.DateTime.Formatter.zone_gmt() %>
+<%# Event with same timezone than user %><% @event.options.timezone != nil and @event.options.timezone == @timezone -> %>
+  <%= gettext "Start %{begins_on} (your timezone)", begins_on: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale) %>
+<%# Event with no timezone (show in user timezone) %><% true -> %>
   <%= gettext "Start %{begins_on}", begins_on: @event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
+<% end %>
 <% end %>
 <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
   <%= gettext "End %{ends_on}", ends_on: @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>

@@ -944,7 +944,7 @@ msgstr ""
 msgid "Only groups can create events"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/event.ex:287
 msgid "Unknown error while creating event"
 msgstr ""
