@@ -8,11 +8,11 @@ defmodule Mobilizon.Web.Email.Participation do
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Config
+  alias Mobilizon.{Config, Events, Users}
   alias Mobilizon.Events.{Event, Participant}
-  alias Mobilizon.Users
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email
+  alias Mobilizon.Web.JsonLD.ObjectView
 
   @doc """
   Send participation emails to local user
@@ -117,6 +117,7 @@ defmodule Mobilizon.Web.Email.Participation do
     |> assign(:locale, locale)
     |> assign(:event, event)
     |> assign(:subject, subject)
+    |> assign(:jsonLDMetadata, json_ld(participant))
     |> Email.add_event_attachment(event)
     |> render(:event_participation_approved)
   end
@@ -139,7 +140,16 @@ defmodule Mobilizon.Web.Email.Participation do
     Email.base_email(to: email, subject: subject)
     |> assign(:locale, locale)
     |> assign(:participant, participant)
+    |> assign(:jsonLDMetadata, json_ld(participant))
     |> assign(:subject, subject)
     |> render(:anonymous_participation_confirmation)
+  end
+
+  defp json_ld(participant) do
+    event = Events.get_event_with_preload!(participant.event_id)
+
+    "participation.json"
+    |> ObjectView.render(%{participant: %Participant{participant | event: event}})
+    |> Jason.encode!()
   end
 end

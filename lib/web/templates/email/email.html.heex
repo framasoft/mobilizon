@@ -41,6 +41,9 @@
       /* ANDROID CENTER FIX */
       div[style*="margin: 16px 0;"] { margin: 0 !important; }
     </style>
+    <%= if @jsonLDMetadata do %>
+      <script type="application/ld+json"><%= @jsonLDMetadata |> raw %></script>
+    <% end %>
   </head>
   <body style="background-color: #ECEBF2; margin: 0 !important; padding: 0 !important;mso-line-height-rule: exactly;">
     <table border="0" cellpadding="0" cellspacing="0" width="100%">

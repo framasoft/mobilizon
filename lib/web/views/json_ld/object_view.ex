@@ -3,10 +3,11 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.Event
+  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
+  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   @spec render(String.t(), map()) :: map()
   def render("group.json", %{group: %Actor{} = group}) do
@@ -24,6 +25,13 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "@type" => if(event.organizer_actor.type == :Group, do: "Organization", else: "Person"),
       "name" => Actor.display_name(event.organizer_actor)
     }
+
+    organizer =
+      if event.organizer_actor.avatar do
+        Map.put(organizer, "image", event.organizer_actor.avatar.url)
+      else
+        organizer
+      end
 
     json_ld = %{
       "@context" => "https://schema.org",
@@ -93,6 +101,35 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "dateModified" => post.updated_at
     }
   end
+
+  def render("participation.json", %{
+        participant: %Participant{} = participant
+      }) do
+    res = %{
+      "@context" => "http://schema.org",
+      "@type" => "EventReservation",
+      "underName" => %{
+        "@type" => "Person",
+        "name" => participant.actor.name || participant.actor.preferred_username
+      },
+      "reservationFor" => render("event.json", %{event: participant.event}),
+      "reservationStatus" => reservation_status(participant.role),
+      "modifiedTime" => participant.updated_at,
+      "modifyReservationUrl" => Routes.page_url(Endpoint, :event, participant.event.uuid)
+    }
+
+    if participant.code do
+      Map.put(res, "reservationNumber", participant.code)
+    else
+      res
+    end
+  end
+
+  @spec reservation_status(ParticipantRole.t()) :: String.t()
+  defp reservation_status(:rejected), do: "https://schema.org/ReservationCancelled"
+  defp reservation_status(:not_confirmed), do: "https://schema.org/ReservationPending"
+  defp reservation_status(:not_approved), do: "https://schema.org/ReservationHold"
+  defp reservation_status(_), do: "https://schema.org/ReservationConfirmed"
 
   @spec render_location(map()) :: map() | nil
   defp render_location(%{physical_address: %Address{} = address}),

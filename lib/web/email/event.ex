@@ -47,6 +47,11 @@ defmodule Mobilizon.Web.Email.Event do
         title: old_event.title
       )
 
+    json_ld =
+      "participation.json"
+      |> ObjectView.render(%{participant: %Participant{participant | event: event, actor: actor}})
+      |> Jason.encode!()
+
     Email.base_email(to: {Actor.display_name(actor), email}, subject: subject)
     |> assign(:locale, locale)
     |> assign(:event, event)
@@ -54,6 +59,7 @@ defmodule Mobilizon.Web.Email.Event do
     |> assign(:changes, changes)
     |> assign(:subject, subject)
     |> assign(:timezone, timezone)
+    |> assign(:jsonLDMetadata, json_ld)
     |> Email.add_event_attachment(event)
     |> render(:event_updated)
   end

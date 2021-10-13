@@ -18,6 +18,7 @@ defmodule Mobilizon.Web.Email do
     |> put_header("Reply-To", Config.instance_email_reply_to())
     |> maybe_put_date_header()
     |> maybe_put_message_id()
+    |> assign(:jsonLDMetadata, nil)
     |> assign(:instance_name, Config.instance_name())
     |> put_html_layout({EmailView, "email.html"})
     |> put_text_layout({EmailView, "email.text"})
