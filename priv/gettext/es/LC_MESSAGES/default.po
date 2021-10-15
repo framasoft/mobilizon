@@ -1839,21 +1839,53 @@ msgid "Anonymous participant"
 msgstr "Participante anónimo"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:88
-msgid "In your timezone (%{timezone} %{offset})"
+#: lib/web/templates/email/date/event_tz_date.html.heex:6
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
+msgid "🌐 %{timezone} %{offset}"
 msgstr ""
 
-#, elixir-format, fuzzy
-#: lib/web/templates/email/event_updated.text.eex:20
-msgid "Start %{begins_on} (your timezone)"
-msgstr "Inicio %{begins_on}"
-
-#, elixir-format, fuzzy
-#: lib/web/templates/email/event_updated.text.eex:18
-msgid "Start %{begins_on} (🌐 %{timezone} %{offset})"
-msgstr "Inicio %{begins_on}"
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (%{timezone} %{offset})"
+msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.html.heex:84
-msgid "🌐 %{timezone} %{offset}"
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (in your timezone %{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.heex:13
+#: lib/web/templates/email/notification_each_week.text.eex:1
+msgid "On the agenda this week"
+msgstr "Un evento programado para hoy"
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:11
+msgid "Details"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+msgid "From the %{start} to the %{end}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:68
+msgid "Manage your participation"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+msgid "On %{date} from %{start_time} to %{end_time}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:19
+msgid "Read more"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:50
+msgid "Online event"
 msgstr ""

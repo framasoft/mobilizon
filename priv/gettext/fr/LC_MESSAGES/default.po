@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-10-12 17:42+0200\n"
+"PO-Revision-Date: 2021-10-15 15:16+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -32,7 +32,7 @@ msgstr "%{title} par %{creator}"
 msgid "Activate my account"
 msgstr "Activer mon compte"
 
-#: lib/web/templates/email/email.html.heex:118 lib/web/templates/email/email.text.eex:9
+#: lib/web/templates/email/email.html.heex:123 lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Demander à la communauté sur Framacolibri"
 
@@ -92,7 +92,7 @@ msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le 
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
-#: lib/web/email/participation.ex:108
+#: lib/web/email/participation.ex:111
 msgid "Your participation to event %{title} has been approved"
 msgstr "Votre participation à l'événement %{title} a été approuvée"
 
@@ -100,7 +100,7 @@ msgstr "Votre participation à l'événement %{title} a été approuvée"
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
-#: lib/web/email/event.ex:36
+#: lib/web/email/event.ex:45
 msgid "Event %{title} has been updated"
 msgstr "L'événement %{title} a été mis à jour"
 
@@ -112,11 +112,11 @@ msgstr "Nouveau titre : %{title}"
 msgid "You requested a new password for your account on %{instance}."
 msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{instance}."
 
-#: lib/web/templates/email/email.html.heex:86
+#: lib/web/templates/email/email.html.heex:91
 msgid "Warning"
 msgstr "Attention"
 
-#: lib/web/email/participation.ex:131
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr "Confirmer ma participation à l'événement %{title}"
 
@@ -288,7 +288,7 @@ msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Un événement prévu aujourd'hui"
 msgstr[1] "%{nb_events} événements prévus aujourd'hui"
 
-#: lib/web/templates/email/on_day_notification.html.heex:38 lib/web/templates/email/on_day_notification.text.eex:4
+#: lib/web/templates/email/on_day_notification.html.heex:38 lib/web/templates/email/on_day_notification.text.eex:3
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Vous avez un événement aujourd'hui :"
@@ -610,7 +610,7 @@ msgstr "Confirmez votre adresse email"
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr "Salut ! Vous venez de vous enregistrer pour rejoindre cet événement : « %{title} ». Merci de confirmer l'adresse email que vous avez fournie :"
 
-#: lib/web/templates/email/email.html.heex:115 lib/web/templates/email/email.text.eex:8
+#: lib/web/templates/email/email.html.heex:120 lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Besoin d'aide ? Quelque chose ne fonctionne pas correctement ?"
 
@@ -634,7 +634,7 @@ msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur <b>%{in
 msgid "Please do not use it for real purposes."
 msgstr "Veuillez ne pas l'utiliser pour un cas réel."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:147 lib/web/templates/email/event_updated.text.eex:29 lib/web/templates/email/notification_each_week.html.heex:70 lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:70 lib/web/templates/email/on_day_notification.text.eex:14
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133 lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60 lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60 lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton « Je participe »."
@@ -650,7 +650,7 @@ msgstr[1] "Vous avez %{number_participation_requests} demandes de participation 
 msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} est une instance Mobilizon."
 
-#: lib/web/templates/email/email.html.heex:143
+#: lib/web/templates/email/email.html.heex:148
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "<b>%{instance}</b> est une instance Mobilizon."
 
@@ -666,13 +666,9 @@ msgstr "Un événement est à venir !"
 msgid "Confirm new email"
 msgstr "Confirmez votre adresse email"
 
-#: lib/web/templates/email/event_updated.html.heex:98
+#: lib/web/templates/email/event_updated.html.heex:84
 msgid "End"
 msgstr "Fin"
-
-#: lib/web/templates/email/event_updated.text.eex:26
-msgid "End %{ends_on}"
-msgstr "Fin %{ends_on}"
 
 #: lib/web/templates/email/event_updated.html.heex:13 lib/web/templates/email/event_updated.text.eex:1
 msgid "Event update!"
@@ -710,15 +706,15 @@ msgstr "Si vous n'avez pas déclenché cette alerte, vous pouvez ignorer cet e-m
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgstr "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton « Je participe »."
 
-#: lib/web/templates/email/email.html.heex:144 lib/web/templates/email/email.text.eex:11
+#: lib/web/templates/email/email.html.heex:149 lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "En apprendre plus à propos de Mobilizon ici !"
 
-#: lib/web/templates/email/event_updated.html.heex:108 lib/web/templates/export/event_participants.html.heex:129
+#: lib/web/templates/email/event_updated.html.heex:94 lib/web/templates/export/event_participants.html.heex:129
 msgid "Location"
 msgstr "Localisation"
 
-#: lib/web/templates/email/event_updated.html.heex:118
+#: lib/web/templates/email/event_updated.html.heex:104
 msgid "Location address was removed"
 msgstr "L'adresse physique a été enlevée"
 
@@ -749,10 +745,6 @@ msgstr "Désolé ! Vous n'y allez pas."
 #: lib/web/templates/email/event_updated.html.heex:74
 msgid "Start"
 msgstr "Début"
-
-#: lib/web/templates/email/event_updated.text.eex:22
-msgid "Start %{begins_on}"
-msgstr "Début %{begins_on}"
 
 #: lib/web/templates/email/event_updated.text.eex:3
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
@@ -790,17 +782,13 @@ msgstr "Voir le signalement :"
 msgid "Visit event page"
 msgstr "Voir la page de l'événement"
 
-#: lib/web/templates/email/event_updated.html.heex:135
+#: lib/web/templates/email/event_updated.html.heex:121
 msgid "Visit the updated event page"
 msgstr "Voir la page de l'événement mis à jour"
 
-#: lib/web/templates/email/event_updated.text.eex:28
+#: lib/web/templates/email/event_updated.text.eex:21
 msgid "Visit the updated event page: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
-
-#: lib/web/templates/email/notification_each_week.html.heex:13 lib/web/templates/email/notification_each_week.text.eex:1
-msgid "What's up this week?"
-msgstr "Quoi de neuf cette semaine ?"
 
 #: lib/web/templates/email/on_day_notification.html.heex:13 lib/web/templates/email/on_day_notification.text.eex:1
 msgid "What's up today?"
@@ -830,7 +818,7 @@ msgstr "Vous y allez !"
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr "Si vous n'êtes pas à l'origine de cette modification, merci d'ignorer ce message."
 
-#: lib/web/templates/email/email.html.heex:90
+#: lib/web/templates/email/email.html.heex:95
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "<b>Veuillez ne pas l'utiliser pour un cas réel.</b>"
 
@@ -978,7 +966,7 @@ msgstr "Vous avez confirmé votre participation. Mettez à jour votre agenda, ca
 msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Vous avez demandé à participer à l'événement <b>%{title}</b>."
 
-#: lib/web/email/participation.ex:88
+#: lib/web/email/participation.ex:90
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Votre participation à l'événement %{title} a été approuvée"
 
@@ -1074,7 +1062,7 @@ msgstr "Cette page n’est pas correcte"
 msgid "We're sorry, but something went wrong on our end."
 msgstr "Nous sommes désolé·e·s, mais quelque chose s’est mal passé de notre côté."
 
-#: lib/web/templates/email/email.html.heex:89 lib/web/templates/email/email.text.eex:4
+#: lib/web/templates/email/email.html.heex:94 lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Ceci est un site de démonstration permettant de tester Mobilizon."
 
@@ -1205,18 +1193,42 @@ msgstr "Participant⋅es pour %{event}"
 msgid "Anonymous participant"
 msgstr "Participant⋅e anonyme"
 
-#: lib/web/templates/email/event_updated.html.heex:88
-msgid "In your timezone (%{timezone} %{offset})"
-msgstr "Dans votre fuseau horaire (%{timezone} %{offset})"
-
-#: lib/web/templates/email/event_updated.text.eex:20
-msgid "Start %{begins_on} (your timezone)"
-msgstr "Début %{begins_on} (votre fuseau horaire)"
-
-#: lib/web/templates/email/event_updated.text.eex:18
-msgid "Start %{begins_on} (🌐 %{timezone} %{offset})"
-msgstr "Début %{begins_on} (🌐 %{timezone} %{offset})"
-
-#: lib/web/templates/email/event_updated.html.heex:84
+#: lib/web/templates/email/date/event_tz_date.html.heex:6 lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
 msgid "🌐 %{timezone} %{offset}"
 msgstr "🌐 %{timezone} %{offset}"
+
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (%{timezone} %{offset})"
+msgstr "%{date_time} (%{timezone} %{offset})"
+
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (in your timezone %{timezone} %{offset})"
+msgstr "%{date_time} (dans votre fuseau horaire %{timezone} %{offset})"
+
+#: lib/web/templates/email/notification_each_week.html.heex:13 lib/web/templates/email/notification_each_week.text.eex:1
+msgid "On the agenda this week"
+msgstr "Au programme cette semaine"
+
+#: lib/web/templates/email/participation/event_card.html.heex:11
+msgid "Details"
+msgstr "Détails"
+
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+msgid "From the %{start} to the %{end}"
+msgstr "Du %{start} au %{end}"
+
+#: lib/web/templates/email/participation/card/_metadata.html.heex:68
+msgid "Manage your participation"
+msgstr "Gérer votre participation"
+
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+msgid "On %{date} from %{start_time} to %{end_time}"
+msgstr "Le %{date} de %{start_time} à %{end_time}"
+
+#: lib/web/templates/email/participation/event_card.html.heex:19
+msgid "Read more"
+msgstr "Lire plus"
+
+#: lib/web/templates/email/participation/card/_metadata.html.heex:50
+msgid "Online event"
+msgstr "Événement en ligne"
