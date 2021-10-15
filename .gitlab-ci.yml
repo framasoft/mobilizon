@@ -213,7 +213,7 @@ package-app:
   script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get
+    - mix deps.get && mix tz_world.update
     - mix phx.digest
     - mix release --path release/mobilizon
     - cd release/mobilizon && ln -s lib/mobilizon-*/priv priv
