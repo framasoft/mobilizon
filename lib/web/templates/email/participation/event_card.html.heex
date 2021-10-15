@@ -1,0 +1,24 @@
+<%= if @event.picture do %>
+  <!-- event image -->
+  <%= render("participation/card/_picture.html", event: @event) %>
+  <!-- event image end -->
+<% end %>
+<%= render("participation/card/_title.html", event: @event) %>
+<%= render("participation/card/_metadata.html", event: @event, timezone: @timezone, locale: @locale) %>
+<%= if @event.description do %>
+  <div class="event-working" style="vertical-align: baseline; width: 450px; margin: 0 0 0 10px; padding: 7.5px 0 15px; border: 0;">
+    <p style="color: rgb(46,62,72); font-family: Helvetica,Arial,sans-serif; font-weight: 700; line-height: 1.5; font-size: 16px; vertical-align: baseline; margin: 0; padding: 0 0 7.5px; border: 0;" align="left">
+      <%= gettext("Details") %>
+    </p>
+    <p class="event-working__detail" style="color: rgb(87,100,108); font-family: Helvetica,Arial,sans-serif; font-weight: 300; line-height: 1.5; font-size: 16px; vertical-align: baseline; margin: 0; padding: 0; border: 0;" align="left">
+      <%= process_description(@event.description) %>
+    </p>
+    <%= if String.length(@event.description) > 200 do %>
+      <p style="color: rgb(10,10,10); font-family: Helvetica,Arial,sans-serif; font-weight: normal; line-height: 1.3; font-size: 16px; vertical-align: baseline; margin: 0; padding: 0; border: 0;" align="left">
+        <a href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)} style="color: rgb(254,56,89); font-family: Helvetica,Arial,sans-serif; font-weight: 400; text-align: left; line-height: 1.5; text-decoration: none; vertical-align: baseline; font-size: 16px; margin: 0; padding: 0; border: 0;" target="_blank">
+          <%= gettext("Read more") %>
+        </a>
+      </p>
+    <% end %>
+  </div>
+<% end %>

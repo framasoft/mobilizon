@@ -10,7 +10,7 @@
       <tr>
         <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "What's up this week?" %>
+            <%= gettext "On the agenda this week" %>
           </h1>
         </td>
       </tr>
@@ -40,27 +40,17 @@
         </td>
       </tr>
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 15px 0px 15px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <%= if @total > 1 do %>
-            <ul style="margin: 0;">
+            <ul style="margin: 0;padding: 0;list-style-type: none;">
               <%= for participation <- @participations do %>
-                <li>
-                  <strong>
-                    <%= participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
-                  </strong>
-                  <a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, participation.event.uuid) }"} target="_blank">
-                    <%= participation.event.title %>
-                  </a>
+                <li style="padding: 0; border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; margin-bottom: 10px">
+                  <%= render("participation/event_card.html", event: participation.event, timezone: @timezone, locale: @locale) %>
                 </li>
               <% end %>
             </ul>
           <% else %>
-            <strong>
-              <%= @participation.event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
-            </strong>
-            <a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) }"} target="_blank">
-              <%= @participation.event.title %>
-            </a>
+            <%= render("participation/event_card.html", event: @participation.event, timezone: @timezone, locale: @locale) %>
           <% end %>
         </td>
       </tr>

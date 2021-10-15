@@ -1,0 +1,8 @@
+<%= if @event.options.timezone == nil do %>
+  <%= @date |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale , :short) %>
+<% else %>
+  <strong><%= @date |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale, :short) %></strong><br />
+  <%= if @event.options.timezone != @timezone do %>
+    <span style="font-size: 13px;"><%= gettext "🌐 %{timezone} %{offset}", timezone: @event.options.timezone, offset: @date |> datetime_tz_convert(@event.options.timezone) |> Cldr.DateTime.Formatter.zone_gmt() %></span>
+  <% end %>
+<% end %>

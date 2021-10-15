@@ -74,21 +74,7 @@
                   <%= gettext "Start" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= if @event.options.timezone == nil do %>
-                    <b><%= @event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
-                  <% else %>
-                    <span style="font-size: 14px;">
-                    <%= if @event.options.timezone != @timezone do %>
-                        <%# Event with different timezone than user %>
-                        <b><%= @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale) %></b><br />
-                        <%= gettext "🌐 %{timezone} %{offset}", timezone: @event.options.timezone, offset: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> Cldr.DateTime.Formatter.zone_gmt() %>
-                      <% else %>
-                        <%# Event with same timezone than user %>
-                        <b><%= @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale) %></b><br />
-                        <%= gettext "In your timezone (%{timezone} %{offset})", timezone: @event.options.timezone, offset: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> Cldr.DateTime.Formatter.zone_gmt() %>
-                    <% end %>
-                    </span>
-                  <% end %>
+                  <%= render("date/event_tz_date.html", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %>
                 </td>
               </tr>
             <% end %>
@@ -98,7 +84,7 @@
                   <%= gettext "End" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <b><%= @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
+                  <%= render("date/event_tz_date.html", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %>
                 </td>
               </tr>
             <% end %>

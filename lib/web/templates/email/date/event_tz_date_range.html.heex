@@ -1,0 +1,14 @@
+<%= cond do %>
+  <%= @end_date == nil -> %>
+  <%= render("date/event_tz_date.html", date: @start_date, event: @event, timezone: @timezone, locale: @locale) %>
+  <% is_same_day?(@start_date, @end_date) -> %>
+  <strong><%= gettext "On %{date} from %{start_time} to %{end_time}", date: datetime_to_date_string(@start_date, @locale), start_time: datetime_to_time_string(@start_date, @locale), end_time: datetime_to_time_string(@end_date, @locale) %></strong><br />
+  <%= if @event.options.timezone != @timezone do %>
+    <span style="font-size: 13px;"><%= gettext "🌐 %{timezone} %{offset}", timezone: @event.options.timezone, offset: Cldr.DateTime.Formatter.zone_gmt(@start_date) %></span>
+  <% end %>
+  <% true -> %>
+  <strong><%= gettext "From the %{start} to the %{end}", start: datetime_to_string(@start_date, @locale, :short), end: datetime_to_string(@end_date, @locale, :short) %></strong><br />
+  <%= if @event.options.timezone != @timezone do %>
+    <span style="font-size: 13px;"><%= gettext "🌐 %{timezone} %{offset}", timezone: @event.options.timezone, offset: Cldr.DateTime.Formatter.zone_gmt(@start_date) %></span>
+  <% end %>
+<% end %>

@@ -14,16 +14,9 @@
 <%= if MapSet.member?(@changes, :title) do %>
   <%= gettext "New title: %{title}", title: @event.title %>
 <% end %>
-<%= if MapSet.member?(@changes, :begins_on) do %><%= cond do %><% @event.options.timezone != nil and @event.options.timezone != @timezone -> %><%# Event with different timezone than user %>
-  <%= gettext "Start %{begins_on} (🌐 %{timezone} %{offset})", begins_on: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale), timezone: @event.options.timezone, offset: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> Cldr.DateTime.Formatter.zone_gmt() %>
-<%# Event with same timezone than user %><% @event.options.timezone != nil and @event.options.timezone == @timezone -> %>
-  <%= gettext "Start %{begins_on} (your timezone)", begins_on: @event.begins_on |> datetime_tz_convert(@event.options.timezone) |> datetime_to_string(@locale) %>
-<%# Event with no timezone (show in user timezone) %><% true -> %>
-  <%= gettext "Start %{begins_on}", begins_on: @event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
+<%= if MapSet.member?(@changes, :begins_on) do %><%= render("date/event_tz_date.text", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %>
 <% end %>
-<% end %>
-<%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
-  <%= gettext "End %{ends_on}", ends_on: @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %>
+<%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %><%= render("date/event_tz_date.text", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %>
 <% end %>
 <%= gettext "Visit the updated event page: %{link}", link: Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>
