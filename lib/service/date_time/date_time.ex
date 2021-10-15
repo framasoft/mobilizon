@@ -16,8 +16,13 @@ defmodule Mobilizon.Service.DateTime do
     Mobilizon.Cldr.Time.to_string!(datetime, format: format, locale: locale_or_default(locale))
   end
 
-  @spec datetime_tz_convert(DateTime.t(), String.t()) :: DateTime.t()
-  def datetime_tz_convert(%DateTime{} = datetime, timezone) do
+  @spec datetime_to_date_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
+  def datetime_to_date_string(%DateTime{} = datetime, locale \\ "en", format \\ :short) do
+    Mobilizon.Cldr.Date.to_string!(datetime, format: format, locale: locale_or_default(locale))
+  end
+
+  @spec datetime_tz_convert(DateTime.t(), String.t() | nil) :: DateTime.t()
+  def datetime_tz_convert(%DateTime{} = datetime, timezone) when is_binary(timezone) do
     case DateTime.shift_zone(datetime, timezone) do
       {:ok, datetime_with_tz} ->
         datetime_with_tz
@@ -26,6 +31,8 @@ defmodule Mobilizon.Service.DateTime do
         datetime
     end
   end
+
+  def datetime_tz_convert(%DateTime{} = datetime, nil), do: datetime
 
   @spec datetime_relative(DateTime.t(), String.t()) :: String.t()
   def datetime_relative(%DateTime{} = datetime, locale \\ "en") do
@@ -199,5 +206,10 @@ defmodule Mobilizon.Service.DateTime do
   def is_delay_ok_since_last_notification_sent?(%DateTime{} = last_notification_sent) do
     DateTime.compare(DateTime.add(last_notification_sent, 3_600), DateTime.utc_now()) ==
       :lt
+  end
+
+  @spec is_same_day?(DateTime.t(), DateTime.t()) :: boolean()
+  def is_same_day?(%DateTime{} = one, %DateTime{} = two) do
+    DateTime.to_date(one) == DateTime.to_date(two)
   end
 end
