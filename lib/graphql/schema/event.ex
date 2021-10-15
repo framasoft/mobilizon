@@ -243,6 +243,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description:
         "Whether to show or hide the person organizer when event is organized by a group"
     )
+
+    field(:is_online, :boolean, description: "Whether the event is fully online")
   end
 
   @desc """
@@ -294,6 +296,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description:
         "Whether to show or hide the person organizer when event is organized by a group"
     )
+
+    field(:is_online, :boolean, description: "Whether the event is fully online")
   end
 
   enum :event_metadata_type do

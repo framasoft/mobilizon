@@ -28,7 +28,8 @@ defmodule Mobilizon.Events.EventOptions do
           show_start_time: boolean,
           show_end_time: boolean,
           timezone: String.t() | nil,
-          hide_organizer_when_group_event: boolean
+          hide_organizer_when_group_event: boolean,
+          is_online: boolean()
         }
 
   @attrs [
@@ -43,7 +44,8 @@ defmodule Mobilizon.Events.EventOptions do
     :show_start_time,
     :show_end_time,
     :timezone,
-    :hide_organizer_when_group_event
+    :hide_organizer_when_group_event,
+    :is_online
   ]
 
   @primary_key false
@@ -61,6 +63,7 @@ defmodule Mobilizon.Events.EventOptions do
     field(:show_end_time, :boolean, default: true)
     field(:timezone, :string)
     field(:hide_organizer_when_group_event, :boolean, default: false)
+    field(:is_online, :boolean, default: false)
 
     embeds_many(:offers, EventOffer)
     embeds_many(:participation_condition, EventParticipationCondition)

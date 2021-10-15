@@ -1202,5 +1202,6 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "Back to top": "Back to top",
   "Powered by Mobilizon": "Powered by Mobilizon",
-  "Instance follows": "Instance follows"
+  "Instance follows": "Instance follows",
+  "The event is fully online": "The event is fully online"
 }

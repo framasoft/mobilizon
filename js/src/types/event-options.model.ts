@@ -27,6 +27,7 @@ export interface IEventOptions {
   showStartTime: boolean;
   showEndTime: boolean;
   timezone: string | null;
+  isOnline: boolean;
 }
 
 export class EventOptions implements IEventOptions {
@@ -57,4 +58,6 @@ export class EventOptions implements IEventOptions {
   showEndTime = true;
 
   timezone = null;
+
+  isOnline = false;
 }

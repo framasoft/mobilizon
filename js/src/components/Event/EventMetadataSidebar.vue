@@ -1,6 +1,7 @@
 <template>
   <div>
     <event-metadata-block
+      v-if="!event.options.isOnline"
       :title="$t('Location')"
       :icon="physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'"
     >

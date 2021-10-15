@@ -62,6 +62,7 @@ const EVENT_OPTIONS_FRAGMENT = gql`
     commentModeration
     showParticipationPrice
     hideOrganizerWhenGroupEvent
+    isOnline
   }
 `;
 

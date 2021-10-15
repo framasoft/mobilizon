@@ -34,6 +34,7 @@
           @select="updateSelected"
           v-bind="$attrs"
           :id="id"
+          :disabled="disabled"
         >
           <template #default="{ option }">
             <b-icon :icon="option.poiInfos.poiIcon.icon" />
@@ -156,6 +157,7 @@ export default class FullAddressAutoComplete extends Mixins(
 ) {
   @Prop({ required: false, default: "" }) label!: string;
   @Prop({ required: false }) userTimezone!: string;
+  @Prop({ required: false, default: false, type: Boolean }) disabled!: boolean;
 
   addressModalActive = false;
 
