@@ -20,6 +20,7 @@ defmodule Mobilizon.Web.Email do
     |> maybe_put_message_id()
     |> assign(:jsonLDMetadata, nil)
     |> assign(:instance_name, Config.instance_name())
+    |> assign(:offer_unsupscription, true)
     |> put_html_layout({EmailView, "email.html"})
     |> put_text_layout({EmailView, "email.text"})
   end

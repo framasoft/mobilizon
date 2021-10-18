@@ -34,6 +34,7 @@ defmodule Mobilizon.Web.Email.User do
     |> assign(:locale, locale)
     |> assign(:token, confirmation_token)
     |> assign(:subject, subject)
+    |> assign(:offer_unsupscription, false)
     |> render(:registration_confirmation)
   end
 
@@ -54,6 +55,7 @@ defmodule Mobilizon.Web.Email.User do
     |> assign(:locale, locale)
     |> assign(:token, reset_password_token)
     |> assign(:subject, subject)
+    |> assign(:offer_unsupscription, false)
     |> render(:password_reset)
   end
 
@@ -161,6 +163,7 @@ defmodule Mobilizon.Web.Email.User do
     |> assign(:locale, user_locale)
     |> assign(:subject, subject)
     |> assign(:new_email, unconfirmed_email)
+    |> assign(:offer_unsupscription, false)
     |> render(:email_changed_old)
   end
 
@@ -181,6 +184,7 @@ defmodule Mobilizon.Web.Email.User do
     |> assign(:locale, user_locale)
     |> assign(:subject, subject)
     |> assign(:token, confirmation_token)
+    |> assign(:offer_unsupscription, false)
     |> render(:email_changed_new)
   end
 
