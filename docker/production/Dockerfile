@@ -16,8 +16,7 @@ COPY mix.exs mix.lock ./
 ENV MIX_ENV=prod
 RUN mix local.hex --force \
     && mix local.rebar --force \
-    && mix deps.get \
-    && mix tz_world.update
+    && mix deps.get
 
 COPY lib ./lib
 COPY priv ./priv

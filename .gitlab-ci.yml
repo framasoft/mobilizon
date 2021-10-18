@@ -109,8 +109,7 @@ exunit:
   variables:
     MIX_ENV: test
   before_script:
-    - mix deps.get
-    - mix tz_world.update
+    - mix deps.get && mix tz_world.update
     - mix ecto.create
     - mix ecto.migrate
   script:
@@ -215,7 +214,7 @@ package-app:
   script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get && mix tz_world.update
+    - mix deps.get
     - mix phx.digest
     - mix release --path release/mobilizon
     - cd release/mobilizon && ln -s lib/mobilizon-*/priv priv && cd ../../
@@ -228,7 +227,7 @@ package-app:
   artifacts:
     expire_in: 30 days
     paths:
-      - release
+      - ${APP_ASSET}
 
 package-app-dev:
   stage: package
@@ -239,7 +238,7 @@ package-app-dev:
   artifacts:
     expire_in: 2 days
     paths:
-      - release
+      - ${APP_ASSET}
 
 release-upload:
   stage: upload
