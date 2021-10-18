@@ -109,7 +109,7 @@ defmodule Mobilizon.Events.Participant do
 
   # No lookalike symbols
   @symbols '6789BCDFGHJKLMNPQRTW'
-  @symbol_count Enum.count(@symbols)
+  @symbol_count Enum.count(@symbols) - 1
   @code_length 6
 
   @spec generate_code :: String.t()

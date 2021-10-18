@@ -1009,8 +1009,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
-          creator,
           user.email,
+          creator,
           actor,
           event,
           new_event,
@@ -1020,8 +1020,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert_delivered_email(
         Email.Event.event_updated(
-          participant,
           participant_user.email,
+          participant,
           participant_actor,
           event,
           new_event,

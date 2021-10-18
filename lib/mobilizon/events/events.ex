@@ -738,6 +738,11 @@ defmodule Mobilizon.Events do
     |> Repo.one()
   end
 
+  @spec get_participant!(integer | String.t()) :: Participant.t()
+  def get_participant!(participant_id) do
+    Repo.get_by!(Participant, id: participant_id)
+  end
+
   @doc """
   Gets a single participation for an event and actor.
 

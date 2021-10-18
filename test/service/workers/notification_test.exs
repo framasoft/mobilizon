@@ -25,7 +25,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
           notification_before_event: true
         )
 
-      user = Map.put(user, :settings, settings)
+      user = %User{user | settings: settings}
 
       %Actor{} = actor = insert(:actor, user: user)
 
@@ -53,8 +53,9 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       {:ok, %Participant{id: participant_id} = participant} =
         Events.create_participant(%{actor_id: actor_id, event_id: event_id, role: :participant})
 
-      actor = Map.put(participant.actor, :user, user)
-      participant = Map.put(participant, :actor, actor)
+      actor = %Actor{participant.actor | user: user}
+      event = Events.get_event_with_preload!(participant.event_id)
+      participant = %Participant{participant | actor: actor, event: event}
 
       assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
@@ -115,7 +116,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
     end
 
     test "unless the person is no longer participating" do
-      %Event{id: event_id} = insert(:event)
+      %Event{id: event_id} = event = insert(:event)
 
       %User{id: user_id} = user = insert(:user)
 
@@ -129,7 +130,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         Events.create_participant(%{actor_id: actor.id, event_id: event_id, role: :participant})
 
       actor = Map.put(participant.actor, :user, user)
-      participant = Map.put(participant, :actor, actor)
+      participant = %Participant{participant | actor: actor, event: event}
 
       assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
@@ -227,21 +228,21 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
     end
 
     test "unless the person is no longer participating" do
-      %Event{id: event_id} = insert(:event)
+      %Event{id: event_id} = event = insert(:event)
 
       %User{id: user_id} = user = insert(:user)
 
       settings =
         insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
 
-      user = Map.put(user, :settings, settings)
+      user = %User{user | settings: settings}
       %Actor{} = actor = insert(:actor, user: user)
 
       {:ok, %Participant{} = participant} =
         Events.create_participant(%{actor_id: actor.id, event_id: event_id, role: :participant})
 
-      actor = Map.put(participant.actor, :user, user)
-      participant = Map.put(participant, :actor, actor)
+      actor = %Actor{participant.actor | user: user}
+      participant = %Participant{participant | actor: actor, event: event}
 
       assert {:ok, %{participant: %Participant{}}} = Events.delete_participant(participant)
 
