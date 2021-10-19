@@ -50,6 +50,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
         Logger.debug("Inserting full comment")
         Logger.debug(inspect(object))
 
+
         data = %{
           text: object["content"],
           url: object["id"],
