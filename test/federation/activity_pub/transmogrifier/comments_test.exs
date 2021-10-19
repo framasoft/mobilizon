@@ -117,6 +117,16 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
              end) =~ "[warn] Parent object is something we don't handle"
     end
 
+    test "it ignores incoming private notes" do
+      data = File.read!("test/fixtures/mastodon-post-activity-private.json") |> Jason.decode!()
+      event = insert(:event)
+      object = data["object"]
+      object = Map.put(object, "inReplyTo", event.url)
+      data = Map.put(data, "object", object)
+
+      :error = Transmogrifier.handle_incoming(data)
+    end
+
     test "it works for incoming notices" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
