@@ -1,5 +1,5 @@
 init:
-	@bash docker/message.sh "start"
+	@bash docker/message.sh "Start"
 	make start
 
 setup: stop
@@ -10,16 +10,16 @@ migrate:
 logs:
 	docker-compose logs -f
 start: stop
-	@bash docker/message.sh "starting Mobilizon with docker"
+	@bash docker/message.sh "Starting Mobilizon with Docker"
 	docker-compose up -d api
-	@bash docker/message.sh "Docker server started."
+	@bash docker/message.sh "Docker server started"
 stop:
-	@bash docker/message.sh "stopping Mobilizon"
+	@bash docker/message.sh "Stopping Mobilizon"
 	docker-compose down
-	@bash docker/message.sh "stopped"
+	@bash docker/message.sh "Mobilizon is stopped"
 test: stop
 	@bash docker/message.sh "Running tests"
-	docker-compose -f docker-compose.yml -f docker-compose.test.yml run api mix test
-	@bash docker/message.sh "Tests runned"
+	docker-compose -f docker-compose.yml -f docker-compose.test.yml run api mix test $(only)
+	@bash docker/message.sh "Done running tests"
 
 target: init

@@ -247,6 +247,7 @@ defmodule Mobilizon.Mixfile do
       test: [
         "ecto.create",
         "ecto.migrate",
+        "tz_world.update",
         &run_test/1
       ],
       "phx.deps_migrate_serve": [
