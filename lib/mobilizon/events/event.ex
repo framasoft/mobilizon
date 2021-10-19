@@ -47,6 +47,7 @@ defmodule Mobilizon.Events.Event do
           draft: boolean,
           visibility: atom(),
           join_options: atom(),
+          external_participation_url: String.t(),
           publish_at: DateTime.t() | nil,
           uuid: Ecto.UUID.t(),
           online_address: String.t() | nil,
@@ -81,6 +82,7 @@ defmodule Mobilizon.Events.Event do
     :local,
     :visibility,
     :join_options,
+    :external_participation_url,
     :publish_at,
     :online_address,
     :phone_address,
@@ -105,6 +107,7 @@ defmodule Mobilizon.Events.Event do
     field(:draft, :boolean, default: false)
     field(:visibility, EventVisibility, default: :public)
     field(:join_options, JoinOptions, default: :free)
+    field(:external_participation_url, :string)
     field(:publish_at, :utc_datetime)
     field(:uuid, Ecto.UUID, default: Ecto.UUID.generate())
     field(:online_address, :string)

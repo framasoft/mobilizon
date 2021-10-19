@@ -94,7 +94,13 @@
               </span>
             </div>
             <div class="column is-3-tablet">
+              <external-participation-button
+                v-if="event.joinOptions === EventJoinOptions.EXTERNAL"
+                :event="event"
+                :current-actor="currentActor"
+              />
               <participation-section
+                v-else
                 :participation="participations[0]"
                 :event="event"
                 :anonymousParticipation="anonymousParticipation"
@@ -120,7 +126,7 @@
                     <tag>{{ organizer.domain }}</tag>
                   </a>
                 </template>
-                <p>
+                <p v-if="event.joinOptions !== EventJoinOptions.EXTERNAL">
                   <router-link
                     class="participations-link"
                     v-if="canManageEvent && event.draft === false"
@@ -508,6 +514,7 @@ import { CREATE_REPORT } from "../../graphql/report";
 import EventMixin from "../../mixins/event";
 import IdentityPicker from "../Account/IdentityPicker.vue";
 import ParticipationSection from "../../components/Participation/ParticipationSection.vue";
+import ExternalParticipationButton from "../../components/Event/ExternalParticipationButton.vue";
 import RouteName from "../../router/name";
 import CommentTree from "../../components/Comment/CommentTree.vue";
 import "intersection-observer";
@@ -542,6 +549,7 @@ import { IUser } from "@/types/current-user.model";
     ReportModal,
     IdentityPicker,
     ParticipationSection,
+    ExternalParticipationButton,
     CommentTree,
     Tag,
     PopoverActorCard,
