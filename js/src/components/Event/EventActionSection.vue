@@ -1,7 +1,13 @@
 <template>
   <div class="">
+    <external-participation-button
+      v-if="event && event.joinOptions === EventJoinOptions.EXTERNAL"
+      :event="event"
+      :current-actor="currentActor"
+    />
+
     <participation-section
-      v-if="event && anonymousParticipationConfig"
+      v-else-if="event && anonymousParticipationConfig"
       :participation="participations[0]"
       :event="event"
       :anonymousParticipation="anonymousParticipation"
@@ -15,7 +21,10 @@
       @cancel-anonymous-participation="cancelAnonymousParticipation"
     />
     <div class="flex flex-col gap-1 mt-1">
-      <p class="inline-flex gap-2 ml-auto">
+      <p
+        class="inline-flex gap-2 ml-auto"
+        v-if="event.joinOptions !== EventJoinOptions.EXTERNAL"
+      >
         <TicketConfirmationOutline />
         <router-link
           class="participations-link"
@@ -349,6 +358,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { useCreateReport } from "@/composition/apollo/report";
 import { useDeleteEvent } from "@/composition/apollo/event";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
+import ExternalParticipationButton from "./ExternalParticipationButton.vue";
 
 const ShareEventModal = defineAsyncComponent(
   () => import("@/components/Event/ShareEventModal.vue")

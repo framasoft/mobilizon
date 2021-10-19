@@ -1605,5 +1605,9 @@
   "Reported by an unknown actor": "Reported by an unknown actor",
   "Reported at": "Reported at",
   "Updated at": "Updated at",
-  "Suspend the profile?": "Suspend the profile?"
+  "Suspend the profile?": "Suspend the profile?",
+  "Go to booking": "Go to booking",
+  "External registration": "External registration",
+  "I want to manage the registration with an external provider": "I want to manage the registration with an external provider",
+  "External provider URL": "External provider URL"
 }

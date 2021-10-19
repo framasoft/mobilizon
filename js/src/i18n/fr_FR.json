@@ -1601,5 +1601,9 @@
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
   "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Go to booking": "Aller à la réservation",
+  "External registration": "Inscription externe",
+  "I want to manage the registration with an external provider": "Je souhaite gérer l'enregistrement auprès d'un fournisseur externe",
+  "External provider URL": "URL du fournisseur externe"
 }
