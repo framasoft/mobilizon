@@ -114,7 +114,11 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "PropertyValue" => "sc:PropertyValue",
           "value" => "sc:value",
           "propertyID" => "sc:propertyID",
-          "inLanguage" => "sc:inLanguage"
+          "inLanguage" => "sc:inLanguage",
+          "timezone" => %{
+            "@id" => "mz:timezone",
+            "@type" => "sc:Text"
+          }
         }
       ]
     }

@@ -91,6 +91,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:email, :string, description: "The anonymous participant's email")
       arg(:message, :string, description: "The anonymous participant's message")
       arg(:locale, :string, description: "The anonymous participant's locale")
+      arg(:timezone, :string, description: "The anonymous participant's timezone")
 
       resolve(&Participant.actor_join_event/3)
     end

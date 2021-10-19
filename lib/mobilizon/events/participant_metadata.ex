@@ -15,7 +15,7 @@ defmodule Mobilizon.Events.Participant.Metadata do
           locale: String.t()
         }
 
-  @attrs [:email, :confirmation_token, :cancellation_token, :message, :locale]
+  @attrs [:email, :confirmation_token, :cancellation_token, :message, :locale, :timezone]
 
   @derive Jason.Encoder
   embedded_schema do
@@ -24,6 +24,7 @@ defmodule Mobilizon.Events.Participant.Metadata do
     field(:cancellation_token, :string)
     field(:message, :string)
     field(:locale, :string)
+    field(:timezone, :string)
   end
 
   @doc false

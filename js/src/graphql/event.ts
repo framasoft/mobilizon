@@ -62,6 +62,7 @@ const EVENT_OPTIONS_FRAGMENT = gql`
     commentModeration
     showParticipationPrice
     hideOrganizerWhenGroupEvent
+    isOnline
   }
 `;
 
@@ -380,6 +381,7 @@ export const JOIN_EVENT = gql`
     $email: String
     $message: String
     $locale: String
+    $timezone: String
   ) {
     joinEvent(
       eventId: $eventId
@@ -387,6 +389,7 @@ export const JOIN_EVENT = gql`
       email: $email
       message: $message
       locale: $locale
+      timezone: $timezone
     ) {
       ...ParticipantQuery
     }

@@ -1308,5 +1308,6 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "Back to top": "Retour en haut",
   "Powered by Mobilizon": "Propulsé par Mobilizon",
-  "Instance follows": "Abonnements de l'instance"
+  "Instance follows": "Abonnements de l'instance",
+  "The event is fully online": "L'événement est entièrement en ligne"
 }

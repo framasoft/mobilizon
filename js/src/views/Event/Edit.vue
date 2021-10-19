@@ -81,10 +81,16 @@
           {{ $t("Date parameters") }}
         </b-button>
 
-        <full-address-auto-complete
-          v-model="eventPhysicalAddress"
-          :user-timezone="userActualTimezone"
-        />
+        <div class="address">
+          <full-address-auto-complete
+            v-model="eventPhysicalAddress"
+            :user-timezone="userActualTimezone"
+            :disabled="isOnline"
+          />
+          <b-switch class="is-online" v-model="isOnline">{{
+            $t("The event is fully online")
+          }}</b-switch>
+        </div>
 
         <div class="field">
           <label class="label">{{ $t("Description") }}</label>
@@ -534,6 +540,15 @@ section {
         margin-left: auto;
       }
     }
+  }
+}
+
+.address {
+  ::v-deep .address-autocomplete {
+    margin-bottom: 0 !important;
+  }
+  .is-online {
+    margin-bottom: 10px;
   }
 }
 </style>
@@ -1287,6 +1302,17 @@ export default class EditEvent extends Vue {
       this.timezone = address.timezone;
     }
     this.event.physicalAddress = address;
+  }
+
+  get isOnline(): boolean {
+    return this.event.options.isOnline;
+  }
+
+  set isOnline(isOnline: boolean) {
+    this.event.options = {
+      ...this.event.options,
+      isOnline,
+    };
   }
 }
 </script>

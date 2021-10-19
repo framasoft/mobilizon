@@ -37,7 +37,7 @@ msgid "Activate my account"
 msgstr "Saját fiók aktiválása"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:118
+#: lib/web/templates/email/email.html.heex:123
 #: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Kérdezze meg a közösséget a Framacolibrin"
@@ -124,7 +124,7 @@ msgstr ""
 "kívül a levelet."
 
 #, elixir-format
-#: lib/web/email/participation.ex:108
+#: lib/web/email/participation.ex:111
 msgid "Your participation to event %{title} has been approved"
 msgstr "Jóváhagyták a részvételét a(z) %{title} eseményen"
 
@@ -134,7 +134,7 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "Elutasították a részvételét a(z) %{title} eseményen"
 
 #, elixir-format
-#: lib/web/email/event.ex:36
+#: lib/web/email/event.ex:45
 msgid "Event %{title} has been updated"
 msgstr "A(z) %{title} esemény frissítésre került"
 
@@ -149,12 +149,12 @@ msgid "You requested a new password for your account on %{instance}."
 msgstr "Új jelszót kért a(z) %{instance} példányon lévő fiókjához."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:86
+#: lib/web/templates/email/email.html.heex:91
 msgid "Warning"
 msgstr "Figyelmeztetés"
 
 #, elixir-format
-#: lib/web/email/participation.ex:131
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr "Erősítse meg a részvételét a(z) %{title} eseményen"
 
@@ -376,7 +376,7 @@ msgstr[1] "%{nb_events} tervezett esemény ma"
 
 #, elixir-format
 #: lib/web/templates/email/on_day_notification.html.heex:38
-#: lib/web/templates/email/on_day_notification.text.eex:4
+#: lib/web/templates/email/on_day_notification.text.eex:3
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Egy eseménye van ma:"
@@ -771,7 +771,7 @@ msgid "Hi there! You just registered to join this event: « %{title} ». Please 
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:115
+#: lib/web/templates/email/email.html.heex:120
 #: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr ""
@@ -804,9 +804,9 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.heex:70
-#: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:70
-#: lib/web/templates/email/on_day_notification.text.eex:14
+#: lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60
+#: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60
+#: lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -826,7 +826,7 @@ msgid "%{instance} is powered by Mobilizon."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:143
+#: lib/web/templates/email/email.html.heex:148
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr ""
 
@@ -852,11 +852,6 @@ msgstr "Új e-mail-cím megerősítése"
 #: lib/web/templates/email/event_updated.html.heex:84
 msgid "End"
 msgstr "Befejezés"
-
-#, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:21
-msgid "End %{ends_on}"
-msgstr "Befejezés: %{ends_on}"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:13
@@ -910,7 +905,7 @@ msgid "If you wish to cancel your attendance, visit the event page through the l
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:144
+#: lib/web/templates/email/email.html.heex:149
 #: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr ""
@@ -968,11 +963,6 @@ msgid "Start"
 msgstr "Kezdés"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:18
-msgid "Start %{begins_on}"
-msgstr "Kezdés: %{begins_on}"
-
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:3
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr ""
@@ -1028,15 +1018,9 @@ msgid "Visit the updated event page"
 msgstr "A frissített eseményoldal felkeresése"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:23
+#: lib/web/templates/email/event_updated.text.eex:21
 msgid "Visit the updated event page: %{link}"
 msgstr "A frissített eseményoldal felkeresése: %{link}"
-
-#, elixir-format
-#: lib/web/templates/email/notification_each_week.html.heex:13
-#: lib/web/templates/email/notification_each_week.text.eex:1
-msgid "What's up this week?"
-msgstr "Mi lesz a héten?"
 
 #, elixir-format
 #: lib/web/templates/email/on_day_notification.html.heex:13
@@ -1081,7 +1065,7 @@ msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:90
+#: lib/web/templates/email/email.html.heex:95
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr ""
 
@@ -1266,7 +1250,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/participation.ex:88
+#: lib/web/email/participation.ex:90
 msgid "Your participation to event %{title} has been confirmed"
 msgstr ""
 
@@ -1389,7 +1373,7 @@ msgid "We're sorry, but something went wrong on our end."
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:89
+#: lib/web/templates/email/email.html.heex:94
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr ""
@@ -1554,4 +1538,56 @@ msgstr "Részvétel jóváhagyva"
 #, elixir-format
 #: lib/service/export/participants/common.ex:88
 msgid "Anonymous participant"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.html.heex:6
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
+msgid "🌐 %{timezone} %{offset}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (%{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (in your timezone %{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.heex:13
+#: lib/web/templates/email/notification_each_week.text.eex:1
+msgid "On the agenda this week"
+msgstr "Egy esemény tervezve a héten"
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:11
+msgid "Details"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+msgid "From the %{start} to the %{end}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:68
+msgid "Manage your participation"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+msgid "On %{date} from %{start_time} to %{end_time}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:19
+msgid "Read more"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:50
+msgid "Online event"
 msgstr ""

@@ -74,7 +74,7 @@
                   <%= gettext "Start" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <b><%= @event.begins_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
+                  <%= render("date/event_tz_date.html", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %>
                 </td>
               </tr>
             <% end %>
@@ -84,7 +84,7 @@
                   <%= gettext "End" %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <b><%= @event.ends_on |> datetime_tz_convert(@timezone) |> datetime_to_string(@locale) %></b>
+                  <%= render("date/event_tz_date.html", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %>
                 </td>
               </tr>
             <% end %>

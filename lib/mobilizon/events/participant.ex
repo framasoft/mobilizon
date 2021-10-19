@@ -17,6 +17,7 @@ defmodule Mobilizon.Events.Participant do
   @type t :: %__MODULE__{
           id: String.t(),
           role: ParticipantRole.t(),
+          code: String.t(),
           url: String.t(),
           event: Event.t(),
           actor: Actor.t(),
@@ -24,7 +25,8 @@ defmodule Mobilizon.Events.Participant do
         }
 
   @required_attrs [:url, :role, :event_id, :actor_id]
-  @attrs @required_attrs
+  @optional_attrs [:code]
+  @attrs @required_attrs ++ @optional_attrs
 
   @timestamps_opts [type: :utc_datetime]
 
@@ -32,6 +34,7 @@ defmodule Mobilizon.Events.Participant do
   schema "participants" do
     field(:role, ParticipantRole, default: :participant)
     field(:url, :string)
+    field(:code, :string)
 
     embeds_one(:metadata, Metadata, on_replace: :delete)
 
@@ -64,6 +67,7 @@ defmodule Mobilizon.Events.Participant do
     |> cast(attrs, @attrs)
     |> cast_embed(:metadata)
     |> ensure_url()
+    |> add_code()
     |> validate_required(@required_attrs)
     |> unique_constraint(:actor_id, name: :participants_event_id_actor_id_index)
   end
@@ -93,4 +97,25 @@ defmodule Mobilizon.Events.Participant do
 
   @spec generate_url(String.t()) :: String.t()
   defp generate_url(uuid), do: "#{Endpoint.url()}/join/event/#{uuid}"
+
+  @spec add_code(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  defp add_code(%Ecto.Changeset{} = changeset) do
+    case fetch_field(changeset, :code) do
+      {:data, nil} -> put_change(changeset, :code, generate_code())
+      {_, _code} -> changeset
+      :error -> put_change(changeset, :code, generate_code())
+    end
+  end
+
+  # No lookalike symbols
+  @symbols '6789BCDFGHJKLMNPQRTW'
+  @symbol_count Enum.count(@symbols) - 1
+  @code_length 6
+
+  @spec generate_code :: String.t()
+  defp generate_code do
+    for _ <- 1..@code_length,
+        into: "",
+        do: <<Enum.at(@symbols, :rand.uniform(@symbol_count))>>
+  end
 end

@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "yarn run build:assets && yarn run build:pictures",
-    "test:unit": "LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8 vue-cli-service test:unit",
+    "test:unit": "LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8 TZ=UTC vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
     "build:assets": "vue-cli-service build",

@@ -14,15 +14,24 @@ defmodule Mobilizon.Web.Email.Event do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.{Setting, User}
-
   alias Mobilizon.Web.Email
+  alias Mobilizon.Web.JsonLD.ObjectView
 
   @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
-  @spec event_updated(String.t(), Actor.t(), Event.t(), Event.t(), MapSet.t(), String.t()) ::
+  @spec event_updated(
+          Participant.t(),
+          String.t(),
+          Actor.t(),
+          Event.t(),
+          Event.t(),
+          MapSet.t(),
+          String.t()
+        ) ::
           Bamboo.Email.t()
   def event_updated(
         email,
+        %Participant{} = participant,
         %Actor{} = actor,
         %Event{} = old_event,
         %Event{} = event,
@@ -38,6 +47,11 @@ defmodule Mobilizon.Web.Email.Event do
         title: old_event.title
       )
 
+    json_ld =
+      "participation.json"
+      |> ObjectView.render(%{participant: %Participant{participant | event: event, actor: actor}})
+      |> Jason.encode!()
+
     Email.base_email(to: {Actor.display_name(actor), email}, subject: subject)
     |> assign(:locale, locale)
     |> assign(:event, event)
@@ -45,6 +59,7 @@ defmodule Mobilizon.Web.Email.Event do
     |> assign(:changes, changes)
     |> assign(:subject, subject)
     |> assign(:timezone, timezone)
+    |> assign(:jsonLDMetadata, json_ld)
     |> Email.add_event_attachment(event)
     |> render(:event_updated)
   end
@@ -83,13 +98,14 @@ defmodule Mobilizon.Web.Email.Event do
           MapSet.t()
         ) :: Bamboo.Email.t()
   defp send_notification_for_event_update_to_participant(
-         {%Participant{} = _participant, %Actor{} = actor,
+         {%Participant{} = participant, %Actor{} = actor,
           %User{locale: locale, email: email} = _user, %Setting{timezone: timezone}},
          %Event{} = old_event,
          %Event{} = event,
          diff
        ) do
     do_send_notification_for_event_update_to_participant(
+      participant,
       email,
       actor,
       old_event,
@@ -101,13 +117,14 @@ defmodule Mobilizon.Web.Email.Event do
   end
 
   defp send_notification_for_event_update_to_participant(
-         {%Participant{} = _participant, %Actor{} = actor,
+         {%Participant{} = participant, %Actor{} = actor,
           %User{locale: locale, email: email} = _user, nil},
          %Event{} = old_event,
          %Event{} = event,
          diff
        ) do
     do_send_notification_for_event_update_to_participant(
+      participant,
       email,
       actor,
       old_event,
@@ -119,7 +136,8 @@ defmodule Mobilizon.Web.Email.Event do
   end
 
   defp send_notification_for_event_update_to_participant(
-         {%Participant{metadata: %{email: email}} = _participant, %Actor{} = actor, nil, nil},
+         {%Participant{metadata: %{email: email} = participant_metadata} = participant,
+          %Actor{} = actor, nil, nil},
          %Event{} = old_event,
          %Event{} = event,
          diff
@@ -128,17 +146,19 @@ defmodule Mobilizon.Web.Email.Event do
     locale = Gettext.get_locale()
 
     do_send_notification_for_event_update_to_participant(
+      participant,
       email,
       actor,
       old_event,
       event,
       diff,
-      "Etc/UTC",
+      Map.get(participant_metadata, :timezone, "Etc/UTC"),
       locale
     )
   end
 
   @spec do_send_notification_for_event_update_to_participant(
+          Participant.t(),
           String.t(),
           Actor.t(),
           Event.t(),
@@ -148,6 +168,7 @@ defmodule Mobilizon.Web.Email.Event do
           String.t()
         ) :: Bamboo.Email.t()
   defp do_send_notification_for_event_update_to_participant(
+         participant,
          email,
          actor,
          old_event,
@@ -157,7 +178,7 @@ defmodule Mobilizon.Web.Email.Event do
          locale
        ) do
     email
-    |> Email.Event.event_updated(actor, old_event, event, diff, timezone, locale)
+    |> Email.Event.event_updated(participant, actor, old_event, event, diff, timezone, locale)
     |> Email.Mailer.send_email_later()
   end
 end

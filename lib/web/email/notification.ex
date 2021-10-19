@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.Email.Notification do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.Email
+  alias Mobilizon.Web.JsonLD.ObjectView
 
   @spec before_event_notification(String.t(), Participant.t(), String.t()) ::
           Bamboo.Email.t()
@@ -30,6 +31,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:locale, locale)
     |> assign(:participant, participant)
     |> assign(:subject, subject)
+    |> assign(:jsonLDMetadata, build_json_ld(participant))
     |> Email.add_event_attachment(event)
     |> render(:before_event_notification)
   end
@@ -57,6 +59,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:total, total)
     |> assign(:timezone, timezone)
     |> assign(:subject, subject)
+    |> assign(:jsonLDMetadata, build_json_ld(participations))
     |> render(:on_day_notification)
   end
 
@@ -83,6 +86,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:total, total)
     |> assign(:timezone, timezone)
     |> assign(:subject, subject)
+    |> assign(:jsonLDMetadata, build_json_ld(participations))
     |> render(:notification_each_week)
   end
 
@@ -109,5 +113,18 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:total, total)
     |> assign(:subject, subject)
     |> render(:pending_participation_notification)
+  end
+
+  @spec build_json_ld(Participant.t()) :: String.t()
+  defp build_json_ld(%Participant{} = participant) do
+    "participation.json"
+    |> ObjectView.render(%{participant: participant})
+    |> Jason.encode!()
+  end
+
+  defp build_json_ld(participations) when is_list(participations) do
+    participations
+    |> Enum.map(&ObjectView.render("participation.json", %{participant: &1}))
+    |> Jason.encode!()
   end
 end

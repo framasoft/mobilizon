@@ -61,6 +61,7 @@ export const joinEventMock = {
   email: "some@email.tld",
   message: "a message long enough",
   locale: "en_US",
+  timezone: "UTC",
 };
 
 export const eventNoCommentThreadsMock = {

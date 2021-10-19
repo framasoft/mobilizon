@@ -32,7 +32,7 @@ msgid "Activate my account"
 msgstr "Ta i bruk kontoen min"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:118
+#: lib/web/templates/email/email.html.heex:123
 #: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Spør brukarsamfunnet på Framacolibri"
@@ -118,7 +118,7 @@ msgstr ""
 "berre oversjå denne eposten."
 
 #, elixir-format
-#: lib/web/email/participation.ex:108
+#: lib/web/email/participation.ex:111
 msgid "Your participation to event %{title} has been approved"
 msgstr "Deltakinga di på hendinga %{title} er godkjent"
 
@@ -128,7 +128,7 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "Deltakinga di på hendinga %{title} er avslegen"
 
 #, elixir-format
-#: lib/web/email/event.ex:36
+#: lib/web/email/event.ex:45
 msgid "Event %{title} has been updated"
 msgstr "Hendinga %{title} er oppdatert"
 
@@ -143,12 +143,12 @@ msgid "You requested a new password for your account on %{instance}."
 msgstr "Du ba om eit nytt passord for brukarkontoen din på %{instance}."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:86
+#: lib/web/templates/email/email.html.heex:91
 msgid "Warning"
 msgstr "Åtvaring"
 
 #, elixir-format
-#: lib/web/email/participation.ex:131
+#: lib/web/email/participation.ex:135
 msgid "Confirm your participation to event %{title}"
 msgstr "Stadfest at du vil delta på hendinga %{title}"
 
@@ -365,7 +365,7 @@ msgstr[1] "%{nb_events} planlagde hendingar i dag"
 
 #, elixir-format
 #: lib/web/templates/email/on_day_notification.html.heex:38
-#: lib/web/templates/email/on_day_notification.text.eex:4
+#: lib/web/templates/email/on_day_notification.text.eex:3
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
 msgstr[0] "Du har ei hending i dag:"
@@ -877,7 +877,7 @@ msgstr ""
 "epostadressa du skreiv inn:"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:115
+#: lib/web/templates/email/email.html.heex:120
 #: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Treng du hjelp, eller er det noko som ikkje verkar slik du venta?"
@@ -912,9 +912,9 @@ msgstr "Ikkje bruk han på ordentleg."
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:24 lib/web/templates/email/notification_each_week.html.heex:70
-#: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:70
-#: lib/web/templates/email/on_day_notification.text.eex:14
+#: lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60
+#: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60
+#: lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
@@ -940,7 +940,7 @@ msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} er ein Mobilizon-nettstad."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:143
+#: lib/web/templates/email/email.html.heex:148
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "<b>%{instance}</b> er ein Mobilizon-nettstad."
 
@@ -966,11 +966,6 @@ msgstr "Stadfest ny epostadresse"
 #: lib/web/templates/email/event_updated.html.heex:84
 msgid "End"
 msgstr "Slutt"
-
-#, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:21
-msgid "End %{ends_on}"
-msgstr "Slutt %{ends_on}"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:13
@@ -1040,7 +1035,7 @@ msgstr ""
 "og klkka på «Deltek»-knappen."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:144
+#: lib/web/templates/email/email.html.heex:149
 #: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "Lær meir om Mobilizon her!"
@@ -1095,11 +1090,6 @@ msgstr "Orsak! Du er ikkje påmeld."
 #: lib/web/templates/email/event_updated.html.heex:74
 msgid "Start"
 msgstr "Start"
-
-#, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:18
-msgid "Start %{begins_on}"
-msgstr "Startar %{begins_on}"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:3
@@ -1159,15 +1149,9 @@ msgid "Visit the updated event page"
 msgstr "Sjå på den oppdaterte hendingssida"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:23
+#: lib/web/templates/email/event_updated.text.eex:21
 msgid "Visit the updated event page: %{link}"
 msgstr "Sjå på den oppdaterte hendingssida: %{link}"
-
-#, elixir-format
-#: lib/web/templates/email/notification_each_week.html.heex:13
-#: lib/web/templates/email/notification_each_week.text.eex:1
-msgid "What's up this week?"
-msgstr "Kva skjer denne veka?"
 
 #, elixir-format
 #: lib/web/templates/email/on_day_notification.html.heex:13
@@ -1218,7 +1202,7 @@ msgstr ""
 "Viss du ikkje endra dette sjølv, kan du trygt sjå bort frå denne meldinga."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:90
+#: lib/web/templates/email/email.html.heex:95
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "<b>Ikkje bruk det på ordentleg.</b>"
 
@@ -1493,7 +1477,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Du ba nett om å vera med på <b>%{title}</b>."
 
 #, elixir-format
-#: lib/web/email/participation.ex:88
+#: lib/web/email/participation.ex:90
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Me har stadfesta at du deltek på hendinga %{title}"
 
@@ -1628,7 +1612,7 @@ msgid "We're sorry, but something went wrong on our end."
 msgstr "Orsak, det skjedde noko feil hjå oss."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:89
+#: lib/web/templates/email/email.html.heex:94
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Dette er ei demoside for å prøva ut Mobilizon."
@@ -1803,3 +1787,55 @@ msgstr "Deltakinga er godkjend"
 #: lib/service/export/participants/common.ex:88
 msgid "Anonymous participant"
 msgstr "Anonym deltakar"
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.html.heex:6
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
+msgid "🌐 %{timezone} %{offset}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (%{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date.text.eex:1
+msgid "%{date_time} (in your timezone %{timezone} %{offset})"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/notification_each_week.html.heex:13
+#: lib/web/templates/email/notification_each_week.text.eex:1
+msgid "On the agenda this week"
+msgstr "Ei planlagd hending denne veka"
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:11
+msgid "Details"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+msgid "From the %{start} to the %{end}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:68
+msgid "Manage your participation"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+msgid "On %{date} from %{start_time} to %{end_time}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.html.heex:19
+msgid "Read more"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:50
+msgid "Online event"
+msgstr ""

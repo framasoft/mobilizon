@@ -1,0 +1,63 @@
+@import "../variables.scss";
+
+/**
+ * Taken from https://github.com/vue-a11y/vue-skip-to/blob/master/src/VueSkipTo.vue because styles are inlined there
+ */
+
+.vue-skip-to {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  &.focused,
+  &:hover {
+    left: 0;
+    top: 0;
+    clip: auto;
+    height: auto;
+    width: auto;
+    background-color: $white;
+    border: 2px solid $violet-3;
+  }
+
+  &,
+  &__nav-list {
+    list-style-type: none;
+  }
+
+  &__nav > span,
+  &__link {
+    display: block;
+    padding: 8px 16px;
+    color: $violet-3;
+    font-size: 18px;
+  }
+
+  &__nav > span {
+    border-bottom: 2px solid $violet-3;
+    font-weight: bold;
+  }
+
+  &,
+  &__link {
+    text-decoration: none;
+  }
+
+  &__link:focus {
+    outline: none;
+    background-color: $violet-3;
+    color: #f2f2f2;
+  }
+}
