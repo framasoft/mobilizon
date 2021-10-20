@@ -1,7 +1,7 @@
 <template>
   <div class="section container">
     <h1 class="title">{{ $t("Let's define a few settings") }}</h1>
-    <b-steps v-model="realActualStepIndex" :has-navigation="false">
+    <b-steps v-model="stepIndex" :has-navigation="false">
       <b-step-item step="1" :label="$t('Settings')">
         <settings-onboarding />
       </b-step-item>
@@ -15,11 +15,11 @@
     <section class="has-text-centered section buttons">
       <b-button
         outlined
-        :disabled="realActualStepIndex < 1"
+        :disabled="stepIndex < 1"
         tag="router-link"
         :to="{
           name: RouteName.WELCOME_SCREEN,
-          params: { step: actualStepIndex - 1 },
+          params: { step: stepIndex },
         }"
       >
         {{ $t("Previous") }}
@@ -27,17 +27,17 @@
       <b-button
         outlined
         type="is-success"
-        v-if="realActualStepIndex < 2"
+        v-if="stepIndex < 2"
         tag="router-link"
         :to="{
           name: RouteName.WELCOME_SCREEN,
-          params: { step: actualStepIndex + 1 },
+          params: { step: stepIndex + 2 },
         }"
       >
         {{ $t("Next") }}
       </b-button>
       <b-button
-        v-if="realActualStepIndex >= 2"
+        v-if="stepIndex >= 2"
         type="is-success"
         size="is-big"
         tag="router-link"
@@ -49,7 +49,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { TIMEZONES } from "../../graphql/config";
 import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
@@ -79,17 +79,8 @@ export default class SettingsOnboard extends Vue {
 
   RouteName = RouteName;
 
-  actualStepIndex = this.step;
-
-  @Watch("step")
-  updateActualStep(): void {
-    if (this.step) {
-      this.actualStepIndex = this.step;
-    }
-  }
-
-  get realActualStepIndex(): number {
-    return this.actualStepIndex - 1;
+  get stepIndex(): number {
+    return this.step - 1;
   }
 }
 </script>
