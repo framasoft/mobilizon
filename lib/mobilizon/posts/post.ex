@@ -22,8 +22,8 @@ defmodule Mobilizon.Posts.Post do
   import Ecto.Changeset
   alias Ecto.Changeset
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Events, Medias}
   alias Mobilizon.Events.Tag
-  alias Mobilizon.Medias
   alias Mobilizon.Medias.Media
   alias Mobilizon.Posts.Post.TitleSlug
   alias Mobilizon.Posts.PostVisibility
@@ -140,6 +140,12 @@ defmodule Mobilizon.Posts.Post do
     do: put_assoc(changeset, :tags, Enum.map(tags, &process_tag/1))
 
   defp put_tags(changeset, _), do: changeset
+
+  @spec process_tag(map() | Tag.t()) :: Tag.t() | Ecto.Changeset.t()
+  # We need a changeset instead of a raw struct because of slug which is generated in changeset
+  defp process_tag(%{id: id} = _tag) do
+    Events.get_tag(id)
+  end
 
   defp process_tag(tag), do: Tag.changeset(%Tag{}, tag)
 
