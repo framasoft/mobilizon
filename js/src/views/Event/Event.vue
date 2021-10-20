@@ -135,17 +135,17 @@
                     }"
                   >
                     <!-- We retire one because of the event creator who is a participant -->
-                    <span v-if="event.options.maximumAttendeeCapacity">
+                    <span v-if="maximumAttendeeCapacity">
                       {{
                         $tc(
                           "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity -
+                          maximumAttendeeCapacity -
                             event.participantStats.participant,
                           {
                             available:
-                              event.options.maximumAttendeeCapacity -
+                              maximumAttendeeCapacity -
                               event.participantStats.participant,
-                            capacity: event.options.maximumAttendeeCapacity,
+                            capacity: maximumAttendeeCapacity,
                           }
                         )
                       }}
@@ -163,17 +163,17 @@
                     </span>
                   </router-link>
                   <span v-else>
-                    <span v-if="event.options.maximumAttendeeCapacity">
+                    <span v-if="maximumAttendeeCapacity">
                       {{
                         $tc(
                           "{available}/{capacity} available places",
-                          event.options.maximumAttendeeCapacity -
+                          maximumAttendeeCapacity -
                             event.participantStats.participant,
                           {
                             available:
-                              event.options.maximumAttendeeCapacity -
+                              maximumAttendeeCapacity -
                               event.participantStats.participant,
-                            capacity: event.options.maximumAttendeeCapacity,
+                            capacity: maximumAttendeeCapacity,
                           }
                         )
                       }}
@@ -1074,20 +1074,23 @@ export default class Event extends EventMixin {
       : this.event.beginsOn;
   }
 
+  get maximumAttendeeCapacity(): number {
+    return this.event?.options?.maximumAttendeeCapacity;
+  }
+
   get eventCapacityOK(): boolean {
     if (this.event.draft) return true;
-    if (!this.event.options.maximumAttendeeCapacity) return true;
+    if (!this.maximumAttendeeCapacity) return true;
     return (
-      this.event.options.maximumAttendeeCapacity >
+      this.event?.options?.maximumAttendeeCapacity >
       this.event.participantStats.participant
     );
   }
 
   get numberOfPlacesStillAvailable(): number {
-    if (this.event.draft) return this.event.options.maximumAttendeeCapacity;
+    if (this.event.draft) return this.maximumAttendeeCapacity;
     return (
-      this.event.options.maximumAttendeeCapacity -
-      this.event.participantStats.participant
+      this.maximumAttendeeCapacity - this.event.participantStats.participant
     );
   }
 

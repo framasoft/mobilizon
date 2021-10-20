@@ -48,3 +48,4 @@ docker/production/.env
 test-junit-report.xml
 js/junit.xml
 .env
+demo/
