@@ -32,15 +32,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
     end
   end
 
-  def find_discussions_for_actor(%Actor{}, _args, %{
-        context: %{
-          current_user: %User{}
-        }
-      }) do
+  def find_discussions_for_actor(%Actor{}, _args, _resolution) do
     {:ok, %Page{total: 0, elements: []}}
   end
-
-  def find_discussions_for_actor(%Actor{}, _args, _resolution), do: {:error, :unauthenticated}
 
   @spec get_discussion(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Discussion.t()} | {:error, :unauthorized | :discussion_not_found | String.t()}
