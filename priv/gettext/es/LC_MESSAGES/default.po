@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-10-14 04:21+0000\n"
+"PO-Revision-Date: 2021-10-21 07:21+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.8.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:48
 #, elixir-format
@@ -1796,12 +1796,12 @@ msgstr "Moderador"
 #: lib/service/export/participants/common.ex:37
 #, elixir-format
 msgid "Not approved"
-msgstr "No aprovado"
+msgstr "Sin aprovar"
 
 #: lib/service/export/participants/common.ex:40
 #, elixir-format
 msgid "Not confirmed"
-msgstr "No confirmado"
+msgstr "Sin confirmar"
 
 #: lib/service/export/participants/common.ex:46
 #, elixir-format
@@ -1838,54 +1838,54 @@ msgstr "Participación aprobada"
 msgid "Anonymous participant"
 msgstr "Participante anónimo"
 
-#, elixir-format
 #: lib/web/templates/email/date/event_tz_date.html.heex:6
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
+#, elixir-format
 msgid "🌐 %{timezone} %{offset}"
-msgstr ""
+msgstr "🌐 %{timezone} %{offset}"
 
-#, elixir-format
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
+#, elixir-format
 msgid "%{date_time} (%{timezone} %{offset})"
-msgstr ""
+msgstr "%{date_time} (%{timezone} %{offset})"
 
-#, elixir-format
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
-msgid "%{date_time} (in your timezone %{timezone} %{offset})"
-msgstr ""
-
 #, elixir-format
+msgid "%{date_time} (in your timezone %{timezone} %{offset})"
+msgstr "%{date_time} (en tu zona horaria% {timezone} %{offset})"
+
 #: lib/web/templates/email/notification_each_week.html.heex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
+#, elixir-format
 msgid "On the agenda this week"
 msgstr "Un evento programado para hoy"
 
-#, elixir-format
 #: lib/web/templates/email/participation/event_card.html.heex:11
+#, elixir-format
 msgid "Details"
-msgstr ""
+msgstr "Detalles"
 
-#, elixir-format
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+#, elixir-format
 msgid "From the %{start} to the %{end}"
-msgstr ""
+msgstr "Desde el %{start} hasta el %{end}"
 
-#, elixir-format
 #: lib/web/templates/email/participation/card/_metadata.html.heex:68
+#, elixir-format
 msgid "Manage your participation"
-msgstr ""
+msgstr "Gestiona tu participación"
 
-#, elixir-format
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+#, elixir-format
 msgid "On %{date} from %{start_time} to %{end_time}"
-msgstr ""
+msgstr "El %{date} del % {start_time} al %{end_time}"
 
-#, elixir-format
 #: lib/web/templates/email/participation/event_card.html.heex:19
-msgid "Read more"
-msgstr ""
-
 #, elixir-format
+msgid "Read more"
+msgstr "Lee mas"
+
 #: lib/web/templates/email/participation/card/_metadata.html.heex:50
+#, elixir-format
 msgid "Online event"
-msgstr ""
+msgstr "Evento en línea"
