@@ -216,7 +216,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
       actor2 = insert(:actor, user: user)
 
       output =
-        "Informations for the user #{@email}:\n  - account status: Activated on #{confirmed_at} (UTC)\n  - Role: #{role}\n  Identities (2):\n    - @#{actor1.preferred_username} / \n    - @#{actor2.preferred_username} / \n\n\n"
+        "Informations for the user #{@email}:\n  - account status: Activated on #{confirmed_at} (UTC)\n  - Role: #{role}\n  Identities (2):\n    - @#{actor1.preferred_username} / #{actor1.name}\n    - @#{actor2.preferred_username} / #{actor2.name}\n\n\n"
 
       Show.run([@email])
       assert_received {:mix_shell, :info, [output_received]}

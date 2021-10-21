@@ -30,7 +30,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       {:ok, feed} = ElixirFeedParser.parse(conn.resp_body)
 
       assert feed.title ==
-               actor.preferred_username <> "'s public events feed on #{Config.instance_name()}"
+               actor.name <> "'s public events feed on #{Config.instance_name()}"
 
       [entry1, entry2] = entries = feed.entries
 
@@ -270,7 +270,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       {:ok, feed} = ElixirFeedParser.parse(conn.resp_body)
 
       assert feed.title ==
-               "#{actor1.preferred_username}'s private events feed on #{Config.instance_name()}"
+               "#{actor1.name}'s private events feed on #{Config.instance_name()}"
 
       [entry] = feed.entries
       assert entry.title == event1.title

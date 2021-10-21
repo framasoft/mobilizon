@@ -45,6 +45,7 @@ defmodule Mobilizon.Factory do
 
     %Mobilizon.Actors.Actor{
       preferred_username: preferred_username,
+      name: sequence("Thomas Named"),
       domain: nil,
       followers: [],
       followings: [],
@@ -81,7 +82,8 @@ defmodule Mobilizon.Factory do
         resources_url: Actor.build_url(preferred_username, :resources),
         inbox_url: Actor.build_url(preferred_username, :inbox),
         outbox_url: Actor.build_url(preferred_username, :outbox),
-        user: nil
+        user: nil,
+        physical_address: build(:address)
       }
     )
   end

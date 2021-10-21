@@ -20,18 +20,20 @@ defmodule Mobilizon.Service.Metadata.Instance do
     description = Utils.process_description(Config.instance_description())
     title = "#{Config.instance_name()} - Mobilizon"
 
-    instance_json_ld = """
-    <script type="application/ld+json">{
-    "@context": "http://schema.org",
-    "@type": "WebSite",
-    "name": "#{title}",
-    "url": "#{Endpoint.url()}",
-    "potentialAction": {
-    "@type": "SearchAction",
-    "target": "#{Endpoint.url()}/search?term={search_term}",
-    "query-input": "required name=search_term"
+    json_ld = %{
+      "@context" => "http://schema.org",
+      "@type" => "WebSite",
+      "name" => "#{title}",
+      "url" => "#{Endpoint.url()}",
+      "potentialAction" => %{
+        "@type" => "SearchAction",
+        "target" => "#{Endpoint.url()}/search?term={search_term}",
+        "query-input" => "required name=search_term"
+      }
     }
-    }</script>
+
+    instance_json_ld = """
+    <script type="application/ld+json">#{Jason.encode!(json_ld)}</script>
     """
 
     [

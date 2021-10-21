@@ -11,13 +11,30 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
 
   @spec render(String.t(), map()) :: map()
   def render("group.json", %{group: %Actor{} = group}) do
-    %{
+    res = %{
       "@context" => "http://schema.org",
       "@type" => "Organization",
       "url" => group.url,
       "name" => group.name || group.preferred_username,
       "address" => render_address(group)
     }
+
+    res =
+      if group.banner do
+        Map.put(res, "image", group.banner.url)
+      else
+        res
+      end
+
+    if group.physical_address do
+      Map.put(
+        res,
+        "address",
+        render_one(group.physical_address, ObjectView, "address.json", as: :address)
+      )
+    else
+      res
+    end
   end
 
   def render("event.json", %{event: %Event{} = event}) do
@@ -93,12 +110,27 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "@context" => "https://schema.org",
       "@type" => "Article",
       "name" => post.title,
+      "headline" => post.title,
       "author" => %{
         "@type" => "Organization",
-        "name" => Actor.display_name(post.attributed_to)
+        "name" => Actor.display_name(post.attributed_to),
+        "url" =>
+          Endpoint
+          |> Routes.page_url(
+            :actor,
+            Actor.preferred_username_and_domain(post.attributed_to)
+          )
+          |> URI.decode()
       },
       "datePublished" => post.publish_at,
-      "dateModified" => post.updated_at
+      "dateModified" => post.updated_at,
+      "image" =>
+        if(post.picture,
+          do: [
+            post.picture.file.url
+          ],
+          else: ["#{Endpoint.url()}/img/mobilizon_default_card.png"]
+        )
     }
   end
 

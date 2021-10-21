@@ -10,7 +10,9 @@ defmodule Mobilizon.Service.Metadata.InstanceTest do
       description = Utils.process_description(Config.instance_description())
 
       assert Instance.build_tags() |> Utils.stringify_tags() ==
-               "<title>#{title}</title><meta content=\"#{description}\" name=\"description\"><meta content=\"#{title}\" property=\"og:title\"><meta content=\"#{Endpoint.url()}\" property=\"og:url\"><meta content=\"#{description}\" property=\"og:description\"><meta content=\"website\" property=\"og:type\"><script type=\"application/ld+json\">{\n\"@context\": \"http://schema.org\",\n\"@type\": \"WebSite\",\n\"name\": \"#{title}\",\n\"url\": \"#{Endpoint.url()}\",\n\"potentialAction\": {\n\"@type\": \"SearchAction\",\n\"target\": \"#{Endpoint.url()}/search?term={search_term}\",\n\"query-input\": \"required name=search_term\"\n}\n}</script>\n"
+               """
+               <title>#{title}</title><meta content="#{description}" name="description"><meta content="#{title}" property="og:title"><meta content="#{Endpoint.url()}" property="og:url"><meta content="#{description}" property="og:description"><meta content="website" property="og:type"><script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","name":"#{title}","potentialAction":{"@type":"SearchAction","query-input":"required name=search_term","target":"#{Endpoint.url()}/search?term={search_term}"},"url":"#{Endpoint.url()}"}</script>
+               """
     end
   end
 end
