@@ -38,10 +38,6 @@ config :mobilizon, :cldr,
     "sv"
   ]
 
-config :tzdata, :data_dir, "/var/lib/mobilizon/tzdata"
-
-config :tz_world, data_dir: "/var/lib/mobilizon/tz_world"
-
 cond do
   System.get_env("INSTANCE_CONFIG") &&
       File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
