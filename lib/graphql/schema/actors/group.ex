@@ -205,6 +205,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     value(:private, description: "Visible only to people with the link - or invited")
   end
 
+  object :group_follow do
+    field(:group, :group, description: "The group followed")
+    field(:profile, :group, description: "The group followed")
+    field(:notify, :boolean, description: "Whether to notify profile from group activity")
+  end
+
   object :group_queries do
     @desc "Get all groups"
     field :groups, :paginated_group_list do
@@ -309,6 +315,37 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:group_id, non_null(:id), description: "The group ID")
 
       resolve(&Group.delete_group/3)
+    end
+
+    @desc "Follow a group"
+    field :follow_group, :follower do
+      arg(:group_id, non_null(:id), description: "The group ID")
+
+      arg(:notify, :boolean,
+        description: "Whether to notify profile from group activity",
+        default_value: true
+      )
+
+      resolve(&Group.follow_group/3)
+    end
+
+    @desc "Update a group follow"
+    field :update_group_follow, :follower do
+      arg(:follow_id, non_null(:id), description: "The follow ID")
+
+      arg(:notify, :boolean,
+        description: "Whether to notify profile from group activity",
+        default_value: true
+      )
+
+      resolve(&Group.update_group_follow/3)
+    end
+
+    @desc "Unfollow a group"
+    field :unfollow_group, :follower do
+      arg(:group_id, non_null(:id), description: "The group ID")
+
+      resolve(&Group.unfollow_group/3)
     end
   end
 end

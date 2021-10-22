@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   import Mobilizon.Users.Guards
   alias Mobilizon.Config
   alias Mobilizon.{Actors, Events}
-  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.GraphQL.API
@@ -318,6 +318,78 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   def leave_group(_parent, _args, _resolution) do
     {:error, dgettext("errors", "You need to be logged-in to leave a group")}
+  end
+
+  @doc """
+  Follow a group
+  """
+  @spec follow_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, String.t()}
+  def follow_group(_parent, %{group_id: group_id, notify: _notify}, %{
+        context: %{current_actor: %Actor{} = actor}
+      }) do
+    case Actors.get_actor(group_id) do
+      %Actor{type: :Group} = group ->
+        with {:ok, _activity, %Follower{} = follower} <- Actions.Follow.follow(actor, group) do
+          {:ok, follower}
+        end
+
+      nil ->
+        {:error, dgettext("errors", "Group not found")}
+    end
+  end
+
+  def follow_group(_parent, _args, _resolution) do
+    {:error, dgettext("errors", "You need to be logged-in to follow a group")}
+  end
+
+  @doc """
+  Update a group follow
+  """
+  @spec update_group_follow(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Member.t()} | {:error, String.t()}
+  def update_group_follow(_parent, %{follow_id: follow_id, notify: notify}, %{
+        context: %{current_actor: %Actor{} = actor}
+      }) do
+    case Actors.get_follower(follow_id) do
+      %Follower{} = follower ->
+        if follower.actor_id == actor.id do
+          # Update notify
+          Actors.update_follower(follower, %{notify: notify})
+        else
+          {:error, dgettext("errors", "Follow does not match your account")}
+        end
+
+      nil ->
+        {:error, dgettext("errors", "Follow not found")}
+    end
+  end
+
+  def update_group_follow(_parent, _args, _resolution) do
+    {:error, dgettext("errors", "You need to be logged-in to update a group follow")}
+  end
+
+  @doc """
+  Unfollow a group
+  """
+  @spec unfollow_group(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, Follower.t()} | {:error, String.t()}
+  def unfollow_group(_parent, %{group_id: group_id}, %{
+        context: %{current_actor: %Actor{} = actor}
+      }) do
+    case Actors.get_actor(group_id) do
+      %Actor{type: :Group} = group ->
+        with {:ok, _activity, %Follower{} = follower} <- Actions.Follow.unfollow(actor, group) do
+          {:ok, follower}
+        end
+
+      nil ->
+        {:error, dgettext("errors", "Group not found")}
+    end
+  end
+
+  def unfollow_group(_parent, _args, _resolution) do
+    {:error, dgettext("errors", "You need to be logged-in to unfollow a group")}
   end
 
   @spec find_events_for_group(Actor.t(), map(), Absinthe.Resolution.t()) ::

@@ -17,6 +17,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.FollowerType do
       description: "Whether the follow has been approved by the target actor"
     )
 
+    field(:notify, :boolean,
+      description:
+        "Whether the follower will be notified by the target actor's activity or not (applicable for profile/group follows)"
+    )
+
     field(:inserted_at, :datetime, description: "When the follow was created")
     field(:updated_at, :datetime, description: "When the follow was updated")
   end

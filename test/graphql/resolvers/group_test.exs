@@ -4,6 +4,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
 
   import Mobilizon.Factory
 
+  alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   @non_existent_username "nonexistent"
@@ -466,6 +467,194 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         )
 
       assert hd(res["errors"])["message"] =~ "not an administrator"
+    end
+  end
+
+  describe "follow a group" do
+    @follow_group_mutation """
+    mutation FollowGroup($groupId: ID!, $notify: Boolean) {
+      followGroup(groupId: $groupId, notify: $notify) {
+        id
+      }
+    }
+    """
+
+    test "when not authenticated", %{conn: conn, user: _user} do
+      %Actor{type: :Group} = group = insert(:group)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @follow_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged-in to follow a group"
+    end
+
+    test "when group doesn't exist", %{conn: conn, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @follow_group_mutation,
+          variables: %{groupId: "89542"}
+        )
+
+      assert hd(res["errors"])["message"] == "Group not found"
+    end
+
+    test "success", %{conn: conn, user: user} do
+      %Actor{type: :Group} = group = insert(:group)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @follow_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert res["errors"] == nil
+    end
+  end
+
+  describe "unfollow a group" do
+    @unfollow_group_mutation """
+    mutation UnfollowGroup($groupId: ID!) {
+      unfollowGroup(groupId: $groupId) {
+        id
+      }
+    }
+    """
+
+    test "when not authenticated", %{conn: conn, user: _user} do
+      %Actor{type: :Group} = group = insert(:group)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @unfollow_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged-in to unfollow a group"
+    end
+
+    test "when group doesn't exist", %{conn: conn, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @unfollow_group_mutation,
+          variables: %{groupId: "89542"}
+        )
+
+      assert hd(res["errors"])["message"] == "Group not found"
+    end
+
+    test "when the profile is not following the group", %{conn: conn, user: user} do
+      %Actor{type: :Group} = group = insert(:group)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @unfollow_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert hd(res["errors"])["message"] =~ "Could not unfollow actor: you are not following"
+    end
+
+    test "success", %{conn: conn, user: user, actor: actor} do
+      %Actor{type: :Group} = group = insert(:group)
+
+      Mobilizon.Actors.follow(group, actor)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @unfollow_group_mutation,
+          variables: %{groupId: group.id}
+        )
+
+      assert res["errors"] == nil
+      assert Mobilizon.Actors.get_follower_by_followed_and_following(group, actor) == nil
+    end
+  end
+
+  describe "update a group follow" do
+    @update_group_follow_mutation """
+    mutation UpdateGroupFollow($followId: ID!, $notify: Boolean) {
+      updateGroupFollow(followId: $followId, notify: $notify) {
+        id
+        notify
+      }
+    }
+    """
+    test "when not authenticated", %{conn: conn, user: _user, actor: actor} do
+      %Actor{type: :Group} = group = insert(:group)
+      follow = insert(:follower, target_actor: group, actor: actor)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_follow_mutation,
+          variables: %{followId: follow.id}
+        )
+
+      assert hd(res["errors"])["message"] == "You need to be logged-in to update a group follow"
+    end
+
+    test "when follow doesn't exist", %{conn: conn, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_follow_mutation,
+          variables: %{followId: "d7c83493-e4a0-42a2-a15d-a469e955e80a"}
+        )
+
+      assert hd(res["errors"])["message"] == "Follow not found"
+    end
+
+    test "when follow does not match the current actor", %{conn: conn, user: user} do
+      %Actor{type: :Group} = group = insert(:group)
+      follow = insert(:follower, target_actor: group)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_follow_mutation,
+          variables: %{followId: follow.id}
+        )
+
+      assert hd(res["errors"])["message"] == "Follow does not match your account"
+    end
+
+    test "success", %{conn: conn, user: user, actor: actor} do
+      %Actor{type: :Group} = group = insert(:group)
+      follow = insert(:follower, target_actor: group, actor: actor)
+
+      assert %Follower{notify: true} =
+               Mobilizon.Actors.get_follower_by_followed_and_following(group, actor)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @update_group_follow_mutation,
+          variables: %{followId: follow.id, notify: false}
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["updateGroupFollow"]["notify"] == false
+
+      assert %Follower{notify: false} =
+               Mobilizon.Actors.get_follower_by_followed_and_following(group, actor)
     end
   end
 end
