@@ -29,6 +29,9 @@ variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}"
   ARCH: "amd64"
   EXPORT_FORMATS: "csv,ods,pdf"
+  APP_VERSION: "${CI_COMMIT_REF_NAME}"
+  APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
+  CYPRESS_INSTALL_BINARY: 0
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
@@ -177,15 +180,40 @@ pages:
 
 .docker: &docker
   stage: docker
+  image: docker:stable
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:stable-dind
   cache: {}
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
   before_script:
-    - mkdir -p /kaniko/.docker
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_AUTH\",\"email\":\"$CI_REGISTRY_EMAIL\"}}}" > /kaniko/.docker/config.json
+    # Install buildx
+    - wget https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64
+    - mkdir -p ~/.docker/cli-plugins/
+    - mv buildx-v0.6.3.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    # Create env
+    - docker context create tls-environment
+    - docker buildx create --use tls-environment
+    # Install qemu/binfmt
+    - docker pull tonistiigi/binfmt:latest
+    - docker run --rm --privileged tonistiigi/binfmt:latest --install all
+    # Login to DockerHub
+    - mkdir -p ~/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_AUTH\",\"email\":\"$CI_REGISTRY_EMAIL\"}}}" > ~/.docker/config.json
   script:
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/docker/production/Dockerfile --destination $DOCKER_IMAGE_NAME --build-arg VCS_REF=$CI_VCS_REF --build-arg BUILD_DATE=$CI_JOB_TIMESTAMP
+    - >
+      docker buildx build
+      --push
+      --platform linux/amd64,linux/arm64,linux/arm
+      -t framasoft/mobilizon:multiarch
+      -f docker/production/Dockerfile .
+  tags:
+    - "privileged"
 
 build-docker-master:
   <<: *docker
@@ -205,12 +233,11 @@ build-docker-tag:
   variables:
     DOCKER_IMAGE_NAME: framasoft/mobilizon:$CI_COMMIT_TAG
 
+# Packaging app for amd64
 package-app:
   stage: package
   variables: &release-variables
     MIX_ENV: "prod"
-    APP_VERSION: "${CI_COMMIT_TAG}"
-    APP_ASSET: "${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
   script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
@@ -240,17 +267,60 @@ package-app-dev:
     paths:
       - ${APP_ASSET}
 
+# Packaging app for multi-arch
+multi-arch-release:
+  stage: package
+  image: docker:stable
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
+    DOCKER_DRIVER: overlay2
+    APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
+  services:
+    - docker:stable-dind
+  cache: {}
+  before_script:
+    # Install buildx
+    - wget https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64
+    - mkdir -p ~/.docker/cli-plugins/
+    - mv buildx-v0.6.3.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    # Create env
+    - docker context create tls-environment
+    - docker buildx create --use tls-environment
+    # Install qemu/binfmt
+    - docker pull tonistiigi/binfmt:latest
+    - docker run --rm --privileged tonistiigi/binfmt:latest --install all
+  script:
+    - docker buildx build --platform linux/${ARCH} --output type=local,dest=releases --build-arg APP_ASSET=${APP_ASSET} -f docker/multiarch/Dockerfile .
+    - ls -alh releases/mobilizon/
+    - du -sh releases/mobilizon/${APP_ASSET}
+  tags:
+    - "privileged"
+  artifacts:
+    expire_in: 30 days
+    paths:
+      - releases/mobilizon/${APP_ASSET}
+  parallel:
+    matrix:
+      - ARCH: ["arm", "arm64"]
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: $CI_COMMIT_TAG
+
+# Release
 release-upload:
   stage: upload
   image: framasoft/yakforms-assets-deploy:latest
   rules: *tag-rules
-  variables:
-    APP_VERSION: "${CI_COMMIT_TAG}"
-    APP_ASSET: "${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
   script:
     - eval `ssh-agent -s`
     - ssh-add <(echo "${DEPLOYEMENT_KEY}" | base64 --decode -i)
-    - echo "put -r ${APP_ASSET}" | sftp -o "VerifyHostKeyDNS yes" ${DEPLOYEMENT_USER}@${DEPLOYEMENT_HOST}:public/
+    - echo "put -r mobilizon_*.tar.gz" | sftp -o "VerifyHostKeyDNS yes" ${DEPLOYEMENT_USER}@${DEPLOYEMENT_HOST}:public/
   artifacts:
     expire_in: 1 day
     when: on_success
@@ -264,8 +334,6 @@ release-create:
   before_script:
     - apk --no-cache add gawk sed grep
   script: |
-    APP_VERSION="${CI_COMMIT_TAG}"
-    APP_ASSET="${CI_PROJECT_NAME}_${APP_VERSION}_${ARCH}.tar.gz"
     CHANGELOG=$(awk -v version="$APP_VERSION" '/^## / { printit = $2 == version }; printit' CHANGELOG.md | grep -v "## $APP_VERSION" | sed '1{/^$/d}')
     ENDPOINT="https://packages.joinmobilizon.org"
 

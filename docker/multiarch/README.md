@@ -1,0 +1,1 @@
+Contains the Dockerfile used to generate multi-arch Elixir releases
