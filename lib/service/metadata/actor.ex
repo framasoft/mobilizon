@@ -20,14 +20,24 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
 
     [
       Tag.tag(:meta, property: "og:title", content: Actor.display_name_and_username(group)),
-      Tag.tag(:meta, property: "og:url", content: group.url),
+      Tag.tag(:meta,
+        property: "og:url",
+        content:
+          Endpoint
+          |> Routes.page_url(
+            :actor,
+            Actor.preferred_username_and_domain(group)
+          )
+          |> URI.decode()
+      ),
       Tag.tag(:meta, property: "og:description", content: group.summary),
       Tag.tag(:meta, property: "og:type", content: "profile"),
       Tag.tag(:meta,
         property: "profile:username",
         content: Actor.preferred_username_and_domain(group)
       ),
-      Tag.tag(:meta, property: "twitter:card", content: "summary")
+      Tag.tag(:meta, property: "twitter:card", content: "summary"),
+      Tag.tag(:meta, property: "twitter:site", content: "@joinmobilizon")
     ]
     |> maybe_add_avatar(group)
     |> add_group_schema(group)
@@ -50,8 +60,22 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
 
   @spec add_group_schema(list(Tag.t()), Actor.t()) :: list(Tag.t())
   defp add_group_schema(tags, %Actor{} = group) do
+    breadcrumbs = %{
+      "@context" => "https://schema.org",
+      "@type" => "BreadcrumbList",
+      "itemListElement" => [
+        %{
+          "@type" => "ListItem",
+          "position" => 1,
+          "name" => Actor.display_name(group)
+        }
+      ]
+    }
+
     tags ++
       [
+        ~s{<script type="application/ld+json">#{Jason.encode!(breadcrumbs)}</script>}
+        |> HTML.raw(),
         ~s{<script type="application/ld+json">#{json(group)}</script>} |> HTML.raw()
       ]
   end
