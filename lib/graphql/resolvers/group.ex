@@ -330,8 +330,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       }) do
     case Actors.get_actor(group_id) do
       %Actor{type: :Group} = group ->
-        with {:ok, _activity, %Follower{} = follower} <- Actions.Follow.follow(actor, group) do
-          {:ok, follower}
+        case Actions.Follow.follow(actor, group) do
+          {:ok, _activity, %Follower{} = follower} ->
+            {:ok, follower}
+
+          {:error, :already_following} ->
+            {:error, dgettext("errors", "You are already following this group")}
         end
 
       nil ->
