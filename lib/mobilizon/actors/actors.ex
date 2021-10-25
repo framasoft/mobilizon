@@ -1030,6 +1030,14 @@ defmodule Mobilizon.Actors do
     |> Repo.delete()
   end
 
+  @spec list_paginated_follows_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Follower.t())
+  def list_paginated_follows_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
+    actor_id
+    |> followings_for_actor_query
+    |> Page.build_page(page, limit)
+  end
+
   @doc """
   Returns the list of external followers for an actor.
   """

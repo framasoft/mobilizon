@@ -102,6 +102,21 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       arg(:limit, :integer, default_value: 10, description: "The limit of memberships per page")
       resolve(&Person.person_memberships/3)
     end
+
+    @desc "The list of groups this person follows"
+    field(:follows, :paginated_follower_list,
+      description: "The list of groups this person follows"
+    ) do
+      arg(:group, :string, description: "Filter by group federated username")
+
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the follows list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of follows per page")
+      resolve(&Person.person_follows/3)
+    end
   end
 
   @desc """
