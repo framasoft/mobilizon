@@ -250,19 +250,15 @@ defmodule Mobilizon.Users do
   Updates user's default actor.
   Raises `Ecto.NoResultsError` if the user does not exist.
   """
-  @spec update_user_default_actor(integer | String.t(), Actor.t() | nil) :: User.t()
-  def update_user_default_actor(user_id, actor) do
+  @spec update_user_default_actor(User.t(), Actor.t() | nil) :: User.t()
+  def update_user_default_actor(%User{id: user_id} = user, actor) do
     actor_id = if is_nil(actor), do: nil, else: actor.id
 
     user_id
-    |> update_user_default_actor_query(actor_id)
-    |> Repo.update_all([])
+    |> update_user_default_actor_query()
+    |> Repo.update_all(set: [default_actor_id: actor_id])
 
-    Cachex.put(:default_actors, to_string(user_id), actor)
-
-    user_id
-    |> get_user!()
-    |> Repo.preload([:default_actor])
+    %User{user | default_actor: actor}
   end
 
   @doc """
@@ -524,13 +520,9 @@ defmodule Mobilizon.Users do
     from(a in Actor, where: a.user_id == ^user_id)
   end
 
-  @spec update_user_default_actor_query(integer | String.t(), integer | String.t() | nil) ::
+  @spec update_user_default_actor_query(integer | String.t()) ::
           Ecto.Query.t()
-  defp update_user_default_actor_query(user_id, actor_id) do
-    from(
-      u in User,
-      where: u.id == ^user_id,
-      update: [set: [default_actor_id: ^actor_id]]
-    )
+  defp update_user_default_actor_query(user_id) do
+    where(User, [u], u.id == ^user_id)
   end
 end

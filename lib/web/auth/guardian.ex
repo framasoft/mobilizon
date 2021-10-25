@@ -32,7 +32,7 @@ defmodule Mobilizon.Web.Auth.Guardian do
     try do
       case Integer.parse(uid_str) do
         {uid, ""} ->
-          {:ok, Users.get_user_with_actors!(uid)}
+          {:ok, Users.get_user!(uid)}
 
         _ ->
           {:error, :invalid_id}
