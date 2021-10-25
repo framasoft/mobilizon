@@ -72,6 +72,12 @@ defmodule Mobilizon.Users do
     |> Repo.preload([:settings])
   end
 
+  def get_user_with_activity_settings!(id) do
+    User
+    |> Repo.get(id)
+    |> Repo.preload([:settings, :activity_settings])
+  end
+
   @doc """
   Gets an user by its email.
   """
@@ -428,12 +434,6 @@ defmodule Mobilizon.Users do
     ActivitySetting
     |> where([a], a.user_id == ^user_id)
     |> Repo.all()
-  end
-
-  def activity_setting(%User{id: user_id}, key, method) do
-    ActivitySetting
-    |> where([a], a.user_id == ^user_id and a.key == ^key and a.method == ^method)
-    |> Repo.one()
   end
 
   @doc """
