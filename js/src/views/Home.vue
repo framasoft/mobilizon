@@ -243,26 +243,7 @@
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowMyUpcomingEvents && canShowLastWeekEvents"
-      />
-      <!-- Last week events -->
-      <section v-if="canShowLastWeekEvents">
-        <h2 class="title">{{ $t("Last week") }}</h2>
-        <b-loading :active.sync="$apollo.loading" />
-        <div>
-          <EventListCard
-            v-for="participation in lastWeekEvents"
-            :key="participation.id"
-            :participation="participation"
-            @event-deleted="eventDeleted"
-            :options="{ hideDate: false }"
-          />
-        </div>
-      </section>
-      <hr
-        role="presentation"
-        class="home-separator"
-        v-if="canShowLastWeekEvents && canShowCloseEvents"
+        v-if="canShowMyUpcomingEvents && canShowCloseEvents"
       />
       <!-- Events close to you -->
       <section class="events-close" v-if="canShowCloseEvents">
@@ -301,9 +282,7 @@
       <hr
         role="presentation"
         class="home-separator"
-        v-if="
-          canShowMyUpcomingEvents || canShowLastWeekEvents || canShowCloseEvents
-        "
+        v-if="canShowMyUpcomingEvents || canShowCloseEvents"
       />
       <section class="events-recent">
         <h2 class="title">
@@ -334,7 +313,7 @@
         </div>
         <b-message v-else type="is-danger"
           >{{ $t("No events found") }}<br />
-          <div v-if="goingToEvents.size > 0 || lastWeekEvents.length > 0">
+          <div v-if="goingToEvents.size > 0">
             <b-icon size="is-small" icon="information-outline" />
             <small>{{
               $t("The events you created are not shown here.")
@@ -400,10 +379,8 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       query: LOGGED_USER_PARTICIPATIONS,
       fetchPolicy: "cache-and-network",
       variables() {
-        const lastWeek = new Date();
-        lastWeek.setDate(new Date().getDate() - 7);
         return {
-          afterDateTime: lastWeek.toISOString(),
+          afterDateTime: new Date().toISOString(),
         };
       },
       update: (data) =>
@@ -584,20 +561,6 @@ export default class Home extends Vue {
     );
   }
 
-  get lastWeekEvents(): IParticipant[] {
-    const res = this.currentUserParticipations.filter(
-      ({ event, role }) =>
-        event.beginsOn != null &&
-        this.isBefore(event.beginsOn.toDateString(), 0) &&
-        role !== ParticipantRole.REJECTED
-    );
-    res.sort(
-      (a: IParticipant, b: IParticipant) =>
-        a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
-    );
-    return res;
-  }
-
   eventDeleted(eventid: string): void {
     this.currentUserParticipations = this.currentUserParticipations.filter(
       (participation) => participation.event.id !== eventid
@@ -620,10 +583,6 @@ export default class Home extends Vue {
 
   get canShowMyUpcomingEvents(): boolean {
     return this.currentActor.id != undefined && this.goingToEvents.size > 0;
-  }
-
-  get canShowLastWeekEvents(): boolean {
-    return this.currentActor && this.lastWeekEvents.length > 0;
   }
 
   get canShowCloseEvents(): boolean {
