@@ -164,26 +164,17 @@
                 type="is-primary"
                 >{{ $t("Join group") }}</b-button
               >
-              <b-tooltip
-                v-if="
-                  (!isCurrentActorFollowing || previewPublic) &&
-                  group.openness !== Openness.OPEN
-                "
-                :label="$t('This group is invite-only')"
-                position="is-bottom"
-              >
-                <b-button disabled type="is-primary">{{
-                  $t("Follow 1")
-                }}</b-button></b-tooltip
-              >
               <b-button
-                v-else-if="
-                  (!isCurrentActorFollowing || previewPublic) && currentActor.id
+                v-if="
+                  ((!isCurrentActorFollowing && !isCurrentActorAGroupMember) ||
+                    previewPublic) &&
+                  !isCurrentActorPendingFollow &&
+                  currentActor.id
                 "
                 @click="followGroup"
                 type="is-primary"
-                :disabled="previewPublic"
-                >{{ $t("Follow 2") }}</b-button
+                :disabled="isCurrentActorPendingFollow"
+                >{{ $t("Follow") }}</b-button
               >
               <b-button
                 tag="router-link"
@@ -191,10 +182,21 @@
                   name: RouteName.GROUP_FOLLOW,
                   params: { preferredUsername: usernameWithDomain(group) },
                 }"
-                v-else-if="!isCurrentActorFollowing || previewPublic"
+                v-else-if="
+                  !isCurrentActorPendingFollow &&
+                  !isCurrentActorFollowing &&
+                  previewPublic
+                "
                 :disabled="previewPublic"
                 type="is-primary"
-                >{{ $t("Follow 3") }}</b-button
+                >{{ $t("Follow") }}</b-button
+              >
+              <b-button
+                outlined
+                v-if="isCurrentActorPendingFollow && currentActor.id"
+                @click="unFollowGroup"
+                type="is-primary"
+                >{{ $t("Cancel follow request") }}</b-button
               ><b-button
                 v-if="
                   isCurrentActorFollowing && !previewPublic && currentActor.id
@@ -473,7 +475,7 @@
             }}
           </event-metadata-block>
           <event-metadata-block
-            v-if="physicalAddress"
+            v-if="physicalAddress.url"
             :title="$t('Location')"
             :icon="
               physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'
@@ -534,6 +536,18 @@
           </div>
           <empty-content v-else-if="group" icon="calendar" :inline="true">
             {{ $t("No public upcoming events") }}
+            <template #desc v-if="isCurrentActorFollowing">
+              <i18n
+                class="has-text-grey-dark"
+                path="You will receive notifications about this group's public activity depending on %{notification_settings}."
+              >
+                <router-link
+                  :to="{ name: RouteName.NOTIFICATIONS }"
+                  slot="notification_settings"
+                  >{{ $t("your notification settings") }}</router-link
+                >
+              </i18n>
+            </template>
           </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
           <router-link
@@ -1275,6 +1289,7 @@ div.container {
       min-width: 20rem;
       flex: 2;
       background: white;
+      padding: 0 5px;
 
       @include desktop {
         padding: 10px;

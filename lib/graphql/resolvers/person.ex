@@ -402,7 +402,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   Returns this person's group follows
   """
   @spec person_follows(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
-  def person_follows(%Actor{id: actor_id} = person, %{group: group}, %{
+  def person_follows(%Actor{} = person, %{group: group}, %{
         context: %{current_user: %User{} = user}
       }) do
     if user_can_access_person_details?(person, user) do

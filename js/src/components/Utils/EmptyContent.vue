@@ -32,6 +32,7 @@ export default class EmptyContent extends Vue {
   }
   &.inline {
     margin-top: 5vh;
+    margin-bottom: 2vh;
   }
 }
 </style>

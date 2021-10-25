@@ -264,6 +264,8 @@ defmodule Mobilizon.Users do
     |> update_user_default_actor_query()
     |> Repo.update_all(set: [default_actor_id: actor_id])
 
+    Cachex.put(:default_actors, to_string(user_id), actor)
+
     %User{user | default_actor: actor}
   end
 

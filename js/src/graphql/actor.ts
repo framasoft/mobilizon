@@ -466,6 +466,7 @@ export const PERSON_STATUS_GROUP = gql`
         elements {
           id
           notify
+          approved
           target_actor {
             id
             preferredUsername

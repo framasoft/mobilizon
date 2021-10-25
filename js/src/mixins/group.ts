@@ -107,11 +107,17 @@ export default class GroupMixin extends Vue {
   }
 
   get isCurrentActorFollowing(): boolean {
-    return this.currentActorFollow !== null;
+    return this.currentActorFollow?.approved === true;
+  }
+
+  get isCurrentActorPendingFollow(): boolean {
+    return this.currentActorFollow?.approved === false;
   }
 
   get isCurrentActorFollowingNotify(): boolean {
-    return this.currentActorFollow?.notify === true;
+    return (
+      this.isCurrentActorFollowing && this.currentActorFollow?.notify === true
+    );
   }
 
   get currentActorFollow(): IFollower | null {
