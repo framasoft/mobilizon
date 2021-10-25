@@ -496,10 +496,7 @@ import {
   FETCH_EVENT,
   JOIN_EVENT,
 } from "../../graphql/event";
-import {
-  CURRENT_ACTOR_CLIENT,
-  PERSON_MEMBERSHIP_GROUP,
-} from "../../graphql/actor";
+import { CURRENT_ACTOR_CLIENT, PERSON_STATUS_GROUP } from "../../graphql/actor";
 import { EventModel, IEvent } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
@@ -623,7 +620,7 @@ import { IUser } from "@/types/current-user.model";
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {

@@ -120,7 +120,7 @@ import { IMember } from "@/types/actor/member.model";
 import {
   CURRENT_ACTOR_CLIENT,
   PERSON_MEMBERSHIPS,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "../../graphql/actor";
 import { FETCH_POST } from "../../graphql/post";
 import { IPost } from "../../types/post.model";
@@ -166,7 +166,7 @@ import { ICurrentUser } from "@/types/current-user.model";
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {

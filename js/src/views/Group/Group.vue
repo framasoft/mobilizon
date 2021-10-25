@@ -164,6 +164,54 @@
                 type="is-primary"
                 >{{ $t("Join group") }}</b-button
               >
+              <b-tooltip
+                v-if="
+                  (!isCurrentActorFollowing || previewPublic) &&
+                  group.openness !== Openness.OPEN
+                "
+                :label="$t('This group is invite-only')"
+                position="is-bottom"
+              >
+                <b-button disabled type="is-primary">{{
+                  $t("Follow 1")
+                }}</b-button></b-tooltip
+              >
+              <b-button
+                v-else-if="
+                  (!isCurrentActorFollowing || previewPublic) && currentActor.id
+                "
+                @click="followGroup"
+                type="is-primary"
+                :disabled="previewPublic"
+                >{{ $t("Follow 2") }}</b-button
+              >
+              <b-button
+                tag="router-link"
+                :to="{
+                  name: RouteName.GROUP_FOLLOW,
+                  params: { preferredUsername: usernameWithDomain(group) },
+                }"
+                v-else-if="!isCurrentActorFollowing || previewPublic"
+                :disabled="previewPublic"
+                type="is-primary"
+                >{{ $t("Follow 3") }}</b-button
+              ><b-button
+                v-if="
+                  isCurrentActorFollowing && !previewPublic && currentActor.id
+                "
+                type="is-primary"
+                @click="unFollowGroup"
+                >{{ $t("Unfollow") }}</b-button
+              >
+              <b-button
+                v-if="isCurrentActorFollowing"
+                @click="toggleFollowNotify"
+                :icon-left="
+                  isCurrentActorFollowingNotify
+                    ? 'bell-outline'
+                    : 'bell-off-outline'
+                "
+              ></b-button>
               <b-button
                 outlined
                 icon-left="share"
@@ -586,7 +634,7 @@ import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
-import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
+import { PERSON_STATUS_GROUP } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
@@ -594,6 +642,11 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { Paginate } from "@/types/paginate";
 import { IEvent } from "@/types/event.model";
 import { IPost } from "@/types/post.model";
+import {
+  FOLLOW_GROUP,
+  UNFOLLOW_GROUP,
+  UPDATE_GROUP_FOLLOW,
+} from "@/graphql/followers";
 
 @Component({
   apollo: {
@@ -674,7 +727,7 @@ export default class Group extends mixins(GroupMixin) {
       },
       refetchQueries: [
         {
-          query: PERSON_MEMBERSHIP_GROUP,
+          query: PERSON_STATUS_GROUP,
           variables: {
             id: currentActorId,
             group,
@@ -697,7 +750,7 @@ export default class Group extends mixins(GroupMixin) {
         },
         refetchQueries: [
           {
-            query: PERSON_MEMBERSHIP_GROUP,
+            query: PERSON_STATUS_GROUP,
             variables: {
               id: currentActorId,
               group,
@@ -710,6 +763,73 @@ export default class Group extends mixins(GroupMixin) {
         this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
+  }
+
+  async followGroup(): Promise<void> {
+    try {
+      const [group, currentActorId] = [
+        usernameWithDomain(this.group),
+        this.currentActor.id,
+      ];
+      await this.$apollo.mutate({
+        mutation: FOLLOW_GROUP,
+        variables: {
+          groupId: this.group.id,
+        },
+        refetchQueries: [
+          {
+            query: PERSON_STATUS_GROUP,
+            variables: {
+              id: currentActorId,
+              group,
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
+  }
+
+  async unFollowGroup(): Promise<void> {
+    console.debug("unfollow group");
+    try {
+      const [group, currentActorId] = [
+        usernameWithDomain(this.group),
+        this.currentActor.id,
+      ];
+      await this.$apollo.mutate({
+        mutation: UNFOLLOW_GROUP,
+        variables: {
+          groupId: this.group.id,
+        },
+        refetchQueries: [
+          {
+            query: PERSON_STATUS_GROUP,
+            variables: {
+              id: currentActorId,
+              group,
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
+  }
+
+  async toggleFollowNotify(): Promise<void> {
+    await this.$apollo.mutate({
+      mutation: UPDATE_GROUP_FOLLOW,
+      variables: {
+        followId: this.currentActorFollow?.id,
+        notify: !this.isCurrentActorFollowingNotify,
+      },
+    });
   }
 
   acceptInvitation(): void {

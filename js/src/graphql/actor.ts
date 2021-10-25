@@ -433,7 +433,7 @@ export const PERSON_MEMBERSHIPS = gql`
   }
 `;
 
-export const PERSON_MEMBERSHIP_GROUP = gql`
+export const PERSON_STATUS_GROUP = gql`
   query PersonMembershipGroup($id: ID!, $group: String!) {
     person(id: $id) {
       id
@@ -456,6 +456,35 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
             id
             preferredUsername
             name
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+      follows(group: $group) {
+        total
+        elements {
+          id
+          notify
+          target_actor {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
+          }
+          actor {
+            id
+            preferredUsername
+            name
+            domain
+            avatar {
+              id
+              url
+            }
           }
           insertedAt
           updatedAt

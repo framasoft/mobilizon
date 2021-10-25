@@ -1,11 +1,17 @@
 import {
   CURRENT_ACTOR_CLIENT,
   GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
-import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  IActor,
+  IFollower,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import { MemberRole } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
 
@@ -31,7 +37,7 @@ const now = new Date();
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -98,6 +104,21 @@ export default class GroupMixin extends Vue {
       this.person?.memberships?.total > 0 &&
       roles.includes(this.person?.memberships?.elements[0].role)
     );
+  }
+
+  get isCurrentActorFollowing(): boolean {
+    return this.currentActorFollow !== null;
+  }
+
+  get isCurrentActorFollowingNotify(): boolean {
+    return this.currentActorFollow?.notify === true;
+  }
+
+  get currentActorFollow(): IFollower | null {
+    if (this.person?.follows?.total > 0) {
+      return this.person?.follows?.elements[0];
+    }
+    return null;
   }
 
   handleErrors(errors: any[]): void {

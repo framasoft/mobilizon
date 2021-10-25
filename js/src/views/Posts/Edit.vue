@@ -181,7 +181,7 @@ import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import PictureUpload from "../../components/PictureUpload.vue";
-import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
+import { PERSON_STATUS_GROUP } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 
 @Component({
@@ -211,7 +211,7 @@ import { FETCH_GROUP } from "@/graphql/group";
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {

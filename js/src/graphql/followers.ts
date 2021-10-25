@@ -47,3 +47,28 @@ export const UPDATE_FOLLOWER = gql`
     }
   }
 `;
+
+export const FOLLOW_GROUP = gql`
+  mutation FollowGroup($groupId: ID!, $notify: Boolean) {
+    followGroup(groupId: $groupId, notify: $notify) {
+      id
+    }
+  }
+`;
+
+export const UNFOLLOW_GROUP = gql`
+  mutation UnfollowGroup($groupId: ID!) {
+    unfollowGroup(groupId: $groupId) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_GROUP_FOLLOW = gql`
+  mutation UpdateGroupFollow($followId: ID!, $notify: Boolean) {
+    updateGroupFollow(followId: $followId, notify: $notify) {
+      id
+      notify
+    }
+  }
+`;

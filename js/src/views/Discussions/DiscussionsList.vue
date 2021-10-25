@@ -89,7 +89,7 @@ import { MemberRole } from "@/types/enums";
 import {
   CURRENT_ACTOR_CLIENT,
   GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
 import { IMember } from "@/types/actor/member.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
@@ -116,7 +116,7 @@ const DISCUSSIONS_PER_PAGE = 10;
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {

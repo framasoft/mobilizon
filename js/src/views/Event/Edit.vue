@@ -607,7 +607,7 @@ import {
   IDENTITIES,
   LOGGED_USER_DRAFTS,
   LOGGED_USER_PARTICIPATIONS,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "../../graphql/actor";
 import {
   displayNameAndUsername,
@@ -669,7 +669,7 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
