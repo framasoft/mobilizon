@@ -195,7 +195,7 @@ defmodule Mobilizon.Mixfile do
       {:sitemapper, "~> 0.6"},
       {:xml_builder, "~> 2.2"},
       {:remote_ip, "~> 1.0.0"},
-      {:ex_cldr_languages, "~> 0.2.1"},
+      {:ex_cldr_languages, "~> 0.3.0"},
       {:slugger, "~> 0.3"},
       {:sentry, "~> 8.0"},
       {:html_entities, "~> 0.5"},
