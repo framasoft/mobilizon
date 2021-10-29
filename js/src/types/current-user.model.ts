@@ -3,6 +3,7 @@ import type { IPerson } from "@/types/actor/person.model";
 import type { Paginate } from "./paginate";
 import type { IParticipant } from "./participant.model";
 import { ICurrentUserRole, INotificationPendingEnum } from "./enums";
+import { IFollowedGroupEvent } from "./followedGroupEvent.model";
 
 export interface ICurrentUser {
   id: string;
@@ -47,6 +48,7 @@ export interface IUser extends ICurrentUser {
   drafts: IEvent[];
   settings: IUserSettings;
   activitySettings: IActivitySetting[];
+  followedGroupEvents: Paginate<IFollowedGroupEvent>;
   locale: string;
   provider?: string;
   lastSignInAt: string;

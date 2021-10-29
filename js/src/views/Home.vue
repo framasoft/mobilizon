@@ -1,5 +1,6 @@
 <template>
   <div id="homepage">
+    <b-loading :active.sync="$apollo.loading" />
     <section
       class="hero"
       :class="{ webp: supportsWebPFormat }"
@@ -59,19 +60,9 @@
           <i18n tag="span" path="On {instance} and other federated instances">
             <b slot="instance">{{ config.name }}</b>
           </i18n>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
-        <b-loading :active.sync="$apollo.loading" />
         <div v-if="this.events.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="event in this.events.elements.slice(0, 6)"
-              :key="event.uuid"
-            >
-              <EventCard :event="event" />
-            </div>
-          </div>
+          <multi-card :events="events.elements.slice(0, 6)" />
           <span class="view-all">
             <router-link :to="{ name: RouteName.SEARCH }"
               >{{ $t("View everything") }} >></router-link
@@ -181,10 +172,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="container section"
-      v-if="config && loggedUser && loggedUser.settings"
-    >
+    <div class="container section" v-if="config && loggedUserSettings">
       <section v-if="currentActor.id && (welcomeBack || newRegisteredUser)">
         <b-message type="is-info" v-if="welcomeBack">{{
           $t("Welcome back {username}!", {
@@ -200,7 +188,6 @@
       <!-- Your upcoming events -->
       <section v-if="canShowMyUpcomingEvents">
         <h2 class="title">{{ $t("Your upcoming events") }}</h2>
-        <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
           <p
             class="date-component-container"
@@ -243,8 +230,26 @@
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowMyUpcomingEvents && canShowCloseEvents"
+        v-if="canShowMyUpcomingEvents && canShowFollowActivity"
       />
+      <!-- Events from your followed groups -->
+      <section class="followActivity" v-if="canShowFollowActivity">
+        <h2 class="title">
+          {{ $t("Recent events from your groups") }}
+        </h2>
+        <p>{{ $t("That you follow or of which you are a member") }}</p>
+        <multi-card
+          :events="
+            followedGroupEvents.elements.map(({ event }) => event).slice(0, 3)
+          "
+        />
+      </section>
+      <hr
+        role="presentation"
+        class="home-separator"
+        v-if="canShowFollowActivity && canShowCloseEvents"
+      />
+
       <!-- Events close to you -->
       <section class="events-close" v-if="canShowCloseEvents">
         <h2 class="title">
@@ -254,10 +259,10 @@
           {{
             $tc(
               "Within {number} kilometers of {place}",
-              loggedUser.settings.location.range,
+              loggedUserSettings.location.range,
               {
-                number: loggedUser.settings.location.range,
-                place: loggedUser.settings.location.name,
+                number: loggedUserSettings.location.range,
+                place: loggedUserSettings.location.name,
               }
             )
           }}
@@ -267,17 +272,8 @@
           >
             <b-icon class="clickable" icon="pencil" size="is-small" />
           </router-link>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
-        <div class="columns is-multiline">
-          <div
-            class="column is-one-third-desktop"
-            v-for="event in closeEvents.elements.slice(0, 3)"
-            :key="event.uuid"
-          >
-            <event-card :event="event" />
-          </div>
-        </div>
+        <multi-card :events="closeEvents.elements.slice(0, 3)" />
       </section>
       <hr
         role="presentation"
@@ -292,19 +288,10 @@
           <i18n tag="span" path="On {instance} and other federated instances">
             <b slot="instance">{{ config.name }}</b>
           </i18n>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
 
-        <div v-if="this.events.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="event in this.events.elements.slice(0, 6)"
-              :key="event.uuid"
-            >
-              <recent-event-card-wrapper :event="event" />
-            </div>
-          </div>
+        <div v-if="events.total > 0">
+          <multi-card :events="events.elements.slice(0, 8)" />
           <span class="view-all">
             <router-link :to="{ name: RouteName.SEARCH }"
               >{{ $t("View everything") }} >></router-link
@@ -333,27 +320,28 @@ import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
 import { CLOSE_EVENTS, FETCH_EVENTS } from "../graphql/event";
 import EventListCard from "../components/Event/EventListCard.vue";
-import EventCard from "../components/Event/EventCard.vue";
-import RecentEventCardWrapper from "../components/Event/RecentEventCardWrapper.vue";
-import {
-  CURRENT_ACTOR_CLIENT,
-  LOGGED_USER_PARTICIPATIONS,
-} from "../graphql/actor";
+import MultiCard from "../components/Event/MultiCard.vue";
+import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
-import { ICurrentUser, IUser } from "../types/current-user.model";
-import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
+import {
+  ICurrentUser,
+  IUser,
+  IUserSettings,
+} from "../types/current-user.model";
+import { CURRENT_USER_CLIENT } from "../graphql/user";
+import { HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
 import DateComponent from "../components/Event/DateCalendarIcon.vue";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
+import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import Subtitle from "../components/Utils/Subtitle.vue";
 
 @Component({
   apollo: {
     events: {
       query: FETCH_EVENTS,
-      fetchPolicy: "no-cache", // Debug me: https://github.com/apollographql/apollo-client/issues/3030
       variables: {
         orderBy: EventSortField.INSERTED_AT,
         direction: SortDirection.DESC,
@@ -364,33 +352,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       update: (data) => new Person(data.currentActor),
     },
     currentUser: CURRENT_USER_CLIENT,
-    loggedUser: {
-      query: USER_SETTINGS,
-      fetchPolicy: "network-only",
-      skip() {
-        return !this.currentUser || this.currentUser.isLoggedIn === false;
-      },
-      error() {
-        return null;
-      },
-    },
     config: CONFIG,
-    currentUserParticipations: {
-      query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          afterDateTime: new Date().toISOString(),
-        };
-      },
-      update: (data) =>
-        data.loggedUser.participations.elements.map(
-          (participation: IParticipant) => new Participant(participation)
-        ),
-      skip() {
-        return this.currentUser?.isLoggedIn === false;
-      },
-    },
     closeEvents: {
       query: CLOSE_EVENTS,
       variables() {
@@ -408,13 +370,30 @@ import Subtitle from "../components/Utils/Subtitle.vue";
         );
       },
     },
+    userQueries: {
+      query: HOME_USER_QUERIES,
+      update(data) {
+        console.log("loggedUser", data.loggedUser);
+        this.loggedUser = data.loggedUser;
+        this.followedGroupEvents = data.loggedUser.followedGroupEvents;
+        this.currentUserParticipations =
+          data.loggedUser.participations.elements.map(
+            (participation: IParticipant) => new Participant(participation)
+          );
+      },
+      variables: {
+        afterDateTime: new Date().toISOString(),
+      },
+      skip() {
+        return !this.currentUser?.isLoggedIn;
+      },
+    },
   },
   components: {
     Subtitle,
     DateComponent,
     EventListCard,
-    EventCard,
-    RecentEventCardWrapper,
+    MultiCard,
     "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
   metaInfo() {
@@ -438,9 +417,9 @@ export default class Home extends Vue {
 
   country = { name: null };
 
-  currentUser!: IUser;
+  currentUser!: ICurrentUser;
 
-  loggedUser!: ICurrentUser;
+  loggedUser: IUser | null = null;
 
   currentActor!: IPerson;
 
@@ -453,6 +432,11 @@ export default class Home extends Vue {
   supportsWebPFormat = supportsWebPFormat;
 
   closeEvents: Paginate<IEvent> = { elements: [], total: 0 };
+
+  followedGroupEvents: Paginate<IFollowedGroupEvent> = {
+    elements: [],
+    total: 0,
+  };
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
@@ -573,7 +557,7 @@ export default class Home extends Vue {
 
   @Watch("loggedUser")
   detectEmptyUserSettings(loggedUser: IUser): void {
-    if (loggedUser && loggedUser.id && loggedUser.settings === null) {
+    if (loggedUser?.id && loggedUser?.settings === null) {
       this.$router.push({
         name: RouteName.WELCOME_SCREEN,
         params: { step: "1" },
@@ -581,12 +565,23 @@ export default class Home extends Vue {
     }
   }
 
+  get loggedUserSettings(): IUserSettings | undefined {
+    return this.loggedUser?.settings;
+  }
+
   get canShowMyUpcomingEvents(): boolean {
     return this.currentActor.id != undefined && this.goingToEvents.size > 0;
   }
 
   get canShowCloseEvents(): boolean {
-    return this.closeEvents.total > 0;
+    return (
+      this.loggedUser?.settings?.location != undefined &&
+      this.closeEvents.total > 0
+    );
+  }
+
+  get canShowFollowActivity(): boolean {
+    return this.followedGroupEvents.total > 0;
   }
 }
 </script>
