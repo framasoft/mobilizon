@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const SEARCH_EVENTS = gql`
   query SearchEvents(
@@ -58,18 +59,11 @@ export const SEARCH_GROUPS = gql`
     ) {
       total
       elements {
-        id
-        avatar {
-          id
-          url
-        }
-        domain
-        preferredUsername
-        name
-        __typename
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const SEARCH_PERSONS = gql`
@@ -77,18 +71,11 @@ export const SEARCH_PERSONS = gql`
     searchPersons(term: $searchText, page: $page, limit: $limit) {
       total
       elements {
-        id
-        avatar {
-          id
-          url
-        }
-        domain
-        preferredUsername
-        name
-        __typename
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const INTERACT = gql`
@@ -110,16 +97,9 @@ export const INTERACT = gql`
         __typename
       }
       ... on Group {
-        id
-        avatar {
-          id
-          url
-        }
-        domain
-        preferredUsername
-        name
-        __typename
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;

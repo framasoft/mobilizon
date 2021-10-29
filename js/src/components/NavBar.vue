@@ -208,12 +208,8 @@ import RouteName from "../router/name";
 
 @Component({
   apollo: {
-    currentUser: {
-      query: CURRENT_USER_CLIENT,
-    },
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
+    currentUser: CURRENT_USER_CLIENT,
+    currentActor: CURRENT_ACTOR_CLIENT,
     identities: {
       query: IDENTITIES,
       update: ({ identities }) =>

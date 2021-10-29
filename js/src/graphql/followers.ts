@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const GROUP_FOLLOWERS = gql`
   query (
@@ -8,10 +9,7 @@ export const GROUP_FOLLOWERS = gql`
     $approved: Boolean
   ) {
     group(preferredUsername: $name) {
-      id
-      preferredUsername
-      name
-      domain
+      ...ActorFragment
       followers(
         page: $followersPage
         limit: $followersLimit
@@ -21,14 +19,7 @@ export const GROUP_FOLLOWERS = gql`
         elements {
           id
           actor {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           approved
           insertedAt
@@ -37,6 +28,7 @@ export const GROUP_FOLLOWERS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_FOLLOWER = gql`

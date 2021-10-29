@@ -40,6 +40,22 @@
         </div>
         <div class="media-content">
           <p class="event-title" :title="event.title">{{ event.title }}</p>
+          <div class="event-organizer">
+            <figure
+              class="image is-24x24"
+              v-if="organizer(event) && organizer(event).avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="organizer(event).avatar.url"
+                alt=""
+              />
+            </figure>
+            <b-icon v-else icon="account-circle" />
+            <span class="organizer-name">
+              {{ organizerDisplayName(event) }}
+            </span>
+          </div>
           <div
             class="event-subtitle"
             v-if="event.physicalAddress"
@@ -49,7 +65,7 @@
                 : event.physicalAddress.description
             "
           >
-            <!--            <p>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</p>-->
+            <b-icon icon="map-marker" />
             <span v-if="isDescriptionDifferentFromLocality">
               {{ event.physicalAddress.description }},
               {{ event.physicalAddress.locality }}
@@ -57,6 +73,13 @@
             <span v-else>
               {{ event.physicalAddress.description }}
             </span>
+          </div>
+          <div
+            class="event-subtitle"
+            v-else-if="event.options && event.options.isOnline"
+          >
+            <b-icon icon="video" />
+            <span>{{ $t("Online") }}</span>
           </div>
         </div>
       </div>
@@ -100,7 +123,12 @@
 </template>
 
 <script lang="ts">
-import { IEvent, IEventCardOptions } from "@/types/event.model";
+import {
+  IEvent,
+  IEventCardOptions,
+  organizerDisplayName,
+  organizer,
+} from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
@@ -124,6 +152,10 @@ export default class EventCard extends Vue {
   EventStatus = EventStatus;
 
   RouteName = RouteName;
+
+  organizerDisplayName = organizerDisplayName;
+
+  organizer = organizer;
 
   defaultOptions: IEventCardOptions = {
     hideDate: false,
@@ -236,35 +268,58 @@ a.card {
         margin-bottom: 15px;
         margin-left: 0rem;
       }
+
+      & > .media-content {
+        flex: 1;
+        width: 100%;
+        overflow-x: inherit;
+      }
     }
 
     .event-title {
-      font-size: 1.2rem;
-      line-height: 1.25rem;
+      font-size: 18px;
+      line-height: 24px;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      min-height: 2.4rem;
+      // min-height: 2.4rem;
       font-weight: bold;
+    }
+
+    .event-organizer {
+      display: flex;
+      align-items: center;
+      padding-top: 8px;
+
+      .organizer-name {
+        font-size: 14px;
+        padding-left: 5px;
+        font-weight: 600;
+      }
     }
 
     .event-subtitle {
       font-size: 0.85rem;
-      display: inline-flex;
-      flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      // flex-wrap: wrap;
       color: #3c376e;
 
-      span {
-        width: 14rem;
-        display: block;
-        overflow: hidden;
-
-        flex-grow: 1;
-
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      span:not(.icon) {
+        padding-left: 5px;
       }
+
+      // span {
+      //   width: 14rem;
+      //   display: block;
+      //   overflow: hidden;
+
+      //   flex-grow: 1;
+
+      //   text-overflow: ellipsis;
+      //   white-space: nowrap;
+      // }
     }
   }
 }

@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT = gql`
   fragment ResourceMetadataBasicFields on ResourceMetadata {
@@ -38,10 +39,7 @@ export const GET_RESOURCE = gql`
         type
       }
       actor {
-        id
-        preferredUsername
-        name
-        domain
+        ...ActorFragment
       }
       children(page: $page, limit: $limit) {
         total
@@ -68,6 +66,7 @@ export const GET_RESOURCE = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
   ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
 

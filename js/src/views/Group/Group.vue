@@ -475,7 +475,7 @@
             }}
           </event-metadata-block>
           <event-metadata-block
-            v-if="physicalAddress.url"
+            v-if="physicalAddress && physicalAddress.url"
             :title="$t('Location')"
             :icon="
               physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'

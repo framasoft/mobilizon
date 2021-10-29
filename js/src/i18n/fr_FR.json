@@ -1308,6 +1308,13 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "Back to top": "Retour en haut",
   "Powered by Mobilizon": "Propulsé par Mobilizon",
-  "Instance follows": "Abonnements de l'instance",
-  "The event is fully online": "L'événement est entièrement en ligne"
+  "The event is fully online": "L'événement est entièrement en ligne",
+  "Follow": "Suivre",
+  "Cancel follow request": "Annuler la demande de suivi",
+  "Unfollow": "Ne plus suivre",
+  "your notification settings": "vos paramètres de notification",
+  "You will receive notifications about this group's public activity depending on %{notification_settings}.": "Vous recevrez des notifications à propos de l'activité publique de ce groupe en fonction de %{notification_settings}.",
+  "Recent events from your groups": "Événements récents de vos groupes",
+  "Online": "En ligne",
+  "That you follow or of which you are a member": "Que vous suivez ou dont vous êtes membre"
 }

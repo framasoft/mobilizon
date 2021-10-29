@@ -63,12 +63,14 @@ export default class LazyImage extends Vue {
   onEnter(): void {
     // Image is visible (means: has entered the viewport),
     // so start loading by setting the src attribute
-    this.image.src = this.src;
+    if (this.image) {
+      this.image.src = this.src;
 
-    this.image.onload = () => {
-      // Image is loaded, so start fading in
-      this.isLoaded = true;
-    };
+      this.image.onload = () => {
+        // Image is loaded, so start fading in
+        this.isLoaded = true;
+      };
+    }
   }
 
   @Watch("src")

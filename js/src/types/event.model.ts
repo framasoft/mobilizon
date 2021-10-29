@@ -4,7 +4,7 @@ import type { ITag } from "@/types/tag.model";
 import type { IMedia } from "@/types/media.model";
 import type { IComment } from "@/types/comment.model";
 import type { Paginate } from "@/types/paginate";
-import { Actor, Group } from "./actor";
+import { Actor, displayName, Group } from "./actor";
 import type { IActor, IGroup, IPerson } from "./actor";
 import type { IParticipant } from "./participant.model";
 import { EventOptions } from "./event-options.model";
@@ -256,4 +256,22 @@ export function toEditJSON(event: IEditableEvent): IEventEditJSON {
       id,
     })),
   };
+}
+
+export function organizer(event: IEvent): IActor | null {
+  if (event.attributedTo) {
+    return event.attributedTo;
+  }
+  if (event.organizerActor) {
+    return event.organizerActor;
+  }
+  return null;
+}
+
+export function organizerDisplayName(event: IEvent): string | null {
+  const organizerActor = organizer(event);
+  if (organizerActor) {
+    return displayName(organizerActor);
+  }
+  return null;
 }

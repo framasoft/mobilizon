@@ -1202,6 +1202,13 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "Back to top": "Back to top",
   "Powered by Mobilizon": "Powered by Mobilizon",
-  "Instance follows": "Instance follows",
-  "The event is fully online": "The event is fully online"
+  "The event is fully online": "The event is fully online",
+  "Follow": "Follow",
+  "Cancel follow request": "Cancel follow request",
+  "Unfollow": "Unfollow",
+  "your notification settings": "your notification settings",
+  "You will receive notifications about this group's public activity depending on %{notification_settings}.": "You will receive notifications about this group's public activity depending on %{notification_settings}.",
+  "Recent events from your groups": "Recent events from your groups",
+  "Online": "Online",
+  "That you follow or of which you are a member": "That you follow or of which you are a member"
 }

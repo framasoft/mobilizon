@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 import { TAG_FRAGMENT } from "./tags";
 
 export const POST_FRAGMENT = gql`
@@ -10,24 +11,10 @@ export const POST_FRAGMENT = gql`
     body
     draft
     author {
-      id
-      preferredUsername
-      name
-      domain
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     attributedTo {
-      id
-      preferredUsername
-      name
-      domain
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     insertedAt
     updatedAt
@@ -49,6 +36,7 @@ export const POST_FRAGMENT = gql`
     }
   }
   ${TAG_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const POST_BASIC_FIELDS = gql`
@@ -58,24 +46,10 @@ export const POST_BASIC_FIELDS = gql`
     slug
     url
     author {
-      id
-      preferredUsername
-      name
-      domain
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     attributedTo {
-      id
-      preferredUsername
-      name
-      domain
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     insertedAt
     updatedAt
@@ -88,15 +62,13 @@ export const POST_BASIC_FIELDS = gql`
       name
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const FETCH_GROUP_POSTS = gql`
   query GroupPosts($preferredUsername: String!, $page: Int, $limit: Int) {
     group(preferredUsername: $preferredUsername) {
-      id
-      preferredUsername
-      domain
-      name
+      ...ActorFragment
       posts(page: $page, limit: $limit) {
         total
         elements {

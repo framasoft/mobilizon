@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
   fragment DiscussionBasicFields on Discussion {
@@ -11,18 +12,13 @@ export const DISCUSSION_BASIC_FIELDS_FRAGMENT = gql`
       id
       text
       actor {
-        id
-        preferredUsername
-        domain
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
       publishedAt
       deletedAt
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const DISCUSSION_FIELDS_FOR_REPLY_FRAGMENT = gql`
@@ -35,26 +31,17 @@ export const DISCUSSION_FIELDS_FOR_REPLY_FRAGMENT = gql`
       text
       updatedAt
       actor {
-        id
-        preferredUsername
-        domain
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
     }
     actor {
-      id
-      preferredUsername
-      domain
+      ...ActorFragment
     }
     creator {
-      id
-      preferredUsername
-      domain
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const DISCUSSION_FIELDS_FRAGMENT = gql`
@@ -70,28 +57,17 @@ export const DISCUSSION_FIELDS_FRAGMENT = gql`
       deletedAt
       publishedAt
       actor {
-        id
-        domain
-        name
-        preferredUsername
-        avatar {
-          url
-        }
+        ...ActorFragment
       }
     }
     actor {
-      id
-      domain
-      name
-      preferredUsername
+      ...ActorFragment
     }
     creator {
-      id
-      domain
-      name
-      preferredUsername
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const CREATE_DISCUSSION = gql`
@@ -121,14 +97,7 @@ export const GET_DISCUSSION = gql`
           id
           text
           actor {
-            id
-            avatar {
-              id
-              url
-            }
-            name
-            domain
-            preferredUsername
+            ...ActorFragment
           }
           insertedAt
           updatedAt
@@ -140,6 +109,7 @@ export const GET_DISCUSSION = gql`
     }
   }
   ${DISCUSSION_FIELDS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_DISCUSSION = gql`
@@ -171,16 +141,10 @@ export const DISCUSSION_COMMENT_CHANGED = gql`
         deletedAt
         publishedAt
         actor {
-          id
-          preferredUsername
-          name
-          domain
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;

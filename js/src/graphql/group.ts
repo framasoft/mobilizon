@@ -2,6 +2,7 @@ import gql from "graphql-tag";
 import { DISCUSSION_BASIC_FIELDS_FRAGMENT } from "./discussion";
 import { RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT } from "./resources";
 import { POST_BASIC_FIELDS } from "./post";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const LIST_GROUPS = gql`
   query ListGroups(
@@ -23,12 +24,7 @@ export const LIST_GROUPS = gql`
       limit: $limit
     ) {
       elements {
-        id
-        url
-        name
-        domain
-        summary
-        preferredUsername
+        ...ActorFragment
         suspended
         avatar {
           id
@@ -51,16 +47,12 @@ export const LIST_GROUPS = gql`
       total
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const GROUP_FIELDS_FRAGMENTS = gql`
   fragment GroupFullFields on Group {
-    id
-    url
-    name
-    domain
-    summary
-    preferredUsername
+    ...ActorFragment
     suspended
     visibility
     openness
@@ -117,16 +109,10 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
           notApproved
         }
         attributedTo {
-          id
-          preferredUsername
-          name
-          domain
+          ...ActorFragment
         }
         organizerActor {
-          id
-          preferredUsername
-          name
-          domain
+          ...ActorFragment
         }
       }
       total
@@ -148,14 +134,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
         id
         role
         actor {
-          id
-          name
-          domain
-          preferredUsername
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
         insertedAt
       }
@@ -197,6 +176,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       total
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const FETCH_GROUP = gql`
@@ -263,21 +243,14 @@ export const CREATE_GROUP = gql`
       banner: $banner
       avatar: $avatar
     ) {
-      id
-      preferredUsername
-      name
-      domain
-      summary
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
       banner {
         id
         url
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_GROUP = gql`
@@ -303,23 +276,17 @@ export const UPDATE_GROUP = gql`
       physicalAddress: $physicalAddress
       manuallyApprovesFollowers: $manuallyApprovesFollowers
     ) {
-      id
-      preferredUsername
-      name
-      summary
+      ...ActorFragment
       visibility
       openness
       manuallyApprovesFollowers
-      avatar {
-        id
-        url
-      }
       banner {
         id
         url
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const DELETE_GROUP = gql`
@@ -355,10 +322,7 @@ export const GROUP_TIMELINE = gql`
     $limit: Int
   ) {
     group(preferredUsername: $preferredUsername) {
-      id
-      preferredUsername
-      domain
-      name
+      ...ActorFragment
       activity(type: $type, author: $author, page: $page, limit: $limit) {
         total
         elements {
@@ -371,18 +335,10 @@ export const GROUP_TIMELINE = gql`
           }
           type
           author {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           group {
-            id
-            preferredUsername
+            ...ActorFragment
           }
           object {
             ... on Event {
@@ -396,14 +352,7 @@ export const GROUP_TIMELINE = gql`
             ... on Member {
               id
               actor {
-                id
-                name
-                preferredUsername
-                domain
-                avatar {
-                  id
-                  url
-                }
+                ...ActorFragment
               }
             }
             ... on Resource {
@@ -421,11 +370,7 @@ export const GROUP_TIMELINE = gql`
               id
             }
             ... on Group {
-              id
-              preferredUsername
-              domain
-              name
-              summary
+              ...ActorFragment
               visibility
               openness
               physicalAddress {
@@ -433,9 +378,7 @@ export const GROUP_TIMELINE = gql`
               }
               banner {
                 id
-              }
-              avatar {
-                id
+                url
               }
             }
           }
@@ -443,4 +386,5 @@ export const GROUP_TIMELINE = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;

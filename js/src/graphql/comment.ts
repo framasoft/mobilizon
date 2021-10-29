@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const COMMENT_FIELDS_FRAGMENT_NAME = "CommentFields";
 export const COMMENT_FIELDS_FRAGMENT = gql`
@@ -10,15 +11,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     visibility
     local
     actor {
-      avatar {
-        id
-        url
-      }
-      id
-      domain
-      preferredUsername
-      name
-      summary
+      ...ActorFragment
     }
     totalReplies
     insertedAt
@@ -26,6 +19,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     deletedAt
     isAnnouncement
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const COMMENT_RECURSIVE_FRAGMENT = gql`

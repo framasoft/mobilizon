@@ -345,15 +345,7 @@
         <h3 class="title has-text-centered">
           {{ $t("These events may interest you") }}
         </h3>
-        <div class="columns">
-          <div
-            class="column is-one-third-desktop"
-            v-for="relatedEvent in event.relatedEvents"
-            :key="relatedEvent.uuid"
-          >
-            <EventCard :event="relatedEvent" />
-          </div>
-        </div>
+        <multi-card :events="event.relatedEvents" />
       </section>
       <b-modal
         :active.sync="isReportModalActive"
@@ -501,7 +493,7 @@ import { EventModel, IEvent } from "../../types/event.model";
 import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
-import EventCard from "../../components/Event/EventCard.vue";
+import MultiCard from "../../components/Event/MultiCard.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
 import { IReport } from "../../types/report.model";
 import { CREATE_REPORT } from "../../graphql/report";
@@ -536,7 +528,7 @@ import { IUser } from "@/types/current-user.model";
 @Component({
   components: {
     Subtitle,
-    EventCard,
+    MultiCard,
     BIcon,
     DateCalendarIcon,
     ReportModal,
@@ -576,7 +568,6 @@ import { IUser } from "@/types/current-user.model";
   apollo: {
     event: {
       query: FETCH_EVENT,
-      fetchPolicy: "cache-and-network",
       variables() {
         return {
           uuid: this.uuid,
@@ -590,7 +581,6 @@ import { IUser } from "@/types/current-user.model";
     loggedUser: USER_SETTINGS,
     participations: {
       query: EVENT_PERSON_PARTICIPATION,
-      fetchPolicy: "cache-and-network",
       variables() {
         return {
           eventId: this.event.id,
@@ -621,7 +611,6 @@ import { IUser } from "@/types/current-user.model";
     },
     person: {
       query: PERSON_STATUS_GROUP,
-      fetchPolicy: "cache-and-network",
       variables() {
         return {
           id: this.currentActor.id,

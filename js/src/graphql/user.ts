@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const CREATE_USER = gql`
   mutation CreateUser($email: String!, $password: String!, $locale: String) {
@@ -18,17 +19,12 @@ export const VALIDATE_USER = gql`
         id
         email
         defaultActor {
-          id
-          preferredUsername
-          name
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const LOGGED_USER = gql`
@@ -37,17 +33,12 @@ export const LOGGED_USER = gql`
       id
       email
       defaultActor {
-        id
-        preferredUsername
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
       provider
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const CHANGE_PASSWORD = gql`
@@ -228,14 +219,7 @@ export const LIST_USERS = gql`
         confirmedAt
         disabled
         actors {
-          id
-          preferredUsername
-          avatar {
-            id
-            url
-          }
-          name
-          summary
+          ...ActorFragment
         }
         settings {
           timezone
@@ -243,6 +227,7 @@ export const LIST_USERS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const GET_USER = gql`
@@ -263,13 +248,7 @@ export const GET_USER = gql`
         id
       }
       actors {
-        id
-        preferredUsername
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
       participations {
         total
@@ -277,6 +256,7 @@ export const GET_USER = gql`
       role
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_USER_LOCALE = gql`

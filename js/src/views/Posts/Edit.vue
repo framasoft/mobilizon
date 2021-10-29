@@ -266,7 +266,7 @@ export default class EditPost extends mixins(GroupMixin) {
 
   RouteName = RouteName;
 
-  editablePost!: IPost;
+  editablePost: IPost = this.post;
 
   usernameWithDomain = usernameWithDomain;
 

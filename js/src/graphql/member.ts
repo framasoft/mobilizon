@@ -1,31 +1,19 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const MEMBER_FRAGMENT = gql`
   fragment MemberFragment on Member {
     id
     role
     parent {
-      id
-      preferredUsername
-      domain
-      name
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     actor {
-      id
-      preferredUsername
-      domain
-      name
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
     insertedAt
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const INVITE_MEMBER = gql`
@@ -57,24 +45,13 @@ export const REJECT_INVITATION = gql`
 export const GROUP_MEMBERS = gql`
   query ($name: String!, $roles: String, $page: Int, $limit: Int) {
     group(preferredUsername: $name) {
-      id
-      url
-      name
-      domain
-      preferredUsername
+      ...ActorFragment
       members(page: $page, limit: $limit, roles: $roles) {
         elements {
           id
           role
           actor {
-            id
-            name
-            domain
-            preferredUsername
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           insertedAt
         }
@@ -82,6 +59,7 @@ export const GROUP_MEMBERS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_MEMBER = gql`

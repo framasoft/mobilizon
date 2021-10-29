@@ -62,7 +62,7 @@ export const HOME_USER_QUERIES = gql`
           }
         }
       }
-      followGroupEvents {
+      followedGroupEvents {
         total
         elements {
           profile {
