@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events, Users}
+  alias Mobilizon.{Actors, Admin, Config, Events, FollowedGroupActivity, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Service.Auth.Authenticator
@@ -631,6 +631,23 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          end),
        total: total
      }}
+  end
+
+  def user_followed_group_events(%User{id: user_id}, %{page: page, limit: limit}, %{
+        context: %{current_user: %User{id: logged_in_user_id}}
+      })
+      when user_id == logged_in_user_id do
+    activities = FollowedGroupActivity.user_followed_group_events(user_id, page, limit)
+
+    activities = %Page{
+      activities
+      | elements:
+          Enum.map(activities.elements, fn [event, group, profile] ->
+            %{group: group, profile: profile, event: event}
+          end)
+    }
+
+    {:ok, activities}
   end
 
   @spec update_user_login_information(User.t(), map()) ::
