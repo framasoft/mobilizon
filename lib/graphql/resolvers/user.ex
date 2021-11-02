@@ -633,11 +633,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
      }}
   end
 
-  def user_followed_group_events(%User{id: user_id}, %{page: page, limit: limit}, %{
+  def user_followed_group_events(%User{id: user_id}, %{page: page, limit: limit} = args, %{
         context: %{current_user: %User{id: logged_in_user_id}}
       })
       when user_id == logged_in_user_id do
-    activities = FollowedGroupActivity.user_followed_group_events(user_id, page, limit)
+    activities =
+      FollowedGroupActivity.user_followed_group_events(
+        user_id,
+        Map.get(args, :after_datetime),
+        page,
+        limit
+      )
 
     activities = %Page{
       activities

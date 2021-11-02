@@ -117,6 +117,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
         description: "The limit of follow group events per page"
       )
 
+      arg(:after_datetime, :datetime,
+        description: "Filter follow group events by event start datetime"
+      )
+
       resolve(&User.user_followed_group_events/3)
     end
 
