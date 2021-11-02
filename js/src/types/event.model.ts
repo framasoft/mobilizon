@@ -259,7 +259,7 @@ export function toEditJSON(event: IEditableEvent): IEventEditJSON {
 }
 
 export function organizer(event: IEvent): IActor | null {
-  if (event.attributedTo) {
+  if (event.attributedTo?.id) {
     return event.attributedTo;
   }
   if (event.organizerActor) {

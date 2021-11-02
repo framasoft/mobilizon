@@ -3,17 +3,55 @@
     class="event-minimalist-card-wrapper"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
-    <date-calendar-icon
-      class="calendar-icon"
-      :date="event.beginsOn"
-      :small="true"
-    />
-    <div class="title-info-wrapper">
-      <p class="event-minimalist-title">{{ event.title }}</p>
-      <p v-if="event.physicalAddress" class="has-text-grey">
-        {{ event.physicalAddress.description }}
-      </p>
-      <p v-else>
+    <div class="event-preview mr-0 ml-0">
+      <div>
+        <div class="date-component">
+          <date-calendar-icon :date="event.beginsOn" :small="true" />
+        </div>
+        <lazy-image-wrapper
+          :picture="event.picture"
+          :rounded="true"
+          style="height: 100%; position: absolute; top: 0; left: 0; width: 100%"
+        />
+      </div>
+    </div>
+    <div class="title-info-wrapper has-text-grey-dark">
+      <h3 class="event-minimalist-title">
+        <b-tag
+          class="mr-2"
+          type="is-warning"
+          size="is-medium"
+          v-if="event.draft"
+          >{{ $t("Draft") }}</b-tag
+        >
+        {{ event.title }}
+      </h3>
+      <event-address
+        v-if="event.physicalAddress"
+        class="event-subtitle"
+        :physical-address="event.physicalAddress"
+      />
+      <div
+        class="event-subtitle"
+        v-else-if="event.options && event.options.isOnline"
+      >
+        <b-icon icon="video" />
+        <span>{{ $t("Online") }}</span>
+      </div>
+      <div class="event-subtitle event-organizer" v-if="showOrganizer">
+        <figure
+          class="image is-24x24"
+          v-if="organizer(event) && organizer(event).avatar"
+        >
+          <img class="is-rounded" :src="organizer(event).avatar.url" alt="" />
+        </figure>
+        <b-icon v-else icon="account-circle" />
+        <span class="organizer-name">
+          {{ organizerDisplayName(event) }}
+        </span>
+      </div>
+      <p class="participant-metadata">
+        <b-icon icon="account-multiple" />
         <span v-if="event.options.maximumAttendeeCapacity !== 0">
           {{
             $tc(
@@ -64,30 +102,65 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IEvent } from "@/types/event.model";
+import { IEvent, organizer, organizerDisplayName } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
+import EventAddress from "@/components/Event/EventAddress.vue";
 
 @Component({
   components: {
     DateCalendarIcon,
+    LazyImageWrapper,
+    EventAddress,
   },
 })
 export default class EventMinimalistCard extends Vue {
   @Prop({ required: true, type: Object }) event!: IEvent;
+  @Prop({ required: false, type: Boolean, default: false })
+  showOrganizer!: boolean;
 
   RouteName = RouteName;
 
   ParticipantRole = ParticipantRole;
+
+  organizerDisplayName = organizerDisplayName;
+
+  organizer = organizer;
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_event-card";
+@import "~bulma/sass/utilities/mixins.sass";
+@import "@/variables.scss";
+
 .event-minimalist-card-wrapper {
-  display: flex;
-  width: 100%;
+  display: grid;
+  grid-gap: 5px 10px;
+  grid-template-areas: "preview" "body";
   color: initial;
-  align-items: flex-start;
+
+  @include desktop {
+    grid-template-columns: 200px 3fr;
+    grid-template-areas: "preview body";
+  }
+
+  .event-preview {
+    & > div {
+      position: relative;
+      height: 120px;
+      width: 100%;
+
+      div.date-component {
+        display: flex;
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        z-index: 1;
+      }
+    }
+  }
 
   .calendar-icon {
     margin-right: 1rem;
@@ -97,11 +170,19 @@ export default class EventMinimalistCard extends Vue {
     flex: 2;
 
     .event-minimalist-title {
-      color: #3c376e;
-      font-family: "Liberation Sans", "Helvetica Neue", Roboto, Helvetica, Arial,
-        serif;
-      font-size: 1.25rem;
-      font-weight: 700;
+      padding-bottom: 5px;
+      font-size: 18px;
+      line-height: 24px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-weight: bold;
+      color: $title-color;
+    }
+
+    ::v-deep .icon {
+      vertical-align: middle;
     }
   }
 }

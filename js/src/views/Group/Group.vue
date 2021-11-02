@@ -149,6 +149,7 @@
                   currentActor.id
                 "
                 @click="joinGroup"
+                @keyup.enter="joinGroup"
                 type="is-primary"
                 :disabled="previewPublic"
                 >{{ $t("Join group") }}</b-button
@@ -172,6 +173,7 @@
                   currentActor.id
                 "
                 @click="followGroup"
+                @keyup.enter="followGroup"
                 type="is-primary"
                 :disabled="isCurrentActorPendingFollow"
                 >{{ $t("Follow") }}</b-button
@@ -195,6 +197,7 @@
                 outlined
                 v-if="isCurrentActorPendingFollow && currentActor.id"
                 @click="unFollowGroup"
+                @keyup.enter="unFollowGroup"
                 type="is-primary"
                 >{{ $t("Cancel follow request") }}</b-button
               ><b-button
@@ -208,6 +211,7 @@
               <b-button
                 v-if="isCurrentActorFollowing"
                 @click="toggleFollowNotify"
+                @keyup.enter="toggleFollowNotify"
                 :icon-left="
                   isCurrentActorFollowingNotify
                     ? 'bell-outline'
@@ -218,6 +222,7 @@
                 outlined
                 icon-left="share"
                 @click="triggerShare()"
+                @keyup.enter="triggerShare()"
                 v-if="!isCurrentActorAGroupMember || previewPublic"
               >
                 {{ $t("Share") }}
@@ -246,6 +251,7 @@
                   v-if="!previewPublic && isCurrentActorAGroupMember"
                   aria-role="menuitem"
                   @click="triggerShare()"
+                  @keyup.enter="triggerShare()"
                 >
                   <span>
                     <b-icon icon="share" />
@@ -280,6 +286,7 @@
                   v-if="ableToReport"
                   aria-role="menuitem"
                   @click="isReportModalActive = true"
+                  @keyup.enter="isReportModalActive = true"
                 >
                   <span>
                     <b-icon icon="flag" />
@@ -289,7 +296,8 @@
                 <b-dropdown-item
                   aria-role="menuitem"
                   v-if="isCurrentActorAGroupMember && !previewPublic"
-                  @click="leaveGroup"
+                  @click="openLeaveGroupModal"
+                  @keyup.enter="openLeaveGroupModal"
                 >
                   <span>
                     <b-icon icon="exit-to-app" />
@@ -401,8 +409,8 @@
               class="organized-events-wrapper"
               v-if="group && group.organizedEvents.total > 0"
             >
-              <EventMinimalistCard
-                v-for="event in group.organizedEvents.elements"
+              <event-minimalist-card
+                v-for="event in group.organizedEvents.elements.slice(0, 3)"
                 :event="event"
                 :key="event.uuid"
                 class="organized-event"
@@ -436,13 +444,11 @@
           }"
         >
           <template v-slot:default>
-            <div v-if="group.posts.total > 0" class="posts-wrapper">
-              <post-list-item
-                v-for="post in group.posts.elements"
-                :key="post.id"
-                :post="post"
-              />
-            </div>
+            <multi-post-list-item
+              v-if="group.posts.total > 0"
+              :posts="group.posts.elements.slice(0, 3)"
+              :isCurrentActorMember="isCurrentActorAGroupMember"
+            />
             <empty-content v-else-if="group" icon="bullhorn" :inline="true">
               {{ $t("No posts yet") }}
             </empty-content>
@@ -502,6 +508,7 @@
                 <span
                   class="map-show-button"
                   @click="showMap = !showMap"
+                  @keyup.enter="showMap = !showMap"
                   v-if="physicalAddress.geom"
                   >{{ $t("Show map") }}</span
                 >
@@ -527,8 +534,8 @@
             class="organized-events-wrapper"
             v-if="group && organizedEvents.elements.length > 0"
           >
-            <EventMinimalistCard
-              v-for="event in organizedEvents.elements"
+            <event-minimalist-card
+              v-for="event in organizedEvents.elements.slice(0, 3)"
               :event="event"
               :key="event.uuid"
               class="organized-event"
@@ -562,13 +569,21 @@
         </section>
         <section>
           <subtitle>{{ $t("Latest posts") }}</subtitle>
-          <div v-if="posts.elements.length > 0" class="posts-wrapper">
-            <post-list-item
-              v-for="post in posts.elements"
-              :key="post.id"
-              :post="post"
-            />
-          </div>
+
+          <multi-post-list-item
+            v-if="
+              posts.elements.filter(
+                (post) =>
+                  !post.draft && post.visibility === PostVisibility.PUBLIC
+              ).length > 0
+            "
+            :posts="
+              posts.elements.filter(
+                (post) =>
+                  !post.draft && post.visibility === PostVisibility.PUBLIC
+              )
+            "
+          />
           <empty-content v-else-if="group" icon="bullhorn" :inline="true">
             {{ $t("No posts yet") }}
           </empty-content>
@@ -630,7 +645,7 @@ import Subtitle from "@/components/Utils/Subtitle.vue";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
-import PostListItem from "@/components/Post/PostListItem.vue";
+import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import { Address } from "@/types/address.model";
@@ -668,7 +683,7 @@ import {
   },
   components: {
     DiscussionListItem,
-    PostListItem,
+    MultiPostListItem,
     EventMinimalistCard,
     CompactTodo,
     Subtitle,
@@ -712,6 +727,8 @@ export default class Group extends mixins(GroupMixin) {
 
   usernameWithDomain = usernameWithDomain;
 
+  PostVisibility = PostVisibility;
+
   Openness = Openness;
 
   showMap = false;
@@ -748,6 +765,20 @@ export default class Group extends mixins(GroupMixin) {
           },
         },
       ],
+    });
+  }
+
+  protected async openLeaveGroupModal(): Promise<void> {
+    this.$buefy.dialog.confirm({
+      type: "is-danger",
+      title: this.$t("Leave group") as string,
+      message: this.$t(
+        "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
+        { groupName: `<b>${displayName(this.group)}</b>` }
+      ) as string,
+      onConfirm: () => this.leaveGroup(),
+      confirmText: this.$t("Leave group") as string,
+      cancelText: this.$t("Cancel") as string,
     });
   }
 
@@ -1016,8 +1047,8 @@ export default class Group extends mixins(GroupMixin) {
     return {
       total: this.group.posts.total,
       elements: this.group.posts.elements.filter((post: IPost) => {
-        if (this.previewPublic) {
-          return !(post.draft || post.visibility == PostVisibility.PRIVATE);
+        if (this.previewPublic || !this.isCurrentActorAGroupMember) {
+          return !post.draft && post.visibility == PostVisibility.PUBLIC;
         }
         return true;
       }),
@@ -1143,19 +1174,6 @@ div.container {
 
       section {
         background: $white;
-
-        .posts-wrapper {
-          padding-bottom: 1rem;
-        }
-
-        .organized-events-wrapper {
-          display: flex;
-          flex-wrap: wrap;
-
-          .organized-event {
-            margin: 0.25rem 0;
-          }
-        }
 
         &.presentation {
           .media-left {
@@ -1306,10 +1324,6 @@ div.container {
 
     section {
       margin-top: 0;
-
-      .posts-wrapper {
-        margin-bottom: 1rem;
-      }
     }
   }
 
@@ -1318,6 +1332,13 @@ div.container {
     ::v-deep .has-link a {
       padding-right: 1rem;
     }
+  }
+
+  .organized-events-wrapper,
+  .posts-wrapper {
+    display: grid;
+    grid-gap: 20px;
+    grid-template: 1fr;
   }
 }
 </style>

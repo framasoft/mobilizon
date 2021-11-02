@@ -61,8 +61,12 @@ export const POST_BASIC_FIELDS = gql`
       url
       name
     }
+    tags {
+      ...TagFragment
+    }
   }
   ${ACTOR_FRAGMENT}
+  ${TAG_FRAGMENT}
 `;
 
 export const FETCH_GROUP_POSTS = gql`

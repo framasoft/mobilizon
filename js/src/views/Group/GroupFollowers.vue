@@ -31,6 +31,7 @@
         </li>
       </ul>
     </nav>
+    <b-loading :active="$apollo.loading" />
     <section
       class="container section"
       v-if="group && isCurrentActorAGroupAdmin && followers"
@@ -125,7 +126,7 @@
         </template>
       </b-table>
     </section>
-    <b-message v-else-if="group">
+    <b-message v-else-if="!$apollo.loading && group">
       {{ $t("You are not an administrator for this group.") }}
     </b-message>
   </div>

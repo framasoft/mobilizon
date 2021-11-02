@@ -1,65 +1,12 @@
 import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
 import { ADDRESS_FRAGMENT } from "./address";
+import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
+import {
+  PARTICIPANTS_QUERY_FRAGMENT,
+  PARTICIPANT_QUERY_FRAGMENT,
+} from "./participant";
 import { TAG_FRAGMENT } from "./tags";
-
-const PARTICIPANT_QUERY_FRAGMENT = gql`
-  fragment ParticipantQuery on Participant {
-    role
-    id
-    actor {
-      ...ActorFragment
-    }
-    event {
-      id
-      uuid
-    }
-    metadata {
-      cancellationToken
-      message
-    }
-    insertedAt
-  }
-  ${ACTOR_FRAGMENT}
-`;
-
-const PARTICIPANTS_QUERY_FRAGMENT = gql`
-  fragment ParticipantsQuery on PaginatedParticipantList {
-    total
-    elements {
-      ...ParticipantQuery
-    }
-  }
-  ${PARTICIPANT_QUERY_FRAGMENT}
-`;
-
-export const EVENT_OPTIONS_FRAGMENT = gql`
-  fragment EventOptions on EventOptions {
-    maximumAttendeeCapacity
-    remainingAttendeeCapacity
-    showRemainingAttendeeCapacity
-    anonymousParticipation
-    showStartTime
-    showEndTime
-    timezone
-    offers {
-      price
-      priceCurrency
-      url
-    }
-    participationConditions {
-      title
-      content
-      url
-    }
-    attendees
-    program
-    commentModeration
-    showParticipationPrice
-    hideOrganizerWhenGroupEvent
-    isOnline
-  }
-`;
 
 const FULL_EVENT_FRAGMENT = gql`
   fragment FullEvent on Event {
@@ -473,7 +420,7 @@ export const FETCH_GROUP_EVENTS = gql`
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
     $organisedEventsPage: Int
-    $organisedEventslimit: Int
+    $organisedEventsLimit: Int
   ) {
     group(preferredUsername: $name) {
       ...ActorFragment
@@ -481,7 +428,7 @@ export const FETCH_GROUP_EVENTS = gql`
         afterDatetime: $afterDateTime
         beforeDatetime: $beforeDateTime
         page: $organisedEventsPage
-        limit: $organisedEventslimit
+        limit: $organisedEventsLimit
       ) {
         elements {
           id
@@ -490,7 +437,7 @@ export const FETCH_GROUP_EVENTS = gql`
           beginsOn
           draft
           options {
-            maximumAttendeeCapacity
+            ...EventOptions
           }
           participantStats {
             participant
@@ -502,12 +449,21 @@ export const FETCH_GROUP_EVENTS = gql`
           organizerActor {
             ...ActorFragment
           }
+          physicalAddress {
+            ...AdressFragment
+          }
+          picture {
+            url
+            id
+          }
         }
         total
       }
     }
   }
+  ${EVENT_OPTIONS_FRAGMENT}
   ${ACTOR_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
 `;
 
 export const CLOSE_EVENTS = gql`

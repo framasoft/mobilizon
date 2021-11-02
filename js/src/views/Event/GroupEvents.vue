@@ -52,14 +52,10 @@
           {{ showPassedEvents ? $t("Past events") : $t("Upcoming events") }}
         </subtitle>
         <b-switch v-model="showPassedEvents">{{ $t("Past events") }}</b-switch>
-        <transition-group name="list" tag="div" class="event-list">
-          <EventListViewCard
-            v-for="event in group.organizedEvents.elements"
-            :key="event.id"
-            :event="event"
-            :options="{ memberofGroup: isCurrentActorMember }"
-          />
-        </transition-group>
+        <grouped-multi-event-minimalist-card
+          :events="group.organizedEvents.elements"
+          :isCurrentActorMember="isCurrentActorMember"
+        />
         <b-message
           v-if="
             group.organizedEvents.elements.length === 0 &&
@@ -88,7 +84,7 @@ import { Component } from "vue-property-decorator";
 import { mixins } from "vue-class-component";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
-import EventListViewCard from "@/components/Event/EventListViewCard.vue";
+import GroupedMultiEventMinimalistCard from "@/components/Event/GroupedMultiEventMinimalistCard.vue";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
@@ -120,14 +116,14 @@ const EVENTS_PAGE_LIMIT = 10;
           beforeDateTime: this.showPassedEvents ? new Date() : null,
           afterDateTime: this.showPassedEvents ? null : new Date(),
           organisedEventsPage: this.eventsPage,
-          organisedEventslimit: EVENTS_PAGE_LIMIT,
+          organisedEventsLimit: EVENTS_PAGE_LIMIT,
         };
       },
     },
   },
   components: {
     Subtitle,
-    EventListViewCard,
+    GroupedMultiEventMinimalistCard,
   },
   metaInfo() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

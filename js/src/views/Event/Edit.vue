@@ -606,7 +606,6 @@ import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
   LOGGED_USER_DRAFTS,
-  LOGGED_USER_PARTICIPATIONS,
   PERSON_STATUS_GROUP,
 } from "../../graphql/actor";
 import {
@@ -635,6 +634,7 @@ import { IEventOptions } from "@/types/event-options.model";
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
 import { IAddress } from "@/types/address.model";
+import { LOGGED_USER_PARTICIPATIONS } from "@/graphql/participant";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 

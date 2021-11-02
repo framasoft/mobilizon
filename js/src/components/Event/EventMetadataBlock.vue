@@ -14,9 +14,9 @@
         />
       </span>
       <b-icon v-else-if="icon" :icon="icon" size="is-medium" />
-      <p :class="{ 'padding-left': icon }">
+      <div class="content-wrapper" :class="{ 'padding-left': icon }">
         <slot></slot>
-      </p>
+      </div>
     </div>
   </div>
 </template>
@@ -42,7 +42,7 @@ div.eventMetadataBlock {
   align-items: center;
   margin-bottom: 1.75rem;
 
-  p {
+  .content-wrapper {
     overflow: hidden;
 
     &.padding-left {

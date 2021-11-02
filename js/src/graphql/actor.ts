@@ -198,67 +198,6 @@ export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
   }
 `;
 
-export const LOGGED_USER_PARTICIPATIONS = gql`
-  query LoggedUserParticipations(
-    $afterDateTime: DateTime
-    $beforeDateTime: DateTime
-    $page: Int
-    $limit: Int
-  ) {
-    loggedUser {
-      id
-      participations(
-        afterDatetime: $afterDateTime
-        beforeDatetime: $beforeDateTime
-        page: $page
-        limit: $limit
-      ) {
-        total
-        elements {
-          event {
-            id
-            uuid
-            title
-            picture {
-              id
-              url
-              alt
-            }
-            beginsOn
-            visibility
-            organizerActor {
-              ...ActorFragment
-            }
-            attributedTo {
-              ...ActorFragment
-            }
-            participantStats {
-              going
-              notApproved
-              participant
-            }
-            options {
-              maximumAttendeeCapacity
-              remainingAttendeeCapacity
-            }
-            tags {
-              id
-              slug
-              title
-            }
-          }
-          id
-          role
-          actor {
-            ...ActorFragment
-          }
-        }
-      }
-    }
-  }
-  ${ACTOR_FRAGMENT}
-`;
-
 export const LOGGED_USER_DRAFTS = gql`
   query LoggedUserDrafts($page: Int, $limit: Int) {
     loggedUser {
@@ -267,6 +206,7 @@ export const LOGGED_USER_DRAFTS = gql`
         id
         uuid
         title
+        draft
         picture {
           id
           url

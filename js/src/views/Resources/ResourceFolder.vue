@@ -60,11 +60,11 @@
             <hr
               role="presentation"
               class="dropdown-divider"
-              v-if="config.resourceProviders.length"
+              v-if="resourceProviders.length"
             />
             <b-dropdown-item
               aria-role="listitem"
-              v-for="resourceProvider in config.resourceProviders"
+              v-for="resourceProvider in resourceProviders"
               :key="resourceProvider.software"
               @click="createResourceFromProvider(resourceProvider)"
             >
@@ -416,6 +416,10 @@ export default class Resources extends Mixins(ResourceMixin) {
 
   get lastFragment(): string | undefined {
     return this.filteredPath.slice(-1)[0];
+  }
+
+  get resourceProviders(): IProvider[] {
+    return this.config?.resourceProviders || [];
   }
 
   async createResource(): Promise<void> {

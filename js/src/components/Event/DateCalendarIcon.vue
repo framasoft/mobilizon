@@ -12,18 +12,17 @@
 </docs>
 
 <template>
-  <time
+  <div
     class="datetime-container"
     :class="{ small }"
-    :datetime="dateObj.getUTCSeconds()"
     :style="`--small: ${smallStyle}`"
   >
     <div class="datetime-container-header" />
     <div class="datetime-container-content">
-      <span class="day">{{ day }}</span>
-      <span class="month">{{ month }}</span>
+      <time :datetime="dateObj.toISOString()" class="day">{{ day }}</time>
+      <time :datetime="dateObj.toISOString()" class="month">{{ month }}</time>
     </div>
-  </time>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -54,7 +53,7 @@ export default class DateCalendarIcon extends Vue {
 </script>
 
 <style lang="scss" scoped>
-time.datetime-container {
+div.datetime-container {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -76,7 +75,7 @@ time.datetime-container {
     height: calc(30px * var(--small));
   }
 
-  span {
+  time {
     display: block;
     font-weight: 600;
     color: $violet-3;

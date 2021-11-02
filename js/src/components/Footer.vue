@@ -47,6 +47,7 @@
       </li>
       <li>
         <a
+          rel="external"
           hreflang="en"
           href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE"
         >
@@ -62,13 +63,16 @@
         tag="span"
         path="Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}."
       >
-        <a slot="mobilizon" href="https://joinmobilizon.org">{{
+        <a rel="external" slot="mobilizon" href="https://joinmobilizon.org">{{
           $t("Mobilizon")
         }}</a>
         <span slot="date">{{ new Date().getFullYear() }}</span>
-        <a href="https://joinmobilizon.org/hall-of-fame" slot="contributors">{{
-          $t("more than 1360 contributors")
-        }}</a>
+        <a
+          rel="external"
+          href="https://joinmobilizon.org/hall-of-fame"
+          slot="contributors"
+          >{{ $t("more than 1360 contributors") }}</a
+        >
       </i18n>
     </div>
   </footer>

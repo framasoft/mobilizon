@@ -5,6 +5,7 @@
     :width="pictureOrDefault.metadata.width"
     :height="pictureOrDefault.metadata.height"
     :blurhash="pictureOrDefault.metadata.blurhash"
+    :rounded="rounded"
   />
 </template>
 <script lang="ts">
@@ -34,6 +35,7 @@ const DEFAULT_PICTURE = {
 export default class LazyImageWrapper extends Vue {
   @Prop({ required: false, type: Object as PropType<IMedia | null> })
   picture!: IMedia | null;
+  @Prop({ required: false, type: Boolean, default: false }) rounded!: boolean;
 
   get pictureOrDefault(): Partial<IMedia> {
     if (this.picture === null) {

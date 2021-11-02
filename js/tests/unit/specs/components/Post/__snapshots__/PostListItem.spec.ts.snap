@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PostListItem renders post list item with basic informations 1`] = `
+<a href="/p/my-blog-post-some-uuid" class="post-minimalist-card-wrapper">
+  <!---->
+  <div class="title-info-wrapper has-text-grey-dark">
+    <p class="post-minimalist-title">My Blog Post</p>
+    <p class="post-publication-date"><span class="icon"><i class="mdi mdi-clock mdi-24px"></i></span> <span class="has-text-grey-dark">Dec 2, 2020</span></p>
+    <!---->
+    <!---->
+  </div>
+</a>
+`;
+
+exports[`PostListItem renders post list item with publisher name 1`] = `
+<a href="/p/my-blog-post-some-uuid" class="post-minimalist-card-wrapper">
+  <!---->
+  <div class="title-info-wrapper has-text-grey-dark">
+    <p class="post-minimalist-title">My Blog Post</p>
+    <p class="post-publication-date"><span class="icon"><i class="mdi mdi-clock mdi-24px"></i></span> <span class="has-text-grey-dark">Dec 2, 2020</span></p>
+    <!---->
+    <p class="post-publisher has-text-grey-dark"><span class="icon"><i class="mdi mdi-account-edit mdi-24px"></i></span> <span>Published by <b class="has-text-weight-medium">An author</b></span></p>
+  </div>
+</a>
+`;
+
+exports[`PostListItem renders post list item with tags 1`] = `
+<a href="/p/my-blog-post-some-uuid" class="post-minimalist-card-wrapper">
+  <!---->
+  <div class="title-info-wrapper has-text-grey-dark">
+    <p class="post-minimalist-title">My Blog Post</p>
+    <p class="post-publication-date"><span class="icon"><i class="mdi mdi-clock mdi-24px"></i></span> <span class="has-text-grey-dark">Dec 2, 2020</span></p>
+    <div class="tags" style="display: inline;"><span class="icon"><i class="mdi mdi-tag mdi-24px"></i></span> <span class="tag"><span class="">A tag</span>
+      <!----></span>
+    </div>
+    <!---->
+  </div>
+</a>
+`;

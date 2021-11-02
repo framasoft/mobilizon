@@ -3,6 +3,9 @@ import { DISCUSSION_BASIC_FIELDS_FRAGMENT } from "./discussion";
 import { RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT } from "./resources";
 import { POST_BASIC_FIELDS } from "./post";
 import { ACTOR_FRAGMENT } from "./actor";
+import { ADDRESS_FRAGMENT } from "./address";
+import { TAG_FRAGMENT } from "./tags";
+import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
 
 export const LIST_GROUPS = gql`
   query ListGroups(
@@ -68,6 +71,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       type
       id
       originId
+      url
     }
     avatar {
       id
@@ -93,7 +97,7 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       afterDatetime: $afterDateTime
       beforeDatetime: $beforeDateTime
       page: $organisedEventsPage
-      limit: $organisedEventslimit
+      limit: $organisedEventsLimit
     ) {
       elements {
         id
@@ -113,6 +117,19 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
         }
         organizerActor {
           ...ActorFragment
+        }
+        picture {
+          id
+          url
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        options {
+          ...EventOptions
+        }
+        tags {
+          ...TagFragment
         }
       }
       total
@@ -177,6 +194,9 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     }
   }
   ${ACTOR_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
 `;
 
 export const FETCH_GROUP = gql`
@@ -185,7 +205,7 @@ export const FETCH_GROUP = gql`
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
     $organisedEventsPage: Int
-    $organisedEventslimit: Int
+    $organisedEventsLimit: Int
     $postsPage: Int
     $postsLimit: Int
     $membersPage: Int
@@ -209,7 +229,7 @@ export const GET_GROUP = gql`
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
     $organisedEventsPage: Int
-    $organisedEventslimit: Int
+    $organisedEventsLimit: Int
     $postsPage: Int
     $postsLimit: Int
     $membersPage: Int

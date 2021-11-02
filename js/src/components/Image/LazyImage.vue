@@ -16,7 +16,7 @@
         :width="width"
         :height="height"
         class="absolute top-0 left-0 transition-opacity duration-500"
-        :class="isLoaded ? 'opacity-100' : 'opacity-0'"
+        :class="{ isLoaded: isLoaded ? 'opacity-100' : 'opacity-0', rounded }"
         alt=""
       />
     </div>
@@ -37,6 +37,7 @@ export default class LazyImage extends Vue {
   @Prop({ type: String, required: false, default: null }) blurhash!: string;
   @Prop({ type: Number, default: 1 }) width!: number;
   @Prop({ type: Number, default: 1 }) height!: number;
+  @Prop({ type: Boolean, default: false }) rounded!: boolean;
 
   inheritAttrs = false;
   isLoaded = false;
@@ -115,5 +116,8 @@ img {
   height: 100%;
   object-fit: cover;
   object-position: 50% 50%;
+  &.rounded {
+    border-radius: 8px;
+  }
 }
 </style>

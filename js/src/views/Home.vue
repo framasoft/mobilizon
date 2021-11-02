@@ -213,7 +213,7 @@
             </span>
           </p>
           <div>
-            <EventListCard
+            <event-participation-card
               v-for="participation in thisWeek(row)"
               @event-deleted="eventDeleted"
               :key="participation[1].id"
@@ -230,24 +230,34 @@
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowMyUpcomingEvents && canShowFollowActivity"
+        v-if="canShowMyUpcomingEvents && canShowFollowedGroupEvents"
       />
       <!-- Events from your followed groups -->
-      <section class="followActivity" v-if="canShowFollowActivity">
+      <section class="followActivity" v-if="canShowFollowedGroupEvents">
         <h2 class="title">
-          {{ $t("Recent events from your groups") }}
+          {{ $t("Upcoming events from your groups") }}
         </h2>
         <p>{{ $t("That you follow or of which you are a member") }}</p>
-        <multi-card
-          :events="
-            followedGroupEvents.elements.map(({ event }) => event).slice(0, 3)
-          "
-        />
+        <multi-card :events="filteredFollowedGroupsEvents" />
+        <span class="view-all">
+          <router-link
+            :to="{
+              name: RouteName.MY_EVENTS,
+              query: {
+                showUpcoming: 'true',
+                showDrafts: 'false',
+                showAttending: 'false',
+                showMyGroups: 'true',
+              },
+            }"
+            >{{ $t("View everything") }} >></router-link
+          >
+        </span>
       </section>
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowFollowActivity && canShowCloseEvents"
+        v-if="canShowFollowedGroupEvents && canShowCloseEvents"
       />
 
       <!-- Events close to you -->
@@ -319,7 +329,7 @@ import { Paginate } from "@/types/paginate";
 import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
 import { CLOSE_EVENTS, FETCH_EVENTS } from "../graphql/event";
-import EventListCard from "../components/Event/EventListCard.vue";
+import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
@@ -392,7 +402,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
   components: {
     Subtitle,
     DateComponent,
-    EventListCard,
+    EventParticipationCard,
     MultiCard,
     "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
@@ -580,8 +590,20 @@ export default class Home extends Vue {
     );
   }
 
-  get canShowFollowActivity(): boolean {
-    return this.followedGroupEvents.total > 0;
+  get canShowFollowedGroupEvents(): boolean {
+    return this.filteredFollowedGroupsEvents.length > 0;
+  }
+
+  get filteredFollowedGroupsEvents(): IEvent[] {
+    return this.followedGroupEvents.elements
+      .map(({ event }: { event: IEvent }) => event)
+      .filter(
+        ({ id }) =>
+          !this.thisWeekGoingToEvents
+            .map(({ event: { id: event_id } }) => event_id)
+            .includes(id)
+      )
+      .slice(0, 3);
   }
 }
 </script>

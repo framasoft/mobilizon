@@ -1,5 +1,5 @@
 <template>
-  <article class="box">
+  <article class="box mb-5 mt-4">
     <div class="identity-header">
       <figure class="image is-24x24" v-if="participation.actor.avatar">
         <img
@@ -10,16 +10,39 @@
           width="24"
         />
       </figure>
+      <b-icon v-else icon="account-circle" />
       {{ displayNameAndUsername(participation.actor) }}
     </div>
     <div class="list-card">
-      <div class="date-component">
-        <date-calendar-icon
-          :date="participation.event.beginsOn"
-          :small="true"
-        />
-      </div>
       <div class="content-and-actions">
+        <div class="event-preview mr-0 ml-0">
+          <div>
+            <div class="date-component">
+              <date-calendar-icon
+                :date="participation.event.beginsOn"
+                :small="true"
+              />
+            </div>
+            <router-link
+              :to="{
+                name: RouteName.EVENT,
+                params: { uuid: participation.event.uuid },
+              }"
+            >
+              <lazy-image-wrapper
+                :rounded="true"
+                :picture="participation.event.picture"
+                style="
+                  height: 100%;
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                "
+              />
+            </router-link>
+          </div>
+        </div>
         <div class="list-card-content">
           <div class="title-wrapper">
             <router-link
@@ -31,59 +54,61 @@
               <h3 class="title">{{ participation.event.title }}</h3>
             </router-link>
           </div>
-          <div class="participation-actor">
-            <span>
-              <b-icon
-                icon="earth"
-                v-if="participation.event.visibility === EventVisibility.PUBLIC"
-              />
-              <b-icon
-                icon="link"
-                v-else-if="
-                  participation.event.visibility === EventVisibility.UNLISTED
-                "
-              />
-              <b-icon
-                icon="lock"
-                v-else-if="
-                  participation.event.visibility === EventVisibility.PRIVATE
-                "
-              />
-            </span>
-            <span
-              v-if="
-                participation.event.physicalAddress &&
-                participation.event.physicalAddress.locality
-              "
-              >{{ participation.event.physicalAddress.locality }} -</span
-            >
-            <i18n
-              tag="span"
-              path="Organized by {name}"
-              v-if="organizerActor.id !== currentActor.id"
-            >
-              <popover-actor-card
-                slot="name"
-                :actor="organizerActor"
-                :inline="true"
-              >
-                {{ organizerActor.displayName() }}
-              </popover-actor-card>
-            </i18n>
-            <span v-else>{{ $t("Organized by you") }}</span>
+          <event-address
+            v-if="participation.event.physicalAddress"
+            class="event-subtitle"
+            :physical-address="participation.event.physicalAddress"
+          />
+          <div
+            class="event-subtitle"
+            v-else-if="
+              participation.event.options &&
+              participation.event.options.isOnline
+            "
+          >
+            <b-icon icon="video" />
+            <span>{{ $t("Online") }}</span>
           </div>
-          <div>
+          <div class="event-subtitle event-organizer">
+            <figure
+              class="image is-24x24"
+              v-if="
+                organizer(participation.event) &&
+                organizer(participation.event).avatar
+              "
+            >
+              <img
+                class="is-rounded"
+                :src="organizer(participation.event).avatar.url"
+                alt=""
+              />
+            </figure>
+            <b-icon v-else icon="account-circle" />
+            <span class="organizer-name">
+              {{ organizerDisplayName(participation.event) }}
+            </span>
+          </div>
+          <div class="event-subtitle event-participants">
+            <b-icon
+              :class="{ 'has-text-danger': lastSeatsLeft }"
+              icon="account-group"
+            />
             <span
               class="participant-stats"
-              v-if="
-                ![
-                  ParticipantRole.PARTICIPANT,
-                  ParticipantRole.NOT_APPROVED,
-                ].includes(participation.role)
-              "
+              v-if="participation.role !== ParticipantRole.NOT_APPROVED"
             >
+              <!-- Less than 10 seats left -->
+              <span class="has-text-danger" v-if="lastSeatsLeft">
+                {{
+                  $t("{number} seats left", {
+                    number: seatsLeft,
+                  })
+                }}
+              </span>
               <span
-                v-if="participation.event.options.maximumAttendeeCapacity !== 0"
+                v-else-if="
+                  participation.event.options.maximumAttendeeCapacity !== 0
+                "
               >
                 {{
                   $tc(
@@ -111,28 +136,27 @@
                   )
                 }}
               </span>
-              <span v-if="participation.event.participantStats.notApproved > 0">
-                <b-button
-                  type="is-text"
-                  @click="
-                    gotToWithCheck(participation, {
-                      name: RouteName.PARTICIPATIONS,
-                      query: { role: ParticipantRole.NOT_APPROVED },
-                      params: { eventId: participation.event.uuid },
-                    })
-                  "
-                >
-                  {{
-                    $tc(
-                      "{count} requests waiting",
-                      participation.event.participantStats.notApproved,
-                      {
-                        count: participation.event.participantStats.notApproved,
-                      }
-                    )
-                  }}
-                </b-button>
-              </span>
+              <b-button
+                v-if="participation.event.participantStats.notApproved > 0"
+                type="is-text"
+                @click="
+                  gotToWithCheck(participation, {
+                    name: RouteName.PARTICIPATIONS,
+                    query: { role: ParticipantRole.NOT_APPROVED },
+                    params: { eventId: participation.event.uuid },
+                  })
+                "
+              >
+                {{
+                  $tc(
+                    "{count} requests waiting",
+                    participation.event.participantStats.notApproved,
+                    {
+                      count: participation.event.participantStats.notApproved,
+                    }
+                  )
+                }}
+              </b-button>
             </span>
           </div>
         </div>
@@ -233,7 +257,11 @@ import { mixins } from "vue-class-component";
 import { RawLocation, Route } from "vue-router";
 import { EventVisibility, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
-import { IEventCardOptions } from "../../types/event.model";
+import {
+  IEventCardOptions,
+  organizer,
+  organizerDisplayName,
+} from "../../types/event.model";
 import { displayNameAndUsername, IActor, IPerson } from "../../types/actor";
 import ActorMixin from "../../mixins/actor";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
@@ -241,6 +269,9 @@ import EventMixin from "../../mixins/event";
 import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
+import EventAddress from "@/components/Event/EventAddress.vue";
+import { PropType } from "vue";
 
 const defaultOptions: IEventCardOptions = {
   hideDate: true,
@@ -254,6 +285,8 @@ const defaultOptions: IEventCardOptions = {
   components: {
     DateCalendarIcon,
     PopoverActorCard,
+    LazyImageWrapper,
+    EventAddress,
   },
   apollo: {
     currentActor: {
@@ -261,11 +294,15 @@ const defaultOptions: IEventCardOptions = {
     },
   },
 })
-export default class EventListCard extends mixins(ActorMixin, EventMixin) {
+export default class EventParticipationCard extends mixins(
+  ActorMixin,
+  EventMixin
+) {
   /**
    * The participation associated
    */
-  @Prop({ required: true }) participation!: IParticipant;
+  @Prop({ required: true, type: Object as PropType<IParticipant> })
+  participation!: IParticipant;
 
   /**
    * Options are merged with default options
@@ -280,6 +317,10 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
   EventVisibility = EventVisibility;
 
   displayNameAndUsername = displayNameAndUsername;
+
+  organizerDisplayName = organizerDisplayName;
+
+  organizer = organizer;
 
   RouteName = RouteName;
 
@@ -304,13 +345,13 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
       participation.actor.id !== this.currentActor.id &&
       participation.event.organizerActor
     ) {
-      const organizer = participation.event.organizerActor as IPerson;
-      await changeIdentity(this.$apollo.provider.defaultClient, organizer);
+      const organizerActor = participation.event.organizerActor as IPerson;
+      await changeIdentity(this.$apollo.provider.defaultClient, organizerActor);
       this.$buefy.notification.open({
         message: this.$t(
           "Current identity has been changed to {identityName} in order to manage this event.",
           {
-            identityName: organizer.preferredUsername,
+            identityName: organizerActor.preferredUsername,
           }
         ) as string,
         type: "is-info",
@@ -330,10 +371,30 @@ export default class EventListCard extends mixins(ActorMixin, EventMixin) {
     }
     return this.participation.event.organizerActor;
   }
+
+  get seatsLeft(): number | null {
+    if (this.participation.event.options.maximumAttendeeCapacity > 0) {
+      return (
+        this.participation.event.options.maximumAttendeeCapacity -
+        this.participation.event.participantStats.participant
+      );
+    }
+    return null;
+  }
+
+  get lastSeatsLeft(): boolean {
+    if (this.seatsLeft) {
+      return this.seatsLeft < 10;
+    }
+    return false;
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_event-card";
+@import "~bulma/sass/utilities/mixins.sass";
+
 article.box {
   div.tag-container {
     position: absolute;
@@ -359,49 +420,67 @@ article.box {
 
   .list-card {
     display: flex;
-    padding: 0 6px;
+    padding: 0 6px 0 0;
     position: relative;
     flex-direction: column;
 
-    div.date-component {
-      align-self: flex-start;
-      padding: 5px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      margin-top: 1px;
-      height: 0;
-      display: flex;
-      align-items: flex-end;
-      margin-bottom: 15px;
-      margin-left: 0rem;
-    }
-
     .content-and-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 1rem;
+      display: grid;
+      grid-gap: 5px 10px;
+      grid-template-areas: "preview" "body" "actions";
+
+      @include tablet {
+        grid-template-columns: 1fr 3fr;
+        grid-template-areas: "preview body" "actions actions";
+      }
+
+      @include desktop {
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-areas: "preview body actions";
+      }
+
+      .event-preview {
+        grid-area: preview;
+
+        & > div {
+          height: 128px;
+          width: 100%;
+          position: relative;
+
+          div.date-component {
+            display: flex;
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            z-index: 1;
+          }
+
+          img {
+            width: 100%;
+            object-position: center;
+            object-fit: cover;
+            height: 100%;
+          }
+        }
+      }
 
       .actions {
-        padding-right: 7.5px;
+        padding: 7px;
         cursor: pointer;
+        align-self: center;
+        justify-self: center;
+        grid-area: actions;
       }
 
       div.list-card-content {
         flex: 1;
         padding: 5px;
-        min-width: 350px;
+        grid-area: body;
 
-        .participation-actor span,
-        .participant-stats span {
+        .participant-stats {
+          display: flex;
+          align-items: center;
           padding: 0 5px;
-
-          button {
-            height: auto;
-            padding-top: 0;
-          }
         }
 
         div.title-wrapper {
@@ -419,11 +498,11 @@ article.box {
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            font-weight: 400;
-            line-height: 1em;
-            font-size: 1.4em;
-            padding-bottom: 5px;
+            font-size: 18px;
+            line-height: 24px;
             margin: auto 0;
+            font-weight: bold;
+            color: $title-color;
           }
         }
       }
@@ -434,9 +513,9 @@ article.box {
     background: $yellow-2;
     display: flex;
     padding: 5px;
-    padding-left: calc(48px + 15px);
 
-    figure {
+    figure,
+    span.icon {
       padding-right: 3px;
     }
   }

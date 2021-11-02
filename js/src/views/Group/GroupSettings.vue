@@ -32,6 +32,7 @@
         </li>
       </ul>
     </nav>
+    <b-loading :active="$apollo.loading" />
     <section
       class="container section"
       v-if="group && isCurrentActorAGroupAdmin"
@@ -169,7 +170,7 @@
         {{ value }}
       </b-message>
     </section>
-    <b-message v-else>
+    <b-message v-else-if="!$apollo.loading">
       {{ $t("You are not an administrator for this group.") }}
     </b-message>
   </div>
@@ -178,12 +179,11 @@
 <script lang="ts">
 import { Component, Watch } from "vue-property-decorator";
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
-import { Route } from "vue-router";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
 import { GroupVisibility, Openness } from "@/types/enums";
-import { UPDATE_GROUP, DELETE_GROUP } from "../../graphql/group";
+import { UPDATE_GROUP } from "../../graphql/group";
 import { IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { CONFIG } from "@/graphql/config";
@@ -246,31 +246,6 @@ export default class GroupSettings extends mixins(GroupMixin) {
       this.handleError(err);
     }
   }
-
-  confirmDeleteGroup(): void {
-    this.$buefy.dialog.confirm({
-      title: this.$t("Delete group") as string,
-      message: this.$t(
-        "Are you sure you want to <b>completely delete</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
-      ) as string,
-      confirmText: this.$t("Delete group") as string,
-      cancelText: this.$t("Cancel") as string,
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => this.deleteGroup(),
-    });
-  }
-
-  async deleteGroup(): Promise<Route> {
-    await this.$apollo.mutate<{ deleteGroup: IGroup }>({
-      mutation: DELETE_GROUP,
-      variables: {
-        groupId: this.group.id,
-      },
-    });
-    return this.$router.push({ name: RouteName.MY_GROUPS });
-  }
-
   async copyURL(): Promise<void> {
     await window.navigator.clipboard.writeText(this.group.url);
     this.showCopiedTooltip = true;

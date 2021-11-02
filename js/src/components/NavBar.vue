@@ -58,7 +58,7 @@
         tag="a"
         href="https://mediation.koena.net/framasoft/mobilizon/"
         target="_blank"
-        rel="noopener"
+        rel="noopener external"
         hreflang="fr"
       >
         <img

@@ -61,7 +61,7 @@ export default class FolderItem extends Mixins(ResourceMixin) {
   list = [];
 
   groupObject: Record<string, unknown> = {
-    name: `folder-${this.resource.title}`,
+    name: `folder-${this.resource?.title}`,
     pull: false,
     put: ["resources"],
   };

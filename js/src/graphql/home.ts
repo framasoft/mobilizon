@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
 import { ADDRESS_FRAGMENT } from "./address";
-import { EVENT_OPTIONS_FRAGMENT } from "./event";
+import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
 import { TAG_FRAGMENT } from "./tags";
 import { USER_SETTINGS_FRAGMENT } from "./user";
 

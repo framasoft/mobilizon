@@ -52,6 +52,7 @@ export const eventRoutes: RouteConfig[] = [
     path: "/events/me",
     name: EventRouteName.MY_EVENTS,
     component: myEvents,
+    props: true,
     meta: {
       requiredAuth: true,
       announcer: { message: (): string => i18n.t("My events") as string },
