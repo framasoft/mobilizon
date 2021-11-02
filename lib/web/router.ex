@@ -92,7 +92,7 @@ defmodule Mobilizon.Web.Router do
     forward("/", Absinthe.Plug,
       schema: Mobilizon.GraphQL.Schema,
       analyze_complexity: true,
-      max_complexity: 200
+      max_complexity: 250
     )
   end
 
