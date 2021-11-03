@@ -30,7 +30,7 @@ exports[`PostListItem renders post list item with tags 1`] = `
   <div class="title-info-wrapper has-text-grey-dark">
     <p class="post-minimalist-title">My Blog Post</p>
     <p class="post-publication-date"><span class="icon"><i class="mdi mdi-clock mdi-24px"></i></span> <span class="has-text-grey-dark">Dec 2, 2020</span></p>
-    <div class="tags" style="display: inline;"><span class="icon"><i class="mdi mdi-tag mdi-24px"></i></span> <span class="tag"><span class="">A tag</span>
+    <div class="tags" style="display: inline;"><span class="icon"><i class="mdi mdi-tag mdi-24px"></i></span> <span class="tag"><!----><span class="">A tag</span>
       <!----></span>
     </div>
     <!---->
