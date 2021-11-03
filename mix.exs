@@ -201,7 +201,7 @@ defmodule Mobilizon.Mixfile do
       {:html_entities, "~> 0.5"},
       {:sweet_xml, "~> 0.7"},
       {:web_push_encryption, "~> 0.3"},
-      {:eblurhash, "1.2.0"},
+      {:eblurhash, "~> 1.2.0"},
       {:struct_access, "~> 1.1.2"},
       {:paasaa, "~> 0.5.0"},
       {:nimble_csv, "~> 1.1"},
