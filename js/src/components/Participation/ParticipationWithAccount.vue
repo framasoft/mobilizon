@@ -31,6 +31,7 @@ import { IEvent } from "@/types/event.model";
   metaInfo() {
     return {
       title: this.$t("Participation with account") as string,
+      meta: [{ name: "robots", content: "noindex" }],
     };
   },
 })

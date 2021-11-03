@@ -60,6 +60,7 @@ import RouteName from "../../router/name";
   metaInfo() {
     return {
       title: this.$t("Resend confirmation email") as string,
+      meta: [{ name: "robots", content: "noindex" }],
     };
   },
 })
