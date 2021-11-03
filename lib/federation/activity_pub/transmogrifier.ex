@@ -67,29 +67,30 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
 
-    with object_data when is_map(object_data) <-
-           object |> Converter.Comment.as_to_model_data(),
-         {:existing_comment, {:error, :comment_not_found}} <-
-           {:existing_comment, Discussions.get_comment_from_url_with_preload(object_data.url)},
-         object_data <- transform_object_data_for_discussion(object_data),
-         # Check should be better
-
-         {:ok, %Activity{} = activity, entity} <-
-           (if is_data_for_comment_or_discussion?(object_data) do
-              Logger.debug("Chosing to create a regular comment")
-              Actions.Create.create(:comment, object_data, false)
-            else
-              Logger.debug("Chosing to initialize or add a comment to a conversation")
-              Actions.Create.create(:discussion, object_data, false)
-            end) do
-      {:ok, activity, entity}
-    else
-      {:existing_comment, {:ok, %Comment{} = comment}} ->
-        {:ok, nil, comment}
-
-      {:error, :event_not_allow_commenting} ->
-        Logger.debug("Tried to reply to an event for which comments are closed")
+    case Converter.Comment.as_to_model_data(object) do
+      %{visibility: visibility, event_id: event_id}
+      when visibility != :public and event_id != nil ->
+        Logger.info("Tried to reply to an event with a private comment - ignore")
         :error
+
+      object_data when is_map(object_data) ->
+        case Discussions.get_comment_from_url_with_preload(object_data.url) do
+          {:error, :comment_not_found} ->
+            object_data = transform_object_data_for_discussion(object_data)
+
+            case create_comment_or_discussion(object_data) do
+              {:ok, %Activity{} = activity, entity} ->
+                {:ok, activity, entity}
+
+              {:error, :event_not_allow_commenting} ->
+                Logger.debug("Tried to reply to an event for which comments are closed")
+                :error
+            end
+
+          {:ok, %Comment{} = comment} ->
+            # Object already exists
+            {:ok, nil, comment}
+        end
     end
   end
 
@@ -1176,5 +1177,17 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   defp can_manage_event?(%Actor{} = _actor, %Event{} = _event) do
     false
+  end
+
+  @spec create_comment_or_discussion(map()) ::
+          {:ok, Activity.t(), struct()} | {:error, atom() | Ecto.Changeset.t()}
+  defp create_comment_or_discussion(object_data) do
+    if is_data_for_comment_or_discussion?(object_data) do
+      Logger.debug("Chosing to create a regular comment")
+      Actions.Create.create(:comment, object_data, false)
+    else
+      Logger.debug("Chosing to initialize or add a comment to a conversation")
+      Actions.Create.create(:discussion, object_data, false)
+    end
   end
 end

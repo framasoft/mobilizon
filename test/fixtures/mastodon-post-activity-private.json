@@ -1,0 +1,57 @@
+{
+    "@context": [
+        "https://www.w3.org/ns/activitystreams",
+        "https://w3id.org/security/v1",
+        {
+            "Emoji": "toot:Emoji",
+            "Hashtag": "as:Hashtag",
+            "atomUri": "ostatus:atomUri",
+            "conversation": "ostatus:conversation",
+            "inReplyToAtomUri": "ostatus:inReplyToAtomUri",
+            "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+            "movedTo": "as:movedTo",
+            "ostatus": "http://ostatus.org#",
+            "sensitive": "as:sensitive",
+            "toot": "http://joinmastodon.org/ns#"
+        }
+    ],
+    "actor": "https://framapiaf.org/users/admin",
+    "id": "https://framapiaf.org/users/admin/statuses/19512778738411823/activity",
+    "nickname": "lain",
+    "object": {
+        "atomUri": "https://framapiaf.org/users/admin/statuses/19512778738411823",
+        "attachment": [],
+        "attributedTo": "https://framapiaf.org/users/admin",
+        "content": "<p><span class=\"h-card\"><a href=\"https://framapiaf.org/users/tcit\" class=\"u-url mention\">@<span>tcit</span></a></span> here is a private message</p>",
+        "conversation": "tag:mastodon.example.org,2018-02-12:objectId=20:objectType=Conversation",
+        "id": "https://framapiaf.org/users/admin/statuses/19512778738411823",
+        "inReplyTo": null,
+        "inReplyToAtomUri": null,
+        "published": "2018-02-12T14:08:20Z",
+        "sensitive": true,
+        "summary": "cw",
+        "tag": [
+            {
+                "href": "https://framapiaf.org/users/tcit",
+                "name": "@tcit@framapiaf.org",
+                "type": "Mention"
+            }
+        ],
+        "to": [
+            "https://framapiaf.org/users/tcit"
+        ],
+        "type": "Note",
+        "url": "https://framapiaf.org/@admin/19512778738411823"
+    },
+    "published": "2018-02-12T14:08:20Z",
+    "signature": {
+        "created": "2018-02-12T14:08:20Z",
+        "creator": "https://framapiaf.org/users/admin#main-key",
+        "signatureValue": "rnNfcopkc6+Ju73P806popcfwrK9wGYHaJVG1/ZvrlEbWVDzaHjkXqj9Q3/xju5l8CSn9tvSgCCtPFqZsFQwn/pFIFUcw7ZWB2xi4bDm3NZ3S4XQ8JRaaX7og5hFxAhWkGhJhAkfxVnOg2hG+w2d/7d7vRVSC1vo5ip4erUaA/PkWusZvPIpxnRWoXaxJsFmVx0gJgjpJkYDyjaXUlp+jmaoseeZ4EPQUWqHLKJ59PRG0mg8j2xAjYH9nQaN14qMRmTGPxY8gfv/CUFcatA+8VJU9KEsJkDAwLVvglydNTLGrxpAJU78a2eaht0foV43XUIZGe3DKiJPgE+UOKGCJw==",
+        "type": "RsaSignature2017"
+    },
+    "to": [
+        "https://framapiaf.org/users/tcit"
+    ],
+    "type": "Create"
+}

@@ -230,8 +230,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     end
   end
 
-  @ap_public "https://www.w3.org/ns/activitystreams#Public"
-
   defp get_visibility(object), do: if(@ap_public in object["to"], do: :public, else: :unlisted)
 
   @spec date_to_string(DateTime.t() | nil) :: String.t()
