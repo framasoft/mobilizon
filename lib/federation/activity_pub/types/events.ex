@@ -73,7 +73,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     activity_data = %{
       "type" => "Delete",
       "actor" => actor.url,
-      "object" => Convertible.model_to_as(event),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => url
+      },
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"],
       "id" => url <> "/delete"
     }

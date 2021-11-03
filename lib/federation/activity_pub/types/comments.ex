@@ -82,7 +82,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
     activity_data = %{
       "type" => "Delete",
       "actor" => actor.url,
-      "object" => Convertible.model_to_as(comment),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => url
+      },
       "id" => url <> "/delete",
       "to" => ["https://www.w3.org/ns/activitystreams#Public"]
     }

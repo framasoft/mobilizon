@@ -115,7 +115,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
         activity_data = %{
           "type" => "Delete",
           "actor" => actor.url,
-          "object" => Convertible.model_to_as(discussion),
+          "object" => %{
+            "type" => "Tombstone",
+            "url" => url
+          },
           "id" => url <> "/delete",
           "to" => [group.members_url]
         }

@@ -92,7 +92,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
     activity_data = %{
       "type" => "Delete",
       "actor" => actor_url,
-      "object" => Convertible.model_to_as(target_actor),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => target_actor_url
+      },
       "id" => target_actor_url <> "/delete",
       "to" => to,
       "cc" => cc
