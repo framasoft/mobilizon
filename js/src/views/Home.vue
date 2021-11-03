@@ -1,5 +1,6 @@
 <template>
   <div id="homepage">
+    <b-loading :active.sync="$apollo.loading" />
     <section
       class="hero"
       :class="{ webp: supportsWebPFormat }"
@@ -59,19 +60,9 @@
           <i18n tag="span" path="On {instance} and other federated instances">
             <b slot="instance">{{ config.name }}</b>
           </i18n>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
-        <b-loading :active.sync="$apollo.loading" />
         <div v-if="this.events.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="event in this.events.elements.slice(0, 6)"
-              :key="event.uuid"
-            >
-              <EventCard :event="event" />
-            </div>
-          </div>
+          <multi-card :events="events.elements.slice(0, 6)" />
           <span class="view-all">
             <router-link :to="{ name: RouteName.SEARCH }"
               >{{ $t("View everything") }} >></router-link
@@ -181,10 +172,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="container section"
-      v-if="config && loggedUser && loggedUser.settings"
-    >
+    <div class="container section" v-if="config && loggedUserSettings">
       <section v-if="currentActor.id && (welcomeBack || newRegisteredUser)">
         <b-message type="is-info" v-if="welcomeBack">{{
           $t("Welcome back {username}!", {
@@ -200,7 +188,6 @@
       <!-- Your upcoming events -->
       <section v-if="canShowMyUpcomingEvents">
         <h2 class="title">{{ $t("Your upcoming events") }}</h2>
-        <b-loading :active.sync="$apollo.loading" />
         <div v-for="row of goingToEvents" class="upcoming-events" :key="row[0]">
           <p
             class="date-component-container"
@@ -226,7 +213,7 @@
             </span>
           </p>
           <div>
-            <EventListCard
+            <event-participation-card
               v-for="participation in thisWeek(row)"
               @event-deleted="eventDeleted"
               :key="participation[1].id"
@@ -243,27 +230,36 @@
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowMyUpcomingEvents && canShowLastWeekEvents"
+        v-if="canShowMyUpcomingEvents && canShowFollowedGroupEvents"
       />
-      <!-- Last week events -->
-      <section v-if="canShowLastWeekEvents">
-        <h2 class="title">{{ $t("Last week") }}</h2>
-        <b-loading :active.sync="$apollo.loading" />
-        <div>
-          <EventListCard
-            v-for="participation in lastWeekEvents"
-            :key="participation.id"
-            :participation="participation"
-            @event-deleted="eventDeleted"
-            :options="{ hideDate: false }"
-          />
-        </div>
+      <!-- Events from your followed groups -->
+      <section class="followActivity" v-if="canShowFollowedGroupEvents">
+        <h2 class="title">
+          {{ $t("Upcoming events from your groups") }}
+        </h2>
+        <p>{{ $t("That you follow or of which you are a member") }}</p>
+        <multi-card :events="filteredFollowedGroupsEvents" />
+        <span class="view-all">
+          <router-link
+            :to="{
+              name: RouteName.MY_EVENTS,
+              query: {
+                showUpcoming: 'true',
+                showDrafts: 'false',
+                showAttending: 'false',
+                showMyGroups: 'true',
+              },
+            }"
+            >{{ $t("View everything") }} >></router-link
+          >
+        </span>
       </section>
       <hr
         role="presentation"
         class="home-separator"
-        v-if="canShowLastWeekEvents && canShowCloseEvents"
+        v-if="canShowFollowedGroupEvents && canShowCloseEvents"
       />
+
       <!-- Events close to you -->
       <section class="events-close" v-if="canShowCloseEvents">
         <h2 class="title">
@@ -273,10 +269,10 @@
           {{
             $tc(
               "Within {number} kilometers of {place}",
-              loggedUser.settings.location.range,
+              loggedUserSettings.location.range,
               {
-                number: loggedUser.settings.location.range,
-                place: loggedUser.settings.location.name,
+                number: loggedUserSettings.location.range,
+                place: loggedUserSettings.location.name,
               }
             )
           }}
@@ -286,24 +282,13 @@
           >
             <b-icon class="clickable" icon="pencil" size="is-small" />
           </router-link>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
-        <div class="columns is-multiline">
-          <div
-            class="column is-one-third-desktop"
-            v-for="event in closeEvents.elements.slice(0, 3)"
-            :key="event.uuid"
-          >
-            <event-card :event="event" />
-          </div>
-        </div>
+        <multi-card :events="closeEvents.elements.slice(0, 3)" />
       </section>
       <hr
         role="presentation"
         class="home-separator"
-        v-if="
-          canShowMyUpcomingEvents || canShowLastWeekEvents || canShowCloseEvents
-        "
+        v-if="canShowMyUpcomingEvents || canShowCloseEvents"
       />
       <section class="events-recent">
         <h2 class="title">
@@ -313,19 +298,10 @@
           <i18n tag="span" path="On {instance} and other federated instances">
             <b slot="instance">{{ config.name }}</b>
           </i18n>
-          <b-loading :active.sync="$apollo.loading" />
         </p>
 
-        <div v-if="this.events.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="event in this.events.elements.slice(0, 6)"
-              :key="event.uuid"
-            >
-              <recent-event-card-wrapper :event="event" />
-            </div>
-          </div>
+        <div v-if="events.total > 0">
+          <multi-card :events="events.elements.slice(0, 8)" />
           <span class="view-all">
             <router-link :to="{ name: RouteName.SEARCH }"
               >{{ $t("View everything") }} >></router-link
@@ -334,7 +310,7 @@
         </div>
         <b-message v-else type="is-danger"
           >{{ $t("No events found") }}<br />
-          <div v-if="goingToEvents.size > 0 || lastWeekEvents.length > 0">
+          <div v-if="goingToEvents.size > 0">
             <b-icon size="is-small" icon="information-outline" />
             <small>{{
               $t("The events you created are not shown here.")
@@ -353,28 +329,29 @@ import { Paginate } from "@/types/paginate";
 import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
 import { CLOSE_EVENTS, FETCH_EVENTS } from "../graphql/event";
-import EventListCard from "../components/Event/EventListCard.vue";
-import EventCard from "../components/Event/EventCard.vue";
-import RecentEventCardWrapper from "../components/Event/RecentEventCardWrapper.vue";
-import {
-  CURRENT_ACTOR_CLIENT,
-  LOGGED_USER_PARTICIPATIONS,
-} from "../graphql/actor";
+import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
+import MultiCard from "../components/Event/MultiCard.vue";
+import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IPerson, Person } from "../types/actor";
-import { ICurrentUser, IUser } from "../types/current-user.model";
-import { CURRENT_USER_CLIENT, USER_SETTINGS } from "../graphql/user";
+import {
+  ICurrentUser,
+  IUser,
+  IUserSettings,
+} from "../types/current-user.model";
+import { CURRENT_USER_CLIENT } from "../graphql/user";
+import { HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
 import DateComponent from "../components/Event/DateCalendarIcon.vue";
 import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
+import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import Subtitle from "../components/Utils/Subtitle.vue";
 
 @Component({
   apollo: {
     events: {
       query: FETCH_EVENTS,
-      fetchPolicy: "no-cache", // Debug me: https://github.com/apollographql/apollo-client/issues/3030
       variables: {
         orderBy: EventSortField.INSERTED_AT,
         direction: SortDirection.DESC,
@@ -385,35 +362,7 @@ import Subtitle from "../components/Utils/Subtitle.vue";
       update: (data) => new Person(data.currentActor),
     },
     currentUser: CURRENT_USER_CLIENT,
-    loggedUser: {
-      query: USER_SETTINGS,
-      fetchPolicy: "network-only",
-      skip() {
-        return !this.currentUser || this.currentUser.isLoggedIn === false;
-      },
-      error() {
-        return null;
-      },
-    },
     config: CONFIG,
-    currentUserParticipations: {
-      query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        const lastWeek = new Date();
-        lastWeek.setDate(new Date().getDate() - 7);
-        return {
-          afterDateTime: lastWeek.toISOString(),
-        };
-      },
-      update: (data) =>
-        data.loggedUser.participations.elements.map(
-          (participation: IParticipant) => new Participant(participation)
-        ),
-      skip() {
-        return this.currentUser?.isLoggedIn === false;
-      },
-    },
     closeEvents: {
       query: CLOSE_EVENTS,
       variables() {
@@ -431,13 +380,30 @@ import Subtitle from "../components/Utils/Subtitle.vue";
         );
       },
     },
+    userQueries: {
+      query: HOME_USER_QUERIES,
+      update(data) {
+        console.log("loggedUser", data.loggedUser);
+        this.loggedUser = data.loggedUser;
+        this.followedGroupEvents = data.loggedUser.followedGroupEvents;
+        this.currentUserParticipations =
+          data.loggedUser.participations.elements.map(
+            (participation: IParticipant) => new Participant(participation)
+          );
+      },
+      variables: {
+        afterDateTime: new Date().toISOString(),
+      },
+      skip() {
+        return !this.currentUser?.isLoggedIn;
+      },
+    },
   },
   components: {
     Subtitle,
     DateComponent,
-    EventListCard,
-    EventCard,
-    RecentEventCardWrapper,
+    EventParticipationCard,
+    MultiCard,
     "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
   metaInfo() {
@@ -461,9 +427,9 @@ export default class Home extends Vue {
 
   country = { name: null };
 
-  currentUser!: IUser;
+  currentUser!: ICurrentUser;
 
-  loggedUser!: ICurrentUser;
+  loggedUser: IUser | null = null;
 
   currentActor!: IPerson;
 
@@ -476,6 +442,11 @@ export default class Home extends Vue {
   supportsWebPFormat = supportsWebPFormat;
 
   closeEvents: Paginate<IEvent> = { elements: [], total: 0 };
+
+  followedGroupEvents: Paginate<IFollowedGroupEvent> = {
+    elements: [],
+    total: 0,
+  };
 
   // get displayed_name() {
   //   return this.loggedPerson && this.loggedPerson.name === null
@@ -584,20 +555,6 @@ export default class Home extends Vue {
     );
   }
 
-  get lastWeekEvents(): IParticipant[] {
-    const res = this.currentUserParticipations.filter(
-      ({ event, role }) =>
-        event.beginsOn != null &&
-        this.isBefore(event.beginsOn.toDateString(), 0) &&
-        role !== ParticipantRole.REJECTED
-    );
-    res.sort(
-      (a: IParticipant, b: IParticipant) =>
-        a.event.beginsOn.getTime() - b.event.beginsOn.getTime()
-    );
-    return res;
-  }
-
   eventDeleted(eventid: string): void {
     this.currentUserParticipations = this.currentUserParticipations.filter(
       (participation) => participation.event.id !== eventid
@@ -610,7 +567,7 @@ export default class Home extends Vue {
 
   @Watch("loggedUser")
   detectEmptyUserSettings(loggedUser: IUser): void {
-    if (loggedUser && loggedUser.id && loggedUser.settings === null) {
+    if (loggedUser?.id && loggedUser?.settings === null) {
       this.$router.push({
         name: RouteName.WELCOME_SCREEN,
         params: { step: "1" },
@@ -618,16 +575,35 @@ export default class Home extends Vue {
     }
   }
 
+  get loggedUserSettings(): IUserSettings | undefined {
+    return this.loggedUser?.settings;
+  }
+
   get canShowMyUpcomingEvents(): boolean {
     return this.currentActor.id != undefined && this.goingToEvents.size > 0;
   }
 
-  get canShowLastWeekEvents(): boolean {
-    return this.currentActor && this.lastWeekEvents.length > 0;
+  get canShowCloseEvents(): boolean {
+    return (
+      this.loggedUser?.settings?.location != undefined &&
+      this.closeEvents.total > 0
+    );
   }
 
-  get canShowCloseEvents(): boolean {
-    return this.closeEvents.total > 0;
+  get canShowFollowedGroupEvents(): boolean {
+    return this.filteredFollowedGroupsEvents.length > 0;
+  }
+
+  get filteredFollowedGroupsEvents(): IEvent[] {
+    return this.followedGroupEvents.elements
+      .map(({ event }: { event: IEvent }) => event)
+      .filter(
+        ({ id }) =>
+          !this.thisWeekGoingToEvents
+            .map(({ event: { id: event_id } }) => event_id)
+            .includes(id)
+      )
+      .slice(0, 3);
   }
 }
 </script>

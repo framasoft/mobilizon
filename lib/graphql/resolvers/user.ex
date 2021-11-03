@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events, Users}
+  alias Mobilizon.{Actors, Admin, Config, Events, FollowedGroupActivity, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Service.Auth.Authenticator
@@ -311,19 +311,20 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   def change_default_actor(
         _parent,
         %{preferred_username: username},
-        %{context: %{current_user: %User{id: user_id} = user}}
+        %{context: %{current_user: %User{} = user}}
       ) do
-    with %Actor{id: actor_id} = actor <- Actors.get_local_actor_by_name(username),
-         {:user_actor, true} <-
-           {:user_actor, actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id)},
-         %User{} = user <- Users.update_user_default_actor(user_id, actor) do
-      {:ok, user}
-    else
-      {:user_actor, _} ->
-        {:error, :actor_not_from_user}
+    case Actors.get_local_actor_by_name(username) do
+      %Actor{id: actor_id} = actor ->
+        if actor_id in Enum.map(Users.get_actors_for_user(user), & &1.id) do
+          %User{} = user = Users.update_user_default_actor(user, actor)
+          {:ok, user}
+        else
+          {:error, dgettext("errors", "This profile does not belong to you")}
+        end
 
-      _error ->
-        {:error, :unable_to_change_default_actor}
+      nil ->
+        {:error,
+         dgettext("errors", "Profile with username %{username} not found", %{username: username})}
     end
   end
 
@@ -630,6 +631,29 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          end),
        total: total
      }}
+  end
+
+  def user_followed_group_events(%User{id: user_id}, %{page: page, limit: limit} = args, %{
+        context: %{current_user: %User{id: logged_in_user_id}}
+      })
+      when user_id == logged_in_user_id do
+    activities =
+      FollowedGroupActivity.user_followed_group_events(
+        user_id,
+        Map.get(args, :after_datetime),
+        page,
+        limit
+      )
+
+    activities = %Page{
+      activities
+      | elements:
+          Enum.map(activities.elements, fn [event, group, profile] ->
+            %{group: group, profile: profile, event: event}
+          end)
+    }
+
+    {:ok, activities}
   end
 
   @spec update_user_login_information(User.t(), map()) ::

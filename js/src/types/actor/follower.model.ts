@@ -5,4 +5,5 @@ export interface IFollower {
   actor: IActor;
   targetActor: IActor;
   approved: boolean;
+  notify?: boolean;
 }

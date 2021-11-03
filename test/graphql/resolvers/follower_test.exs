@@ -178,7 +178,7 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
     }
   }
   """
-  describe "update a follower update_follower/3" do
+  describe "approve a follower update_follower/3" do
     test "without being logged-in", %{
       conn: conn,
       group: %Actor{} = group

@@ -7,7 +7,16 @@
       <div class="heading-section">
         <div class="heading-wrapper">
           <div class="title-metadata">
-            <h1 class="title">{{ post.title }}</h1>
+            <div class="title-wrapper">
+              <b-tag
+                class="mr-2"
+                type="is-warning"
+                size="is-medium"
+                v-if="post.draft"
+                >{{ $t("Draft") }}</b-tag
+              >
+              <h1 class="title">{{ post.title }}</h1>
+            </div>
             <p class="metadata">
               <router-link
                 slot="author"
@@ -49,7 +58,14 @@
                 }}
               </span>
               <span
-                v-if="post.visibility === PostVisibility.PRIVATE"
+                v-if="post.visibility === PostVisibility.UNLISTED"
+                class="has-text-grey-dark"
+              >
+                <b-icon icon="link" size="is-small" />
+                {{ $t("Accessible only by link") }}
+              </span>
+              <span
+                v-else-if="post.visibility === PostVisibility.PRIVATE"
                 class="has-text-grey-dark"
               >
                 <b-icon icon="lock" size="is-small" />
@@ -61,21 +77,72 @@
               </span>
             </p>
           </div>
-          <p class="buttons" v-if="isCurrentActorMember">
-            <b-tag type="is-warning" size="is-medium" v-if="post.draft">{{
-              $t("Draft")
-            }}</b-tag>
-            <router-link
+          <b-dropdown position="is-bottom-left" aria-role="list">
+            <b-button slot="trigger" role="button" icon-right="dots-horizontal">
+              {{ $t("Actions") }}
+            </b-button>
+            <b-dropdown-item
+              aria-role="listitem"
+              has-link
               v-if="
                 currentActor.id === post.author.id ||
                 isCurrentActorAGroupModerator
               "
-              :to="{ name: RouteName.POST_EDIT, params: { slug: post.slug } }"
-              tag="button"
-              class="button is-text"
-              >{{ $t("Edit") }}</router-link
             >
-          </p>
+              <router-link
+                :to="{
+                  name: RouteName.POST_EDIT,
+                  params: { slug: post.slug },
+                }"
+                >{{ $t("Edit") }} <b-icon icon="pencil"
+              /></router-link>
+            </b-dropdown-item>
+            <b-dropdown-item
+              aria-role="listitem"
+              v-if="
+                currentActor.id === post.author.id ||
+                isCurrentActorAGroupModerator
+              "
+              @click="openDeletePostModal"
+              @keyup.enter="openDeletePostModal"
+            >
+              {{ $t("Delete") }}
+              <b-icon icon="delete" />
+            </b-dropdown-item>
+
+            <hr
+              role="presentation"
+              class="dropdown-divider"
+              aria-role="menuitem"
+              v-if="
+                currentActor.id === post.author.id ||
+                isCurrentActorAGroupModerator
+              "
+            />
+            <b-dropdown-item
+              aria-role="listitem"
+              v-if="!post.draft"
+              @click="triggerShare()"
+              @keyup.enter="triggerShare()"
+            >
+              <span>
+                {{ $t("Share this event") }}
+                <b-icon icon="share" />
+              </span>
+            </b-dropdown-item>
+
+            <b-dropdown-item
+              aria-role="listitem"
+              v-if="ableToReport"
+              @click="isReportModalActive = true"
+              @keyup.enter="isReportModalActive = true"
+            >
+              <span>
+                {{ $t("Report") }}
+                <b-icon icon="flag" />
+              </span>
+            </b-dropdown-item>
+          </b-dropdown>
         </div>
       </div>
     </header>
@@ -108,6 +175,21 @@
         <tag>{{ tag.title }}</tag>
       </router-link>
     </section>
+    <b-modal
+      :active.sync="isReportModalActive"
+      has-modal-card
+      ref="reportModal"
+    >
+      <report-modal
+        :on-confirm="reportPost"
+        :title="$t('Report this post')"
+        :outside-domain="groupDomain"
+        @close="$refs.reportModal.close()"
+      />
+    </b-modal>
+    <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
+      <share-post-modal :post="post" />
+    </b-modal>
   </article>
 </template>
 
@@ -120,10 +202,8 @@ import { IMember } from "@/types/actor/member.model";
 import {
   CURRENT_ACTOR_CLIENT,
   PERSON_MEMBERSHIPS,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "../../graphql/actor";
-import { FETCH_POST } from "../../graphql/post";
-import { IPost } from "../../types/post.model";
 import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import Tag from "../../components/Tag.vue";
@@ -132,9 +212,17 @@ import ActorInline from "../../components/Account/ActorInline.vue";
 import { formatDistanceToNowStrict } from "date-fns";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
+import SharePostModal from "../../components/Post/SharePostModal.vue";
+import { IReport } from "@/types/report.model";
+import { CREATE_REPORT } from "@/graphql/report";
+import ReportModal from "../../components/Report/ReportModal.vue";
+import PostMixin from "../../mixins/post";
 
 @Component({
   apollo: {
+    config: CONFIG,
     currentUser: CURRENT_USER_CLIENT,
     currentActor: CURRENT_ACTOR_CLIENT,
     memberships: {
@@ -150,23 +238,8 @@ import { ICurrentUser } from "@/types/current-user.model";
         return !this.currentActor || !this.currentActor.id;
       },
     },
-    post: {
-      query: FETCH_POST,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          slug: this.slug,
-        };
-      },
-      skip() {
-        return !this.slug;
-      },
-      error({ graphQLErrors }) {
-        this.handleErrors(graphQLErrors);
-      },
-    },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -187,6 +260,8 @@ import { ICurrentUser } from "@/types/current-user.model";
     Tag,
     LazyImageWrapper,
     ActorInline,
+    SharePostModal,
+    ReportModal,
   },
   metaInfo() {
     return {
@@ -200,12 +275,12 @@ import { ICurrentUser } from "@/types/current-user.model";
     };
   },
 })
-export default class Post extends mixins(GroupMixin) {
+export default class Post extends mixins(GroupMixin, PostMixin) {
   @Prop({ required: true, type: String }) slug!: string;
 
-  post!: IPost;
-
   memberships!: IMember[];
+
+  config!: IConfig;
 
   RouteName = RouteName;
 
@@ -217,11 +292,9 @@ export default class Post extends mixins(GroupMixin) {
 
   PostVisibility = PostVisibility;
 
-  handleErrors(errors: any[]): void {
-    if (errors.some((error) => error.status_code === 404)) {
-      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
-    }
-  }
+  isShareModalActive = false;
+
+  isReportModalActive = false;
 
   get isCurrentActorMember(): boolean {
     if (!this.post.attributedTo || !this.memberships) return false;
@@ -235,6 +308,62 @@ export default class Post extends mixins(GroupMixin) {
       ICurrentUserRole.ADMINISTRATOR,
       ICurrentUserRole.MODERATOR,
     ].includes(this.currentUser.role);
+  }
+
+  get ableToReport(): boolean {
+    return (
+      this.config &&
+      (this.currentActor.id != null || this.config.anonymous.reports.allowed)
+    );
+  }
+
+  triggerShare(): void {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore-start
+    if (navigator.share) {
+      navigator
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        .share({
+          title: this.post.title,
+          url: this.post.url,
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error: any) => console.log("Error sharing", error));
+    } else {
+      this.isShareModalActive = true;
+      // send popup
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore-end
+  }
+
+  async reportPost(content: string, forward: boolean): Promise<void> {
+    this.isReportModalActive = false;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.$refs.reportModal.close();
+    const postTitle = this.post.title;
+
+    try {
+      await this.$apollo.mutate<IReport>({
+        mutation: CREATE_REPORT,
+        variables: {
+          postId: this.post.id,
+          reportedId: this.post.attributedTo?.id,
+          content,
+          forward,
+        },
+      });
+      this.$notifier.success(
+        this.$t("Post {eventTitle} reported", { postTitle }) as string
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  get groupDomain(): string | undefined | null {
+    return this.post.attributedTo?.domain;
   }
 }
 </script>
@@ -261,16 +390,31 @@ article.post {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+        align-items: center;
 
         .title-metadata {
           min-width: 300px;
           flex: 20;
 
+          .title-wrapper {
+            display: inline;
+
+            .tag {
+              height: 38px;
+              vertical-align: text-bottom;
+            }
+
+            & > h1 {
+              display: inline;
+            }
+          }
+
           p.metadata {
-            margin-top: 16px;
+            margin-top: 10px;
             display: flex;
             justify-content: flex-start;
             flex-wrap: wrap;
+            flex-direction: column;
 
             *:not(:first-child) {
               padding-left: 5px;
@@ -328,5 +472,14 @@ article.post {
   }
 
   margin: 0 auto;
+
+  a.dropdown-item,
+  .dropdown .dropdown-menu .has-link a,
+  button.dropdown-item {
+    white-space: nowrap;
+    width: 100%;
+    padding-right: 1rem;
+    text-align: right;
+  }
 }
 </style>

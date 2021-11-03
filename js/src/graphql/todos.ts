@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const GET_TODO = gql`
   query GetTodo($id: ID!) {
@@ -9,26 +10,17 @@ export const GET_TODO = gql`
       dueDate
       todoList {
         actor {
-          id
-          preferredUsername
-          domain
-          name
+          ...ActorFragment
         }
         title
         id
       }
       assignedTo {
-        id
-        preferredUsername
-        domain
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const FETCH_TODO_LIST = gql`
@@ -43,21 +35,17 @@ export const FETCH_TODO_LIST = gql`
           title
           status
           assignedTo {
-            id
-            preferredUsername
-            domain
+            ...ActorFragment
           }
           dueDate
         }
       }
       actor {
-        id
-        preferredUsername
-        domain
-        name
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const CREATE_TODO_LIST = gql`

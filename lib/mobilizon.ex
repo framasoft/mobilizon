@@ -19,7 +19,6 @@ defmodule Mobilizon do
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Service.{ErrorPage, ErrorReporting}
   alias Mobilizon.Service.Export.{Feed, ICalendar}
-  alias TzWorld.Backend.DetsWithIndexCache
 
   @name Mix.Project.config()[:name]
   @version Mix.Project.config()[:version]
@@ -38,9 +37,8 @@ defmodule Mobilizon do
   @spec start(:normal | {:takeover, node} | {:failover, node}, term) ::
           {:ok, pid} | {:ok, pid, term} | {:error, term}
   def start(_type, _args) do
-    # We update and reload TzWorld at runtime so that the data is not contained in releases
+    # We update TzWorld at runtime so that the data is not contained in releases
     TzWorldUpdate.run(nil)
-    DetsWithIndexCache.handle_call(:reload_data, nil, nil)
 
     children =
       [

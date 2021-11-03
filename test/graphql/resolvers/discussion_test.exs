@@ -448,7 +448,7 @@ defmodule Mobilizon.GraphQL.Resolvers.DiscussionTest do
 
     #   # Change the current actor for user
     #   actor2 = insert(:actor, user: user)
-    #   Mobilizon.Users.update_user_default_actor(user.id, actor2)
+    #   Mobilizon.Users.update_user_default_actor(user, actor2)
 
     #   res =
     #     conn
@@ -461,7 +461,7 @@ defmodule Mobilizon.GraphQL.Resolvers.DiscussionTest do
     #   assert hd(res["errors"])["message"] ==
     #            "You cannot delete this comment"
 
-    #   Mobilizon.Users.update_user_default_actor(user.id, actor)
+    #   Mobilizon.Users.update_user_default_actor(user, actor)
 
     #   res =
     #     conn

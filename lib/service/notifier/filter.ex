@@ -3,25 +3,31 @@ defmodule Mobilizon.Service.Notifier.Filter do
   Module to filter activities to notify according to user's activity settings
   """
   alias Mobilizon.Activities.Activity
-  alias Mobilizon.Users
   alias Mobilizon.Users.{ActivitySetting, User}
 
   @type method :: String.t()
 
   @spec can_send_activity?(Activity.t(), method(), User.t(), function()) :: boolean()
-  def can_send_activity?(%Activity{} = activity, method, %User{} = user, get_default) do
+  def can_send_activity?(
+        %Activity{} = activity,
+        method,
+        %User{activity_settings: activity_settings},
+        get_default
+      ) do
     case map_activity_to_activity_setting(activity) do
       false ->
         false
 
       key when is_binary(key) ->
-        user |> Users.activity_setting(key, method) |> enabled?(key, get_default)
+        activity_settings
+        |> Enum.find(&(&1.key == key && &1.method == method))
+        |> enabled?(key, get_default)
     end
   end
 
   @spec enabled?(ActivitySetting.t() | nil, String.t(), function()) :: boolean()
   defp enabled?(nil, activity_setting, get_default), do: get_default.(activity_setting)
-  defp enabled?(%ActivitySetting{enabled: enabled}, _activity_setting, _get_default), do: enabled
+  defp enabled?(%{enabled: enabled}, _activity_setting, _get_default), do: enabled
 
   # Mention
   defp map_activity_to_activity_setting(%Activity{subject: :event_comment_mention}),

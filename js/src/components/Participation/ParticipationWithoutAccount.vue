@@ -158,6 +158,7 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
   metaInfo() {
     return {
       title: this.$t("Participation without account") as string,
+      meta: [{ name: "robots", content: "noindex" }],
     };
   },
 })

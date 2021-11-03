@@ -151,6 +151,7 @@ A button to set your participation
       >
     </b-dropdown>
     <b-button
+      rel="nofollow"
       tag="router-link"
       :to="{
         name: RouteName.EVENT_PARTICIPATE_LOGGED_OUT,
@@ -164,6 +165,7 @@ A button to set your participation
     >
     <b-button
       tag="router-link"
+      rel="nofollow"
       :to="{
         name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
         params: { uuid: event.uuid },

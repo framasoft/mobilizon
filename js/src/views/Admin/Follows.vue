@@ -89,7 +89,7 @@ import RouteName from "../../router/name";
   },
   metaInfo() {
     return {
-      title: this.$t("Instance follows") as string,
+      title: this.$t("Federation") as string,
     };
   },
 })

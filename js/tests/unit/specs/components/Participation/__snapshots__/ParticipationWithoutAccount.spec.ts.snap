@@ -19,6 +19,7 @@ exports[`ParticipationWithoutAccount handles being already a participant 1`] = `
                 </div>
               </div>
             </section>
+            <!---->
           </article>
         </transition-stub>
         <transition-stub name="fade">
@@ -30,6 +31,7 @@ exports[`ParticipationWithoutAccount handles being already a participant 1`] = `
                 <div class="media-content">You are already a participant of this event</div>
               </div>
             </section>
+            <!---->
           </article>
         </transition-stub>
         <div class="field"><label class="label">Email address</label>
@@ -88,6 +90,7 @@ exports[`ParticipationWithoutAccount renders the participation without account v
                 <div class="media-content">Unable to save your participation in this browser.</div>
               </div>
             </section>
+            <!---->
           </article>
         </transition-stub>
         <p class="content"><span>You may now close this window, or <a href="/events/f37910ea-fd5a-4756-9679-00971f3f4106" class="">return to the event's page</a>.</span></p>
@@ -116,6 +119,7 @@ exports[`ParticipationWithoutAccount renders the warning if the event participat
                 <div class="media-content">Unable to save your participation in this browser.</div>
               </div>
             </section>
+            <!---->
           </article>
         </transition-stub>
         <p class="content"><span>You may now close this window, or <a href="/events/f37910ea-fd5a-4756-9679-00971f3f4106" class="">return to the event's page</a>.</span></p>

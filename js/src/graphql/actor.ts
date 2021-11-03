@@ -1,14 +1,25 @@
 import gql from "graphql-tag";
 
+export const ACTOR_FRAGMENT = gql`
+  fragment ActorFragment on Actor {
+    id
+    avatar {
+      id
+      url
+    }
+    type
+    preferredUsername
+    name
+    domain
+    summary
+    url
+  }
+`;
+
 export const FETCH_PERSON = gql`
   query ($username: String!) {
     fetchPerson(preferredUsername: $username) {
-      id
-      url
-      name
-      domain
-      summary
-      preferredUsername
+      ...ActorFragment
       suspended
       mediaSize
       avatar {
@@ -34,6 +45,7 @@ export const FETCH_PERSON = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const GET_PERSON = gql`
@@ -47,12 +59,7 @@ export const GET_PERSON = gql`
     $membershipsLimit: Int
   ) {
     person(id: $actorId) {
-      id
-      url
-      name
-      domain
-      summary
-      preferredUsername
+      ...ActorFragment
       suspended
       mediaSize
       avatar {
@@ -98,14 +105,7 @@ export const GET_PERSON = gql`
           role
           insertedAt
           parent {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
         }
       }
@@ -115,6 +115,7 @@ export const GET_PERSON = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const PERSON_FRAGMENT = gql`
@@ -126,6 +127,7 @@ export const PERSON_FRAGMENT = gql`
     }
     type
     preferredUsername
+    domain
     name
   }
 `;
@@ -151,17 +153,11 @@ export const LIST_PROFILES = gql`
     ) {
       total
       elements {
-        id
-        preferredUsername
-        domain
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_DEFAULT_ACTOR = gql`
@@ -179,12 +175,9 @@ export const CURRENT_ACTOR_CLIENT = gql`
   query currentActor {
     currentActor @client {
       id
-      avatar {
-        id
-        url
-      }
       preferredUsername
       name
+      avatar
     }
   }
 `;
@@ -205,91 +198,6 @@ export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
   }
 `;
 
-export const LOGGED_USER_PARTICIPATIONS = gql`
-  query LoggedUserParticipations(
-    $afterDateTime: DateTime
-    $beforeDateTime: DateTime
-    $page: Int
-    $limit: Int
-  ) {
-    loggedUser {
-      id
-      participations(
-        afterDatetime: $afterDateTime
-        beforeDatetime: $beforeDateTime
-        page: $page
-        limit: $limit
-      ) {
-        total
-        elements {
-          event {
-            id
-            uuid
-            title
-            picture {
-              id
-              url
-              alt
-            }
-            beginsOn
-            visibility
-            organizerActor {
-              id
-              preferredUsername
-              name
-              domain
-              summary
-              avatar {
-                id
-                url
-              }
-            }
-            attributedTo {
-              avatar {
-                id
-                url
-              }
-              preferredUsername
-              name
-              summary
-              domain
-              url
-              id
-            }
-            participantStats {
-              going
-              notApproved
-              participant
-            }
-            options {
-              maximumAttendeeCapacity
-              remainingAttendeeCapacity
-            }
-            tags {
-              id
-              slug
-              title
-            }
-          }
-          id
-          role
-          actor {
-            id
-            preferredUsername
-            name
-            domain
-            summary
-            avatar {
-              id
-              url
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 export const LOGGED_USER_DRAFTS = gql`
   query LoggedUserDrafts($page: Int, $limit: Int) {
     loggedUser {
@@ -298,6 +206,7 @@ export const LOGGED_USER_DRAFTS = gql`
         id
         uuid
         title
+        draft
         picture {
           id
           url
@@ -306,14 +215,7 @@ export const LOGGED_USER_DRAFTS = gql`
         beginsOn
         visibility
         organizerActor {
-          id
-          preferredUsername
-          name
-          domain
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
         participantStats {
           going
@@ -326,6 +228,7 @@ export const LOGGED_USER_DRAFTS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const LOGGED_USER_MEMBERSHIPS = gql`
@@ -338,25 +241,10 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
           id
           role
           actor {
-            id
-            avatar {
-              id
-              url
-            }
-            preferredUsername
-            name
-            domain
+            ...ActorFragment
           }
           parent {
-            id
-            preferredUsername
-            domain
-            name
-            type
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
             organizedEvents {
               elements {
                 id
@@ -370,34 +258,22 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
             }
           }
           invitedBy {
-            id
-            preferredUsername
-            domain
-            name
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
         }
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const IDENTITIES = gql`
   query Identities {
     identities {
-      id
-      avatar {
-        id
-        url
-      }
-      type
-      preferredUsername
-      name
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const PERSON_MEMBERSHIPS = gql`
@@ -410,20 +286,10 @@ export const PERSON_MEMBERSHIPS = gql`
           id
           role
           parent {
-            id
-            preferredUsername
-            name
-            domain
-            type
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           invitedBy {
-            id
-            preferredUsername
-            name
+            ...ActorFragment
           }
           insertedAt
           updatedAt
@@ -431,9 +297,10 @@ export const PERSON_MEMBERSHIPS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
-export const PERSON_MEMBERSHIP_GROUP = gql`
+export const PERSON_STATUS_GROUP = gql`
   query PersonMembershipGroup($id: ID!, $group: String!) {
     person(id: $id) {
       id
@@ -443,19 +310,26 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
           id
           role
           parent {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           invitedBy {
-            id
-            preferredUsername
-            name
+            ...ActorFragment
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+      follows(group: $group) {
+        total
+        elements {
+          id
+          notify
+          approved
+          target_actor {
+            ...ActorFragment
+          }
+          actor {
+            ...ActorFragment
           }
           insertedAt
           updatedAt
@@ -463,6 +337,7 @@ export const PERSON_MEMBERSHIP_GROUP = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
@@ -478,19 +353,10 @@ export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
           id
           role
           parent {
-            id
-            preferredUsername
-            name
-            domain
-            avatar {
-              id
-              url
-            }
+            ...ActorFragment
           }
           invitedBy {
-            id
-            preferredUsername
-            name
+            ...ActorFragment
           }
           insertedAt
           updatedAt
@@ -498,6 +364,7 @@ export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const CREATE_PERSON = gql`
@@ -513,16 +380,10 @@ export const CREATE_PERSON = gql`
       summary: $summary
       avatar: $avatar
     ) {
-      id
-      preferredUsername
-      name
-      summary
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const UPDATE_PERSON = gql`
@@ -533,16 +394,10 @@ export const UPDATE_PERSON = gql`
     $avatar: MediaInput
   ) {
     updatePerson(id: $id, name: $name, summary: $summary, avatar: $avatar) {
-      id
-      preferredUsername
-      name
-      summary
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const DELETE_PERSON = gql`
@@ -570,16 +425,10 @@ export const REGISTER_PERSON = gql`
       summary: $summary
       email: $email
     ) {
-      id
-      preferredUsername
-      name
-      summary
-      avatar {
-        id
-        url
-      }
+      ...ActorFragment
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const SUSPEND_PROFILE = gql`

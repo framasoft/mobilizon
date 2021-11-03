@@ -133,6 +133,7 @@ import RouteName from "../../router/name";
   metaInfo() {
     return {
       title: this.$t("Unlogged participation") as string,
+      meta: [{ name: "robots", content: "noindex" }],
     };
   },
 })

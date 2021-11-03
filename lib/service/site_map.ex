@@ -14,8 +14,8 @@ defmodule Mobilizon.Service.SiteMap do
   def generate_sitemap do
     static_routes = [
       {Routes.page_url(Endpoint, :index, []), :daily},
+      "#{Endpoint.url()}/search",
       "#{Endpoint.url()}/about/instance",
-      "#{Endpoint.url()}/about/mobilizon",
       "#{Endpoint.url()}/terms",
       "#{Endpoint.url()}/privacy",
       "#{Endpoint.url()}/rules",

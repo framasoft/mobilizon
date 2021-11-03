@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const DASHBOARD = gql`
   query {
@@ -14,14 +15,7 @@ export const DASHBOARD = gql`
         }
       }
       lastGroupCreated {
-        id
-        preferredUsername
-        domain
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
       numberOfUsers
       numberOfEvents
@@ -33,31 +27,23 @@ export const DASHBOARD = gql`
       numberOfConfirmedParticipationsToLocalEvents
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const RELAY_FRAGMENT = gql`
   fragment relayFragment on Follower {
     id
     actor {
-      id
-      preferredUsername
-      name
-      domain
-      type
-      summary
+      ...ActorFragment
     }
     targetActor {
-      id
-      preferredUsername
-      name
-      domain
-      type
-      summary
+      ...ActorFragment
     }
     approved
     insertedAt
     updatedAt
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const RELAY_FOLLOWERS = gql`

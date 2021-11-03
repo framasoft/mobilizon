@@ -49,10 +49,8 @@
         >
       </div>
       <div class="post-list">
-        <post-element-item
-          v-for="post in group.posts.elements"
-          :key="post.id"
-          :post="post"
+        <multi-post-list-item
+          :posts="group.posts.elements"
           :isCurrentActorMember="isCurrentActorMember"
         />
       </div>
@@ -88,7 +86,7 @@ import { Paginate } from "../../types/paginate";
 import { IPost } from "../../types/post.model";
 import { usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
-import PostElementItem from "../../components/Post/PostElementItem.vue";
+import MultiPostListItem from "../../components/Post/MultiPostListItem.vue";
 
 const POSTS_PAGE_LIMIT = 10;
 
@@ -124,7 +122,7 @@ const POSTS_PAGE_LIMIT = 10;
     },
   },
   components: {
-    PostElementItem,
+    MultiPostListItem,
   },
   metaInfo() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -132,7 +130,7 @@ const POSTS_PAGE_LIMIT = 10;
     const { group } = this;
     return {
       title: this.$t("{group} posts", {
-        group: group.name || usernameWithDomain(group),
+        group: group?.name || usernameWithDomain(group),
       }) as string,
     };
   },

@@ -1,13 +1,20 @@
 import {
   CURRENT_ACTOR_CLIENT,
   GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  PERSON_MEMBERSHIP_GROUP,
+  PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
-import { FETCH_GROUP } from "@/graphql/group";
+import { DELETE_GROUP, FETCH_GROUP } from "@/graphql/group";
 import RouteName from "@/router/name";
-import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  IActor,
+  IFollower,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import { MemberRole } from "@/types/enums";
 import { Component, Vue } from "vue-property-decorator";
+import { Route } from "vue-router";
 
 const now = new Date();
 
@@ -31,7 +38,7 @@ const now = new Date();
       },
     },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -100,6 +107,27 @@ export default class GroupMixin extends Vue {
     );
   }
 
+  get isCurrentActorFollowing(): boolean {
+    return this.currentActorFollow?.approved === true;
+  }
+
+  get isCurrentActorPendingFollow(): boolean {
+    return this.currentActorFollow?.approved === false;
+  }
+
+  get isCurrentActorFollowingNotify(): boolean {
+    return (
+      this.isCurrentActorFollowing && this.currentActorFollow?.notify === true
+    );
+  }
+
+  get currentActorFollow(): IFollower | null {
+    if (this.person?.follows?.total > 0) {
+      return this.person?.follows?.elements[0];
+    }
+    return null;
+  }
+
   handleErrors(errors: any[]): void {
     if (
       errors.some((error) => error.status_code === 404) ||
@@ -107,5 +135,29 @@ export default class GroupMixin extends Vue {
     ) {
       this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
     }
+  }
+
+  confirmDeleteGroup(): void {
+    this.$buefy.dialog.confirm({
+      title: this.$t("Delete group") as string,
+      message: this.$t(
+        "Are you sure you want to <b>completely delete</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
+      ) as string,
+      confirmText: this.$t("Delete group") as string,
+      cancelText: this.$t("Cancel") as string,
+      type: "is-danger",
+      hasIcon: true,
+      onConfirm: () => this.deleteGroup(),
+    });
+  }
+
+  async deleteGroup(): Promise<Route> {
+    await this.$apollo.mutate<{ deleteGroup: IGroup }>({
+      mutation: DELETE_GROUP,
+      variables: {
+        groupId: this.group.id,
+      },
+    });
+    return this.$router.push({ name: RouteName.MY_GROUPS });
   }
 }

@@ -40,78 +40,60 @@
         </div>
         <div class="media-content">
           <p class="event-title" :title="event.title">{{ event.title }}</p>
+          <div class="event-organizer">
+            <figure
+              class="image is-24x24"
+              v-if="organizer(event) && organizer(event).avatar"
+            >
+              <img
+                class="is-rounded"
+                :src="organizer(event).avatar.url"
+                alt=""
+              />
+            </figure>
+            <b-icon v-else icon="account-circle" />
+            <span class="organizer-name">
+              {{ organizerDisplayName(event) }}
+            </span>
+          </div>
+          <event-address
+            v-if="event.physicalAddress"
+            class="event-subtitle"
+            :physical-address="event.physicalAddress"
+          />
           <div
             class="event-subtitle"
-            v-if="event.physicalAddress"
-            :title="
-              isDescriptionDifferentFromLocality
-                ? `${event.physicalAddress.description}, ${event.physicalAddress.locality}`
-                : event.physicalAddress.description
-            "
+            v-else-if="event.options && event.options.isOnline"
           >
-            <!--            <p>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</p>-->
-            <span v-if="isDescriptionDifferentFromLocality">
-              {{ event.physicalAddress.description }},
-              {{ event.physicalAddress.locality }}
-            </span>
-            <span v-else>
-              {{ event.physicalAddress.description }}
-            </span>
+            <b-icon icon="video" />
+            <span>{{ $t("Online") }}</span>
           </div>
         </div>
       </div>
     </div>
-    <!--    <div class="date-and-title">-->
-    <!--      <div class="date-component">-->
-    <!--        <date-calendar-icon v-if="!mergedOptions.hideDate" :date="event.beginsOn" />-->
-    <!--      </div>-->
-    <!--      <div class="title-wrapper">-->
-    <!--        <h4>{{ event.title }}</h4>-->
-    <!--        <div class="organizer-place-wrapper has-text-grey">-->
-    <!--          <span>{{ $t('By @{username}', { username: actor.preferredUsername }) }}</span>-->
-    <!--           ·-->
-    <!--          <span v-if="event.physicalAddress">-->
-    <!--            {{ event.physicalAddress.description }}, {{ event.physicalAddress.locality }}-->
-    <!--          </span>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div v-if="!mergedOptions.hideDetails" class="details">-->
-    <!--      <div v-if="event.participants.length > 0 &&-->
-    <!--      mergedOptions.loggedPerson &&-->
-    <!--      event.participants[0].actor.id === mergedOptions.loggedPerson.id">-->
-    <!--        <b-tag type="is-info"><translate>Organizer</translate></b-tag>-->
-    <!--      </div>-->
-    <!--      <div v-else-if="event.participants.length === 1">-->
-    <!--        <translate-->
-    <!--                :translate-params="{name: event.participants[0].actor.preferredUsername}"-->
-    <!--        >{name} organizes this event</translate>-->
-    <!--      </div>-->
-    <!--      <div v-else>-->
-    <!--        <span v-for="participant in event.participants" :key="participant.actor.uuid">-->
-    <!--          {{ participant.actor.preferredUsername }}-->
-    <!--          <span v-if="participant.role === ParticipantRole.CREATOR">(organizer)</span>,-->
-    <!--          &lt;!&ndash; <translate-->
-    <!--            :translate-params="{name: participant.actor.preferredUsername}"-->
-    <!--          >&nbsp;{name} is in,</translate>&ndash;&gt;-->
-    <!--        </span>-->
-    <!--      </div>-->
   </router-link>
 </template>
 
 <script lang="ts">
-import { IEvent, IEventCardOptions } from "@/types/event.model";
+import {
+  IEvent,
+  IEventCardOptions,
+  organizerDisplayName,
+  organizer,
+} from "@/types/event.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import { Actor, Person } from "@/types/actor";
 import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
+import EventAddress from "@/components/Event/EventAddress.vue";
 
 @Component({
   components: {
     DateCalendarIcon,
     LazyImageWrapper,
+    EventAddress,
   },
 })
 export default class EventCard extends Vue {
@@ -124,6 +106,10 @@ export default class EventCard extends Vue {
   EventStatus = EventStatus;
 
   RouteName = RouteName;
+
+  organizerDisplayName = organizerDisplayName;
+
+  organizer = organizer;
 
   defaultOptions: IEventCardOptions = {
     hideDate: false,
@@ -143,18 +129,12 @@ export default class EventCard extends Vue {
       this.event.organizerActor || this.mergedOptions.organizerActor
     );
   }
-
-  get isDescriptionDifferentFromLocality(): boolean {
-    return (
-      this.event?.physicalAddress?.description !==
-        this.event?.physicalAddress?.locality &&
-      this.event?.physicalAddress?.description !== undefined
-    );
-  }
 }
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_event-card";
+
 a.card {
   display: block;
   background: $secondary;
@@ -236,35 +216,31 @@ a.card {
         margin-bottom: 15px;
         margin-left: 0rem;
       }
+
+      & > .media-content {
+        flex: 1;
+        width: 100%;
+        overflow-x: inherit;
+      }
     }
 
     .event-title {
-      font-size: 1.2rem;
-      line-height: 1.25rem;
+      font-size: 18px;
+      line-height: 24px;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      min-height: 2.4rem;
+      padding-bottom: 8px;
       font-weight: bold;
     }
 
     .event-subtitle {
       font-size: 0.85rem;
-      display: inline-flex;
-      flex-wrap: wrap;
-      color: #3c376e;
+    }
 
-      span {
-        width: 14rem;
-        display: block;
-        overflow: hidden;
-
-        flex-grow: 1;
-
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+    .organizer-name {
+      font-size: 14px;
     }
   }
 }

@@ -92,7 +92,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     |> Enum.map(& &1.user_id)
     |> Enum.filter(& &1)
     |> Enum.uniq()
-    |> Enum.map(&Users.get_user_with_settings!/1)
+    |> Enum.map(&Users.get_user_with_activity_settings!/1)
   end
 
   defp notify_anonymous_participants(nil, _activity), do: :ok

@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 
 export const REPORTS = gql`
   query Reports($status: ReportStatus, $page: Int, $limit: Int) {
@@ -7,25 +8,10 @@ export const REPORTS = gql`
       elements {
         id
         reported {
-          id
-          preferredUsername
-          domain
-          name
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
         reporter {
-          id
-          preferredUsername
-          name
-          avatar {
-            id
-            url
-          }
-          domain
-          type
+          ...ActorFragment
         }
         event {
           id
@@ -41,31 +27,17 @@ export const REPORTS = gql`
       }
     }
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 const REPORT_FRAGMENT = gql`
   fragment ReportFragment on Report {
     id
     reported {
-      id
-      preferredUsername
-      name
-      avatar {
-        id
-        url
-      }
-      domain
+      ...ActorFragment
     }
     reporter {
-      id
-      preferredUsername
-      name
-      avatar {
-        id
-        url
-      }
-      domain
-      type
+      ...ActorFragment
     }
     event {
       id
@@ -81,27 +53,14 @@ const REPORT_FRAGMENT = gql`
       id
       text
       actor {
-        id
-        preferredUsername
-        domain
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
     }
     notes {
       id
       content
       moderator {
-        id
-        preferredUsername
-        name
-        avatar {
-          id
-          url
-        }
+        ...ActorFragment
       }
       insertedAt
     }
@@ -110,6 +69,7 @@ const REPORT_FRAGMENT = gql`
     status
     content
   }
+  ${ACTOR_FRAGMENT}
 `;
 
 export const REPORT = gql`
@@ -167,13 +127,7 @@ export const LOGS = gql`
         id
         action
         actor {
-          id
-          preferredUsername
-          domain
-          avatar {
-            id
-            url
-          }
+          ...ActorFragment
         }
         object {
           ... on Report {
@@ -197,23 +151,14 @@ export const LOGS = gql`
               uuid
             }
             actor {
-              id
-              preferredUsername
-              domain
-              name
+              ...ActorFragment
             }
           }
           ... on Person {
-            id
-            preferredUsername
-            domain
-            name
+            ...ActorFragment
           }
           ... on Group {
-            id
-            preferredUsername
-            domain
-            name
+            ...ActorFragment
           }
           ... on User {
             id
@@ -226,4 +171,5 @@ export const LOGS = gql`
       total
     }
   }
+  ${ACTOR_FRAGMENT}
 `;

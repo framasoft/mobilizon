@@ -6,7 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   import Mobilizon.Users.Guards
 
   alias Mobilizon.{Actors, Events, Users}
-  alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.Participant
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
@@ -355,7 +355,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   end
 
   @doc """
-  Returns the list of events this person is going to
+  Returns this person's group memberships
   """
   @spec person_memberships(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
   def person_memberships(%Actor{id: actor_id} = person, %{group: group}, %{
@@ -395,6 +395,49 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     else
       {:can_get_memberships, _} ->
         {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+    end
+  end
+
+  @doc """
+  Returns this person's group follows
+  """
+  @spec person_follows(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
+  def person_follows(%Actor{} = person, %{group: group}, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    if user_can_access_person_details?(person, user) do
+      with {:group, %Actor{} = group} <- {:group, Actors.get_actor_by_name(group, :Group)},
+           %Follower{} = follow <-
+             Actors.get_follower_by_followed_and_following(group, person) do
+        {:ok,
+         %Page{
+           total: 1,
+           elements: [follow]
+         }}
+      else
+        nil ->
+          {:ok, %Page{total: 0, elements: []}}
+
+        {:group, nil} ->
+          {:error, :group_not_found}
+      end
+    else
+      {:error, dgettext("errors", "Profile is not owned by authenticated user")}
+    end
+  end
+
+  def person_follows(
+        %Actor{} = person,
+        %{page: page, limit: limit},
+        %{
+          context: %{current_user: %User{} = user}
+        }
+      ) do
+    if user_can_access_person_details?(person, user) do
+      follows = Actors.list_paginated_follows_for_actor(person, page, limit)
+      {:ok, follows}
+    else
+      {:error, dgettext("errors", "Profile is not owned by authenticated user")}
     end
   end
 

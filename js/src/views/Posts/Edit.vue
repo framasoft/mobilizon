@@ -119,9 +119,11 @@
                 }}</b-button>
               </span>
               <span class="navbar-item" v-if="this.isUpdate">
-                <b-button type="is-danger is-outlined" @click="deletePost">{{
-                  $t("Delete post")
-                }}</b-button>
+                <b-button
+                  type="is-danger is-outlined"
+                  @click="openDeletePostModal"
+                  >{{ $t("Delete post") }}</b-button
+                >
               </span>
               <!-- If an post has been published we can't make it draft anymore -->
               <span class="navbar-item" v-if="post.draft === true">
@@ -167,12 +169,7 @@ import {
 import GroupMixin from "@/mixins/group";
 import { PostVisibility } from "@/types/enums";
 import { CONFIG } from "../../graphql/config";
-import {
-  FETCH_POST,
-  CREATE_POST,
-  UPDATE_POST,
-  DELETE_POST,
-} from "../../graphql/post";
+import { CREATE_POST, UPDATE_POST } from "../../graphql/post";
 
 import { IPost } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
@@ -181,8 +178,9 @@ import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import PictureUpload from "../../components/PictureUpload.vue";
-import { PERSON_MEMBERSHIP_GROUP } from "@/graphql/actor";
+import { PERSON_STATUS_GROUP } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
+import PostMixin from "../../mixins/post";
 
 @Component({
   apollo: {
@@ -198,20 +196,8 @@ import { FETCH_GROUP } from "@/graphql/group";
         return !this.preferredUsername;
       },
     },
-    post: {
-      query: FETCH_POST,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          slug: this.slug,
-        };
-      },
-      skip() {
-        return !this.slug;
-      },
-    },
     person: {
-      query: PERSON_MEMBERSHIP_GROUP,
+      query: PERSON_STATUS_GROUP,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -242,7 +228,7 @@ import { FETCH_GROUP } from "@/graphql/group";
     };
   },
 })
-export default class EditPost extends mixins(GroupMixin) {
+export default class EditPost extends mixins(GroupMixin, PostMixin) {
   @Prop({ required: false, type: String }) slug: undefined | string;
 
   @Prop({ required: false, type: String }) preferredUsername!: string;
@@ -266,7 +252,7 @@ export default class EditPost extends mixins(GroupMixin) {
 
   RouteName = RouteName;
 
-  editablePost!: IPost;
+  editablePost: IPost = this.post;
 
   usernameWithDomain = usernameWithDomain;
 
@@ -335,23 +321,6 @@ export default class EditPost extends mixins(GroupMixin) {
           {}
         );
       }
-    }
-  }
-
-  async deletePost(): Promise<void> {
-    const { data } = await this.$apollo.mutate({
-      mutation: DELETE_POST,
-      variables: {
-        id: this.post.id,
-      },
-    });
-    if (data && this.post.attributedTo) {
-      this.$router.push({
-        name: RouteName.POSTS,
-        params: {
-          preferredUsername: usernameWithDomain(this.post.attributedTo),
-        },
-      });
     }
   }
 

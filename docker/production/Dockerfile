@@ -4,6 +4,9 @@ FROM node:16-alpine as assets
 RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 WORKDIR /build
 COPY js .
+
+ENV CYPRESS_INSTALL_BINARY 0
+
 RUN yarn install \
     && yarn run build
 

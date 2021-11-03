@@ -158,6 +158,7 @@ import AuthProviders from "../../components/User/AuthProviders.vue";
     return {
       title: this.$t("Login on Mobilizon!") as string,
       titleTemplate: "%s | Mobilizon",
+      meta: [{ name: "robots", content: "noindex" }],
     };
   },
 })

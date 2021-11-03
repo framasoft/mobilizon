@@ -1237,7 +1237,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         |> Map.put(:attributed_to_id, "#{group_id}")
         |> Map.put(:eventId, to_string(event.id))
 
-      Users.update_user_default_actor(user.id, member_not_approved_actor)
+      Users.update_user_default_actor(user, member_not_approved_actor)
 
       res =
         conn
@@ -1252,7 +1252,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, not_member_actor)
+      Users.update_user_default_actor(user, not_member_actor)
 
       res =
         conn
@@ -1267,7 +1267,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, member_actor)
+      Users.update_user_default_actor(user, member_actor)
 
       res =
         conn
@@ -1282,7 +1282,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       assert hd(res["errors"])["message"] ==
                "This profile doesn't have permission to update an event on behalf of this group"
 
-      Users.update_user_default_actor(user.id, moderator_actor)
+      Users.update_user_default_actor(user, moderator_actor)
 
       res =
         conn

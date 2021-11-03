@@ -1,70 +1,12 @@
 import gql from "graphql-tag";
+import { ACTOR_FRAGMENT } from "./actor";
 import { ADDRESS_FRAGMENT } from "./address";
+import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
+import {
+  PARTICIPANTS_QUERY_FRAGMENT,
+  PARTICIPANT_QUERY_FRAGMENT,
+} from "./participant";
 import { TAG_FRAGMENT } from "./tags";
-
-const PARTICIPANT_QUERY_FRAGMENT = gql`
-  fragment ParticipantQuery on Participant {
-    role
-    id
-    actor {
-      preferredUsername
-      avatar {
-        id
-        url
-      }
-      name
-      id
-      domain
-    }
-    event {
-      id
-      uuid
-    }
-    metadata {
-      cancellationToken
-      message
-    }
-    insertedAt
-  }
-`;
-
-const PARTICIPANTS_QUERY_FRAGMENT = gql`
-  fragment ParticipantsQuery on PaginatedParticipantList {
-    total
-    elements {
-      ...ParticipantQuery
-    }
-  }
-  ${PARTICIPANT_QUERY_FRAGMENT}
-`;
-
-const EVENT_OPTIONS_FRAGMENT = gql`
-  fragment EventOptions on EventOptions {
-    maximumAttendeeCapacity
-    remainingAttendeeCapacity
-    showRemainingAttendeeCapacity
-    anonymousParticipation
-    showStartTime
-    showEndTime
-    timezone
-    offers {
-      price
-      priceCurrency
-      url
-    }
-    participationConditions {
-      title
-      content
-      url
-    }
-    attendees
-    program
-    commentModeration
-    showParticipationPrice
-    hideOrganizerWhenGroupEvent
-    isOnline
-  }
-`;
 
 const FULL_EVENT_FRAGMENT = gql`
   fragment FullEvent on Event {
@@ -97,40 +39,13 @@ const FULL_EVENT_FRAGMENT = gql`
       ...AdressFragment
     }
     organizerActor {
-      avatar {
-        id
-        url
-      }
-      preferredUsername
-      domain
-      name
-      url
-      id
-      summary
+      ...ActorFragment
     }
     contacts {
-      avatar {
-        id
-        url
-      }
-      preferredUsername
-      name
-      summary
-      domain
-      url
-      id
+      ...ActorFragment
     }
     attributedTo {
-      avatar {
-        id
-        url
-      }
-      preferredUsername
-      name
-      summary
-      domain
-      url
-      id
+      ...ActorFragment
     }
     participantStats {
       going
@@ -156,18 +71,19 @@ const FULL_EVENT_FRAGMENT = gql`
         }
       }
       physicalAddress {
-        id
-        description
+        ...AdressFragment
       }
       organizerActor {
-        id
-        avatar {
-          id
-          url
-        }
-        preferredUsername
-        domain
-        name
+        ...ActorFragment
+      }
+      attributedTo {
+        ...ActorFragment
+      }
+      options {
+        ...EventOptions
+      }
+      tags {
+        ...TagFragment
       }
     }
     options {
@@ -183,6 +99,7 @@ const FULL_EVENT_FRAGMENT = gql`
   ${ADDRESS_FRAGMENT}
   ${TAG_FRAGMENT}
   ${EVENT_OPTIONS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const FETCH_EVENT = gql`
@@ -244,36 +161,28 @@ export const FETCH_EVENTS = gql`
         # online_address,
         # phone_address,
         physicalAddress {
-          id
-          description
-          locality
+          ...AdressFragment
         }
         organizerActor {
-          id
-          avatar {
-            id
-            url
-          }
-          preferredUsername
-          domain
-          name
+          ...ActorFragment
         }
         attributedTo {
-          avatar {
-            id
-            url
-          }
-          preferredUsername
-          name
+          ...ActorFragment
         }
         category
         tags {
           ...TagFragment
         }
+        options {
+          ...EventOptions
+        }
       }
     }
   }
+  ${ADDRESS_FRAGMENT}
   ${TAG_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const CREATE_EVENT = gql`
@@ -511,18 +420,15 @@ export const FETCH_GROUP_EVENTS = gql`
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
     $organisedEventsPage: Int
-    $organisedEventslimit: Int
+    $organisedEventsLimit: Int
   ) {
     group(preferredUsername: $name) {
-      id
-      preferredUsername
-      domain
-      name
+      ...ActorFragment
       organizedEvents(
         afterDatetime: $afterDateTime
         beforeDatetime: $beforeDateTime
         page: $organisedEventsPage
-        limit: $organisedEventslimit
+        limit: $organisedEventsLimit
       ) {
         elements {
           id
@@ -531,29 +437,33 @@ export const FETCH_GROUP_EVENTS = gql`
           beginsOn
           draft
           options {
-            maximumAttendeeCapacity
+            ...EventOptions
           }
           participantStats {
             participant
             notApproved
           }
           attributedTo {
-            id
-            preferredUsername
-            name
-            domain
+            ...ActorFragment
           }
           organizerActor {
+            ...ActorFragment
+          }
+          physicalAddress {
+            ...AdressFragment
+          }
+          picture {
+            url
             id
-            preferredUsername
-            name
-            domain
           }
         }
         total
       }
     }
   }
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
 `;
 
 export const CLOSE_EVENTS = gql`
@@ -570,13 +480,28 @@ export const CLOSE_EVENTS = gql`
           url
         }
         tags {
-          slug
-          title
+          ...TagFragment
+        }
+        options {
+          ...EventOptions
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        organizerActor {
+          ...ActorFragment
         }
         __typename
       }
     }
   }
+  ${ADDRESS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const EXPORT_EVENT_PARTICIPATIONS = gql`

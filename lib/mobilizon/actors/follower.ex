@@ -17,12 +17,14 @@ defmodule Mobilizon.Actors.Follower do
           url: String.t(),
           target_actor: Actor.t(),
           actor: Actor.t(),
+          notify: boolean(),
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
 
   @required_attrs [:url, :approved, :target_actor_id, :actor_id]
-  @attrs @required_attrs
+  @optional_attrs [:notify]
+  @attrs @required_attrs ++ @optional_attrs
 
   @timestamps_opts [type: :utc_datetime]
 
@@ -30,6 +32,7 @@ defmodule Mobilizon.Actors.Follower do
   schema "followers" do
     field(:approved, :boolean, default: false)
     field(:url, :string)
+    field(:notify, :boolean, default: true)
 
     timestamps()
 

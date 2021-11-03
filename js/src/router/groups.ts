@@ -18,6 +18,7 @@ export enum GroupsRouteName {
   POSTS = "POSTS",
   GROUP_EVENTS = "GROUP_EVENTS",
   GROUP_JOIN = "GROUP_JOIN",
+  GROUP_FOLLOW = "GROUP_FOLLOW",
   TIMELINE = "TIMELINE",
 }
 
@@ -147,6 +148,14 @@ export const groupsRoutes: RouteConfig[] = [
       import("@/components/Group/JoinGroupWithAccount.vue"),
     props: true,
     name: GroupsRouteName.GROUP_JOIN,
+    meta: { requiredAuth: false, announcer: { skip: true } },
+  },
+  {
+    path: "/@:preferredUsername/follow",
+    component: (): Promise<ImportedComponent> =>
+      import("@/components/Group/JoinGroupWithAccount.vue"),
+    props: true,
+    name: GroupsRouteName.GROUP_FOLLOW,
     meta: { requiredAuth: false, announcer: { skip: true } },
   },
   {
