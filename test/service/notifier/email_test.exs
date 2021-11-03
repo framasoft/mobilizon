@@ -29,7 +29,7 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
   describe "sending email for activities" do
     test "when the user doesn't allow it" do
       %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
-      %User{} = user = insert(:user)
+      %User{} = user = insert(:user, activity_settings: [])
       %Setting{} = user_settings = insert(:settings, user_id: user.id, group_notifications: :none)
       user = %User{user | settings: user_settings}
 

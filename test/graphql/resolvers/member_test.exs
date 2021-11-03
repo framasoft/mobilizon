@@ -423,7 +423,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
     } do
       user = insert(:user)
       actor = insert(:actor, user: user)
-      Mobilizon.Users.update_user_default_actor(user.id, actor)
+      Mobilizon.Users.update_user_default_actor(user, actor)
 
       %Member{id: member_id} =
         insert(:member, %{actor: target_actor, parent: group, role: :member})
@@ -449,7 +449,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       group: group,
       target_actor: target_actor
     } do
-      Mobilizon.Users.update_user_default_actor(user.id, actor)
+      Mobilizon.Users.update_user_default_actor(user, actor)
       insert(:member, actor: actor, parent: group, role: :administrator)
 
       %Member{id: member_id} =
@@ -504,7 +504,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       actor: actor,
       group: group
     } do
-      Mobilizon.Users.update_user_default_actor(user.id, actor)
+      Mobilizon.Users.update_user_default_actor(user, actor)
       %Member{id: member_id} = insert(:member, actor: actor, parent: group, role: :administrator)
 
       res =
