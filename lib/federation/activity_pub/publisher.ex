@@ -28,6 +28,19 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
       Relay.publish(activity)
     end
 
+    recipients =
+      if public && Config.get([:instance, :allow_relay]) do
+        followers_url = Relay.get_actor().followers_url
+
+        Logger.debug(
+          "Public activity, so adding relay followers URL to recipients: #{inspect(followers_url)}"
+        )
+
+        recipients ++ [followers_url]
+      else
+        recipients
+      end
+
     recipients = Enum.uniq(recipients)
 
     {recipients, followers} = convert_followers_in_recipients(recipients)
