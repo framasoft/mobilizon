@@ -112,18 +112,35 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   @spec do_export_event(Event.t()) :: ICalendar.Event.t()
   defp do_export_event(%Event{} = event) do
-    %ICalendar.Event{
+    icalendar_event = %ICalendar.Event{
       summary: event.title,
       dtstart: begins_on(event),
       dtstamp: event.publish_at || DateTime.utc_now(),
       dtend: ends_on(event),
       description: HTML.strip_tags(event.description),
       uid: event.uuid,
-      url: event.url,
-      geo: Address.coords(event.physical_address),
-      location: Address.representation(event.physical_address),
-      categories: event.tags |> Enum.map(& &1.title)
+      url: event.url
     }
+
+    icalendar_event =
+      if event.physical_address do
+        %ICalendar.Event{
+          icalendar_event
+          | geo: Address.coords(event.physical_address),
+            location: Address.representation(event.physical_address)
+        }
+      else
+        icalendar_event
+      end
+
+    icalendar_event =
+      if length(event.tags) > 0 do
+        %ICalendar.Event{icalendar_event | categories: event.tags |> Enum.map(& &1.title)}
+      else
+        icalendar_event
+      end
+
+    icalendar_event
   end
 
   @spec vendor :: String.t()
