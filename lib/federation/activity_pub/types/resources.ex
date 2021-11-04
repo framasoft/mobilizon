@@ -161,7 +161,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
       "actor" => actor_url,
       "attributedTo" => [group_url],
       "type" => "Delete",
-      "object" => Convertible.model_to_as(resource),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => url
+      },
       "id" => url <> "/delete",
       "to" => [members_url]
     }

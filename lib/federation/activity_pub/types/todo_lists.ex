@@ -55,7 +55,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.TodoLists do
     activity_data = %{
       "actor" => actor_url,
       "type" => "Delete",
-      "object" => Convertible.model_to_as(todo_list),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => url
+      },
       "id" => url <> "/delete",
       "to" => [group_url]
     }

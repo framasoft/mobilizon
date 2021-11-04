@@ -95,7 +95,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
     activity_data = %{
       "actor" => actor_url,
       "type" => "Delete",
-      "object" => Convertible.model_to_as(url),
+      "object" => %{
+        "type" => "Tombstone",
+        "id" => url
+      },
       "id" => "#{url}/delete",
       "to" => [group_url]
     }

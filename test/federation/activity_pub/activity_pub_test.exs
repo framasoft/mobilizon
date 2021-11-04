@@ -121,7 +121,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == event.organizer_actor.url
-      assert delete.data["object"]["type"] == "Event"
+      assert delete.data["object"]["type"] == "Tombstone"
       assert delete.data["object"]["id"] == event.url
 
       assert Events.get_event_by_url(event.url) == nil
@@ -137,7 +137,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert delete.data["type"] == "Delete"
         assert delete.data["actor"] == event.organizer_actor.url
-        assert delete.data["object"]["type"] == "Event"
+        assert delete.data["object"]["type"] == "Tombstone"
         assert delete.data["object"]["id"] == event.url
         assert delete.local == false
 
@@ -155,7 +155,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
       assert delete.data["type"] == "Delete"
       assert delete.data["actor"] == comment.actor.url
-      assert delete.data["object"]["type"] == "Note"
+      assert delete.data["object"]["type"] == "Tombstone"
       assert delete.data["object"]["id"] == comment.url
 
       refute is_nil(Discussions.get_comment_from_url(comment.url).deleted_at)
@@ -486,7 +486,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
 
         assert update_data.local
         assert update_data.data["type"] == "Delete"
-        assert update_data.data["object"]["type"] == "Document"
+        assert update_data.data["object"]["type"] == "Tombstone"
         assert update_data.data["object"]["id"] == url
         assert update_data.data["to"] == [group.members_url]
         assert update_data.data["actor"] == actor.url
