@@ -376,6 +376,7 @@ export default class EditorComponent extends Vue {
 }
 </script>
 <style lang="scss">
+@use "@/styles/_mixins" as *;
 @import "./Editor/style.scss";
 
 $color-black: #000;
@@ -392,7 +393,7 @@ $color-white: #eee;
     border: 0;
     color: $color-black;
     padding: 0.2rem 0.5rem;
-    margin-right: 0.2rem;
+    @include margin-right(0.2rem);
     border-radius: 3px;
     cursor: pointer;
 
@@ -464,7 +465,7 @@ $color-white: #eee;
 
     ul,
     ol {
-      padding-left: 1rem;
+      @include padding-left(1rem);
     }
 
     ul {
@@ -480,7 +481,7 @@ $color-white: #eee;
     blockquote {
       border-left: 3px solid rgba($color-black, 0.1);
       color: rgba($color-black, 0.8);
-      padding-left: 0.8rem;
+      @include padding-left(0.8rem);
       font-style: italic;
 
       p {

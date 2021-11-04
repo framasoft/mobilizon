@@ -26,6 +26,7 @@ export default class ActorInline extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 div.actor-inline {
   align-items: flex-start;
   display: inline-flex;
@@ -36,7 +37,7 @@ div.actor-inline {
     flex-basis: auto;
     flex-grow: 0;
     flex-shrink: 0;
-    margin-right: 0.5rem;
+    @include margin-right(0.5rem);
   }
   div.actor-name {
     flex-basis: auto;

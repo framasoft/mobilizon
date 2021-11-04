@@ -368,6 +368,7 @@ export default class EditPost extends mixins(GroupMixin, PostMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .container.section {
   background: $white;
 }
@@ -388,7 +389,7 @@ form {
 
       .navbar-end {
         justify-content: flex-end;
-        margin-left: auto;
+        @include margin-left(auto);
       }
     }
   }

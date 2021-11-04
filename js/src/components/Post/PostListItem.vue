@@ -71,6 +71,7 @@ export default class PostListItem extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @import "~bulma/sass/utilities/mixins.sass";
 
 .post-minimalist-card-wrapper {
@@ -100,7 +101,7 @@ export default class PostListItem extends Vue {
   }
   ::v-deep .icon {
     vertical-align: middle;
-    margin-right: 5px;
+    @include margin-right(5px);
   }
 
   ::v-deep .tags {

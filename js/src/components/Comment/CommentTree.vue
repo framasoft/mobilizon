@@ -363,6 +363,7 @@ export default class CommentTree extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 form.new-comment {
   padding-bottom: 1rem;
 
@@ -373,7 +374,7 @@ form.new-comment {
 
     .field {
       flex: 1;
-      padding-right: 10px;
+      @include padding-right(10px);
       margin-bottom: 0;
 
       &.notify-participants {

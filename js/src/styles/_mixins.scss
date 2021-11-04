@@ -1,0 +1,55 @@
+@mixin margin($block-start, $inline-end, $block-end, $inline-start) {
+  @include margin-left($inline-start);
+  @include margin-right($inline-end);
+
+  margin-top: $block-start;
+  margin-bottom: $block-end;
+}
+
+@mixin padding($block-start, $inline-end, $block-end, $inline-start) {
+  @include padding-left($inline-start);
+  @include padding-right($inline-end);
+
+  padding-top: $block-start;
+  padding-bottom: $block-end;
+}
+
+@mixin margin-left($value) {
+  @supports (margin-inline-start: $value) {
+    margin-inline-start: $value;
+  }
+
+  @supports not (margin-inline-start: $value) {
+    margin-left: $value;
+  }
+}
+
+@mixin margin-right($value) {
+  @supports (margin-inline-end: $value) {
+    margin-inline-end: $value;
+  }
+
+  @supports not (margin-inline-end: $value) {
+    margin-right: $value;
+  }
+}
+
+@mixin padding-left($value) {
+  @supports (padding-inline-start: $value) {
+    padding-inline-start: $value;
+  }
+
+  @supports not (padding-inline-start: $value) {
+    padding-left: $value;
+  }
+}
+
+@mixin padding-right($value) {
+  @supports (padding-inline-end: $value) {
+    padding-inline-end: $value;
+  }
+
+  @supports not (padding-inline-end: $value) {
+    padding-right: $value;
+  }
+}

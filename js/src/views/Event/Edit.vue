@@ -459,6 +459,7 @@
 </template>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 main section > .container {
   background: $white;
 
@@ -537,7 +538,7 @@ section {
 
       .navbar-end {
         justify-content: flex-end;
-        margin-left: auto;
+        @include margin-left(auto);
       }
     }
   }

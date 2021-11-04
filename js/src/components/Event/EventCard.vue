@@ -133,6 +133,7 @@ export default class EventCard extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @use "@/styles/_event-card";
 
 a.card {
@@ -170,7 +171,7 @@ a.card {
     position: absolute;
     top: 10px;
     right: 0;
-    margin-right: -3px;
+    @include margin-right(-3px);
     z-index: 10;
     max-width: 40%;
 
@@ -214,7 +215,7 @@ a.card {
         align-items: flex-end;
         align-self: flex-start;
         margin-bottom: 15px;
-        margin-left: 0rem;
+        @include margin-left(0);
       }
 
       & > .media-content {

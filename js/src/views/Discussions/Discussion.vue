@@ -496,6 +496,7 @@ export default class Discussion extends mixins(GroupMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 div.container.section {
   background: white;
   padding: 1rem 5% 4rem;
@@ -507,7 +508,7 @@ div.container.section {
 
     h1.title {
       margin-bottom: 0;
-      margin-right: 10px;
+      @include margin-right(10px);
     }
 
     form.title-edit {

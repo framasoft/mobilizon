@@ -246,7 +246,6 @@ export default class App extends Vue {
 /* Icons */
 $mdi-font-path: "~@mdi/font/fonts";
 @import "~@mdi/font/scss/materialdesignicons";
-
 @import "common";
 
 #mobilizon {

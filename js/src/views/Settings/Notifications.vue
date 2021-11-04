@@ -780,6 +780,7 @@ export default class Notifications extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .field {
   &:not(:last-child) {
     margin-bottom: 1.5rem;
@@ -790,11 +791,12 @@ export default class Notifications extends Vue {
     text-decoration: underline;
     text-decoration-color: #fea72b;
     text-decoration-thickness: 2px;
-    margin-left: 5px;
+    @include margin-left(5px);
   }
 }
 
 ::v-deep .buttons > *:not(:last-child) .button {
   margin-right: 0.5rem;
+  @include margin-right(0.5rem);
 }
 </style>

@@ -53,6 +53,7 @@ export default class ActorCard extends Vue {
 </style>
 
 <style lang="scss">
+@use "@/styles/_mixins" as *;
 .tooltip {
   display: block !important;
   z-index: 10000;
@@ -105,7 +106,7 @@ export default class ActorCard extends Vue {
   }
 
   &[x-placement^="right"] {
-    margin-left: 5px;
+    @include margin-left(5px);
 
     .tooltip-arrow {
       border-width: 5px 5px 5px 0;
@@ -114,13 +115,13 @@ export default class ActorCard extends Vue {
       border-bottom-color: transparent !important;
       left: -5px;
       top: calc(50% - 5px);
-      margin-left: 0;
-      margin-right: 0;
+      @include margin-left(0);
+      @include margin-right(0);
     }
   }
 
   &[x-placement^="left"] {
-    margin-right: 5px;
+    @include margin-right(5px);
 
     .tooltip-arrow {
       border-width: 5px 0 5px 5px;
@@ -129,8 +130,8 @@ export default class ActorCard extends Vue {
       border-bottom-color: transparent !important;
       right: -5px;
       top: calc(50% - 5px);
-      margin-left: 0;
-      margin-right: 0;
+      @include margin-left(0);
+      @include margin-right(0);
     }
   }
 

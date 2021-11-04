@@ -1057,6 +1057,7 @@ export default class Group extends mixins(GroupMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @import "~bulma/sass/utilities/mixins.sass";
 div.container {
   margin-bottom: 3rem;
@@ -1074,7 +1075,7 @@ div.container {
 
   .header .breadcrumb {
     margin-bottom: 0.5rem;
-    margin-left: 0.5rem;
+    @include margin-left(0.5rem);
   }
 
   .block-container {
@@ -1132,7 +1133,7 @@ div.container {
         align-content: space-between;
 
         & > span {
-          margin-right: 0.5rem;
+          @include margin-right(0.5rem);
         }
       }
 
@@ -1165,10 +1166,10 @@ div.container {
         margin: 0 0.5rem;
 
         &:first-child {
-          margin-left: 0;
+          @include margin-left(0);
         }
         &:last-child {
-          margin-right: 0;
+          @include margin-right(0);
         }
       }
 
@@ -1259,7 +1260,7 @@ div.container {
           justify-content: center;
 
           ::v-deep .b-tooltip {
-            padding-right: 0.5em;
+            @include padding-right(0.5em);
           }
         }
 
@@ -1274,7 +1275,7 @@ div.container {
           }
 
           figure:not(:first-child) {
-            margin-left: -10px;
+            @include margin-left(-10px);
           }
         }
       }
@@ -1291,9 +1292,9 @@ div.container {
     .group-metadata {
       min-width: 20rem;
       flex: 1;
-      padding-left: 1rem;
+      @include padding-left(1rem);
       @include mobile {
-        padding-left: 0;
+        @include padding-left(0);
       }
 
       .sticky {
@@ -1330,7 +1331,7 @@ div.container {
   .menu-dropdown {
     ::v-deep .dropdown-item,
     ::v-deep .has-link a {
-      padding-right: 1rem;
+      @include padding-right(1rem);
     }
   }
 

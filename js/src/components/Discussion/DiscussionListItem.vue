@@ -83,6 +83,7 @@ export default class DiscussionListItem extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .discussion-minimalist-card-wrapper {
   text-decoration: none;
   display: flex;
@@ -92,7 +93,7 @@ export default class DiscussionListItem extends Vue {
   align-items: center;
 
   .calendar-icon {
-    margin-right: 1rem;
+    @include margin-right(1rem);
   }
 
   .title-info-wrapper {

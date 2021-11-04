@@ -128,6 +128,7 @@ export default class EventListViewCard extends mixins(ActorMixin, EventMixin) {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 article.box {
   div.content {
     padding: 5px;
@@ -148,7 +149,7 @@ article.box {
 
       div.date-component {
         flex: 0;
-        margin-right: 16px;
+        @include margin-right(16px);
       }
 
       .title {

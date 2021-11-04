@@ -609,6 +609,7 @@ export default class Home extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @import "~bulma/sass/utilities/mixins.sass";
 
 main > div > .container {
@@ -623,7 +624,7 @@ main > div > .container {
 
 .events-recent {
   & > h3 {
-    padding-left: 0.75rem;
+    @include padding-left(0.75rem);
   }
 
   .columns {
@@ -637,7 +638,7 @@ main > div > .container {
   margin: 0.5rem auto 1rem;
 
   h3.subtitle {
-    margin-left: 7px;
+    @include margin-left(7px);
   }
 }
 

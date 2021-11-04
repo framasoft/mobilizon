@@ -51,13 +51,14 @@
 </template>
 
 <style scoped lang="scss">
+@use "@/styles/_mixins" as *;
 .root {
   display: flex;
   align-items: center;
 }
 
 figure.image {
-  margin-right: 30px;
+  @include margin-right(30px);
   max-height: 200px;
   max-width: 200px;
   overflow: hidden;
@@ -99,7 +100,7 @@ figure.image {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      margin-right: 5px;
+      @include margin-right(5px);
     }
   }
 }

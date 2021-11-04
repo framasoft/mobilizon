@@ -86,6 +86,7 @@ export default class GroupMemberCard extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .card {
   .card-content {
     display: flex;
@@ -113,7 +114,7 @@ export default class GroupMemberCard extends Vue {
 
     figure,
     span.icon {
-      padding-right: 3px;
+      @include padding-right(3px);
     }
   }
 }

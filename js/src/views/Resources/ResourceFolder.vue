@@ -754,6 +754,8 @@ export default class Resources extends Mixins(ResourceMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
+
 .container.section {
   background: $white;
 
@@ -766,7 +768,7 @@ nav.breadcrumb ul {
   align-items: center;
 
   li:last-child .dropdown {
-    margin-left: 5px;
+    @include margin-left(5px);
 
     a {
       justify-content: left;
@@ -785,14 +787,14 @@ nav.breadcrumb ul {
     align-items: center;
 
     ::v-deep .b-checkbox.checkbox {
-      margin-left: 10px;
+      @include margin-left(10px);
     }
 
     .actions {
-      margin-right: 5px;
+      @include margin-right(5px);
 
       & > * {
-        margin-left: 5px;
+        @include margin-left(5px);
       }
     }
   }
@@ -810,11 +812,11 @@ nav.breadcrumb ul {
 
   .resource-checkbox {
     align-self: center;
-    padding-left: 10px;
+    @include padding-left(10px);
     opacity: 0.3;
 
     ::v-deep .b-checkbox.checkbox {
-      margin-right: 0.25rem;
+      @include margin-right(0.25rem);
     }
   }
 

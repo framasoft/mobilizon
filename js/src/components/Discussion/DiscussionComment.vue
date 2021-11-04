@@ -148,6 +148,7 @@ export default class DiscussionComment extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 article.comment {
   display: flex;
   border-top: 1px solid #e9e9e9;
@@ -163,7 +164,7 @@ article.comment {
       padding: 0 1rem 0.3em;
 
       .name {
-        margin-right: auto;
+        @include margin-right(auto);
         flex: 1 1 auto;
         overflow: hidden;
 
@@ -216,7 +217,7 @@ article.comment {
         ::v-deep blockquote {
           border-left: 0.2em solid #333;
           display: block;
-          padding-left: 1em;
+          @include padding-left(1em);
         }
 
         ::v-deep p {

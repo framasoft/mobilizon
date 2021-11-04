@@ -215,7 +215,7 @@ h1 {
 }
 
 ::v-deep .buttons > *:not(:last-child) .button {
-  margin-right: 0.5rem;
+  @include margin-right(0.5rem);
 }
 </style>
 

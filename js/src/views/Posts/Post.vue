@@ -368,6 +368,7 @@ export default class Post extends mixins(GroupMixin, PostMixin) {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 article.post {
   background: $white !important;
   header {
@@ -417,7 +418,7 @@ article.post {
             flex-direction: column;
 
             *:not(:first-child) {
-              padding-left: 5px;
+              @include padding-left(5px);
             }
           }
         }
@@ -478,7 +479,7 @@ article.post {
   button.dropdown-item {
     white-space: nowrap;
     width: 100%;
-    padding-right: 1rem;
+    @include padding-right(1rem);
     text-align: right;
   }
 }

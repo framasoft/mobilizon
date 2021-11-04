@@ -131,6 +131,7 @@ export default class EventMinimalistCard extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @use "@/styles/_event-card";
 @import "~bulma/sass/utilities/mixins.sass";
 @import "@/variables.scss";
@@ -163,7 +164,7 @@ export default class EventMinimalistCard extends Vue {
   }
 
   .calendar-icon {
-    margin-right: 1rem;
+    @include margin-right(1rem);
   }
 
   .title-info-wrapper {

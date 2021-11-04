@@ -1151,6 +1151,7 @@ export default class Event extends EventMixin {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .section {
   padding: 1rem 2rem 4rem;
 }
@@ -1192,7 +1193,7 @@ div.sidebar {
 
       span {
         line-height: 2.7rem;
-        padding-right: 6px;
+        @include padding-right(6px);
       }
     }
   }
@@ -1239,7 +1240,7 @@ div.sidebar {
     min-width: 20rem;
     flex: 1;
     @media all and (min-width: 672px) {
-      padding-left: 1rem;
+      @include padding-left(1rem);
     }
 
     .sticky {
@@ -1281,7 +1282,7 @@ div.sidebar {
     ::v-deep blockquote {
       border-left: 0.2em solid #333;
       display: block;
-      padding-left: 1em;
+      @include padding-left(1rem);
     }
 
     ::v-deep p {
@@ -1327,7 +1328,7 @@ a.dropdown-item,
 button.dropdown-item {
   white-space: nowrap;
   width: 100%;
-  padding-right: 1rem;
+  @include padding-right(1rem);
   text-align: right;
 }
 
@@ -1362,7 +1363,7 @@ a.participations-link {
     align-items: flex-end;
     align-self: flex-start;
     margin-bottom: 7px;
-    margin-left: 0rem;
+    @include margin-left(0);
   }
 }
 .title {
