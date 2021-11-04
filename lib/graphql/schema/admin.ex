@@ -64,13 +64,13 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       %Comment{}, _ ->
         :comment
 
-      %Actor{type: "Person"}, _ ->
+      %Actor{type: :Person}, _ ->
         :person
 
       %User{}, _ ->
         :user
 
-      %Actor{type: "Group"}, _ ->
+      %Actor{type: :Group}, _ ->
         :group
 
       _, _ ->
