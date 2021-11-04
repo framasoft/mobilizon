@@ -152,10 +152,11 @@ export default class EventMap extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .modal-card-head {
   justify-content: flex-end;
   button.delete {
-    margin-right: 1rem;
+    @include margin-right(1rem);
   }
 }
 

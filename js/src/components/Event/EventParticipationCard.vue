@@ -392,6 +392,7 @@ export default class EventParticipationCard extends mixins(
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 @use "@/styles/_event-card";
 @import "~bulma/sass/utilities/mixins.sass";
 
@@ -400,7 +401,7 @@ article.box {
     position: absolute;
     top: 10px;
     right: 0;
-    margin-right: -5px;
+    @include margin-left(-5px);
     z-index: 10;
     max-width: 40%;
 
@@ -516,7 +517,7 @@ article.box {
 
     figure,
     span.icon {
-      padding-right: 3px;
+      @include padding-right(3px);
     }
   }
 

@@ -42,7 +42,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
           target_type
           |> String.to_existing_atom()
           |> transform_action_log(action, action_log)
-          |> Map.merge(%{actor: actor, id: id, inserted_at: inserted_at})
+          |> add_extra_data(actor, id, inserted_at)
         end)
         |> Enum.filter(& &1)
 
@@ -52,6 +52,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   def list_action_logs(_parent, _args, _resolution) do
     {:error, dgettext("errors", "You need to be logged-in and a moderator to list action logs")}
+  end
+
+  defp add_extra_data(nil, _actor, _id, _inserted_at), do: nil
+
+  defp add_extra_data(map, actor, id, inserted_at) do
+    Map.merge(map, %{actor: actor, id: id, inserted_at: inserted_at})
   end
 
   @spec transform_action_log(module(), atom(), ActionLog.t()) :: map()
@@ -127,22 +133,22 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
   @spec convert_changes_to_struct(module(), map()) :: struct()
   defp convert_changes_to_struct(struct, %{"report_id" => _report_id} = changes) do
-    with data <- for({key, val} <- changes, into: %{}, do: {String.to_existing_atom(key), val}),
-         data <- Map.put(data, :report, Mobilizon.Reports.get_report(data.report_id)) do
-      struct(struct, data)
-    end
+    data = for({key, val} <- changes, into: %{}, do: {String.to_existing_atom(key), val})
+    data = Map.put(data, :report, Mobilizon.Reports.get_report(data.report_id))
+    struct(struct, data)
   end
 
   defp convert_changes_to_struct(struct, changes) do
-    with changeset <- struct.__changeset__,
-         data <-
-           for(
-             {key, val} <- changes,
-             into: %{},
-             do: {String.to_existing_atom(key), process_eventual_type(changeset, key, val)}
-           ) do
-      struct(struct, data)
-    end
+    changeset = struct.__changeset__
+
+    data =
+      for(
+        {key, val} <- changes,
+        into: %{},
+        do: {String.to_existing_atom(key), process_eventual_type(changeset, key, val)}
+      )
+
+    struct(struct, data)
   end
 
   # datetimes are not unserialized as DateTime/NaiveDateTime so we do it manually with changeset data
@@ -150,6 +156,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
           DateTime.t() | NaiveDateTime.t() | any()
   defp process_eventual_type(changeset, key, val) do
     cond do
+      changeset[String.to_existing_atom(key)] == Mobilizon.Actors.ActorType and not is_nil(val) ->
+        String.to_existing_atom(val)
+
       changeset[String.to_existing_atom(key)] == :utc_datetime and not is_nil(val) ->
         {:ok, datetime, _} = DateTime.from_iso8601(val)
         datetime

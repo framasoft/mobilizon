@@ -336,6 +336,7 @@ export default class Comment extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 form.reply {
   padding-bottom: 1rem;
 }
@@ -355,7 +356,7 @@ form.reply {
   }
 
   & > small {
-    margin-left: 0.3rem;
+    @include margin-left(0.3rem);
   }
 }
 
@@ -365,14 +366,14 @@ form.reply {
 
   .editor {
     flex: 1;
-    padding-right: 10px;
+    @include padding-right(10px);
     margin-bottom: 0;
   }
 }
 
 a.comment-link {
   text-decoration: none;
-  margin-left: 5px;
+  @include margin-left(5px);
   color: $text;
   &:hover {
     text-decoration: underline;
@@ -416,7 +417,7 @@ a.comment-link {
   }
 
   .media-left {
-    margin-right: 0.5rem;
+    @include margin-right(5px);
   }
 }
 
@@ -427,7 +428,7 @@ a.comment-link {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right: 10px;
+    @include margin-right(10px);
 
     .vertical-border {
       width: 3px;
@@ -516,7 +517,7 @@ article {
 }
 
 .reply-action .icon {
-  padding-right: 0.4rem;
+  @include padding-right(0.4rem);
 }
 
 .visually-hidden {

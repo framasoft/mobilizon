@@ -131,11 +131,12 @@ export default class EventMetadataItem extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .card .media {
   align-items: center;
 
   & > button {
-    margin-left: 1rem;
+    @include margin-left(1rem);
   }
 }
 </style>

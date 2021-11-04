@@ -338,6 +338,7 @@ export default class NavBar extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 nav {
   .navbar-item {
     a.button {
@@ -370,7 +371,7 @@ nav {
   }
 
   .navbar-item.has-dropdown a.navbar-link figure {
-    margin-right: 0.75rem;
+    @include margin-right(0.75rem);
     display: flex;
     align-items: center;
   }

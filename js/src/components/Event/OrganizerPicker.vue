@@ -121,6 +121,7 @@ export default class OrganizerPicker extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 ::v-deep .list-item {
   box-sizing: content-box;
 
@@ -133,11 +134,11 @@ export default class OrganizerPicker extends Vue {
 
       figure.image,
       span.icon.media-left {
-        margin-right: 0.5rem;
+        @include margin-right(0.5rem);
       }
 
       span.icon.media-left {
-        margin-left: -0.25rem;
+        @include margin-left(-0.25rem);
       }
     }
   }

@@ -103,6 +103,7 @@ export default class AddressInfo extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 address {
   font-style: normal;
   display: flex;
@@ -118,7 +119,7 @@ address {
   }
 
   span.icon {
-    padding-right: 1rem;
+    @include padding-right(1rem);
   }
 }
 </style>

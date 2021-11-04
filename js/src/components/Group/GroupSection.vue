@@ -33,6 +33,7 @@ export default class GroupSection extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 section {
   display: flex;
   flex-direction: column;
@@ -44,7 +45,7 @@ section {
     display: flex;
     justify-content: flex-end;
     padding-bottom: 0.5rem;
-    padding-right: 0.5rem;
+    @include padding-right(0.5rem);
   }
 
   .main-slot {
@@ -68,7 +69,7 @@ div.group-section-title {
 
   ::v-deep & > a {
     align-self: center;
-    margin-right: 5px;
+    @include margin-right(5px);
     color: var(--title-color);
   }
 

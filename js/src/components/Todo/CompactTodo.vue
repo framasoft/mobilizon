@@ -66,7 +66,8 @@ export default class Todo extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 span.details {
-  margin-left: 1rem;
+  @include margin-left(1rem);
 }
 </style>

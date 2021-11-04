@@ -82,6 +82,7 @@ export default class ResourceItem extends Vue {
 }
 </script>
 <style lang="scss" scoped>
+@use "@/styles/_mixins" as *;
 .resource-wrapper {
   display: flex;
   flex: 1;
@@ -137,7 +138,7 @@ a {
       display: inline-block;
       width: 16px;
       height: 16px;
-      margin-right: 6px;
+      @include margin-right(6px);
       vertical-align: middle;
     }
 
