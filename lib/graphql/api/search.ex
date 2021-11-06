@@ -40,13 +40,15 @@ defmodule Mobilizon.GraphQL.API.Search do
 
       true ->
         page =
-          Actors.build_actors_by_username_or_name_page(
+          Actors.search_actors(
             term,
             [
-              actor_type: [result_type],
+              actor_type: result_type,
               radius: Map.get(args, :radius),
               location: Map.get(args, :location),
-              minimum_visibility: Map.get(args, :minimum_visibility, :public)
+              minimum_visibility: Map.get(args, :minimum_visibility, :public),
+              current_actor_id: Map.get(args, :current_actor_id),
+              exclude_my_groups: Map.get(args, :exclude_my_groups, false)
             ],
             page,
             limit

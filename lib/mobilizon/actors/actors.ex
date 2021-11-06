@@ -450,29 +450,55 @@ defmodule Mobilizon.Actors do
   @doc """
   Builds a page struct for actors by their name or displayed name.
   """
-  @spec build_actors_by_username_or_name_page(
+  @spec search_actors(
           String.t(),
           Keyword.t(),
           integer | nil,
           integer | nil
         ) :: Page.t()
-  def build_actors_by_username_or_name_page(
+  def search_actors(
         term,
         options \\ [],
         page \\ nil,
         limit \\ nil
       ) do
+    term
+    |> build_actors_by_username_or_name_page_query(options)
+    |> maybe_exclude_my_groups(
+      Keyword.get(options, :exclude_my_groups, false),
+      Keyword.get(options, :current_actor_id)
+    )
+    |> Page.build_page(page, limit)
+  end
+
+  defp maybe_exclude_my_groups(query, true, current_actor_id) when current_actor_id != nil do
+    query
+    |> join(:left, [a], m in Member, on: a.id == m.parent_id)
+    |> join(:left, [a], f in Follower, on: a.id == f.target_actor_id)
+    |> where([_a, ..., m, f], m.actor_id != ^current_actor_id and f.actor_id != ^current_actor_id)
+  end
+
+  defp maybe_exclude_my_groups(query, _, _), do: query
+
+  @spec build_actors_by_username_or_name_page_query(
+          String.t(),
+          Keyword.t()
+        ) :: Ecto.Query.t()
+  defp build_actors_by_username_or_name_page_query(
+         term,
+         options
+       ) do
     anonymous_actor_id = Mobilizon.Config.anonymous_actor_id()
     query = from(a in Actor)
 
     query
+    |> distinct([q], q.id)
     |> actor_by_username_or_name_query(term)
     |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
-    |> filter_by_types(Keyword.get(options, :actor_type, :Group))
+    |> filter_by_type(Keyword.get(options, :actor_type, :Group))
     |> filter_by_minimum_visibility(Keyword.get(options, :minimum_visibility, :public))
     |> filter_suspended(false)
     |> filter_out_anonymous_actor_id(anonymous_actor_id)
-    |> Page.build_page(page, limit)
   end
 
   @doc """
@@ -1313,17 +1339,15 @@ defmodule Mobilizon.Actors do
   @spec actors_for_location(Ecto.Queryable.t(), String.t(), integer()) :: Ecto.Query.t()
   defp actors_for_location(query, location, radius)
        when is_valid_string(location) and not is_nil(radius) do
-    with {lon, lat} <- Geohax.decode(location),
-         point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
-      query
-      |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
-      |> where(
-        [q],
-        st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
-      )
-    else
-      _ -> query
-    end
+    {lon, lat} = Geohax.decode(location)
+    point = Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})")
+
+    query
+    |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+    |> where(
+      [q],
+      st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
+    )
   end
 
   defp actors_for_location(query, _location, _radius), do: query
@@ -1563,11 +1587,6 @@ defmodule Mobilizon.Actors do
   end
 
   defp filter_by_type(query, _type), do: query
-
-  @spec filter_by_types(Ecto.Queryable.t(), [ActorType.t()]) :: Ecto.Query.t()
-  defp filter_by_types(query, types) do
-    from(a in query, where: a.type in ^types)
-  end
 
   @spec filter_by_minimum_visibility(Ecto.Queryable.t(), atom()) :: Ecto.Query.t()
   defp filter_by_minimum_visibility(query, :private), do: query

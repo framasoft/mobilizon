@@ -21,7 +21,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Search do
   """
   @spec search_groups(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Page.t(Actor.t())} | {:error, String.t()}
-  def search_groups(_parent, %{page: page, limit: limit} = args, _resolution) do
+  def search_groups(
+        _parent,
+        %{page: page, limit: limit} = args,
+        %{context: context} = _resolution
+      ) do
+    current_actor = Map.get(context, :current_actor, nil)
+    current_actor_id = if current_actor, do: current_actor.id, else: nil
+    args = Map.put(args, :current_actor_id, current_actor_id)
     Search.search_actors(args, page, limit, :Group)
   end
 

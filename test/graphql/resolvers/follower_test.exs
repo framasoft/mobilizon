@@ -70,7 +70,9 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
           variables: %{name: preferred_username}
         )
 
-      assert hd(res["errors"])["message"] == "unauthenticated"
+      assert res["errors"] == nil
+      assert res["data"]["group"]["followers"]["total"] == 1
+      assert res["data"]["group"]["followers"]["elements"] == []
     end
 
     test "without being a member", %{
@@ -88,7 +90,9 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
           variables: %{name: preferred_username}
         )
 
-      assert hd(res["errors"])["message"] == "unauthorized"
+      assert res["errors"] == nil
+      assert res["data"]["group"]["followers"]["total"] == 1
+      assert res["data"]["group"]["followers"]["elements"] == []
     end
 
     test "without being a moderator", %{
@@ -107,7 +111,9 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
           variables: %{name: preferred_username}
         )
 
-      assert hd(res["errors"])["message"] == "unauthorized"
+      assert res["errors"] == nil
+      assert res["data"]["group"]["followers"]["total"] == 1
+      assert res["data"]["group"]["followers"]["elements"] == []
     end
 
     test "while being a moderator", %{

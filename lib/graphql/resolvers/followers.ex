@@ -13,7 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   @spec find_followers_for_group(Actor.t(), map(), map()) :: {:ok, Page.t()}
   def find_followers_for_group(
         %Actor{id: group_id} = group,
-        %{page: page, limit: limit} = args,
+        args,
         %{
           context: %{
             current_user: %User{role: user_role},
@@ -21,15 +21,23 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
           }
         }
       ) do
+    followers = group_followers(group, args)
+
     if Actors.is_moderator?(actor_id, group_id) or is_moderator(user_role) do
-      {:ok,
-       Actors.list_paginated_followers_for_actor(group, Map.get(args, :approved), page, limit)}
+      {:ok, followers}
     else
-      {:error, :unauthorized}
+      {:ok, %Page{followers | elements: []}}
     end
   end
 
-  def find_followers_for_group(_, _, _), do: {:error, :unauthenticated}
+  def find_followers_for_group(%Actor{} = group, args, _) do
+    followers = group_followers(group, args)
+    {:ok, %Page{followers | elements: []}}
+  end
+
+  defp group_followers(group, %{page: page, limit: limit} = args) do
+    Actors.list_paginated_followers_for_actor(group, Map.get(args, :approved), page, limit)
+  end
 
   @spec update_follower(any(), map(), map()) :: {:ok, Follower.t()} | {:error, any()}
   def update_follower(_, %{id: follower_id, approved: approved}, %{
