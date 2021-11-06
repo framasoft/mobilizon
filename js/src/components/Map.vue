@@ -163,7 +163,7 @@ export default class Map extends Vue {
 </script>
 <style lang="scss" scoped>
 div.map-container {
-  height: 100%;
+  height: 80vh;
   width: 100%;
 
   .leaflet-map {

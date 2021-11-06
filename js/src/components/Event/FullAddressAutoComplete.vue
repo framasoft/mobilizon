@@ -42,7 +42,7 @@
             ><br />
             <small>{{ option.poiInfos.alternativeName }}</small>
           </template>
-          <template slot="empty">
+          <template #empty>
             <span v-if="isFetching">{{ $t("Searching…") }}</span>
             <div v-else-if="queryText.length >= 3" class="is-enabled">
               <span>{{
@@ -83,7 +83,7 @@
     </div>
     <div
       class="map column"
-      v-if="selected && selected.geom && selected.poiInfos"
+      v-if="!hideMap && selected && selected.geom && selected.poiInfos"
     >
       <map-leaflet
         :coords="selected.geom"
@@ -96,47 +96,6 @@
         :readOnly="false"
       />
     </div>
-    <!--        <b-modal v-if="selected" :active.sync="addressModalActive" :width="640" has-modal-card scroll="keep">-->
-    <!--            <div class="modal-card" style="width: auto">-->
-    <!--                <header class="modal-card-head">-->
-    <!--                    <p class="modal-card-title">{{ $t('Add an address') }}</p>-->
-    <!--                </header>-->
-    <!--                <section class="modal-card-body">-->
-    <!--                    <form>-->
-    <!--                        <b-field :label="$t('Name')">-->
-    <!--                            <b-input aria-required="true" required v-model="selected.description" />-->
-    <!--                        </b-field>-->
-
-    <!--                        <b-field :label="$t('Street')">-->
-    <!--                            <b-input v-model="selected.street" />-->
-    <!--                        </b-field>-->
-
-    <!--                        <b-field grouped>-->
-    <!--                            <b-field :label="$t('Postal Code')">-->
-    <!--                                <b-input v-model="selected.postalCode" />-->
-    <!--                            </b-field>-->
-
-    <!--                            <b-field :label="$t('Locality')">-->
-    <!--                                <b-input v-model="selected.locality" />-->
-    <!--                            </b-field>-->
-    <!--                        </b-field>-->
-
-    <!--                        <b-field grouped>-->
-    <!--                            <b-field :label="$t('Region')">-->
-    <!--                                <b-input v-model="selected.region" />-->
-    <!--                            </b-field>-->
-
-    <!--                            <b-field :label="$t('Country')">-->
-    <!--                                <b-input v-model="selected.country" />-->
-    <!--                            </b-field>-->
-    <!--                        </b-field>-->
-    <!--                    </form>-->
-    <!--                </section>-->
-    <!--                <footer class="modal-card-foot">-->
-    <!--                    <button class="button" type="button" @click="resetPopup()">{{ $t('Clear') }}</button>-->
-    <!--                </footer>-->
-    <!--            </div>-->
-    <!--        </b-modal>-->
   </div>
 </template>
 <script lang="ts">
@@ -158,6 +117,7 @@ export default class FullAddressAutoComplete extends Mixins(
   @Prop({ required: false, default: "" }) label!: string;
   @Prop({ required: false }) userTimezone!: string;
   @Prop({ required: false, default: false, type: Boolean }) disabled!: boolean;
+  @Prop({ required: false, default: false, type: Boolean }) hideMap!: boolean;
 
   addressModalActive = false;
 
@@ -175,10 +135,6 @@ export default class FullAddressAutoComplete extends Mixins(
   updateEditing(): void {
     if (!(this.value && this.value.id)) return;
     this.selected = this.value;
-    const address = new Address(this.selected);
-    if (address.poiInfos) {
-      this.queryText = `${address.poiInfos.name} ${address.poiInfos.alternativeName}`;
-    }
   }
 
   updateSelected(option: IAddress): void {
@@ -211,20 +167,6 @@ export default class FullAddressAutoComplete extends Mixins(
   // eslint-disable-next-line class-methods-use-this
   get canShowLocateMeButton(): boolean {
     return window.isSecureContext;
-  }
-
-  @Watch("queryText")
-  resetAddressOnEmptyField(queryText: string): void {
-    if (queryText === "" && this.selected?.id) {
-      console.log("doing reset");
-      this.resetAddress();
-    }
-  }
-
-  resetAddress(): void {
-    this.$emit("input", null);
-    this.queryText = "";
-    this.selected = new Address();
   }
 }
 </script>

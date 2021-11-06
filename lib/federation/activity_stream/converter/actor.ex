@@ -8,12 +8,15 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
 
   alias Mobilizon.Actors.Actor, as: ActorModel
 
+  alias Mobilizon.Addresses.Address
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
-
+  alias Mobilizon.Federation.ActivityStream.Converter.Address, as: AddressConverter
+  alias Mobilizon.Medias.File
   alias Mobilizon.Service.HTTP.RemoteMediaDownloaderClient
   alias Mobilizon.Service.RichMedia.Parser
   alias Mobilizon.Web.Upload
+  import Mobilizon.Federation.ActivityStream.Converter.Utils, only: [get_address: 1]
 
   @behaviour Converter
 
@@ -36,6 +39,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
 
     banner =
       download_picture(get_in(data, ["image", "url"]), get_in(data, ["image", "name"]), "banner")
+
+    address = get_address(data["location"])
 
     %{
       url: data["id"],
@@ -60,7 +65,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"],
       visibility: if(Map.get(data, "discoverable", false) == true, do: :public, else: :unlisted),
-      openness: data["openness"]
+      openness: data["openness"],
+      physical_address_id: if(address, do: address.id, else: nil)
     }
   end
 
@@ -106,33 +112,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       }
     }
 
-    actor_data =
-      if actor.type == :Group do
-        Map.put(actor_data, "members", actor.members_url)
-      else
-        actor_data
-      end
-
-    actor_data =
-      if is_nil(actor.avatar) do
-        actor_data
-      else
-        Map.put(actor_data, "icon", %{
-          "type" => "Image",
-          "mediaType" => actor.avatar.content_type,
-          "url" => actor.avatar.url
-        })
-      end
-
-    if is_nil(actor.banner) do
-      actor_data
-    else
-      Map.put(actor_data, "image", %{
-        "type" => "Image",
-        "mediaType" => actor.banner.content_type,
-        "url" => actor.banner.url
-      })
-    end
+    actor_data
+    |> maybe_add_members(actor)
+    |> maybe_add_avatar_picture(actor)
+    |> maybe_add_banner_picture(actor)
+    |> maybe_add_physical_address(actor)
   end
 
   @spec download_picture(String.t() | nil, String.t(), String.t()) :: map() | nil
@@ -146,4 +130,41 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       Map.take(file, [:content_type, :name, :url, :size])
     end
   end
+
+  defp maybe_add_members(actor_data, %ActorModel{type: :Group, members_url: members_url}) do
+    Map.put(actor_data, "members", members_url)
+  end
+
+  defp maybe_add_members(actor_data, %ActorModel{}), do: actor_data
+
+  @spec maybe_add_avatar_picture(map(), ActorModel.t()) :: map()
+  defp maybe_add_avatar_picture(actor_data, %ActorModel{avatar: %File{} = avatar}) do
+    Map.put(actor_data, "image", %{
+      "type" => "Image",
+      "mediaType" => avatar.content_type,
+      "url" => avatar.url
+    })
+  end
+
+  defp maybe_add_avatar_picture(res, %ActorModel{avatar: _}), do: res
+
+  @spec maybe_add_banner_picture(map(), ActorModel.t()) :: map()
+  defp maybe_add_banner_picture(actor_data, %ActorModel{banner: %File{} = banner}) do
+    Map.put(actor_data, "image", %{
+      "type" => "Image",
+      "mediaType" => banner.content_type,
+      "url" => banner.url
+    })
+  end
+
+  defp maybe_add_banner_picture(res, %ActorModel{banner: _}), do: res
+
+  @spec maybe_add_physical_address(map(), ActorModel.t()) :: map()
+  defp maybe_add_physical_address(res, %ActorModel{
+         physical_address: %Address{} = physical_address
+       }) do
+    Map.put(res, "location", AddressConverter.model_to_as(physical_address))
+  end
+
+  defp maybe_add_physical_address(res, %ActorModel{physical_address: _}), do: res
 end

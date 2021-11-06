@@ -183,14 +183,14 @@ defmodule Mobilizon.ActorsTest do
       assert MapSet.new([actor_found_id, actor2_found_id]) == MapSet.new([actor.id, actor2.id])
     end
 
-    test "test build_actors_by_username_or_name_page/4 returns actors with similar usernames",
+    test "test search_actors/4 returns actors with similar usernames",
          %{actor: %Actor{id: actor_id}} do
       use_cassette "actors/remote_actor_mastodon_tcit" do
         with {:ok, %Actor{id: actor2_id}} <-
                ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
           %Page{total: 2, elements: actors} =
-            Actors.build_actors_by_username_or_name_page("tcit",
-              actor_type: [:Person],
+            Actors.search_actors("tcit",
+              actor_type: :Person,
               minimum_visibility: :private
             )
 
@@ -201,9 +201,8 @@ defmodule Mobilizon.ActorsTest do
       end
     end
 
-    test "test build_actors_by_username_or_name_page/4 returns actors with similar names" do
-      %{total: 0, elements: actors} =
-        Actors.build_actors_by_username_or_name_page("ohno", actor_type: [:Person])
+    test "test search_actors/4 returns actors with similar names" do
+      %{total: 0, elements: actors} = Actors.search_actors("ohno", actor_type: :Person)
 
       assert actors == []
     end

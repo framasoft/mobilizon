@@ -54,7 +54,7 @@
               <h3 class="title">{{ participation.event.title }}</h3>
             </router-link>
           </div>
-          <event-address
+          <inline-address
             v-if="participation.event.physicalAddress"
             class="event-subtitle"
             :physical-address="participation.event.physicalAddress"
@@ -270,7 +270,7 @@ import RouteName from "../../router/name";
 import { changeIdentity } from "../../utils/auth";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
-import EventAddress from "@/components/Event/EventAddress.vue";
+import InlineAddress from "@/components/Address/InlineAddress.vue";
 import { PropType } from "vue";
 
 const defaultOptions: IEventCardOptions = {
@@ -286,7 +286,7 @@ const defaultOptions: IEventCardOptions = {
     DateCalendarIcon,
     PopoverActorCard,
     LazyImageWrapper,
-    EventAddress,
+    InlineAddress,
   },
   apollo: {
     currentActor: {

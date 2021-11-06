@@ -1,5 +1,6 @@
 <template>
   <div
+    class="ellipsis"
     :title="
       isDescriptionDifferentFromLocality
         ? `${physicalAddress.description}, ${physicalAddress.locality}`
@@ -22,7 +23,7 @@ import { PropType } from "vue";
 import { Prop, Vue, Component } from "vue-property-decorator";
 
 @Component
-export default class EventAddress extends Vue {
+export default class InlineAddress extends Vue {
   @Prop({ required: true, type: Object as PropType<IAddress> })
   physicalAddress!: IAddress;
 
@@ -34,3 +35,11 @@ export default class EventAddress extends Vue {
   }
 }
 </script>
+<style lang="scss" scoped>
+.ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

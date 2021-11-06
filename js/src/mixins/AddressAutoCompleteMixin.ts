@@ -1,4 +1,3 @@
-import { mixins } from "vue-class-component";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { LatLng } from "leaflet";
 import { Address, IAddress } from "../types/address.model";
@@ -7,6 +6,7 @@ import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 import debounce from "lodash/debounce";
 import { DebouncedFunc } from "lodash";
+import { PropType } from "vue";
 
 @Component({
   components: {
@@ -17,8 +17,9 @@ import { DebouncedFunc } from "lodash";
     config: CONFIG,
   },
 })
-export default class AddressAutoCompleteMixin extends mixins(Vue) {
-  @Prop({ required: true }) value!: IAddress;
+export default class AddressAutoCompleteMixin extends Vue {
+  @Prop({ required: true, type: Object as PropType<IAddress> })
+  value!: IAddress;
   gettingLocationError: string | null = null;
 
   gettingLocation = false;
@@ -28,8 +29,6 @@ export default class AddressAutoCompleteMixin extends mixins(Vue) {
   addressData: IAddress[] = [];
 
   selected: IAddress = new Address();
-
-  queryText: string = (this.value && new Address(this.value).fullName) || "";
 
   config!: IConfig;
 
@@ -85,6 +84,22 @@ export default class AddressAutoCompleteMixin extends mixins(Vue) {
     this.isFetching = false;
   }
 
+  get queryText(): string {
+    return (this.value && new Address(this.value).fullName) || "";
+  }
+
+  set queryText(text: string) {
+    if (text === "" && this.selected?.id) {
+      console.log("doing reset");
+      this.resetAddress();
+    }
+  }
+
+  resetAddress(): void {
+    this.$emit("input", null);
+    this.selected = new Address();
+  }
+
   async locateMe(): Promise<void> {
     this.gettingLocation = true;
     this.gettingLocationError = null;
@@ -124,7 +139,6 @@ export default class AddressAutoCompleteMixin extends mixins(Vue) {
       const defaultAddress = new Address(this.addressData[0]);
       this.selected = defaultAddress;
       this.$emit("input", this.selected);
-      this.queryText = `${defaultAddress.poiInfos.name} ${defaultAddress.poiInfos.alternativeName}`;
     }
   }
 

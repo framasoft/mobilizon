@@ -328,7 +328,7 @@ import { EventSortField, ParticipantRole, SortDirection } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
 import { supportsWebPFormat } from "@/utils/support";
 import { IParticipant, Participant } from "../types/participant.model";
-import { CLOSE_EVENTS, FETCH_EVENTS } from "../graphql/event";
+import { FETCH_EVENTS } from "../graphql/event";
 import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
@@ -339,7 +339,7 @@ import {
   IUserSettings,
 } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT } from "../graphql/user";
-import { HOME_USER_QUERIES } from "../graphql/home";
+import { CLOSE_CONTENT, HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
 import DateComponent from "../components/Event/DateCalendarIcon.vue";
@@ -363,15 +363,17 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     },
     currentUser: CURRENT_USER_CLIENT,
     config: CONFIG,
-    closeEvents: {
-      query: CLOSE_EVENTS,
+    closeContent: {
+      query: CLOSE_CONTENT,
       variables() {
         return {
           location: this.loggedUser?.settings?.location?.geohash,
           radius: this.loggedUser?.settings?.location?.range,
         };
       },
-      update: (data) => data.searchEvents,
+      update(data) {
+        this.closeEvents = data.searchEvents;
+      },
       skip() {
         return (
           !this.currentUser?.isLoggedIn ||

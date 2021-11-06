@@ -9,7 +9,7 @@
       style="height: 120px"
     />
     <div class="title-info-wrapper has-text-grey-dark">
-      <p class="post-minimalist-title">{{ post.title }}</p>
+      <h3 class="post-minimalist-title">{{ post.title }}</h3>
       <p class="post-publication-date">
         <b-icon icon="clock" />
         <span class="has-text-grey-dark" v-if="isBeforeLastWeek">{{

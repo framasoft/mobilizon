@@ -210,10 +210,11 @@ pages:
       docker buildx build
       --push
       --platform linux/amd64,linux/arm64,linux/arm
-      -t framasoft/mobilizon:multiarch
+      -t $DOCKER_IMAGE_NAME
       -f docker/production/Dockerfile .
   tags:
     - "privileged"
+  timeout: 3 hours
 
 build-docker-master:
   <<: *docker

@@ -7,7 +7,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Addresses
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Events.Event, as: EventModel
   alias Mobilizon.Medias.Media
@@ -25,7 +24,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       fetch_mentions: 1,
       build_tags: 1,
       maybe_fetch_actor_and_attributed_to_id: 1,
-      process_pictures: 2
+      process_pictures: 2,
+      get_address: 1
     ]
 
   require Logger
@@ -191,44 +191,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   end
 
   defp get_metdata(_), do: []
-
-  @spec get_address(map | binary | nil) :: Address.t() | nil
-  defp get_address(address_url) when is_binary(address_url) do
-    get_address(%{"id" => address_url})
-  end
-
-  defp get_address(%{"id" => url} = map) when is_map(map) and is_binary(url) do
-    Logger.debug("Address with an URL, let's check against our own database")
-
-    case Addresses.get_address_by_url(url) do
-      %Address{} = address ->
-        address
-
-      _ ->
-        Logger.debug("not in our database, let's try to create it")
-        map = Map.put(map, "url", map["id"])
-        do_get_address(map)
-    end
-  end
-
-  defp get_address(map) when is_map(map) do
-    do_get_address(map)
-  end
-
-  defp get_address(nil), do: nil
-
-  @spec do_get_address(map) :: Address.t() | nil
-  defp do_get_address(map) do
-    map = AddressConverter.as_to_model_data(map)
-
-    case Addresses.create_address(map) do
-      {:ok, %Address{} = address} ->
-        address
-
-      _ ->
-        nil
-    end
-  end
 
   defp get_visibility(object), do: if(@ap_public in object["to"], do: :public, else: :unlisted)
 

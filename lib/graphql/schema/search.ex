@@ -59,6 +59,14 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:term, :string, default_value: "", description: "Search term")
       arg(:location, :string, description: "A geohash for coordinates")
 
+      arg(:exclude_my_groups, :boolean,
+        description: "Whether to include the groups the current actor is member or follower"
+      )
+
+      arg(:minimum_visibility, :group_visibility,
+        description: "The minimum visibility the group must have"
+      )
+
       arg(:radius, :float,
         default_value: 50,
         description: "Radius around the location to search in"
