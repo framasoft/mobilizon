@@ -1332,5 +1332,7 @@
   "Showing events starting on": "Afficher les événements à partir de",
   "Showing events before": "Afficher les événements avant",
   "Clear date filter field": "Vider le champ de filtre de la date",
-  "{count} members or followers": "Aucun⋅e membre ou abonné⋅e|Un⋅e membre ou abonné⋅e|{count} membres ou abonné⋅es"
+  "{count} members or followers": "Aucun⋅e membre ou abonné⋅e|Un⋅e membre ou abonné⋅e|{count} membres ou abonné⋅es",
+  "This profile is from another instance, the informations shown here may be incomplete.": "Ce profil provient d'une autre instance, les informations montrées ici peuvent être incomplètes.",
+  "View full profile": "Voir le profil complet"
 }

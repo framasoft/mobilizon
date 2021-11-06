@@ -473,6 +473,16 @@
     <div v-else-if="group" class="public-container">
       <aside class="group-metadata">
         <div class="sticky">
+          <b-message v-if="group.domain && !isCurrentActorAGroupMember">
+            {{
+              $t(
+                "This profile is from another instance, the informations shown here may be incomplete."
+              )
+            }}
+            <a :href="group.url" rel="noopener noreferrer external">{{
+              $t("View full profile")
+            }}</a>
+          </b-message>
           <event-metadata-block :title="$t('Members')" icon="account-group">
             {{
               $tc("{count} members", group.members.total, {
