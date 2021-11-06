@@ -1226,5 +1226,7 @@
   "Post {eventTitle} reported": "Post {eventTitle} reported",
   "You have attended {count} events in the past.": "You have not attended any events in the past.|You have attended one event in the past.|You have attended {count} events in the past.",
   "Showing events starting on": "Showing events starting on",
-  "Showing events before": "Showing events before"
+  "Showing events before": "Showing events before",
+  "Clear date filter field": "Clear date filter field",
+  "{count} members or followers": "No members or followers|One member or follower|{count} members or followers"
 }

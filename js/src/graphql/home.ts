@@ -105,3 +105,51 @@ export const HOME_USER_QUERIES = gql`
   ${EVENT_OPTIONS_FRAGMENT}
   ${ACTOR_FRAGMENT}
 `;
+
+export const CLOSE_CONTENT = gql`
+  query CloseContent(
+    $location: String!
+    $radius: Float
+    $page: Int
+    $limit: Int
+  ) {
+    searchEvents(
+      location: $location
+      radius: $radius
+      page: $page
+      limit: $limit
+    ) {
+      total
+      elements {
+        id
+        title
+        uuid
+        beginsOn
+        picture {
+          id
+          url
+        }
+        tags {
+          ...TagFragment
+        }
+        options {
+          ...EventOptions
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        organizerActor {
+          ...ActorFragment
+        }
+        __typename
+      }
+    }
+  }
+  ${ADDRESS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;

@@ -70,15 +70,7 @@
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.elements.length > 0">
-        <div class="columns is-multiline">
-          <div
-            class="column is-one-third-desktop"
-            v-for="event in events.elements"
-            :key="event.uuid"
-          >
-            <EventCard :event="event" />
-          </div>
-        </div>
+        <multi-card :events="events.elements" />
         <div class="pagination" v-if="events.total > EVENT_PAGE_LIMIT">
           <b-pagination
             :total="events.total"
@@ -98,7 +90,7 @@
         >{{ $t("No events found") }}</b-message
       >
     </section>
-    <b-tabs v-else v-model="activeTab" type="is-boxed" class="searchTabs">
+    <b-tabs v-else v-model="activeTab" type="is-boxed" class="mt-3 searchTabs">
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <b-tab-item>
         <template slot="header">
@@ -109,15 +101,7 @@
           </span>
         </template>
         <div v-if="searchEvents.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="event in searchEvents.elements"
-              :key="event.uuid"
-            >
-              <EventCard :event="event" />
-            </div>
-          </div>
+          <multi-card class="my-4" :events="searchEvents.elements" />
           <div class="pagination" v-if="searchEvents.total > EVENT_PAGE_LIMIT">
             <b-pagination
               :total="searchEvents.total"
@@ -146,15 +130,7 @@
           {{ $t("Groups are not enabled on this instance.") }}
         </b-message>
         <div v-else-if="searchGroups.total > 0">
-          <div class="columns is-multiline">
-            <div
-              class="column is-one-third-desktop"
-              v-for="group in searchGroups.elements"
-              :key="group.uuid"
-            >
-              <group-card :group="group" />
-            </div>
-          </div>
+          <multi-group-card class="my-4" :groups="searchGroups.elements" />
           <div class="pagination">
             <b-pagination
               :total="searchGroups.total"
@@ -193,16 +169,16 @@ import {
   eachWeekendOfInterval,
 } from "date-fns";
 import { SearchTabs } from "@/types/enums";
-import EventCard from "../components/Event/EventCard.vue";
+import MultiCard from "../components/Event/MultiCard.vue";
 import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
 import RouteName from "../router/name";
 import { IAddress, Address } from "../types/address.model";
 import AddressAutoComplete from "../components/Event/AddressAutoComplete.vue";
-import { SEARCH_EVENTS, SEARCH_GROUPS } from "../graphql/search";
+import { SEARCH_EVENTS_AND_GROUPS } from "../graphql/search";
 import { Paginate } from "../types/paginate";
 import { IGroup } from "../types/actor";
-import GroupCard from "../components/Group/GroupCard.vue";
+import MultiGroupCard from "../components/Group/MultiGroupCard.vue";
 import { CONFIG } from "../graphql/config";
 import { REVERSE_GEOCODE } from "../graphql/address";
 
@@ -226,9 +202,9 @@ const THROTTLE = 2000; // minimum interval in ms between two requests
 
 @Component({
   components: {
-    EventCard,
+    MultiCard,
     AddressAutoComplete,
-    GroupCard,
+    MultiGroupCard,
   },
   apollo: {
     config: CONFIG,
@@ -241,8 +217,8 @@ const THROTTLE = 2000; // minimum interval in ms between two requests
         };
       },
     },
-    searchEvents: {
-      query: SEARCH_EVENTS,
+    search: {
+      query: SEARCH_EVENTS_AND_GROUPS,
       fetchPolicy: "cache-and-network",
       variables() {
         return {
@@ -256,27 +232,11 @@ const THROTTLE = 2000; // minimum interval in ms between two requests
           limit: EVENT_PAGE_LIMIT,
         };
       },
-      throttle: THROTTLE,
-      skip() {
-        return !this.canSearchEvents;
-      },
-    },
-    searchGroups: {
-      query: SEARCH_GROUPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          term: this.search,
-          location: this.geohash,
-          radius: this.radius,
-          page: this.groupPage,
-          limit: GROUP_PAGE_LIMIT,
-        };
+      update(data) {
+        this.searchEvents = data.searchEvents;
+        this.searchGroups = data.searchGroups;
       },
       throttle: THROTTLE,
-      skip() {
-        return !this.canSearchGroups;
-      },
     },
   },
   metaInfo() {

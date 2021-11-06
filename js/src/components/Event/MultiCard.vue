@@ -29,14 +29,7 @@ export default class MultiCard extends Vue {
   grid-auto-rows: 1fr;
   grid-column-gap: 30px;
   grid-row-gap: 30px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  // @media (min-width: 400px) {
-  //   grid-template-columns: repeat(2, 1fr);
-  // }
-  // @media (min-width: 800px) {
-  //   grid-template-columns: repeat(4, 1fr);
-  // }
-
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   .event-card {
     height: 100%;
     display: flex;

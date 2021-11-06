@@ -1,8 +1,10 @@
 import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
+import { ADDRESS_FRAGMENT } from "./address";
+import { TAG_FRAGMENT } from "./tags";
 
-export const SEARCH_EVENTS = gql`
-  query SearchEvents(
+export const SEARCH_EVENTS_AND_GROUPS = gql`
+  query SearchEventsAndGroups(
     $location: String
     $radius: Float
     $tags: String
@@ -33,23 +35,20 @@ export const SEARCH_EVENTS = gql`
           url
         }
         tags {
-          slug
-          title
+          ...TagFragment
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        organizerActor {
+          ...ActorFragment
+        }
+        attributedTo {
+          ...ActorFragment
         }
         __typename
       }
     }
-  }
-`;
-
-export const SEARCH_GROUPS = gql`
-  query SearchGroups(
-    $term: String
-    $location: String
-    $radius: Float
-    $page: Int
-    $limit: Int
-  ) {
     searchGroups(
       term: $term
       location: $location
@@ -60,9 +59,21 @@ export const SEARCH_GROUPS = gql`
       total
       elements {
         ...ActorFragment
+        banner {
+          id
+          url
+        }
+        members(roles: "member,moderator,administrator,creator") {
+          total
+        }
+        followers(approved: true) {
+          total
+        }
       }
     }
   }
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
   ${ACTOR_FRAGMENT}
 `;
 

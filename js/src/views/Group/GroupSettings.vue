@@ -153,8 +153,8 @@
 
         <full-address-auto-complete
           :label="$t('Group address')"
-          v-model="editableGroup.physicalAddress"
-          :value="currentAddress"
+          v-model="currentAddress"
+          :hideMap="true"
         />
 
         <div class="buttons">
@@ -184,7 +184,7 @@ import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
 import { GroupVisibility, Openness } from "@/types/enums";
 import { UPDATE_GROUP } from "../../graphql/group";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+import { Group, IGroup, usernameWithDomain } from "../../types/actor";
 import { Address, IAddress } from "../../types/address.model";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
@@ -209,13 +209,9 @@ import { buildFileFromIMedia } from "@/utils/image";
   },
 })
 export default class GroupSettings extends mixins(GroupMixin) {
-  loading = true;
-
   RouteName = RouteName;
 
   config!: IConfig;
-
-  newMemberUsername = "";
 
   errors: string[] = [];
 
@@ -231,12 +227,11 @@ export default class GroupSettings extends mixins(GroupMixin) {
 
   showCopiedTooltip = false;
 
-  editableGroup!: IGroup;
+  editableGroup: IGroup = new Group();
 
   async updateGroup(): Promise<void> {
     try {
       const variables = this.buildVariables();
-      console.log(variables);
       await this.$apollo.mutate<{ updateGroup: IGroup }>({
         mutation: UPDATE_GROUP,
         variables,
@@ -275,14 +270,23 @@ export default class GroupSettings extends mixins(GroupMixin) {
     let avatarObj = {};
     let bannerObj = {};
     const variables = { ...this.editableGroup };
-    const physicalAddress = {
-      ...variables.physicalAddress,
-    };
+    let physicalAddress;
+    if (variables.physicalAddress) {
+      physicalAddress = { ...variables.physicalAddress };
+    } else {
+      physicalAddress = variables.physicalAddress;
+    }
 
     // eslint-disable-next-line
     // @ts-ignore
-    delete variables.__typename;
-    if (physicalAddress) {
+    if (variables.__typename) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      delete variables.__typename;
+    }
+    // eslint-disable-next-line
+    // @ts-ignore
+    if (physicalAddress && physicalAddress.__typename) {
       // eslint-disable-next-line
       // @ts-ignore
       delete physicalAddress.__typename;
@@ -333,6 +337,10 @@ export default class GroupSettings extends mixins(GroupMixin) {
 
   get currentAddress(): IAddress {
     return new Address(this.editableGroup.physicalAddress);
+  }
+
+  set currentAddress(address: IAddress) {
+    this.editableGroup.physicalAddress = address;
   }
 
   get avatarMaxSize(): number | undefined {

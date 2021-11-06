@@ -1330,5 +1330,7 @@
   "Post {eventTitle} reported": "Billet {eventTitle} signalé",
   "You have attended {count} events in the past.": "Vous n'avez participé à aucun événement par le passé.|Vous avez participé à un événement par le passé.|Vous avez participé à {count} événements par le passé.",
   "Showing events starting on": "Afficher les événements à partir de",
-  "Showing events before": "Afficher les événements avant"
+  "Showing events before": "Afficher les événements avant",
+  "Clear date filter field": "Vider le champ de filtre de la date",
+  "{count} members or followers": "Aucun⋅e membre ou abonné⋅e|Un⋅e membre ou abonné⋅e|{count} membres ou abonné⋅es"
 }

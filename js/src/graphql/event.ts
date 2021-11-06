@@ -466,44 +466,6 @@ export const FETCH_GROUP_EVENTS = gql`
   ${ADDRESS_FRAGMENT}
 `;
 
-export const CLOSE_EVENTS = gql`
-  query CloseEvents($location: String, $radius: Float) {
-    searchEvents(location: $location, radius: $radius, page: 1, limit: 10) {
-      total
-      elements {
-        id
-        title
-        uuid
-        beginsOn
-        picture {
-          id
-          url
-        }
-        tags {
-          ...TagFragment
-        }
-        options {
-          ...EventOptions
-        }
-        physicalAddress {
-          ...AdressFragment
-        }
-        attributedTo {
-          ...ActorFragment
-        }
-        organizerActor {
-          ...ActorFragment
-        }
-        __typename
-      }
-    }
-  }
-  ${ADDRESS_FRAGMENT}
-  ${TAG_FRAGMENT}
-  ${EVENT_OPTIONS_FRAGMENT}
-  ${ACTOR_FRAGMENT}
-`;
-
 export const EXPORT_EVENT_PARTICIPATIONS = gql`
   mutation ExportEventParticipants(
     $eventId: ID!

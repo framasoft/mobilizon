@@ -1,7 +1,7 @@
 <template>
   <router-link
     class="card"
-    :to="{ name: 'Event', params: { uuid: event.uuid } }"
+    :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
     <div class="card-image">
       <figure class="image is-16by9">

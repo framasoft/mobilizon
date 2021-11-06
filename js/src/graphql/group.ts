@@ -408,3 +408,19 @@ export const GROUP_TIMELINE = gql`
   }
   ${ACTOR_FRAGMENT}
 `;
+
+export const CLOSE_GROUPS = gql`
+  query CloseGroups($location: String, $radius: Float) {
+    searchGroups(location: $location, radius: $radius, page: 1, limit: 10) {
+      total
+      elements {
+        ...ActorFragment
+        physicalAddress {
+          ...AdressFragment
+        }
+      }
+    }
+  }
+  ${ACTOR_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+`;
