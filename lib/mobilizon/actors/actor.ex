@@ -124,7 +124,8 @@ defmodule Mobilizon.Actors.Actor do
     :summary,
     :manually_approves_followers,
     :visibility,
-    :openness
+    :openness,
+    :physical_address_id
   ]
   @remote_actor_creation_attrs @remote_actor_creation_required_attrs ++
                                  @remote_actor_creation_optional_attrs
