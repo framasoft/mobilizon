@@ -1230,5 +1230,7 @@
   "Clear date filter field": "Clear date filter field",
   "{count} members or followers": "No members or followers|One member or follower|{count} members or followers",
   "This profile is from another instance, the informations shown here may be incomplete.": "This profile is from another instance, the informations shown here may be incomplete.",
-  "View full profile": "View full profile"
+  "View full profile": "View full profile",
+  "Any type": "Any type",
+  "In person": "In person"
 }

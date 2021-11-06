@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
 import { ADDRESS_FRAGMENT } from "./address";
+import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
 import { TAG_FRAGMENT } from "./tags";
 
 export const SEARCH_EVENTS_AND_GROUPS = gql`
@@ -9,9 +10,11 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $radius: Float
     $tags: String
     $term: String
+    $type: EventType
     $beginsOn: DateTime
     $endsOn: DateTime
-    $page: Int
+    $eventPage: Int
+    $groupPage: Int
     $limit: Int
   ) {
     searchEvents(
@@ -19,9 +22,10 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       radius: $radius
       tags: $tags
       term: $term
+      type: $type
       beginsOn: $beginsOn
       endsOn: $endsOn
-      page: $page
+      page: $eventPage
       limit: $limit
     ) {
       total
@@ -46,6 +50,9 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         attributedTo {
           ...ActorFragment
         }
+        options {
+          ...EventOptions
+        }
         __typename
       }
     }
@@ -53,7 +60,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       term: $term
       location: $location
       radius: $radius
-      page: $page
+      page: $groupPage
       limit: $limit
     ) {
       total
@@ -75,6 +82,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       }
     }
   }
+  ${EVENT_OPTIONS_FRAGMENT}
   ${TAG_FRAGMENT}
   ${ADDRESS_FRAGMENT}
   ${ACTOR_FRAGMENT}

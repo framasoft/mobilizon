@@ -31,6 +31,8 @@ export interface IEventParticipantStats {
   going: number;
 }
 
+export type EventType = "IN_PERSON" | "ONLINE" | null;
+
 interface IEventEditJSON {
   id?: string;
   title: string;

@@ -39,34 +39,36 @@
           />
         </div>
         <div class="media-content">
-          <p class="event-title" :title="event.title">{{ event.title }}</p>
-          <div class="event-organizer">
-            <figure
-              class="image is-24x24"
-              v-if="organizer(event) && organizer(event).avatar"
+          <h3 class="event-title" :title="event.title">{{ event.title }}</h3>
+          <div class="content-end">
+            <div class="event-organizer">
+              <figure
+                class="image is-24x24"
+                v-if="organizer(event) && organizer(event).avatar"
+              >
+                <img
+                  class="is-rounded"
+                  :src="organizer(event).avatar.url"
+                  alt=""
+                />
+              </figure>
+              <b-icon v-else icon="account-circle" />
+              <span class="organizer-name">
+                {{ organizerDisplayName(event) }}
+              </span>
+            </div>
+            <inline-address
+              v-if="event.physicalAddress"
+              class="event-subtitle"
+              :physical-address="event.physicalAddress"
+            />
+            <div
+              class="event-subtitle"
+              v-else-if="event.options && event.options.isOnline"
             >
-              <img
-                class="is-rounded"
-                :src="organizer(event).avatar.url"
-                alt=""
-              />
-            </figure>
-            <b-icon v-else icon="account-circle" />
-            <span class="organizer-name">
-              {{ organizerDisplayName(event) }}
-            </span>
-          </div>
-          <inline-address
-            v-if="event.physicalAddress"
-            class="event-subtitle"
-            :physical-address="event.physicalAddress"
-          />
-          <div
-            class="event-subtitle"
-            v-else-if="event.options && event.options.isOnline"
-          >
-            <b-icon icon="video" />
-            <span>{{ $t("Online") }}</span>
+              <b-icon icon="video" />
+              <span>{{ $t("Online") }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -201,12 +203,14 @@ a.card {
   }
 
   .card-content {
+    height: 100%;
     padding: 0.5rem;
 
     & > .media {
       position: relative;
       display: flex;
       flex-direction: column;
+      height: 100%;
 
       & > .media-left {
         margin-top: -15px;
@@ -222,6 +226,9 @@ a.card {
         flex: 1;
         width: 100%;
         overflow-x: inherit;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
     }
 
