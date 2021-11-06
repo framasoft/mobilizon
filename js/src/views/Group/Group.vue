@@ -505,13 +505,15 @@
                     </p>
                   </address>
                 </div>
-                <span
+                <b-button
                   class="map-show-button"
+                  type="is-text"
                   @click="showMap = !showMap"
                   @keyup.enter="showMap = !showMap"
                   v-if="physicalAddress.geom"
-                  >{{ $t("Show map") }}</span
                 >
+                  {{ $t("Show map") }}
+                </b-button>
               </div>
             </div>
           </event-metadata-block>
