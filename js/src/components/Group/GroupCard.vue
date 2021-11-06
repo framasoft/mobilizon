@@ -15,7 +15,7 @@
       </figure>
     </div>
     <div class="card-content">
-      <div class="media mb-3">
+      <div class="media mb-2">
         <div class="media-left">
           <figure class="image is-48x48" v-if="group.avatar">
             <img class="is-rounded" :src="group.avatar.url" alt="" />
@@ -24,12 +24,12 @@
         </div>
         <div class="media-content">
           <h3 class="is-size-5 group-title">{{ displayName(group) }}</h3>
-          <span class="is-6 has-text-grey-dark">
+          <span class="is-6 has-text-grey-dark group-federated-username">
             {{ `@${usernameWithDomain(group)}` }}
           </span>
         </div>
       </div>
-      <div class="content" v-html="group.summary" />
+      <div class="content mb-2" v-html="group.summary" />
       <div class="card-custom-footer">
         <inline-address
           class="has-text-grey-dark"
@@ -37,6 +37,7 @@
           :physicalAddress="group.physicalAddress"
         />
         <p class="has-text-grey-dark">
+          <b-icon icon="account" />
           {{
             $tc(
               "{count} members or followers",
@@ -117,12 +118,15 @@ export default class GroupCard extends Vue {
       text-overflow: ellipsis;
 
       .group-title {
-        line-height: 1.75rem;
+        line-height: 1.5rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         font-weight: bold;
+      }
+      .group-federated-username {
+        font-size: 14px;
       }
     }
   }
