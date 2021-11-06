@@ -56,7 +56,7 @@
               {{ organizerDisplayName(event) }}
             </span>
           </div>
-          <event-address
+          <inline-address
             v-if="event.physicalAddress"
             class="event-subtitle"
             :physical-address="event.physicalAddress"
@@ -87,13 +87,13 @@ import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import { Actor, Person } from "@/types/actor";
 import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
-import EventAddress from "@/components/Event/EventAddress.vue";
+import InlineAddress from "@/components/Address/InlineAddress.vue";
 
 @Component({
   components: {
     DateCalendarIcon,
     LazyImageWrapper,
-    EventAddress,
+    InlineAddress,
   },
 })
 export default class EventCard extends Vue {

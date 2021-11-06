@@ -31,7 +31,12 @@
       </div>
       <div class="content" v-html="group.summary" />
       <div class="card-custom-footer">
-        <span class="has-text-grey-dark">
+        <inline-address
+          class="has-text-grey-dark"
+          v-if="group.physicalAddress"
+          :physicalAddress="group.physicalAddress"
+        />
+        <p class="has-text-grey-dark">
           {{
             $tc(
               "{count} members or followers",
@@ -41,7 +46,7 @@
               }
             )
           }}
-        </span>
+        </p>
       </div>
     </div>
   </router-link>
@@ -52,10 +57,12 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import { displayName, IGroup, usernameWithDomain } from "@/types/actor";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import RouteName from "../../router/name";
+import InlineAddress from "@/components/Address/InlineAddress.vue";
 
 @Component({
   components: {
     LazyImageWrapper,
+    InlineAddress,
   },
 })
 export default class GroupCard extends Vue {

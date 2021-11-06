@@ -69,6 +69,9 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         followers(approved: true) {
           total
         }
+        physicalAddress {
+          ...AdressFragment
+        }
       }
     }
   }
