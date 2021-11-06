@@ -506,6 +506,7 @@ defmodule Mobilizon.Events do
     |> events_for_ends_on(args)
     |> events_for_tags(args)
     |> events_for_location(args)
+    |> filter_online(args)
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
@@ -1306,6 +1307,18 @@ defmodule Mobilizon.Events do
   end
 
   defp events_for_location(query, _args), do: query
+
+  @spec filter_online(Ecto.Query.t(), map()) :: Ecto.Query.t()
+  defp filter_online(query, %{type: :online}), do: is_online_fragment(query, true)
+
+  defp filter_online(query, %{type: :in_person}), do: is_online_fragment(query, false)
+
+  defp filter_online(query, _), do: query
+
+  @spec is_online_fragment(Ecto.Query.t(), boolean()) :: Ecto.Query.t()
+  defp is_online_fragment(query, value) do
+    where(query, [q], fragment("(?->>'is_online')::bool = ?", q.options, ^value))
+  end
 
   @spec normalize_search_string(String.t()) :: String.t()
   defp normalize_search_string(search_string) do

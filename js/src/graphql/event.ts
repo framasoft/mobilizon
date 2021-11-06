@@ -158,8 +158,6 @@ export const FETCH_EVENTS = gql`
           url
         }
         publishAt
-        # online_address,
-        # phone_address,
         physicalAddress {
           ...AdressFragment
         }
