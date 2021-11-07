@@ -1,6 +1,6 @@
 <template>
   <article class="box mb-5 mt-4">
-    <div class="identity-header">
+    <div class="identity-header" dir="auto">
       <figure class="image is-24x24" v-if="participation.actor.avatar">
         <img
           class="is-rounded"
@@ -43,7 +43,7 @@
             </router-link>
           </div>
         </div>
-        <div class="list-card-content">
+        <div class="list-card-content" dir="auto">
           <div class="title-wrapper">
             <router-link
               :to="{

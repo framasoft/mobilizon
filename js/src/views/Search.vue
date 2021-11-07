@@ -213,7 +213,7 @@ import debounce from "lodash/debounce";
 
 interface ISearchTimeOption {
   label: string;
-  start?: Date;
+  start?: Date | null;
   end?: Date | null;
 }
 
@@ -292,6 +292,11 @@ export default class Search extends Vue {
   location: IAddress = new Address();
 
   dateOptions: Record<string, ISearchTimeOption> = {
+    past: {
+      label: this.$t("In the past") as string,
+      start: null,
+      end: new Date(),
+    },
     today: {
       label: this.$t("Today") as string,
       start: new Date(),
@@ -346,7 +351,7 @@ export default class Search extends Vue {
 
   data(): Record<string, unknown> {
     return {
-      debouncedUpdateSearchQuery: debounce(this.updateSearchQuery, 200),
+      debouncedUpdateSearchQuery: debounce(this.updateSearchQuery, 500),
     };
   }
 
@@ -525,7 +530,7 @@ export default class Search extends Vue {
     }
   };
 
-  get start(): Date | undefined {
+  get start(): Date | undefined | null {
     if (this.dateOptions[this.when]) {
       return this.dateOptions[this.when].start;
     }

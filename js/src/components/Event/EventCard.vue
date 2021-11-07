@@ -24,7 +24,7 @@
             v-for="tag in (event.tags || []).slice(0, 3)"
             :key="tag.slug"
           >
-            <b-tag type="is-light">{{ tag.title }}</b-tag>
+            <b-tag type="is-light" dir="auto">{{ tag.title }}</b-tag>
           </router-link>
         </div>
       </figure>
@@ -39,9 +39,11 @@
           />
         </div>
         <div class="media-content">
-          <h3 class="event-title" :title="event.title">{{ event.title }}</h3>
+          <h3 class="event-title" :title="event.title" dir="auto">
+            {{ event.title }}
+          </h3>
           <div class="content-end">
-            <div class="event-organizer">
+            <div class="event-organizer" dir="auto">
               <figure
                 class="image is-24x24"
                 v-if="organizer(event) && organizer(event).avatar"
@@ -58,12 +60,14 @@
               </span>
             </div>
             <inline-address
+              dir="auto"
               v-if="event.physicalAddress"
               class="event-subtitle"
               :physical-address="event.physicalAddress"
             />
             <div
               class="event-subtitle"
+              dir="auto"
               v-else-if="event.options && event.options.isOnline"
             >
               <b-icon icon="video" />

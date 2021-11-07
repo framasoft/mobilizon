@@ -7,7 +7,7 @@
     }"
     class="comment-element"
   >
-    <article class="media" :id="commentId">
+    <article class="media" :id="commentId" dir="auto">
       <popover-actor-card
         :actor="comment.actor"
         :inline="true"
@@ -32,11 +32,11 @@
       </div>
       <div class="media-content">
         <div class="content">
-          <span class="first-line" v-if="!comment.deletedAt">
+          <span class="first-line" v-if="!comment.deletedAt" dir="auto">
             <strong :class="{ organizer: commentFromOrganizer }">{{
               comment.actor.name
             }}</strong>
-            <small>{{ usernameWithDomain(comment.actor) }}</small>
+            <small>@{{ usernameWithDomain(comment.actor) }}</small>
           </span>
           <a v-else class="comment-link" :href="commentURL">
             <span>{{ $t("[deleted]") }}</span>
@@ -63,7 +63,7 @@
             </button>
           </span>
           <br />
-          <div v-if="!comment.deletedAt" v-html="comment.text" />
+          <div v-if="!comment.deletedAt" v-html="comment.text" dir="auto" />
           <div v-else>{{ $t("[This comment has been deleted]") }}</div>
           <div class="load-replies" v-if="comment.totalReplies">
             <p v-if="!showReplies" @click="fetchReplies">
@@ -446,9 +446,12 @@ a.comment-link {
 
 .media .media-content {
   overflow-x: initial;
-  .content .editor-line {
-    display: flex;
-    align-items: center;
+  .content {
+    text-align: start;
+    .editor-line {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .icons {

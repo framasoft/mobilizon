@@ -5,7 +5,7 @@
         <lazy-image-wrapper :picture="post.picture" />
       </div>
       <div class="heading-section">
-        <div class="heading-wrapper">
+        <div class="heading-wrapper" dir="auto">
           <div class="title-metadata">
             <div class="title-wrapper">
               <b-tag
@@ -165,8 +165,8 @@
       }}
     </b-message>
 
-    <section v-html="post.body" class="content" />
-    <section class="tags">
+    <section v-html="post.body" dir="auto" class="content" />
+    <section class="tags" dir="auto">
       <router-link
         v-for="tag in post.tags"
         :key="tag.title"

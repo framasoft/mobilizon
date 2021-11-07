@@ -1,5 +1,5 @@
 <template>
-  <div class="resource-wrapper">
+  <div class="resource-wrapper" dir="auto">
     <a :href="resource.resourceUrl" target="_blank">
       <div class="preview">
         <div

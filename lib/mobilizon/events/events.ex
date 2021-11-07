@@ -1258,23 +1258,27 @@ defmodule Mobilizon.Events do
   defp events_for_begins_on(query, args) do
     begins_on = Map.get(args, :begins_on, DateTime.utc_now())
 
-    query
-    |> where([q], q.begins_on >= ^begins_on)
+    if is_nil(begins_on) do
+      query
+    else
+      where(query, [q], q.begins_on >= ^begins_on)
+    end
   end
 
   @spec events_for_ends_on(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_ends_on(query, args) do
     ends_on = Map.get(args, :ends_on)
 
-    if is_nil(ends_on),
-      do: query,
-      else:
-        where(
-          query,
-          [q],
-          (is_nil(q.ends_on) and q.begins_on <= ^ends_on) or
-            q.ends_on <= ^ends_on
-        )
+    if is_nil(ends_on) do
+      query
+    else
+      where(
+        query,
+        [q],
+        (is_nil(q.ends_on) and q.begins_on <= ^ends_on) or
+          q.ends_on <= ^ends_on
+      )
+    end
   end
 
   @spec events_for_tags(Ecto.Queryable.t(), map()) :: Ecto.Query.t()

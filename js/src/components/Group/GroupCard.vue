@@ -23,13 +23,15 @@
           <b-icon v-else size="is-large" icon="account-group" />
         </div>
         <div class="media-content">
-          <h3 class="is-size-5 group-title">{{ displayName(group) }}</h3>
+          <h3 class="is-size-5 group-title" dir="auto">
+            {{ displayName(group) }}
+          </h3>
           <span class="is-6 has-text-grey-dark group-federated-username">
             {{ `@${usernameWithDomain(group)}` }}
           </span>
         </div>
       </div>
-      <div class="content mb-2" v-html="group.summary" />
+      <div class="content mb-2" dir="auto" v-html="group.summary" />
       <div class="card-custom-footer">
         <inline-address
           class="has-text-grey-dark"

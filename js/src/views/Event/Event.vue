@@ -10,9 +10,11 @@
         <section class="intro">
           <div class="columns">
             <div class="column">
-              <h1 class="title" style="margin: 0">{{ event.title }}</h1>
+              <h1 class="title" style="margin: 0" dir="auto">
+                {{ event.title }}
+              </h1>
               <div class="organizer">
-                <span v-if="event.organizerActor && !event.attributedTo">
+                <div v-if="event.organizerActor && !event.attributedTo">
                   <popover-actor-card
                     :actor="event.organizerActor"
                     :inline="true"
@@ -25,7 +27,7 @@
                       }}
                     </span>
                   </popover-actor-card>
-                </span>
+                </div>
                 <span
                   v-else-if="
                     event.attributedTo &&
@@ -70,7 +72,11 @@
                   </i18n>
                 </span>
               </div>
-              <p class="tags" v-if="event.tags && event.tags.length > 0">
+              <p
+                class="tags"
+                v-if="event.tags && event.tags.length > 0"
+                dir="auto"
+              >
                 <router-link
                   v-for="tag in event.tags"
                   :key="tag.title"
@@ -316,6 +322,7 @@
             </p>
             <div v-else>
               <div
+                dir="auto"
                 class="description-content"
                 ref="eventDescriptionElement"
                 v-html="event.description"

@@ -10,7 +10,7 @@
       <b-icon v-else size="is-large" icon="account-circle" />
     </div>
     <div class="body">
-      <div class="meta">
+      <div class="meta" dir="auto">
         <span
           class="first-line name"
           v-if="comment.actor && !comment.deletedAt"
@@ -64,7 +64,11 @@
           >
         </div>
       </div>
-      <div v-if="!editMode && !comment.deletedAt" class="text-wrapper">
+      <div
+        v-if="!editMode && !comment.deletedAt"
+        class="text-wrapper"
+        dir="auto"
+      >
         <div class="description-content" v-html="comment.text"></div>
         <p
           v-if="

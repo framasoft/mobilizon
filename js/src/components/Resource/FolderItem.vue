@@ -1,5 +1,5 @@
 <template>
-  <div class="resource-wrapper">
+  <div class="resource-wrapper" dir="auto">
     <router-link
       :to="{
         name: RouteName.RESOURCE_FOLDER,

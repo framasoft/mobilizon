@@ -211,6 +211,7 @@ import ListItem from "@tiptap/extension-list-item";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import CharacterCount from "@tiptap/extension-character-count";
+import { AutoDir } from "./Editor/Autodir";
 
 @Component({
   components: { EditorContent, BubbleMenu },
@@ -274,6 +275,7 @@ export default class EditorComponent extends Vue {
         ListItem,
         Mention.configure(MentionOptions),
         CustomImage,
+        AutoDir,
         Underline,
         Link.configure({
           HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
