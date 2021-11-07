@@ -3,8 +3,8 @@
     <section class="hero is-primary">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">{{ config.name }}</h1>
-          <p>{{ config.description }}</p>
+          <h1 class="title" dir="auto">{{ config.name }}</h1>
+          <p dir="auto">{{ config.description }}</p>
         </div>
       </div>
     </section>

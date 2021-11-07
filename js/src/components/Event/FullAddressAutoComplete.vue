@@ -35,6 +35,7 @@
           v-bind="$attrs"
           :id="id"
           :disabled="disabled"
+          dir="auto"
         >
           <template #default="{ option }">
             <b-icon :icon="option.poiInfos.poiIcon.icon" />

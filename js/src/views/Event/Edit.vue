@@ -28,6 +28,7 @@
             required
             v-model="event.title"
             id="title"
+            dir="auto"
           />
         </b-field>
 

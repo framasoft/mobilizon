@@ -1,6 +1,7 @@
 <template>
   <div class="list is-hoverable">
     <b-input
+      dir="auto"
       :placeholder="$t('Filter by profile or group name')"
       v-model="actorFilter"
     />
@@ -11,7 +12,7 @@
       v-for="availableActor in actualFilteredAvailableActors"
       :key="availableActor.id"
     >
-      <div class="media">
+      <div class="media" dir="auto">
         <figure class="image is-48x48" v-if="availableActor.avatar">
           <img
             class="media-left is-rounded"

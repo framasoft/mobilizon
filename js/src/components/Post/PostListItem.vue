@@ -1,6 +1,7 @@
 <template>
   <router-link
     class="post-minimalist-card-wrapper"
+    dir="auto"
     :to="{ name: RouteName.POST, params: { slug: post.slug } }"
   >
     <lazy-image-wrapper
@@ -12,7 +13,7 @@
       <h3 class="post-minimalist-title">{{ post.title }}</h3>
       <p class="post-publication-date">
         <b-icon icon="clock" />
-        <span class="has-text-grey-dark" v-if="isBeforeLastWeek">{{
+        <span dir="auto" class="has-text-grey-dark" v-if="isBeforeLastWeek">{{
           publishedAt | formatDateTimeString(undefined, false, "short")
         }}</span>
         <span v-else>{{

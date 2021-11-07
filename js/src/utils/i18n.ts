@@ -67,6 +67,12 @@ function setLanguageInDOM(lang: string): void {
   if (documentLang !== fixedLang) {
     html.setAttribute("lang", fixedLang);
   }
+
+  const direction = ["ar", "ae", "he", "fa", "ku", "ur"].includes(fixedLang)
+    ? "rtl"
+    : "ltr";
+  console.debug("setDirection with", [fixedLang, direction]);
+  html.setAttribute("dir", direction);
 }
 
 function fileForLanguage(matches: Record<string, string>, lang: string) {

@@ -7,6 +7,7 @@
       icon="magnify"
       type="search"
       rounded
+      dir="auto"
       :placeholder="defaultPlaceHolder"
       v-model="search"
       @keyup.native.enter="enter"

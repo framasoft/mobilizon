@@ -12,7 +12,7 @@
         {{ actor.name || `@${usernameWithDomain(actor)}` }}
       </p>
       <p class="has-text-grey-dark" v-if="actor.name">
-        @{{ usernameWithDomain(actor) }}
+        <span dir="ltr">@{{ usernameWithDomain(actor) }}</span>
       </p>
       <div
         v-if="full"

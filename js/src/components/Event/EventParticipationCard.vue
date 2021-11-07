@@ -43,8 +43,8 @@
             </router-link>
           </div>
         </div>
-        <div class="list-card-content" dir="auto">
-          <div class="title-wrapper">
+        <div class="list-card-content">
+          <div class="title-wrapper" dir="auto">
             <router-link
               :to="{
                 name: RouteName.EVENT,
