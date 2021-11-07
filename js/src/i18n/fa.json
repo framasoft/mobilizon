@@ -33,7 +33,7 @@
   "Avatar": "آواتار",
   "Back to previous page": "بازگشت به صفحه قبلی",
   "Before you can login, you need to click on the link inside it to validate your account.": "پیش از آن که بتواند وارد شوید لازم است روی پیوندی که داخل آن است کلیک کنید تا حساب‌تان اعتبارسنجی شود.",
-  "By @{username}": "توسط @{username}",
+  "By {username}": "توسط {username}",
   "Cancel": "لغو",
   "Cancel anonymous participation": "غلو حضور ناشناس",
   "Cancel creation": "لغو ساخت",

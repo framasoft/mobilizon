@@ -60,7 +60,10 @@
           <div class="title-container">
             <h1 v-if="group.name">{{ group.name }}</h1>
             <b-skeleton v-else :animated="true" />
-            <small class="has-text-grey-dark" v-if="group.preferredUsername"
+            <small
+              dir="ltr"
+              class="has-text-grey-dark"
+              v-if="group.preferredUsername"
               >@{{ usernameWithDomain(group) }}</small
             >
             <b-skeleton v-else :animated="true" />
@@ -503,7 +506,7 @@
               }}</span>
               <div class="address" v-if="physicalAddress">
                 <div>
-                  <address>
+                  <address dir="auto">
                     <p
                       class="addressDescription"
                       :title="physicalAddress.poiInfos.name"
@@ -533,6 +536,7 @@
         <section>
           <subtitle>{{ $t("About") }}</subtitle>
           <div
+            dir="auto"
             v-html="group.summary"
             v-if="group.summary && group.summary !== '<p></p>'"
           />

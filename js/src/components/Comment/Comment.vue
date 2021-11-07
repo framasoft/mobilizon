@@ -36,7 +36,7 @@
             <strong :class="{ organizer: commentFromOrganizer }">{{
               comment.actor.name
             }}</strong>
-            <small>@{{ usernameWithDomain(comment.actor) }}</small>
+            <small dir="ltr">@{{ usernameWithDomain(comment.actor) }}</small>
           </span>
           <a v-else class="comment-link" :href="commentURL">
             <span>{{ $t("[deleted]") }}</span>
@@ -128,7 +128,7 @@
           <div class="content">
             <span class="first-line">
               <strong>{{ currentActor.name }}</strong>
-              <small>@{{ currentActor.preferredUsername }}</small>
+              <small dir="ltr">@{{ currentActor.preferredUsername }}</small>
             </span>
             <br />
             <span class="editor-line">

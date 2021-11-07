@@ -123,8 +123,8 @@ A button to set your participation
         @keyup.enter="joinEvent(currentActor)"
       >
         <div class="media">
-          <div class="media-left">
-            <figure class="image is-32x32" v-if="currentActor.avatar">
+          <div class="media-left" v-if="currentActor.avatar">
+            <figure class="image is-32x32">
               <img class="is-rounded" :src="currentActor.avatar.url" alt />
             </figure>
           </div>

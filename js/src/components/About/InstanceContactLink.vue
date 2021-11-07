@@ -1,9 +1,9 @@
 <template>
   <p>
-    <a :title="contact" v-if="configLink" :href="configLink.uri">{{
+    <a dir="auto" :title="contact" v-if="configLink" :href="configLink.uri">{{
       configLink.text
     }}</a>
-    <span v-else-if="contact">{{ contact }}</span>
+    <span dir="auto" v-else-if="contact">{{ contact }}</span>
     <span v-else>{{ $t("contact uninformed") }}</span>
   </p>
 </template>

@@ -18,17 +18,28 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
   def call(conn, _) do
     locale =
       [
+        eventual_path_locale(conn.path_info),
         conn.assigns[:user_locale],
         conn.assigns[:detected_locale],
         default_locale(),
         "en"
       ]
+      |> Enum.filter(& &1)
       |> Enum.map(&determine_best_locale/1)
       |> Enum.filter(&supported_locale?/1)
       |> hd()
 
     Gettext.put_locale(locale)
     assign(conn, :locale, locale)
+  end
+
+  defp eventual_path_locale(path_info) do
+    with [locale] <- path_info,
+         true <- supported_locale?(locale) do
+      locale
+    else
+      _ -> nil
+    end
   end
 
   @spec supported_locale?(String.t()) :: boolean()

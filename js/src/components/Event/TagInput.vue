@@ -23,6 +23,7 @@
       :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
       @typing="getFilteredTags"
       :id="id"
+      dir="auto"
     >
     </b-taginput>
   </b-field>

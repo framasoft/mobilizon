@@ -165,3 +165,36 @@ p {
 .icon {
   vertical-align: middle;
 }
+
+.tags .tag:not(:last-child) {
+  margin-right: unset;
+  @include margin-right(0.5rem);
+}
+
+.button .icon {
+  &:first-child:not(:last-child) {
+    @include margin-left(calc(-0.5em - 1px));
+    @include margin-right(0.25em);
+  }
+  &:last-child:not(:first-child) {
+    @include margin-right(calc(-0.5em - 1px));
+    @include margin-left(0.25em);
+  }
+}
+
+.buttons .button:not(:last-child):not(.is-fullwidth) {
+  margin-right: unset;
+  @include margin-right(0.5rem);
+}
+
+.breadcrumb li:first-child a {
+  padding-left: unset;
+  @include padding-left(0);
+  @include padding-right(0.75em);
+}
+.media-left {
+  @include margin-left(1rem);
+}
+a.dropdown-item {
+  @include padding-right(3rem);
+}

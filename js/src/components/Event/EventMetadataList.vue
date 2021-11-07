@@ -25,6 +25,7 @@
         :placeholder="$t('e.g. Accessibility, Twitch, PeerTube')"
         id="event-metadata-autocomplete"
         @select="(option) => addElement(option)"
+        dir="auto"
       >
         <template slot-scope="props">
           <div class="media">

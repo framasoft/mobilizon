@@ -1,6 +1,7 @@
 <template>
   <router-link
     class="event-minimalist-card-wrapper"
+    dir="auto"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
     <div class="event-preview mr-0 ml-0">

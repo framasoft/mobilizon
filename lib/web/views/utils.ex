@@ -49,11 +49,20 @@ defmodule Mobilizon.Web.Views.Utils do
   defp do_replacements(index_content, tags, locale) do
     index_content
     |> replace_meta(tags)
-    |> String.replace("<html lang=\"en\">", "<html lang=\"#{locale}\">")
+    |> String.replace(
+      ~s(<html lang="en" dir="auto">),
+      ~s(<html lang="#{locale}" dir="#{get_language_direction(locale)}">)
+    )
   end
 
   @spec get_locale(Plug.Conn.t()) :: String.t()
   def get_locale(%Plug.Conn{assigns: assigns}) do
     Map.get(assigns, :locale)
   end
+
+  @ltr_languages ["ar", "ae", "he", "fa", "ku", "ur"]
+
+  @spec get_language_direction(String.t()) :: String.t()
+  defp get_language_direction(locale) when locale in @ltr_languages, do: "rtl"
+  defp get_language_direction(_locale), do: "ltr"
 end

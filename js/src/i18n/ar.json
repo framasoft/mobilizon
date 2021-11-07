@@ -29,7 +29,7 @@
   "Are you sure you want to cancel your participation at event \"{title}\"?": "هل أنت متأكد مِن أنك تريد الغاء مشاركتك في فعالية \"{title}\"؟",
   "Avatar": "الصورة الرمزية",
   "Back to previous page": "العودة إلى الصفحة السابقة",
-  "By @{username}": "حسب @{username}",
+  "By {username}": "حسب {username}",
   "By {username} and {group}": "مِن {username} و {group}",
   "Cancel": "الغاء",
   "Cancel creation": "إلغاء الإنشاء",

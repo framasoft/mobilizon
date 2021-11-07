@@ -4,6 +4,7 @@
     <div
       v-if="inline && selectedActor.id"
       class="inline box"
+      dir="auto"
       @click="isComponentModalActive = true"
     >
       <div class="media">
@@ -65,6 +66,7 @@
                 <b-input
                   :placeholder="$t('Filter by name')"
                   v-model="contactFilter"
+                  dir="auto"
                 />
                 <p
                   class="field"

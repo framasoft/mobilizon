@@ -7,7 +7,7 @@
         <div class="date-calendar-icon-wrapper">
           <date-calendar-icon :date="event.beginsOn" />
         </div>
-        <section class="intro">
+        <section class="intro" dir="auto">
           <div class="columns">
             <div class="column">
               <h1 class="title" style="margin: 0" dir="auto">
@@ -19,57 +19,24 @@
                     :actor="event.organizerActor"
                     :inline="true"
                   >
-                    <span>
-                      {{
-                        $t("By @{username}", {
-                          username: usernameWithDomain(event.organizerActor),
-                        })
-                      }}
-                    </span>
+                    <i18n path="By {username}" dir="auto">
+                      <span dir="ltr" slot="username"
+                        >@{{ usernameWithDomain(event.organizerActor) }}</span
+                      >
+                    </i18n>
                   </popover-actor-card>
                 </div>
-                <span
-                  v-else-if="
-                    event.attributedTo &&
-                    event.options.hideOrganizerWhenGroupEvent
-                  "
-                >
+                <span v-else-if="event.attributedTo">
                   <popover-actor-card
                     :actor="event.attributedTo"
                     :inline="true"
                   >
-                    {{
-                      $t("By @{group}", {
-                        group: usernameWithDomain(event.attributedTo),
-                      })
-                    }}
-                  </popover-actor-card>
-                </span>
-                <span v-else-if="event.organizerActor && event.attributedTo">
-                  <i18n path="By {group}">
-                    <popover-actor-card
-                      :actor="event.attributedTo"
-                      slot="group"
-                      :inline="true"
-                    >
-                      <router-link
-                        :to="{
-                          name: RouteName.GROUP,
-                          params: {
-                            preferredUsername: usernameWithDomain(
-                              event.attributedTo
-                            ),
-                          },
-                        }"
+                    <i18n path="By {group}" dir="auto">
+                      <span dir="ltr" slot="group"
+                        >@{{ usernameWithDomain(event.attributedTo) }}</span
                       >
-                        {{
-                          $t("@{group}", {
-                            group: usernameWithDomain(event.attributedTo),
-                          })
-                        }}
-                      </router-link>
-                    </popover-actor-card>
-                  </i18n>
+                    </i18n>
+                  </popover-actor-card>
                 </span>
               </div>
               <p

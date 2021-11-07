@@ -31,7 +31,7 @@
   "Avatar": "Avatar",
   "Back to previous page": "Zpět na předchozí stránku",
   "Before you can login, you need to click on the link inside it to validate your account.": "Před přihlášením musíte kliknout na odkaz v e-mailu pro potvrzení účtu.",
-  "By @{username}": "Od @{username}",
+  "By {username}": "Od {username}",
   "Cancel": "Zrušit",
   "Cancel anonymous participation": "Zrušit anonymní účast",
   "Cancel creation": "Zrušit vytváření",

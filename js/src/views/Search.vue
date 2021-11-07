@@ -20,6 +20,7 @@
               id="search"
               :value="search"
               @input="debouncedUpdateSearchQuery"
+              dir="auto"
               :placeholder="
                 $t('For instance: London, Taekwondo, Architecture…')
               "
