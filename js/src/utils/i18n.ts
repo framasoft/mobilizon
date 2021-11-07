@@ -10,6 +10,8 @@ const DEFAULT_LOCALE = "en_US";
 
 const localeInLocalStorage = getLocaleData();
 
+export const AVAILABLE_LANGUAGES = Object.keys(langs);
+
 console.debug("localeInLocalStorage", localeInLocalStorage);
 
 let language =

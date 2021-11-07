@@ -50,8 +50,8 @@ defmodule Mobilizon.Web.Views.Utils do
     index_content
     |> replace_meta(tags)
     |> String.replace(
-      "<html lang=\"en\" dir=\"auto\">",
-      "<html lang=\"#{locale}\" dir=\"#{get_language_direction(locale)}\">"
+      ~s(<html lang="en" dir="auto">),
+      ~s(<html lang="#{locale}" dir="#{get_language_direction(locale)}">)
     )
   end
 

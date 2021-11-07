@@ -13,7 +13,7 @@ import { groupsRoutes } from "./groups";
 import { discussionRoutes } from "./discussion";
 import { userRoutes } from "./user";
 import RouteName from "./name";
-import { i18n } from "@/utils/i18n";
+import { AVAILABLE_LANGUAGES, i18n } from "@/utils/i18n";
 
 Vue.use(Router);
 
@@ -183,11 +183,22 @@ export const routes = [
       announcer: { message: (): string => i18n.t("Page not found") as string },
     },
   },
-  {
-    path: "*",
-    redirect: { name: RouteName.PAGE_NOT_FOUND },
-  },
 ];
+
+for (const locale of AVAILABLE_LANGUAGES) {
+  routes.push({
+    path: `/${locale}`,
+    component: (): Promise<ImportedComponent> =>
+      import(
+        /* webpackChunkName: "HomepageRedirectComponent" */ "../components/Utils/HomepageRedirectComponent.vue"
+      ),
+  });
+}
+
+routes.push({
+  path: "*",
+  redirect: { name: RouteName.PAGE_NOT_FOUND },
+});
 
 const router = new Router({
   scrollBehavior,
