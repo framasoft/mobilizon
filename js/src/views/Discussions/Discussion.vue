@@ -45,7 +45,7 @@
       {{ error }}
     </b-message>
     <section>
-      <div class="discussion-title">
+      <div class="discussion-title" dir="auto">
         <h1 class="title" v-if="discussion.title && !editTitleMode">
           {{ discussion.title }}
         </h1>

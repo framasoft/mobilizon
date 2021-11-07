@@ -12,6 +12,7 @@
         expanded
         @select="updateSelected"
         v-bind="$attrs"
+        dir="auto"
       >
         <template #default="{ option }">
           <b-icon :icon="option.poiInfos.poiIcon.icon" />

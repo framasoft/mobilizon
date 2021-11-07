@@ -71,6 +71,7 @@ defmodule Mobilizon.Service.Formatter.DefaultScrubbler do
   ])
 
   Meta.allow_tag_with_this_attribute_values(:span, "class", ["h-card", "mention"])
+  Meta.allow_tag_with_this_attribute_values(:span, "dir", ["ltr", "rtl", "auto"])
   Meta.allow_tag_with_these_attributes(:span, ["data-user"])
 
   Meta.allow_tag_with_these_attributes(:h1, [])

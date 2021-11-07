@@ -1,13 +1,13 @@
 <template>
   <div class="card">
-    <div class="identity-header">
+    <div class="identity-header" dir="auto">
       <figure class="image is-24x24" v-if="member.actor.avatar">
         <img class="is-rounded" :src="member.actor.avatar.url" alt="" />
       </figure>
       <b-icon v-else icon="account-circle" />
       {{ displayNameAndUsername(member.actor) }}
     </div>
-    <div class="card-content">
+    <div class="card-content" dir="auto">
       <div>
         <div class="media">
           <div class="media-left">
@@ -16,7 +16,7 @@
             </figure>
             <b-icon v-else size="is-large" icon="account-group" />
           </div>
-          <div class="media-content">
+          <div class="media-content" dir="auto">
             <router-link
               :to="{
                 name: RouteName.GROUP,
@@ -27,10 +27,7 @@
             >
               <h2>{{ member.parent.name }}</h2>
               <p class="is-6 has-text-grey-dark">
-                <span v-if="member.parent.domain">{{
-                  `@${member.parent.preferredUsername}@${member.parent.domain}`
-                }}</span>
-                <span v-else>{{ `@${member.parent.preferredUsername}` }}</span>
+                <span>{{ `@${usernameWithDomain(member.parent)}` }}</span>
                 <b-taglist>
                   <b-tag
                     type="is-info"

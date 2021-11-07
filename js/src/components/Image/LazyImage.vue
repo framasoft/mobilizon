@@ -18,6 +18,7 @@
         class="absolute top-0 left-0 transition-opacity duration-500"
         :class="{ isLoaded: isLoaded ? 'opacity-100' : 'opacity-0', rounded }"
         alt=""
+        src=""
       />
     </div>
   </div>

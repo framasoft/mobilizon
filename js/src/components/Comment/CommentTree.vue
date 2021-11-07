@@ -59,7 +59,7 @@
     >
       {{ $t("Loading comments…") }}
     </p>
-    <transition-group name="comment-empty-list" mode="out-in" v-else>
+    <transition-group tag="div" name="comment-empty-list" v-else>
       <transition-group
         key="list"
         name="comment-list"

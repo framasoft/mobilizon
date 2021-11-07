@@ -1,5 +1,5 @@
 <template>
-  <address>
+  <address dir="auto">
     <b-icon
       v-if="showIcon"
       :icon="address.poiInfos.poiIcon.icon"

@@ -65,7 +65,7 @@
         {{ $t("There's no discussions yet") }}
       </empty-content>
     </section>
-    <section class="section" v-else>
+    <section class="section" v-else-if="!$apollo.loading">
       <empty-content icon="chat">
         {{ $t("Only group members can access discussions") }}
         <template #desc>

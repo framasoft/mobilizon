@@ -27,6 +27,7 @@ const debouncedFetchItems = pDebounce(fetchItems, 200);
 const mentionOptions: Partial<any> = {
   HTMLAttributes: {
     class: "mention",
+    dir: "ltr",
   },
   suggestion: {
     items: async (query: string): Promise<IPerson[]> => {

@@ -47,6 +47,7 @@
           v-model="identity.name"
           @input="autoUpdateUsername($event)"
           id="identity-display-name"
+          dir="auto"
         />
       </b-field>
 
@@ -64,6 +65,7 @@
             required
             v-model="identity.preferredUsername"
             :disabled="isUpdate"
+            dir="auto"
             :use-html5-validation="!isUpdate"
             pattern="[a-z0-9_]+"
             id="identity-username"
@@ -82,6 +84,7 @@
       >
         <b-input
           type="textarea"
+          dir="auto"
           aria-required="false"
           v-model="identity.summary"
           id="identity-summary"
@@ -190,7 +193,8 @@
   </div>
 </template>
 
-<style scoped type="scss">
+<style scoped lang="scss">
+@use "@/styles/_mixins" as *;
 h1 {
   display: flex;
   justify-content: center;

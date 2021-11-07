@@ -1,6 +1,7 @@
 <template>
   <router-link
     class="discussion-minimalist-card-wrapper"
+    dir="auto"
     :to="{
       name: RouteName.DISCUSSION,
       params: { slug: discussion.slug, id: discussion.id },
@@ -37,6 +38,7 @@
       </div>
       <div
         class="ellipsis has-text-grey-dark"
+        dir="auto"
         v-if="!discussion.lastComment.deletedAt"
       >
         {{ htmlTextEllipsis }}

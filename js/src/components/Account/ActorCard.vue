@@ -1,27 +1,25 @@
 <template>
-  <div>
-    <div class="media" style="align-items: top">
-      <div class="media-left">
-        <figure class="image is-32x32" v-if="actor.avatar">
-          <img class="is-rounded" :src="actor.avatar.url" alt="" />
-        </figure>
-        <b-icon v-else size="is-medium" icon="account-circle" />
-      </div>
+  <div class="media" style="align-items: top" dir="auto">
+    <div class="media-left">
+      <figure class="image is-32x32" v-if="actor.avatar">
+        <img class="is-rounded" :src="actor.avatar.url" alt="" />
+      </figure>
+      <b-icon v-else size="is-medium" icon="account-circle" />
+    </div>
 
-      <div class="media-content">
-        <p>
-          {{ actor.name || `@${usernameWithDomain(actor)}` }}
-        </p>
-        <p class="has-text-grey-dark" v-if="actor.name">
-          @{{ usernameWithDomain(actor) }}
-        </p>
-        <div
-          v-if="full"
-          class="summary"
-          :class="{ limit: limit }"
-          v-html="actor.summary"
-        />
-      </div>
+    <div class="media-content">
+      <p>
+        {{ actor.name || `@${usernameWithDomain(actor)}` }}
+      </p>
+      <p class="has-text-grey-dark" v-if="actor.name">
+        @{{ usernameWithDomain(actor) }}
+      </p>
+      <div
+        v-if="full"
+        class="summary"
+        :class="{ limit: limit }"
+        v-html="actor.summary"
+      />
     </div>
   </div>
 </template>
@@ -54,6 +52,14 @@ export default class ActorCard extends Vue {
 
 <style lang="scss">
 @use "@/styles/_mixins" as *;
+
+.media {
+  .media-left {
+    margin-right: initial;
+    @include margin-right(1rem);
+  }
+}
+
 .tooltip {
   display: block !important;
   z-index: 10000;
