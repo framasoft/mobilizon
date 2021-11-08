@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.API.Search do
 
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+  import Mobilizon.GraphQL.Resolvers.Event.Utils
 
   require Logger
 
@@ -67,10 +68,14 @@ defmodule Mobilizon.GraphQL.API.Search do
     term = String.trim(term)
 
     if is_url(term) do
-      # skip, if it's w not an actor
+      # skip, if it's not an event
       case process_from_url(term) do
-        %Page{total: _total, elements: [%Event{} = _event]} = page ->
-          {:ok, page}
+        %Page{total: _total, elements: [%Event{} = event]} = page ->
+          if Map.get(args, :current_user) != nil || check_event_access?(event) do
+            {:ok, page}
+          else
+            {:ok, %{total: 0, elements: []}}
+          end
 
         _ ->
           {:ok, %{total: 0, elements: []}}

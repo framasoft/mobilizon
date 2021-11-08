@@ -117,26 +117,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   @spec find_event(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Event.t()} | {:error, :event_not_found}
   def find_event(parent, %{uuid: uuid} = args, %{context: context} = resolution) do
-    with {:has_event, %Event{} = event} <-
-           {:has_event, Events.get_public_event_by_uuid_with_preload(uuid)},
-         {:access_valid, true} <-
-           {:access_valid, Map.has_key?(context, :current_user) || check_event_access(event)} do
-      {:ok, event}
-    else
-      {:has_event, _} ->
+    case Events.get_public_event_by_uuid_with_preload(uuid) do
+      %Event{} = event ->
+        if Map.has_key?(context, :current_user) || check_event_access?(event) do
+          {:ok, event}
+        else
+          {:error, :event_not_found}
+        end
+
+      _ ->
         find_private_event(parent, args, resolution)
-
-      {:access_valid, _} ->
-        {:error, :event_not_found}
     end
-  end
-
-  @spec check_event_access(Event.t()) :: boolean()
-  defp check_event_access(%Event{local: true}), do: true
-
-  defp check_event_access(%Event{url: url}) do
-    relay_actor_id = Config.relay_actor_id()
-    Events.check_if_event_has_instance_follow(url, relay_actor_id)
   end
 
   @doc """

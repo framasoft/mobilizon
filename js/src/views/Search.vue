@@ -34,6 +34,8 @@
             ref="aac"
             :placeholder="$t('For instance: London')"
             @input="locchange"
+            :hideMap="true"
+            :hideSelected="true"
           />
           <b-field
             :label="$t('Radius')"
@@ -144,9 +146,16 @@
             </b-pagination>
           </div>
         </div>
-        <b-message v-else-if="$apollo.loading === false" type="is-danger">{{
-          $t("No events found")
-        }}</b-message>
+        <b-message v-else-if="$apollo.loading === false" type="is-danger">
+          <p>{{ $t("No events found") }}</p>
+          <p v-if="searchIsUrl && !currentUser.id">
+            {{
+              $t(
+                "Only registered users may fetch remote events from their URL."
+              )
+            }}
+          </p>
+        </b-message>
       </b-tab-item>
       <b-tab-item v-if="!tag">
         <template slot="header">
@@ -211,6 +220,8 @@ import MultiGroupCard from "../components/Group/MultiGroupCard.vue";
 import { CONFIG } from "../graphql/config";
 import { REVERSE_GEOCODE } from "../graphql/address";
 import debounce from "lodash/debounce";
+import { CURRENT_USER_CLIENT } from "@/graphql/user";
+import { ICurrentUser } from "@/types/current-user.model";
 
 interface ISearchTimeOption {
   label: string;
@@ -267,6 +278,7 @@ const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
         this.searchGroups = data.searchGroups;
       },
     },
+    currentUser: CURRENT_USER_CLIENT,
   },
   metaInfo() {
     return {
@@ -291,6 +303,8 @@ export default class Search extends Vue {
   searchGroups: Paginate<IGroup> = { total: 0, elements: [] };
 
   location: IAddress = new Address();
+
+  currentUser!: ICurrentUser;
 
   dateOptions: Record<string, ISearchTimeOption> = {
     past: {
@@ -569,6 +583,18 @@ export default class Search extends Vue {
 
   private stringExists(value: string | null | undefined): boolean {
     return this.valueExists(value) && (value as string).length > 0;
+  }
+
+  get searchIsUrl(): boolean {
+    let url;
+    if (!this.search) return false;
+    try {
+      url = new URL(this.search);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
   }
 }
 </script>
