@@ -14,7 +14,6 @@ defmodule Mobilizon do
 
   import Cachex.Spec
 
-  alias Mix.Tasks.TzWorld.Update, as: TzWorldUpdate
   alias Mobilizon.{Config, Storage, Web}
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Service.{ErrorPage, ErrorReporting}
@@ -37,9 +36,6 @@ defmodule Mobilizon do
   @spec start(:normal | {:takeover, node} | {:failover, node}, term) ::
           {:ok, pid} | {:ok, pid, term} | {:error, term}
   def start(_type, _args) do
-    # We update TzWorld at runtime so that the data is not contained in releases
-    TzWorldUpdate.run(nil)
-
     children =
       [
         # supervisors
