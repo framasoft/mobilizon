@@ -3,10 +3,8 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
   Export a list of participants to ODS
   """
 
-  alias Mobilizon.Events
+  alias Mobilizon.{Events, Export, PythonPort, PythonWorker}
   alias Mobilizon.Events.Event
-  alias Mobilizon.Export
-  alias Mobilizon.PythonWorker
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Web.Gettext, as: GettextBackend
   import Mobilizon.Web.Gettext, only: [gettext: 2]
@@ -91,7 +89,7 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
 
   @spec dependencies_ok? :: boolean
   def dependencies_ok? do
-    PythonWorker.has_module("pyexcel_ods3")
+    PythonPort.python_exists?() && PythonWorker.has_module("pyexcel_ods3")
   end
 
   @spec enabled? :: boolean

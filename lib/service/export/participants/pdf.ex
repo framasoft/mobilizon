@@ -3,10 +3,8 @@ defmodule Mobilizon.Service.Export.Participants.PDF do
   Export a list of participants to PDF
   """
 
-  alias Mobilizon.Events
+  alias Mobilizon.{Events, Export, PythonPort, PythonWorker}
   alias Mobilizon.Events.Event
-  alias Mobilizon.Export
-  alias Mobilizon.PythonWorker
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Web.ExportView
   alias Mobilizon.Web.Gettext, as: GettextBackend
@@ -105,7 +103,7 @@ defmodule Mobilizon.Service.Export.Participants.PDF do
 
   @spec dependencies_ok? :: boolean
   def dependencies_ok? do
-    PythonWorker.has_module("weasyprint")
+    PythonPort.python_exists?() && PythonWorker.has_module("weasyprint")
   end
 
   @spec enabled? :: boolean

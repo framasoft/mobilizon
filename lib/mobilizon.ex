@@ -51,7 +51,6 @@ defmodule Mobilizon do
         # workers
         Guardian.DB.Token.SweeperServer,
         ActivityPub.Federator,
-        Mobilizon.PythonWorker,
         TzWorld.Backend.DetsWithIndexCache,
         cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),
         cachex_spec(:ics, 2500, 60, 60, &ICalendar.create_cache/1),
@@ -72,6 +71,13 @@ defmodule Mobilizon do
         }
       ] ++
         task_children(@env)
+
+    children =
+      if Mobilizon.PythonPort.python_exists?() do
+        children ++ [Mobilizon.PythonWorker]
+      else
+        children
+      end
 
     ErrorReporting.configure()
 
