@@ -88,6 +88,8 @@ config :mobilizon, Mobilizon.Web.Upload,
 
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "/var/lib/mobilizon/uploads"
 
+config :tz_world, data_dir: "/var/lib/mobilizon/timezones"
+
 config :mobilizon, :media_proxy,
   enabled: true,
   proxy_opts: [

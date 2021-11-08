@@ -51,7 +51,8 @@ LABEL org.opencontainers.image.title="mobilizon" \
 RUN apk add --no-cache openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc musl-dev python3-dev pango libxslt-dev
 RUN pip install weasyprint pyexcel-ods3
 
-RUN mkdir -p /app/uploads && chown nobody:nobody /app/uploads
+RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nobody /var/lib/mobilizon/uploads
+RUN mkdir -p /var/lib/mobilizon/timezones && chown nobody:nobody /var/lib/mobilizon/timezones
 RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
 
 USER nobody
