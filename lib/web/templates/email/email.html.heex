@@ -141,12 +141,14 @@
             <!-- ADDRESS -->
             <tr>
               <td bgcolor="#ECEBF2" align="center" style="padding: 30px 30px 30px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 18px;" >
-                <p style="margin: 0;">
-                  <%= if @offer_unsupscription do %>
+                <%= if @offer_unsupscription do %>
+                  <p>
                     <a href={"#{Mobilizon.Web.Endpoint.url()}/settings/notifications"}>
                       <%= gettext("Manage your notification settings") %>
                     </a>
-                  <% end %>
+                  </p>
+                <% end %>
+                <p style="margin: 0;">
                   <%= gettext("<b>%{instance}</b> is powered by Mobilizon.", instance: @instance_name) |> raw %><br />
                   <a href="https://joinmobilizon.org"><%= gettext "Learn more about Mobilizon here!" %></a>
                 </p>
