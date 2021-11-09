@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure some event action pages (participate remotely or without an account) don't get indexed by search engines
 - Only send `Tombstone` element in `Delete` activities, not the whole previous deleted element.
 - Only add address and tags to event icalendar export if they exist
+- `master` branch has been renamed to `main`
 
 ### Removed
 
