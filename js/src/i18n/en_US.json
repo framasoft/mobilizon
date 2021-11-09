@@ -1232,5 +1232,6 @@
   "View full profile": "View full profile",
   "Any type": "Any type",
   "In person": "In person",
-  "In the past": "In the past"
+  "In the past": "In the past",
+  "Only registered users may fetch remote events from their URL.": "Only registered users may fetch remote events from their URL."
 }
