@@ -6,7 +6,7 @@
     :class="{ inline, clickable: actor && actor.type === ActorType.GROUP }"
   >
     <slot></slot>
-    <template slot="popover" class="popover">
+    <template slot="popover">
       <actor-card :full="true" :actor="actor" :popover="true" />
     </template>
   </v-popover>
