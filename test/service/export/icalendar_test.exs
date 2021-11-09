@@ -26,6 +26,7 @@ defmodule Mobilizon.Service.ICalendarTest do
       DTSTART:#{Value.to_ics(event.begins_on)}Z
       GEO:#{event.physical_address |> Address.coords() |> Tuple.to_list() |> Enum.join(";")}
       LOCATION:#{Address.representation(event.physical_address)}
+      ORGANIZER:#{event.organizer_actor.name}
       SUMMARY:#{event.title}
       UID:#{event.uuid}
       URL:#{event.url}

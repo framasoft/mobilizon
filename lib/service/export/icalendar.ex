@@ -3,6 +3,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   Export an event to iCalendar format.
   """
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Config, Events}
   alias Mobilizon.Events.{Event, EventOptions}
@@ -119,7 +120,8 @@ defmodule Mobilizon.Service.Export.ICalendar do
       dtend: ends_on(event),
       description: HTML.strip_tags(event.description),
       uid: event.uuid,
-      url: event.url
+      url: event.url,
+      organizer: organizer(event)
     }
 
     icalendar_event =
@@ -161,4 +163,12 @@ defmodule Mobilizon.Service.Export.ICalendar do
   end
 
   defp shift_tz(%DateTime{} = date, _), do: date
+
+  defp organizer(%Event{attributed_to: %Actor{} = group}) do
+    Actor.display_name(group)
+  end
+
+  defp organizer(%Event{organizer_actor: %Actor{} = profile}) do
+    Actor.display_name(profile)
+  end
 end
