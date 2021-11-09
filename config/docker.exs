@@ -33,9 +33,6 @@ config :mobilizon, :instance,
   email_from: System.get_env("MOBILIZON_INSTANCE_EMAIL", "noreply@mobilizon.lan"),
   email_reply_to: System.get_env("MOBILIZON_REPLY_EMAIL", "noreply@mobilizon.lan")
 
-config :mobilizon, Mobilizon.Web.Upload.Uploader.Local,
-  uploads: System.get_env("MOBILIZON_UPLOADS", "/app/uploads")
-
 config :mobilizon, Mobilizon.Storage.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("MOBILIZON_DATABASE_USERNAME", "username"),
@@ -68,4 +65,8 @@ config :geolix,
     }
   ]
 
-config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "/var/lib/mobilizon/uploads"
+config :mobilizon, Mobilizon.Web.Upload.Uploader.Local,
+  uploads: System.get_env("MOBILIZON_UPLOADS", "/var/lib/mobilizon/uploads")
+
+config :tz_world,
+  data_dir: System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/timezones")

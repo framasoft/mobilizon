@@ -1,3 +1,30 @@
+# Upgrading from 1.3 to 2.0
+
+Requirements dependencies depend on the way Mobilizon is installed.
+## New dependencies requirements
+
+### Release and Docker
+
+You are already using latest Elixir version in the release tarball and Docker images.
+
+### Source install
+
+* Elixir 1.12 and Erlang OTP 22 is now required. If your distribution doesn't provide these versions, you can uninstall them and install [Elixir](https://github.com/asdf-vm/asdf-elixir) through the [ASDF tool](https://asdf-vm.com/).
+
+## Optional dependencies
+
+These are optional, installing them will allow Mobilizon to export to PDF and ODS as well.
+### Docker
+Everything is included in our Docker image.
+### Release and source install
+
+New optional Python dependencies:
+* `Python` >= 3.6
+* `weasyprint` for PDF export (with [a few extra dependencies](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html))
+* `pyexcel-ods3` for ODS export (no extra dependencies)
+
+Both can be installed through pip.
+
 # Upgrading from 1.0 to 1.1
 
 The 1.1 version of Mobilizon brings Elixir releases support. An Elixir release is a self-contained directory that contains all of Mobilizon's code (front-end and backend), it's dependencies, as well as the Erlang Virtual Machine and runtime (only the parts you need). As long as the release has been assembled on the same OS and architecture, it can be deploy and run straight away. [Read more about releases](https://elixir-lang.org/getting-started/mix-otp/config-and-releases.html#releases).

@@ -29,8 +29,10 @@ export default class IdentityEditionMixin extends Mixins(Vue) {
       .toLocaleLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s{2,}/, " ")
       .replace(/ /g, "_")
-      .replace(/[^a-z0-9_]/g, "");
+      .replace(/[^a-z0-9_]/g, "")
+      .replace(/_{2,}/, "");
   }
 
   validateUsername(): boolean {

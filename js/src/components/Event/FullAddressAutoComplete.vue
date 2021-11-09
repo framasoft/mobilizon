@@ -9,19 +9,19 @@
       >
         <template slot="label">
           {{ actualLabel }}
+          <span
+            class="is-size-6 has-text-weight-normal"
+            v-if="gettingLocation"
+            >{{ $t("Getting location") }}</span
+          >
+        </template>
+        <p class="control" v-if="canShowLocateMeButton && !gettingLocation">
           <b-button
-            v-if="canShowLocateMeButton && !gettingLocation"
-            size="is-small"
             icon-right="map-marker"
             @click="locateMe"
             :title="$t('Use my location')"
           />
-          <span
-            class="is-size-6 has-text-weight-normal"
-            v-else-if="gettingLocation"
-            >{{ $t("Getting location") }}</span
-          >
-        </template>
+        </p>
         <b-autocomplete
           :data="addressData"
           v-model="queryText"
@@ -29,7 +29,7 @@
           field="fullName"
           :loading="isFetching"
           @typing="fetchAsyncData"
-          icon="map-marker"
+          :icon="canShowLocateMeButton ? null : 'map-marker'"
           expanded
           @select="updateSelected"
           v-bind="$attrs"
@@ -71,7 +71,10 @@
           :title="$t('Clear address field')"
         />
       </b-field>
-      <div class="card" v-if="selected.originId || selected.url">
+      <div
+        class="card"
+        v-if="!hideSelected && (selected.originId || selected.url)"
+      >
         <div class="card-content">
           <address-info
             :address="selected"
@@ -119,6 +122,8 @@ export default class FullAddressAutoComplete extends Mixins(
   @Prop({ required: false }) userTimezone!: string;
   @Prop({ required: false, default: false, type: Boolean }) disabled!: boolean;
   @Prop({ required: false, default: false, type: Boolean }) hideMap!: boolean;
+  @Prop({ required: false, default: false, type: Boolean })
+  hideSelected!: boolean;
 
   addressModalActive = false;
 

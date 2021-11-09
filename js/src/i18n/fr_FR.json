@@ -1336,5 +1336,6 @@
   "View full profile": "Voir le profil complet",
   "Any type": "N'importe quel type",
   "In person": "En personne",
-  "In the past": "Dans le passé"
+  "In the past": "Dans le passé",
+  "Only registered users may fetch remote events from their URL.": "Seul⋅es les utilisateur⋅ices enregistré⋅es peuvent récupérer des événements depuis leur URL."
 }

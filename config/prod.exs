@@ -37,12 +37,3 @@ config :mobilizon, :cldr,
     "ru",
     "sv"
   ]
-
-cond do
-  System.get_env("INSTANCE_CONFIG") &&
-      File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
-    import_config System.get_env("INSTANCE_CONFIG")
-
-  true ->
-    :ok
-end

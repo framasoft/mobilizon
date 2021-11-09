@@ -82,11 +82,7 @@
         tag="span"
         @keyup.enter="toggleMenu"
       >
-        <template
-          slot="label"
-          v-if="currentActor"
-          class="navbar-dropdown-profile"
-        >
+        <template slot="label" v-if="currentActor">
           <div class="identity-wrapper">
             <div>
               <figure class="image is-32x32" v-if="currentActor.avatar">

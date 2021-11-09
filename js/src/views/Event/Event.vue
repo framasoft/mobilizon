@@ -83,7 +83,7 @@
                 @cancel-anonymous-participation="cancelAnonymousParticipation"
               />
               <div class="has-text-right">
-                <template class="visibility" v-if="!event.draft">
+                <template v-if="!event.draft">
                   <p v-if="event.visibility === EventVisibility.PUBLIC">
                     {{ $t("Public event") }}
                     <b-icon icon="earth" />
