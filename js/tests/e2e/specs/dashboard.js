@@ -12,10 +12,7 @@ describe("Homepage", () => {
 
     cy.contains("License")
       .should("have.attr", "href")
-      .and(
-        "eq",
-        "https://framagit.org/framasoft/mobilizon/blob/master/LICENSE"
-      );
+      .and("eq", "https://framagit.org/framasoft/mobilizon/blob/main/LICENSE");
   });
 
   it("Tries to register from the hero section", () => {

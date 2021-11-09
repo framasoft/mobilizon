@@ -172,7 +172,7 @@ pages:
   #     #- yarn run --cwd "js" styleguide:build
   #     #- mv js/styleguide public/frontend
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
   artifacts:
     expire_in: 1 hour
     paths:
@@ -216,14 +216,14 @@ pages:
     - "privileged"
   timeout: 3 hours
 
-build-docker-master:
+build-docker-main:
   <<: *docker
   rules:
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
   variables:
-    DOCKER_IMAGE_NAME: framasoft/mobilizon:master
+    DOCKER_IMAGE_NAME: framasoft/mobilizon:main
 
 build-docker-tag:
   <<: *docker

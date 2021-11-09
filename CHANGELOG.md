@@ -958,7 +958,7 @@ Updated translations:
     MIX_ENV=prod mix deps.clean mime --build
     ```
 
-* The [nginx configuration](https://framagit.org/framasoft/mobilizon/-/blob/master/support/nginx/mobilizon.conf) has been changed with improvements and support for custom error pages.
+* The [nginx configuration](https://framagit.org/framasoft/mobilizon/-/blob/main/support/nginx/mobilizon.conf) has been changed with improvements and support for custom error pages.
 
 * The cmake dependency has been added (see [our documentation](https://docs.joinmobilizon.org/administration/dependencies/#basic-tools))
 
@@ -999,9 +999,9 @@ Config has moved from `.env` files to a more traditional way to handle things in
 
 To migrate existing configuration, you can simply run `mix mobilizon.instance gen` and fill in the adequate values previously in `.env` files (you don't need to perform the operations to create the database).
 
-A minimal file template [is available](https://framagit.org/framasoft/mobilizon/blob/master/priv/templates/config.template.eex) to check for missing configuration.
+A minimal file template [is available](https://framagit.org/framasoft/mobilizon/blob/main/priv/templates/config.template.eex) to check for missing configuration.
 
-Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/master/support/systemd/mobilizon.service).
+Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/main/support/systemd/mobilizon.service).
 
 ### Added
 - Possibility to participate to an event without an account (confirmation through email required)

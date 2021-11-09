@@ -49,7 +49,7 @@
         <a
           rel="external"
           hreflang="en"
-          href="https://framagit.org/framasoft/mobilizon/blob/master/LICENSE"
+          href="https://framagit.org/framasoft/mobilizon/blob/main/LICENSE"
         >
           {{ $t("License") }}
         </a>
