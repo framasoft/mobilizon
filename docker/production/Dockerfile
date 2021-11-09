@@ -7,7 +7,8 @@ COPY js .
 
 ENV CYPRESS_INSTALL_BINARY 0
 
-RUN yarn install \
+# Network timeout because it's slow when cross-compiling
+RUN yarn install --network-timeout 100000 \
     && yarn run build
 
 # Then, build the application binary
