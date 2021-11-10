@@ -133,7 +133,7 @@ defmodule Mobilizon.Events.Event do
   @doc false
   @spec changeset(t | Ecto.Schema.t(), map) :: Changeset.t()
   def changeset(%__MODULE__{} = event, attrs) do
-    attrs = Map.update(attrs, :uuid, Ecto.UUID.generate(), & &1)
+    attrs = Map.update(attrs, :uuid, Ecto.UUID.generate(), &(&1 || Ecto.UUID.generate()))
     attrs = Map.update(attrs, :url, Routes.page_url(Endpoint, :event, attrs.uuid), & &1)
 
     event
