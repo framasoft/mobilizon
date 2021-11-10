@@ -127,12 +127,12 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "T'han denegat la participació a %{title}"
 
 #, elixir-format
-#: lib/web/email/event.ex:45
+#: lib/web/email/event.ex:46
 msgid "Event %{title} has been updated"
 msgstr "S'ha actualitzat {%title}"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:15
+#: lib/web/templates/email/event_updated.text.eex:7
 msgid "New title: %{title}"
 msgstr "Nou títol: %{title}"
 
@@ -926,7 +926,7 @@ msgstr "No ho facis servir més que proves, sisplau"
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60
+#: lib/web/templates/email/event_updated.text.eex:14 lib/web/templates/email/notification_each_week.html.heex:60
 #: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60
 #: lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -1112,19 +1112,19 @@ msgstr "Hi ha hagut canvis a %{title} i et volíem avisar."
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:55
-#: lib/web/templates/email/event_updated.text.eex:11
+#: lib/web/templates/email/event_updated.text.eex:6
 msgid "This event has been cancelled by its organizers. Sorry!"
 msgstr "Les organitzadores d'aquesta activitat l'han canceŀlada. Ho sentim!"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:51
-#: lib/web/templates/email/event_updated.text.eex:7
+#: lib/web/templates/email/event_updated.text.eex:4
 msgid "This event has been confirmed"
 msgstr "S'ha confirmat l'activitat"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:53
-#: lib/web/templates/email/event_updated.text.eex:9
+#: lib/web/templates/email/event_updated.text.eex:5
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
 "Aquesta activitat encara no està confirmada: l'organització t'ho farà saber "
@@ -1163,7 +1163,7 @@ msgid "Visit the updated event page"
 msgstr "Vés a la pàgina d'activitat actualitzada"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:21
+#: lib/web/templates/email/event_updated.text.eex:12
 msgid "Visit the updated event page: %{link}"
 msgstr "Vés a l'activitat actualitzada a %{link}"
 
@@ -1289,7 +1289,7 @@ msgstr ""
 "%{group_name} (%{group_address}). Ja no formes part del grup."
 
 #, elixir-format
-#: lib/web/email/group.ex:87
+#: lib/web/email/group.ex:89
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "El grup %{group} ha estat suspès a %{instance}"
 
@@ -1827,7 +1827,7 @@ msgstr ""
 msgid "Date:"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/participation/event_card.text.eex:5
 msgid "Details:"
 msgstr ""
@@ -1837,7 +1837,7 @@ msgstr ""
 msgid "Manage your notification settings"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/participation/card/_metadata.text.eex:4
 msgid "Manage your participation:"
 msgstr ""
@@ -1848,17 +1848,17 @@ msgstr ""
 msgid "Organizer: %{organizer}"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/participation/card/_metadata.html.heex:92
 msgid "Participate"
 msgstr "S'ha aprovat la participació"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/participation/card/_metadata.text.eex:4
 msgid "Participate:"
 msgstr "S'ha aprovat la participació"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/participation/event_card.text.eex:7
 msgid "Read more : %{url}"
 msgstr ""
@@ -1869,6 +1869,21 @@ msgid "Title: %{title}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/group.ex:42
+#: lib/web/email/group.ex:44
 msgid "📅 Just scheduled by %{group}: %{event}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:9
+msgid "New end date:"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:10
+msgid "New location:"
+msgstr "Ubicació"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:8
+msgid "New start date:"
 msgstr ""

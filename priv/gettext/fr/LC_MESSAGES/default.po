@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-11-10 12:43+0100\n"
+"PO-Revision-Date: 2021-11-10 20:42+0100\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -100,11 +100,11 @@ msgstr "Votre participation à l'événement %{title} a été approuvée"
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
-#: lib/web/email/event.ex:45
+#: lib/web/email/event.ex:46
 msgid "Event %{title} has been updated"
 msgstr "L'événement %{title} a été mis à jour"
 
-#: lib/web/templates/email/event_updated.text.eex:15
+#: lib/web/templates/email/event_updated.text.eex:7
 msgid "New title: %{title}"
 msgstr "Nouveau titre : %{title}"
 
@@ -634,7 +634,7 @@ msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur <b>%{in
 msgid "Please do not use it for real purposes."
 msgstr "Veuillez ne pas l'utiliser pour un cas réel."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133 lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60 lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60 lib/web/templates/email/on_day_notification.text.eex:11
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63 lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133 lib/web/templates/email/event_updated.text.eex:14 lib/web/templates/email/notification_each_week.html.heex:60 lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60 lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton « Je participe »."
@@ -750,15 +750,15 @@ msgstr "Début"
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr "Il y a eu des changements pour %{title} donc nous avons pensé que nous vous le ferions savoir."
 
-#: lib/web/templates/email/event_updated.html.heex:55 lib/web/templates/email/event_updated.text.eex:11
+#: lib/web/templates/email/event_updated.html.heex:55 lib/web/templates/email/event_updated.text.eex:6
 msgid "This event has been cancelled by its organizers. Sorry!"
 msgstr "Cet événement a été annulé par ses organisateur·ices. Désolé !"
 
-#: lib/web/templates/email/event_updated.html.heex:51 lib/web/templates/email/event_updated.text.eex:7
+#: lib/web/templates/email/event_updated.html.heex:51 lib/web/templates/email/event_updated.text.eex:4
 msgid "This event has been confirmed"
 msgstr "L'événement a été confirmé"
 
-#: lib/web/templates/email/event_updated.html.heex:53 lib/web/templates/email/event_updated.text.eex:9
+#: lib/web/templates/email/event_updated.html.heex:53 lib/web/templates/email/event_updated.text.eex:5
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr "Cet événement doit encore être confirmé : les organisateur·ices vous feront savoir si l'événement est confirmé."
 
@@ -786,7 +786,7 @@ msgstr "Voir la page de l'événement"
 msgid "Visit the updated event page"
 msgstr "Voir la page de l'événement mis à jour"
 
-#: lib/web/templates/email/event_updated.text.eex:21
+#: lib/web/templates/email/event_updated.text.eex:12
 msgid "Visit the updated event page: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
 
@@ -862,7 +862,7 @@ msgstr "Le groupe %{group} a été suspendu sur %{instance} !"
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr "L'équipe de modération de votre instance a décidé de suspendre %{group_name} (%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
 
-#: lib/web/email/group.ex:87
+#: lib/web/email/group.ex:89
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Le groupe %{group} a été suspendu sur %{instance}"
 
@@ -1281,6 +1281,18 @@ msgstr "Lire plus : %{url}"
 msgid "Title: %{title}"
 msgstr "Titre : %{title}"
 
-#: lib/web/email/group.ex:42
+#: lib/web/email/group.ex:44
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Programmé à l'instant par %{group}: %{event}"
+
+#: lib/web/templates/email/event_updated.text.eex:9
+msgid "New end date:"
+msgstr "Nouvelle date de fin :"
+
+#: lib/web/templates/email/event_updated.text.eex:10
+msgid "New location:"
+msgstr "Nouvelle localisation :"
+
+#: lib/web/templates/email/event_updated.text.eex:8
+msgid "New start date:"
+msgstr "Nouvelle date de début :"

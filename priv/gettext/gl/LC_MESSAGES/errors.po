@@ -999,7 +999,7 @@ msgstr ""
 msgid "Follow not found"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/user.ex:327
 msgid "Profile with username %{username} not found"
 msgstr "Non se atopa a persoa con nome de usuaria %{username}"
@@ -1014,17 +1014,17 @@ msgstr ""
 msgid "You are already following this group"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/group.ex:347
 msgid "You need to be logged-in to follow a group"
 msgstr "Tes que estar conectada para poder unirte a un grupo"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/group.ex:396
 msgid "You need to be logged-in to unfollow a group"
 msgstr "Tes que estar conectada para poder unirte a un grupo"
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/graphql/resolvers/group.ex:373
 msgid "You need to be logged-in to update a group follow"
 msgstr "Tes que estar conectada para poder actualizar un grupo"
