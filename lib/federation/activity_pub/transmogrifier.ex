@@ -114,8 +114,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            Actions.Create.create(:event, object_data, false) do
       {:ok, activity, event}
     else
-      {:existing_event, %Event{} = event} -> {:ok, nil, event}
-      _ -> :error
+      {:existing_event, %Event{} = event} ->
+        {:ok, nil, event}
+
+      err ->
+        Logger.debug(inspect(err))
+        :error
     end
   end
 
