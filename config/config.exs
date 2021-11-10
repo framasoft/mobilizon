@@ -196,7 +196,8 @@ config :mobilizon, :cldr,
   locales: [
     "fr",
     "en",
-    "ru"
+    "ru",
+    "ar"
   ]
 
 config :mobilizon, :activitypub,
