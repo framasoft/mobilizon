@@ -111,6 +111,7 @@
   </p>
 </template>
 <script lang="ts">
+import { getTimezoneOffset } from "date-fns-tz";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
@@ -177,6 +178,8 @@ export default class EventFullDate extends Vue {
     return (
       !!this.timezone &&
       !!this.userActualTimezone &&
+      getTimezoneOffset(this.timezone) !==
+        getTimezoneOffset(this.userActualTimezone) &&
       this.timezone !== this.userActualTimezone
     );
   }
