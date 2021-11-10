@@ -1,6 +1,6 @@
 defmodule Mobilizon.Web.Resolvers.EventTest do
   use Mobilizon.Web.ConnCase
-  use Bamboo.Test
+  use Bamboo.Test, shared: true
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
@@ -180,6 +180,8 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     end
 
     test "create_event/3 creates an event", %{conn: conn, actor: actor, user: user} do
+      begins_on = DateTime.utc_now()
+
       res =
         conn
         |> auth_conn(user)
@@ -188,17 +190,24 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           variables: %{
             title: "come to my event",
             description: "it will be fine",
-            begins_on: "#{DateTime.utc_now()}",
+            begins_on: "#{DateTime.add(begins_on, 3600 * 24)}",
             organizer_actor_id: "#{actor.id}"
           }
         )
 
       assert res["data"]["createEvent"]["title"] == "come to my event"
-      {id, ""} = res["data"]["createEvent"]["id"] |> Integer.parse()
+      id = String.to_integer(res["data"]["createEvent"]["id"])
+      uuid = res["data"]["createEvent"]["uuid"]
 
       assert_enqueued(
         worker: Workers.BuildSearch,
         args: %{event_id: id, op: :insert_search_event}
+      )
+
+      assert_enqueued(
+        worker: Workers.EventDelayedNotificationWorker,
+        args: %{event_uuid: uuid, action: :notify_of_new_event},
+        scheduled_at: {DateTime.add(begins_on, 1800), delta: 5}
       )
     end
 
@@ -930,8 +939,10 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
                ["ends_on cannot be set before begins_on"]
     end
 
-    test "update_event/3 updates an event", %{conn: conn, actor: actor, user: user} do
-      event = insert(:event, organizer_actor: actor)
+    test "updates an event", %{conn: conn, actor: actor, user: user} do
+      %Event{uuid: event_uuid, title: event_title} =
+        event = insert(:event, organizer_actor: actor)
+
       creator = insert(:participant, event: event, actor: actor, role: :creator)
       participant_user = insert(:user)
       participant_actor = insert(:actor, user: participant_user)
@@ -1005,6 +1016,25 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         args: %{event_id: event_id_int, op: :update_search_event}
       )
 
+      assert [
+               %{
+                 args: %{
+                   "event_uuid" => ^event_uuid,
+                   "action" => "notify_of_event_update",
+                   "old_event" => %{
+                     "title" => ^event_title
+                   },
+                   "changes" => %{
+                     "description" => "description updated",
+                     "status" => "tentative",
+                     "title" => "my event updated"
+                   }
+                 }
+               }
+             ] = all_enqueued(worker: Workers.EventDelayedNotificationWorker)
+
+      Oban.drain_queue(queue: :default, with_scheduled: true)
+
       {:ok, new_event} = Mobilizon.Events.get_event_with_preload(event.id)
 
       assert_delivered_email(
@@ -1014,7 +1044,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address])
+          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address]),
+          "Etc/UTC",
+          "en"
         )
       )
 
@@ -1025,7 +1057,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
           participant_actor,
           event,
           new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address])
+          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address]),
+          "Etc/UTC",
+          "en"
         )
       )
     end

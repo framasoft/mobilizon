@@ -1,22 +1,14 @@
 <%= gettext "Event update!" %>
 ==
 <%= gettext "There have been changes for %{title} so we'd thought we'd let you know.", title: @old_event.title %>
-<%= if MapSet.member?(@changes, :status) do %>
-  <%= case @event.status do %>
-    <% :confirmed -> %>
-    <%= gettext "This event has been confirmed" %>
-    <% :tentative -> %>
-    <%= gettext "This event has yet to be confirmed: organizers will let you know if they do confirm it." %>
-    <% :cancelled -> %>
-    <%= gettext "This event has been cancelled by its organizers. Sorry!" %>
-  <% end %>
-<% end %>
-<%= if MapSet.member?(@changes, :title) do %>
-  <%= gettext "New title: %{title}", title: @event.title %>
-<% end %>
-<%= if MapSet.member?(@changes, :begins_on) do %><%= render("date/event_tz_date.text", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %>
-<% end %>
-<%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %><%= render("date/event_tz_date.text", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %>
-<% end %>
+<%= if MapSet.member?(@changes, :status) do %><%= case @event.status do %><% :confirmed -> %><%= gettext "This event has been confirmed" %><% :tentative -> %>
+<%= gettext "This event has yet to be confirmed: organizers will let you know if they do confirm it." %><% :cancelled -> %>
+<%= gettext "This event has been cancelled by its organizers. Sorry!" %><% end %><% end %><%= if MapSet.member?(@changes, :title) do %>
+<%= gettext "New title: %{title}", title: @event.title %><% end %><%= if MapSet.member?(@changes, :begins_on) do %>
+<%= gettext "New start date:" %> <%= render("date/event_tz_date.text", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %><% end %><%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
+<%= gettext "New end date:" %> <%= render("date/event_tz_date.text", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %><% end %><%= if MapSet.member?(@changes, :physical_address) do %>
+<%= gettext "New location:" %> <%= Mobilizon.Addresses.Address.representation(@event.physical_address) %><% end %>
+
 <%= gettext "Visit the updated event page: %{link}", link: Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
+
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>

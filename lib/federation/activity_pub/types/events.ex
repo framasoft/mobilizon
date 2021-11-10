@@ -14,9 +14,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Service.Formatter.HTML
   alias Mobilizon.Service.LanguageDetection
   alias Mobilizon.Service.Notifications.Scheduler
+  alias Mobilizon.Service.Workers.EventDelayedNotificationWorker
   alias Mobilizon.Share
   alias Mobilizon.Tombstone
-  alias Mobilizon.Web.Email.Group
+  import Mobilizon.Events.Utils, only: [calculate_notification_time: 1]
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
   require Logger
 
@@ -29,10 +30,15 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     args = prepare_args_for_event(args)
 
     case EventsManager.create_event(args) do
-      {:ok, %Event{} = event} ->
+      {:ok, %Event{uuid: event_uuid, begins_on: begins_on} = event} ->
         EventActivity.insert_activity(event, subject: "event_created")
-        # TODO make this async
-        Group.notify_of_new_event(event)
+
+        %{action: :notify_of_new_event, event_uuid: event_uuid}
+        |> EventDelayedNotificationWorker.new(
+          scheduled_at: calculate_notification_time(begins_on)
+        )
+        |> Oban.insert()
+
         event_as_data = Convertible.model_to_as(event)
         audience = Audience.get_audience(event)
         create_data = make_create_data(event_as_data, Map.merge(audience, additional))
