@@ -1,0 +1,3 @@
+<%= gettext("Title: %{title}", title: @event.title) %>
+
+<%= if @event.attributed_to do %><%= gettext("Organizer: %{organizer}", organizer: @event.attributed_to.name || @event.attributed_to.preferred_username) %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(@event.attributed_to)) %><% else %><%= gettext("Organizer: %{organizer}", organizer: @event.organizer_actor.name || @event.organizer_actor.preferred_username) %><% end %>

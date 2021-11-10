@@ -16,6 +16,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Service.Notifications.Scheduler
   alias Mobilizon.Share
   alias Mobilizon.Tombstone
+  alias Mobilizon.Web.Email.Group
   import Mobilizon.Federation.ActivityPub.Utils, only: [make_create_data: 2, make_update_data: 2]
   require Logger
 
@@ -30,6 +31,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     case EventsManager.create_event(args) do
       {:ok, %Event{} = event} ->
         EventActivity.insert_activity(event, subject: "event_created")
+        # TODO make this async
+        Group.notify_of_new_event(event)
         event_as_data = Convertible.model_to_as(event)
         audience = Audience.get_audience(event)
         create_data = make_create_data(event_as_data, Map.merge(audience, additional))

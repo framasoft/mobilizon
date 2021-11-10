@@ -1,0 +1,3 @@
+<%= gettext "%{group} scheduled a new event:", group: Mobilizon.Actors.Actor.display_name(@group) %>
+
+<%= render("participation/event_card.text", event: @event, timezone: @timezone, locale: @locale, action: "event") %>

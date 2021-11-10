@@ -1626,4 +1626,21 @@ defmodule Mobilizon.Actors do
   @spec preload_followers(Actor.t(), boolean) :: Actor.t()
   defp preload_followers(actor, true), do: Repo.preload(actor, [:followers])
   defp preload_followers(actor, false), do: actor
+
+  @spec list_actors_to_notify_from_group_event(Actor.t()) :: Follower.t()
+  def list_actors_to_notify_from_group_event(%Actor{id: actor_id}) do
+    Actor
+    |> join(:left, [a], f in Follower, on: a.id == f.actor_id)
+    |> join(:left, [a], m in Member, on: a.id == m.actor_id)
+    |> where(
+      [a, f],
+      is_nil(a.domain) and f.target_actor_id == ^actor_id and f.approved == true and
+        f.notify == true
+    )
+    |> or_where(
+      [a, _f, m],
+      is_nil(a.domain) and m.parent_id == ^actor_id and m.role in ^@member_roles
+    )
+    |> Repo.all()
+  end
 end

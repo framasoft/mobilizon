@@ -1,0 +1,4 @@
+<%= gettext("Date:") %> <%= render("date/event_tz_date_range.text", event: @event, start_date: datetime_tz_convert(@event.begins_on, @event.options.timezone), end_date: datetime_tz_convert(@event.ends_on, @event.options.timezone), timezone: @timezone, locale: @locale) %>
+<%= gettext("Address:") %> <%= if @event.physical_address do %><%= render_address(@event.physical_address) %><% end %><%= if @event.options.is_online do %><%= gettext "Online event" %><% end %>
+
+<%= case @action do %><% "participation" -> %><%= gettext("Manage your participation:") %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %><% "event" -> %><%= gettext("Participate:") %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %><% end %>

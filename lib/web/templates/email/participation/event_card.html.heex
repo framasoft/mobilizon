@@ -4,9 +4,9 @@
   <!-- event image end -->
 <% end %>
 <%= render("participation/card/_title.html", event: @event) %>
-<%= render("participation/card/_metadata.html", event: @event, timezone: @timezone, locale: @locale) %>
+<%= render("participation/card/_metadata.html", event: @event, timezone: @timezone, locale: @locale, action: @action) %>
 <%= if @event.description do %>
-  <div class="event-working" style="vertical-align: baseline; width: 450px; margin: 0 0 0 10px; padding: 7.5px 0 15px; border: 0;">
+  <div class="event-working" style="vertical-align: baseline; margin: 0 0 0 10px; padding: 7.5px 0 15px; border: 0;">
     <p style="color: rgb(46,62,72); font-family: Helvetica,Arial,sans-serif; font-weight: 700; line-height: 1.5; font-size: 16px; vertical-align: baseline; margin: 0; padding: 0 0 7.5px; border: 0;" align="left">
       <%= gettext("Details") %>
     </p>

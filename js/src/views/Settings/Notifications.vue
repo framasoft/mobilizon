@@ -402,7 +402,7 @@ export default class Notifications extends Vue {
       push: { enabled: false, disabled: false },
     },
     event_created: {
-      email: { enabled: false, disabled: false },
+      email: { enabled: true, disabled: false },
       push: { enabled: false, disabled: false },
     },
     event_updated: {

@@ -1,6 +1,6 @@
 defmodule Mobilizon.Web.Email.Group do
   @moduledoc """
-  Handles emails sent about participation.
+  Handles emails sent about group changes.
   """
   use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
 
@@ -9,68 +9,62 @@ defmodule Mobilizon.Web.Email.Group do
 
   alias Mobilizon.{Actors, Config, Users}
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Users.User
+  alias Mobilizon.Events.Event
+  alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.Email
 
-  @doc """
-  Send emails to local user
-  """
-  @spec send_invite_to_user(Member.t()) :: :ok
-  def send_invite_to_user(%Member{actor: %Actor{user_id: nil}}), do: :ok
+  @spec notify_of_new_event(Event.t()) :: :ok
+  def notify_of_new_event(%Event{attributed_to: %Actor{} = group} = event) do
+    # TODO: When we have events restricted to members, don't send emails to followers
+    group
+    |> Actors.list_actors_to_notify_from_group_event()
+    |> Enum.each(&notify_follower(event, group, &1))
+  end
 
-  def send_invite_to_user(
-        %Member{actor: %Actor{user_id: user_id}, parent: %Actor{} = group, role: :invited} =
-          member
-      ) do
-    with %User{email: email} = user <- Users.get_user!(user_id) do
-      locale = Map.get(user, :locale, "en")
+  def notify_of_new_event(%Event{}), do: :ok
+
+  defp notify_follower(%Event{} = _event, %Actor{}, %Actor{user_id: nil}), do: :ok
+
+  defp notify_follower(%Event{} = event, %Actor{type: :Group} = group, %Actor{
+         id: profile_id,
+         user_id: user_id
+       }) do
+    %User{
+      email: email,
+      locale: locale,
+      settings: %Setting{timezone: timezone},
+      activity_settings: activity_settings
+    } = Users.get_user_with_activity_settings!(user_id)
+
+    if profile_id != event.organizer_actor_id &&
+         accepts_new_events_notifications(activity_settings) do
       Gettext.put_locale(locale)
-      %Actor{name: invited_by_name} = inviter = Actors.get_actor(member.invited_by_id)
 
       subject =
         gettext(
-          "You have been invited by %{inviter} to join group %{group}",
-          inviter: invited_by_name,
-          group: group.name
+          "📅 Just scheduled by %{group}: %{event}",
+          group: Actor.display_name(group),
+          event: event.title
         )
 
       Email.base_email(to: email, subject: subject)
       |> assign(:locale, locale)
-      |> assign(:inviter, inviter)
       |> assign(:group, group)
+      |> assign(:event, event)
+      |> assign(:timezone, timezone)
       |> assign(:subject, subject)
-      |> render(:group_invite)
+      |> render(:event_group_follower_notification)
       |> Email.Mailer.send_email_later()
 
       :ok
     end
   end
 
-  # Only send notification to local members
-  def send_notification_to_removed_member(%Member{actor: %Actor{user_id: nil}}), do: :ok
-
-  def send_notification_to_removed_member(%Member{
-        actor: %Actor{user_id: user_id},
-        parent: %Actor{} = group,
-        role: :rejected
-      }) do
-    with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
-      Gettext.put_locale(locale)
-
-      subject =
-        gettext(
-          "You have been removed from group %{group}",
-          group: group.name
-        )
-
-      Email.base_email(to: email, subject: subject)
-      |> assign(:locale, locale)
-      |> assign(:group, group)
-      |> assign(:subject, subject)
-      |> render(:group_member_removal)
-      |> Email.Mailer.send_email_later()
-
-      :ok
+  @spec accepts_new_events_notifications(list()) :: boolean()
+  defp accepts_new_events_notifications(activity_settings) do
+    case Enum.find(activity_settings, &(&1.key == "event_created" && &1.method == "email")) do
+      nil -> false
+      %{enabled: enabled} -> enabled
     end
   end
 

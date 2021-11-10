@@ -1,0 +1,47 @@
+<!-- HERO -->
+<tr>
+  <td bgcolor="#474467" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <tr>
+        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+          <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
+            <%= gettext "%{group} scheduled a new event", group: Mobilizon.Actors.Actor.display_name(@group) %>
+          </h1>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>
+<!-- COPY BLOCK -->
+<tr>
+  <td bgcolor="#E6E4F4" align="center" style="padding: 0px 10px 0px 10px;">
+    <!--[if (gte mso 9)|(IE)]>
+      <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+        <tr>
+          <td align="center" valign="top" width="600">
+    <![endif]-->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+      <!-- COPY -->
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 15px 0px 15px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <%= render("participation/event_card.html", event: @event, timezone: @timezone, locale: @locale, action: "event") %>
+        </td>
+      </tr>
+    </table>
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+  </tr>
+</table>
+    <![endif]-->
+  </td>
+</tr>

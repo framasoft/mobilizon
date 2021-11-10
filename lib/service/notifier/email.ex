@@ -134,7 +134,7 @@ defmodule Mobilizon.Service.Notifier.Email do
     "participation_event_comment" => true,
     "event_new_pending_participation" => true,
     "event_new_participation" => false,
-    "event_created" => false,
+    "event_created" => true,
     "event_updated" => false,
     "discussion_updated" => false,
     "post_published" => false,
