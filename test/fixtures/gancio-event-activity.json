@@ -1,0 +1,42 @@
+{
+  "id": "https://demo.gancio.org/federation/m/1#create",
+  "type": "Create",
+  "to": ["https://www.w3.org/ns/activitystreams#Public"],
+  "cc": ["https://demo.gancio.org/federation/u/gancio/followers"],
+  "published": "2021-07-01T22:33:36Z",
+  "actor": "https://demo.gancio.org/federation/u/gancio",
+  "object": {
+    "id": "https://demo.gancio.org/federation/m/1",
+    "name": "Demo event",
+    "url": "https://demo.gancio.org/event/demo-event",
+    "type": "Event",
+    "startTime": "2021-07-14T17:30:57+02:00",
+    "endTime": "2021-07-14T18:30:57+02:00",
+    "location": {
+      "name": "Colosseo"
+    },
+    "attachment": [
+      {
+        "type": "Document",
+        "mediaType": "image/jpeg",
+        "url": "https://demo.gancio.org/media/7215892e7326a9b326b6bcad5b57642e.jpg",
+        "name": "",
+        "blurHash": null,
+        "focalPoint": [0, 0]
+      }
+    ],
+    "tag": [
+      {
+        "type": "Hashtag",
+        "name": "#test",
+        "href": "/tags/test"
+      }
+    ],
+    "published": "2021-07-01T22:33:36Z",
+    "attributedTo": "https://demo.gancio.org/federation/u/gancio",
+    "to": ["https://www.w3.org/ns/activitystreams#Public"],
+    "cc": ["https://demo.gancio.org/federation/u/gancio/followers"],
+    "content": "\n    📍 Colosseo\n    📅 Wednesday, 14 July (17:30)\n\n    \n  ",
+    "summary": "\n    📍 Colosseo\n    📅 Wednesday, 14 July (17:30)\n\n    \n  "
+  }
+}

@@ -79,6 +79,43 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
       end
     end
 
+    test "it works for incoming events from Gancio" do
+      data = File.read!("test/fixtures/gancio-event-activity.json") |> Jason.decode!()
+
+      {:ok, %Activity{data: data, local: false}, %Event{} = event} =
+        Transmogrifier.handle_incoming(data)
+
+      assert data["id"] == "https://demo.gancio.org/federation/m/1/activity"
+
+      assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+
+      # assert data["cc"] == [nil]
+
+      assert data["actor"] == "https://demo.gancio.org/federation/u/gancio"
+
+      object = data["object"]
+
+      assert object["id"] ==
+               "https://demo.gancio.org/federation/m/1"
+
+      assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+
+      assert object["cc"] == []
+
+      assert object["actor"] == "https://demo.gancio.org/federation/u/gancio"
+      assert object["location"]["name"] == "Colosseo"
+      assert object["attributedTo"] == "https://demo.gancio.org/federation/u/gancio"
+
+      assert event.title == "Demo event"
+      assert event.begins_on == ~U[2021-07-14 15:30:57Z]
+      assert event.ends_on == ~U[2021-07-14 16:30:57Z]
+      assert event.picture.file.content_type == "image/jpeg"
+      assert event.picture.file.name == "unknown.jpg"
+      assert length(event.tags) == 1
+      assert hd(event.tags).title == "test"
+      assert event.physical_address.description == "Colosseo"
+    end
+
     test "it works for incoming events for local groups" do
       %Actor{url: group_url, id: group_id} = group = insert(:group)
 
