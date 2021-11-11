@@ -696,6 +696,7 @@
   "Only group members can access discussions": "Solo los miembros del grupo pueden acceder a las discusiones",
   "Only group moderators can create, edit and delete events.": "Solo los moderadores de grupo pueden crear, editar y eliminar eventos.",
   "Only group moderators can create, edit and delete posts.": "Solo los moderadores de grupo pueden crear, editar y eliminar publicaciones.",
+  "Only registered users may fetch remote events from their URL.": "Solo los usuarios registrados pueden obtener eventos remotos de su URL.",
   "Open": "Abrir",
   "Open a topic on our forum": "Abrir un tema en nuestro foro",
   "Open an issue on our bug tracker (advanced users)": "Abrir un problema en nuestro rastreador de errores (usuarios avanzados)",
