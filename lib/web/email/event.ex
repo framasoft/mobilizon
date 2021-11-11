@@ -26,6 +26,7 @@ defmodule Mobilizon.Web.Email.Event do
           Event.t(),
           Event.t(),
           MapSet.t(),
+          String.t(),
           String.t()
         ) ::
           Bamboo.Email.t()
@@ -36,8 +37,8 @@ defmodule Mobilizon.Web.Email.Event do
         %Event{} = old_event,
         %Event{} = event,
         changes,
-        timezone \\ "Etc/UTC",
-        locale \\ "en"
+        timezone,
+        locale
       ) do
     Gettext.put_locale(locale)
 
@@ -70,13 +71,15 @@ defmodule Mobilizon.Web.Email.Event do
         %Event{id: event_id} = event,
         changes
       ) do
-    important = MapSet.new(@important_changes)
+    important = @important_changes |> Enum.map(&to_string/1) |> MapSet.new()
 
     diff =
       changes
       |> Map.keys()
       |> MapSet.new()
       |> MapSet.intersection(important)
+      |> Enum.map(&String.to_existing_atom/1)
+      |> MapSet.new()
 
     if MapSet.size(diff) > 0 do
       Repo.transaction(fn ->
@@ -178,7 +181,7 @@ defmodule Mobilizon.Web.Email.Event do
          locale
        ) do
     email
-    |> Email.Event.event_updated(participant, actor, old_event, event, diff, timezone, locale)
+    |> event_updated(participant, actor, old_event, event, diff, timezone, locale)
     |> Email.Mailer.send_email_later()
   end
 end

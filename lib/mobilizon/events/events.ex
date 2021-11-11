@@ -10,6 +10,7 @@ defmodule Mobilizon.Events do
 
   import Mobilizon.Service.Guards
   import Mobilizon.Storage.Ecto
+  import Mobilizon.Events.Utils, only: [calculate_notification_time: 1]
 
   alias Ecto.{Changeset, Multi}
 
@@ -18,6 +19,7 @@ defmodule Mobilizon.Events do
 
   alias Mobilizon.Events.{
     Event,
+    EventOptions,
     EventParticipantStats,
     FeedToken,
     Participant,
@@ -27,12 +29,11 @@ defmodule Mobilizon.Events do
     Track
   }
 
-  alias Mobilizon.Service.Workers
+  alias Mobilizon.Service.Workers.BuildSearch
+  alias Mobilizon.Service.Workers.EventDelayedNotificationWorker
   alias Mobilizon.Share
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
-
-  alias Mobilizon.Web.Email
 
   defenum(EventVisibility, :event_visibility, [
     :public,
@@ -229,7 +230,7 @@ defmodule Mobilizon.Events do
     with {:ok, %{insert: %Event{} = event}} <- do_create_event(attrs),
          %Event{} = event <- Repo.preload(event, @event_preloads) do
       unless event.draft do
-        Workers.BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
+        BuildSearch.enqueue(:insert_search_event, %{"event_id" => event.id})
       end
 
       {:ok, event}
@@ -303,18 +304,62 @@ defmodule Mobilizon.Events do
          %Event{} = new_event <- Repo.preload(new_event, @event_preloads, force: true) do
       Cachex.del(:ics, "event_#{new_event.uuid}")
 
-      Email.Event.calculate_event_diff_and_send_notifications(
-        old_event,
-        new_event,
-        changes
-      )
+      unless new_event.draft do
+        %{
+          action: :notify_of_event_update,
+          event_uuid: new_event.uuid,
+          old_event: old_event |> Map.from_struct() |> Map.take(Event.__schema__(:fields)),
+          changes: build_changes(changes)
+        }
+        |> EventDelayedNotificationWorker.new(
+          scheduled_at: calculate_notification_time(new_event.begins_on),
+          replace: [:scheduled_at, :args],
+          unique: [period: 1, keys: [:event_uuid, :action]]
+        )
+        |> Oban.insert()
 
-      unless new_event.draft,
-        do: Workers.BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
+        BuildSearch.enqueue(:update_search_event, %{"event_id" => new_event.id})
+      end
 
       {:ok, new_event}
     end
   end
+
+  @spec build_changes(map()) :: map()
+  defp build_changes(changes) do
+    changes
+    |> Map.take(Event.__schema__(:fields))
+    |> maybe_add_address(changes)
+    |> maybe_add_options(changes)
+  end
+
+  @spec maybe_add_address(map(), map()) :: map()
+  defp maybe_add_address(changes, %{physical_address: %Ecto.Changeset{} = changeset}),
+    do:
+      Map.put(
+        changes,
+        :physical_address,
+        changeset
+        |> Ecto.Changeset.apply_changes()
+        |> Map.from_struct()
+        |> Map.take(Address.__schema__(:fields))
+      )
+
+  defp maybe_add_address(changes, _), do: Map.drop(changes, [:physical_address])
+
+  @spec maybe_add_options(map(), map()) :: map()
+  defp maybe_add_options(changes, %{options: %Ecto.Changeset{} = changeset}),
+    do:
+      Map.put(
+        changes,
+        :options,
+        changeset
+        |> Ecto.Changeset.apply_changes()
+        |> Map.from_struct()
+        |> Map.take(EventOptions.__schema__(:fields))
+      )
+
+  defp maybe_add_options(changes, _), do: Map.drop(changes, [:options])
 
   @doc """
   Deletes an event.

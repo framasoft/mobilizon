@@ -4,7 +4,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Invite do
   """
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
-  alias Mobilizon.Web.Email.Group
+  alias Mobilizon.Web.Email.Member, as: EmailMember
   require Logger
 
   import Mobilizon.Federation.ActivityPub.Utils,
@@ -56,7 +56,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Invite do
 
         maybe_federate(activity)
         maybe_relay_if_group_activity(activity)
-        Group.send_invite_to_user(member)
+        EmailMember.send_invite_to_user(member)
         {:ok, activity, member}
       end
     else

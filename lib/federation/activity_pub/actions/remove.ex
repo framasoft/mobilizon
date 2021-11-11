@@ -5,7 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Remove do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub.Activity
-  alias Mobilizon.Web.Email.Group
+  alias Mobilizon.Web.Email.Member, as: EmailMember
   require Logger
 
   import Mobilizon.Federation.ActivityPub.Utils,
@@ -34,7 +34,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Remove do
         subject: "member_removed"
       )
 
-      Group.send_notification_to_removed_member(member)
+      EmailMember.send_notification_to_removed_member(member)
 
       remove_data = %{
         "to" => [group_members_url],

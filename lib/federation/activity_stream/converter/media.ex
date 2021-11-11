@@ -66,6 +66,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
   end
 
   @spec upload_media(String.t(), String.t()) :: {:ok, map()} | {:error, atom() | String.t()}
+  defp upload_media(media_url, ""), do: upload_media(media_url, "unknown")
+
   defp upload_media(media_url, name) do
     case Tesla.get(media_url, opts: @http_options) do
       {:ok, %{body: body}} ->

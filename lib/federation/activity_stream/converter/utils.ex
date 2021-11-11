@@ -196,7 +196,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   def process_pictures(object, actor_id) do
     attachements = Map.get(object, "attachment", [])
 
-    media_attachements = get_medias(attachements)
+    {banner, media_attachements} = get_medias(attachements)
 
     media_attachements_map =
       media_attachements
@@ -220,9 +220,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
       |> Map.new()
 
     picture_id =
-      case get_banner_picture(attachements) do
-        banner when is_map(banner) ->
-          case MediaConverter.find_or_create_media(banner, actor_id) do
+      case banner do
+        banner_map when is_map(banner_map) ->
+          case MediaConverter.find_or_create_media(banner_map, actor_id) do
             {:error, _err} ->
               nil
 
@@ -247,12 +247,23 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   defp replace_media_url_in_body(body, {old_url, new_url}),
     do: String.replace(body, old_url, new_url)
 
+  @spec get_medias(list(map())) :: {map(), list(map())}
   defp get_medias(attachments) do
-    Enum.filter(attachments, &(&1["type"] == "Document" && &1["name"] != @banner_picture_name))
+    banner = get_banner_picture(attachments)
+    {banner, Enum.filter(attachments, &(&1["type"] == "Document" && &1["url"] != banner["url"]))}
   end
 
+  @spec get_banner_picture(list(map())) :: map()
   defp get_banner_picture(attachments) do
-    Enum.find(attachments, &(&1["type"] == "Document" && &1["name"] == @banner_picture_name))
+    # Prefer media with
+    media_with_picture_name =
+      Enum.find(attachments, &(&1["type"] == "Document" && &1["name"] == @banner_picture_name))
+
+    case media_with_picture_name do
+      # If no banner found, use the first media
+      nil -> Enum.find(attachments, &(&1["type"] == "Document"))
+      media_with_picture_name -> media_with_picture_name
+    end
   end
 
   @spec get_address(map | binary | nil) :: Address.t() | nil

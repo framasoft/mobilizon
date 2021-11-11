@@ -30,7 +30,7 @@ COPY rel ./rel
 COPY support ./support
 COPY --from=assets ./priv/static ./priv/static
 
-RUN mix phx.digest \
+RUN mix phx.digest.clean --all \
     && mix release
 
 # Finally setup the app

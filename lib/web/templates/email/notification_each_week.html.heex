@@ -45,12 +45,12 @@
             <ul style="margin: 0;padding: 0;list-style-type: none;">
               <%= for participation <- @participations do %>
                 <li style="padding: 0; border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; margin-bottom: 10px">
-                  <%= render("participation/event_card.html", event: participation.event, timezone: @timezone, locale: @locale) %>
+                  <%= render("participation/event_card.html", event: participation.event, timezone: @timezone, locale: @locale, action: "participation") %>
                 </li>
               <% end %>
             </ul>
           <% else %>
-            <%= render("participation/event_card.html", event: @participation.event, timezone: @timezone, locale: @locale) %>
+            <%= render("participation/event_card.html", event: @participation.event, timezone: @timezone, locale: @locale, action: "participation") %>
           <% end %>
         </td>
       </tr>

@@ -33,7 +33,7 @@ msgid "Activate my account"
 msgstr "Mein Konto aktivieren"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:123
+#: lib/web/templates/email/email.html.heex:120
 #: lib/web/templates/email/email.text.eex:9
 msgid "Ask the community on Framacolibri"
 msgstr "Richte deine Fragen an die Gemeinschaft auf Framacolibri"
@@ -50,7 +50,7 @@ msgid "Event"
 msgstr "Veranstaltung"
 
 #, elixir-format
-#: lib/web/email/user.ex:48
+#: lib/web/email/user.ex:49
 msgid "Instructions to reset your password on %{instance}"
 msgstr "Anweisungen um dein Passwort auf %{instance} zurückzusetzen"
 
@@ -129,12 +129,12 @@ msgid "Your participation to event %{title} has been rejected"
 msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde abgelehnt"
 
 #, elixir-format
-#: lib/web/email/event.ex:45
+#: lib/web/email/event.ex:46
 msgid "Event %{title} has been updated"
 msgstr "Veranstaltung %{title} wurde aktualisiert"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:15
+#: lib/web/templates/email/event_updated.text.eex:7
 msgid "New title: %{title}"
 msgstr "Neuer Titel: %{title}"
 
@@ -145,7 +145,7 @@ msgstr ""
 "Du hast ein neues Passwort für deinen Account auf %{instance} angefragt."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:91
+#: lib/web/templates/email/email.html.heex:88
 msgid "Warning"
 msgstr "Warnung"
 
@@ -360,17 +360,17 @@ msgid "What information do we collect?"
 msgstr "Welche Informationen sammeln wir ?"
 
 #, elixir-format
-#: lib/web/email/user.ex:175
+#: lib/web/email/user.ex:178
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon auf %{instance}: Bestätige deine E-Mail Adresse"
 
 #, elixir-format
-#: lib/web/email/user.ex:155
+#: lib/web/email/user.ex:157
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon auf %{instance}: E-Mail geändert"
 
 #, elixir-format
-#: lib/web/email/notification.ex:49
+#: lib/web/email/notification.ex:51
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Ein Event wurde heute geplannt"
@@ -396,7 +396,7 @@ msgid "Come along!"
 msgstr "Komm rein!"
 
 #, elixir-format
-#: lib/web/email/notification.ex:24
+#: lib/web/email/notification.ex:25
 msgid "Don't forget to go to %{title}"
 msgstr "Vergesse nicht zu %{title} gehen"
 
@@ -423,19 +423,19 @@ msgid "View the event on: %{link}"
 msgstr "Zeige die aktualisierte Veranstaltung unter: %{link}"
 
 #, elixir-format
-#: lib/web/email/group.ex:31
+#: lib/web/email/member.ex:31
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Du wurdest von %{inviter} eingeladen, der Gruppe %{group} beizutreten"
 
 #, elixir-format
-#: lib/web/email/notification.ex:75
+#: lib/web/email/notification.ex:78
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Ein Event ist für diese Woche geplant"
 msgstr[1] "%{nb_events} Events sind für diese Woche geplant"
 
 #, elixir-format
-#: lib/web/email/notification.ex:98
+#: lib/web/email/notification.ex:102
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Eine Teilnahmeanfrage für die Veranstaltung %{title} zu bearbeiten"
@@ -922,7 +922,7 @@ msgstr ""
 "angegebene E-Mail Adresse:"
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:120
+#: lib/web/templates/email/email.html.heex:117
 #: lib/web/templates/email/email.text.eex:8
 msgid "Need help? Is something not working as expected?"
 msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
@@ -959,7 +959,7 @@ msgstr "Bitte verwenden Sie es nicht für reale Zwecke."
 #, elixir-format
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:63
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6 lib/web/templates/email/event_updated.html.heex:133
-#: lib/web/templates/email/event_updated.text.eex:22 lib/web/templates/email/notification_each_week.html.heex:60
+#: lib/web/templates/email/event_updated.text.eex:14 lib/web/templates/email/notification_each_week.html.heex:60
 #: lib/web/templates/email/notification_each_week.text.eex:11 lib/web/templates/email/on_day_notification.html.heex:60
 #: lib/web/templates/email/on_day_notification.text.eex:11
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -986,7 +986,7 @@ msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} ist ein Mobilizon-Server."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:148
+#: lib/web/templates/email/email.html.heex:152
 msgid "<b>%{instance}</b> is powered by Mobilizon."
 msgstr "<b>%{instance}</b> ist ein Mobilizon-Server."
 
@@ -1083,7 +1083,7 @@ msgstr ""
 "auf die Veranstaltungs-Seite und klicke auf den Teilnahme-Button."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:149
+#: lib/web/templates/email/email.html.heex:153
 #: lib/web/templates/email/email.text.eex:11
 msgid "Learn more about Mobilizon here!"
 msgstr "Lerne mehr über Mobilizon!"
@@ -1149,20 +1149,20 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:55
-#: lib/web/templates/email/event_updated.text.eex:11
+#: lib/web/templates/email/event_updated.text.eex:6
 msgid "This event has been cancelled by its organizers. Sorry!"
 msgstr ""
 "Diese Veranstaltung wurde von den Veranstaltern abgesagt. Entschuldigung!"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:51
-#: lib/web/templates/email/event_updated.text.eex:7
+#: lib/web/templates/email/event_updated.text.eex:4
 msgid "This event has been confirmed"
 msgstr "Veranstaltung wurde bestätigt"
 
 #, elixir-format
 #: lib/web/templates/email/event_updated.html.heex:53
-#: lib/web/templates/email/event_updated.text.eex:9
+#: lib/web/templates/email/event_updated.text.eex:5
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
 "Diese Veranstaltung muss noch bestätigt werden: Die Organisatorinnen werden "
@@ -1201,7 +1201,7 @@ msgid "Visit the updated event page"
 msgstr "Besuchen Sie die aktualisierte Veranstaltungsseite"
 
 #, elixir-format
-#: lib/web/templates/email/event_updated.text.eex:21
+#: lib/web/templates/email/event_updated.text.eex:12
 msgid "Visit the updated event page: %{link}"
 msgstr "Zeige die aktualisierte Veranstaltung unter: %{link}"
 
@@ -1258,7 +1258,7 @@ msgstr ""
 "diese Meldung."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:95
+#: lib/web/templates/email/email.html.heex:92
 msgid "<b>Please do not use it for real purposes.</b>"
 msgstr "<b>Bitte verwenden Sie es nicht für reale Zwecke.</b>"
 
@@ -1277,7 +1277,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Macht's gut und danke für den Fisch!"
 
 #, elixir-format
-#: lib/web/email/group.ex:61
+#: lib/web/email/member.ex:61
 msgid "You have been removed from group %{group}"
 msgstr "Sie wurden aus der Gruppe %{group} entfernt"
 
@@ -1333,7 +1333,7 @@ msgstr ""
 "dieser Gruppe."
 
 #, elixir-format
-#: lib/web/email/group.ex:95
+#: lib/web/email/group.ex:89
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Die Gruppe %{group} wurde auf %{instance} ausgesetzt"
 
@@ -1684,14 +1684,14 @@ msgid "We're sorry, but something went wrong on our end."
 msgstr "Es tut uns leid, aber auf unserer Seite ist etwas schief gelaufen."
 
 #, elixir-format
-#: lib/web/templates/email/email.html.heex:94
+#: lib/web/templates/email/email.html.heex:91
 #: lib/web/templates/email/email.text.eex:4
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Dies ist eine Demo-Seite, um die Beta-Version von Mobilizon zu testen."
 
 #, elixir-format
-#: lib/service/metadata/actor.ex:67 lib/service/metadata/actor.ex:75
-#: lib/service/metadata/instance.ex:54 lib/service/metadata/instance.ex:60
+#: lib/service/metadata/actor.ex:91 lib/service/metadata/actor.ex:99
+#: lib/service/metadata/instance.ex:56 lib/service/metadata/instance.ex:62
 msgid "%{name}'s feed"
 msgstr "Feed von %{name}"
 
@@ -1784,7 +1784,7 @@ msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde akzeptiert"
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #, elixir-format
 #: lib/service/export/participants/csv.ex:73
-#: lib/service/export/participants/ods.ex:79 lib/service/export/participants/pdf.ex:93
+#: lib/service/export/participants/ods.ex:77 lib/service/export/participants/pdf.ex:91
 msgid "%{event}_participants"
 msgstr ""
 
@@ -1866,6 +1866,7 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/date/event_tz_date.html.heex:6
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
+#: lib/web/templates/email/date/event_tz_date_range.text.eex:1 lib/web/templates/email/date/event_tz_date_range.text.eex:1
 msgid "🌐 %{timezone} %{offset}"
 msgstr ""
 
@@ -1892,16 +1893,18 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:10
+#: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 msgid "From the %{start} to the %{end}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/card/_metadata.html.heex:68
+#: lib/web/templates/email/participation/card/_metadata.html.heex:70
 msgid "Manage your participation"
 msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:5
+#: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 msgid "On %{date} from %{start_time} to %{end_time}"
 msgstr ""
 
@@ -1912,5 +1915,87 @@ msgstr ""
 
 #, elixir-format
 #: lib/web/templates/email/participation/card/_metadata.html.heex:50
+#: lib/web/templates/email/participation/card/_metadata.text.eex:2
 msgid "Online event"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_group_follower_notification.html.heex:13
+msgid "%{group} scheduled a new event"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_group_follower_notification.text.eex:1
+msgid "%{group} scheduled a new event:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.text.eex:2
+msgid "Address:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.text.eex:1
+msgid "Date:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.text.eex:5
+msgid "Details:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/email.html.heex:147
+msgid "Manage your notification settings"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+msgid "Manage your participation:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_title.text.eex:3
+#: lib/web/templates/email/participation/card/_title.text.eex:3
+msgid "Organizer: %{organizer}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.html.heex:92
+msgid "Participate"
+msgstr "Teilnahme bestätigt"
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+msgid "Participate:"
+msgstr "Teilnahme bestätigt"
+
+#, elixir-format
+#: lib/web/templates/email/participation/event_card.text.eex:7
+msgid "Read more : %{url}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/participation/card/_title.text.eex:1
+msgid "Title: %{title}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/group.ex:44
+msgid "📅 Just scheduled by %{group}: %{event}"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:9
+msgid "New end date:"
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/event_updated.text.eex:10
+msgid "New location:"
+msgstr "Ort"
+
+#, elixir-format
+#: lib/web/templates/email/event_updated.text.eex:8
+msgid "New start date:"
 msgstr ""
