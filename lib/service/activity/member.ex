@@ -18,19 +18,19 @@ defmodule Mobilizon.Service.Activity.Member do
       ) do
     subject = Keyword.get(options, :subject)
 
-    with author_id <- get_author(new_member, options),
-         object_id <- if(subject == "member_removed", do: nil, else: to_string(member_id)) do
-      ActivityBuilder.enqueue(:build_activity, %{
-        "type" => "member",
-        "subject" => subject,
-        "subject_params" => get_subject_params(new_member, options),
-        "group_id" => parent_id,
-        "author_id" => author_id,
-        "object_type" => "member",
-        "object_id" => object_id,
-        "inserted_at" => DateTime.utc_now()
-      })
-    end
+    author_id = get_author(new_member, options)
+    object_id = if(subject == "member_removed", do: nil, else: to_string(member_id))
+
+    ActivityBuilder.enqueue(:build_activity, %{
+      "type" => "member",
+      "subject" => subject,
+      "subject_params" => get_subject_params(new_member, options),
+      "group_id" => parent_id,
+      "author_id" => author_id,
+      "object_type" => "member",
+      "object_id" => object_id,
+      "inserted_at" => DateTime.utc_now()
+    })
   end
 
   def insert_activity(_, _), do: {:ok, nil}
@@ -66,38 +66,41 @@ defmodule Mobilizon.Service.Activity.Member do
           end
       end
 
-    moderator = Keyword.get(options, :moderator)
-    old_member = Keyword.get(options, :old_member)
-
-    subject_params = %{
+    %{
       member_role: String.upcase(to_string(role))
     }
+    |> maybe_add_actor(actor)
+    |> maybe_add_old_member(Keyword.get(options, :old_member))
+    |> maybe_add_moderator(Keyword.get(options, :moderator))
+  end
 
-    subject_params =
-      if(is_nil(actor),
-        do: subject_params,
-        else:
-          subject_params
-          |> Map.put(
-            :member_actor_federated_username,
-            Actor.preferred_username_and_domain(actor)
-          )
-          |> Map.put(:member_actor_name, actor.name)
-      )
+  @spec maybe_add_actor(map(), Actor.t() | nil) :: map()
+  defp maybe_add_actor(subject_params, nil), do: subject_params
 
-    subject_params =
-      if(is_nil(old_member),
-        do: subject_params,
-        else: Map.put(subject_params, :old_role, String.upcase(to_string(old_member.role)))
-      )
+  defp maybe_add_actor(subject_params, %Actor{} = actor) do
+    subject_params
+    |> Map.put(
+      :member_actor_federated_username,
+      Actor.preferred_username_and_domain(actor)
+    )
+    |> Map.put(:member_actor_name, actor.name)
+  end
 
-    if is_nil(moderator),
-      do: subject_params,
-      else:
-        Map.put(
-          subject_params,
-          :moderator_preferred_username,
-          Actor.preferred_username_and_domain(moderator)
-        )
+  @spec maybe_add_old_member(map(), Member.t() | nil) :: map()
+  defp maybe_add_old_member(subject_params, nil), do: subject_params
+
+  defp maybe_add_old_member(subject_params, old_member) do
+    Map.put(subject_params, :old_role, String.upcase(to_string(old_member.role)))
+  end
+
+  @spec maybe_add_moderator(map(), Actor.t() | nil) :: map()
+  defp maybe_add_moderator(subject_params, nil), do: subject_params
+
+  defp maybe_add_moderator(subject_params, moderator) do
+    Map.put(
+      subject_params,
+      :moderator_preferred_username,
+      Actor.preferred_username_and_domain(moderator)
+    )
   end
 end
