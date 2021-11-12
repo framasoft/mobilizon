@@ -339,6 +339,10 @@ release-create:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules: *tag-rules
+  variables:
+    APP_ASSET_AMD64: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_amd64.tar.gz"
+    APP_ASSET_ARM: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_arm.tar.gz"
+    APP_ASSET_ARM64: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_arm64.tar.gz"
   before_script:
     - apk --no-cache add gawk sed grep
   script: |
@@ -348,4 +352,6 @@ release-create:
     release-cli create  --name "$CI_COMMIT_TAG" \
                         --description "$CHANGELOG" \
                         --tag-name "$CI_COMMIT_TAG" \
-                        --assets-link "{\"name\":\"${APP_ASSET}\",\"url\":\"${ENDPOINT}/${APP_ASSET}\"}"
+                        --assets-link "{\"name\":\"${APP_ASSET_AMD64}\",\"url\":\"${ENDPOINT}/${APP_ASSET_AMD64}\"}" \
+                        --assets-link "{\"name\":\"${APP_ASSET_ARM}\",\"url\":\"${ENDPOINT}/${APP_ASSET_ARM}\"}" \
+                        --assets-link "{\"name\":\"${APP_ASSET_ARM64}\",\"url\":\"${ENDPOINT}/${APP_ASSET_ARM64}\"}"
