@@ -151,7 +151,13 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
              |> Map.update(:message, nil, &String.trim(HTML.strip_tags(&1)))
          }) do
       {:ok, %Member{} = member} ->
-        Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_joined")
+        subject =
+          case Mobilizon.Actors.get_default_member_role(group) do
+            :not_approved -> "member_request"
+            :member -> "member_joined"
+          end
+
+        Mobilizon.Service.Activity.Member.insert_activity(member, subject: subject)
 
         Absinthe.Subscription.publish(Endpoint, actor,
           group_membership_changed: [Actor.preferred_username_and_domain(group), actor.id]

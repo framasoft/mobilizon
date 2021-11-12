@@ -10,6 +10,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
   alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.Notifications.Scheduler
+  alias Mobilizon.Web.Email.Member, as: EmailMember
   alias Mobilizon.Web.Endpoint
   require Logger
 
@@ -21,7 +22,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
       maybe_relay_if_group_activity: 1
     ]
 
-  @type acceptable_types :: :join | :follow | :invite
+  @type acceptable_types :: :join | :follow | :invite | :member
   @type acceptable_entities ::
           accept_join_entities | accept_follow_entities | accept_invite_entities
 
@@ -35,6 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
         :join -> accept_join(entity, additional)
         :follow -> accept_follow(entity, additional)
         :invite -> accept_invite(entity, additional)
+        :member -> accept_member(entity, additional)
       end
 
     with {:ok, entity, update_data} <- accept_res do
@@ -158,12 +160,47 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
     end
   end
 
-  @spec maybe_refresh_group(Member.t()) :: :ok | nil
-  defp maybe_refresh_group(%Member{
-         parent: %Actor{domain: parent_domain, url: parent_url},
-         actor: %Actor{} = actor
-       }) do
-    unless is_nil(parent_domain),
-      do: Refresher.fetch_group(parent_url, actor)
+  @spec accept_member(Member.t(), map()) ::
+          {:ok, Member.t(), Activity.t()} | {:error, Ecto.Changeset.t()}
+  defp accept_member(
+         %Member{actor_id: actor_id, actor: actor, parent: %Actor{} = group} = member,
+         %{moderator: %Actor{url: actor_url} = moderator}
+       ) do
+    with %Actor{} <- Actors.get_actor!(actor_id),
+         {:ok, %Member{id: member_id} = member} <-
+           Actors.update_member(member, %{role: :member}) do
+      Mobilizon.Service.Activity.Member.insert_activity(member,
+        subject: "member_approved",
+        moderator: moderator
+      )
+
+      Absinthe.Subscription.publish(Endpoint, actor,
+        group_membership_changed: [Actor.preferred_username_and_domain(group), actor_id]
+      )
+
+      EmailMember.send_notification_to_approved_member(member)
+
+      Cachex.del(:activity_pub, "member_#{member_id}")
+
+      maybe_refresh_group(member)
+
+      accept_data = %{
+        "type" => "Accept",
+        "attributedTo" => member.parent.url,
+        "to" => [member.parent.members_url],
+        "cc" => [member.parent.url],
+        "actor" => actor_url,
+        "object" => Convertible.model_to_as(member),
+        "id" => "#{Endpoint.url()}/accept/member/#{member_id}"
+      }
+
+      {:ok, member, accept_data}
+    end
   end
+
+  @spec maybe_refresh_group(Member.t()) :: {:ok, Actor.t()} | {:error, atom()} | {:error}
+  defp maybe_refresh_group(%Member{
+         parent: %Actor{} = group
+       }),
+       do: Refresher.refresh_profile(group)
 end

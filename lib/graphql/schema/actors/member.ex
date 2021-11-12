@@ -82,6 +82,24 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     end
 
     @desc """
+    Approve a membership request
+    """
+    field :approve_member, :member do
+      arg(:member_id, non_null(:id), description: "The member ID")
+
+      resolve(&Member.approve_member/3)
+    end
+
+    @desc """
+    Reject a membership request
+    """
+    field :reject_member, :member do
+      arg(:member_id, non_null(:id), description: "The member ID")
+
+      resolve(&Member.reject_member/3)
+    end
+
+    @desc """
     Update a member's role
     """
     field :update_member, :member do
@@ -93,8 +111,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
 
     @desc "Remove a member from a group"
     field :remove_member, :member do
-      arg(:group_id, non_null(:id), description: "The group ID")
       arg(:member_id, non_null(:id), description: "The member ID")
+
+      arg(:exclude, :boolean,
+        default_value: false,
+        description: "Whether the member should be excluded from the group"
+      )
 
       resolve(&Member.remove_member/3)
     end

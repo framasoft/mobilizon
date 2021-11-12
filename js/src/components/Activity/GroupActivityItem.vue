@@ -148,6 +148,11 @@ export default class GroupActivityItem extends mixins(ActivityMixin) {
         case Openness.INVITE_ONLY:
           details.push("The group can now only be joined with an invite.");
           break;
+        case Openness.MODERATED:
+          details.push(
+            "The group can now be joined by anyone, but new members need to be approved by an administrator."
+          );
+          break;
         case Openness.OPEN:
           details.push("The group can now be joined by anyone.");
           break;

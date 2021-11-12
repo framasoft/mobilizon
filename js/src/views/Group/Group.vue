@@ -23,29 +23,6 @@
         </ul>
       </nav>
       <b-loading :active.sync="$apollo.loading"></b-loading>
-      <invitations
-        v-if="isCurrentActorAnInvitedGroupMember"
-        :invitations="[groupMember]"
-        @acceptInvitation="acceptInvitation"
-        @reject-invitation="rejectInvitation"
-      />
-      <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
-        {{ $t("You have been removed from this group's members.") }}
-      </b-message>
-      <b-message
-        v-if="
-          isCurrentActorAGroupMember &&
-          isCurrentActorARecentMember &&
-          isCurrentActorOnADifferentDomainThanGroup
-        "
-        type="is-info"
-      >
-        {{
-          $t(
-            "Since you are a new member, private content can take a few minutes to appear."
-          )
-        }}
-      </b-message>
       <header class="block-container presentation" v-if="group">
         <div class="banner-container">
           <lazy-image-wrapper :picture="group.banner" />
@@ -137,7 +114,7 @@
               <b-tooltip
                 v-if="
                   (!isCurrentActorAGroupMember || previewPublic) &&
-                  group.openness !== Openness.OPEN
+                  group.openness === Openness.INVITE_ONLY
                 "
                 :label="$t('This group is invite-only')"
                 position="is-bottom"
@@ -148,7 +125,9 @@
               >
               <b-button
                 v-else-if="
-                  (!isCurrentActorAGroupMember || previewPublic) &&
+                  ((!isCurrentActorAGroupMember &&
+                    !isCurrentActorAPendingGroupMember) ||
+                    previewPublic) &&
                   currentActor.id
                 "
                 @click="joinGroup"
@@ -156,6 +135,14 @@
                 type="is-primary"
                 :disabled="previewPublic"
                 >{{ $t("Join group") }}</b-button
+              >
+              <b-button
+                outlined
+                v-else-if="isCurrentActorAPendingGroupMember"
+                @click="leaveGroup"
+                @keyup.enter="leaveGroup"
+                type="is-primary"
+                >{{ $t("Cancel membership request") }}</b-button
               >
               <b-button
                 tag="router-link"
@@ -310,6 +297,49 @@
               </b-dropdown>
             </div>
           </div>
+          <invitations
+            v-if="isCurrentActorAnInvitedGroupMember"
+            :invitations="[groupMember]"
+          />
+          <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
+            {{ $t("You have been removed from this group's members.") }}
+          </b-message>
+          <b-message
+            v-if="
+              isCurrentActorAGroupMember &&
+              isCurrentActorARecentMember &&
+              isCurrentActorOnADifferentDomainThanGroup
+            "
+            type="is-info"
+          >
+            {{
+              $t(
+                "Since you are a new member, private content can take a few minutes to appear."
+              )
+            }}
+          </b-message>
+          <b-message
+            v-if="
+              !isCurrentActorAGroupMember &&
+              !isCurrentActorAPendingGroupMember &&
+              !isCurrentActorPendingFollow &&
+              !isCurrentActorFollowing
+            "
+            type="is-info"
+            has-icon
+            class="m-3"
+          >
+            <i18n
+              path="Following the group will allow you to be informed of the {group_upcoming_public_events}, whereas joining the group means you will {access_to_group_private_content_as_well}, including group discussions, group resources and members-only posts."
+            >
+              <b slot="group_upcoming_public_events">{{
+                $t("group's upcoming public events")
+              }}</b>
+              <b slot="access_to_group_private_content_as_well">{{
+                $t("access to the group's private content as well")
+              }}</b>
+            </i18n>
+          </b-message>
         </div>
       </header>
     </div>
@@ -891,31 +921,6 @@ export default class Group extends mixins(GroupMixin) {
         notify: !this.isCurrentActorFollowingNotify,
       },
     });
-  }
-
-  acceptInvitation(): void {
-    if (this.groupMember) {
-      const index = this.person.memberships.elements.findIndex(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        ({ id }: IMember) => id === this.groupMember.id
-      );
-      const member = this.groupMember;
-      member.role = MemberRole.MEMBER;
-      this.person.memberships.elements.splice(index, 1, member);
-      this.$apollo.queries.group.refetch();
-    }
-  }
-
-  rejectInvitation({ id: memberId }: { id: string }): void {
-    const index = this.person.memberships.elements.findIndex(
-      (membership) =>
-        membership.role === MemberRole.INVITED && membership.id === memberId
-    );
-    if (index > -1) {
-      this.person.memberships.elements.splice(index, 1);
-      this.person.memberships.total -= 1;
-    }
   }
 
   async reportGroup(content: string, forward: boolean): Promise<void> {

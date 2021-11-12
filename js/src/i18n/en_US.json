@@ -881,6 +881,7 @@
   "{member} was invited by {profile}.": "{member} was invited by {profile}.",
   "You added the member {member}.": "You added the member {member}.",
   "{profile} added the member {member}.": "{profile} added the member {member}.",
+  "{member} joined the group.": "{member} joined the group.",
   "{member} rejected the invitation to join the group.": "{member} rejected the invitation to join the group.",
   "{member} accepted the invitation to join the group.": "{member} accepted the invitation to join the group.",
   "You excluded member {member}.": "You excluded member {member}.",
@@ -1233,5 +1234,17 @@
   "Any type": "Any type",
   "In person": "In person",
   "In the past": "In the past",
-  "Only registered users may fetch remote events from their URL.": "Only registered users may fetch remote events from their URL."
+  "Only registered users may fetch remote events from their URL.": "Only registered users may fetch remote events from their URL.",
+  "Moderate new members": "Moderate new members",
+  "Anyone can request being a member, but an administrator needs to approve the membership.": "Anyone can request being a member, but an administrator needs to approve the membership.",
+  "Cancel membership request": "Cancel membership request",
+  "group's upcoming public events": "group's upcoming public events",
+  "access to the group's private content as well": "access to the group's private content as well",
+  "Following the group will allow you to be informed of the {group_upcoming_public_events}, whereas joining the group means you will {access_to_group_private_content_as_well}, including group discussions, group resources and members-only posts.": "Following the group will allow you to be informed of the {group_upcoming_public_events}, whereas joining the group means you will {access_to_group_private_content_as_well}, including group discussions, group resources and members-only posts.",
+  "The group can now be joined by anyone, but new members need to be approved by an administrator.": "The group can now be joined by anyone, but new members need to be approved by an administrator.",
+  "You approved {member}'s membership.": "You approved {member}'s membership.",
+  "Your membership was approved by {profile}.": "Your membership was approved by {profile}.",
+  "{profile} approved {member}'s membership.": "{profile} approved {member}'s membership.",
+  "You rejected {member}'s membership request.": "You rejected {member}'s membership request.",
+  "{profile} rejected {member}'s membership request.": "{profile} rejected {member}'s membership request."
 }

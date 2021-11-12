@@ -50,6 +50,14 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
     dgettext("activity", "%{profile} added the member %{member}.", args)
   end
 
+  defp text(:member_approved, args) do
+    dgettext("activity", "%{profile} approved the membership request from %{member}.", args)
+  end
+
+  defp text(:member_rejected, args) do
+    dgettext("activity", "%{profile} rejected the membership request from %{member}.", args)
+  end
+
   defp text(:member_updated, args) do
     dgettext("activity", "%{profile} updated the member %{member}.", args)
   end

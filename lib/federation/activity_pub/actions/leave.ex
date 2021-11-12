@@ -69,14 +69,20 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Leave do
   end
 
   def leave(
-        %Actor{type: :Group, id: group_id, url: group_url, members_url: group_members_url},
-        %Actor{id: actor_id, url: actor_url},
+        %Actor{
+          type: :Group,
+          domain: group_domain,
+          id: group_id,
+          url: group_url,
+          members_url: group_members_url
+        },
+        %Actor{id: actor_id, url: actor_url, domain: actor_domain},
         local,
         additional
       ) do
     case Actors.get_member(actor_id, group_id) do
       {:ok, %Member{id: member_id} = member} ->
-        if Map.get(additional, :force_member_removal, false) ||
+        if Map.get(additional, :force_member_removal, false) || group_domain != actor_domain ||
              !Actors.is_only_administrator?(member_id, group_id) do
           with {:ok, %Member{} = member} <- Actors.delete_member(member) do
             Mobilizon.Service.Activity.Member.insert_activity(member, subject: "member_quit")

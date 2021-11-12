@@ -37,9 +37,10 @@ export const ACCEPT_INVITATION = gql`
 export const REJECT_INVITATION = gql`
   mutation RejectInvitation($id: ID!) {
     rejectInvitation(id: $id) {
-      id
+      ...MemberFragment
     }
   }
+  ${MEMBER_FRAGMENT}
 `;
 
 export const GROUP_MEMBERS = gql`
@@ -72,11 +73,20 @@ export const UPDATE_MEMBER = gql`
 `;
 
 export const REMOVE_MEMBER = gql`
-  mutation RemoveMember($groupId: ID!, $memberId: ID!) {
-    removeMember(groupId: $groupId, memberId: $memberId) {
+  mutation RemoveMember($memberId: ID!, $exclude: Boolean) {
+    removeMember(memberId: $memberId, exclude: $exclude) {
       id
     }
   }
+`;
+
+export const APPROVE_MEMBER = gql`
+  mutation ApproveMember($memberId: ID!) {
+    approveMember(memberId: $memberId) {
+      ...MemberFragment
+    }
+  }
+  ${MEMBER_FRAGMENT}
 `;
 
 export const JOIN_GROUP = gql`

@@ -203,7 +203,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       {:ok, activity, _member} = Actions.Remove.remove(member, group, moderator, true)
       assert activity.data["type"] == "Remove"
       assert activity.data["actor"] == moderator.url
-      assert activity.data["to"] == [group.members_url]
+      assert activity.data["to"] == [member.actor.url, group.members_url]
       assert activity.data["object"] == member.url
     end
   end

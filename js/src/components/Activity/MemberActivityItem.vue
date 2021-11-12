@@ -9,13 +9,7 @@
           :inline="true"
           slot="member"
         >
-          <b>
-            {{
-              $t("@{username}", {
-                username: usernameWithDomain(activity.object.actor),
-              })
-            }}</b
-          ></popover-actor-card
+          <b> {{ displayName(activity.object.actor) }}</b></popover-actor-card
         >
         <b slot="member" v-else>{{
           subjectParams.member_actor_federated_username
@@ -25,13 +19,7 @@
           :inline="true"
           slot="profile"
         >
-          <b>
-            {{
-              $t("@{username}", {
-                username: usernameWithDomain(activity.author),
-              })
-            }}</b
-          ></popover-actor-card
+          <b> {{ displayName(activity.author) }}</b></popover-actor-card
         ></i18n
       >
       <small class="has-text-grey-dark activity-date">{{
@@ -41,7 +29,7 @@
   </div>
 </template>
 <script lang="ts">
-import { usernameWithDomain } from "@/types/actor";
+import { displayName } from "@/types/actor";
 import { ActivityMemberSubject, MemberRole } from "@/types/enums";
 import { Component } from "vue-property-decorator";
 import RouteName from "../../router/name";
@@ -62,7 +50,7 @@ export const MEMBER_ROLE_VALUE: Record<string, number> = {
   },
 })
 export default class MemberActivityItem extends mixins(ActivityMixin) {
-  usernameWithDomain = usernameWithDomain;
+  displayName = displayName;
   RouteName = RouteName;
   ActivityMemberSubject = ActivityMemberSubject;
 
@@ -83,6 +71,14 @@ export default class MemberActivityItem extends mixins(ActivityMixin) {
           return "You added the member {member}.";
         }
         return "{profile} added the member {member}.";
+      case ActivityMemberSubject.MEMBER_APPROVED:
+        if (this.isAuthorCurrentActor) {
+          return "You approved {member}'s membership.";
+        }
+        if (this.isObjectMemberCurrentActor) {
+          return "Your membership was approved by {profile}.";
+        }
+        return "{profile} approved {member}'s membership.";
       case ActivityMemberSubject.MEMBER_JOINED:
         return "{member} joined the group.";
       case ActivityMemberSubject.MEMBER_UPDATED:
@@ -94,6 +90,12 @@ export default class MemberActivityItem extends mixins(ActivityMixin) {
         }
         return "{profile} updated the member {member}.";
       case ActivityMemberSubject.MEMBER_REMOVED:
+        if (this.subjectParams.member_role === MemberRole.NOT_APPROVED) {
+          if (this.isAuthorCurrentActor) {
+            return "You rejected {member}'s membership request.";
+          }
+          return "{profile} rejected {member}'s membership request.";
+        }
         if (this.isAuthorCurrentActor) {
           return "You excluded member {member}.";
         }
