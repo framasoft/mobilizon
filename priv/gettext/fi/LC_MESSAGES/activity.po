@@ -97,7 +97,7 @@ msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} poisti resurssin %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:58
+#: lib/service/activity/renderer/member.ex:66
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:56 lib/web/templates/email/activity/_member_activity_item.text.eex:39
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} hylkäsi jäsenen %{member}."
@@ -115,7 +115,7 @@ msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} siirsi resurssin %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:62
+#: lib/service/activity/renderer/member.ex:70
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:64 lib/web/templates/email/activity/_member_activity_item.text.eex:45
 msgid "%{profile} quit the group."
 msgstr "%{profile} poistui ryhmästä."
@@ -151,7 +151,7 @@ msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} päivitti ryhmää %{group}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:54
+#: lib/service/activity/renderer/member.ex:62
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:48 lib/web/templates/email/activity/_member_activity_item.text.eex:33
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} päivitti jäsentä %{member}."
@@ -327,3 +327,13 @@ msgstr "Viestin %{post} ryhmästä %{group} julkaisi %{profile}."
 #: lib/service/activity/renderer/post.ex:39
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr "Viestin %{post} ryhmästä %{group} päivitti %{profile}."
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:54
+msgid "%{profile} approved the membership request from %{member}."
+msgstr "%{profile} päivitti jäsentä %{member}."
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:58
+msgid "%{profile} rejected the membership request from %{member}."
+msgstr ""

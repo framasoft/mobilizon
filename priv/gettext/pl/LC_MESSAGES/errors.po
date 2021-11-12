@@ -534,7 +534,8 @@ msgid "You are not a member of this group"
 msgstr "Nie jesteś członkiem tej grupy"
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:155
+#: lib/graphql/resolvers/member.ex:155 lib/graphql/resolvers/member.ex:171
+#: lib/graphql/resolvers/member.ex:186
 msgid "You are not a moderator or admin for this group"
 msgstr "Nie jesteś moderatorem ani administratorem tej grupy"
 
@@ -570,7 +571,7 @@ msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:159
+#: lib/graphql/resolvers/member.ex:190
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "Nie możesz przydzielić sobie niższej rangi grupy, ponieważ jesteś jedynym "
@@ -815,12 +816,12 @@ msgid "This invitation doesn't exist."
 msgstr "To zaproszenie nie istnieje."
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:185
+#: lib/graphql/resolvers/member.ex:215
 msgid "This member already has been rejected."
 msgstr "Ten członek już został odrzucony."
 
 #, elixir-format
-#: lib/graphql/resolvers/member.ex:192
+#: lib/graphql/resolvers/member.ex:239
 msgid "You don't have the right to remove this member."
 msgstr "Nie masz uprawnień do usunięcia tego członka."
 
@@ -1030,3 +1031,18 @@ msgstr "Musisz być zalogowany(-a), aby dołączyć do grupy"
 #: lib/graphql/resolvers/group.ex:373
 msgid "You need to be logged-in to update a group follow"
 msgstr "Musisz być zalogowany(-a), aby zaktualizować grupę"
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:208
+msgid "This member does not exist"
+msgstr ""
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:232
+msgid "You don't have the role needed to remove this member."
+msgstr "Nie masz uprawnień do usunięcia tego członka."
+
+#, elixir-format
+#: lib/graphql/resolvers/member.ex:250
+msgid "You must be logged-in to remove a member"
+msgstr ""

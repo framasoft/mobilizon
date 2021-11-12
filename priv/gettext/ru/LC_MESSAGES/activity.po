@@ -98,7 +98,7 @@ msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} удалил ресурс %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:58
+#: lib/service/activity/renderer/member.ex:66
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:56 lib/web/templates/email/activity/_member_activity_item.text.eex:39
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} исключил участника %{member}."
@@ -116,7 +116,7 @@ msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} переместил ресурс %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:62
+#: lib/service/activity/renderer/member.ex:70
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:64 lib/web/templates/email/activity/_member_activity_item.text.eex:45
 msgid "%{profile} quit the group."
 msgstr "%{profile} вышел из группы."
@@ -152,7 +152,7 @@ msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} обновил группу %{group}."
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:54
+#: lib/service/activity/renderer/member.ex:62
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:48 lib/web/templates/email/activity/_member_activity_item.text.eex:33
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} обновил участника %{member}."
@@ -330,3 +330,13 @@ msgstr "Сообщение %{post} из группы %{group} было опуб�
 #: lib/service/activity/renderer/post.ex:39
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr "Сообщение %{post} из группы %{group} было обновлено %{profile}."
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:54
+msgid "%{profile} approved the membership request from %{member}."
+msgstr "%{profile} обновил участника %{member}."
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:58
+msgid "%{profile} rejected the membership request from %{member}."
+msgstr ""

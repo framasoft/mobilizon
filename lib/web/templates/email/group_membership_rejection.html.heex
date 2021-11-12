@@ -35,7 +35,7 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("Your membership request to join group %{link_start}<b>%{group}</b>%{link_end} has been rejected.", group: Mobilizon.Actors.Actor.display_name(@group), link_start: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(@group))}\">", link_end: "</a>") |> raw %>
+            <%= gettext("Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected.", group: Mobilizon.Actors.Actor.display_name(@group), link_start: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(@group))}\">", link_end: "</a>") |> raw %>
           </p>
         </td>
       </tr>
