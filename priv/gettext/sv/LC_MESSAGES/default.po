@@ -1055,7 +1055,7 @@ msgid "So long, and thanks for the fish!"
 msgstr ""
 
 #, elixir-format
-#: lib/web/email/member.ex:61
+#: lib/web/email/member.ex:113
 msgid "You have been removed from group %{group}"
 msgstr ""
 
@@ -1643,7 +1643,7 @@ msgstr ""
 msgid "New end date:"
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:10
 msgid "New location:"
 msgstr ""
@@ -1651,4 +1651,51 @@ msgstr ""
 #, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:8
 msgid "New start date:"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_membership_rejection.html.heex:13
+#: lib/web/templates/email/group_membership_rejection.text.eex:1
+msgid "Sorry, not this time!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_membership_approval.html.heex:52
+msgid "View the group"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_membership_approval.html.heex:13
+#: lib/web/templates/email/group_membership_approval.text.eex:1
+msgid "You're in!"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/member.ex:60
+msgid "Your membership request for group %{group} has been approved"
+msgstr ""
+
+#, elixir-format
+#: lib/web/email/member.ex:89
+msgid "Your membership request for group %{group} has been rejected"
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_membership_rejection.text.eex:3
+msgid "Your membership request for group %{group} has been rejected."
+msgstr ""
+
+#, elixir-format
+#: lib/web/templates/email/group_membership_rejection.html.heex:38
+msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/group_membership_approval.text.eex:3
+msgid "Your membership request for group %{group} has been approved."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/group_membership_approval.html.heex:38
+msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""

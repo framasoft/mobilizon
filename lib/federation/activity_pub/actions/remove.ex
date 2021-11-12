@@ -21,23 +21,25 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Remove do
   @spec remove(Member.t(), Actor.t(), Actor.t(), boolean, map) ::
           {:ok, Activity.t(), Member.t()} | {:error, :member_not_found | Ecto.Changeset.t()}
   def remove(
-        %Member{} = member,
+        %Member{id: member_id},
         %Actor{type: :Group, url: group_url, members_url: group_members_url},
         %Actor{url: moderator_url} = moderator,
         local,
         _additional \\ %{}
       ) do
-    with {:ok, %Member{id: member_id}} <- Actors.update_member(member, %{role: :rejected}),
-         %Member{} = member <- Actors.get_member(member_id) do
+    with %Member{actor: %Actor{url: actor_url}} = member <- Actors.get_member(member_id),
+         {:ok, %Member{}} <- Actors.delete_member(member) do
       Mobilizon.Service.Activity.Member.insert_activity(member,
         moderator: moderator,
         subject: "member_removed"
       )
 
+      Cachex.del(:activity_pub, "member_#{member_id}")
+
       EmailMember.send_notification_to_removed_member(member)
 
       remove_data = %{
-        "to" => [group_members_url],
+        "to" => [actor_url, group_members_url],
         "type" => "Remove",
         "actor" => moderator_url,
         "object" => member.url,

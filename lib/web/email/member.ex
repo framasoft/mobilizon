@@ -47,12 +47,64 @@ defmodule Mobilizon.Web.Email.Member do
   end
 
   # Only send notification to local members
+  def send_notification_to_approved_member(%Member{actor: %Actor{user_id: nil}}), do: :ok
+
+  def send_notification_to_approved_member(%Member{
+        actor: %Actor{user_id: user_id},
+        parent: %Actor{} = group
+      }) do
+    with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
+      Gettext.put_locale(locale)
+
+      subject =
+        gettext(
+          "Your membership request for group %{group} has been approved",
+          group: Actor.display_name(group)
+        )
+
+      Email.base_email(to: email, subject: subject)
+      |> assign(:locale, locale)
+      |> assign(:group, group)
+      |> assign(:subject, subject)
+      |> render(:group_membership_approval)
+      |> Email.Mailer.send_email_later()
+
+      :ok
+    end
+  end
+
+  # Only send notification to local members
   def send_notification_to_removed_member(%Member{actor: %Actor{user_id: nil}}), do: :ok
 
+  # Member rejection
   def send_notification_to_removed_member(%Member{
         actor: %Actor{user_id: user_id},
         parent: %Actor{} = group,
-        role: :rejected
+        role: :not_approved
+      }) do
+    with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
+      Gettext.put_locale(locale)
+
+      subject =
+        gettext(
+          "Your membership request for group %{group} has been rejected",
+          group: Actor.display_name(group)
+        )
+
+      Email.base_email(to: email, subject: subject)
+      |> assign(:locale, locale)
+      |> assign(:group, group)
+      |> assign(:subject, subject)
+      |> render(:group_membership_rejection)
+      |> Email.Mailer.send_email_later()
+
+      :ok
+    end
+  end
+
+  def send_notification_to_removed_member(%Member{
+        actor: %Actor{user_id: user_id},
+        parent: %Actor{} = group
       }) do
     with %User{email: email, locale: locale} <- Users.get_user!(user_id) do
       Gettext.put_locale(locale)
@@ -60,7 +112,7 @@ defmodule Mobilizon.Web.Email.Member do
       subject =
         gettext(
           "You have been removed from group %{group}",
-          group: group.name
+          group: Actor.display_name(group)
         )
 
       Email.base_email(to: email, subject: subject)

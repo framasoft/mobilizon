@@ -247,7 +247,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
           :direct
 
         :one_day ->
-          calculate_next_day_notification(Date.utc_today(), timezone)
+          calculate_next_day_notification(Date.utc_today(), timezone: timezone)
 
         :one_hour ->
           DateTime.utc_now()

@@ -132,6 +132,19 @@
           <b-radio
             v-model="editableGroup.openness"
             name="groupOpenness"
+            :native-value="Openness.MODERATED"
+            >{{ $t("Moderate new members") }}<br />
+            <small>{{
+              $t(
+                "Anyone can request being a member, but an administrator needs to approve the membership."
+              )
+            }}</small>
+          </b-radio>
+        </div>
+        <div class="field">
+          <b-radio
+            v-model="editableGroup.openness"
+            name="groupOpenness"
             :native-value="Openness.INVITE_ONLY"
             >{{ $t("Manually invite new members") }}<br />
             <small>{{

@@ -740,14 +740,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     Logger.info("Handle incoming to remove a member from a group")
 
-    with {:ok, %Actor{id: moderator_id} = moderator} <-
+    with {:ok, %Actor{} = moderator} <-
            data |> Utils.get_actor() |> ActivityPubActor.get_or_fetch_actor_by_url(),
          {:ok, person_id} <- get_remove_object(object),
          {:ok, %Actor{type: :Group, id: group_id} = group} <-
            origin |> Utils.get_url() |> ActivityPubActor.get_or_fetch_actor_by_url(),
-         {:is_admin, {:ok, %Member{role: role}}}
-         when role in [:moderator, :administrator, :creator] <-
-           {:is_admin, Actors.get_member(moderator_id, group_id)},
+         {:is_admin, true} <-
+           {:is_admin, can_remove_actor_from_group?(moderator, group)},
          {:is_member, {:ok, %Member{role: role} = member}} when role != :rejected <-
            {:is_member, Actors.get_member(person_id, group_id)} do
       Actions.Remove.remove(member, group, moderator, false)
@@ -866,6 +865,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:error, _err} ->
         case get_member(join_object) do
+          {:ok, %Member{role: :not_approved} = member} ->
+            do_handle_incoming_accept_join_group(member, :member, %{moderator: actor_accepting})
+
           {:ok, %Member{invited_by: nil} = member} ->
             do_handle_incoming_accept_join_group(member, :join)
 
@@ -922,15 +924,17 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   defp do_handle_incoming_accept_join_group(
          %Member{role: role, parent: _group} = member,
-         type
+         type,
+         additional \\ %{}
        )
-       when role in [:not_approved, :rejected, :invited] and type in [:join, :invite] do
+       when role in [:not_approved, :rejected, :invited] and type in [:join, :invite, :member] do
     # Or maybe for groups it's the group that sends the Accept activity
     with {:ok, %Activity{} = activity, %Member{role: :member} = member} <-
            Actions.Accept.accept(
              type,
              member,
-             false
+             false,
+             additional
            ) do
       {:ok, activity, member}
     end
@@ -1192,6 +1196,19 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     else
       Logger.debug("Chosing to initialize or add a comment to a conversation")
       Actions.Create.create(:discussion, object_data, false)
+    end
+  end
+
+  @spec can_remove_actor_from_group?(Actor.t(), Actor.t()) :: boolean()
+  defp can_remove_actor_from_group?(%Actor{} = moderator, %Actor{} = group) do
+    case Actors.get_member(moderator.id, group.id) do
+      {:ok, %Member{role: role}} when role in [:moderator, :administrator, :creator] ->
+        true
+
+      _ ->
+        # If member moderator not found, it's probably because no one on this instance is member of this group yet
+        # Therefore we can't access the list of admin/moderators and we just trust the origin domain
+        moderator.domain == group.domain
     end
   end
 end

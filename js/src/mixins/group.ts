@@ -99,6 +99,10 @@ export default class GroupMixin extends Vue {
     ]);
   }
 
+  get isCurrentActorAPendingGroupMember(): boolean {
+    return this.hasCurrentActorThisRole([MemberRole.NOT_APPROVED]);
+  }
+
   hasCurrentActorThisRole(givenRole: string | string[]): boolean {
     const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
     return (

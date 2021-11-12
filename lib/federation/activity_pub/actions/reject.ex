@@ -28,6 +28,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Reject do
         :join -> reject_join(entity, additional)
         :follow -> reject_follow(entity, additional)
         :invite -> reject_invite(entity, additional)
+        :member -> reject_member(entity, additional)
       end
 
     {:ok, activity} = create_activity(update_data, local)
@@ -114,6 +115,30 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Reject do
            "cc" => [member.parent.url],
            "object" => member_url,
            "id" => "#{Endpoint.url()}/reject/invite/member/#{member_id}"
+         } do
+      {:ok, member, accept_data}
+    end
+  end
+
+  @spec reject_member(Member.t(), map()) :: {:ok, Member.t(), Activity.t()} | any
+  defp reject_member(
+         %Member{actor_id: actor_id} = member,
+         %{moderator: %Actor{url: actor_url}}
+       ) do
+    with %Actor{} <- Actors.get_actor(actor_id),
+         {:ok, %Member{url: member_url, id: member_id} = member} <-
+           Actors.delete_member(member),
+         Mobilizon.Service.Activity.Member.insert_activity(member,
+           subject: "member_rejected"
+         ),
+         accept_data <- %{
+           "type" => "Reject",
+           "actor" => actor_url,
+           "attributedTo" => member.parent.url,
+           "to" => [member.parent.members_url],
+           "cc" => [member.parent.url],
+           "object" => member_url,
+           "id" => "#{Endpoint.url()}/reject/member/#{member_id}"
          } do
       {:ok, member, accept_data}
     end

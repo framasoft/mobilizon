@@ -524,6 +524,93 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
   end
 
   describe "Member resolver to remove a member from a group" do
-    # TODO write tests for me plz
+    @remove_member_mutation """
+      mutation RemoveMember($memberId: ID!) {
+        removeMember(memberId: $memberId) {
+          id
+        }
+      }
+    """
+
+    setup %{conn: conn, actor: actor, user: user} do
+      group = insert(:group)
+      target_actor = insert(:actor, user: user)
+
+      {:ok, conn: conn, actor: actor, user: user, group: group, target_actor: target_actor}
+    end
+
+    test "remove_member/3 fails when not connected", %{
+      conn: conn,
+      group: group,
+      target_actor: target_actor
+    } do
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @remove_member_mutation,
+          variables: %{
+            memberId: member_id
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You must be logged-in to remove a member"
+    end
+
+    test "remove_member/3 fails when not a member of the group", %{
+      conn: conn,
+      group: group,
+      target_actor: target_actor
+    } do
+      user = insert(:user)
+      actor = insert(:actor, user: user)
+      Mobilizon.Users.update_user_default_actor(user, actor)
+
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @remove_member_mutation,
+          variables: %{
+            memberId: member_id
+          }
+        )
+
+      assert hd(res["errors"])["message"] == "You don't have the right to remove this member."
+    end
+
+    test "remove_member/3 removes a member", %{
+      conn: conn,
+      user: user,
+      actor: actor,
+      group: group,
+      target_actor: target_actor
+    } do
+      Mobilizon.Users.update_user_default_actor(user, actor)
+      insert(:member, actor: actor, parent: group, role: :administrator)
+
+      %Member{id: member_id} =
+        insert(:member, %{actor: target_actor, parent: group, role: :member})
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @remove_member_mutation,
+          variables: %{
+            memberId: member_id
+          }
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["removeMember"]["id"] == member_id
+
+      assert Mobilizon.Actors.get_member(member_id) == nil
+    end
   end
 end

@@ -141,6 +141,37 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
     end
   end
 
+  def approve_member(_parent, %{member_id: member_id}, %{
+        context: %{current_actor: %Actor{} = moderator}
+      }) do
+    case Actors.get_member(member_id) do
+      %Member{} = member ->
+        with {:ok, _activity, %Member{} = member} <-
+               Actions.Accept.accept(:member, member, true, %{moderator: moderator}) do
+          {:ok, member}
+        end
+
+      {:error, :member_not_found} ->
+        {:error, dgettext("errors", "You are not a moderator or admin for this group")}
+    end
+  end
+
+  # TODO : Maybe remove me ? Remove member with exclude parameter does the same
+  def reject_member(_parent, %{member_id: member_id}, %{
+        context: %{current_actor: %Actor{} = moderator}
+      }) do
+    case Actors.get_member(member_id) do
+      %Member{} = member ->
+        with {:ok, _activity, %Member{} = member} <-
+               Actions.Reject.reject(:member, member, true, %{moderator: moderator}) do
+          {:ok, member}
+        end
+
+      {:error, :member_not_found} ->
+        {:error, dgettext("errors", "You are not a moderator or admin for this group")}
+    end
+  end
+
   @spec update_member(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Member.t()} | {:error, String.t()}
   def update_member(_parent, %{member_id: member_id, role: role}, %{
@@ -168,18 +199,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
 
   @spec remove_member(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Member.t()} | {:error, String.t()}
-  def remove_member(_parent, %{member_id: member_id, group_id: group_id}, %{
+  def remove_member(_parent, %{member_id: member_id, exclude: _exclude}, %{
         context: %{current_actor: %Actor{id: moderator_id} = moderator}
       }) do
-    with %Member{role: role} = member when role != :rejected <- Actors.get_member(member_id),
-         %Actor{type: :Group} = group <- Actors.get_actor(group_id),
-         {:has_rights_to_remove, {:ok, %Member{role: role}}}
-         when role in [:moderator, :administrator, :creator] <-
-           {:has_rights_to_remove, Actors.get_member(moderator_id, group_id)},
-         {:ok, _activity, %Member{}} <-
-           Actions.Remove.remove(member, group, moderator, true) do
-      {:ok, member}
-    else
+    case Actors.get_member(member_id) do
+      nil ->
+        {:error,
+         dgettext(
+           "errors",
+           "This member does not exist"
+         )}
+
       %Member{role: :rejected} ->
         {:error,
          dgettext(
@@ -187,14 +217,40 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
            "This member already has been rejected."
          )}
 
-      {:has_rights_to_remove, _} ->
-        {:error,
-         dgettext(
-           "errors",
-           "You don't have the right to remove this member."
-         )}
+      %Member{parent_id: group_id} = member ->
+        case Actors.get_member(moderator_id, group_id) do
+          {:ok, %Member{role: role}} when role in [:moderator, :administrator, :creator] ->
+            %Actor{type: :Group} = group = Actors.get_actor(group_id)
+
+            with {:ok, _activity, %Member{}} <-
+                   Actions.Remove.remove(member, group, moderator, true) do
+              {:ok, member}
+            end
+
+          {:ok, %Member{}} ->
+            {:error,
+             dgettext(
+               "errors",
+               "You don't have the role needed to remove this member."
+             )}
+
+          {:error, :member_not_found} ->
+            {:error,
+             dgettext(
+               "errors",
+               "You don't have the right to remove this member."
+             )}
+        end
     end
   end
+
+  def remove_member(_parent, _args, _resolution),
+    do:
+      {:error,
+       dgettext(
+         "errors",
+         "You must be logged-in to remove a member"
+       )}
 
   # Rejected members can be invited again
   @spec check_member_not_existant_or_rejected(String.t() | integer, String.t() | integer()) ::

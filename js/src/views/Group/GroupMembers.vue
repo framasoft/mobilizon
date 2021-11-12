@@ -196,6 +196,20 @@
         <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
           <div class="buttons" v-if="props.row.actor.id !== currentActor.id">
             <b-button
+              type="is-success"
+              v-if="props.row.role === MemberRole.NOT_APPROVED"
+              @click="approveMember(props.row)"
+              icon-left="check"
+              >{{ $t("Approve member") }}</b-button
+            >
+            <b-button
+              type="is-danger"
+              v-if="props.row.role === MemberRole.NOT_APPROVED"
+              @click="rejectMember(props.row)"
+              icon-left="exit-to-app"
+              >{{ $t("Reject member") }}</b-button
+            >
+            <b-button
               v-if="
                 [MemberRole.MEMBER, MemberRole.MODERATOR].includes(
                   props.row.role
@@ -217,7 +231,7 @@
             >
             <b-button
               v-if="props.row.role === MemberRole.MEMBER"
-              @click="removeMember(props.row.id)"
+              @click="removeMember(props.row)"
               type="is-danger"
               icon-left="exit-to-app"
               >{{ $t("Remove") }}</b-button
@@ -250,8 +264,9 @@ import {
   GROUP_MEMBERS,
   REMOVE_MEMBER,
   UPDATE_MEMBER,
+  APPROVE_MEMBER,
 } from "../../graphql/member";
-import { usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain, displayName } from "../../types/actor";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 @Component({
@@ -332,7 +347,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
       this.$notifier.success(
         this.$t("{username} was invited to {group}", {
           username: this.newMemberUsername,
-          group: this.group.name || usernameWithDomain(this.group),
+          group: displayName(this.group),
         }) as string
       );
       this.newMemberUsername = "";
@@ -375,7 +390,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
     });
   }
 
-  async removeMember(memberId: string): Promise<void> {
+  async removeMember(oldMember: IMember): Promise<void> {
     const { roles, MEMBERS_PER_PAGE, group, page } = this;
     const variables = {
       name: usernameWithDomain(group),
@@ -388,7 +403,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
         mutation: REMOVE_MEMBER,
         variables: {
           groupId: this.group.id,
-          memberId,
+          memberId: oldMember.id,
         },
         refetchQueries: [
           {
@@ -397,12 +412,18 @@ export default class GroupMembers extends mixins(GroupMixin) {
           },
         ],
       });
-      this.$notifier.success(
-        this.$t("The member was removed from the group {group}", {
-          username: this.newMemberUsername,
-          group: this.group.name || usernameWithDomain(this.group),
-        }) as string
-      );
+      let message = this.$t("The member was removed from the group {group}", {
+        group: displayName(this.group),
+      }) as string;
+      if (oldMember.role === MemberRole.NOT_APPROVED) {
+        message = this.$t(
+          "The membership request from {profile} was rejected",
+          {
+            group: displayName(oldMember.actor),
+          }
+        ) as string;
+      }
+      this.$notifier.success(message);
     } catch (error: any) {
       console.error(error);
       if (error.graphQLErrors && error.graphQLErrors.length > 0) {
@@ -414,29 +435,49 @@ export default class GroupMembers extends mixins(GroupMixin) {
   promoteMember(member: IMember): void {
     if (!member.id) return;
     if (member.role === MemberRole.MODERATOR) {
-      this.updateMember(member.id, MemberRole.ADMINISTRATOR);
+      this.updateMember(member, MemberRole.ADMINISTRATOR);
     }
     if (member.role === MemberRole.MEMBER) {
-      this.updateMember(member.id, MemberRole.MODERATOR);
+      this.updateMember(member, MemberRole.MODERATOR);
     }
   }
 
   demoteMember(member: IMember): void {
     if (!member.id) return;
     if (member.role === MemberRole.MODERATOR) {
-      this.updateMember(member.id, MemberRole.MEMBER);
+      this.updateMember(member, MemberRole.MEMBER);
     }
     if (member.role === MemberRole.ADMINISTRATOR) {
-      this.updateMember(member.id, MemberRole.MODERATOR);
+      this.updateMember(member, MemberRole.MODERATOR);
     }
   }
 
-  async updateMember(memberId: string, role: MemberRole): Promise<void> {
+  async approveMember(member: IMember): Promise<void> {
+    try {
+      await this.$apollo.mutate<{ approveMember: IMember }>({
+        mutation: APPROVE_MEMBER,
+        variables: { memberId: member.id },
+      });
+      this.$notifier.success(this.$t("The member was approved") as string);
+    } catch (error: any) {
+      console.error(error);
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
+  }
+
+  rejectMember(member: IMember): void {
+    if (!member.id) return;
+    this.removeMember(member);
+  }
+
+  async updateMember(oldMember: IMember, role: MemberRole): Promise<void> {
     try {
       await this.$apollo.mutate<{ updateMember: IMember }>({
         mutation: UPDATE_MEMBER,
         variables: {
-          memberId,
+          memberId: oldMember.id,
           role,
         },
         refetchQueries: [
@@ -455,8 +496,14 @@ export default class GroupMembers extends mixins(GroupMixin) {
           successMessage = "The member role was updated to administrator";
           break;
         case MemberRole.MEMBER:
+          if (oldMember.role === MemberRole.NOT_APPROVED) {
+            successMessage = "The member was approved";
+          } else {
+            successMessage = "The member role was updated to simple member";
+          }
+          break;
         default:
-          successMessage = "The member role was updated to simple member";
+          successMessage = "The member role was updated";
       }
       this.$notifier.success(this.$t(successMessage) as string);
     } catch (error: any) {

@@ -1,0 +1,5 @@
+<%= gettext "Sorry, not this time!" %>
+==
+<%= gettext "Your membership request for group %{group} has been rejected.", group: Mobilizon.Actors.Actor.display_name(@group) %>
+
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(@group)) %>
