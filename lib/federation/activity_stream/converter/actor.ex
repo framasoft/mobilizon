@@ -54,13 +54,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       outbox_url: data["outbox"],
       following_url: data["following"],
       followers_url: data["followers"],
-      members_url: data["members"],
-      resources_url: data["resources"],
-      todos_url: data["todos"],
-      events_url: data["events"],
-      posts_url: data["posts"],
-      discussions_url: data["discussions"],
-      shared_inbox_url: data["endpoints"]["sharedInbox"],
       domain: URI.parse(data["id"]).host,
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"],
@@ -68,9 +61,25 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       openness: data["openness"],
       physical_address_id: if(address, do: address.id, else: nil)
     }
+    |> add_endpoints_to_model(data)
   end
 
   def as_to_model_data(_), do: {:error, :actor_not_allowed_type}
+
+  defp add_endpoints_to_model(actor, data) do
+    # TODO: Remove fallbacks in 3.0
+    endpoints = %{
+      members_url: get_in(data, ["endpoints", "members"]) || data["members"],
+      resources_url: get_in(data, ["endpoints", "resources"]) || data["resources"],
+      todos_url: get_in(data, ["endpoints", "todos"]) || data["todos"],
+      events_url: get_in(data, ["endpoints", "events"]) || data["events"],
+      posts_url: get_in(data, ["endpoints", "posts"]) || data["posts"],
+      discussions_url: get_in(data, ["endpoints", "discussions"]) || data["discussions"],
+      shared_inbox_url: data["endpoints"]["sharedInbox"]
+    }
+
+    Map.merge(actor, endpoints)
+  end
 
   @doc """
   Convert an actor struct to an ActivityStream representation.
@@ -86,12 +95,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       "summary" => actor.summary || "",
       "following" => actor.following_url,
       "followers" => actor.followers_url,
-      "members" => actor.members_url,
-      "resources" => actor.resources_url,
-      "todos" => actor.todos_url,
-      "posts" => actor.posts_url,
-      "events" => actor.events_url,
-      "discussions" => actor.discussions_url,
       "inbox" => actor.inbox_url,
       "outbox" => actor.outbox_url,
       "url" => actor.url,
@@ -113,10 +116,28 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     }
 
     actor_data
+    |> add_endpoints(actor)
     |> maybe_add_members(actor)
     |> maybe_add_avatar_picture(actor)
     |> maybe_add_banner_picture(actor)
     |> maybe_add_physical_address(actor)
+  end
+
+  defp add_endpoints(%{"endpoints" => endpoints} = actor_data, %ActorModel{} = actor) do
+    new_endpoints = %{
+      "members" => actor.members_url,
+      "resources" => actor.resources_url,
+      "todos" => actor.todos_url,
+      "posts" => actor.posts_url,
+      "events" => actor.events_url,
+      "discussions" => actor.discussions_url
+    }
+
+    endpoints = Map.merge(endpoints, new_endpoints)
+
+    actor_data
+    |> Map.merge(new_endpoints)
+    |> Map.put("endpoints", endpoints)
   end
 
   @spec download_picture(String.t() | nil, String.t(), String.t()) :: map() | nil

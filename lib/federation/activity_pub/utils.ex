@@ -118,6 +118,34 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "timezone" => %{
             "@id" => "mz:timezone",
             "@type" => "sc:Text"
+          },
+          "discussions" => %{
+            "@id" => "mz:discussions",
+            "@type" => "@id"
+          },
+          "events" => %{
+            "@id" => "mz:events",
+            "@type" => "@id"
+          },
+          "members" => %{
+            "@id" => "mz:members",
+            "@type" => "@id"
+          },
+          "openness" => %{
+            "@id" => "mz:openness",
+            "@type" => "@id"
+          },
+          "posts" => %{
+            "@id" => "mz:posts",
+            "@type" => "@id"
+          },
+          "resources" => %{
+            "@id" => "mz:resources",
+            "@type" => "@id"
+          },
+          "todos" => %{
+            "@id" => "mz:todos",
+            "@type" => "@id"
           }
         }
       ]
