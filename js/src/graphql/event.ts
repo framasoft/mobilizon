@@ -206,6 +206,7 @@ export const CREATE_EVENT = gql`
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]
+    $metadata: EventMetadataInput
   ) {
     createEvent(
       organizerActorId: $organizerActorId
@@ -226,6 +227,7 @@ export const CREATE_EVENT = gql`
       physicalAddress: $physicalAddress
       options: $options
       contacts: $contacts
+      metadata: $metadata
     ) {
       ...FullEvent
     }
