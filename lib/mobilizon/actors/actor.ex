@@ -93,7 +93,8 @@ defmodule Mobilizon.Actors.Actor do
     :manually_approves_followers,
     :user_id,
     :visibility,
-    :openness
+    :openness,
+    :physical_address_id
   ]
   @update_attrs @update_required_attrs ++ @update_optional_attrs
 
