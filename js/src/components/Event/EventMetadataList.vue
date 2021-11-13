@@ -62,7 +62,11 @@
         </b-button>
       </p>
     </b-field>
-    <b-modal has-modal-card v-model="showNewElementModal">
+    <b-modal
+      has-modal-card
+      v-model="showNewElementModal"
+      :close-button-aria-label="$t('Close')"
+    >
       <div class="modal-card">
         <header class="modal-card-head">
           <button

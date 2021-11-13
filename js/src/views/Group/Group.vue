@@ -647,6 +647,7 @@
       <b-modal
         v-if="physicalAddress && physicalAddress.geom"
         :active.sync="showMap"
+        :close-button-aria-label="$t('Close')"
       >
         <div class="map">
           <map-leaflet
@@ -660,6 +661,7 @@
       </b-modal>
     </div>
     <b-modal
+      :close-button-aria-label="$t('Close')"
       :active.sync="isReportModalActive"
       has-modal-card
       ref="reportModal"
@@ -673,6 +675,7 @@
       />
     </b-modal>
     <b-modal
+      :close-button-aria-label="$t('Close')"
       v-if="group"
       :active.sync="isShareModalActive"
       has-modal-card

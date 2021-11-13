@@ -65,6 +65,7 @@
     <b-modal
       :active.sync="isAnonymousParticipationModalOpen"
       has-modal-card
+      :close-button-aria-label="$t('Close')"
       ref="anonymous-participation-modal"
     >
       <div class="modal-card">

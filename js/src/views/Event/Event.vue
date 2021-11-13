@@ -325,6 +325,7 @@
         :active.sync="isReportModalActive"
         has-modal-card
         ref="reportModal"
+        :close-button-aria-label="$t('Close')"
       >
         <report-modal
           :on-confirm="reportEvent"
@@ -334,6 +335,7 @@
         />
       </b-modal>
       <b-modal
+        :close-button-aria-label="$t('Close')"
         :active.sync="isShareModalActive"
         has-modal-card
         ref="shareModal"
@@ -344,6 +346,7 @@
         :active.sync="isJoinModalActive"
         has-modal-card
         ref="participationModal"
+        :close-button-aria-label="$t('Close')"
       >
         <identity-picker v-model="identity">
           <template v-slot:footer>
@@ -380,6 +383,7 @@
         :active.sync="isJoinConfirmationModalActive"
         has-modal-card
         ref="joinConfirmationModal"
+        :close-button-aria-label="$t('Close')"
       >
         <div class="modal-card">
           <header class="modal-card-head">
@@ -427,6 +431,7 @@
         </div>
       </b-modal>
       <b-modal
+        :close-button-aria-label="$t('Close')"
         class="map-modal"
         v-if="event.physicalAddress && event.physicalAddress.geom"
         :active.sync="showMap"
