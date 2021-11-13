@@ -3,7 +3,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   Tools for calculating content audience
   """
 
-  alias Mobilizon.{Actors, Events, Share}
+  alias Mobilizon.{Actors, Discussions, Events, Share}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
@@ -43,8 +43,10 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     %{"to" => [@ap_public], "cc" => []}
   end
 
-  def get_audience(%Comment{discussion: %Discussion{} = discussion}) do
-    get_audience(discussion)
+  def get_audience(%Comment{discussion: %Discussion{id: discussion_id}}) do
+    discussion_id
+    |> Discussions.get_discussion()
+    |> get_audience()
   end
 
   def get_audience(%Comment{
