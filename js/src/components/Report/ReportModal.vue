@@ -1,7 +1,7 @@
 <template>
   <div class="modal-card">
     <header class="modal-card-head" v-if="title">
-      <p class="modal-card-title">{{ title }}</p>
+      <h2 class="modal-card-title">{{ title }}</h2>
     </header>
 
     <section
@@ -17,7 +17,7 @@
             <article class="media">
               <div class="media-left">
                 <figure class="image is-48x48" v-if="comment.actor.avatar">
-                  <img :src="comment.actor.avatar.url" alt="Image" />
+                  <img :src="comment.actor.avatar.url" alt="" />
                 </figure>
                 <b-icon
                   class="media-left"
@@ -45,12 +45,16 @@
           </p>
 
           <div class="control">
-            <b-input
-              v-model="content"
-              type="textarea"
-              @keyup.enter="confirm"
-              :placeholder="$t('Additional comments')"
-            />
+            <b-field
+              :label="$t('Additional comments')"
+              label-for="additonal-comments"
+            >
+              <b-input
+                v-model="content"
+                type="textarea"
+                id="additonal-comments"
+              />
+            </b-field>
           </div>
 
           <div class="control" v-if="outsideDomain">
@@ -73,7 +77,12 @@
       <button class="button" ref="cancelButton" @click="close">
         {{ translatedCancelText }}
       </button>
-      <button class="button is-primary" ref="confirmButton" @click="confirm">
+      <button
+        class="button is-primary"
+        ref="confirmButton"
+        @click="confirm"
+        @keyup.enter="confirm"
+      >
         {{ translatedConfirmText }}
       </button>
     </footer>
