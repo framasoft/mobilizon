@@ -154,7 +154,7 @@ import { GraphQLError } from "graphql";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
-import { ApolloCache, FetchResult } from "@apollo/client/core";
+import { ApolloCache, FetchResult, gql, Reference } from "@apollo/client/core";
 import { mixins } from "vue-class-component";
 import GroupMixin from "@/mixins/group";
 
@@ -310,49 +310,23 @@ export default class Discussion extends mixins(GroupMixin) {
       variables: {
         commentId: comment.id,
       },
-      update: (
-        store: ApolloCache<{ deleteComment: IComment }>,
-        { data }: FetchResult
-      ) => {
-        if (!data || !data.deleteComment) return;
-        const discussionData = store.readQuery<{
-          discussion: IDiscussion;
-        }>({
-          query: GET_DISCUSSION,
-          variables: {
-            slug: this.slug,
-            page: this.page,
-          },
-        });
-        if (!discussionData) return;
-        const { discussion: discussionCached } = discussionData;
-        const index = discussionCached.comments.elements.findIndex(
-          ({ id }) => id === data.deleteComment.id
-        );
-        let discussionUpdated = discussionCached;
-        if (index > -1) {
-          const updatedComment = {
-            ...discussionCached.comments.elements[index],
+      update: (store: ApolloCache<{ deleteComment: IComment }>) => {
+        store.writeFragment({
+          id: store.identify(comment as unknown as Reference),
+          fragment: gql`
+            fragment CommentDeleted on Comment {
+              deletedAt
+              actor {
+                id
+              }
+              text
+            }
+          `,
+          data: {
             deletedAt: new Date(),
+            text: "",
             actor: null,
-            updatedComment: {
-              text: "",
-            },
-          };
-          const elements = [...discussionCached.comments.elements];
-          elements.splice(index, 1, updatedComment);
-          discussionUpdated = {
-            ...discussionCached,
-            comments: {
-              total: discussionCached.comments.total,
-              elements,
-            },
-          };
-        }
-        store.writeQuery({
-          query: GET_DISCUSSION,
-          variables: { slug: this.slug, page: this.page },
-          data: { discussion: discussionUpdated },
+          },
         });
       },
     });
@@ -369,20 +343,6 @@ export default class Discussion extends mixins(GroupMixin) {
           page: this.page,
           limit: this.COMMENTS_PER_PAGE,
         },
-        updateQuery: (previousResult, { fetchMoreResult }) => {
-          return {
-            discussion: {
-              ...previousResult.discussion,
-              comments: {
-                ...fetchMoreResult.discussion.comments,
-                elements: [
-                  ...previousResult.discussion.comments.elements,
-                  ...fetchMoreResult.discussion.comments.elements,
-                ],
-              },
-            },
-          };
-        },
       });
       this.hasMoreComments = !this.discussion.comments.elements
         .map(({ id }) => id)
@@ -398,32 +358,6 @@ export default class Discussion extends mixins(GroupMixin) {
       variables: {
         discussionId: this.discussion.id,
         title: this.newTitle,
-      },
-      update: (
-        store: ApolloCache<{ updateDiscussion: IDiscussion }>,
-        { data }: FetchResult<{ updateDiscussion: IDiscussion }>
-      ) => {
-        const discussionData = store.readQuery<{
-          discussion: IDiscussion;
-        }>({
-          query: GET_DISCUSSION,
-          variables: {
-            slug: this.slug,
-            page: this.page,
-          },
-        });
-        if (discussionData && data?.updateDiscussion) {
-          store.writeQuery({
-            query: GET_DISCUSSION,
-            variables: { slug: this.slug, page: this.page },
-            data: {
-              discussion: {
-                ...discussionData.discussion,
-                title: data?.updateDiscussion.title,
-              },
-            },
-          });
-        }
       },
     });
     this.editTitleMode = false;
