@@ -165,7 +165,7 @@
   "Click for more information": "Cliquez pour plus d'informations",
   "Click to select": "Cliquez pour sélectionner",
   "Click to upload": "Cliquez pour téléverser",
-  "Close": "Fermé",
+  "Close": "Fermer",
   "Close comments for all (except for admins)": "Fermer les commentaires à tout le monde (excepté les administrateur⋅rice·s)",
   "Closed": "Fermé",
   "Comment deleted": "Commentaire supprimé",
@@ -1350,5 +1350,10 @@
   "Your membership was approved by {profile}.": "Votre demande d'adhésion a été approuvée par {profile}.",
   "{profile} approved {member}'s membership.": "{profile} a approuvé la demande d'adhésion de {member}.",
   "You rejected {member}'s membership request.": "Vous avez rejeté la demande d'adhésion de {member}.",
-  "{profile} rejected {member}'s membership request.": "{profile} a rejeté la demande d'adhésion de {member}."
+  "{profile} rejected {member}'s membership request.": "{profile} a rejeté la demande d'adhésion de {member}.",
+  "Send": "Envoyer",
+  "Approve member": "Approuver le ou la membre",
+  "Reject member": "Rejeter le ou la membre",
+  "The membership request from {profile} was rejected": "La demande d'adhésion de {profile} a été rejetée",
+  "The member was approved": "Le ou la membre a été approuvée"
 }

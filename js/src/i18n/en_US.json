@@ -1246,5 +1246,10 @@
   "Your membership was approved by {profile}.": "Your membership was approved by {profile}.",
   "{profile} approved {member}'s membership.": "{profile} approved {member}'s membership.",
   "You rejected {member}'s membership request.": "You rejected {member}'s membership request.",
-  "{profile} rejected {member}'s membership request.": "{profile} rejected {member}'s membership request."
+  "{profile} rejected {member}'s membership request.": "{profile} rejected {member}'s membership request.",
+  "Send": "Send",
+  "Approve member": "Approve member",
+  "Reject member": "Reject member",
+  "The membership request from {profile} was rejected": "The membership request from {profile} was rejected",
+  "The member was approved": "The member was approved"
 }
