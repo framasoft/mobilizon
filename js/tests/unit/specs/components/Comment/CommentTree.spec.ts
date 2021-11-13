@@ -162,7 +162,9 @@ describe("CommentTree", () => {
       requestHandlers.eventCommentThreadsQueryHandler
     ).toHaveBeenCalledWith({ eventUUID: eventData.uuid });
 
-    expect(wrapper.find(".no-comments").text()).toBe("No comments yet");
+    expect(wrapper.findComponent({ name: "EmptyContent" }).text()).toBe(
+      "No comments yet"
+    );
     expect(wrapper.html()).toMatchSnapshot();
   });
 });
