@@ -176,6 +176,7 @@
       </router-link>
     </section>
     <b-modal
+      :close-button-aria-label="$t('Close')"
       :active.sync="isReportModalActive"
       has-modal-card
       ref="reportModal"
@@ -187,7 +188,12 @@
         @close="$refs.reportModal.close()"
       />
     </b-modal>
-    <b-modal :active.sync="isShareModalActive" has-modal-card ref="shareModal">
+    <b-modal
+      :active.sync="isShareModalActive"
+      has-modal-card
+      ref="shareModal"
+      :close-button-aria-label="$t('Close')"
+    >
       <share-post-modal :post="post" />
     </b-modal>
   </article>

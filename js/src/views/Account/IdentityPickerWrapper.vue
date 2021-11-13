@@ -45,7 +45,11 @@
       </figure>
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
-    <b-modal v-model="isComponentModalActive" has-modal-card>
+    <b-modal
+      v-model="isComponentModalActive"
+      has-modal-card
+      :close-button-aria-label="$t('Close')"
+    >
       <identity-picker v-model="currentIdentity" />
     </b-modal>
   </div>

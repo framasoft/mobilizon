@@ -9,7 +9,7 @@
         type="is-danger"
         :title="$t('Warning').toLocaleUpperCase()"
         closable
-        aria-close-label="Close"
+        :aria-close-label="$t('Close')"
       >
         <p>
           {{ $t("This is a demonstration site to test Mobilizon.") }}

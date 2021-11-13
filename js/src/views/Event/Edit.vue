@@ -339,7 +339,12 @@
         {{ $t("Only group moderators can create, edit and delete events.") }}
       </b-message>
     </div>
-    <b-modal v-model="dateSettingsIsOpen" has-modal-card trap-focus>
+    <b-modal
+      v-model="dateSettingsIsOpen"
+      has-modal-card
+      trap-focus
+      :close-button-aria-label="$t('Close')"
+    >
       <form action>
         <div class="modal-card" style="width: auto">
           <header class="modal-card-head">

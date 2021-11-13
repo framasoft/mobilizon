@@ -157,7 +157,11 @@
       :aria-current-label="$t('Current page')"
     >
     </b-pagination>
-    <b-modal :active.sync="renameModal" has-modal-card>
+    <b-modal
+      :active.sync="renameModal"
+      has-modal-card
+      :close-button-aria-label="$t('Close')"
+    >
       <div class="modal-card">
         <section class="modal-card-body">
           <form @submit.prevent="renameResource">
@@ -172,7 +176,11 @@
         </section>
       </div>
     </b-modal>
-    <b-modal :active.sync="moveModal" has-modal-card>
+    <b-modal
+      :active.sync="moveModal"
+      has-modal-card
+      :close-button-aria-label="$t('Close')"
+    >
       <div class="modal-card">
         <section class="modal-card-body">
           <resource-selector
@@ -184,7 +192,11 @@
         </section>
       </div>
     </b-modal>
-    <b-modal :active.sync="createResourceModal" has-modal-card>
+    <b-modal
+      :active.sync="createResourceModal"
+      has-modal-card
+      :close-button-aria-label="$t('Close')"
+    >
       <div class="modal-card">
         <section class="modal-card-body">
           <form @submit.prevent="createResource">
@@ -208,6 +220,7 @@
       has-modal-card
       class="link-resource-modal"
       aria-modal
+      :close-button-aria-label="$t('Close')"
     >
       <div class="modal-card">
         <section class="modal-card-body">

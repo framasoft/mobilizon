@@ -299,6 +299,10 @@ export default class Comment extends Vue {
         onConfirm: this.reportComment,
         outsideDomain: this.comment.actor.domain,
       },
+      // https://github.com/buefy/buefy/pull/3589
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      closeButtonAriaLabel: this.$t("Close"),
     });
   }
 

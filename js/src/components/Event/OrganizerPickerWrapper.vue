@@ -46,7 +46,11 @@
       />
       <b-icon v-else size="is-large" icon="account-circle" />
     </span>
-    <b-modal :active.sync="isComponentModalActive" has-modal-card>
+    <b-modal
+      :active.sync="isComponentModalActive"
+      has-modal-card
+      :close-button-aria-label="$t('Close')"
+    >
       <div class="modal-card">
         <header class="modal-card-head">
           <p class="modal-card-title">{{ $t("Pick a profile or a group") }}</p>

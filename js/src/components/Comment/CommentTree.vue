@@ -45,8 +45,8 @@
             type="is-primary"
             class="comment-button-submit"
             icon-left="send"
-            :aria-label="$t('Post a comment')"
-          />
+            >{{ $t("Send") }}</b-button
+          >
         </div>
       </article>
     </form>
@@ -63,7 +63,7 @@
       <transition-group
         key="list"
         name="comment-list"
-        v-if="comments.length"
+        v-if="filteredOrderedComments.length"
         class="comment-list"
         tag="ul"
       >
@@ -77,9 +77,9 @@
           @delete-comment="deleteComment"
         />
       </transition-group>
-      <div v-else class="no-comments" key="no-comments">
+      <empty-content v-else icon="comment" key="no-comments" :inline="true">
         <span>{{ $t("No comments yet") }}</span>
-      </div>
+      </empty-content>
     </transition-group>
   </div>
 </template>
@@ -99,6 +99,7 @@ import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
 import { IEvent } from "../../types/event.model";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 @Component({
   apollo: {
@@ -119,6 +120,7 @@ import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
   components: {
     Comment,
     IdentityPickerWrapper,
+    EmptyContent,
     editor: () =>
       import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
   },
@@ -364,21 +366,34 @@ export default class CommentTree extends Vue {
 
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
+@import "~bulma/sass/utilities/mixins.sass";
 form.new-comment {
   padding-bottom: 1rem;
 
-  .media-content {
-    display: flex;
-    align-items: center;
-    align-content: center;
+  .media {
+    flex-wrap: wrap;
+    justify-content: center;
+    .media-left {
+      @include mobile {
+        @include margin-right(0.5rem);
+        @include margin-left(0.5rem);
+      }
+    }
 
-    .field {
-      flex: 1;
-      @include padding-right(10px);
-      margin-bottom: 0;
+    .media-content {
+      display: flex;
+      align-items: center;
+      align-content: center;
+      width: min-content;
 
-      &.notify-participants {
-        margin-top: 0.5rem;
+      .field {
+        flex: 1;
+        @include padding-right(10px);
+        margin-bottom: 0;
+
+        &.notify-participants {
+          margin-top: 0.5rem;
+        }
       }
     }
   }

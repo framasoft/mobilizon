@@ -145,8 +145,10 @@ export default class DiscussionComment extends Vue {
   }
 
   updateComment(): void {
-    this.comment.text = this.updatedComment;
-    this.$emit("update-comment", this.comment);
+    this.$emit("update-comment", {
+      ...this.comment,
+      text: this.updatedComment,
+    });
     this.toggleEditMode();
   }
 }

@@ -149,6 +149,7 @@
       </b-button>
 
       <b-modal
+        :close-button-aria-label="$t('Close')"
         :active.sync="isDeleteAccountModalActive"
         has-modal-card
         full-screen
