@@ -18,6 +18,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     updatedAt
     deletedAt
     isAnnouncement
+    language
   }
   ${ACTOR_FRAGMENT}
 `;

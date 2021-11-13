@@ -10,7 +10,12 @@
         <section class="intro" dir="auto">
           <div class="columns">
             <div class="column">
-              <h1 class="title" style="margin: 0" dir="auto">
+              <h1
+                class="title"
+                style="margin: 0"
+                dir="auto"
+                :lang="event.language"
+              >
                 {{ event.title }}
               </h1>
               <div class="organizer">
@@ -289,6 +294,7 @@
             </p>
             <div v-else>
               <div
+                :lang="event.language"
                 dir="auto"
                 class="description-content"
                 ref="eventDescriptionElement"

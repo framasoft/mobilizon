@@ -22,6 +22,7 @@ const FULL_EVENT_FRAGMENT = gql`
     visibility
     joinOptions
     draft
+    language
     picture {
       id
       url
@@ -60,6 +61,7 @@ const FULL_EVENT_FRAGMENT = gql`
       uuid
       title
       beginsOn
+      language
       picture {
         id
         url
@@ -153,6 +155,7 @@ export const FETCH_EVENTS = gql`
         status
         visibility
         insertedAt
+        language
         picture {
           id
           url

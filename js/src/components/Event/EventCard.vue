@@ -39,7 +39,12 @@
           />
         </div>
         <div class="media-content">
-          <h3 class="event-title" :title="event.title" dir="auto">
+          <h3
+            class="event-title"
+            :title="event.title"
+            dir="auto"
+            :lang="event.language"
+          >
             {{ event.title }}
           </h3>
           <div class="content-end">

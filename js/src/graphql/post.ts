@@ -21,6 +21,7 @@ export const POST_FRAGMENT = gql`
     publishAt
     draft
     visibility
+    language
     tags {
       ...TagFragment
     }
@@ -56,6 +57,7 @@ export const POST_BASIC_FIELDS = gql`
     publishAt
     draft
     visibility
+    language
     picture {
       id
       url

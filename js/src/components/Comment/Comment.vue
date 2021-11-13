@@ -63,7 +63,12 @@
             </button>
           </span>
           <br />
-          <div v-if="!comment.deletedAt" v-html="comment.text" dir="auto" />
+          <div
+            v-if="!comment.deletedAt"
+            v-html="comment.text"
+            dir="auto"
+            :lang="comment.language"
+          />
           <div v-else>{{ $t("[This comment has been deleted]") }}</div>
           <div class="load-replies" v-if="comment.totalReplies">
             <p v-if="!showReplies" @click="fetchReplies">

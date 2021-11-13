@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="title-info-wrapper has-text-grey-dark">
-      <h3 class="event-minimalist-title">
+      <h3 class="event-minimalist-title" :lang="event.language" dir="auto">
         <b-tag
           class="mr-2"
           type="is-warning"
