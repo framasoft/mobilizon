@@ -43,18 +43,22 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @spec update(Actor.t(), map, map) ::
           {:ok, Actor.t(), ActivityStream.t()} | {:error, Ecto.Changeset.t()}
   def update(%Actor{} = old_actor, args, additional) do
+    updater_actor = Map.get(args, :updater_actor) || Map.get(additional, :updater_actor)
+
     case Actors.update_actor(old_actor, args) do
       {:ok, %Actor{} = new_actor} ->
         GroupActivity.insert_activity(new_actor,
           subject: "group_updated",
           old_group: old_actor,
-          updater_actor: Map.get(args, :updater_actor)
+          updater_actor: updater_actor
         )
 
         actor_as_data = Convertible.model_to_as(new_actor)
         Cachex.del(:activity_pub, "actor_#{new_actor.preferred_username}")
         audience = Audience.get_audience(new_actor)
-        additional = Map.merge(additional, %{"actor" => old_actor.url})
+
+        additional = Map.merge(additional, %{"actor" => (updater_actor || old_actor).url})
+
         update_data = make_update_data(actor_as_data, Map.merge(audience, additional))
         {:ok, new_actor, update_data}
 

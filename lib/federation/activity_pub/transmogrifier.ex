@@ -391,12 +391,15 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         } = params
       )
       when object_type in ["Person", "Group", "Application", "Service", "Organization"] do
-    with {:ok, %Actor{suspended: false} = old_actor} <-
+    with author_url <- Utils.get_actor(params),
+         {:ok, %Actor{suspended: false} = author} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(author_url),
+         {:ok, %Actor{suspended: false} = old_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(object["id"]),
          object_data <-
            object |> Converter.Actor.as_to_model_data(),
          {:ok, %Activity{} = activity, %Actor{} = new_actor} <-
-           Actions.Update.update(old_actor, object_data, false) do
+           Actions.Update.update(old_actor, object_data, false, %{updater_actor: author}) do
       {:ok, activity, new_actor}
     else
       e ->

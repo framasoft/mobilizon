@@ -112,6 +112,9 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
         organizer_actor {
           id
         },
+        attributed_to {
+          id
+        },
         online_address,
         phone_address,
         category,
@@ -318,6 +321,56 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       assert res["errors"] == nil
       assert res["data"]["person"]["participations"]["elements"] == []
+    end
+
+    test "create_event/3 creates an event as a draft for a group", %{
+      conn: conn,
+      actor: actor,
+      user: user
+    } do
+      %Actor{id: group_id} = group = insert(:group)
+      insert(:member, parent: group, actor: actor, role: :moderator)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{DateTime.utc_now()}",
+            organizer_actor_id: "#{actor.id}",
+            attributed_to_id: group_id,
+            draft: true
+          }
+        )
+
+      assert res["data"]["createEvent"]["title"] == "come to my event"
+      assert res["data"]["createEvent"]["draft"] == true
+      assert res["data"]["createEvent"]["attributed_to"]["id"] == to_string(group_id)
+
+      event_uuid = res["data"]["createEvent"]["uuid"]
+      event_id = res["data"]["createEvent"]["id"]
+
+      refute_enqueued(
+        worker: Workers.BuildSearch,
+        args: %{event_id: String.to_integer(event_id), op: :insert_search_event}
+      )
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: event_uuid})
+
+      assert hd(res["errors"])["message"] =~ "not found"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @find_event_query, variables: %{uuid: event_uuid})
+
+      assert res["errors"] == nil
+      assert res["data"]["event"]["draft"] == true
     end
 
     test "create_event/3 creates an event with options", %{conn: conn, actor: actor, user: user} do
