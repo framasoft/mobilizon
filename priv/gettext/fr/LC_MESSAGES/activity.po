@@ -43,7 +43,7 @@ msgstr "%{member} a été invité⋅e par %{profile}."
 #: lib/service/activity/renderer/member.ex:50 lib/web/templates/email/activity/_member_activity_item.html.heex:40
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:27
 msgid "%{profile} added the member %{member}."
-msgstr "%{profile} a ajouté le ou la membre %{membre}."
+msgstr "%{profile} a ajouté le ou la membre %{member}."
 
 #: lib/service/activity/renderer/discussion.ex:65 lib/web/templates/email/activity/_discussion_activity_item.html.heex:46
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
@@ -87,7 +87,7 @@ msgstr "%{profile} a supprimé la resource %{resource}."
 #: lib/service/activity/renderer/member.ex:66 lib/web/templates/email/activity/_member_activity_item.html.heex:56
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 msgid "%{profile} excluded member %{member}."
-msgstr "%{profile} a exclu le ou la membre %{membre}."
+msgstr "%{profile} a exclu le ou la membre %{member}."
 
 #: lib/service/activity/renderer/resource.ex:76 lib/web/templates/email/activity/_resource_activity_item.html.heex:71
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
