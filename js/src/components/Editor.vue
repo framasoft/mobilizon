@@ -212,6 +212,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import CharacterCount from "@tiptap/extension-character-count";
 import { AutoDir } from "./Editor/Autodir";
+import sanitizeHtml from "sanitize-html";
 
 @Component({
   components: { EditorContent, BubbleMenu },
@@ -265,6 +266,7 @@ export default class EditorComponent extends Vue {
           "aria-label": this.ariaLabel,
           role: "textbox",
         },
+        transformPastedHTML: this.transformPastedHTML,
       },
       extensions: [
         StarterKit,
@@ -290,6 +292,19 @@ export default class EditorComponent extends Vue {
         this.$emit("input", this.editor?.getHTML());
       },
     });
+  }
+
+  transformPastedHTML(html: string): string {
+    // When using comment mode, limit to acceptable tags
+    if (this.isCommentMode) {
+      return sanitizeHtml(html, {
+        allowedTags: ["b", "i", "em", "strong", "a"],
+        allowedAttributes: {
+          a: ["href", "rel", "target"],
+        },
+      });
+    }
+    return html;
   }
 
   @Watch("value")
