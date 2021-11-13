@@ -12,6 +12,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Storage.Page
   alias Mobilizon.Todos.TodoList
+  require Logger
 
   @private_visibility_empty_collection %{elements: [], total: 0}
   @json_ld_header Utils.make_json_ld_header()
@@ -39,9 +40,16 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
     page = Map.get(args, :page, 1)
     collection_name = String.trim_trailing(view_name, ".json")
     collection_name = String.to_existing_atom(collection_name)
+    actor_applicant = Map.get(args, :actor_applicant)
+
+    Logger.debug("Rendering actor collection #{inspect(collection_name)}")
+
+    Logger.debug(
+      "Using authenticated fetch with actor #{if actor_applicant, do: actor_applicant.url, else: nil}"
+    )
 
     %{total: total, elements: elements} =
-      if can_get_collection?(collection_name, actor, Map.get(args, :actor_applicant)),
+      if can_get_collection?(collection_name, actor, actor_applicant),
         do: fetch_collection(collection_name, actor, page),
         else: default_collection(collection_name, actor, page)
 
@@ -127,8 +135,13 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
        when visibility in [:public, :unlisted] and collection in [:outbox, :followers, :following],
        do: true
 
-  defp can_get_collection?(_collection_name, %Actor{} = actor, %Actor{} = actor_applicant),
-    do: actor_applicant_group_member?(actor, actor_applicant)
+  defp can_get_collection?(_collection_name, %Actor{} = actor, %Actor{} = actor_applicant) do
+    Logger.debug(
+      "Testing if #{actor_applicant.url} can be allowed access to #{actor.url} private collections"
+    )
+
+    actor_applicant_group_member?(actor, actor_applicant)
+  end
 
   defp can_get_collection?(_, _, _), do: false
 

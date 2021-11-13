@@ -48,6 +48,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
       signature_valid = HTTPSignatures.validate_conn(conn)
       Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
       date_valid = date_valid?(conn)
+      Logger.debug("Is date valid ? #{inspect(date_valid)}")
       assign(conn, :valid_signature, signature_valid && date_valid)
     end
   end

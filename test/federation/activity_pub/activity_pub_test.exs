@@ -47,10 +47,17 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         File.read!("test/fixtures/mastodon-status-2.json")
         |> Jason.decode!()
 
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
       Mock
-      |> expect(:call, fn
+      |> expect(:call, 2, fn
         %{method: :get, url: ^url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: data}}
+
+        %{method: :get, url: "https://framapiaf.org/users/Framasoft"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 
       {:ok, object} = ActivityPub.fetch_object_from_url(url)
@@ -72,13 +79,20 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         File.read!("test/fixtures/mastodon-status-4.json")
         |> Jason.decode!()
 
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
       Mock
-      |> expect(:call, 2, fn
+      |> expect(:call, 3, fn
         %{method: :get, url: ^url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: data}}
 
         %{method: :get, url: ^reply_to_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: reply_to_data}}
+
+        %{method: :get, url: "https://pirateradio.social/users/captain"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 
       {:ok, object} = ActivityPub.fetch_object_from_url(url)
@@ -98,13 +112,26 @@ defmodule Mobilizon.Federation.ActivityPubTest do
         File.read!("test/fixtures/peertube-video.json")
         |> Jason.decode!()
 
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
       Mock
-      |> expect(:call, 2, fn
+      |> expect(:call, 5, fn
         %{method: :get, url: ^url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: data}}
 
         %{method: :get, url: ^origin_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: origin_data}}
+
+        %{method: :get, url: "https://diaspodon.fr/users/dada"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+
+        %{method: :get, url: "https://framatube.org/accounts/framasoft"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+
+        %{method: :get, url: "https://framapiaf.org/users/Pouhiou"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 
       {:ok, object} = ActivityPub.fetch_object_from_url(url)

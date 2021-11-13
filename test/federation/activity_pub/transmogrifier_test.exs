@@ -4,8 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/transmogrifier_test.exs
 
 defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-
   use Mobilizon.DataCase
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
@@ -33,54 +31,75 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
 
   describe "handle incoming events" do
     test "it works for incoming events" do
-      use_cassette "activity_pub/fetch_mobilizon_post_activity" do
-        data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
 
-        {:ok, %Activity{data: data, local: false}, %Event{} = event} =
-          Transmogrifier.handle_incoming(data)
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: url}, _opts ->
+          case url do
+            "https://mobilizon.fr/@metacartes" ->
+              actor_data = Map.put(actor_data, "id", "https://mobilizon.fr/@metacartes")
+              {:ok, %Tesla.Env{status: 200, body: actor_data}}
 
-        assert data["id"] ==
-                 "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93/activity"
+            "https://framapiaf.org/users/tcit" ->
+              actor_data = Map.put(actor_data, "id", "https://framapiaf.org/users/tcit")
+              {:ok, %Tesla.Env{status: 200, body: actor_data}}
+          end
+      end)
 
-        assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+      data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
 
-        #
-        #      assert data["cc"] == [
-        #               "https://framapiaf.org/users/admin/followers",
-        #               "http://localtesting.pleroma.lol/users/lain"
-        #             ]
+      {:ok, %Activity{data: data, local: false}, %Event{} = event} =
+        Transmogrifier.handle_incoming(data)
 
-        assert data["actor"] == "https://mobilizon.fr/@metacartes"
+      assert data["id"] ==
+               "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93/activity"
 
-        object = data["object"]
+      assert data["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
 
-        assert object["id"] ==
-                 "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93"
+      #
+      #      assert data["cc"] == [
+      #               "https://framapiaf.org/users/admin/followers",
+      #               "http://localtesting.pleroma.lol/users/lain"
+      #             ]
 
-        assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
+      assert data["actor"] == "https://mobilizon.fr/@metacartes"
 
-        #      assert object["cc"] == [
-        #               "https://framapiaf.org/users/admin/followers",
-        #               "http://localtesting.pleroma.lol/users/lain"
-        #             ]
+      object = data["object"]
 
-        assert object["actor"] == "https://mobilizon.fr/@metacartes"
-        assert object["location"]["name"] == "Locaux de Framasoft"
-        # assert object["attributedTo"] == "https://mobilizon.fr/@metacartes"
+      assert object["id"] ==
+               "https://mobilizon.fr/events/39a0c4a6-f2b6-41dc-bbe2-fc5bff76cc93"
 
-        assert event.physical_address.street == "10 Rue Jangot"
+      assert object["to"] == ["https://www.w3.org/ns/activitystreams#Public"]
 
-        assert event.physical_address.url ==
-                 "https://event1.tcit.fr/address/eeecc11d-0030-43e8-a897-6422876372jd"
+      #      assert object["cc"] == [
+      #               "https://framapiaf.org/users/admin/followers",
+      #               "http://localtesting.pleroma.lol/users/lain"
+      #             ]
 
-        assert event.online_address == "https://google.com"
+      assert object["actor"] == "https://mobilizon.fr/@metacartes"
+      assert object["location"]["name"] == "Locaux de Framasoft"
+      # assert object["attributedTo"] == "https://mobilizon.fr/@metacartes"
 
-        {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
-      end
+      assert event.physical_address.street == "10 Rue Jangot"
+
+      assert event.physical_address.url ==
+               "https://event1.tcit.fr/address/eeecc11d-0030-43e8-a897-6422876372jd"
+
+      assert event.online_address == "https://google.com"
+
+      {:ok, %Actor{}} = Actors.get_actor_by_url(object["actor"])
     end
 
     test "it works for incoming events from Gancio" do
       data = File.read!("test/fixtures/gancio-event-activity.json") |> Jason.decode!()
+      actor_data = File.read!("test/fixtures/gancio-actor.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://demo.gancio.org/federation/u/gancio"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
 
       {:ok, %Activity{data: data, local: false}, %Event{} = event} =
         Transmogrifier.handle_incoming(data)
@@ -524,6 +543,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     end
 
     test "it accepts incoming resources and handles group being not found" do
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://someurl.com/notfound"}, _opts ->
+          {:ok, %Tesla.Env{status: 404, body: ""}}
+      end)
+
       creator =
         insert(:actor,
           domain: "mobilizon.app",
@@ -649,12 +674,18 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
     test "it works for incoming announces" do
       data = File.read!("test/fixtures/mastodon-announce.json") |> Jason.decode!()
       status_data = File.read!("test/fixtures/mastodon-status.json") |> Jason.decode!()
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
 
       Mock
-      |> expect(:call, fn
-        %{method: :get, url: "https://framapiaf.org/users/peertube/statuses/104584600044284729"},
-        _opts ->
-          {:ok, %Tesla.Env{status: 200, body: status_data}}
+      |> expect(:call, 2, fn
+        %{method: :get, url: url}, _opts ->
+          case url do
+            "https://framapiaf.org/users/peertube/statuses/104584600044284729" ->
+              {:ok, %Tesla.Env{status: 200, body: status_data}}
+
+            "https://framapiaf.org/users/peertube" ->
+              {:ok, %Tesla.Env{status: 200, body: actor_data}}
+          end
       end)
 
       {:ok, _, %Comment{actor: %Actor{url: actor_url}, url: comment_url}} =
@@ -677,10 +708,12 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         File.read!("test/fixtures/mastodon-announce.json")
         |> Jason.decode!()
         |> Map.put("object", comment_url)
+        |> Map.put("actor", actor_url)
 
       Mock
       |> expect(:call, fn
         %{method: :get, url: ^actor_url}, _opts ->
+          actor_data = Map.put(actor_data, "id", actor_url)
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 
@@ -926,10 +959,21 @@ defmodule Mobilizon.Federation.ActivityPub.TransmogrifierTest do
         File.read!("test/fixtures/https__info.pleroma.site_activity.json")
         |> Jason.decode!()
 
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+        |> Map.put("id", "https://framapiaf.org/users/admin")
+
       Mock
-      |> expect(:call, fn
-        %{method: :get, url: "https://info.pleroma.site/activity.json"}, _opts ->
-          {:ok, %Tesla.Env{status: 200, body: data}}
+      |> expect(:call, 2, fn
+        %{method: :get, url: url}, _opts ->
+          case url do
+            "https://info.pleroma.site/activity.json" ->
+              {:ok, %Tesla.Env{status: 200, body: data}}
+
+            "https://framapiaf.org/users/admin" ->
+              {:ok, %Tesla.Env{status: 200, body: actor_data}}
+          end
       end)
 
       data = %{

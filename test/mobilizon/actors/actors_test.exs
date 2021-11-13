@@ -1,20 +1,19 @@
 defmodule Mobilizon.ActorsTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Mobilizon.DataCase
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
+  import Mox
   import Mobilizon.Factory
 
   alias Mobilizon.{Actors, Config, Discussions, Events, Users}
   alias Mobilizon.Actors.{Actor, Bot, Follower, Member}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Medias.File, as: FileModel
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.Page
-
-  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
-
   alias Mobilizon.Web.Upload.Uploader
 
   describe "actors" do
@@ -99,25 +98,32 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_actor_by_name/1 returns a remote actor" do
-      use_cassette "actors/remote_actor_mastodon_tcit" do
-        {:ok,
-         %Actor{
-           id: actor_id,
-           preferred_username: preferred_username,
-           domain: domain,
-           avatar: %FileModel{name: picture_name} = _picture
-         } = _actor} = ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url)
+      tcit_social_tcit =
+        "test/fixtures/mastodon-tcit-tcit.json" |> File.read!() |> Jason.decode!()
 
-        assert picture_name == "a28c50ce5f2b13fd.jpg"
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: @remote_account_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: tcit_social_tcit}}
+      end)
 
-        %Actor{
-          id: actor_found_id,
-          avatar: %FileModel{name: picture_name} = _picture
-        } = Actors.get_actor_by_name("#{preferred_username}@#{domain}")
+      {:ok,
+       %Actor{
+         id: actor_id,
+         preferred_username: preferred_username,
+         domain: domain,
+         avatar: %FileModel{name: picture_name} = _picture
+       } = _actor} = ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url)
 
-        assert actor_found_id == actor_id
-        assert picture_name == "a28c50ce5f2b13fd.jpg"
-      end
+      assert picture_name == "a28c50ce5f2b13fd.jpg"
+
+      %Actor{
+        id: actor_found_id,
+        avatar: %FileModel{name: picture_name} = _picture
+      } = Actors.get_actor_by_name("#{preferred_username}@#{domain}")
+
+      assert actor_found_id == actor_id
+      assert picture_name == "a28c50ce5f2b13fd.jpg"
     end
 
     test "get_local_actor_by_name_with_preload!/1 returns the local actor with its organized events",
@@ -155,22 +161,29 @@ defmodule Mobilizon.ActorsTest do
     end
 
     test "get_actor_by_name_with_preload!/1 returns the remote actor with its organized events" do
-      use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{} = actor} <-
-               ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
-          assert Actors.get_actor_by_name_with_preload(
-                   "#{actor.preferred_username}@#{actor.domain}"
-                 ).organized_events == []
+      tcit_social_tcit =
+        "test/fixtures/mastodon-tcit-tcit.json" |> File.read!() |> Jason.decode!()
 
-          event = insert(:event, organizer_actor: actor)
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: @remote_account_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: tcit_social_tcit}}
+      end)
 
-          event_found_id =
-            Actors.get_actor_by_name_with_preload("#{actor.preferred_username}@#{actor.domain}").organized_events
-            |> hd
-            |> Map.get(:id)
+      with {:ok, %Actor{} = actor} <-
+             ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
+        assert Actors.get_actor_by_name_with_preload(
+                 "#{actor.preferred_username}@#{actor.domain}"
+               ).organized_events == []
 
-          assert event_found_id == event.id
-        end
+        event = insert(:event, organizer_actor: actor)
+
+        event_found_id =
+          Actors.get_actor_by_name_with_preload("#{actor.preferred_username}@#{actor.domain}").organized_events
+          |> hd
+          |> Map.get(:id)
+
+        assert event_found_id == event.id
       end
     end
 
@@ -185,19 +198,26 @@ defmodule Mobilizon.ActorsTest do
 
     test "test search_actors/4 returns actors with similar usernames",
          %{actor: %Actor{id: actor_id}} do
-      use_cassette "actors/remote_actor_mastodon_tcit" do
-        with {:ok, %Actor{id: actor2_id}} <-
-               ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
-          %Page{total: 2, elements: actors} =
-            Actors.search_actors("tcit",
-              actor_type: :Person,
-              minimum_visibility: :private
-            )
+      tcit_social_tcit =
+        "test/fixtures/mastodon-tcit-tcit.json" |> File.read!() |> Jason.decode!()
 
-          actors_ids = actors |> Enum.map(& &1.id)
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: @remote_account_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: tcit_social_tcit}}
+      end)
 
-          assert MapSet.new(actors_ids) == MapSet.new([actor2_id, actor_id])
-        end
+      with {:ok, %Actor{id: actor2_id}} <-
+             ActivityPubActor.get_or_fetch_actor_by_url(@remote_account_url) do
+        %Page{total: 2, elements: actors} =
+          Actors.search_actors("tcit",
+            actor_type: :Person,
+            minimum_visibility: :private
+          )
+
+        actors_ids = actors |> Enum.map(& &1.id)
+
+        assert MapSet.new(actors_ids) == MapSet.new([actor2_id, actor_id])
       end
     end
 

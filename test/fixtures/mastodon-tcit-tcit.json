@@ -1,0 +1,119 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "manuallyApprovesFollowers": "as:manuallyApprovesFollowers",
+      "toot": "http://joinmastodon.org/ns#",
+      "featured": {
+        "@id": "toot:featured",
+        "@type": "@id"
+      },
+      "featuredTags": {
+        "@id": "toot:featuredTags",
+        "@type": "@id"
+      },
+      "alsoKnownAs": {
+        "@id": "as:alsoKnownAs",
+        "@type": "@id"
+      },
+      "movedTo": {
+        "@id": "as:movedTo",
+        "@type": "@id"
+      },
+      "schema": "http://schema.org#",
+      "PropertyValue": "schema:PropertyValue",
+      "value": "schema:value",
+      "IdentityProof": "toot:IdentityProof",
+      "discoverable": "toot:discoverable",
+      "Device": "toot:Device",
+      "Ed25519Signature": "toot:Ed25519Signature",
+      "Ed25519Key": "toot:Ed25519Key",
+      "Curve25519Key": "toot:Curve25519Key",
+      "EncryptedMessage": "toot:EncryptedMessage",
+      "publicKeyBase64": "toot:publicKeyBase64",
+      "deviceId": "toot:deviceId",
+      "claim": {
+        "@type": "@id",
+        "@id": "toot:claim"
+      },
+      "fingerprintKey": {
+        "@type": "@id",
+        "@id": "toot:fingerprintKey"
+      },
+      "identityKey": {
+        "@type": "@id",
+        "@id": "toot:identityKey"
+      },
+      "devices": {
+        "@type": "@id",
+        "@id": "toot:devices"
+      },
+      "messageFranking": "toot:messageFranking",
+      "messageType": "toot:messageType",
+      "cipherText": "toot:cipherText",
+      "suspended": "toot:suspended",
+      "focalPoint": {
+        "@container": "@list",
+        "@id": "toot:focalPoint"
+      }
+    }
+  ],
+  "id": "https://social.tcit.fr/users/tcit",
+  "type": "Person",
+  "following": "https://social.tcit.fr/users/tcit/following",
+  "followers": "https://social.tcit.fr/users/tcit/followers",
+  "inbox": "https://social.tcit.fr/users/tcit/inbox",
+  "outbox": "https://social.tcit.fr/users/tcit/outbox",
+  "featured": "https://social.tcit.fr/users/tcit/collections/featured",
+  "featuredTags": "https://social.tcit.fr/users/tcit/collections/tags",
+  "preferredUsername": "tcit",
+  "name": "🦄 Thomas Citharel",
+  "summary": "<p>Hoping to make people&apos;s life better with free software at <span class=\"h-card\"><a href=\"https://framapiaf.org/@Framasoft\" class=\"u-url mention\">@<span>Framasoft</span></a></span>.</p><p>ᕕ(ᐛ)ᕗ</p>",
+  "url": "https://social.tcit.fr/@tcit",
+  "manuallyApprovesFollowers": false,
+  "discoverable": true,
+  "published": "2017-04-03T00:00:00Z",
+  "devices": "https://social.tcit.fr/users/tcit/collections/devices",
+  "publicKey": {
+    "id": "https://social.tcit.fr/users/tcit#main-key",
+    "owner": "https://social.tcit.fr/users/tcit",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApXwYMUdFg3XUd+bGsh8C\nyiMRGpRGAWuCdM5pDWx5uM4pW2pM3xbHbcI21j9h8BmlAiPg6hbZD73KGly2N8Rt\n5iIS0I+l6i8kA1JCCdlAaDTRd41RKMggZDoQvjVZQtsyE1VzMeU2kbqqTFN6ew7H\nvbd6O0NhixoKoZ5f3jwuBDZoT0p1TAcaMdmG8oqHD97isizkDnRn8cOBA6wtI+xb\n5xP2zxZMsLpTDZLiKU8XcPKZCw4OfQfmDmKkHtrFb77jCAQj/s/FxjVnvxRwmfhN\nnWy0D+LUV/g63nHh/b5zXIeV92QZLvDYbgbezmzUzv9UeA1s70GGbaDqCIy85gw9\n+wIDAQAB\n-----END PUBLIC KEY-----\n"
+  },
+  "tag": [],
+  "attachment": [
+    {
+      "type": "PropertyValue",
+      "name": "Works at",
+      "value": "<span class=\"h-card\"><a href=\"https://framapiaf.org/@Framasoft\" class=\"u-url mention\">@<span>Framasoft@framapiaf.org</span></a></span>"
+    },
+    {
+      "type": "PropertyValue",
+      "name": "Pronouns",
+      "value": "He/Him"
+    },
+    {
+      "type": "PropertyValue",
+      "name": "Work Account",
+      "value": "<a href=\"https://framapiaf.org/@tcit\" rel=\"me nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">framapiaf.org/@tcit</span><span class=\"invisible\"></span></a>"
+    },
+    {
+      "type": "PropertyValue",
+      "name": "Site",
+      "value": "<a href=\"https://tcit.fr\" rel=\"me nofollow noopener noreferrer\" target=\"_blank\"><span class=\"invisible\">https://</span><span class=\"\">tcit.fr</span><span class=\"invisible\"></span></a>"
+    }
+  ],
+  "endpoints": {
+    "sharedInbox": "https://social.tcit.fr/inbox"
+  },
+  "icon": {
+    "type": "Image",
+    "mediaType": "image/jpeg",
+    "url": "https://social.tcit.fr/system/accounts/avatars/000/000/001/original/a28c50ce5f2b13fd.jpg"
+  },
+  "image": {
+    "type": "Image",
+    "mediaType": "image/jpeg",
+    "url": "https://social.tcit.fr/system/accounts/headers/000/000/001/original/ac9c4a71083bd9a1.jpg"
+  }
+}

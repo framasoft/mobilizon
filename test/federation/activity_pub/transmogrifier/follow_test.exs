@@ -1,15 +1,30 @@
 defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   use Mobilizon.DataCase
-
+  import Mox
   import ExUnit.CaptureLog
   import Mobilizon.Factory
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Follower
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
   describe "handle incoming follow requests" do
     test "it works only for groups" do
       actor = insert(:actor)
+
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://social.tcit.fr/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://social.tcit.fr/users/tcit")
+           }}
+      end)
 
       data =
         File.read!("test/fixtures/mastodon-follow-activity.json")
@@ -26,6 +41,20 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
     test "it works for incoming follow requests" do
       actor = insert(:group)
+
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://social.tcit.fr/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://social.tcit.fr/users/tcit")
+           }}
+      end)
 
       data =
         File.read!("test/fixtures/mastodon-follow-activity.json")

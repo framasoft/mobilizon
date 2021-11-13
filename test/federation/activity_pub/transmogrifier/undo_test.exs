@@ -22,8 +22,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UndoTest do
         |> Jason.decode!()
 
       Mock
-      |> expect(:call, fn
+      |> expect(:call, 2, fn
         %{method: :get, url: "https://framapiaf.org/users/Framasoft"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+
+        %{method: :get, url: "https://framapiaf.org/users/peertube"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
       end)
 

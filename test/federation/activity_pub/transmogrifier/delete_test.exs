@@ -56,6 +56,19 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
     end
 
     test "it fails for incoming deletes with spoofed origin" do
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/peertube"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+
+        %{method: :get, url: "http://mastodon.example.org/users/gargron"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
+
       comment = insert(:comment)
 
       announce_data =
@@ -77,7 +90,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
         data
         |> Map.put("object", object)
 
-      {:error, :unknown_actor} = Transmogrifier.handle_incoming(data)
+      :error = Transmogrifier.handle_incoming(data)
 
       assert Discussions.get_comment_from_url(comment.url)
     end
@@ -132,12 +145,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
         |> Map.put("id", deleted_actor_url)
 
       Mock
-      |> expect(:call, fn
+      |> expect(:call, 2, fn
         %{url: ^deleted_actor_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: deleted_actor_data}}
       end)
 
-      assert :error == Transmogrifier.handle_incoming(data)
+      assert {:error, "Group object URL remote"} == Transmogrifier.handle_incoming(data)
 
       assert Actors.get_actor_by_url(url)
     end
