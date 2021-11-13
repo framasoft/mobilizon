@@ -669,7 +669,11 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
         };
       },
       update(data) {
-        return new EventModel(data.event);
+        let event = data.event;
+        if (this.isDuplicate) {
+          event = { ...event, organizerActor: this.currentActor };
+        }
+        return new EventModel(event);
       },
       skip() {
         return !this.eventId;
