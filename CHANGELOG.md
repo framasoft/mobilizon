@@ -4,8 +4,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.0-beta.2 - 2021-11-15
+
+This lists changes since 2.0.0-beta.1.
+### Added
+
+- Group followers and members get an notification email by default when a group publishes a new event (subject to activity notification settings)
+- Group admins can now approve or deny new memberships
+- Added organizer actor name (profile or group) in the icalendar export
+- Add initial support for federation with Gancio
+
+### Changed
+
+- Event update notification is send to participants ~30 minutes after the event update, so that successive edits are throttled.
+- Event, post and comments titles and content now have expose their detected language in HTML, for improved screen reader experience
+
+### Fixed
+
+- Release front-end files are no longer in duplicate
+- Only show datetime timezone toggle on event if the timezone offset is different from our own
+- Fix error when determining audience for Discussion when deleting a comment
+- Fix a couple of accessibility issues
+- Limit to acceptable tags when pasting raw HTML into comment fields on front-end
+- Fixed group map display
+- Fixed updating group physical address
+- Allow group members to access group drafts
+- Improve group refreshment workflow
+- Fixed date signature generation for federation
+- Fixed an issue when duplicating a group event from another profile
+- Fixed event metadata not saved on eventcreation
+- Use a different pagination parameter for searched events and featured events on search page
+
+### Translations
+
+- Gaelic
+- Spanish
+
 ## 2.0.0-beta.1 - 2021-11-09
 
+Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
 ### Added
 
 - Added possibility to follow groups and be notified from new upcoming events
@@ -40,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve metadata on public page
 - Make sure some event action pages (participate remotely or without an account) don't get indexed by search engines
 - Only send `Tombstone` element in `Delete` activities, not the whole previous deleted element.
+- Make sure `Delete` activity are send correctly to everyone
 - Only add address and tags to event icalendar export if they exist
 - `master` branch has been renamed to `main`
 
