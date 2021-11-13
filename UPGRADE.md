@@ -1,19 +1,69 @@
 # Upgrading from 1.3 to 2.0
 
 Requirements dependencies depend on the way Mobilizon is installed.
-## New dependencies requirements
-
-### Release and Docker
+## New Elixir version requirement
+### Docker and Release install
 
 You are already using latest Elixir version in the release tarball and Docker images.
 
 ### Source install
 
-* Elixir 1.12 and Erlang OTP 22 is now required. If your distribution doesn't provide these versions, you can uninstall them and install [Elixir](https://github.com/asdf-vm/asdf-elixir) through the [ASDF tool](https://asdf-vm.com/).
+**Elixir 1.12 and Erlang OTP 22 are now required**. If your distribution doesn't provide these versions (which is likely), you must uninstall them and install [Elixir](https://github.com/asdf-vm/asdf-elixir) through the [ASDF tool](https://asdf-vm.com/).
 
-## Optional dependencies
+## Geographic timezone data
 
-These are optional, installing them will allow Mobilizon to export to PDF and ODS as well.
+Mobilizon 2.0 uses data based on [timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder) (which is based itself on OpenStreetMap data) to determine the timezone of an event automatically, based on it's geocoordinates. However, this needs ~700Mio of disk, so we don't redistribute data directly, depending on the case. It's possible to skip this part, but users will need to manually pick the timezone for every event they created when it has a different timezone from their own.
+
+### Docker install
+
+The geographic timezone data is already bundled into the image, you have nothing to do.
+### Release install
+
+In order to keep the release tarballs light, the geographic timezone data is not bundled directly. You need to download the data :
+* either raw from Github, but **requires an extra ~1Gio of memory** to process the data
+
+  ```sh
+  sudo -u mobilizon mkdir /var/lib/mobilizon/timezones
+  sudo -u mobilizon ./bin/mobilizon_ctl tz_world.update
+  ```
+
+* either already processed from our own distribution server
+
+  ```sh
+  sudo -u mobilizon mkdir /var/lib/mobilizon/timezones
+  sudo -u mobilizon curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
+  ```
+
+In both cases, ~700Mio of disk will be used. You may use the following configuration to specify where the data is expected:
+```elixir
+config :tz_world, data_dir: "/some/place"
+```
+
+### Source install
+
+You need to download the data :
+* either raw from Github, but **requires an extra ~1Gio of memory** to process the data
+
+  ```sh
+  sudo -u mobilizon mkdir /var/lib/mobilizon/timezones
+  sudo -u mobilizon mix mobilizon.tz_world.update
+  ```
+
+* either already processed from our own distribution server
+
+  ```sh
+  sudo -u mobilizon mkdir /var/lib/mobilizon/timezones
+  sudo -u mobilizon curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
+  ```
+
+In both cases, ~700Mio of disk will be used. You may use the following configuration to specify where the data is expected:
+```elixir
+config :tz_world, data_dir: "/some/place"
+```
+
+## New optional dependencies
+
+These are optional, installing them will allow Mobilizon to export to PDF and ODS as well. Mobilizon 2.0 allows to export the participant list, but more is planned.
 ### Docker
 Everything is included in our Docker image.
 ### Release and source install
@@ -23,7 +73,7 @@ New optional Python dependencies:
 * `weasyprint` for PDF export (with [a few extra dependencies](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html))
 * `pyexcel-ods3` for ODS export (no extra dependencies)
 
-Both can be installed through pip.
+Both can be installed through pip. You need to enable exports for PDF and ODS in the configuration afterwards. Read [the dedicated docs page about this]() (*upcoming*).
 
 # Upgrading from 1.0 to 1.1
 
