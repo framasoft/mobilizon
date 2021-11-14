@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-11-13 09:48+0000\n"
+"PO-Revision-Date: 2021-11-14 14:19+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/es/>\n"
@@ -527,9 +527,9 @@ msgstr "Ya eres participante de este evento"
 msgid "You are not a member of this group"
 msgstr "no eres un miembro de este grupo"
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:155 lib/graphql/resolvers/member.ex:171
 #: lib/graphql/resolvers/member.ex:186
+#, elixir-format
 msgid "You are not a moderator or admin for this group"
 msgstr "No eres moderador ni administrador de este grupo"
 
@@ -566,8 +566,8 @@ msgstr ""
 "No puedes abandonar el evento porque eres el único participante creador del "
 "evento"
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:190
+#, elixir-format
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "No puede establecerse en un rol de miembro inferior para este grupo porque "
@@ -812,13 +812,13 @@ msgstr "No puedes rechazar esta invitación con este perfil."
 msgid "This invitation doesn't exist."
 msgstr "Esta invitación no existe."
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:215
+#, elixir-format
 msgid "This member already has been rejected."
 msgstr "Este miembro ya ha sido rechazado."
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:239
+#, elixir-format
 msgid "You don't have the right to remove this member."
 msgstr "No tiene derecho a eliminar este miembro."
 
@@ -1037,17 +1037,17 @@ msgstr "Debes iniciar sesión para eliminar su cuenta"
 msgid "You need to be logged-in to update a group follow"
 msgstr "Debes iniciar sesión para actualizar un grupo"
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:208
-msgid "This member does not exist"
-msgstr ""
-
 #, elixir-format
+msgid "This member does not exist"
+msgstr "Este miembro no existe"
+
 #: lib/graphql/resolvers/member.ex:232
+#, elixir-format
 msgid "You don't have the role needed to remove this member."
 msgstr "No tiene derecho a eliminar este miembro."
 
-#, elixir-format
 #: lib/graphql/resolvers/member.ex:250
+#, elixir-format
 msgid "You must be logged-in to remove a member"
-msgstr ""
+msgstr "Debes iniciar sesión para eliminar un miembro"
