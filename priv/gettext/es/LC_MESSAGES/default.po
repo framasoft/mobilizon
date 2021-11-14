@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-11-13 09:48+0000\n"
+"PO-Revision-Date: 2021-11-14 14:19+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -1247,8 +1247,8 @@ msgstr ""
 msgid "So long, and thanks for the fish!"
 msgstr "¡Hasta luego y gracias por el pescado!"
 
-#, elixir-format
 #: lib/web/email/member.ex:113
+#, elixir-format
 msgid "You have been removed from group %{group}"
 msgstr "Ha sido eliminado del grupo %{group}"
 
@@ -1949,8 +1949,8 @@ msgstr "📅 Recién programado por %{group}: %{event}"
 msgid "New end date:"
 msgstr "Nueva fecha de finalización:"
 
-#, elixir-format
 #: lib/web/templates/email/event_updated.text.eex:10
+#, elixir-format
 #, elixir-format
 msgid "New location:"
 msgstr "Ubicación:"
@@ -1960,50 +1960,53 @@ msgstr "Ubicación:"
 msgid "New start date:"
 msgstr "Nueva fecha de inicio:"
 
-#, elixir-format
 #: lib/web/templates/email/group_membership_rejection.html.heex:13
 #: lib/web/templates/email/group_membership_rejection.text.eex:1
+#, elixir-format
 msgid "Sorry, not this time!"
-msgstr ""
+msgstr "¡Lo siento, esta vez no!"
 
-#, elixir-format
 #: lib/web/templates/email/group_membership_approval.html.heex:52
-msgid "View the group"
-msgstr ""
-
 #, elixir-format
+msgid "View the group"
+msgstr "Ver el grupo"
+
 #: lib/web/templates/email/group_membership_approval.html.heex:13
 #: lib/web/templates/email/group_membership_approval.text.eex:1
+#, elixir-format
 msgid "You're in!"
 msgstr "¡Vas!"
 
-#, elixir-format
 #: lib/web/email/member.ex:60
+#, elixir-format
 msgid "Your membership request for group %{group} has been approved"
-msgstr ""
+msgstr "Su solicitud de adesión para el grupo %{group} ha sido aprobada"
 
-#, elixir-format
 #: lib/web/email/member.ex:89
+#, elixir-format
 msgid "Your membership request for group %{group} has been rejected"
-msgstr ""
+msgstr "Su solicitud de adesión para el grupo %{group} ha sido rechazada"
 
-#, elixir-format
 #: lib/web/templates/email/group_membership_rejection.text.eex:3
-msgid "Your membership request for group %{group} has been rejected."
-msgstr ""
-
 #, elixir-format
+msgid "Your membership request for group %{group} has been rejected."
+msgstr "Su solicitud de adesión para el grupo %{group} ha sido rechazada."
+
 #: lib/web/templates/email/group_membership_rejection.html.heex:38
+#, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected."
 msgstr ""
+"Su solicitud de membresía para el grupo %{link_start}<b>% {group}</b>% "
+"{link_end} ha sido rechazada."
 
-#, elixir-format, fuzzy
 #: lib/web/templates/email/group_membership_approval.text.eex:3
+#, elixir-format
 msgid "Your membership request for group %{group} has been approved."
-msgstr ""
+msgstr "Su solicitud de adesión para el grupo% {group} ha sido aprobada."
 
-#, elixir-format, fuzzy
 #: lib/web/templates/email/group_membership_approval.html.heex:38
+#, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
-
+"Su solicitud de adesión para el grupo %{link_start}<b>%{group}</b>%{link_end}"
+" ha sido aprobada."
