@@ -602,42 +602,28 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       ) do
     Logger.info("Handle incoming to delete an object")
 
-    with actor_url <- Utils.get_actor(data),
-         {:actor, {:ok, %Actor{} = actor}} <-
-           {:actor, ActivityPubActor.get_or_fetch_actor_by_url(actor_url)},
-         object_id <- Utils.get_url(object),
-         {:ok, object} <- is_group_object_gone(object_id),
-         {:origin_check, true} <-
-           {:origin_check,
-            Utils.origin_check_from_id?(actor_url, object_id) ||
-              Permission.can_delete_group_object?(actor, object)},
-         {:ok, activity, object} <- Actions.Delete.delete(object, actor, false) do
-      {:ok, activity, object}
-    else
-      {:origin_check, false} ->
-        Logger.warn("Object origin check failed")
-        :error
+    actor_url = Utils.get_actor(data)
+    object_id = Utils.get_url(object)
 
-      {:actor, {:error, _err}} ->
+    case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
+      {:error, _err} ->
         {:error, :unknown_actor}
 
-      {:error, e} ->
-        Logger.debug(inspect(e))
+      {:ok, %Actor{} = actor} ->
+        case is_group_object_gone(object_id) do
+          {:ok, object} ->
+            if Utils.origin_check_from_id?(actor_url, object_id) ||
+                 Permission.can_delete_group_object?(actor, object) do
+              Actions.Delete.delete(object, actor, false)
+            else
+              Logger.warn("Object origin check failed")
+              :error
+            end
 
-        # Sentry.capture_message("Error while handling a Delete activity",
-        #   extra: %{data: data}
-        # )
-
-        :error
-
-      e ->
-        Logger.error(inspect(e))
-
-        # Sentry.capture_message("Error while handling a Delete activity",
-        #   extra: %{data: data}
-        # )
-
-        :error
+          {:error, err} ->
+            Logger.debug(inspect(err))
+            {:error, err}
+        end
     end
   end
 
