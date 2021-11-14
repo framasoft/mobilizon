@@ -9,6 +9,8 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
+  alias Mobilizon.Service.HTTP.HostMetaClient.Mock, as: HostMetaClientMock
+  alias Mobilizon.Service.HTTP.WebfingerClient.Mock, as: WebfingerClientMock
 
   describe "fetching actor from its url" do
     @actor_url "https://framapiaf.org/users/tcit"
@@ -24,6 +26,27 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
       |> expect(:call, fn
         %{method: :get, url: @actor_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
+
+      HostMetaClientMock
+      |> expect(:call, fn
+        %{method: :get, url: "http://framapiaf.org/.well-known/host-meta"}, _opts ->
+          {:ok, %Tesla.Env{status: 404, body: ""}}
+      end)
+
+      webfinger_data =
+        File.read!("test/fixtures/webfinger/mastodon-webfinger.json")
+        |> String.replace("social.tcit.fr", "framapiaf.org")
+        |> Jason.decode!()
+
+      WebfingerClientMock
+      |> expect(:call, fn
+        %{
+          method: :get,
+          url: "http://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: webfinger_data}}
       end)
 
       assert {:ok,
@@ -42,6 +65,27 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
       |> expect(:call, fn
         %{method: :get, url: @actor_url}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
+
+      HostMetaClientMock
+      |> expect(:call, fn
+        %{method: :get, url: "http://framapiaf.org/.well-known/host-meta"}, _opts ->
+          {:ok, %Tesla.Env{status: 404, body: ""}}
+      end)
+
+      webfinger_data =
+        File.read!("test/fixtures/webfinger/mastodon-webfinger.json")
+        |> String.replace("social.tcit.fr", "framapiaf.org")
+        |> Jason.decode!()
+
+      WebfingerClientMock
+      |> expect(:call, fn
+        %{
+          method: :get,
+          url: "http://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 200, body: webfinger_data}}
       end)
 
       assert {:ok,

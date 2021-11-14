@@ -1,0 +1,10 @@
+{
+  "subject": "acct:gancio@demo.gancio.org",
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://demo.gancio.org/federation/u/gancio"
+    }
+  ]
+}

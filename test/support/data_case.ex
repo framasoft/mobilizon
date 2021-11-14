@@ -91,6 +91,10 @@ defmodule Mobilizon.DataCase do
 
   Mox.defmock(Mobilizon.Service.HTTP.ActivityPub.Mock, for: Tesla.Adapter)
 
+  Mox.defmock(Mobilizon.Service.HTTP.WebfingerClient.Mock, for: Tesla.Adapter)
+
+  Mox.defmock(Mobilizon.Service.HTTP.HostMetaClient.Mock, for: Tesla.Adapter)
+
   Mox.defmock(Mobilizon.Service.HTTP.GeospatialClient.Mock,
     for: Tesla.Adapter
   )

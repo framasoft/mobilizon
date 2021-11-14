@@ -4,7 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/activity_pub/activity_pub_test.exs
 
 defmodule Mobilizon.Federation.ActivityPubTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Mobilizon.DataCase
 
   import Mock

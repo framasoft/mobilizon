@@ -4,7 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/web_finger/web_finger_controller_test.exs
 
 defmodule Mobilizon.Web.ActivityPubControllerTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   import Mox
 
   use Mobilizon.Web.ConnCase

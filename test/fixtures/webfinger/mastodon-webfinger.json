@@ -1,0 +1,23 @@
+{
+  "subject": "acct:tcit@social.tcit.fr",
+  "aliases": [
+    "https://social.tcit.fr/@tcit",
+    "https://social.tcit.fr/users/tcit"
+  ],
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://social.tcit.fr/@tcit"
+    },
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://social.tcit.fr/users/tcit"
+    },
+    {
+      "rel": "http://ostatus.org/schema/1.0/subscribe",
+      "template": "https://social.tcit.fr/authorize_interaction?uri={uri}"
+    }
+  ]
+}

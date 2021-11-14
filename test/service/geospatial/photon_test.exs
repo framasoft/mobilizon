@@ -41,7 +41,6 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
 
     # Photon returns something quite wrong, so no need to test this right now.
     #    test "returns a valid address from reverse geocode" do
-    #      use_cassette "geospatial/photon/geocode" do
     #        assert %Address{
     #                 locality: "Lyon",
     #                 description: "",
@@ -57,7 +56,6 @@ defmodule Mobilizon.Service.Geospatial.PhotonTest do
     #               } ==
     #                 Photon.geocode(4.8425657, 45.7517141)
     #                 |> hd
-    #      end
     #    end
   end
 end

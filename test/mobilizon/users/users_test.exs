@@ -5,7 +5,6 @@ defmodule Mobilizon.UsersTest do
   alias Mobilizon.Users
   alias Mobilizon.Users.{Setting, User}
   import Mobilizon.Factory
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   describe "users" do
     @valid_attrs %{email: "foo@bar.tld", password: "some password"}

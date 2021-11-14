@@ -1,0 +1,66 @@
+{
+  "subject": "acct:lain@squeet.me",
+  "aliases": ["https://squeet.me/~lain", "https://squeet.me/profile/lain"],
+  "links": [
+    {
+      "rel": "http://purl.org/macgirvin/dfrn/1.0",
+      "href": "https://squeet.me/profile/lain"
+    },
+    {
+      "rel": "http://schemas.google.com/g/2010#updates-from",
+      "type": "application/atom+xml",
+      "href": "https://squeet.me/dfrn_poll/lain"
+    },
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://squeet.me/profile/lain"
+    },
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://squeet.me/profile/lain"
+    },
+    {
+      "rel": "http://microformats.org/profile/hcard",
+      "type": "text/html",
+      "href": "https://squeet.me/hcard/lain"
+    },
+    {
+      "rel": "http://portablecontacts.net/spec/1.0",
+      "href": "https://squeet.me/poco/lain"
+    },
+    {
+      "rel": "http://webfinger.net/rel/avatar",
+      "type": "image/jpeg",
+      "href": "https://squeet.me/photo/abf2ee40bfcb044ac7fd1d143c82f63a-4.jpg?ts=1526641378"
+    },
+    {
+      "rel": "http://joindiaspora.com/seed_location",
+      "type": "text/html",
+      "href": "https://squeet.me"
+    },
+    { "rel": "salmon", "href": "https://squeet.me/salmon/lain" },
+    {
+      "rel": "http://salmon-protocol.org/ns/salmon-replies",
+      "href": "https://squeet.me/salmon/lain"
+    },
+    {
+      "rel": "http://salmon-protocol.org/ns/salmon-mention",
+      "href": "https://squeet.me/salmon/lain/mention"
+    },
+    {
+      "rel": "http://ostatus.org/schema/1.0/subscribe",
+      "template": "https://squeet.me/follow?url={uri}"
+    },
+    {
+      "rel": "magic-public-key",
+      "href": "data:application/magic-public-key,RSA.zBrwVSzZ9YSNfTE3vJFCB6BB9-EGm4o0Lp9rlU1JWisWMZmFGuU8yftNA56KGVz2UHPY6weUh51tifa4nvIKzQ.AQAB"
+    },
+    {
+      "rel": "http://purl.org/openwebauth/v1",
+      "type": "application/x-zot+json",
+      "href": "https://squeet.me/owa"
+    }
+  ]
+}

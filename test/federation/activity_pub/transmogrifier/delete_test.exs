@@ -1,6 +1,5 @@
 defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.DeleteTest do
   use Mobilizon.DataCase
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Oban.Testing, repo: Mobilizon.Storage.Repo
   import Mobilizon.Factory
   import Mox
