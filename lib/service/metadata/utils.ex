@@ -29,7 +29,7 @@ defmodule Mobilizon.Service.Metadata.Utils do
   * Slices it to a limit and add an ellipsis character
   * Returns a default description if text is empty
   """
-  @spec process_description(String.t(), String.t(), integer()) :: String.t()
+  @spec process_description(String.t(), String.t(), integer() | nil) :: String.t()
   def process_description(description, locale \\ "en", limit \\ @slice_limit)
   def process_description(nil, locale, limit), do: process_description("", locale, limit)
 
@@ -55,6 +55,8 @@ defmodule Mobilizon.Service.Metadata.Utils do
 
   defdelegate datetime_to_string(datetime, locale \\ "en", format \\ :medium), to: DateTime
   defdelegate render_address(address), to: Address
+
+  defp maybe_slice(description, nil), do: description
 
   defp maybe_slice(description, limit) do
     if String.length(description) > limit do
