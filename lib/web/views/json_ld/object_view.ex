@@ -3,7 +3,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
+  alias Mobilizon.Events.{Event, EventOptions, Participant, ParticipantRole}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
@@ -59,6 +59,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "performer" => organizer,
       "organizer" => organizer,
       "location" => render_location(event),
+      "eventAttendanceMode" => eventAttendanceMode(event),
       "eventStatus" =>
         if(event.status == :cancelled,
           do: "https://schema.org/EventCancelled",
@@ -182,4 +183,20 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     do: render_one(address, ObjectView, "address.json", as: :address)
 
   defp render_address(_), do: nil
+
+  @livestream_keys ["mz:live", "mz:visio"]
+
+  defp eventAttendanceMode(%Event{options: %EventOptions{is_online: true}}),
+    do: "https://schema.org/OnlineEventAttendanceMode"
+
+  defp eventAttendanceMode(%Event{physical_address: %Address{}, metadata: metadata}) do
+    if Enum.any?(metadata, &String.contains?(&1["key"], @livestream_keys)) do
+      "https://schema.org/MixedEventAttendanceMode"
+    else
+      "https://schema.org/OfflineEventAttendanceMode"
+    end
+  end
+
+  defp eventAttendanceMode(%Event{}),
+    do: "https://schema.org/OfflineEventAttendanceMode"
 end
