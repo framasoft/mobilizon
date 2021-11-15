@@ -23,6 +23,7 @@ const postData = {
   body: "My content",
   insertedAt: "2020-12-02T09:01:20.873Z",
   tags: [],
+  language: "en",
 };
 
 const generateWrapper = (

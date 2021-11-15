@@ -114,8 +114,12 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     Logger.debug("headers")
     Logger.debug(inspect(headers))
 
-    with {:ok, key} <- prepare_public_key(keys) do
-      HTTPSignatures.sign(key, actor.url <> "#main-key", headers)
+    case prepare_public_key(keys) do
+      {:ok, key} ->
+        HTTPSignatures.sign(key, actor.url <> "#main-key", headers)
+
+      {:error, :pem_decode_error} ->
+        raise ArgumentError, message: "Failed to prepare public keys for #{actor.url}"
     end
   end
 
@@ -129,7 +133,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
   @spec generate_date_header(NaiveDateTime.t()) :: String.t()
   def generate_date_header(%NaiveDateTime{} = date) do
-    Timex.format!(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT")
+    Timex.lformat!(date, "{WDshort}, {0D} {Mshort} {YYYY} {h24}:{m}:{s} GMT", "en")
   end
 
   @spec generate_request_target(String.t(), String.t()) :: String.t()

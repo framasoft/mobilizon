@@ -101,7 +101,8 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
           false
       end
     else
-      true
+      # Object is not owned by a group
+      false
     end
   end
 

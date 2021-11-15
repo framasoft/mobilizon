@@ -1,0 +1,15 @@
+{
+  "subject": "acct:framasoft@framatube.org",
+  "aliases": ["https://framatube.org/accounts/framasoft"],
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://framatube.org/accounts/framasoft"
+    },
+    {
+      "rel": "http://ostatus.org/schema/1.0/subscribe",
+      "template": "https://framatube.org/remote-interaction?uri={uri}"
+    }
+  ]
+}

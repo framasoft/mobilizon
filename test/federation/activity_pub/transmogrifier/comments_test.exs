@@ -36,11 +36,78 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
     end
 
     test "it fetches replied-to activities if we don't have them" do
-      data =
-        File.read!("test/fixtures/mastodon-post-activity.json")
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
+      status_data = File.read!("test/fixtures/mastodon-status-2.json") |> Jason.decode!()
+
+      reply_to_data =
+        File.read!("test/fixtures/pleroma-comment-object.json")
         |> Jason.decode!()
 
       reply_to_url = "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
+
+      Mock
+      |> expect(:call, 5, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/admin")
+               |> Map.put("preferredUsername", "admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/tcit")
+               |> Map.put("preferredUsername", "tcit")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/Framasoft"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/Framasoft")
+               |> Map.put("preferredUsername", "Framasoft")
+           }}
+
+        %{
+          method: :get,
+          url: "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
+        },
+        _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               status_data
+               |> Map.put(
+                 "id",
+                 "https://fedi.absturztau.be/objects/1726cdc7-4f2a-4ddb-9c68-03d27c98c3d9"
+               )
+               |> Map.put("actor", "https://fedi.absturztau.be/users/dqn")
+           }}
+
+        %{method: :get, url: "https://fedi.absturztau.be/users/dqn"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://fedi.absturztau.be/users/dqn")
+           }}
+
+        %{method: :get, url: ^reply_to_url}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: reply_to_data}}
+      end)
+
+      data =
+        File.read!("test/fixtures/mastodon-post-activity.json")
+        |> Jason.decode!()
 
       object =
         data["object"]
@@ -49,16 +116,6 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
       data =
         data
         |> Map.put("object", object)
-
-      reply_to_data =
-        File.read!("test/fixtures/pleroma-comment-object.json")
-        |> Jason.decode!()
-
-      Mock
-      |> expect(:call, fn
-        %{method: :get, url: ^reply_to_url}, _opts ->
-          {:ok, %Tesla.Env{status: 200, body: reply_to_data}}
-      end)
 
       {:ok, returned_activity, _} = Transmogrifier.handle_incoming(data)
 
@@ -75,6 +132,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
     end
 
     test "it doesn't saves replies to an event if the event doesn't accept comments" do
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://framapiaf.org/users/admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://framapiaf.org/users/tcit")
+           }}
+      end)
+
       data =
         File.read!("test/fixtures/mastodon-post-activity.json")
         |> Jason.decode!()
@@ -94,6 +170,31 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
 
     @url_404 "https://404.site/whatever"
     test "it does not crash if the object in inReplyTo can't be fetched" do
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/admin")
+               |> Map.put("preferredUsername", "admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/tcit")
+               |> Map.put("preferredUsername", "tcit")
+           }}
+      end)
+
       data =
         File.read!("test/fixtures/mastodon-post-activity.json")
         |> Jason.decode!()
@@ -118,6 +219,31 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
     end
 
     test "it ignores incoming private notes" do
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/admin")
+               |> Map.put("preferredUsername", "admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/tcit")
+               |> Map.put("preferredUsername", "tcit")
+           }}
+      end)
+
       data = File.read!("test/fixtures/mastodon-post-activity-private.json") |> Jason.decode!()
       event = insert(:event)
       object = data["object"]
@@ -128,7 +254,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
     end
 
     test "it works for incoming notices" do
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://framapiaf.org/users/admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://framapiaf.org/users/tcit")
+           }}
+      end)
 
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
 
@@ -136,8 +280,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
                "https://framapiaf.org/users/admin/statuses/99512778738411822/activity"
 
       assert data["to"] == [
-               "https://www.w3.org/ns/activitystreams#Public",
-               "https://framapiaf.org/users/tcit"
+               "https://www.w3.org/ns/activitystreams#Public"
              ]
 
       #      assert data["cc"] == [
@@ -164,6 +307,31 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
     end
 
     test "it works for incoming notices with hashtags" do
+      actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
+
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/admin")
+               |> Map.put("preferredUsername", "admin")
+           }}
+
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://framapiaf.org/users/tcit")
+               |> Map.put("preferredUsername", "tcit")
+           }}
+      end)
+
       data = File.read!("test/fixtures/mastodon-post-activity-hashtag.json") |> Jason.decode!()
 
       {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)

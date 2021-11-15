@@ -37,6 +37,7 @@ export const HOME_USER_QUERIES = gql`
             }
             beginsOn
             visibility
+            language
             organizerActor {
               ...ActorFragment
             }
@@ -79,6 +80,7 @@ export const HOME_USER_QUERIES = gql`
             picture {
               url
             }
+            language
             attributedTo {
               ...ActorFragment
             }
@@ -129,6 +131,7 @@ export const CLOSE_CONTENT = gql`
           id
           url
         }
+        language
         tags {
           ...TagFragment
         }

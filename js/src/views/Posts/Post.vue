@@ -15,7 +15,7 @@
                 v-if="post.draft"
                 >{{ $t("Draft") }}</b-tag
               >
-              <h1 class="title">{{ post.title }}</h1>
+              <h1 class="title" :lang="post.language">{{ post.title }}</h1>
             </div>
             <p class="metadata">
               <router-link
@@ -165,7 +165,12 @@
       }}
     </b-message>
 
-    <section v-html="post.body" dir="auto" class="content" />
+    <section
+      v-html="post.body"
+      dir="auto"
+      class="content"
+      :lang="post.language"
+    />
     <section class="tags" dir="auto">
       <router-link
         v-for="tag in post.tags"

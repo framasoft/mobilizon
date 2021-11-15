@@ -280,6 +280,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
 
       _ ->
         Logger.debug("not in our database, let's try to create it")
+        # This is odd, why do addresses have url instead of just @id?
         map = Map.put(map, "url", map["id"])
         do_get_address(map)
     end

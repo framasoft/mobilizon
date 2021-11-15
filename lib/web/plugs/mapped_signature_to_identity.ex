@@ -48,9 +48,10 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
 
   # if this has payload make sure it is signed by the same actor that made it
   def call(%{assigns: %{valid_signature: true}, params: %{"actor" => actor}} = conn, _opts) do
-    with actor_id <- Utils.get_url(actor),
+    with actor_id when actor_id != nil <- Utils.get_url(actor),
          {:actor, %Actor{} = actor} <- {:actor, actor_from_key_id(conn)},
          {:actor_match, true} <- {:actor_match, actor.url == actor_id} do
+      Logger.debug("Mapped identity to #{actor.url} from actor param")
       assign(conn, :actor, actor)
     else
       {:actor_match, false} ->
@@ -58,7 +59,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
         Logger.debug("key_id=#{key_id_from_conn(conn)}, actor=#{actor}")
         assign(conn, :valid_signature, false)
 
-      # remove me once testsuite uses mapped capabilities instead of what we do now
+      # TODO: remove me once testsuite uses mapped capabilities instead of what we do now
       {:actor, nil} ->
         Logger.debug("Failed to map identity from signature (lookup failure)")
         Logger.debug("key_id=#{key_id_from_conn(conn)}, actor=#{actor}")
@@ -70,6 +71,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
   def call(%{assigns: %{valid_signature: true}} = conn, _opts) do
     case actor_from_key_id(conn) do
       %Actor{} = actor ->
+        Logger.debug("Mapped identity to #{actor.url} from signed fetch")
         assign(conn, :actor, actor)
 
       _ ->

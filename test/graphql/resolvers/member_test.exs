@@ -1,10 +1,12 @@
 defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
   use Mobilizon.Web.ConnCase
-
+  import Mox
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Member
   alias Mobilizon.GraphQL.AbsintheHelpers
+  alias Mobilizon.Service.HTTP.HostMetaClient.Mock, as: HostMetaClientMock
+  alias Mobilizon.Service.HTTP.WebfingerClient.Mock, as: WebfingerClientMock
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -296,6 +298,23 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
       group: group
     } do
       insert(:member, %{actor: actor, parent: group, role: :administrator})
+
+      HostMetaClientMock
+      |> expect(:call, fn
+        %{method: :get, url: "http://nowhere.absolute/.well-known/host-meta"}, _opts ->
+          {:ok, %Tesla.Env{status: 404, body: ""}}
+      end)
+
+      WebfingerClientMock
+      |> expect(:call, fn
+        %{
+          method: :get,
+          url:
+            "http://nowhere.absolute/.well-known/webfinger?resource=acct:not_existing@nowhere.absolute"
+        },
+        _opts ->
+          {:ok, %Tesla.Env{status: 404, body: ""}}
+      end)
 
       res =
         conn

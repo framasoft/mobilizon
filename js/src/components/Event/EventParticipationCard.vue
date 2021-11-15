@@ -51,7 +51,9 @@
                 params: { uuid: participation.event.uuid },
               }"
             >
-              <h3 class="title">{{ participation.event.title }}</h3>
+              <h3 class="title" :lang="participation.event.language">
+                {{ participation.event.title }}
+              </h3>
             </router-link>
           </div>
           <inline-address

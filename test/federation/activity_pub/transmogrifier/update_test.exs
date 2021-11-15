@@ -1,8 +1,8 @@
 defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
   use Mobilizon.DataCase
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   use Oban.Testing, repo: Mobilizon.Storage.Repo
   import Mobilizon.Factory
+  import Mox
 
   alias Mobilizon.{Actors, Events, Posts}
   alias Mobilizon.Actors.{Actor, Member}
@@ -10,79 +10,100 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
   alias Mobilizon.Posts.Post
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
+  alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
   describe "handle incoming update activities" do
     test "it works for incoming update activities on actors" do
-      use_cassette "activity_pub/update_actor_activity" do
-        data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
+      data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
-        {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
-        update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
 
-        object =
-          update_data["object"]
-          |> Map.put("actor", data["actor"])
-          |> Map.put("id", data["actor"])
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
 
-        update_data =
-          update_data
-          |> Map.put("actor", data["actor"])
-          |> Map.put("object", object)
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
 
-        {:ok, %Activity{data: _data, local: false}, _} =
-          Transmogrifier.handle_incoming(update_data)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
-        {:ok, %Actor{} = actor} = Actors.get_actor_by_url(update_data["actor"])
-        assert actor.name == "nextsoft"
+      object =
+        update_data["object"]
+        |> Map.put("actor", data["actor"])
+        |> Map.put("id", data["actor"])
 
-        assert actor.summary == "<p>Some bio</p>"
-      end
+      update_data =
+        update_data
+        |> Map.put("actor", data["actor"])
+        |> Map.put("object", object)
+
+      {:ok, %Activity{data: _data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
+
+      {:ok, %Actor{} = actor} = Actors.get_actor_by_url(update_data["actor"])
+      assert actor.name == "nextsoft"
+
+      assert actor.summary == "<p>Some bio</p>"
     end
 
     test "it works for incoming update activities on events" do
-      use_cassette "activity_pub/event_update_activities" do
-        data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
+      data = File.read!("test/fixtures/mobilizon-post-activity.json") |> Jason.decode!()
 
-        {:ok, %Activity{data: data, local: false}, %Event{id: event_id}} =
-          Transmogrifier.handle_incoming(data)
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
 
-        assert_enqueued(
-          worker: Mobilizon.Service.Workers.BuildSearch,
-          args: %{event_id: event_id, op: :insert_search_event}
-        )
+      Mock
+      |> expect(:call, 2, fn
+        %{method: :get, url: "https://mobilizon.fr/@metacartes"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
 
-        assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
+        %{method: :get, url: "https://framapiaf.org/users/tcit"}, _opts ->
+          {:ok, %Tesla.Env{status: 200, body: actor_data}}
+      end)
 
-        update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+      {:ok, %Activity{data: data, local: false}, %Event{id: event_id}} =
+        Transmogrifier.handle_incoming(data)
 
-        object =
-          data["object"]
-          |> Map.put("actor", data["actor"])
-          |> Map.put("name", "My updated event")
-          |> Map.put("id", data["object"]["id"])
-          |> Map.put("type", "Event")
+      assert_enqueued(
+        worker: Mobilizon.Service.Workers.BuildSearch,
+        args: %{event_id: event_id, op: :insert_search_event}
+      )
 
-        update_data =
-          update_data
-          |> Map.put("actor", data["actor"])
-          |> Map.put("object", object)
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
 
-        {:ok, %Activity{data: data, local: false}, _} =
-          Transmogrifier.handle_incoming(update_data)
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
 
-        %Event{} = event = Events.get_event_by_url(data["object"]["id"])
+      object =
+        data["object"]
+        |> Map.put("actor", data["actor"])
+        |> Map.put("name", "My updated event")
+        |> Map.put("id", data["object"]["id"])
+        |> Map.put("type", "Event")
 
-        assert_enqueued(
-          worker: Mobilizon.Service.Workers.BuildSearch,
-          args: %{event_id: event_id, op: :update_search_event}
-        )
+      update_data =
+        update_data
+        |> Map.put("actor", data["actor"])
+        |> Map.put("object", object)
 
-        assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(update_data)
 
-        assert event.title == "My updated event"
+      %Event{} = event = Events.get_event_by_url(data["object"]["id"])
 
-        assert event.description == data["object"]["content"]
-      end
+      assert_enqueued(
+        worker: Mobilizon.Service.Workers.BuildSearch,
+        args: %{event_id: event_id, op: :update_search_event}
+      )
+
+      assert %{success: 1, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :search)
+
+      assert event.title == "My updated event"
+
+      assert event.description == data["object"]["content"]
     end
 
     #     test "it works for incoming update activities which lock the account" do

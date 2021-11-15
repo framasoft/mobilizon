@@ -101,11 +101,11 @@
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <h2 class="title">{{ $t("Featured events") }}</h2>
       <div v-if="events.elements.length > 0">
-        <multi-card :events="events.elements" />
+        <multi-card class="my-4" :events="events.elements" />
         <div class="pagination" v-if="events.total > EVENT_PAGE_LIMIT">
           <b-pagination
             :total="events.total"
-            v-model="eventPage"
+            v-model="featuredEventPage"
             :per-page="EVENT_PAGE_LIMIT"
             :aria-next-label="$t('Next page')"
             :aria-previous-label="$t('Previous page')"
@@ -251,7 +251,7 @@ const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
       query: FETCH_EVENTS,
       variables() {
         return {
-          page: this.eventPage,
+          page: this.featuredEventPage,
           limit: EVENT_PAGE_LIMIT,
         };
       },
@@ -389,6 +389,17 @@ export default class Search extends Vue {
 
   updateSearchQuery(searchQuery: string): void {
     this.search = searchQuery;
+  }
+
+  get featuredEventPage(): number {
+    return parseInt(this.$route.query.featuredEventPage as string, 10) || 1;
+  }
+
+  set featuredEventPage(page: number) {
+    this.$router.push({
+      name: this.$route.name || RouteName.SEARCH,
+      query: { ...this.$route.query, featuredEventPage: page.toString() },
+    });
   }
 
   get eventPage(): number {

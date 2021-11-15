@@ -111,6 +111,7 @@ export const eventCommentThreadsMock = {
           deletedAt: null,
           insertedAt: "2020-12-03T09:02:00Z",
           isAnnouncement: false,
+          language: "en",
         },
         {
           __typename: "Comment",
@@ -141,6 +142,7 @@ export const eventCommentThreadsMock = {
           deletedAt: null,
           insertedAt: "2020-12-03T11:02:00Z",
           isAnnouncement: false,
+          language: "en",
         },
       ],
     },
@@ -185,6 +187,7 @@ export const newCommentForEventResponse: DataMock = {
       deletedAt: null,
       insertedAt: "2020-12-03T13:02:00Z",
       isAnnouncement: false,
+      language: "en",
     },
   },
 };

@@ -20,11 +20,7 @@ defmodule Mobilizon.Mixfile do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test,
-        vcr: :test,
-        "vcr.delete": :test,
-        "vcr.check": :test,
-        "vcr.show": :test
+        "coveralls.html": :test
       ],
       name: "Mobilizon",
       source_url: "https://framagit.org/framasoft/mobilizon",
@@ -216,7 +212,6 @@ defmodule Mobilizon.Mixfile do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
-      {:exvcr, "~> 0.12", only: :test},
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:mock, "~> 0.3.4", only: :test},
       {:elixir_feed_parser, "~> 2.1.0", only: :test},

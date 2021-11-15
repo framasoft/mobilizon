@@ -10,7 +10,9 @@
       style="height: 120px"
     />
     <div class="title-info-wrapper has-text-grey-dark">
-      <h3 class="post-minimalist-title">{{ post.title }}</h3>
+      <h3 class="post-minimalist-title" :lang="post.language">
+        {{ post.title }}
+      </h3>
       <p class="post-publication-date">
         <b-icon icon="clock" />
         <span dir="auto" class="has-text-grey-dark" v-if="isBeforeLastWeek">{{

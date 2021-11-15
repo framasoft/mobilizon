@@ -32,14 +32,14 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = cached_actor} ->
         if Actors.needs_update?(cached_actor) do
-          __MODULE__.make_actor_from_url(url, preload)
+          __MODULE__.make_actor_from_url(url, preload: preload)
         else
           {:ok, cached_actor}
         end
 
       {:error, :actor_not_found} ->
         # For tests, see https://github.com/jjh42/mock#not-supported---mocking-internal-function-calls and Mobilizon.Federation.ActivityPubTest
-        __MODULE__.make_actor_from_url(url, preload)
+        __MODULE__.make_actor_from_url(url, preload: preload)
     end
   end
 
@@ -48,15 +48,15 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Create an actor locally by its URL (AP ID)
   """
-  @spec make_actor_from_url(url :: String.t(), preload :: boolean()) ::
+  @spec make_actor_from_url(url :: String.t(), options :: Keyword.t()) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | Ecto.Changeset.t()}
-  def make_actor_from_url(url, preload \\ false) do
+  def make_actor_from_url(url, options \\ []) do
     if are_same_origin?(url, Endpoint.url()) do
       {:error, :actor_is_local}
     else
-      case Fetcher.fetch_and_prepare_actor_from_url(url) do
+      case Fetcher.fetch_and_prepare_actor_from_url(url, options) do
         {:ok, data} when is_map(data) ->
-          Actors.upsert_actor(data, preload)
+          Actors.upsert_actor(data, Keyword.get(options, :preload, false))
 
         # Request returned 410
         {:error, :actor_deleted} ->
@@ -78,13 +78,13 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
     case Actors.get_actor_by_name_with_preload(nickname, type) do
       %Actor{url: actor_url} = actor ->
         if Actors.needs_update?(actor) do
-          make_actor_from_url(actor_url, true)
+          make_actor_from_url(actor_url, preload: true)
         else
           {:ok, actor}
         end
 
       nil ->
-        make_actor_from_nickname(nickname, true)
+        make_actor_from_nickname(nickname, preload: true)
     end
   end
 
@@ -100,7 +100,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   def make_actor_from_nickname(nickname, preload \\ false) do
     case WebFinger.finger(nickname) do
       {:ok, url} when is_binary(url) ->
-        make_actor_from_url(url, preload)
+        make_actor_from_url(url, preload: preload)
 
       {:error, e} ->
         {:error, e}

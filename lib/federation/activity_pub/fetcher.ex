@@ -49,8 +49,11 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
           {:error, :content_not_json}
 
         {:ok, %Tesla.Env{} = res} ->
-          Logger.debug("Resource returned bad HTTP code inspect #{res}")
+          Logger.debug("Resource returned bad HTTP code #{inspect(res)}")
           {:error, :http_error}
+
+        {:error, err} ->
+          {:error, err}
       end
     else
       {:error, :invalid_url}
@@ -122,39 +125,25 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   """
   @spec fetch_and_prepare_actor_from_url(String.t()) ::
           {:ok, map()} | {:error, fetch_actor_errors}
-  def fetch_and_prepare_actor_from_url(url) do
+  def fetch_and_prepare_actor_from_url(url, options \\ []) do
     Logger.debug("Fetching and preparing actor from url")
     Logger.debug(inspect(url))
 
-    case Tesla.get(url,
-           headers: [{"Accept", "application/activity+json"}],
-           follow_redirect: true
-         ) do
-      {:ok, %{status: 200, body: body}} ->
-        Logger.debug("response okay, now decoding json")
+    case fetch(url, options) do
+      {:ok, data} ->
+        case ActorConverter.as_to_model_data(data) do
+          {:error, :actor_not_allowed_type} ->
+            {:error, :actor_not_allowed_type}
 
-        case Jason.decode(body) do
-          {:ok, data} when is_map(data) ->
-            Logger.debug("Got activity+json response at actor's endpoint, now converting data")
-
-            case ActorConverter.as_to_model_data(data) do
-              {:error, :actor_not_allowed_type} ->
-                {:error, :actor_not_allowed_type}
-
-              map when is_map(map) ->
-                {:ok, map}
-            end
-
-          {:error, %Jason.DecodeError{} = e} ->
-            Logger.warn("Could not decode actor at fetch #{url}, #{inspect(e)}")
-            {:error, :json_decode_error}
+          map when is_map(map) ->
+            {:ok, map}
         end
 
-      {:ok, %{status: 410}} ->
+      {:error, :http_gone} ->
         Logger.info("Response HTTP 410")
         {:error, :actor_deleted}
 
-      {:ok, %Tesla.Env{}} ->
+      {:error, :http_error} ->
         Logger.info("Non 200 HTTP Code")
         {:error, :http_error}
 

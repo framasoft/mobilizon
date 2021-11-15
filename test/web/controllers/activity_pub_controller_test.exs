@@ -4,7 +4,6 @@
 # Upstream: https://git.pleroma.social/pleroma/pleroma/blob/develop/test/web/web_finger/web_finger_controller_test.exs
 
 defmodule Mobilizon.Web.ActivityPubControllerTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
   import Mox
 
   use Mobilizon.Web.ConnCase
@@ -120,7 +119,6 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
   describe "/@:preferred_username/inbox" do
     test "it inserts an incoming event into the database", %{conn: conn} do
-      # use_cassette "activity_pub_controller/mastodon-post-activity_actor_call" do
       data = File.read!("test/fixtures/mastodon-post-activity.json") |> Jason.decode!()
 
       %Actor{url: remote_actor_url} =
@@ -151,6 +149,9 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
             ^local_actor_url ->
               {:ok, %Tesla.Env{status: 200, body: local_actor_data}}
 
+            "https://framapiaf.org/users/tcit" ->
+              {:ok, %Tesla.Env{status: 404, body: ""}}
+
             "https://framapiaf.org/users/admin/statuses/99512778738411822" ->
               {:ok, %Tesla.Env{status: 404, body: ""}}
           end
@@ -168,7 +169,6 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
                ActivityPub.fetch_object_from_url(data["object"]["id"])
 
       assert comment.actor.id == remote_actor.id
-      # end
     end
   end
 

@@ -1,6 +1,4 @@
 defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
-
   use Mobilizon.DataCase
 
   import Mobilizon.Factory

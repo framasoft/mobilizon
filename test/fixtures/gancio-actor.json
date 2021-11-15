@@ -1,0 +1,36 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    "https://w3id.org/security/v1",
+    {
+      "toot": "http://joinmastodon.org/ns#",
+      "schema": "http://schema.org#",
+      "ProperyValue": "schema:PropertyValue",
+      "value": "schema:value"
+    }
+  ],
+  "id": "https://demo.gancio.org/federation/u/gancio",
+  "type": "Application",
+  "name": "gancio",
+  "preferredUsername": "gancio",
+  "inbox": "https://demo.gancio.org/federation/u/gancio/inbox",
+  "outbox": "https://demo.gancio.org/federation/u/gancio/outbox",
+  "discoverable": true,
+  "attachment": [
+    {
+      "type": "PropertyValue",
+      "name": "Website",
+      "value": "<a href='https://demo.gancio.org'>https://demo.gancio.org</a>"
+    }
+  ],
+  "icon": {
+    "type": "Image",
+    "mediaType": "image/png",
+    "url": "https://demo.gancio.org/logo.png"
+  },
+  "publicKey": {
+    "id": "https://demo.gancio.org/federation/u/gancio#main-key",
+    "owner": "https://demo.gancio.org/federation/u/gancio",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxp9BQ8TvVqu+0xXk7VuZ\nnuO42cHxVI+z/3TQ80AfX5aoUnK/uP7lIPy+NiIgRRu0L4hsjEs+HP6Ny9NAKFtC\nddS3pUrgIDz/AUyKeYRsCycw4XyeX7gaqIan4vCx+ANPDVTc3twDenynHhaXbPsP\nzGeKiAsGIFKRUxc5I5xnQBk6Fy6LZvGwfif07AcECER+nzffSOMPYFVbhlRuBwOg\n/tJcut77KOEpJIQSwqzT0FOw4oFtkvJt/nhpQMkXwOjEuiMOVpPoXUIpWjnbvNmy\nIPXdnKN4QqHi0fAE+FvKGbNmr18vqApT/D4Yen6W1ZWCRdUR1jjl8LNFBkPH/Tad\nkOj+UyRRJjRRqY5mXCI72Bmhwmi/YdS4gt9K73okOZ3atM+9Kfj3azZm8pP7fRkK\n/lwRP8RZFSSpz4w9JtzYmR7P8qTaxwMuq8VrxtFmf1IBChFpyNHUDtmC9MzLBRE7\n+fnpr1bARR3OwO83/xtT+vKNE+2SBvsf7zeFRXa+p5dGaih90rQOwL8EsUItiG61\nm4y9n3Q7BM7XwrZ7sGe3Hey5SWveOEgemfP4ANJBiMQpU69LKM9dGW1FcEX4FlwW\nZx/135nzMXE2cF+y+q/yY2FlacXPqJXMY32mIc+rHMzvFY/ZDzjRY/7Gg2ekjXuN\n1o7Ag7a+5k+r+XkWBNKIHp8CAwEAAQ==\n-----END PUBLIC KEY-----\n"
+  }
+}

@@ -129,7 +129,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   @spec permissions(Event.t()) :: Permission.t()
   def permissions(%Event{draft: draft, attributed_to_id: _attributed_to_id}) do
     %Permission{
-      access: if(draft, do: nil, else: :member),
+      access: if(draft, do: :moderator, else: :member),
       create: :moderator,
       update: :moderator,
       delete: :moderator

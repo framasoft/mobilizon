@@ -62,14 +62,17 @@ config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "test/uploads"
 
 config :tz_world, data_dir: "_build/test/lib/tz_world/priv"
 
-config :exvcr,
-  vcr_cassette_library_dir: "test/fixtures/vcr_cassettes"
-
 config :tesla, Mobilizon.Service.HTTP.ActivityPub,
   adapter: Mobilizon.Service.HTTP.ActivityPub.Mock
 
+config :tesla, Mobilizon.Service.HTTP.WebfingerClient,
+  adapter: Mobilizon.Service.HTTP.WebfingerClient.Mock
+
 config :tesla, Mobilizon.Service.HTTP.GeospatialClient,
   adapter: Mobilizon.Service.HTTP.GeospatialClient.Mock
+
+config :tesla, Mobilizon.Service.HTTP.HostMetaClient,
+  adapter: Mobilizon.Service.HTTP.HostMetaClient.Mock
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 

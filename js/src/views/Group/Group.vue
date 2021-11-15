@@ -1366,4 +1366,8 @@ div.container {
     grid-template: 1fr;
   }
 }
+.map {
+  height: 60vh;
+  width: 100%;
+}
 </style>

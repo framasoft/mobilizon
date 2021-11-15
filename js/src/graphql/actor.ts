@@ -214,6 +214,9 @@ export const LOGGED_USER_DRAFTS = gql`
         }
         beginsOn
         visibility
+        attributedTo {
+          ...ActorFragment
+        }
         organizerActor {
           ...ActorFragment
         }

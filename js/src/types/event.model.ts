@@ -90,6 +90,7 @@ export interface IEvent {
   options: IEventOptions;
   metadata: IEventMetadata[];
   contacts: IActor[];
+  language: string;
 
   toEditJSON(): IEventEditJSON;
 }
@@ -133,6 +134,8 @@ export class EventModel implements IEvent {
   draft = true;
 
   publishAt = new Date();
+
+  language = "und";
 
   participantStats = {
     notApproved: 0,
@@ -210,6 +213,7 @@ export class EventModel implements IEvent {
 
     this.tags = hash.tags;
     this.metadata = hash.metadata;
+    this.language = hash.language;
     if (hash.options) this.options = hash.options;
   }
 
