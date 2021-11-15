@@ -817,7 +817,7 @@ msgid "You don't have the right to remove this member."
 msgstr "Non hai il diritto di rimuovere questo membro."
 
 #, elixir-format
-#: lib/mobilizon/actors/actor.ex:350
+#: lib/mobilizon/actors/actor.ex:351
 msgid "This username is already taken."
 msgstr "Questo nome utente è già in uso."
 

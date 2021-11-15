@@ -327,10 +327,10 @@ defmodule Mobilizon.Events do
   @spec build_changes(map()) :: map()
   defp build_changes(changes) do
     changes
-    |> Map.take(Event.__schema__(:fields))
     |> maybe_add_field(:physical_address)
     |> maybe_add_field(:options)
     |> maybe_add_field(:metadata)
+    |> Map.drop(Event.__schema__(:associations) -- [:physical_address, :options, :metadata])
   end
 
   @spec maybe_add_field(map(), atom()) :: map()

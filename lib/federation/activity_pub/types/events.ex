@@ -231,6 +231,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
       Mobilizon.Events.get_default_participant_role(event) == :not_approved &&
           role == :not_approved ->
+        Logger.debug("Scheduling a notification to notify of a new pending participation")
         Scheduler.pending_participation_notification(event)
         {:ok, activity_data, participant}
 

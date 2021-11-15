@@ -1,7 +1,9 @@
 <%= gettext "A request is pending!" %>
 ==
 
-<%= ngettext "You have one pending attendance request to process:", "You have %{number_participation_requests} attendance requests to process:", @total, number_participation_requests: @total %>
+<%= ngettext "You have one pending attendance request to process for the following event:", "You have %{number_participation_requests} attendance requests to process for the following event:", @total, number_participation_requests: @total %>
+
+<%= render("participation/event_card.text", event: @event, timezone: @timezone, locale: @locale, action: nil) %>
 
 <%= gettext "Manage pending requests" %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
 

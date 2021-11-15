@@ -182,20 +182,39 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
         event_id: event_id
       }
 
+      Logger.debug("Determining when we should send the pending participation notification")
+
       cond do
         # Sending directly
         send_at == :direct ->
-          Notification.enqueue(:pending_participation_notification, params)
+          Logger.debug("The notification will be sent straight away!")
+
+          {:ok, %Oban.Job{id: job_id}} =
+            Notification.enqueue(:pending_participation_notification, params)
+
+          Logger.debug("Job scheduled with ID #{job_id}")
 
         # Not sending
         is_nil(send_at) ->
+          Logger.debug("We will not send any notification")
           {:ok, nil}
 
         # Sending to calculated time
         DateTime.compare(begins_on, send_at) == :gt ->
-          Notification.enqueue(:pending_participation_notification, params, scheduled_at: send_at)
+          Logger.debug("We will send the notification on #{send_at}")
+
+          {:ok, %Oban.Job{id: job_id}} =
+            Notification.enqueue(:pending_participation_notification, params,
+              scheduled_at: send_at
+            )
+
+          Logger.debug("Job scheduled with ID #{job_id}")
 
         true ->
+          Logger.debug(
+            "Something went wrong when determining when to send the pending participation notification"
+          )
+
           {:ok, nil}
       end
     else
@@ -302,6 +321,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
 
       :one_hour ->
         compare_to
+        |> DateTime.add(3600)
         |> DateTime.shift_zone!(timezone)
         |> (&%{&1 | minute: 0, second: 0, microsecond: {0, 0}}).()
     end

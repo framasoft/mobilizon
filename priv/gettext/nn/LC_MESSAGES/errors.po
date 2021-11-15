@@ -834,7 +834,7 @@ msgid "You don't have the right to remove this member."
 msgstr "Du har ikkje løyve til å fjerna denne medlemen."
 
 #, elixir-format
-#: lib/mobilizon/actors/actor.ex:350
+#: lib/mobilizon/actors/actor.ex:351
 msgid "This username is already taken."
 msgstr "Dette brukarnamnet er oppteke."
 

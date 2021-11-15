@@ -2,6 +2,8 @@
 
 <%= render("participation/card/_metadata.text", event: @event, timezone: @timezone, locale: @locale, action: @action) %>
 
+<%= case @action do %><% "participation" -> %><%= gettext("Manage your participation:") %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %><% "event" -> %><%= gettext("Participate:") %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %><% nil -> %><% end %>
+
 <%= if @event.description do %><%= gettext("Details:") %>
 <%= process_description(@event.description) %>
 <%= if String.length(@event.description) > 200 do %><%= gettext("Read more : %{url}", url: Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)) |> raw %><% end %><% end %>
