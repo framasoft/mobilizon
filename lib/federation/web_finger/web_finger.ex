@@ -188,10 +188,12 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec find_webfinger_endpoint(String.t()) ::
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   defp find_webfinger_endpoint(domain) when is_binary(domain) do
-    with {:ok, %{body: body}} <- fetch_document("http://#{domain}/.well-known/host-meta"),
+    with {:ok, %Tesla.Env{status: 200, body: body}} <-
+           fetch_document("http://#{domain}/.well-known/host-meta"),
          link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}
     else
+      {:ok, %Tesla.Env{status: 404}} -> {:error, :entity_not_found}
       {:error, :link_not_found} -> {:error, :link_not_found}
       {:error, error} -> {:error, error}
     end
