@@ -299,12 +299,13 @@ multi-arch-release:
     - docker buildx build --platform linux/${ARCH} --output type=local,dest=releases --build-arg APP_ASSET=${APP_ASSET} -f docker/multiarch/Dockerfile .
     - ls -alh releases/mobilizon/
     - du -sh releases/mobilizon/${APP_ASSET}
+    - mv releases/mobilizon/${APP_ASSET} .
   tags:
     - "privileged"
   artifacts:
     expire_in: 30 days
     paths:
-      - releases/mobilizon/${APP_ASSET}
+      - ${APP_ASSET}
   parallel:
     matrix:
       - ARCH: ["arm", "arm64"]
