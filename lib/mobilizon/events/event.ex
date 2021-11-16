@@ -64,7 +64,8 @@ defmodule Mobilizon.Events.Event do
           tags: [Tag.t()],
           participants: [Actor.t()],
           contacts: [Actor.t()],
-          language: String.t()
+          language: String.t(),
+          metadata: [EventMetadata.t()]
         }
 
   @update_required_attrs [:title, :begins_on, :organizer_actor_id]

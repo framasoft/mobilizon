@@ -790,18 +790,6 @@ msgstr[4] ""
 msgstr[5] ""
 
 #, elixir-format
-#: lib/web/templates/email/pending_participation_notification.html.heex:38
-#: lib/web/templates/email/pending_participation_notification.text.eex:4
-msgid "You have one pending attendance request to process:"
-msgid_plural "You have %{number_participation_requests} attendance requests to process:"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
-
-#, elixir-format
 #: lib/web/templates/email/email.text.eex:11
 msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} هو خادم موبيليزون Mobilizon."
@@ -903,8 +891,8 @@ msgid "Location address was removed"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/pending_participation_notification.html.heex:51
-#: lib/web/templates/email/pending_participation_notification.text.eex:6
+#: lib/web/templates/email/pending_participation_notification.html.heex:56
+#: lib/web/templates/email/pending_participation_notification.text.eex:8
 msgid "Manage pending requests"
 msgstr ""
 
@@ -1015,8 +1003,8 @@ msgid "Would you wish to update or cancel your attendance, simply access the eve
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/pending_participation_notification.html.heex:64
-#: lib/web/templates/email/pending_participation_notification.text.eex:8
+#: lib/web/templates/email/pending_participation_notification.html.heex:69
+#: lib/web/templates/email/pending_participation_notification.text.eex:10
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
 
@@ -1543,7 +1531,7 @@ msgid "On the agenda this week"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/event_card.html.heex:11
+#: lib/web/templates/email/participation/event_card.html.heex:58
 msgid "Details"
 msgstr ""
 
@@ -1554,7 +1542,7 @@ msgid "From the %{start} to the %{end}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/card/_metadata.html.heex:70
+#: lib/web/templates/email/participation/event_card.html.heex:20
 msgid "Manage your participation"
 msgstr ""
 
@@ -1565,7 +1553,7 @@ msgid "On %{date} from %{start_time} to %{end_time}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/event_card.html.heex:19
+#: lib/web/templates/email/participation/event_card.html.heex:66
 msgid "Read more"
 msgstr ""
 
@@ -1596,7 +1584,7 @@ msgid "Date:"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/event_card.text.eex:5
+#: lib/web/templates/email/participation/event_card.text.eex:7
 msgid "Details:"
 msgstr ""
 
@@ -1606,7 +1594,7 @@ msgid "Manage your notification settings"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+#: lib/web/templates/email/participation/event_card.text.eex:5
 msgid "Manage your participation:"
 msgstr ""
 
@@ -1617,17 +1605,17 @@ msgid "Organizer: %{organizer}"
 msgstr ""
 
 #, elixir-format
-#: lib/web/templates/email/participation/card/_metadata.html.heex:92
+#: lib/web/templates/email/participation/event_card.html.heex:42
 msgid "Participate"
 msgstr "تم قبول المشاركة"
 
 #, elixir-format
-#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+#: lib/web/templates/email/participation/event_card.text.eex:5
 msgid "Participate:"
 msgstr "تم قبول المشاركة"
 
 #, elixir-format
-#: lib/web/templates/email/participation/event_card.text.eex:7
+#: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more : %{url}"
 msgstr ""
 
@@ -1693,12 +1681,24 @@ msgstr ""
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/group_membership_approval.text.eex:3
 msgid "Your membership request for group %{group} has been approved."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/group_membership_approval.html.heex:38
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/web/templates/email/pending_participation_notification.html.heex:38
+#: lib/web/templates/email/pending_participation_notification.text.eex:4
+msgid "You have one pending attendance request to process for the following event:"
+msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""

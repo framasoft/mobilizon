@@ -1355,5 +1355,7 @@
   "Approve member": "Approuver le ou la membre",
   "Reject member": "Rejeter le ou la membre",
   "The membership request from {profile} was rejected": "La demande d'adhésion de {profile} a été rejetée",
-  "The member was approved": "Le ou la membre a été approuvée"
+  "The member was approved": "Le ou la membre a été approuvée",
+  "Emails usually don't contain capitals, make sure you haven't made a typo.": "Les emails ne contiennent d'ordinaire pas de capitales, assurez-vous de n'avoir pas fait de faute de frappe.",
+  "To follow groups and be informed of their latest events": "Afin de suivre des groupes et être informé de leurs derniers événements"
 }

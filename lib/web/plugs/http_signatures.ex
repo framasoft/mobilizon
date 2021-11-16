@@ -36,14 +36,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
           "(request-target)",
           String.downcase("#{conn.method}") <> " #{conn.request_path}"
         )
-
-      conn =
-        if conn.assigns[:digest] do
-          conn
-          |> put_req_header("digest", conn.assigns[:digest])
-        else
-          conn
-        end
+        |> maybe_put_digest_header()
 
       signature_valid = HTTPSignatures.validate_conn(conn)
       Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
@@ -52,6 +45,11 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
       assign(conn, :valid_signature, signature_valid && date_valid)
     end
   end
+
+  defp maybe_put_digest_header(%Plug.Conn{assigns: %{digest: digest}} = conn),
+    do: put_req_header(conn, "digest", digest)
+
+  defp maybe_put_digest_header(%Plug.Conn{} = conn), do: conn
 
   @spec date_valid?(Plug.Conn.t()) :: boolean()
   defp date_valid?(conn) do

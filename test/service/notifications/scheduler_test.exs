@@ -353,6 +353,7 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
 
       scheduled_at =
         DateTime.utc_now()
+        |> DateTime.add(3600)
         |> DateTime.shift_zone!("Europe/Paris")
         |> (&%{&1 | minute: 0, second: 0, microsecond: {0, 0}}).()
 

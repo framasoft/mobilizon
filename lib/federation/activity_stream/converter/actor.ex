@@ -149,6 +149,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
          name <- name || Parser.get_filename_from_response(response_headers, url) || default_name,
          {:ok, file} <- Upload.store(%{body: body, name: name}) do
       Map.take(file, [:content_type, :name, :url, :size])
+    else
+      _ -> nil
     end
   end
 
@@ -160,7 +162,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
 
   @spec maybe_add_avatar_picture(map(), ActorModel.t()) :: map()
   defp maybe_add_avatar_picture(actor_data, %ActorModel{avatar: %File{} = avatar}) do
-    Map.put(actor_data, "image", %{
+    Map.put(actor_data, "icon", %{
       "type" => "Image",
       "mediaType" => avatar.content_type,
       "url" => avatar.url

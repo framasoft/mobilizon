@@ -117,6 +117,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Discussions do
           "actor" => actor.url,
           "object" => %{
             "type" => "Tombstone",
+            "formerType" => "Note",
+            "deleted" => DateTime.utc_now(),
             "url" => url
           },
           "id" => url <> "/delete",

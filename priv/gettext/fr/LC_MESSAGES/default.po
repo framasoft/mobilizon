@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-11-12 17:13+0100\n"
+"PO-Revision-Date: 2021-11-15 15:55+0100\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -640,12 +640,6 @@ msgid_plural "Would you wish to cancel your attendance to one or several events,
 msgstr[0] "Si vous avez besoin d'annuler votre participation, il suffit d'accéder à la page de l'événement à partir du lien ci-dessus et de cliquer sur le bouton « Je participe »."
 msgstr[1] "Si vous avez besoin d'annuler votre participation à un ou plusieurs événements, il suffit d'accéder aux pages des événement grâce aux liens ci-dessus et de cliquer sur le bouton « Je participe »."
 
-#: lib/web/templates/email/pending_participation_notification.html.heex:38 lib/web/templates/email/pending_participation_notification.text.eex:4
-msgid "You have one pending attendance request to process:"
-msgid_plural "You have %{number_participation_requests} attendance requests to process:"
-msgstr[0] "Vous avez une demande de participation en attente à traiter :"
-msgstr[1] "Vous avez %{number_participation_requests} demandes de participation en attente à traiter :"
-
 #: lib/web/templates/email/email.text.eex:11
 msgid "%{instance} is powered by Mobilizon."
 msgstr "%{instance} est une instance Mobilizon."
@@ -656,7 +650,7 @@ msgstr "<b>%{instance}</b> est une instance Mobilizon."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:13 lib/web/templates/email/pending_participation_notification.text.eex:1
 msgid "A request is pending!"
-msgstr "Une requête est en attente !"
+msgstr "Une demande est en attente !"
 
 #: lib/web/templates/email/before_event_notification.html.heex:13 lib/web/templates/email/before_event_notification.text.eex:1
 msgid "An event is upcoming!"
@@ -718,7 +712,7 @@ msgstr "Localisation"
 msgid "Location address was removed"
 msgstr "L'adresse physique a été enlevée"
 
-#: lib/web/templates/email/pending_participation_notification.html.heex:51 lib/web/templates/email/pending_participation_notification.text.eex:6
+#: lib/web/templates/email/pending_participation_notification.html.heex:56 lib/web/templates/email/pending_participation_notification.text.eex:8
 msgid "Manage pending requests"
 msgstr "Gérer les demandes de participation en attente"
 
@@ -798,7 +792,7 @@ msgstr "Quoi de neuf aujourd'hui ?"
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr "Si vous souhaitez mettre à jour ou annuler votre participation, il vous suffit d'accéder à la page de l'événement par le lien ci-dessus et de cliquer sur le bouton Participer."
 
-#: lib/web/templates/email/pending_participation_notification.html.heex:64 lib/web/templates/email/pending_participation_notification.text.eex:8
+#: lib/web/templates/email/pending_participation_notification.html.heex:69 lib/web/templates/email/pending_participation_notification.text.eex:10
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr "Vous recevez ce courriel parce que vous avez choisi de recevoir des notifications pour les demandes de participation en attente à vos événements. Vous pouvez désactiver ou modifier vos paramètres de notification dans les paramètres de votre compte utilisateur dans « Notifications »."
 
@@ -1209,7 +1203,7 @@ msgstr "%{date_time} (dans votre fuseau horaire %{timezone} %{offset})"
 msgid "On the agenda this week"
 msgstr "Au programme cette semaine"
 
-#: lib/web/templates/email/participation/event_card.html.heex:11
+#: lib/web/templates/email/participation/event_card.html.heex:58
 msgid "Details"
 msgstr "Détails"
 
@@ -1217,7 +1211,7 @@ msgstr "Détails"
 msgid "From the %{start} to the %{end}"
 msgstr "Du %{start} au %{end}"
 
-#: lib/web/templates/email/participation/card/_metadata.html.heex:70
+#: lib/web/templates/email/participation/event_card.html.heex:20
 msgid "Manage your participation"
 msgstr "Gérer votre participation"
 
@@ -1225,7 +1219,7 @@ msgstr "Gérer votre participation"
 msgid "On %{date} from %{start_time} to %{end_time}"
 msgstr "Le %{date} de %{start_time} à %{end_time}"
 
-#: lib/web/templates/email/participation/event_card.html.heex:19
+#: lib/web/templates/email/participation/event_card.html.heex:66
 msgid "Read more"
 msgstr "Lire plus"
 
@@ -1249,7 +1243,7 @@ msgstr "Adresse :"
 msgid "Date:"
 msgstr "Date :"
 
-#: lib/web/templates/email/participation/event_card.text.eex:5
+#: lib/web/templates/email/participation/event_card.text.eex:7
 msgid "Details:"
 msgstr "Détails :"
 
@@ -1257,7 +1251,7 @@ msgstr "Détails :"
 msgid "Manage your notification settings"
 msgstr "Gérer vos paramètres de notification"
 
-#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+#: lib/web/templates/email/participation/event_card.text.eex:5
 msgid "Manage your participation:"
 msgstr "Gérer votre participation :"
 
@@ -1265,15 +1259,15 @@ msgstr "Gérer votre participation :"
 msgid "Organizer: %{organizer}"
 msgstr "Organisateur : %{organizer}"
 
-#: lib/web/templates/email/participation/card/_metadata.html.heex:92
+#: lib/web/templates/email/participation/event_card.html.heex:42
 msgid "Participate"
 msgstr "Participer"
 
-#: lib/web/templates/email/participation/card/_metadata.text.eex:4
+#: lib/web/templates/email/participation/event_card.text.eex:5
 msgid "Participate:"
 msgstr "Participer :"
 
-#: lib/web/templates/email/participation/event_card.text.eex:7
+#: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more : %{url}"
 msgstr "Lire plus : %{url}"
 
@@ -1332,3 +1326,9 @@ msgstr "Votre demande d'adhésion pour le groupe %{group} a été approuvée."
 #: lib/web/templates/email/group_membership_approval.html.heex:38
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr "Votre demande d'adhésion pour le groupe %{link_start}<b>%{group}</b>%{link_end} a été approuvée."
+
+#: lib/web/templates/email/pending_participation_notification.html.heex:38 lib/web/templates/email/pending_participation_notification.text.eex:4
+msgid "You have one pending attendance request to process for the following event:"
+msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
+msgstr[0] "Vous avez une demande de participation en attente à traiter pour l'événement suivant :"
+msgstr[1] "Vous avez %{number_participation_requests} demandes de participation en attente à traiter pour l'événement suivant :"

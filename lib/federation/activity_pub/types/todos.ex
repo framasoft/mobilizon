@@ -97,6 +97,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Todos do
       "type" => "Delete",
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => "Todo",
+        "deleted" => DateTime.utc_now(),
         "id" => url
       },
       "id" => "#{url}/delete",

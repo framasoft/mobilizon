@@ -53,6 +53,13 @@
                     )
                   }}
                 </li>
+                <li v-if="config.features.groups">
+                  {{
+                    $t(
+                      "To follow groups and be informed of their latest events"
+                    )
+                  }}
+                </li>
               </ul>
             </div>
           </div>
@@ -83,8 +90,8 @@
           <form v-on:submit.prevent="submit()">
             <b-field
               :label="$t('Email')"
-              :type="errors.email ? 'is-danger' : null"
-              :message="errors.email"
+              :type="errorEmailType"
+              :message="errorEmailMessages"
               label-for="email"
             >
               <b-input
@@ -100,8 +107,8 @@
 
             <b-field
               :label="$t('Password')"
-              :type="errors.password ? 'is-danger' : null"
-              :message="errors.password"
+              :type="errorPasswordType"
+              :message="errorPasswordMessages"
               label-for="password"
             >
               <b-input
@@ -178,12 +185,6 @@
               <auth-providers :oauthProviders="config.auth.oauthProviders" />
             </div>
           </form>
-
-          <div v-if="errors.length > 0">
-            <b-message type="is-danger" v-for="error in errors" :key="error">{{
-              error
-            }}</b-message>
-          </div>
         </div>
       </div>
     </section>
@@ -191,13 +192,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { CREATE_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
 import { CONFIG } from "../../graphql/config";
 import Subtitle from "../../components/Utils/Subtitle.vue";
 import AuthProviders from "../../components/User/AuthProviders.vue";
+import { AbsintheGraphQLError } from "../../types/apollo";
+
+type errorType = "is-danger" | "is-warning";
+type errorMessage = { type: errorType; message: string };
+type credentials = { email: string; password: string; locale: string };
 
 @Component({
   components: { Subtitle, AuthProviders },
@@ -218,13 +224,14 @@ export default class Register extends Vue {
 
   @Prop({ type: String, required: false, default: "" }) password!: string;
 
-  credentials = {
+  credentials: credentials = {
     email: this.email,
     password: this.password,
     locale: "en",
   };
 
-  errors: string[] = [];
+  emailErrors: errorMessage[] = [];
+  passwordErrors: errorMessage[] = [];
 
   sendingForm = false;
 
@@ -245,7 +252,8 @@ export default class Register extends Vue {
     this.sendingForm = true;
     this.credentials.locale = this.$i18n.locale;
     try {
-      this.errors = [];
+      this.emailErrors = [];
+      this.passwordErrors = [];
 
       await this.$apollo.mutate({
         mutation: CREATE_USER,
@@ -257,16 +265,66 @@ export default class Register extends Vue {
         params: { email: this.credentials.email },
       });
     } catch (error: any) {
-      console.error(error);
-      this.errors = error.graphQLErrors.reduce(
-        (acc: string[], localError: any) => {
-          acc.push(localError.message);
-          return acc;
-        },
-        []
+      error.graphQLErrors.forEach(
+        ({ field, message }: AbsintheGraphQLError) => {
+          switch (field) {
+            case "email":
+              this.emailErrors.push({
+                type: "is-danger" as errorType,
+                message: message[0] as string,
+              });
+              break;
+            case "password":
+              this.passwordErrors.push({
+                type: "is-danger" as errorType,
+                message: message[0] as string,
+              });
+              break;
+            default:
+          }
+        }
       );
+
       this.sendingForm = false;
     }
+  }
+
+  @Watch("credentials", { deep: true })
+  watchCredentials(credentials: credentials): void {
+    if (credentials.email !== credentials.email.toLowerCase()) {
+      const error = {
+        type: "is-warning" as errorType,
+        message: this.$t(
+          "Emails usually don't contain capitals, make sure you haven't made a typo."
+        ) as string,
+      };
+      this.emailErrors = [error];
+      this.$forceUpdate();
+    }
+  }
+
+  maxErrorType(errors: errorMessage[]): errorType | undefined {
+    if (!errors || errors.length === 0) return undefined;
+    return errors.reduce<errorType>((acc, error) => {
+      if (error.type === "is-danger" || acc === "is-danger") return "is-danger";
+      return "is-warning";
+    }, "is-warning");
+  }
+
+  get errorEmailType(): errorType | undefined {
+    return this.maxErrorType(this.emailErrors);
+  }
+
+  get errorPasswordType(): errorType | undefined {
+    return this.maxErrorType(this.passwordErrors);
+  }
+
+  get errorEmailMessages(): string[] {
+    return this.emailErrors.map(({ message }) => message);
+  }
+
+  get errorPasswordMessages(): string[] {
+    return this.passwordErrors?.map(({ message }) => message);
   }
 }
 </script>
@@ -301,5 +359,8 @@ p.create-account {
   ::v-deep button {
     margin: 1rem auto 2rem;
   }
+}
+::v-deep .help.is-warning {
+  color: #755033;
 }
 </style>

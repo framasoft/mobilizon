@@ -3,11 +3,14 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
+  alias Mobilizon.Events.{Event, EventOptions, Participant, ParticipantRole}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.Router.Helpers, as: Routes
+
+  import Mobilizon.Service.Metadata.Utils,
+    only: [process_description: 3]
 
   @spec render(String.t(), map()) :: map()
   def render("group.json", %{group: %Actor{} = group}) do
@@ -54,11 +57,12 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "@context" => "https://schema.org",
       "@type" => "Event",
       "name" => event.title,
-      "description" => event.description,
+      "description" => process_description(event.description, "en", nil),
       # We assume for now performer == organizer
       "performer" => organizer,
       "organizer" => organizer,
-      "location" => render_location(event),
+      "location" => render_all_locations(event),
+      "eventAttendanceMode" => event |> attendance_mode() |> event_attendance_mode(),
       "eventStatus" =>
         if(event.status == :cancelled,
           do: "https://schema.org/EventCancelled",
@@ -163,23 +167,66 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   defp reservation_status(:not_approved), do: "https://schema.org/ReservationHold"
   defp reservation_status(_), do: "https://schema.org/ReservationConfirmed"
 
-  @spec render_location(map()) :: map() | nil
-  defp render_location(%{physical_address: %Address{} = address}),
-    do: render_one(address, ObjectView, "place.json", as: :address)
+  defp render_all_locations(%Event{} = event) do
+    []
+    |> render_location(event)
+    |> render_virtual_location(event)
+  end
+
+  @spec render_location(list(), map()) :: list()
+  defp render_location(locations, %{physical_address: %Address{} = address}),
+    do: locations ++ [render_one(address, ObjectView, "place.json", as: :address)]
+
+  defp render_location(locations, _), do: locations
 
   # For now the Virtual Location of an event is it's own URL,
   # but in the future it will be a special field
-  defp render_location(%Event{url: event_url}) do
-    %{
-      "@type" => "VirtualLocation",
-      "url" => event_url
-    }
+  defp render_virtual_location(locations, %Event{
+         url: event_url,
+         metadata: metadata,
+         options: %EventOptions{is_online: is_online}
+       }) do
+    links = virtual_location_links(metadata)
+    fallback_links = if is_online, do: [event_url], else: []
+    links = if length(links) > 0, do: Enum.map(links, & &1.value), else: fallback_links
+
+    locations ++
+      Enum.map(
+        links,
+        &%{
+          "@type" => "VirtualLocation",
+          "url" => &1
+        }
+      )
   end
 
-  defp render_location(_), do: nil
+  defp render_virtual_location(locations, _), do: locations
 
   defp render_address(%{physical_address: %Address{} = address}),
     do: render_one(address, ObjectView, "address.json", as: :address)
 
   defp render_address(_), do: nil
+
+  defp event_attendance_mode(:online), do: "https://schema.org/OnlineEventAttendanceMode"
+  defp event_attendance_mode(:offline), do: "https://schema.org/OfflineEventAttendanceMode"
+  defp event_attendance_mode(:mixed), do: "https://schema.org/MixedEventAttendanceMode"
+
+  defp attendance_mode(%Event{options: %EventOptions{is_online: true}}),
+    do: :online
+
+  defp attendance_mode(%Event{physical_address: %Address{}, metadata: metadata}) do
+    if metadata |> virtual_location_links() |> length() > 0 do
+      :mixed
+    else
+      :offline
+    end
+  end
+
+  defp attendance_mode(%Event{}),
+    do: :offline
+
+  @livestream_keys ["mz:live", "mz:visio"]
+  @spec virtual_location_links(list()) :: list()
+  defp virtual_location_links(metadata),
+    do: Enum.filter(metadata, &String.contains?(&1.key, @livestream_keys))
 end

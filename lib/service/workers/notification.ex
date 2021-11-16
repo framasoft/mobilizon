@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.Workers.Notification do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.Email.{Mailer, Notification}
+  require Logger
 
   import Mobilizon.Service.DateTime,
     only: [
@@ -114,7 +115,7 @@ defmodule Mobilizon.Service.Workers.Notification do
           "event_id" => event_id
         }
       }) do
-    with %User{} = user <- Users.get_user(user_id),
+    with %User{} = user <- Users.get_user_with_settings!(user_id),
          {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          %Page{total: total} when total > 0 <-
            Events.list_participants_for_event(event_id, [:not_approved]) do
@@ -125,8 +126,8 @@ defmodule Mobilizon.Service.Workers.Notification do
       :ok
     else
       err ->
-        require Logger
         Logger.debug(inspect(err))
+        err
     end
   end
 

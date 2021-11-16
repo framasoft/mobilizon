@@ -19,7 +19,6 @@ defmodule Mobilizon.Events do
 
   alias Mobilizon.Events.{
     Event,
-    EventOptions,
     EventParticipantStats,
     FeedToken,
     Participant,
@@ -328,38 +327,29 @@ defmodule Mobilizon.Events do
   @spec build_changes(map()) :: map()
   defp build_changes(changes) do
     changes
-    |> Map.take(Event.__schema__(:fields))
-    |> maybe_add_address(changes)
-    |> maybe_add_options(changes)
+    |> maybe_add_field(:physical_address)
+    |> maybe_add_field(:options)
+    |> maybe_add_field(:metadata)
+    |> Map.drop(Event.__schema__(:associations) -- [:physical_address, :options, :metadata])
   end
 
-  @spec maybe_add_address(map(), map()) :: map()
-  defp maybe_add_address(changes, %{physical_address: %Ecto.Changeset{} = changeset}),
-    do:
-      Map.put(
-        changes,
-        :physical_address,
-        changeset
-        |> Ecto.Changeset.apply_changes()
-        |> Map.from_struct()
-        |> Map.take(Address.__schema__(:fields))
-      )
+  @spec maybe_add_field(map(), atom()) :: map()
+  defp maybe_add_field(changes, field) do
+    case Map.get(changes, field) do
+      %Ecto.Changeset{} = changeset ->
+        Map.put(
+          changes,
+          field,
+          changeset
+          |> Ecto.Changeset.apply_changes()
+          |> Map.from_struct()
+          |> Map.take(Address.__schema__(:fields))
+        )
 
-  defp maybe_add_address(changes, _), do: Map.drop(changes, [:physical_address])
-
-  @spec maybe_add_options(map(), map()) :: map()
-  defp maybe_add_options(changes, %{options: %Ecto.Changeset{} = changeset}),
-    do:
-      Map.put(
-        changes,
-        :options,
-        changeset
-        |> Ecto.Changeset.apply_changes()
-        |> Map.from_struct()
-        |> Map.take(EventOptions.__schema__(:fields))
-      )
-
-  defp maybe_add_options(changes, _), do: Map.drop(changes, [:options])
+      _ ->
+        Map.drop(changes, [field])
+    end
+  end
 
   @doc """
   Deletes an event.

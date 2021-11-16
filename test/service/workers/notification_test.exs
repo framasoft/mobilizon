@@ -318,6 +318,12 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
     test "if there are participants to approve" do
       %User{id: user_id} = user = insert(:user)
 
+      settings =
+        insert(:settings,
+          user_id: user_id,
+          timezone: "Europe/Paris"
+        )
+
       %Event{id: event_id} = event = insert(:event)
 
       %Participant{} = insert(:participant, event: event, role: :not_approved)
@@ -333,7 +339,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
 
       assert_delivered_email(
         NotificationMailer.pending_participation_notification(
-          user,
+          %User{user | settings: settings},
           event,
           2
         )

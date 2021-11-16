@@ -92,7 +92,7 @@ defmodule Mobilizon.Web.Email.Notification do
 
   @spec pending_participation_notification(User.t(), Event.t(), pos_integer()) :: Bamboo.Email.t()
   def pending_participation_notification(
-        %User{locale: locale, email: email},
+        %User{locale: locale, email: email, settings: %Setting{timezone: timezone}},
         %Event{} = event,
         total
       ) do
@@ -111,6 +111,7 @@ defmodule Mobilizon.Web.Email.Notification do
     |> assign(:locale, locale)
     |> assign(:event, event)
     |> assign(:total, total)
+    |> assign(:timezone, timezone)
     |> assign(:subject, subject)
     |> render(:pending_participation_notification)
   end

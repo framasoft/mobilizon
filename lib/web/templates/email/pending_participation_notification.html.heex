@@ -35,15 +35,20 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= ngettext "You have one pending attendance request to process:", "You have %{number_participation_requests} attendance requests to process:", @total, number_participation_requests: @total %>
+            <%= ngettext "You have one pending attendance request to process for the following event:", "You have %{number_participation_requests} attendance requests to process for the following event:", @total, number_participation_requests: @total %>
           </p>
+        </td>
+      </tr>
+      <tr>
+        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+          <%= render("participation/event_card.html", event: @event, timezone: @timezone, locale: @locale, action: nil) %>
         </td>
       </tr>
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 30px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">

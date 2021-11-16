@@ -91,6 +91,8 @@ defmodule Mobilizon.Web.Email.Event do
           &send_notification_for_event_update_to_participant(&1, old_event, event, diff)
         )
       end)
+    else
+      {:ok, :ok}
     end
   end
 

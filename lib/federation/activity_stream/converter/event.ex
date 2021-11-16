@@ -18,6 +18,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   alias Mobilizon.Service.TimezoneDetector
   alias Mobilizon.Web.Endpoint
 
+  import Mobilizon.Federation.ActivityPub.Utils, only: [get_url: 1]
+
   import Mobilizon.Federation.ActivityStream.Converter.Utils,
     only: [
       fetch_tags: 1,
@@ -25,7 +27,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       build_tags: 1,
       maybe_fetch_actor_and_attributed_to_id: 1,
       process_pictures: 2,
-      get_address: 1
+      get_address: 1,
+      fetch_actor: 1
     ]
 
   require Logger
@@ -56,6 +59,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         visibility = get_visibility(object)
         options = get_options(object, address)
         metadata = get_metdata(object)
+        contacts = get_contacts(object)
 
         [description: description, picture_id: picture_id, medias: medias] =
           process_pictures(object, actor_id)
@@ -72,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           category: object["category"],
           visibility: visibility,
           join_options: Map.get(object, "joinMode", "free"),
-          local: is_local(object["id"]),
+          local: is_local?(object["id"]),
           options: options,
           metadata: metadata,
           status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
@@ -86,7 +90,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           physical_address_id: if(address, do: address.id, else: nil),
           updated_at: object["updated"],
           publish_at: object["published"],
-          language: object["inLanguage"]
+          language: object["inLanguage"],
+          contacts: contacts
         }
 
       {:error, err} ->
@@ -133,7 +138,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "id" => event.url,
       "url" => event.url,
       "inLanguage" => event.language,
-      "timezone" => event.options.timezone
+      "timezone" => event.options.timezone,
+      "contacts" => Enum.map(event.contacts, & &1.url)
     }
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
@@ -281,9 +287,25 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     )
   end
 
-  defp is_local(url) do
+  @spec is_local?(String.t()) :: boolean()
+  defp is_local?(url) do
     %URI{host: url_domain} = URI.parse(url)
     %URI{host: local_domain} = URI.parse(Endpoint.url())
     url_domain == local_domain
+  end
+
+  @spec get_contacts(map()) :: list(Actor.t())
+  defp get_contacts(object) do
+    object
+    |> Map.get("contacts", [])
+    |> Enum.map(&get_contact/1)
+    |> Enum.filter(&match?({:ok, _}, &1))
+    |> Enum.map(fn {:ok, contact} -> contact end)
+  end
+
+  defp get_contact(contact) do
+    contact
+    |> get_url()
+    |> fetch_actor()
   end
 end

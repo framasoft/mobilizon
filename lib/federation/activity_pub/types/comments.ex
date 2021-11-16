@@ -84,6 +84,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
       "actor" => actor.url,
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => "Note",
+        "deleted" => DateTime.utc_now(),
         "id" => url
       },
       "id" => url <> "/delete",

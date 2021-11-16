@@ -261,11 +261,6 @@ defmodule Mobilizon.Actors do
         data,
         preload \\ false
       ) do
-    # data =
-    #   data
-    #   |> Map.put(:avatar, transform_media_file(data.avatar))
-    #   |> Map.put(:banner, transform_media_file(data.banner))
-
     insert =
       data
       |> Actor.remote_actor_creation_changeset()

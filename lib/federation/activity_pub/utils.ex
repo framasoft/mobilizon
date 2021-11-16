@@ -650,9 +650,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Sign a request with an actor.
   """
-  @spec sign_fetch(Enum.t(), Actor.t(), String.t(), String.t()) :: Enum.t()
-  def sign_fetch(headers, actor, id, date) do
-    if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) do
+  @spec sign_fetch(Enum.t(), Actor.t(), String.t(), String.t(), Keyword.t()) :: Enum.t()
+  def sign_fetch(headers, actor, id, date, options \\ []) do
+    if Mobilizon.Config.get([:activitypub, :sign_object_fetches]) and
+         Keyword.get(options, :ignore_sign_object_fetches, false) == false do
       headers ++ make_signature(actor, id, date)
     else
       headers

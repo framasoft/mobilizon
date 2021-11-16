@@ -454,6 +454,21 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       Config.put([:instance, :registration_email_denylist], [])
     end
 
+    test "create_user/3 lowers domain part of email",
+         %{
+           conn: conn
+         } do
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_user_mutation,
+          variables: Map.put(@user_creation, :email, "test+alias@DEMO.tld")
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["createUser"]["email"] == "test+alias@demo.tld"
+    end
+
     test "register_person/3 doesn't register a profile from an unknown email", %{conn: conn} do
       conn
       |> put_req_header("accept-language", "fr")
