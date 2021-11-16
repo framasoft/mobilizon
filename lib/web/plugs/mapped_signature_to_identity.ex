@@ -34,6 +34,8 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
 
   @spec actor_from_key_id(Plug.Conn.t()) :: Actor.t() | nil
   defp actor_from_key_id(conn) do
+    Logger.debug("Determining actor from connection signature")
+
     with key_actor_id when is_binary(key_actor_id) <- key_id_from_conn(conn),
          {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(key_actor_id) do
       actor

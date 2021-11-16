@@ -29,6 +29,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   end
 
   def get_or_fetch_actor_by_url(url, preload) do
+    Logger.debug("Getting or fetching actor by URL #{url}")
+
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = cached_actor} ->
         if Actors.needs_update?(cached_actor) do
@@ -51,6 +53,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @spec make_actor_from_url(url :: String.t(), options :: Keyword.t()) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | Ecto.Changeset.t()}
   def make_actor_from_url(url, options \\ []) do
+    Logger.debug("Making actor from url #{url}")
+
     if are_same_origin?(url, Endpoint.url()) do
       {:error, :actor_is_local}
     else
@@ -75,6 +79,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @spec find_or_make_actor_from_nickname(nickname :: String.t(), type :: atom() | nil) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | WebFinger.finger_errors()}
   def find_or_make_actor_from_nickname(nickname, type \\ nil) do
+    Logger.debug("Finding or making actor from nickname #{nickname}")
+
     case Actors.get_actor_by_name_with_preload(nickname, type) do
       %Actor{url: actor_url} = actor ->
         if Actors.needs_update?(actor) do
@@ -98,8 +104,11 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @spec make_actor_from_nickname(nickname :: String.t(), preload :: boolean) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | WebFinger.finger_errors()}
   def make_actor_from_nickname(nickname, preload \\ false) do
+    Logger.debug("Fingering actor from nickname #{nickname}")
+
     case WebFinger.finger(nickname) do
       {:ok, url} when is_binary(url) ->
+        Logger.debug("Matched #{nickname} to URL #{url}, now making actor")
         make_actor_from_url(url, preload: preload)
 
       {:error, e} ->
