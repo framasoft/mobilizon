@@ -45,7 +45,12 @@
           {{ error }}
         </b-message>
         <form @submit="loginAction">
-          <b-field :label="$t('Email')" label-for="email">
+          <b-field
+            :label="$t('Email')"
+            label-for="email"
+            :message="caseWarningText"
+            :type="caseWarningType"
+          >
             <b-input
               aria-required="true"
               required
@@ -277,11 +282,34 @@ export default class Login extends Vue {
       return this.$router.push("/");
     }
   }
+
+  get hasCaseWarning(): boolean {
+    return this.credentials.email !== this.credentials.email.toLowerCase();
+  }
+
+  get caseWarningText(): string | undefined {
+    if (this.hasCaseWarning) {
+      return this.$t(
+        "Emails usually don't contain capitals, make sure you haven't made a typo."
+      ) as string;
+    }
+    return undefined;
+  }
+
+  get caseWarningType(): string | undefined {
+    if (this.hasCaseWarning) {
+      return "is-warning";
+    }
+    return undefined;
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .container .columns {
   margin: 1rem auto 3rem;
+}
+::v-deep .help.is-warning {
+  color: #755033;
 }
 </style>
