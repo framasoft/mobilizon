@@ -179,7 +179,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   def maybe_fetch_actor_and_attributed_to_id(_), do: {:error, :no_actor_found}
 
   @spec fetch_actor(String.t()) :: {:ok, Actor.t()} | {:error, atom()}
-  defp fetch_actor(actor_url) do
+  def fetch_actor(actor_url) do
     case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
       {:ok, %Actor{suspended: false} = actor} ->
         {:ok, actor}

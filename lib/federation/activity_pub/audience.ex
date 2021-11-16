@@ -228,6 +228,14 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     |> Enum.uniq()
   end
 
+  defp add_event_contacts(%Event{contacts: contacts}) do
+    contacts
+    |> Enum.map(& &1.url)
+    |> Enum.uniq()
+  end
+
+  defp add_event_contacts(%Event{}), do: []
+
   defp process_mention({_, mentioned_actor}), do: mentioned_actor.url
 
   defp process_mention(%{actor_id: actor_id}) do
@@ -255,7 +263,9 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     {to, cc} =
       {to,
        Enum.uniq(
-         cc ++ add_comments_authors(event.comments) ++ add_shares_actors_followers(event.url)
+         cc ++
+           add_comments_authors(event.comments) ++
+           add_shares_actors_followers(event.url) ++ add_event_contacts(event)
        )}
 
     %{"to" => to, "cc" => cc}
