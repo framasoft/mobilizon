@@ -145,13 +145,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   """
   @spec create_user(any, %{email: String.t()}, any) :: {:ok, User.t()} | {:error, String.t()}
   def create_user(_parent, %{email: email} = args, _resolution) do
-    with :registration_ok <- check_registration_config(email),
+    with {:ok, email} <- lowercase_domain(email),
+         :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
-         {:ok, %User{} = user} <- Users.register(args),
+         {:ok, %User{} = user} <- Users.register(%{args | email: email}),
          %Bamboo.Email{} <-
            Email.User.send_confirmation_email(user, Map.get(args, :locale, "en")) do
       {:ok, user}
     else
+      {:error, :invalid_email} ->
+        {:error, dgettext("errors", "Your email seems to be using an invalid format")}
+
       :registration_closed ->
         {:error, dgettext("errors", "Registrations are not open")}
 
@@ -190,23 +194,39 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     # Remove everything behind the +
     email = String.replace(email, ~r/(\+.*)(?=\@)/, "")
 
-    if email_in_list(email, Config.instance_registrations_denylist()),
+    if email_in_list?(email, Config.instance_registrations_denylist()),
       do: :deny_listed,
       else: :not_deny_listed
   end
 
   @spec check_allow_listed_email(String.t()) :: :registration_ok | :not_allowlisted
   defp check_allow_listed_email(email) do
-    if email_in_list(email, Config.instance_registrations_allowlist()),
+    if email_in_list?(email, Config.instance_registrations_allowlist()),
       do: :registration_ok,
       else: :not_allowlisted
   end
 
-  defp email_in_list(email, list) do
-    [_, domain] = String.split(email, "@", parts: 2, trim: true)
+  @spec email_in_list?(String.t(), list(String.t())) :: boolean()
+  defp email_in_list?(email, list) do
+    [_, domain] = split_email(email)
 
     domain in list or email in list
   end
+
+  # Domains should always be lower-case, so let's force that
+  @spec lowercase_domain(String.t()) :: {:ok, String.t()} | {:error, :invalid_email}
+  defp lowercase_domain(email) do
+    case split_email(email) do
+      [user_part, domain_part] ->
+        {:ok, "#{user_part}@#{String.downcase(domain_part)}"}
+
+      _ ->
+        {:error, :invalid_email}
+    end
+  end
+
+  @spec split_email(String.t()) :: list(String.t())
+  defp split_email(email), do: String.split(email, "@", parts: 2, trim: true)
 
   @doc """
   Validate an user, get its actor and a token
