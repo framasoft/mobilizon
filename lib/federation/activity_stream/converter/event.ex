@@ -76,7 +76,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           category: object["category"],
           visibility: visibility,
           join_options: Map.get(object, "joinMode", "free"),
-          local: is_local(object["id"]),
+          local: is_local?(object["id"]),
           options: options,
           metadata: metadata,
           status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
@@ -287,7 +287,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     )
   end
 
-  defp is_local(url) do
+  @spec is_local?(String.t()) :: boolean()
+  defp is_local?(url) do
     %URI{host: url_domain} = URI.parse(url)
     %URI{host: local_domain} = URI.parse(Endpoint.url())
     url_domain == local_domain
