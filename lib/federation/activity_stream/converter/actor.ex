@@ -160,7 +160,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
 
   @spec maybe_add_avatar_picture(map(), ActorModel.t()) :: map()
   defp maybe_add_avatar_picture(actor_data, %ActorModel{avatar: %File{} = avatar}) do
-    Map.put(actor_data, "image", %{
+    Map.put(actor_data, "icon", %{
       "type" => "Image",
       "mediaType" => avatar.content_type,
       "url" => avatar.url
