@@ -150,7 +150,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
   @spec delete(Resource.t(), Actor.t(), boolean, map()) ::
           {:ok, ActivityStream.t(), Actor.t(), Resource.t()} | {:error, Ecto.Changeset.t()}
   def delete(
-        %Resource{url: url, actor: %Actor{url: group_url, members_url: members_url}} = resource,
+        %Resource{url: url, type: type, actor: %Actor{url: group_url, members_url: members_url}} =
+          resource,
         %Actor{url: actor_url} = actor,
         _local,
         _additionnal
@@ -163,6 +164,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
       "type" => "Delete",
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => if(type == :folder, do: "ResourceCollection", else: "Document"),
+        "deleted" => DateTime.utc_now(),
         "id" => url
       },
       "id" => url <> "/delete",

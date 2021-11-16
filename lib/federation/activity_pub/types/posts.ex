@@ -79,6 +79,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Posts do
       "type" => "Delete",
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => "Article",
+        "deleted" => DateTime.utc_now(),
         "id" => url
       },
       "id" => url <> "/delete",

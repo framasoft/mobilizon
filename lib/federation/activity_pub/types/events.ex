@@ -84,6 +84,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
       "actor" => actor.url,
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => "Event",
+        "deleted" => DateTime.utc_now(),
         "id" => url
       },
       "to" => [actor.url <> "/followers", "https://www.w3.org/ns/activitystreams#Public"],

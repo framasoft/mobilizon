@@ -98,6 +98,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
       "actor" => actor_url,
       "object" => %{
         "type" => "Tombstone",
+        "formerType" => to_string(type),
+        "deleted" => DateTime.utc_now(),
         "id" => target_actor_url
       },
       "id" => target_actor_url <> "/delete",
