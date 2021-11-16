@@ -53,6 +53,13 @@
                     )
                   }}
                 </li>
+                <li v-if="config.features.groups">
+                  {{
+                    $t(
+                      "To follow groups and be informed of their latest events"
+                    )
+                  }}
+                </li>
               </ul>
             </div>
           </div>

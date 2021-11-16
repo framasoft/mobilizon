@@ -1252,5 +1252,6 @@
   "Reject member": "Reject member",
   "The membership request from {profile} was rejected": "The membership request from {profile} was rejected",
   "The member was approved": "The member was approved",
-  "Emails usually don't contain capitals, make sure you haven't made a typo.": "Emails usually don't contain capitals, make sure you haven't made a typo."
+  "Emails usually don't contain capitals, make sure you haven't made a typo.": "Emails usually don't contain capitals, make sure you haven't made a typo.",
+  "To follow groups and be informed of their latest events": "To follow groups and be informed of their latest events"
 }
