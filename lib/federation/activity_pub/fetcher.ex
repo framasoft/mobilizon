@@ -13,7 +13,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   alias Mobilizon.Service.HTTP.ActivityPub, as: ActivityPubClient
 
   import Mobilizon.Federation.ActivityPub.Utils,
-    only: [maybe_date_fetch: 2, sign_fetch: 4, origin_check?: 2]
+    only: [maybe_date_fetch: 2, sign_fetch: 5, origin_check?: 2]
 
   import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
@@ -28,7 +28,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
     headers =
       [{:Accept, "application/activity+json"}]
       |> maybe_date_fetch(date)
-      |> sign_fetch(on_behalf_of, url, date)
+      |> sign_fetch(on_behalf_of, url, date, options)
 
     client = ActivityPubClient.client(headers: headers)
 

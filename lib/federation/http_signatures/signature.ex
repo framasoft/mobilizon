@@ -103,8 +103,9 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     actor_id = key_id_to_actor_url(kid)
     Logger.debug("Refetching public key for #{actor_id}")
 
-    with {:ok, _actor} <- ActivityPubActor.make_actor_from_url(actor_id) do
-      get_public_key_for_url(actor_id)
+    with {:ok, %Actor{} = actor} <-
+           ActivityPubActor.make_actor_from_url(actor_url, ignore_sign_object_fetches: true) do
+      get_actor_public_key(actor)
     end
   end
 
