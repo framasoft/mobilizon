@@ -38,7 +38,18 @@ defmodule Mobilizon.Web.Plugs.HTTPSignatures do
         )
         |> maybe_put_digest_header()
 
-      signature_valid = HTTPSignatures.validate_conn(conn)
+      signature_valid =
+        try do
+          HTTPSignatures.validate_conn(conn)
+        rescue
+          # Because if the actor is not found in
+          # Mobilizon.Federation.HTTPSignatures.Signature.get_public_key_for_url/1
+          # we return an empty string as key,
+          # to give an extra-chance of fetching new actor keys
+          # and :public_key.verify doesn't like this
+          ArgumentError -> false
+        end
+
       Logger.debug("Is signature valid ? #{inspect(signature_valid)}")
       date_valid = date_valid?(conn)
       Logger.debug("Is date valid ? #{inspect(date_valid)}")

@@ -59,7 +59,7 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
       {:error, :actor_not_found} ->
         Logger.info(
-          "Unable to get actor from URL from local database, returning empty keys to trigger refreshment"
+          "Unable to get actor with URL #{url} from local database, returning empty keys to trigger refreshment"
         )
 
         {:ok, ""}
