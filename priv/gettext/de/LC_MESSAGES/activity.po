@@ -358,24 +358,9 @@ msgid "%{profile} approved the membership request from %{member} for group %{gro
 msgstr "%{profile} hat das Mitglied %{member} aktualisiert."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr "%{profile} hat die Diskussion %{discussion} archiviert."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr "%{profile} hat die Diskussion %{discussion} erstellt."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "%{profile} hat den Folder %{resource} erstellt."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
-msgstr "%{profile} hat die Diskussion %{discussion} gelöscht."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:69
@@ -391,11 +376,6 @@ msgstr "%{profile} hat die Ressource %{resource} gelöscht."
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "%{profile} hat das Mitglied %{member} ausgeschlossen."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
-msgstr ""
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:61
@@ -418,11 +398,6 @@ msgid "%{profile} rejected the membership request from %{member} for group %{gro
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr "%{profile} hat die Diskussion %{discussion} umbenannt."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
@@ -435,16 +410,41 @@ msgstr ""
 "{profile} hat die Ressource %{old_resource_title} in %{resource} umbenannt."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr "%{profile} hat auf die Diskussion %{discussion} geantwortet."
-
-#, elixir-format
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "%{profile} hat das Mitglied %{member} aktualisiert."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} hat die Ressource %{resource} erstellt."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr "%{profile} hat die Diskussion %{discussion} archiviert."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr "%{profile} hat die Diskussion %{discussion} erstellt."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr "%{profile} hat die Diskussion %{discussion} gelöscht."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr "%{profile} hat die Diskussion %{discussion} umbenannt."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
+msgstr "%{profile} hat auf die Diskussion %{discussion} geantwortet."

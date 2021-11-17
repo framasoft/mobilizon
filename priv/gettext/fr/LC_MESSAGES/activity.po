@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-11-17 16:25+0100\n"
+"PO-Revision-Date: 2021-11-17 17:17+0100\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/activity/fr/>\n"
 "Language: fr\n"
@@ -269,21 +269,9 @@ msgstr "%{profile} a ajouté le ou la membre %{member} au groupe %{group}."
 msgid "%{profile} approved the membership request from %{member} for group %{group}."
 msgstr "%{profile} a approuvé la demande d'adhésion de %{member} au groupe %{group}."
 
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr "%{profile} a archivé la discussion %{discussion} du groupe %{group}."
-
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr "%{profile} a créé la discussion %{discussion} du groupe %{group}."
-
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "%{profile} a créé le dossier %{resource} du groupe %{group}."
-
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
-msgstr "%{profile} a créé la discussion %{discussion} dans le groupe %{group}."
 
 #: lib/service/activity/renderer/resource.ex:69
 msgid "%{profile} deleted the folder %{resource} in group %{group}."
@@ -296,10 +284,6 @@ msgstr "%{profile} a supprimé la ressource %{resource} du groupe %{group}."
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "%{profile} a exclu le ou la membre %{member} du groupe %{group}."
-
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
-msgstr "%{profile} vous a mentionné dans la discussion %{discussion} du groupe %{group}."
 
 #: lib/service/activity/renderer/resource.ex:61
 msgid "%{profile} moved the folder %{resource} in group %{group}."
@@ -317,10 +301,6 @@ msgstr "%{profile} a quitté le groupe %{group}."
 msgid "%{profile} rejected the membership request from %{member} for group %{group}."
 msgstr "%{profile} a rejeté la demande d'adhésion de %{member} pour le groupe %{group}."
 
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr "%{profile} a renommé la discussion %{discussion} du groupe %{group}."
-
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr "%{profile} a renommé le dossier %{old_resource_title} en %{resource} dans le groupe %{group}."
@@ -329,10 +309,6 @@ msgstr "%{profile} a renommé le dossier %{old_resource_title} en %{resource} da
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource} in group %{group}."
 msgstr "%{profile} a renommé la ressource %{old_resource_title} en %{resource} dans le groupe %{group}."
 
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr "%{profile} a répondu à la discussion %{discussion} du groupe %{group}."
-
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "%{profile} a mis à jour le membre %{member} dans le groupe %{group}."
@@ -340,3 +316,27 @@ msgstr "%{profile} a mis à jour le membre %{member} dans le groupe %{group}."
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} a créé la ressource %{resource} dans le groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr "%{profile} a archivé la discussion %{discussion} du groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr "%{profile} a créé la discussion %{discussion} du groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr "%{profile} a créé la discussion %{discussion} dans le groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr "%{profile} vous a mentionné dans la discussion %{discussion} du groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr "%{profile} a renommé la discussion %{discussion} du groupe %{group}."
+
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
+msgstr "%{profile} a répondu à la discussion %{discussion} du groupe %{group}."

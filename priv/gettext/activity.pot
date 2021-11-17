@@ -347,23 +347,8 @@ msgid "%{profile} approved the membership request from %{member} for group %{gro
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr ""
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr ""
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
-msgstr ""
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
 msgstr ""
 
 #, elixir-format
@@ -379,11 +364,6 @@ msgstr ""
 #, elixir-format
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
-msgstr ""
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
 msgstr ""
 
 #, elixir-format
@@ -407,11 +387,6 @@ msgid "%{profile} rejected the membership request from %{member} for group %{gro
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr ""
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
@@ -422,11 +397,6 @@ msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr ""
-
-#, elixir-format
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr ""
@@ -434,4 +404,34 @@ msgstr ""
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
 msgstr ""

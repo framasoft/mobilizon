@@ -361,24 +361,9 @@ msgid "%{profile} approved the membership request from %{member} for group %{gro
 msgstr "%{profile} actualizado el miembro %{member}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr "%{profile} archivó la discusión %{discussion}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr "%{profile} creó la discusión %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "%{profile} creó la carpeta %{resource}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
-msgstr "%{profile} eliminó la discusión %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:69
@@ -394,11 +379,6 @@ msgstr "%{profile} eliminado el recurso %{resource}."
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "%{profile }miembro excluido %{member}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
-msgstr "%{profile}te mencioné en la discusión %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:61
@@ -421,11 +401,6 @@ msgid "%{profile} rejected the membership request from %{member} for group %{gro
 msgstr "%{profile} rechazó la solicitud de inscripción de %{member}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr "%{profile} renombrado la discusión %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
@@ -438,16 +413,41 @@ msgstr ""
 "%{profile} ha renombrado el recurso de %{old_resource_title} a %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr "%{profile} respondió a la discusión %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "%{profile} actualizado el miembro %{member}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} creó el recurso %{resource}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr "%{profile} archivó la discusión %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr "%{profile} creó la discusión %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr "%{profile} eliminó la discusión %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr "%{profile}te mencioné en la discusión %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr "%{profile} renombrado la discusión %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
+msgstr "%{profile} respondió a la discusión %{discussion}."

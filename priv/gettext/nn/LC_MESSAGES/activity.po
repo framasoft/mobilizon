@@ -360,24 +360,9 @@ msgid "%{profile} approved the membership request from %{member} for group %{gro
 msgstr "%{profile} oppdaterte medlemen %{member}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr "%{profile} arkiverte diskusjonen %{discussion}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr "%{profile} laga diskusjonen %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "%{profile} laga mappa %{resource}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
-msgstr "%{profile} sletta diskusjonen %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:69
@@ -393,11 +378,6 @@ msgstr "%{profile} sletta ressursen %{resource}."
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "%{profile} kasta ut medlemen %{member}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
-msgstr "%{profile} nemnde deg i diskusjonen %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:61
@@ -420,11 +400,6 @@ msgid "%{profile} rejected the membership request from %{member} for group %{gro
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr "%{profile} ga nytt namn til diskusjonen %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr "%{profile} døypte om mappa frå %{old_resource_title} til %{resource}."
@@ -436,16 +411,41 @@ msgstr ""
 "%{profile} døypte om ressursen frå %{old_resource_title} til %{resource}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr "%{profile} svara på diskusjonen %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "%{profile} oppdaterte medlemen %{member}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} laga ressursen %{resource}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr "%{profile} arkiverte diskusjonen %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr "%{profile} laga diskusjonen %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr "%{profile} sletta diskusjonen %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr "%{profile} nemnde deg i diskusjonen %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr "%{profile} ga nytt namn til diskusjonen %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
+msgstr "%{profile} svara på diskusjonen %{discussion}."

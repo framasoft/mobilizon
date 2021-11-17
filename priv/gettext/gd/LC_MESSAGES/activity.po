@@ -382,24 +382,9 @@ msgid "%{profile} approved the membership request from %{member} for group %{gro
 msgstr "Dh’ùraich %{profile} am ball %{member}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:83
-msgid "%{profile} archived the discussion %{discussion} in group {group}."
-msgstr "Chuir %{profile} an deasbad %{discussion} san tasg-lann."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:26
-msgid "%{profile} created the discussion %{discussion} in group {group}."
-msgstr "Chruthaich %{profile} an deasbad %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "Chruthaich %{profile} am pasgan %{resource}."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:97
-msgid "%{profile} deleted the discussion %{discussion} in group {group}."
-msgstr "Sguab %{profile} às an deasbad %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:69
@@ -415,11 +400,6 @@ msgstr "Sguab %{profile} às an goireas %{resource}."
 #: lib/service/activity/renderer/member.ex:75
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "Dhùin %{profile} am ball %{member} a-mach."
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
-msgstr "Thug %{profile} iomradh ort san deasbad %{discussion}."
 
 #, elixir-format
 #: lib/service/activity/renderer/resource.ex:61
@@ -442,11 +422,6 @@ msgid "%{profile} rejected the membership request from %{member} for group %{gro
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:69
-msgid "%{profile} renamed the discussion %{discussion} in group {group}."
-msgstr "Thug %{profile} ainm ùr air %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr "Thug %{profile} %{resource} air a’ phasgan %{old_resource_title}."
@@ -457,16 +432,41 @@ msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}
 msgstr "Thug %{profile} %{resource} air a’ ghoireas %{old_resource_title}."
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:41
-msgid "%{profile} replied to the discussion %{discussion} in group {group}."
-msgstr "Fhreagair %{profile} san deasbad %{discussion}."
-
-#, elixir-format
 #: lib/service/activity/renderer/member.ex:71
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "Dh’ùraich %{profile} am ball %{member}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "Chruthaich %{profile} an goireas %{resource}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:86
+msgid "%{profile} archived the discussion %{discussion} in group %{group}."
+msgstr "Chuir %{profile} an deasbad %{discussion} san tasg-lann."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group %{group}."
+msgstr "Chruthaich %{profile} an deasbad %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:101
+msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
+msgstr "Sguab %{profile} às an deasbad %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:56
+msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
+msgstr "Thug %{profile} iomradh ort san deasbad %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:71
+msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
+msgstr "Thug %{profile} ainm ùr air %{discussion}."
+
+#, elixir-format, fuzzy
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
+msgstr "Fhreagair %{profile} san deasbad %{discussion}."

@@ -25,7 +25,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} created the discussion %{discussion} in group {group}.",
+              "%{profile} created the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
                 discussion: title,
@@ -40,10 +40,11 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} replied to the discussion %{discussion} in group {group}.",
+              "%{profile} replied to the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
-                discussion: title
+                discussion: title,
+                group: group
               }
             ),
           url: discussion_url(activity)
@@ -54,10 +55,11 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} mentionned you in the discussion %{discussion} in group {group}.",
+              "%{profile} mentionned you in the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
-                discussion: title
+                discussion: title,
+                group: group
               }
             ),
           url: discussion_url(activity)
@@ -68,10 +70,11 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} renamed the discussion %{discussion} in group {group}.",
+              "%{profile} renamed the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
-                discussion: title
+                discussion: title,
+                group: group
               }
             ),
           url: discussion_url(activity)
@@ -82,10 +85,11 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} archived the discussion %{discussion} in group {group}.",
+              "%{profile} archived the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
-                discussion: title
+                discussion: title,
+                group: group
               }
             ),
           url: discussion_url(activity)
@@ -96,10 +100,11 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
           body:
             dgettext(
               "activity",
-              "%{profile} deleted the discussion %{discussion} in group {group}.",
+              "%{profile} deleted the discussion %{discussion} in group %{group}.",
               %{
                 profile: profile,
-                discussion: title
+                discussion: title,
+                group: group
               }
             ),
           url: nil
