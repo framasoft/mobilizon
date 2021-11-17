@@ -16,100 +16,59 @@ defmodule Mobilizon.Service.Activity.Renderer.Resource do
     locale = Keyword.get(options, :locale, "en")
     Gettext.put_locale(locale)
 
-    case activity.subject do
-      :resource_created ->
-        if activity.subject_params["is_folder"] do
-          %{
-            body:
-              dgettext("activity", "%{profile} created the folder %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        else
-          %{
-            body:
-              dgettext("activity", "%{profile} created the resource %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        end
+    %{
+      body:
+        text(activity.subject, %{
+          profile: profile(activity),
+          resource: title(activity),
+          group: group(activity),
+          subject_params: activity.subject_params
+        }),
+      resource_url: resource_url(activity)
+    }
+  end
 
-      :resource_renamed ->
-        if activity.subject_params["is_folder"] do
-          %{
-            body:
-              dgettext(
-                "activity",
-                "%{profile} renamed the folder from %{old_resource_title} to %{resource}.",
-                %{
-                  profile: profile(activity),
-                  resource: title(activity),
-                  old_resource_title: activity.subject_params["old_resource_title"]
-                }
-              ),
-            url: resource_url(activity)
-          }
-        else
-          %{
-            body:
-              dgettext(
-                "activity",
-                "%{profile} renamed the resource from %{old_resource_title} to %{resource}.",
-                %{
-                  profile: profile(activity),
-                  resource: title(activity),
-                  old_resource_title: activity.subject_params["old_resource_title"]
-                }
-              ),
-            url: resource_url(activity)
-          }
-        end
+  defp text(:resource_created, %{subject_params: subject_params} = args) do
+    if subject_params["is_folder"] do
+      dgettext("activity", "%{profile} created the folder %{resource} in group %{group}.", args)
+    else
+      dgettext(
+        "activity",
+        "%{profile} created the resource %{resource} in group %{group}.",
+        args
+      )
+    end
+  end
 
-      :resource_moved ->
-        if activity.subject_params["is_folder"] do
-          %{
-            body:
-              dgettext("activity", "%{profile} moved the folder %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        else
-          %{
-            body:
-              dgettext("activity", "%{profile} moved the resource %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        end
+  defp text(:resource_renamed, %{subject_params: subject_params} = args) do
+    if subject_params["is_folder"] do
+      dgettext(
+        "activity",
+        "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}.",
+        Map.put(args, :old_resource_title, subject_params["old_resource_title"])
+      )
+    else
+      dgettext(
+        "activity",
+        "%{profile} renamed the resource from %{old_resource_title} to %{resource} in group %{group}.",
+        Map.put(args, :old_resource_title, subject_params["old_resource_title"])
+      )
+    end
+  end
 
-      :resource_deleted ->
-        if activity.subject_params["is_folder"] do
-          %{
-            body:
-              dgettext("activity", "%{profile} deleted the folder %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        else
-          %{
-            body:
-              dgettext("activity", "%{profile} deleted the resource %{resource}.", %{
-                profile: profile(activity),
-                resource: title(activity)
-              }),
-            url: resource_url(activity)
-          }
-        end
+  defp text(:resource_moved, %{subject_params: subject_params} = args) do
+    if subject_params["is_folder"] do
+      dgettext("activity", "%{profile} moved the folder %{resource} in group %{group}.", args)
+    else
+      dgettext("activity", "%{profile} moved the resource %{resource} in group %{group}.", args)
+    end
+  end
+
+  defp text(:resource_deleted, %{subject_params: subject_params} = args) do
+    if subject_params["is_folder"] do
+      dgettext("activity", "%{profile} deleted the folder %{resource} in group %{group}.", args)
+    else
+      dgettext("activity", "%{profile} deleted the resource %{resource} in group %{group}.", args)
     end
   end
 
@@ -121,4 +80,5 @@ defmodule Mobilizon.Service.Activity.Renderer.Resource do
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)
   defp title(activity), do: activity.subject_params["resource_title"]
+  defp group(%Activity{group: group}), do: Actor.display_name(group)
 end

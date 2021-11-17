@@ -1351,12 +1351,12 @@ msgid "Public feed for %{instance}"
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:298
+#: lib/graphql/resolvers/user.ex:318
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:304
+#: lib/graphql/resolvers/user.ex:324
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
 

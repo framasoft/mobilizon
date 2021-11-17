@@ -1656,14 +1656,14 @@ msgid "Public feed for %{instance}"
 msgstr "Fonte pública de %{instance}"
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:298
+#: lib/graphql/resolvers/user.ex:318
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 "O contrasinal escollido é demasiado curto. Comproba que o teu contrasinal "
 "teña polo menos 6 caracteres."
 
 #, elixir-format
-#: lib/graphql/resolvers/user.ex:304
+#: lib/graphql/resolvers/user.ex:324
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
 "O token proporcionado non é válido. Asegúrate de que o URL é exactamente o "
@@ -1963,7 +1963,7 @@ msgstr ""
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/web/templates/email/pending_participation_notification.html.heex:38
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
 msgid "You have one pending attendance request to process for the following event:"

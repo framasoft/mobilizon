@@ -11,50 +11,50 @@ msgid ""
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:38
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:19 lib/web/templates/email/activity/_member_activity_item.text.eex:12
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:19
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:12
 msgid "%{member} accepted the invitation to join the group."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:42
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:26 lib/web/templates/email/activity/_member_activity_item.text.eex:17
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:26
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:17
 msgid "%{member} rejected the invitation to join the group."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:30
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:4 lib/web/templates/email/activity/_member_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:4
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:1
 msgid "%{member} requested to join the group."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:34
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:11 lib/web/templates/email/activity/_member_activity_item.text.eex:6
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:11
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:6
 msgid "%{member} was invited by %{profile}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:50
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:40 lib/web/templates/email/activity/_member_activity_item.text.eex:27
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:40
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:27
 msgid "%{profile} added the member %{member}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:65
-#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:46 lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
+#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:46
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:25
-#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:4 lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:4
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
 msgid "%{profile} created the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:24
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:5 lib/web/templates/email/activity/_resource_activity_item.text.eex:2
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:5
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:2
 msgid "%{profile} created the folder %{resource}."
 msgstr ""
 
@@ -65,74 +65,74 @@ msgid "%{profile} created the group %{group}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:33
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:20 lib/web/templates/email/activity/_resource_activity_item.text.eex:8
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:20
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:8
 msgid "%{profile} created the resource %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:75
-#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:60 lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
+#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:60
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:97
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:103 lib/web/templates/email/activity/_resource_activity_item.text.eex:40
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:103
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
 msgid "%{profile} deleted the folder %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:106
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:111 lib/web/templates/email/activity/_resource_activity_item.text.eex:45
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:111
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
 msgid "%{profile} deleted the resource %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:66
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:56 lib/web/templates/email/activity/_member_activity_item.text.eex:39
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:56
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 msgid "%{profile} excluded member %{member}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:76
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:71 lib/web/templates/email/activity/_resource_activity_item.text.eex:28
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:71
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
 msgid "%{profile} moved the folder %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:85
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86 lib/web/templates/email/activity/_resource_activity_item.text.eex:34
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
 msgid "%{profile} moved the resource %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:70
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:64 lib/web/templates/email/activity/_member_activity_item.text.eex:45
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:64
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
 msgid "%{profile} quit the group."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:55
-#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:32 lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:32
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:45
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:37 lib/web/templates/email/activity/_resource_activity_item.text.eex:14
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:37
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:14
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/resource.ex:59
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:53 lib/web/templates/email/activity/_resource_activity_item.text.eex:21
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:53
+#: lib/web/templates/email/activity/_resource_activity_item.text.eex:21
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/discussion.ex:35
-#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:18 lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_discussion_activity_item.html.heex:18
+#: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr ""
 
@@ -143,8 +143,8 @@ msgid "%{profile} updated the group %{group}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:62
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:48 lib/web/templates/email/activity/_member_activity_item.text.eex:33
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:48
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
 msgid "%{profile} updated the member %{member}."
 msgstr ""
 
@@ -185,8 +185,8 @@ msgid "The post %{post} was updated by %{profile}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:46
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:33 lib/web/templates/email/activity/_member_activity_item.text.eex:22
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:33
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:22
 msgid "%{member} joined the group."
 msgstr ""
 
@@ -240,11 +240,6 @@ msgstr ""
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
 msgid "%{profile} mentionned you in a comment under event %{event}."
-msgstr ""
-
-#, elixir-format
-#: lib/service/activity/renderer/discussion.ex:45
-msgid "%{profile} mentionned you in the discussion %{discussion}."
 msgstr ""
 
 #, elixir-format
@@ -317,11 +312,126 @@ msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:54
-msgid "%{profile} approved the membership request from %{member}."
+#: lib/service/activity/renderer/member.ex:39
+msgid "%{member} accepted the invitation to join the group %{group}."
 msgstr ""
 
 #, elixir-format
-#: lib/service/activity/renderer/member.ex:58
-msgid "%{profile} rejected the membership request from %{member}."
+#: lib/service/activity/renderer/member.ex:47
+msgid "%{member} joined the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:43
+msgid "%{member} rejected the invitation to join the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:31
+msgid "%{member} requested to join the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:35
+msgid "%{member} was invited by %{profile} to group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:51
+msgid "%{profile} added the member %{member} to group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:55
+msgid "%{profile} approved the membership request from %{member} for group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:83
+msgid "%{profile} archived the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:26
+msgid "%{profile} created the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:33
+msgid "%{profile} created the folder %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:97
+msgid "%{profile} deleted the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:69
+msgid "%{profile} deleted the folder %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:71
+msgid "%{profile} deleted the resource %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:75
+msgid "%{profile} excluded member %{member} from the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:55
+msgid "%{profile} mentionned you in the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:61
+msgid "%{profile} moved the folder %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:63
+msgid "%{profile} moved the resource %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:79
+msgid "%{profile} quit the group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:63
+msgid "%{profile} rejected the membership request from %{member} for group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:69
+msgid "%{profile} renamed the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:45
+msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:51
+msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/discussion.ex:41
+msgid "%{profile} replied to the discussion %{discussion} in group {group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/member.ex:71
+msgid "%{profile} updated the member %{member} in group %{group}."
+msgstr ""
+
+#, elixir-format
+#: lib/service/activity/renderer/resource.ex:35
+msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr ""
