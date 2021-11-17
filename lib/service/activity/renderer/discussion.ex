@@ -17,65 +17,91 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
     Gettext.put_locale(locale)
     profile = profile(activity)
     title = title(activity)
+    group = group(activity)
 
     case activity.subject do
       :discussion_created ->
         %{
           body:
-            dgettext("activity", "%{profile} created the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} created the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title,
+                group: group
+              }
+            ),
           url: discussion_url(activity)
         }
 
       :discussion_replied ->
         %{
           body:
-            dgettext("activity", "%{profile} replied to the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} replied to the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title
+              }
+            ),
           url: discussion_url(activity)
         }
 
       :discussion_mention ->
         %{
           body:
-            dgettext("activity", "%{profile} mentionned you in the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} mentionned you in the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title
+              }
+            ),
           url: discussion_url(activity)
         }
 
       :discussion_renamed ->
         %{
           body:
-            dgettext("activity", "%{profile} renamed the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} renamed the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title
+              }
+            ),
           url: discussion_url(activity)
         }
 
       :discussion_archived ->
         %{
           body:
-            dgettext("activity", "%{profile} archived the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} archived the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title
+              }
+            ),
           url: discussion_url(activity)
         }
 
       :discussion_deleted ->
         %{
           body:
-            dgettext("activity", "%{profile} deleted the discussion %{discussion}.", %{
-              profile: profile,
-              discussion: title
-            }),
+            dgettext(
+              "activity",
+              "%{profile} deleted the discussion %{discussion} in group {group}.",
+              %{
+                profile: profile,
+                discussion: title
+              }
+            ),
           url: nil
         }
     end
@@ -91,8 +117,10 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
     |> URI.decode()
   end
 
-  defp profile(%Activity{author: author}), do: Actor.display_name_and_username(author)
+  defp profile(%Activity{author: author}), do: Actor.display_name(author)
 
   defp title(%Activity{subject_params: %{"discussion_title" => discussion_title}}),
     do: discussion_title
+
+  defp group(%Activity{group: group}), do: Actor.display_name(group)
 end
