@@ -107,7 +107,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
   def model_to_as(%EventModel{} = event) do
     {to, cc} =
       if event.visibility == :public,
-        do: {[@ap_public], []},
+        do: {[@ap_public], [event.organizer_actor.followers_url]},
         else: {[attributed_to_or_default(event).followers_url], [@ap_public]}
 
     %{

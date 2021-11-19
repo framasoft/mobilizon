@@ -458,10 +458,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           Logger.debug("Making announce data for a group private object")
 
           to =
-            (object["to"] || [])
-            |> MapSet.new()
-            |> MapSet.intersection(MapSet.new([actor.followers_url, actor.members_url]))
-            |> MapSet.to_list()
+            Map.get(object, "to", []) ++
+              Map.get(object, "cc", []) ++ [actor.followers_url, actor.members_url]
 
           {to, []}
         else
@@ -477,6 +475,11 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       "to" => to,
       "cc" => cc
     }
+
+    data =
+      if object["attributedTo"],
+        do: Map.put(data, "attributedTo", object["attributedTo"]),
+        else: data
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data
   end
