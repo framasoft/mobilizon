@@ -10,7 +10,6 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
 
   @behaviour HTTPSignatures.Adapter
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
 
@@ -53,16 +52,8 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
           {:ok, String.t()}
           | {:error, :actor_not_found | :pem_decode_error}
   defp get_public_key_for_url(url) do
-    case Actors.get_actor_by_url(url) do
-      {:ok, %Actor{} = actor} ->
-        get_actor_public_key(actor)
-
-      {:error, :actor_not_found} ->
-        Logger.info(
-          "Unable to get actor with URL #{url} from local database, returning empty keys to trigger refreshment"
-        )
-
-        {:ok, ""}
+    with {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(url) do
+      get_actor_public_key(actor)
     end
   end
 

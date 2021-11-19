@@ -37,7 +37,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "attachment" => [],
                    "attributedTo" => ^actor_url,
                    "category" => nil,
-                   "cc" => [],
+                   "cc" => [^followers_url],
                    "commentsEnabled" => false,
                    "content" => nil,
                    "draft" => false,
@@ -108,7 +108,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
     end
 
     test "from a group member" do
-      %Actor{id: organizer_actor_id, url: actor_url} = actor = insert(:actor)
+      %Actor{id: organizer_actor_id, url: actor_url, followers_url: actor_followers_url} =
+        actor = insert(:actor)
 
       %Actor{
         id: attributed_to_id,
@@ -139,7 +140,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "attachment" => [],
                    "attributedTo" => ^group_url,
                    "category" => nil,
-                   "cc" => [],
+                   "cc" => [^actor_followers_url],
                    "commentsEnabled" => false,
                    "content" => nil,
                    "draft" => false,
@@ -189,7 +190,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "actor" => ^actor_url,
                    "anonymousParticipationEnabled" => false,
                    "attributedTo" => ^actor_url,
-                   "cc" => [],
+                   "cc" => [^followers_url],
                    "commentsEnabled" => false,
                    "draft" => false,
                    "ical:status" => "CONFIRMED",
@@ -212,7 +213,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
 
     test "from a group member" do
       %Actor{} = actor_1 = insert(:actor)
-      %Actor{id: organizer_actor_2_id, url: actor_2_url} = actor_2 = insert(:actor)
+
+      %Actor{id: organizer_actor_2_id, url: actor_2_url, followers_url: actor_followers_url} =
+        actor_2 = insert(:actor)
 
       %Actor{
         url: group_url,
@@ -247,7 +250,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "actor" => ^actor_2_url,
                    "anonymousParticipationEnabled" => false,
                    "attributedTo" => ^group_url,
-                   "cc" => [],
+                   "cc" => [^actor_followers_url],
                    "commentsEnabled" => false,
                    "draft" => false,
                    "ical:status" => "CONFIRMED",
@@ -269,7 +272,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
     end
 
     test "from a remote group member" do
-      %Actor{id: organizer_actor_1_id, url: actor_1_url} = actor_1 = insert(:actor)
+      %Actor{id: organizer_actor_1_id, url: actor_1_url, followers_url: actor_followers_url} =
+        actor_1 = insert(:actor)
+
       %Actor{} = actor_2 = insert(:actor)
 
       %Actor{
@@ -305,7 +310,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "actor" => ^actor_1_url,
                    "anonymousParticipationEnabled" => false,
                    "attributedTo" => ^group_url,
-                   "cc" => [],
+                   "cc" => [^actor_followers_url],
                    "commentsEnabled" => false,
                    "draft" => false,
                    "ical:status" => "CONFIRMED",

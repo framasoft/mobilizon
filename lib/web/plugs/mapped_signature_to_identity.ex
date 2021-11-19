@@ -10,8 +10,8 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
 
   import Plug.Conn
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.HTTPSignatures.Signature
 
@@ -41,7 +41,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentity do
         # We don't need to call refreshment here since
         # the Mobilizon.Federation.HTTPSignatures.Signature plug
         # should already have refreshed the actor if needed
-        ActivityPubActor.make_actor_from_url(key_actor_id, ignore_sign_object_fetches: true)
+        Actors.get_actor_by_url(key_actor_id)
 
       nil ->
         {:error, :no_key_in_conn}

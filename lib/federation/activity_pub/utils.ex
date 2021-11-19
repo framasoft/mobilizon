@@ -192,6 +192,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         _attributed_to
       )
       when is_map(object) do
+    Logger.debug("Maybe relay if group activity (object is map)")
+    Logger.debug(inspect(object))
     do_maybe_relay_if_group_activity(object, object["attributedTo"])
   end
 
@@ -201,10 +203,12 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
         %Actor{url: attributed_to_url}
       )
       when is_binary(object) and is_binary(attributed_to_url) do
+    Logger.debug("Maybe relay if group activity (object is binary)")
     do_maybe_relay_if_group_activity(object, attributed_to_url)
   end
 
   def maybe_relay_if_group_activity(_activity, _attributedTo) do
+    Logger.debug("Will not replay : not a group activity")
     :ok
   end
 
@@ -214,6 +218,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     do: do_maybe_relay_if_group_activity(object, hd(attributed_to))
 
   defp do_maybe_relay_if_group_activity(object, attributed_to) when is_binary(attributed_to) do
+    Logger.debug("Let's try to relay group activity")
     id = "#{Endpoint.url()}/announces/#{Ecto.UUID.generate()}"
 
     case Actors.get_local_group_by_url(attributed_to) do
@@ -223,8 +228,9 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
             Logger.info("Forwarded activity to external members of the group")
             :ok
 
-          {:error, _err} ->
+          {:error, err} ->
             Logger.info("Failed to forward activity to external members of the group")
+            Logger.debug(inspect(err))
             :error
         end
 
@@ -233,7 +239,9 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
-  defp do_maybe_relay_if_group_activity(_, _), do: :ok
+  defp do_maybe_relay_if_group_activity(_, attributed_to) do
+    Logger.debug("Will not relay group activity, attributed to is : #{inspect(attributed_to)}")
+  end
 
   @spec remote_actors(list(String.t())) :: list(Actor.t())
   def remote_actors(recipients) do
@@ -439,10 +447,16 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
        ) do
     {to, cc} =
       if public do
+        Logger.debug("Making announce data for a public object")
+
         {[actor.followers_url, object_actor_url],
          ["https://www.w3.org/ns/activitystreams#Public"]}
       else
+        Logger.debug("Making announce data for a private object")
+
         if actor_type == :Group do
+          Logger.debug("Making announce data for a group private object")
+
           to =
             (object["to"] || [])
             |> MapSet.new()
@@ -451,6 +465,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
           {to, []}
         else
+          Logger.debug("Making announce data for a private object")
           {[actor.followers_url], []}
         end
       end

@@ -5,9 +5,8 @@
 
 defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
   use Mobilizon.Web.ConnCase
-  import Mox
+  import Mobilizon.Factory
 
-  alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Web.Plugs.MappedSignatureToIdentity
 
   defp set_signature(conn, key_id) do
@@ -16,30 +15,8 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
     |> assign(:valid_signature, true)
   end
 
-  defp framapiaf_admin do
-    "test/fixtures/signature/framapiaf_admin.json"
-    |> File.read!()
-    |> Jason.decode!()
-  end
-
-  defp nyu_rye do
-    "test/fixtures/signature/nyu_rye.json"
-    |> File.read!()
-    |> Jason.decode!()
-  end
-
   test "it successfully maps a valid identity with a valid signature" do
-    Mock
-    |> expect(:call, fn
-      %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: framapiaf_admin()}}
-    end)
-
-    Mock
-    |> expect(:call, fn
-      %{method: :get, url: "/doesntmattter"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: ""}}
-    end)
+    insert(:actor, domain: "framapiaf.org", url: "https://framapiaf.org/users/admin")
 
     conn =
       build_conn(:get, "/doesntmattter")
@@ -50,17 +27,7 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
   end
 
   test "it successfully maps a valid identity with a valid signature with payload" do
-    Mock
-    |> expect(:call, fn
-      %{method: :get, url: "https://framapiaf.org/users/admin"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: framapiaf_admin()}}
-    end)
-
-    Mock
-    |> expect(:call, fn
-      %{method: :post, url: "/doesntmattter"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: ""}}
-    end)
+    insert(:actor, domain: "framapiaf.org", url: "https://framapiaf.org/users/admin")
 
     conn =
       build_conn(:post, "/doesntmattter", %{"actor" => "https://framapiaf.org/users/admin"})
@@ -71,17 +38,8 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
   end
 
   test "it considers a mapped identity to be invalid when it mismatches a payload" do
-    Mock
-    |> expect(:call, fn
-      %{method: :get, url: "https://niu.moe/users/rye"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: nyu_rye()}}
-    end)
-
-    Mock
-    |> expect(:call, fn
-      %{method: :post, url: "/doesntmattter"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: ""}}
-    end)
+    insert(:actor, domain: "framapiaf.org", url: "https://framapiaf.org/users/admin")
+    insert(:actor, domain: "niu.moe", url: "https://niu.moe/users/rye")
 
     conn =
       build_conn(:post, "/doesntmattter", %{"actor" => "https://framapiaf.org/users/admin"})
@@ -91,19 +49,9 @@ defmodule Mobilizon.Web.Plugs.MappedSignatureToIdentityTest do
     assert %{valid_signature: false} == conn.assigns
   end
 
-  @tag skip: "Available again when lib/web/plugs/mapped_signature_to_identity.ex#62 is fixed"
   test "it considers a mapped identity to be invalid when the identity cannot be found" do
-    Mock
-    |> expect(:call, fn
-      %{method: :get, url: "https://mastodon.social/users/gargron"}, _opts ->
-        {:ok, %Tesla.Env{status: 404, body: ""}}
-    end)
-
-    Mock
-    |> expect(:call, fn
-      %{method: :post, url: "/doesntmattter"}, _opts ->
-        {:ok, %Tesla.Env{status: 200, body: ""}}
-    end)
+    insert(:actor, domain: "framapiaf.org", url: "https://framapiaf.org/users/admin")
+    insert(:actor, domain: "mastodon.social", url: "https://mastodon.social/users/gargron")
 
     conn =
       build_conn(:post, "/doesntmattter", %{"actor" => "https://framapiaf.org/users/admin"})

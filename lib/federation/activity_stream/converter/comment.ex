@@ -196,6 +196,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
           |> Map.put(:origin_comment_id, origin_comment_id)
           |> Map.put(:discussion_id, discussion_id)
 
+        # Reply to a deleted entity
+        {:ok, %Mobilizon.Tombstone{}} ->
+          data
+
         # Anything else is kind of a MP
         {:error, parent} ->
           Logger.warn("Parent object is something we don't handle")
