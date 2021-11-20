@@ -74,7 +74,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
     query
     |> Repo.all(timeout: :infinity)
     |> Enum.filter(fn %Media{file: %File{url: url}} ->
-      is_all_media_orphan?(url, expiration_date)
+      !url_is_also_a_profile_file?(url) && is_all_media_orphan?(url, expiration_date)
     end)
     |> Enum.chunk_by(fn %Media{file: %File{url: url}} ->
       url
@@ -91,7 +91,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
 
   @spec is_media_orphan?(Media.t(), DateTime.t()) :: boolean()
   def is_media_orphan?(%Media{id: media_id}, expiration_date) do
-    query =
+    media_query =
       from(m in Media,
         as: :media,
         distinct: true,
@@ -103,6 +103,13 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
         where: fragment(@union_query)
       )
 
-    Repo.exists?(query)
+    Repo.exists?(media_query)
+  end
+
+  @spec url_is_also_a_profile_file?(String.t()) :: nil
+  defp url_is_also_a_profile_file?(url) when is_binary(url) do
+    Actor
+    |> where([a], fragment("avatar->>'url'") == ^url or fragment("banner->>'url'") == ^url)
+    |> Repo.exists?()
   end
 end
