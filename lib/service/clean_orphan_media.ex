@@ -72,7 +72,7 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
       )
 
     query
-    |> Repo.all()
+    |> Repo.all(timeout: :infinity)
     |> Enum.filter(fn %Media{file: %File{url: url}} ->
       is_all_media_orphan?(url, expiration_date)
     end)
