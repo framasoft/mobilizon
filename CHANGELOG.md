@@ -4,9 +4,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.0-rc.1 - 2021-11-20
+
+This lists changes since 2.0.0-beta.2. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
+### Changed
+
+- Mention following groups on the registration page
+- Add missing group name to activity notifications
+- Warn while registering and logging when the email contains uppercase characters
+- Improve json-ld metadata on event live streams
+- Add "eventAttendanceMode" to JSON-ld schema.org event representation
+- Improve sending pending participation notifications
+- Add "formerType" and "delete" attributes on Tombstones ActivityPub objects representation
+
+### Fixed
+- Fixed creating group activities when creating events with some fields
+- Move release package at correct path for CI upload
+- Fixed event contacts that were not exposed and fetched over federation
+- Don't sign fetch when fetching actor for a given signature
+- Some various HTTP signatures issues
+- Fixed actor AP representation of avatar
+- Handle errors when fetching actor pictures
+- Fixed sending group events to followers on Mastodon
+- Fixed actors avatars and banners being deleted if the same file was also an orphan media
+
+### Translations
+
+- Gaelic
+- Spanish
+
 ## 2.0.0-beta.2 - 2021-11-15
 
-This lists changes since 2.0.0-beta.1.
+This lists changes since 2.0.0-beta.1. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
 ### Added
 
 - Group followers and members get an notification email by default when a group publishes a new event (subject to activity notification settings)
