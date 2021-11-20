@@ -45,7 +45,11 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
 
     {recipients, followers} = convert_followers_in_recipients(recipients)
 
+    Logger.debug("Found the following followers: #{inspect(Enum.map(followers, & &1.url))}")
+
     {recipients, members} = convert_members_in_recipients(recipients)
+
+    Logger.debug("Found the following followers: #{inspect(Enum.map(members, & &1.url))}")
 
     remote_inboxes =
       (remote_actors(recipients) ++ followers ++ members)
