@@ -137,29 +137,4 @@ defmodule Mix.Tasks.Mobilizon.Media.CleanOrphanTest do
       size: 13_120
     }
   end
-
-  defp create_file do
-    File.cp!("test/fixtures/picture.png", "test/fixtures/picture_tmp.png")
-
-    file = %Plug.Upload{
-      content_type: "image/png",
-      path: Path.absname("test/fixtures/picture_tmp.png"),
-      filename: "image.png"
-    }
-
-    {:ok, data} = Mobilizon.Web.Upload.store(file)
-
-    %{
-      content_type: "image/png",
-      name: "image.png",
-      url: url
-    } = data
-
-    %Mobilizon.Medias.File{
-      name: "My Media",
-      url: url,
-      content_type: "image/png",
-      size: 13_120
-    }
-  end
 end
