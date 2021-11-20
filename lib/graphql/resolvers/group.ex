@@ -120,9 +120,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
         with {:ok, %{name: name, url: url, content_type: content_type, size: _size}} <-
                Upload.store(pic.file, type: key, description: pic.alt) do
-          Map.put(args, key, %{"name" => name, "url" => url, "mediaType" => content_type})
+          Logger.debug("Uploaded #{name} to #{url}")
+          Map.put(args, key, %{name: name, url: url, content_type: content_type})
         end
       else
+        Logger.debug("No picture upload")
         args
       end
     end)
@@ -200,12 +202,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         {:error, :file_too_large} ->
           {:error, dgettext("errors", "The provided picture is too heavy")}
 
-        map when is_map(map) ->
+        args when is_map(args) ->
           case API.Groups.update_group(args) do
             {:ok, _activity, %Actor{type: :Group} = group} ->
               {:ok, group}
 
-            {:error, _err} ->
+            {:error, %Ecto.Changeset{} = changeset} ->
+              {:error, changeset}
+
+            {:error, err} ->
+              Logger.info("Failed to update group #{inspect(group_id)}")
+              Logger.debug(inspect(err))
               {:error, dgettext("errors", "Failed to update the group")}
           end
       end
