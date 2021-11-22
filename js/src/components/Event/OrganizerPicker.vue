@@ -15,7 +15,7 @@
       <div class="media" dir="auto">
         <figure class="image is-48x48" v-if="availableActor.avatar">
           <img
-            class="media-left is-rounded"
+            class="image is-rounded"
             :src="availableActor.avatar.url"
             alt=""
           />
