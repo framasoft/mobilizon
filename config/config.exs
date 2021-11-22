@@ -329,6 +329,7 @@ config :mobilizon, Mobilizon.Service.Notifier.Email, enabled: true
 config :mobilizon, Mobilizon.Service.Notifier.Push, enabled: true
 
 config :mobilizon, :exports,
+  path: "/var/lib/mobilizon/uploads/exports",
   formats: [
     Mobilizon.Service.Export.Participants.CSV
   ]

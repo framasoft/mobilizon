@@ -4,9 +4,9 @@ defmodule Mobilizon.Service.Export.Participants.Common do
   """
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.{Config, Export}
   alias Mobilizon.Events.Participant
   alias Mobilizon.Events.Participant.Metadata
-  alias Mobilizon.Export
   alias Mobilizon.Storage.Repo
   import Mobilizon.Web.Gettext, only: [gettext: 1]
 
@@ -116,5 +116,14 @@ defmodule Mobilizon.Service.Export.Participants.Common do
     export_config = Application.get_env(:mobilizon, :exports)
     formats = Keyword.get(export_config, :formats, [])
     type in formats
+  end
+
+  @default_upload_path "uploads/exports/"
+
+  @spec export_path(String.t()) :: String.t()
+  def export_path(extension) do
+    [:exports, :path]
+    |> Config.get(@default_upload_path)
+    |> Path.join(extension)
   end
 end

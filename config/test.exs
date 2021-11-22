@@ -60,6 +60,8 @@ config :mobilizon, Mobilizon.Web.Upload, filters: [], link_name: false
 
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "test/uploads"
 
+config :mobilizon, :exports, path: "test/uploads/exports"
+
 config :tz_world, data_dir: "_build/test/lib/tz_world/priv"
 
 config :tesla, Mobilizon.Service.HTTP.ActivityPub,

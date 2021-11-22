@@ -12,9 +12,14 @@ defmodule Mobilizon.Service.Export.Participants.PDF do
   import Mobilizon.Web.Gettext, only: [gettext: 2]
 
   import Mobilizon.Service.Export.Participants.Common,
-    only: [save_upload: 5, columns: 0, to_list: 1, clean_exports: 2, export_enabled?: 1]
-
-  @upload_path "uploads/exports/pdf/"
+    only: [
+      save_upload: 5,
+      columns: 0,
+      to_list: 1,
+      clean_exports: 2,
+      export_enabled?: 1,
+      export_path: 1
+    ]
 
   @extension "pdf"
 
@@ -27,7 +32,7 @@ defmodule Mobilizon.Service.Export.Participants.PDF do
   def export(%Event{id: event_id} = event, options \\ []) do
     if ready?() do
       filename = "#{ShortUUID.encode!(Ecto.UUID.generate())}.pdf"
-      full_path = @upload_path <> filename
+      full_path = Path.join([export_path(@extension), filename])
 
       case Repo.transaction(
              fn ->
@@ -98,7 +103,7 @@ defmodule Mobilizon.Service.Export.Participants.PDF do
   """
   @spec clean_exports :: :ok
   def clean_exports do
-    clean_exports("pdf", @upload_path)
+    clean_exports(@extension, export_path(@extension))
   end
 
   @spec dependencies_ok? :: boolean

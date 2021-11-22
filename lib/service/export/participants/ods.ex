@@ -10,9 +10,14 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
   import Mobilizon.Web.Gettext, only: [gettext: 2]
 
   import Mobilizon.Service.Export.Participants.Common,
-    only: [save_upload: 5, to_list: 1, clean_exports: 2, columns: 0, export_enabled?: 1]
-
-  @upload_path "uploads/exports/ods/"
+    only: [
+      save_upload: 5,
+      to_list: 1,
+      clean_exports: 2,
+      columns: 0,
+      export_enabled?: 1,
+      export_path: 1
+    ]
 
   @extension "ods"
 
@@ -25,7 +30,7 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
   def export(%Event{id: event_id} = event, options \\ []) do
     if ready?() do
       filename = "#{ShortUUID.encode!(Ecto.UUID.generate())}.ods"
-      full_path = @upload_path <> filename
+      full_path = Path.join([export_path(@extension), filename])
 
       case Repo.transaction(
              fn ->
@@ -84,7 +89,7 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
   """
   @spec clean_exports :: :ok
   def clean_exports do
-    clean_exports("ods", @upload_path)
+    clean_exports(@extension, export_path(@extension))
   end
 
   @spec dependencies_ok? :: boolean

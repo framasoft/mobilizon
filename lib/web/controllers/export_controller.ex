@@ -6,7 +6,7 @@ defmodule Mobilizon.Web.ExportController do
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
   alias Mobilizon.Export
-  import Mobilizon.Service.Export.Participants.Common, only: [enabled_formats: 0]
+  import Mobilizon.Service.Export.Participants.Common, only: [enabled_formats: 0, export_path: 1]
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   # sobelow_skip ["Traversal.SendDownload"]
@@ -15,7 +15,7 @@ defmodule Mobilizon.Web.ExportController do
     if format in enabled_formats() do
       case Export.get_export(file, "event_participants", format) do
         %Export{file_name: file_name, file_path: file_path} ->
-          local_path = "uploads/exports/#{format}/#{file_path}"
+          local_path = Path.join(export_path(format), file_path)
           # We're using encode: false to disable escaping the filename with URI.encode_www_form/1
           # but it may introduce an security issue if the event title wasn't properly sanitized
           # https://github.com/phoenixframework/phoenix/pull/3344
