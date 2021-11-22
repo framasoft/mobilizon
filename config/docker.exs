@@ -68,5 +68,13 @@ config :geolix,
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local,
   uploads: System.get_env("MOBILIZON_UPLOADS", "/var/lib/mobilizon/uploads")
 
+config :mobilizon, :exports,
+  path: System.get_env("MOBILIZON_UPLOADS_EXPORTS", "/var/lib/mobilizon/uploads/exports"),
+  formats: [
+    Mobilizon.Service.Export.Participants.CSV,
+    Mobilizon.Service.Export.Participants.PDF,
+    Mobilizon.Service.Export.Participants.ODS
+  ]
+
 config :tz_world,
   data_dir: System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/timezones")
