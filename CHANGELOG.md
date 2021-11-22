@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.0-rc.2 - 2021-11-22
+
+This lists changes since 2.0.0-rc.1. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
+### Changed
+
+- Improve MyEvents page description text
+
+### Fixed
+- Fix spacing in organizer picker
+- Increase number of close events and follow group events
+- Fix accessing user profile in admin section
+- Set initial values for some EventMetadata elements, fixing submitting them right away with no value
+- Avoid giving an error page if the apollo futureParticipations query is undefined
+### Translations
+
+- German
+- Hungarian
+
 ## 2.0.0-rc.1 - 2021-11-20
 
 This lists changes since 2.0.0-beta.2. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
