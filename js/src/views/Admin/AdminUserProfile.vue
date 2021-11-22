@@ -101,7 +101,7 @@ import { IPerson } from "../../types/actor";
     // @ts-ignore
     const { user } = this;
     return {
-      title: user.email,
+      title: user?.email,
     };
   },
 })
