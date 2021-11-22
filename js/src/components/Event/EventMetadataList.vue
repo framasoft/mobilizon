@@ -16,6 +16,7 @@
     >
       <b-autocomplete
         expanded
+        :clear-on-select="true"
         v-model="search"
         ref="autocomplete"
         :data="filteredDataArray"
@@ -140,7 +141,10 @@ export default class EventMetadataList extends Vue {
   }
 
   set metadata(metadata: IEventMetadata[]) {
-    this.$emit("input", metadata);
+    this.$emit(
+      "input",
+      metadata.filter((elem) => elem)
+    );
   }
 
   localizedCategories: Record<EventMetadataCategories, string> = {

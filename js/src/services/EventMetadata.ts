@@ -14,7 +14,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     description: i18n.t(
       "Whether the event is accessible with a wheelchair"
     ) as string,
-    value: "",
+    value: "no",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.CHOICE,
     choices: {
@@ -29,7 +29,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     key: "mz:accessibility:live:subtitle",
     label: i18n.t("Subtitles") as string,
     description: i18n.t("Whether the event live video is subtitled") as string,
-    value: "",
+    value: "false",
     type: EventMetadataType.BOOLEAN,
     keyType: EventMetadataKeyType.PLAIN,
     choices: {
@@ -47,7 +47,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     description: i18n.t(
       "Whether the event is interpreted in sign language"
     ) as string,
-    value: "",
+    value: "false",
     type: EventMetadataType.BOOLEAN,
     keyType: EventMetadataKeyType.PLAIN,
     choices: {
