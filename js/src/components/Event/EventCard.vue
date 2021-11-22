@@ -248,8 +248,11 @@ a.card {
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      padding-bottom: 8px;
       font-weight: bold;
+    }
+
+    .content-end {
+      padding-top: 8px;
     }
 
     .event-subtitle {

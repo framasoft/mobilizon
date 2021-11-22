@@ -94,6 +94,8 @@ config :mobilizon, Mobilizon.Web.Auth.Guardian,
 
 config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
 
+config :mobilizon, :exports, path: "uploads/exports"
+
 config :tz_world, data_dir: "_build/dev/lib/tz_world/priv"
 
 config :mobilizon, :anonymous,

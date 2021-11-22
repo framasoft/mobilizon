@@ -56,7 +56,7 @@ const SHORT_TIME_FORMAT_OPTIONS: DateTimeFormatOptions = {
 
 function formatDateTimeString(
   value: string,
-  timeZone: string | undefined = undefined,
+  timeZone: string | null | undefined = undefined,
   showTime = true,
   dateFormat = "long"
 ): string {
@@ -68,7 +68,7 @@ function formatDateTimeString(
     options = {
       ...options,
       ...(isLongFormat ? LONG_TIME_FORMAT_OPTIONS : SHORT_TIME_FORMAT_OPTIONS),
-      timeZone,
+      timeZone: timeZone || undefined,
     };
   }
   const format = new Intl.DateTimeFormat(locale(), options);

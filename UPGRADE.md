@@ -8,7 +8,7 @@ You are already using latest Elixir version in the release tarball and Docker im
 
 ### Source install
 
-**Elixir 1.12 and Erlang OTP 22 are now required**. If your distribution doesn't provide these versions (which is likely), you must uninstall them and install [Elixir](https://github.com/asdf-vm/asdf-elixir) through the [ASDF tool](https://asdf-vm.com/).
+**Elixir 1.12 and Erlang OTP 22 are now required**. If your distribution or the repositories from Erlang Solutions don't provide these versions, you need to uninstall the current versions and install [Elixir](https://github.com/asdf-vm/asdf-elixir) through the [ASDF tool](https://asdf-vm.com/).
 
 ## Geographic timezone data
 
@@ -61,6 +61,17 @@ In both cases, ~700Mio of disk will be used. You may use the following configura
 config :tz_world, data_dir: "/some/place"
 ```
 
+## Exports folder
+
+Create the folder for default CSV export:
+
+```sh
+sudo -u mobilizon mkdir -p /var/lib/mobilizon/uploads/exports/csv
+```
+
+This path can be configured, see [the dedicated docs page about this](https://docs.joinmobilizon.org/administration/configure/exports/).
+Files in this folder are temporary and are cleaned once an hour.
+
 ## New optional dependencies
 
 These are optional, installing them will allow Mobilizon to export to PDF and ODS as well. Mobilizon 2.0 allows to export the participant list, but more is planned.
@@ -73,7 +84,7 @@ New optional Python dependencies:
 * `weasyprint` for PDF export (with [a few extra dependencies](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html))
 * `pyexcel-ods3` for ODS export (no extra dependencies)
 
-Both can be installed through pip. You need to enable exports for PDF and ODS in the configuration afterwards. Read [the dedicated docs page about this]() (*upcoming*).
+Both can be installed through pip. You need to enable and configure exports for PDF and ODS in the configuration afterwards. Read [the dedicated docs page about this](https://docs.joinmobilizon.org/administration/configure/exports/).
 
 # Upgrading from 1.0 to 1.1
 
