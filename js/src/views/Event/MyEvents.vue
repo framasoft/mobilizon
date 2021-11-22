@@ -6,7 +6,7 @@
     <p>
       {{
         $t(
-          "You will find here all the events you have created or of which you are a participant."
+          "You will find here all the events you have created or of which you are a participant, as well as events organized by groups you follow or are a member of."
         )
       }}
     </p>
