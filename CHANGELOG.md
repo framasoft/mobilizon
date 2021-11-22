@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.0-rc.3 - 2021-11-22
+
+This lists changes since 2.0.0-rc.3. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
+### Fixed
+
+- Fixed path to exports in production
+- Fixed padding below truncated title of event cards
+- Fixed exports that weren't enabled in Docker
+- Fixed error page when event end date is null
+
 ## 2.0.0-rc.2 - 2021-11-22
 
 This lists changes since 2.0.0-rc.1. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
