@@ -283,7 +283,7 @@
             <b-icon class="clickable" icon="pencil" size="is-small" />
           </router-link>
         </p>
-        <multi-card :events="closeEvents.elements.slice(0, 3)" />
+        <multi-card :events="closeEvents.elements.slice(0, 4)" />
       </section>
       <hr
         role="presentation"
@@ -605,7 +605,7 @@ export default class Home extends Vue {
             .map(({ event: { id: event_id } }) => event_id)
             .includes(id)
       )
-      .slice(0, 3);
+      .slice(0, 4);
   }
 }
 </script>

@@ -6,7 +6,6 @@ import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 import debounce from "lodash/debounce";
 import { DebouncedFunc } from "lodash";
-import { PropType } from "vue";
 
 @Component({
   components: {
@@ -18,7 +17,7 @@ import { PropType } from "vue";
   },
 })
 export default class AddressAutoCompleteMixin extends Vue {
-  @Prop({ required: true, type: Object as PropType<IAddress> })
+  @Prop({ required: true })
   value!: IAddress;
   gettingLocationError: string | null = null;
 

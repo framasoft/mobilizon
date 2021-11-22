@@ -6,7 +6,7 @@
     <p>
       {{
         $t(
-          "You will find here all the events you have created or of which you are a participant."
+          "You will find here all the events you have created or of which you are a participant, as well as events organized by groups you follow or are a member of."
         )
       }}
     </p>
@@ -434,24 +434,28 @@ export default class MyEvents extends Vue {
 
   loadMoreFutureParticipations(): void {
     this.futurePage += 1;
-    this.$apollo.queries.futureParticipations.fetchMore({
-      // New variables
-      variables: {
-        page: this.futurePage,
-        limit: this.limit,
-      },
-    });
+    if (this.$apollo.queries.futureParticipations) {
+      this.$apollo.queries.futureParticipations.fetchMore({
+        // New variables
+        variables: {
+          page: this.futurePage,
+          limit: this.limit,
+        },
+      });
+    }
   }
 
   loadMorePastParticipations(): void {
     this.pastPage += 1;
-    this.$apollo.queries.pastParticipations.fetchMore({
-      // New variables
-      variables: {
-        page: this.pastPage,
-        limit: this.limit,
-      },
-    });
+    if (this.$apollo.queries.pastParticipations) {
+      this.$apollo.queries.pastParticipations.fetchMore({
+        // New variables
+        variables: {
+          page: this.pastPage,
+          limit: this.limit,
+        },
+      });
+    }
   }
 
   eventDeleted(eventid: string): void {
