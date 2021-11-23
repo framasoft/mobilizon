@@ -113,6 +113,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Fixed padding below truncated title of event cards
 - Fixed exports that weren't enabled in Docker
 - Fixed error page when event end date is null
+- Fixed event language not being allowed to be null
 
 ### Security
 

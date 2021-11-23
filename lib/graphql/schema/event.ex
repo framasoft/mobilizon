@@ -104,7 +104,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:inserted_at, :datetime, description: "When the event was created")
     field(:options, :event_options, description: "The event options")
     field(:metadata, list_of(:event_metadata), description: "A key-value list of metadata")
-    field(:language, non_null(:string), description: "The event language")
+    field(:language, :string, description: "The event language")
   end
 
   @desc "The list of visibility options for an event"
