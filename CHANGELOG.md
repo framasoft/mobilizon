@@ -4,6 +4,136 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.0 - 2021-11-23
+
+Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
+### Added
+
+- Added possibility to follow groups and be notified from new upcoming events
+- Export list of participants to CSV, `PDF` and `ODS`
+- Allow to set timezone for an event. The timezone is automatically defined from the address if one is defined. If the event timezone is different than the user's current one, a toggle is shown to switch between the two.
+- Added initial support for Right To Left languages (such as arabic) and [BiDi](https://en.wikipedia.org/wiki/Bidirectional_text)
+- Group followers and members get an notification email by default when a group publishes a new event (subject to activity notification settings)
+- Group admins can now approve or deny new memberships
+- Build releases in `arm` and `arm64` format in addition to `amd64`
+- Build Docker images in `arm` and `arm64` format in addition to `amd64`
+- Added possibility to indicate the event is fully online
+- Added possibility to search only for online events
+- Added possibility to search only in past events
+- Detect event, comments and posts languages automatically. Allows setting language
+- Allow to change an user's password through the users.modify mix task
+- Add instance setting so that only the admin can create groups
+- Add instance setting so that only groups can create events
+- Added JSON-LD metadata about the event in emails
+- Added a quick link to email notification settings at the bottom of emails
+- Allow to access Mobilizon with a specific language directly by using `https://instance.tld/lang` where `lang` is a language supported by Mobilizon
+- Added organizer actor name (profile or group) in the icalendar export
+- Add initial support for federation with Gancio
+
+### Changed
+
+- Multiple UI improvements, including post, event and participation cards, discussions and emails. The « My Events » page was also redesigned to allow showing events from your groups.
+- Various accessibility improvements
+- Event update notification is send to participants ~30 minutes after the event update, so that successive edits are throttled.
+- Event, post and comments titles and content now have expose their detected language in HTML, for improved screen reader experience
+- Delete current actor ID as well from local storage when unlogging
+- Show a default text for instance contact in default terms text when no instance contact is set
+- Only show locatecontrol button in leaflet map when we can do geolocation
+- Disable push column in notification settings when push is not available
+- Show actual language instead of language code in Users admin view
+- Empty old & new passwords fields when successful password change
+- Don't link to the group page from admin when actor is suspended
+- Warn participants when the event organizer is suspended (and therefore the event cancelled)
+- Improve metadata on public page
+- Make sure some event action pages (participate remotely or without an account) don't get indexed by search engines
+- Only send `Tombstone` element in `Delete` activities, not the whole previous deleted element.
+- Make sure `Delete` activity are send correctly to everyone
+- Only add address and tags to event icalendar export if they exist
+- `master` branch has been renamed to `main`
+- Mention following groups on the registration page
+- Add missing group name to activity notifications
+- Warn while registering and logging when the email contains uppercase characters
+- Improve json-ld metadata on event live streams
+- Add "eventAttendanceMode" to JSON-ld schema.org event representation
+- Improve sending pending participation notifications
+- Add "formerType" and "delete" attributes on Tombstones ActivityPub objects representation
+- Improve MyEvents page description text
+
+### Removed
+
+- Support for Elixir < 1.12 and OTP < 22
+
+### Fixed
+
+- Fix tags autocomplete
+- Fix config onboarding after LDAP initial connexion
+- Fix events pagination on tags page
+- Fixed deduplicated files from orphan media being deleted as well
+- Fix deleting own account
+- Fix search returning user profiles instead of only groups
+- Fix federating geo coordinates
+- Fix an issue with group activity items when moving resources
+- Fix an issue with Identity Picker
+- Fix an issue with TagInput
+- Fix an issue when leaving a group
+- Fix admin settings edition
+- Fix an issue when showing public page of suspended group
+- Removed non existing page (`/about/mobilizon`) from sitemap
+- Fix action logs containing group suspension events
+- Fixed group physical address not exposed to ActivityPub
+- Release front-end files are no longer in duplicate
+- Only show datetime timezone toggle on event if the timezone offset is different from our own
+- Fix error when determining audience for Discussion when deleting a comment
+- Fix a couple of accessibility issues
+- Limit to acceptable tags when pasting raw HTML into comment fields on front-end
+- Fixed group map display
+- Fixed updating group physical address
+- Allow group members to access group drafts
+- Improve group refreshment workflow
+- Fixed date signature generation for federation
+- Fixed an issue when duplicating a group event from another profile
+- Fixed event metadata not saved on eventcreation
+- Use a different pagination parameter for searched events and featured events on search page
+- Fixed creating group activities when creating events with some fields
+- Move release package at correct path for CI upload
+- Fixed event contacts that were not exposed and fetched over federation
+- Don't sign fetch when fetching actor for a given signature
+- Some various HTTP signatures issues
+- Fixed actor AP representation of avatar
+- Handle errors when fetching actor pictures
+- Fixed sending group events to followers on Mastodon
+- Fixed actors avatars and banners being deleted if the same file was also an orphan media
+- Fix spacing in organizer picker
+- Increase number of close events and follow group events
+- Fix accessing user profile in admin section
+- Set initial values for some EventMetadata elements, fixing submitting them right away with no value
+- Avoid giving an error page if the apollo futureParticipations query is undefined
+- Fixed path to exports in production
+- Fixed padding below truncated title of event cards
+- Fixed exports that weren't enabled in Docker
+- Fixed error page when event end date is null
+
+### Security
+
+- Fixed private messages sent as event replies from Mastodon that were shown publically as public comments. They are now discarded.
+
+### Translations
+
+- Czech
+- Gaelic
+- German
+- Hungarian
+- Indonesian
+- Norwegian Nynorsk
+- Occitan
+- Persian
+- Portuguese (Brazil)
+- Russian
+- Slovenian
+- Spanish
+
+
 ## 2.0.0-rc.3 - 2021-11-22
 
 This lists changes since 2.0.0-rc.3. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
