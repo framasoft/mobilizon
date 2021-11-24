@@ -21,6 +21,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   require Logger
 
   @actor_types ["Group", "Person", "Application"]
+  @all_actor_types @actor_types ++ ["Organization", "Service"]
 
   # Wraps an object into an activity
   @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
@@ -286,22 +287,49 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     actor
   end
 
-  def get_actor(%{"actor" => actor}) when is_list(actor) do
-    if is_binary(Enum.at(actor, 0)) do
-      Enum.at(actor, 0)
-    else
-      actor
-      |> Enum.find(fn %{"type" => type} -> type in ["Person", "Service", "Application"] end)
-      |> Map.get("id")
+  def get_actor(%{"actor" => [actor | tail] = actor_list} = object)
+      when is_list(actor_list) and length(actor_list) > 0 do
+    res =
+      try do
+        object
+        |> Map.put("actor", actor)
+        |> get_actor()
+      rescue
+        ArgumentError -> nil
+      end
+
+    case res do
+      id when is_binary(id) ->
+        id
+
+      _ ->
+        object
+        |> Map.put("actor", tail)
+        |> get_actor()
     end
   end
 
-  def get_actor(%{"actor" => %{"id" => id}}) when is_binary(id) do
+  def get_actor(%{"actor" => %{"id" => id, "type" => type}})
+      when is_binary(id) and type in @all_actor_types do
     id
   end
 
-  def get_actor(%{"actor" => nil, "attributedTo" => actor}) when not is_nil(actor) do
+  def get_actor(%{"actor" => _, "attributedTo" => actor}) when not is_nil(actor) do
     get_actor(%{"actor" => actor})
+  end
+
+  def get_actor(%{"actor" => %{"id" => id, "type" => type}})
+      when is_binary(id) do
+    raise ArgumentError,
+      message: "Object contains an actor object with invalid type: #{inspect(type)}"
+  end
+
+  def get_actor(%{"actor" => nil, "attributedTo" => nil}) do
+    raise ArgumentError, message: "Object contains both actor and attributedTo fields being null"
+  end
+
+  def get_actor(%{"actor" => _}) do
+    raise ArgumentError, message: "Object contains not actor information"
   end
 
   @doc """

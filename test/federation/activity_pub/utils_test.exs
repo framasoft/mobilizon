@@ -59,4 +59,83 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
              })
     end
   end
+
+  describe "get_actor/1" do
+    test "with a string" do
+      assert Utils.get_actor(%{"actor" => "https://somewhere.tld/@someone"}) ==
+               "https://somewhere.tld/@someone"
+    end
+
+    test "with an object" do
+      assert Utils.get_actor(%{
+               "actor" => %{"id" => "https://somewhere.tld/@someone", "type" => "Person"}
+             }) ==
+               "https://somewhere.tld/@someone"
+    end
+
+    test "with an invalid object" do
+      assert_raise ArgumentError,
+                   "Object contains an actor object with invalid type: \"Else\"",
+                   fn ->
+                     Utils.get_actor(%{
+                       "actor" => %{"id" => "https://somewhere.tld/@someone", "type" => "Else"}
+                     })
+                   end
+    end
+
+    test "with a list" do
+      assert Utils.get_actor(%{
+               "actor" => ["https://somewhere.tld/@someone", "https://somewhere.else/@other"]
+             }) ==
+               "https://somewhere.tld/@someone"
+    end
+
+    test "with a list of objects" do
+      assert Utils.get_actor(%{
+               "actor" => [
+                 %{"type" => "Person", "id" => "https://somewhere.tld/@someone"},
+                 "https://somewhere.else/@other"
+               ]
+             }) ==
+               "https://somewhere.tld/@someone"
+    end
+
+    test "with a list of objects containing an invalid one" do
+      assert Utils.get_actor(%{
+               "actor" => [
+                 %{"type" => "Else", "id" => "https://somewhere.tld/@someone"},
+                 "https://somewhere.else/@other"
+               ]
+             }) ==
+               "https://somewhere.else/@other"
+    end
+
+    test "with an empty list" do
+      assert_raise ArgumentError,
+                   "Object contains not actor information",
+                   fn ->
+                     Utils.get_actor(%{
+                       "actor" => []
+                     })
+                   end
+    end
+
+    test "fallbacks to attributed_to" do
+      assert Utils.get_actor(%{
+               "actor" => nil,
+               "attributedTo" => "https://somewhere.tld/@someone"
+             }) == "https://somewhere.tld/@someone"
+    end
+
+    test "with no actor information" do
+      assert_raise ArgumentError,
+                   "Object contains both actor and attributedTo fields being null",
+                   fn ->
+                     Utils.get_actor(%{
+                       "actor" => nil,
+                       "attributedTo" => nil
+                     })
+                   end
+    end
+  end
 end
