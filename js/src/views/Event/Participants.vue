@@ -90,6 +90,7 @@
       :show-detail-icon="false"
       :loading="this.$apollo.loading"
       paginated
+      :current-page="page"
       backend-pagination
       :pagination-simple="true"
       :aria-next-label="$t('Next page')"
@@ -259,7 +260,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch, Ref } from "vue-property-decorator";
+import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import { IEvent, IEventParticipantStats } from "../../types/event.model";
@@ -367,17 +368,6 @@ export default class Participants extends Vue {
   get participantStats(): IEventParticipantStats | null {
     if (!this.event) return null;
     return this.event.participantStats;
-  }
-
-  @Watch("page")
-  loadMoreParticipants(): void {
-    this.$apollo.queries.event.fetchMore({
-      // New variables
-      variables: {
-        page: this.page,
-        limit: this.limit,
-      },
-    });
   }
 
   async acceptParticipant(participant: IParticipant): Promise<void> {
@@ -521,6 +511,7 @@ export default class Participants extends Vue {
         name: routeName,
         query: { ...this.$route.query, ...args },
       });
+      this.$apollo.queries.event.refetch();
     } catch (e) {
       if (isNavigationFailure(e, NavigationFailureType.redirected)) {
         throw Error(e.toString());
