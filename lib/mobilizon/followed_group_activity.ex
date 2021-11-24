@@ -16,7 +16,7 @@ defmodule Mobilizon.FollowedGroupActivity do
         ) :: Page.t(Event.t())
   def user_followed_group_events(user_id, after_datetime \\ nil, page \\ nil, limit \\ nil) do
     Event
-    |> distinct([e], e.id)
+    |> distinct([e], [e.begins_on, e.id])
     |> join(:left, [e], p in Participant, on: e.id == p.event_id)
     |> join(:inner, [_e, p], pa in Actor, on: p.actor_id == pa.id)
     |> join(:inner, [e], g in Actor, on: e.attributed_to_id == g.id)
