@@ -29,7 +29,6 @@ module.exports = {
       },
     ],
     "@typescript-eslint/no-explicit-any": "off",
-    "cypress/no-unnecessary-waiting": "off",
     "vue/max-len": [
       "off",
       {
