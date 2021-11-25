@@ -56,7 +56,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     %{
       "@context" => [
         "https://www.w3.org/ns/activitystreams",
-        "https://litepub.social/context.jsonld",
+        "https://w3id.org/security/v1",
         %{
           "@language" => "und",
           "sc" => "http://schema.org#",
