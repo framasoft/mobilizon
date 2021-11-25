@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-06 00:33+0000\n"
-"PO-Revision-Date: 2021-11-22 09:37+0000\n"
+"PO-Revision-Date: 2021-11-25 01:22+0000\n"
 "Last-Translator: Balázs Úr <balazs@urbalazs.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hu/>\n"
@@ -449,12 +449,12 @@ msgstr "Nem található %{username} felhasználónévvel rendelkező személy"
 #: lib/graphql/resolvers/post.ex:169 lib/graphql/resolvers/post.ex:203
 #, elixir-format
 msgid "Post ID is not a valid ID"
-msgstr "A hozzászólás-azonosító nem érvényes azonosító"
+msgstr "A bejegyzésazonosító nem érvényes azonosító"
 
 #: lib/graphql/resolvers/post.ex:172 lib/graphql/resolvers/post.ex:206
 #, elixir-format
 msgid "Post doesn't exist"
-msgstr "A hozzászólás nem létezik"
+msgstr "A bejegyzés nem létezik"
 
 #: lib/graphql/resolvers/member.ex:82
 #, elixir-format
@@ -673,7 +673,7 @@ msgstr "Bejelentkezve kell lennie az események létrehozásához"
 #: lib/graphql/resolvers/post.ex:141
 #, elixir-format
 msgid "You need to be logged-in to create posts"
-msgstr "Bejelentkezve kell lennie a hozzászólások létrehozásához"
+msgstr "Bejelentkezve kell lennie a bejegyzések létrehozásához"
 
 #: lib/graphql/resolvers/report.ex:79
 #, elixir-format
@@ -693,7 +693,7 @@ msgstr "Bejelentkezve kell lennie egy esemény törléséhez"
 #: lib/graphql/resolvers/post.ex:214
 #, elixir-format
 msgid "You need to be logged-in to delete posts"
-msgstr "Bejelentkezve kell lennie a hozzászólások törléséhez"
+msgstr "Bejelentkezve kell lennie a bejegyzések törléséhez"
 
 #: lib/graphql/resolvers/resource.ex:204
 #, elixir-format
@@ -718,7 +718,7 @@ msgstr "Bejelentkezve kell lennie egy esemény frissítéséhez"
 #: lib/graphql/resolvers/post.ex:180
 #, elixir-format
 msgid "You need to be logged-in to update posts"
-msgstr "Bejelentkezve kell lennie a hozzászólások frissítéséhez"
+msgstr "Bejelentkezve kell lennie a bejegyzések frissítéséhez"
 
 #: lib/graphql/resolvers/resource.ex:174
 #, elixir-format
@@ -754,7 +754,7 @@ msgstr "Ez az e-mail-cím már használatban van."
 #: lib/graphql/error.ex:97
 #, elixir-format
 msgid "Post not found"
-msgstr "Nem található a hozzászólás"
+msgstr "Nem található a bejegyzés"
 
 #: lib/graphql/error.ex:84
 #, elixir-format

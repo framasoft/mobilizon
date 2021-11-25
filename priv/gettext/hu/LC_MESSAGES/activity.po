@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-11-22 09:37+0000\n"
+"PO-Revision-Date: 2021-11-25 01:22+0000\n"
 "Last-Translator: Balázs Úr <balazs@urbalazs.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/hu/>\n"
 "Language: hu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.8.1\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -182,19 +182,19 @@ msgstr "A(z) %{event} eseményt %{profile} frissítette."
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:1
 #, elixir-format
 msgid "The post %{post} was created by %{profile}."
-msgstr "A(z) %{post} hozzászólást %{profile} hozta létre."
+msgstr "A(z) %{post} bejegyzést %{profile} hozta létre."
 
 #: lib/web/templates/email/activity/_post_activity_item.html.heex:34
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:13
 #, elixir-format
 msgid "The post %{post} was deleted by %{profile}."
-msgstr "A(z) %{post} hozzászólást %{profile} törölte."
+msgstr "A(z) %{post} bejegyzést %{profile} törölte."
 
 #: lib/web/templates/email/activity/_post_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:7
 #, elixir-format
 msgid "The post %{post} was updated by %{profile}."
-msgstr "A(z) %{post} hozzászólást %{profile} frissítette."
+msgstr "A(z) %{post} bejegyzést %{profile} frissítette."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:33
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:22
@@ -317,19 +317,18 @@ msgstr "A(z) %{group} csoportot %{profile} frissítette."
 #: lib/service/activity/renderer/post.ex:47
 #, elixir-format
 msgid "The post %{post} from group %{group} was deleted by %{profile}."
-msgstr "A(z) %{post} hozzászólást a(z) %{group} csoportból %{profile} törölte."
+msgstr "A(z) %{post} bejegyzést a(z) %{group} csoportból %{profile} törölte."
 
 #: lib/service/activity/renderer/post.ex:31
 #, elixir-format
 msgid "The post %{post} from group %{group} was published by %{profile}."
-msgstr ""
-"A(z) %{post} hozzászólást a(z) %{group} csoportból %{profile} közzétette."
+msgstr "A(z) %{post} bejegyzést a(z) %{group} csoportból %{profile} közzétette."
 
 #: lib/service/activity/renderer/post.ex:39
 #, elixir-format
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr ""
-"A(z) %{post} hozzászólást a(z) %{group} csoportból %{profile} frissítette."
+"A(z) %{post} bejegyzést a(z) %{group} csoportból %{profile} frissítette."
 
 #: lib/service/activity/renderer/member.ex:39
 #, elixir-format
