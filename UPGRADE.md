@@ -34,7 +34,7 @@ In order to keep the release tarballs light, the geographic timezone data is not
   sudo -u mobilizon curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
   ```
 
-In both cases, ~700Mio of disk will be used. You may use the following configuration to specify where the data is expected:
+In both cases, ~700Mio of disk will be used. You may use the following configuration to specify where the data is expected if you decide to change it from the default location (`/var/lib/mobilizon/timezones`) :
 ```elixir
 config :tz_world, data_dir: "/some/place"
 ```
