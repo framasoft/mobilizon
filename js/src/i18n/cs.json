@@ -24,6 +24,7 @@
   "Anonymous participants will be asked to confirm their participation through e-mail.": "Anonymní účastníci budou požádáni o potvrzení své účasti e-mailem.",
   "Anonymous participations": "Anonymní účasti",
   "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever.": "Opravdu chcete smazat svůj celý účet? Ztratíte vše. Identity, nastavení, vytvořené události, zprávy i záznamy o účasti budou navždy smazány.",
+  "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "Opravdu chcete <b>odstranit</b> tento komentář? Tuto akci nelze vzít zpět.",
   "Are you sure you want to cancel the event creation? You'll lose all modifications.": "Opravdu chcete zrušit vytváření události? Přijdete o všechny provedené změny.",
   "Are you sure you want to cancel the event edition? You'll lose all modifications.": "Opravdu chcete zrušit úpravu události? Přijdete o všechny provedené změny.",
   "Are you sure you want to cancel your participation at event \"{title}\"?": "Opravdu chcete zrušit svou účast na události \"{title}\"?",
@@ -201,5 +202,6 @@
   "Notes": "Poznámky",
   "Number of places": "Počet míst",
   "OK": "OK",
-  "Old password": "Staré heslo"
+  "Old password": "Staré heslo",
+  "Please do not use it in any real way.": "Prosím, nepoužívejte ji v žádném případě."
 }
