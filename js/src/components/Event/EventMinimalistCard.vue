@@ -19,6 +19,20 @@
     <div class="title-info-wrapper has-text-grey-dark">
       <h3 class="event-minimalist-title" :lang="event.language" dir="auto">
         <b-tag
+          type="is-info"
+          class="mr-1"
+          v-if="event.status === EventStatus.TENTATIVE"
+        >
+          {{ $t("Tentative") }}
+        </b-tag>
+        <b-tag
+          type="is-danger"
+          class="mr-1"
+          v-if="event.status === EventStatus.CANCELLED"
+        >
+          {{ $t("Cancelled") }}
+        </b-tag>
+        <b-tag
           class="mr-2"
           type="is-warning"
           size="is-medium"
@@ -105,7 +119,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { IEvent, organizer, organizerDisplayName } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
-import { ParticipantRole } from "@/types/enums";
+import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
@@ -129,6 +143,8 @@ export default class EventMinimalistCard extends Vue {
   organizerDisplayName = organizerDisplayName;
 
   organizer = organizer;
+
+  EventStatus = EventStatus;
 }
 </script>
 <style lang="scss" scoped>
