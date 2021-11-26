@@ -18,6 +18,7 @@
               icon="magnify"
               type="search"
               id="search"
+              ref="autocompleteSearchInput"
               :value="search"
               @input="debouncedUpdateSearchQuery"
               dir="auto"
@@ -276,6 +277,9 @@ const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
       update(data) {
         this.searchEvents = data.searchEvents;
         this.searchGroups = data.searchGroups;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.$refs.autocompleteSearchInput?.focus();
       },
     },
     currentUser: CURRENT_USER_CLIENT,
@@ -362,6 +366,7 @@ export default class Search extends Vue {
 
   $refs!: {
     aac: FullAddressAutoComplete;
+    autocompleteSearchInput: any;
   };
 
   data(): Record<string, unknown> {

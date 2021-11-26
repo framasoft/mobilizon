@@ -190,6 +190,30 @@ pages:
   services:
     - docker:stable-dind
   cache: {}
+  tags:
+    - "privileged"
+
+build-docker-main:
+  <<: *docker
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  before_script:
+    # Login to DockerHub
+    - mkdir -p ~/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_AUTH\",\"email\":\"$CI_REGISTRY_EMAIL\"}}}" > ~/.docker/config.json
+  script:
+    - docker build -t framasoft/mobilizon:main -f docker/production/Dockerfile .
+    - docker push framasoft/mobilizon:main
+
+build-docker-tag:
+  <<: *docker
+  rules: &tag-rules
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: $CI_COMMIT_TAG
+  timeout: 3 hours
   before_script:
     # Install buildx
     - wget https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64
@@ -210,29 +234,9 @@ pages:
       docker buildx build
       --push
       --platform linux/amd64,linux/arm64,linux/arm
-      -t $DOCKER_IMAGE_NAME
+      -t framasoft/mobilizon:$CI_COMMIT_TAG
+      -t framasoft/mobilizon:latest
       -f docker/production/Dockerfile .
-  tags:
-    - "privileged"
-  timeout: 3 hours
-
-build-docker-main:
-  <<: *docker
-  rules:
-    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
-      when: never
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-  variables:
-    DOCKER_IMAGE_NAME: framasoft/mobilizon:main
-
-build-docker-tag:
-  <<: *docker
-  rules: &tag-rules
-    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
-      when: never
-    - if: $CI_COMMIT_TAG
-  variables:
-    DOCKER_IMAGE_NAME: framasoft/mobilizon:$CI_COMMIT_TAG
 
 # Packaging app for amd64
 package-app:
