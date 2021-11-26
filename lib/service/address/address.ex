@@ -57,8 +57,7 @@ defmodule Mobilizon.Service.Address do
       name: if(defined?(postal_code), do: "#{description} (#{postal_code})", else: description),
       alternative_name:
         [locality, country]
-        |> Enum.filter(& &1)
-        |> Enum.filter(&(&1 != description))
+        |> Enum.filter(&(&1 && &1 != description))
         |> Enum.join(", ")
     }
   end

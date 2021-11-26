@@ -181,7 +181,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
     else
       shell_error(
         "The task would have overwritten the following files:\n" <>
-          (will_overwrite |> Enum.map(&"- #{&1}\n") |> Enum.join("")) <>
+          Enum.map_join(will_overwrite, "", &"- #{&1}\n") <>
           "Rerun with `-f/--force` to overwrite them."
       )
     end

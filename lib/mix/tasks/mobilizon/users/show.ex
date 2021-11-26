@@ -47,7 +47,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Show do
   defp display_actors(actors) do
     """
     Identities (#{length(actors)}):
-    #{actors |> Enum.map(&display_actor/1) |> Enum.join("")}
+    #{Enum.map_join(actors, &display_actor/1)}
     """
   end
 

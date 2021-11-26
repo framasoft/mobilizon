@@ -77,11 +77,15 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
        ) do
     event_uuid
     |> Events.get_event_by_uuid_with_preload()
-    |> (fn %Event{organizer_actor: %Actor{id: actor_id}} -> [actor_id] end).()
+    |> organizer_actor_id()
     |> users_from_actor_ids(Keyword.fetch!(options, :author_id))
   end
 
   defp users_to_notify(_, _), do: []
+
+  defp organizer_actor_id(%Event{organizer_actor: %Actor{id: actor_id}}) do
+    [actor_id]
+  end
 
   @spec users_from_actor_ids(list(), integer() | String.t()) :: list(Users.t())
   defp users_from_actor_ids(actor_ids, author_id) do

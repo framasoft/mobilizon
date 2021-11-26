@@ -39,7 +39,7 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
                  |> Events.participant_for_event_export_query(Keyword.get(options, :roles, []))
                  |> Repo.all()
                  |> Enum.map(&to_list/1)
-                 |> (fn data -> Enum.concat([columns()], data) end).()
+                 |> add_header_columns()
                  |> generate_ods()
 
                File.write!(full_path, content)
@@ -60,6 +60,10 @@ defmodule Mobilizon.Service.Export.Participants.ODS do
     else
       {:error, :export_dependency_not_installed}
     end
+  end
+
+  defp add_header_columns(data) do
+    Enum.concat([columns()], data)
   end
 
   defp generate_ods(data) do

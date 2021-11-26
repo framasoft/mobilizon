@@ -46,10 +46,9 @@ defmodule Mobilizon.Service.CleanOrphanMedia do
                  [from: "posts_medias", param: "media_id"],
                  [from: "comments_medias", param: "media_id"]
                ]
-               |> Enum.map(fn [from: from, param: param] ->
+               |> Enum.map_join(" UNION ", fn [from: from, param: param] ->
                  "SELECT 1 FROM #{from} WHERE #{from}.#{param} = m0.id"
                end)
-               |> Enum.join(" UNION ")
                |> (&"NOT EXISTS(#{&1})").()
 
   @spec find_media(Keyword.t()) :: list(list(Media.t()))
