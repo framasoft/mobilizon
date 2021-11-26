@@ -15,7 +15,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
   See Mobilizon.Web.Resolvers.Event.create_event/3
   """
   def media(%{picture_id: media_id} = _parent, _args, _resolution) do
-    with {:ok, media} <- do_fetch_media(media_id), do: {:ok, media}
+    do_fetch_media(media_id)
   end
 
   def media(%{picture: media} = _parent, _args, _resolution), do: {:ok, media}

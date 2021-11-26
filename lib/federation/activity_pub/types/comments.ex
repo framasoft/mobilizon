@@ -149,25 +149,23 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Comments do
            ),
          tags <- ConverterUtils.fetch_tags(tags),
          mentions <- Map.get(args, :mentions, []) ++ ConverterUtils.fetch_mentions(mentions),
-         lang <- Map.get(args, :language, "und"),
-         args <-
-           Map.merge(args, %{
-             actor_id: Map.get(args, :actor_id),
-             text: text,
-             mentions: mentions,
-             tags: tags,
-             event: event,
-             in_reply_to_comment: in_reply_to_comment,
-             in_reply_to_comment_id:
-               if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id)),
-             origin_comment_id:
-               if(is_nil(in_reply_to_comment),
-                 do: nil,
-                 else: Comment.get_thread_id(in_reply_to_comment)
-               ),
-             language: if(lang == "und", do: LanguageDetection.detect(:comment, args), else: lang)
-           }) do
-      args
+         lang <- Map.get(args, :language, "und") do
+      Map.merge(args, %{
+        actor_id: Map.get(args, :actor_id),
+        text: text,
+        mentions: mentions,
+        tags: tags,
+        event: event,
+        in_reply_to_comment: in_reply_to_comment,
+        in_reply_to_comment_id:
+          if(is_nil(in_reply_to_comment), do: nil, else: Map.get(in_reply_to_comment, :id)),
+        origin_comment_id:
+          if(is_nil(in_reply_to_comment),
+            do: nil,
+            else: Comment.get_thread_id(in_reply_to_comment)
+          ),
+        language: if(lang == "und", do: LanguageDetection.detect(:comment, args), else: lang)
+      })
     end
   end
 

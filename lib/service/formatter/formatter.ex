@@ -15,6 +15,8 @@ defmodule Mobilizon.Service.Formatter do
 
   alias Mobilizon.Web.Endpoint
 
+  # https://github.com/rrrene/credo/issues/912
+  # credo:disable-for-next-line Credo.Check.Readability.MaxLineLength
   @link_regex ~r"((?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~%:/?#[\]@!\$&'\(\)\*\+,;=.]+)|[0-9a-z+\-\.]+:[0-9a-z$-_.+!*'(),]+"ui
   @markdown_characters_regex ~r/(`|\*|_|{|}|[|]|\(|\)|#|\+|-|\.|!)/
 

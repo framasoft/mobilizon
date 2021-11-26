@@ -559,11 +559,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
            Enum.each(actors, fn actor ->
              actor_performing = Keyword.get(options, :actor_performing, actor)
              Actions.Delete.delete(actor, actor_performing, true)
-           end),
-         # Delete user
-         {:ok, user} <-
-           Users.delete_user(user, reserve_email: Keyword.get(options, :reserve_email, activated)) do
-      {:ok, user}
+           end) do
+      # Delete user
+      Users.delete_user(user, reserve_email: Keyword.get(options, :reserve_email, activated))
     end
   end
 

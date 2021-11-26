@@ -61,6 +61,7 @@ const FULL_EVENT_FRAGMENT = gql`
       uuid
       title
       beginsOn
+      status
       language
       picture {
         id
@@ -438,6 +439,7 @@ export const FETCH_GROUP_EVENTS = gql`
           uuid
           title
           beginsOn
+          status
           draft
           options {
             ...EventOptions

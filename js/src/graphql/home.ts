@@ -36,6 +36,7 @@ export const HOME_USER_QUERIES = gql`
               alt
             }
             beginsOn
+            status
             visibility
             language
             organizerActor {
@@ -77,6 +78,7 @@ export const HOME_USER_QUERIES = gql`
             uuid
             title
             beginsOn
+            status
             picture {
               url
             }
@@ -127,6 +129,7 @@ export const CLOSE_CONTENT = gql`
         title
         uuid
         beginsOn
+        status
         picture {
           id
           url

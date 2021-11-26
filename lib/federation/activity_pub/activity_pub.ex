@@ -155,7 +155,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   # Create an activity from an event
-  @spec event_to_activity(%Event{}, boolean()) :: Activity.t()
+  @spec event_to_activity(Event.t(), boolean()) :: Activity.t()
   defp event_to_activity(%Event{} = event, local \\ true) do
     %Activity{
       recipients: [@public_ap_adress],
@@ -166,7 +166,7 @@ defmodule Mobilizon.Federation.ActivityPub do
   end
 
   # Create an activity from a comment
-  @spec comment_to_activity(%Comment{}, boolean()) :: Activity.t()
+  @spec comment_to_activity(Comment.t(), boolean()) :: Activity.t()
   defp comment_to_activity(%Comment{} = comment, local \\ true) do
     %Activity{
       recipients: [@public_ap_adress],
