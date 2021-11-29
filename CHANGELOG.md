@@ -15,13 +15,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make sure my group upcoming events are ordered by their start date
 - Fix event participants pagination
 - Always focus the search field after results have been fetched
+- Don't sign fetches to instance actor when refreshing their keys
+- Fix reject of already following instances
 - Added missing timezone data to the Docker image
 - Replace @tiptap/starter-kit with indidual extensions, removing unneeded extensions that caused issues on old Firefox versions
 - Better handling of Friendica Update activities without actor information
 - Always show pending/cancelled status on event cards
+- Fixed nightly docker build
+- Refresh loggeduser information before the final step of onboarding, avoiding loop when finishing onboarding
+- Handle tz_world data being absent
 
 ### Translations
 
+- Croatian (New !)
 - Czech
 - Gaelic
 - Hungarian
