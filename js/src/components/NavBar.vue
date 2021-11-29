@@ -272,6 +272,11 @@ export default class NavBar extends Vue {
       // If we don't have any identities, the user has validated their account,
       // is logging for the first time but didn't create an identity somehow
       if (this.identities.length === 0) {
+        console.debug(
+          "We have no identities listed for current user",
+          this.identities
+        );
+        console.debug("Pushing route to REGISTER_PROFILE");
         try {
           await this.$router.push({
             name: RouteName.REGISTER_PROFILE,
