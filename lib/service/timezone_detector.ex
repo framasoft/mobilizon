@@ -18,6 +18,9 @@ defmodule Mobilizon.Service.TimezoneDetector do
 
       {:error, :time_zone_not_found} ->
         fallback
+
+      {:error, :enoent} ->
+        fallback
     end
   end
 
