@@ -14,36 +14,37 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Getting an actor from url, eventually creating it if we don't have it locally or if it needs an update
   """
-  @spec get_or_fetch_actor_by_url(url :: String.t(), preload :: boolean()) ::
+  @spec get_or_fetch_actor_by_url(url :: String.t(), options :: Keyword.t()) ::
           {:ok, Actor.t()}
           | {:error, make_actor_errors}
           | {:error, :no_internal_relay_actor}
           | {:error, :url_nil}
-  def get_or_fetch_actor_by_url(url, preload \\ false)
-
-  def get_or_fetch_actor_by_url(nil, _preload), do: {:error, :url_nil}
+  def get_or_fetch_actor_by_url(url, options \\ [])
 
   def get_or_fetch_actor_by_url("https://www.w3.org/ns/activitystreams#Public", _preload) do
     %Actor{url: url} = Relay.get_actor()
     get_or_fetch_actor_by_url(url)
   end
 
-  def get_or_fetch_actor_by_url(url, preload) do
+  def get_or_fetch_actor_by_url(url, options) when is_binary(url) and is_list(options) do
     Logger.debug("Getting or fetching actor by URL #{url}")
+    preload = Keyword.get(options, :preload, false)
 
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = cached_actor} ->
         if Actors.needs_update?(cached_actor) do
-          __MODULE__.make_actor_from_url(url, preload: preload)
+          __MODULE__.make_actor_from_url(url, options)
         else
           {:ok, cached_actor}
         end
 
       {:error, :actor_not_found} ->
         # For tests, see https://github.com/jjh42/mock#not-supported---mocking-internal-function-calls and Mobilizon.Federation.ActivityPubTest
-        __MODULE__.make_actor_from_url(url, preload: preload)
+        __MODULE__.make_actor_from_url(url, options)
     end
   end
+
+  def get_or_fetch_actor_by_url(nil, _preload), do: {:error, :url_nil}
 
   @type make_actor_errors :: Fetcher.fetch_actor_errors() | :actor_is_local
 
