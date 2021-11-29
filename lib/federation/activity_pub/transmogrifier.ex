@@ -210,7 +210,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(
         %{"type" => "Follow", "object" => followed, "actor" => follower, "id" => id} = _data
       ) do
-    with {:ok, %Actor{} = followed} <- ActivityPubActor.get_or_fetch_actor_by_url(followed, true),
+    with {:ok, %Actor{} = followed} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(followed, preload: true),
          {:ok, %Actor{} = follower} <- ActivityPubActor.get_or_fetch_actor_by_url(follower),
          {:ok, activity, object} <-
            Actions.Follow.follow(follower, followed, id, false) do

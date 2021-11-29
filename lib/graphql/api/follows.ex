@@ -69,8 +69,8 @@ defmodule Mobilizon.GraphQL.API.Follows do
     )
 
     case Actors.is_following(follower, followed) do
-      %Follower{approved: true} ->
-        {:error, "Follow already accepted"}
+      %Follower{approved: false} ->
+        {:error, "Follow already rejected"}
 
       %Follower{} = follow ->
         Actions.Reject.reject(

@@ -52,7 +52,8 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
           {:ok, String.t()}
           | {:error, :actor_not_found | :pem_decode_error}
   defp get_public_key_for_url(url) do
-    with {:ok, %Actor{} = actor} <- ActivityPubActor.get_or_fetch_actor_by_url(url) do
+    with {:ok, %Actor{} = actor} <-
+           ActivityPubActor.get_or_fetch_actor_by_url(url, ignore_sign_object_fetches: true) do
       get_actor_public_key(actor)
     end
   end

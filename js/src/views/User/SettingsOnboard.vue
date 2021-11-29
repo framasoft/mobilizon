@@ -49,7 +49,8 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { USER_SETTINGS } from "@/graphql/user";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { TIMEZONES } from "../../graphql/config";
 import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
@@ -65,6 +66,7 @@ import { IConfig } from "../../types/config.model";
   },
   apollo: {
     config: TIMEZONES,
+    loggedUser: USER_SETTINGS,
   },
   metaInfo() {
     return {
@@ -81,6 +83,11 @@ export default class SettingsOnboard extends Vue {
 
   get stepIndex(): number {
     return this.step - 1;
+  }
+
+  @Watch("stepIndex")
+  refetchUserSettings() {
+    this.$apollo.queries.loggedUser.refetch();
   }
 }
 </script>

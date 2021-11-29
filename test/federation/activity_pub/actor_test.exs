@@ -126,7 +126,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
            needs_update?: fn _ -> false end
          ]},
         {ActivityPubActor, [:passthrough],
-         make_actor_from_url: fn @actor_url, preload: false ->
+         make_actor_from_url: fn @actor_url, [] ->
            {:ok,
             %Actor{
               preferred_username: "tcit",
@@ -138,7 +138,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
                  ActivityPubActor.get_or_fetch_actor_by_url(@actor_url)
 
         assert_called(Actors.needs_update?(:_))
-        refute called(ActivityPubActor.make_actor_from_url(@actor_url, preload: false))
+        refute called(ActivityPubActor.make_actor_from_url(@actor_url, []))
       end
 
       # Fetch doesn't use cache if Actors.needs_update? returns true
@@ -155,7 +155,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
            needs_update?: fn _ -> true end
          ]},
         {ActivityPubActor, [:passthrough],
-         make_actor_from_url: fn @actor_url, preload: false ->
+         make_actor_from_url: fn @actor_url, [] ->
            {:ok,
             %Actor{
               preferred_username: "tcit",
@@ -169,7 +169,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
         assert_called(ActivityPubActor.get_or_fetch_actor_by_url(@actor_url))
         assert_called(Actors.get_actor_by_url(@actor_url, false))
         assert_called(Actors.needs_update?(:_))
-        assert_called(ActivityPubActor.make_actor_from_url(@actor_url, preload: false))
+        assert_called(ActivityPubActor.make_actor_from_url(@actor_url, []))
       end
     end
 
@@ -182,7 +182,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
 
       assert match?(
                {:error, :actor_deleted},
-               ActivityPubActor.make_actor_from_url(@actor_url, preload: false)
+               ActivityPubActor.make_actor_from_url(@actor_url, [])
              )
     end
 

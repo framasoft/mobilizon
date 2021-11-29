@@ -406,7 +406,6 @@ import Subtitle from "../components/Utils/Subtitle.vue";
     DateComponent,
     EventParticipationCard,
     MultiCard,
-    "settings-onboard": () => import("./User/SettingsOnboard.vue"),
   },
   metaInfo() {
     return {
@@ -569,7 +568,9 @@ export default class Home extends Vue {
 
   @Watch("loggedUser")
   detectEmptyUserSettings(loggedUser: IUser): void {
+    console.debug("Try to detect empty user settings", loggedUser);
     if (loggedUser?.id && loggedUser?.settings === null) {
+      console.debug("No user settings, pushing to onboarding assistant");
       this.$router.push({
         name: RouteName.WELCOME_SCREEN,
         params: { step: "1" },

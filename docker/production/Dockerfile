@@ -30,8 +30,7 @@ COPY rel ./rel
 COPY support ./support
 COPY --from=assets ./priv/static ./priv/static
 
-RUN mix tz_world.update \
-    && mix phx.digest.clean --all \
+RUN mix phx.digest.clean --all \
     && mix release
 
 # Finally setup the app
@@ -50,11 +49,13 @@ LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apk add --no-cache openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc musl-dev python3-dev pango libxslt-dev
+RUN apk add --no-cache curl openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc musl-dev python3-dev pango libxslt-dev
 RUN pip install weasyprint pyexcel-ods3
 
 RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nobody /var/lib/mobilizon/uploads
-RUN mkdir -p /var/lib/mobilizon/timezones && chown nobody:nobody /var/lib/mobilizon/timezones
+RUN mkdir -p /var/lib/mobilizon/timezones
+RUN curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
+RUN chown nobody:nobody /var/lib/mobilizon/timezones
 RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
 
 USER nobody
