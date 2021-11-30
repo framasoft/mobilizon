@@ -188,16 +188,22 @@ a.card {
 
     a {
       text-decoration: none;
+    }
 
-      span.tag {
-        margin: 5px auto;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        display: block;
-        font-size: 0.9em;
-        line-height: 1.75em;
+    span.tag {
+      margin: 5px auto;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: block;
+      font-size: 0.9em;
+      line-height: 1.75em;
+
+      &:not(.is-info, .is-danger) {
         background-color: #e6e4f4;
-        color: #3c376e;
+        color: $violet-3;
+      }
+      &.is-info {
+        color: $violet-3;
       }
     }
   }
