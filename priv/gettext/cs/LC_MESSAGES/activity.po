@@ -8,21 +8,21 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-11-23 07:54+0000\n"
+"PO-Revision-Date: 2021-12-04 01:43+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/cs/>\n"
 "Language: cs\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.8.1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
 #, elixir-format
 msgid "%{member} accepted the invitation to join the group."
-msgstr ""
+msgstr "%{member} přijal pozvání do skupiny."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:26
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:17
