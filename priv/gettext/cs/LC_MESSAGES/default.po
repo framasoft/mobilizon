@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-05 04:32+0000\n"
+"PO-Revision-Date: 2021-12-07 14:27+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -330,28 +330,35 @@ msgstr ""
 msgctxt "terms"
 msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
 msgstr ""
+"Napomáhat moderování komunity, například porovnáním vaší IP adresy s jinými "
+"známými adresami, aby se zjistilo, \n"
+"zda se vyhýbáte banům nebo porušujete jiné předpisy."
 
 #: lib/web/templates/api/privacy.html.heex:43
 #, elixir-format
 msgctxt "terms"
 msgid "To provide the core functionality of Mobilizon. Depending on this instance's policy you may only be able to\n    interact with other people's content and post your own content if you are logged in."
 msgstr ""
+"Poskytování základních funkcí systému Mobilizon. V závislosti na zásadách "
+"této instance můžete komunikovat \n"
+"s obsahem ostatních uživatelů a zveřejňovat svůj vlastní obsah, pouze pokud "
+"jste přihlášeni."
 
 #: lib/web/templates/api/privacy.html.heex:6
 #, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
-msgstr ""
+msgstr "Jaké informace shromažďujeme?"
 
 #: lib/web/email/user.ex:178
 #, elixir-format
 msgid "Mobilizon on %{instance}: confirm your email address"
-msgstr ""
+msgstr "Mobilizon na %{instance}: potvrďte svou e-mailovou adresu"
 
 #: lib/web/email/user.ex:157
 #, elixir-format
 msgid "Mobilizon on %{instance}: email changed"
-msgstr ""
+msgstr "Mobilizon na %{instance}: e-mail změněn"
 
 #: lib/web/email/notification.ex:51
 #, elixir-format
@@ -373,45 +380,45 @@ msgstr[2] ""
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-format
 msgid "%{inviter} just invited you to join their group %{group}"
-msgstr ""
+msgstr "%{inviter} vás právě pozval do své skupiny %{group}"
 
 #: lib/web/templates/email/group_invite.html.heex:13
 #: lib/web/templates/email/group_invite.text.eex:1
 #, elixir-format
 msgid "Come along!"
-msgstr ""
+msgstr "Pojďte s námi!"
 
 #: lib/web/email/notification.ex:25
 #, elixir-format
 msgid "Don't forget to go to %{title}"
-msgstr ""
+msgstr "Nezapomeňte přejít na %{title}"
 
 #: lib/web/templates/email/before_event_notification.html.heex:38
 #: lib/web/templates/email/before_event_notification.text.eex:3
 #, elixir-format
 msgid "Get ready for %{title}"
-msgstr ""
+msgstr "Připravte se na %{title}"
 
 #: lib/web/templates/email/group_invite.html.heex:59
 #, elixir-format
 msgid "See my groups"
-msgstr ""
+msgstr "Viz mé skupiny"
 
 #: lib/web/templates/email/group_invite.html.heex:45
 #: lib/web/templates/email/group_invite.text.eex:5
 #, elixir-format
 msgid "To accept this invitation, head over to your groups."
-msgstr ""
+msgstr "Chcete-li tuto pozvánku přijmout, přejděte do svých skupin."
 
 #: lib/web/templates/email/before_event_notification.text.eex:5
 #, elixir-format
 msgid "View the event on: %{link}"
-msgstr ""
+msgstr "Zobrazit událost na: %{link}"
 
 #: lib/web/email/member.ex:31
 #, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
-msgstr ""
+msgstr "Byl/a jste pozván/a %{inviter} do skupiny %{group}"
 
 #: lib/web/email/notification.ex:78
 #, elixir-format
@@ -441,73 +448,104 @@ msgstr[2] ""
 #: lib/service/metadata/utils.ex:53
 #, elixir-format
 msgid "The event organizer didn't add any description."
-msgstr ""
+msgstr "Organizátor akce nepřidal žádný popis."
 
 #: lib/web/templates/api/privacy.html.heex:54
 #, elixir-format
 msgctxt "terms"
 msgid "We implement a variety of security measures to maintain the safety of your personal information when you enter, submit, or access your personal information. Among other things, your browser session, as well as the traffic between your applications and the API, are secured with SSL/TLS, and your password is hashed using a strong one-way algorithm."
 msgstr ""
+"Při zadávání, odesílání nebo přístupu k vašim osobním údajům uplatňujeme "
+"různá bezpečnostní opatření, abychom zajistili bezpečnost vašich osobních "
+"údajů. Relace vašeho prohlížeče i přenosy mezi aplikacemi a rozhraním API "
+"jsou mimo jiné zabezpečeny pomocí protokolu SSL/TLS a vaše heslo je "
+"hashováno pomocí silného jednosměrného algoritmu."
 
 #: lib/web/templates/api/privacy.html.heex:94
 #, elixir-format
 msgctxt "terms"
 msgid "No. We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our site, conducting our business, or servicing you, so long as those parties agree to keep this information confidential. We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety."
 msgstr ""
+"Ne. Vaše osobní údaje neprodáváme, nevyměňujeme ani jinak nepředáváme "
+"externím stranám. To se netýká důvěryhodných třetích stran, které nám "
+"pomáhají s provozem našich stránek, prováděním našich obchodních činností "
+"nebo poskytováním služeb, pokud tyto strany souhlasí s tím, že budou tyto "
+"informace uchovávat v tajnosti. Vaše údaje můžeme také zveřejnit, pokud se "
+"domníváme, že je to vhodné pro dodržení zákona, prosazení zásad našich "
+"stránek nebo ochranu našich nebo cizích práv, majetku nebo bezpečnosti."
 
 #: lib/web/templates/api/terms.html.heex:23
 #, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
-msgstr ""
+msgstr "Souhlas s těmito podmínkami"
 
 #: lib/web/templates/api/terms.html.heex:27
 #, elixir-format
 msgctxt "terms"
 msgid "Changes to these Terms"
-msgstr ""
+msgstr "Změny těchto podmínek"
 
 #: lib/web/templates/api/terms.html.heex:85
 #, elixir-format
 msgctxt "terms"
 msgid "A lot of the content on the Service is from you and others, and we don't review, verify or authenticate it, and it may include inaccuracies or false information. We make no representations, warranties, or guarantees relating to the quality, suitability, truth, accuracy or completeness of any content contained in the Service. You acknowledge sole responsibility for and assume all risk arising from your use of or reliance on any content."
 msgstr ""
+"Mnoho obsahu ve službě pochází od vás a dalších uživatelů a my jej "
+"nepřezkoumáváme, neověřujeme ani neověřujeme jeho pravost, takže může "
+"obsahovat nepřesnosti nebo nepravdivé informace. Neposkytujeme žádná "
+"prohlášení, záruky ani ujištění týkající se kvality, vhodnosti, pravdivosti, "
+"přesnosti nebo úplnosti jakéhokoli obsahu obsaženého ve Službě. Berete na "
+"vědomí výhradní odpovědnost a přebíráte veškerá rizika vyplývající z "
+"používání jakéhokoli obsahu nebo spoléhání se na něj."
 
 #: lib/web/templates/api/terms.html.heex:60
 #, elixir-format
 msgctxt "terms"
 msgid "Also, you agree that you will not do any of the following in connection with the Service or other users:"
 msgstr ""
+"Souhlasíte také s tím, že se v souvislosti se službou nebo jinými uživateli "
+"nedopustíte žádné z následujících činností:"
 
 #: lib/web/templates/api/terms.html.heex:65
 #, elixir-format
 msgctxt "terms"
 msgid "Circumvent or attempt to circumvent any filtering, security measures, rate limits or other features designed to protect the Service, users of the Service, or third parties."
 msgstr ""
+"Obcházet nebo se pokoušet obcházet jakékoli filtrování, bezpečnostní "
+"opatření, omezení rychlosti nebo jiné funkce určené k ochraně Služby, "
+"uživatelů Služby nebo třetích stran."
 
 #: lib/web/templates/api/terms.html.heex:64
 #, elixir-format
 msgctxt "terms"
 msgid "Collect any personal information about other users, or intimidate, threaten, stalk or otherwise harass other users of the Service;"
 msgstr ""
+"shromažďovat jakékoli osobní údaje o ostatních uživatelích, zastrašovat, "
+"vyhrožovat, pronásledovat nebo jinak obtěžovat ostatní uživatele Služby;"
 
 #: lib/web/templates/api/terms.html.heex:55
 #, elixir-format
 msgctxt "terms"
 msgid "Content that is illegal or unlawful, that would otherwise create liability;"
 msgstr ""
+"Obsah, který je nezákonný nebo protiprávní a který by jinak zakládal "
+"odpovědnost;"
 
 #: lib/web/templates/api/terms.html.heex:56
 #, elixir-format
 msgctxt "terms"
 msgid "Content that may infringe or violate any patent, trademark, trade secret, copyright, right of privacy, right of publicity or other intellectual or other right of any party;"
 msgstr ""
+"Obsah, který může porušovat nebo porušuje jakýkoli patent, ochrannou známku, "
+"obchodní tajemství, autorská práva, právo na soukromí, právo na publicitu "
+"nebo jiná duševní či jiná práva jakékoli strany;"
 
 #: lib/web/templates/api/terms.html.heex:42
 #, elixir-format
 msgctxt "terms"
 msgid "Creating Accounts"
-msgstr ""
+msgstr "Vytváření účtů"
 
 #: lib/web/templates/api/terms.html.heex:89
 #, elixir-format
