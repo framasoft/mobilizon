@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-12-04 01:43+0000\n"
+"PO-Revision-Date: 2021-12-07 14:27+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/cs/>\n"
 "Language: cs\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Weblate 4.9.1\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 msgid "can't be blank"
@@ -108,54 +108,56 @@ msgstr "Nelze obnovit token"
 #: lib/graphql/resolvers/group.ex:245
 #, elixir-format
 msgid "Current profile is not a member of this group"
-msgstr ""
+msgstr "Aktuální profil není členem této skupiny"
 
 #: lib/graphql/resolvers/group.ex:249
 #, elixir-format
 msgid "Current profile is not an administrator of the selected group"
-msgstr ""
+msgstr "Aktuální profil není správcem vybrané skupiny"
 
 #: lib/graphql/resolvers/user.ex:613
 #, elixir-format
 msgid "Error while saving user settings"
-msgstr ""
+msgstr "Chyba při ukládání uživatelských nastavení"
 
 #: lib/graphql/error.ex:99 lib/graphql/resolvers/group.ex:242
 #: lib/graphql/resolvers/group.ex:274 lib/graphql/resolvers/group.ex:311 lib/graphql/resolvers/group.ex:342
 #: lib/graphql/resolvers/group.ex:391 lib/graphql/resolvers/member.ex:79
 #, elixir-format
 msgid "Group not found"
-msgstr ""
+msgstr "Skupina nebyla nalezena"
 
 #: lib/graphql/resolvers/group.ex:78 lib/graphql/resolvers/group.ex:82
 #, elixir-format
 msgid "Group with ID %{id} not found"
-msgstr ""
+msgstr "Skupina s ID %{id} nebyla nalezena"
 
 #: lib/graphql/resolvers/user.ex:85
 #, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
-msgstr ""
+msgstr "Nelze ověřit, váš e-mail nebo heslo jsou neplatné."
 
 #: lib/graphql/resolvers/group.ex:308
 #, elixir-format
 msgid "Member not found"
-msgstr ""
+msgstr "Člen nebyl nalezen"
 
 #: lib/graphql/resolvers/actor.ex:94
 #, elixir-format
 msgid "No profile found for the moderator user"
-msgstr ""
+msgstr "Pro uživatele moderátora nebyl nalezen žádný profil"
 
 #: lib/graphql/resolvers/user.ex:273
 #, elixir-format
 msgid "No user to validate with this email was found"
 msgstr ""
+"Nebyl nalezen žádný uživatel, kterého by bylo možné ověřit pomocí tohoto "
+"e-mailu"
 
 #: lib/graphql/resolvers/person.ex:314 lib/graphql/resolvers/user.ex:298
 #, elixir-format
 msgid "No user with this email was found"
-msgstr ""
+msgstr "Nebyl nalezen žádný uživatel s tímto e-mailem"
 
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32 lib/graphql/resolvers/participant.ex:210 lib/graphql/resolvers/person.ex:236
@@ -163,38 +165,38 @@ msgstr ""
 #: lib/graphql/resolvers/person.ex:425 lib/graphql/resolvers/person.ex:440
 #, elixir-format
 msgid "Profile is not owned by authenticated user"
-msgstr ""
+msgstr "Profil není vlastněn ověřeným uživatelem"
 
 #: lib/graphql/resolvers/user.ex:160
 #, elixir-format
 msgid "Registrations are not open"
-msgstr ""
+msgstr "Registrace nejsou otevřeny"
 
 #: lib/graphql/resolvers/user.ex:428
 #, elixir-format
 msgid "The current password is invalid"
-msgstr ""
+msgstr "Aktuální heslo je neplatné"
 
 #: lib/graphql/resolvers/user.ex:471
 #, elixir-format
 msgid "The new email doesn't seem to be valid"
-msgstr ""
+msgstr "Nový e-mail se nezdá být platný"
 
 #: lib/graphql/resolvers/user.ex:474
 #, elixir-format
 msgid "The new email must be different"
-msgstr ""
+msgstr "Nový e-mail musí být jiný"
 
 #: lib/graphql/resolvers/user.ex:431
 #, elixir-format
 msgid "The new password must be different"
-msgstr ""
+msgstr "Nové heslo se musí lišit"
 
 #: lib/graphql/resolvers/user.ex:478 lib/graphql/resolvers/user.ex:540
 #: lib/graphql/resolvers/user.ex:543
 #, elixir-format
 msgid "The password provided is invalid"
-msgstr ""
+msgstr "Zadané heslo je neplatné"
 
 #: lib/graphql/resolvers/user.ex:435
 #, elixir-format

@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-12-05 04:32+0000\n"
+"PO-Revision-Date: 2021-12-07 14:27+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/cs/>\n"
@@ -70,43 +70,43 @@ msgstr "%{profile} vytvořil složku %{resource}."
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:1
 #, elixir-format
 msgid "%{profile} created the group %{group}."
-msgstr ""
+msgstr "%{profile} vytvořil skupinu %{group}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:20
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:8
 #, elixir-format
 msgid "%{profile} created the resource %{resource}."
-msgstr ""
+msgstr "%{profile} vytvořil zdroj %{resource}."
 
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:60
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
 #, elixir-format
 msgid "%{profile} deleted the discussion %{discussion}."
-msgstr ""
+msgstr "%{profile} smazal diskusi %{discussion}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:103
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
 #, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
-msgstr ""
+msgstr "%{profile} smazal složku %{resource}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:111
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
 #, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
-msgstr ""
+msgstr "%{profile} smazal prostředek %{resource}."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:56
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 #, elixir-format
 msgid "%{profile} excluded member %{member}."
-msgstr ""
+msgstr "%{profile} vyloučil člena %{member}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:71
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
 #, elixir-format
 msgid "%{profile} moved the folder %{resource}."
-msgstr ""
+msgstr "%{profile} přesunul složku %{resource}."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
