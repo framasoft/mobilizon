@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-09 01:11+0000\n"
+"PO-Revision-Date: 2021-12-09 17:58+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -364,18 +364,18 @@ msgstr "Mobilizon na %{instance}: e-mail změněn"
 #, elixir-format
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Na dnešek je naplánována jedna událost"
+msgstr[1] "%{nb_events} události plánované na dnešek"
+msgstr[2] "%{nb_events} událostí plánovaných na dnešek"
 
 #: lib/web/templates/email/on_day_notification.html.heex:38
 #: lib/web/templates/email/on_day_notification.text.eex:3
 #, elixir-format
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Dnes máte jednu událost:"
+msgstr[1] "Dnes máte %{total} události:"
+msgstr[2] "Dnes máte %{totall} událostí:"
 
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-format
@@ -424,26 +424,30 @@ msgstr "Byl/a jste pozván/a %{inviter} do skupiny %{group}"
 #, elixir-format
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Tento týden je naplánována jedna akce"
+msgstr[1] "%{nb_events} události plánované na tento týden"
+msgstr[2] "%{nb_events} událostí plánovaných na tento týden"
 
 #: lib/web/email/notification.ex:102
 #, elixir-format
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
-msgstr[0] ""
+msgstr[0] "Jeden požadavek na účast pro událost %{title} ke zpracování"
 msgstr[1] ""
+"%{number_participation_requests} žádosti o účast pro událost %{title} ke "
+"zpracování"
 msgstr[2] ""
+"%{number_participation_requests} žádostí o účast pro událost %{title} ke "
+"zpracování"
 
 #: lib/web/templates/email/notification_each_week.html.heex:38
 #: lib/web/templates/email/notification_each_week.text.eex:3
 #, elixir-format
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Tento týden máte jednu událost:"
+msgstr[1] "Tento týden máte %{total} události:"
+msgstr[2] "Tento týden máte %{total} událostí:"
 
 #: lib/service/metadata/utils.ex:53
 #, elixir-format
@@ -935,8 +939,16 @@ msgstr "Nepoužívejte ji pro skutečné účely."
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
+"Chcete-li zrušit svou účast, navštivte stránku události prostřednictvím výše "
+"uvedeného odkazu a klikněte na tlačítko \"Zúčastnit se\"."
 msgstr[1] ""
+"Pokud si přejete zrušit svou účast na jedné nebo více událostech, navštivte "
+"stránky události prostřednictvím odkazů výše a klikněte na tlačítko \" "
+"Zúčastnit se \"."
 msgstr[2] ""
+"Pokud si přejete zrušit svou účast na jedné nebo více událostech, navštivte "
+"stránky události prostřednictvím odkazů výše a klikněte na tlačítko \" "
+"Zúčastnit se \"."
 
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
@@ -1244,6 +1256,8 @@ msgstr ""
 #, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> vás právě pozval do jejich skupiny "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.heex:38
 #, elixir-format
@@ -1357,6 +1371,9 @@ msgstr ""
 msgctxt "terms"
 msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better."
 msgstr ""
+"Některé odborné či jiné termíny použité v následujícím textu se mohou týkat "
+"obtížně pochopitelných pojmů. Pro jejich lepší pochopení jsme pro vás "
+"připravili <a href=\"/glossary\">slovníček pojmů</a>."
 
 #: lib/web/templates/api/terms.html.heex:45
 #, elixir-format
@@ -1476,7 +1493,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.html.heex:38
 #, elixir-format
 msgid "You recently requested to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Nedávno jste požádali o účast na <b>%{title}</b>."
 
 #: lib/web/email/participation.ex:90
 #, elixir-format
@@ -1491,27 +1508,29 @@ msgstr "<b>%{reporter}</b> nahlásil následující obsah."
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-format
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "Byla nahlášena skupina %{group}"
 
 #: lib/web/templates/email/report.html.heex:51
 #, elixir-format
 msgid "Group reported"
-msgstr ""
+msgstr "Skupina nahlášena"
 
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "Profil %{profile} byl nahlášen"
 
 #: lib/web/templates/email/report.html.heex:56
 #, elixir-format
 msgid "Profile reported"
-msgstr ""
+msgstr "Profil nahlášen"
 
 #: lib/web/templates/email/event_participation_confirmed.html.heex:45
 #, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Nyní jste potvrdili svou účast. Aktualizujte si kalendář, protože nyní jste "
+"na seznamu hostů!"
 
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-format
