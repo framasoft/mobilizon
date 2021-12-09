@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-09 18:17+0000\n"
+"PO-Revision-Date: 2021-12-09 18:44+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -1540,75 +1540,86 @@ msgstr "U příspěvku je vyžadován text"
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-format
 msgid "A title is required for the post"
-msgstr ""
+msgstr "U příspěvku je vyžadován nadpis"
 
 #: lib/web/templates/email/instance_follow.text.eex:3
 #, elixir-format
 msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr ""
+msgstr "%{name} (%{domain}) právě požádal o sledování vaší instance."
 
 #: lib/web/email/follow.ex:54
 #, elixir-format
 msgid "%{name} requests to follow your instance"
-msgstr ""
+msgstr "%{name} žádá o sledování vaší instance"
 
 #: lib/web/templates/email/instance_follow.html.heex:38
 #, elixir-format
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
 msgstr ""
+"<b>%{name} (%{domain})</b> právě požádal o sledování vaší instance. Pokud "
+"souhlasíte, bude tato instance dostávat všechny veřejné události vaší "
+"instance."
 
 #: lib/web/templates/email/instance_follow.text.eex:4
 #, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
+"Pokud souhlasíte, bude tato instance přijímat všechny vaše veřejné události."
 
 #: lib/web/email/follow.ex:48
 #, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
-msgstr ""
+msgstr "Instance %{name} (%{domain}) žádá o sledování vaší instance"
 
 #: lib/web/templates/email/instance_follow.html.heex:66
 #, elixir-format
 msgid "See the federation settings"
-msgstr ""
+msgstr "Viz nastavení federace"
 
 #: lib/web/templates/email/instance_follow.html.heex:52
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
 msgstr ""
+"Chcete-li tuto pozvánku přijmout, přejděte do nastavení správce instance."
 
 #: lib/web/templates/email/instance_follow.html.heex:13
 #: lib/web/templates/email/instance_follow.text.eex:1
 #, elixir-format
 msgid "Want to connect?"
-msgstr ""
+msgstr "Chcete se připojit?"
 
 #: lib/web/templates/email/instance_follow.html.heex:45
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-format
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
+"Poznámka: Když vás %{name} (%{domain}) sleduje, nemusí to nutně znamenat, že "
+"sledujete tuto instanci, ale můžete také požádat o jejich sledování."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:38
 #, elixir-format
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Ahoj! Právě jste se zaregistrovali do této události: \" <b>%{title}</b> \". "
+"Potvrďte prosím zadanou e-mailovou adresu:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:38
 #, elixir-format
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Vydali jste žádost o účast na <b>%{title}</b>."
 
 #: lib/web/templates/email/event_updated.html.heex:64
 #, elixir-format
 msgid "Event title"
-msgstr ""
+msgstr "Název události"
 
 #: lib/web/templates/email/event_updated.html.heex:38
 #, elixir-format
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""
+"U <b>%{title}</b> došlo ke změnám, a tak jsme si řekli, že vás o nich budeme "
+"informovat."
 
 #: lib/web/templates/error/500_page.html.heex:7
 #, elixir-format
