@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-09 17:58+0000\n"
+"PO-Revision-Date: 2021-12-09 18:17+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -1535,7 +1535,7 @@ msgstr ""
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-format
 msgid "A text is required for the post"
-msgstr ""
+msgstr "U příspěvku je vyžadován text"
 
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-format
