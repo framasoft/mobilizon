@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-08 04:59+0000\n"
+"PO-Revision-Date: 2021-12-09 01:11+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -1646,22 +1646,26 @@ msgstr ""
 #: lib/web/templates/error/500_page.html.heex:52
 #, elixir-format
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
-msgstr ""
+msgstr "Zdá se, že server Mobilizon %{instance} je dočasně mimo provoz."
 
 #: lib/service/export/feed.ex:67
 #, elixir-format
 msgid "Public feed for %{instance}"
-msgstr ""
+msgstr "Veřejný kanál pro %{instance}"
 
 #: lib/graphql/resolvers/user.ex:318
 #, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
+"Zvolené heslo je příliš krátké. Ujistěte se, že heslo obsahuje alespoň 6 "
+"znaků."
 
 #: lib/graphql/resolvers/user.ex:324
 #, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
+"Zadaný token je neplatný. Ujistěte se, že adresa URL je přesně taková, jaká "
+"byla uvedena v e-mailu, který jste obdrželi."
 
 #: lib/web/email/actor.ex:44
 #, elixir-format
@@ -1697,77 +1701,77 @@ msgstr ""
 #: lib/service/export/participants/common.ex:61
 #, elixir-format
 msgid "Participant message"
-msgstr ""
+msgstr "Zpráva účastníka"
 
 #: lib/service/export/participants/common.ex:61
 #, elixir-format
 msgid "Participant name"
-msgstr ""
+msgstr "Jméno účastníka"
 
 #: lib/service/export/participants/common.ex:61
 #, elixir-format
 msgid "Participant status"
-msgstr ""
+msgstr "Status účastníka"
 
 #: lib/service/export/participants/common.ex:52
 #, elixir-format
 msgid "Administrator"
-msgstr ""
+msgstr "Administrátor"
 
 #: lib/service/export/participants/common.ex:55
 #, elixir-format
 msgid "Creator"
-msgstr ""
+msgstr "Tvůrce"
 
 #: lib/service/export/participants/common.ex:49
 #, elixir-format
 msgid "Moderator"
-msgstr ""
+msgstr "Moderátor"
 
 #: lib/service/export/participants/common.ex:37
 #, elixir-format
 msgid "Not approved"
-msgstr ""
+msgstr "Neschváleno"
 
 #: lib/service/export/participants/common.ex:40
 #, elixir-format
 msgid "Not confirmed"
-msgstr ""
+msgstr "Nepotvrzeno"
 
 #: lib/service/export/participants/common.ex:46
 #, elixir-format
 msgid "Participant"
-msgstr ""
+msgstr "Účastník"
 
 #: lib/service/export/participants/common.ex:43
 #, elixir-format
 msgid "Rejected"
-msgstr ""
+msgstr "Odmítnuto"
 
 #: lib/web/templates/export/event_participants.html.heex:122
 #, elixir-format
 msgid "Begins on"
-msgstr ""
+msgstr "Začíná na"
 
 #: lib/web/templates/export/event_participants.html.heex:125
 #, elixir-format
 msgid "Ends on"
-msgstr ""
+msgstr "Končí v"
 
 #: lib/web/templates/export/event_participants.html.heex:132
 #, elixir-format
 msgid "Number of participants"
-msgstr ""
+msgstr "Počet účastníků"
 
 #: lib/web/templates/export/event_participants.html.heex:120
 #, elixir-format
 msgid "Participants for %{event}"
-msgstr ""
+msgstr "Účastníci akce %{event}"
 
 #: lib/service/export/participants/common.ex:88
 #, elixir-format
 msgid "Anonymous participant"
-msgstr ""
+msgstr "Anonymní účastník"
 
 #: lib/web/templates/email/date/event_tz_date.html.heex:6
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:7 lib/web/templates/email/date/event_tz_date_range.html.heex:12
@@ -1779,23 +1783,23 @@ msgstr ""
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
 #, elixir-format
 msgid "%{date_time} (%{timezone} %{offset})"
-msgstr ""
+msgstr "%{date_time} (%{timezone} %{offset})"
 
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
 #, elixir-format
 msgid "%{date_time} (in your timezone %{timezone} %{offset})"
-msgstr ""
+msgstr "%{date_time} (ve vašem časovém pásmu %{timezone} %{offset})"
 
 #: lib/web/templates/email/notification_each_week.html.heex:13
 #: lib/web/templates/email/notification_each_week.text.eex:1
 #, elixir-format
 msgid "On the agenda this week"
-msgstr ""
+msgstr "Na pořadu jednání tento týden"
 
 #: lib/web/templates/email/participation/event_card.html.heex:58
 #, elixir-format
 msgid "Details"
-msgstr ""
+msgstr "Detaily"
 
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:10
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
@@ -1806,7 +1810,7 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:20
 #, elixir-format
 msgid "Manage your participation"
-msgstr ""
+msgstr "Spravujte svou účast"
 
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:5
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
@@ -1817,13 +1821,13 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:66
 #, elixir-format
 msgid "Read more"
-msgstr ""
+msgstr "Více informací"
 
 #: lib/web/templates/email/participation/card/_metadata.html.heex:50
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
 #, elixir-format
 msgid "Online event"
-msgstr ""
+msgstr "Online událost"
 
 #: lib/web/templates/email/event_group_follower_notification.html.heex:13
 #, elixir-format
@@ -1838,27 +1842,27 @@ msgstr ""
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
 #, elixir-format
 msgid "Address:"
-msgstr ""
+msgstr "Adresa:"
 
 #: lib/web/templates/email/participation/card/_metadata.text.eex:1
 #, elixir-format
 msgid "Date:"
-msgstr ""
+msgstr "Datum:"
 
 #: lib/web/templates/email/participation/event_card.text.eex:7
 #, elixir-format
 msgid "Details:"
-msgstr ""
+msgstr "Detaily:"
 
 #: lib/web/templates/email/email.html.heex:147
 #, elixir-format
 msgid "Manage your notification settings"
-msgstr ""
+msgstr "Spravujte nastavení oznámení"
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-format
 msgid "Manage your participation:"
-msgstr ""
+msgstr "Spravujte svou účast:"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #: lib/web/templates/email/participation/card/_title.text.eex:3
@@ -1869,12 +1873,12 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:42
 #, elixir-format
 msgid "Participate"
-msgstr ""
+msgstr "Účastněte se"
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-format
 msgid "Participate:"
-msgstr ""
+msgstr "Účastněte se:"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
 #, elixir-format
@@ -1884,7 +1888,7 @@ msgstr ""
 #: lib/web/templates/email/participation/card/_title.text.eex:1
 #, elixir-format
 msgid "Title: %{title}"
-msgstr ""
+msgstr "Název: %{title}"
 
 #: lib/web/email/group.ex:44
 #, elixir-format
@@ -1894,39 +1898,39 @@ msgstr ""
 #: lib/web/templates/email/event_updated.text.eex:9
 #, elixir-format
 msgid "New end date:"
-msgstr ""
+msgstr "Nové datum ukončení:"
 
 #: lib/web/templates/email/event_updated.text.eex:10
 #, elixir-format
 msgid "New location:"
-msgstr ""
+msgstr "Nová lokalita:"
 
 #: lib/web/templates/email/event_updated.text.eex:8
 #, elixir-format
 msgid "New start date:"
-msgstr ""
+msgstr "Nové datum zahájení:"
 
 #: lib/web/templates/email/group_membership_rejection.html.heex:13
 #: lib/web/templates/email/group_membership_rejection.text.eex:1
 #, elixir-format
 msgid "Sorry, not this time!"
-msgstr ""
+msgstr "Promiňte, tentokrát ne!"
 
 #: lib/web/templates/email/group_membership_approval.html.heex:52
 #, elixir-format
 msgid "View the group"
-msgstr ""
+msgstr "Zobrazit skupinu"
 
 #: lib/web/templates/email/group_membership_approval.html.heex:13
 #: lib/web/templates/email/group_membership_approval.text.eex:1
 #, elixir-format
 msgid "You're in!"
-msgstr ""
+msgstr "Jste v ní!"
 
 #: lib/web/email/member.ex:60
 #, elixir-format
 msgid "Your membership request for group %{group} has been approved"
-msgstr ""
+msgstr "Vaše žádost o členství ve skupině %{group} byla schválena"
 
 #: lib/web/email/member.ex:89
 #, elixir-format
