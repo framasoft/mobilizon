@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-12-08 04:59+0000\n"
+"PO-Revision-Date: 2021-12-10 01:26+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/cs/>\n"
@@ -222,9 +222,9 @@ msgstr ""
 #, elixir-format
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Zobrazit jednu další aktivitu"
+msgstr[1] "Zobrazit %{count} další aktivity"
+msgstr[2] "Zobrazit %{count} dalších aktivit"
 
 #: lib/web/templates/email/email_direct_activity.html.heex:44
 #: lib/web/templates/email/email_direct_activity.html.heex:46 lib/web/templates/email/email_direct_activity.text.eex:6
@@ -232,9 +232,9 @@ msgstr[2] ""
 #, elixir-format
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Došlo k aktivitě!"
+msgstr[1] "Došlo k nějaké aktivitě!"
+msgstr[2] "Došlo k nějakým aktivitám!"
 
 #: lib/service/activity/renderer/renderer.ex:46
 #, elixir-format

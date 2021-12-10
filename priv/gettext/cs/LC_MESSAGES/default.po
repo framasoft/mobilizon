@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-12-09 01:11+0000\n"
+"PO-Revision-Date: 2021-12-09 19:12+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -364,18 +364,18 @@ msgstr "Mobilizon na %{instance}: e-mail změněn"
 #, elixir-format
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Na dnešek je naplánována jedna událost"
+msgstr[1] "%{nb_events} události plánované na dnešek"
+msgstr[2] "%{nb_events} událostí plánovaných na dnešek"
 
 #: lib/web/templates/email/on_day_notification.html.heex:38
 #: lib/web/templates/email/on_day_notification.text.eex:3
 #, elixir-format
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Dnes máte jednu událost:"
+msgstr[1] "Dnes máte %{total} události:"
+msgstr[2] "Dnes máte %{totall} událostí:"
 
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-format
@@ -424,26 +424,30 @@ msgstr "Byl/a jste pozván/a %{inviter} do skupiny %{group}"
 #, elixir-format
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Tento týden je naplánována jedna akce"
+msgstr[1] "%{nb_events} události plánované na tento týden"
+msgstr[2] "%{nb_events} událostí plánovaných na tento týden"
 
 #: lib/web/email/notification.ex:102
 #, elixir-format
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
-msgstr[0] ""
+msgstr[0] "Jeden požadavek na účast pro událost %{title} ke zpracování"
 msgstr[1] ""
+"%{number_participation_requests} žádosti o účast pro událost %{title} ke "
+"zpracování"
 msgstr[2] ""
+"%{number_participation_requests} žádostí o účast pro událost %{title} ke "
+"zpracování"
 
 #: lib/web/templates/email/notification_each_week.html.heex:38
 #: lib/web/templates/email/notification_each_week.text.eex:3
 #, elixir-format
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Tento týden máte jednu událost:"
+msgstr[1] "Tento týden máte %{total} události:"
+msgstr[2] "Tento týden máte %{total} událostí:"
 
 #: lib/service/metadata/utils.ex:53
 #, elixir-format
@@ -935,8 +939,16 @@ msgstr "Nepoužívejte ji pro skutečné účely."
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
+"Chcete-li zrušit svou účast, navštivte stránku události prostřednictvím výše "
+"uvedeného odkazu a klikněte na tlačítko \"Zúčastnit se\"."
 msgstr[1] ""
+"Pokud si přejete zrušit svou účast na jedné nebo více událostech, navštivte "
+"stránky události prostřednictvím odkazů výše a klikněte na tlačítko \" "
+"Zúčastnit se \"."
 msgstr[2] ""
+"Pokud si přejete zrušit svou účast na jedné nebo více událostech, navštivte "
+"stránky události prostřednictvím odkazů výše a klikněte na tlačítko \" "
+"Zúčastnit se \"."
 
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-format
@@ -1244,6 +1256,8 @@ msgstr ""
 #, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> vás právě pozval do jejich skupiny "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.heex:38
 #, elixir-format
@@ -1357,6 +1371,9 @@ msgstr ""
 msgctxt "terms"
 msgid "Some terms, technical or otherwise, used in the text below may cover concepts that are difficult to grasp. We have provided <a href=\"/glossary\">a glossary</a> to help you understand them better."
 msgstr ""
+"Některé odborné či jiné termíny použité v následujícím textu se mohou týkat "
+"obtížně pochopitelných pojmů. Pro jejich lepší pochopení jsme pro vás "
+"připravili <a href=\"/glossary\">slovníček pojmů</a>."
 
 #: lib/web/templates/api/terms.html.heex:45
 #, elixir-format
@@ -1476,7 +1493,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_confirmed.html.heex:38
 #, elixir-format
 msgid "You recently requested to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Nedávno jste požádali o účast na <b>%{title}</b>."
 
 #: lib/web/email/participation.ex:90
 #, elixir-format
@@ -1491,157 +1508,171 @@ msgstr "<b>%{reporter}</b> nahlásil následující obsah."
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-format
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "Byla nahlášena skupina %{group}"
 
 #: lib/web/templates/email/report.html.heex:51
 #, elixir-format
 msgid "Group reported"
-msgstr ""
+msgstr "Skupina nahlášena"
 
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "Profil %{profile} byl nahlášen"
 
 #: lib/web/templates/email/report.html.heex:56
 #, elixir-format
 msgid "Profile reported"
-msgstr ""
+msgstr "Profil nahlášen"
 
 #: lib/web/templates/email/event_participation_confirmed.html.heex:45
 #, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Nyní jste potvrdili svou účast. Aktualizujte si kalendář, protože nyní jste "
+"na seznamu hostů!"
 
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-format
 msgid "A text is required for the post"
-msgstr ""
+msgstr "U příspěvku je vyžadován text"
 
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-format
 msgid "A title is required for the post"
-msgstr ""
+msgstr "U příspěvku je vyžadován nadpis"
 
 #: lib/web/templates/email/instance_follow.text.eex:3
 #, elixir-format
 msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr ""
+msgstr "%{name} (%{domain}) právě požádal o sledování vaší instance."
 
 #: lib/web/email/follow.ex:54
 #, elixir-format
 msgid "%{name} requests to follow your instance"
-msgstr ""
+msgstr "%{name} žádá o sledování vaší instance"
 
 #: lib/web/templates/email/instance_follow.html.heex:38
 #, elixir-format
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
 msgstr ""
+"<b>%{name} (%{domain})</b> právě požádal o sledování vaší instance. Pokud "
+"souhlasíte, bude tato instance dostávat všechny veřejné události vaší "
+"instance."
 
 #: lib/web/templates/email/instance_follow.text.eex:4
 #, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
+"Pokud souhlasíte, bude tato instance přijímat všechny vaše veřejné události."
 
 #: lib/web/email/follow.ex:48
 #, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
-msgstr ""
+msgstr "Instance %{name} (%{domain}) žádá o sledování vaší instance"
 
 #: lib/web/templates/email/instance_follow.html.heex:66
 #, elixir-format
 msgid "See the federation settings"
-msgstr ""
+msgstr "Viz nastavení federace"
 
 #: lib/web/templates/email/instance_follow.html.heex:52
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
 msgstr ""
+"Chcete-li tuto pozvánku přijmout, přejděte do nastavení správce instance."
 
 #: lib/web/templates/email/instance_follow.html.heex:13
 #: lib/web/templates/email/instance_follow.text.eex:1
 #, elixir-format
 msgid "Want to connect?"
-msgstr ""
+msgstr "Chcete se připojit?"
 
 #: lib/web/templates/email/instance_follow.html.heex:45
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-format
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
+"Poznámka: Když vás %{name} (%{domain}) sleduje, nemusí to nutně znamenat, že "
+"sledujete tuto instanci, ale můžete také požádat o jejich sledování."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:38
 #, elixir-format
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Ahoj! Právě jste se zaregistrovali do této události: \" <b>%{title}</b> \". "
+"Potvrďte prosím zadanou e-mailovou adresu:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:38
 #, elixir-format
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Vydali jste žádost o účast na <b>%{title}</b>."
 
 #: lib/web/templates/email/event_updated.html.heex:64
 #, elixir-format
 msgid "Event title"
-msgstr ""
+msgstr "Název události"
 
 #: lib/web/templates/email/event_updated.html.heex:38
 #, elixir-format
 msgid "There have been changes for <b>%{title}</b> so we'd thought we'd let you know."
 msgstr ""
+"U <b>%{title}</b> došlo ke změnám, a tak jsme si řekli, že vás o nich budeme "
+"informovat."
 
 #: lib/web/templates/error/500_page.html.heex:7
 #, elixir-format
 msgid "This page is not correct"
-msgstr ""
+msgstr "Tato stránka není správně"
 
 #: lib/web/templates/error/500_page.html.heex:50
 #, elixir-format
 msgid "We're sorry, but something went wrong on our end."
-msgstr ""
+msgstr "Je nám líto, ale na naší straně se něco pokazilo."
 
 #: lib/web/templates/email/email.html.heex:91
 #: lib/web/templates/email/email.text.eex:4
 #, elixir-format
 msgid "This is a demonstration site to test Mobilizon."
-msgstr ""
+msgstr "Jde o demonstrační web pro testování Mobilizon."
 
 #: lib/service/metadata/actor.ex:91 lib/service/metadata/actor.ex:99
 #: lib/service/metadata/instance.ex:56 lib/service/metadata/instance.ex:62
 #, elixir-format
 msgid "%{name}'s feed"
-msgstr ""
+msgstr "Kanál %{name}"
 
 #: lib/service/export/feed.ex:115
 #, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
-msgstr ""
+msgstr "Kanál soukromých událostí %{actor} na %{instance}"
 
 #: lib/service/export/feed.ex:110
 #, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
-msgstr ""
+msgstr "Kanál veřejných událostí %{actor} na %{instance}"
 
 #: lib/service/export/feed.ex:219
 #, elixir-format
 msgid "Feed for %{email} on %{instance}"
-msgstr ""
+msgstr "Kanál pro %{email} na %{instance}"
 
 #: lib/web/templates/error/500_page.html.heex:57
 #, elixir-format
 msgid "If the issue persists, you may contact the server administrator at %{contact}."
 msgstr ""
+"Pokud problém přetrvává, můžete kontaktovat správce serveru na %{contact}."
 
 #: lib/web/templates/error/500_page.html.heex:55
 #, elixir-format
 msgid "If the issue persists, you may try to contact the server administrator."
-msgstr ""
+msgstr "Pokud problém přetrvává, můžete se pokusit kontaktovat správce serveru."
 
 #: lib/web/templates/error/500_page.html.heex:68
 #, elixir-format
 msgid "Technical details"
-msgstr ""
+msgstr "Technické detaily"
 
 #: lib/web/templates/error/500_page.html.heex:52
 #, elixir-format
@@ -1670,24 +1701,29 @@ msgstr ""
 #: lib/web/email/actor.ex:44
 #, elixir-format
 msgid "Your participation to %{event} has been cancelled!"
-msgstr ""
+msgstr "Vaše účast na %{event} byla zrušena!"
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:38
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
 #, elixir-format
 msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation to event %{event} cancelled."
 msgstr ""
+"Moderátorský tým vaší instance se rozhodl pozastavit %{actor_name} "
+"(%{actor_address}). Všechny jejich události byly odstraněny a vaše účast na "
+"události %{event} zrušena."
 
 #: lib/web/templates/email/group_suspension.html.heex:38
 #, elixir-format
 msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
 msgstr ""
+"Moderátorský tým vaší instance se rozhodl pozastavit <b>%{group_name}</b> "
+"(%{group_address}). Již nejste členem této skupiny."
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:13
 #: lib/web/templates/email/actor_suspension_participants.text.eex:1
 #, elixir-format
 msgid "Your participation to %{event} on %{instance} has been cancelled!"
-msgstr ""
+msgstr "Vaše účast na %{event} na %{instance} byla zrušena!"
 
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
@@ -1696,7 +1732,7 @@ msgstr ""
 #: lib/service/export/participants/ods.ex:77 lib/service/export/participants/pdf.ex:91
 #, elixir-format
 msgid "%{event}_participants"
-msgstr ""
+msgstr "%{event}_participants"
 
 #: lib/service/export/participants/common.ex:61
 #, elixir-format
@@ -1778,7 +1814,7 @@ msgstr "Anonymní účastník"
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1 lib/web/templates/email/date/event_tz_date_range.text.eex:1
 #, elixir-format
 msgid "🌐 %{timezone} %{offset}"
-msgstr ""
+msgstr "🌐 %{timezone} %{offset}"
 
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
 #, elixir-format
@@ -1805,7 +1841,7 @@ msgstr "Detaily"
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 #, elixir-format
 msgid "From the %{start} to the %{end}"
-msgstr ""
+msgstr "Od %{start} do %{end}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:20
 #, elixir-format
@@ -1816,7 +1852,7 @@ msgstr "Spravujte svou účast"
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 #, elixir-format
 msgid "On %{date} from %{start_time} to %{end_time}"
-msgstr ""
+msgstr "Dne %{date} od %{start_time} do %{end_time}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:66
 #, elixir-format
@@ -1832,12 +1868,12 @@ msgstr "Online událost"
 #: lib/web/templates/email/event_group_follower_notification.html.heex:13
 #, elixir-format
 msgid "%{group} scheduled a new event"
-msgstr ""
+msgstr "%{group} naplánovala novou událost"
 
 #: lib/web/templates/email/event_group_follower_notification.text.eex:1
 #, elixir-format
 msgid "%{group} scheduled a new event:"
-msgstr ""
+msgstr "%{group} naplánovala novou událost:"
 
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
 #, elixir-format
@@ -1868,7 +1904,7 @@ msgstr "Spravujte svou účast:"
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #, elixir-format
 msgid "Organizer: %{organizer}"
-msgstr ""
+msgstr "Organizátor: %{organizer}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:42
 #, elixir-format
@@ -1883,7 +1919,7 @@ msgstr "Účastněte se:"
 #: lib/web/templates/email/participation/event_card.text.eex:9
 #, elixir-format
 msgid "Read more : %{url}"
-msgstr ""
+msgstr "Více informací : %{url}"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:1
 #, elixir-format
@@ -1893,7 +1929,7 @@ msgstr "Název: %{title}"
 #: lib/web/email/group.ex:44
 #, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
-msgstr ""
+msgstr "📅 Právě naplánováno od %{group}: %{event}"
 
 #: lib/web/templates/email/event_updated.text.eex:9
 #, elixir-format
@@ -1935,27 +1971,31 @@ msgstr "Vaše žádost o členství ve skupině %{group} byla schválena"
 #: lib/web/email/member.ex:89
 #, elixir-format
 msgid "Your membership request for group %{group} has been rejected"
-msgstr ""
+msgstr "Vaše žádost o členství ve skupině %{group} byla zamítnuta"
 
 #: lib/web/templates/email/group_membership_rejection.text.eex:3
 #, elixir-format
 msgid "Your membership request for group %{group} has been rejected."
-msgstr ""
+msgstr "Vaše žádost o členství ve skupině %{skupina} byla zamítnuta."
 
 #: lib/web/templates/email/group_membership_rejection.html.heex:38
 #, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected."
 msgstr ""
+"Vaše žádost o členství ve skupině %{link_start}<b>%{group}</b>%{link_end} "
+"byla zamítnuta."
 
 #: lib/web/templates/email/group_membership_approval.text.eex:3
 #, elixir-format
 msgid "Your membership request for group %{group} has been approved."
-msgstr ""
+msgstr "Vaše žádost o členství ve skupině %{group} byla schválena."
 
 #: lib/web/templates/email/group_membership_approval.html.heex:38
 #, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
+"Vaše žádost o členství ve skupině %{link_start}<b>%{group}</b>%{link_end} "
+"byla schválena."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:38
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
@@ -1963,5 +2003,11 @@ msgstr ""
 msgid "You have one pending attendance request to process for the following event:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
 msgstr[0] ""
+"Máte jednu nevyřízenou žádost o účast na následující události, kterou je "
+"třeba zpracovat:"
 msgstr[1] ""
+"Máte %{number_participation_requests} žádosti o účast ke zpracování pro "
+"následující událost:"
 msgstr[2] ""
+"Máte %{number_participation_requests} žádostí o účast ke zpracování pro "
+"následující událost:"
