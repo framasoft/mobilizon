@@ -45,6 +45,7 @@ div.eventMetadataBlock {
   .content-wrapper {
     overflow: hidden;
     width: 100%;
+    max-width: calc(100vw - 32px - 20px);
 
     &.padding-left {
       padding: 0 20px;
