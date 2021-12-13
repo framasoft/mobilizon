@@ -239,10 +239,14 @@ export const LOGGED_USER_DRAFTS = gql`
 `;
 
 export const LOGGED_USER_MEMBERSHIPS = gql`
-  query LoggedUserMemberships($page: Int, $limit: Int) {
+  query LoggedUserMemberships(
+    $membershipName: String
+    $page: Int
+    $limit: Int
+  ) {
     loggedUser {
       id
-      memberships(page: $page, limit: $limit) {
+      memberships(name: $membershipName, page: $page, limit: $limit) {
         total
         elements {
           id

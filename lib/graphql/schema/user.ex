@@ -85,6 +85,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:memberships, :paginated_member_list,
       description: "The list of memberships for this user"
     ) do
+      arg(:name, :string, description: "A name to filter members by")
+
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated memberships list"

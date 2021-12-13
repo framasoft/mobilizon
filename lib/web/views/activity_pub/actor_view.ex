@@ -100,7 +100,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   end
 
   defp fetch_collection(:members, actor, page) do
-    Actors.list_members_for_group(actor, @selected_member_roles, page)
+    Actors.list_members_for_group(actor, nil, @selected_member_roles, page)
   end
 
   defp fetch_collection(:resources, actor, page) do
