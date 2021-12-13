@@ -103,7 +103,7 @@
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
         :total="group.members.total"
-        :per-page="EVENTS_PER_PAGE"
+        :per-page="MEMBERS_PER_PAGE"
         @page-change="onMembersPageChange"
       >
         <b-table-column
@@ -329,6 +329,8 @@ const MEMBERS_PER_PAGE = 10;
           organizedEventsLimit: EVENTS_PER_PAGE,
           postsPage: this.postsPage,
           postsLimit: POSTS_PER_PAGE,
+          membersLimit: MEMBERS_PER_PAGE,
+          membersPage: this.membersPage,
         };
       },
       skip() {
