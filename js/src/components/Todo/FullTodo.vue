@@ -11,7 +11,7 @@
         <actor-auto-complete v-model="assignedTo" />
       </b-field>
       <b-field :label="$t('Due on')">
-        <b-datepicker v-model="dueDate" />
+        <b-datepicker v-model="dueDate" :first-day-of-week="firstDayOfWeek" />
       </b-field>
     </div>
   </div>
@@ -98,6 +98,10 @@ export default class Todo extends Vue {
         position: "is-bottom",
       });
     }
+  }
+
+  get firstDayOfWeek(): number {
+    return this.$dateFnsLocale?.options?.weekStartsOn || 0;
   }
 }
 </script>

@@ -59,7 +59,10 @@
                 : $t('Showing events before')
             "
           >
-            <b-datepicker v-model="dateFilter" />
+            <b-datepicker
+              v-model="dateFilter"
+              :first-day-of-week="firstDayOfWeek"
+            />
             <b-button
               @click="dateFilter = new Date()"
               class="reset-area"
@@ -472,6 +475,10 @@ export default class MyEvents extends Vue {
 
   get hideCreateEventButton(): boolean {
     return !!this.config?.restrictions?.onlyGroupsCanCreateEvents;
+  }
+
+  get firstDayOfWeek(): number {
+    return this.$dateFnsLocale?.options?.weekStartsOn || 0;
   }
 }
 </script>

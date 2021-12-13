@@ -53,6 +53,7 @@
               id: 'begins-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
+              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
@@ -73,6 +74,7 @@
               id: 'ends-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
+              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
@@ -1324,6 +1326,10 @@ export default class EditEvent extends Vue {
       ...this.event.options,
       isOnline,
     };
+  }
+
+  get firstDayOfWeek(): number {
+    return this.$dateFnsLocale?.options?.weekStartsOn || 0;
   }
 }
 </script>
