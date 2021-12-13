@@ -426,32 +426,32 @@ msgstr ""
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:86
 msgid "%{profile} archived the discussion %{discussion} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:26
 msgid "%{profile} created the discussion %{discussion} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:101
 msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:56
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:71
 msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
 msgstr ""
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:41
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
 msgstr ""

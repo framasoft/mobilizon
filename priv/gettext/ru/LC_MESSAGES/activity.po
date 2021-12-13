@@ -421,32 +421,32 @@ msgstr "%{profile} обновил участника %{member}."
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} создал ресурс %{resource}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:86
 msgid "%{profile} archived the discussion %{discussion} in group %{group}."
 msgstr "%{profile} заархивировал обсуждение %{discussion}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:26
 msgid "%{profile} created the discussion %{discussion} in group %{group}."
 msgstr "%{profile} создал обсуждение %{discussion}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:101
 msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
 msgstr "%{profile} удалил обсуждение %{discussion}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:56
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
 msgstr "%{profile} упомянул вас в обсуждении %{discussion}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:71
 msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
 msgstr "%{profile} переименовал обсуждение %{discussion}."
 
-#, elixir-format, fuzzy
+#, elixir-format
 #: lib/service/activity/renderer/discussion.ex:41
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
 msgstr "%{profile} ответил на обсуждение %{discussion}."

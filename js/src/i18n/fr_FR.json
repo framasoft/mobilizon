@@ -1357,5 +1357,12 @@
   "The membership request from {profile} was rejected": "La demande d'adhésion de {profile} a été rejetée",
   "The member was approved": "Le ou la membre a été approuvée",
   "Emails usually don't contain capitals, make sure you haven't made a typo.": "Les emails ne contiennent d'ordinaire pas de capitales, assurez-vous de n'avoir pas fait de faute de frappe.",
-  "To follow groups and be informed of their latest events": "Afin de suivre des groupes et être informé de leurs derniers événements"
+  "To follow groups and be informed of their latest events": "Afin de suivre des groupes et être informé de leurs derniers événements",
+  "No group member found": "Aucun membre du groupe trouvé",
+  "This group was not found": "Ce groupe n'a pas été trouvé",
+  "Back to group list": "Retour à la liste des groupes",
+  "This profile was not found": "Ce profil n'a pas été trouvé",
+  "Back to profile list": "Retour à la liste des profiles",
+  "This user was not found": "Cet utilisateur⋅ice n'a pas été trouvé⋅e",
+  "Back to user list": "Retour à la liste des utilisateur⋅ices"
 }
