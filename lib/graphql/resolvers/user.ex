@@ -376,13 +376,14 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   """
   def user_memberships(
         %User{id: user_id},
-        %{page: page, limit: limit} = _args,
+        %{page: page, limit: limit} = args,
         %{context: %{current_user: %User{id: logged_user_id}}}
       ) do
     with true <- user_id == logged_user_id,
          memberships <-
            Actors.list_memberships_for_user(
              user_id,
+             Map.get(args, :name),
              page,
              limit
            ) do

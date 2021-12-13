@@ -275,7 +275,7 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
       query: GROUP_MEMBERS,
       variables() {
         return {
-          name: this.$route.params.preferredUsername,
+          groupName: this.$route.params.preferredUsername,
           page: this.page,
           limit: this.MEMBERS_PER_PAGE,
           roles: this.roles,
@@ -325,7 +325,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
       this.inviteError = "";
       const { roles, MEMBERS_PER_PAGE, group, page } = this;
       const variables = {
-        name: usernameWithDomain(group),
+        groupName: usernameWithDomain(group),
         page,
         limit: MEMBERS_PER_PAGE,
         roles,
@@ -393,7 +393,7 @@ export default class GroupMembers extends mixins(GroupMixin) {
   async removeMember(oldMember: IMember): Promise<void> {
     const { roles, MEMBERS_PER_PAGE, group, page } = this;
     const variables = {
-      name: usernameWithDomain(group),
+      groupName: usernameWithDomain(group),
       page,
       limit: MEMBERS_PER_PAGE,
       roles,

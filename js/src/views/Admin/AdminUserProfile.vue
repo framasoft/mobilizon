@@ -69,6 +69,17 @@
       >
     </div>
   </div>
+  <empty-content v-else-if="!$apollo.loading" icon="account">
+    {{ $t("This user was not found") }}
+    <template #desc>
+      <b-button
+        type="is-text"
+        tag="router-link"
+        :to="{ name: RouteName.USERS }"
+        >{{ $t("Back to user list") }}</b-button
+      >
+    </template>
+  </empty-content>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -80,6 +91,7 @@ import { usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IUser } from "../../types/current-user.model";
 import { IPerson } from "../../types/actor";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
 
 @Component({
   apollo: {
@@ -103,6 +115,9 @@ import { IPerson } from "../../types/actor";
     return {
       title: user?.email,
     };
+  },
+  components: {
+    EmptyContent,
   },
 })
 export default class AdminUserProfile extends Vue {

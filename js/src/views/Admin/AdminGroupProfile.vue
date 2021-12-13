@@ -103,7 +103,7 @@
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
         :total="group.members.total"
-        :per-page="EVENTS_PER_PAGE"
+        :per-page="MEMBERS_PER_PAGE"
         @page-change="onMembersPageChange"
       >
         <b-table-column
@@ -286,6 +286,17 @@
       </b-table>
     </section>
   </div>
+  <empty-content v-else-if="!$apollo.loading" icon="account-multiple">
+    {{ $t("This group was not found") }}
+    <template #desc>
+      <b-button
+        type="is-text"
+        tag="router-link"
+        :to="{ name: RouteName.ADMIN_GROUPS }"
+        >{{ $t("Back to group list") }}</b-button
+      >
+    </template>
+  </empty-content>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
@@ -318,6 +329,8 @@ const MEMBERS_PER_PAGE = 10;
           organizedEventsLimit: EVENTS_PER_PAGE,
           postsPage: this.postsPage,
           postsLimit: POSTS_PER_PAGE,
+          membersLimit: MEMBERS_PER_PAGE,
+          membersPage: this.membersPage,
         };
       },
       skip() {

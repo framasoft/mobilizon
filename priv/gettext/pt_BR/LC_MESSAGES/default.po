@@ -1512,8 +1512,8 @@ msgstr "A sua participação no evento %{title} foi aprovada"
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #, elixir-format
-#: lib/service/export/participants/csv.ex:73
-#: lib/service/export/participants/ods.ex:77 lib/service/export/participants/pdf.ex:91
+#: lib/service/export/participants/csv.ex:81
+#: lib/service/export/participants/ods.ex:86 lib/service/export/participants/pdf.ex:96
 msgid "%{event}_participants"
 msgstr ""
 

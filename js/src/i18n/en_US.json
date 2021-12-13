@@ -1253,5 +1253,12 @@
   "The membership request from {profile} was rejected": "The membership request from {profile} was rejected",
   "The member was approved": "The member was approved",
   "Emails usually don't contain capitals, make sure you haven't made a typo.": "Emails usually don't contain capitals, make sure you haven't made a typo.",
-  "To follow groups and be informed of their latest events": "To follow groups and be informed of their latest events"
+  "To follow groups and be informed of their latest events": "To follow groups and be informed of their latest events",
+  "No group member found": "No group member found",
+  "This group was not found": "This group was not found",
+  "Back to group list": "Back to group list",
+  "This profile was not found": "This profile was not found",
+  "Back to profile list": "Back to profile list",
+  "This user was not found": "This user was not found",
+  "Back to user list": "Back to user list"
 }

@@ -65,42 +65,60 @@
               />
             </div>
             <div class="column contact-picker">
-              <div v-if="isSelectedActorAGroup && actorMembers.length > 0">
+              <div v-if="isSelectedActorAGroup">
                 <p>{{ $t("Add a contact") }}</p>
                 <b-input
                   :placeholder="$t('Filter by name')"
                   v-model="contactFilter"
                   dir="auto"
                 />
-                <p
-                  class="field"
-                  v-for="actor in filteredActorMembers"
-                  :key="actor.id"
-                >
-                  <b-checkbox v-model="actualContacts" :native-value="actor.id">
-                    <div class="media">
-                      <div class="media-left">
-                        <figure class="image is-48x48" v-if="actor.avatar">
-                          <img
-                            class="image is-rounded"
-                            :src="actor.avatar.url"
-                            :alt="actor.avatar.alt"
+                <div v-if="actorMembers.length > 0">
+                  <p
+                    class="field"
+                    v-for="actor in filteredActorMembers"
+                    :key="actor.id"
+                  >
+                    <b-checkbox
+                      v-model="actualContacts"
+                      :native-value="actor.id"
+                    >
+                      <div class="media">
+                        <div class="media-left">
+                          <figure class="image is-48x48" v-if="actor.avatar">
+                            <img
+                              class="image is-rounded"
+                              :src="actor.avatar.url"
+                              :alt="actor.avatar.alt"
+                            />
+                          </figure>
+                          <b-icon
+                            v-else
+                            size="is-large"
+                            icon="account-circle"
                           />
-                        </figure>
-                        <b-icon v-else size="is-large" icon="account-circle" />
-                      </div>
-                      <div class="media-content" v-if="actor.name">
-                        <p class="is-4">{{ actor.name }}</p>
-                        <p class="is-6 has-text-grey-dark">
+                        </div>
+                        <div class="media-content" v-if="actor.name">
+                          <p class="is-4">{{ actor.name }}</p>
+                          <p class="is-6 has-text-grey-dark">
+                            {{ `@${usernameWithDomain(actor)}` }}
+                          </p>
+                        </div>
+                        <div class="media-content" v-else>
                           {{ `@${usernameWithDomain(actor)}` }}
-                        </p>
+                        </div>
                       </div>
-                      <div class="media-content" v-else>
-                        {{ `@${usernameWithDomain(actor)}` }}
-                      </div>
-                    </div>
-                  </b-checkbox>
-                </p>
+                    </b-checkbox>
+                  </p>
+                </div>
+                <div
+                  v-else-if="
+                    actorMembers.length === 0 && contactFilter.length > 0
+                  "
+                >
+                  <empty-content icon="account-multiple" :inline="true">
+                    {{ $t("No group member found") }}
+                  </empty-content>
+                </div>
               </div>
               <div v-else class="content has-text-grey-dark has-text-centered">
                 <p>{{ $t("Your profile will be shown as contact.") }}</p>
@@ -122,6 +140,7 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { IMember } from "@/types/actor/member.model";
 import { IActor, IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import OrganizerPicker from "./OrganizerPicker.vue";
+import EmptyContent from "../Utils/EmptyContent.vue";
 import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
@@ -139,16 +158,17 @@ const MEMBER_ROLES = [
 ];
 
 @Component({
-  components: { OrganizerPicker },
+  components: { OrganizerPicker, EmptyContent },
   apollo: {
     members: {
       query: GROUP_MEMBERS,
       variables() {
         return {
-          name: usernameWithDomain(this.selectedActor),
+          groupName: usernameWithDomain(this.selectedActor),
           page: this.membersPage,
           limit: 10,
           roles: MEMBER_ROLES.join(","),
+          name: this.contactFilter,
         };
       },
       update: (data) => data.group.members,
@@ -161,9 +181,11 @@ const MEMBER_ROLES = [
     currentActor: CURRENT_ACTOR_CLIENT,
     userMemberships: {
       query: LOGGED_USER_MEMBERSHIPS,
-      variables: {
-        page: 1,
-        limit: 100,
+      variables() {
+        return {
+          page: 1,
+          limit: 10,
+        };
       },
       update: (data) => data.loggedUser.memberships,
     },

@@ -253,7 +253,7 @@ package-app:
   only:
     - tags@framasoft/mobilizon
   artifacts:
-    expire_in: 30 days
+    expire_in: 2 days
     paths:
       - ${APP_ASSET}
 
@@ -302,7 +302,7 @@ multi-arch-release:
   tags:
     - "privileged"
   artifacts:
-    expire_in: 30 days
+    expire_in: 2 days
     paths:
       - ${APP_ASSET}
   parallel:

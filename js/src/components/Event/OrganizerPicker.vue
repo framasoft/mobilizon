@@ -51,6 +51,13 @@ import { MemberRole } from "@/types/enums";
     groupMemberships: {
       query: LOGGED_USER_MEMBERSHIPS,
       update: (data) => data.loggedUser.memberships,
+      variables() {
+        return {
+          page: 1,
+          limit: 10,
+          membershipName: this.actorFilter,
+        };
+      },
     },
     identities: IDENTITIES,
     currentActor: CURRENT_ACTOR_CLIENT,

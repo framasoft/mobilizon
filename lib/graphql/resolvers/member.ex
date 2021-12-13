@@ -21,7 +21,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
           {:ok, Page.t(Member.t())}
   def find_members_for_group(
         %Actor{id: group_id} = group,
-        %{page: page, limit: limit, roles: roles},
+        %{page: page, limit: limit, roles: roles} = args,
         %{
           context: %{current_user: %User{role: user_role}, current_actor: %Actor{id: actor_id}}
         } = _resolution
@@ -39,7 +39,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
             |> Enum.map(&String.to_existing_atom/1)
         end
 
-      %Page{} = page = Actors.list_members_for_group(group, roles, page, limit)
+      %Page{} =
+        page = Actors.list_members_for_group(group, Map.get(args, :name), roles, page, limit)
+
       {:ok, page}
     else
       # Actor is not member of group, fallback to public

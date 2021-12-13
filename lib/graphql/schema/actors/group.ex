@@ -103,6 +103,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     field :members, :paginated_member_list do
+      arg(:name, :string, description: "A name to filter members by")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated member list")
       arg(:limit, :integer, default_value: 10, description: "The limit of members per page")
       arg(:roles, :string, default_value: "", description: "Filter members by their role")

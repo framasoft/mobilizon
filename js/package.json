@@ -52,7 +52,7 @@
     "intersection-observer": "^0.12.0",
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.4.0",
-    "leaflet.locatecontrol": "^0.74.0",
+    "leaflet.locatecontrol": "^0.76.0",
     "lodash": "^4.17.11",
     "ngeohash": "^0.6.3",
     "p-debounce": "^4.0.0",
@@ -75,7 +75,7 @@
   "devDependencies": {
     "@types/jest": "^27.0.2",
     "@types/leaflet": "^1.5.2",
-    "@types/leaflet.locatecontrol": "^0.60.7",
+    "@types/leaflet.locatecontrol": "^0.74",
     "@types/lodash": "^4.14.141",
     "@types/ngeohash": "^0.6.2",
     "@types/phoenix": "^1.5.2",

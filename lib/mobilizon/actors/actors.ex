@@ -794,12 +794,14 @@ defmodule Mobilizon.Actors do
   """
   @spec list_memberships_for_user(
           integer,
+          String.t() | nil,
           integer | nil,
           integer | nil
-        ) :: Page.t()
-  def list_memberships_for_user(user_id, page, limit) do
+        ) :: Page.t(Member.t())
+  def list_memberships_for_user(user_id, name, page, limit) do
     user_id
     |> list_members_for_user_query()
+    |> filter_members_by_group_name(name)
     |> Page.build_page(page, limit)
   end
 
@@ -827,12 +829,15 @@ defmodule Mobilizon.Actors do
           Page.t(Member.t())
   def list_members_for_group(
         %Actor{id: group_id, type: :Group},
+        name \\ nil,
         roles \\ [],
         page \\ nil,
         limit \\ nil
       ) do
     group_id
     |> members_for_group_query()
+    |> join_members_actor()
+    |> filter_members_by_actor_name(name)
     |> filter_member_role(roles)
     |> Page.build_page(page, limit)
   end
@@ -1380,13 +1385,10 @@ defmodule Mobilizon.Actors do
 
   @spec list_members_for_user_query(integer()) :: Ecto.Query.t()
   defp list_members_for_user_query(user_id) do
-    from(
-      m in Member,
-      join: a in Actor,
-      on: m.actor_id == a.id,
-      where: a.user_id == ^user_id and m.role != ^:not_approved,
-      preload: [:parent, :actor, :invited_by]
-    )
+    Member
+    |> join_members_actor()
+    |> where([m, a], a.user_id == ^user_id and m.role != ^:not_approved)
+    |> preload([:parent, :actor, :invited_by])
   end
 
   @spec members_for_actor_query(integer | String.t()) :: Ecto.Query.t()
@@ -1444,6 +1446,28 @@ defmodule Mobilizon.Actors do
 
   defp filter_member_role(query, role) when is_atom(role) do
     from(m in query, where: m.role == ^role)
+  end
+
+  @spec filter_members_by_actor_name(Ecto.Query.t(), String.t() | nil) :: Ecto.Query.t()
+  defp filter_members_by_actor_name(query, nil), do: query
+  defp filter_members_by_actor_name(query, ""), do: query
+
+  defp filter_members_by_actor_name(query, name) when is_binary(name) do
+    where(query, [_q, a], like(a.name, ^"%#{name}%") or like(a.preferred_username, ^"%#{name}%"))
+  end
+
+  defp filter_members_by_group_name(query, nil), do: query
+  defp filter_members_by_group_name(query, ""), do: query
+
+  defp filter_members_by_group_name(query, name) when is_binary(name) do
+    query
+    |> join(:inner, [q], a in Actor, on: q.parent_id == a.id)
+    |> where([_q, ..., a], like(a.name, ^"%#{name}%") or like(a.preferred_username, ^"%#{name}%"))
+  end
+
+  @spec join_members_actor(Ecto.Query.t()) :: Ecto.Query.t()
+  defp join_members_actor(query) do
+    join(query, :inner, [q], a in Actor, on: q.actor_id == a.id)
   end
 
   @spec administrator_members_for_group_query(integer | String.t()) :: Ecto.Query.t()

@@ -44,10 +44,16 @@ export const REJECT_INVITATION = gql`
 `;
 
 export const GROUP_MEMBERS = gql`
-  query ($name: String!, $roles: String, $page: Int, $limit: Int) {
-    group(preferredUsername: $name) {
+  query (
+    $groupName: String!
+    $name: String
+    $roles: String
+    $page: Int
+    $limit: Int
+  ) {
+    group(preferredUsername: $groupName) {
       ...ActorFragment
-      members(page: $page, limit: $limit, roles: $roles) {
+      members(name: $name, page: $page, limit: $limit, roles: $roles) {
         elements {
           id
           role
