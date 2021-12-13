@@ -286,6 +286,17 @@
       </b-table>
     </section>
   </div>
+  <empty-content v-else-if="!$apollo.loading" icon="account-multiple">
+    {{ $t("This group was not found") }}
+    <template #desc>
+      <b-button
+        type="is-text"
+        tag="router-link"
+        :to="{ name: RouteName.ADMIN_GROUPS }"
+        >{{ $t("Back to group list") }}</b-button
+      >
+    </template>
+  </empty-content>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
