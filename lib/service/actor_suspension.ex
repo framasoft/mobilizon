@@ -4,7 +4,7 @@ defmodule Mobilizon.Service.ActorSuspension do
   """
 
   alias Ecto.Multi
-  alias Mobilizon.{Actors, Events, Users}
+  alias Mobilizon.{Actors, Events, Medias, Users}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
@@ -15,7 +15,6 @@ defmodule Mobilizon.Service.ActorSuspension do
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email.Actor, as: ActorEmail
   alias Mobilizon.Web.Email.Group
-  alias Mobilizon.Web.Upload
   require Logger
   import Ecto.Query
 
@@ -249,7 +248,7 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   @spec safe_remove_file(String.t(), Actor.t()) :: {:ok, Actor.t()}
   defp safe_remove_file(url, %Actor{} = actor) do
-    case Upload.remove(url) do
+    case Medias.delete_user_profile_media_by_url(url) do
       {:ok, _value} ->
         {:ok, actor}
 

@@ -107,19 +107,8 @@ defmodule Mobilizon.Medias do
     transaction =
       Multi.new()
       |> Multi.delete(:media, media)
-      |> Multi.run(:remove, fn _repo, %{media: %Media{file: %File{url: url}} = media} ->
-        case Upload.remove(url) do
-          {:error, err} ->
-            if err == :enofile and Keyword.get(opts, :ignore_file_not_found, false) do
-              Logger.info("Deleting media and ignoring absent file.")
-              {:ok, media}
-            else
-              {:error, err}
-            end
-
-          {:ok, media} ->
-            {:ok, media}
-        end
+      |> Multi.run(:remove, fn _repo, %{media: %Media{} = media} ->
+        delete_file_from_media(media, opts)
       end)
       |> Repo.transaction()
 
@@ -130,6 +119,143 @@ defmodule Mobilizon.Medias do
       {:error, :remove, error, _} ->
         {:error, error}
     end
+  end
+
+  @spec delete_file_from_media(Media.t(), Keyword.t()) :: {:ok, Media.t()} | {:error, atom()}
+  defp delete_file_from_media(%Media{file: %File{url: url}} = media, opts) do
+    if can_delete_media_file?(media) do
+      case Upload.remove(url) do
+        {:error, err} ->
+          if err == :enofile and Keyword.get(opts, :ignore_file_not_found, false) do
+            Logger.info("Deleting media and ignoring absent file.")
+            {:ok, media}
+          else
+            {:error, err}
+          end
+
+        {:ok, media} ->
+          {:ok, media}
+      end
+    else
+      Logger.debug("We cannot delete media file, it's still being used")
+      {:ok, media}
+    end
+  end
+
+  @spec can_delete_media_file?(Media.t()) :: boolean()
+  defp can_delete_media_file?(%Media{file: %File{url: url}}) do
+    Logger.debug("Checking for other uses of the media file, by comparing it's URL…")
+
+    case get_media_by_url(url) do
+      # No other media with this URL
+      nil ->
+        if url_is_also_a_profile_file?(url) do
+          Logger.debug("Found URL in actor profile, so we need to keep the file")
+          false
+        else
+          Logger.debug("All good, we can delete the media file")
+          true
+        end
+
+      %Media{} ->
+        Logger.debug(
+          "Found media different from this once for this URL, so there's at least one other media"
+        )
+
+        false
+    end
+  end
+
+  @spec delete_user_profile_media_by_url(String.t()) ::
+          {:ok, String.t() | :ignored} | {:error, atom()}
+  def delete_user_profile_media_by_url(url) do
+    if get_media_by_url(url) == nil && count_occurences_of_url_in_profiles(url) <= 1 do
+      # We have no media using this URL and only this profile is using this URL
+      Upload.remove(url)
+    else
+      {:ok, :ignored}
+    end
+  end
+
+  # Ecto doesn't currently allow us to use exists with a subquery,
+  # so we can't create the union through Ecto
+  # https://github.com/elixir-ecto/ecto/issues/3619
+  @union_query [
+                 [from: "events", param: "picture_id"],
+                 [from: "events_medias", param: "media_id"],
+                 [from: "posts", param: "picture_id"],
+                 [from: "posts_medias", param: "media_id"],
+                 [from: "comments_medias", param: "media_id"]
+               ]
+               |> Enum.map_join(" UNION ", fn [from: from, param: param] ->
+                 "SELECT 1 FROM #{from} WHERE #{from}.#{param} = m0.id"
+               end)
+               |> (&"NOT EXISTS(#{&1})").()
+
+  @spec find_media_to_clean(Keyword.t()) :: list(list(Media.t()))
+  def find_media_to_clean(opts) do
+    default_grace_period =
+      Mobilizon.Config.get([:instance, :orphan_upload_grace_period_hours], 48)
+
+    grace_period = Keyword.get(opts, :grace_period, default_grace_period)
+    expiration_date = DateTime.add(DateTime.utc_now(), grace_period * -3600)
+
+    query =
+      from(m in Media,
+        as: :media,
+        distinct: true,
+        join: a in Actor,
+        on: a.id == m.actor_id,
+        where: is_nil(a.domain),
+        where: m.inserted_at < ^expiration_date,
+        where: fragment(@union_query)
+      )
+
+    query
+    |> Repo.all(timeout: :infinity)
+    |> Enum.filter(fn %Media{file: %File{url: url}} ->
+      !url_is_also_a_profile_file?(url) && is_all_media_orphan?(url, expiration_date)
+    end)
+    |> Enum.chunk_by(fn %Media{file: %File{url: url}} ->
+      url
+      |> String.split("?", parts: 2)
+      |> hd
+    end)
+  end
+
+  defp is_all_media_orphan?(url, expiration_date) do
+    url
+    |> get_all_media_by_url()
+    |> Enum.all?(&is_media_orphan?(&1, expiration_date))
+  end
+
+  @spec is_media_orphan?(Media.t(), DateTime.t()) :: boolean()
+  defp is_media_orphan?(%Media{id: media_id}, expiration_date) do
+    media_query =
+      from(m in Media,
+        as: :media,
+        distinct: true,
+        join: a in Actor,
+        on: a.id == m.actor_id,
+        where: m.id == ^media_id,
+        where: is_nil(a.domain),
+        where: m.inserted_at < ^expiration_date,
+        where: fragment(@union_query)
+      )
+
+    Repo.exists?(media_query)
+  end
+
+  @spec url_is_also_a_profile_file?(String.t()) :: boolean()
+  defp url_is_also_a_profile_file?(url) when is_binary(url) do
+    count_occurences_of_url_in_profiles(url) > 0
+  end
+
+  @spec count_occurences_of_url_in_profiles(String.t()) :: integer()
+  defp count_occurences_of_url_in_profiles(url) when is_binary(url) do
+    Actor
+    |> where([a], fragment("avatar->>'url'") == ^url or fragment("banner->>'url'") == ^url)
+    |> Repo.aggregate(:count)
   end
 
   @spec media_by_url_query(String.t()) :: Ecto.Query.t()

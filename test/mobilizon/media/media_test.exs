@@ -4,6 +4,7 @@ defmodule Mobilizon.MediaTest do
   import Mobilizon.Factory
 
   alias Mobilizon.{Config, Medias}
+  alias Mobilizon.Medias.Media
 
   alias Mobilizon.Web.Upload.Uploader
 
@@ -29,8 +30,16 @@ defmodule Mobilizon.MediaTest do
 
       assert media.file.name == "something old"
     end
+  end
 
-    test "delete_media/1 deletes the media" do
+  describe "delete_media/1" do
+    setup do
+      File.rm_rf!(Config.get!([Uploader.Local, :uploads]))
+      File.mkdir(Config.get!([Uploader.Local, :uploads]))
+      :ok
+    end
+
+    test "deletes the media" do
       media = insert(:media)
 
       %URI{path: "/media/" <> path} = URI.parse(media.file.url)
@@ -47,6 +56,62 @@ defmodule Mobilizon.MediaTest do
                Config.get!([Uploader.Local, :uploads]) <>
                  "/" <> path
              )
+    end
+
+    test "doesn't delete the media if two media entities are using the same URL" do
+      Config.put([Mobilizon.Web.Upload, :filters], [
+        Mobilizon.Web.Upload.Filter.Dedupe
+      ])
+
+      media1 = insert(:media)
+      media2 = insert(:media)
+
+      assert media1.file.url == media2.file.url
+
+      %URI{path: "/media/" <> path} = URI.parse(media1.file.url)
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> path
+             )
+
+      assert {:ok, %Media{}} = Medias.delete_media(media1)
+      assert_raise Ecto.NoResultsError, fn -> Medias.get_media!(media1.id) end
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> path
+             )
+
+      Config.put([Mobilizon.Web.Upload, :filters], [])
+    end
+
+    test "doesn't delete the media if the same file is being used in a profile" do
+      Config.put([Mobilizon.Web.Upload, :filters], [
+        Mobilizon.Web.Upload.Filter.Dedupe
+      ])
+
+      actor = insert(:actor)
+      media = insert(:media)
+
+      assert media.file.url == actor.avatar.url
+
+      %URI{path: "/media/" <> path} = URI.parse(media.file.url)
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> path
+             )
+
+      assert {:ok, %Media{}} = Medias.delete_media(media)
+      assert_raise Ecto.NoResultsError, fn -> Medias.get_media!(media.id) end
+
+      assert File.exists?(
+               Config.get!([Uploader.Local, :uploads]) <>
+                 "/" <> path
+             )
+
+      Config.put([Mobilizon.Web.Upload, :filters], [])
     end
   end
 end

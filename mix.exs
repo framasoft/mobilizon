@@ -256,6 +256,7 @@ defmodule Mobilizon.Mixfile do
   end
 
   defp run_test(args) do
+    File.mkdir("test/uploads")
     Mix.Task.run("test", args)
     File.rm_rf!("test/uploads")
   end

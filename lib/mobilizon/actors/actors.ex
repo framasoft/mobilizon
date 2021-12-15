@@ -14,11 +14,11 @@ defmodule Mobilizon.Actors do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Crypto
   alias Mobilizon.Events.FeedToken
+  alias Mobilizon.Medias
   alias Mobilizon.Service.Workers
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.Upload
 
   require Logger
 
@@ -1263,7 +1263,7 @@ defmodule Mobilizon.Actors do
         with %Ecto.Changeset{changes: %{url: new_url}} <- changes[key],
              %{url: old_url} <- data |> Map.from_struct() |> Map.get(key),
              false <- new_url == old_url do
-          Upload.remove(old_url)
+          Medias.delete_user_profile_media_by_url(old_url)
         end
       end
     end)
