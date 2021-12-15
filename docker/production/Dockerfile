@@ -12,7 +12,7 @@ RUN yarn install --network-timeout 100000 \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:1.12-alpine AS builder
+FROM elixir:1.13-alpine AS builder
 
 RUN apk add --no-cache build-base git cmake
 
