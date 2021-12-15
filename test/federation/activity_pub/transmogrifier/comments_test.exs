@@ -215,7 +215,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
 
       assert capture_log([level: :warn], fn ->
                {:ok, _returned_activity, _entity} = Transmogrifier.handle_incoming(data)
-             end) =~ "[warn] Parent object is something we don't handle"
+             end) =~ "[warning] Parent object is something we don't handle"
     end
 
     test "it ignores incoming private notes" do

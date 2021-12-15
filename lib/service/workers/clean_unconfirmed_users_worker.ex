@@ -15,13 +15,13 @@ defmodule Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker do
 
   @spec should_perform? :: boolean()
   defp should_perform? do
-    case Cachex.get(:key_value, "last_media_cleanup") do
-      {:ok, %DateTime{} = last_media_cleanup} ->
+    case Cachex.get(:key_value, "unconfirmed_users_cleanup") do
+      {:ok, %DateTime{} = unconfirmed_users_cleanup} ->
         default_grace_period =
           Mobilizon.Config.get([:instance, :unconfirmed_user_grace_period_hours], 48)
 
         DateTime.compare(
-          last_media_cleanup,
+          unconfirmed_users_cleanup,
           DateTime.add(DateTime.utc_now(), default_grace_period * -3600)
         ) == :lt
 

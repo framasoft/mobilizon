@@ -455,7 +455,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
         {:ok, nil}
 
       _ ->
-        {:error, dgettext("errors", "User not found")}
+        {:error, :user_not_found}
     end
   end
 
