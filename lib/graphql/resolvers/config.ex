@@ -5,6 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
   alias Mobilizon.Config
   alias Mobilizon.Events.Categories
+  alias Mobilizon.Service.FrontEndAnalytics
 
   @doc """
   Gets config.
@@ -170,7 +171,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
         public_key:
           get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
       },
-      export_formats: Config.instance_export_formats()
+      export_formats: Config.instance_export_formats(),
+      analytics: FrontEndAnalytics.config()
     }
   end
 end

@@ -48,13 +48,75 @@
               $t("Mobilizon")
             }}</a>
           </i18n>
-          {{
-            $t(
-              "We improve this software thanks to your feedback. To let us know about this issue, two possibilities (both unfortunately require user account creation):"
-            )
-          }}
+          <span v-if="sentryEnabled && sentryReady">
+            {{
+              $t(
+                "We collect your feedback and the error information in order to improve this service."
+              )
+            }}</span
+          >
+          <span v-else>
+            {{
+              $t(
+                "We improve this software thanks to your feedback. To let us know about this issue, two possibilities (both unfortunately require user account creation):"
+              )
+            }}
+          </span>
         </p>
-        <div class="content">
+        <form
+          v-if="sentryEnabled && sentryReady && !submittedFeedback"
+          @submit.prevent="sendErrorToSentry"
+        >
+          <b-field :label="$t('What happened?')" label-for="what-happened">
+            <b-input
+              v-model="feedback"
+              type="textarea"
+              id="what-happened"
+              :placeholder="$t(`I've clicked on X, then on Y`)"
+            />
+          </b-field>
+          <b-button icon-left="send" native-type="submit" type="is-primary">{{
+            $t("Send feedback")
+          }}</b-button>
+          <p class="content">
+            {{
+              $t(
+                "Please add as many details as possible to help identify the problem."
+              )
+            }}
+          </p>
+        </form>
+        <b-message type="is-danger" v-else-if="feedbackError">
+          <p>
+            {{
+              $t(
+                "Sorry, we wen't able to save your feedback. Don't worry, we'll try to fix this issue anyway."
+              )
+            }}
+          </p>
+          <i18n path="You may now close this page or {return_to_the_homepage}.">
+            <template #return_to_the_homepage>
+              <router-link :to="{ name: RouteName.HOME }">{{
+                $t("return to the homepage")
+              }}</router-link>
+            </template>
+          </i18n>
+        </b-message>
+        <b-message type="is-success" v-else-if="submittedFeedback">
+          <p>{{ $t("Thanks a lot, your feedback was submitted!") }}</p>
+          <i18n path="You may now close this page or {return_to_the_homepage}.">
+            <template #return_to_the_homepage>
+              <router-link :to="{ name: RouteName.HOME }">{{
+                $t("return to the homepage")
+              }}</router-link>
+            </template>
+          </i18n>
+        </b-message>
+        <div
+          class="content"
+          v-if="!(sentryEnabled && sentryReady) || submittedFeedback"
+        >
+          <p v-if="submittedFeedback">{{ $t("You may also:") }}</p>
           <ul>
             <li>
               <a
@@ -65,7 +127,7 @@
             </li>
             <li>
               <a
-                href="https://framagit.org/framasoft/mobilizon/-/issues/new?issuable_template=Bug"
+                href="https://framagit.org/framasoft/mobilizon/-/issues/"
                 target="_blank"
                 >{{
                   $t("Open an issue on our bug tracker (advanced users)")
@@ -74,7 +136,7 @@
             </li>
           </ul>
         </div>
-        <p class="content">
+        <p class="content" v-if="!sentryEnabled">
           {{
             $t(
               "Please add as many details as possible to help identify the problem."
@@ -89,14 +151,14 @@
           <p>{{ $t("Error stacktrace") }}</p>
           <pre>{{ error.stack }}</pre>
         </details>
-        <p>
+        <p v-if="!sentryEnabled">
           {{
             $t(
               "The technical details of the error can help developers solve the problem more easily. Please add them to your feedback."
             )
           }}
         </p>
-        <div class="buttons">
+        <div class="buttons" v-if="!sentryEnabled">
           <b-tooltip
             :label="tooltipConfig.label"
             :type="tooltipConfig.type"
@@ -115,14 +177,20 @@
   </div>
 </template>
 <script lang="ts">
-import { CONTACT } from "@/graphql/config";
+import { CONFIG } from "@/graphql/config";
+import { checkProviderConfig, convertConfig } from "@/services/statistics";
+import { IAnalyticsConfig, IConfig } from "@/types/config.model";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { LOGGED_USER } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
+import { ISentryConfiguration } from "@/types/analytics/sentry.model";
+import { submitFeedback } from "@/services/statistics/sentry";
+import RouteName from "@/router/name";
 
 @Component({
   apollo: {
-    config: {
-      query: CONTACT,
-    },
+    config: CONFIG,
+    loggedUser: LOGGED_USER,
   },
   metaInfo() {
     return {
@@ -138,7 +206,17 @@ export default class ErrorComponent extends Vue {
 
   copied: "success" | "error" | false = false;
 
-  config!: { contact: string | null; name: string };
+  config!: IConfig;
+
+  feedback = "";
+
+  submittedFeedback = false;
+
+  feedbackError = false;
+
+  loggedUser!: IUser;
+
+  RouteName = RouteName;
 
   async copyErrorToClipboard(): Promise<void> {
     try {
@@ -192,6 +270,56 @@ export default class ErrorComponent extends Vue {
     document.execCommand("copy");
 
     document.body.removeChild(textArea);
+  }
+
+  get sentryEnabled(): boolean {
+    return this.sentryProvider?.enabled === true;
+  }
+
+  get sentryProvider(): IAnalyticsConfig | undefined {
+    return this.config && checkProviderConfig(this.config, "sentry");
+  }
+
+  get sentryConfig(): ISentryConfiguration | undefined {
+    if (this.sentryProvider?.configuration) {
+      return convertConfig(
+        this.sentryProvider?.configuration
+      ) as ISentryConfiguration;
+    }
+    return undefined;
+  }
+
+  get sentryReady() {
+    const eventId = window.sessionStorage.getItem("lastEventId");
+    const dsn = this.sentryConfig?.dsn;
+    const organization = this.sentryConfig?.organization;
+    const project = this.sentryConfig?.project;
+    const host = this.sentryConfig?.host;
+    return eventId && dsn && organization && project && host;
+  }
+
+  async sendErrorToSentry() {
+    try {
+      const eventId = window.sessionStorage.getItem("lastEventId");
+      const dsn = this.sentryConfig?.dsn;
+      const organization = this.sentryConfig?.organization;
+      const project = this.sentryConfig?.project;
+      const host = this.sentryConfig?.host;
+      const endpoint = `https://${host}/api/0/projects/${organization}/${project}/user-feedback/`;
+      if (eventId && dsn && this.sentryReady) {
+        await submitFeedback(endpoint, dsn, {
+          event_id: eventId,
+          name:
+            this.loggedUser?.defaultActor?.preferredUsername || "Unknown user",
+          email: this.loggedUser?.email || "unknown@email.org",
+          comments: this.feedback,
+        });
+        this.submittedFeedback = true;
+      }
+    } catch (error) {
+      console.error(error);
+      this.feedbackError = true;
+    }
   }
 }
 </script>
