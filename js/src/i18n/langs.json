@@ -1,27 +1,14 @@
 {
-  "ar": "العربية",
   "bn": "বাংলা",
-  "ca": "Català",
   "cs": "čeština",
-  "cy": "Cymraeg",
   "de": "Deutsch",
-  "en": "English",
   "es": "Español",
-  "fa": "فارسی",
   "fi": "suomi",
-  "fr": "Français",
   "gd": "Gàidhlig",
-  "gl": "Galego",
   "hu": "Magyar",
-  "id": "Bahasa Indonesia",
   "it": "Italiano",
-  "nl": "Nederlands",
   "nn": "Nynorsk",
-  "oc": "Occitan",
   "pl": "Polski",
-  "pt_BR": "Português brasileiro",
   "ru": "Русский",
-  "sl": "Slovenščina",
-  "sv": "Svenska",
-  "zh_Hant": "繁體字"
+  "sv": "Svenska"
 }
