@@ -60,7 +60,6 @@
   "Create my group": "Стварыць групу",
   "Create my profile": "Стварыць профіль",
   "Create token": "Стварыць токен",
-  "Creator": "Стваральнік/стваральніца",
   "Current identity has been changed to {identityName} in order to manage this event.": "Бягучая ідэнтычнасць змененая на {identityName}, каб можна было рэдагаваць гэту падзею.",
   "Dashboard": "Панэль кіравання",
   "Date": "Дата",
@@ -94,7 +93,6 @@
   "Ends on…": "Заканчваецца…",
   "Enter the link URL": "Увядзіце адрас URL",
   "Error while changing email": "Памылка пры змяненні email",
-  "Error while saving report.": "Памылка падчас запісу паведамлення пра праблемы.",
   "Error while validating account": "Памылка падчас пацвярджэння ўліковага запісу",
   "Event": "Падзея",
   "Event already passed": "Падзея ўжо прайшла",
@@ -126,7 +124,6 @@
   "General information": "Агульная інфармацыя",
   "Getting location": "Атрыманне месцапалажэння",
   "Go": "Перайсці",
-  "Group List": "Спіс груп",
   "Group name": "Назва групы",
   "Group {displayName} created": "Створаная група {displayName}",
   "Groups": "Групы",
@@ -144,7 +141,6 @@
   "Identity {displayName} updated": "Ідэнтычнасць {displayName} абноўленая",
   "If an account with this email exists, we just sent another confirmation email to {email}": "Калі ўліковы запіс з гэтым адрасам існуе, мы толькі што даслалі ліст на {email}",
   "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity.": "Калі гэтая ідэнтычнасць — адміністратар нейкіх груп, спачатку трэба выдаліць гэтыя групы, а потым можна будзе выдаліць гэта ідэнтычнасць.",
-  "In the meantime, please consider that the software is not (yet) finished. More information {onBlog}.": "Пакуль што разумейце, што гэта праграма (пакуль што) недаробленая. Болей інфармацыі {onBlog}.",
   "Instance Name": "Імя сервера",
   "Instance settings": "Налады сервера",
   "Instances": "Серверы",
@@ -166,7 +162,6 @@
   "Manage participations": "Кіраванне ўдзеламі",
   "Mark as resolved": "Пазначыць як гатовае",
   "Members": "Сябры",
-  "Mobilizon is under development, we will add new features to this site during regular updates, until the release of <b>version 1 of the software in the first half of 2020</b>.": "Mobilizon зараз распрацоўваецца, мы будзем рэгулярна абнаўляць гэты сайт і дадаваць магчымасці да выхаду <b>версіі праграмы 1 у першай палове 2020 года</b>.",
   "Moderated comments (shown after approval)": "Каментарыі ў мадэрацыі (з'явяцца пасля адабрэння)",
   "My account": "Мой уліковы запіс",
   "My events": "Мае падзеі",
@@ -203,6 +198,5 @@
   "Participation approval": "Дазваленне ўдзелу",
   "Participation confirmation": "Паццьвярджэнне ўдзелу",
   "Post a comment": "Даслаць каментар",
-  "Post a reply": "Даслаць адказ",
-  "This is a demonstration site to test the beta version of Mobilizon.": "Гэта дэманстрацыйны сайт для праверкі бэта-версіі Mobilizon."
+  "Post a reply": "Даслаць адказ"
 }
