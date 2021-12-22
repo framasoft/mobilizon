@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.2 - 2021-12-22
+
+### Changed
+
+- Improved handling of media file deletion
+- Releases and Docker image are now using Elixir 1.13
+
+### Fixed
+
+- Fixed position of tentative tag on event cards
+- Fixed text overflow when a link is too long in event mobile view
+- Fixed filtering user own memberships and group members in event organizer & contacts picker
+- Fixed first day of week not depending on locale in the datetime picker
+- Fixed the admin page when a group/profile/user was not found
+- Fixed group members pagination on admin group profile view
+- Fixed admin edition of the instance's language
+### Translations
+
+- Croatian
+- Czech
+- Esperanto
+- German
+- Hebrew
+- Occitan
+- Persian
+- Russian
+- Spanish
+
 ## 2.0.1 - 2021-11-26
 
 ### Changed
