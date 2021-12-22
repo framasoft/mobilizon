@@ -15,16 +15,6 @@
     "location": {
       "name": "Colosseo"
     },
-    "attachment": [
-      {
-        "type": "Document",
-        "mediaType": "image/jpeg",
-        "url": "https://demo.gancio.org/media/7215892e7326a9b326b6bcad5b57642e.jpg",
-        "name": "",
-        "blurHash": null,
-        "focalPoint": [0, 0]
-      }
-    ],
     "tag": [
       {
         "type": "Hashtag",
