@@ -433,18 +433,22 @@ export default class Settings extends Vue {
   RouteName = RouteName;
 
   get instanceLanguages(): string[] {
-    const languageCodes = this.adminSettings.instanceLanguages || [];
+    const languageCodes = [...this.adminSettings.instanceLanguages] || [];
     return languageCodes
       .map((code) => this.languageForCode(code))
       .filter((language) => language) as string[];
   }
 
   set instanceLanguages(instanceLanguages: string[]) {
-    this.adminSettings.instanceLanguages = instanceLanguages
+    const newInstanceLanguages = instanceLanguages
       .map((language) => {
         return this.codeForLanguage(language);
       })
       .filter((code) => code !== undefined) as string[];
+    this.adminSettings = {
+      ...this.adminSettings,
+      instanceLanguages: newInstanceLanguages,
+    };
   }
 
   async updateSettings(): Promise<void> {
