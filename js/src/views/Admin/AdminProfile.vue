@@ -384,6 +384,12 @@ export default class AdminProfile extends Vue {
       {
         key: this.$t("Domain") as string,
         value: this.person.domain ? this.person.domain : this.$t("Local"),
+        link: this.person.domain
+          ? {
+              name: RouteName.INSTANCE,
+              params: { domain: this.person.domain },
+            }
+          : undefined,
       },
       {
         key: this.$i18n.t("Uploaded media size"),

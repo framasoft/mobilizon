@@ -78,7 +78,7 @@
         />
         <SettingMenuItem
           :title="$t('Federation')"
-          :to="{ name: RouteName.RELAYS }"
+          :to="{ name: RouteName.INSTANCES }"
         />
       </SettingMenuSection>
     </ul>

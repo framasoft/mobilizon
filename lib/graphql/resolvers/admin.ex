@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events}
+  alias Mobilizon.{Actors, Admin, Config, Events, Instances}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Cldr.Language
@@ -329,6 +329,79 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  def get_instances(
+        _parent,
+        args,
+        %{
+          context: %{current_user: %User{role: role}}
+        }
+      )
+      when is_admin(role) do
+    {:ok,
+     Instances.instances(
+       args
+       |> Keyword.new()
+       |> Keyword.take([
+         :page,
+         :limit,
+         :order_by,
+         :direction,
+         :filter_domain,
+         :filter_follow_status,
+         :filter_suspend_status
+       ])
+     )}
+  end
+
+  def get_instances(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def get_instances(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
+  end
+
+  def get_instance(_parent, %{domain: domain}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    has_relay = Actors.has_relay?(domain)
+    remote_relay = Actors.get_actor_by_name("relay@#{domain}")
+    local_relay = Relay.get_actor()
+
+    result = %{
+      has_relay: has_relay,
+      follower_status: follow_status(remote_relay, local_relay),
+      followed_status: follow_status(local_relay, remote_relay)
+    }
+
+    {:ok, Map.merge(Instances.instance(domain), result)}
+  end
+
+  def get_instance(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def get_instance(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
+  end
+
+  def create_instance(
+        parent,
+        %{domain: domain} = args,
+        %{context: %{current_user: %User{role: role}}} = resolution
+      )
+      when is_admin(role) do
+    case Relay.follow(domain) do
+      {:ok, _activity, _follow} ->
+        Instances.refresh()
+        get_instance(parent, args, resolution)
+
+      {:error, err} ->
+        {:error, err}
+    end
+  end
+
   @spec create_relay(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Follower.t()} | {:error, any()}
   def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
@@ -425,4 +498,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       :ok
     end
   end
+
+  @spec follow_status(Actor.t() | nil, Actor.t() | nil) :: :approved | :pending | :none
+  defp follow_status(follower, followed) when follower != nil and followed != nil do
+    case Actors.check_follow(follower, followed) do
+      %Follower{approved: true} -> :approved
+      %Follower{approved: false} -> :pending
+      _ -> :none
+    end
+  end
+
+  defp follow_status(_, _), do: :none
 end

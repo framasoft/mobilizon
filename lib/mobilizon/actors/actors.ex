@@ -1256,6 +1256,16 @@ defmodule Mobilizon.Actors do
     :ok
   end
 
+  @spec has_relay?(String.t()) :: boolean()
+  def has_relay?(domain) do
+    Actor
+    |> where(
+      [a],
+      a.preferred_username == "relay" and a.domain == ^domain and a.type == :Application
+    )
+    |> Repo.exists?()
+  end
+
   @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp delete_files_if_media_changed(%Ecto.Changeset{changes: changes, data: data} = changeset) do
     Enum.each([:avatar, :banner], fn key ->
