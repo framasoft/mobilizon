@@ -13,6 +13,7 @@ import filters from "./filters";
 import { i18n } from "./utils/i18n";
 import apolloProvider from "./vue-apollo";
 import "./registerServiceWorker";
+import "./assets/tailwind.css";
 
 Vue.config.productionTip = false;
 
