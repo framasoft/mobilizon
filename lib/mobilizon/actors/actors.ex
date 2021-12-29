@@ -1176,7 +1176,7 @@ defmodule Mobilizon.Actors do
     if followed.suspended do
       {:error, :followed_suspended}
     else
-      case is_following(follower, followed) do
+      case check_follow(follower, followed) do
         %Follower{} ->
           {:error, :already_following}
 
@@ -1202,7 +1202,7 @@ defmodule Mobilizon.Actors do
   @spec unfollow(Actor.t(), Actor.t()) ::
           {:ok, Follower.t()} | {:error, Ecto.Changeset.t() | String.t()}
   def unfollow(%Actor{} = followed, %Actor{} = follower) do
-    case {:already_following, is_following(follower, followed)} do
+    case {:already_following, check_follow(follower, followed)} do
       {:already_following, %Follower{} = follow} ->
         delete_follower(follow)
 
@@ -1214,8 +1214,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Checks whether an actor is following another actor.
   """
-  @spec is_following(Actor.t(), Actor.t()) :: Follower.t() | nil
-  def is_following(%Actor{} = follower_actor, %Actor{} = followed_actor) do
+  @spec check_follow(Actor.t(), Actor.t()) :: Follower.t() | nil
+  def check_follow(%Actor{} = follower_actor, %Actor{} = followed_actor) do
     get_follower_by_followed_and_following(followed_actor, follower_actor)
   end
 

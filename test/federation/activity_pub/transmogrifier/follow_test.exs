@@ -36,7 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
              end) =~ "Only group and instances can be followed"
 
       actor = Actors.get_actor_with_preload(actor.id)
-      refute Actors.is_following(Actors.get_actor_by_url!(data["actor"], true), actor)
+      refute Actors.check_follow(Actors.get_actor_by_url!(data["actor"], true), actor)
     end
 
     test "it works for incoming follow requests" do
@@ -68,7 +68,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
       assert data["id"] == "https://social.tcit.fr/users/tcit#follows/2"
 
       actor = Actors.get_actor_with_preload(actor.id)
-      assert Actors.is_following(Actors.get_actor_by_url!(data["actor"], true), actor)
+      assert Actors.check_follow(Actors.get_actor_by_url!(data["actor"], true), actor)
     end
 
     test "it rejects activities without a valid ID" do
@@ -97,7 +97,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
     #       assert data["actor"] == "https://hubzilla.example.org/channel/kaniini"
     #       assert data["type"] == "Follow"
     #       assert data["id"] == "https://hubzilla.example.org/channel/kaniini#follows/2"
-    #       assert User.is_following(User.get_by_ap_id(data["actor"]), user)
+    #       assert User.check_follow(User.get_by_ap_id(data["actor"]), user)
     #     end
   end
 
@@ -106,10 +106,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
       follower = insert(:actor)
       followed = insert(:group, manually_approves_followers: false)
 
-      refute Actors.is_following(follower, followed)
+      refute Actors.check_follow(follower, followed)
 
       {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
 
       follow_object_id = follow_activity.data["id"]
 
@@ -131,17 +131,17 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
     end
 
     test "it works for incoming accepts which were pre-accepted" do
       follower = insert(:actor)
       followed = insert(:group, manually_approves_followers: true)
 
-      refute Actors.is_following(follower, followed)
+      refute Actors.check_follow(follower, followed)
 
       {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
 
       follow_object_id = follow_activity.data["id"]
 
@@ -166,7 +166,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
     end
 
     test "it works for incoming accepts which are referenced by IRI only" do
@@ -188,7 +188,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
     end
 
     test "it fails for incoming accepts which cannot be correlated" do
@@ -207,7 +207,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-      refute Actors.is_following(follower, followed)
+      refute Actors.check_follow(follower, followed)
     end
   end
 
@@ -228,7 +228,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follower} = Actors.get_actor_by_url(follower.url)
 
-      refute Actors.is_following(follower, followed)
+      refute Actors.check_follow(follower, followed)
     end
 
     test "it works for incoming rejects which are referenced by IRI only" do
@@ -237,7 +237,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, follow_activity, _} = Actions.Follow.follow(follower, followed)
 
-      assert Actors.is_following(follower, followed)
+      assert Actors.check_follow(follower, followed)
 
       reject_data =
         File.read!("test/fixtures/mastodon-reject-activity.json")
@@ -247,7 +247,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
 
       {:ok, %Activity{data: _}, _} = Transmogrifier.handle_incoming(reject_data)
 
-      refute Actors.is_following(follower, followed)
+      refute Actors.check_follow(follower, followed)
     end
   end
 end

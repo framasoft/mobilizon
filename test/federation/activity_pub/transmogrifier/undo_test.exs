@@ -82,7 +82,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UndoTest do
       assert data["actor"] == "https://social.tcit.fr/users/tcit"
 
       {:ok, followed} = Actors.get_actor_by_url(data["actor"])
-      refute Actors.is_following(followed, actor)
+      refute Actors.check_follow(followed, actor)
     end
   end
 end
