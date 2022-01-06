@@ -8,7 +8,12 @@ defmodule Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker do
 
   @impl Oban.Worker
   def perform(%Job{}) do
-    if Mobilizon.Config.get!([:instance, :remove_unconfirmed_users]) and should_perform?() do
+    remove_unconfirmed_users =
+      :mobilizon
+      |> Application.get_env(:instance)
+      |> Keyword.get(:remove_unconfirmed_users, false)
+
+    if remove_unconfirmed_users and should_perform?() do
       CleanUnconfirmedUsers.clean()
     end
   end

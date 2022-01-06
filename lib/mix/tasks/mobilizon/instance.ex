@@ -130,7 +130,7 @@ defmodule Mix.Tasks.Mobilizon.Instance do
           options,
           :listen_port,
           "What port will the app listen to (leave it if you are using the default setup with nginx)?",
-          4000
+          "4000"
         )
 
       instance_secret = :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)

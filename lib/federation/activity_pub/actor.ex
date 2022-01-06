@@ -108,15 +108,15 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Create an actor inside our database from username, using WebFinger to find out its AP ID and then fetch it
   """
-  @spec make_actor_from_nickname(nickname :: String.t(), preload :: boolean) ::
+  @spec make_actor_from_nickname(nickname :: String.t(), options :: Keyword.t()) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | WebFinger.finger_errors()}
-  def make_actor_from_nickname(nickname, preload \\ false) do
+  def make_actor_from_nickname(nickname, options \\ []) do
     Logger.debug("Fingering actor from nickname #{nickname}")
 
     case WebFinger.finger(nickname) do
       {:ok, url} when is_binary(url) ->
         Logger.debug("Matched #{nickname} to URL #{url}, now making actor")
-        make_actor_from_url(url, preload: preload)
+        make_actor_from_url(url, options)
 
       {:error, e} ->
         {:error, e}

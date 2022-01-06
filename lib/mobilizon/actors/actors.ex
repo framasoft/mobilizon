@@ -1475,7 +1475,7 @@ defmodule Mobilizon.Actors do
     |> where([_q, ..., a], like(a.name, ^"%#{name}%") or like(a.preferred_username, ^"%#{name}%"))
   end
 
-  @spec join_members_actor(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec join_members_actor(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp join_members_actor(query) do
     join(query, :inner, [q], a in Actor, on: q.actor_id == a.id)
   end

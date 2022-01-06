@@ -20,7 +20,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
   @doc """
   Get audience for an entity
   """
-  @spec get_audience(Entity.t()) :: audience()
+  @spec get_audience(Entity.t() | Participant.t()) :: audience()
   def get_audience(%Event{} = event) do
     extract_actors_from_event(event)
   end
