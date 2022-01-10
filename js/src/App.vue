@@ -216,7 +216,11 @@ export default class App extends Vue {
     // Set the focus to the router view
     // https://marcus.io/blog/accessible-routing-vuejs
     setTimeout(() => {
-      const focusTarget = this.routerView?.$el as HTMLElement;
+      const focusTarget = (
+        this.routerView?.$refs?.componentFocusTarget !== undefined
+          ? this.routerView?.$refs?.componentFocusTarget
+          : this.routerView?.$el
+      ) as HTMLElement;
       if (focusTarget) {
         // Make focustarget programmatically focussable
         focusTarget.setAttribute("tabindex", "-1");
