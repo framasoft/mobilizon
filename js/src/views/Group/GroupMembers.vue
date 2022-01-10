@@ -1,36 +1,25 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul v-if="group">
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP_SETTINGS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Settings") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.GROUP_MEMBERS_SETTINGS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Members") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      v-if="group"
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.GROUP_SETTINGS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Settings'),
+        },
+        {
+          name: RouteName.GROUP_MEMBERS_SETTINGS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Members'),
+        },
+      ]"
+    />
     <b-loading :active="$apollo.loading" />
     <section
       class="container section"
@@ -311,6 +300,8 @@ export default class GroupMembers extends mixins(GroupMixin) {
   MEMBERS_PER_PAGE = 10;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   mounted(): void {
     const roleQuery = this.$route.query.role as string;

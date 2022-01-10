@@ -1,32 +1,23 @@
 <template>
   <div class="container section" v-if="group">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
-            $t("My groups")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.DISCUSSION_LIST,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Discussions") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.MY_GROUPS,
+          text: $t('My groups'),
+        },
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.DISCUSSION_LIST,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Discussions'),
+        },
+      ]"
+    />
     <section v-if="isCurrentActorAGroupMember">
       <p>
         {{
@@ -82,7 +73,13 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
-import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  displayName,
+  IActor,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import RouteName from "../../router/name";
 import { MemberRole } from "@/types/enums";
@@ -166,6 +163,7 @@ export default class DiscussionsList extends Vue {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+  displayName = displayName;
 
   DISCUSSIONS_PER_PAGE = DISCUSSIONS_PER_PAGE;
 

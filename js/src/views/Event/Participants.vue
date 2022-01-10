@@ -1,32 +1,20 @@
 <template>
   <section class="section container" v-if="event">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MY_EVENTS }">{{
-            $t("My events")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.EVENT,
-              params: { uuid: event.uuid },
-            }"
-            >{{ event.title }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.PARTICIPANTS,
-              params: { uuid: event.uuid },
-            }"
-            >{{ $t("Participants") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.MY_EVENTS, text: $t('My events') },
+        {
+          name: RouteName.EVENT,
+          params: { uuid: event.uuid },
+          text: event.title,
+        },
+        {
+          name: RouteName.PARTICIPANTS,
+          params: { uuid: event.uuid },
+          text: $t('Participants'),
+        },
+      ]"
+    />
     <h1 class="title">{{ $t("Participants") }}</h1>
     <div class="level">
       <div class="level-left">

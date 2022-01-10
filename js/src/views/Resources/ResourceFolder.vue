@@ -1,80 +1,38 @@
 <template>
   <div class="container section" v-if="resource">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(resource.actor) },
-            }"
-            >{{ resource.actor.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.RESOURCE_FOLDER_ROOT,
-              params: { preferredUsername: usernameWithDomain(resource.actor) },
-            }"
-            >{{ $t("Resources") }}</router-link
-          >
-        </li>
-        <li
-          :class="{
-            'is-active':
-              index + 1 === ResourceMixin.resourcePathArray(resource).length,
-          }"
-          v-for="(pathFragment, index) in filteredPath"
-          :key="pathFragment"
-        >
-          <router-link
-            :to="{
-              name: RouteName.RESOURCE_FOLDER,
-              params: {
-                path: ResourceMixin.resourcePathArray(resource).slice(
-                  0,
-                  index + 1
-                ),
-                preferredUsername: usernameWithDomain(resource.actor),
-              },
-            }"
-            >{{ pathFragment }}</router-link
-          >
-        </li>
-        <li>
-          <b-dropdown aria-role="list">
-            <b-button class="button is-primary" slot="trigger">+</b-button>
+    <breadcrumbs-nav :links="breadcrumbLinks">
+      <li>
+        <b-dropdown aria-role="list">
+          <b-button class="button is-primary" slot="trigger">+</b-button>
 
-            <b-dropdown-item aria-role="listitem" @click="createFolderModal">
-              <b-icon icon="folder" />
-              {{ $t("New folder") }}
-            </b-dropdown-item>
-            <b-dropdown-item
-              aria-role="listitem"
-              @click="createLinkResourceModal = true"
-            >
-              <b-icon icon="link" />
-              {{ $t("New link") }}
-            </b-dropdown-item>
-            <hr
-              role="presentation"
-              class="dropdown-divider"
-              v-if="resourceProviders.length"
-            />
-            <b-dropdown-item
-              aria-role="listitem"
-              v-for="resourceProvider in resourceProviders"
-              :key="resourceProvider.software"
-              @click="createResourceFromProvider(resourceProvider)"
-            >
-              <b-icon :icon="mapServiceTypeToIcon[resourceProvider.software]" />
-              {{ createSentenceForType(resourceProvider.software) }}
-            </b-dropdown-item>
-          </b-dropdown>
-        </li>
-      </ul>
-    </nav>
+          <b-dropdown-item aria-role="listitem" @click="createFolderModal">
+            <b-icon icon="folder" />
+            {{ $t("New folder") }}
+          </b-dropdown-item>
+          <b-dropdown-item
+            aria-role="listitem"
+            @click="createLinkResourceModal = true"
+          >
+            <b-icon icon="link" />
+            {{ $t("New link") }}
+          </b-dropdown-item>
+          <hr
+            role="presentation"
+            class="dropdown-divider"
+            v-if="resourceProviders.length"
+          />
+          <b-dropdown-item
+            aria-role="listitem"
+            v-for="resourceProvider in resourceProviders"
+            :key="resourceProvider.software"
+            @click="createResourceFromProvider(resourceProvider)"
+          >
+            <b-icon :icon="mapServiceTypeToIcon[resourceProvider.software]" />
+            {{ createSentenceForType(resourceProvider.software) }}
+          </b-dropdown-item>
+        </b-dropdown>
+      </li>
+    </breadcrumbs-nav>
     <section>
       <p v-if="resource.path === '/'" class="module-description">
         {{
@@ -276,7 +234,7 @@ import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import Draggable from "vuedraggable";
 import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IActor, usernameWithDomain } from "../../types/actor";
+import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import RouteName from "../../router/name";
 import {
   IResource,
@@ -763,6 +721,40 @@ export default class Resources extends Mixins(ResourceMixin) {
         throw Error(e.toString());
       }
     }
+  }
+
+  get breadcrumbLinks() {
+    if (!this.resource?.actor) return [];
+    const resourceActor = this.resource.actor;
+    const links = [
+      {
+        name: RouteName.GROUP,
+        params: { preferredUsername: usernameWithDomain(this.resource.actor) },
+        text: displayName(this.resource.actor),
+      },
+      {
+        name: RouteName.RESOURCE_FOLDER_ROOT,
+        params: { preferredUsername: usernameWithDomain(this.resource.actor) },
+        text: this.$t("Resources") as string,
+      },
+    ];
+
+    links.push(
+      ...this.filteredPath.map((pathFragment, index) => {
+        return {
+          name: RouteName.RESOURCE_FOLDER,
+          params: {
+            path: ResourceMixin.resourcePathArray(this.resource).slice(
+              0,
+              index + 1
+            ) as unknown as string,
+            preferredUsername: usernameWithDomain(resourceActor),
+          },
+          text: pathFragment,
+        };
+      })
+    );
+    return links;
   }
 }
 </script>

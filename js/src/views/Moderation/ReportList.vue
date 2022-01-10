@@ -1,19 +1,17 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.REPORTS }">{{
-            $t("Reports")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.MODERATION,
+          text: $t('Moderation'),
+        },
+        {
+          name: RouteName.REPORTS,
+          text: $t('Reports'),
+        },
+      ]"
+    />
     <section>
       <div class="flex flex-wrap gap-2">
         <b-field :label="$t('Report status')">
@@ -93,7 +91,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Ref, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { IReport } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";

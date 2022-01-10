@@ -1,19 +1,14 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.USERS }">{{
-            $t("Users")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.MODERATION, text: $t('Moderation') },
+        {
+          name: RouteName.USERS,
+          text: $t('Users'),
+        },
+      ]"
+    />
     <div v-if="users">
       <b-table
         :data="users.elements"

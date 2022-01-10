@@ -1,27 +1,19 @@
 <template>
   <div class="container section" v-if="group">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.TODO_LISTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Events") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.EVENTS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Events'),
+        },
+      ]"
+    />
     <section>
       <h1 class="title" v-if="group">
         {{
@@ -89,7 +81,7 @@ import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_EVENTS } from "@/graphql/event";
-import { usernameWithDomain } from "../../types/actor";
+import { displayName, usernameWithDomain } from "../../types/actor";
 
 const EVENTS_PAGE_LIMIT = 10;
 
@@ -142,6 +134,8 @@ export default class GroupEvents extends mixins(GroupMixin) {
   eventsPage = 1;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   RouteName = RouteName;
 

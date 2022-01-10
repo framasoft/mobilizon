@@ -1,31 +1,20 @@
 <template>
   <div v-if="user" class="section">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.USERS,
-            }"
-            >{{ $t("Users") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.ADMIN_USER_PROFILE,
-              params: { id: user.id },
-            }"
-            >{{ user.email }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        {
+          name: RouteName.USERS,
+          text: $t('Users'),
+        },
+        {
+          name: RouteName.ADMIN_USER_PROFILE,
+          params: { id: user.id },
+          text: user.email,
+        },
+      ]"
+    />
+
     <table v-if="metadata.length > 0" class="table is-fullwidth">
       <tbody>
         <tr v-for="{ key, value, link, elements, type } in metadata" :key="key">

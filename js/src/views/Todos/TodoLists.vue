@@ -1,27 +1,19 @@
 <template>
   <div class="container section" v-if="group">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.TODO_LISTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Task lists") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.TODO_LISTS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Task lists'),
+        },
+      ]"
+    />
     <section>
       <p>
         {{
@@ -61,7 +53,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { FETCH_GROUP } from "@/graphql/group";
-import { IGroup, usernameWithDomain } from "@/types/actor";
+import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
 import { CREATE_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import { ITodoList } from "@/types/todolist";
@@ -107,6 +99,8 @@ export default class TodoLists extends Vue {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   get todoLists(): ITodoList[] {
     return this.group.todoLists.elements;

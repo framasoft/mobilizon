@@ -1,34 +1,24 @@
 <template>
   <section class="container section" v-if="todoList">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: todoList.actor.preferredUsername },
-            }"
-            >{{ todoList.actor.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.TODO_LISTS,
-              params: { preferredUsername: todoList.actor.preferredUsername },
-            }"
-            >{{ $t("Task lists") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }"
-          >
-            {{ todoList.title }}
-          </router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(todoList.actor) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.TODO_LISTS,
+          params: { preferredUsername: usernameWithDomain(todoList.actor) },
+          text: $t('Task lists'),
+        },
+        {
+          name: RouteName.TODO_LIST,
+          params: { id: todoList.id },
+          text: todoList.title,
+        },
+      ]"
+    />
     <h2 class="title">{{ todoList.title }}</h2>
     <div v-for="todo in todoList.todos.elements" :key="todo.id">
       <compact-todo :todo="todo" />
@@ -48,7 +38,7 @@ import { ITodo } from "@/types/todos";
 import { CREATE_TODO, FETCH_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IActor } from "@/types/actor";
+import { displayName, IActor, usernameWithDomain } from "@/types/actor";
 import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
@@ -88,6 +78,10 @@ export default class TodoList extends Vue {
   newTodo: ITodo = { title: "", status: false };
 
   RouteName = RouteName;
+
+  displayName = displayName;
+
+  usernameWithDomain = usernameWithDomain;
 
   async createNewTodo(): Promise<void> {
     await this.$apollo.mutate({

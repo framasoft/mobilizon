@@ -1,31 +1,20 @@
 <template>
   <div v-if="person" class="section">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.PROFILES,
-            }"
-            >{{ $t("Profiles") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.PROFILES,
-              params: { id: person.id },
-            }"
-            >{{ person.name || person.preferredUsername }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        {
+          name: RouteName.PROFILES,
+          text: $t('Profiles'),
+        },
+        {
+          name: RouteName.PROFILES,
+          params: { id: person.id },
+          text: displayName(person),
+        },
+      ]"
+    />
+
     <div class="actor-card">
       <actor-card
         :actor="person"
@@ -279,7 +268,7 @@ import {
   UNSUSPEND_PROFILE,
 } from "../../graphql/actor";
 import { IPerson } from "../../types/actor";
-import { usernameWithDomain } from "../../types/actor/actor.model";
+import { displayName, usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
@@ -333,6 +322,8 @@ export default class AdminProfile extends Vue {
   person!: IPerson;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   RouteName = RouteName;
 

@@ -1,28 +1,6 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.IDENTITIES }">{{
-            $t("Profiles")
-          }}</router-link>
-        </li>
-        <li class="is-active" v-if="isUpdate && identity">
-          <router-link
-            :to="{
-              name: RouteName.UPDATE_IDENTITY,
-              params: { identityName: identity.preferredUsername },
-            }"
-            >{{ identity.name }}</router-link
-          >
-        </li>
-        <li class="is-active" v-else>
-          <router-link :to="{ name: RouteName.CREATE_IDENTITY }">{{
-            $t("New profile")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav :links="breadcrumbsLinks" />
     <div class="root" v-if="identity">
       <h1 class="title">
         <span v-if="isUpdate">{{ identity.displayName() }}</span>
@@ -253,6 +231,7 @@ import { ServerParseError } from "@apollo/client/link/http";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import pick from "lodash/pick";
 import { ActorType } from "@/types/enums";
+import { Location } from "vue-router";
 
 @Component({
   components: {
@@ -669,6 +648,30 @@ export default class EditIdentity extends mixins(identityEditionMixin) {
     this.identity = new Person();
     this.oldDisplayName = null;
     this.avatarFile = null;
+  }
+
+  get breadcrumbsLinks(): (Location & { text: string })[] {
+    const links = [
+      {
+        name: RouteName.IDENTITIES,
+        params: {},
+        text: this.$t("Profiles") as string,
+      },
+    ];
+    if (this.isUpdate && this.identity) {
+      links.push({
+        name: RouteName.UPDATE_IDENTITY,
+        params: { identityName: this.identity.preferredUsername },
+        text: this.identity.name,
+      });
+    } else {
+      links.push({
+        name: RouteName.CREATE_IDENTITY,
+        params: {},
+        text: this.$t("New profile") as string,
+      });
+    }
+    return links;
   }
 }
 </script>

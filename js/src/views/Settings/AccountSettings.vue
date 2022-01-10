@@ -1,19 +1,17 @@
 <template>
   <div v-if="loggedUser">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{
-            $t("Account")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS_GENERAL }">{{
-            $t("General")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.ACCOUNT_SETTINGS,
+          text: $t('Account'),
+        },
+        {
+          name: RouteName.ACCOUNT_SETTINGS_GENERAL,
+          text: $t('General'),
+        },
+      ]"
+    />
     <section>
       <div class="setting-title">
         <h2>{{ $t("Email") }}</h2>

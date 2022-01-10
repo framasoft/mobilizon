@@ -1,19 +1,14 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.PROFILES }">{{
-            $t("Profiles")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.MODERATION, text: $t('Moderation') },
+        {
+          name: RouteName.PROFILES,
+          text: $t('Profiles'),
+        },
+      ]"
+    />
     <div v-if="persons">
       <b-switch v-model="local">{{ $t("Local") }}</b-switch>
       <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>

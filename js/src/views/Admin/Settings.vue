@@ -1,19 +1,12 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.ADMIN_SETTINGS }">{{
-            $t("Instance settings")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        { text: $t('Instance settings') },
+      ]"
+    />
+
     <section v-if="settingsToWrite">
       <form @submit.prevent="updateSettings">
         <b-field :label="$t('Instance Name')" label-for="instance-name">

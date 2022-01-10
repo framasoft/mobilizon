@@ -1,28 +1,16 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.INSTANCES }">{{
-            $t("Instances")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        { text: $t('Instances') },
+      ]"
+    />
     <section>
       <h1 class="title">{{ $t("Instances") }}</h1>
       <form @submit="followInstance" class="my-4">
-        <b-field
-          :label="$t('Follow a new instance')"
-          custom-class="add-relay"
-          horizontal
-        >
-          <b-field grouped expanded size="is-large">
+        <b-field :label="$t('Follow a new instance')" horizontal>
+          <b-field grouped group-multiline expanded size="is-large">
             <p class="control">
               <b-input
                 v-model="newRelayAddress"

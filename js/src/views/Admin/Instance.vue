@@ -1,28 +1,12 @@
 <template>
   <div v-if="instance">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: RouteName.INSTANCES }">{{
-            $t("Instances")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.INSTANCE,
-              params: { domain: instance.domain },
-            }"
-            >{{ instance.domain }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        { name: RouteName.INSTANCES, text: $t('Instances') },
+        { text: instance.domain },
+      ]"
+    />
     <h1 class="text-2xl">{{ instance.domain }}</h1>
     <div class="grid md:grid-cols-4 gap-2 content-center text-center mt-2">
       <div class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800">

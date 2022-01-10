@@ -1,31 +1,19 @@
 <template>
   <div v-if="group" class="section">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.ADMIN_GROUPS,
-            }"
-            >{{ $t("Groups") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.PROFILES,
-              params: { id: group.id },
-            }"
-            >{{ group.name || usernameWithDomain(group) }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        {
+          name: RouteName.ADMIN_GROUPS,
+          text: $t('Groups'),
+        },
+        {
+          name: RouteName.PROFILES,
+          params: { id: group.id },
+          text: displayName(group),
+        },
+      ]"
+    />
     <div class="actor-card">
       <p v-if="group.suspended">
         <actor-card
@@ -305,7 +293,11 @@ import { formatBytes } from "@/utils/datetime";
 import { MemberRole } from "@/types/enums";
 import { SUSPEND_PROFILE, UNSUSPEND_PROFILE } from "../../graphql/actor";
 import { IGroup } from "../../types/actor";
-import { usernameWithDomain, IActor } from "../../types/actor/actor.model";
+import {
+  usernameWithDomain,
+  displayName,
+  IActor,
+} from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
@@ -358,6 +350,8 @@ export default class AdminGroupProfile extends Vue {
   group!: IGroup;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   RouteName = RouteName;
 
