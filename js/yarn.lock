@@ -1433,6 +1433,11 @@
     magic-string "^0.25.0"
     string.prototype.matchall "^4.0.6"
 
+"@tailwindcss/line-clamp@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/line-clamp/-/line-clamp-0.3.0.tgz#bb342d7bdc11a6568dc6d2aacacd531b25eae7cf"
+  integrity sha512-ffDDclrqr3sy8cpChCozedDUAN8enxqAiWeH8d4dGQ2hcXlxf51+7KleveFi/n/TxEuRVApoL7hICeDOdYPKpg==
+
 "@tiptap/core@^2.0.0-beta.41":
   version "2.0.0-beta.161"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.0.0-beta.161.tgz#d91f4639c6ea5ad02fe1194cd7466daf9f12a2eb"
