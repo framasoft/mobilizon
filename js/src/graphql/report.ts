@@ -2,8 +2,13 @@ import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
 
 export const REPORTS = gql`
-  query Reports($status: ReportStatus, $page: Int, $limit: Int) {
-    reports(status: $status, page: $page, limit: $limit) {
+  query Reports(
+    $status: ReportStatus
+    $domain: String
+    $page: Int
+    $limit: Int
+  ) {
+    reports(status: $status, domain: $domain, page: $page, limit: $limit) {
       total
       elements {
         id

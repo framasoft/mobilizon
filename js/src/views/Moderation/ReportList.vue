@@ -15,23 +15,37 @@
       </ul>
     </nav>
     <section>
-      <b-field>
-        <b-radio-button
-          v-model="status"
-          :native-value="ReportStatusEnum.OPEN"
-          >{{ $t("Open") }}</b-radio-button
+      <div class="flex flex-wrap gap-2">
+        <b-field :label="$t('Report status')">
+          <b-radio-button
+            v-model="status"
+            :native-value="ReportStatusEnum.OPEN"
+            >{{ $t("Open") }}</b-radio-button
+          >
+          <b-radio-button
+            v-model="status"
+            :native-value="ReportStatusEnum.RESOLVED"
+            >{{ $t("Resolved") }}</b-radio-button
+          >
+          <b-radio-button
+            v-model="status"
+            :native-value="ReportStatusEnum.CLOSED"
+            >{{ $t("Closed") }}</b-radio-button
+          >
+        </b-field>
+        <b-field
+          :label="$t('Domain')"
+          label-for="domain-filter"
+          class="flex-auto"
         >
-        <b-radio-button
-          v-model="status"
-          :native-value="ReportStatusEnum.RESOLVED"
-          >{{ $t("Resolved") }}</b-radio-button
-        >
-        <b-radio-button
-          v-model="status"
-          :native-value="ReportStatusEnum.CLOSED"
-          >{{ $t("Closed") }}</b-radio-button
-        >
-      </b-field>
+          <b-input
+            id="domain-filter"
+            :placeholder="$t('mobilizon-instance.tld')"
+            :value="filterDomain"
+            @input="debouncedUpdateDomainFilter"
+          />
+        </b-field>
+      </div>
       <ul v-if="reports.elements.length > 0">
         <li v-for="report in reports.elements" :key="report.id">
           <router-link
@@ -79,7 +93,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Ref, Vue } from "vue-property-decorator";
 import { IReport } from "@/types/report.model";
 import { REPORTS } from "@/graphql/report";
 import ReportCard from "@/components/Report/ReportCard.vue";
@@ -88,6 +102,7 @@ import { ReportStatusEnum } from "@/types/enums";
 import RouteName from "../../router/name";
 import VueRouter from "vue-router";
 import { Paginate } from "@/types/paginate";
+import debounce from "lodash/debounce";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const REPORT_PAGE_LIMIT = 10;
@@ -106,6 +121,7 @@ const REPORT_PAGE_LIMIT = 10;
           page: this.page,
           status: this.status,
           limit: REPORT_PAGE_LIMIT,
+          domain: this.filterDomain,
         };
       },
       pollInterval: 120000, // 2 minutes
@@ -128,18 +144,28 @@ export default class ReportList extends Vue {
 
   REPORT_PAGE_LIMIT = REPORT_PAGE_LIMIT;
 
+  data(): Record<string, unknown> {
+    return {
+      debouncedUpdateDomainFilter: debounce(this.updateDomainFilter, 500),
+    };
+  }
+
+  async updateDomainFilter(domain: string) {
+    this.filterDomain = domain;
+  }
+
   get page(): number {
     return parseInt((this.$route.query.page as string) || "1", 10);
   }
 
   set page(page: number) {
-    this.pushRouter(RouteName.REPORTS, {
+    this.pushRouter({
       page: page.toString(),
     });
   }
 
   get status(): ReportStatusEnum {
-    const filter = this.$route.params.filter?.toUpperCase();
+    const filter = (this.$route.query.status || "") as string;
     if (filter in ReportStatusEnum) {
       return filter as ReportStatusEnum;
     }
@@ -147,19 +173,21 @@ export default class ReportList extends Vue {
   }
 
   set status(status: ReportStatusEnum) {
-    this.$router.push({
-      name: RouteName.REPORTS,
-      params: { filter: status.toLowerCase() },
-    });
+    this.pushRouter({ status });
   }
 
-  protected async pushRouter(
-    routeName: string,
-    args: Record<string, string>
-  ): Promise<void> {
+  get filterDomain(): string {
+    return (this.$route.query.domain as string) || "";
+  }
+
+  set filterDomain(domain: string) {
+    this.pushRouter({ domain });
+  }
+
+  protected async pushRouter(args: Record<string, string>): Promise<void> {
     try {
       await this.$router.push({
-        name: routeName,
+        name: RouteName.REPORTS,
         params: this.$route.params,
         query: { ...this.$route.query, ...args },
       });

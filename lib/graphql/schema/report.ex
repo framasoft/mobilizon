@@ -67,6 +67,7 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
 
       arg(:limit, :integer, default_value: 10, description: "The limit of reports per page")
       arg(:status, :report_status, default_value: :open, description: "Filter reports by status")
+      arg(:domain, :string, default_value: nil, description: "Filter reports by domain name")
       resolve(&Report.list_reports/3)
     end
 

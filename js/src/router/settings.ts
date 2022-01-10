@@ -20,7 +20,7 @@ export enum SettingsRouteName {
   ADMIN_GROUPS = "ADMIN_GROUPS",
   ADMIN_GROUP_PROFILE = "ADMIN_GROUP_PROFILE",
   MODERATION = "MODERATION",
-  REPORTS = "Reports",
+  REPORTS = "REPORTS",
   REPORT = "Report",
   REPORT_LOGS = "Logs",
   CREATE_IDENTITY = "CreateIdentity",
@@ -234,7 +234,7 @@ export const settingsRoutes: RouteConfig[] = [
         meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
-        path: "/moderation/reports/:filter?",
+        path: "/moderation/reports",
         name: SettingsRouteName.REPORTS,
         component: (): Promise<ImportedComponent> =>
           import(

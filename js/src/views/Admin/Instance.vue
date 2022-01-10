@@ -70,7 +70,10 @@
         <span class="text-sm block">{{ $t("Followers") }}</span>
       </div>
       <div class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800">
-        <router-link to="/" class="dark:text-white hover:dark:text-slate-300">
+        <router-link
+          :to="{ name: RouteName.REPORTS, query: { domain: instance.domain } }"
+          class="dark:text-white hover:dark:text-slate-300"
+        >
           <span class="mb-4 text-xl font-semibold block">{{
             instance.reportsCount
           }}</span>

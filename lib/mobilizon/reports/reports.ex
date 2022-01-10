@@ -8,6 +8,7 @@ defmodule Mobilizon.Reports do
 
   import Mobilizon.Storage.Ecto
 
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Storage.{Page, Repo}
 
@@ -49,17 +50,18 @@ defmodule Mobilizon.Reports do
   @doc """
   Returns the list of reports.
   """
-  @spec list_reports(integer | nil, integer | nil, atom, atom, ReportStatus.t()) ::
-          Page.t(Report.t())
-  def list_reports(
-        page \\ nil,
-        limit \\ nil,
-        sort \\ :updated_at,
-        direction \\ :asc,
-        status \\ :open
-      ) do
+  @spec list_reports(Keyword.t()) :: Page.t(Report.t())
+  def list_reports(options) do
+    page = Keyword.get(options, :page)
+    limit = Keyword.get(options, :limit)
+    sort = Keyword.get(options, :sort, :updated_at)
+    direction = Keyword.get(options, :direction, :asc)
+    status = Keyword.get(options, :status, :open)
+    domain = Keyword.get(options, :domain)
+
     status
     |> list_reports_query()
+    |> filter_domain_name(domain)
     |> sort(sort, direction)
     |> Page.build_page(page, limit)
   end
@@ -99,11 +101,19 @@ defmodule Mobilizon.Reports do
 
   @spec list_reports_query(ReportStatus.t()) :: Ecto.Query.t()
   defp list_reports_query(status) do
-    from(
-      r in Report,
-      preload: [:reported, :reporter, :manager, :event, :comments, :notes],
-      where: r.status == ^status
-    )
+    Report
+    |> preload([:reported, :reporter, :manager, :event, :comments, :notes])
+    |> where([r], r.status == ^status)
+  end
+
+  @spec filter_domain_name(Ecto.Queryable.t(), String.t() | nil) :: Ecto.Queryable.t()
+  defp filter_domain_name(query, nil), do: query
+  defp filter_domain_name(query, ""), do: query
+
+  defp filter_domain_name(query, domain) do
+    query
+    |> join(:inner, [r], a in Actor, on: a.id == r.reported_id)
+    |> where([_r, a], like(a.domain, ^"%#{domain}%"))
   end
 
   @spec count_reports_query :: Ecto.Query.t()
