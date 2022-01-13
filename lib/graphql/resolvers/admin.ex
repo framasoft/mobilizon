@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events, Instances}
+  alias Mobilizon.{Actors, Admin, Config, Events, Instances, Users}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Cldr.Language
@@ -279,6 +279,86 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   def save_settings(_parent, _args, _resolution) do
     {:error,
      dgettext("errors", "You need to be logged-in and an administrator to save admin settings")}
+  end
+
+  def update_user(_parent, %{id: id, notify: notify} = args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    case Users.get_user(id) do
+      nil ->
+        {:error, :user_not_found}
+
+      %User{} = user ->
+        case args |> Map.drop([:notify, :id]) |> Map.keys() do
+          [] ->
+            {:error, :invalid_argument}
+
+          [change, _] ->
+            case change do
+              :email -> change_email(user, Map.get(args, :email), notify)
+              :role -> change_role(user, Map.get(args, :role), notify)
+              :confirmed -> confirm_user(user, Map.get(args, :confirmed), notify)
+            end
+        end
+    end
+  end
+
+  def update_user(_parent, _args, _resolution) do
+    {:error,
+     dgettext("errors", "You need to be logged-in and an administrator to edit an user's details")}
+  end
+
+  @spec change_email(User.t(), String.t(), boolean())
+  defp change_email(%User{email: old_email} = user, new_email, notify) do
+    if Authenticator.can_change_email?(user) do
+      if new_email != old_email do
+        if Email.Checker.valid?(new_email) do
+          case Users.update_user_email(user, new_email) do
+            {:ok, %User{} = user} ->
+              user
+              |> Email.User.send_email_reset_old_email()
+              |> Email.Mailer.send_email_later()
+
+              user
+              |> Email.User.send_email_reset_new_email()
+              |> Email.Mailer.send_email_later()
+
+              {:ok, user}
+
+            {:error, %Ecto.Changeset{} = err} ->
+              Logger.debug(inspect(err))
+              {:error, dgettext("errors", "Failed to update user email")}
+          end
+        else
+          {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+        end
+      else
+        {:error, dgettext("errors", "The new email must be different")}
+      end
+    end
+  end
+
+  defp change_role(%User{role: old_role} = user, new_role, notify) do
+    if old_role != new_role do
+      Users.update_user(user, %{role: new_role})
+    end
+  end
+
+  defp confirm_user(%User{confirmed_at: old_confirmed_at} = user, confirmed, notify) do
+    new_confirmed_at =
+      cond do
+        is_nil(old_confirmed_at) && confirmed ->
+          DateTime.utc_now()
+
+        match?(%DateTime{}, old_confirmed_at) && !confirmed ->
+          nil
+
+        true ->
+          old_confirmed_at
+      end
+
+    Users.update_user(user, %{confirmed_at: new_confirmed_at})
   end
 
   @spec list_relay_followers(any(), map(), Absinthe.Resolution.t()) ::

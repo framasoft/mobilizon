@@ -409,5 +409,22 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
       resolve(&Admin.save_settings/3)
     end
+
+    @desc """
+    For an admin to update an user
+    """
+    field :admin_update_user, type: :user do
+      arg(:id, non_null(:id), description: "The user's ID")
+      arg(:email, :string, description: "The user's new email")
+      arg(:confirmed, :string, description: "Manually confirm the user's account")
+      arg(:role, :user_role, description: "Set user's new role")
+
+      arg(:notify, :boolean,
+        default_value: false,
+        description: "Whether or not to notify the user of the change"
+      )
+
+      resolve(&Admin.update_user/3)
+    end
   end
 end

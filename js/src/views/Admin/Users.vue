@@ -16,7 +16,6 @@
         paginated
         backend-pagination
         backend-filtering
-        detailed
         :current-page.sync="page"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
@@ -75,31 +74,6 @@
         >
           {{ getLanguageNameForCode(props.row.locale) }}
         </b-table-column>
-
-        <template #detail="props">
-          <router-link
-            class="profile"
-            v-for="actor in props.row.actors"
-            :key="actor.id"
-            :to="{ name: RouteName.ADMIN_PROFILE, params: { id: actor.id } }"
-          >
-            <article class="media">
-              <figure class="media-left">
-                <p class="image is-32x32" v-if="actor.avatar">
-                  <img :src="actor.avatar.url" />
-                </p>
-                <b-icon v-else size="is-medium" icon="account-circle" />
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                  <strong v-if="actor.name">{{ actor.name }}</strong>
-                  <small>@{{ actor.preferredUsername }}</small>
-                  <p>{{ actor.summary }}</p>
-                </div>
-              </div>
-            </article>
-          </router-link>
-        </template>
       </b-table>
     </div>
   </div>

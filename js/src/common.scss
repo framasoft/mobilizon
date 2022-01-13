@@ -7,10 +7,6 @@
 @import "styles/vue-announcer.scss";
 @import "styles/vue-skip-to.scss";
 
-// a {
-//   color: $violet-2;
-// }
-
 a.out,
 .content a,
 .ProseMirror a {
@@ -19,16 +15,8 @@ a.out,
   text-decoration-thickness: 2px;
 }
 
-// input.input {
-//   border-color: $input-border-color !important;
-// }
-
 .section {
   padding: 1rem 1% 4rem;
-}
-
-figure img.is-rounded {
-  border: 1px solid #cdcaea;
 }
 
 $color-black: #000;

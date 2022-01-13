@@ -15,48 +15,113 @@
       ]"
     />
 
-    <table v-if="metadata.length > 0" class="table is-fullwidth">
-      <tbody>
-        <tr v-for="{ key, value, link, elements, type } in metadata" :key="key">
-          <td>{{ key }}</td>
-          <td v-if="elements && elements.length > 0">
-            <ul
-              v-for="{ value, link: elementLink, active } in elements"
-              :key="value"
-            >
-              <li>
-                <router-link :to="elementLink">
-                  <span v-if="active">{{
-                    $t("{profile} (by default)", { profile: value })
-                  }}</span>
-                  <span v-else>{{ value }}</span>
-                </router-link>
-              </li>
-            </ul>
-          </td>
-          <td v-else-if="elements">
-            {{ $t("None") }}
-          </td>
-          <td v-else-if="link">
-            <router-link :to="link">
-              {{ value }}
-            </router-link>
-          </td>
-          <td v-else-if="type == 'code'">
-            <code>{{ value }}</code>
-          </td>
-          <td v-else>{{ value }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="buttons">
-      <b-button
-        @click="deleteAccount"
-        v-if="!user.disabled"
-        type="is-primary"
-        >{{ $t("Suspend") }}</b-button
-      >
-    </div>
+    <section>
+      <h2 class="text-lg font-bold">{{ $t("Details") }}</h2>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block py-2 min-w-full sm:px-2 lg:px-8">
+            <div class="overflow-hidden shadow-md sm:rounded-lg">
+              <table v-if="metadata.length > 0" class="min-w-full">
+                <tbody>
+                  <tr
+                    class="odd:bg-white even:bg-gray-50 border-b odd:dark:bg-gray-800 even:dark:bg-gray-700 dark:border-gray-600"
+                    v-for="{ key, value, link, elements, type } in metadata"
+                    :key="key"
+                  >
+                    <td class="py-4 px-2 whitespace-nowrap dark:text-white">
+                      {{ key }}
+                    </td>
+                    <td
+                      v-if="elements && elements.length > 0"
+                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap dark:text-white"
+                    >
+                      <ul
+                        v-for="{ value, link: elementLink, active } in elements"
+                        :key="value"
+                      >
+                        <li>
+                          <router-link :to="elementLink">
+                            <span v-if="active">{{
+                              $t("{profile} (by default)", { profile: value })
+                            }}</span>
+                            <span v-else>{{ value }}</span>
+                          </router-link>
+                        </li>
+                      </ul>
+                    </td>
+                    <td
+                      v-else-if="elements"
+                      class="py-4 px-2 whitespace-nowrap dark:text-white"
+                    >
+                      {{ $t("None") }}
+                    </td>
+                    <td
+                      v-else-if="link"
+                      class="py-4 px-2 whitespace-nowrap dark:text-white"
+                    >
+                      <router-link :to="link">
+                        {{ value }}
+                      </router-link>
+                    </td>
+                    <td
+                      v-else-if="type === 'code'"
+                      class="py-4 px-2 whitespace-nowrap dark:text-white"
+                    >
+                      <code>{{ value }}</code>
+                    </td>
+                    <td
+                      v-else-if="type === 'badge'"
+                      class="py-4 px-2 whitespace-nowrap dark:text-white"
+                    >
+                      <span
+                        class="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900"
+                      >
+                        {{ value }}
+                      </span>
+                    </td>
+                    <td
+                      v-else
+                      class="py-4 px-2 whitespace-nowrap dark:text-white"
+                    >
+                      {{ value }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="my-4">
+      <h2 class="text-lg font-bold">{{ $t("Actions") }}</h2>
+      <div class="buttons">
+        <b-button
+          @click="deleteAccount"
+          v-if="!user.disabled"
+          type="is-primary"
+          >{{ $t("Suspend") }}</b-button
+        >
+      </div>
+    </section>
+    <section class="my-4">
+      <h2 class="text-lg font-bold">{{ $t("Profiles") }}</h2>
+      <div class="flex gap-4 flex-wrap">
+        <router-link
+          v-for="profile in profiles"
+          :key="profile.id"
+          class="flex-auto"
+          :to="{ name: RouteName.ADMIN_PROFILE, params: { id: profile.id } }"
+        >
+          <actor-card
+            :actor="profile"
+            :full="true"
+            :popover="false"
+            :limit="false"
+          />
+        </router-link>
+      </div>
+    </section>
   </div>
   <empty-content v-else-if="!$apollo.loading" icon="account">
     {{ $t("This user was not found") }}
@@ -76,11 +141,12 @@ import { Route } from "vue-router";
 import { formatBytes } from "@/utils/datetime";
 import { ICurrentUserRole } from "@/types/enums";
 import { GET_USER, SUSPEND_USER } from "../../graphql/user";
-import { usernameWithDomain } from "../../types/actor/actor.model";
+import { IActor, usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IUser } from "../../types/current-user.model";
-import { IPerson } from "../../types/actor";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
+import ActorCard from "../../components/Account/ActorCard.vue";
+import { LANGUAGES_CODES } from "@/graphql/admin";
 
 @Component({
   apollo: {
@@ -96,6 +162,17 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
         return !this.id;
       },
     },
+    languages: {
+      query: LANGUAGES_CODES,
+      variables() {
+        return {
+          codes: [this.languageCode],
+        };
+      },
+      skip() {
+        return !this.languageCode;
+      },
+    },
   },
   metaInfo() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -107,12 +184,15 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
   },
   components: {
     EmptyContent,
+    ActorCard,
   },
 })
 export default class AdminUserProfile extends Vue {
   @Prop({ required: true }) id!: string;
 
   user!: IUser;
+
+  languages!: Array<{ code: string; name: string }>;
 
   usernameWithDomain = usernameWithDomain;
 
@@ -127,31 +207,20 @@ export default class AdminUserProfile extends Vue {
       },
       {
         key: this.$i18n.t("Language"),
-        value: this.user.locale,
+        value: this.languages
+          ? this.languages[0].name
+          : this.$i18n.t("Unknown"),
       },
       {
         key: this.$i18n.t("Role"),
         value: this.roleName(this.user.role),
+        type: "badge",
       },
       {
         key: this.$i18n.t("Login status"),
         value: this.user.disabled
           ? this.$i18n.t("Disabled")
           : this.$t("Activated"),
-      },
-      {
-        key: this.$i18n.t("Profiles"),
-        elements: this.user.actors.map((actor: IPerson) => {
-          return {
-            link: { name: RouteName.ADMIN_PROFILE, params: { id: actor.id } },
-            value: actor.name
-              ? `${actor.name} (${actor.preferredUsername})`
-              : actor.preferredUsername,
-            active: this.user.defaultActor
-              ? actor.id === this.user.defaultActor.id
-              : false,
-          };
-        }),
       },
       {
         key: this.$i18n.t("Confirmed"),
@@ -175,12 +244,16 @@ export default class AdminUserProfile extends Vue {
         type: "code",
       },
       {
-        key: this.$i18n.t("Participations"),
+        key: this.$i18n.t("Total number of participations"),
         value: this.user.participations.total,
       },
       {
-        key: this.$i18n.t("Uploaded media size"),
-        value: formatBytes(this.user.mediaSize),
+        key: this.$i18n.t("Uploaded media total size"),
+        value: formatBytes(
+          this.user.mediaSize,
+          2,
+          this.$i18n.t("0 Bytes") as string
+        ),
       },
     ];
   }
@@ -206,11 +279,13 @@ export default class AdminUserProfile extends Vue {
     });
     return this.$router.push({ name: RouteName.USERS });
   }
+
+  get profiles(): IActor[] {
+    return this.user.actors;
+  }
+
+  get languageCode(): string | undefined {
+    return this.user?.locale;
+  }
 }
 </script>
-
-<style lang="scss" scoped>
-table {
-  margin: 2rem 0;
-}
-</style>

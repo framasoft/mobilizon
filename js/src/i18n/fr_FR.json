@@ -1279,5 +1279,12 @@
   "No instances match this filter. Try resetting filter fields?": "Aucune instance ne correspond à ce filtre. Essayer de remettre à zéro les champs des filtres ?",
   "You haven't interacted with other instances yet.": "Vous n'avez interagi avec encore aucune autre instance.",
   "mobilizon-instance.tld": "instance-mobilizon.tld",
-  "Report status": "Statut du signalement"
+  "Report status": "Statut du signalement",
+  "access the corresponding account": "accéder au compte correspondant",
+  "Organized events": "Événements organisés",
+  "Memberships": "Adhésions",
+  "This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it.": "Ce profil se situe sur cette instance, vous devez donc {access_the_corresponding_account} afin de le suspendre.",
+  "Total number of participations": "Nombre total de participations",
+  "Uploaded media total size": "Taille totale des médias téléversés",
+  "0 Bytes": "0 octets"
 }

@@ -143,11 +143,13 @@ $title-color: $violet-3;
 :root {
   --color-primary: 30 125 151;
   --color-secondary: 255 213 153;
+  --color-violet-title: 66 64 86;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --color-primary: 30 125 151;
     --color-secondary: 255 213 153;
+    --color-violet-title: 66 64 86;
   }
 }

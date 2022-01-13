@@ -1,22 +1,38 @@
 <template>
-  <div class="media" style="align-items: top" dir="auto">
-    <div class="media-left">
-      <figure class="image is-32x32" v-if="actor.avatar">
-        <img class="is-rounded" :src="actor.avatar.url" alt="" />
+  <div
+    class="p-4 bg-white rounded-lg shadow-md sm:p-8 dark:bg-gray-800 dark:border-gray-700 flex items-center space-x-4"
+    dir="auto"
+  >
+    <div class="flex-shrink-0">
+      <figure class="w-12 h-12" v-if="actor.avatar">
+        <img
+          class="rounded-lg"
+          :src="actor.avatar.url"
+          alt=""
+          width="48"
+          height="48"
+        />
       </figure>
-      <b-icon v-else size="is-medium" icon="account-circle" />
+      <b-icon
+        v-else
+        size="is-large"
+        icon="account-circle"
+        class="ltr:-mr-0.5 rtl:-ml-0.5"
+      />
     </div>
 
-    <div class="media-content">
-      <p>
-        {{ actor.name || `@${usernameWithDomain(actor)}` }}
-      </p>
-      <p class="has-text-grey-dark" v-if="actor.name">
+    <div class="flex-1 min-w-0">
+      <h5
+        class="text-xl font-medium violet-title tracking-tight text-gray-900 dark:text-white"
+      >
+        {{ displayName(actor) }}
+      </h5>
+      <p class="text-gray-500 truncate dark:text-gray-400" v-if="actor.name">
         <span dir="ltr">@{{ usernameWithDomain(actor) }}</span>
       </p>
       <div
         v-if="full"
-        class="summary"
+        class="line-clamp-3"
         :class="{ limit: limit }"
         v-html="actor.summary"
       />
@@ -25,7 +41,7 @@
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { IActor, usernameWithDomain } from "../../types/actor";
+import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 
 @Component
 export default class ActorCard extends Vue {
@@ -38,135 +54,7 @@ export default class ActorCard extends Vue {
   @Prop({ required: false, type: Boolean, default: true }) limit!: boolean;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 }
 </script>
-<style lang="scss" scoped>
-.summary.limit {
-  max-width: 25rem;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-}
-</style>
-
-<style lang="scss">
-@use "@/styles/_mixins" as *;
-
-.media {
-  .media-left {
-    margin-right: initial;
-    @include margin-right(1rem);
-  }
-}
-
-.tooltip {
-  display: block !important;
-  z-index: 10000;
-
-  .tooltip-inner {
-    background: black;
-    color: white;
-    border-radius: 16px;
-    padding: 5px 10px 4px;
-  }
-
-  .tooltip-arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    position: absolute;
-    margin: 5px;
-    border-color: black;
-    z-index: 1;
-  }
-
-  &[x-placement^="top"] {
-    margin-bottom: 5px;
-
-    .tooltip-arrow {
-      border-width: 5px 5px 0 5px;
-      border-left-color: transparent !important;
-      border-right-color: transparent !important;
-      border-bottom-color: transparent !important;
-      bottom: -5px;
-      left: calc(50% - 5px);
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-
-  &[x-placement^="bottom"] {
-    margin-top: 5px;
-
-    .tooltip-arrow {
-      border-width: 0 5px 5px 5px;
-      border-left-color: transparent !important;
-      border-right-color: transparent !important;
-      border-top-color: transparent !important;
-      top: -5px;
-      left: calc(50% - 5px);
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-
-  &[x-placement^="right"] {
-    @include margin-left(5px);
-
-    .tooltip-arrow {
-      border-width: 5px 5px 5px 0;
-      border-left-color: transparent !important;
-      border-top-color: transparent !important;
-      border-bottom-color: transparent !important;
-      left: -5px;
-      top: calc(50% - 5px);
-      @include margin-left(0);
-      @include margin-right(0);
-    }
-  }
-
-  &[x-placement^="left"] {
-    @include margin-right(5px);
-
-    .tooltip-arrow {
-      border-width: 5px 0 5px 5px;
-      border-top-color: transparent !important;
-      border-right-color: transparent !important;
-      border-bottom-color: transparent !important;
-      right: -5px;
-      top: calc(50% - 5px);
-      @include margin-left(0);
-      @include margin-right(0);
-    }
-  }
-
-  &.popover {
-    $color: #f9f9f9;
-
-    .popover-inner {
-      background: lighten($background-color, 65%);
-      color: black;
-      padding: 24px;
-      border-radius: 5px;
-      box-shadow: 0 5px 30px rgba(black, 0.1);
-    }
-
-    .popover-arrow {
-      border-color: $color;
-    }
-  }
-
-  &[aria-hidden="true"] {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.15s, visibility 0.15s;
-  }
-
-  &[aria-hidden="false"] {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.15s;
-  }
-}
-</style>

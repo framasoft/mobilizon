@@ -15,49 +15,84 @@
       ]"
     />
 
-    <div class="actor-card">
-      <actor-card
-        :actor="person"
-        :full="true"
-        :popover="false"
-        :limit="false"
-      />
-    </div>
-    <table v-if="metadata.length > 0" class="table is-fullwidth">
-      <tbody>
-        <tr v-for="{ key, value, link } in metadata" :key="key">
-          <td>{{ key }}</td>
-          <td v-if="link">
-            <router-link :to="link">
-              {{ value }}
-            </router-link>
-          </td>
-          <td v-else>{{ value }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="buttons">
-      <b-button
-        @click="suspendProfile"
-        v-if="person.domain && !person.suspended"
-        type="is-primary"
-        >{{ $t("Suspend") }}</b-button
+    <actor-card :actor="person" :full="true" :popover="false" :limit="false" />
+    <section class="mt-4 mb-3">
+      <h2 class="text-lg font-bold">{{ $t("Details") }}</h2>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block py-2 min-w-full sm:px-2 lg:px-8">
+            <div class="overflow-hidden shadow-md sm:rounded-lg">
+              <table v-if="metadata.length > 0" class="min-w-full">
+                <tbody>
+                  <tr
+                    v-for="{ key, value, link } in metadata"
+                    :key="key"
+                    class="odd:bg-white even:bg-gray-50 border-b odd:dark:bg-gray-800 even:dark:bg-gray-700 dark:border-gray-600"
+                  >
+                    <td class="py-4 px-2 whitespace-nowrap dark:text-white">
+                      {{ key }}
+                    </td>
+                    <td
+                      v-if="link"
+                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap dark:text-white"
+                    >
+                      <router-link :to="link">
+                        {{ value }}
+                      </router-link>
+                    </td>
+                    <td
+                      v-else
+                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap dark:text-white"
+                    >
+                      {{ value }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="mt-4 mb-3">
+      <h2 class="text-lg font-bold">{{ $t("Actions") }}</h2>
+      <div class="buttons" v-if="person.domain">
+        <b-button
+          @click="suspendProfile"
+          v-if="person.domain && !person.suspended"
+          type="is-primary"
+          >{{ $t("Suspend") }}</b-button
+        >
+        <b-button
+          @click="unsuspendProfile"
+          v-if="person.domain && person.suspended"
+          type="is-primary"
+          >{{ $t("Unsuspend") }}</b-button
+        >
+      </div>
+      <p v-else></p>
+      <div
+        class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800"
+        role="alert"
       >
-      <b-button
-        @click="unsuspendProfile"
-        v-if="person.domain && person.suspended"
-        type="is-primary"
-        >{{ $t("Unsuspend") }}</b-button
-      >
-    </div>
-    <section>
-      <h2 class="subtitle">
-        {{
-          $tc("{number} organized events", person.organizedEvents.total, {
-            number: person.organizedEvents.total,
-          })
-        }}
-      </h2>
+        <i18n
+          path="This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it."
+        >
+          <template #access_the_corresponding_account>
+            <router-link
+              class="underline"
+              :to="{
+                name: RouteName.ADMIN_USER_PROFILE,
+                params: { id: person.user.id },
+              }"
+              >{{ $t("access the corresponding account") }}</router-link
+            >
+          </template>
+        </i18n>
+      </div>
+    </section>
+    <section class="mt-4 mb-3">
+      <h2 class="text-lg font-bold">{{ $t("Organized events") }}</h2>
       <b-table
         :data="person.organizedEvents.elements"
         :loading="$apollo.queries.person.loading"
@@ -93,14 +128,8 @@
         </template>
       </b-table>
     </section>
-    <section>
-      <h2 class="subtitle">
-        {{
-          $tc("{number} participations", person.participations.total, {
-            number: person.participations.total,
-          })
-        }}
-      </h2>
+    <section class="mt-4 mb-3">
+      <h2 class="text-lg font-bold">{{ $t("Participations") }}</h2>
       <b-table
         :data="
           person.participations.elements.map(
@@ -140,14 +169,8 @@
         </template>
       </b-table>
     </section>
-    <section>
-      <h2 class="subtitle">
-        {{
-          $tc("{number} memberships", person.memberships.total, {
-            number: person.memberships.total,
-          })
-        }}
-      </h2>
+    <section class="mt-4 mb-3">
+      <h2 class="text-lg font-bold">{{ $t("Memberships") }}</h2>
       <b-table
         :data="person.memberships.elements"
         :loading="$apollo.loading"
@@ -512,16 +535,3 @@ export default class AdminProfile extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-table,
-section {
-  margin: 2rem 0;
-}
-
-.actor-card {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-}
-</style>
