@@ -416,7 +416,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field :admin_update_user, type: :user do
       arg(:id, non_null(:id), description: "The user's ID")
       arg(:email, :string, description: "The user's new email")
-      arg(:confirmed, :string, description: "Manually confirm the user's account")
+      arg(:confirmed, :boolean, description: "Manually confirm the user's account")
       arg(:role, :user_role, description: "Set user's new role")
 
       arg(:notify, :boolean,

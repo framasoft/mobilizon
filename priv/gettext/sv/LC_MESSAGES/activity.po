@@ -159,18 +159,29 @@ msgstr "%{profile} uppdaterade medlemmen %{member}."
 
 #: lib/service/activity/renderer/event.ex:23
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:4 lib/web/templates/email/activity/_event_activity_item.text.eex:1
-#, elixir-format
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:4
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:1
 msgid "The event %{event} was created by %{profile}."
 msgstr "Händelsen %{event} skapades av %{profile}."
 
 #: lib/service/activity/renderer/event.ex:43
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:34 lib/web/templates/email/activity/_event_activity_item.text.eex:13
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:34
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:13
+msgid "The event %{event} was deleted by %{profile}."
+msgstr ""
+
 #, elixir-format
 msgid "The event %{event} was deleted by %{profile}."
 msgstr "Händelsen %{event} togs bort av %{profile}."
 
 #: lib/service/activity/renderer/event.ex:33
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:19 lib/web/templates/email/activity/_event_activity_item.text.eex:7
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:19
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:7
+msgid "The event %{event} was updated by %{profile}."
+msgstr ""
+
 #, elixir-format
 msgid "The event %{event} was updated by %{profile}."
 msgstr "Händelsen %{event} uppdaterades av %{profile}."
@@ -201,12 +212,22 @@ msgstr "%{member} gick med i gruppen."
 
 #: lib/service/activity/renderer/event.ex:63
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:58 lib/web/templates/email/activity/_event_activity_item.text.eex:25
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:58
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:25
+msgid "%{profile} posted a comment on the event %{event}."
+msgstr ""
+
 #, elixir-format
 msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} la en kommentar till händelsen %{event}."
 
 #: lib/service/activity/renderer/event.ex:54
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:43 lib/web/templates/email/activity/_event_activity_item.text.eex:19
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:43
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:19
+msgid "%{profile} replied to a comment on the event %{event}."
+msgstr ""
+
 #, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} svarade på en kommentar i evenemanget %{event}."
@@ -227,7 +248,8 @@ msgstr[0] "Visa en till aktivitet"
 msgstr[1] "Visa %{count} fler aktiviteter"
 
 #: lib/web/templates/email/email_direct_activity.html.heex:44
-#: lib/web/templates/email/email_direct_activity.html.heex:46 lib/web/templates/email/email_direct_activity.text.eex:6
+#: lib/web/templates/email/email_direct_activity.html.heex:46
+#: lib/web/templates/email/email_direct_activity.text.eex:6
 #: lib/web/templates/email/email_direct_activity.text.eex:7
 #, elixir-format
 msgid "There has been an activity!"
@@ -243,12 +265,24 @@ msgstr "Aktivitet på %{instance}"
 #: lib/service/activity/renderer/comment.ex:38
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:19 lib/web/templates/email/activity/_comment_activity_item.text.eex:7
 #: lib/web/templates/email/email_anonymous_activity.html.heex:41 lib/web/templates/email/email_anonymous_activity.text.eex:5
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:19
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:7
+#: lib/web/templates/email/email_anonymous_activity.html.heex:41
+#: lib/web/templates/email/email_anonymous_activity.text.eex:5
+msgid "%{profile} has posted an announcement under event %{event}."
+msgstr ""
+
 #, elixir-format
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} skickade ut en kungörelse under händelsen %{event}."
 
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:4
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:1
+msgid "%{profile} mentionned you in a comment under event %{event}."
+msgstr ""
+
 #, elixir-format
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} nämnde dig i en kommentar under händelsen %{event}."
@@ -268,6 +302,9 @@ msgstr "Här är din veckas aktivitetssammanfattning"
 
 #: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
 #, elixir-format
+#, elixir-format
+#: lib/web/email/activity.ex:119
+#: lib/web/email/activity.ex:140
 msgid "Activity notification for %{instance}"
 msgstr "Aktivitetsavisering för %{instance}"
 
@@ -289,6 +326,11 @@ msgstr "Veckoaktivitetssammanfattning för %{instance}"
 
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:51
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
+msgid "%{profile} has posted a new comment under your event %{event}."
+msgstr ""
+
 #, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr "%{profile} har lagt en ny kommentar under ditt evenemang %{event}."
@@ -296,6 +338,8 @@ msgstr "%{profile} har lagt en ny kommentar under ditt evenemang %{event}."
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 #, elixir-format
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:36
+#: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr "%{profile} har lagt ett nytt svar under ditt evenemang %{event}."
 

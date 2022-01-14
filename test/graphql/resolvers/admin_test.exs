@@ -1,14 +1,14 @@
 defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
   use Mobilizon.Web.ConnCase
-
+  use Bamboo.Test
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
-
-  alias Mobilizon.Federation.ActivityPub.Relay
+  alias Mobilizon.Web.Email
 
   alias Mobilizon.GraphQL.{AbsintheHelpers, API}
 
@@ -480,11 +480,11 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
     end
 
     test "unless user isn't admin", %{conn: conn} do
-      admin = insert(:user)
+      user = insert(:user)
 
       res =
         conn
-        |> auth_conn(admin)
+        |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
           query: @update_instance_admin_settings_mutation,
           variables: %{"instanceName" => @new_instance_name, "registrationsOpen" => false}
@@ -492,6 +492,246 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
 
       assert hd(res["errors"])["message"] ==
                "You need to be logged-in and an administrator to save admin settings"
+    end
+  end
+
+  @admin_update_user """
+  mutation AdminUpdateUser($id: ID!, $email: String, $role: UserRole, $confirmed: Boolean, $notify: Boolean) {
+    adminUpdateUser(id: $id, email: $email, role: $role, confirmed: $confirmed, notify: $notify) {
+      id
+      email
+      role
+      confirmedAt
+    }
+  }
+  """
+
+  describe "Resolver: Update an user email" do
+    setup do
+      admin = insert(:user, role: :administrator)
+      user = insert(:user)
+      {:ok, admin: admin, user: user}
+    end
+
+    test "when not an admin", %{conn: conn, user: user} do
+      admin = insert(:user)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "email" => "new@email.com"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged-in and an administrator to edit an user's details"
+    end
+
+    test "when putting same email", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "email" => user.email}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "The new email must be different"
+    end
+
+    test "with an invalid email", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "email" => "not an email"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "The new email doesn't seem to be valid"
+    end
+
+    test "with a valid email, and no notification", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "email" => "new@email.com", "notify" => false}
+        )
+
+      refute_delivered_email(
+        Email.Admin.user_email_change_old(%User{user | email: "new@email.com"}, user.email)
+      )
+
+      refute_delivered_email(
+        Email.Admin.user_email_change_new(%User{user | email: "new@email.com"}, user.email)
+      )
+
+      assert res["errors"] == nil
+      assert res["data"]["adminUpdateUser"]["email"] == "new@email.com"
+    end
+
+    test "with a valid email, and notification", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "email" => "new@email.com", "notify" => true}
+        )
+
+      assert_delivered_email(
+        Email.Admin.user_email_change_old(%User{user | email: "new@email.com"}, user.email)
+      )
+
+      assert_delivered_email(
+        Email.Admin.user_email_change_new(%User{user | email: "new@email.com"}, user.email)
+      )
+
+      assert res["errors"] == nil
+      assert res["data"]["adminUpdateUser"]["email"] == "new@email.com"
+    end
+  end
+
+  describe "Resolver: Update an user role" do
+    setup do
+      admin = insert(:user, role: :administrator)
+      user = insert(:user)
+      {:ok, admin: admin, user: user}
+    end
+
+    test "when putting same role", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "role" => String.upcase(to_string(user.role))}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "The new role must be different"
+    end
+
+    test "with an invalid role", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "role" => "not a valid role"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "Argument \"role\" has invalid value $role."
+    end
+
+    test "with a valid role, and no notification", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "role" => "MODERATOR", "notify" => false}
+        )
+
+      refute_delivered_email(
+        Email.Admin.user_role_change(%User{user | role: :moderator}, user.role)
+      )
+
+      assert res["errors"] == nil
+      assert res["data"]["adminUpdateUser"]["role"] == "MODERATOR"
+    end
+
+    test "with a valid role, and notification", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "role" => "MODERATOR", "notify" => true}
+        )
+
+      assert_delivered_email(
+        Email.Admin.user_role_change(%User{user | role: :moderator}, user.role)
+      )
+
+      assert res["errors"] == nil
+      assert res["data"]["adminUpdateUser"]["role"] == "MODERATOR"
+    end
+  end
+
+  describe "Resolver: Confirm an user" do
+    setup do
+      admin = insert(:user, role: :administrator)
+      user = insert(:user)
+      {:ok, admin: admin, user: user}
+    end
+
+    test "already confirmed", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "confirmed" => true, "notify" => false}
+        )
+
+      refute_delivered_email(Email.Admin.user_confirmation(user))
+
+      assert hd(res["errors"])["message"] == "Can't confirm an already confirmed user"
+    end
+
+    test "while unconfirming", %{conn: conn, user: user, admin: admin} do
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "confirmed" => false, "notify" => false}
+        )
+
+      refute_delivered_email(Email.Admin.user_confirmation(user))
+
+      assert hd(res["errors"])["message"] == "Deconfirming users is not supported"
+    end
+
+    test "while confirming, and no notification", %{conn: conn, admin: admin} do
+      user = insert(:user, confirmed_at: nil)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "confirmed" => true, "notify" => false}
+        )
+
+      refute_delivered_email(Email.Admin.user_confirmation(user))
+
+      assert res["errors"] == nil
+      refute res["data"]["adminUpdateUser"]["confirmedAt"] == nil
+    end
+
+    test "while confirming, and notification", %{conn: conn, admin: admin} do
+      user = insert(:user, confirmed_at: nil)
+
+      res =
+        conn
+        |> auth_conn(admin)
+        |> AbsintheHelpers.graphql_query(
+          query: @admin_update_user,
+          variables: %{"id" => user.id, "confirmed" => true, "notify" => true}
+        )
+
+      assert_delivered_email(Email.Admin.user_confirmation(user))
+
+      assert res["errors"] == nil
+      refute res["data"]["adminUpdateUser"]["confirmedAt"] == nil
     end
   end
 end

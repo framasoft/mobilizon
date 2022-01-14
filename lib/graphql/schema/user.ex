@@ -280,6 +280,11 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     @desc "List instance users"
     field :users, :users do
       arg(:email, :string, default_value: "", description: "Filter users by email")
+
+      arg(:current_sign_in_ip, :string,
+        description: "Filter users by current signed-in IP address"
+      )
+
       arg(:page, :integer, default_value: 1, description: "The page in the paginated users list")
       arg(:limit, :integer, default_value: 10, description: "The limit of users per page")
 

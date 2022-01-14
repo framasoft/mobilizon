@@ -9,13 +9,12 @@
     />
     <h1 class="text-2xl">{{ instance.domain }}</h1>
     <div class="grid md:grid-cols-4 gap-2 content-center text-center mt-2">
-      <div class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800">
+      <div class="bg-gray-50 rounded-xl p-8">
         <router-link
           :to="{
             name: RouteName.PROFILES,
             query: { domain: instance.domain },
           }"
-          class="dark:text-white hover:dark:text-slate-300"
         >
           <span class="mb-4 text-xl font-semibold block">{{
             instance.personCount
@@ -23,13 +22,12 @@
           <span class="text-sm block">{{ $t("Profiles") }}</span>
         </router-link>
       </div>
-      <div class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800">
+      <div class="bg-gray-50 rounded-xl p-8">
         <router-link
           :to="{
             name: RouteName.ADMIN_GROUPS,
             query: { domain: instance.domain },
           }"
-          class="dark:text-white hover:dark:text-slate-300"
         >
           <span class="mb-4 text-xl font-semibold block">{{
             instance.groupCount
@@ -37,26 +35,21 @@
           <span class="text-sm block">{{ $t("Groups") }}</span>
         </router-link>
       </div>
-      <div
-        class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800 dark:text-white hover:dark:text-slate-300"
-      >
+      <div class="bg-gray-50 rounded-xl p-8">
         <span class="mb-4 text-xl font-semibold block">{{
           instance.followingsCount
         }}</span>
         <span class="text-sm block">{{ $t("Followings") }}</span>
       </div>
-      <div
-        class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800 dark:text-white hover:dark:text-slate-300"
-      >
+      <div class="bg-gray-50 rounded-xl p-8">
         <span class="mb-4 text-xl font-semibold block">{{
           instance.followersCount
         }}</span>
         <span class="text-sm block">{{ $t("Followers") }}</span>
       </div>
-      <div class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800">
+      <div class="bg-gray-50 rounded-xl p-8">
         <router-link
           :to="{ name: RouteName.REPORTS, query: { domain: instance.domain } }"
-          class="dark:text-white hover:dark:text-slate-300"
         >
           <span class="mb-4 text-xl font-semibold block">{{
             instance.reportsCount
@@ -64,9 +57,7 @@
           <span class="text-sm block">{{ $t("Reports") }}</span>
         </router-link>
       </div>
-      <div
-        class="bg-gray-50 rounded-xl p-8 dark:bg-gray-800 dark:text-white hover:dark:text-slate-300"
-      >
+      <div class="bg-gray-50 rounded-xl p-8">
         <span class="mb-4 font-semibold block">{{
           formatBytes(instance.mediaSize)
         }}</span>

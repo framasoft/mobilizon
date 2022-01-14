@@ -251,3 +251,26 @@ export const SAVE_ADMIN_SETTINGS = gql`
   }
   ${ADMIN_SETTINGS_FRAGMENT}
 `;
+
+export const ADMIN_UPDATE_USER = gql`
+  mutation AdminUpdateUser(
+    $id: ID!
+    $email: String
+    $role: UserRole
+    $confirmed: Boolean
+    $notify: Boolean
+  ) {
+    adminUpdateUser(
+      id: $id
+      email: $email
+      role: $role
+      confirmed: $confirmed
+      notify: $notify
+    ) {
+      id
+      email
+      role
+      confirmedAt
+    }
+  }
+`;

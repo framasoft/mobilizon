@@ -209,14 +209,30 @@ export const UPDATE_ACTIVITY_SETTING = gql`
 `;
 
 export const LIST_USERS = gql`
-  query ListUsers($email: String, $page: Int, $limit: Int) {
-    users(email: $email, page: $page, limit: $limit) {
+  query ListUsers(
+    $email: String
+    $currentSignInIp: String
+    $page: Int
+    $limit: Int
+    $sort: SortableUserField
+    $direction: SortDirection
+  ) {
+    users(
+      email: $email
+      currentSignInIp: $currentSignInIp
+      page: $page
+      limit: $limit
+      sort: $sort
+      direction: $direction
+    ) {
       total
       elements {
         id
         email
         locale
         confirmedAt
+        currentSignInIp
+        currentSignInAt
         disabled
         actors {
           ...ActorFragment

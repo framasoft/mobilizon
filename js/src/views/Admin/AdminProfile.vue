@@ -15,7 +15,14 @@
       ]"
     />
 
-    <actor-card :actor="person" :full="true" :popover="false" :limit="false" />
+    <div class="flex justify-center">
+      <actor-card
+        :actor="person"
+        :full="true"
+        :popover="false"
+        :limit="false"
+      />
+    </div>
     <section class="mt-4 mb-3">
       <h2 class="text-lg font-bold">{{ $t("Details") }}</h2>
       <div class="flex flex-col">
@@ -27,14 +34,14 @@
                   <tr
                     v-for="{ key, value, link } in metadata"
                     :key="key"
-                    class="odd:bg-white even:bg-gray-50 border-b odd:dark:bg-gray-800 even:dark:bg-gray-700 dark:border-gray-600"
+                    class="odd:bg-white even:bg-gray-50 border-b"
                   >
-                    <td class="py-4 px-2 whitespace-nowrap dark:text-white">
+                    <td class="py-4 px-2 whitespace-nowrap">
                       {{ key }}
                     </td>
                     <td
                       v-if="link"
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap dark:text-white"
+                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
                     >
                       <router-link :to="link">
                         {{ value }}
@@ -42,7 +49,7 @@
                     </td>
                     <td
                       v-else
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap dark:text-white"
+                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
                     >
                       {{ value }}
                     </td>
@@ -72,7 +79,8 @@
       </div>
       <p v-else></p>
       <div
-        class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg dark:bg-blue-200 dark:text-blue-800"
+        v-if="person.user"
+        class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg"
         role="alert"
       >
         <i18n

@@ -13,7 +13,10 @@ defmodule Mobilizon.UsersTest do
 
     test "list_users/0 returns all users" do
       user = insert(:user)
-      %Page{elements: users, total: 1} = Users.list_users("", nil, nil, :id, :desc)
+
+      %Page{elements: users, total: 1} =
+        Users.list_users(email: "", page: nil, limit: nil, sort: :id, direction: :desc)
+
       assert [user.id] == users |> Enum.map(& &1.id)
     end
 

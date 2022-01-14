@@ -1,0 +1,1 @@
+<%= case @role do %><% :administrator -> %><%= gettext "Administrator" %><% :moderator -> %><%= gettext "Moderator" %><% :user -> %><%= gettext "User" %><% end %>

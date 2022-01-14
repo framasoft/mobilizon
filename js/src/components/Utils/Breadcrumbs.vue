@@ -1,6 +1,6 @@
 <template>
   <nav class="flex mb-3" :aria-label="$t('Breadcrumbs')">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3 flex-wrap">
       <li
         class="inline-flex items-center"
         v-for="(element, index) in links"
@@ -10,7 +10,7 @@
         <router-link
           v-if="index === 0"
           :to="element"
-          class="inline-flex items-center text-gray-700 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+          class="inline-flex items-center text-gray-800 hover:text-gray-900"
         >
           {{ element.text }}
         </router-link>
@@ -28,7 +28,7 @@
             ></path>
           </svg>
           <span
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-400 md:ltr:ml-2 md:rtl:mr-2 dark:text-gray-500"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-600 md:ltr:ml-2 md:rtl:mr-2"
             >{{ element.text }}</span
           >
         </div>
@@ -47,7 +47,7 @@
           </svg>
           <router-link
             :to="element"
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-700 hover:text-gray-900 md:ltr:ml-2 md:rtl:mr-2 dark:text-gray-400 dark:hover:text-white"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-800 hover:text-gray-900 md:ltr:ml-2 md:rtl:mr-2"
             >{{ element.text }}</router-link
           >
         </div>

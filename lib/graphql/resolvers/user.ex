@@ -48,11 +48,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
           {:ok, Page.t(User.t())} | {:error, :unauthorized}
   def list_users(
         _parent,
-        %{email: email, page: page, limit: limit, sort: sort, direction: direction},
+        args,
         %{context: %{current_user: %User{role: role}}}
       )
       when is_moderator(role) do
-    {:ok, Users.list_users(email, page, limit, sort, direction)}
+    {:ok, Users.list_users(Keyword.new(args))}
   end
 
   def list_users(_parent, _args, _resolution) do
