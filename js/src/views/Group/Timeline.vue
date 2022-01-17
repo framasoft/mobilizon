@@ -1,27 +1,21 @@
 <template>
   <div class="container section">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul v-if="group">
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.TIMELINE,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Activity") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      v-if="group"
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.TIMELINE,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Activity'),
+        },
+      ]"
+    />
+
     <section class="timeline">
       <b-field>
         <b-radio-button v-model="activityType" :native-value="undefined">
@@ -160,7 +154,7 @@
 </template>
 <script lang="ts">
 import { GROUP_TIMELINE } from "@/graphql/group";
-import { IGroup, usernameWithDomain } from "@/types/actor";
+import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
 import { ActivityType } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -233,6 +227,8 @@ export default class Timeline extends Vue {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   ActivityType = ActivityType;
 

@@ -1,27 +1,23 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs" v-if="report">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link :to="{ name: RouteName.REPORTS }">{{
-            $t("Reports")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{ name: RouteName.REPORT, params: { id: report.id } }"
-            >{{
-              $t("Report #{reportNumber}", { reportNumber: report.id })
-            }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      v-if="report"
+      :links="[
+        {
+          name: RouteName.MODERATION,
+          text: $t('Moderation'),
+        },
+        {
+          name: RouteName.REPORTS,
+          text: $t('Reports'),
+        },
+        {
+          name: RouteName.REPORT,
+          params: { id: report.id },
+          text: $t('Report #{reportNumber}', { reportNumber: report.id }),
+        },
+      ]"
+    />
     <section>
       <b-message
         title="Error"

@@ -163,6 +163,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   end
 
   defp shift_tz(%DateTime{} = date, _), do: date
+  defp shift_tz(nil, _), do: nil
 
   defp organizer(%Event{attributed_to: %Actor{} = group}) do
     Actor.display_name(group)

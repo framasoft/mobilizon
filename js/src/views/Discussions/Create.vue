@@ -1,42 +1,29 @@
 <template>
   <section class="section container">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul v-if="group">
-        <li>
-          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
-            $t("My groups")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.DISCUSSION_LIST,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Discussions") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.CREATE_DISCUSSION,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Create") }}</router-link
-          >
-        </li>
-      </ul>
-      <b-skeleton v-else-if="$apollo.loading" :animated="animated"></b-skeleton>
-    </nav>
+    <breadcrumbs-nav
+      v-if="group"
+      :links="[
+        {
+          name: RouteName.MY_GROUPS,
+          text: $t('My groups'),
+        },
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.DISCUSSION_LIST,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Discussions'),
+        },
+        {
+          name: RouteName.CREATE_DISCUSSION,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Create'),
+        },
+      ]"
+    />
     <h1 class="title">{{ $t("Create a discussion") }}</h1>
 
     <form @submit.prevent="createDiscussion">
@@ -67,7 +54,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  displayName,
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import { FETCH_GROUP } from "@/graphql/group";
 import { CREATE_DISCUSSION } from "@/graphql/discussion";
@@ -112,6 +104,8 @@ export default class CreateDiscussion extends Vue {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   async createDiscussion(): Promise<void> {
     this.errors = { title: "" };

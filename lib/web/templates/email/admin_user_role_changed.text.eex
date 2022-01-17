@@ -1,0 +1,8 @@
+<%= gettext "An administrator changed your role" %>
+==
+<%= gettext "Hi there! We just wanted to inform you that an administrator from %{instance} just changed your account role.", %{instance: @instance_name} %>
+
+<%= gettext "Old role:" %> <%= render("admin/_role.text", role: @old_role) %>
+<%= gettext "New role:" %> <%= render("admin/_role.text", role: @new_role) %>
+
+<%= gettext "If something doesn't feel right to you, please contact the instance administrator through the contact methods on the instance's about page: %{about_page}.", %{about_page: "#{Mobilizon.Web.Endpoint.url()}/about/instance"} %>

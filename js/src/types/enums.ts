@@ -276,3 +276,15 @@ export enum EventMetadataCategories {
   BOOKING = "BOOKING",
   VIDEO_CONFERENCE = "VIDEO_CONFERENCE",
 }
+
+export enum InstanceFilterFollowStatus {
+  ALL = "ALL",
+  FOLLOWING = "FOLLOWING",
+  FOLLOWED = "FOLLOWED",
+}
+
+export enum InstanceFollowStatus {
+  APPROVED = "APPROVED",
+  PENDING = "PENDING",
+  NONE = "NONE",
+}

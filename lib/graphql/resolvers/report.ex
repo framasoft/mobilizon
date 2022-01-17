@@ -17,11 +17,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
           {:ok, Page.t(Report.t())} | {:error, String.t()}
   def list_reports(
         _parent,
-        %{page: page, limit: limit, status: status},
+        %{page: page, limit: limit} = args,
         %{context: %{current_user: %User{role: role}}}
       )
       when is_moderator(role) do
-    {:ok, Mobilizon.Reports.list_reports(page, limit, :updated_at, :desc, status)}
+    {:ok,
+     Mobilizon.Reports.list_reports(
+       page: page,
+       limit: limit,
+       sort: :updated_at,
+       direction: :desc,
+       status: Map.get(args, :status),
+       domain: Map.get(args, :domain)
+     )}
   end
 
   def list_reports(_parent, _args, _resolution) do

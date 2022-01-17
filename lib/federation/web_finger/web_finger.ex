@@ -125,7 +125,11 @@ defmodule Mobilizon.Federation.WebFinger do
   defp maybe_add_profile_page(data, _actor), do: data
 
   @type finger_errors ::
-          :host_not_found | :address_invalid | :http_error | :webfinger_information_not_json
+          :host_not_found
+          | :address_invalid
+          | :http_error
+          | :webfinger_information_not_json
+          | :no_url_in_webfinger_data
 
   @doc """
   Finger an actor to retreive it's ActivityPub ID/URL
@@ -144,6 +148,10 @@ defmodule Mobilizon.Federation.WebFinger do
           {:ok, %{"url" => url}} ->
             {:ok, url}
 
+          {:ok, _} ->
+            Logger.debug("No URL found for actor from webfinger data")
+            {:error, :no_url_in_webfinger_data}
+
           {:error, err} ->
             Logger.debug("Couldn't process webfinger data for #{actor}")
             {:error, err}
@@ -158,11 +166,14 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec fetch_webfinger_data(String.t()) ::
           {:ok, map()} | {:error, :webfinger_information_not_json | :http_error}
   defp fetch_webfinger_data(address) do
+    Logger.debug("Calling WebfingerClient with #{inspect(address)}")
+
     case WebfingerClient.get(address) do
       {:ok, %{body: body, status: code}} when code in 200..299 ->
         webfinger_from_json(body)
 
-      _ ->
+      err ->
+        Logger.debug("Failed to fetch webfinger data #{inspect(err)}")
         {:error, :http_error}
     end
   end
@@ -173,12 +184,14 @@ defmodule Mobilizon.Federation.WebFinger do
     case apply_webfinger_endpoint(actor) do
       address when is_binary(address) ->
         if address_invalid(address) do
+          Logger.info("Webfinger endpoint seems to be an invalid URL #{inspect(address)}")
           {:error, :address_invalid}
         else
           {:ok, address}
         end
 
       _ ->
+        Logger.info("Host not found in actor address #{inspect(actor)}")
         {:error, :host_not_found}
     end
   end
@@ -188,12 +201,15 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec find_webfinger_endpoint(String.t()) ::
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   defp find_webfinger_endpoint(domain) when is_binary(domain) do
+    Logger.debug("Calling HostMetaClient for #{domain}")
+
     with {:ok, %Tesla.Env{status: 200, body: body}} <-
-           HostMetaClient.get("http://#{domain}/.well-known/host-meta"),
+           HostMetaClient.get("https://#{domain}/.well-known/host-meta"),
          link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}
     else
       {:ok, %Tesla.Env{status: 404}} -> {:error, :entity_not_found}
+      {:ok, %Tesla.Env{}} -> {:error, :http_error}
       {:error, :link_not_found} -> {:error, :link_not_found}
       {:error, error} -> {:error, error}
     end
@@ -204,10 +220,12 @@ defmodule Mobilizon.Federation.WebFinger do
     with {:ok, domain} <- domain_from_federated_actor(actor) do
       case find_webfinger_endpoint(domain) do
         {:ok, link_template} ->
+          Logger.debug("Using webfinger location provided by host-meta endpoint")
           String.replace(link_template, "{uri}", "acct:#{actor}")
 
         _ ->
-          "http://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
+          Logger.debug("Using default webfinger location")
+          "https://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
       end
     end
   end
@@ -232,6 +250,10 @@ defmodule Mobilizon.Federation.WebFinger do
         case {link["type"], link["rel"]} do
           {"application/activity+json", "self"} ->
             Map.put(data, "url", link["href"])
+
+          {nil, _rel} ->
+            Logger.debug("No type declared for the following link #{inspect(link)}")
+            data
 
           _ ->
             Logger.debug(fn ->

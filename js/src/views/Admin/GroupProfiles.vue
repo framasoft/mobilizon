@@ -1,19 +1,14 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.PROFILES }">{{
-            $t("Groups")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.MODERATION, text: $t('Moderation') },
+        {
+          name: RouteName.ADMIN_GROUPS,
+          text: $t('Groups'),
+        },
+      ]"
+    />
     <div class="buttons" v-if="showCreateGroupsButton">
       <router-link
         class="button is-primary"

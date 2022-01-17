@@ -67,10 +67,6 @@ defmodule Mix.Tasks.Mobilizon.Users.New do
       {:error, %Ecto.Changeset{errors: errors}} ->
         shell_error(inspect(errors))
         shell_error("User has not been created because of the above reason.")
-
-      err ->
-        shell_error(inspect(err))
-        shell_error("User has not been created because of an unknown reason.")
     end
   end
 

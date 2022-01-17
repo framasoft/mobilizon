@@ -41,7 +41,7 @@ defmodule Mobilizon.GraphQL.API.Follows do
       "We're trying to accept a follow: #{followed_url} is accepting #{follower_url} follow request."
     )
 
-    case Actors.is_following(follower, followed) do
+    case Actors.check_follow(follower, followed) do
       %Follower{approved: false} = follow ->
         Actions.Accept.accept(
           :follow,
@@ -68,8 +68,9 @@ defmodule Mobilizon.GraphQL.API.Follows do
       "We're trying to reject a follow: #{followed_url} is rejecting #{follower_url} follow request."
     )
 
-    case Actors.is_following(follower, followed) do
-      %Follower{approved: false} ->
+    case Actors.check_follow(follower, followed) do
+      %Follower{approved: false} = follow ->
+        Actors.delete_follower(follow)
         {:error, "Follow already rejected"}
 
       %Follower{} = follow ->

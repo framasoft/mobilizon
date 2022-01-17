@@ -1,27 +1,36 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.USERS }">{{
-            $t("Users")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.MODERATION, text: $t('Moderation') },
+        {
+          name: RouteName.USERS,
+          text: $t('Users'),
+        },
+      ]"
+    />
     <div v-if="users">
+      <form @submit.prevent="activateFilters">
+        <b-field class="mb-5" grouped group-multiline>
+          <b-field :label="$t('Email')" expanded>
+            <b-input trap-focus icon="email" v-model="emailFilterFieldValue" />
+          </b-field>
+          <b-field :label="$t('IP Address')" expanded>
+            <b-input icon="web" v-model="ipFilterFieldValue" />
+          </b-field>
+          <p class="control self-end mb-0">
+            <b-button type="is-primary" native-type="submit">{{
+              $t("Filter")
+            }}</b-button>
+          </p>
+        </b-field>
+      </form>
       <b-table
         :data="users.elements"
         :loading="$apollo.queries.users.loading"
         paginated
         backend-pagination
-        backend-filtering
-        detailed
+        :debounce-search="500"
         :current-page.sync="page"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
@@ -30,25 +39,14 @@
         :show-detail-icon="true"
         :total="users.total"
         :per-page="USERS_PER_PAGE"
-        :has-detailed-visible="(row) => row.actors.length > 0"
         @page-change="onPageChange"
-        @filters-change="onFiltersChange"
       >
         <b-table-column field="id" width="40" numeric v-slot="props">
           {{ props.row.id }}
         </b-table-column>
-        <b-table-column field="email" :label="$t('Email')" searchable>
-          <template #searchable="props">
-            <b-input
-              v-model="props.filters.email"
-              :aria-label="$t('Filter')"
-              :placeholder="$t('Filter')"
-              icon="magnify"
-            />
-          </template>
+        <b-table-column field="email" :label="$t('Email')">
           <template v-slot:default="props">
             <router-link
-              class="user-profile"
               :to="{
                 name: RouteName.ADMIN_USER_PROFILE,
                 params: { id: props.row.id },
@@ -61,13 +59,16 @@
         </b-table-column>
         <b-table-column
           field="confirmedAt"
-          :label="$t('Confirmed at')"
+          :label="$t('Last seen on')"
           :centered="true"
           v-slot="props"
         >
-          <template v-if="props.row.confirmedAt">
-            {{ props.row.confirmedAt | formatDateTimeString }}
+          <template v-if="props.row.currentSignInAt">
+            <time :datetime="props.row.currentSignInAt">
+              {{ props.row.currentSignInAt | formatDateTimeString }}
+            </time>
           </template>
+          <template v-else-if="props.row.confirmedAt"> - </template>
           <template v-else>
             {{ $t("Not confirmed") }}
           </template>
@@ -80,30 +81,19 @@
         >
           {{ getLanguageNameForCode(props.row.locale) }}
         </b-table-column>
-
-        <template #detail="props">
-          <router-link
-            class="profile"
-            v-for="actor in props.row.actors"
-            :key="actor.id"
-            :to="{ name: RouteName.ADMIN_PROFILE, params: { id: actor.id } }"
+        <template #empty>
+          <empty-content
+            v-if="!$apollo.loading && emailFilter"
+            :inline="true"
+            icon="account"
           >
-            <article class="media">
-              <figure class="media-left">
-                <p class="image is-32x32" v-if="actor.avatar">
-                  <img :src="actor.avatar.url" />
-                </p>
-                <b-icon v-else size="is-medium" icon="account-circle" />
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                  <strong v-if="actor.name">{{ actor.name }}</strong>
-                  <small>@{{ actor.preferredUsername }}</small>
-                  <p>{{ actor.summary }}</p>
-                </div>
-              </div>
-            </article>
-          </router-link>
+            {{ $t("No user matches the filters") }}
+            <template #desc>
+              <b-button type="is-primary" @click="resetFilters">
+                {{ $t("Reset filters") }}
+              </b-button>
+            </template>
+          </empty-content>
         </template>
       </b-table>
     </div>
@@ -117,6 +107,7 @@ import VueRouter from "vue-router";
 import { LANGUAGES_CODES } from "@/graphql/admin";
 import { IUser } from "@/types/current-user.model";
 import { Paginate } from "@/types/paginate";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const USERS_PER_PAGE = 10;
@@ -128,7 +119,8 @@ const USERS_PER_PAGE = 10;
       fetchPolicy: "cache-and-network",
       variables() {
         return {
-          email: this.email,
+          email: this.emailFilter,
+          currentSignInIp: this.ipFilter,
           page: this.page,
           limit: USERS_PER_PAGE,
         };
@@ -151,6 +143,9 @@ const USERS_PER_PAGE = 10;
       title: this.$t("Users") as string,
     };
   },
+  components: {
+    EmptyContent,
+  },
 })
 export default class Users extends Vue {
   USERS_PER_PAGE = USERS_PER_PAGE;
@@ -160,6 +155,9 @@ export default class Users extends Vue {
   users!: Paginate<IUser>;
   languages!: Array<{ code: string; name: string }>;
 
+  emailFilterFieldValue = this.emailFilter;
+  ipFilterFieldValue = this.ipFilter;
+
   get page(): number {
     return parseInt((this.$route.query.page as string) || "1", 10);
   }
@@ -168,12 +166,20 @@ export default class Users extends Vue {
     this.pushRouter({ page: page.toString() });
   }
 
-  get email(): string {
-    return (this.$route.query.email as string) || "";
+  get emailFilter(): string {
+    return (this.$route.query.emailFilter as string) || "";
   }
 
-  set email(email: string) {
-    this.pushRouter({ email });
+  set emailFilter(emailFilter: string) {
+    this.pushRouter({ emailFilter });
+  }
+
+  get ipFilter(): string {
+    return (this.$route.query.ipFilter as string) || "";
+  }
+
+  set ipFilter(ipFilter: string) {
+    this.pushRouter({ ipFilter });
   }
 
   get languagesCodes(): string[] {
@@ -192,15 +198,23 @@ export default class Users extends Vue {
     this.page = page;
     await this.$apollo.queries.users.fetchMore({
       variables: {
-        email: this.email,
+        email: this.emailFilter,
+        currentSignInIp: this.ipFilter,
         page: this.page,
         limit: USERS_PER_PAGE,
       },
     });
   }
 
-  onFiltersChange({ email }: { email: string }): void {
-    this.email = email;
+  activateFilters(): void {
+    this.emailFilter = this.emailFilterFieldValue;
+    this.ipFilter = this.ipFilterFieldValue;
+  }
+
+  resetFilters(): void {
+    this.emailFilterFieldValue = "";
+    this.ipFilterFieldValue = "";
+    this.activateFilters();
   }
 
   private async pushRouter(args: Record<string, string>): Promise<void> {

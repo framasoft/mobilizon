@@ -1,31 +1,19 @@
 <template>
   <div class="container section" v-if="group">
-    <nav class="breadcrumb" aria-label="breadcrumbs" v-if="group">
-      <ul>
-        <li>
-          <router-link
-            v-if="group"
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name || group.preferredUsername }}</router-link
-          >
-          <b-skeleton v-else :animated="true"></b-skeleton>
-        </li>
-        <li class="is-active">
-          <router-link
-            v-if="group"
-            :to="{
-              name: RouteName.POSTS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Posts") }}</router-link
-          >
-          <b-skeleton v-else :animated="true"></b-skeleton>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.POSTS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Posts'),
+        },
+      ]"
+    />
     <section>
       <div class="intro">
         <p v-if="isCurrentActorMember">
@@ -84,7 +72,7 @@ import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_POSTS } from "../../graphql/post";
 import { Paginate } from "../../types/paginate";
 import { IPost } from "../../types/post.model";
-import { usernameWithDomain } from "../../types/actor";
+import { usernameWithDomain, displayName } from "../../types/actor";
 import RouteName from "../../router/name";
 import MultiPostListItem from "../../components/Post/MultiPostListItem.vue";
 
@@ -147,6 +135,8 @@ export default class PostList extends mixins(GroupMixin) {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   POSTS_PAGE_LIMIT = POSTS_PAGE_LIMIT;
 

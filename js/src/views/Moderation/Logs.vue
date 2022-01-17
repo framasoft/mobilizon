@@ -1,19 +1,17 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MODERATION }">{{
-            $t("Moderation")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.REPORT_LOGS }">{{
-            $t("Moderation log")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.MODERATION,
+          text: $t('Moderation'),
+        },
+        {
+          name: RouteName.REPORT_LOGS,
+          text: $t('Moderation log'),
+        },
+      ]"
+    />
     <section v-if="actionLogs.total > 0 && actionLogs.elements.length > 0">
       <ul>
         <li v-for="log in actionLogs.elements" :key="log.id">

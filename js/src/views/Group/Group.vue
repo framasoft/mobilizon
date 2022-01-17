@@ -1,27 +1,17 @@
 <template>
   <div class="container is-widescreen">
     <div class="header">
-      <nav class="breadcrumb" :aria-label="$t('Breadcrumbs')">
-        <ul>
-          <li>
-            <router-link :to="{ name: RouteName.MY_GROUPS }">{{
-              $t("My groups")
-            }}</router-link>
-          </li>
-          <li class="is-active">
-            <router-link
-              aria-current-value="location"
-              v-if="group && group.preferredUsername"
-              :to="{
-                name: RouteName.GROUP,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              >{{ group.name }}</router-link
-            >
-            <b-skeleton v-else :animated="true"></b-skeleton>
-          </li>
-        </ul>
-      </nav>
+      <breadcrumbs-nav
+        v-if="group"
+        :links="[
+          { name: RouteName.MY_GROUPS, text: $t('My groups') },
+          {
+            name: RouteName.GROUP,
+            params: { preferredUsername: usernameWithDomain(group) },
+            text: displayName(group),
+          },
+        ]"
+      />
       <b-loading :active.sync="$apollo.loading"></b-loading>
       <header class="block-container presentation" v-if="group">
         <div class="banner-container">
@@ -775,6 +765,8 @@ export default class Group extends mixins(GroupMixin) {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   PostVisibility = PostVisibility;
 

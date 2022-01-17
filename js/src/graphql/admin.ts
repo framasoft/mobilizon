@@ -70,6 +70,67 @@ export const RELAY_FOLLOWINGS = gql`
   ${RELAY_FRAGMENT}
 `;
 
+export const INSTANCE_FRAGMENT = gql`
+  fragment InstanceFragment on Instance {
+    domain
+    hasRelay
+    followerStatus
+    followedStatus
+    eventCount
+    personCount
+    groupCount
+    followersCount
+    followingsCount
+    reportsCount
+    mediaSize
+  }
+`;
+
+export const INSTANCE = gql`
+  query instance($domain: ID!) {
+    instance(domain: $domain) {
+      ...InstanceFragment
+    }
+  }
+  ${INSTANCE_FRAGMENT}
+`;
+
+export const INSTANCES = gql`
+  query Instances(
+    $page: Int
+    $limit: Int
+    $orderBy: InstancesSortFields
+    $direction: String
+    $filterDomain: String
+    $filterFollowStatus: InstanceFilterFollowStatus
+    $filterSuspendStatus: InstanceFilterSuspendStatus
+  ) {
+    instances(
+      page: $page
+      limit: $limit
+      orderBy: $orderBy
+      direction: $direction
+      filterDomain: $filterDomain
+      filterFollowStatus: $filterFollowStatus
+      filterSuspendStatus: $filterSuspendStatus
+    ) {
+      total
+      elements {
+        ...InstanceFragment
+      }
+    }
+  }
+  ${INSTANCE_FRAGMENT}
+`;
+export const ADD_INSTANCE = gql`
+  mutation addInstance($domain: String!) {
+    addInstance(domain: $domain) {
+      ...InstanceFragment
+    }
+  }
+  ${INSTANCE_FRAGMENT}
+`;
+
 export const ADD_RELAY = gql`
   mutation addRelay($address: String!) {
     addRelay(address: $address) {
@@ -189,4 +250,27 @@ export const SAVE_ADMIN_SETTINGS = gql`
     }
   }
   ${ADMIN_SETTINGS_FRAGMENT}
+`;
+
+export const ADMIN_UPDATE_USER = gql`
+  mutation AdminUpdateUser(
+    $id: ID!
+    $email: String
+    $role: UserRole
+    $confirmed: Boolean
+    $notify: Boolean
+  ) {
+    adminUpdateUser(
+      id: $id
+      email: $email
+      role: $role
+      confirmed: $confirmed
+      notify: $notify
+    ) {
+      id
+      email
+      role
+      confirmedAt
+    }
+  }
 `;

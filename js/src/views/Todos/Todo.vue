@@ -1,35 +1,29 @@
 <template>
   <section class="section container" v-if="todo">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: {
-                preferredUsername: todo.todoList.actor.preferredUsername,
-              },
-            }"
-            >{{ todo.todoList.actor.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.TODO_LIST,
-              params: { id: todo.todoList.id },
-            }"
-          >
-            {{ todo.todoList.title }}
-          </router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.TODO }" aria-current="page">
-            {{ todo.title }}
-          </router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: {
+            preferredUsername: usernameWithDomain(todo.todoList.actor),
+          },
+          text: displayName(todo.todoList.actor),
+        },
+        {
+          name: RouteName.TODO_LISTS,
+          params: {
+            preferredUsername: usernameWithDomain(todo.todoList.actor),
+          },
+          text: $t('Task lists'),
+        },
+        {
+          name: RouteName.TODO_LIST,
+          params: { id: todo.todoList.id },
+          text: todo.todoList.title,
+        },
+        { name: RouteName.TODO, text: todo.title },
+      ]"
+    />
     <full-todo :todo="todo" />
   </section>
 </template>
@@ -39,6 +33,7 @@ import { GET_TODO } from "@/graphql/todos";
 import { ITodo } from "@/types/todos";
 import FullTodo from "@/components/Todo/FullTodo.vue";
 import RouteName from "../../router/name";
+import { displayName, usernameWithDomain } from "@/types/actor";
 
 @Component({
   components: {
@@ -70,5 +65,9 @@ export default class Todo extends Vue {
   todo!: ITodo;
 
   RouteName = RouteName;
+
+  usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 }
 </script>

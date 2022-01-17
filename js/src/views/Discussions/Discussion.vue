@@ -1,46 +1,29 @@
 <template>
   <div class="container section" v-if="discussion">
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.MY_GROUPS }">{{
-            $t("My groups")
-          }}</router-link>
-        </li>
-        <li>
-          <router-link
-            v-if="discussion.actor"
-            :to="{
-              name: RouteName.GROUP,
-              params: {
-                preferredUsername: usernameWithDomain(discussion.actor),
-              },
-            }"
-            >{{ discussion.actor.name }}</router-link
-          >
-          <b-skeleton v-else-if="$apollo.loading" animated />
-        </li>
-        <li>
-          <router-link
-            v-if="discussion.actor"
-            :to="{
-              name: RouteName.DISCUSSION_LIST,
-              params: {
-                preferredUsername: usernameWithDomain(discussion.actor),
-              },
-            }"
-            >{{ $t("Discussions") }}</router-link
-          >
-          <b-skeleton animated v-else-if="$apollo.loading" />
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{ name: RouteName.DISCUSSION, params: { id: discussion.id } }"
-            >{{ discussion.title }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      v-if="group"
+      :links="[
+        {
+          name: RouteName.MY_GROUPS,
+          text: $t('My groups'),
+        },
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.DISCUSSION_LIST,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Discussions'),
+        },
+        {
+          name: RouteName.DISCUSSION,
+          params: { id: discussion.id },
+          text: discussion.title,
+        },
+      ]"
+    />
     <b-message v-if="error" type="is-danger">
       {{ error }}
     </b-message>
@@ -148,7 +131,7 @@ import {
 } from "@/graphql/discussion";
 import { IDiscussion } from "@/types/discussions";
 import { Discussion as DiscussionModel } from "@/types/discussions";
-import { usernameWithDomain } from "@/types/actor";
+import { displayName, usernameWithDomain } from "@/types/actor";
 import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { GraphQLError } from "graphql";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
@@ -250,6 +233,7 @@ export default class Discussion extends mixins(GroupMixin) {
   RouteName = RouteName;
 
   usernameWithDomain = usernameWithDomain;
+  displayName = displayName;
   error: string | null = null;
 
   async reply(): Promise<void> {

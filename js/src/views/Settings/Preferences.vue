@@ -1,19 +1,17 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ACCOUNT_SETTINGS }">{{
-            $t("Account")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.PREFERENCES }">{{
-            $t("Preferences")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.ACCOUNT_SETTINGS,
+          text: $t('Account'),
+        },
+        {
+          name: RouteName.PREFERENCES,
+          text: $t('Preferences'),
+        },
+      ]"
+    />
     <div>
       <b-field :label="$t('Language')" label-for="setting-language">
         <b-select

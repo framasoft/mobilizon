@@ -211,6 +211,9 @@ type Config {
   "The instance's features"
   features: Features
 
+  "The instance's restrictions"
+  restrictions: Restrictions
+
   "The instance's version"
   version: String
 
@@ -240,6 +243,9 @@ type Config {
 
   "Web Push settings for the instance"
   webPush: WebPush
+
+  "The instance list of export formats"
+  exportFormats: ExportFormats
 }
 
 "A tag"
@@ -306,7 +312,13 @@ type TodoList {
   actor: Actor
 
   "The todo-list's todos"
-  todos: PaginatedTodoList
+  todos(
+    "The page in the paginated todos list"
+    page: Int
+
+    "The limit of todos per page"
+    limit: Int
+  ): PaginatedTodoList
 }
 
 "Represents a participant to an event"
@@ -455,7 +467,7 @@ type Comment implements ActivityObject & ActionLogObject {
   isAnnouncement: Boolean!
 
   "The comment language"
-  language: String!
+  language: String
 }
 
 "An attached media or a link to a media"
@@ -690,6 +702,9 @@ enum ExportFormatEnum {
 
   "PDF format"
   PDF
+
+  "ODS format"
+  ODS
 }
 
 "The list of visibility options for a comment"
@@ -770,6 +785,14 @@ interface Interactable {
   url: String
 }
 
+enum EventType {
+  "The event will happen in person. It can also be livestreamed, but has a physical address"
+  IN_PERSON
+
+  "The event will only happen online. It has no physical address"
+  ONLINE
+}
+
 enum EventMetadataType {
   "A string"
   STRING
@@ -792,6 +815,14 @@ enum RoutingType {
 "A struct containing the id of the deleted object"
 type DeletedObject {
   id: ID
+}
+
+"A follow group event"
+type FollowedGroupEvent {
+  user: User
+  profile: Person
+  group: Group
+  event: Event
 }
 
 "A paginated list of comments"
@@ -851,7 +882,7 @@ type Post implements ActivityObject {
   updatedAt: DateTime
 
   "The post language"
-  language: String!
+  language: String
 
   "The post's tags"
   tags: [Tag]
@@ -939,6 +970,12 @@ type Statistics {
 
   "The number of instances this instance follows"
   numberOfInstanceFollowings: Int
+}
+
+"Export formats configuration"
+type ExportFormats {
+  "The list of formats the event participants can be exported to"
+  eventParticipants: [String]
 }
 
 "Search persons result"
@@ -1128,6 +1165,18 @@ type Person implements ActionLogObject & Actor {
     "The limit of memberships per page"
     limit: Int
   ): PaginatedMemberList
+
+  "The list of groups this person follows"
+  follows(
+    "Filter by group federated username"
+    group: String
+
+    "The page in the follows list"
+    page: Int
+
+    "The limit of follows per page"
+    limit: Int
+  ): PaginatedFollowerList
 }
 
 "Root Mutation"
@@ -1396,6 +1445,30 @@ type RootMutationType {
     groupId: ID!
   ): DeletedObject
 
+  "Follow a group"
+  followGroup(
+    "The group ID"
+    groupId: ID!
+
+    "Whether to notify profile from group activity"
+    notify: Boolean
+  ): Follower
+
+  "Update a group follow"
+  updateGroupFollow(
+    "The follow ID"
+    followId: ID!
+
+    "Whether to notify profile from group activity"
+    notify: Boolean
+  ): Follower
+
+  "Unfollow a group"
+  unfollowGroup(
+    "The group ID"
+    groupId: ID!
+  ): Follower
+
   "Create an event"
   createEvent(
     "The event's title"
@@ -1589,6 +1662,9 @@ type RootMutationType {
 
     "The anonymous participant's locale"
     locale: String
+
+    "The anonymous participant's timezone"
+    timezone: String
   ): Participant
 
   "Leave an event"
@@ -1663,6 +1739,18 @@ type RootMutationType {
     id: ID!
   ): Member
 
+  "Approve a membership request"
+  approveMember(
+    "The member ID"
+    memberId: ID!
+  ): Member
+
+  "Reject a membership request"
+  rejectMember(
+    "The member ID"
+    memberId: ID!
+  ): Member
+
   "Update a member's role"
   updateMember(
     "The member ID"
@@ -1674,11 +1762,11 @@ type RootMutationType {
 
   "Remove a member from a group"
   removeMember(
-    "The group ID"
-    groupId: ID!
-
     "The member ID"
     memberId: ID!
+
+    "Whether the member should be excluded from the group"
+    exclude: Boolean
   ): Member
 
   "Create a Feed Token"
@@ -2108,6 +2196,12 @@ type RootQueryType {
     "A geohash for coordinates"
     location: String
 
+    "Whether to include the groups the current actor is member or follower"
+    excludeMyGroups: Boolean
+
+    "The minimum visibility the group must have"
+    minimumVisibility: GroupVisibility
+
     "Radius around the location to search in"
     radius: Float
 
@@ -2127,6 +2221,9 @@ type RootQueryType {
 
     "A geohash for coordinates"
     location: String
+
+    "Whether the event is online or in person"
+    type: EventType
 
     "Radius around the location to search in"
     radius: Float
@@ -2389,6 +2486,12 @@ type RootQueryType {
     direction: String
   ): PaginatedFollowerList
 
+  "Get an instance's details"
+  instance(
+    "The instance domain"
+    domain: ID!
+  ): Instance
+
   "Get a todo list"
   todoList(
     "The todo-list ID"
@@ -2460,6 +2563,39 @@ timezone. The DateTime appears in a JSON response as an ISO8601 formatted
 string.
 """
 scalar NaiveDateTime
+
+"An instance representation"
+type Instance {
+  "The domain name of the instance"
+  domain: ID
+
+  "Whether this instance has a Mobilizon relay actor"
+  hasRelay: Boolean
+
+  "Do we follow this instance"
+  followerStatus: InstanceFollowStatus
+
+  "Does this instance follow us?"
+  followedStatus: InstanceFollowStatus
+
+  "The number of profiles on this instance we know of"
+  personCount: Int
+
+  "The number of grouo on this instance we know of"
+  groupCount: Int
+
+  "The number of their profiles who follow our groups"
+  followersCount: Int
+
+  "The number of our profiles who follow their groups"
+  followingsCount: Int
+
+  "The number of reports made against profiles from this instance"
+  reportsCount: Int
+
+  "The size of all the media files sent by actors from this instance"
+  mediaSize: Int
+}
 
 """
 The `DateTime` scalar type represents a date and time in the UTC
@@ -2573,8 +2709,14 @@ input EventOptionsInput {
   "Show event end time"
   showEndTime: Boolean
 
+  "The event's timezone"
+  timezone: String
+
   "Whether to show or hide the person organizer when event is organized by a group"
   hideOrganizerWhenGroupEvent: Boolean
+
+  "Whether the event is fully online"
+  isOnline: Boolean
 }
 
 "A report object"
@@ -2765,7 +2907,7 @@ type Event implements ActivityObject & Interactable & ActionLogObject {
   metadata: [EventMetadata]
 
   "The event language"
-  language: String!
+  language: String
 }
 
 "An event offer"
@@ -2835,6 +2977,18 @@ input AddressInput {
 
   "The address's original ID from the provider"
   originId: String
+
+  "The (estimated) timezone of the location"
+  timezone: String
+}
+
+"The instance's restrictions"
+type Restrictions {
+  "Whether groups creation is allowed only for admin, not for all users"
+  onlyAdminCanCreateGroups: Boolean
+
+  "Whether events creation is allowed only for groups, not for persons"
+  onlyGroupsCanCreateEvents: Boolean
 }
 
 "Instance anonymous configuration"
@@ -2916,8 +3070,14 @@ type EventOptions {
   "Show event end time"
   showEndTime: Boolean
 
+  "The event's timezone"
+  timezone: String
+
   "Whether to show or hide the person organizer when event is organized by a group"
   hideOrganizerWhenGroupEvent: Boolean
+
+  "Whether the event is fully online"
+  isOnline: Boolean
 }
 
 "A resource provider details"
@@ -2957,6 +3117,9 @@ type Follower {
 
   "Whether the follow has been approved by the target actor"
   approved: Boolean
+
+  "Whether the follower will be notified by the target actor's activity or not (applicable for profile\/group follows)"
+  notify: Boolean
 
   "When the follow was created"
   insertedAt: DateTime
@@ -3322,6 +3485,15 @@ type PaginatedGroupList {
   total: Int
 }
 
+"A paginated list of follow group events"
+type PaginatedFollowedGroupEvents {
+  "A list of follow group events"
+  elements: [FollowedGroupEvent]
+
+  "The total number of follow group events in the list"
+  total: Int
+}
+
 "Instance map tiles configuration"
 type Tiles {
   "The instance's tiles endpoint"
@@ -3377,6 +3549,20 @@ type Address {
 
   "The address's original ID from the provider"
   originId: String
+
+  "The (estimated) timezone of the location"
+  timezone: String
+}
+
+enum InstanceFollowStatus {
+  "The instance follow was approved"
+  APPROVED
+
+  "The instance follow is still pending"
+  PENDING
+
+  "There's no instance follow etablished"
+  NONE
 }
 
 "The instance's terms configuration"
@@ -3599,6 +3785,9 @@ type User implements ActionLogObject {
 
   "The list of memberships for this user"
   memberships(
+    "A name to filter members by"
+    name: String
+
     "The page in the paginated memberships list"
     page: Int
 
@@ -3614,6 +3803,18 @@ type User implements ActionLogObject {
     "The limit of drafts events per page"
     limit: Int
   ): [Event]
+
+  "The suggested events from the groups this user follows"
+  followedGroupEvents(
+    "The page in the follow group events list"
+    page: Int
+
+    "The limit of follow group events per page"
+    limit: Int
+
+    "Filter follow group events by event start datetime"
+    afterDatetime: DateTime
+  ): PaginatedFollowedGroupEvents
 
   "The list of settings for this user"
   settings: UserSettings
@@ -3731,6 +3932,9 @@ type Group implements ActionLogObject & ActivityObject & Interactable & Actor {
 
   "A paginated list of group members"
   members(
+    "A name to filter members by"
+    name: String
+
     "The page in the paginated member list"
     page: Int
 
@@ -3760,7 +3964,13 @@ type Group implements ActionLogObject & ActivityObject & Interactable & Actor {
   ): PaginatedPostList
 
   "A paginated list of the todo lists this group has"
-  todoLists: PaginatedTodoListList
+  todoLists(
+    "The page in the paginated todo-lists list"
+    page: Int
+
+    "The limit of todo-lists per page"
+    limit: Int
+  ): PaginatedTodoListList
 
   "A paginated list of the followers this group has"
   followers(

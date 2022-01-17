@@ -12,7 +12,9 @@ import { NotifierPlugin } from "./plugins/notifier";
 import filters from "./filters";
 import { i18n } from "./utils/i18n";
 import apolloProvider from "./vue-apollo";
+import Breadcrumbs from "@/components/Utils/Breadcrumbs.vue";
 import "./registerServiceWorker";
+import "./assets/tailwind.css";
 
 Vue.config.productionTip = false;
 
@@ -24,6 +26,7 @@ Vue.use(VueScrollTo);
 Vue.use(VTooltip);
 Vue.use(VueAnnouncer);
 Vue.use(VueSkipTo);
+Vue.component("breadcrumbs-nav", Breadcrumbs);
 
 // Register the router hooks with their names
 Component.registerHooks([

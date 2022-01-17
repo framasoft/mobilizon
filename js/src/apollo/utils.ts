@@ -70,6 +70,9 @@ export const typePolicies: TypePolicies = {
       participantStats: { merge: replaceMergePolicy },
     },
   },
+  Instance: {
+    keyFields: ["domain"],
+  },
   RootQueryType: {
     fields: {
       relayFollowers: paginatedLimitPagination<IFollower>(),

@@ -1176,7 +1176,7 @@ defmodule Mobilizon.Actors do
     if followed.suspended do
       {:error, :followed_suspended}
     else
-      case is_following(follower, followed) do
+      case check_follow(follower, followed) do
         %Follower{} ->
           {:error, :already_following}
 
@@ -1202,7 +1202,7 @@ defmodule Mobilizon.Actors do
   @spec unfollow(Actor.t(), Actor.t()) ::
           {:ok, Follower.t()} | {:error, Ecto.Changeset.t() | String.t()}
   def unfollow(%Actor{} = followed, %Actor{} = follower) do
-    case {:already_following, is_following(follower, followed)} do
+    case {:already_following, check_follow(follower, followed)} do
       {:already_following, %Follower{} = follow} ->
         delete_follower(follow)
 
@@ -1214,8 +1214,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Checks whether an actor is following another actor.
   """
-  @spec is_following(Actor.t(), Actor.t()) :: Follower.t() | nil
-  def is_following(%Actor{} = follower_actor, %Actor{} = followed_actor) do
+  @spec check_follow(Actor.t(), Actor.t()) :: Follower.t() | nil
+  def check_follow(%Actor{} = follower_actor, %Actor{} = followed_actor) do
     get_follower_by_followed_and_following(followed_actor, follower_actor)
   end
 
@@ -1254,6 +1254,16 @@ defmodule Mobilizon.Actors do
     Workers.Background.enqueue("actor_key_rotation", %{"actor_id" => actor.id}, schedule_in: delay)
 
     :ok
+  end
+
+  @spec has_relay?(String.t()) :: boolean()
+  def has_relay?(domain) do
+    Actor
+    |> where(
+      [a],
+      a.preferred_username == "relay" and a.domain == ^domain and a.type == :Application
+    )
+    |> Repo.exists?()
   end
 
   @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
@@ -1465,7 +1475,7 @@ defmodule Mobilizon.Actors do
     |> where([_q, ..., a], like(a.name, ^"%#{name}%") or like(a.preferred_username, ^"%#{name}%"))
   end
 
-  @spec join_members_actor(Ecto.Query.t()) :: Ecto.Query.t()
+  @spec join_members_actor(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp join_members_actor(query) do
     join(query, :inner, [q], a in Actor, on: q.actor_id == a.id)
   end

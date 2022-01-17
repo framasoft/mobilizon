@@ -72,7 +72,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://social.tcit.fr/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://social.tcit.fr/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: host_meta_xml}}
       end)
 
@@ -100,7 +100,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://pleroma.soykaf.com/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://pleroma.soykaf.com/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: host_meta_xml}}
       end)
 
@@ -127,7 +127,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://framatube.org/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://framatube.org/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: host_meta_xml}}
       end)
 
@@ -154,7 +154,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://squeet.me/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://squeet.me/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: host_meta_xml}}
       end)
 
@@ -182,7 +182,7 @@ defmodule Mobilizon.Federation.WebFingerTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://demo.gancio.org/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://demo.gancio.org/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 200, body: host_meta_xml}}
       end)
 

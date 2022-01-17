@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  elixir:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Elixir Version: 1.9, 1.10, 1.10.4, ...
+        VARIANT: "1.13.1"
+        # Phoenix Version: 1.4.17, 1.5.4, ...
+        PHOENIX_VERSION: "1.6.6"
+        # Node Version: 10, 11, ...
+        NODE_VERSION: "16"
+
+    volumes:
+      - ..:/workspace:z
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+    environment:
+      MOBILIZON_INSTANCE_NAME: My Mobilizon Instance
+      MOBILIZON_INSTANCE_HOST: localhost
+      MOBILIZON_INSTANCE_HOST_PORT: 4000
+      MOBILIZON_INSTANCE_PORT: 4000
+      MOBILIZON_INSTANCE_EMAIL: noreply@mobilizon.me
+      MOBILIZON_INSTANCE_REGISTRATIONS_OPEN: "true"
+      MOBILIZON_DATABASE_PASSWORD: postgres
+      MOBILIZON_DATABASE_USERNAME: postgres
+      MOBILIZON_DATABASE_DBNAME: mobilizon
+      MOBILIZON_DATABASE_HOST: db
+
+  db:
+    image: postgis/postgis:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+
+volumes:
+  postgres-data: null

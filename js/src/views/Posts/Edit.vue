@@ -2,43 +2,7 @@
   <div>
     <form @submit.prevent="publish(false)" v-if="isCurrentActorAGroupModerator">
       <div class="container section">
-        <nav class="breadcrumb" aria-label="breadcrumbs" v-if="actualGroup">
-          <ul>
-            <li>
-              <router-link
-                v-if="actualGroup"
-                :to="{
-                  name: RouteName.GROUP,
-                  params: {
-                    preferredUsername: usernameWithDomain(actualGroup),
-                  },
-                }"
-                >{{
-                  actualGroup.name || actualGroup.preferredUsername
-                }}</router-link
-              >
-              <b-skeleton v-else :animated="true"></b-skeleton>
-            </li>
-            <li>
-              <router-link
-                v-if="actualGroup"
-                :to="{
-                  name: RouteName.POSTS,
-                  params: {
-                    preferredUsername: usernameWithDomain(actualGroup),
-                  },
-                }"
-                >{{ $t("Posts") }}</router-link
-              >
-              <b-skeleton v-else :animated="true"></b-skeleton>
-            </li>
-            <li class="is-active">
-              <span v-if="preferredUsername">{{ $t("New post") }}</span>
-              <span v-else-if="slug">{{ $t("Edit post") }}</span>
-              <b-skeleton v-else :animated="true"></b-skeleton>
-            </li>
-          </ul>
-        </nav>
+        <breadcrumbs-nav v-if="actualGroup" :links="breadcrumbLinks" />
         <h1 class="title" v-if="isUpdate === true">
           {{ $t("Edit post") }}
         </h1>
@@ -174,7 +138,7 @@ import { CREATE_POST, UPDATE_POST } from "../../graphql/post";
 
 import { IPost } from "../../types/post.model";
 import Editor from "../../components/Editor.vue";
-import { IActor, usernameWithDomain } from "../../types/actor";
+import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import TagInput from "../../components/Event/TagInput.vue";
 import RouteName from "../../router/name";
 import Subtitle from "../../components/Utils/Subtitle.vue";
@@ -365,6 +329,39 @@ export default class EditPost extends mixins(GroupMixin, PostMixin) {
       return this.post.attributedTo as IActor;
     }
     return this.group;
+  }
+
+  get breadcrumbLinks() {
+    const links = [
+      {
+        name: RouteName.GROUP,
+        params: {
+          preferredUsername: usernameWithDomain(this.actualGroup),
+        },
+        text: displayName(this.actualGroup),
+      },
+      {
+        name: RouteName.POSTS,
+        params: {
+          preferredUsername: usernameWithDomain(this.actualGroup),
+        },
+        text: this.$t("Posts"),
+      },
+    ];
+    if (this.preferredUsername) {
+      links.push({
+        text: this.$t("New post") as string,
+        name: RouteName.POST_EDIT,
+        params: { preferredUsername: usernameWithDomain(this.actualGroup) },
+      });
+    } else {
+      links.push({
+        text: this.$t("Edit post") as string,
+        name: RouteName.POST_EDIT,
+        params: { preferredUsername: usernameWithDomain(this.actualGroup) },
+      });
+    }
+    return links;
   }
 }
 </script>

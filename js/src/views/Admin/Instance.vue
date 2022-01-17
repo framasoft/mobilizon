@@ -1,0 +1,246 @@
+<template>
+  <div v-if="instance">
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        { name: RouteName.INSTANCES, text: $t('Instances') },
+        { text: instance.domain },
+      ]"
+    />
+    <h1 class="text-2xl">{{ instance.domain }}</h1>
+    <div class="grid md:grid-cols-4 gap-2 content-center text-center mt-2">
+      <div class="bg-gray-50 rounded-xl p-8">
+        <router-link
+          :to="{
+            name: RouteName.PROFILES,
+            query: { domain: instance.domain },
+          }"
+        >
+          <span class="mb-4 text-xl font-semibold block">{{
+            instance.personCount
+          }}</span>
+          <span class="text-sm block">{{ $t("Profiles") }}</span>
+        </router-link>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-8">
+        <router-link
+          :to="{
+            name: RouteName.ADMIN_GROUPS,
+            query: { domain: instance.domain },
+          }"
+        >
+          <span class="mb-4 text-xl font-semibold block">{{
+            instance.groupCount
+          }}</span>
+          <span class="text-sm block">{{ $t("Groups") }}</span>
+        </router-link>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-8">
+        <span class="mb-4 text-xl font-semibold block">{{
+          instance.followingsCount
+        }}</span>
+        <span class="text-sm block">{{ $t("Followings") }}</span>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-8">
+        <span class="mb-4 text-xl font-semibold block">{{
+          instance.followersCount
+        }}</span>
+        <span class="text-sm block">{{ $t("Followers") }}</span>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-8">
+        <router-link
+          :to="{ name: RouteName.REPORTS, query: { domain: instance.domain } }"
+        >
+          <span class="mb-4 text-xl font-semibold block">{{
+            instance.reportsCount
+          }}</span>
+          <span class="text-sm block">{{ $t("Reports") }}</span>
+        </router-link>
+      </div>
+      <div class="bg-gray-50 rounded-xl p-8">
+        <span class="mb-4 font-semibold block">{{
+          formatBytes(instance.mediaSize)
+        }}</span>
+        <span class="text-sm block">{{ $t("Uploaded media size") }}</span>
+      </div>
+    </div>
+    <div class="mt-3 grid md:grid-cols-2 gap-4" v-if="instance.hasRelay">
+      <div class="border bg-white p-6 shadow-md rounded-md">
+        <button
+          @click="removeInstanceFollow"
+          v-if="instance.followedStatus == InstanceFollowStatus.APPROVED"
+          class="bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
+        >
+          {{ $t("Stop following instance") }}
+        </button>
+        <button
+          @click="removeInstanceFollow"
+          v-else-if="instance.followedStatus == InstanceFollowStatus.PENDING"
+          class="bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
+        >
+          {{ $t("Cancel follow request") }}
+        </button>
+        <button
+          @click="followInstance"
+          v-else
+          class="bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
+        >
+          {{ $t("Follow instance") }}
+        </button>
+      </div>
+      <div class="border bg-white p-6 shadow-md rounded-md">
+        <button
+          @click="acceptInstance"
+          v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
+          class="bg-green-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
+        >
+          {{ $t("Accept follow") }}
+        </button>
+        <button
+          @click="rejectInstance"
+          v-else-if="instance.followerStatus != InstanceFollowStatus.NONE"
+          class="bg-red-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
+        >
+          {{ $t("Reject follow") }}
+        </button>
+        <p v-else>
+          {{ $t("This instance doesn't follow yours.") }}
+        </p>
+      </div>
+    </div>
+    <div v-else class="md:h-48 py-16 text-center opacity-50">
+      {{ $t("Only Mobilizon instances can be followed") }}
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import {
+  ACCEPT_RELAY,
+  ADD_INSTANCE,
+  INSTANCE,
+  REJECT_RELAY,
+  REMOVE_RELAY,
+} from "@/graphql/admin";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { formatBytes } from "@/utils/datetime";
+import RouteName from "@/router/name";
+import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { IInstance } from "@/types/instance.model";
+import { ApolloCache, gql, Reference } from "@apollo/client/core";
+import { InstanceFollowStatus } from "@/types/enums";
+
+@Component({
+  apollo: {
+    instance: {
+      query: INSTANCE,
+      variables() {
+        return {
+          domain: this.domain,
+        };
+      },
+    },
+  },
+})
+export default class Instance extends Vue {
+  @Prop({ type: String, required: true }) domain!: string;
+
+  instance!: IInstance;
+
+  InstanceFollowStatus = InstanceFollowStatus;
+
+  formatBytes = formatBytes;
+
+  RouteName = RouteName;
+
+  async acceptInstance(): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: ACCEPT_RELAY,
+        variables: {
+          address: `relay@${this.domain}`,
+        },
+      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
+    }
+  }
+
+  async rejectInstance(): Promise<void> {
+    try {
+      await this.$apollo.mutate({
+        mutation: REJECT_RELAY,
+        variables: {
+          address: `relay@${this.domain}`,
+        },
+      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
+    }
+  }
+
+  async followInstance(e: Event): Promise<void> {
+    e.preventDefault();
+    try {
+      await this.$apollo.mutate<{ addInstance: Instance }>({
+        mutation: ADD_INSTANCE,
+        variables: {
+          domain: this.domain,
+        },
+      });
+    } catch (err: any) {
+      if (err.message) {
+        Snackbar.open({
+          message: err.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
+    }
+  }
+
+  async removeInstanceFollow(): Promise<void> {
+    const { instance } = this;
+    try {
+      await this.$apollo.mutate({
+        mutation: REMOVE_RELAY,
+        variables: {
+          address: `relay@${this.domain}`,
+        },
+        update(cache: ApolloCache<any>) {
+          cache.writeFragment({
+            id: cache.identify(instance as unknown as Reference),
+            fragment: gql`
+              fragment InstanceFollowedStatus on Instance {
+                followedStatus
+              }
+            `,
+            data: {
+              followedStatus: InstanceFollowStatus.NONE,
+            },
+          });
+        },
+      });
+    } catch (e: any) {
+      if (e.message) {
+        Snackbar.open({
+          message: e.message,
+          type: "is-danger",
+          position: "is-bottom",
+        });
+      }
+    }
+  }
+}
+</script>

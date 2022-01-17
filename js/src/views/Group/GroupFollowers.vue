@@ -1,36 +1,25 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul v-if="group">
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ group.name }}</router-link
-          >
-        </li>
-        <li>
-          <router-link
-            :to="{
-              name: RouteName.GROUP_SETTINGS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Settings") }}</router-link
-          >
-        </li>
-        <li class="is-active">
-          <router-link
-            :to="{
-              name: RouteName.GROUP_FOLLOWERS_SETTINGS,
-              params: { preferredUsername: usernameWithDomain(group) },
-            }"
-            >{{ $t("Followers") }}</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      v-if="group"
+      :links="[
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: displayName(group),
+        },
+        {
+          name: RouteName.GROUP_SETTINGS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Settings'),
+        },
+        {
+          name: RouteName.GROUP_FOLLOWERS_SETTINGS,
+          params: { preferredUsername: usernameWithDomain(group) },
+          text: $t('Followers'),
+        },
+      ]"
+    />
     <b-loading :active="$apollo.loading" />
     <section
       class="container section"
@@ -138,7 +127,7 @@ import GroupMixin from "@/mixins/group";
 import { mixins } from "vue-class-component";
 import { GROUP_FOLLOWERS, UPDATE_FOLLOWER } from "@/graphql/followers";
 import RouteName from "../../router/name";
-import { usernameWithDomain } from "../../types/actor";
+import { displayName, usernameWithDomain } from "../../types/actor";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { IFollower } from "@/types/actor/follower.model";
 import { Paginate } from "@/types/paginate";
@@ -180,6 +169,8 @@ export default class GroupFollowers extends mixins(GroupMixin) {
   FOLLOWERS_PER_PAGE = 10;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   followers!: Paginate<IFollower>;
 

@@ -11,9 +11,8 @@ export enum SettingsRouteName {
   ADMIN = "ADMIN",
   ADMIN_DASHBOARD = "ADMIN_DASHBOARD",
   ADMIN_SETTINGS = "ADMIN_SETTINGS",
-  RELAYS = "Relays",
-  RELAY_FOLLOWINGS = "Followings",
-  RELAY_FOLLOWERS = "Followers",
+  INSTANCES = "INSTANCES",
+  INSTANCE = "INSTANCE",
   USERS = "USERS",
   PROFILES = "PROFILES",
   ADMIN_PROFILE = "ADMIN_PROFILE",
@@ -21,7 +20,7 @@ export enum SettingsRouteName {
   ADMIN_GROUPS = "ADMIN_GROUPS",
   ADMIN_GROUP_PROFILE = "ADMIN_GROUP_PROFILE",
   MODERATION = "MODERATION",
-  REPORTS = "Reports",
+  REPORTS = "REPORTS",
   REPORT = "Report",
   REPORT_LOGS = "Logs",
   CREATE_IDENTITY = "CreateIdentity",
@@ -199,43 +198,34 @@ export const settingsRoutes: RouteConfig[] = [
         meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
-        path: "admin/relays",
-        name: SettingsRouteName.RELAYS,
-        redirect: { name: SettingsRouteName.RELAY_FOLLOWINGS },
+        path: "admin/instances",
+        name: SettingsRouteName.INSTANCES,
         component: (): Promise<ImportedComponent> =>
-          import(/* webpackChunkName: "Follows" */ "@/views/Admin/Follows.vue"),
-        meta: { requiredAuth: true, announcer: { skip: true } },
-        children: [
-          {
-            path: "followings",
-            name: SettingsRouteName.RELAY_FOLLOWINGS,
-            component: (): Promise<ImportedComponent> =>
-              import(
-                /* webpackChunkName: "Followings" */ "@/components/Admin/Followings.vue"
-              ),
-            meta: {
-              requiredAuth: true,
-              announcer: {
-                message: (): string => i18n.t("Followings") as string,
-              },
-            },
+          import(
+            /* webpackChunkName: "Instances" */ "@/views/Admin/Instances.vue"
+          ),
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Instances") as string,
           },
-          {
-            path: "followers",
-            name: SettingsRouteName.RELAY_FOLLOWERS,
-            component: (): Promise<ImportedComponent> =>
-              import(
-                /* webpackChunkName: "Followers" */ "@/components/Admin/Followers.vue"
-              ),
-            meta: {
-              requiredAuth: true,
-              announcer: {
-                message: (): string => i18n.t("Followers") as string,
-              },
-            },
-          },
-        ],
+        },
         props: true,
+      },
+      {
+        path: "admin/instances/:domain",
+        name: SettingsRouteName.INSTANCE,
+        component: (): Promise<ImportedComponent> =>
+          import(
+            /* webpackChunkName: "Instance" */ "@/views/Admin/Instance.vue"
+          ),
+        props: true,
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => i18n.t("Instance") as string,
+          },
+        },
       },
       {
         path: "/moderation",
@@ -244,7 +234,7 @@ export const settingsRoutes: RouteConfig[] = [
         meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
-        path: "/moderation/reports/:filter?",
+        path: "/moderation/reports",
         name: SettingsRouteName.REPORTS,
         component: (): Promise<ImportedComponent> =>
           import(

@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   import Mobilizon.Users.Guards
 
-  alias Mobilizon.{Actors, Admin, Config, Events}
+  alias Mobilizon.{Actors, Admin, Config, Events, Instances, Users}
   alias Mobilizon.Actors.{Actor, Follower}
   alias Mobilizon.Admin.{ActionLog, Setting}
   alias Mobilizon.Cldr.Language
@@ -14,9 +14,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
   alias Mobilizon.Reports.{Note, Report}
+  alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Service.Statistics
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
+  alias Mobilizon.Web.Email
   import Mobilizon.Web.Gettext
   require Logger
 
@@ -281,6 +283,114 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
      dgettext("errors", "You need to be logged-in and an administrator to save admin settings")}
   end
 
+  @spec update_user(any, map(), Absinthe.Resolution.t()) ::
+          {:error, :invalid_argument | :user_not_found | binary | Ecto.Changeset.t()}
+          | {:ok, Mobilizon.Users.User.t()}
+  def update_user(_parent, %{id: id, notify: notify} = args, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    case Users.get_user(id) do
+      nil ->
+        {:error, :user_not_found}
+
+      %User{} = user ->
+        case args |> Map.drop([:notify, :id]) |> Map.keys() do
+          [] ->
+            {:error, :invalid_argument}
+
+          [change | _] ->
+            case change do
+              :email -> change_email(user, Map.get(args, :email), notify)
+              :role -> change_role(user, Map.get(args, :role), notify)
+              :confirmed -> confirm_user(user, Map.get(args, :confirmed), notify)
+            end
+        end
+    end
+  end
+
+  def update_user(_parent, _args, _resolution) do
+    {:error,
+     dgettext("errors", "You need to be logged-in and an administrator to edit an user's details")}
+  end
+
+  @spec change_email(User.t(), String.t(), boolean()) :: {:ok, User.t()} | {:error, String.t()}
+  defp change_email(%User{email: old_email} = user, new_email, notify) do
+    if Authenticator.can_change_email?(user) do
+      if new_email != old_email do
+        if Email.Checker.valid?(new_email) do
+          case Users.update_user(user, %{email: new_email}) do
+            {:ok, %User{} = updated_user} ->
+              if notify do
+                updated_user
+                |> Email.Admin.user_email_change_old(old_email)
+                |> Email.Mailer.send_email_later()
+
+                updated_user
+                |> Email.Admin.user_email_change_new(old_email)
+                |> Email.Mailer.send_email_later()
+              end
+
+              {:ok, updated_user}
+
+            {:error, %Ecto.Changeset{} = err} ->
+              Logger.debug(inspect(err))
+              {:error, dgettext("errors", "Failed to update user email")}
+          end
+        else
+          {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+        end
+      else
+        {:error, dgettext("errors", "The new email must be different")}
+      end
+    end
+  end
+
+  @spec change_role(User.t(), Mobilizon.Users.UserRole.t(), boolean()) ::
+          {:ok, User.t()} | {:error, String.t() | Ecto.Changeset.t()}
+  defp change_role(%User{role: old_role} = user, new_role, notify) do
+    if old_role != new_role do
+      with {:ok, %User{} = user} <- Users.update_user(user, %{role: new_role}) do
+        if notify do
+          user
+          |> Email.Admin.user_role_change(old_role)
+          |> Email.Mailer.send_email_later()
+        end
+
+        {:ok, user}
+      end
+    else
+      {:error, dgettext("errors", "The new role must be different")}
+    end
+  end
+
+  @spec confirm_user(User.t(), boolean(), boolean()) ::
+          {:ok, User.t()} | {:error, String.t() | Ecto.Changeset.t()}
+  defp confirm_user(%User{confirmed_at: nil} = user, true, notify) do
+    with {:ok, %User{} = user} <-
+           Users.update_user(user, %{
+             confirmed_at: DateTime.utc_now(),
+             confirmation_sent_at: nil,
+             confirmation_token: nil
+           }) do
+      if notify do
+        user
+        |> Email.Admin.user_confirmation()
+        |> Email.Mailer.send_email_later()
+      end
+
+      {:ok, user}
+    end
+  end
+
+  defp confirm_user(%User{confirmed_at: %DateTime{}} = _user, true, _notify) do
+    {:error, dgettext("errors", "Can't confirm an already confirmed user")}
+  end
+
+  defp confirm_user(_user, _confirm, _notify) do
+    {:error, dgettext("errors", "Deconfirming users is not supported")}
+  end
+
   @spec list_relay_followers(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Page.t(Follower.t())} | {:error, :unauthorized | :unauthenticated}
   def list_relay_followers(
@@ -329,16 +439,81 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  def get_instances(
+        _parent,
+        args,
+        %{
+          context: %{current_user: %User{role: role}}
+        }
+      )
+      when is_admin(role) do
+    {:ok,
+     Instances.instances(
+       args
+       |> Keyword.new()
+       |> Keyword.take([
+         :page,
+         :limit,
+         :order_by,
+         :direction,
+         :filter_domain,
+         :filter_follow_status,
+         :filter_suspend_status
+       ])
+     )}
+  end
+
+  def get_instances(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def get_instances(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
+  end
+
+  def get_instance(_parent, %{domain: domain}, %{
+        context: %{current_user: %User{role: role}}
+      })
+      when is_admin(role) do
+    has_relay = Actors.has_relay?(domain)
+    remote_relay = Actors.get_actor_by_name("relay@#{domain}")
+    local_relay = Relay.get_actor()
+
+    result = %{
+      has_relay: has_relay,
+      follower_status: follow_status(remote_relay, local_relay),
+      followed_status: follow_status(local_relay, remote_relay)
+    }
+
+    {:ok, Map.merge(Instances.instance(domain), result)}
+  end
+
+  def get_instance(_parent, _args, %{context: %{current_user: %User{}}}) do
+    {:error, :unauthorized}
+  end
+
+  def get_instance(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
+  end
+
+  def create_instance(
+        parent,
+        %{domain: domain} = args,
+        %{context: %{current_user: %User{role: role}}} = resolution
+      )
+      when is_admin(role) do
+    with {:ok, _activity, _follow} <- Relay.follow(domain) do
+      Instances.refresh()
+      get_instance(parent, args, resolution)
+    end
+  end
+
   @spec create_relay(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Follower.t()} | {:error, any()}
   def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
-    case Relay.follow(address) do
-      {:ok, _activity, follow} ->
-        {:ok, follow}
-
-      {:error, err} ->
-        {:error, err}
+    with {:ok, _activity, follow} <- Relay.follow(address) do
+      {:ok, follow}
     end
   end
 
@@ -346,12 +521,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
           {:ok, Follower.t()} | {:error, any()}
   def remove_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
       when is_admin(role) do
-    case Relay.unfollow(address) do
-      {:ok, _activity, follow} ->
-        {:ok, follow}
-
-      {:error, err} ->
-        {:error, err}
+    with {:ok, _activity, follow} <- Relay.unfollow(address) do
+      {:ok, follow}
     end
   end
 
@@ -363,12 +534,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         %{context: %{current_user: %User{role: role}}}
       )
       when is_admin(role) do
-    case Relay.accept(address) do
-      {:ok, _activity, follow} ->
-        {:ok, follow}
-
-      {:error, err} ->
-        {:error, err}
+    with {:ok, _activity, follow} <- Relay.accept(address) do
+      {:ok, follow}
     end
   end
 
@@ -380,12 +547,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         %{context: %{current_user: %User{role: role}}}
       )
       when is_admin(role) do
-    case Relay.reject(address) do
-      {:ok, _activity, follow} ->
-        {:ok, follow}
-
-      {:error, err} ->
-        {:error, err}
+    with {:ok, _activity, follow} <- Relay.reject(address) do
+      {:ok, follow}
     end
   end
 
@@ -425,4 +588,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       :ok
     end
   end
+
+  @spec follow_status(Actor.t() | nil, Actor.t() | nil) :: :approved | :pending | :none
+  defp follow_status(follower, followed) when follower != nil and followed != nil do
+    case Actors.check_follow(follower, followed) do
+      %Follower{approved: true} -> :approved
+      %Follower{approved: false} -> :pending
+      _ -> :none
+    end
+  end
+
+  defp follow_status(_, _), do: :none
 end

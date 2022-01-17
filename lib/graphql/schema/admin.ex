@@ -153,6 +153,80 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     value(:custom, as: "CUSTOM", description: "Custom privacy policy text")
   end
 
+  enum :instance_follow_status do
+    value(:approved, description: "The instance follow was approved")
+    value(:pending, description: "The instance follow is still pending")
+    value(:none, description: "There's no instance follow etablished")
+  end
+
+  enum :instances_sort_fields do
+    value(:event_count)
+    value(:person_count)
+    value(:group_count)
+    value(:followers_count)
+    value(:followings_count)
+    value(:reports_count)
+    value(:media_size)
+  end
+
+  enum :instance_filter_follow_status do
+    value(:all)
+    value(:following)
+    value(:followed)
+  end
+
+  enum :instance_filter_suspend_status do
+    value(:all)
+    value(:suspended)
+  end
+
+  @desc """
+  An instance representation
+  """
+  object :instance do
+    field(:domain, :id, description: "The domain name of the instance")
+    field(:has_relay, :boolean, description: "Whether this instance has a Mobilizon relay actor")
+    field(:follower_status, :instance_follow_status, description: "Do we follow this instance")
+    field(:followed_status, :instance_follow_status, description: "Does this instance follow us?")
+
+    field(:event_count, :integer, description: "The number of events on this instance we know of")
+
+    field(:person_count, :integer,
+      description: "The number of profiles on this instance we know of"
+    )
+
+    field(:group_count, :integer, description: "The number of grouo on this instance we know of")
+
+    field(:followers_count, :integer,
+      description: "The number of their profiles who follow our groups"
+    )
+
+    field(:followings_count, :integer,
+      description: "The number of our profiles who follow their groups"
+    )
+
+    field(:reports_count, :integer,
+      description: "The number of reports made against profiles from this instance"
+    )
+
+    field(:media_size, :integer,
+      description: "The size of all the media files sent by actors from this instance"
+    )
+
+    field(:has_relay, :boolean,
+      description:
+        "Whether this instance has a relay, meaning that it's a Mobilizon instance that we can follow"
+    )
+  end
+
+  @desc """
+  A paginated list of instances
+  """
+  object :paginated_instance_list do
+    field(:elements, list_of(:instance), description: "A list of instances")
+    field(:total, :integer, description: "The total number of instances in the list")
+  end
+
   object :admin_queries do
     @desc "Get the list of action logs"
     field :action_logs, type: :paginated_action_log_list do
@@ -226,9 +300,59 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:direction, :string, default_value: :desc, description: "The sorting direction")
       resolve(&Admin.list_relay_followings/3)
     end
+
+    @desc """
+    List instances
+    """
+    field :instances, :paginated_instance_list do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated relay followings list"
+      )
+
+      arg(:limit, :integer,
+        default_value: 10,
+        description: "The limit of relay followings per page"
+      )
+
+      arg(:order_by, :instances_sort_fields,
+        default_value: :event_count,
+        description: "The field to order by the list"
+      )
+
+      arg(:filter_domain, :string, default_value: nil, description: "Filter by domain")
+
+      arg(:filter_follow_status, :instance_filter_follow_status,
+        default_value: :all,
+        description: "Whether or not to filter instances by the follow status"
+      )
+
+      arg(:filter_suspend_status, :instance_filter_suspend_status,
+        default_value: :all,
+        description: "Whether or not to filter instances by the suspended status"
+      )
+
+      arg(:direction, :string, default_value: :desc, description: "The sorting direction")
+      resolve(&Admin.get_instances/3)
+    end
+
+    @desc """
+    Get an instance's details
+    """
+    field :instance, :instance do
+      arg(:domain, non_null(:id), description: "The instance domain")
+      resolve(&Admin.get_instance/3)
+    end
   end
 
   object :admin_mutations do
+    @desc "Add an instance subscription"
+    field :add_instance, type: :instance do
+      arg(:domain, non_null(:string), description: "The instance domain to add")
+
+      resolve(&Admin.create_instance/3)
+    end
+
     @desc "Add a relay subscription"
     field :add_relay, type: :follower do
       arg(:address, non_null(:string), description: "The relay hostname to add")
@@ -284,6 +408,23 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:instance_languages, list_of(:string), description: "The instance's languages")
 
       resolve(&Admin.save_settings/3)
+    end
+
+    @desc """
+    For an admin to update an user
+    """
+    field :admin_update_user, type: :user do
+      arg(:id, non_null(:id), description: "The user's ID")
+      arg(:email, :string, description: "The user's new email")
+      arg(:confirmed, :boolean, description: "Manually confirm the user's account")
+      arg(:role, :user_role, description: "Set user's new role")
+
+      arg(:notify, :boolean,
+        default_value: false,
+        description: "Whether or not to notify the user of the change"
+      )
+
+      resolve(&Admin.update_user/3)
     end
   end
 end

@@ -19,8 +19,8 @@ function localeShortWeekDayNames(): string[] {
 }
 
 // https://stackoverflow.com/a/18650828/10204399
-function formatBytes(bytes: number, decimals = 2): string {
-  if (bytes === 0) return "0 Bytes";
+function formatBytes(bytes: number, decimals = 2, zero = "0 Bytes"): string {
+  if (bytes === 0) return zero;
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;

@@ -301,7 +301,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://nowhere.absolute/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://nowhere.absolute/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 404, body: ""}}
       end)
 
@@ -310,7 +310,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
         %{
           method: :get,
           url:
-            "http://nowhere.absolute/.well-known/webfinger?resource=acct:not_existing@nowhere.absolute"
+            "https://nowhere.absolute/.well-known/webfinger?resource=acct:not_existing@nowhere.absolute"
         },
         _opts ->
           {:ok, %Tesla.Env{status: 404, body: ""}}

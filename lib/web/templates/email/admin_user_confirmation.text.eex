@@ -1,0 +1,7 @@
+<%= gettext "An administrator manually confirmed your account" %>
+==
+<%= gettext "Hi there! We just wanted to inform you that an administrator from %{instance} just manually confirmed your account.", %{instance: @instance_name} %>
+
+<%= gettext "You may now login using your credentials on the service:" %> <%= "#{Mobilizon.Web.Endpoint.url()}/login" %>
+
+<%= gettext "If something doesn't feel right to you, please contact the instance administrator through the contact methods on the instance's about page: %{about_page}.", %{about_page: "#{Mobilizon.Web.Endpoint.url()}/about/instance"} %>

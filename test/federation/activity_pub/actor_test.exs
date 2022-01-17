@@ -30,7 +30,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://framapiaf.org/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://framapiaf.org/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 404, body: ""}}
       end)
 
@@ -43,7 +43,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
       |> expect(:call, fn
         %{
           method: :get,
-          url: "http://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
+          url: "https://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
         },
         _opts ->
           {:ok, %Tesla.Env{status: 200, body: webfinger_data}}
@@ -69,7 +69,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
 
       HostMetaClientMock
       |> expect(:call, fn
-        %{method: :get, url: "http://framapiaf.org/.well-known/host-meta"}, _opts ->
+        %{method: :get, url: "https://framapiaf.org/.well-known/host-meta"}, _opts ->
           {:ok, %Tesla.Env{status: 404, body: ""}}
       end)
 
@@ -82,7 +82,7 @@ defmodule Mobilizon.Federation.ActivityPub.ActorTest do
       |> expect(:call, fn
         %{
           method: :get,
-          url: "http://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
+          url: "https://framapiaf.org/.well-known/webfinger?resource=acct:tcit@framapiaf.org"
         },
         _opts ->
           {:ok, %Tesla.Env{status: 200, body: webfinger_data}}

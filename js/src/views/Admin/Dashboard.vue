@@ -1,19 +1,11 @@
 <template>
   <div>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
-      <ul>
-        <li>
-          <router-link :to="{ name: RouteName.ADMIN }">{{
-            $t("Admin")
-          }}</router-link>
-        </li>
-        <li class="is-active">
-          <router-link :to="{ name: RouteName.ADMIN_DASHBOARD }">{{
-            $t("Dashboard")
-          }}</router-link>
-        </li>
-      </ul>
-    </nav>
+    <breadcrumbs-nav
+      :links="[
+        { name: RouteName.ADMIN, text: $t('Admin') },
+        { text: $t('Dashboard') },
+      ]"
+    />
     <section>
       <h1 class="title">{{ $t("Administration") }}</h1>
       <div class="tile is-ancestor" v-if="dashboard">

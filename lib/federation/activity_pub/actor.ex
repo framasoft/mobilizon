@@ -33,7 +33,10 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
     case Actors.get_actor_by_url(url, preload) do
       {:ok, %Actor{} = cached_actor} ->
         if Actors.needs_update?(cached_actor) do
-          __MODULE__.make_actor_from_url(url, options)
+          case __MODULE__.make_actor_from_url(url, options) do
+            {:ok, %Actor{} = actor} -> {:ok, actor}
+            {:error, _} -> {:ok, cached_actor}
+          end
         else
           {:ok, cached_actor}
         end
@@ -83,11 +86,14 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
     Logger.debug("Finding or making actor from nickname #{nickname}")
 
     case Actors.get_actor_by_name_with_preload(nickname, type) do
-      %Actor{url: actor_url} = actor ->
-        if Actors.needs_update?(actor) do
-          make_actor_from_url(actor_url, preload: true)
+      %Actor{url: actor_url} = cached_actor ->
+        if Actors.needs_update?(cached_actor) do
+          case __MODULE__.make_actor_from_url(actor_url, preload: true) do
+            {:ok, %Actor{} = actor} -> {:ok, actor}
+            {:error, _} -> {:ok, cached_actor}
+          end
         else
-          {:ok, actor}
+          {:ok, cached_actor}
         end
 
       nil ->
@@ -102,15 +108,15 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   @doc """
   Create an actor inside our database from username, using WebFinger to find out its AP ID and then fetch it
   """
-  @spec make_actor_from_nickname(nickname :: String.t(), preload :: boolean) ::
+  @spec make_actor_from_nickname(nickname :: String.t(), options :: Keyword.t()) ::
           {:ok, Actor.t()} | {:error, make_actor_errors | WebFinger.finger_errors()}
-  def make_actor_from_nickname(nickname, preload \\ false) do
+  def make_actor_from_nickname(nickname, options \\ []) do
     Logger.debug("Fingering actor from nickname #{nickname}")
 
     case WebFinger.finger(nickname) do
       {:ok, url} when is_binary(url) ->
         Logger.debug("Matched #{nickname} to URL #{url}, now making actor")
-        make_actor_from_url(url, preload: preload)
+        make_actor_from_url(url, options)
 
       {:error, e} ->
         {:error, e}
