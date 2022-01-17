@@ -169,20 +169,12 @@ msgstr "Händelsen %{event} skapades av %{profile}."
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:34
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:13
 msgid "The event %{event} was deleted by %{profile}."
-msgstr ""
-
-#, elixir-format
-msgid "The event %{event} was deleted by %{profile}."
 msgstr "Händelsen %{event} togs bort av %{profile}."
 
 #: lib/service/activity/renderer/event.ex:33
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:19 lib/web/templates/email/activity/_event_activity_item.text.eex:7
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:7
-msgid "The event %{event} was updated by %{profile}."
-msgstr ""
-
-#, elixir-format
 msgid "The event %{event} was updated by %{profile}."
 msgstr "Händelsen %{event} uppdaterades av %{profile}."
 
@@ -215,20 +207,12 @@ msgstr "%{member} gick med i gruppen."
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:58
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:25
 msgid "%{profile} posted a comment on the event %{event}."
-msgstr ""
-
-#, elixir-format
-msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} la en kommentar till händelsen %{event}."
 
 #: lib/service/activity/renderer/event.ex:54
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:43 lib/web/templates/email/activity/_event_activity_item.text.eex:19
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:43
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:19
-msgid "%{profile} replied to a comment on the event %{event}."
-msgstr ""
-
-#, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} svarade på en kommentar i evenemanget %{event}."
 

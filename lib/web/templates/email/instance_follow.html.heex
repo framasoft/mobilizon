@@ -35,21 +35,25 @@
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events.", name: @follower.name, domain: @follower.domain) |> raw %>
+            <%= if @follower.type == :Application do %><%= gettext("<b>%{name} (%{domain})</b> just requested to follow your instance.", name: @follower.name, domain: @follower.domain) |> raw %><% else %><%= gettext("<b>%{name}</b> just requested to follow your instance.", name: Mobilizon.Actors.Actor.display_name_and_username(@follower)) |> raw %><% end %>
+            <br />
+            <%= if @follower.type == :Application do %><%= gettext "If you accept, this instance will receive all of your public events." %><% else %><%= gettext "If you accept, this profile will receive all of your public events." %><% end %>
           </p>
         </td>
       </tr>
+      <%= if @follower.type == :Application do %>
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0;">
-            <%= gettext("Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: @follower.name, domain: @follower.domain) %>
+            <%= gettext "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.", name: @follower.name, domain: @follower.domain %>
           </p>
         </td>
       </tr>
+      <% end %>
       <tr>
         <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
           <p style="margin: 0">
-            <%= gettext "To accept this invitation, head over to the instance's admin settings." %>
+            <%= if @follower.type == :Application do %><%= gettext "To accept this invitation, head over to the instance's admin settings." %><% else %><%= gettext "To accept this invitation, head over to the profile's admin page." %><% end %>
           </p>
         </td>
       </tr>
@@ -62,9 +66,15 @@
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
-                      <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/settings/admin/relays/followers" }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "See the federation settings" %>
+                    <%= if @follower.type == :Application do %>
+                      <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/settings/admin/instances/#{@follower.domain}" }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "View the details" %>
                       </a>
+                    <% else %>
+                      <a href={"#{ "#{Mobilizon.Web.Endpoint.url()}/settings/admin/profiles/#{@follower.id}" }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
+                        <%= gettext "View the details" %>
+                      </a>
+                    <% end %>
                     </td>
                   </tr>
                 </table>
