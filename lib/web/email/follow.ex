@@ -20,7 +20,7 @@ defmodule Mobilizon.Web.Email.Follow do
   def send_notification_to_admins(
         %Follower{
           # approved: false,
-          actor: %Actor{} = follower,
+          actor: %Actor{type: :Application} = follower,
           target_actor: %Actor{id: target_actor_id}
         } = _follow
       ) do
