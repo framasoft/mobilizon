@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-14 08:50+0000\n"
-"Last-Translator: Kristoffer Grundström <swedishsailfishosuser@tutanota.com>\n"
+"PO-Revision-Date: 2022-01-17 15:44+0000\n"
+"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: Swedish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/sv/>\n"
 "Language: sv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -301,10 +301,10 @@ msgid "Here's your weekly activity recap"
 msgstr "Här är din veckas aktivitetssammanfattning"
 
 #: lib/web/email/activity.ex:119 lib/web/email/activity.ex:140
-#, elixir-format
-#, elixir-format
 #: lib/web/email/activity.ex:119
 #: lib/web/email/activity.ex:140
+#, elixir-format
+#, elixir-format
 msgid "Activity notification for %{instance}"
 msgstr "Aktivitetsavisering för %{instance}"
 
@@ -337,9 +337,9 @@ msgstr "%{profile} har lagt en ny kommentar under ditt evenemang %{event}."
 
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:36 lib/web/templates/email/activity/_comment_activity_item.text.eex:13
-#, elixir-format
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:36
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
+#, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr "%{profile} har lagt ett nytt svar under ditt evenemang %{event}."
 
