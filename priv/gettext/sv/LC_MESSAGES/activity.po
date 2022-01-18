@@ -254,20 +254,12 @@ msgstr "Aktivitet på %{instance}"
 #: lib/web/templates/email/email_anonymous_activity.html.heex:41
 #: lib/web/templates/email/email_anonymous_activity.text.eex:5
 msgid "%{profile} has posted an announcement under event %{event}."
-msgstr ""
-
-#, elixir-format
-msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} skickade ut en kungörelse under händelsen %{event}."
 
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:4 lib/web/templates/email/activity/_comment_activity_item.text.eex:1
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:4
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:1
-msgid "%{profile} mentionned you in a comment under event %{event}."
-msgstr ""
-
-#, elixir-format
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} nämnde dig i en kommentar under händelsen %{event}."
 
@@ -312,10 +304,6 @@ msgstr "Veckoaktivitetssammanfattning för %{instance}"
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:51 lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:51
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
-msgid "%{profile} has posted a new comment under your event %{event}."
-msgstr ""
-
-#, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr "%{profile} har lagt en ny kommentar under ditt evenemang %{event}."
 
