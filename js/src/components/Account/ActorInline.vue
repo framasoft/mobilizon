@@ -9,20 +9,22 @@
 
     <div class="actor-name">
       <p>
-        {{ actor.name || `@${usernameWithDomain(actor)}` }}
+        {{ displayName(actor) }}
       </p>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
-import { IActor, usernameWithDomain } from "../../types/actor";
+import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 
 @Component
 export default class ActorInline extends Vue {
   @Prop({ required: true, type: Object }) actor!: IActor;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 }
 </script>
 <style lang="scss" scoped>
