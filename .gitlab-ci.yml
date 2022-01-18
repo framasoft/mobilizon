@@ -59,8 +59,11 @@ lint-elixir:
     - mix deps.get
   script:
     - export EXITVALUE=0
+    - git fetch origin ${CI_DEFAULT_BRANCH}
+    - TARGET_SHA1=$(git show-ref -s ${CI_DEFAULT_BRANCH})
+    - echo "$TARGET_SHA1"
     - mix format --check-formatted --dry-run || export EXITVALUE=1
-    - mix credo --strict -a || export EXITVALUE=1
+    - mix credo diff --from-git-merge-base $TARGET_SHA1 --strict -a || export EXITVALUE=1
     - mix sobelow --config || export EXITVALUE=1
     - exit $EXITVALUE
 
