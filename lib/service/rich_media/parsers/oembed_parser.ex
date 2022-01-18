@@ -67,7 +67,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
          {:ok, data} <- Jason.decode(json),
          data <-
            data
-           |> Map.new(fn {k, v} -> {String.to_existing_atom(k), v} end)
+           |> Map.new(fn {k, v} -> {String.to_existing_atom(k), String.trim(v)} end)
            |> Map.take(@oembed_allowed_attributes) do
       {:ok, data}
     end

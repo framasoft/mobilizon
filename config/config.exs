@@ -185,6 +185,12 @@ config :phoenix, :filter_parameters, ["password", "token"]
 config :absinthe, schema: Mobilizon.GraphQL.Schema
 config :absinthe, Absinthe.Logger, filter_variables: ["token", "password", "secret"]
 
+config :codepagex, :encodings, [
+  :ascii,
+  ~r[iso8859]i,
+  :"VENDORS/MICSFT/WINDOWS/CP1252"
+]
+
 config :mobilizon, Mobilizon.Web.Gettext, split_module_by: [:locale, :domain]
 
 config :ex_cldr,

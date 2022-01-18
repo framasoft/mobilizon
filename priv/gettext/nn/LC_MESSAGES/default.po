@@ -1520,7 +1520,7 @@ msgid "A title is required for the post"
 msgstr "Du treng ein tittel på innlegget"
 
 #, elixir-format
-#: lib/web/templates/email/instance_follow.text.eex:3
+#: lib/web/templates/email/instance_follow.text.eex:5
 msgid "%{name} (%{domain}) just requested to follow your instance."
 msgstr "%{name} (%{domain}) har spurt om å fylgja nettstaden din."
 
@@ -1530,15 +1530,8 @@ msgid "%{name} requests to follow your instance"
 msgstr "%{name} spør om å fylgja nettstaden din"
 
 #, elixir-format
-#: lib/web/templates/email/instance_follow.html.heex:38
-msgid "<b>%{name} (%{domain})</b> just requested to follow your instance. If you accept, this instance will receive all of your instance's public events."
-msgstr ""
-"<b>%{name} (%{domain})</b> har nett spurt om å fylgja nettstaden din. Viss "
-"du seier ja, vil nettstaden få alle dei offentlege hendingane på nettstaden "
-"din."
-
-#, elixir-format
-#: lib/web/templates/email/instance_follow.text.eex:4
+#: lib/web/templates/email/instance_follow.html.heex:40
+#: lib/web/templates/email/instance_follow.text.eex:6
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
 "Viss du seier ja, vil nettstaden få alle dei offentlege hendingane dine."
@@ -1549,13 +1542,8 @@ msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr "Nettstaden %{name} (%{domain}) spør om å fylgja nettstaden din"
 
 #, elixir-format
-#: lib/web/templates/email/instance_follow.html.heex:66
-msgid "See the federation settings"
-msgstr "Sjå på innstillingane for spreiing"
-
-#, elixir-format
-#: lib/web/templates/email/instance_follow.html.heex:52
-#: lib/web/templates/email/instance_follow.text.eex:6
+#: lib/web/templates/email/instance_follow.html.heex:56
+#: lib/web/templates/email/instance_follow.text.eex:9
 msgid "To accept this invitation, head over to the instance's admin settings."
 msgstr ""
 "Gå til administratorinnstillingane for nettstaden for å godta denne "
@@ -1568,8 +1556,8 @@ msgid "Want to connect?"
 msgstr "Vil du kopla til?"
 
 #, elixir-format
-#: lib/web/templates/email/instance_follow.html.heex:45
-#: lib/web/templates/email/instance_follow.text.eex:5
+#: lib/web/templates/email/instance_follow.html.heex:48
+#: lib/web/templates/email/instance_follow.text.eex:7
 msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
 "Merk: At %{name} (%{domain}) fylgjer deg, tyder ikkje plent at du fylgjer "
@@ -2123,4 +2111,40 @@ msgstr ""
 #, elixir-format, ex-autogen, fuzzy
 #: lib/web/templates/email/admin_user_role_changed.html.heex:38
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just changed your account role."
+msgstr ""
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/web/templates/email/instance_follow.text.eex:5
+msgid "%{name} just requested to follow your instance."
+msgstr "%{name} spør om å fylgja nettstaden din"
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/web/templates/email/instance_follow.html.heex:38
+msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
+msgstr "%{name} (%{domain}) har spurt om å fylgja nettstaden din."
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/web/templates/email/instance_follow.html.heex:38
+msgid "<b>%{name}</b> just requested to follow your instance."
+msgstr "%{name} spør om å fylgja nettstaden din"
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/web/templates/email/instance_follow.html.heex:40
+#: lib/web/templates/email/instance_follow.text.eex:6
+msgid "If you accept, this profile will receive all of your public events."
+msgstr ""
+"Viss du seier ja, vil nettstaden få alle dei offentlege hendingane dine."
+
+#, elixir-format, ex-autogen, fuzzy
+#: lib/web/templates/email/instance_follow.html.heex:56
+#: lib/web/templates/email/instance_follow.text.eex:9
+msgid "To accept this invitation, head over to the profile's admin page."
+msgstr ""
+"Gå til administratorinnstillingane for nettstaden for å godta denne "
+"invitasjonen."
+
+#, elixir-format, ex-autogen
+#: lib/web/templates/email/instance_follow.html.heex:71
+#: lib/web/templates/email/instance_follow.html.heex:75
+msgid "View the details"
 msgstr ""

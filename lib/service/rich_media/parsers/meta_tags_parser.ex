@@ -53,7 +53,10 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
       end)
 
     if data[to_string(key_name)] in Enum.map(allowed_attributes, &to_string/1) do
-      %{String.to_existing_atom(data[to_string(key_name)]) => data[to_string(value_name)]}
+      %{
+        String.to_existing_atom(data[to_string(key_name)]) =>
+          String.trim(data[to_string(value_name)])
+      }
     else
       %{}
     end
@@ -65,7 +68,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
   defp maybe_put_title(meta, html) when meta != %{} do
     case get_page_title(html) do
       "" -> meta
-      title -> Map.put_new(meta, :title, title)
+      title -> Map.put_new(meta, :title, String.trim(title))
     end
   end
 
@@ -80,7 +83,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.MetaTagsParser do
         meta
 
       description ->
-        Map.put_new(meta, :description, description)
+        Map.put_new(meta, :description, String.trim(description))
     end
   end
 

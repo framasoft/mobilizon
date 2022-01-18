@@ -7,9 +7,7 @@
       <b-field :label="$t('Title')">
         <b-input v-model="title" />
       </b-field>
-      <b-field :label="$t('Assigned to')">
-        <actor-auto-complete v-model="assignedTo" />
-      </b-field>
+      <b-field :label="$t('Assigned to')"> </b-field>
       <b-field :label="$t('Due on')">
         <b-datepicker v-model="dueDate" :first-day-of-week="firstDayOfWeek" />
       </b-field>
@@ -17,19 +15,15 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Prop, Vue } from "vue-property-decorator";
 import debounce from "lodash/debounce";
 import { DebouncedFunc } from "lodash";
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
-import ActorAutoComplete from "../Account/ActorAutoComplete.vue";
 import { IPerson } from "../../types/actor";
 
-@Component({
-  components: { ActorAutoComplete },
-})
 export default class Todo extends Vue {
   @Prop({ required: true, type: Object }) todo!: ITodo;
 

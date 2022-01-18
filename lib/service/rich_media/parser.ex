@@ -74,6 +74,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
            {:is_html, _response_headers, true} <-
              {:is_html, response_headers, is_html(response_headers)} do
         body
+        |> convert_utf8(response_headers)
         |> maybe_parse()
         |> Map.put(:url, url)
         |> maybe_add_favicon()
@@ -85,6 +86,10 @@ defmodule Mobilizon.Service.RichMedia.Parser do
           data = get_data_for_media(response_headers, url)
 
           {:ok, data}
+
+        {:ok, err} ->
+          Logger.debug("HTTP error: #{inspect(err)}")
+          {:error, "HTTP error: #{inspect(err)}"}
 
         {:error, err} ->
           Logger.debug("HTTP error: #{inspect(err)}")
@@ -195,6 +200,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   @spec maybe_parse(String.t()) :: map()
   defp maybe_parse(html) do
     Enum.reduce_while(parsers(), %{}, fn parser, acc ->
+      Logger.debug("Using #{inspect(parser)} to parse link")
+
       case parser.parse(html, acc) do
         {:ok, data} ->
           {:halt, data}
@@ -307,14 +314,88 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   # Twitter requires a well-know crawler user-agent to show server-rendered data
   defp default_user_agent("https://twitter.com/" <> _) do
-    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    Config.instance_user_agent() <> " (compatible; bot)"
   end
 
   defp default_user_agent("https://mobile.twitter.com/" <> _) do
-    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    Config.instance_user_agent() <> " (compatible; bot)"
   end
 
   defp default_user_agent(_url) do
     Config.instance_user_agent()
+  end
+
+  defp convert_utf8(body, headers) do
+    headers
+    |> get_header("Content-Type")
+    |> handle_charset(body)
+  end
+
+  defp handle_charset(nil, body) do
+    case detect_charset_from_meta(body) do
+      "" -> body
+      nil -> body
+      charset -> convert_body(body, charset)
+    end
+  end
+
+  defp handle_charset(content_type, body) do
+    case charset_from_content_type(content_type) do
+      nil -> handle_charset(nil, body)
+      charset -> convert_body(body, charset)
+    end
+  end
+
+  defp charset_from_content_type(content_type) do
+    with [_, params] <- :binary.split(content_type, ";"),
+         %{"charset" => charset} <- Utils.params(params) do
+      charset
+    else
+      _ -> nil
+    end
+  end
+
+  defp detect_charset_from_meta(body) do
+    Logger.debug("Trying to detect charset from meta")
+
+    document = Floki.parse_document!(body)
+
+    case document
+         |> Floki.find("meta[http-equiv=\"content-type\"]")
+         |> List.first() do
+      nil ->
+        case document
+             |> Floki.find("meta[http-equiv=\"Content-Type\"]")
+             |> List.first() do
+          nil -> nil
+          meta -> content_type_from_meta(meta)
+        end
+
+      meta ->
+        content_type_from_meta(meta)
+    end
+  end
+
+  defp content_type_from_meta(meta) do
+    Logger.debug("Finding content-type into <meta> element")
+
+    meta
+    |> Floki.attribute("content")
+    |> List.first()
+    |> String.trim()
+    |> charset_from_content_type()
+  end
+
+  defp convert_body(body, "utf-8"), do: body
+
+  defp convert_body(body, charset) do
+    Logger.debug("Converting body from #{charset}")
+    Codepagex.to_string!(body, fix_charset(charset))
+  end
+
+  defp fix_charset("windows-1252"), do: :"VENDORS/MICSFT/WINDOWS/CP1252"
+
+  defp fix_charset(charset) do
+    String.replace(charset, "-", "_")
   end
 end

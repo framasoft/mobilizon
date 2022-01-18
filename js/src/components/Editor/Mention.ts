@@ -7,6 +7,8 @@ import apolloProvider from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
 import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
+import { MentionOptions } from "@tiptap/extension-mention";
+import { Editor } from "@tiptap/core";
 
 const client =
   apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
@@ -24,13 +26,21 @@ const fetchItems = async (query: string): Promise<IPerson[]> => {
 
 const debouncedFetchItems = pDebounce(fetchItems, 200);
 
-const mentionOptions: Partial<any> = {
+const mentionOptions: MentionOptions = {
   HTMLAttributes: {
     class: "mention",
     dir: "ltr",
   },
+  renderLabel({ options, node }) {
+    return `${options.suggestion.char}${node.attrs.label ?? node.attrs.id}`;
+  },
   suggestion: {
-    items: async (query: string): Promise<IPerson[]> => {
+    items: async ({
+      query,
+    }: {
+      query: string;
+      editor: Editor;
+    }): Promise<IPerson[]> => {
       if (query === "") {
         return [];
       }
@@ -70,8 +80,12 @@ const mentionOptions: Partial<any> = {
           return component.ref?.onKeyDown(props);
         },
         onExit() {
-          popup[0].destroy();
-          component.destroy();
+          if (popup && popup[0]) {
+            popup[0].destroy();
+          }
+          if (component) {
+            component.destroy();
+          }
         },
       };
     },

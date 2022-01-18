@@ -7,7 +7,7 @@
       :key="index"
       @click="selectItem(index)"
     >
-      <actor-card :actor="item" />
+      <actor-inline :actor="item" />
     </button>
   </div>
 </template>
@@ -16,11 +16,11 @@
 import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 import { displayName, usernameWithDomain } from "@/types/actor/actor.model";
 import { IPerson } from "@/types/actor";
-import ActorCard from "../../components/Account/ActorCard.vue";
+import ActorInline from "../../components/Account/ActorInline.vue";
 
 @Component({
   components: {
-    ActorCard,
+    ActorInline,
   },
 })
 export default class MentionList extends Vue {
