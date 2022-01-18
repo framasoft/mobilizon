@@ -308,11 +308,11 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   # Twitter requires a well-know crawler user-agent to show server-rendered data
   defp default_user_agent("https://twitter.com/" <> _) do
-    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    Config.instance_user_agent() <> " (compatible; bot)"
   end
 
   defp default_user_agent("https://mobile.twitter.com/" <> _) do
-    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    Config.instance_user_agent() <> " (compatible; bot)"
   end
 
   defp default_user_agent(_url) do
