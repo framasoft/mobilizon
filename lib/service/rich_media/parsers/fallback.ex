@@ -35,7 +35,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.Fallback do
   defp get_page(html, :title) do
     html
     |> Floki.parse_document!()
-    |> Floki.find("html title")
+    |> Floki.find("title")
     |> List.first()
     |> Floki.text()
     |> String.trim()

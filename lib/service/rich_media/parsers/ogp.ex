@@ -54,6 +54,7 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OGP do
   defp transform_tags(data) do
     data
     |> Enum.reject(fn {_, v} -> is_nil(v) end)
+    |> Enum.map(fn {k, v} -> {k, String.trim(v)} end)
     |> Map.new()
     |> Map.update(:image_remote_url, Map.get(data, :image), & &1)
     |> Map.update(:width, get_integer_value(data, :"image:width"), & &1)

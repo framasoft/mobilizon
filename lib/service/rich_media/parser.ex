@@ -87,6 +87,10 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
           {:ok, data}
 
+        {:ok, err} ->
+          Logger.debug("HTTP error: #{inspect(err)}")
+          {:error, "HTTP error: #{inspect(err)}"}
+
         {:error, err} ->
           Logger.debug("HTTP error: #{inspect(err)}")
           {:error, "HTTP error: #{inspect(err)}"}
@@ -196,6 +200,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
   @spec maybe_parse(String.t()) :: map()
   defp maybe_parse(html) do
     Enum.reduce_while(parsers(), %{}, fn parser, acc ->
+      Logger.debug("Using #{inspect(parser)} to parse link")
+
       case parser.parse(html, acc) do
         {:ok, data} ->
           {:halt, data}
