@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2021-11-17 15:53+0000\n"
+"PO-Revision-Date: 2022-01-19 05:44+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:48
 msgid ""
@@ -2195,19 +2195,16 @@ msgstr ""
 "acaba de cambiar el rol de su cuenta."
 
 #: lib/web/templates/email/instance_follow.text.eex:5
-#, fuzzy
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name} solicita seguir tu instancia"
+msgstr "%{name} solicita seguir tu instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:38
-#, fuzzy
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
-msgstr "%{name} (%{domain}) sólo solicitó seguir su instancia."
+msgstr "<b>%{name} (%{domain})</b>sólo solicitó seguir su instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:38
-#, fuzzy
 msgid "<b>%{name}</b> just requested to follow your instance."
-msgstr "%{name} solicita seguir tu instancia"
+msgstr "<b>%{name}</b> solicita seguir tu instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:40
 #: lib/web/templates/email/instance_follow.text.eex:6
