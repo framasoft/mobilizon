@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-01-19 05:44+0000\n"
+"PO-Revision-Date: 2022-01-19 22:30+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -2196,32 +2196,32 @@ msgstr ""
 
 #: lib/web/templates/email/instance_follow.text.eex:5
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name} solicita seguir tu instancia."
+msgstr "%{name} acaba de solicitar seguir tu instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:38
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
-msgstr "<b>%{name} (%{domain})</b>sólo solicitó seguir su instancia."
+msgstr "<b>{name} (%{domain}) </b>solicitó seguir su instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:38
 msgid "<b>%{name}</b> just requested to follow your instance."
-msgstr "<b>%{name}</b> solicita seguir tu instancia."
+msgstr "<b>%{name}</b> acaba de solicitar seguir tu instancia."
 
 #: lib/web/templates/email/instance_follow.html.heex:40
 #: lib/web/templates/email/instance_follow.text.eex:6
-#, fuzzy
 msgid "If you accept, this profile will receive all of your public events."
-msgstr "Si acepta, esta instancia recibirá todos sus eventos públicos."
+msgstr "Si acepta, este perfil recibirá todos sus eventos públicos."
 
 #: lib/web/templates/email/instance_follow.html.heex:56
 #: lib/web/templates/email/instance_follow.text.eex:9
-#, fuzzy
 msgid "To accept this invitation, head over to the profile's admin page."
-msgstr "Para aceptar esta invitación, dirígete a tus grupos."
+msgstr ""
+"Para aceptar esta invitación, diríjase a la página de administración del "
+"perfil."
 
 #: lib/web/templates/email/instance_follow.html.heex:71
 #: lib/web/templates/email/instance_follow.html.heex:75
 msgid "View the details"
-msgstr ""
+msgstr "Ver los detalles"
 
 #: lib/web/templates/email/instance_follow.html.heex:38
 msgid ""
