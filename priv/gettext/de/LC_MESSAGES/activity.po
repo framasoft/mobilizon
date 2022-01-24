@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-21 00:27+0000\n"
+"PO-Revision-Date: 2022-01-24 12:23+0000\n"
 "Last-Translator: Al Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/de/>\n"
@@ -240,8 +240,8 @@ msgstr[1] "Eine weitere Aktivität anzeigen"
 #, elixir-format
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Es hat sich etwas getan!"
+msgstr[1] "Es hat sich einiges getan!"
 
 #: lib/service/activity/renderer/renderer.ex:46
 #, elixir-format
@@ -269,11 +269,11 @@ msgstr ""
 "erwähnt."
 
 #: lib/web/templates/email/email_direct_activity.html.heex:155
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
 "Möchten Sie keine Aktivitätsbenachrichtigungen erhalten? Sie können die "
-"Häufigkeit ändern oder sie in %{tag_start}ihren Einstellungen%{tag_end} "
+"Häufigkeit ändern oder sie in %{tag_start}Ihren Einstellungen%{tag_end} "
 "deaktivieren."
 
 #: lib/web/templates/email/email_direct_activity.html.heex:42
@@ -322,12 +322,12 @@ msgstr ""
 "%{profile} hat eine neue Antwort unter Ihrer Veranstaltung %{event} gepostet."
 
 #: lib/web/email/activity.ex:46
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "Announcement for your event %{event}"
 msgstr "Ankündigung für Ihre Veranstaltung %{event}"
 
 #: lib/service/activity/renderer/group.ex:23
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "The group %{group} was updated by %{profile}."
 msgstr "Die Gruppe %{group} wurde von %{profile} aktualisiert."
 
@@ -423,7 +423,7 @@ msgid "%{profile} quit the group %{group}."
 msgstr "%{profile} hat die Gruppe verlassen."
 
 #: lib/service/activity/renderer/member.ex:63
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "%{profile} rejected the membership request from %{member} for group %{group}."
 msgstr ""
 "%{profile} hat die Mitgliedschaftsanfrage von %{member} für die Gruppe "
@@ -467,7 +467,7 @@ msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
 msgstr "%{profile} hat die Diskussion %{discussion} gelöscht."
 
 #: lib/service/activity/renderer/discussion.ex:56
-#, elixir-format, fuzzy
+#, elixir-format
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} hat dich in der Diskussion %{diskussion} in der Gruppe %{group} "
