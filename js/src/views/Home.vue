@@ -23,9 +23,6 @@
           <!-- <p v-if="!config.registrationsOpen">
               {{ $t("This instance isn't opened to registrations, but you can register on other instances.") }}
           </p>-->
-          <b-message type="is-danger" v-if="!config.registrationsOpen">{{
-            $t("Unfortunately, this instance isn't opened to registrations")
-          }}</b-message>
           <div class="buttons">
             <b-button
               type="is-primary"
