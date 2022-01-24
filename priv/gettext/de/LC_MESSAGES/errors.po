@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-01-21 00:27+0000\n"
+"PO-Revision-Date: 2022-01-24 12:23+0000\n"
 "Last-Translator: Al Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
@@ -994,9 +994,9 @@ msgid "Failed to validate user email"
 msgstr "Benutzer kann nicht validiert werden"
 
 #: lib/graphql/resolvers/participant.ex:146
-#, elixir-format
+#, elixir-format, fuzzy
 msgid "The anonymous actor ID is invalid"
-msgstr ""
+msgstr "Die anonyme ID ist ungültig"
 
 #: lib/graphql/resolvers/resource.ex:162
 #, elixir-format
@@ -1022,6 +1022,8 @@ msgstr "Format nicht unterstützt"
 #, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr ""
+"Eine für den Export in %{format} erforderliche Abhängigkeit ist nicht "
+"installiert"
 
 #: lib/graphql/resolvers/participant.ex:313
 #, elixir-format
@@ -1031,7 +1033,7 @@ msgstr "Beim Speichern des Exports ist ein Fehler aufgetreten"
 #: lib/web/controllers/export_controller.ex:30
 #, elixir-format
 msgid "Export to format %{format} is not enabled on this instance"
-msgstr ""
+msgstr "Export in Format %{format} ist auf dieser Instanz nicht aktivier"
 
 #: lib/graphql/resolvers/group.ex:167
 #, elixir-format
@@ -1125,13 +1127,13 @@ msgstr ""
 "Das Zurücknehmen einer Bestätigung von Benutzer:innen wird nicht unterstützt"
 
 #: lib/graphql/resolvers/admin.ex:363
-#, elixir-format, ex-autogen, fuzzy
+#, elixir-format, ex-autogen
 msgid "The new role must be different"
-msgstr "Die neue E-Mail muss anders lauten"
+msgstr "Die neue Rolle muss anders sein"
 
 #: lib/graphql/resolvers/admin.ex:314
-#, elixir-format, ex-autogen, fuzzy
+#, elixir-format, ex-autogen
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
-"Sie müssen eingeloggt und ein Administrator sein, um Admin-Einstellungen zu "
-"speichern"
+"Sie müssen angemeldet und ein Administrator:in sein, um Administrator:in-"
+"Einstellungen zu ändern"
