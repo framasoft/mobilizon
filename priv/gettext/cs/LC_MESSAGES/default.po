@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-01-27 22:05+0000\n"
+"PO-Revision-Date: 2022-01-28 00:12+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -2180,7 +2180,7 @@ msgid "%{name} just requested to follow your instance."
 msgstr "%{name} žádá o sledování vaší instance."
 
 #: lib/web/templates/email/instance_follow.html.heex:38
-#, elixir-format, ex-autogen, fuzzy
+#, elixir-format, ex-autogen
 msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
 msgstr "<b>%{name} (%{domain})</b> právě požádal o sledování vaší instance."
 
