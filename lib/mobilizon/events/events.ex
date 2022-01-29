@@ -1330,12 +1330,15 @@ defmodule Mobilizon.Events do
   defp events_for_location(query, %{location: location, radius: radius})
        when is_valid_string(location) and not is_nil(radius) do
     with {lon, lat} <- Geohax.decode(location),
-         point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})") do
+         point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})"),
+         {{x_min, y_min}, {x_max, y_max}} <- search_box({lon, lat}, radius) do
       query
       |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
       |> where(
-        [q],
-        st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
+        [q, ..., a],
+        st_x(a.geom) > ^x_min and st_x(a.geom) < ^x_max and
+          st_y(a.geom) > ^y_min and st_y(a.geom) < ^y_max and
+          st_dwithin_in_meters(^point, a.geom, ^(radius * 1000))
       )
     else
       _ -> query
@@ -1343,6 +1346,15 @@ defmodule Mobilizon.Events do
   end
 
   defp events_for_location(query, _args), do: query
+
+  @spec search_box({float(), float()}, float()) :: {{float, float}, {float, float}}
+  defp search_box({lon0, lat0}, radius) do
+    km_per_lat_deg = 111.195
+    lat_amp = radius / km_per_lat_deg
+    km_per_lon_deg_at_lat = Haversine.distance({0.0, lat0}, {1.0, lat0}) / 1000
+    lon_amp = radius / km_per_lon_deg_at_lat
+    {{lon0 - lon_amp, lat0 - lat_amp}, {lon0 + lon_amp, lat0 + lat_amp}}
+  end
 
   @spec filter_online(Ecto.Query.t(), map()) :: Ecto.Query.t()
   defp filter_online(query, %{type: :online}), do: is_online_fragment(query, true)
