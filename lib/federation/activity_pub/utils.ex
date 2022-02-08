@@ -112,6 +112,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
             "@id" => "mz:participationMessage",
             "@type" => "sc:Text"
           },
+          "isOnline" => %{
+            "@type" => "sc:Boolean",
+            "@id" => "mz:isOnline"
+          },
           "PropertyValue" => "sc:PropertyValue",
           "value" => "sc:value",
           "propertyID" => "sc:propertyID",

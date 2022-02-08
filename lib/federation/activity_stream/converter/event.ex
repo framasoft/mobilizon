@@ -139,7 +139,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "url" => event.url,
       "inLanguage" => event.language,
       "timezone" => event.options.timezone,
-      "contacts" => Enum.map(event.contacts, & &1.url)
+      "contacts" => Enum.map(event.contacts, & &1.url),
+      "isOnline" => event.options.is_online
     }
     |> maybe_add_physical_address(event)
     |> maybe_add_event_picture(event)
@@ -168,7 +169,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           "repliesModerationOption",
           if(Map.get(object, "commentsEnabled", true), do: :allow_all, else: :closed)
         ),
-      timezone: calculate_timezone(object, address)
+      timezone: calculate_timezone(object, address),
+      is_online: object["isOnline"] == true
     }
   end
 
