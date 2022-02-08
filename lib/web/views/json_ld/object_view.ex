@@ -53,6 +53,8 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
         organizer
       end
 
+    participant_count = Mobilizon.Events.count_participant_participants(event.id)
+
     json_ld = %{
       "@context" => "https://schema.org",
       "@type" => "Event",
@@ -63,6 +65,9 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "organizer" => organizer,
       "location" => render_all_locations(event),
       "eventAttendanceMode" => event |> attendance_mode() |> event_attendance_mode(),
+      "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
+      "remainingAttendeeCapacity" =>
+        remaining_attendee_capacity(event.options, participant_count),
       "eventStatus" =>
         if(event.status == :cancelled,
           do: "https://schema.org/EventCancelled",
@@ -229,4 +234,20 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   @spec virtual_location_links(list()) :: list()
   defp virtual_location_links(metadata),
     do: Enum.filter(metadata, &String.contains?(&1.key, @livestream_keys))
+
+  # TODO: Make this in common with Mobilizon.Federation.ActivityStream.Converter.Event
+  @spec remaining_attendee_capacity(map(), integer()) :: integer() | nil
+  defp remaining_attendee_capacity(
+         %{maximum_attendee_capacity: maximum_attendee_capacity},
+         participant_count
+       )
+       when is_integer(maximum_attendee_capacity) and maximum_attendee_capacity > 0 do
+    maximum_attendee_capacity - participant_count
+  end
+
+  defp remaining_attendee_capacity(
+         %{maximum_attendee_capacity: _},
+         _participant_count
+       ),
+       do: nil
 end

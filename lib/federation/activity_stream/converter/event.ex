@@ -110,6 +110,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
         do: {[@ap_public], [event.organizer_actor.followers_url]},
         else: {[attributed_to_or_default(event).followers_url], [@ap_public]}
 
+    participant_count = Mobilizon.Events.count_participant_participants(event.id)
+
     %{
       "type" => "Event",
       "to" => to,
@@ -129,6 +131,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "endTime" => event.ends_on |> shift_tz(event.options.timezone) |> date_to_string(),
       "tag" => event.tags |> build_tags(),
       "maximumAttendeeCapacity" => event.options.maximum_attendee_capacity,
+      "remainingAttendeeCapacity" =>
+        remaining_attendee_capacity(event.options, participant_count),
+      "participantCount" => participant_count,
       "repliesModerationOption" => event.options.comment_moderation,
       "commentsEnabled" => event.options.comment_moderation == :allow_all,
       "anonymousParticipationEnabled" => event.options.anonymous_participation,
@@ -310,4 +315,19 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
     |> get_url()
     |> fetch_actor()
   end
+
+  @spec remaining_attendee_capacity(map(), integer()) :: integer() | nil
+  defp remaining_attendee_capacity(
+         %{maximum_attendee_capacity: maximum_attendee_capacity},
+         participant_count
+       )
+       when is_integer(maximum_attendee_capacity) and maximum_attendee_capacity > 0 do
+    maximum_attendee_capacity - participant_count
+  end
+
+  defp remaining_attendee_capacity(
+         %{maximum_attendee_capacity: _},
+         _participant_count
+       ),
+       do: nil
 end
