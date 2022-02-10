@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-01-28 00:12+0000\n"
+"PO-Revision-Date: 2022-02-11 05:38+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -2053,7 +2053,7 @@ msgid "An administrator updated your role on %{instance}"
 msgstr "Administrátor aktualizoval vaši roli v %{instance}"
 
 #: lib/web/templates/email/email_changed_new.text.eex:3
-#, elixir-format, ex-autogen, fuzzy
+#, elixir-format, ex-autogen
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on %{instance}. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
 "Ahoj! Zdá se, že jste chtěli změnit e-mailovou adresu spojenou s vaším účtem "
