@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-01-24 12:23+0000\n"
-"Last-Translator: Al Wisi <alwisi@posteo.de>\n"
+"PO-Revision-Date: 2022-02-15 14:42+0000\n"
+"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -2201,7 +2201,7 @@ msgid "User"
 msgstr "Benutzer:in"
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:45
-#, elixir-format, ex-autogen, fuzzy
+#, elixir-format, ex-autogen
 msgid "You may now login using your credentials on the service."
 msgstr "Sie können sich nun mit Ihren Anmeldedaten bei dem Dienst anmelden."
 
