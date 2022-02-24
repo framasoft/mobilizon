@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-02-15 14:42+0000\n"
+"PO-Revision-Date: 2022-02-24 12:36+0000\n"
 "Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -1848,7 +1848,7 @@ msgstr "Ende"
 #: lib/web/templates/export/event_participants.html.heex:132
 #, elixir-format
 msgid "Number of participants"
-msgstr "Anzahl der Teilnehmer:innen"
+msgstr "Anzahl der Treilnehmenden"
 
 #: lib/web/templates/export/event_participants.html.heex:120
 #, elixir-format
@@ -1957,7 +1957,7 @@ msgstr "Verwalten Sie Ihre Teilnahme:"
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #, elixir-format
 msgid "Organizer: %{organizer}"
-msgstr "Organisator:in: %{organizer}"
+msgstr "Veranstalter:in: %{organizer}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:42
 #, elixir-format
@@ -1982,7 +1982,7 @@ msgstr "Titel: %{title}"
 #: lib/web/email/group.ex:44
 #, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
-msgstr "📅 Gerade von %{group} geplant: %{event}"
+msgstr "📅 Gerade erstellt von %{group}: %{event}"
 
 #: lib/web/templates/email/event_updated.text.eex:9
 #, elixir-format
@@ -2102,11 +2102,11 @@ msgstr "Eine Administrator:in hat Ihre Rolle auf %{instance} aktualisiert"
 #, elixir-format, ex-autogen
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on %{instance}. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
-"Hallo! Es scheint, dass Sie die mit Ihrem Konto verknüpfte E-Mail-Adresse "
-"auf <b>%{instance}</b> ändern wollten. Wenn Sie dies immer noch tun möchten, "
-"klicken Sie bitte auf die Schaltfläche unten, um die Änderung zu bestätigen. "
-"Sie können sich dann mit dieser neuen E-Mail-Adresse bei %{instance} "
-"anmelden."
+"Hallo zusammen! Es scheint, dass Sie die mit Ihrem Konto verknüpfte E-Mail-"
+"Adresse auf <b>%{instance}</b> ändern wollten. Wenn Sie dies immer noch tun "
+"möchten, klicken Sie bitte auf die Schaltfläche unten, um die Änderung zu "
+"bestätigen. Sie können sich dann mit dieser neuen E-Mail-Adresse bei "
+"%{instance} anmelden."
 
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:3
 #: lib/web/templates/email/admin_user_email_changed_old.text.eex:3
