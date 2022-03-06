@@ -3,40 +3,44 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-06 22:54+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-03-07 15:08+0000\n"
+"Last-Translator: Kenneth Aalberg <kenneaal@gmail.com>\n"
+"Language-Team: Norwegian Bokmål <https://weblate.framasoft.org/projects/"
+"mobilizon/backend/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 3.5.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:48
 #, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"Hvis du ikke ba om dette, vennligst ignorer denne eposten. Passordet ditt "
+"vil ikke endres før du bruker lenken nedenfor og lager et nytt passord."
 
 #: lib/web/templates/email/report.html.heex:74
 #, elixir-format
 msgid "%{title} by %{creator}"
-msgstr ""
+msgstr "%{title} av %{creator}"
 
 #: lib/web/templates/email/registration_confirmation.html.heex:58
 #, elixir-format
 msgid "Activate my account"
-msgstr ""
+msgstr "Aktiver kontoen min"
 
 #: lib/web/templates/email/email.html.heex:120
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Spør samfunnet på Framacolibri"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-format
 msgid "Comments"
-msgstr ""
+msgstr "Kommentarer"
 
 #: lib/web/templates/email/report.html.heex:72
 #: lib/web/templates/email/report.text.eex:11
@@ -47,59 +51,63 @@ msgstr ""
 #: lib/web/email/user.ex:49
 #, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Instruksjoner for å tilbakestille passordet ditt på %{instance}"
 
 #: lib/web/templates/email/report.text.eex:21
 #, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "Begrunnelse"
 
 #: lib/web/templates/email/password_reset.html.heex:61
 #, elixir-format
 msgid "Reset Password"
-msgstr ""
+msgstr "Tilbakestill passord"
 
 #: lib/web/templates/email/password_reset.html.heex:41
 #, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Det er enkelt å tilbakestille passordet ditt. Bare trykk på knappen nedenfor "
+"og følg instruksjonene, så er du i gang."
 
 #: lib/web/email/user.ex:28
 #, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgstr "Instruksjoner for å bekrefte Mobilizon-kontoen din på %{instance}"
 
 #: lib/web/email/admin.ex:24
 #, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr ""
+msgstr "Ny rapport på Mobilizon instans %{instance}"
 
 #: lib/web/templates/email/before_event_notification.html.heex:51
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-format
 msgid "Go to event page"
-msgstr ""
+msgstr "Gå til hendelsessiden"
 
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-format
 msgid "New report from %{reporter} on %{instance}"
-msgstr ""
+msgstr "Ny rapport fra %{reporter} på %{instance}"
 
 #: lib/web/templates/email/event_participation_approved.text.eex:1
 #, elixir-format
 msgid "Participation approved"
-msgstr ""
+msgstr "Deltagelse godkjent"
 
 #: lib/web/templates/email/password_reset.html.heex:13
 #: lib/web/templates/email/password_reset.text.eex:1
 #, elixir-format
 msgid "Password reset"
-msgstr ""
+msgstr "Tilbakestill passord"
 
 #: lib/web/templates/email/password_reset.text.eex:7
 #, elixir-format
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Det er enkelt å tilbakestille passordet ditt. Bare trykk på knappen nedenfor "
+"og følg instruksjonene, så er du i gang."
 
 #: lib/web/templates/email/registration_confirmation.text.eex:5
 #, elixir-format
