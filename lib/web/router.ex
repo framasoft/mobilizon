@@ -58,7 +58,7 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :atom_and_ical do
     plug(:put_secure_browser_headers)
-    plug(:accepts, ["atom", "ics", "html"])
+    plug(:accepts, ["atom", "ics", "html", "xml"])
   end
 
   pipeline :exports do
