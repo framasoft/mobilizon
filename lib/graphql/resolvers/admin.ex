@@ -176,8 +176,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
   @spec get_list_of_languages(any(), any(), any()) :: {:ok, String.t()} | {:error, any()}
   def get_list_of_languages(_parent, %{codes: codes}, _resolution) when is_list(codes) do
-    locale = Gettext.get_locale()
-    locale = if Cldr.known_locale_name?(locale), do: locale, else: "en"
+    locale = Mobilizon.Cldr.locale_or_default(Gettext.get_locale())
 
     case Language.known_languages(locale) do
       data when is_map(data) ->

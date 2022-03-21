@@ -12,4 +12,18 @@ defmodule Mobilizon.Cldr do
         else: nil
       ),
     providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
+
+  def known_locale?(locale) do
+    Mobilizon.Cldr.known_locale_names()
+    |> Enum.map(&Atom.to_string/1)
+    |> Enum.member?(locale)
+  end
+
+  def locale_or_default(locale, default \\ "en") do
+    if known_locale?(locale) do
+      locale
+    else
+      default
+    end
+  end
 end
