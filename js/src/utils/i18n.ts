@@ -49,6 +49,7 @@ export const i18n = new VueI18n({
   fallbackLocale: DEFAULT_LOCALE,
   formatFallbackMessages: true,
   pluralizationRules,
+  fallbackRootWithEmptyString: true,
 });
 
 console.debug("set VueI18n with default locale", DEFAULT_LOCALE);
