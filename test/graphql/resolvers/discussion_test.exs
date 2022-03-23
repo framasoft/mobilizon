@@ -52,9 +52,9 @@ defmodule Mobilizon.GraphQL.Resolvers.DiscussionTest do
   describe "create a discussion" do
     @create_discussion_mutation """
     mutation createDiscussion($title: String!, $actorId: ID!, $text: String!) {
-    createDiscussion(title: $title, text: $text, actorId: $actorId) {
-      ...DiscussionFields
-    }
+      createDiscussion(title: $title, text: $text, actorId: $actorId) {
+        ...DiscussionFields
+      }
     }
     #{@discussion_fields_fragment}
     """
