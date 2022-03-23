@@ -177,7 +177,7 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
   end
 
   @update_follower_mutation """
-  mutation UpdateFollower($id: ID!, $approved: Boolean) {
+  mutation UpdateFollower($id: ID!, $approved: Boolean!) {
     updateFollower(id: $id, approved: $approved) {
       id
       approved

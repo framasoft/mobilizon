@@ -64,7 +64,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PostTest do
   """
 
   @create_post """
-  mutation CreatePost($title: String!, $body: String, $attributedToId: ID!, $draft: Boolean) {
+  mutation CreatePost($title: String!, $body: String!, $attributedToId: ID!, $draft: Boolean) {
     createPost(title: $title, body: $body, attributedToId: $attributedToId, draft: $draft) {
       ...PostFragment
     }

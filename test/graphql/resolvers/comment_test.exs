@@ -19,7 +19,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
 
   describe "Comment Resolver" do
     @create_comment_mutation """
-    mutation CreateComment($text: String!, $eventId: ID, $inReplyToCommentId: ID) {
+    mutation CreateComment($text: String!, $eventId: ID!, $inReplyToCommentId: ID) {
       createComment(text: $text, eventId: $eventId, inReplyToCommentId: $inReplyToCommentId) {
         id,
         text,

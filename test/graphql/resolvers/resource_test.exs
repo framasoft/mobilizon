@@ -50,7 +50,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
   """
 
   @get_resource """
-  query GetResource($path: String, $username: String) {
+  query GetResource($path: String!, $username: String!) {
     resource(path: $path, username: $username) {
         id,
         title,
