@@ -185,7 +185,6 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   """
   object :instance do
     field(:domain, :id, description: "The domain name of the instance")
-    field(:has_relay, :boolean, description: "Whether this instance has a Mobilizon relay actor")
     field(:follower_status, :instance_follow_status, description: "Do we follow this instance")
     field(:followed_status, :instance_follow_status, description: "Does this instance follow us?")
 

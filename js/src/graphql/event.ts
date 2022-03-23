@@ -207,7 +207,7 @@ export const CREATE_EVENT = gql`
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]
-    $metadata: EventMetadataInput
+    $metadata: [EventMetadataInput]
   ) {
     createEvent(
       organizerActorId: $organizerActorId
@@ -257,7 +257,7 @@ export const EDIT_EVENT = gql`
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]
-    $metadata: EventMetadataInput
+    $metadata: [EventMetadataInput]
   ) {
     updateEvent(
       eventId: $id

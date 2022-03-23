@@ -1478,7 +1478,8 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert is_nil(Users.get_user(user.id))
 
-      assert %{success: 2, snoozed: 0, failure: 0} == Oban.drain_queue(queue: :background)
+      assert %{success: 2, snoozed: 0, failure: 0, discard: 0} ==
+               Oban.drain_queue(queue: :background)
 
       assert_raise Ecto.NoResultsError, fn ->
         Events.get_event!(event_id)

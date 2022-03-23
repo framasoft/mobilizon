@@ -75,7 +75,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     @create_event_mutation """
     mutation CreateEvent(
       $title: String!,
-      $description: String,
+      $description: String!,
       $begins_on: DateTime!,
       $ends_on: DateTime,
       $status: EventStatus,

@@ -11,7 +11,7 @@ defmodule Mobilizon.Service.Activity.CommentTest do
   alias Mobilizon.Service.Workers.LegacyNotifierBuilder
   alias Mobilizon.Users.User
 
-  use Mobilizon.DataCase, async: true
+  use Mobilizon.DataCase
   use Oban.Testing, repo: Mobilizon.Storage.Repo
   import Mobilizon.Factory
 
