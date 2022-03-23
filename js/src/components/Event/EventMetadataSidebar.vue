@@ -48,9 +48,10 @@
             !event.attributedTo || !event.options.hideOrganizerWhenGroupEvent
           "
           :actor="event.attributedTo"
+          :inline="true"
         />
-        <actor-card v-else :actor="event.organizerActor" />
       </router-link>
+      <actor-card v-else :actor="event.organizerActor" :inline="true" />
       <actor-card
         :actor="contact"
         v-for="contact in event.contacts"
