@@ -8,102 +8,70 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-03-05 13:05+0000\n"
-"Last-Translator: Esmail_Hazem <hazem_almaleeh1@hotmail.com>\n"
-"Language-Team: Arabic <https://weblate.framasoft.org/projects/mobilizon/"
-"backend-errors/ar/>\n"
-"Language: ar\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.4.2\n"
+"Language: nb_NO\n"
+"Plural-Forms: nplurals=2\n"
 
 #, elixir-autogen
 #: lib/mobilizon/discussions/discussion.ex:69
 msgid "can't be blank"
-msgstr "لا يمكن أن يترك فارغا"
+msgstr ""
 
 msgid "has already been taken"
-msgstr "تم حجزه مِن قَبل"
+msgstr ""
 
 msgid "is invalid"
-msgstr "غير صالح"
+msgstr ""
 
 msgid "must be accepted"
-msgstr "يجب الموافقة عليه"
+msgstr ""
 
 msgid "has invalid format"
-msgstr "لديه تنسيق غير صالح"
+msgstr ""
 
 msgid "has an invalid entry"
-msgstr "لديه إدخال غير صالح"
+msgstr ""
 
 msgid "is reserved"
-msgstr "محجوز"
+msgstr ""
 
 msgid "does not match confirmation"
-msgstr "لا تتطابق مع التأكيد"
+msgstr ""
 
 msgid "is still associated with this entry"
-msgstr "ما زالت مرتبطة مع هذا الإدخال"
+msgstr ""
 
 msgid "are still associated with this entry"
-msgstr "ما زالوا مرتبطين مع هذا الإدخال"
+msgstr ""
 
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "يجب أن يكون %{count} حرف"
-msgstr[1] "يجب أن يكون %{count} حرف"
-msgstr[2] "يجب أن يكون %{count} حرفَيْن"
-msgstr[3] "يجب أن يكون %{count} حُروف"
-msgstr[4] "يجب أن يكون %{count} حرف"
-msgstr[5] "يجب أن يكون %{count} حرف"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 msgid "must be less than %{number}"
 msgstr ""
@@ -1114,12 +1082,12 @@ msgstr ""
 msgid "Deconfirming users is not supported"
 msgstr ""
 
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:362
 msgid "The new role must be different"
 msgstr ""
 
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:313
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
