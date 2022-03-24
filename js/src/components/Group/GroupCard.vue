@@ -31,8 +31,12 @@
           </span>
         </div>
       </div>
-      <div class="content mb-2" dir="auto" v-html="group.summary" />
-      <div class="card-custom-footer">
+      <div
+        class="content mb-2 line-clamp-3"
+        dir="auto"
+        v-html="group.summary"
+      />
+      <div>
         <inline-address
           class="has-text-grey-dark"
           v-if="group.physicalAddress"
