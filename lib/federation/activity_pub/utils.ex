@@ -117,6 +117,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
             "@id" => "mz:participantCount",
             "@type" => "sc:Integer"
           },
+          "memberCount" => %{
+            "@id" => "mz:memberCount",
+            "@type" => "sc:Integer"
+          },
           "isOnline" => %{
             "@type" => "sc:Boolean",
             "@id" => "mz:isOnline"
