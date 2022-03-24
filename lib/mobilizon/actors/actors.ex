@@ -891,6 +891,17 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
+  Returns the number of followers for a group
+  """
+  @spec count_members_for_group(Actor.t()) :: integer()
+  def count_members_for_group(%Actor{id: actor_id}) do
+    actor_id
+    |> members_for_group_query()
+    # |> where([m], m.role in @member_roles)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
   Gets a single bot.
   Raises `Ecto.NoResultsError` if the bot does not exist.
   """

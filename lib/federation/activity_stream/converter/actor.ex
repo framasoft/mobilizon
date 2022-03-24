@@ -6,8 +6,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   internal one, and back.
   """
 
+  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor, as: ActorModel
-
   alias Mobilizon.Addresses.Address
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -154,8 +154,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     end
   end
 
-  defp maybe_add_members(actor_data, %ActorModel{type: :Group, members_url: members_url}) do
-    Map.put(actor_data, "members", members_url)
+  defp maybe_add_members(actor_data, %ActorModel{type: :Group, members_url: members_url} = group) do
+    actor_data
+    |> Map.put("members", members_url)
+    |> Map.put("memberCount", Actors.count_members_for_group(group))
   end
 
   defp maybe_add_members(actor_data, %ActorModel{}), do: actor_data
