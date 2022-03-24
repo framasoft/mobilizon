@@ -1300,7 +1300,7 @@ export default class EditEvent extends Vue {
   tzOffset(date: Date): number {
     if (this.timezone && date) {
       const eventUTCOffset = getTimezoneOffset(this.timezone, date);
-      const localUTCOffset = getTimezoneOffset(this.userActualTimezone);
+      const localUTCOffset = getTimezoneOffset(this.userActualTimezone, date);
       return (eventUTCOffset - localUTCOffset) / (60 * 1000);
     }
     return 0;
