@@ -28,7 +28,7 @@ export default class Vue2LeafletLocateControl extends Vue {
     unknown
   >;
 
-  @Prop({ type: Boolean, default: true }) visible = true;
+  @Prop({ type: Boolean, default: true }) visible!: boolean;
 
   ready = false;
 
