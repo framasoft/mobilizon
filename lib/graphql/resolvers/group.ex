@@ -160,7 +160,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         {:picture, {:error, :file_too_large}} ->
           {:error, dgettext("errors", "The provided picture is too heavy")}
 
-        {:error, err} when is_binary(err) ->
+        {:error, err} ->
           {:error, err}
       end
     else
