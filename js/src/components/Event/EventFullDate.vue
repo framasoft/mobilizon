@@ -169,17 +169,20 @@ export default class EventFullDate extends Vue {
 
   isSameDay(): boolean {
     const sameDay =
-      new Date(this.beginsOn).toDateString() ===
-      new Date(this.endsOn).toDateString();
+      this.beginsOnDate.toDateString() === new Date(this.endsOn).toDateString();
     return this.endsOn !== undefined && sameDay;
+  }
+
+  get beginsOnDate(): Date {
+    return new Date(this.beginsOn);
   }
 
   get differentFromUserTimezone(): boolean {
     return (
       !!this.timezone &&
       !!this.userActualTimezone &&
-      getTimezoneOffset(this.timezone) !==
-        getTimezoneOffset(this.userActualTimezone) &&
+      getTimezoneOffset(this.timezone, this.beginsOnDate) !==
+        getTimezoneOffset(this.userActualTimezone, this.beginsOnDate) &&
       this.timezone !== this.userActualTimezone
     );
   }
