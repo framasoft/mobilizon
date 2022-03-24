@@ -5,6 +5,7 @@ defmodule Mobilizon.Posts do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Tag
   alias Mobilizon.Posts.Post
+  alias Mobilizon.Service.Export.Cachable
   alias Mobilizon.Storage.{Page, Repo}
 
   import Ecto.Query
@@ -107,6 +108,8 @@ defmodule Mobilizon.Posts do
   """
   @spec update_post(Post.t(), map) :: {:ok, Post.t()} | {:error, Ecto.Changeset.t()}
   def update_post(%Post{} = post, attrs) do
+    Cachable.clear_all_caches(post)
+
     post
     |> Repo.preload([:tags, :media])
     |> Post.changeset(attrs)
@@ -117,7 +120,10 @@ defmodule Mobilizon.Posts do
   Deletes a post
   """
   @spec delete_post(Post.t()) :: {:ok, Post.t()} | {:error, Ecto.Changeset.t()}
-  def delete_post(%Post{} = post), do: Repo.delete(post)
+  def delete_post(%Post{} = post) do
+    Cachable.clear_all_caches(post)
+    Repo.delete(post)
+  end
 
   @doc """
   Returns the list of tags for the post.

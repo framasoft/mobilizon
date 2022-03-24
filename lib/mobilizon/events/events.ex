@@ -28,6 +28,7 @@ defmodule Mobilizon.Events do
     Track
   }
 
+  alias Mobilizon.Service.Export.Cachable
   alias Mobilizon.Service.Workers.BuildSearch
   alias Mobilizon.Service.Workers.EventDelayedNotificationWorker
   alias Mobilizon.Share
@@ -301,7 +302,7 @@ defmodule Mobilizon.Events do
            end)
            |> Repo.transaction(),
          %Event{} = new_event <- Repo.preload(new_event, @event_preloads, force: true) do
-      Cachex.del(:ics, "event_#{new_event.uuid}")
+      Cachable.clear_all_caches(new_event)
 
       unless new_event.draft do
         %{
@@ -355,14 +356,10 @@ defmodule Mobilizon.Events do
   Deletes an event.
   """
   @spec delete_event(Event.t()) :: {:ok, Event.t()} | {:error, Changeset.t()}
-  def delete_event(%Event{} = event), do: Repo.delete(event)
-
-  @doc """
-  Deletes an event.
-  Raises an exception if it fails.
-  """
-  @spec delete_event!(Event.t()) :: Event.t()
-  def delete_event!(%Event{} = event), do: Repo.delete!(event)
+  def delete_event(%Event{} = event) do
+    Cachable.clear_all_caches(event)
+    Repo.delete(event)
+  end
 
   @doc """
   Returns the list of events.

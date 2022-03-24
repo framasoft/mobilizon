@@ -7,14 +7,17 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.Addresses.Address
   alias Mobilizon.{Config, Events}
   alias Mobilizon.Events.{Event, EventOptions}
-  alias Mobilizon.Service.Export.Common
+  alias Mobilizon.Service.Export.{Cachable, Common}
   alias Mobilizon.Service.Formatter.HTML
+
+  @behaviour Cachable
 
   @item_limit 500
 
   @doc """
   Create cache for an actor, an event or an user token
   """
+  @impl Cachable
   @spec create_cache(String.t()) :: {:commit, String.t()} | {:ignore, atom()}
   def create_cache("actor_" <> name) do
     case export_public_actor(name) do
@@ -26,6 +29,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
+  @impl Cachable
   def create_cache("event_" <> uuid) do
     with %Event{} = event <- Events.get_public_event_by_uuid_with_preload(uuid),
          {:ok, res} <- export_public_event(event) do
@@ -39,6 +43,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
+  @impl Cachable
   def create_cache("token_" <> token) do
     case fetch_events_from_token(token) do
       {:ok, res} ->
@@ -49,6 +54,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
     end
   end
 
+  @impl Cachable
   def create_cache("instance") do
     {:ok, res} = fetch_instance_feed()
     {:commit, res}
@@ -171,5 +177,46 @@ defmodule Mobilizon.Service.Export.ICalendar do
 
   defp organizer(%Event{organizer_actor: %Actor{} = profile}) do
     Actor.display_name(profile)
+  end
+
+  @impl Cachable
+  @spec clear_caches(%{
+          :__struct__ => Mobilizon.Actors.Actor | Mobilizon.Events.Event | Mobilizon.Posts.Post,
+          optional(any) => any
+        }) :: {:error, boolean} | {:ok, boolean}
+  def clear_caches(%Event{attributed_to: %Actor{} = actor} = event) do
+    clear_actor_feed(actor)
+    clear_caches(%{event | attributed_to: nil})
+  end
+
+  @impl Cachable
+  def clear_caches(%Event{uuid: uuid}) do
+    # TODO: It would be nice to clear feed token cache based on participations as well,
+    # but that's harder, as it would require loading all participations
+    Cachex.del(:ics, "event_#{uuid}")
+    clear_instance()
+  end
+
+  # Not applicable for posts
+  @impl Cachable
+  def clear_caches(%Mobilizon.Posts.Post{}) do
+    {:ok, true}
+  end
+
+  @impl Cachable
+  def clear_caches(%Actor{} = actor) do
+    clear_actor_feed(actor)
+
+    clear_instance()
+  end
+
+  defp clear_instance do
+    Cachex.del(:ics, "instance")
+  end
+
+  defp clear_actor_feed(%Actor{preferred_username: preferred_username} = actor) do
+    if Actor.is_public_visibility?(actor) do
+      Cachex.del(:ics, "actor_#{preferred_username}")
+    end
   end
 end
