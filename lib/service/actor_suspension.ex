@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.ActorSuspension do
   alias Mobilizon.Medias.File
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
+  alias Mobilizon.Service.Export.Cachable
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Email.Actor, as: ActorEmail
@@ -66,6 +67,7 @@ defmodule Mobilizon.Service.ActorSuspension do
     case Repo.transaction(multi) do
       {:ok, %{actor: %Actor{} = actor}} ->
         {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
+        Cachable.clear_all_caches(actor)
         Logger.info("Deleted actor #{actor.url}")
         {:ok, actor}
 

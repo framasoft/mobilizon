@@ -11,7 +11,7 @@ defmodule Mobilizon.Service.Export.Feed do
   alias Mobilizon.Config
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Service.Export.Common
+  alias Mobilizon.Service.Export.{Cachable, Common}
   alias Mobilizon.Users.User
 
   alias Mobilizon.Web.Endpoint
@@ -19,11 +19,14 @@ defmodule Mobilizon.Service.Export.Feed do
 
   require Logger
 
+  @behaviour Cachable
+
   @item_limit 500
 
   @spec version :: String.t()
   defp version, do: Config.instance_version()
 
+  @impl Cachable
   @spec create_cache(String.t()) ::
           {:commit, String.t()}
           | {:ignore, :actor_not_found | :actor_not_public | :bad_token | :token_not_found}
@@ -37,6 +40,7 @@ defmodule Mobilizon.Service.Export.Feed do
     end
   end
 
+  @impl Cachable
   def create_cache("token_" <> token) do
     case fetch_events_from_token(token) do
       {:ok, res} ->
@@ -47,6 +51,7 @@ defmodule Mobilizon.Service.Export.Feed do
     end
   end
 
+  @impl Cachable
   def create_cache("instance") do
     {:ok, res} = fetch_instance_feed()
     {:commit, res}
@@ -226,5 +231,45 @@ defmodule Mobilizon.Service.Export.Feed do
     |> Feed.entries(Enum.map(events, &get_entry/1))
     |> Feed.build()
     |> Atomex.generate_document()
+  end
+
+  @impl Cachable
+  def clear_caches(%Event{attributed_to: %Actor{} = actor} = event) do
+    clear_actor_feed(actor)
+    clear_caches(%{event | attributed_to: nil})
+  end
+
+  @impl Cachable
+  def clear_caches(%Event{}) do
+    # TODO: It would be nice to clear feed token cache based on participations as well,
+    # but that's harder, as it would require loading all participations
+    clear_instance()
+  end
+
+  @impl Cachable
+  def clear_caches(%Post{attributed_to: %Actor{} = actor} = post) do
+    clear_actor_feed(actor)
+    clear_caches(%{post | attributed_to: nil})
+  end
+
+  @impl Cachable
+  def clear_caches(%Post{}) do
+    clear_instance()
+  end
+
+  @impl Cachable
+  def clear_caches(%Actor{} = actor) do
+    clear_actor_feed(actor)
+    clear_instance()
+  end
+
+  defp clear_instance do
+    Cachex.del(:feed, "instance")
+  end
+
+  defp clear_actor_feed(%Actor{preferred_username: preferred_username} = actor) do
+    if Actor.is_public_visibility?(actor) do
+      Cachex.del(:feed, "actor_#{preferred_username}")
+    end
   end
 end
