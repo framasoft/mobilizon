@@ -22,11 +22,8 @@
         }}</label>
         <div class="field-body">
           <b-field
-            :message="
-              $t(
-                'Only alphanumeric lowercased characters and underscores are supported.'
-              )
-            "
+            :message="preferredUsernameErrors[0]"
+            :type="preferredUsernameErrors[1]"
           >
             <b-input
               ref="preferredUsernameInput"
@@ -60,7 +57,12 @@
         />
       </div>
 
-      <b-field :label="$t('Description')" label-for="group-summary">
+      <b-field
+        :label="$t('Description')"
+        label-for="group-summary"
+        :message="summaryErrors[0]"
+        :type="summaryErrors[1]"
+      >
         <b-input v-model="group.summary" type="textarea" id="group-summary" />
       </b-field>
 
@@ -102,7 +104,7 @@ import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { ErrorResponse } from "@apollo/client/link/error";
+import { ErrorResponse } from "@/types/errors.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
@@ -135,11 +137,17 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
 
   errors: string[] = [];
 
+  fieldErrors: Record<string, string | undefined> = {
+    preferred_username: undefined,
+    summary: undefined,
+  };
+
   usernameWithDomain = usernameWithDomain;
 
   async createGroup(): Promise<void> {
     try {
       this.errors = [];
+      this.fieldErrors = { preferred_username: undefined, summary: undefined };
       await this.$apollo.mutate({
         mutation: CREATE_GROUP,
         variables: this.buildVariables(),
@@ -244,11 +252,35 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
         );
       }
     }
-    this.errors.push(
-      ...(err.graphQLErrors || []).map(
-        ({ message }: { message: string }) => message
-      )
-    );
+    err.graphQLErrors?.forEach((error) => {
+      if (error.field) {
+        if (Array.isArray(error.message)) {
+          this.fieldErrors[error.field] = error.message[0];
+        } else {
+          this.fieldErrors[error.field] = error.message;
+        }
+      } else {
+        this.errors.push(error.message);
+      }
+    });
+  }
+
+  get summaryErrors() {
+    const message = this.fieldErrors.summary
+      ? this.fieldErrors.summary
+      : undefined;
+    const type = this.fieldErrors.summary ? "is-danger" : undefined;
+    return [message, type];
+  }
+
+  get preferredUsernameErrors() {
+    const message = this.fieldErrors.preferred_username
+      ? this.fieldErrors.preferred_username
+      : this.$t(
+          "Only alphanumeric lowercased characters and underscores are supported."
+        );
+    const type = this.fieldErrors.preferred_username ? "is-danger" : undefined;
+    return [message, type];
   }
 }
 </script>

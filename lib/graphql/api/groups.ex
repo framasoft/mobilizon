@@ -5,9 +5,10 @@ defmodule Mobilizon.GraphQL.API.Groups do
 
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
-
+  alias Mobilizon.GraphQL.Error
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
   alias Mobilizon.Service.Formatter.HTML
+  import Mobilizon.Web.Gettext
 
   @doc """
   Create a group
@@ -26,7 +27,13 @@ defmodule Mobilizon.GraphQL.API.Groups do
         Actions.Create.create(:actor, args, true, %{"actor" => args.creator_actor.url})
 
       %Actor{} ->
-        {:error, "A profile or group with that name already exists"}
+        {:error,
+         %Error{
+           code: :validation,
+           message: dgettext("errors", "A profile or group with that name already exists"),
+           status_code: 409,
+           field: "preferred_username"
+         }}
     end
   end
 

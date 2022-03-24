@@ -72,6 +72,8 @@ defmodule Mobilizon.GraphQL.Error do
     }
   end
 
+  defp handle(%Error{} = error), do: error
+
   # ... Handle other error types here ...
   defp handle(other) do
     Logger.error("Unhandled error term:\n#{inspect(other)}")
