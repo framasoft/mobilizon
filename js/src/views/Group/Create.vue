@@ -60,7 +60,12 @@
         />
       </div>
 
-      <b-field :label="$t('Description')" label-for="group-summary">
+      <b-field
+        :label="$t('Description')"
+        label-for="group-summary"
+        :message="fieldErrors.summary"
+        :type="fieldErrors.summary ? 'is-danger' : undefined"
+      >
         <b-input v-model="group.summary" type="textarea" id="group-summary" />
       </b-field>
 
@@ -102,7 +107,7 @@ import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { ErrorResponse } from "@apollo/client/link/error";
+import { ErrorResponse } from "@/types/errors.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 
@@ -134,6 +139,8 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
   bannerFile: File | null = null;
 
   errors: string[] = [];
+
+  fieldErrors: Record<string, string> = {};
 
   usernameWithDomain = usernameWithDomain;
 
@@ -244,11 +251,17 @@ export default class CreateGroup extends mixins(IdentityEditionMixin) {
         );
       }
     }
-    this.errors.push(
-      ...(err.graphQLErrors || []).map(
-        ({ message }: { message: string }) => message
-      )
-    );
+    err.graphQLErrors?.forEach((error) => {
+      if (error.field) {
+        if (Array.isArray(error.message)) {
+          this.fieldErrors[error.field] = error.message[0];
+        } else {
+          this.fieldErrors[error.field] = error.message;
+        }
+      } else {
+        this.errors.push(error.message);
+      }
+    });
   }
 }
 </script>
