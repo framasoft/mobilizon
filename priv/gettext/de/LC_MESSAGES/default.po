@@ -2172,7 +2172,7 @@ msgid ""
 msgstr ""
 "Wenn Ihnen etwas nicht richtig vorkommt, kontaktieren Sie bitte die "
 "Instanzadministrator:in über die aufgeführten Kontaktmethoden %{start_link} "
-"auf der Über-Seite%{end_link} der Instanz."
+"auf der About-Seite%{end_link} der Instanz."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:7
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:4
