@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-03-27 20:09+0000\n"
-"Last-Translator: Kira Sinn <kirachantalsinn@gmail.com>\n"
+"PO-Revision-Date: 2022-03-28 07:01+0000\n"
+"Last-Translator: Norwin <frama@nroo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/de/>\n"
 "Language: de\n"
@@ -106,7 +106,7 @@ msgstr "%{profile} hat das Mitglied %{member} ausgeschlossen."
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource}."
-msgstr "%{profile} hat den Folder %{resource} verschoben."
+msgstr "%{profile} hat den Ordner %{resource} verschoben."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
