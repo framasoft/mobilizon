@@ -1091,7 +1091,7 @@
   "You are offline": "Sie sind offline",
   "You are participating in this event anonymously": "Sie nehmen anonym an dieser Veranstaltung teil",
   "You are participating in this event anonymously but didn't confirm participation": "Sie nehmen an dieser Veranstaltung anonym teil, haben aber Ihre Teilnahme noch nicht bestätigt",
-  "You can add tags by hitting the Enter key or by adding a comma": "Sie können Schlagworte hinzufügen, indem Sie Enter drücken oder durch ein Komma trennen",
+  "You can add tags by hitting the Enter key or by adding a comma": "Sie können Schlagworte hinzufügen, indem Sie Komma oder Enter drücken",
   "You can pick your timezone into your preferences.": "Sie können Ihre Zeitzone in den Einstellungen festlegen.",
   "You can try another search term or drag and drop the marker on the map": "Sie können einen anderen Suchbegriff verwenden oder die Markierung auf der Karte verschieben",
   "You can't change your password because you are registered through {provider}.": "Sie können Ihr Passwort nicht ändern, weil Sie über {provider} angemeldet sind.",
