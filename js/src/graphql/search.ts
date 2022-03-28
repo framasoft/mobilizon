@@ -11,6 +11,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $tags: String
     $term: String
     $type: EventType
+    $category: String
     $beginsOn: DateTime
     $endsOn: DateTime
     $eventPage: Int
@@ -23,6 +24,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       tags: $tags
       term: $term
       type: $type
+      category: $category
       beginsOn: $beginsOn
       endsOn: $endsOn
       page: $eventPage

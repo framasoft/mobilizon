@@ -54,14 +54,6 @@ defmodule Mobilizon.Events do
     :cancelled
   ])
 
-  defenum(EventCategory, :event_category, [
-    :business,
-    :conference,
-    :birthday,
-    :demonstration,
-    :meeting
-  ])
-
   defenum(ParticipantRole, :participant_role, [
     :not_approved,
     :not_confirmed,
@@ -536,6 +528,7 @@ defmodule Mobilizon.Events do
     |> events_for_search_query()
     |> events_for_begins_on(args)
     |> events_for_ends_on(args)
+    |> events_for_category(args)
     |> events_for_tags(args)
     |> events_for_location(args)
     |> filter_online(args)
@@ -1312,6 +1305,13 @@ defmodule Mobilizon.Events do
       )
     end
   end
+
+  @spec events_for_category(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
+  defp events_for_category(query, %{category: category}) when is_valid_string(category) do
+    where(query, [q], q.category == ^category)
+  end
+
+  defp events_for_category(query, _args), do: query
 
   @spec events_for_tags(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_tags(query, %{tags: tags}) when is_valid_string(tags) do

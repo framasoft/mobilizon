@@ -20,7 +20,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       |> DateTime.truncate(:second),
     uuid: "b5126423-f1af-43e4-a923-002a03003ba4",
     url: "some url",
-    category: "meeting",
+    category: "MEETING",
     options: %{}
   }
 

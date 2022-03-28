@@ -93,6 +93,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:tags, :string, description: "A comma-separated string listing the tags")
       arg(:location, :string, description: "A geohash for coordinates")
       arg(:type, :event_type, description: "Whether the event is online or in person")
+      arg(:category, :string, description: "The category for the event")
 
       arg(:radius, :float,
         default_value: 50,

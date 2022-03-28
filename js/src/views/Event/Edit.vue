@@ -32,7 +32,28 @@
           />
         </b-field>
 
-        <tag-input v-model="event.tags" />
+        <div class="flex flex-wrap gap-4">
+          <b-field
+            :label="$t('Category')"
+            label-for="category"
+            class="w-full md:max-w-fit"
+          >
+            <b-select
+              :placeholder="$t('Select a category')"
+              v-model="event.category"
+              expanded
+            >
+              <option
+                v-for="category in eventCategories"
+                :value="category.id"
+                :key="category.id"
+              >
+                {{ category.label }}
+              </option>
+            </b-select>
+          </b-field>
+          <tag-input v-model="event.tags" class="flex-1" />
+        </div>
 
         <b-field
           horizontal
@@ -644,6 +665,7 @@ import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
 import { IAddress } from "@/types/address.model";
 import { LOGGED_USER_PARTICIPATIONS } from "@/graphql/participant";
+import { eventCategories } from "@/utils/categories";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -752,6 +774,8 @@ export default class EditEvent extends Vue {
   displayNameAndUsername = displayNameAndUsername;
 
   formatList = formatList;
+
+  eventCategories = eventCategories;
 
   @Watch("eventId", { immediate: true })
   resetFormForCreation(eventId: string): void {
@@ -1058,22 +1082,6 @@ export default class EditEvent extends Vue {
       ...toEditJSON(new EventModel(this.event)),
       options: this.eventOptions,
     };
-
-    console.debug(this.event.beginsOn?.toISOString());
-
-    // if (this.event.beginsOn && this.timezone) {
-    //   console.debug(
-    //     "begins on should be",
-    //     zonedTimeToUtc(this.event.beginsOn, this.timezone).toISOString()
-    //   );
-    // }
-
-    // if (this.event.beginsOn && this.timezone) {
-    //   res.beginsOn = zonedTimeToUtc(
-    //     this.event.beginsOn,
-    //     this.timezone
-    //   ).toISOString();
-    // }
 
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor

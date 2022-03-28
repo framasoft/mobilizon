@@ -44,11 +44,10 @@
                   </popover-actor-card>
                 </span>
               </div>
-              <p
-                class="tags"
-                v-if="event.tags && event.tags.length > 0"
-                dir="auto"
-              >
+              <p class="tags" dir="auto">
+                <tag v-if="eventCategory" class="category">{{
+                  eventCategory
+                }}</tag>
                 <router-link
                   v-for="tag in event.tags"
                   :key="tag.title"
@@ -508,6 +507,7 @@ import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
+import { eventCategories } from "@/utils/categories";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -1132,6 +1132,15 @@ export default class Event extends EventMixin {
 
   get routingType(): string | undefined {
     return this.config?.maps?.routing?.type;
+  }
+
+  get eventCategory(): string | undefined {
+    if (this.event?.category === "MEETING") {
+      return undefined;
+    }
+    return eventCategories.find((eventCategory) => {
+      return eventCategory.id === this.event?.category;
+    })?.label as string;
   }
 }
 </script>

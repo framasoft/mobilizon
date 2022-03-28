@@ -66,7 +66,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "The event's tags"
     )
 
-    field(:category, :string, description: "The event's category")
+    field(:category, :event_category, description: "The event's category")
 
     field(:draft, :boolean, description: "Whether or not the event is a draft")
 
@@ -399,7 +399,11 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
       arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
 
-      arg(:category, :string, default_value: "meeting", description: "The event's category")
+      arg(:category, :event_category,
+        default_value: "MEETING",
+        description: "The event's category"
+      )
+
       arg(:physical_address, :address_input, description: "The event's physical address")
       arg(:options, :event_options_input, default_value: %{}, description: "The event options")
       arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")
@@ -448,7 +452,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
       arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
 
-      arg(:category, :string, description: "The event's category")
+      arg(:category, :event_category, description: "The event's category")
       arg(:physical_address, :address_input, description: "The event's physical address")
       arg(:options, :event_options_input, description: "The event options")
       arg(:metadata, list_of(:event_metadata_input), description: "The event metadata")

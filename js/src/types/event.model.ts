@@ -53,6 +53,7 @@ interface IEventEditJSON {
   options: IEventOptions;
   contacts: { id?: string }[];
   metadata: IEventMetadata[];
+  category: string;
 }
 
 export interface IEvent {
@@ -91,6 +92,7 @@ export interface IEvent {
   metadata: IEventMetadata[];
   contacts: IActor[];
   language: string;
+  category: string;
 
   toEditJSON(): IEventEditJSON;
 }
@@ -166,6 +168,8 @@ export class EventModel implements IEvent {
 
   metadata: IEventMetadata[] = [];
 
+  category = "MEETING";
+
   constructor(hash?: IEvent | IEditableEvent) {
     if (!hash) return;
 
@@ -214,6 +218,7 @@ export class EventModel implements IEvent {
     this.tags = hash.tags;
     this.metadata = hash.metadata;
     this.language = hash.language;
+    this.category = hash.category;
     if (hash.options) this.options = hash.options;
   }
 
@@ -240,6 +245,7 @@ export function toEditJSON(event: IEditableEvent): IEventEditJSON {
     beginsOn: event.beginsOn ? event.beginsOn.toISOString() : null,
     endsOn: event.endsOn ? event.endsOn.toISOString() : null,
     status: event.status,
+    category: event.category,
     visibility: event.visibility,
     joinOptions: event.joinOptions,
     draft: event.draft,
