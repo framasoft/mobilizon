@@ -34,6 +34,7 @@
 
         <div class="flex flex-wrap gap-4">
           <b-field
+            v-if="config"
             :label="$t('Category')"
             label-for="category"
             class="w-full md:max-w-fit"
@@ -44,7 +45,7 @@
               expanded
             >
               <option
-                v-for="category in eventCategories"
+                v-for="category in config.eventCategories"
                 :value="category.id"
                 :key="category.id"
               >
@@ -665,7 +666,6 @@ import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
 import { IAddress } from "@/types/address.model";
 import { LOGGED_USER_PARTICIPATIONS } from "@/graphql/participant";
-import { eventCategories } from "@/utils/categories";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -774,8 +774,6 @@ export default class EditEvent extends Vue {
   displayNameAndUsername = displayNameAndUsername;
 
   formatList = formatList;
-
-  eventCategories = eventCategories;
 
   @Watch("eventId", { immediate: true })
   resetFormForCreation(eventId: string): void {

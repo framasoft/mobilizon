@@ -4,6 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
   """
 
   alias Mobilizon.Config
+  alias Mobilizon.Events.Categories
 
   @doc """
   Gets config.
@@ -55,6 +56,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       end
 
     {:ok, %{body_html: body_html, type: type, url: url}}
+  end
+
+  @spec event_categories(any(), map(), Absinthe.Resolution.t()) :: {:ok, [map()]}
+  def event_categories(_parent, _args, _resolution) do
+    categories =
+      Categories.list()
+      |> Enum.map(fn %{id: id, label: label} ->
+        %{id: id |> to_string |> String.upcase(), label: label}
+      end)
+
+    {:ok, categories}
   end
 
   @spec config_cache :: map()

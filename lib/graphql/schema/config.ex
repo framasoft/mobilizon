@@ -16,6 +16,13 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:contact, :string, description: "The instance's contact details")
 
     field(:languages, list_of(:string), description: "The instance's admins languages")
+
+    field(:event_categories, list_of(:event_category_option),
+      description: "The instance list of event categories possibilities"
+    ) do
+      resolve(&Config.event_categories/3)
+    end
+
     field(:registrations_open, :boolean, description: "Whether the registrations are opened")
 
     field(:registrations_allowlist, :boolean,
@@ -330,6 +337,14 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:event_participants, list_of(:string),
       description: "The list of formats the event participants can be exported to"
     )
+  end
+
+  @desc """
+  Event categories list configuration
+  """
+  object :event_category_option do
+    field(:id, :string, description: "The ID of the event category")
+    field(:label, :string, description: "The translated name of the event category")
   end
 
   object :config_queries do

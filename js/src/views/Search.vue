@@ -109,7 +109,7 @@
               </option>
               <option
                 :value="category.id"
-                v-for="category in eventCategories"
+                v-for="category in config.eventCategories"
                 :key="category.id"
               >
                 {{ category.label }}
@@ -247,7 +247,6 @@ import { REVERSE_GEOCODE } from "../graphql/address";
 import debounce from "lodash/debounce";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
-import { eventCategories } from "@/utils/categories";
 
 interface ISearchTimeOption {
   label: string;
@@ -388,8 +387,6 @@ export default class Search extends Vue {
   EVENT_PAGE_LIMIT = EVENT_PAGE_LIMIT;
 
   GROUP_PAGE_LIMIT = GROUP_PAGE_LIMIT;
-
-  eventCategories = eventCategories;
 
   $refs!: {
     aac: FullAddressAutoComplete;

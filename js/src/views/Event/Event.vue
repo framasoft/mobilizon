@@ -507,7 +507,6 @@ import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
-import { eventCategories } from "@/utils/categories";
 
 // noinspection TypeScriptValidateTypes
 @Component({
@@ -1138,7 +1137,7 @@ export default class Event extends EventMixin {
     if (this.event?.category === "MEETING") {
       return undefined;
     }
-    return eventCategories.find((eventCategory) => {
+    return this.config.eventCategories.find((eventCategory) => {
       return eventCategory.id === this.event?.category;
     })?.label as string;
   }

@@ -1,81 +1,18 @@
 defmodule Mobilizon.GraphQL.Schema.Custom.EnumTypes do
+  @moduledoc """
+  Register extra enum types dynamically
+  """
   alias Absinthe.Blueprint.Schema
   alias Absinthe.Schema.Notation
-  alias Absinthe.{Blueprint, Pipeline, Phase}
-
-  @categories [
-    %{
-      id: :arts,
-      label: "ARTS"
-    },
-    %{
-      id: :book_clubs,
-      label: "BOOK_CLUBS"
-    },
-    %{
-      id: :business,
-      label: "BUSINESS"
-    },
-    %{
-      id: :causes,
-      label: "CAUSES"
-    },
-    %{
-      id: :comedy,
-      label: "COMEDY"
-    },
-    %{
-      id: :crafts,
-      label: "CRAFTS"
-    },
-    %{
-      id: :food_drink,
-      label: "FOOD_DRINK"
-    },
-    %{
-      id: :health,
-      label: "HEALTH"
-    },
-    %{
-      id: :music,
-      label: "MUSIC"
-    },
-    %{
-      id: :auto_boat_air,
-      label: "AUTO_BOAT_AIR"
-    },
-    %{
-      id: :community,
-      label: "COMMUNITY"
-    },
-    %{
-      id: :family_education,
-      label: "FAMILY_EDUCATION"
-    },
-    %{
-      id: :fashion_beauty,
-      label: "FASHION_BEAUTY"
-    },
-    %{
-      id: :film_media,
-      label: "FILM_MEDIA"
-    },
-    %{
-      id: :games,
-      label: "GAMES"
-    },
-    # Legacy default value
-    %{
-      id: :meeting,
-      label: "MEETING"
-    }
-  ]
+  alias Absinthe.{Blueprint, Phase, Pipeline}
+  alias Mobilizon.Events.Categories
 
   def pipeline(pipeline) do
     Pipeline.insert_after(pipeline, Phase.Schema.TypeImports, __MODULE__)
   end
 
-  def run(blueprint = %Blueprint{}, _) do
+  @spec run(Absinthe.Blueprint.t(), any()) :: {:ok, Absinthe.Blueprint.t()}
+  def run(%Blueprint{} = blueprint, _) do
     %{schema_definitions: [schema]} = blueprint
 
     new_enum = build_dynamic_enum()
@@ -88,18 +25,19 @@ defmodule Mobilizon.GraphQL.Schema.Custom.EnumTypes do
     {:ok, %{blueprint | schema_definitions: [schema]}}
   end
 
-  def build_dynamic_enum() do
+  @spec build_dynamic_enum :: Absinthe.Blueprint.Schema.EnumTypeDefinition.t()
+  defp build_dynamic_enum do
     %Schema.EnumTypeDefinition{
       name: "EventCategory",
       identifier: :event_category,
       module: __MODULE__,
       __reference__: Notation.build_reference(__ENV__),
       values:
-        Enum.map(@categories, fn %{id: id, label: label} ->
+        Enum.map(Categories.list(), fn %{id: id} ->
           %Schema.EnumValueDefinition{
             identifier: id,
-            value: label,
-            name: label,
+            value: String.upcase(to_string(id)),
+            name: String.upcase(to_string(id)),
             module: __MODULE__,
             __reference__: Notation.build_reference(__ENV__)
           }
