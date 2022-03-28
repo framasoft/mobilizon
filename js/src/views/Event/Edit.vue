@@ -49,11 +49,11 @@
             horizontal-time-picker
             editable
             :tz-offset="tzOffset(beginsOn)"
+            :first-day-of-week="firstDayOfWeek"
             :datepicker="{
               id: 'begins-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
-              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
@@ -70,11 +70,11 @@
             :min-datetime="beginsOn"
             :tz-offset="tzOffset(endsOn)"
             editable
+            :first-day-of-week="firstDayOfWeek"
             :datepicker="{
               id: 'ends-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
-              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
