@@ -148,7 +148,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
         {:error, :http_error}
 
       {:error, error} ->
-        Logger.warn("Could not fetch actor at fetch #{url}, #{inspect(error)}")
+        Logger.info("Could not fetch actor at #{url}, #{inspect(error)}")
         {:error, :http_error}
     end
   end
