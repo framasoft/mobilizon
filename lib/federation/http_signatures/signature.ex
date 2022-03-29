@@ -102,14 +102,18 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
   end
 
   @spec sign(Actor.t(), map()) :: String.t() | {:error, :pem_decode_error} | no_return
-  def sign(%Actor{domain: domain, keys: keys} = actor, headers) when is_nil(domain) do
-    Logger.debug("Signing a payload on behalf of #{actor.url}")
+  def sign(%Actor{domain: domain, keys: keys, url: url} = actor, headers) when is_nil(domain) do
+    Logger.debug("Signing a payload on behalf of #{url}")
     Logger.debug("headers")
     Logger.debug(inspect(headers))
 
     case prepare_public_key(keys) do
       {:ok, key} ->
-        HTTPSignatures.sign(key, actor.url <> "#main-key", headers)
+        if Application.get_env(:sentry, :dsn) != nil do
+          Sentry.Context.set_extra_context(%{"actor_url" => url})
+        end
+
+        HTTPSignatures.sign(key, url <> "#main-key", headers)
 
       {:error, :pem_decode_error} ->
         raise ArgumentError, message: "Failed to prepare public keys for #{actor.url}"
