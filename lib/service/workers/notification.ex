@@ -46,7 +46,7 @@ defmodule Mobilizon.Service.Workers.Notification do
       }) do
     with %User{locale: locale, settings: %Setting{timezone: timezone, notification_on_day: true}} =
            user <- Users.get_user_with_settings!(user_id),
-         {start, tomorrow} <- calculate_start_end(1, timezone),
+         {start, tomorrow} <- calculate_start_end(1, timezone || "Etc/UTC"),
          %Page{
            elements: participations,
            total: total
@@ -80,7 +80,7 @@ defmodule Mobilizon.Service.Workers.Notification do
            locale: locale,
            settings: %Setting{timezone: timezone, notification_each_week: true}
          } = user <- Users.get_user_with_settings!(user_id),
-         {start, end_week} <- calculate_start_end(7, timezone),
+         {start, end_week} <- calculate_start_end(7, timezone || "Etc/UTC"),
          %Page{
            elements: participations,
            total: total
