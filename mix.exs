@@ -299,7 +299,6 @@ defmodule Mobilizon.Mixfile do
         Mobilizon.Events.Tag,
         Mobilizon.Events.TagRelations,
         Mobilizon.Events.Track,
-        Mobilizon.Events.EventCategory,
         Mobilizon.Events.EventStatus,
         Mobilizon.Events.EventVisibility,
         Mobilizon.Events.JoinOptions,

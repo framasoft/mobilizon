@@ -4,6 +4,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0 - 2022-03-28
+
+### Added
+
+- Event category field
+- Redesigned federation admin section with dedicated instance pages
+- Allow to filter moderation reports by domain
+
+### Changed
+- Expose some fields to ActivityStreams event representation: `isOnline`, `remainingAttendeeCapacity` and `participantCount`
+- Expose a new field to ActivityStreams group representation: `memberCount`
+- Improve group creation errors feedback
+
+### Fixed
+
+- Fixed actor refreshment being impossible
+- Fixed ical export for undefined datetimes
+- Fixed parsing links with hashtag characters
+- Fixed fetching link details from Twitter
+- Fixed Thunderbird accessing ICS feed endpoint with special `Accept` HTTP header
+- Make sure every ICS/Feed caches are emptied when modifying entities
+- Fixed time issues with DST changes
+- Fixed group preview card not truncating description
+
+### Translations
+
+- Arabic
+- Basque
+- Belarusian
+- Bengali
+- Catalan
+- Chinese (Traditional)
+- Croatian
+- Czech
+- Danish
+- Dutch
+- Esperanto
+- Finnish
+- French
+- Gaelic
+- Galician
+- German
+- Hebrew
+- Hungarian
+- Indonesian
+- Italian
+- Japanese
+- Kabyle
+- Kannada
+- Norwegian Nynorsk
+- Occitan
+- Persian
+- Polish
+- Portuguese
+- Portuguese (Brazil)
+- Russian
+- Slovenian
+- Spanish
+- Swedish
+- Welsh
+
 ## 2.0.2 - 2021-12-22
 
 ### Changed

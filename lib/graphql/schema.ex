@@ -22,12 +22,15 @@ defmodule Mobilizon.GraphQL.Schema do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.GraphQL.Middleware.{CurrentActorProvider, ErrorHandler}
   alias Mobilizon.GraphQL.Schema
+  alias Mobilizon.GraphQL.Schema.Custom
   alias Mobilizon.Storage.Repo
+
+  @pipeline_modifier Custom.EnumTypes
 
   import_types(Absinthe.Type.Custom)
   import_types(Absinthe.Plug.Types)
-  import_types(Schema.Custom.UUID)
-  import_types(Schema.Custom.Point)
+  import_types(Custom.UUID)
+  import_types(Custom.Point)
 
   import_types(Schema.ActivityType)
   import_types(Schema.UserType)

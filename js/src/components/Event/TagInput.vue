@@ -21,7 +21,7 @@
       maxlength="20"
       maxtags="10"
       :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
-      @typing="getFilteredTags"
+      @typing="debouncedGetFilteredTags"
       :id="id"
       dir="auto"
     >
@@ -33,6 +33,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
 import { FILTER_TAGS } from "@/graphql/tags";
+import debounce from "lodash/debounce";
 
 @Component({
   apollo: {
@@ -61,6 +62,12 @@ export default class TagInput extends Vue {
 
   get id(): string {
     return `tag-input-${TagInput.componentId}`;
+  }
+
+  data(): Record<string, unknown> {
+    return {
+      debouncedGetFilteredTags: debounce(this.getFilteredTags, 200),
+    };
   }
 
   async getFilteredTags(text: string): Promise<void> {

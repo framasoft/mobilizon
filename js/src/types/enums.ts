@@ -72,14 +72,6 @@ export enum EventVisibilityJoinOptions {
   LIMITED = "LIMITED",
 }
 
-export enum Category {
-  BUSINESS = "business",
-  CONFERENCE = "conference",
-  BIRTHDAY = "birthday",
-  DEMONSTRATION = "demonstration",
-  MEETING = "meeting",
-}
-
 export enum LoginErrorCode {
   NEED_TO_LOGIN = "need_to_login",
 }

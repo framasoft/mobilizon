@@ -32,7 +32,29 @@
           />
         </b-field>
 
-        <tag-input v-model="event.tags" />
+        <div class="flex flex-wrap gap-4">
+          <b-field
+            v-if="config"
+            :label="$t('Category')"
+            label-for="category"
+            class="w-full md:max-w-fit"
+          >
+            <b-select
+              :placeholder="$t('Select a category')"
+              v-model="event.category"
+              expanded
+            >
+              <option
+                v-for="category in config.eventCategories"
+                :value="category.id"
+                :key="category.id"
+              >
+                {{ category.label }}
+              </option>
+            </b-select>
+          </b-field>
+          <tag-input v-model="event.tags" class="flex-1" />
+        </div>
 
         <b-field
           horizontal
@@ -49,11 +71,11 @@
             horizontal-time-picker
             editable
             :tz-offset="tzOffset(beginsOn)"
+            :first-day-of-week="firstDayOfWeek"
             :datepicker="{
               id: 'begins-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
-              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
@@ -70,11 +92,11 @@
             :min-datetime="beginsOn"
             :tz-offset="tzOffset(endsOn)"
             editable
+            :first-day-of-week="firstDayOfWeek"
             :datepicker="{
               id: 'ends-on-field',
               'aria-next-label': $t('Next month'),
               'aria-previous-label': $t('Previous month'),
-              'first-day-of-week': firstDayOfWeek,
             }"
           >
           </b-datetimepicker>
@@ -1058,22 +1080,6 @@ export default class EditEvent extends Vue {
       ...toEditJSON(new EventModel(this.event)),
       options: this.eventOptions,
     };
-
-    console.debug(this.event.beginsOn?.toISOString());
-
-    // if (this.event.beginsOn && this.timezone) {
-    //   console.debug(
-    //     "begins on should be",
-    //     zonedTimeToUtc(this.event.beginsOn, this.timezone).toISOString()
-    //   );
-    // }
-
-    // if (this.event.beginsOn && this.timezone) {
-    //   res.beginsOn = zonedTimeToUtc(
-    //     this.event.beginsOn,
-    //     this.timezone
-    //   ).toISOString();
-    // }
 
     const organizerActor = this.event.organizerActor?.id
       ? this.event.organizerActor

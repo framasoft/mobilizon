@@ -23,6 +23,7 @@ const FULL_EVENT_FRAGMENT = gql`
     joinOptions
     draft
     language
+    category
     picture {
       id
       url
@@ -203,7 +204,7 @@ export const CREATE_EVENT = gql`
     $picture: MediaInput
     $onlineAddress: String
     $phoneAddress: String
-    $category: String
+    $category: EventCategory
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]
@@ -253,7 +254,7 @@ export const EDIT_EVENT = gql`
     $phoneAddress: String
     $organizerActorId: ID
     $attributedToId: ID
-    $category: String
+    $category: EventCategory
     $physicalAddress: AddressInput
     $options: EventOptionsInput
     $contacts: [Contact]

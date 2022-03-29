@@ -11,6 +11,10 @@ export const CONFIG = gql`
       demoMode
       countryCode
       languages
+      eventCategories {
+        id
+        label
+      }
       anonymous {
         participation {
           allowed
@@ -102,6 +106,10 @@ export const CONFIG_EDIT_EVENT = gql`
       timezones
       features {
         groups
+      }
+      eventCategories {
+        id
+        label
       }
       anonymous {
         participation {

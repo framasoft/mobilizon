@@ -1306,5 +1306,8 @@
   "IP Address": "IP Address",
   "Last seen on": "Last seen on",
   "No user matches the filters": "No user matches the filters",
-  "Reset filters": "Reset filters"
+  "Reset filters": "Reset filters",
+  "Category": "Category",
+  "Select a category": "Select a category",
+  "Any category": "Any category"
 }

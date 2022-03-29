@@ -17,7 +17,8 @@ span.tag {
   background: $purple-3;
   color: $violet-2;
   text-transform: uppercase;
-  &::before {
+
+  &:not(.category)::before {
     content: "#";
   }
 }
