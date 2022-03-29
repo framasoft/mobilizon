@@ -191,7 +191,7 @@ defmodule Mobilizon.Factory do
       ends_on: Timex.shift(start, hours: 2),
       organizer_actor: actor,
       attributed_to: nil,
-      category: sequence("something"),
+      category: "PARTY",
       physical_address: build(:address),
       visibility: :public,
       tags: build_list(3, :tag),
