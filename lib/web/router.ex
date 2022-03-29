@@ -3,9 +3,11 @@ defmodule Mobilizon.Web.Router do
   Router for mobilizon app
   """
   use Mobilizon.Web, :router
+  import Mobilizon.Web.RequestContext
 
   pipeline :graphql do
     #    plug(:accepts, ["json"])
+    plug(:put_request_context)
     plug(Mobilizon.Web.Auth.Pipeline)
     plug(Mobilizon.Web.Plugs.SetLocalePlug)
   end
@@ -22,29 +24,35 @@ defmodule Mobilizon.Web.Router do
   end
 
   pipeline :host_meta do
+    plug(:put_request_context)
     plug(:accepts, ["xrd-xml"])
   end
 
   pipeline :well_known do
+    plug(:put_request_context)
     plug(:accepts, ["json", "jrd-json"])
   end
 
   pipeline :activity_pub_signature do
+    plug(:put_request_context)
     plug(Mobilizon.Web.Plugs.HTTPSignatures)
     plug(Mobilizon.Web.Plugs.MappedSignatureToIdentity)
   end
 
   pipeline :relay do
+    plug(:put_request_context)
     plug(Mobilizon.Web.Plugs.HTTPSignatures)
     plug(Mobilizon.Web.Plugs.MappedSignatureToIdentity)
     plug(:accepts, ["activity-json", "json"])
   end
 
   pipeline :activity_pub do
+    plug(:put_request_context)
     plug(:accepts, ["activity-json"])
   end
 
   pipeline :activity_pub_and_html do
+    plug(:put_request_context)
     plug(:accepts, ["html", "activity-json"])
     plug(:put_secure_browser_headers)
 
@@ -57,14 +65,13 @@ defmodule Mobilizon.Web.Router do
   end
 
   pipeline :atom_and_ical do
+    plug(:put_request_context)
     plug(:put_secure_browser_headers)
     plug(:accepts, ["atom", "ics", "html", "xml"])
   end
 
-  pipeline :exports do
-  end
-
   pipeline :browser do
+    plug(:put_request_context)
     plug(Plug.Static, at: "/", from: "priv/static")
 
     plug(Mobilizon.Web.Plugs.SetLocalePlug)
@@ -76,9 +83,6 @@ defmodule Mobilizon.Web.Router do
 
     plug(:accepts, ["html"])
     plug(:put_secure_browser_headers)
-  end
-
-  pipeline :remote_media do
   end
 
   scope "/exports", Mobilizon.Web do
