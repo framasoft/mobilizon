@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-28 19:02+0200\n"
+"PO-Revision-Date: 2022-03-29 11:37+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -1259,10 +1259,6 @@ msgstr "Participer"
 msgid "Participate:"
 msgstr "Participer :"
 
-#: lib/web/templates/email/participation/event_card.text.eex:9
-msgid "Read more : %{url}"
-msgstr "Lire plus : %{url}"
-
 #: lib/web/templates/email/participation/card/_title.text.eex:1
 msgid "Title: %{title}"
 msgstr "Titre : %{title}"
@@ -1445,122 +1441,126 @@ msgstr "Pour accepter cette invitation, rendez-vous sur la page du profil dans l
 msgid "View the details"
 msgstr "Voir les détails"
 
-#: lib/mobilizon/events/categories.ex:10
+#: lib/mobilizon/events/categories.ex:16
 msgid "Arts"
 msgstr "Arts"
 
-#: lib/mobilizon/events/categories.ex:46
+#: lib/mobilizon/events/categories.ex:52
 msgid "Auto, boat and air"
 msgstr "Automobile, bateaux et aéronautique"
 
-#: lib/mobilizon/events/categories.ex:14
+#: lib/mobilizon/events/categories.ex:20
 msgid "Book clubs"
 msgstr "Clubs de lecture"
 
-#: lib/mobilizon/events/categories.ex:18
+#: lib/mobilizon/events/categories.ex:24
 msgid "Business"
 msgstr "Entreprises"
 
-#: lib/mobilizon/events/categories.ex:22
+#: lib/mobilizon/events/categories.ex:28
 msgid "Causes"
 msgstr "Causes"
 
-#: lib/mobilizon/events/categories.ex:26
+#: lib/mobilizon/events/categories.ex:32
 msgid "Comedy"
 msgstr "Comédie"
 
-#: lib/mobilizon/events/categories.ex:50
+#: lib/mobilizon/events/categories.ex:56
 msgid "Community"
 msgstr "Communauté"
 
-#: lib/mobilizon/events/categories.ex:30
+#: lib/mobilizon/events/categories.ex:36
 msgid "Crafts"
 msgstr "Artisanat"
 
-#: lib/mobilizon/events/categories.ex:54
+#: lib/mobilizon/events/categories.ex:60
 msgid "Family & Education"
 msgstr "Famille et éducation"
 
-#: lib/mobilizon/events/categories.ex:58
+#: lib/mobilizon/events/categories.ex:64
 msgid "Fashion & Beauty"
 msgstr "Mode et beauté"
 
-#: lib/mobilizon/events/categories.ex:62
+#: lib/mobilizon/events/categories.ex:68
 msgid "Film & Media"
 msgstr "Films et médias"
 
-#: lib/mobilizon/events/categories.ex:34
+#: lib/mobilizon/events/categories.ex:40
 msgid "Food & Drink"
 msgstr "Alimentation et boissons"
 
-#: lib/mobilizon/events/categories.ex:66
+#: lib/mobilizon/events/categories.ex:72
 msgid "Games"
 msgstr "Jeux"
 
-#: lib/mobilizon/events/categories.ex:38
+#: lib/mobilizon/events/categories.ex:44
 msgid "Health"
 msgstr "Santé"
 
-#: lib/mobilizon/events/categories.ex:78
+#: lib/mobilizon/events/categories.ex:84
 msgid "LGBTQ"
 msgstr "LGBTQ"
 
-#: lib/mobilizon/events/categories.ex:70
+#: lib/mobilizon/events/categories.ex:76
 msgid "Language & Culture"
 msgstr "Langue et Culture"
 
-#: lib/mobilizon/events/categories.ex:74
+#: lib/mobilizon/events/categories.ex:80
 msgid "Learning"
 msgstr "Apprentissage"
 
-#: lib/mobilizon/events/categories.ex:127
+#: lib/mobilizon/events/categories.ex:133
 msgid "Meeting"
 msgstr "Rencontre"
 
-#: lib/mobilizon/events/categories.ex:82
+#: lib/mobilizon/events/categories.ex:88
 msgid "Movements and politics"
 msgstr "Politique et organisations"
 
-#: lib/mobilizon/events/categories.ex:42
+#: lib/mobilizon/events/categories.ex:48
 msgid "Music"
 msgstr "Musique"
 
-#: lib/mobilizon/events/categories.ex:86
+#: lib/mobilizon/events/categories.ex:92
 msgid "Networking"
 msgstr "Réseautage"
 
-#: lib/mobilizon/events/categories.ex:106
+#: lib/mobilizon/events/categories.ex:112
 msgid "Outdoors & Adventure"
 msgstr "Plein air et aventure"
 
-#: lib/mobilizon/events/categories.ex:90
+#: lib/mobilizon/events/categories.ex:96
 msgid "Party"
 msgstr "Fête"
 
-#: lib/mobilizon/events/categories.ex:94
+#: lib/mobilizon/events/categories.ex:100
 msgid "Performing & Visual Arts"
 msgstr "Arts du spectacle et arts visuels"
 
-#: lib/mobilizon/events/categories.ex:98
+#: lib/mobilizon/events/categories.ex:104
 msgid "Pets"
 msgstr "Animaux domestiques"
 
-#: lib/mobilizon/events/categories.ex:102
+#: lib/mobilizon/events/categories.ex:108
 msgid "Photography"
 msgstr "Photographie"
 
-#: lib/mobilizon/events/categories.ex:114
+#: lib/mobilizon/events/categories.ex:120
 msgid "Science & Tech"
 msgstr "Science et technologie"
 
-#: lib/mobilizon/events/categories.ex:110
+#: lib/mobilizon/events/categories.ex:116
 msgid "Spirituality, Religion & Beliefs"
 msgstr "Spiritualité, religion et croyances"
 
-#: lib/mobilizon/events/categories.ex:118
+#: lib/mobilizon/events/categories.ex:124
 msgid "Sports"
 msgstr "Sports"
 
-#: lib/mobilizon/events/categories.ex:122
+#: lib/mobilizon/events/categories.ex:128
 msgid "Theatre"
 msgstr "Théâtre"
+
+#: lib/web/templates/email/participation/event_card.text.eex:9
+msgid "Read more: %{url}"
+msgstr "Lire plus : %{url}"
