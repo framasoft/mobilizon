@@ -131,7 +131,7 @@ defmodule Mobilizon.Web.ReverseProxy do
         Logger.warn("Tried to reverse proxy URL #{inspect(url)}")
 
         conn
-        |> error_or_redirect(url, 500, "Request failed", opts)
+        |> error_or_redirect(url, 400, "Request failed", opts)
         |> halt()
 
       {:error, {:invalid_http_response, code}} ->
@@ -150,7 +150,7 @@ defmodule Mobilizon.Web.ReverseProxy do
         Logger.error("#{__MODULE__}: request to #{inspect(url)} failed: #{inspect(error)}")
 
         conn
-        |> error_or_redirect(url, 500, "Request failed", opts)
+        |> error_or_redirect(url, 400, "Request failed", opts)
         |> halt()
     end
   end
