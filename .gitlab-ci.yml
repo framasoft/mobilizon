@@ -274,7 +274,7 @@ package-app-dev:
 # Packaging app for multi-arch
 multi-arch-release:
   stage: package
-  image: docker:stable
+  image: docker:20.10.12
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
     DOCKER_HOST: tcp://docker:2376
@@ -283,7 +283,7 @@ multi-arch-release:
     DOCKER_DRIVER: overlay2
     APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
   services:
-    - docker:stable-dind
+    - docker:20.10.12-dind
   cache: {}
   before_script:
     # Install buildx
