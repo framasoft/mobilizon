@@ -91,6 +91,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             # Object already exists
             {:ok, nil, comment}
         end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
