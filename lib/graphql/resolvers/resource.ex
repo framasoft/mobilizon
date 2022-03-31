@@ -122,6 +122,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           {:ok, _, %Resource{} = resource} ->
             {:ok, resource}
 
+          {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, changeset}
+
           {:error, _err} ->
             {:error, dgettext("errors", "Error while creating resource")}
         end

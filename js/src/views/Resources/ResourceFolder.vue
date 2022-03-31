@@ -9,10 +9,7 @@
             <b-icon icon="folder" />
             {{ $t("New folder") }}
           </b-dropdown-item>
-          <b-dropdown-item
-            aria-role="listitem"
-            @click="createLinkResourceModal = true"
-          >
+          <b-dropdown-item aria-role="listitem" @click="createLinkModal">
             <b-icon icon="link" />
             {{ $t("New link") }}
           </b-dropdown-item>
@@ -124,7 +121,11 @@
         <section class="modal-card-body">
           <form @submit.prevent="renameResource">
             <b-field :label="$t('Title')">
-              <b-input aria-required="true" v-model="updatedResource.title" />
+              <b-input
+                ref="resourceRenameInput"
+                aria-required="true"
+                v-model="updatedResource.title"
+              />
             </b-field>
 
             <b-button native-type="submit">{{
@@ -154,12 +155,17 @@
       :active.sync="createResourceModal"
       has-modal-card
       :close-button-aria-label="$t('Close')"
+      trap-focus
     >
       <div class="modal-card">
         <section class="modal-card-body">
+          <b-message type="is-danger" v-if="modalError">
+            {{ modalError }}
+          </b-message>
           <form @submit.prevent="createResource">
             <b-field :label="$t('Title')" label-for="new-resource-title">
               <b-input
+                ref="modalNewResourceInput"
                 aria-required="true"
                 v-model="newResource.title"
                 id="new-resource-title"
@@ -179,6 +185,7 @@
       class="link-resource-modal"
       aria-modal
       :close-button-aria-label="$t('Close')"
+      trap-focus
     >
       <div class="modal-card">
         <section class="modal-card-body">
@@ -193,6 +200,7 @@
                 required
                 v-model="newResource.resourceUrl"
                 @blur="previewResource"
+                ref="modalNewResourceLinkInput"
               />
             </b-field>
 
@@ -355,6 +363,12 @@ export default class Resources extends Mixins(ResourceMixin) {
     put: true,
   };
 
+  $refs!: {
+    resourceRenameInput: any;
+    modalNewResourceInput: HTMLElement;
+    modalNewResourceLinkInput: HTMLElement;
+  };
+
   mapServiceTypeToIcon = mapServiceTypeToIcon;
 
   get page(): number {
@@ -458,15 +472,25 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
-  createFolderModal(): void {
-    this.newResource.type = "folder";
-    this.createResourceModal = true;
+  async createLinkModal(): Promise<void> {
+    this.createLinkResourceModal = true;
+    await this.$nextTick();
+    this.$refs.modalNewResourceLinkInput.focus();
   }
 
-  createResourceFromProvider(provider: IProvider): void {
+  async createFolderModal(): Promise<void> {
+    this.newResource.type = "folder";
+    this.createResourceModal = true;
+    await this.$nextTick();
+    this.$refs.modalNewResourceInput.focus();
+  }
+
+  async createResourceFromProvider(provider: IProvider): Promise<void> {
     this.newResource.resourceUrl = Resources.generateFullResourceUrl(provider);
     this.newResource.type = provider.software;
     this.createResourceModal = true;
+    await this.$nextTick();
+    this.$refs.modalNewResourceInput.focus();
   }
 
   static generateFullResourceUrl(provider: IProvider): string {
@@ -549,10 +573,12 @@ export default class Resources extends Mixins(ResourceMixin) {
     }
   }
 
-  handleRename(resource: IResource): void {
-    console.log("handleRename");
+  async handleRename(resource: IResource): Promise<void> {
     this.renameModal = true;
     this.updatedResource = { ...resource };
+    await this.$nextTick();
+    this.$refs.resourceRenameInput.focus();
+    this.$refs.resourceRenameInput.$el.querySelector("input").select();
   }
 
   handleMove(resource: IResource): void {

@@ -63,6 +63,10 @@ defmodule Mobilizon.Resources.Resource do
     |> maybe_add_published_at()
     |> validate_resource_or_folder()
     |> validate_required(@required_attrs)
+    |> validate_length(:title, max: 200)
+    |> validate_length(:summary, max: 400)
+    |> validate_length(:resource_url, max: 400)
+    |> validate_length(:path, max: 500)
     |> unique_constraint(:url, name: :resource_url_index)
   end
 
