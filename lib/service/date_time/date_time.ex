@@ -182,7 +182,7 @@ defmodule Mobilizon.Service.DateTime do
     compare_to_day = Keyword.get(options, :compare_to_day, Date.utc_today())
     compare_to = Keyword.get(options, :compare_to_datetime, DateTime.utc_now())
     start_time = Keyword.get(options, :start_time, @start_time)
-    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    timezone = Keyword.get(options, :timezone, "Etc/UTC") || "Etc/UTC"
     end_time = Keyword.get(options, :end_time, @end_time)
 
     DateTime.compare(compare_to, DateTime.new!(compare_to_day, start_time, timezone)) in [

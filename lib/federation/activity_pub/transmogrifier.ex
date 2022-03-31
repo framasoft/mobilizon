@@ -91,6 +91,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             # Object already exists
             {:ok, nil, comment}
         end
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -850,8 +853,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   # Handle incoming `Accept` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_accept_join(join_object, %Actor{} = actor_accepting) do
     case get_participant(join_object, actor_accepting) do
-      {:ok, participant} ->
-        do_handle_incoming_accept_join_event(participant, actor_accepting)
+      {:ok, activity, participant} ->
+        do_handle_incoming_accept_join_event(participant, actor_accepting, activity)
 
       {:error, _err} ->
         case get_member(join_object) do
@@ -870,17 +873,22 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp do_handle_incoming_accept_join_event(%Participant{role: :participant}, _actor) do
+  defp do_handle_incoming_accept_join_event(
+         %Participant{role: :participant} = participant,
+         _actor,
+         activity
+       ) do
     Logger.debug(
       "Tried to handle an Accept activity on a Join activity with a event object but the participant is already validated"
     )
 
-    nil
+    {:ok, activity, participant}
   end
 
   defp do_handle_incoming_accept_join_event(
          %Participant{role: role, event: event} = participant,
-         %Actor{} = actor_accepting
+         %Actor{} = actor_accepting,
+         _activity
        )
        when role in [:not_approved, :rejected] do
     with %Event{} = event <- Events.get_event_with_preload!(event.id),
@@ -932,7 +940,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
   # Handle incoming `Reject` activities wrapping a `Join` activity on an event
   defp do_handle_incoming_reject_join(join_object, %Actor{} = actor_accepting) do
-    with {:join_event, {:ok, %Participant{event: event, role: role} = participant}}
+    with {:join_event, {:ok, _activity, %Participant{event: event, role: role} = participant}}
          when role != :rejected <-
            {:join_event, get_participant(join_object, actor_accepting)},
          {:event, %Event{} = event} <- {:event, Events.get_event_with_preload!(event.id)},
@@ -943,7 +951,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
          :ok <- Participation.send_emails_to_local_user(participant) do
       {:ok, activity, participant}
     else
-      {:join_event, {:ok, %Participant{role: :rejected}}} ->
+      {:join_event, {:ok, _activity, %Participant{role: :rejected}}} ->
         Logger.warn(
           "Tried to handle an Reject activity on a Join activity with a event object but the participant is already rejected"
         )
@@ -1040,18 +1048,18 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     end
   end
 
-  defp get_participant(join_object, %Actor{} = actor_accepting, loop \\ 1) do
+  defp get_participant(join_object, %Actor{} = actor_accepting, loop \\ 1, activity \\ nil) do
     with join_object_id when not is_nil(join_object_id) <- Utils.get_url(join_object),
          {:not_found, %Participant{} = participant} <-
            {:not_found, Events.get_participant_by_url(join_object_id)} do
-      {:ok, participant}
+      {:ok, activity, participant}
     else
       {:not_found, _err} ->
         with true <- is_map(join_object),
              true <- loop < 2,
              true <- Utils.are_same_origin?(actor_accepting.url, join_object["id"]),
-             {:ok, _activity, %Participant{url: participant_url}} <- handle_incoming(join_object) do
-          get_participant(participant_url, actor_accepting, 2)
+             {:ok, activity, %Participant{url: participant_url}} <- handle_incoming(join_object) do
+          get_participant(participant_url, actor_accepting, 2, activity)
         else
           _ ->
             {:error, "Participant URL not found"}

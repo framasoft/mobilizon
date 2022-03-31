@@ -119,7 +119,11 @@ defmodule Mobilizon.Resources do
         {:ok, resource}
 
       {:error, operation, reason, _changes} ->
-        {:error, "Error while inserting resource when #{operation} because of #{inspect(reason)}"}
+        Logger.error(
+          "Error while inserting resource when #{operation} because of #{inspect(reason)}"
+        )
+
+        {:error, reason}
     end
   end
 

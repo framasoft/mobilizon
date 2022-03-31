@@ -221,7 +221,7 @@ export default class App extends Vue {
           ? this.routerView?.$refs?.componentFocusTarget
           : this.routerView?.$el
       ) as HTMLElement;
-      if (focusTarget) {
+      if (focusTarget && focusTarget instanceof Element) {
         // Make focustarget programmatically focussable
         focusTarget.setAttribute("tabindex", "-1");
 

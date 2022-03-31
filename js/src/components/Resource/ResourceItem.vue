@@ -45,7 +45,7 @@
     </a>
     <resource-dropdown
       class="actions"
-      v-if="!inline || !preview"
+      v-if="!inline && !preview"
       @delete="$emit('delete', resource.id)"
       @move="$emit('move', resource)"
       @rename="$emit('rename', resource)"

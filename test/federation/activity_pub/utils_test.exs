@@ -129,7 +129,7 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
 
     test "with no actor information" do
       assert_raise ArgumentError,
-                   "Object contains both actor and attributedTo fields being null",
+                   "Object contains both actor and attributedTo fields being null: %{\"actor\" => nil, \"attributedTo\" => nil}",
                    fn ->
                      Utils.get_actor(%{
                        "actor" => nil,

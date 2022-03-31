@@ -1,7 +1,7 @@
 <template>
   <div v-if="resource">
     <article class="panel is-primary">
-      <p class="panel-heading">
+      <p class="panel-heading truncate">
         {{
           $t('Move "{resourceName}"', { resourceName: initialResource.title })
         }}
@@ -28,7 +28,7 @@
       </a>
       <template v-if="resource.children">
         <a
-          class="panel-block"
+          class="panel-block flex-wrap"
           v-for="element in resource.children.elements"
           :class="{
             clickable:
@@ -37,15 +37,17 @@
           :key="element.id"
           @click="goDown(element)"
         >
-          <span class="panel-icon">
-            <b-icon
-              icon="folder"
-              size="is-small"
-              v-if="element.type === 'folder'"
-            />
-            <b-icon icon="link" size="is-small" v-else />
-          </span>
-          {{ element.title }}
+          <p class="truncate">
+            <span class="panel-icon">
+              <b-icon
+                icon="folder"
+                size="is-small"
+                v-if="element.type === 'folder'"
+              />
+              <b-icon icon="link" size="is-small" v-else />
+            </span>
+            <span>{{ element.title }}</span>
+          </p>
           <span v-if="element.id === initialResource.id">
             <em v-if="element.type === 'folder'"> {{ $t("(this folder)") }}</em>
             <em v-else> {{ $t("(this link)") }}</em>
@@ -89,7 +91,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { GET_RESOURCE } from "../../graphql/resources";
 import { IResource } from "../../types/resource";
 
@@ -119,7 +121,7 @@ export default class ResourceSelector extends Vue {
 
   @Prop({ required: true }) username!: string;
 
-  resource: IResource | undefined = this.initialResource.parent;
+  resource: IResource | undefined = undefined;
 
   RESOURCES_PER_PAGE = 10;
 
@@ -128,6 +130,20 @@ export default class ResourceSelector extends Vue {
   goDown(element: IResource): void {
     if (element.type === "folder" && element.id !== this.initialResource.id) {
       this.resource = element;
+    }
+  }
+
+  data() {
+    return {
+      resource: this.initialResource?.parent,
+    };
+  }
+
+  @Watch("initialResource")
+  updateResourceFromProp() {
+    if (this.initialResource) {
+      this.resource = this.initialResource?.parent;
+      this.$apollo.queries.resource.refetch();
     }
   }
 

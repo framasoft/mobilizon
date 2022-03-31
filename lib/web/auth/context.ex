@@ -26,22 +26,6 @@ defmodule Mobilizon.Web.Auth.Context do
 
     user_agent = conn |> Plug.Conn.get_req_header("user-agent") |> List.first()
 
-    if Application.get_env(:sentry, :dsn) != nil do
-      Sentry.Context.set_request_context(%{
-        url: Plug.Conn.request_url(conn),
-        method: conn.method,
-        headers: %{
-          "User-Agent": user_agent,
-          Referer: conn |> Plug.Conn.get_req_header("referer") |> List.first()
-        },
-        query_string: conn.query_string,
-        env: %{
-          REQUEST_ID: conn |> Plug.Conn.get_resp_header("x-request-id") |> List.first(),
-          SERVER_NAME: conn.host
-        }
-      })
-    end
-
     {conn, context} =
       case Guardian.Plug.current_resource(conn) do
         %User{id: user_id, email: user_email} = user ->
