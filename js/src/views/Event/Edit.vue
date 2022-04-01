@@ -616,6 +616,7 @@ import {
   EventJoinOptions,
   EventStatus,
   EventVisibility,
+  GroupVisibility,
   MemberRole,
   ParticipantRole,
 } from "@/types/enums";
@@ -639,6 +640,7 @@ import {
   LOGGED_USER_DRAFTS,
   PERSON_STATUS_GROUP,
 } from "../../graphql/actor";
+import { FETCH_GROUP } from "../../graphql/group";
 import {
   displayNameAndUsername,
   IActor,
@@ -719,6 +721,21 @@ const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
         );
       },
     },
+    group: {
+      query: FETCH_GROUP,
+      fetchPolicy: "cache-and-network",
+      variables() {
+        return {
+          name: this.event?.attributedTo?.preferredUsername,
+        };
+      },
+      skip() {
+        return (
+          !this.event?.attributedTo ||
+          !this.event?.attributedTo?.preferredUsername
+        );
+      },
+    },
   },
   metaInfo() {
     return {
@@ -736,6 +753,8 @@ export default class EditEvent extends Vue {
   @Prop({ type: Boolean, default: false }) isUpdate!: boolean;
 
   @Prop({ type: Boolean, default: false }) isDuplicate!: boolean;
+
+  group!: IGroup;
 
   currentActor!: IActor;
 
@@ -779,6 +798,16 @@ export default class EditEvent extends Vue {
   resetFormForCreation(eventId: string): void {
     if (eventId === undefined) {
       this.event = new EventModel();
+    }
+  }
+
+  @Watch("group")
+  updateEventVisibility(group: IGroup): void {
+    if (!this.isUpdate && group.visibility == GroupVisibility.UNLISTED) {
+      this.event.visibility = EventVisibility.UNLISTED;
+    }
+    if (!this.isUpdate && group.visibility == GroupVisibility.PUBLIC) {
+      this.event.visibility = EventVisibility.PUBLIC;
     }
   }
 
