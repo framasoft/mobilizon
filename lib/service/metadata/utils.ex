@@ -54,7 +54,7 @@ defmodule Mobilizon.Service.Metadata.Utils do
   end
 
   defdelegate datetime_to_string(datetime, locale \\ "en", format \\ :medium), to: DateTime
-  defdelegate render_address(address), to: Address
+  defdelegate render_address!(address), to: Address
 
   defp maybe_slice(description, nil), do: description
 

@@ -190,6 +190,29 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   defp delete_discussions(%Multi{} = multi, %Actor{type: :Group, id: actor_id}) do
     Logger.debug("Delete group's discussions")
+
+    multi =
+      Multi.run(multi, :group_discussion_comments, fn _, _ ->
+        group_comments_ids =
+          Comment
+          |> join(:inner, [c], d in Discussion, on: c.discussion_id == d.id)
+          |> where([_c, d], d.actor_id == ^actor_id)
+          |> select([c], [c.id])
+          |> Repo.all()
+          |> Enum.concat()
+
+        {:ok, group_comments_ids}
+      end)
+
+    multi =
+      Multi.delete_all(
+        multi,
+        :delete_discussions_comments,
+        fn %{group_discussion_comments: group_discussion_comments} ->
+          where(Comment, [c], c.id in ^group_discussion_comments)
+        end
+      )
+
     Multi.delete_all(multi, :delete_discussions, where(Discussion, [e], e.actor_id == ^actor_id))
   end
 

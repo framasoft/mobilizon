@@ -9,7 +9,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   import Mobilizon.Service.Metadata.Utils,
-    only: [process_description: 2, strip_tags: 1, datetime_to_string: 2, render_address: 1]
+    only: [process_description: 2, strip_tags: 1, datetime_to_string: 2, render_address!: 1]
 
   def build_tags(%Event{} = event, locale \\ "en") do
     formatted_description = description(event, locale)
@@ -150,7 +150,13 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
 
   @spec maybe_build_address(list(String.t()), Address.t() | nil) :: list(String.t())
   defp maybe_build_address(elements, %Address{} = address) do
-    elements ++ [render_address(address)]
+    elements ++ [render_address!(address)]
+  rescue
+    # If the address is not renderable
+    e in ArgumentError ->
+      require Logger
+      Logger.error(Exception.format(:error, e, __STACKTRACE__))
+      elements
   end
 
   defp maybe_build_address(elements, _address), do: elements

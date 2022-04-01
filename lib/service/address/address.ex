@@ -7,7 +7,7 @@ defmodule Mobilizon.Service.Address do
 
   @type address :: %{name: String.t(), alternative_name: String.t()}
 
-  @spec render_address(AddressModel.t()) :: String.t() | no_return
+  @spec render_address(AddressModel.t()) :: String.t() | nil
   def render_address(%AddressModel{} = address) do
     %{name: name, alternative_name: alternative_name} = render_names(address)
 
@@ -22,7 +22,18 @@ defmodule Mobilizon.Service.Address do
         alternative_name
 
       true ->
+        nil
+    end
+  end
+
+  @spec render_address!(AddressModel.t()) :: String.t() | no_return
+  def render_address!(%AddressModel{} = address) do
+    case render_address(address) do
+      nil ->
         raise ArgumentError, message: "Invalid address"
+
+      address ->
+        address
     end
   end
 

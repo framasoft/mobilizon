@@ -50,8 +50,10 @@ defmodule Mobilizon.Service.AddressTest do
     end
 
     test "with no data" do
+      assert AddressRenderer.render_address(%Address{}) == nil
+
       assert_raise ArgumentError, "Invalid address", fn ->
-        AddressRenderer.render_address(%Address{})
+        AddressRenderer.render_address!(%Address{})
       end
     end
   end

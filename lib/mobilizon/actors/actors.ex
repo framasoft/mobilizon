@@ -58,6 +58,8 @@ defmodule Mobilizon.Actors do
   @moderator_roles [:moderator] ++ @administrator_roles
   @member_roles [:member] ++ @moderator_roles
 
+  @associations_to_preload [:organized_events, :followers, :followings, :user, :physical_address]
+
   @doc """
   Gets a single actor.
   """
@@ -169,7 +171,7 @@ defmodule Mobilizon.Actors do
   def get_local_actor_by_name_with_preload(name) do
     name
     |> get_local_actor_by_name()
-    |> Repo.preload([:organized_events, :followers, :followings])
+    |> Repo.preload(@associations_to_preload)
   end
 
   @doc """
@@ -179,7 +181,7 @@ defmodule Mobilizon.Actors do
   def get_actor_by_name_with_preload(name, type \\ nil) do
     name
     |> get_actor_by_name(type)
-    |> Repo.preload([:organized_events, :user, :physical_address])
+    |> Repo.preload(@associations_to_preload)
   end
 
   @doc """
@@ -246,7 +248,7 @@ defmodule Mobilizon.Actors do
   @spec update_actor(Actor.t(), map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def update_actor(%Actor{} = actor, attrs) do
     actor
-    |> Repo.preload([:physical_address])
+    |> Repo.preload(@associations_to_preload)
     |> Actor.update_changeset(attrs)
     |> delete_files_if_media_changed()
     |> Repo.update()
@@ -271,7 +273,7 @@ defmodule Mobilizon.Actors do
 
     case insert do
       {:ok, actor} ->
-        actor = if preload, do: Repo.preload(actor, [:followers]), else: actor
+        actor = if preload, do: Repo.preload(actor, @associations_to_preload), else: actor
 
         {:ok, actor}
 
@@ -1304,7 +1306,7 @@ defmodule Mobilizon.Actors do
   defp actor_with_preload_query(actor_id, true) do
     Actor
     |> where([a], a.id == ^actor_id)
-    |> preload([a], [:organized_events, :followers, :followings])
+    |> preload([a], ^@associations_to_preload)
   end
 
   @spec actor_by_username_query(String.t()) :: Ecto.Query.t()
