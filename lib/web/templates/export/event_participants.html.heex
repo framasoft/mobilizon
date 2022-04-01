@@ -125,7 +125,7 @@ th {
                 <dt><%= gettext("Ends on") %></dt>
                 <dd><%= datetime_to_string(@event.ends_on, @locale, :long) %></dd>
             <% end %>
-            <%= if @event.physical_address do %>
+            <%= if not is_nil(@event.physical_address) and not is_nil(render_address(@event.physical_address)) do %>
                 <dt><%= gettext("Location") %></dt>
                 <dd><%= render_address(@event.physical_address) %></dd>
             <% end %>

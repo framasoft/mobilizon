@@ -26,7 +26,7 @@
                   </td>
                 </tr>
                 <!-- row for datetime end -->
-                <%= if @event.physical_address do %>
+                <%= if not is_nil(@event.physical_address) and not is_nil(render_address(@event.physical_address)) do %>
                   <!-- venue block -->
                   <tr style="vertical-align: baseline; margin: 0; padding: 0; border: 0;" align="left">
                     <td style="word-wrap: break-word; border-collapse: collapse; color: rgb(10,10,10); font-family: Helvetica,Arial,sans-serif; font-weight: normal; line-height: 1.3; font-size: 16px; margin: 0; padding: 0 12px 0 0; border: 0;" valign="baseline" align="left">
