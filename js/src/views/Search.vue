@@ -93,6 +93,7 @@
             </b-select>
           </b-field>
           <b-field
+            v-if="config"
             expanded
             :label="$t('Category')"
             label-for="category"
