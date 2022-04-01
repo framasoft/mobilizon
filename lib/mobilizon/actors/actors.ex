@@ -461,6 +461,7 @@ defmodule Mobilizon.Actors do
       ) do
     term
     |> build_actors_by_username_or_name_page_query(options)
+    |> maybe_exclude_stale_actors(Keyword.get(options, :exclude_stale_actors, false))
     |> maybe_exclude_my_groups(
       Keyword.get(options, :exclude_my_groups, false),
       Keyword.get(options, :current_actor_id)
@@ -476,6 +477,17 @@ defmodule Mobilizon.Actors do
   end
 
   defp maybe_exclude_my_groups(query, _, _), do: query
+
+  @spec maybe_exclude_stale_actors(Ecto.Queryable.t(), boolean()) :: Ecto.Query.t()
+  defp maybe_exclude_stale_actors(query, true) do
+    actor_stale_period =
+      Application.get_env(:mobilizon, :activitypub)[:stale_actor_search_exclusion_after]
+
+    stale_date = DateTime.utc_now() |> DateTime.add(-actor_stale_period)
+    where(query, [a], is_nil(a.domain) or a.last_refreshed_at >= ^stale_date)
+  end
+
+  defp maybe_exclude_stale_actors(query, false), do: query
 
   @spec build_actors_by_username_or_name_page_query(
           String.t(),

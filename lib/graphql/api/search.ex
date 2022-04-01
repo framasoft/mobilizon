@@ -49,7 +49,8 @@ defmodule Mobilizon.GraphQL.API.Search do
               location: Map.get(args, :location),
               minimum_visibility: Map.get(args, :minimum_visibility, :public),
               current_actor_id: Map.get(args, :current_actor_id),
-              exclude_my_groups: Map.get(args, :exclude_my_groups, false)
+              exclude_my_groups: Map.get(args, :exclude_my_groups, false),
+              exclude_stale_actors: true
             ],
             page,
             limit
