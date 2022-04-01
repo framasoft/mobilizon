@@ -259,17 +259,22 @@ export default class GroupSettings extends mixins(GroupMixin) {
 
   @Watch("group")
   async watchUpdateGroup(oldGroup: IGroup, newGroup: IGroup): Promise<void> {
-    if (
-      oldGroup?.avatar !== undefined &&
-      oldGroup?.avatar !== newGroup?.avatar
-    ) {
-      this.avatarFile = await buildFileFromIMedia(this.group.avatar);
-    }
-    if (
-      oldGroup?.banner !== undefined &&
-      oldGroup?.banner !== newGroup?.banner
-    ) {
-      this.bannerFile = await buildFileFromIMedia(this.group.banner);
+    try {
+      if (
+        oldGroup?.avatar !== undefined &&
+        oldGroup?.avatar !== newGroup?.avatar
+      ) {
+        this.avatarFile = await buildFileFromIMedia(this.group.avatar);
+      }
+      if (
+        oldGroup?.banner !== undefined &&
+        oldGroup?.banner !== newGroup?.banner
+      ) {
+        this.bannerFile = await buildFileFromIMedia(this.group.banner);
+      }
+    } catch (e) {
+      // Catch errors while building media
+      console.error(e);
     }
     this.editableGroup = { ...this.group };
   }
