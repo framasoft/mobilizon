@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-01-19 22:30+0000\n"
+"PO-Revision-Date: 2022-04-02 06:40+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:48
 msgid ""
@@ -2334,9 +2334,8 @@ msgid "Theatre"
 msgstr "Teatro"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
-#, fuzzy
 msgid "Read more: %{url}"
-msgstr "Lee mas"
+msgstr "Leer más: %{url}"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more : %{url}"
