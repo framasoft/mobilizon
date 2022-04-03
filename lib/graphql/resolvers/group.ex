@@ -16,15 +16,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
 
   require Logger
 
+  @doc """
+  Find a group
+  """
   @spec find_group(
           any,
           %{:preferred_username => binary, optional(any) => any},
           Absinthe.Resolution.t()
         ) ::
           {:error, :group_not_found} | {:ok, Actor.t()}
-  @doc """
-  Find a group
-  """
   def find_group(
         parent,
         %{preferred_username: name} = args,
@@ -45,7 +45,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, %Actor{}} ->
         {:error, :group_not_found}
 
-      {:error, _err} ->
+      {:error, err} ->
+        Logger.debug("Unable to find group, #{inspect(err)}")
         {:error, :group_not_found}
     end
   end
@@ -59,9 +60,28 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:ok, %Actor{}} ->
         {:error, :group_not_found}
 
-      {:error, _err} ->
+      {:error, err} ->
+        Logger.debug("Unable to find group, #{inspect(err)}")
         {:error, :group_not_found}
     end
+  end
+
+  def find_group_by_id(_parent, %{id: id} = args, %{
+        context: %{
+          current_actor: %Actor{id: actor_id}
+        }
+      }) do
+    with %Actor{suspended: false, id: group_id} = group <- Actors.get_actor_with_preload(id),
+         true <- Actors.is_member?(actor_id, group_id) do
+      {:ok, group}
+    else
+      _ ->
+        {:error, :group_not_found}
+    end
+  end
+
+  def find_group_by_id(_parent, _args, _resolution) do
+    {:error, :group_not_found}
   end
 
   @doc """
