@@ -1,5 +1,8 @@
 <template>
-  <div class="organizer-picker" v-if="selectedActor">
+  <div
+    class="bg-white border border-gray-300 rounded-lg cursor-pointer"
+    v-if="selectedActor"
+  >
     <!-- If we have a current actor (inline) -->
     <div
       v-if="inline && selectedActor.id"
