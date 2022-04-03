@@ -148,7 +148,7 @@ import EmptyContent from "../Utils/EmptyContent.vue";
 import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
-  LOGGED_USER_MEMBERSHIPS,
+  PERSON_GROUP_MEMBERSHIPS,
 } from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";
 import { GROUP_MEMBERS } from "@/graphql/member";
@@ -184,15 +184,17 @@ const MEMBER_ROLES = [
       },
     },
     currentActor: CURRENT_ACTOR_CLIENT,
-    userMemberships: {
-      query: LOGGED_USER_MEMBERSHIPS,
+    personMemberships: {
+      query: PERSON_GROUP_MEMBERSHIPS,
       variables() {
         return {
+          id: this.currentActor?.id,
           page: 1,
           limit: 10,
+          groupId: this.$route.query?.actorId,
         };
       },
-      update: (data) => data.loggedUser.memberships,
+      update: (data) => data.person.memberships,
     },
     identities: IDENTITIES,
   },
@@ -201,6 +203,9 @@ export default class OrganizerPickerWrapper extends Vue {
   @Prop({ type: Object, required: false }) value!: IActor;
 
   @Prop({ default: true, type: Boolean }) inline!: boolean;
+
+  @Prop({ type: Array, required: false, default: () => [] })
+  contacts!: IActor[];
 
   currentActor!: IPerson;
 
@@ -212,13 +217,11 @@ export default class OrganizerPickerWrapper extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  @Prop({ type: Array, required: false, default: () => [] })
-  contacts!: IActor[];
   members: Paginate<IMember> = { elements: [], total: 0 };
 
   membersPage = 1;
 
-  userMemberships: Paginate<IMember> = { elements: [], total: 0 };
+  personMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
   data(): Record<string, unknown> {
     return {
@@ -241,15 +244,13 @@ export default class OrganizerPickerWrapper extends Vue {
     this.contactFilter = contactFilter;
   }
 
-  @Watch("userMemberships")
+  @Watch("personMemberships")
   setInitialActor(): void {
-    if (this.$route.query?.actorId) {
-      const actorId = this.$route.query?.actorId as string;
-      const actor = this.userMemberships.elements.find(
-        ({ parent: { id }, role }) =>
-          actorId === id && MEMBER_ROLES.includes(role)
-      )?.parent as IActor;
-      this.selectedActor = actor;
+    if (
+      this.personMemberships?.elements[0]?.parent?.id ===
+      this.$route.query?.actorId
+    ) {
+      this.selectedActor = this.personMemberships?.elements[0]?.parent;
     }
   }
 
