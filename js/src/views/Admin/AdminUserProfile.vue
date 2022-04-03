@@ -95,7 +95,7 @@
                     >
                       <b-button
                         size="is-small"
-                        v-if="!user.confirmedAt || !user.disabled"
+                        v-if="!user.confirmedAt || user.disabled"
                         @click="isConfirmationModalActive = true"
                         type="is-text"
                         icon-left="check"
