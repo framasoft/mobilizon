@@ -72,7 +72,8 @@
                 <p>{{ $t("Add a contact") }}</p>
                 <b-input
                   :placeholder="$t('Filter by name')"
-                  v-model="contactFilter"
+                  :value="contactFilter"
+                  @input="debounceSetFilterByName"
                   dir="auto"
                 />
                 <div v-if="actorMembers.length > 0">
@@ -152,6 +153,7 @@ import {
 import { Paginate } from "../../types/paginate";
 import { GROUP_MEMBERS } from "@/graphql/member";
 import { ActorType, MemberRole } from "@/types/enums";
+import debounce from "lodash/debounce";
 
 const MEMBER_ROLES = [
   MemberRole.CREATOR,
@@ -218,6 +220,12 @@ export default class OrganizerPickerWrapper extends Vue {
 
   userMemberships: Paginate<IMember> = { elements: [], total: 0 };
 
+  data(): Record<string, unknown> {
+    return {
+      debounceSetFilterByName: debounce(this.setContactFilter, 1000),
+    };
+  }
+
   get actualContacts(): (string | undefined)[] {
     return this.contacts.map(({ id }) => id);
   }
@@ -227,6 +235,10 @@ export default class OrganizerPickerWrapper extends Vue {
       "update:contacts",
       this.actorMembers.filter(({ id }) => contactsIds.includes(id))
     );
+  }
+
+  setContactFilter(contactFilter: string) {
+    this.contactFilter = contactFilter;
   }
 
   @Watch("userMemberships")
@@ -279,7 +291,7 @@ export default class OrganizerPickerWrapper extends Vue {
         actor.preferredUsername.toLowerCase(),
         actor.name?.toLowerCase(),
         actor.domain?.toLowerCase(),
-      ].some((match) => match?.includes(this.contactFilter.toLowerCase()));
+      ];
     });
   }
 
