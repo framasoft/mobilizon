@@ -189,6 +189,8 @@ export default class Login extends Vue {
     password: "",
   };
 
+  redirect: string | undefined = "";
+
   errors: string[] = [];
 
   rules = {
@@ -204,6 +206,7 @@ export default class Login extends Vue {
 
     const { query } = this.$route;
     this.errorCode = query.code as LoginErrorCode;
+    this.redirect = query.redirect as string | undefined;
   }
 
   async loginAction(e: Event): Promise<Route | void> {
@@ -230,8 +233,8 @@ export default class Login extends Vue {
       saveUserData(data.login);
       await this.setupClientUserAndActors(data.login);
 
-      if (this.$route.query.redirect) {
-        this.$router.push(this.$route.query.redirect as string);
+      if (this.redirect) {
+        this.$router.push(this.redirect as string);
         return;
       }
       if (window.localStorage) {
