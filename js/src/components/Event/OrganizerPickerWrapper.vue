@@ -1,5 +1,8 @@
 <template>
-  <div class="organizer-picker" v-if="selectedActor">
+  <div
+    class="bg-white border border-gray-300 rounded-lg cursor-pointer"
+    v-if="selectedActor"
+  >
     <!-- If we have a current actor (inline) -->
     <div
       v-if="inline && selectedActor.id"
@@ -69,7 +72,8 @@
                 <p>{{ $t("Add a contact") }}</p>
                 <b-input
                   :placeholder="$t('Filter by name')"
-                  v-model="contactFilter"
+                  :value="contactFilter"
+                  @input="debounceSetFilterByName"
                   dir="auto"
                 />
                 <div v-if="actorMembers.length > 0">
@@ -144,11 +148,12 @@ import EmptyContent from "../Utils/EmptyContent.vue";
 import {
   CURRENT_ACTOR_CLIENT,
   IDENTITIES,
-  LOGGED_USER_MEMBERSHIPS,
+  PERSON_GROUP_MEMBERSHIPS,
 } from "../../graphql/actor";
 import { Paginate } from "../../types/paginate";
 import { GROUP_MEMBERS } from "@/graphql/member";
 import { ActorType, MemberRole } from "@/types/enums";
+import debounce from "lodash/debounce";
 
 const MEMBER_ROLES = [
   MemberRole.CREATOR,
@@ -179,15 +184,17 @@ const MEMBER_ROLES = [
       },
     },
     currentActor: CURRENT_ACTOR_CLIENT,
-    userMemberships: {
-      query: LOGGED_USER_MEMBERSHIPS,
+    personMemberships: {
+      query: PERSON_GROUP_MEMBERSHIPS,
       variables() {
         return {
+          id: this.currentActor?.id,
           page: 1,
           limit: 10,
+          groupId: this.$route.query?.actorId,
         };
       },
-      update: (data) => data.loggedUser.memberships,
+      update: (data) => data.person.memberships,
     },
     identities: IDENTITIES,
   },
@@ -196,6 +203,9 @@ export default class OrganizerPickerWrapper extends Vue {
   @Prop({ type: Object, required: false }) value!: IActor;
 
   @Prop({ default: true, type: Boolean }) inline!: boolean;
+
+  @Prop({ type: Array, required: false, default: () => [] })
+  contacts!: IActor[];
 
   currentActor!: IPerson;
 
@@ -207,13 +217,17 @@ export default class OrganizerPickerWrapper extends Vue {
 
   usernameWithDomain = usernameWithDomain;
 
-  @Prop({ type: Array, required: false, default: () => [] })
-  contacts!: IActor[];
   members: Paginate<IMember> = { elements: [], total: 0 };
 
   membersPage = 1;
 
-  userMemberships: Paginate<IMember> = { elements: [], total: 0 };
+  personMemberships: Paginate<IMember> = { elements: [], total: 0 };
+
+  data(): Record<string, unknown> {
+    return {
+      debounceSetFilterByName: debounce(this.setContactFilter, 1000),
+    };
+  }
 
   get actualContacts(): (string | undefined)[] {
     return this.contacts.map(({ id }) => id);
@@ -226,15 +240,17 @@ export default class OrganizerPickerWrapper extends Vue {
     );
   }
 
-  @Watch("userMemberships")
+  setContactFilter(contactFilter: string) {
+    this.contactFilter = contactFilter;
+  }
+
+  @Watch("personMemberships")
   setInitialActor(): void {
-    if (this.$route.query?.actorId) {
-      const actorId = this.$route.query?.actorId as string;
-      const actor = this.userMemberships.elements.find(
-        ({ parent: { id }, role }) =>
-          actorId === id && MEMBER_ROLES.includes(role)
-      )?.parent as IActor;
-      this.selectedActor = actor;
+    if (
+      this.personMemberships?.elements[0]?.parent?.id ===
+      this.$route.query?.actorId
+    ) {
+      this.selectedActor = this.personMemberships?.elements[0]?.parent;
     }
   }
 
@@ -276,7 +292,7 @@ export default class OrganizerPickerWrapper extends Vue {
         actor.preferredUsername.toLowerCase(),
         actor.name?.toLowerCase(),
         actor.domain?.toLowerCase(),
-      ].some((match) => match?.includes(this.contactFilter.toLowerCase()));
+      ];
     });
   }
 

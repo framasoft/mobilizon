@@ -351,6 +351,30 @@ export const PERSON_STATUS_GROUP = gql`
   ${ACTOR_FRAGMENT}
 `;
 
+export const PERSON_GROUP_MEMBERSHIPS = gql`
+  query PersonGroupMemberships($id: ID!, $groupId: ID!) {
+    person(id: $id) {
+      id
+      memberships(groupId: $groupId) {
+        total
+        elements {
+          id
+          role
+          parent {
+            ...ActorFragment
+          }
+          invitedBy {
+            ...ActorFragment
+          }
+          insertedAt
+          updatedAt
+        }
+      }
+    }
+  }
+  ${ACTOR_FRAGMENT}
+`;
+
 export const GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED = gql`
   subscription GroupMembershipSubscriptionChanged(
     $actorId: ID!

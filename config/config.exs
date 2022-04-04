@@ -212,7 +212,8 @@ config :mobilizon, :activitypub,
   # One day
   actor_stale_period: 3_600 * 48,
   actor_key_rotation_delay: 3_600 * 48,
-  sign_object_fetches: true
+  sign_object_fetches: true,
+  stale_actor_search_exclusion_after: 3_600 * 24 * 7
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
 

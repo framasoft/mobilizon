@@ -53,7 +53,8 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
             location: nil,
             minimum_visibility: :public,
             current_actor_id: nil,
-            exclude_my_groups: false
+            exclude_my_groups: false,
+            exclude_stale_actors: true
           ],
           1,
           10

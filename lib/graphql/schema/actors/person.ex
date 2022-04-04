@@ -88,11 +88,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       resolve(&Person.person_participations/3)
     end
 
-    @desc "The list of group this person is member of"
+    @desc "The list of groups this person is member of"
     field(:memberships, :paginated_member_list,
       description: "The list of group this person is member of"
     ) do
       arg(:group, :string, description: "Filter by group federated username")
+      arg(:group_id, :id, description: "Filter by group ID")
 
       arg(:page, :integer,
         default_value: 1,

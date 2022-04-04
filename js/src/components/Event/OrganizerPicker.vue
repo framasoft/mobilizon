@@ -5,33 +5,48 @@
       :placeholder="$t('Filter by profile or group name')"
       v-model="actorFilter"
     />
-    <b-radio-button
-      v-model="selectedActor"
-      :native-value="availableActor"
-      class="list-item"
-      v-for="availableActor in actualFilteredAvailableActors"
-      :key="availableActor.id"
+    <transition-group
+      tag="ul"
+      class="grid grid-cols-1 gap-y-3 m-5 max-w-md mx-auto"
+      enter-active-class="duration-300 ease-out"
+      enter-from-class="transform opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="transform opacity-0"
     >
-      <div class="media" dir="auto">
-        <figure class="image is-48x48" v-if="availableActor.avatar">
-          <img
-            class="image is-rounded"
-            :src="availableActor.avatar.url"
-            alt=""
-          />
-        </figure>
-        <b-icon
-          class="media-left"
-          v-else
-          size="is-large"
-          icon="account-circle"
+      <li
+        class="relative focus-within:shadow-lg"
+        v-for="availableActor in actualFilteredAvailableActors"
+        :key="availableActor.id"
+      >
+        <input
+          class="sr-only peer"
+          type="radio"
+          :value="availableActor"
+          name="availableActors"
+          v-model="selectedActor"
+          :id="`availableActor-${availableActor.id}`"
         />
-        <div class="media-content">
-          <h3>{{ availableActor.name }}</h3>
-          <small>{{ `@${availableActor.preferredUsername}` }}</small>
-        </div>
-      </div>
-    </b-radio-button>
+        <label
+          class="flex flex-wrap p-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
+          :for="`availableActor-${availableActor.id}`"
+        >
+          <figure class="image is-48x48" v-if="availableActor.avatar">
+            <img
+              class="image is-rounded"
+              :src="availableActor.avatar.url"
+              alt=""
+            />
+          </figure>
+          <b-icon v-else size="is-large" icon="account-circle" />
+          <div>
+            <h3>{{ availableActor.name }}</h3>
+            <small>{{ `@${availableActor.preferredUsername}` }}</small>
+          </div>
+        </label>
+      </li>
+    </transition-group>
   </div>
 </template>
 <script lang="ts">

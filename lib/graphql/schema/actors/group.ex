@@ -244,6 +244,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
 
       resolve(&Group.find_group/3)
     end
+
+    @desc "Get a group by its preferred username"
+    field :group_by_id, :group do
+      arg(:id, non_null(:id), description: "The group local ID")
+
+      resolve(&Group.find_group_by_id/3)
+    end
   end
 
   object :group_mutations do
