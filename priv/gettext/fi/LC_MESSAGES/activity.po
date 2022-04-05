@@ -275,13 +275,13 @@ msgid "Here's your weekly activity recap"
 msgstr "Tässä on viikoittainen kertaus toiminnastasi"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:119
-#: lib/web/email/activity.ex:140
+#: lib/web/email/activity.ex:121
+#: lib/web/email/activity.ex:142
 msgid "Activity notification for %{instance}"
 msgstr "Toimenpide palvelimella %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:126
+#: lib/web/email/activity.ex:128
 msgid "Daily activity recap for %{instance}"
 msgstr "Päivittäinen toiminnan kertaus instanssille %{instance}"
 
@@ -292,7 +292,7 @@ msgid "Here's your daily activity recap"
 msgstr "Tässä on päivittäinen kertaus toiminnastasi"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:133
+#: lib/web/email/activity.ex:135
 msgid "Weekly activity recap for %{instance}"
 msgstr "Viikoittainen toiminnan kertaus instanssille %{instance}"
 

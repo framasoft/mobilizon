@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-03-29 11:37+0200\n"
+"PO-Revision-Date: 2022-04-05 14:11+0200\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend/fr/>\n"
 "Language: fr\n"
@@ -60,11 +60,11 @@ msgstr "Réinitialiser mon mot de passe"
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le bouton et suivez les inscriptions. Vous serez opérationnel en un rien de temps."
 
-#: lib/web/email/user.ex:28
+#: lib/web/email/user.ex:26
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Instructions pour confirmer votre compte Mobilizon sur %{instance}"
 
-#: lib/web/email/admin.ex:24
+#: lib/web/email/admin.ex:22
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Nouveau signalement sur l'instance Mobilizon %{instance}"
 
@@ -92,15 +92,15 @@ msgstr "Réinitialiser votre mot de passe est facile. Cliquez simplement sur le 
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr "Vous avez créé un compte sur %{host} avec cette adresse email. Vous êtes à un clic de l'activer."
 
-#: lib/web/email/participation.ex:111
+#: lib/web/email/participation.ex:114
 msgid "Your participation to event %{title} has been approved"
 msgstr "Votre participation à l'événement %{title} a été approuvée"
 
-#: lib/web/email/participation.ex:68
+#: lib/web/email/participation.ex:67
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Votre participation à l'événement %{title} a été rejetée"
 
-#: lib/web/email/event.ex:46
+#: lib/web/email/event.ex:44
 msgid "Event %{title} has been updated"
 msgstr "L'événement %{title} a été mis à jour"
 
@@ -116,7 +116,7 @@ msgstr "Vous avez demandé un nouveau mot de passe pour votre compte sur %{insta
 msgid "Warning"
 msgstr "Attention"
 
-#: lib/web/email/participation.ex:135
+#: lib/web/email/participation.ex:140
 msgid "Confirm your participation to event %{title}"
 msgstr "Confirmer ma participation à l'événement %{title}"
 
@@ -274,15 +274,15 @@ msgctxt "terms"
 msgid "What information do we collect?"
 msgstr "Quelles informations collectons-nous ?"
 
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:182
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon sur %{instance} : confirmez votre adresse email"
 
-#: lib/web/email/user.ex:157
+#: lib/web/email/user.ex:159
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon sur %{instance} : adresse email modifiée"
 
-#: lib/web/email/notification.ex:51
+#: lib/web/email/notification.ex:52
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Un événement prévu aujourd'hui"
@@ -302,7 +302,7 @@ msgstr "%{inviter} vient de vous inviter à rejoindre son groupe %{group}"
 msgid "Come along!"
 msgstr "Rejoignez-nous !"
 
-#: lib/web/email/notification.ex:25
+#: lib/web/email/notification.ex:24
 msgid "Don't forget to go to %{title}"
 msgstr "N'oubliez pas de vous rendre à %{title}"
 
@@ -322,17 +322,17 @@ msgstr "Pour accepter cette invitation, rendez-vous dans vos groupes."
 msgid "View the event on: %{link}"
 msgstr "Voir l'événement mis à jour sur : %{link}"
 
-#: lib/web/email/member.ex:31
+#: lib/web/email/member.ex:30
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "Vous avez été invité par %{inviter} à rejoindre le groupe %{group}"
 
-#: lib/web/email/notification.ex:78
+#: lib/web/email/notification.ex:81
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Un événement prévu cette semaine"
 msgstr[1] "%{nb_events} événements prévus cette semaine"
 
-#: lib/web/email/notification.ex:102
+#: lib/web/email/notification.ex:107
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Une demande de participation à l'événement %{title} à traiter"
@@ -692,7 +692,7 @@ msgstr "Si vous n'avez pas effectué cette modification vous-même, il est proba
 msgid "If you didn't trigger the change yourself, please ignore this message. Your password won't be changed until you click the link above."
 msgstr "Si vous n'êtes pas à l'origine de cette modification, merci d'ignorer ce message. Votre mot de passe ne sera pas modifié tant que vous ne cliquerez pas le lien ci-dessus."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:70 lib/web/templates/email/anonymous_participation_confirmation.text.eex:4 lib/web/templates/email/registration_confirmation.html.heex:45
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:70 lib/web/templates/email/anonymous_participation_confirmation.text.eex:4 lib/web/templates/email/registration_confirmation.html.heex:45 lib/web/templates/email/registration_confirmation.text.eex:7
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Si vous n'avez pas déclenché cette alerte, vous pouvez ignorer cet e-mail sans souci."
 
@@ -824,7 +824,7 @@ msgstr "Si vous pensez qu'il s'agit d'une erreur, vous pouvez contacter les admi
 msgid "So long, and thanks for the fish!"
 msgstr "Salut, et encore merci pour le poisson !"
 
-#: lib/web/email/member.ex:113
+#: lib/web/email/member.ex:114
 msgid "You have been removed from group %{group}"
 msgstr "Vous avez été enlevé du groupe %{group}"
 
@@ -856,7 +856,7 @@ msgstr "Le groupe %{group} a été suspendu sur %{instance} !"
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr "L'équipe de modération de votre instance a décidé de suspendre %{group_name} (%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
 
-#: lib/web/email/group.ex:89
+#: lib/web/email/group.ex:90
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Le groupe %{group} a été suspendu sur %{instance}"
 
@@ -960,7 +960,7 @@ msgstr "Vous avez confirmé votre participation. Mettez à jour votre agenda, ca
 msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Vous avez demandé à participer à l'événement <b>%{title}</b>."
 
-#: lib/web/email/participation.ex:90
+#: lib/web/email/participation.ex:91
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Votre participation à l'événement %{title} a été approuvée"
 
@@ -1000,7 +1000,7 @@ msgstr "Un titre est requis pour le billet"
 msgid "%{name} (%{domain}) just requested to follow your instance."
 msgstr "%{name} (%{domain}) vient de demander à suivre votre instance."
 
-#: lib/web/email/follow.ex:54
+#: lib/web/email/follow.ex:53
 msgid "%{name} requests to follow your instance"
 msgstr "%{name} demande à suivre votre instance"
 
@@ -1008,7 +1008,7 @@ msgstr "%{name} demande à suivre votre instance"
 msgid "If you accept, this instance will receive all of your public events."
 msgstr "Si vous acceptez, leur instance recevra tous les événements publics de votre instance."
 
-#: lib/web/email/follow.ex:48
+#: lib/web/email/follow.ex:47
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr "L'instance %{name} (%{domain}) demande à suivre votre instance"
 
@@ -1088,15 +1088,15 @@ msgstr "Le serveur Mobilizon %{instance} semble être temporairement hors-servic
 msgid "Public feed for %{instance}"
 msgstr "Flux public pour %{instance}"
 
-#: lib/graphql/resolvers/user.ex:318
+#: lib/graphql/resolvers/user.ex:316
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr "Le mot de passe que vous avez choisi est trop court. Assurez-vous que votre mot de passe contienne au moins 6 caractères."
 
-#: lib/graphql/resolvers/user.ex:324
+#: lib/graphql/resolvers/user.ex:322
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr "Le jeton que vous avez fourni est invalide. Assurez-vous que l'URL est exactement la même que celle contenue dans le message que vous avez reçu."
 
-#: lib/web/email/actor.ex:44
+#: lib/web/email/actor.ex:43
 msgid "Your participation to %{event} has been cancelled!"
 msgstr "Votre participation à l'événement %{title} a été annulée !"
 
@@ -1263,7 +1263,7 @@ msgstr "Participer :"
 msgid "Title: %{title}"
 msgstr "Titre : %{title}"
 
-#: lib/web/email/group.ex:44
+#: lib/web/email/group.ex:43
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Programmé à l'instant par %{group} : %{event}"
 
@@ -1291,11 +1291,11 @@ msgstr "Voir le groupe"
 msgid "You're in!"
 msgstr "Vous en êtes !"
 
-#: lib/web/email/member.ex:60
+#: lib/web/email/member.ex:61
 msgid "Your membership request for group %{group} has been approved"
 msgstr "Votre demande d'adhésion pour le groupe %{group} a été acceptée"
 
-#: lib/web/email/member.ex:89
+#: lib/web/email/member.ex:88
 msgid "Your membership request for group %{group} has been rejected"
 msgstr "Votre demande d'adhésion pour le groupe %{group} a été rejetée"
 
@@ -1325,7 +1325,7 @@ msgstr[1] "Vous avez %{number_participation_requests} demandes de participation 
 msgid "An administrator changed your role"
 msgstr "Un⋅e administrateur⋅ice a changé votre rôle"
 
-#: lib/web/email/admin.ex:120
+#: lib/web/email/admin.ex:122
 msgid "An administrator confirmed your account on %{instance}"
 msgstr "Un⋅e administrateur⋅ice a confirmé votre compte sur %{instance}"
 
@@ -1333,7 +1333,7 @@ msgstr "Un⋅e administrateur⋅ice a confirmé votre compte sur %{instance}"
 msgid "An administrator manually changed the email attached to your account"
 msgstr "Une administrateur⋅ice a manuellement changé le courriel attaché à votre compte"
 
-#: lib/web/email/admin.ex:47 lib/web/email/admin.ex:72
+#: lib/web/email/admin.ex:43 lib/web/email/admin.ex:70
 msgid "An administrator manually changed the email attached to your account on %{instance}"
 msgstr "Une administrateur⋅ice a manuellement changé le courriel attaché à votre compte sur %{instance}"
 
@@ -1564,3 +1564,7 @@ msgstr "Théâtre"
 #: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more: %{url}"
 msgstr "Lire plus : %{url}"
+
+#: lib/web/templates/email/registration_confirmation.text.eex:9
+msgid "Activate my account:"
+msgstr "Activer mon compte :"
