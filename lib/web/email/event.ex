@@ -18,8 +18,8 @@ defmodule Mobilizon.Web.Email.Event do
   @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
   @spec event_updated(
-          Participant.t(),
           String.t(),
+          Participant.t(),
           Actor.t(),
           Event.t(),
           Event.t(),
