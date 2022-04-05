@@ -66,7 +66,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     end
   end
 
-  def find_group_by_id(_parent, %{id: id} = args, %{
+  def find_group_by_id(_parent, %{id: id}, %{
         context: %{
           current_actor: %Actor{id: actor_id}
         }
