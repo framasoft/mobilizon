@@ -8,12 +8,13 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.Workers.Notification
   alias Mobilizon.Users.User
-  alias Mobilizon.Web.Email.Notification, as: NotificationMailer
 
   use Mobilizon.DataCase
-  use Bamboo.Test
 
+  import Swoosh.TestAssertions
   import Mobilizon.Factory
+
+  @email "someone@somewhere.tld"
 
   describe "A before_event_notification job sends an email" do
     test "if the user is still participating" do
@@ -36,12 +37,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         args: %{"op" => "before_event_notification", "participant_id" => participant_id}
       })
 
-      assert_delivered_email(
-        NotificationMailer.before_event_notification(
-          participant.actor.user.email,
-          participant
-        )
-      )
+      assert_email_sent(to: participant.actor.user.email)
     end
 
     test "unless the person is no longer participating" do
@@ -63,30 +59,19 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         args: %{"op" => "before_event_notification", "participant_id" => participant_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.before_event_notification(
-          participant.actor.user.email,
-          participant
-        )
-      )
+      refute_email_sent()
     end
 
     test "unless the event has been cancelled" do
       %Event{} = event = insert(:event, status: :cancelled)
 
-      %Participant{id: participant_id} =
-        participant = insert(:participant, role: :participant, event: event)
+      %Participant{id: participant_id} = insert(:participant, role: :participant, event: event)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "before_event_notification", "participant_id" => participant_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.before_event_notification(
-          participant.actor.user.email,
-          participant
-        )
-      )
+      refute_email_sent()
     end
   end
 
@@ -100,19 +85,13 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
 
-      %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+      %Participant{} = insert(:participant, role: :participant, actor: actor)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "on_day_notification", "user_id" => user_id}
       })
 
-      assert_delivered_email(
-        NotificationMailer.on_day_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      assert_email_sent(to: user.email)
     end
 
     test "unless the person is no longer participating" do
@@ -138,13 +117,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         args: %{"op" => "on_day_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.on_day_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      refute_email_sent()
     end
 
     test "unless the event has been cancelled" do
@@ -157,24 +130,17 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Actor{} = actor = insert(:actor, user: user)
       %Event{} = event = insert(:event, status: :cancelled)
 
-      %Participant{} =
-        participant = insert(:participant, role: :participant, event: event, actor: actor)
+      %Participant{} = insert(:participant, role: :participant, event: event, actor: actor)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "on_day_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.on_day_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      refute_email_sent()
     end
 
     test "with a lot of events" do
-      %User{id: user_id} = user = insert(:user)
+      %User{id: user_id} = user = insert(:user, email: @email)
 
       settings =
         insert(:settings, user_id: user_id, notification_on_day: true, timezone: "Europe/Paris")
@@ -182,23 +148,16 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
 
-      participants =
-        Enum.reduce(0..10, [], fn _i, acc ->
-          %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
-          acc ++ [participant]
-        end)
+      Enum.reduce(0..10, [], fn _i, acc ->
+        %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+        acc ++ [participant]
+      end)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "on_day_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.on_day_notification(
-          user,
-          participants,
-          3
-        )
-      )
+      assert_email_sent(to: @email, subject: "11 events planned today")
     end
   end
 
@@ -212,19 +171,13 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
 
-      %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+      %Participant{} = insert(:participant, role: :participant, actor: actor)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "weekly_notification", "user_id" => user_id}
       })
 
-      assert_delivered_email(
-        NotificationMailer.weekly_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      assert_email_sent(to: user.email)
     end
 
     test "unless the person is no longer participating" do
@@ -250,13 +203,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         args: %{"op" => "weekly_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.weekly_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      refute_email_sent()
     end
 
     test "unless the event has been cancelled" do
@@ -269,24 +216,17 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %Actor{} = actor = insert(:actor, user: user)
       %Event{} = event = insert(:event, status: :cancelled)
 
-      %Participant{} =
-        participant = insert(:participant, role: :participant, event: event, actor: actor)
+      %Participant{} = insert(:participant, role: :participant, event: event, actor: actor)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "weekly_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.weekly_notification(
-          user,
-          [participant],
-          1
-        )
-      )
+      refute_email_sent()
     end
 
     test "with a lot of events" do
-      %User{id: user_id} = user = insert(:user)
+      %User{id: user_id} = user = insert(:user, email: @email)
 
       settings =
         insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
@@ -294,23 +234,16 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
 
-      participants =
-        Enum.reduce(0..10, [], fn _i, acc ->
-          %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
-          acc ++ [participant]
-        end)
+      Enum.reduce(0..10, [], fn _i, acc ->
+        %Participant{} = participant = insert(:participant, role: :participant, actor: actor)
+        acc ++ [participant]
+      end)
 
       Notification.perform(%Oban.Job{
         args: %{"op" => "weekly_notification", "user_id" => user_id}
       })
 
-      refute_delivered_email(
-        NotificationMailer.weekly_notification(
-          user,
-          participants,
-          3
-        )
-      )
+      assert_email_sent(to: @email, subject: "11 events planned this week")
     end
   end
 
@@ -318,11 +251,10 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
     test "if there are participants to approve" do
       %User{id: user_id} = user = insert(:user)
 
-      settings =
-        insert(:settings,
-          user_id: user_id,
-          timezone: "Europe/Paris"
-        )
+      insert(:settings,
+        user_id: user_id,
+        timezone: "Europe/Paris"
+      )
 
       %Event{id: event_id} = event = insert(:event)
 
@@ -337,13 +269,7 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
         }
       })
 
-      assert_delivered_email(
-        NotificationMailer.pending_participation_notification(
-          %User{user | settings: settings},
-          event,
-          2
-        )
-      )
+      assert_email_sent(to: user.email)
     end
   end
 end

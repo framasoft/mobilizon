@@ -81,7 +81,7 @@ defmodule Mobilizon.Mixfile do
   def application do
     [
       mod: {Mobilizon, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :bamboo, :geolix, :crypto, :cachex]
+      extra_applications: [:logger, :runtime_tools, :guardian, :geolix, :crypto, :cachex]
     ]
   end
 
@@ -152,9 +152,9 @@ defmodule Mobilizon.Mixfile do
       {:jason, "~> 1.2"},
       {:ecto_enum, "~> 1.4"},
       {:ex_ical, "~> 0.2"},
-      {:bamboo, "~> 2.1"},
-      {:bamboo_phoenix, "~> 1.0"},
-      {:bamboo_smtp, "~> 4.0"},
+      {:swoosh, "~> 1.6"},
+      {:gen_smtp, "~> 1.1"},
+      {:phoenix_swoosh, "~> 1.0"},
       {:geolix, "~> 2.0"},
       {:geolix_adapter_mmdb2, "~> 0.6.0"},
       {:absinthe, "~> 1.6"},

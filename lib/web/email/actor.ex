@@ -2,9 +2,8 @@ defmodule Mobilizon.Web.Email.Actor do
   @moduledoc """
   Handles emails sent about actors status.
   """
-  use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
+  use Phoenix.Swoosh, view: Mobilizon.Web.EmailView
 
-  import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Actors.Actor
@@ -43,14 +42,16 @@ defmodule Mobilizon.Web.Email.Actor do
 
       subject = gettext("Your participation to %{event} has been cancelled!", event: event.title)
 
-      Email.base_email(to: email, subject: subject)
-      |> assign(:locale, locale)
-      |> assign(:actor, suspended)
-      |> assign(:event, event)
-      |> assign(:role, member_role)
-      |> assign(:subject, subject)
-      |> render(:actor_suspension_participants)
-      |> Email.Mailer.send_email_later()
+      [to: email, subject: subject]
+      |> Email.base_email()
+      |> render_body(:actor_suspension_participants, %{
+        locale: locale,
+        actor: suspended,
+        event: event,
+        role: member_role,
+        subject: subject
+      })
+      |> Email.Mailer.send_email()
 
       :ok
     end

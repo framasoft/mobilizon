@@ -148,9 +148,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     with {:ok, email} <- lowercase_domain(email),
          :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
-         {:ok, %User{} = user} <- Users.register(%{args | email: email}),
-         %Bamboo.Email{} <-
-           Email.User.send_confirmation_email(user, Map.get(args, :locale, "en")) do
+         {:ok, %User{} = user} <- Users.register(%{args | email: email}) do
+      Email.User.send_confirmation_email(user, Map.get(args, :locale, "en"))
       {:ok, user}
     else
       {:error, :invalid_email} ->
@@ -285,9 +284,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          {:ok, %User{locale: locale} = user} <-
            Users.get_user_by_email(email, activated: true, unconfirmed: false),
          {:can_reset_password, true} <-
-           {:can_reset_password, Authenticator.can_reset_password?(user)},
-         {:ok, %Bamboo.Email{}} <-
-           Email.User.send_password_reset_email(user, Map.get(args, :locale, locale)) do
+           {:can_reset_password, Authenticator.can_reset_password?(user)} do
+      Email.User.send_password_reset_email(user, Map.get(args, :locale, locale))
       {:ok, email}
     else
       {:can_reset_password, false} ->
@@ -456,11 +454,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
                 {:ok, %User{} = user} ->
                   user
                   |> Email.User.send_email_reset_old_email()
-                  |> Email.Mailer.send_email_later()
+                  |> Email.Mailer.send_email()
 
                   user
                   |> Email.User.send_email_reset_new_email()
-                  |> Email.Mailer.send_email_later()
+                  |> Email.Mailer.send_email()
 
                   {:ok, user}
 

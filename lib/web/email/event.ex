@@ -3,9 +3,7 @@ defmodule Mobilizon.Web.Email.Event do
   Handles emails sent about events.
   """
 
-  use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
-
-  import Bamboo.Phoenix
+  use Phoenix.Swoosh, view: Mobilizon.Web.EmailView
 
   import Mobilizon.Web.Gettext
 
@@ -20,8 +18,8 @@ defmodule Mobilizon.Web.Email.Event do
   @important_changes [:title, :begins_on, :ends_on, :status, :physical_address]
 
   @spec event_updated(
-          Participant.t(),
           String.t(),
+          Participant.t(),
           Actor.t(),
           Event.t(),
           Event.t(),
@@ -29,7 +27,7 @@ defmodule Mobilizon.Web.Email.Event do
           String.t(),
           String.t()
         ) ::
-          Bamboo.Email.t()
+          Swoosh.Email.t()
   def event_updated(
         email,
         %Participant{} = participant,
@@ -53,16 +51,18 @@ defmodule Mobilizon.Web.Email.Event do
       |> ObjectView.render(%{participant: %Participant{participant | event: event, actor: actor}})
       |> Jason.encode!()
 
-    Email.base_email(to: {Actor.display_name(actor), email}, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:event, event)
-    |> assign(:old_event, old_event)
-    |> assign(:changes, changes)
-    |> assign(:subject, subject)
-    |> assign(:timezone, timezone)
-    |> assign(:jsonLDMetadata, json_ld)
+    [to: {Actor.display_name(actor), email}, subject: subject]
+    |> Email.base_email()
     |> Email.add_event_attachment(event)
-    |> render(:event_updated)
+    |> render_body(:event_updated, %{
+      locale: locale,
+      event: event,
+      old_event: old_event,
+      changes: changes,
+      subject: subject,
+      timezone: timezone,
+      jsonLDMetadata: json_ld
+    })
   end
 
   @spec calculate_event_diff_and_send_notifications(Event.t(), Event.t(), map()) :: {:ok, :ok}
@@ -101,7 +101,7 @@ defmodule Mobilizon.Web.Email.Event do
           Event.t(),
           Event.t(),
           MapSet.t()
-        ) :: Bamboo.Email.t()
+        ) :: Swoosh.Email.t()
   defp send_notification_for_event_update_to_participant(
          {%Participant{} = participant, %Actor{} = actor,
           %User{locale: locale, email: email} = _user, %Setting{timezone: timezone}},
@@ -171,7 +171,7 @@ defmodule Mobilizon.Web.Email.Event do
           MapSet.t(),
           String.t(),
           String.t()
-        ) :: Bamboo.Email.t()
+        ) :: Swoosh.Email.t()
   defp do_send_notification_for_event_update_to_participant(
          participant,
          email,
@@ -184,6 +184,6 @@ defmodule Mobilizon.Web.Email.Event do
        ) do
     email
     |> event_updated(participant, actor, old_event, event, diff, timezone, locale)
-    |> Email.Mailer.send_email_later()
+    |> Email.Mailer.send_email()
   end
 end

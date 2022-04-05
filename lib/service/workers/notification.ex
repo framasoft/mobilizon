@@ -35,7 +35,7 @@ defmodule Mobilizon.Service.Workers.Notification do
         %Participant{participant | event: event, actor: actor},
         locale
       )
-      |> Mailer.send_email_later()
+      |> Mailer.send_email()
 
       :ok
     end
@@ -65,7 +65,7 @@ defmodule Mobilizon.Service.Workers.Notification do
            end) do
       user
       |> Notification.on_day_notification(participations, total, locale)
-      |> Mailer.send_email_later()
+      |> Mailer.send_email()
 
       :ok
     else
@@ -99,7 +99,7 @@ defmodule Mobilizon.Service.Workers.Notification do
            end) do
       user
       |> Notification.weekly_notification(participations, total, locale)
-      |> Mailer.send_email_later()
+      |> Mailer.send_email()
 
       :ok
     else
@@ -121,7 +121,7 @@ defmodule Mobilizon.Service.Workers.Notification do
            Events.list_participants_for_event(event_id, [:not_approved]) do
       user
       |> Notification.pending_participation_notification(event, total)
-      |> Mailer.send_email_later()
+      |> Mailer.send_email()
 
       :ok
     else

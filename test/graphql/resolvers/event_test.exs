@@ -1,6 +1,5 @@
 defmodule Mobilizon.Web.Resolvers.EventTest do
   use Mobilizon.Web.ConnCase
-  use Bamboo.Test, shared: true
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
@@ -12,8 +11,7 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
   alias Mobilizon.Users.User
 
   alias Mobilizon.GraphQL.AbsintheHelpers
-
-  alias Mobilizon.Web.Email
+  import Swoosh.TestAssertions
 
   @event %{
     description: "some body",
@@ -981,12 +979,11 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       %Event{uuid: event_uuid, title: event_title} =
         event = insert(:event, organizer_actor: actor)
 
-      creator = insert(:participant, event: event, actor: actor, role: :creator)
+      insert(:participant, event: event, actor: actor, role: :creator)
       participant_user = insert(:user)
       participant_actor = insert(:actor, user: participant_user)
 
-      participant =
-        insert(:participant, event: event, actor: participant_actor, role: :participant)
+      insert(:participant, event: event, actor: participant_actor, role: :participant)
 
       address = insert(:address)
 
@@ -1073,33 +1070,10 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
 
       Oban.drain_queue(queue: :default, with_scheduled: true)
 
-      {:ok, new_event} = Mobilizon.Events.get_event_with_preload(event.id)
+      {:ok, _new_event} = Mobilizon.Events.get_event_with_preload(event.id)
 
-      assert_delivered_email(
-        Email.Event.event_updated(
-          user.email,
-          creator,
-          actor,
-          event,
-          new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address]),
-          "Etc/UTC",
-          "en"
-        )
-      )
-
-      assert_delivered_email(
-        Email.Event.event_updated(
-          participant_user.email,
-          participant,
-          participant_actor,
-          event,
-          new_event,
-          MapSet.new([:title, :begins_on, :ends_on, :status, :physical_address]),
-          "Etc/UTC",
-          "en"
-        )
-      )
+      assert_email_sent(to: {actor.name, user.email})
+      assert_email_sent(to: {participant_actor.name, participant_user.email})
     end
 
     test "update_event/3 updates an event with a new picture", %{

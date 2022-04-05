@@ -1,6 +1,5 @@
 defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   use Mobilizon.Web.ConnCase
-  use Bamboo.Test
   use Oban.Testing, repo: Mobilizon.Storage.Repo
 
   import Mobilizon.Factory
@@ -15,6 +14,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   alias Mobilizon.Web.Email
+  import Swoosh.TestAssertions
 
   @get_user_query """
   query GetUser($id: ID!) {
@@ -362,7 +362,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       {:ok, user} = Users.get_user_by_email(@user_creation.email)
 
-      assert_delivered_email(Email.User.confirmation_email(user, @user_creation.locale))
+      assert_email_sent(to: user.email)
 
       res =
         conn
@@ -705,7 +705,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert json_response(res, 200)["data"]["resendConfirmationEmail"] == user.email
-      assert_delivered_email(Email.User.confirmation_email(user))
+      assert_email_sent(to: user.email)
     end
 
     test "test resend_confirmation_email/3 with invalid email resends an validation email",
@@ -1279,8 +1279,8 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert user.email == @old_email
       assert user.unconfirmed_email == @new_email
 
-      assert_delivered_email(Email.User.send_email_reset_old_email(user))
-      assert_delivered_email(Email.User.send_email_reset_new_email(user))
+      assert_email_sent(to: user.email)
+      assert_email_sent(to: user.unconfirmed_email)
 
       conn
       |> AbsintheHelpers.graphql_query(
@@ -1329,8 +1329,8 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert user.email == @old_email
       assert user.unconfirmed_email == @new_email
 
-      assert_delivered_email(Email.User.send_email_reset_old_email(user))
-      assert_delivered_email(Email.User.send_email_reset_new_email(user))
+      assert_email_sent(to: user.email)
+      assert_email_sent(to: user.unconfirmed_email)
 
       res =
         conn

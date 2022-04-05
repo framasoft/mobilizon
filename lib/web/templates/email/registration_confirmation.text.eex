@@ -4,4 +4,7 @@
 
 <%= gettext "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email.", host: @instance_name %>
 
+<%= gettext "If you didn't trigger this email, you may safely ignore it." %>
+
+<%= gettext "Activate my account:" %>
 <%= Mobilizon.Web.Endpoint.url() <> "/validate/#{@token}" %>

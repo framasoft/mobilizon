@@ -43,9 +43,8 @@ config :mobilizon, Mobilizon.Storage.Repo,
   pool_size: 10
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,
-  adapter: Bamboo.SMTPAdapter,
-  server: System.get_env("MOBILIZON_SMTP_SERVER", "localhost"),
-  hostname: System.get_env("MOBILIZON_SMTP_HOSTNAME", "localhost"),
+  adapter: Swoosh.Adapters.SMTP,
+  relay: System.get_env("MOBILIZON_SMTP_SERVER", "localhost"),
   port: System.get_env("MOBILIZON_SMTP_PORT", "25"),
   username: System.get_env("MOBILIZON_SMTP_USERNAME", nil),
   password: System.get_env("MOBILIZON_SMTP_PASSWORD", nil),
