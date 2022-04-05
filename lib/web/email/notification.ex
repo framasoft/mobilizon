@@ -2,9 +2,8 @@ defmodule Mobilizon.Web.Email.Notification do
   @moduledoc """
   Handles emails sent about event notifications.
   """
-  use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
+  use Phoenix.Swoosh, view: Mobilizon.Web.EmailView
 
-  import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Events.{Event, Participant}
@@ -13,7 +12,7 @@ defmodule Mobilizon.Web.Email.Notification do
   alias Mobilizon.Web.JsonLD.ObjectView
 
   @spec before_event_notification(String.t(), Participant.t(), String.t()) ::
-          Bamboo.Email.t()
+          Swoosh.Email.t()
   def before_event_notification(
         email,
         %Participant{event: event, role: :participant} = participant,
@@ -27,17 +26,19 @@ defmodule Mobilizon.Web.Email.Notification do
         title: event.title
       )
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:participant, participant)
-    |> assign(:subject, subject)
-    |> assign(:jsonLDMetadata, build_json_ld(participant))
+    [to: email, subject: subject]
+    |> Email.base_email()
     |> Email.add_event_attachment(event)
-    |> render(:before_event_notification)
+    |> render_body(:before_event_notification, %{
+      locale: locale,
+      participant: participant,
+      subject: subject,
+      jsonLDMetadata: build_json_ld(participant)
+    })
   end
 
   @spec on_day_notification(User.t(), list(Participant.t()), pos_integer(), String.t()) ::
-          Bamboo.Email.t()
+          Swoosh.Email.t()
   def on_day_notification(
         %User{email: email, settings: %Setting{timezone: timezone}},
         participations,
@@ -52,19 +53,21 @@ defmodule Mobilizon.Web.Email.Notification do
         nb_events: total
       )
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:participation, participation)
-    |> assign(:participations, participations)
-    |> assign(:total, total)
-    |> assign(:timezone, timezone)
-    |> assign(:subject, subject)
-    |> assign(:jsonLDMetadata, build_json_ld(participations))
-    |> render(:on_day_notification)
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:on_day_notification, %{
+      locale: locale,
+      participation: participation,
+      participations: participations,
+      subject: subject,
+      total: total,
+      timezone: timezone,
+      jsonLDMetadata: build_json_ld(participations)
+    })
   end
 
   @spec weekly_notification(User.t(), list(Participant.t()), pos_integer(), String.t()) ::
-          Bamboo.Email.t()
+          Swoosh.Email.t()
   def weekly_notification(
         %User{email: email, settings: %Setting{timezone: timezone}},
         participations,
@@ -79,18 +82,20 @@ defmodule Mobilizon.Web.Email.Notification do
         nb_events: total
       )
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:participation, participation)
-    |> assign(:participations, participations)
-    |> assign(:total, total)
-    |> assign(:timezone, timezone)
-    |> assign(:subject, subject)
-    |> assign(:jsonLDMetadata, build_json_ld(participations))
-    |> render(:notification_each_week)
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:notification_each_week, %{
+      locale: locale,
+      participation: participation,
+      participations: participations,
+      subject: subject,
+      total: total,
+      timezone: timezone,
+      jsonLDMetadata: build_json_ld(participations)
+    })
   end
 
-  @spec pending_participation_notification(User.t(), Event.t(), pos_integer()) :: Bamboo.Email.t()
+  @spec pending_participation_notification(User.t(), Event.t(), pos_integer()) :: Swoosh.Email.t()
   def pending_participation_notification(
         %User{locale: locale, email: email, settings: %Setting{timezone: timezone}},
         %Event{} = event,
@@ -107,13 +112,15 @@ defmodule Mobilizon.Web.Email.Notification do
         title: event.title
       )
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:event, event)
-    |> assign(:total, total)
-    |> assign(:timezone, timezone)
-    |> assign(:subject, subject)
-    |> render(:pending_participation_notification)
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:pending_participation_notification, %{
+      locale: locale,
+      event: event,
+      subject: subject,
+      total: total,
+      timezone: timezone
+    })
   end
 
   @spec build_json_ld(Participant.t()) :: String.t()

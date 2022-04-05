@@ -2,9 +2,8 @@ defmodule Mobilizon.Web.Email.Group do
   @moduledoc """
   Handles emails sent about group changes.
   """
-  use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
+  use Phoenix.Swoosh, view: Mobilizon.Web.EmailView
 
-  import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.{Actors, Config, Users}
@@ -47,14 +46,16 @@ defmodule Mobilizon.Web.Email.Group do
           event: event.title
         )
 
-      Email.base_email(to: email, subject: subject)
-      |> assign(:locale, locale)
-      |> assign(:group, group)
-      |> assign(:event, event)
-      |> assign(:timezone, timezone)
-      |> assign(:subject, subject)
-      |> render(:event_group_follower_notification)
-      |> Email.Mailer.send_email_later()
+      [to: email, subject: subject]
+      |> Email.base_email()
+      |> render_body(:event_group_follower_notification, %{
+        locale: locale,
+        group: group,
+        event: event,
+        timezone: timezone,
+        subject: subject
+      })
+      |> Email.Mailer.send_email()
 
       :ok
     end
@@ -92,13 +93,15 @@ defmodule Mobilizon.Web.Email.Group do
           instance: Config.instance_name()
         )
 
-      Email.base_email(to: email, subject: subject)
-      |> assign(:locale, locale)
-      |> assign(:group, group)
-      |> assign(:role, member_role)
-      |> assign(:subject, subject)
-      |> render(:group_suspension)
-      |> Email.Mailer.send_email_later()
+      [to: email, subject: subject]
+      |> Email.base_email()
+      |> render_body(:group_suspension, %{
+        locale: locale,
+        group: group,
+        role: member_role,
+        subject: subject
+      })
+      |> Email.Mailer.send_email()
 
       :ok
     end

@@ -2,9 +2,8 @@ defmodule Mobilizon.Web.Email.Activity do
   @moduledoc """
   Handles emails sent about activity notifications.
   """
-  use Bamboo.Phoenix, view: Mobilizon.Web.EmailView
+  use Phoenix.Swoosh, view: Mobilizon.Web.EmailView
 
-  import Bamboo.Phoenix
   import Mobilizon.Web.Gettext
 
   alias Mobilizon.Activities.Activity
@@ -12,8 +11,7 @@ defmodule Mobilizon.Web.Email.Activity do
   alias Mobilizon.Config
   alias Mobilizon.Web.Email
 
-  @spec direct_activity(String.t(), list(), Keyword.t()) ::
-          Bamboo.Email.t()
+  @spec direct_activity(String.t(), list(), Keyword.t()) :: Swoosh.Email.t()
   def direct_activity(
         email,
         activities,
@@ -28,17 +26,19 @@ defmodule Mobilizon.Web.Email.Activity do
 
     chunked_activities = chunk_activities(activities)
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:locale, locale)
-    |> assign(:subject, subject)
-    |> assign(:activities, chunked_activities)
-    |> assign(:total_number_activities, length(activities))
-    |> assign(:single_activity, single_activity)
-    |> assign(:recap, recap)
-    |> render(:email_direct_activity)
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:email_direct_activity, %{
+      locale: locale,
+      subject: subject,
+      activities: chunked_activities,
+      total_number_activities: length(activities),
+      single_activity: single_activity,
+      recap: recap
+    })
   end
 
-  @spec anonymous_activity(String.t(), Activity.t(), Keyword.t()) :: Bamboo.Email.t()
+  @spec anonymous_activity(String.t(), Activity.t(), Keyword.t()) :: Swoosh.Email.t()
   def anonymous_activity(email, %Activity{subject_params: subject_params} = activity, options) do
     locale = Keyword.get(options, :locale, "en")
 
@@ -49,11 +49,13 @@ defmodule Mobilizon.Web.Email.Activity do
         event: subject_params["event_title"]
       )
 
-    Email.base_email(to: email, subject: subject)
-    |> assign(:subject, subject)
-    |> assign(:activity, activity)
-    |> assign(:locale, locale)
-    |> render(:email_anonymous_activity)
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:email_anonymous_activity, %{
+      subject: subject,
+      activity: activity,
+      locale: locale
+    })
   end
 
   @spec chunk_activities(list()) :: map()

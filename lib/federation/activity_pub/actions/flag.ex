@@ -22,7 +22,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Flag do
       Enum.each(Users.list_moderators(), fn moderator ->
         moderator
         |> Admin.report(report)
-        |> Mailer.send_email_later()
+        |> Mailer.send_email()
       end)
 
       {:ok, activity, report}
