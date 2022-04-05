@@ -110,8 +110,12 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   relay: "localhost",
   # usually 25, 465 or 587
   port: 25,
-  username: nil,
-  password: nil,
+  username: "",
+  password: "",
+  # can be `:always` or `:never`
+  auth: :if_available,
+  # can be `true`
+  ssl: false,
   # can be `:always` or `:never`
   tls: :if_available,
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
