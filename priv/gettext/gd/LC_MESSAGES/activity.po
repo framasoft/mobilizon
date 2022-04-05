@@ -287,13 +287,13 @@ msgid "Here's your weekly activity recap"
 msgstr "Seo dhut ath-shùil air gnìomhachd na seachdaine"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:119
-#: lib/web/email/activity.ex:140
+#: lib/web/email/activity.ex:121
+#: lib/web/email/activity.ex:142
 msgid "Activity notification for %{instance}"
 msgstr "Brath gnìomhachd airson %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:126
+#: lib/web/email/activity.ex:128
 msgid "Daily activity recap for %{instance}"
 msgstr "Ath-shùil air gnìomhachd %{instance} làitheil"
 
@@ -304,7 +304,7 @@ msgid "Here's your daily activity recap"
 msgstr "Seo dhut ath-shùil air gnìomhachd an latha"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:133
+#: lib/web/email/activity.ex:135
 msgid "Weekly activity recap for %{instance}"
 msgstr "Ath-shùil air gnìomhachd %{instance} sheachdaineil"
 

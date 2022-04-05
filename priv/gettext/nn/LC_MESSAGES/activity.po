@@ -276,13 +276,13 @@ msgid "Here's your weekly activity recap"
 msgstr "Her er samandraget for denne veka"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:119
-#: lib/web/email/activity.ex:140
+#: lib/web/email/activity.ex:121
+#: lib/web/email/activity.ex:142
 msgid "Activity notification for %{instance}"
 msgstr "Varsel for %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:126
+#: lib/web/email/activity.ex:128
 msgid "Daily activity recap for %{instance}"
 msgstr "Dagleg samandrag for %{instance}"
 
@@ -293,7 +293,7 @@ msgid "Here's your daily activity recap"
 msgstr "Her er det daglege samandraget ditt"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:133
+#: lib/web/email/activity.ex:135
 msgid "Weekly activity recap for %{instance}"
 msgstr "Vekesamandrag for %{instance}"
 

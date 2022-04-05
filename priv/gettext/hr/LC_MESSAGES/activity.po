@@ -284,13 +284,13 @@ msgid "Here's your weekly activity recap"
 msgstr "Ovaj tjedan, ukratko"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:119
-#: lib/web/email/activity.ex:140
+#: lib/web/email/activity.ex:121
+#: lib/web/email/activity.ex:142
 msgid "Activity notification for %{instance}"
 msgstr "Obavijest o aktivnosti za %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:126
+#: lib/web/email/activity.ex:128
 msgid "Daily activity recap for %{instance}"
 msgstr "Dnevni sadržaj za %{instance}"
 
@@ -301,7 +301,7 @@ msgid "Here's your daily activity recap"
 msgstr "Današnja aktivnost, ukratko"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:133
+#: lib/web/email/activity.ex:135
 msgid "Weekly activity recap for %{instance}"
 msgstr "Kratki sadržaj tjedna za %{instance}"
 

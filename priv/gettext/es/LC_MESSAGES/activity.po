@@ -277,13 +277,13 @@ msgid "Here's your weekly activity recap"
 msgstr "Aquí está su resumen de actividad semanal"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:119
-#: lib/web/email/activity.ex:140
+#: lib/web/email/activity.ex:121
+#: lib/web/email/activity.ex:142
 msgid "Activity notification for %{instance}"
 msgstr "Actividad en %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:126
+#: lib/web/email/activity.ex:128
 msgid "Daily activity recap for %{instance}"
 msgstr "Resumen de actividad diaria en %{instance}"
 
@@ -294,7 +294,7 @@ msgid "Here's your daily activity recap"
 msgstr "Aquí está su resumen de actividad diaria"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/activity.ex:133
+#: lib/web/email/activity.ex:135
 msgid "Weekly activity recap for %{instance}"
 msgstr "Resumen de actividad semanal para %{instance}"
 

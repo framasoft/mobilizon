@@ -71,12 +71,12 @@ msgstr ""
 "framgangsmåten. Dette ordnar me på ei lita stund."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:28
+#: lib/web/email/user.ex:26
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Framgangsmåte for å stadfesta Mobilizon-kontoen din på %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:24
+#: lib/web/email/admin.ex:22
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Ny rapport på Mobilizon-nettstaden %{instance}"
 
@@ -118,17 +118,17 @@ msgstr ""
 "berre oversjå denne eposten."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:111
+#: lib/web/email/participation.ex:114
 msgid "Your participation to event %{title} has been approved"
 msgstr "Deltakinga di på hendinga %{title} er godkjent"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:68
+#: lib/web/email/participation.ex:67
 msgid "Your participation to event %{title} has been rejected"
 msgstr "Deltakinga di på hendinga %{title} er avslegen"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/event.ex:46
+#: lib/web/email/event.ex:44
 msgid "Event %{title} has been updated"
 msgstr "Hendinga %{title} er oppdatert"
 
@@ -148,7 +148,7 @@ msgid "Warning"
 msgstr "Åtvaring"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:135
+#: lib/web/email/participation.ex:140
 msgid "Confirm your participation to event %{title}"
 msgstr "Stadfest at du vil delta på hendinga %{title}"
 
@@ -347,17 +347,17 @@ msgid "What information do we collect?"
 msgstr "Kva opplysingar samlar me?"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:182
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon på %{instance}: stadfest epostadressa di"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:157
+#: lib/web/email/user.ex:159
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon på %{instance}: epostadressa er endra"
 
 #, elixir-format
-#: lib/web/email/notification.ex:51
+#: lib/web/email/notification.ex:52
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Ei planlagd hending i dag"
@@ -383,7 +383,7 @@ msgid "Come along!"
 msgstr "Bli med!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/notification.ex:25
+#: lib/web/email/notification.ex:24
 msgid "Don't forget to go to %{title}"
 msgstr "Ikkje gløym å koma på %{title}"
 
@@ -410,19 +410,19 @@ msgid "View the event on: %{link}"
 msgstr "Sjå hendinga på: %{link}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:31
+#: lib/web/email/member.ex:30
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} har invitert deg til å bli med i gruppa %{group}"
 
 #, elixir-format
-#: lib/web/email/notification.ex:78
+#: lib/web/email/notification.ex:81
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Ei planlagd hending denne veka"
 msgstr[1] "%{nb_events} planlagde hendingar denne veka"
 
 #, elixir-format
-#: lib/web/email/notification.ex:102
+#: lib/web/email/notification.ex:107
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Du har ein førespurnad om å delta på %{title} å handtera"
@@ -1016,6 +1016,7 @@ msgstr ""
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:70
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
 #: lib/web/templates/email/registration_confirmation.html.heex:45
+#: lib/web/templates/email/registration_confirmation.text.eex:7
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Viss du ikkje gjorde dette sjølv, kan du trygt sjå bort frå dette."
 
@@ -1217,7 +1218,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Ha det så lenge, og takk for all fisken!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:113
+#: lib/web/email/member.ex:114
 msgid "You have been removed from group %{group}"
 msgstr "Du er fjerna frå gruppa %{group}"
 
@@ -1272,7 +1273,7 @@ msgstr ""
 "(%{group_address}). Du er ikkje lenger medlem av gruppa."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/group.ex:89
+#: lib/web/email/group.ex:90
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Gruppa %{group} på %{instance} er sperra"
 
@@ -1473,7 +1474,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Du ba nett om å vera med på <b>%{title}</b>."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:90
+#: lib/web/email/participation.ex:91
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "Me har stadfesta at du deltek på hendinga %{title}"
 
@@ -1525,7 +1526,7 @@ msgid "%{name} (%{domain}) just requested to follow your instance."
 msgstr "%{name} (%{domain}) har spurt om å fylgja nettstaden din."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/follow.ex:54
+#: lib/web/email/follow.ex:53
 msgid "%{name} requests to follow your instance"
 msgstr "%{name} spør om å fylgja nettstaden din"
 
@@ -1537,7 +1538,7 @@ msgstr ""
 "Viss du seier ja, vil nettstaden få alle dei offentlege hendingane dine."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/follow.ex:48
+#: lib/web/email/follow.ex:47
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr "Nettstaden %{name} (%{domain}) spør om å fylgja nettstaden din"
 
@@ -1653,19 +1654,19 @@ msgid "Public feed for %{instance}"
 msgstr "Offentleg straum for %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:318
+#: lib/graphql/resolvers/user.ex:316
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr "Passordet er for kort. Det må ha minst 6 teikn."
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:324
+#: lib/graphql/resolvers/user.ex:322
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
 "Godkjenningsteiknet er ugyldig. Pass på at adressa er heilt lik den du fekk "
 "i eposten."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/actor.ex:44
+#: lib/web/email/actor.ex:43
 msgid "Your participation to %{event} has been cancelled!"
 msgstr "Du har meldt deg av deltakinga på %{title}!"
 
@@ -1894,7 +1895,7 @@ msgid "Title: %{title}"
 msgstr "Tittel: %{title}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/group.ex:44
+#: lib/web/email/group.ex:43
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Nyleg planlagt av %{group}: %{event}"
 
@@ -1931,12 +1932,12 @@ msgid "You're in!"
 msgstr "Du skal dit!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:60
+#: lib/web/email/member.ex:61
 msgid "Your membership request for group %{group} has been approved"
 msgstr "Førespurnaden din om å bli med i %{group} er godkjend"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:89
+#: lib/web/email/member.ex:88
 msgid "Your membership request for group %{group} has been rejected"
 msgstr "Førespurnaden din om å bli med i %{group} fekk avslag"
 
@@ -1981,7 +1982,7 @@ msgid "An administrator changed your role"
 msgstr "Ein styrar endra brukarrolla di"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:120
+#: lib/web/email/admin.ex:122
 msgid "An administrator confirmed your account on %{instance}"
 msgstr "Ein styrar stadfesta brukarkontoen din på %{instance}"
 
@@ -1995,8 +1996,8 @@ msgstr ""
 "Ein styrar endra epostadressa som er knytt til brukarkontoen din manuelt"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:47
-#: lib/web/email/admin.ex:72
+#: lib/web/email/admin.ex:43
+#: lib/web/email/admin.ex:70
 msgid "An administrator manually changed the email attached to your account on %{instance}"
 msgstr ""
 "Ein styrar endra epostadressa som er knytt til brukarkontoen din på "
@@ -2327,3 +2328,8 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more: %{url}"
 msgstr "Les meir"
+
+#, elixir-autogen, elixir-format, fuzzy
+#: lib/web/templates/email/registration_confirmation.text.eex:9
+msgid "Activate my account:"
+msgstr "Ta i bruk kontoen min"

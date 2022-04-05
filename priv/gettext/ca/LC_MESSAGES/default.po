@@ -71,12 +71,12 @@ msgstr ""
 "instruccions. Acabarem de seguida."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:28
+#: lib/web/email/user.ex:26
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
 msgstr "Instruccions per confirmar el teu compte de Mobilizon a %{instance}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:24
+#: lib/web/email/admin.ex:22
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "S'ha denunciat una activitat al servidor de Mobilizon %{instance}"
 
@@ -117,17 +117,17 @@ msgstr ""
 "'activar-lo. Si no l'has creat tu, ignora aquest mail."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:111
+#: lib/web/email/participation.ex:114
 msgid "Your participation to event %{title} has been approved"
 msgstr "T'han aprovat la participació a %{title}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:68
+#: lib/web/email/participation.ex:67
 msgid "Your participation to event %{title} has been rejected"
 msgstr "T'han denegat la participació a %{title}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/event.ex:46
+#: lib/web/email/event.ex:44
 msgid "Event %{title} has been updated"
 msgstr "S'ha actualitzat {%title}"
 
@@ -147,7 +147,7 @@ msgid "Warning"
 msgstr "Alerta"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:135
+#: lib/web/email/participation.ex:140
 msgid "Confirm your participation to event %{title}"
 msgstr "Confirma que participaràs a l'activitat %{title}"
 
@@ -354,17 +354,17 @@ msgid "What information do we collect?"
 msgstr "Quina informació recollim?"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:178
+#: lib/web/email/user.ex:182
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon a %{instance}: confirma la teva adreça de correu"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/user.ex:157
+#: lib/web/email/user.ex:159
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon a %{instance}: s'ha canviat l'adreça de correu"
 
 #, elixir-format
-#: lib/web/email/notification.ex:51
+#: lib/web/email/notification.ex:52
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
 msgstr[0] "Una activitat planificada per avui"
@@ -390,7 +390,7 @@ msgid "Come along!"
 msgstr "Vine!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/notification.ex:25
+#: lib/web/email/notification.ex:24
 msgid "Don't forget to go to %{title}"
 msgstr "No t'oblidis d'anar a %{title}"
 
@@ -417,19 +417,19 @@ msgid "View the event on: %{link}"
 msgstr "Vés a l'activitat actualitzada a %{link}"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:31
+#: lib/web/email/member.ex:30
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr "%{inviter} t'ha convidat al grup %{group}"
 
 #, elixir-format
-#: lib/web/email/notification.ex:78
+#: lib/web/email/notification.ex:81
 msgid "One event planned this week"
 msgid_plural "%{nb_events} events planned this week"
 msgstr[0] "Una activitat planificada per aquesta setmana"
 msgstr[1] "%{nb_events} planificades per aquesta setmana"
 
 #, elixir-format
-#: lib/web/email/notification.ex:102
+#: lib/web/email/notification.ex:107
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
 msgstr[0] "Hi ha una soŀlicitud de participar a %{title} pendent de resoldre"
@@ -1031,6 +1031,7 @@ msgstr ""
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:70
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
 #: lib/web/templates/email/registration_confirmation.html.heex:45
+#: lib/web/templates/email/registration_confirmation.text.eex:7
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Si no has demanat això, sisplau ignora aquest correu."
 
@@ -1231,7 +1232,7 @@ msgid "So long, and thanks for the fish!"
 msgstr "Salut i canya al forçut!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:113
+#: lib/web/email/member.ex:114
 msgid "You have been removed from group %{group}"
 msgstr "T'han tret del grup %{group}"
 
@@ -1285,7 +1286,7 @@ msgstr ""
 "%{group_name} (%{group_address}). Ja no formes part del grup."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/group.ex:89
+#: lib/web/email/group.ex:90
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "El grup %{group} ha estat suspès a %{instance}"
 
@@ -1440,7 +1441,7 @@ msgid "You recently requested to attend <b>%{title}</b>."
 msgstr "Has soŀlicitat participar a l'activitat %{title}."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/participation.ex:90
+#: lib/web/email/participation.ex:91
 msgid "Your participation to event %{title} has been confirmed"
 msgstr "T'han aprovat la participació a %{title}"
 
@@ -1493,7 +1494,7 @@ msgstr ""
 "%{name} (%{domain}) acaba de demanar-vos poder seguir la vostra instància."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/follow.ex:54
+#: lib/web/email/follow.ex:53
 msgid "%{name} requests to follow your instance"
 msgstr "%{name} demana poder seguir la vostra instància"
 
@@ -1504,7 +1505,7 @@ msgid "If you accept, this instance will receive all of your public events."
 msgstr "Si accepteu, la instància rebrà totes les vostres activitats públiques."
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/follow.ex:48
+#: lib/web/email/follow.ex:47
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr ""
 "La instància %{name} (%{domain}) soŀlicita poder seguir la vostra instància"
@@ -1618,17 +1619,17 @@ msgid "Public feed for %{instance}"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:318
+#: lib/graphql/resolvers/user.ex:316
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:324
+#: lib/graphql/resolvers/user.ex:322
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/actor.ex:44
+#: lib/web/email/actor.ex:43
 msgid "Your participation to %{event} has been cancelled!"
 msgstr "T'han aprovat la participació a %{title}"
 
@@ -1857,7 +1858,7 @@ msgid "Title: %{title}"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/group.ex:44
+#: lib/web/email/group.ex:43
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr ""
 
@@ -1894,12 +1895,12 @@ msgid "You're in!"
 msgstr "T'han acceptat!"
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:60
+#: lib/web/email/member.ex:61
 msgid "Your membership request for group %{group} has been approved"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/member.ex:89
+#: lib/web/email/member.ex:88
 msgid "Your membership request for group %{group} has been rejected"
 msgstr ""
 
@@ -1940,7 +1941,7 @@ msgid "An administrator changed your role"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:120
+#: lib/web/email/admin.ex:122
 msgid "An administrator confirmed your account on %{instance}"
 msgstr ""
 
@@ -1953,8 +1954,8 @@ msgid "An administrator manually changed the email attached to your account"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/web/email/admin.ex:47
-#: lib/web/email/admin.ex:72
+#: lib/web/email/admin.ex:43
+#: lib/web/email/admin.ex:70
 msgid "An administrator manually changed the email attached to your account on %{instance}"
 msgstr ""
 
@@ -2261,3 +2262,8 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.text.eex:9
 msgid "Read more: %{url}"
 msgstr ""
+
+#, elixir-autogen, elixir-format, fuzzy
+#: lib/web/templates/email/registration_confirmation.text.eex:9
+msgid "Activate my account:"
+msgstr "Activa el meu compte"
