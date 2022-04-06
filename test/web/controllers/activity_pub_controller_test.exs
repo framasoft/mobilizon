@@ -14,6 +14,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
   alias Mobilizon.Actors.Actor
 
   alias Mobilizon.Federation.ActivityPub
+  alias Mobilizon.Service.ActorSuspension
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Web.ActivityPub.ActorView
   alias Mobilizon.Web.{Endpoint, PageView}
@@ -43,6 +44,24 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
                ActorView.render("actor.json", %{actor: actor})
                |> Jason.encode!()
                |> Jason.decode!()
+    end
+
+    test "it returns nothing if the actor is suspended", %{conn: conn} do
+      suspended = insert(:actor)
+
+      conn = get(conn, Actor.build_url(suspended.preferred_username, :page))
+      assert json_response(conn, 200)
+
+      assert {:ok, true} ==
+               Cachex.exists?(:activity_pub, "actor_" <> suspended.preferred_username)
+
+      ActorSuspension.suspend_actor(suspended)
+
+      assert {:ok, false} ==
+               Cachex.exists?(:activity_pub, "actor_" <> suspended.preferred_username)
+
+      conn = get(conn, Actor.build_url(suspended.preferred_username, :page))
+      assert json_response(conn, 404)
     end
   end
 
