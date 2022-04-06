@@ -26,6 +26,16 @@ defmodule Mobilizon.Service.FrontEndAnalytics.Sentry do
   def configuration do
     :mobilizon
     |> Application.get_env(__MODULE__, [])
-    |> Keyword.drop([:enabled])
+    |> Keyword.drop([:enabled, :csp])
+  end
+
+  @doc """
+  The CSP configuration to add for the service to work
+  """
+  @impl FrontEndAnalytics
+  def csp do
+    :mobilizon
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(:csp, [])
   end
 end

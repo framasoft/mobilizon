@@ -13,7 +13,12 @@ defmodule Mobilizon.Service.FrontEndAnalytics do
   @doc """
   The configuration for the service
   """
-  @callback configuration() :: map()
+  @callback configuration() :: keyword()
+
+  @doc """
+  The CSP configuration to add for the service to work
+  """
+  @callback csp() :: keyword()
 
   @spec providers :: list(module())
   def providers do
@@ -27,7 +32,14 @@ defmodule Mobilizon.Service.FrontEndAnalytics do
     Enum.reduce(providers(), [], &load_config/2)
   end
 
-  @spec load_config(module(), map()) :: map()
+  @spec csp :: keyword()
+  def csp do
+    providers()
+    |> Enum.map(& &1.csp())
+    |> Enum.reduce([], &merge_csp_config/2)
+  end
+
+  @spec load_config(module(), list(map())) :: list(map())
   defp load_config(provider, acc) do
     acc ++
       [
@@ -50,4 +62,10 @@ defmodule Mobilizon.Service.FrontEndAnalytics do
   defp type(val) when is_float(val), do: :float
   defp type(val) when is_boolean(val), do: :boolean
   defp type(val) when is_binary(val), do: :string
+
+  defp merge_csp_config(config, global_config) do
+    Keyword.merge(global_config, config, fn _key, global, config ->
+      "#{global} #{config}"
+    end)
+  end
 end
