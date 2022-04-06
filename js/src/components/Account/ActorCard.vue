@@ -1,7 +1,7 @@
 <template>
   <div
-    class="bg-white rounded-lg shadow-md flex space-x-4 items-center"
-    :class="{ 'flex-col p-4 sm:p-8 pb-10 w-80': !inline }"
+    class="bg-white rounded-lg flex space-x-4 items-center"
+    :class="{ 'flex-col p-4 shadow-md sm:p-8 pb-10 w-80': !inline }"
   >
     <div>
       <figure class="w-12 h-12" v-if="actor.avatar">
