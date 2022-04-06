@@ -43,21 +43,40 @@
         <subtitle>
           {{ showPassedEvents ? $t("Past events") : $t("Upcoming events") }}
         </subtitle>
-        <b-switch v-model="showPassedEvents">{{ $t("Past events") }}</b-switch>
+        <b-switch class="mb-4" v-model="showPassedEvents">{{
+          $t("Past events")
+        }}</b-switch>
         <grouped-multi-event-minimalist-card
           :events="group.organizedEvents.elements"
           :isCurrentActorMember="isCurrentActorMember"
         />
-        <b-message
+        <empty-content
           v-if="
             group.organizedEvents.elements.length === 0 &&
             $apollo.loading === false
           "
-          type="is-danger"
+          icon="calendar"
+          :inline="true"
+          :center="true"
         >
           {{ $t("No events found") }}
-        </b-message>
+          <template v-if="group.domain !== null">
+            <div class="mt-4">
+              <p>
+                {{
+                  $t(
+                    "This group is a remote group, it's possible the original instance has more informations."
+                  )
+                }}
+              </p>
+              <b-button type="is-text" tag="a" :href="group.url">
+                {{ $t("View the group profile on the original instance") }}
+              </b-button>
+            </div>
+          </template>
+        </empty-content>
         <b-pagination
+          class="mt-4"
           :total="group.organizedEvents.total"
           v-model="eventsPage"
           :per-page="EVENTS_PAGE_LIMIT"
@@ -81,6 +100,7 @@ import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_EVENTS } from "@/graphql/event";
+import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { displayName, usernameWithDomain } from "../../types/actor";
 
 const EVENTS_PAGE_LIMIT = 10;
@@ -114,6 +134,7 @@ const EVENTS_PAGE_LIMIT = 10;
     },
   },
   components: {
+    EmptyContent,
     Subtitle,
     GroupedMultiEventMinimalistCard,
   },

@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="event-minimalist-card-wrapper"
+    class="event-minimalist-card-wrapper bg-white rounded-lg shadow-md"
     dir="auto"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
