@@ -22,7 +22,7 @@ import { InMemoryCache } from "@apollo/client/cache";
 const localVue = createLocalVue();
 localVue.use(Buefy);
 config.mocks.$t = (key: string): string => key;
-const $router = { push: jest.fn() };
+const $router = { push: jest.fn(), replace: jest.fn() };
 
 describe("Render login form", () => {
   let wrapper: Wrapper<Vue>;
@@ -125,9 +125,9 @@ describe("Render login form", () => {
     await flushPromises();
     expect(currentUser?.email).toBe("some@email.tld");
     expect(currentUser?.id).toBe("1");
-    expect(jest.isMockFunction(wrapper.vm.$router.push)).toBe(true);
+    expect(jest.isMockFunction(wrapper.vm.$router.replace)).toBe(true);
     await flushPromises();
-    expect($router.push).toHaveBeenCalledWith({ name: RouteName.HOME });
+    expect($router.replace).toHaveBeenCalledWith({ name: RouteName.HOME });
   });
 
   it("handles a login error", async () => {
