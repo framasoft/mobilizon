@@ -1309,5 +1309,8 @@
   "Category": "Catégorie",
   "Select a category": "Choisissez une categorie",
   "Any category": "N'importe quelle catégorie",
-  "No instance found.": "Aucune instance trouvée."
+  "No instance found.": "Aucune instance trouvée.",
+  "This group is a remote group, it's possible the original instance has more informations.": "Ce groupe est un groupe distant, il est possible que l'instance d'origine ait plus d'informations.",
+  "View the group profile on the original instance": "Afficher le profil du groupe sur l'instance d'origine",
+  "View past events": "Voir les événements passés"
 }

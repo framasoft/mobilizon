@@ -36,6 +36,7 @@
     >
       <router-link
         v-if="event.attributedTo"
+        class="hover:underline"
         :to="{
           name: RouteName.GROUP,
           params: {
@@ -53,6 +54,7 @@
       </router-link>
       <actor-card v-else :actor="event.organizerActor" :inline="true" />
       <actor-card
+        :inline="true"
         :actor="contact"
         v-for="contact in event.contacts"
         :key="contact.id"
@@ -65,6 +67,7 @@
     >
       <a
         target="_blank"
+        class="hover:underline"
         rel="noopener noreferrer ugc"
         :href="event.onlineAddress"
         :title="

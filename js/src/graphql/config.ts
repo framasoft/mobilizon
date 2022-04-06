@@ -96,6 +96,15 @@ export const CONFIG = gql`
         enabled
         publicKey
       }
+      analytics {
+        id
+        enabled
+        configuration {
+          key
+          value
+          type
+        }
+      }
     }
   }
 `;

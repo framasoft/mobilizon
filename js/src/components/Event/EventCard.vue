@@ -67,7 +67,6 @@
             <inline-address
               dir="auto"
               v-if="event.physicalAddress"
-              class="event-subtitle"
               :physical-address="event.physicalAddress"
             />
             <div

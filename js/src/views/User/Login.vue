@@ -123,7 +123,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { Route } from "vue-router";
 import { ICurrentUser } from "@/types/current-user.model";
 import { LoginError, LoginErrorCode } from "@/types/enums";
@@ -207,6 +207,11 @@ export default class Login extends Vue {
     const { query } = this.$route;
     this.errorCode = query.code as LoginErrorCode;
     this.redirect = query.redirect as string | undefined;
+
+    // Already-logged-in and accessing /login
+    if (this.currentUser.isLoggedIn) {
+      this.$router.push("/");
+    }
   }
 
   async loginAction(e: Event): Promise<Route | void> {
@@ -240,7 +245,7 @@ export default class Login extends Vue {
       if (window.localStorage) {
         window.localStorage.setItem("welcome-back", "yes");
       }
-      this.$router.push({ name: RouteName.HOME });
+      this.$router.replace({ name: RouteName.HOME });
       return;
     } catch (err: any) {
       this.submitted = false;
@@ -276,13 +281,6 @@ export default class Login extends Vue {
           },
         });
       }
-    }
-  }
-
-  @Watch("currentUser")
-  redirectToHomepageIfAlreadyLoggedIn(): Promise<Route> | void {
-    if (this.currentUser.isLoggedIn) {
-      return this.$router.push("/");
     }
   }
 

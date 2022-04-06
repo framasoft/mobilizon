@@ -4,7 +4,7 @@ defmodule Mobilizon.Web.PageControllerTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Actors.Actor
-
+  alias Mobilizon.Service.ActorSuspension
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
@@ -35,6 +35,18 @@ defmodule Mobilizon.Web.PageControllerTest do
 
     test "GET /@actor with not existing group", %{conn: conn} do
       conn = get(conn, Actor.build_url("not_existing", :page))
+      assert html_response(conn, 404)
+    end
+
+    test "GET /@actor when suspended", %{conn: conn} do
+      suspended = insert(:actor)
+
+      conn = get(conn, Actor.build_url(suspended.preferred_username, :page))
+      assert html_response(conn, 200)
+
+      ActorSuspension.suspend_actor(suspended)
+
+      conn = get(conn, Actor.build_url(suspended.preferred_username, :page))
       assert html_response(conn, 404)
     end
   end

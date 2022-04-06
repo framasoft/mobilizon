@@ -1,7 +1,7 @@
 <template>
   <div
-    class="w-80 bg-white rounded-lg shadow-md flex space-x-4 items-center"
-    :class="{ 'flex-col p-4 sm:p-8 pb-10': !inline }"
+    class="bg-white rounded-lg flex space-x-4 items-center"
+    :class="{ 'flex-col p-4 shadow-md sm:p-8 pb-10 w-80': !inline }"
   >
     <div>
       <figure class="w-12 h-12" v-if="actor.avatar">
@@ -20,8 +20,10 @@
         class="ltr:-mr-0.5 rtl:-ml-0.5"
       />
     </div>
-    <div :class="{ 'text-center': !inline }">
-      <h5 class="text-xl font-medium violet-title tracking-tight text-gray-900">
+    <div :class="{ 'text-center': !inline }" class="overflow-hidden w-full">
+      <h5
+        class="text-xl font-medium violet-title tracking-tight text-gray-900 whitespace-pre-line line-clamp-2"
+      >
         {{ displayName(actor) }}
       </h5>
       <p class="text-gray-500 truncate" v-if="actor.name">

@@ -9,6 +9,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   """
 
   alias Mobilizon.Config
+  alias Mobilizon.Service.FrontEndAnalytics
   import Plug.Conn
 
   require Logger
@@ -136,8 +137,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   @spec get_csp_config(atom(), Keyword.t()) :: iodata()
   defp get_csp_config(type, options) do
-    options
-    |> Keyword.get(type, Config.get([:http_security, :csp_policy, type]))
-    |> Enum.join(" ")
+    config_policy = Keyword.get(options, type, Config.get([:http_security, :csp_policy, type]))
+    front_end_analytics_policy = [Keyword.get(FrontEndAnalytics.csp(), type, [])]
+
+    Enum.join(config_policy ++ front_end_analytics_policy, " ")
   end
 end

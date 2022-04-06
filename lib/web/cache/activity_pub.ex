@@ -29,8 +29,11 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   @spec do_get_actor(String.t()) :: {:commit, Actor.t()} | {:ignore, nil}
   defp do_get_actor("actor_" <> name) do
     case Actor.find_or_make_actor_from_nickname(name) do
-      {:ok, %ActorModel{} = actor} ->
+      {:ok, %ActorModel{suspended: false} = actor} ->
         {:commit, actor}
+
+      {:ok, %ActorModel{}} ->
+        {:ignore, nil}
 
       {:error, _err} ->
         {:ignore, nil}
@@ -45,8 +48,11 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   def get_local_actor_by_name(name) do
     Cachex.fetch(@cache, "local_actor_" <> name, fn "local_actor_" <> name ->
       case Actors.get_local_actor_by_name(name) do
-        %ActorModel{} = actor ->
+        %ActorModel{suspended: false} = actor ->
           {:commit, actor}
+
+        {:ok, %ActorModel{}} ->
+          {:ignore, nil}
 
         nil ->
           {:ignore, nil}

@@ -123,6 +123,8 @@ export const configMock = {
         enabled: true,
         publicKey: "",
       },
+      eventCategories: [],
+      analytics: [],
     },
   },
 };

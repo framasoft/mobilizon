@@ -1309,5 +1309,17 @@
   "Reset filters": "Reset filters",
   "Category": "Category",
   "Select a category": "Select a category",
-  "Any category": "Any category"
+  "Any category": "Any category",
+  "We collect your feedback and the error information in order to improve this service.": "We collect your feedback and the error information in order to improve this service.",
+  "What happened?": "What happened?",
+  "I've clicked on X, then on Y": "I've clicked on X, then on Y",
+  "Send feedback": "Send feedback",
+  "Sorry, we wen't able to save your feedback. Don't worry, we'll try to fix this issue anyway.": "Sorry, we wen't able to save your feedback. Don't worry, we'll try to fix this issue anyway.",
+  "return to the homepage": "return to the homepage",
+  "Thanks a lot, your feedback was submitted!": "Thanks a lot, your feedback was submitted!",
+  "You may also:": "You may also:",
+  "You may now close this page or {return_to_the_homepage}.": "You may now close this page or {return_to_the_homepage}.",
+  "This group is a remote group, it's possible the original instance has more informations.": "This group is a remote group, it's possible the original instance has more informations.",
+  "View the group profile on the original instance": "View the group profile on the original instance",
+  "View past events": "View past events"
 }

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ellipsis"
+    class="truncate"
     :title="
       isDescriptionDifferentFromLocality
         ? `${physicalAddress.description}, ${physicalAddress.locality}`
@@ -8,8 +8,7 @@
     "
   >
     <b-icon icon="map-marker" />
-    <span v-if="isDescriptionDifferentFromLocality">
-      {{ physicalAddress.description }},
+    <span v-if="physicalAddress.locality">
       {{ physicalAddress.locality }}
     </span>
     <span v-else>
@@ -35,11 +34,3 @@ export default class InlineAddress extends Vue {
   }
 }
 </script>
-<style lang="scss" scoped>
-.ellipsis {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

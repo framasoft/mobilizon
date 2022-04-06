@@ -1,5 +1,9 @@
 <template>
-  <div class="empty-content" :class="{ inline }" role="note">
+  <div
+    class="empty-content"
+    :class="{ inline, 'text-center': center }"
+    role="note"
+  >
     <b-icon :icon="icon" size="is-large" />
     <h2 class="empty-content__title">
       <!-- @slot Mandatory title -->
@@ -18,6 +22,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 export default class EmptyContent extends Vue {
   @Prop({ type: String, required: true }) icon!: string;
   @Prop({ type: Boolean, required: false, default: false }) inline!: boolean;
+  @Prop({ type: Boolean, required: false, default: false }) center!: boolean;
 }
 </script>
 

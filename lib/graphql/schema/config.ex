@@ -75,6 +75,10 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:web_push, :web_push, description: "Web Push settings for the instance")
 
     field(:export_formats, :export_formats, description: "The instance list of export formats")
+
+    field(:analytics, list_of(:analytics),
+      description: "Configuration for diverse analytics services"
+    )
   end
 
   @desc """
@@ -328,6 +332,28 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :web_push do
     field(:enabled, :boolean, description: "Whether the WebPush feature is enabled")
     field(:public_key, :string, description: "The server's public WebPush VAPID key")
+  end
+
+  object :analytics do
+    field(:id, :string, description: "ID of the analytics service")
+    field(:enabled, :boolean, description: "Whether the service is activated or not")
+
+    field(:configuration, list_of(:analytics_configuration),
+      description: "A list of key-values configuration"
+    )
+  end
+
+  enum :analytics_configuration_type do
+    value(:string, description: "A string")
+    value(:integer, description: "An integer")
+    value(:boolean, description: "A boolean")
+    value(:float, description: "A float")
+  end
+
+  object :analytics_configuration do
+    field(:key, :string, description: "The key for the analytics configuration element")
+    field(:value, :string, description: "The value for the analytics configuration element")
+    field(:type, :analytics_configuration_type, description: "The analytics configuration type")
   end
 
   @desc """

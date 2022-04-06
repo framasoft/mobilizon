@@ -13,6 +13,7 @@ export const defaultResolvers = {
       id: "67",
       preferredUsername: "someone",
       name: "Personne",
+      avatar: null,
       __typename: "CurrentActor",
     }),
   },

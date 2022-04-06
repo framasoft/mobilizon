@@ -203,6 +203,16 @@ export default class App extends Vue {
     this.interval = undefined;
   }
 
+  @Watch("config")
+  async initializeStatistics(config: IConfig) {
+    if (config) {
+      const { statistics } = (await import("./services/statistics")) as {
+        statistics: (config: IConfig, environment: Record<string, any>) => void;
+      };
+      statistics(config, { router: this.$router, version: config.version });
+    }
+  }
+
   @Watch("$route", { immediate: true })
   updateAnnouncement(route: Route): void {
     const pageTitle = this.extractPageTitleFromRoute(route);
