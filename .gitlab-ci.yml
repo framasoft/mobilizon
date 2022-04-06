@@ -110,7 +110,7 @@ deps:
 exunit:
   stage: test
   services:
-    - name: postgis/postgis:13-3.1
+    - name: postgis/postgis:14-3.2
       alias: postgres
   variables:
     MIX_ENV: test
