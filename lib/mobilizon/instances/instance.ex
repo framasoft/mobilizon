@@ -6,6 +6,16 @@ defmodule Mobilizon.Instances.Instance do
   """
   use Ecto.Schema
 
+  @type t :: %__MODULE__{
+          event_count: non_neg_integer(),
+          person_count: non_neg_integer(),
+          group_count: non_neg_integer(),
+          followers_count: non_neg_integer(),
+          followings_count: non_neg_integer(),
+          reports_count: non_neg_integer(),
+          media_size: non_neg_integer()
+        }
+
   @primary_key {:domain, :string, []}
   schema "instances" do
     field(:event_count, :integer)

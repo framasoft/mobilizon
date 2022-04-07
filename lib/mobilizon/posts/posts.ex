@@ -41,14 +41,14 @@ defmodule Mobilizon.Posts do
   @doc """
   Returns the list of recent posts for a group
   """
-  @spec get_posts_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec get_posts_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t(Post.t())
   def get_posts_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
     group_id
     |> do_get_posts_for_group()
     |> Page.build_page(page, limit)
   end
 
-  @spec get_public_posts_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec get_public_posts_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t(Post.t())
   def get_public_posts_for_group(%Actor{id: group_id}, page \\ nil, limit \\ nil) do
     group_id
     |> do_get_posts_for_group()

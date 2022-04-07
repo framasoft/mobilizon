@@ -90,7 +90,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
           | :todos
           | :outbox
 
-  @spec fetch_collection(collection(), Actor.t(), integer()) :: Page.t()
+  @spec fetch_collection(collection(), Actor.t(), integer()) :: Page.t(Follower.t())
   defp fetch_collection(:following, actor, page) do
     Actors.build_followings_for_actor(actor, page)
   end

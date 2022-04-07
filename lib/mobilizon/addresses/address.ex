@@ -16,7 +16,7 @@ defmodule Mobilizon.Addresses.Address do
           locality: String.t() | nil,
           region: String.t() | nil,
           description: String.t() | nil,
-          geom: Geo.PostGIS.Geometry.t() | nil,
+          geom: Geo.Point.t() | nil,
           postal_code: String.t() | nil,
           street: String.t() | nil,
           type: String.t() | nil,
