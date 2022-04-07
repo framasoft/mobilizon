@@ -9,8 +9,6 @@ ENV ELIXIR_VERSION latest
 ENV ERLANG_VERSION latest
 ENV NODE_VERSION 16
 
-ENV HEX_MIRROR="https://cdn.jsdelivr.net/hex"
-
 # Install system dependencies
 RUN apt-get update -yq && apt-get install -yq build-essential cmake postgresql-client git curl gnupg unzip exiftool webp imagemagick gifsicle
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -34,7 +32,7 @@ WORKDIR /mobilizon
 
 # Elixir release
 RUN source /root/.bashrc && \
-    mix deps.get --only prod && \
+    HEX_MIRROR="https://cdn.jsdelivr.net/hex" mix deps.get --only prod && \
     mix compile  && \
     mix phx.digest.clean --all && \
     mix release --path release/mobilizon && \
