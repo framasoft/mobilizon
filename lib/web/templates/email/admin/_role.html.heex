@@ -1,8 +1,8 @@
 <%= case @role do %>
-    <% :administrator -> %>
-        <b><%= gettext "Administrator" %></b>
-    <% :moderator -> %>
-        <b><%= gettext "Moderator" %></b>
-    <% :user -> %>
-    <b><%= gettext "User" %></b>
+  <% :administrator -> %>
+    <b><%= gettext("Administrator") %></b>
+  <% :moderator -> %>
+    <b><%= gettext("Moderator") %></b>
+  <% :user -> %>
+    <b><%= gettext("User") %></b>
 <% end %>

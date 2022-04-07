@@ -6,11 +6,16 @@
         <tr>
           <td align="center" valign="top" width="600">
     <![endif]-->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
       <tr>
-        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+        <td
+          bgcolor="#ffffff"
+          align="center"
+          valign="top"
+          style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;"
+        >
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "An event is upcoming!" %>
+            <%= gettext("An event is upcoming!") %>
           </h1>
         </td>
       </tr>
@@ -30,12 +35,16 @@
         <tr>
           <td align="center" valign="top" width="600">
     <![endif]-->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
       <!-- COPY -->
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+        <td
+          bgcolor="#ffffff"
+          align="left"
+          style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+        >
           <p style="margin: 0;">
-            <%= gettext "Get ready for %{title}", title: @participant.event.title %>
+            <%= gettext("Get ready for %{title}", title: @participant.event.title) %>
           </p>
         </td>
       </tr>
@@ -47,9 +56,17 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, @participant.event.uuid) }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "Go to event page" %>
-                      </a></td>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
+                      <a
+                        href={
+                          "#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @participant.event.uuid)}"
+                        }
+                        target="_blank"
+                        style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
+                      >
+                        <%= gettext("Go to event page") %>
+                      </a>
+                    </td>
                   </tr>
                 </table>
               </td>
@@ -58,9 +75,15 @@
         </td>
       </tr>
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
+        <td
+          bgcolor="#ffffff"
+          align="left"
+          style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;"
+        >
           <p style="margin: 0">
-            <%= gettext "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button." %>
+            <%= gettext(
+              "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
+            ) %>
           </p>
         </td>
       </tr>

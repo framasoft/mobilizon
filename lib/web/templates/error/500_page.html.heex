@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang={"#{ @locale }"}>
+<html lang={"#{@locale}"}>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= gettext "This page is not correct" %></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= gettext("This page is not correct") %></title>
     <style>
       body.error {
         font-family: BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, Segoe UI, Fira Sans, Droid Sans, Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -24,13 +24,13 @@
       body.error .dialog {
         text-align: center;
       }
-      
+
       body.error .dialog h1 {
         font-size: 20px;
         line-height: 28px;
         font-weight: 400;
       }
-      
+
       body.error .dialog img {
         display: block;
         max-width: 470px;
@@ -47,18 +47,32 @@
         <!-- <img src="/img/error.png" alt="" width="500" /> -->
       </div>
       <div class="error__message">
-        <h1><%= gettext "We're sorry, but something went wrong on our end." %></h1>
+        <h1><%= gettext("We're sorry, but something went wrong on our end.") %></h1>
         <p>
-          <%= gettext("The Mobilizon server %{instance} seems to be temporarily down.", instance: "<b>#{@instance}</b>") |> raw  %><br />
-        
+          <%= gettext("The Mobilizon server %{instance} seems to be temporarily down.",
+            instance: "<b>#{@instance}</b>"
+          )
+          |> raw %>
+          <br />
+
           <%= if is_nil(@contact) do %>
             <%= gettext("If the issue persists, you may try to contact the server administrator.") %>
           <% else %>
-            <%= gettext("If the issue persists, you may contact the server administrator at %{contact}.", contact: cond do
-              String.contains?(@contact, "@") -> "<a href=\"mailto:#{@contact}\">#{@contact}</a>"
-              String.match?(@contact, ~r/^https?:\/\/.*/) -> "<a href=\"#{@contact}\">#{@contact}</a>"
-              true -> @contact
-            end) |> raw %>
+            <%= gettext(
+              "If the issue persists, you may contact the server administrator at %{contact}.",
+              contact:
+                cond do
+                  String.contains?(@contact, "@") ->
+                    "<a href=\"mailto:#{@contact}\">#{@contact}</a>"
+
+                  String.match?(@contact, ~r/^https?:\/\/.*/) ->
+                    "<a href=\"#{@contact}\">#{@contact}</a>"
+
+                  true ->
+                    @contact
+                end
+            )
+            |> raw %>
           <% end %>
         </p>
       </div>
@@ -68,7 +82,7 @@
         <summary style="font-size: 1.25rem;"><%= gettext("Technical details") %></summary>
         <pre>
         <%= for detail <- @details do %>
-          <%= detail %><br>
+          <%= detail %><br />
         <% end %>
         </pre>
       </details>

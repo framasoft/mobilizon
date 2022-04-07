@@ -6,11 +6,16 @@
         <tr>
           <td align="center" valign="top" width="600">
     <![endif]-->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
       <tr>
-        <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+        <td
+          bgcolor="#ffffff"
+          align="center"
+          valign="top"
+          style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #3A384C; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;"
+        >
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
-            <%= gettext "Event update!" %>
+            <%= gettext("Event update!") %>
           </h1>
         </td>
       </tr>
@@ -30,29 +35,43 @@
         <tr>
           <td align="center" valign="top" width="600">
     <![endif]-->
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;" >
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
       <!-- COPY -->
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+        <td
+          bgcolor="#ffffff"
+          align="left"
+          style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+        >
           <p style="margin: 0;">
-            <%= gettext("There have been changes for <b>%{title}</b> so we'd thought we'd let you know.", title: @old_event.title) |> raw %>
+            <%= gettext(
+              "There have been changes for <b>%{title}</b> so we'd thought we'd let you know.",
+              title: @old_event.title
+            )
+            |> raw %>
           </p>
         </td>
       </tr>
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;" >
+        <td
+          bgcolor="#ffffff"
+          align="left"
+          style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+        >
           <table width="100%">
             <%= if MapSet.member?(@changes, :status) do %>
               <tr>
                 <td bgcolor="#ffffff" align="center">
                   <b>
-                    <%= case @event.status do  %>
+                    <%= case @event.status do %>
                       <% :confirmed -> %>
-                      <%= gettext "This event has been confirmed" %>
+                        <%= gettext("This event has been confirmed") %>
                       <% :tentative -> %>
-                      <%= gettext "This event has yet to be confirmed: organizers will let you know if they do confirm it." %>
+                        <%= gettext(
+                          "This event has yet to be confirmed: organizers will let you know if they do confirm it."
+                        ) %>
                       <% :cancelled -> %>
-                      <%= gettext "This event has been cancelled by its organizers. Sorry!" %>
+                        <%= gettext("This event has been cancelled by its organizers. Sorry!") %>
                     <% end %>
                   </b>
                 </td>
@@ -61,7 +80,7 @@
             <%= if MapSet.member?(@changes, :title) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <%= gettext "Event title" %>
+                  <%= gettext("Event title") %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
                   <b><%= @event.title %></b>
@@ -71,27 +90,37 @@
             <%= if MapSet.member?(@changes, :begins_on) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <%= gettext "Start" %>
+                  <%= gettext("Start") %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= render("date/event_tz_date.html", event: @event, date: @event.begins_on, timezone: @timezone, locale: @locale) %>
+                  <%= render("date/event_tz_date.html",
+                    event: @event,
+                    date: @event.begins_on,
+                    timezone: @timezone,
+                    locale: @locale
+                  ) %>
                 </td>
               </tr>
             <% end %>
             <%= if MapSet.member?(@changes, :ends_on) && !is_nil(@event.ends_on) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <%= gettext "End" %>
+                  <%= gettext("End") %>
                 </td>
                 <td bgcolor="#ffffff" align="left">
-                  <%= render("date/event_tz_date.html", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %>
+                  <%= render("date/event_tz_date.html",
+                    event: @event,
+                    date: @event.ends_on,
+                    timezone: @timezone,
+                    locale: @locale
+                  ) %>
                 </td>
               </tr>
             <% end %>
             <%= if MapSet.member?(@changes, :physical_address) do %>
               <tr>
                 <td bgcolor="#ffffff" align="left">
-                  <%= gettext "Location" %>
+                  <%= gettext("Location") %>
                 </td>
                 <%= unless is_nil(@event.physical_address) do %>
                   <td bgcolor="#ffffff" align="left">
@@ -101,7 +130,7 @@
                   </td>
                 <% else %>
                   <td bgcolor="#ffffff" align="left">
-                    <%= gettext "Location address was removed" %>
+                    <%= gettext("Location address was removed") %>
                   </td>
                 <% end %>
               </tr>
@@ -117,9 +146,15 @@
               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E"><a href={"#{ Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) }"} target="_blank" style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;">
-                        <%= gettext "Visit the updated event page" %>
-                      </a></td>
+                    <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
+                      <a
+                        href={"#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}"}
+                        target="_blank"
+                        style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
+                      >
+                        <%= gettext("Visit the updated event page") %>
+                      </a>
+                    </td>
                   </tr>
                 </table>
               </td>
@@ -128,9 +163,17 @@
         </td>
       </tr>
       <tr>
-        <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;" >
+        <td
+          bgcolor="#ffffff"
+          align="left"
+          style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 20px;"
+        >
           <p style="margin: 0">
-            <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>
+            <%= ngettext(
+              "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.",
+              "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.",
+              1
+            ) %>
           </p>
         </td>
       </tr>
