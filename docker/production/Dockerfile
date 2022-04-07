@@ -14,6 +14,8 @@ RUN yarn install --network-timeout 100000 \
 # Then, build the application binary
 FROM elixir:1.13-alpine AS builder
 
+ENV HEX_MIRROR="https://cdn.jsdelivr.net/hex"
+
 RUN apk add --no-cache build-base git cmake
 
 COPY mix.exs mix.lock ./
