@@ -225,7 +225,7 @@ defmodule Mobilizon.Discussions do
   @doc """
   Returns a paginated list of local comments
   """
-  @spec list_local_comments(integer | nil, integer | nil) :: Page.t()
+  @spec list_local_comments(integer | nil, integer | nil) :: Page.t(Comment.t())
   def list_local_comments(page \\ nil, limit \\ nil) do
     Comment
     |> where([c], c.visibility == ^:public)
@@ -238,7 +238,8 @@ defmodule Mobilizon.Discussions do
   @doc """
   Returns the list of public comments for the actor.
   """
-  @spec list_public_comments_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_public_comments_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Comment.t())
   def list_public_comments_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> public_comments_for_actor_query()
@@ -263,7 +264,7 @@ defmodule Mobilizon.Discussions do
   @doc """
   Get all the comments contained into a discussion
   """
-  @spec get_comments_for_discussion(integer, integer | nil, integer | nil) :: Page.t()
+  @spec get_comments_for_discussion(integer, integer | nil, integer | nil) :: Page.t(Comment.t())
   def get_comments_for_discussion(discussion_id, page \\ nil, limit \\ nil) do
     Comment
     |> where([c], c.discussion_id == ^discussion_id)
@@ -326,7 +327,8 @@ defmodule Mobilizon.Discussions do
   @doc """
   Get a paginated list of discussions for a group actor
   """
-  @spec find_discussions_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec find_discussions_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Discussion.t())
   def find_discussions_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     Discussion
     |> where([c], c.actor_id == ^actor_id)

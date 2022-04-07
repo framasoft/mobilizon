@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
 
-  @spec find_followers_for_group(Actor.t(), map(), map()) :: {:ok, Page.t()}
+  @spec find_followers_for_group(Actor.t(), map(), map()) :: {:ok, Page.t(Follower.t())}
   def find_followers_for_group(
         %Actor{id: group_id} = group,
         args,

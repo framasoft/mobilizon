@@ -357,7 +357,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns this person's group memberships
   """
-  @spec person_memberships(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
+  @spec person_memberships(Actor.t(), map(), map()) ::
+          {:ok, Page.t(Member.t())} | {:error, String.t()}
   def person_memberships(%Actor{id: actor_id} = person, args, %{
         context: %{current_user: %User{} = user}
       }) do
@@ -399,7 +400,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   @doc """
   Returns this person's group follows
   """
-  @spec person_follows(Actor.t(), map(), map()) :: {:ok, Page.t()} | {:error, String.t()}
+  @spec person_follows(Actor.t(), map(), map()) ::
+          {:ok, Page.t(Follower.t())} | {:error, String.t()}
   def person_follows(%Actor{} = person, %{group: group}, %{
         context: %{current_user: %User{} = user}
       }) do

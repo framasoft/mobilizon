@@ -106,7 +106,7 @@ defmodule Mobilizon.Service.Export.Common do
     actor |> fetch_identity_participations(limit) |> participations_to_events()
   end
 
-  @spec fetch_identity_participations(Actor.t(), integer()) :: Page.t()
+  @spec fetch_identity_participations(Actor.t(), integer()) :: Page.t(Participant.t())
   defp fetch_identity_participations(%Actor{} = actor, limit) do
     with %Page{} = page <- Events.list_event_participations_for_actor(actor, 1, limit) do
       page

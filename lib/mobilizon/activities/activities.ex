@@ -81,7 +81,7 @@ defmodule Mobilizon.Activities do
           Keyword.t(),
           integer() | nil,
           integer() | nil
-        ) :: Page.t()
+        ) :: Page.t(Activity.t())
   def list_group_activities_for_member(
         group_id,
         actor_asking_id,
@@ -107,7 +107,7 @@ defmodule Mobilizon.Activities do
           Keyword.t(),
           integer() | nil,
           integer() | nil
-        ) :: Page.t()
+        ) :: Page.t(Activity.t())
   def list_group_activities(
         group_id,
         filters \\ [],

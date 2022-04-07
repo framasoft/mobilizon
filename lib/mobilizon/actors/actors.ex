@@ -317,7 +317,7 @@ defmodule Mobilizon.Actors do
           boolean,
           integer | nil,
           integer | nil
-        ) :: Page.t()
+        ) :: Page.t(Actor.t())
   def list_actors(
         type \\ :Person,
         preferred_username \\ "",
@@ -452,7 +452,7 @@ defmodule Mobilizon.Actors do
           Keyword.t(),
           integer | nil,
           integer | nil
-        ) :: Page.t()
+        ) :: Page.t(Actor.t())
   def search_actors(
         term,
         options \\ [],
@@ -1103,7 +1103,7 @@ defmodule Mobilizon.Actors do
   Returns the paginated list of external followers for an actor.
   """
   @spec list_external_followers_for_actor_paginated(Actor.t(), integer | nil, integer | nil) ::
-          Page.t()
+          Page.t(Actor.t())
   def list_external_followers_for_actor_paginated(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> list_external_followers_for_actor_query()
@@ -1113,7 +1113,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Build a page struct for followers of an actor.
   """
-  @spec build_followers_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec build_followers_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t(Follower.t())
   def build_followers_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> follower_actors_for_actor_query()
@@ -1135,7 +1135,7 @@ defmodule Mobilizon.Actors do
   Returns a paginated list of followers for an actor.
   """
   @spec list_paginated_followers_for_actor(Actor.t(), boolean | nil, integer | nil, integer | nil) ::
-          Page.t()
+          Page.t(Follower.t())
   def list_paginated_followers_for_actor(
         %Actor{id: actor_id},
         approved \\ nil,
@@ -1165,7 +1165,7 @@ defmodule Mobilizon.Actors do
   Returns the list of external followings for an actor.
   """
   @spec list_external_followings_for_actor_paginated(Actor.t(), integer | nil, integer | nil) ::
-          Page.t()
+          Page.t(Follower.t())
   def list_external_followings_for_actor_paginated(
         %Actor{id: actor_id},
         page \\ nil,
@@ -1179,7 +1179,8 @@ defmodule Mobilizon.Actors do
   @doc """
   Build a page struct for followings of an actor.
   """
-  @spec build_followings_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec build_followings_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Follower.t())
   def build_followings_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> followings_actors_for_actor_query()

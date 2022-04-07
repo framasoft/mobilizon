@@ -358,7 +358,7 @@ defmodule Mobilizon.Users do
   Get a paginated list of all of a user's subscriptions
   """
   @spec list_user_push_subscriptions(String.t() | integer(), integer() | nil, integer() | nil) ::
-          Page.t()
+          Page.t(PushSubscription.t())
   def list_user_push_subscriptions(user_id, page \\ nil, limit \\ nil) do
     PushSubscription
     |> where([p], p.user_id == ^user_id)

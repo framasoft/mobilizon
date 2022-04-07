@@ -12,7 +12,7 @@ defmodule Mobilizon.Events.Tag do
 
   @type t :: %__MODULE__{
           title: String.t(),
-          slug: TitleSlug.Type.t(),
+          slug: String.t(),
           related_tags: [t]
         }
 

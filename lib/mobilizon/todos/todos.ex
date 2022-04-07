@@ -22,7 +22,7 @@ defmodule Mobilizon.Todos do
   @doc """
   Returns the list of todo lists for a group.
   """
-  @spec get_todo_lists_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec get_todo_lists_for_group(Actor.t(), integer | nil, integer | nil) :: Page.t(TodoList.t())
   def get_todo_lists_for_group(%Actor{id: group_id, type: :Group}, page \\ nil, limit \\ nil) do
     TodoList
     |> where(actor_id: ^group_id)
@@ -34,7 +34,7 @@ defmodule Mobilizon.Todos do
   @doc """
   Returns the list of todos for a group.
   """
-  @spec get_todos_for_todo_list(TodoList.t(), integer | nil, integer | nil) :: Page.t()
+  @spec get_todos_for_todo_list(TodoList.t(), integer | nil, integer | nil) :: Page.t(Todo.t())
   def get_todos_for_todo_list(%TodoList{id: todo_list_id}, page \\ nil, limit \\ nil) do
     Todo
     |> where(todo_list_id: ^todo_list_id)

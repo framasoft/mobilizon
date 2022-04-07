@@ -55,7 +55,7 @@ defmodule Mobilizon.Medias do
   @doc """
   List the paginated media for user
   """
-  @spec medias_for_user(integer | String.t(), integer | nil, integer | nil) :: Page.t()
+  @spec medias_for_user(integer | String.t(), integer | nil, integer | nil) :: Page.t(Media.t())
   def medias_for_user(user_id, page, limit) do
     user_id
     |> medias_for_user_query()

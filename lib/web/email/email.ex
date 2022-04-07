@@ -22,6 +22,7 @@ defmodule Mobilizon.Web.Email do
     |> put_layout({EmailView, :email})
   end
 
+  @spec add_event_attachment(Swoosh.Email.t(), Event.t()) :: Swoosh.Email.t()
   def add_event_attachment(%Swoosh.Email{} = email, %Event{id: event_id}) do
     with {:ok, %Event{} = event} <- Events.get_event_with_preload(event_id),
          {:ok, event_ics_data} <- ICalendar.export_event(event) do

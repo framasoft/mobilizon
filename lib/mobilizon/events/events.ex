@@ -356,7 +356,7 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of events.
   """
-  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: Page.t()
+  @spec list_events(integer | nil, integer | nil, atom, atom, boolean) :: Page.t(Event.t())
   def list_events(
         page \\ nil,
         limit \\ nil,
@@ -410,7 +410,7 @@ defmodule Mobilizon.Events do
   @doc """
   Lists public events for the actor, with all associations loaded.
   """
-  @spec list_public_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_public_events_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t(Event.t())
   def list_public_events_for_actor(actor, page \\ nil, limit \\ nil)
 
   def list_public_events_for_actor(%Actor{type: :Group} = group, page, limit),
@@ -521,7 +521,7 @@ defmodule Mobilizon.Events do
   @doc """
   Builds a page struct for events by their name.
   """
-  @spec build_events_for_search(map(), integer | nil, integer | nil) :: Page.t()
+  @spec build_events_for_search(map(), integer | nil, integer | nil) :: Page.t(Event.t())
   def build_events_for_search(%{term: term} = args, page \\ nil, limit \\ nil) do
     term
     |> normalize_search_string()
@@ -812,7 +812,7 @@ defmodule Mobilizon.Events do
   Default behaviour is to not return :not_approved or :not_confirmed participants
   """
   @spec list_participants_for_event(String.t(), list(atom()), integer | nil, integer | nil) ::
-          Page.t()
+          Page.t(Participant.t())
   def list_participants_for_event(
         id,
         roles \\ [],
@@ -849,7 +849,7 @@ defmodule Mobilizon.Events do
           DateTime.t() | nil,
           integer | nil,
           integer | nil
-        ) :: Page.t()
+        ) :: Page.t(Participant.t())
   def list_participations_for_user(user_id, after_datetime, before_datetime, page, limit) do
     user_id
     |> list_participations_for_user_query()
@@ -891,7 +891,8 @@ defmodule Mobilizon.Events do
   @doc """
   Returns the list of participations for an actor.
   """
-  @spec list_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) :: Page.t()
+  @spec list_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Participant.t())
   def list_event_participations_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> event_participations_for_actor_query()

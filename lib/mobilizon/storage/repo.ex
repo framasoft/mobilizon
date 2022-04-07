@@ -1,7 +1,5 @@
 defmodule Mobilizon.Storage.Repo do
-  @moduledoc """
-  Mobilizon Repo.
-  """
+  @moduledoc false
 
   use Ecto.Repo,
     otp_app: :mobilizon,
