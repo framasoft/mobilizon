@@ -1,3 +1,42 @@
+# Upgrading from 2.0 to 2.1
+
+## Mailer library change
+
+### Docker
+
+The change is already applied. You may remove the `MOBILIZON_SMTP_HOSTNAME` environment key which is not used anymore.
+
+### Release and source mode
+
+In your configuration file under `config :mobilizon, Mobilizon.Web.Email.Mailer`,
+* Change `Bamboo.SMTPAdapter` to `Swoosh.Adapters.SMTP`,
+* rename the `server` key to `relay`
+* remove the `hostname` key,
+* the default value of the username and password fields is an empty string and no longer `nil`.
+
+```diff
+ config :mobilizon, Mobilizon.Web.Email.Mailer,
+-   adapter: Bamboo.SMTPAdapter,
++   adapter: Swoosh.Adapters.SMTP,
+-   server: "localhost",
++   relay: "localhost",
+-   hostname: "localhost",
+   # usually 25, 465 or 587
+   port: 25,
+-   username: nil,
++   username: "",
+-   password: nil,
++   password: "",
+   # can be `:always` or `:never`
+   tls: :if_available,
+   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
+   retries: 1,
+   # can be `true`
+   no_mx_lookups: false,
+   # can be `:always`. If your smtp relay requires authentication set it to `:always`.
+   auth: :if_available
+```
+
 # Upgrading from 1.3 to 2.0
 
 Requirements dependencies depend on the way Mobilizon is installed.
