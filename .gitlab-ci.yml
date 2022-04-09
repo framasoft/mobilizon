@@ -239,7 +239,7 @@ build-docker-tag:
 
 # Packaging app for amd64
 package-app:
-  image: hexpm/elixir:1.13.4-erlang-24.3.2-${OS}
+  image: 1.13.4-erlang-24.3.3-${OS}
   stage: package
   before_script:
     - apt-get update && apt-get install -yq build-essential git curl cmake
@@ -268,7 +268,7 @@ package-app:
       - ${APP_ASSET}
   parallel:
     matrix:
-      - OS: ["debian-bullseye-20210902", "debian-buster-20210902", "ubuntu-focal-20211006", "ubuntu-bionic-20210930"]
+      - OS: ["debian-bullseye", "debian-buster", "ubuntu-focal", "ubuntu-bionic", "fedora-35", "fedora-36", "alpine-3.14.5", "alpine-3.15.3"]
 
 package-app-dev:
   stage: package
