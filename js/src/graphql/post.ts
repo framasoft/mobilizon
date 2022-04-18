@@ -98,7 +98,7 @@ export const FETCH_POST = gql`
 export const CREATE_POST = gql`
   mutation CreatePost(
     $title: String!
-    $body: String
+    $body: String!
     $attributedToId: ID!
     $visibility: PostVisibility
     $draft: Boolean
