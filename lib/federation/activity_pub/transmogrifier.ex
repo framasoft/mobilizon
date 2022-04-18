@@ -41,7 +41,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       params = %{
         reporter_id: params["reporter"].id,
         reported_id: params["reported"].id,
-        comments_ids: params["comments"] |> Enum.map(& &1.id),
+        comments_ids:
+          if(params["comments"], do: params["comments"] |> Enum.map(& &1.id), else: []),
         content: params["content"] || "",
         additional: %{
           "cc" => [params["reported"].url]
