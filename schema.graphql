@@ -175,6 +175,9 @@ type Config {
   "The instance's admins languages"
   languages: [String]
 
+  "The instance list of event categories possibilities"
+  eventCategories: [EventCategoryOption]
+
   "Whether the registrations are opened"
   registrationsOpen: Boolean
 
@@ -246,6 +249,9 @@ type Config {
 
   "The instance list of export formats"
   exportFormats: ExportFormats
+
+  "Configuration for diverse analytics services"
+  analytics: [Analytics]
 }
 
 "A tag"
@@ -367,6 +373,15 @@ character sequences. The UUID4 type is most often used to represent unique
 human-readable ID strings.
 """
 scalar UUID
+
+"A paginated list of instances"
+type PaginatedInstanceList {
+  "A list of instances"
+  elements: [Instance]
+
+  "The total number of instances in the list"
+  total: Int
+}
 
 "A paginated list of discussions"
 type PaginatedDiscussionList {
@@ -667,6 +682,26 @@ type RootSubscriptionType {
   ): Discussion
 }
 
+"Event categories list configuration"
+type EventCategoryOption {
+  "The ID of the event category"
+  id: String
+
+  "The translated name of the event category"
+  label: String
+}
+
+type AnalyticsConfiguration {
+  "The key for the analytics configuration element"
+  key: String
+
+  "The value for the analytics configuration element"
+  value: String
+
+  "The analytics configuration type"
+  type: AnalyticsConfigurationType
+}
+
 "Represents a deleted feed_token"
 type DeletedFeedToken {
   "The user that owned the deleted feed token"
@@ -930,6 +965,27 @@ type PaginatedFollowerList {
   total: Int
 }
 
+type Analytics {
+  "ID of the analytics service"
+  id: String
+
+  "Whether the service is activated or not"
+  enabled: Boolean
+
+  "A list of key-values configuration"
+  configuration: [AnalyticsConfiguration]
+}
+
+enum InstancesSortFields {
+  EVENT_COUNT
+  PERSON_COUNT
+  GROUP_COUNT
+  FOLLOWERS_COUNT
+  FOLLOWINGS_COUNT
+  REPORTS_COUNT
+  MEDIA_SIZE
+}
+
 "The list of possible options for the event's status"
 enum EventStatus {
   "The event is tentative"
@@ -1154,10 +1210,13 @@ type Person implements ActionLogObject & Actor {
     limit: Int
   ): PaginatedParticipantList
 
-  "The list of group this person is member of"
+  "The list of groups this person is member of"
   memberships(
     "Filter by group federated username"
     group: String
+
+    "Filter by group ID"
+    groupId: ID
 
     "The page in the paginated memberships list"
     page: Int
@@ -1514,7 +1573,7 @@ type RootMutationType {
     attributedToId: ID
 
     "The event's category"
-    category: String
+    category: EventCategory
 
     "The event's physical address"
     physicalAddress: AddressInput
@@ -1580,7 +1639,7 @@ type RootMutationType {
     attributedToId: ID
 
     "The event's category"
-    category: String
+    category: EventCategory
 
     "The event's physical address"
     physicalAddress: AddressInput
@@ -1841,6 +1900,12 @@ type RootMutationType {
     noteId: ID!
   ): DeletedObject
 
+  "Add an instance subscription"
+  addInstance(
+    "The instance domain to add"
+    domain: String!
+  ): Instance
+
   "Add a relay subscription"
   addRelay(
     "The relay hostname to add"
@@ -1909,6 +1974,24 @@ type RootMutationType {
     "The instance's languages"
     instanceLanguages: [String]
   ): AdminSettings
+
+  "For an admin to update an user"
+  adminUpdateUser(
+    "The user's ID"
+    id: ID!
+
+    "The user's new email"
+    email: String
+
+    "Manually confirm the user's account"
+    confirmed: Boolean
+
+    "Set user's new role"
+    role: UserRole
+
+    "Whether or not to notify the user of the change"
+    notify: Boolean
+  ): User
 
   "Create a todo list"
   createTodoList(
@@ -2225,6 +2308,9 @@ type RootQueryType {
     "Whether the event is online or in person"
     type: EventType
 
+    "The category for the event"
+    category: String
+
     "Radius around the location to search in"
     radius: Float
 
@@ -2257,6 +2343,9 @@ type RootQueryType {
   users(
     "Filter users by email"
     email: String
+
+    "Filter users by current signed-in IP address"
+    currentSignInIp: String
 
     "The page in the paginated users list"
     page: Int
@@ -2349,6 +2438,12 @@ type RootQueryType {
     preferredUsername: String!
   ): Group
 
+  "Get a group by its preferred username"
+  groupById(
+    "The group local ID"
+    id: ID!
+  ): Group
+
   "Get all events"
   events(
     "The page in the paginated event list"
@@ -2439,6 +2534,9 @@ type RootQueryType {
 
     "Filter reports by status"
     status: ReportStatus
+
+    "Filter reports by domain name"
+    domain: String
   ): PaginatedReportList
 
   "Get a report by id"
@@ -2485,6 +2583,30 @@ type RootQueryType {
     "The sorting direction"
     direction: String
   ): PaginatedFollowerList
+
+  "List instances"
+  instances(
+    "The page in the paginated relay followings list"
+    page: Int
+
+    "The limit of relay followings per page"
+    limit: Int
+
+    "The field to order by the list"
+    orderBy: InstancesSortFields
+
+    "Filter by domain"
+    filterDomain: String
+
+    "Whether or not to filter instances by the follow status"
+    filterFollowStatus: InstanceFilterFollowStatus
+
+    "Whether or not to filter instances by the suspended status"
+    filterSuspendStatus: InstanceFilterSuspendStatus
+
+    "The sorting direction"
+    direction: String
+  ): PaginatedInstanceList
 
   "Get an instance's details"
   instance(
@@ -2569,14 +2691,14 @@ type Instance {
   "The domain name of the instance"
   domain: ID
 
-  "Whether this instance has a Mobilizon relay actor"
-  hasRelay: Boolean
-
   "Do we follow this instance"
   followerStatus: InstanceFollowStatus
 
   "Does this instance follow us?"
   followedStatus: InstanceFollowStatus
+
+  "The number of events on this instance we know of"
+  eventCount: Int
 
   "The number of profiles on this instance we know of"
   personCount: Int
@@ -2595,6 +2717,9 @@ type Instance {
 
   "The size of all the media files sent by actors from this instance"
   mediaSize: Int
+
+  "Whether this instance has a relay, meaning that it's a Mobilizon instance that we can follow"
+  hasRelay: Boolean
 }
 
 """
@@ -2865,7 +2990,7 @@ type Event implements ActivityObject & Interactable & ActionLogObject {
   tags: [Tag]
 
   "The event's category"
-  category: String
+  category: EventCategory
 
   "Whether or not the event is a draft"
   draft: Boolean
@@ -3296,6 +3421,39 @@ type Activity {
   group: Group
 }
 
+enum EventCategory {
+  ARTS
+  BOOK_CLUBS
+  BUSINESS
+  CAUSES
+  COMEDY
+  CRAFTS
+  FOOD_DRINK
+  HEALTH
+  MUSIC
+  AUTO_BOAT_AIR
+  COMMUNITY
+  FAMILY_EDUCATION
+  FASHION_BEAUTY
+  FILM_MEDIA
+  GAMES
+  LANGUAGE_CULTURE
+  LEARNING
+  LGBTQ
+  MOVEMENTS_POLITICS
+  NETWORKING
+  PARTY
+  PERFORMING_VISUAL_ARTS
+  PETS
+  PHOTOGRAPHY
+  OUTDOORS_ADVENTURE
+  SPIRITUALITY_RELIGION_BELIEFS
+  SCIENCE_TECH
+  SPORTS
+  THEATRE
+  MEETING
+}
+
 "The list of visibility options for a post"
 enum PostVisibility {
   "Publicly listed and federated. Can be shared."
@@ -3353,6 +3511,20 @@ type ReportNote implements ActionLogObject {
 
   "When the report note was created"
   insertedAt: DateTime
+}
+
+enum AnalyticsConfigurationType {
+  "A string"
+  STRING
+
+  "An integer"
+  INTEGER
+
+  "A boolean"
+  BOOLEAN
+
+  "A float"
+  FLOAT
 }
 
 "The types of Group that exist"
@@ -3492,6 +3664,12 @@ type PaginatedFollowedGroupEvents {
 
   "The total number of follow group events in the list"
   total: Int
+}
+
+enum InstanceFilterFollowStatus {
+  ALL
+  FOLLOWING
+  FOLLOWED
 }
 
 "Instance map tiles configuration"
@@ -3661,6 +3839,11 @@ type AdminSettings {
   instanceLanguages: [String]
 }
 
+enum InstanceFilterSuspendStatus {
+  ALL
+  SUSPENDED
+}
+
 "The instance's features"
 type Features {
   "Whether groups are activated on this instance"
@@ -3668,9 +3851,6 @@ type Features {
 
   "Whether event creation is allowed on this instance"
   eventCreation: Boolean
-
-  "Activate link to Koena Connect"
-  koenaConnect: Boolean
 }
 
 "A set of user settings"
