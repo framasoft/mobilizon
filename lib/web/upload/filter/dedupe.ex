@@ -7,9 +7,12 @@ defmodule Mobilizon.Web.Upload.Filter.Dedupe do
   @moduledoc """
   Names the file after its hash to avoid dedupes
   """
-  @behaviour Mobilizon.Web.Upload.Filter
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
 
+  @behaviour Filter
+
+  @impl Filter
   @spec filter(Upload.t()) :: {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{name: name, tempfile: tempfile} = upload) do
     extension = name |> String.split(".") |> List.last()

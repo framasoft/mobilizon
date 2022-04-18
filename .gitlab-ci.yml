@@ -32,7 +32,6 @@ variables:
   APP_VERSION: "${CI_COMMIT_REF_NAME}"
   APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
   CYPRESS_INSTALL_BINARY: 0
-  HEX_MIRROR: https://cdn.jsdelivr.net/hex
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"

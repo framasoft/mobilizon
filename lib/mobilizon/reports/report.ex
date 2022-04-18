@@ -17,7 +17,7 @@ defmodule Mobilizon.Reports.Report do
   @type t :: %__MODULE__{
           id: integer(),
           content: String.t(),
-          status: ReportStatus.t(),
+          status: atom(),
           url: String.t(),
           reported: Actor.t(),
           reporter: Actor.t(),

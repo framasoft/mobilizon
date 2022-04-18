@@ -39,7 +39,7 @@ defmodule Mobilizon.Posts.Post do
           body: String.t(),
           title: String.t(),
           draft: boolean,
-          visibility: PostVisibility.t(),
+          visibility: atom(),
           publish_at: DateTime.t(),
           author: Actor.t(),
           attributed_to: Actor.t(),

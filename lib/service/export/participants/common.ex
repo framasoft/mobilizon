@@ -30,7 +30,7 @@ defmodule Mobilizon.Service.Export.Participants.Common do
   @doc """
   Match a participant role to it's translated version
   """
-  @spec translate_role(Mobilizon.Events.ParticipantRole.t()) :: String.t()
+  @spec translate_role(atom()) :: String.t()
   def translate_role(role) do
     case role do
       :not_approved ->

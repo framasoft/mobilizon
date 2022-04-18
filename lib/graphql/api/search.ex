@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.API.Search do
   """
 
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, ActorType}
+  alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
   alias Mobilizon.Storage.Page
@@ -18,7 +18,7 @@ defmodule Mobilizon.GraphQL.API.Search do
   @doc """
   Searches actors.
   """
-  @spec search_actors(map(), integer | nil, integer | nil, ActorType.t()) ::
+  @spec search_actors(map(), integer | nil, integer | nil, atom()) ::
           {:ok, Page.t(Actor.t())} | {:error, String.t()}
   def search_actors(%{term: term} = args, page \\ 1, limit \\ 10, result_type) do
     term = String.trim(term)

@@ -8,12 +8,14 @@ defmodule Mobilizon.Web.Upload.Filter.Exiftool do
   Also strips or replaces filesystem metadata e.g., timestamps.
   """
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
 
-  @behaviour Mobilizon.Web.Upload.Filter
+  @behaviour Filter
 
   @spec filter(Upload.t()) :: {:ok, :filtered | :noop} | {:error, String.t()}
 
   # webp is not compatible with exiftool at this time
+  @impl Filter
   def filter(%Upload{content_type: "image/webp"}), do: {:ok, :noop}
 
   def filter(%Upload{tempfile: file, content_type: "image" <> _}) do

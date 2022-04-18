@@ -3,7 +3,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.{Event, EventOptions, Participant, ParticipantRole}
+  alias Mobilizon.Events.{Event, EventOptions, Participant}
   alias Mobilizon.Posts.Post
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
@@ -166,7 +166,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     end
   end
 
-  @spec reservation_status(ParticipantRole.t()) :: String.t()
+  @spec reservation_status(atom()) :: String.t()
   defp reservation_status(:rejected), do: "https://schema.org/ReservationCancelled"
   defp reservation_status(:not_confirmed), do: "https://schema.org/ReservationPending"
   defp reservation_status(:not_approved), do: "https://schema.org/ReservationHold"

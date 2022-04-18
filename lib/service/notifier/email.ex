@@ -93,7 +93,7 @@ defmodule Mobilizon.Service.Notifier.Email do
   end
 
   @spec match_group_notifications_setting(
-          NotificationPendingNotificationDelay.t(),
+          non_neg_integer(),
           String.t(),
           DateTime.t() | nil,
           Keyword.t()

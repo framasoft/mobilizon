@@ -7,11 +7,12 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
   @moduledoc """
   Extracts metadata about the upload, such as width/height
   """
-  require Logger
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
 
-  @behaviour Mobilizon.Web.Upload.Filter
+  @behaviour Filter
 
+  @impl Filter
   @spec filter(Upload.t()) ::
           {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{tempfile: file, content_type: "image" <> _} = upload) do
@@ -23,6 +24,7 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
     {:ok, :filtered, %Upload{upload | width: image.width, height: image.height}}
   rescue
     e in ErlangError ->
+      require Logger
       Logger.warn("#{__MODULE__}: #{inspect(e)}")
       {:ok, :noop}
   end

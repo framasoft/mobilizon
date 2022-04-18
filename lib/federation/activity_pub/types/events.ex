@@ -3,7 +3,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events, as: EventsManager
-  alias Mobilizon.Events.{Event, Participant, ParticipantRole}
+  alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub.{Actions, Audience, Permission}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream
@@ -191,7 +191,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
           Event.t(),
           ActivityStreams.t(),
           Participant.t(),
-          ParticipantRole.t()
+          atom()
         ) :: {:ok, ActivityStreams.t(), Participant.t()} | {:accept, any()}
   defp approve_if_default_role_is_participant(event, activity_data, participant, role) do
     case event do
@@ -217,7 +217,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     end
   end
 
-  @spec do_approve(Event.t(), ActivityStreams.t(), Particpant.t(), ParticipantRole.t(), map()) ::
+  @spec do_approve(Event.t(), ActivityStreams.t(), Particpant.t(), atom(), map()) ::
           {:accept, any} | {:ok, ActivityStreams.t(), Participant.t()}
   defp do_approve(event, activity_data, participant, role, additionnal) do
     cond do

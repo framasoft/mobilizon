@@ -22,7 +22,7 @@ defmodule Mobilizon.Discussions.Comment do
           url: String.t(),
           id: integer(),
           local: boolean,
-          visibility: CommentVisibility.t(),
+          visibility: atom(),
           uuid: Ecto.UUID.t(),
           actor: Actor.t(),
           attributed_to: Actor.t(),

@@ -52,21 +52,6 @@
           >{{ $t("Create") }}</b-button
         >
       </b-navbar-item>
-      <b-navbar-item
-        v-if="config && config.features.koenaConnect"
-        class="koena"
-        tag="a"
-        href="https://mediation.koena.net/framasoft/mobilizon/"
-        target="_blank"
-        rel="noopener external"
-        hreflang="fr"
-      >
-        <img
-          src="/img/koena-a11y.svg"
-          width="150"
-          alt="Contact accessibilité"
-        />
-      </b-navbar-item>
     </template>
     <template slot="end">
       <b-navbar-item tag="div">
@@ -379,15 +364,6 @@ nav {
 
   a.navbar-item:focus-within {
     background-color: inherit;
-  }
-
-  .koena {
-    padding-top: 0;
-    padding-bottom: 0;
-    & > img {
-      max-height: 4rem;
-      padding-top: 0.2rem;
-    }
   }
 
   .identity-wrapper {

@@ -1,6 +1,6 @@
 defmodule Mobilizon.Service.ErrorReporting do
   @moduledoc """
-  Mpdule to load and configure error reporting adapters
+  Module to load and configure error reporting adapters
   """
 
   @callback enabled? :: boolean()

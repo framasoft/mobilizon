@@ -32,7 +32,7 @@ WORKDIR /mobilizon
 
 # Elixir release
 RUN source /root/.bashrc && \
-    HEX_MIRROR="https://cdn.jsdelivr.net/hex" mix deps.get --only prod && \
+    mix deps.get --only prod && \
     mix compile  && \
     mix phx.digest.clean --all && \
     mix release --path release/mobilizon && \

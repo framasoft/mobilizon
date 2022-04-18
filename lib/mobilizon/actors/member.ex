@@ -14,7 +14,7 @@ defmodule Mobilizon.Actors.Member do
   @type t :: %__MODULE__{
           id: String.t(),
           url: String.t(),
-          role: MemberRole.t(),
+          role: atom(),
           parent: Actor.t(),
           actor: Actor.t(),
           metadata: Metadata.t()
