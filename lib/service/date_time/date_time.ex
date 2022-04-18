@@ -170,7 +170,7 @@ defmodule Mobilizon.Service.DateTime do
          options
        ) do
     notification_time = Keyword.get(options, :notification_time, ~T[08:00:00])
-    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    timezone = Keyword.get(options, :timezone, "Etc/UTC") || "Etc/UTC"
     DateTime.new!(date, notification_time, timezone)
   end
 
