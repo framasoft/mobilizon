@@ -4,9 +4,11 @@ defmodule Mobilizon.Web.Upload.Filter.BlurHash do
   """
   require Logger
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
 
-  @behaviour Mobilizon.Web.Upload.Filter
+  @behaviour Filter
 
+  @impl Filter
   @spec filter(Upload.t()) ::
           {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(%Upload{tempfile: file, content_type: "image" <> _} = upload) do

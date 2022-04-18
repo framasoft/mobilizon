@@ -2,12 +2,12 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
   @moduledoc """
   Handle media optimizations
   """
-
-  @behaviour Mobilizon.Web.Upload.Filter
-
   alias Mobilizon.Config
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
   require Logger
+
+  @behaviour Filter
 
   @default_optimizers [
     JpegOptim,
@@ -18,6 +18,7 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
     Cwebp
   ]
 
+  @impl Filter
   @spec filter(Upload.t()) :: {:ok, :filtered | :noop} | {:error, :file_not_found}
   def filter(%Upload{tempfile: file, content_type: "image" <> _}) do
     optimizers = Config.get([__MODULE__, :optimizers], @default_optimizers)

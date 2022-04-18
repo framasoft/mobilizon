@@ -22,7 +22,7 @@ defmodule Mobilizon.GraphQL.API.Reports do
   @doc """
   Update the state of a report
   """
-  @spec update_report_status(Actor.t(), Report.t(), ReportStatus.t()) ::
+  @spec update_report_status(Actor.t(), Report.t(), atom()) ::
           {:ok, Report.t()} | {:error, Ecto.Changeset.t() | String.t()}
   def update_report_status(%Actor{} = actor, %Report{} = report, state) do
     if ReportStatus.valid_value?(state) do

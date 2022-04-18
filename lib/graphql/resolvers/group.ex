@@ -10,7 +10,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.GraphQL.API
-  alias Mobilizon.Users.{User, UserRole}
+  alias Mobilizon.Users.User
   alias Mobilizon.Web.Upload
   import Mobilizon.Web.Gettext
 
@@ -192,7 +192,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     {:error, "You need to be logged-in to create a group"}
   end
 
-  @spec can_create_group?(UserRole.t()) :: boolean()
+  @spec can_create_group?(atom()) :: boolean()
   defp can_create_group?(role) do
     if Config.only_admin_can_create_groups?() do
       is_admin(role)

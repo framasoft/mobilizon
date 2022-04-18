@@ -345,7 +345,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
-  @spec change_role(User.t(), Mobilizon.Users.UserRole.t(), boolean()) ::
+  @spec change_role(User.t(), atom(), boolean()) ::
           {:ok, User.t()} | {:error, String.t() | Ecto.Changeset.t()}
   defp change_role(%User{role: old_role} = user, new_role, notify) do
     if old_role != new_role do

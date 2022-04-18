@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Middleware.ErrorHandler do
   alias Mobilizon.GraphQL.Error
 
   @behaviour Absinthe.Middleware
-  @impl true
+  @impl Absinthe.Middleware
   def call(resolution, _config) do
     errors =
       resolution.errors

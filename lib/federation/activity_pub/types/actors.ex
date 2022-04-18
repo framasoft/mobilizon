@@ -1,7 +1,7 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Follower, Member, MemberRole}
+  alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub.{Actions, Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
   alias Mobilizon.Federation.ActivityStream
@@ -244,7 +244,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
           Actor.t(),
           ActivityStreams.t(),
           Member.t(),
-          MemberRole.t()
+          atom()
         ) ::
           {:ok, ActivityStreams.t(), Member.t()}
   defp approve_if_default_role_is_member(

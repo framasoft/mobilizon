@@ -99,7 +99,7 @@ defmodule Mobilizon.Reports do
   @spec delete_note(Note.t()) :: {:ok, Note.t()} | {:error, Ecto.Changeset.t()}
   def delete_note(%Note{} = note), do: Repo.delete(note)
 
-  @spec list_reports_query(ReportStatus.t()) :: Ecto.Query.t()
+  @spec list_reports_query(atom()) :: Ecto.Query.t()
   defp list_reports_query(status) do
     Report
     |> preload([:reported, :reporter, :manager, :event, :comments, :notes])

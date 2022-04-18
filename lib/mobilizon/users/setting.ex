@@ -13,9 +13,9 @@ defmodule Mobilizon.Users.Setting do
           notification_on_day: boolean,
           notification_each_week: boolean,
           notification_before_event: boolean,
-          notification_pending_participation: NotificationPendingNotificationDelay.t(),
-          notification_pending_membership: NotificationPendingNotificationDelay.t(),
-          group_notifications: NotificationPendingNotificationDelay.t(),
+          notification_pending_participation: non_neg_integer(),
+          notification_pending_membership: non_neg_integer(),
+          group_notifications: non_neg_integer(),
           last_notification_sent: DateTime.t(),
           user: User.t()
         }

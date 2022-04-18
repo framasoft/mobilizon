@@ -8,17 +8,18 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
   Local uploader for files
   """
 
-  @behaviour Mobilizon.Web.Upload.Uploader
-
   alias Mobilizon.Config
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Uploader
 
-  @impl true
+  @behaviour Uploader
+
+  @impl Uploader
   def get_file(_) do
     {:ok, {:static_dir, upload_path()}}
   end
 
-  @impl true
+  @impl Uploader
   @spec put_file(Upload.t()) ::
           :ok | {:ok, {:file, String.t()}} | {:error, :tempfile_no_longer_exists}
   def put_file(%Upload{path: initial_path, tempfile: tempfile}) do
@@ -38,7 +39,7 @@ defmodule Mobilizon.Web.Upload.Uploader.Local do
     end
   end
 
-  @impl true
+  @impl Uploader
   @spec remove_file(String.t()) ::
           {:ok, {:file, String.t()}}
           | {:error, :folder_not_empty}

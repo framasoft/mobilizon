@@ -33,15 +33,15 @@ defmodule Mobilizon.Actors.Actor do
           resources_url: String.t(),
           posts_url: String.t(),
           events_url: String.t(),
-          type: ActorType.t(),
+          type: atom(),
           name: String.t() | nil,
           domain: String.t() | nil,
           summary: String.t(),
           preferred_username: String.t(),
           keys: String.t(),
           manually_approves_followers: boolean,
-          openness: ActorOpenness.t(),
-          visibility: ActorVisibility.t(),
+          openness: atom(),
+          visibility: atom(),
           suspended: boolean,
           avatar: File.t() | nil,
           banner: File.t() | nil,
@@ -358,7 +358,7 @@ defmodule Mobilizon.Actors.Actor do
   # When we don't even have any preferred_username, don't even try validating preferred_username
   defp unique_username_validator(changeset), do: changeset
 
-  @spec build_urls(Ecto.Changeset.t(), ActorType.t()) :: Ecto.Changeset.t()
+  @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
 
   defp build_urls(%Ecto.Changeset{changes: %{preferred_username: username}} = changeset, type) do

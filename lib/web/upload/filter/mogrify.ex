@@ -8,13 +8,15 @@ defmodule Mobilizon.Web.Upload.Filter.Mogrify do
   Handle mogrify transformations
   """
 
-  @behaviour Mobilizon.Web.Upload.Filter
-
   alias Mobilizon.Config
+  alias Mobilizon.Web.Upload.Filter
+
+  @behaviour Filter
 
   @type conversion :: action :: String.t() | {action :: String.t(), opts :: String.t()}
   @type conversions :: conversion() | [conversion()]
 
+  @impl Filter
   @spec filter(Mobilizon.Web.Upload.t()) :: {:ok, :filtered | :noop} | {:error, String.t()}
   def filter(%Mobilizon.Web.Upload{tempfile: file, content_type: "image" <> _}) do
     do_filter(file, Config.get!([__MODULE__, :args]))

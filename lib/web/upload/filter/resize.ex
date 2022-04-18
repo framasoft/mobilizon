@@ -5,12 +5,15 @@ defmodule Mobilizon.Web.Upload.Filter.Resize do
   This filter requires `Mobilizon.Web.Upload.Filter.AnalyzeMetadata` to be performed before.
   """
 
-  @behaviour Mobilizon.Web.Upload.Filter
   alias Mobilizon.Web.Upload
+  alias Mobilizon.Web.Upload.Filter
+
+  @behaviour Filter
 
   @maximum_width 1_920
   @maximum_height 1_080
 
+  @impl Filter
   @spec filter(Upload.t()) :: {:ok, :filtered, Upload.t()} | {:ok, :noop}
   def filter(
         %Upload{

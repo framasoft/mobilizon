@@ -16,7 +16,7 @@ defmodule Mobilizon.Events.Participant do
 
   @type t :: %__MODULE__{
           id: String.t(),
-          role: ParticipantRole.t(),
+          role: atom(),
           code: String.t(),
           url: String.t(),
           event: Event.t(),

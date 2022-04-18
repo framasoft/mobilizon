@@ -18,7 +18,7 @@ defmodule Mobilizon.Users.User do
           email: String.t(),
           password_hash: String.t(),
           password: String.t(),
-          role: UserRole.t(),
+          role: atom(),
           confirmed_at: DateTime.t() | nil,
           confirmation_sent_at: DateTime.t(),
           confirmation_token: String.t(),

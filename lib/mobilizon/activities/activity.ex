@@ -21,13 +21,13 @@ defmodule Mobilizon.Activities.Activity do
   @attrs @required_attrs ++ @optional_attrs
 
   @type t :: %__MODULE__{
-          priority: Priority.t(),
-          type: Type.t(),
-          subject: Subject.t(),
+          priority: pos_integer(),
+          type: String.t(),
+          subject: String.t(),
           subject_params: map(),
           message: String.t(),
           message_params: map(),
-          object_type: ObjectType.t(),
+          object_type: String.t(),
           object_id: String.t(),
           object: map(),
           author: Actor.t(),

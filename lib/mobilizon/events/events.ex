@@ -442,7 +442,7 @@ defmodule Mobilizon.Events do
 
   @spec list_organized_events_for_group(
           Actor.t(),
-          EventVisibility.t() | :all,
+          atom(),
           DateTime.t() | nil,
           DateTime.t() | nil,
           integer | nil,

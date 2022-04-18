@@ -145,7 +145,7 @@ defmodule Mobilizon.Actors do
   @doc """
   Gets an actor by name.
   """
-  @spec get_actor_by_name(String.t(), ActorType.t() | nil) :: Actor.t() | nil
+  @spec get_actor_by_name(String.t(), atom() | nil) :: Actor.t() | nil
   def get_actor_by_name(name, type \\ nil) do
     Actor
     |> filter_by_type(type)
@@ -1635,7 +1635,7 @@ defmodule Mobilizon.Actors do
     |> preload([f, a], [:target_actor, :actor])
   end
 
-  @spec filter_by_type(Ecto.Queryable.t(), ActorType.t() | nil) :: Ecto.Queryable.t()
+  @spec filter_by_type(Ecto.Queryable.t(), atom() | nil) :: Ecto.Queryable.t()
   defp filter_by_type(query, type)
        when type in [:Person, :Group, :Application, :Service, :Organisation] do
     from(a in query, where: a.type == ^type)

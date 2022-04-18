@@ -1,7 +1,7 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   @moduledoc false
   alias Mobilizon.Actors
-  alias Mobilizon.Actors.{Actor, Member, MemberRole}
+  alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
@@ -89,8 +89,8 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Members do
   @spec check_admins_left?(
           String.t() | integer,
           String.t() | integer,
-          MemberRole.t(),
-          MemberRole.t()
+          atom(),
+          atom()
         ) :: boolean
   defp check_admins_left?(member_id, group_id, current_role, updated_role) do
     Actors.is_only_administrator?(member_id, group_id) && current_role == :administrator &&
