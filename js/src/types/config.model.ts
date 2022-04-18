@@ -95,7 +95,6 @@ export interface IConfig {
   features: {
     eventCreation: boolean;
     groups: boolean;
-    koenaConnect: boolean;
   };
   restrictions: {
     onlyAdminCanCreateGroups: boolean;

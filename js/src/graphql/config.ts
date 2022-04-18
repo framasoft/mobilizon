@@ -71,7 +71,6 @@ export const CONFIG = gql`
       features {
         groups
         eventCreation
-        koenaConnect
       }
       restrictions {
         onlyAdminCanCreateGroups
