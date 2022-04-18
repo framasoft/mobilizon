@@ -20,7 +20,7 @@ COPY mix.exs mix.lock ./
 ENV MIX_ENV=prod
 RUN mix local.hex --force \
     && mix local.rebar --force \
-    && HEX_MIRROR="https://cdn.jsdelivr.net/hex" mix deps.get
+    && mix deps.get
 
 COPY lib ./lib
 COPY priv ./priv
