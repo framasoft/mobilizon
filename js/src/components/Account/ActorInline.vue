@@ -1,15 +1,18 @@
 <template>
-  <div class="actor-inline">
-    <div class="actor-avatar">
-      <figure class="image is-24x24" v-if="actor.avatar">
+  <div class="inline-flex items-start">
+    <div class="flex-none mr-2">
+      <figure class="image is-48x48" v-if="actor.avatar">
         <img class="is-rounded" :src="actor.avatar.url" alt="" />
       </figure>
-      <b-icon v-else size="is-medium" icon="account-circle" />
+      <b-icon v-else size="is-large" icon="account-circle" />
     </div>
 
-    <div class="actor-name">
-      <p>
+    <div class="flex-auto">
+      <p class="text-base line-clamp-3 md:line-clamp-2 max-w-xl">
         {{ displayName(actor) }}
+      </p>
+      <p class="text-sm text-gray-500 truncate">
+        @{{ usernameWithDomain(actor) }}
       </p>
     </div>
   </div>
