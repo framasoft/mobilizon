@@ -177,7 +177,7 @@ export default class ShareGroupModal extends Vue {
   }
 
   get mastodonShareUrl(): string {
-    return `https://toot.karamoff.dev/?text=${encodeURIComponent(
+    return `https://toot.kytta.dev/?text=${encodeURIComponent(
       this.basicTextToEncode
     )}`;
   }
