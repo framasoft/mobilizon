@@ -117,7 +117,7 @@ import { Component, Prop, Vue, Ref } from "vue-property-decorator";
 import { GroupVisibility } from "@/types/enums";
 import DiasporaLogo from "../Share/DiasporaLogo.vue";
 import MastodonLogo from "../Share/MastodonLogo.vue";
-import TelegramLogo from "../Share/MastodonLogo.vue";
+import TelegramLogo from "../Share/TelegramLogo.vue";
 import { displayName, IGroup } from "@/types/actor";
 
 @Component({
