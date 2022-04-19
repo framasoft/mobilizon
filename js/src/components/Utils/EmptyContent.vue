@@ -9,7 +9,7 @@
       <!-- @slot Mandatory title -->
       <slot />
     </h2>
-    <p v-show="$slots.desc">
+    <p v-show="$slots.desc" :class="descriptionClasses">
       <!-- @slot Optional description -->
       <slot name="desc" />
     </p>
@@ -21,6 +21,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 @Component
 export default class EmptyContent extends Vue {
   @Prop({ type: String, required: true }) icon!: string;
+  @Prop({ type: String, required: false, default: "" })
+  descriptionClasses!: string;
   @Prop({ type: Boolean, required: false, default: false }) inline!: boolean;
   @Prop({ type: Boolean, required: false, default: false }) center!: boolean;
 }

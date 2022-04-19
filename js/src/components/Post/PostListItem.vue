@@ -9,7 +9,7 @@
       :rounded="true"
       style="height: 120px"
     />
-    <div class="title-info-wrapper has-text-grey-dark">
+    <div class="title-info-wrapper has-text-grey-dark px-1">
       <h3 class="post-minimalist-title" :lang="post.language">
         {{ post.title }}
       </h3>
