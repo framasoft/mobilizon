@@ -407,6 +407,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
            Actions.Update.update(old_actor, object_data, false, %{updater_actor: author}) do
       {:ok, activity, new_actor}
     else
+      {:error, :update_not_allowed} ->
+        Logger.warn("Activity tried to update an actor that's local or not a group",
+          activity: params
+        )
+
+        :error
+
       e ->
         Sentry.capture_message("Error while handling an Update activity",
           extra: %{params: params}
