@@ -672,8 +672,15 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Converts PEM encoded keys to a public key representation
   """
+  @spec pem_to_public_key_pem(String.t()) :: String.t()
+  def pem_to_public_key_pem(pem) do
+    public_key = pem_to_public_key(pem)
+    public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
+    :public_key.pem_encode([public_key])
+  end
+
   @spec pem_to_public_key(String.t()) :: {:RSAPublicKey, any(), any()}
-  def pem_to_public_key(pem) do
+  defp pem_to_public_key(pem) do
     [key_code] = :public_key.pem_decode(pem)
     key = :public_key.pem_entry_decode(key_code)
 
@@ -686,14 +693,8 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
     end
   end
 
-  @spec pem_to_public_key_pem(String.t()) :: String.t()
-  def pem_to_public_key_pem(pem) do
-    public_key = pem_to_public_key(pem)
-    public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
-    :public_key.pem_encode([public_key])
-  end
-
-  def make_signature(actor, id, date) do
+  @spec make_signature(Actor.t(), String.t(), DateTime.t()) :: list({atom(), String.t()})
+  defp make_signature(actor, id, date) do
     uri = URI.parse(id)
 
     signature =
