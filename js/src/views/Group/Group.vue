@@ -537,12 +537,11 @@
               $t("View full profile")
             }}</a>
           </b-message>
-          <event-metadata-block :title="$t('About')">
-            <div
-              dir="auto"
-              v-html="group.summary"
-              v-if="group.summary && group.summary !== '<p></p>'"
-            />
+          <event-metadata-block
+            :title="$t('About')"
+            v-if="group.summary && group.summary !== '<p></p>'"
+          >
+            <div dir="auto" v-html="group.summary" />
           </event-metadata-block>
           <event-metadata-block :title="$t('Members')" icon="account-group">
             {{
