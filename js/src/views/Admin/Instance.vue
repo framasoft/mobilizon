@@ -98,12 +98,12 @@
         </button>
         <button
           @click="rejectInstance"
-          v-else-if="instance.followerStatus != InstanceFollowStatus.NONE"
+          v-if="instance.followerStatus != InstanceFollowStatus.NONE"
           class="bg-red-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
           {{ $t("Reject follow") }}
         </button>
-        <p v-else>
+        <p v-if="instance.followerStatus == InstanceFollowStatus.NONE">
           {{ $t("This instance doesn't follow yours.") }}
         </p>
       </div>
