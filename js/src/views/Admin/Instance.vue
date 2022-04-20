@@ -8,7 +8,9 @@
       ]"
     />
     <h1 class="text-2xl">{{ instance.domain }}</h1>
-    <div class="grid md:grid-cols-4 gap-2 content-center text-center mt-2">
+    <div
+      class="grid md:grid-cols-2 xl:grid-cols-4 gap-2 content-center text-center mt-2"
+    >
       <div class="bg-gray-50 rounded-xl p-8">
         <router-link
           :to="{
@@ -64,7 +66,7 @@
         <span class="text-sm block">{{ $t("Uploaded media size") }}</span>
       </div>
     </div>
-    <div class="mt-3 grid md:grid-cols-2 gap-4" v-if="instance.hasRelay">
+    <div class="mt-3 grid xl:grid-cols-2 gap-4" v-if="instance.hasRelay">
       <div class="border bg-white p-6 shadow-md rounded-md">
         <button
           @click="removeInstanceFollow"
@@ -88,7 +90,7 @@
           {{ $t("Follow instance") }}
         </button>
       </div>
-      <div class="border bg-white p-6 shadow-md rounded-md">
+      <div class="border bg-white p-6 shadow-md rounded-md flex flex-col gap-2">
         <button
           @click="acceptInstance"
           v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
