@@ -9,7 +9,7 @@
       :class="{ 'is-titleless': !title }"
     >
       <div class="media">
-        <div class="media-left">
+        <div class="media-left hidden md:block">
           <b-icon icon="alert" type="is-warning" size="is-large" />
         </div>
         <div class="media-content">
