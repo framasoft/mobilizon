@@ -18,7 +18,7 @@
       <h1 class="title" v-if="group">
         {{
           $t("{group}'s events", {
-            group: group.name || group.preferredUsername,
+            group: displayName(group),
           })
         }}
       </h1>
@@ -78,7 +78,7 @@
         <b-pagination
           class="mt-4"
           :total="group.organizedEvents.total"
-          v-model="eventsPage"
+          v-model="page"
           :per-page="EVENTS_PAGE_LIMIT"
           :aria-next-label="$t('Next page')"
           :aria-previous-label="$t('Previous page')"
@@ -91,17 +91,15 @@
   </div>
 </template>
 <script lang="ts">
-import { Component } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
+import { Component, Vue } from "vue-property-decorator";
 import RouteName from "@/router/name";
 import Subtitle from "@/components/Utils/Subtitle.vue";
 import GroupedMultiEventMinimalistCard from "@/components/Event/GroupedMultiEventMinimalistCard.vue";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import GroupMixin from "@/mixins/group";
 import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_EVENTS } from "@/graphql/event";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { displayName, usernameWithDomain } from "../../types/actor";
+import { displayName, IGroup, usernameWithDomain } from "../../types/actor";
 
 const EVENTS_PAGE_LIMIT = 10;
 
@@ -127,10 +125,11 @@ const EVENTS_PAGE_LIMIT = 10;
           name: this.$route.params.preferredUsername,
           beforeDateTime: this.showPassedEvents ? new Date() : null,
           afterDateTime: this.showPassedEvents ? null : new Date(),
-          organisedEventsPage: this.eventsPage,
+          organisedEventsPage: this.page,
           organisedEventsLimit: EVENTS_PAGE_LIMIT,
         };
       },
+      update: (data) => data.group,
     },
   },
   components: {
@@ -144,15 +143,27 @@ const EVENTS_PAGE_LIMIT = 10;
     const { group } = this;
     return {
       title: this.$t("{group} events", {
-        group: group?.name || usernameWithDomain(group),
+        group: displayName(group),
       }) as string,
     };
   },
 })
-export default class GroupEvents extends mixins(GroupMixin) {
+export default class GroupEvents extends Vue {
+  group!: IGroup;
+
   memberships!: IMember[];
 
-  eventsPage = 1;
+  get page(): number {
+    return parseInt((this.$route.query.page as string) || "1", 10);
+  }
+
+  set page(page: number) {
+    this.$router.push({
+      name: RouteName.GROUP_EVENTS,
+      query: { ...this.$route.query, page: page.toString() },
+    });
+    this.$apollo.queries.group.refetch();
+  }
 
   usernameWithDomain = usernameWithDomain;
 
@@ -170,14 +181,11 @@ export default class GroupEvents extends mixins(GroupMixin) {
   }
 
   get showPassedEvents(): boolean {
-    return (
-      this.$route.query.future !== undefined &&
-      this.$route.query.future.toString() === "false"
-    );
+    return this.$route.query.future === "false";
   }
 
   set showPassedEvents(value: boolean) {
-    this.$router.push({ query: { future: this.showPassedEvents.toString() } });
+    this.$router.replace({ query: { future: (!value).toString() } });
   }
 }
 </script>
