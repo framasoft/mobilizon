@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0-rc.2 - 2022-04-20
+
+Changes since rc.1:
+* Hide the whole metadata block if group has no description
+* Increase task timeout in Refresher to 60 seconds
+* Allow webfinger to be fetched over http (not https) in dev mode
+* Fix rejecting instance follow
+* Allow instance to have non-standard ports
+* Improve reactions when approving/rejecting an instance follow
+* Improve instance admin view for mobile
+* Allow to reject instance following
+* Fix pagination of group events
+* Add pagination to the instances list
+* Upgrade deps
+* Eventually fetch actors in mentions
+* Add proper fallback for when a TZ isn't registered
+* Improve IdentityPicker
+* Hide side of report modal on low width screens
+* Improve JoinGroupWithAccount component
+* Various group and posts improvements
+* Fix Telegram Logo being replaced with Mastodon logo in ShareGroupModal
+* Change URL to Mastodon Share Manager
+* Improve ActorInline component
+* Avoid assuming we're on Debian-based in release build
+* Fix receiving Flag activities on federated events
+* Update schema.graphql file
+
 ## 2.1.0-rc.1 - 2022-04-18
 
 Changes since beta.3:
