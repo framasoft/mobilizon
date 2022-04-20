@@ -126,7 +126,6 @@ import {
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { formatBytes } from "@/utils/datetime";
 import RouteName from "@/router/name";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IInstance } from "@/types/instance.model";
 import { ApolloCache, gql, Reference } from "@apollo/client/core";
 import { InstanceFollowStatus } from "@/types/enums";
@@ -156,38 +155,61 @@ export default class Instance extends Vue {
 
   async acceptInstance(): Promise<void> {
     try {
+      const { instance } = this;
       await this.$apollo.mutate({
         mutation: ACCEPT_RELAY,
         variables: {
           address: `relay@${this.domain}`,
         },
+        update(cache: ApolloCache<any>) {
+          cache.writeFragment({
+            id: cache.identify(instance as unknown as Reference),
+            fragment: gql`
+              fragment InstanceFollowerStatus on Instance {
+                followerStatus
+              }
+            `,
+            data: {
+              followerStatus: InstanceFollowStatus.APPROVED,
+            },
+          });
+        },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
 
+  /**
+   * Reject instance follow
+   */
   async rejectInstance(): Promise<void> {
     try {
+      const { instance } = this;
       await this.$apollo.mutate({
         mutation: REJECT_RELAY,
         variables: {
           address: `relay@${this.domain}`,
         },
+        update(cache: ApolloCache<any>) {
+          cache.writeFragment({
+            id: cache.identify(instance as unknown as Reference),
+            fragment: gql`
+              fragment InstanceFollowerStatus on Instance {
+                followerStatus
+              }
+            `,
+            data: {
+              followerStatus: InstanceFollowStatus.NONE,
+            },
+          });
+        },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
@@ -201,17 +223,16 @@ export default class Instance extends Vue {
           domain: this.domain,
         },
       });
-    } catch (err: any) {
-      if (err.message) {
-        Snackbar.open({
-          message: err.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
 
+  /**
+   * Stop following instance
+   */
   async removeInstanceFollow(): Promise<void> {
     const { instance } = this;
     try {
@@ -234,13 +255,9 @@ export default class Instance extends Vue {
           });
         },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
