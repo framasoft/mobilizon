@@ -24,6 +24,9 @@ defmodule Mobilizon.Service.Workers.RefreshInstances do
           | {:error,
              Mobilizon.Federation.ActivityPub.Actor.make_actor_errors()
              | Mobilizon.Federation.WebFinger.finger_errors()}
+  defp refresh_instance_actor(%Instance{domain: nil}) do
+    {:error, :not_remote_instance}
+  end
 
   defp refresh_instance_actor(%Instance{domain: domain}) do
     ActivityPubActor.find_or_make_actor_from_nickname("relay@#{domain}")
