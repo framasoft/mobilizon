@@ -17,6 +17,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   alias Mobilizon.Service.RichMedia.Parser
   alias Mobilizon.Web.Upload
   import Mobilizon.Federation.ActivityStream.Converter.Utils, only: [get_address: 1]
+  import Mobilizon.Federation.ActivityPub.Utils, only: [create_full_domain_string: 1]
 
   @behaviour Converter
 
@@ -54,7 +55,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
       outbox_url: data["outbox"],
       following_url: data["following"],
       followers_url: data["followers"],
-      domain: URI.parse(data["id"]).host,
+      domain: data["id"] |> URI.new!() |> create_full_domain_string(),
       manually_approves_followers: data["manuallyApprovesFollowers"],
       type: data["type"],
       visibility: if(Map.get(data, "discoverable", false) == true, do: :public, else: :unlisted),

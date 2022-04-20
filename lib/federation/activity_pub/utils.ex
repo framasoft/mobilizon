@@ -781,4 +781,16 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       params
     end
   end
+
+  @schemes_with_no_port ["http", "https"]
+
+  def create_full_domain_string(%URI{host: host, port: nil}), do: host
+
+  def create_full_domain_string(%URI{host: host, port: port}) do
+    if port in Enum.map(@schemes_with_no_port, &URI.default_port/1) do
+      host
+    else
+      "#{host}:#{port}"
+    end
+  end
 end
