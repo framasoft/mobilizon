@@ -10,6 +10,8 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   alias Mobilizon.Federation.ActivityPub.{Fetcher, Relay, Transmogrifier, Utils}
   require Logger
 
+  @collection_element_task_processing_time 60_000
+
   @doc """
   Refresh a remote profile
   """
@@ -158,7 +160,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
 
     items
     |> Enum.map(fn item -> Task.async(fn -> handling_element(item) end) end)
-    |> Task.await_many()
+    |> Task.await_many(@collection_element_task_processing_time)
 
     Logger.debug("Finished processing a collection")
     :ok
