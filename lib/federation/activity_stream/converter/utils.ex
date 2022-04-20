@@ -34,6 +34,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
   @spec fetch_mentions([map()]) :: [map()]
   def fetch_mentions(mentions) when is_list(mentions) do
     Logger.debug("fetching mentions")
+    Logger.debug(inspect(mentions))
 
     Enum.reduce(mentions, [], fn mention, acc -> create_mention(mention, acc) end)
   end
