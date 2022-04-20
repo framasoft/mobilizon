@@ -8,8 +8,8 @@ defmodule Mobilizon.Service.Formatter do
   Formats input text to structured data, extracts mentions and hashtags.
   """
 
-  alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Service.Formatter.HTML
   alias Phoenix.HTML.Tag
 
@@ -22,26 +22,26 @@ defmodule Mobilizon.Service.Formatter do
 
   @spec escape_mention_handler(String.t(), String.t(), any(), any()) :: String.t()
   defp escape_mention_handler("@" <> nickname = mention, buffer, _, _) do
-    case Actors.get_actor_by_name(nickname) do
-      %Actor{} ->
+    case ActivityPubActor.find_or_make_actor_from_nickname(nickname) do
+      {:ok, %Actor{}} ->
         # escape markdown characters with `\\`
         # (we don't want something like @user__name to be parsed by markdown)
         String.replace(mention, @markdown_characters_regex, "\\\\\\1")
 
-      nil ->
+      {:error, _err} ->
         buffer
     end
   end
 
   @spec mention_handler(String.t(), String.t(), any(), map()) :: {String.t(), map()}
   def mention_handler("@" <> nickname, buffer, _opts, acc) do
-    case Actors.get_actor_by_name(nickname) do
+    case ActivityPubActor.find_or_make_actor_from_nickname(nickname) do
       #      %Actor{preferred_username: preferred_username} = actor ->
       #        link = "<span class='h-card mention'>@<span>#{preferred_username}</span></span>"
       #
       #        {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
-      %Actor{type: :Person, id: id, preferred_username: preferred_username} = actor ->
+      {:ok, %Actor{type: :Person, id: id, preferred_username: preferred_username} = actor} ->
         # link =
         #   "<span class='h-card mention' data-user='#{id}'>@<span>#{preferred_username}</span></span>"
 
@@ -62,7 +62,7 @@ defmodule Mobilizon.Service.Formatter do
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
-      nil ->
+      {:error, _} ->
         {buffer, acc}
     end
   end
