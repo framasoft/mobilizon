@@ -8,7 +8,9 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
   alias Mobilizon.Federation.ActivityPub.{Activity, Federator, Relay, Transmogrifier, Visibility}
   alias Mobilizon.Federation.HTTPSignatures.Signature
   require Logger
-  import Mobilizon.Federation.ActivityPub.Utils, only: [remote_actors: 1]
+
+  import Mobilizon.Federation.ActivityPub.Utils,
+    only: [remote_actors: 1, create_full_domain_string: 1]
 
   @doc """
   Publish an activity to all appropriated audiences inboxes
@@ -77,7 +79,7 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
           Tesla.Env.result()
   def publish_one(%{inbox: inbox, json: json, actor: actor, id: id}) do
     Logger.info("Federating #{id} to #{inbox}")
-    %URI{host: host, path: path} = URI.parse(inbox)
+    %URI{path: path} = uri = URI.new!(inbox)
 
     digest = Signature.build_digest(json)
     date = Signature.generate_date_header()
@@ -87,7 +89,7 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
     signature =
       Signature.sign(actor, %{
         "(request-target)": "post #{path}",
-        host: host,
+        host: create_full_domain_string(uri),
         "content-length": byte_size(json),
         digest: digest,
         date: date

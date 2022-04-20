@@ -4,7 +4,7 @@
       <p class="modal-card-title">{{ $t("Pick an identity") }}</p>
     </header>
     <section class="modal-card-body">
-      <div class="list is-hoverable">
+      <div class="list is-hoverable list-none">
         <a
           class="list-item"
           v-for="identity in identities"
@@ -12,7 +12,7 @@
           :class="{
             'is-active': currentIdentity && identity.id === currentIdentity.id,
           }"
-          @click="changeCurrentIdentity(identity)"
+          @click="currentIdentity = identity"
         >
           <div class="media">
             <img
@@ -60,10 +60,11 @@ export default class IdentityPicker extends Vue {
 
   identities: IActor[] = [];
 
-  currentIdentity: IActor = this.value;
+  get currentIdentity(): IActor {
+    return this.value;
+  }
 
-  changeCurrentIdentity(identity: IActor): void {
-    this.currentIdentity = identity;
+  set currentIdentity(identity: IActor) {
     this.$emit("input", identity);
   }
 }

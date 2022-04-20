@@ -67,33 +67,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
   def as_to_model(%{"object" => objects} = object) do
     with {:ok, %Actor{} = reporter} <-
            ActivityPubActor.get_or_fetch_actor_by_url(object["actor"]),
-         %Actor{} = reported <-
-           Enum.reduce_while(objects, nil, fn url, _ ->
-             case ActivityPubActor.get_or_fetch_actor_by_url(url) do
-               {:ok, %Actor{} = actor} ->
-                 {:halt, actor}
-
-               _ ->
-                 {:cont, nil}
-             end
-           end),
-         event <-
-           Enum.reduce_while(objects, nil, fn url, _ ->
-             case Events.get_event_by_url(url) do
-               %Event{} = event ->
-                 {:halt, event}
-
-               _ ->
-                 {:cont, nil}
-             end
-           end),
-
-         # Remove the reported actor and the event from the object list.
-         comments <-
-           Enum.filter(objects, fn url ->
-             !(url == reported.url || (!is_nil(event) && event.url == url))
-           end),
-         comments <- Enum.map(comments, &Discussions.get_comment_from_url/1) do
+         %Actor{} = reported <- find_reported(objects),
+         event <- find_event(objects),
+         comments <- find_comments(objects, reported, event) do
       %{
         "reporter" => reporter,
         "uri" => object["id"],
@@ -103,5 +79,42 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
         "comments" => comments
       }
     end
+  end
+
+  @spec find_reported(list(String.t())) :: Actor.t() | nil
+  defp find_reported(objects) do
+    Enum.reduce_while(objects, nil, fn url, _ ->
+      case ActivityPubActor.get_or_fetch_actor_by_url(url) do
+        {:ok, %Actor{} = actor} ->
+          {:halt, actor}
+
+        _ ->
+          {:cont, nil}
+      end
+    end)
+  end
+
+  # Remove the reported actor and the event from the object list.
+  @spec find_comments(list(String.t()), Actor.t() | nil, Event.t() | nil) :: list(Comment.t())
+  defp find_comments(objects, reported, event) do
+    objects
+    |> Enum.filter(fn url ->
+      !((!is_nil(reported) && url == reported.url) || (!is_nil(event) && event.url == url))
+    end)
+    |> Enum.map(&Discussions.get_comment_from_url/1)
+    |> Enum.filter(& &1)
+  end
+
+  @spec find_event(list(String.t())) :: Event.t() | nil
+  defp find_event(objects) do
+    Enum.reduce_while(objects, nil, fn url, _ ->
+      case Events.get_event_by_url(url) do
+        %Event{} = event ->
+          {:halt, event}
+
+        _ ->
+          {:cont, nil}
+      end
+    end)
   end
 end

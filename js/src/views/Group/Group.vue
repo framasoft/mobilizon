@@ -27,11 +27,11 @@
           <div class="title-container">
             <h1 v-if="group.name">{{ group.name }}</h1>
             <b-skeleton v-else :animated="true" />
-            <small
+            <span
               dir="ltr"
               class="has-text-grey-dark"
               v-if="group.preferredUsername"
-              >@{{ usernameWithDomain(group) }}</small
+              >@{{ usernameWithDomain(group) }}</span
             >
             <b-skeleton v-else :animated="true" />
             <br />
@@ -78,7 +78,7 @@
                 >
               </p>
             </div>
-            <div class="buttons">
+            <div class="flex gap-2">
               <b-button
                 outlined
                 icon-left="timeline-text"
@@ -101,77 +101,122 @@
                 }"
                 >{{ $t("Group settings") }}</b-button
               >
-              <b-tooltip
-                v-if="
-                  (!isCurrentActorAGroupMember || previewPublic) &&
-                  group.openness === Openness.INVITE_ONLY
-                "
-                :label="$t('This group is invite-only')"
-                position="is-bottom"
+              <b-dropdown
+                aria-role="list"
+                trap-focus
+                v-show="showJoinButton && showFollowButton"
               >
-                <b-button disabled type="is-primary">{{
-                  $t("Join group")
-                }}</b-button></b-tooltip
-              >
-              <b-button
-                v-else-if="
-                  ((!isCurrentActorAGroupMember &&
-                    !isCurrentActorAPendingGroupMember) ||
-                    previewPublic) &&
-                  currentActor.id
-                "
-                @click="joinGroup"
-                @keyup.enter="joinGroup"
-                type="is-primary"
-                :disabled="previewPublic"
-                >{{ $t("Join group") }}</b-button
-              >
+                <template #trigger>
+                  <b-button
+                    :label="$t('Follow')"
+                    type="is-primary"
+                    icon-left="rss"
+                    icon-right="menu-down"
+                  />
+                </template>
+
+                <b-dropdown-item
+                  aria-role="listitem"
+                  class="p-0"
+                  custom
+                  :focusable="false"
+                  :disabled="
+                    isCurrentActorPendingFollow && currentActor.id !== undefined
+                  "
+                >
+                  <button class="media py-4 px-2 w-full" @click="followGroup">
+                    <b-icon class="media-left" icon="rss" />
+                    <div class="media-content">
+                      <h3 class="font-medium text-lg">{{ $t("Follow") }}</h3>
+                      <p class="whitespace-normal md:whitespace-nowrap text-sm">
+                        {{ $t("Get informed of the upcoming public events") }}
+                      </p>
+                      <p
+                        v-if="
+                          doesGroupManuallyApprovesFollowers &&
+                          !isCurrentActorPendingFollow
+                        "
+                        class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                      >
+                        {{
+                          $t(
+                            "Follow requests will be approved by a group moderator"
+                          )
+                        }}
+                      </p>
+                      <p
+                        v-if="isCurrentActorPendingFollow && currentActor.id"
+                        class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                      >
+                        {{ $t("Follow request pending approval") }}
+                      </p>
+                    </div>
+                  </button>
+                </b-dropdown-item>
+
+                <b-dropdown-item
+                  aria-role="listitem"
+                  class="p-0 border-t border-solid"
+                  custom
+                  :focusable="false"
+                  :disabled="
+                    isGroupInviteOnly || isCurrentActorAPendingGroupMember
+                  "
+                >
+                  <button class="media py-4 px-2 w-full" @click="joinGroup">
+                    <b-icon
+                      class="media-left"
+                      icon="account-multiple-plus"
+                    ></b-icon>
+                    <div class="media-content">
+                      <h3 class="font-medium text-lg">{{ $t("Join") }}</h3>
+                      <div v-if="showJoinButton">
+                        <p
+                          class="whitespace-normal md:whitespace-nowrap text-sm"
+                        >
+                          {{
+                            $t(
+                              "Become part of the community and start organizing events"
+                            )
+                          }}
+                        </p>
+                        <p
+                          v-if="isGroupInviteOnly"
+                          class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                        >
+                          {{ $t("This group is invite-only") }}
+                        </p>
+                        <p
+                          v-if="
+                            areGroupMembershipsModerated &&
+                            !isCurrentActorAPendingGroupMember
+                          "
+                          class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                        >
+                          {{
+                            $t(
+                              "Membership requests will be approved by a group moderator"
+                            )
+                          }}
+                        </p>
+                        <p
+                          v-if="isCurrentActorAPendingGroupMember"
+                          class="whitespace-normal md:whitespace-nowrap text-sm italic"
+                        >
+                          {{ $t("Your membership is pending approval") }}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </b-dropdown-item>
+              </b-dropdown>
               <b-button
                 outlined
-                v-else-if="isCurrentActorAPendingGroupMember"
+                v-if="isCurrentActorAPendingGroupMember"
                 @click="leaveGroup"
                 @keyup.enter="leaveGroup"
                 type="is-primary"
                 >{{ $t("Cancel membership request") }}</b-button
-              >
-              <b-button
-                tag="router-link"
-                :to="{
-                  name: RouteName.GROUP_JOIN,
-                  params: { preferredUsername: usernameWithDomain(group) },
-                }"
-                v-else-if="!isCurrentActorAGroupMember || previewPublic"
-                :disabled="previewPublic"
-                type="is-primary"
-                >{{ $t("Join group") }}</b-button
-              >
-              <b-button
-                v-if="
-                  ((!isCurrentActorFollowing && !isCurrentActorAGroupMember) ||
-                    previewPublic) &&
-                  !isCurrentActorPendingFollow &&
-                  currentActor.id
-                "
-                @click="followGroup"
-                @keyup.enter="followGroup"
-                type="is-primary"
-                :disabled="isCurrentActorPendingFollow"
-                >{{ $t("Follow") }}</b-button
-              >
-              <b-button
-                tag="router-link"
-                :to="{
-                  name: RouteName.GROUP_FOLLOW,
-                  params: { preferredUsername: usernameWithDomain(group) },
-                }"
-                v-else-if="
-                  !isCurrentActorPendingFollow &&
-                  !isCurrentActorFollowing &&
-                  previewPublic
-                "
-                :disabled="previewPublic"
-                type="is-primary"
-                >{{ $t("Follow") }}</b-button
               >
               <b-button
                 outlined
@@ -192,12 +237,20 @@
                 v-if="isCurrentActorFollowing"
                 @click="toggleFollowNotify"
                 @keyup.enter="toggleFollowNotify"
+                class="notification-button p-1.5"
+                outlined
                 :icon-left="
                   isCurrentActorFollowingNotify
                     ? 'bell-outline'
                     : 'bell-off-outline'
                 "
-              ></b-button>
+              >
+                <span class="sr-only">{{
+                  isCurrentActorFollowingNotify
+                    ? $t("Activate notifications")
+                    : $t("Deactivate notifications")
+                }}</span>
+              </b-button>
               <b-button
                 outlined
                 icon-left="share"
@@ -307,28 +360,6 @@
                 "Since you are a new member, private content can take a few minutes to appear."
               )
             }}
-          </b-message>
-          <b-message
-            v-if="
-              !isCurrentActorAGroupMember &&
-              !isCurrentActorAPendingGroupMember &&
-              !isCurrentActorPendingFollow &&
-              !isCurrentActorFollowing
-            "
-            type="is-info"
-            has-icon
-            class="m-3"
-          >
-            <i18n
-              path="Following the group will allow you to be informed of the {group_upcoming_public_events}, whereas joining the group means you will {access_to_group_private_content_as_well}, including group discussions, group resources and members-only posts."
-            >
-              <b slot="group_upcoming_public_events">{{
-                $t("group's upcoming public events")
-              }}</b>
-              <b slot="access_to_group_private_content_as_well">{{
-                $t("access to the group's private content as well")
-              }}</b>
-            </i18n>
           </b-message>
         </div>
       </header>
@@ -506,6 +537,12 @@
               $t("View full profile")
             }}</a>
           </b-message>
+          <event-metadata-block
+            :title="$t('About')"
+            v-if="group.summary && group.summary !== '<p></p>'"
+          >
+            <div dir="auto" v-html="group.summary" />
+          </event-metadata-block>
           <event-metadata-block :title="$t('Members')" icon="account-group">
             {{
               $tc("{count} members", group.members.total, {
@@ -554,17 +591,6 @@
       </aside>
       <div class="main-content">
         <section>
-          <subtitle>{{ $t("About") }}</subtitle>
-          <div
-            dir="auto"
-            v-html="group.summary"
-            v-if="group.summary && group.summary !== '<p></p>'"
-          />
-          <empty-content v-else-if="group" icon="image-text" :inline="true">
-            {{ $t("This group doesn't have a description yet.") }}
-          </empty-content>
-        </section>
-        <section>
           <subtitle>{{ $t("Upcoming events") }}</subtitle>
           <div
             class="organized-events-wrapper"
@@ -577,7 +603,12 @@
               class="organized-event"
             />
           </div>
-          <empty-content v-else-if="group" icon="calendar" :inline="true">
+          <empty-content
+            v-else-if="group"
+            icon="calendar"
+            :inline="true"
+            description-classes="flex flex-col items-stretch"
+          >
             {{ $t("No public upcoming events") }}
             <template #desc>
               <template v-if="isCurrentActorFollowing">
@@ -594,7 +625,7 @@
               </template>
               <b-button
                 tag="router-link"
-                class="my-2"
+                class="my-2 self-center"
                 type="is-text"
                 :to="{
                   name: RouteName.GROUP_EVENTS,
@@ -621,8 +652,8 @@
             >
           </div>
         </section>
-        <section>
-          <subtitle>{{ $t("Latest posts") }}</subtitle>
+        <section class="flex flex-col items-stretch">
+          <subtitle class="ml-0">{{ $t("Latest posts") }}</subtitle>
 
           <multi-post-list-item
             v-if="
@@ -642,13 +673,16 @@
             {{ $t("No posts yet") }}
           </empty-content>
           <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
-          <router-link
+          <b-button
+            class="self-center my-2"
             v-if="posts.total > 0"
+            tag="router-link"
+            type="is-text"
             :to="{
               name: RouteName.POSTS,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("View all posts") }}</router-link
+            >{{ $t("View all posts") }}</b-button
           >
         </section>
       </div>
@@ -806,25 +840,38 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   async joinGroup(): Promise<void> {
-    const [group, currentActorId] = [
-      usernameWithDomain(this.group),
-      this.currentActor.id,
-    ];
-    this.$apollo.mutate({
-      mutation: JOIN_GROUP,
-      variables: {
-        groupId: this.group.id,
-      },
-      refetchQueries: [
-        {
-          query: PERSON_STATUS_GROUP,
-          variables: {
-            id: currentActorId,
-            group,
-          },
+    if (!this.currentActor?.id) {
+      this.$router.push({
+        name: RouteName.GROUP_JOIN,
+        params: { preferredUsername: usernameWithDomain(this.group) },
+      });
+      return;
+    }
+    try {
+      const [group, currentActorId] = [
+        usernameWithDomain(this.group),
+        this.currentActor.id,
+      ];
+      await this.$apollo.mutate({
+        mutation: JOIN_GROUP,
+        variables: {
+          groupId: this.group.id,
         },
-      ],
-    });
+        refetchQueries: [
+          {
+            query: PERSON_STATUS_GROUP,
+            variables: {
+              id: currentActorId,
+              group,
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
+      }
+    }
   }
 
   protected async openLeaveGroupModal(): Promise<void> {
@@ -870,6 +917,13 @@ export default class Group extends mixins(GroupMixin) {
   }
 
   async followGroup(): Promise<void> {
+    if (!this.currentActor?.id) {
+      this.$router.push({
+        name: RouteName.GROUP_FOLLOW,
+        params: { preferredUsername: usernameWithDomain(this.group) },
+      });
+      return;
+    }
     try {
       const [group, currentActorId] = [
         usernameWithDomain(this.group),
@@ -1087,6 +1141,41 @@ export default class Group extends mixins(GroupMixin) {
         return true;
       }),
     };
+  }
+
+  get showFollowButton(): boolean {
+    return (
+      (!this.isCurrentActorFollowing || this.previewPublic) &&
+      this.currentActor?.id !== undefined
+    );
+  }
+
+  get showJoinButton(): boolean {
+    return (
+      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
+      this.currentActor?.id !== undefined
+    );
+  }
+
+  get isGroupInviteOnly(): boolean {
+    return (
+      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
+      this.group?.openness === Openness.INVITE_ONLY
+    );
+  }
+
+  get areGroupMembershipsModerated(): boolean {
+    return (
+      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
+      this.group?.openness === Openness.MODERATED
+    );
+  }
+
+  get doesGroupManuallyApprovesFollowers(): boolean {
+    return (
+      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
+      this.group?.manuallyApprovesFollowers
+    );
   }
 }
 </script>
@@ -1379,5 +1468,8 @@ div.container {
 .map {
   height: 60vh;
   width: 100%;
+}
+button.button.notification-button ::v-deep span.icon.is-small {
+  margin: 0 !important;
 }
 </style>

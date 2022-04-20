@@ -195,7 +195,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
       actor = insert(:actor)
       actor_data = %{summary: @updated_actor_summary}
 
-      {:ok, update, _} = Actions.Update.update(actor, actor_data, false)
+      {:ok, update, _} = Actions.Update.update(actor, actor_data, true)
 
       assert update.data["actor"] == actor.url
       assert update.data["to"] == [@activity_pub_public_audience]

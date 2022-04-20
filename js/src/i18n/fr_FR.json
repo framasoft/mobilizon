@@ -1312,5 +1312,14 @@
   "No instance found.": "Aucune instance trouvée.",
   "This group is a remote group, it's possible the original instance has more informations.": "Ce groupe est un groupe distant, il est possible que l'instance d'origine ait plus d'informations.",
   "View the group profile on the original instance": "Afficher le profil du groupe sur l'instance d'origine",
-  "View past events": "Voir les événements passés"
+  "View past events": "Voir les événements passés",
+  "Get informed of the upcoming public events": "Soyez informé⋅e des événements publics à venir",
+  "Join": "Rejoindre",
+  "Become part of the community and start organizing events": "Faites partie de la communauté et commencez à organiser des événements",
+  "Follow requests will be approved by a group moderator": "Les demandes de suivi seront approuvées par un⋅e modérateur⋅ice du groupe",
+  "Follow request pending approval": "Demande de suivi en attente d'approbation",
+  "Your membership is pending approval": "Votre adhésion est en attente d'approbation",
+  "Activate notifications": "Activer les notifications",
+  "Deactivate notifications": "Désactiver les notifications",
+  "Membership requests will be approved by a group moderator": "Les demandes d'adhésion seront approuvées par un⋅e modérateur⋅ice du groupe"
 }

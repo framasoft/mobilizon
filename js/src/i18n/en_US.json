@@ -1321,5 +1321,14 @@
   "You may now close this page or {return_to_the_homepage}.": "You may now close this page or {return_to_the_homepage}.",
   "This group is a remote group, it's possible the original instance has more informations.": "This group is a remote group, it's possible the original instance has more informations.",
   "View the group profile on the original instance": "View the group profile on the original instance",
-  "View past events": "View past events"
+  "View past events": "View past events",
+  "Get informed of the upcoming public events": "Get informed of the upcoming public events",
+  "Join": "Join",
+  "Become part of the community and start organizing events": "Become part of the community and start organizing events",
+  "Follow requests will be approved by a group moderator": "Follow requests will be approved by a group moderator",
+  "Follow request pending approval": "Follow request pending approval",
+  "Your membership is pending approval": "Your membership is pending approval",
+  "Activate notifications": "Activate notifications",
+  "Deactivate notifications": "Deactivate notifications",
+  "Membership requests will be approved by a group moderator": "Membership requests will be approved by a group moderator"
 }

@@ -14,9 +14,9 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.WebFinger
-  alias Mobilizon.Service.Workers.Background
-
   alias Mobilizon.GraphQL.API.Follows
+  alias Mobilizon.Service.Workers.Background
+  import Mobilizon.Federation.ActivityPub.Utils, only: [create_full_domain_string: 1]
 
   require Logger
 
@@ -172,14 +172,14 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   defp fetch_actor("http://" <> address), do: fetch_actor(address)
 
   defp fetch_actor(address) do
-    %URI{host: host} = URI.parse("http://" <> address)
+    %URI{host: host} = uri = URI.parse("http://" <> address)
 
     cond do
       String.contains?(address, "@") ->
         check_actor(address)
 
       !is_nil(host) ->
-        check_actor("relay@#{host}")
+        uri |> create_full_domain_string() |> check_actor()
 
       true ->
         {:error, :bad_url}

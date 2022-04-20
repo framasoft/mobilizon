@@ -129,6 +129,7 @@ defmodule Mobilizon.Federation.WebFinger do
           | :address_invalid
           | :http_error
           | :webfinger_information_not_json
+          | :webfinger_information_not_valid
           | :no_url_in_webfinger_data
 
   @doc """
@@ -164,7 +165,9 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   @spec fetch_webfinger_data(String.t()) ::
-          {:ok, map()} | {:error, :webfinger_information_not_json | :http_error}
+          {:ok, map()}
+          | {:error,
+             :webfinger_information_not_json | :webfinger_information_not_valid | :http_error}
   defp fetch_webfinger_data(address) do
     Logger.debug("Calling WebfingerClient with #{inspect(address)}")
 
@@ -202,9 +205,10 @@ defmodule Mobilizon.Federation.WebFinger do
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   defp find_webfinger_endpoint(domain) when is_binary(domain) do
     Logger.debug("Calling HostMetaClient for #{domain}")
+    prefix = if Application.fetch_env!(:mobilizon, :env) !== :dev, do: "https", else: "http"
 
     with {:ok, %Tesla.Env{status: 200, body: body}} <-
-           HostMetaClient.get("https://#{domain}/.well-known/host-meta"),
+           HostMetaClient.get("#{prefix}://#{domain}/.well-known/host-meta"),
          link_template when is_binary(link_template) <- find_link_from_template(body) do
       {:ok, link_template}
     else
@@ -225,7 +229,8 @@ defmodule Mobilizon.Federation.WebFinger do
 
         _ ->
           Logger.debug("Using default webfinger location")
-          "https://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
+          prefix = if Application.fetch_env!(:mobilizon, :env) !== :dev, do: "https", else: "http"
+          "#{prefix}://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
       end
     end
   end
@@ -243,28 +248,36 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   @spec webfinger_from_json(map() | String.t()) ::
-          {:ok, map()} | {:error, :webfinger_information_not_json}
+          {:ok, map()}
+          | {:error, :webfinger_information_not_json | :webfinger_information_not_valid}
   defp webfinger_from_json(doc) when is_map(doc) do
-    data =
-      Enum.reduce(doc["links"], %{"subject" => doc["subject"]}, fn link, data ->
-        case {link["type"], link["rel"]} do
-          {"application/activity+json", "self"} ->
-            Map.put(data, "url", link["href"])
+    links = Map.get(doc, "links")
+    subject = Map.get(doc, "subject")
 
-          {nil, _rel} ->
-            Logger.debug("No type declared for the following link #{inspect(link)}")
-            data
+    if !is_nil(links) && !is_nil(subject) do
+      data =
+        Enum.reduce(links, %{"subject" => subject}, fn link, data ->
+          case {link["type"], link["rel"]} do
+            {"application/activity+json", "self"} ->
+              Map.put(data, "url", link["href"])
 
-          _ ->
-            Logger.debug(fn ->
-              "Unhandled type to finger: #{inspect(link["type"])}"
-            end)
+            {nil, _rel} ->
+              Logger.debug("No type declared for the following link #{inspect(link)}")
+              data
 
-            data
-        end
-      end)
+            _ ->
+              Logger.debug(fn ->
+                "Unhandled type to finger: #{inspect(link)}"
+              end)
 
-    {:ok, data}
+              data
+          end
+        end)
+
+      {:ok, data}
+    else
+      {:error, :webfinger_information_not_valid}
+    end
   end
 
   defp webfinger_from_json(_doc), do: {:error, :webfinger_information_not_json}

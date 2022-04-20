@@ -240,8 +240,6 @@ build-docker-tag:
 package-app:
   image: mobilizon/buildpack:1.13.4-erlang-24.3.3-${OS}
   stage: package
-  before_script:
-    - apt-get update && apt-get install -yq build-essential git curl cmake
   variables: &release-variables
     MIX_ENV: "prod"
     DEBIAN_FRONTEND: noninteractive

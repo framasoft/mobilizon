@@ -67,7 +67,7 @@ exports[`CommentTree renders an empty comment tree 1`] = `
     </article>
   </form>
   <transition-group-stub tag="div" name="comment-empty-list">
-    <empty-content-stub icon="comment" inline="true"><span>No comments yet</span></empty-content-stub>
+    <empty-content-stub icon="comment" descriptionclasses="" inline="true"><span>No comments yet</span></empty-content-stub>
   </transition-group-stub>
 </div>
 `;

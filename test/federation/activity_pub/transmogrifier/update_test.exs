@@ -3,12 +3,13 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
   use Oban.Testing, repo: Mobilizon.Storage.Repo
   import Mobilizon.Factory
   import Mox
+  import ExUnit.CaptureLog
 
   alias Mobilizon.{Actors, Events, Posts}
   alias Mobilizon.Actors.{Actor, Member}
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
 
@@ -48,6 +49,29 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
       assert actor.name == "nextsoft"
 
       assert actor.summary == "<p>Some bio</p>"
+    end
+
+    test "it fails for incoming update activies on local actors" do
+      %Actor{url: relay_actor_url} = Relay.get_actor()
+
+      update_data = File.read!("test/fixtures/mastodon-update.json") |> Jason.decode!()
+
+      object =
+        update_data["object"]
+        |> Map.put("actor", relay_actor_url)
+        |> Map.put("id", relay_actor_url)
+
+      update_data =
+        update_data
+        |> Map.put("actor", relay_actor_url)
+        |> Map.put("object", object)
+
+      assert capture_log([level: :warn], fn ->
+               :error = Transmogrifier.handle_incoming(update_data)
+             end) =~ "[warning] Activity tried to update an actor that's local or not a group"
+
+      {:ok, %Actor{keys: keys}} = Actors.get_actor_by_url(relay_actor_url)
+      assert Regex.match?(~r/BEGIN RSA PRIVATE KEY/, keys)
     end
 
     test "it works for incoming update activities on events" do

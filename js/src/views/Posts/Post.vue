@@ -15,7 +15,9 @@
                 v-if="post.draft"
                 >{{ $t("Draft") }}</b-tag
               >
-              <h1 class="title" :lang="post.language">{{ post.title }}</h1>
+              <h1 class="title text-3xl" :lang="post.language">
+                {{ post.title }}
+              </h1>
             </div>
             <p class="metadata">
               <router-link
@@ -441,7 +443,6 @@ article.post {
       h1.title {
         margin: 0;
         font-weight: 500;
-        font-size: 38px;
         font-family: "Roboto", "Helvetica", "Arial", serif;
       }
 

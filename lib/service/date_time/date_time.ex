@@ -6,6 +6,8 @@ defmodule Mobilizon.Service.DateTime do
 
   @typep to_string_format :: :short | :medium | :long | :full
 
+  @utc_timezone "Etc/UTC"
+
   @spec datetime_to_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_string(%DateTime{} = datetime, locale \\ "en", format \\ :medium) do
     Mobilizon.Cldr.DateTime.to_string!(datetime,
@@ -75,7 +77,7 @@ defmodule Mobilizon.Service.DateTime do
   def calculate_next_day_notification(%Date{} = day, options \\ []) do
     compare_to = Keyword.get(options, :compare_to, DateTime.utc_now())
     notification_time = Keyword.get(options, :notification_time, ~T[18:00:00])
-    timezone = Keyword.get(options, :timezone, "Etc/UTC") || "Etc/UTC"
+    timezone = options |> Keyword.get(:timezone, @utc_timezone) |> fallback_tz()
 
     send_at = DateTime.new!(day, notification_time, timezone)
 
@@ -145,7 +147,7 @@ defmodule Mobilizon.Service.DateTime do
   @spec appropriate_first_day_of_week(DateTime.t(), keyword) :: DateTime.t() | nil
   defp appropriate_first_day_of_week(%DateTime{} = datetime, options) do
     locale = Keyword.get(options, :locale, "en")
-    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    timezone = options |> Keyword.get(:timezone, @utc_timezone) |> fallback_tz()
 
     local_datetime = datetime_tz_convert(datetime, timezone)
 
@@ -170,7 +172,7 @@ defmodule Mobilizon.Service.DateTime do
          options
        ) do
     notification_time = Keyword.get(options, :notification_time, ~T[08:00:00])
-    timezone = Keyword.get(options, :timezone, "Etc/UTC")
+    timezone = options |> Keyword.get(:timezone, @utc_timezone) |> fallback_tz()
     DateTime.new!(date, notification_time, timezone)
   end
 
@@ -182,7 +184,7 @@ defmodule Mobilizon.Service.DateTime do
     compare_to_day = Keyword.get(options, :compare_to_day, Date.utc_today())
     compare_to = Keyword.get(options, :compare_to_datetime, DateTime.utc_now())
     start_time = Keyword.get(options, :start_time, @start_time)
-    timezone = Keyword.get(options, :timezone, "Etc/UTC") || "Etc/UTC"
+    timezone = options |> Keyword.get(:timezone, @utc_timezone) |> fallback_tz()
     end_time = Keyword.get(options, :end_time, @end_time)
 
     DateTime.compare(compare_to, DateTime.new!(compare_to_day, start_time, timezone)) in [
@@ -212,5 +214,14 @@ defmodule Mobilizon.Service.DateTime do
   @spec is_same_day?(DateTime.t(), DateTime.t()) :: boolean()
   def is_same_day?(%DateTime{} = one, %DateTime{} = two) do
     DateTime.to_date(one) == DateTime.to_date(two)
+  end
+
+  @spec fallback_tz(String.t()) :: String.t()
+  defp fallback_tz(timezone) do
+    if Tzdata.zone_exists?(timezone) do
+      timezone
+    else
+      @utc_timezone
+    end
   end
 end

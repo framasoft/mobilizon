@@ -8,7 +8,9 @@
       ]"
     />
     <h1 class="text-2xl">{{ instance.domain }}</h1>
-    <div class="grid md:grid-cols-4 gap-2 content-center text-center mt-2">
+    <div
+      class="grid md:grid-cols-2 xl:grid-cols-4 gap-2 content-center text-center mt-2"
+    >
       <div class="bg-gray-50 rounded-xl p-8">
         <router-link
           :to="{
@@ -64,7 +66,7 @@
         <span class="text-sm block">{{ $t("Uploaded media size") }}</span>
       </div>
     </div>
-    <div class="mt-3 grid md:grid-cols-2 gap-4" v-if="instance.hasRelay">
+    <div class="mt-3 grid xl:grid-cols-2 gap-4" v-if="instance.hasRelay">
       <div class="border bg-white p-6 shadow-md rounded-md">
         <button
           @click="removeInstanceFollow"
@@ -88,7 +90,7 @@
           {{ $t("Follow instance") }}
         </button>
       </div>
-      <div class="border bg-white p-6 shadow-md rounded-md">
+      <div class="border bg-white p-6 shadow-md rounded-md flex flex-col gap-2">
         <button
           @click="acceptInstance"
           v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
@@ -98,12 +100,12 @@
         </button>
         <button
           @click="rejectInstance"
-          v-else-if="instance.followerStatus != InstanceFollowStatus.NONE"
+          v-if="instance.followerStatus != InstanceFollowStatus.NONE"
           class="bg-red-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
           {{ $t("Reject follow") }}
         </button>
-        <p v-else>
+        <p v-if="instance.followerStatus == InstanceFollowStatus.NONE">
           {{ $t("This instance doesn't follow yours.") }}
         </p>
       </div>
@@ -124,7 +126,6 @@ import {
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { formatBytes } from "@/utils/datetime";
 import RouteName from "@/router/name";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IInstance } from "@/types/instance.model";
 import { ApolloCache, gql, Reference } from "@apollo/client/core";
 import { InstanceFollowStatus } from "@/types/enums";
@@ -154,38 +155,61 @@ export default class Instance extends Vue {
 
   async acceptInstance(): Promise<void> {
     try {
+      const { instance } = this;
       await this.$apollo.mutate({
         mutation: ACCEPT_RELAY,
         variables: {
           address: `relay@${this.domain}`,
         },
+        update(cache: ApolloCache<any>) {
+          cache.writeFragment({
+            id: cache.identify(instance as unknown as Reference),
+            fragment: gql`
+              fragment InstanceFollowerStatus on Instance {
+                followerStatus
+              }
+            `,
+            data: {
+              followerStatus: InstanceFollowStatus.APPROVED,
+            },
+          });
+        },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
 
+  /**
+   * Reject instance follow
+   */
   async rejectInstance(): Promise<void> {
     try {
+      const { instance } = this;
       await this.$apollo.mutate({
         mutation: REJECT_RELAY,
         variables: {
           address: `relay@${this.domain}`,
         },
+        update(cache: ApolloCache<any>) {
+          cache.writeFragment({
+            id: cache.identify(instance as unknown as Reference),
+            fragment: gql`
+              fragment InstanceFollowerStatus on Instance {
+                followerStatus
+              }
+            `,
+            data: {
+              followerStatus: InstanceFollowStatus.NONE,
+            },
+          });
+        },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
@@ -199,17 +223,16 @@ export default class Instance extends Vue {
           domain: this.domain,
         },
       });
-    } catch (err: any) {
-      if (err.message) {
-        Snackbar.open({
-          message: err.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
 
+  /**
+   * Stop following instance
+   */
   async removeInstanceFollow(): Promise<void> {
     const { instance } = this;
     try {
@@ -232,13 +255,9 @@ export default class Instance extends Vue {
           });
         },
       });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+        this.$notifier.error(error.graphQLErrors[0].message);
       }
     }
   }
