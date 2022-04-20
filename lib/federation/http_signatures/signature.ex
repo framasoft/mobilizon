@@ -95,6 +95,9 @@ defmodule Mobilizon.Federation.HTTPSignatures.Signature do
     actor_url = key_id_to_actor_url(kid)
     Logger.debug("Refetching public key for #{actor_url}")
 
+    # In this specific case we don't sign object fetches because
+    # this would cause infinite recursion when servers both need
+    # to fetch each other's keys
     with {:ok, %Actor{} = actor} <-
            ActivityPubActor.make_actor_from_url(actor_url, ignore_sign_object_fetches: true) do
       get_actor_public_key(actor)
