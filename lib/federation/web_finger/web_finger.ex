@@ -129,6 +129,7 @@ defmodule Mobilizon.Federation.WebFinger do
           | :address_invalid
           | :http_error
           | :webfinger_information_not_json
+          | :webfinger_information_not_valid
           | :no_url_in_webfinger_data
 
   @doc """
@@ -164,7 +165,9 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   @spec fetch_webfinger_data(String.t()) ::
-          {:ok, map()} | {:error, :webfinger_information_not_json | :http_error}
+          {:ok, map()}
+          | {:error,
+             :webfinger_information_not_json | :webfinger_information_not_valid | :http_error}
   defp fetch_webfinger_data(address) do
     Logger.debug("Calling WebfingerClient with #{inspect(address)}")
 
@@ -243,28 +246,36 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   @spec webfinger_from_json(map() | String.t()) ::
-          {:ok, map()} | {:error, :webfinger_information_not_json}
+          {:ok, map()}
+          | {:error, :webfinger_information_not_json | :webfinger_information_not_valid}
   defp webfinger_from_json(doc) when is_map(doc) do
-    data =
-      Enum.reduce(doc["links"], %{"subject" => doc["subject"]}, fn link, data ->
-        case {link["type"], link["rel"]} do
-          {"application/activity+json", "self"} ->
-            Map.put(data, "url", link["href"])
+    links = Map.get(doc, "links")
+    subject = Map.get(doc, "subject")
 
-          {nil, _rel} ->
-            Logger.debug("No type declared for the following link #{inspect(link)}")
-            data
+    if !is_nil(links) && !is_nil(subject) do
+      data =
+        Enum.reduce(links, %{"subject" => subject}, fn link, data ->
+          case {link["type"], link["rel"]} do
+            {"application/activity+json", "self"} ->
+              Map.put(data, "url", link["href"])
 
-          _ ->
-            Logger.debug(fn ->
-              "Unhandled type to finger: #{inspect(link["type"])}"
-            end)
+            {nil, _rel} ->
+              Logger.debug("No type declared for the following link #{inspect(link)}")
+              data
 
-            data
-        end
-      end)
+            _ ->
+              Logger.debug(fn ->
+                "Unhandled type to finger: #{inspect(link)}"
+              end)
 
-    {:ok, data}
+              data
+          end
+        end)
+
+      {:ok, data}
+    else
+      {:error, :webfinger_information_not_valid}
+    end
   end
 
   defp webfinger_from_json(_doc), do: {:error, :webfinger_information_not_json}
