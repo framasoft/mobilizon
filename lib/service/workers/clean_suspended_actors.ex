@@ -1,6 +1,6 @@
 defmodule Mobilizon.Service.Workers.CleanSuspendedActors do
   @moduledoc """
-  Worker to clean unattached media
+  Worker to clean suspended actors
   """
 
   use Oban.Worker, queue: "background"
