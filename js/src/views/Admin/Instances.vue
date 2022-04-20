@@ -124,6 +124,17 @@
             </p>
           </div>
         </router-link>
+        <b-pagination
+          v-show="instances.total > INSTANCES_PAGE_LIMIT"
+          :total="instances.total"
+          v-model="instancePage"
+          :per-page="INSTANCES_PAGE_LIMIT"
+          :aria-next-label="$t('Next page')"
+          :aria-previous-label="$t('Previous page')"
+          :aria-page-label="$t('Page')"
+          :aria-current-label="$t('Current page')"
+        >
+        </b-pagination>
       </div>
       <div v-else-if="instances && instances.elements.length == 0">
         <empty-content icon="lan-disconnect" :inline="true">
@@ -163,6 +174,8 @@ import {
 import { SnackbarProgrammatic as Snackbar } from "buefy";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
+const INSTANCES_PAGE_LIMIT = 10;
+
 @Component({
   apollo: {
     instances: {
@@ -171,7 +184,7 @@ const { isNavigationFailure, NavigationFailureType } = VueRouter;
       variables() {
         return {
           page: this.instancePage,
-          limit: 10,
+          limit: INSTANCES_PAGE_LIMIT,
           filterDomain: this.filterDomain,
           filterFollowStatus: this.followStatus,
         };
@@ -203,6 +216,8 @@ export default class Follows extends Vue {
   InstanceFilterFollowStatus = InstanceFilterFollowStatus;
 
   InstanceFollowStatus = InstanceFollowStatus;
+
+  INSTANCES_PAGE_LIMIT = INSTANCES_PAGE_LIMIT;
 
   data(): Record<string, unknown> {
     return {
