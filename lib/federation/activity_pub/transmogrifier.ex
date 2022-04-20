@@ -622,19 +622,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         {:error, :unknown_actor}
 
       {:ok, %Actor{} = actor} ->
-        case is_group_object_gone(object_id) do
-          {:ok, object} ->
-            if Utils.origin_check_from_id?(actor_url, object_id) ||
-                 Permission.can_delete_group_object?(actor, object) do
-              Actions.Delete.delete(object, actor, false)
-            else
-              Logger.warn("Object origin check failed")
-              :error
-            end
+        # If the actor itself is being deleted, no need to check anything other than the object being remote
+        if remote_actor_is_being_deleted(data) do
+          Actions.Delete.delete(actor, actor, false)
+        else
+          case is_group_object_gone(object_id) do
+            # The group object is no longer there, we can remove the element
+            {:ok, entity} ->
+              if Utils.origin_check_from_id?(actor_url, object_id) ||
+                   Permission.can_delete_group_object?(actor, entity) do
+                Actions.Delete.delete(entity, actor, false)
+              else
+                Logger.warn("Object origin check failed")
+                :error
+              end
 
-          {:error, err} ->
-            Logger.debug(inspect(err))
-            {:error, err}
+            {:error, err} ->
+              Logger.debug(inspect(err))
+              {:error, err}
+          end
         end
     end
   end
@@ -1214,5 +1220,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         # Therefore we can't access the list of admin/moderators and we just trust the origin domain
         moderator.domain == group.domain
     end
+  end
+
+  defp remote_actor_is_being_deleted(%{"object" => object} = data) do
+    object_id = Utils.get_url(object)
+    Utils.get_actor(data) == object_id and not Utils.are_same_origin?(object_id, Endpoint.url())
   end
 end
