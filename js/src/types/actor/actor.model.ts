@@ -68,7 +68,7 @@ export function usernameWithDomain(actor: IActor, force = false): string {
 }
 
 export function displayName(actor: IActor): string {
-  return actor.name != null && actor.name !== ""
+  return actor && actor.name != null && actor.name !== ""
     ? actor.name
     : usernameWithDomain(actor);
 }
