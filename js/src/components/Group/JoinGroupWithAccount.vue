@@ -10,7 +10,7 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import RedirectWithAccount from "@/components/Utils/RedirectWithAccount.vue";
 import { FETCH_GROUP } from "@/graphql/group";
-import { IGroup } from "@/types/actor";
+import { displayName, IGroup } from "@/types/actor";
 
 @Component({
   components: { RedirectWithAccount },
@@ -52,7 +52,7 @@ export default class JoinGroupWithAccount extends Vue {
   }
 
   get groupTitle(): undefined | string {
-    return this.group?.name || this.group?.preferredUsername;
+    return this.group && displayName(this.group);
   }
 
   sentence = this.$t(
