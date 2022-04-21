@@ -23,7 +23,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
     Repo.transaction(fn ->
       Users.stream_users_for_recap()
       |> Enum.to_list()
-      |> Repo.preload([:settings])
+      |> Repo.preload([:settings, :activity_settings])
       |> Enum.filter(&filter_elegible_users/1)
       |> Enum.map(fn %User{} = user ->
         %{
