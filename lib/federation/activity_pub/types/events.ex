@@ -267,7 +267,15 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         Map.merge(args, %{
           description: description,
           mentions: mentions,
-          tags: tags
+          # Exclude tags with length > 40
+          tags:
+            Enum.filter(tags, fn tag ->
+              case tag do
+                # For some reason transmogrifier gives us this
+                %{title: tag} -> String.length(tag) < 40
+                tag -> String.length(tag) < 40
+              end
+            end)
         })
       else
         args
