@@ -65,80 +65,93 @@ export class Address implements IAddress {
   }
 
   get poiInfos(): IPoiInfo {
-    /* generate name corresponding to poi type */
-    let name = "";
-    let alternativeName = "";
-    let poiIcon: IPOIIcon = poiIcons.default;
-    // Google Maps doesn't have a type
-    if (this.type == null && this.description === this.street) {
-      this.type = "house";
-    }
-    switch (this.type) {
-      case "house":
-        name = this.description;
-        alternativeName = [this.postalCode, this.locality, this.country]
-          .filter((zone) => zone)
-          .join(", ");
-        poiIcon = poiIcons.defaultAddress;
-        break;
-      case "street":
-      case "secondary":
-        name = this.description;
-        alternativeName = [this.postalCode, this.locality, this.country]
-          .filter((zone) => zone)
-          .join(", ");
-        poiIcon = poiIcons.defaultStreet;
-        break;
-      case "zone":
-      case "city":
-      case "administrative":
-        name = this.postalCode
-          ? `${this.description} (${this.postalCode})`
-          : this.description;
-        alternativeName = [this.region, this.country]
-          .filter((zone) => zone)
-          .join(", ");
-        poiIcon = poiIcons.defaultAdministrative;
-        break;
-      default:
-        // POI
-        name = this.description;
-        alternativeName = "";
-        if (this.street && this.street.trim()) {
-          alternativeName = `${this.street}`;
-          if (this.locality) {
-            alternativeName += ` (${this.locality})`;
-          }
-        } else if (this.locality && this.locality.trim()) {
-          alternativeName = `${this.locality}, ${this.region}, ${this.country}`;
-        } else if (this.region && this.region.trim()) {
-          alternativeName = `${this.region}, ${this.country}`;
-        } else if (this.country && this.country.trim()) {
-          alternativeName = this.country;
-        }
-        poiIcon = this.iconForPOI;
-        break;
-    }
-    return { name, alternativeName, poiIcon };
+    return addressToPoiInfos(this);
   }
 
   get fullName(): string {
-    const { name, alternativeName } = this.poiInfos;
-    if (name && alternativeName) {
-      return `${name}, ${alternativeName}`;
-    }
-    if (name) {
-      return name;
-    }
-    return "";
+    return addressFullName(this);
   }
 
   get iconForPOI(): IPOIIcon {
-    if (this.type == null) {
-      return poiIcons.default;
-    }
-    const type = this.type.split(":").pop() || "";
-    if (poiIcons[type]) return poiIcons[type];
+    return iconForAddress(this);
+  }
+}
+
+export function addressToPoiInfos(address: IAddress): IPoiInfo {
+  /* generate name corresponding to poi type */
+  let name = "";
+  let alternativeName = "";
+  let poiIcon: IPOIIcon = poiIcons.default;
+  let addressType = address.type;
+  // Google Maps doesn't have a type
+  if (address.type == null && address.description === address.street) {
+    addressType = "house";
+  }
+  switch (addressType) {
+    case "house":
+      name = address.description;
+      alternativeName = [address.postalCode, address.locality, address.country]
+        .filter((zone) => zone)
+        .join(", ");
+      poiIcon = poiIcons.defaultAddress;
+      break;
+    case "street":
+    case "secondary":
+      name = address.description;
+      alternativeName = [address.postalCode, address.locality, address.country]
+        .filter((zone) => zone)
+        .join(", ");
+      poiIcon = poiIcons.defaultStreet;
+      break;
+    case "zone":
+    case "city":
+    case "administrative":
+      name = address.postalCode
+        ? `${address.description} (${address.postalCode})`
+        : address.description;
+      alternativeName = [address.region, address.country]
+        .filter((zone) => zone)
+        .join(", ");
+      poiIcon = poiIcons.defaultAdministrative;
+      break;
+    default:
+      // POI
+      name = address.description;
+      alternativeName = "";
+      if (address.street && address.street.trim()) {
+        alternativeName = `${address.street}`;
+        if (address.locality) {
+          alternativeName += ` (${address.locality})`;
+        }
+      } else if (address.locality && address.locality.trim()) {
+        alternativeName = `${address.locality}, ${address.region}, ${address.country}`;
+      } else if (address.region && address.region.trim()) {
+        alternativeName = `${address.region}, ${address.country}`;
+      } else if (address.country && address.country.trim()) {
+        alternativeName = address.country;
+      }
+      poiIcon = iconForAddress(address);
+      break;
+  }
+  return { name, alternativeName, poiIcon };
+}
+
+export function iconForAddress(address: IAddress): IPOIIcon {
+  if (address.type == null) {
     return poiIcons.default;
   }
+  const type = address.type.split(":").pop() || "";
+  if (poiIcons[type]) return poiIcons[type];
+  return poiIcons.default;
+}
+
+export function addressFullName(address: IAddress): string {
+  const { name, alternativeName } = addressToPoiInfos(address);
+  if (name && alternativeName) {
+    return `${name}, ${alternativeName}`;
+  }
+  if (name) {
+    return name;
+  }
+  return "";
 }
