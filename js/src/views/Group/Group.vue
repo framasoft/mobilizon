@@ -558,9 +558,10 @@
             "
           >
             <div class="address-wrapper">
-              <span v-if="!physicalAddress">{{
-                $t("No address defined")
-              }}</span>
+              <span
+                v-if="!physicalAddress || !addressFullName(physicalAddress)"
+                >{{ $t("No address defined") }}</span
+              >
               <div class="address" v-if="physicalAddress">
                 <div>
                   <address dir="auto">
@@ -739,7 +740,7 @@ import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
-import { Address } from "@/types/address.model";
+import { Address, addressFullName } from "@/types/address.model";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
 import { CONFIG } from "@/graphql/config";
@@ -819,6 +820,8 @@ export default class Group extends mixins(GroupMixin) {
   usernameWithDomain = usernameWithDomain;
 
   displayName = displayName;
+
+  addressFullName = addressFullName;
 
   PostVisibility = PostVisibility;
 

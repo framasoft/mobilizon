@@ -39,7 +39,7 @@
       <div>
         <inline-address
           class="has-text-grey-dark"
-          v-if="group.physicalAddress"
+          v-if="group.physicalAddress && addressFullName(group.physicalAddress)"
           :physicalAddress="group.physicalAddress"
         />
         <p class="has-text-grey-dark">
@@ -65,6 +65,7 @@ import { displayName, IGroup, usernameWithDomain } from "@/types/actor";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import RouteName from "../../router/name";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
+import { addressFullName } from "@/types/address.model";
 
 @Component({
   components: {
@@ -80,6 +81,8 @@ export default class GroupCard extends Vue {
   usernameWithDomain = usernameWithDomain;
 
   displayName = displayName;
+
+  addressFullName = addressFullName;
 }
 </script>
 <style lang="scss" scoped>
