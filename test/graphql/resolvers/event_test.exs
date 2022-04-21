@@ -808,6 +808,53 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
     end
   end
 
+  describe "create_event/3 with special tags" do
+    test "same tags with different casing", %{conn: conn, actor: actor, user: user} do
+      begins_on = DateTime.utc_now()
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description: "it will be fine",
+            begins_on: "#{DateTime.add(begins_on, 3600 * 24)}",
+            organizer_actor_id: "#{actor.id}",
+            tags: ["Hello", "hello"]
+          }
+        )
+
+      assert res["error"] == nil
+      assert res["data"]["createEvent"]["tags"] == [%{"slug" => "hello", "title" => "Hello"}]
+    end
+
+    test "too long tags", %{conn: conn, actor: actor, user: user} do
+      begins_on = DateTime.utc_now()
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_event_mutation,
+          variables: %{
+            title: "come to my event",
+            description:
+              "<p>it will be fine, what do you think? <br>#Detected <br>#ThisIsAVeryLongHashTagThatWillNotBeDetectedByTheParser</p>",
+            begins_on: "#{DateTime.add(begins_on, 3600 * 24)}",
+            organizer_actor_id: "#{actor.id}"
+          }
+        )
+
+      assert res["error"] == nil
+
+      assert res["data"]["createEvent"]["tags"] == [
+               %{"slug" => "detected", "title" => "detected"}
+             ]
+    end
+  end
+
   @update_event_mutation """
   mutation updateEvent(
     $eventId: ID!
