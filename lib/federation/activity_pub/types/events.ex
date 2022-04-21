@@ -267,11 +267,21 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         Map.merge(args, %{
           description: description,
           mentions: mentions,
-          tags: tags
+          # Exclude tags with length > 40
+          tags: Enum.filter(tags, &exclude_too_long_tags/1)
         })
       else
         args
       end
+
+    # Make sure we don't have duplicate (with different casing) tags
+    args =
+      Map.update(
+        args,
+        :tags,
+        [],
+        &Enum.uniq_by(&1, fn tag -> tag |> tag_to_string() |> String.downcase() end)
+      )
 
     # Check that we can only allow anonymous participation if our instance allows it
     {_, options} =
@@ -292,4 +302,16 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     |> Map.update(:tags, [], &ConverterUtils.fetch_tags/1)
     |> Map.update(:contacts, [], &ConverterUtils.fetch_actors/1)
   end
+
+  @spec exclude_too_long_tags(%{title: String.t()} | String.t()) :: boolean()
+  defp exclude_too_long_tags(tag) do
+    tag
+    |> tag_to_string()
+    |> String.length()
+    |> Kernel.<(40)
+  end
+
+  @spec tag_to_string(%{title: String.t()} | String.t()) :: String.t()
+  defp tag_to_string(%{title: tag}), do: tag
+  defp tag_to_string(tag), do: tag
 end

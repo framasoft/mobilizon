@@ -1,18 +1,22 @@
 <template>
-  <label for="navSearchField">
-    <span class="visually-hidden">{{ defaultPlaceHolder }}</span>
+  <b-field label-for="navSearchField" class="-mt-2">
     <b-input
-      custom-class="searchField"
+      :placeholder="defaultPlaceHolder"
+      type="search"
       id="navSearchField"
       icon="magnify"
-      type="search"
+      icon-clickable
       rounded
+      custom-class="searchField"
       dir="auto"
-      :placeholder="defaultPlaceHolder"
       v-model="search"
       @keyup.native.enter="enter"
-    />
-  </label>
+    >
+    </b-input>
+    <template #label>
+      <span class="sr-only">{{ defaultPlaceHolder }}</span>
+    </template>
+  </b-field>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
@@ -47,6 +51,7 @@ label span.visually-hidden {
 input.searchField {
   box-shadow: none;
   border-color: #b5b5b5;
+  border-radius: 9999px !important;
 
   &::placeholder {
     color: gray;
