@@ -11,7 +11,8 @@ defmodule Mobilizon.Web.RequestContext do
         method: conn.method,
         headers: %{
           "User-Agent": conn |> Plug.Conn.get_req_header("user-agent") |> List.first(),
-          Referer: conn |> Plug.Conn.get_req_header("referer") |> List.first()
+          Referer: conn |> Plug.Conn.get_req_header("referer") |> List.first(),
+          "Accept-Language": conn |> Plug.Conn.get_req_header("accept-language") |> List.first()
         },
         query_string: conn.query_string,
         env: %{
