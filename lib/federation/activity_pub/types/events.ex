@@ -281,6 +281,21 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         args
       end
 
+    # Make sure we don't have duplicate (with different casing) tags
+    args =
+      Map.update(
+        args,
+        :tags,
+        [],
+        &Enum.uniq_by(&1, fn tag ->
+          case tag do
+            # For some reason transmogrifier gives us this
+            %{title: tag} -> String.downcase(tag)
+            tag -> String.downcase(tag)
+          end
+        end)
+      )
+
     # Check that we can only allow anonymous participation if our instance allows it
     {_, options} =
       Map.get_and_update(
