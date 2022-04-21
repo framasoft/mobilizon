@@ -31,11 +31,7 @@
           </span>
         </div>
       </div>
-      <div
-        class="content mb-2 line-clamp-3"
-        dir="auto"
-        v-html="group.summary"
-      />
+      <div class="mb-2 line-clamp-3" dir="auto" v-html="group.summary" />
       <div>
         <inline-address
           class="has-text-grey-dark"
