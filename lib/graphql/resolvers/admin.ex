@@ -213,12 +213,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         _ -> nil
       end
 
-    last_group_created =
-      case Actors.list_actors(:Group) do
-        %Page{elements: [group | _]} -> group
-        _ -> nil
-      end
-
     {:ok,
      %{
        number_of_users: Statistics.get_cached_value(:local_users),
@@ -231,7 +225,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
        number_of_followers: Statistics.get_cached_value(:instance_followers),
        number_of_followings: Statistics.get_cached_value(:instance_followings),
        last_public_event_published: last_public_event_published,
-       last_group_created: last_group_created
+       last_group_created: Actors.last_group_created()
      }}
   end
 

@@ -444,6 +444,15 @@ defmodule Mobilizon.Actors do
     |> Repo.preload(:organized_events)
   end
 
+  @spec last_group_created :: Actor.t() | nil
+  def last_group_created do
+    Actor
+    |> where(type: :Group, suspended: false)
+    |> order_by(desc: :inserted_at)
+    |> limit(1)
+    |> Repo.one()
+  end
+
   @doc """
   Builds a page struct for actors by their name or displayed name.
   """
