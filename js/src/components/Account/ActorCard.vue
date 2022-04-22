@@ -31,7 +31,11 @@
       </p>
       <div
         v-if="full"
-        :class="{ 'line-clamp-3': limit }"
+        class="only-first-child"
+        :class="{
+          'line-clamp-3': limit,
+          'line-clamp-10': !limit,
+        }"
         v-html="actor.summary"
       />
     </div>
@@ -95,3 +99,8 @@ export default class ActorCard extends Vue {
   displayName = displayName;
 }
 </script>
+<style scoped>
+.only-first-child ::v-deep :not(:first-child) {
+  display: none;
+}
+</style>

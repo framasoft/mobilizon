@@ -16,6 +16,9 @@ module.exports = {
         secondary: withOpacityValue("--color-secondary"),
         "violet-title": withOpacityValue("--color-violet-title"),
       },
+      lineClamp: {
+        10: "10",
+      },
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],

@@ -14,8 +14,8 @@
         },
       ]"
     />
-    <div class="actor-card">
-      <p v-if="group.suspended">
+    <div>
+      <p v-if="group.suspended" class="mx-auto max-w-sm block mb-2">
         <actor-card
           :actor="group"
           :full="true"
@@ -24,6 +24,7 @@
         />
       </p>
       <router-link
+        class="mx-auto max-w-sm block mb-2"
         v-else
         :to="{
           name: RouteName.GROUP,
@@ -572,16 +573,3 @@ export default class AdminGroupProfile extends Vue {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-table,
-section {
-  margin: 2rem 0;
-}
-
-.actor-card {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-}
-</style>

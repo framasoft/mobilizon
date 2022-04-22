@@ -24,10 +24,14 @@
                     :actor="event.organizerActor"
                     :inline="true"
                   >
-                    <i18n path="By {username}" dir="auto">
-                      <span dir="ltr" slot="username"
-                        >@{{ usernameWithDomain(event.organizerActor) }}</span
-                      >
+                    <i18n
+                      path="By {username}"
+                      dir="auto"
+                      class="block truncate max-w-xs md:max-w-sm"
+                    >
+                      <span dir="ltr" slot="username">{{
+                        displayName(event.organizerActor)
+                      }}</span>
                     </i18n>
                   </popover-actor-card>
                 </div>
@@ -36,9 +40,23 @@
                     :actor="event.attributedTo"
                     :inline="true"
                   >
-                    <i18n path="By {group}" dir="auto">
-                      <span dir="ltr" slot="group"
-                        >@{{ usernameWithDomain(event.attributedTo) }}</span
+                    <i18n
+                      path="By {group}"
+                      dir="auto"
+                      class="block truncate max-w-xs md:max-w-sm"
+                    >
+                      <router-link
+                        :to="{
+                          name: RouteName.GROUP,
+                          params: {
+                            preferredUsername: usernameWithDomain(
+                              event.attributedTo
+                            ),
+                          },
+                        }"
+                        dir="ltr"
+                        slot="group"
+                        >{{ displayName(event.attributedTo) }}</router-link
                       >
                     </i18n>
                   </popover-actor-card>
@@ -474,7 +492,13 @@ import {
 } from "../../graphql/event";
 import { CURRENT_ACTOR_CLIENT, PERSON_STATUS_GROUP } from "../../graphql/actor";
 import { EventModel, IEvent } from "../../types/event.model";
-import { IActor, IPerson, Person, usernameWithDomain } from "../../types/actor";
+import {
+  displayName,
+  IActor,
+  IPerson,
+  Person,
+  usernameWithDomain,
+} from "../../types/actor";
 import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
 import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
 import MultiCard from "../../components/Event/MultiCard.vue";
@@ -658,6 +682,8 @@ export default class Event extends EventMixin {
   EventJoinOptions = EventJoinOptions;
 
   usernameWithDomain = usernameWithDomain;
+
+  displayName = displayName;
 
   RouteName = RouteName;
 
