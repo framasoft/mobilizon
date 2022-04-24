@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0-rc.3 - 2022-04-24
+
+Changes since rc.2:
+* Fix activity notifications by preloading user.activity_settings
+* Add "Accept-Language" header to sentry request metadata
+* Hide address blocks when address has no real data
+* Fix text overflow on group card description
+* Exclude tags with more than 40 characters from being extracted
+* Avoid duplicate tags with different casing
+* Fix invalid HTML (<div> inside <label>)
+* Remove attribute type="text/css" from <style> tags
+* Improve actor cards integration
+* Fix latest group not refreshing in admin section
+* Add missing "relay@" part of federated address to follow
+
 ## 2.1.0-rc.2 - 2022-04-20
 
 Changes since rc.1:
