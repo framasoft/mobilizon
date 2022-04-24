@@ -116,7 +116,7 @@
     "jest-junit": "^13.0.0",
     "mock-apollo-client": "^1.1.0",
     "prettier": "^2.2.1",
-    "prettier-eslint": "^13.0.0",
+    "prettier-eslint": "^14.0.0",
     "sass": "^1.34.1",
     "sass-loader": "^12.0.0",
     "ts-jest": "27",
