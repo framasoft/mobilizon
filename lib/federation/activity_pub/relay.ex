@@ -179,7 +179,10 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
         check_actor(address)
 
       !is_nil(host) ->
-        uri |> create_full_domain_string() |> check_actor()
+        uri
+        |> create_full_domain_string()
+        |> then(&Kernel.<>("relay@", &1))
+        |> check_actor()
 
       true ->
         {:error, :bad_url}
