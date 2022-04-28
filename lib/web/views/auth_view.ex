@@ -20,7 +20,7 @@ defmodule Mobilizon.Web.AuthView do
       Tag.tag(:meta, name: "auth-refresh-token", content: refresh_token),
       Tag.tag(:meta, name: "auth-user-id", content: user_id),
       Tag.tag(:meta, name: "auth-user-email", content: user_email),
-      Tag.tag(:meta, name: "auth-user-role", content: user_role),
+      Tag.tag(:meta, name: "auth-user-role", content: String.upcase(to_string(user_role))),
       Tag.tag(:meta, name: "auth-user-actor-id", content: user_actor_id)
     ]
 

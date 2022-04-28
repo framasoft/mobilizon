@@ -7,6 +7,14 @@ defmodule Mobilizon.Web.AuthController do
   require Logger
   plug(:put_layout, false)
 
+  config = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint, [])
+
+  plug(Plug.Session,
+    store: :cookie,
+    key: "_auth_callback",
+    signing_salt: Keyword.get(config, :secret_key_base)
+  )
+
   plug(Ueberauth)
 
   @spec request(Plug.Conn.t(), map()) :: Plug.Conn.t()
