@@ -46,7 +46,7 @@ export default class ProviderValidate extends Vue {
           id: userId,
           email: userEmail,
           isLoggedIn: true,
-          role: ICurrentUserRole.USER,
+          role: userRole,
         },
       });
       const { data } = await this.$apollo.query<{ loggedUser: IUser }>({
