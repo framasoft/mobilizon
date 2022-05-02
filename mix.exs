@@ -192,7 +192,7 @@ defmodule Mobilizon.Mixfile do
       {:sentry, "~> 8.0"},
       {:html_entities, "~> 0.5"},
       {:sweet_xml, "~> 0.7"},
-      {:web_push_encryption, "~> 0.3"},
+      {:web_push_encryption, github: "danhper/elixir-web-push-encryption"},
       {:eblurhash, "~> 1.2.0"},
       {:struct_access, "~> 1.1.2"},
       {:paasaa, "~> 0.5.0"},
