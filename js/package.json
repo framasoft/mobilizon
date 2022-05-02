@@ -18,7 +18,7 @@
     "@mdi/font": "^6.1.95",
     "@sentry/tracing": "^6.16.1",
     "@sentry/vue": "^6.16.1",
-    "@tailwindcss/line-clamp": "^0.3.0",
+    "@tailwindcss/line-clamp": "^0.4.0",
     "@tiptap/core": "^2.0.0-beta.41",
     "@tiptap/extension-blockquote": "^2.0.0-beta.25",
     "@tiptap/extension-bold": "^2.0.0-beta.24",
