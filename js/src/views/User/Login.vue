@@ -18,7 +18,9 @@
             $t(
               "Error while login with {provider}. Retry or login another way.",
               {
-                provider: $route.query.provider,
+                provider:
+                  SELECTED_PROVIDERS[$route.query.provider] ||
+                  "unknown provider",
               }
             )
           }}</b-message
@@ -31,7 +33,9 @@
             $t(
               "Error while login with {provider}. This login provider doesn't exist.",
               {
-                provider: $route.query.provider,
+                provider:
+                  SELECTED_PROVIDERS[$route.query.provider] ||
+                  "unknown provider",
               }
             )
           }}</b-message
@@ -136,6 +140,7 @@ import {
   initializeCurrentActor,
   NoIdentitiesException,
   saveUserData,
+  SELECTED_PROVIDERS,
 } from "../../utils/auth";
 import { ILogin } from "../../types/login.model";
 import {
@@ -197,6 +202,8 @@ export default class Login extends Vue {
     required: validateRequiredField,
     email: validateEmailField,
   };
+
+  SELECTED_PROVIDERS = SELECTED_PROVIDERS;
 
   submitted = false;
 
