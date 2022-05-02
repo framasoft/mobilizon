@@ -1296,7 +1296,12 @@ defmodule Mobilizon.Events do
     if is_nil(begins_on) do
       query
     else
-      where(query, [q], q.begins_on >= ^begins_on)
+      where(
+        query,
+        [q],
+        (not is_nil(q.ends_on) and q.ends_on > ^begins_on) or
+        (is_nil(q.ends_on) and q.begins_on >= ^begins_on)
+      )
     end
   end
 
