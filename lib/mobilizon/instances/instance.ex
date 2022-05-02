@@ -7,6 +7,7 @@ defmodule Mobilizon.Instances.Instance do
   use Ecto.Schema
 
   @type t :: %__MODULE__{
+          domain: String.t(),
           event_count: non_neg_integer(),
           person_count: non_neg_integer(),
           group_count: non_neg_integer(),

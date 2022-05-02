@@ -5,7 +5,7 @@ defmodule Mobilizon.Web.Email.Mailer do
   use Swoosh.Mailer, otp_app: :mobilizon
   alias Mobilizon.Service.ErrorReporting.Sentry
 
-  @spec send_email(Swoosh.Email.t()) :: Swoosh.Email.t()
+  @spec send_email(Swoosh.Email.t()) :: {:ok, term} | {:error, term}
   def send_email(email) do
     Mobilizon.Web.Email.Mailer.deliver(email)
   rescue
