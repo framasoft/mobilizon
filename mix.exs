@@ -182,6 +182,7 @@ defmodule Mobilizon.Mixfile do
       {:ueberauth_google, "~> 0.10.1"},
       {:ueberauth_keycloak_strategy, "~> 0.3.0"},
       {:ueberauth_gitlab_strategy, "~> 0.4.0"},
+      {:ueberauth_cas, "~> 2.0"},
       {:ecto_shortuuid, "~> 0.1"},
       {:tesla, "~> 1.4.0"},
       {:sitemapper, "~> 0.6"},
