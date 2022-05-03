@@ -228,13 +228,13 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
     |> Enum.uniq()
   end
 
-  defp add_event_contacts(%Event{contacts: contacts}) do
+  defp add_event_contacts(%Event{contacts: contacts}) when is_list(contacts) do
     contacts
     |> Enum.map(& &1.url)
     |> Enum.uniq()
   end
 
-  defp add_event_contacts(%Event{}), do: []
+  defp add_event_contacts(_), do: []
 
   defp process_mention({_, mentioned_actor}), do: mentioned_actor.url
 
