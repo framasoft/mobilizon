@@ -28,6 +28,7 @@ defmodule Mobilizon.Events do
     Track
   }
 
+  alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Service.Export.Cachable
   alias Mobilizon.Service.Workers.BuildSearch
   alias Mobilizon.Service.Workers.EventDelayedNotificationWorker
@@ -1676,7 +1677,7 @@ defmodule Mobilizon.Events do
   @spec filter_local_or_from_followed_instances_events(Ecto.Queryable.t()) ::
           Ecto.Query.t()
   defp filter_local_or_from_followed_instances_events(query) do
-    follower_actor_id = Mobilizon.Config.relay_actor_id()
+    %Actor{id: follower_actor_id} = Relay.get_actor()
 
     query
     |> join(:left, [q], s in Share, on: s.uri == q.url)

@@ -4,9 +4,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Event.Utils do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.{Config, Events}
+  alias Mobilizon.Events
   alias Mobilizon.Events.Event
-  alias Mobilizon.Federation.ActivityPub.Permission
+  alias Mobilizon.Federation.ActivityPub.{Permission, Relay}
   import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
   @spec can_event_be_updated_by?(Event.t(), Actor.t()) ::
@@ -43,7 +43,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event.Utils do
   def check_event_access?(%Event{local: true}), do: true
 
   def check_event_access?(%Event{url: url}) do
-    relay_actor_id = Config.relay_actor_id()
-    Events.check_if_event_has_instance_follow(url, relay_actor_id)
+    relay_actor = Relay.get_actor()
+    Events.check_if_event_has_instance_follow(url, relay_actor.id)
   end
 end
