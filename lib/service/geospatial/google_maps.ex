@@ -72,7 +72,7 @@ defmodule Mobilizon.Service.Geospatial.GoogleMaps do
     end
   end
 
-  @spec build_url(:search | :geocode, map(), list()) :: String.t() | no_return
+  @spec build_url(:search | :geocode | :place_details, map(), list()) :: String.t() | no_return
   defp build_url(method, args, options) do
     limit = Keyword.get(options, :limit, 10)
     lang = Keyword.get(options, :lang, "en")

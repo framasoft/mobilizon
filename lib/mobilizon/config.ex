@@ -322,8 +322,6 @@ defmodule Mobilizon.Config do
 
   @spec anonymous_actor_id :: integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
-  @spec relay_actor_id :: integer
-  def relay_actor_id, do: get_cached_value(:relay_actor_id)
   @spec admin_settings :: map
   def admin_settings, do: get_cached_value(:admin_config)
 
@@ -393,16 +391,6 @@ defmodule Mobilizon.Config do
   @spec create_cache(atom()) :: {:ok, integer() | map()} | {:error, Ecto.Changeset.t()}
   defp create_cache(:anonymous_actor_id) do
     case Actors.get_or_create_internal_actor("anonymous") do
-      {:ok, %{id: actor_id}} ->
-        {:ok, actor_id}
-
-      {:error, err} ->
-        {:error, err}
-    end
-  end
-
-  defp create_cache(:relay_actor_id) do
-    case Actors.get_or_create_internal_actor("relay") do
       {:ok, %{id: actor_id}} ->
         {:ok, actor_id}
 

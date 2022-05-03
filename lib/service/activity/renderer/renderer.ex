@@ -29,7 +29,7 @@ defmodule Mobilizon.Service.Activity.Renderer do
 
   @type common_render :: %{body: String.t(), url: String.t()}
 
-  @callback render(entity :: Activity.t(), Keyword.t()) :: common_render()
+  @callback render(activity :: Activity.t(), Keyword.t()) :: common_render()
 
   @spec render(Activity.t()) :: render()
   def render(%Activity{} = activity, options \\ []) do

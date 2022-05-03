@@ -73,7 +73,7 @@ defmodule Mobilizon.Service.Notifier.Push do
     Map.get(@default_behavior, activity_setting, false)
   end
 
-  @spec send_subscription(Activity.t(), any, Keyword.t()) :: no_return
+  @spec send_subscription(Activity.t(), any, Keyword.t()) :: any()
   defp send_subscription(activity, subscription, options) do
     activity
     |> payload(options)

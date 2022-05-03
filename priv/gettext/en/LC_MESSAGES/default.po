@@ -1243,7 +1243,7 @@ msgstr "Your participation to event %{title} has been approved"
 #, elixir-autogen, elixir-format
 #: lib/web/templates/email/report.html.heex:41
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr "%{reporter_name} (%{reporter_username}) reported the following content."
+msgstr "<b>%{reporter}</b> reported the following content."
 
 #, elixir-autogen, elixir-format
 #: lib/web/templates/email/report.text.eex:5

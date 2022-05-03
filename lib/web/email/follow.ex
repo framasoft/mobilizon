@@ -13,12 +13,12 @@ defmodule Mobilizon.Web.Email.Follow do
   alias Mobilizon.Web.Email
 
   @doc """
-  Send follow notification to admins if the followed actor
+  Send follow notification to admins if the followed actor is the relay and the actor follower is an instance
   """
   @spec send_notification_to_admins(Follower.t()) :: :ok
   def send_notification_to_admins(
         %Follower{
-          # approved: false,
+          approved: false,
           actor: %Actor{type: :Application} = follower,
           target_actor: %Actor{id: target_actor_id}
         } = _follow

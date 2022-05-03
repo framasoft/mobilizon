@@ -191,8 +191,8 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   defp process_collection(_, _), do: :error
 
   # If we're handling an activity
-  @spec handling_element(map()) :: {:ok, any, struct} | :error
-  @spec handling_element(String.t()) :: {:ok, struct} | {:ok, atom, struct} | {:error, any()}
+  @spec handling_element(map() | String.t()) ::
+          {:ok, any, struct} | {:ok, struct} | {:ok, atom, struct} | {:error, any()} | :error
   defp handling_element(%{"type" => activity_type} = data)
        when activity_type in ["Create", "Update", "Delete"] do
     object = get_in(data, ["object"])

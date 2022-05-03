@@ -192,5 +192,5 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
     Map.put(res, "location", AddressConverter.model_to_as(physical_address))
   end
 
-  defp maybe_add_physical_address(res, %ActorModel{physical_address: _}), do: res
+  defp maybe_add_physical_address(res, _), do: res
 end
