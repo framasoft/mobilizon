@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0-rc.4 - 2022-05-03
+
+Changes since rc.3:
+* Use upstream dependencies for Ueberauth providers
+* Fix Ueberauth use of CSRF with session
+* Fix being an administrator when using 3rd-party auth provider
+* Include ongoing events in search
+* Send push notification into own task
+* Add Überauth CAS Strategy
+
 ## 2.1.0-rc.3 - 2022-04-24
 
 Changes since rc.2:
