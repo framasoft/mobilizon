@@ -46,22 +46,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Media do
         actor_id
       )
       when is_binary(media_url) do
-    case upload_media(media_url, name) do
-      {:error, err} ->
-        {:error, err}
+    with {:ok, %{url: url} = uploaded} <- upload_media(media_url, name) do
+      case Medias.get_media_by_url(url) do
+        %MediaModel{file: _file} = media ->
+          {:ok, media}
 
-      {:ok, %{url: url} = uploaded} ->
-        case Medias.get_media_by_url(url) do
-          %MediaModel{file: _file} = media ->
-            {:ok, media}
-
-          nil ->
-            Medias.create_media(%{
-              file: Map.take(uploaded, [:url, :name, :content_type, :size]),
-              metadata: Map.take(uploaded, [:width, :height, :blurhash]),
-              actor_id: actor_id
-            })
-        end
+        nil ->
+          Medias.create_media(%{
+            file: Map.take(uploaded, [:url, :name, :content_type, :size]),
+            metadata: Map.take(uploaded, [:width, :height, :blurhash]),
+            actor_id: actor_id
+          })
+      end
     end
   end
 

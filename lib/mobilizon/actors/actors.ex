@@ -848,7 +848,13 @@ defmodule Mobilizon.Actors do
   @doc """
   Returns a paginated list of members for a group.
   """
-  @spec list_members_for_group(Actor.t(), list(atom()), integer | nil, integer | nil) ::
+  @spec list_members_for_group(
+          Actor.t(),
+          String.t() | nil,
+          list(atom()),
+          integer | nil,
+          integer | nil
+        ) ::
           Page.t(Member.t())
   def list_members_for_group(
         %Actor{id: group_id, type: :Group},

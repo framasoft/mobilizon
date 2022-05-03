@@ -41,7 +41,7 @@ defmodule Mobilizon.Service.Workers.Helper do
 
       alias Oban.Job
 
-      @spec enqueue(String.t() | :atom, map(), Keyword.t()) ::
+      @spec enqueue(String.t() | atom(), map(), Keyword.t()) ::
               {:ok, Job.t()} | {:error, Ecto.Changeset.t()}
       def enqueue(operation, params, worker_args \\ []) do
         params = Map.merge(%{"op" => operation}, params)

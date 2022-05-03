@@ -289,7 +289,7 @@ defmodule Mobilizon.Service.Notifications.Scheduler do
         {:ok, nil}
 
       # Sending to calculated time
-      true ->
+      match?(%DateTime{}, send_at) ->
         Notification.enqueue(:pending_membership_notification, params, scheduled_at: send_at)
     end
   end
