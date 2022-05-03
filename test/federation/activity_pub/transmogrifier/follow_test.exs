@@ -5,8 +5,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
   import Mobilizon.Factory
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Follower
-  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Transmogrifier}
+  alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Relay, Transmogrifier}
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
+  alias Mobilizon.Users.User
+
+  import Swoosh.TestAssertions
 
   describe "handle incoming follow requests" do
     test "it works only for groups" do
@@ -99,6 +102,83 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.FollowTest do
     #       assert data["id"] == "https://hubzilla.example.org/channel/kaniini#follows/2"
     #       assert User.check_follow(User.get_by_ap_id(data["actor"]), user)
     #     end
+
+    test "it works for accepting instance follow from user" do
+      %User{} = insert(:user, email: "loulou@example.com", role: :administrator)
+      relay = Relay.get_actor()
+
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://social.tcit.fr/users/tcit"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body: Map.put(actor_data, "id", "https://social.tcit.fr/users/tcit")
+           }}
+      end)
+
+      data =
+        File.read!("test/fixtures/mastodon-follow-activity.json")
+        |> Jason.decode!()
+        |> Map.put("object", relay.url)
+
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+
+      assert data["actor"] == "https://social.tcit.fr/users/tcit"
+      assert data["type"] == "Follow"
+      assert data["id"] == "https://social.tcit.fr/users/tcit#follows/2"
+
+      follow = Actors.check_follow(Actors.get_actor_by_url!(data["actor"], true), relay)
+      assert follow
+      refute follow.approved
+
+      refute_email_sent()
+    end
+
+    test "it works for accepting instance follow from other instance" do
+      %User{email: admin_email} = insert(:user, email: "loulou@example.com", role: :administrator)
+      relay = Relay.get_actor()
+
+      actor_data =
+        File.read!("test/fixtures/mastodon-actor.json")
+        |> Jason.decode!()
+
+      Mock
+      |> expect(:call, fn
+        %{method: :get, url: "https://mobilizon.fr/relay"}, _opts ->
+          {:ok,
+           %Tesla.Env{
+             status: 200,
+             body:
+               actor_data
+               |> Map.put("id", "https://mobilizon.fr/relay")
+               |> Map.put("type", "Application")
+           }}
+      end)
+
+      data =
+        File.read!("test/fixtures/mastodon-follow-activity.json")
+        |> Jason.decode!()
+        |> Map.put("actor", "https://mobilizon.fr/relay")
+        |> Map.put("id", "https://mobilizon.fr/relay#follows/2")
+        |> Map.put("object", relay.url)
+
+      {:ok, %Activity{data: data, local: false}, _} = Transmogrifier.handle_incoming(data)
+
+      assert data["actor"] == "https://mobilizon.fr/relay"
+      assert data["type"] == "Follow"
+      assert data["id"] == "https://mobilizon.fr/relay#follows/2"
+
+      follow = Actors.check_follow(Actors.get_actor_by_url!(data["actor"], true), relay)
+      assert follow
+      refute follow.approved
+
+      assert_email_sent(to: admin_email)
+    end
   end
 
   describe "handle incoming follow accept activities" do

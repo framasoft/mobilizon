@@ -7,10 +7,11 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
   alias Mobilizon.Events.Event
+  alias Mobilizon.GraphQL.AbsintheHelpers
   alias Mobilizon.Reports.{Note, Report}
   alias Mobilizon.Users.User
 
-  alias Mobilizon.GraphQL.AbsintheHelpers
+  import Swoosh.TestAssertions
 
   describe "Resolver: Report a content" do
     @create_report_mutation """
@@ -41,6 +42,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
     end
 
     test "create_report/3 creates a report", %{conn: conn} do
+      %User{email: admin_email} = insert(:user, email: "loulou@example.com", role: :administrator)
       %User{} = user_reporter = insert(:user)
       %Actor{} = reporter = insert(:actor, user: user_reporter)
       %Actor{} = reported = insert(:actor)
@@ -65,6 +67,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
 
       assert res["data"]["createReport"]["reporter"]["id"] ==
                to_string(reporter.id)
+
+      assert_email_sent(to: admin_email)
     end
 
     test "create_report/3 without being connected doesn't create any report", %{conn: conn} do
