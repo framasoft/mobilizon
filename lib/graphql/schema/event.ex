@@ -30,7 +30,6 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:status, :event_status, description: "Status of the event")
     field(:visibility, :event_visibility, description: "The event's visibility")
     field(:join_options, :event_join_options, description: "The event's visibility")
-    field(:external_participation_url, :string, description: "External URL for participation")
 
     field(:picture, :media,
       description: "The event's picture",
@@ -124,7 +123,6 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     value(:free, description: "Anyone can join and is automatically accepted")
     value(:restricted, description: "Manual acceptation")
     value(:invite, description: "Participants must be invited")
-    value(:external, description: "External registration")
   end
 
   @desc "The list of possible options for the event's status"
@@ -381,8 +379,6 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         description: "The event's options to join"
       )
 
-      arg(:external_participation_url, :string, description: "External URL for participation")
-
       arg(:tags, list_of(:string),
         default_value: [],
         description: "The list of tags associated to the event"
@@ -442,8 +438,6 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         default_value: :free,
         description: "The event's options to join"
       )
-
-      arg(:external_participation_url, :string, description: "External URL for participation")
 
       arg(:tags, list_of(:string), description: "The list of tags associated to the event")
 

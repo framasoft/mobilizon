@@ -221,33 +221,9 @@
           </b-radio>
         </div>-->
 
-        <div class="field">
-          <label class="label">{{ $t("External registration") }}</label>
-          <b-switch v-model="externalParticipation">
-            {{
-              $t("I want to manage the registration with an external provider.")
-            }}
-          </b-switch>
-        </div>
-
-        <div class="field" v-if="externalParticipation">
-          <b-field :label="$t('URL')">
-            <b-input
-              icon="link"
-              type="url"
-              v-model="event.externalParticipationUrl"
-              placeholder="URL"
-            />
-          </b-field>
-        </div>
-
         <div
           class="field"
-          v-if="
-            config &&
-            config.anonymous.participation.allowed &&
-            !externalParticipation
-          "
+          v-if="config && config.anonymous.participation.allowed"
         >
           <label class="label">{{ $t("Anonymous participations") }}</label>
           <b-switch v-model="eventOptions.anonymousParticipation">
@@ -270,21 +246,21 @@
           </b-switch>
         </div>
 
-        <div class="field" v-if="!externalParticipation">
+        <div class="field">
           <label class="label">{{ $t("Participation approval") }}</label>
           <b-switch v-model="needsApproval">{{
             $t("I want to approve every participation request")
           }}</b-switch>
         </div>
 
-        <div class="field" v-if="!externalParticipation">
+        <div class="field">
           <label class="label">{{ $t("Number of places") }}</label>
           <b-switch v-model="limitedPlaces">{{
             $t("Limited number of places")
           }}</b-switch>
         </div>
 
-        <div class="box" v-if="limitedPlaces && !externalParticipation">
+        <div class="box" v-if="limitedPlaces">
           <b-field :label="$t('Number of places')" label-for="number-of-places">
             <b-numberinput
               controls-position="compact"
@@ -1189,18 +1165,6 @@ export default class EditEvent extends Vue {
   set needsApproval(value: boolean) {
     if (value === true) {
       this.event.joinOptions = EventJoinOptions.RESTRICTED;
-    } else {
-      this.event.joinOptions = EventJoinOptions.FREE;
-    }
-  }
-
-  get externalParticipation(): boolean {
-    return this.event?.joinOptions == EventJoinOptions.EXTERNAL;
-  }
-
-  set externalParticipation(value: boolean) {
-    if (value === true) {
-      this.event.joinOptions = EventJoinOptions.EXTERNAL;
     } else {
       this.event.joinOptions = EventJoinOptions.FREE;
     }

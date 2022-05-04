@@ -21,7 +21,6 @@ const FULL_EVENT_FRAGMENT = gql`
     status
     visibility
     joinOptions
-    externalParticipationUrl
     draft
     language
     category
@@ -122,7 +121,6 @@ export const FETCH_EVENT_BASIC = gql`
       id
       uuid
       joinOptions
-      externalParticipationUrl
       participantStats {
         going
         notApproved
@@ -201,7 +199,6 @@ export const CREATE_EVENT = gql`
     $status: EventStatus
     $visibility: EventVisibility
     $joinOptions: EventJoinOptions
-    $externalParticipationUrl: String
     $draft: Boolean
     $tags: [String]
     $picture: MediaInput
@@ -223,7 +220,6 @@ export const CREATE_EVENT = gql`
       status: $status
       visibility: $visibility
       joinOptions: $joinOptions
-      externalParticipationUrl: $externalParticipationUrl
       draft: $draft
       tags: $tags
       picture: $picture
@@ -251,7 +247,6 @@ export const EDIT_EVENT = gql`
     $status: EventStatus
     $visibility: EventVisibility
     $joinOptions: EventJoinOptions
-    $externalParticipationUrl: String
     $draft: Boolean
     $tags: [String]
     $picture: MediaInput
@@ -274,7 +269,6 @@ export const EDIT_EVENT = gql`
       status: $status
       visibility: $visibility
       joinOptions: $joinOptions
-      externalParticipationUrl: $externalParticipationUrl
       draft: $draft
       tags: $tags
       picture: $picture
