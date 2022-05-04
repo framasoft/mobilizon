@@ -20,27 +20,30 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
 
   @impl Oban.Worker
   def perform(%Job{}) do
-    Repo.transaction(fn ->
-      Users.stream_users_for_recap()
-      |> Enum.to_list()
-      |> Repo.preload([:settings, :activity_settings])
-      |> Enum.filter(&filter_elegible_users/1)
-      |> Enum.map(fn %User{} = user ->
-        %{
-          activities: activities_for_user(user),
-          user: user
-        }
-      end)
-      |> Enum.filter(fn %{activities: activities, user: _user} -> length(activities) > 0 end)
-      |> Enum.map(fn %{
-                       activities: activities,
-                       user:
-                         %User{settings: %Setting{group_notifications: group_notifications}} =
-                           user
-                     } ->
-        Email.send(user, activities, recap: group_notifications)
-      end)
-    end)
+    Repo.transaction(
+      fn ->
+        Users.stream_users_for_recap()
+        |> Enum.to_list()
+        |> Repo.preload([:settings, :activity_settings])
+        |> Enum.filter(&filter_elegible_users/1)
+        |> Enum.map(fn %User{} = user ->
+          %{
+            activities: activities_for_user(user),
+            user: user
+          }
+        end)
+        |> Enum.filter(fn %{activities: activities, user: _user} -> length(activities) > 0 end)
+        |> Enum.map(fn %{
+                         activities: activities,
+                         user:
+                           %User{settings: %Setting{group_notifications: group_notifications}} =
+                             user
+                       } ->
+          Email.send(user, activities, recap: group_notifications)
+        end)
+      end,
+      timeout: :infinity
+    )
   end
 
   defp activities_for_user(

@@ -64,7 +64,7 @@ defmodule Mobilizon.Service.ActorSuspension do
 
     Logger.debug("Going to run the transaction")
 
-    case Repo.transaction(multi) do
+    case Repo.transaction(multi, timeout: 60_000) do
       {:ok, %{actor: %Actor{} = actor}} ->
         {:ok, true} = Cachex.del(:activity_pub, "actor_#{actor.preferred_username}")
         Cachable.clear_all_caches(actor)

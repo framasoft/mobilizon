@@ -82,15 +82,18 @@ defmodule Mobilizon.Web.Email.Event do
       |> MapSet.new()
 
     if MapSet.size(diff) > 0 do
-      Repo.transaction(fn ->
-        event_id
-        |> Events.list_local_emails_user_participants_for_event_query()
-        |> Repo.stream()
-        |> Enum.to_list()
-        |> Enum.each(
-          &send_notification_for_event_update_to_participant(&1, old_event, event, diff)
-        )
-      end)
+      Repo.transaction(
+        fn ->
+          event_id
+          |> Events.list_local_emails_user_participants_for_event_query()
+          |> Repo.stream()
+          |> Enum.to_list()
+          |> Enum.each(
+            &send_notification_for_event_update_to_participant(&1, old_event, event, diff)
+          )
+        end,
+        timeout: 120_000
+      )
     else
       {:ok, :ok}
     end
