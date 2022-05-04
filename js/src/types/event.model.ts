@@ -42,6 +42,7 @@ interface IEventEditJSON {
   status: EventStatus;
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
+  externalParticipationUrl: string | null;
   draft: boolean;
   picture?: IMedia | { mediaId: string } | null;
   attributedToId: string | null;
@@ -71,6 +72,7 @@ export interface IEvent {
   status: EventStatus;
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
+  externalParticipationUrl: string | null;
   draft: boolean;
 
   picture: IMedia | null;
@@ -130,6 +132,8 @@ export class EventModel implements IEvent {
   visibility = EventVisibility.PUBLIC;
 
   joinOptions = EventJoinOptions.FREE;
+
+  externalParticipationUrl: string | null = null;
 
   status = EventStatus.CONFIRMED;
 
@@ -196,6 +200,7 @@ export class EventModel implements IEvent {
     this.status = hash.status;
     this.visibility = hash.visibility;
     this.joinOptions = hash.joinOptions;
+    this.externalParticipationUrl = hash.externalParticipationUrl;
     this.draft = hash.draft;
 
     this.picture = hash.picture;
@@ -248,6 +253,7 @@ export function toEditJSON(event: IEditableEvent): IEventEditJSON {
     category: event.category,
     visibility: event.visibility,
     joinOptions: event.joinOptions,
+    externalParticipationUrl: event.externalParticipationUrl,
     draft: event.draft,
     tags: event.tags.map((t) => t.title),
     onlineAddress: event.onlineAddress,
