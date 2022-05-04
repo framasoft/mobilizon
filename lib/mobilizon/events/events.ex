@@ -46,8 +46,7 @@ defmodule Mobilizon.Events do
   defenum(JoinOptions, :join_options, [
     :free,
     :restricted,
-    :invite,
-    :external
+    :invite
   ])
 
   defenum(EventStatus, :event_status, [

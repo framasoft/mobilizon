@@ -64,7 +64,6 @@ export enum EventJoinOptions {
   FREE = "FREE",
   RESTRICTED = "RESTRICTED",
   INVITE = "INVITE",
-  EXTERNAL = "EXTERNAL",
 }
 
 export enum EventVisibilityJoinOptions {
