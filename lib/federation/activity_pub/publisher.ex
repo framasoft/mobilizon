@@ -110,13 +110,17 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
   @spec convert_followers_in_recipients(list(String.t())) :: {list(String.t()), list(String.t())}
   defp convert_followers_in_recipients(recipients) do
     Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, follower_actors} = acc ->
-      case Actors.get_actor_by_followers_url(recipient) do
-        %Actor{} = group ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.followers_url end),
-           follower_actors ++ Actors.list_external_followers_for_actor(group)}
+      if is_nil(recipient) do
+        acc
+      else
+        case Actors.get_actor_by_followers_url(recipient) do
+          %Actor{} = group ->
+            {Enum.filter(recipients, fn recipient -> recipient != group.followers_url end),
+             follower_actors ++ Actors.list_external_followers_for_actor(group)}
 
-        nil ->
-          acc
+          nil ->
+            acc
+        end
       end
     end)
   end
@@ -128,19 +132,23 @@ defmodule Mobilizon.Federation.ActivityPub.Publisher do
   @spec convert_members_in_recipients(list(String.t())) :: {list(String.t()), list(Actor.t())}
   defp convert_members_in_recipients(recipients) do
     Enum.reduce(recipients, {recipients, []}, fn recipient, {recipients, member_actors} = acc ->
-      case Actors.get_group_by_members_url(recipient) do
-        # If the group is local just add external members
-        %Actor{domain: domain} = group when is_nil(domain) ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
-           member_actors ++ Actors.list_external_actors_members_for_group(group)}
+      if is_nil(recipient) do
+        acc
+      else
+        case Actors.get_group_by_members_url(recipient) do
+          # If the group is local just add external members
+          %Actor{domain: domain} = group when is_nil(domain) ->
+            {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
+             member_actors ++ Actors.list_external_actors_members_for_group(group)}
 
-        # If it's remote add the remote group actor as well
-        %Actor{} = group ->
-          {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
-           member_actors ++ Actors.list_external_actors_members_for_group(group) ++ [group]}
+          # If it's remote add the remote group actor as well
+          %Actor{} = group ->
+            {Enum.filter(recipients, fn recipient -> recipient != group.members_url end),
+             member_actors ++ Actors.list_external_actors_members_for_group(group) ++ [group]}
 
-        _ ->
-          acc
+          _ ->
+            acc
+        end
       end
     end)
   end

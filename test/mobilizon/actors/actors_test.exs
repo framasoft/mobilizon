@@ -25,7 +25,7 @@ defmodule Mobilizon.ActorsTest do
       suspended: true,
       uri: "some uri",
       url: "some url",
-      preferred_username: "some username"
+      preferred_username: "some_username"
     }
     @update_attrs %{
       summary: "some updated description",
@@ -35,7 +35,7 @@ defmodule Mobilizon.ActorsTest do
       suspended: false,
       uri: "some updated uri",
       url: "some updated url",
-      preferred_username: "some updated username"
+      preferred_username: "some_updated_username"
     }
     @invalid_attrs %{
       summary: nil,
@@ -234,7 +234,7 @@ defmodule Mobilizon.ActorsTest do
       assert actor.domain == "some domain"
       assert actor.keys == "some keypair"
       assert actor.suspended
-      assert actor.preferred_username == "some username"
+      assert actor.preferred_username == "some_username"
     end
 
     test "create_actor/1 with empty data returns error changeset" do
@@ -381,13 +381,13 @@ defmodule Mobilizon.ActorsTest do
     @valid_attrs %{
       summary: "some description",
       suspended: true,
-      preferred_username: "some-title",
+      preferred_username: "some_title",
       name: "Some Title"
     }
     @update_attrs %{
       summary: "some updated description",
       suspended: false,
-      preferred_username: "some-updated-title",
+      preferred_username: "some_updated_title",
       name: "Some Updated Title"
     }
     @invalid_attrs %{summary: nil, suspended: nil, preferred_username: nil, name: nil}
@@ -400,7 +400,7 @@ defmodule Mobilizon.ActorsTest do
 
       assert group.summary == "some description"
       refute group.suspended
-      assert group.preferred_username == "some-title"
+      assert group.preferred_username == "some_title"
     end
 
     test "create_group/1 with an existing profile username fails" do

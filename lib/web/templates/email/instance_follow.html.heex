@@ -44,18 +44,10 @@
           style="padding: 20px 30px 0px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
         >
           <p style="margin: 0;">
-            <%= if @follower.type == :Application do %>
-              <%= gettext("<b>%{name} (%{domain})</b> just requested to follow your instance.",
-                name: @follower.name,
-                domain: @follower.domain
-              )
-              |> raw %>
-            <% else %>
-              <%= gettext("<b>%{name}</b> just requested to follow your instance.",
-                name: Mobilizon.Actors.Actor.display_name_and_username(@follower)
-              )
-              |> raw %>
-            <% end %>
+            <%= gettext("<b>%{name}</b> just requested to follow your instance.",
+              name: Mobilizon.Actors.Actor.display_name_and_username(@follower)
+            )
+            |> raw %>
             <br />
             <%= if @follower.type == :Application do %>
               <%= gettext("If you accept, this instance will receive all of your public events.") %>
@@ -74,9 +66,8 @@
           >
             <p style="margin: 0;">
               <%= gettext(
-                "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.",
-                name: @follower.name,
-                domain: @follower.domain
+                "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.",
+                name: Mobilizon.Actors.Actor.display_name_and_username(@follower)
               ) %>
             </p>
           </td>

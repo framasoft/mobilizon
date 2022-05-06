@@ -216,6 +216,10 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       description:
         "Whether this instance has a relay, meaning that it's a Mobilizon instance that we can follow"
     )
+
+    field(:relay_address, :string,
+      description: "If this instance has a relay, it's federated username"
+    )
   end
 
   @desc """

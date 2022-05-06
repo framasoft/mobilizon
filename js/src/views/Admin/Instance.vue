@@ -66,8 +66,11 @@
         <span class="text-sm block">{{ $t("Uploaded media size") }}</span>
       </div>
     </div>
-    <div class="mt-3 grid xl:grid-cols-2 gap-4" v-if="instance.hasRelay">
-      <div class="border bg-white p-6 shadow-md rounded-md">
+    <div class="mt-3 grid xl:grid-cols-2 gap-4">
+      <div
+        class="border bg-white p-6 shadow-md rounded-md"
+        v-if="instance.hasRelay"
+      >
         <button
           @click="removeInstanceFollow"
           v-if="instance.followedStatus == InstanceFollowStatus.APPROVED"
@@ -90,6 +93,9 @@
           {{ $t("Follow instance") }}
         </button>
       </div>
+      <div v-else class="md:h-48 py-16 text-center opacity-50">
+        {{ $t("Only Mobilizon instances can be followed") }}
+      </div>
       <div class="border bg-white p-6 shadow-md rounded-md flex flex-col gap-2">
         <button
           @click="acceptInstance"
@@ -109,9 +115,6 @@
           {{ $t("This instance doesn't follow yours.") }}
         </p>
       </div>
-    </div>
-    <div v-else class="md:h-48 py-16 text-center opacity-50">
-      {{ $t("Only Mobilizon instances can be followed") }}
     </div>
   </div>
 </template>
@@ -159,7 +162,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: ACCEPT_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({
@@ -191,7 +194,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: REJECT_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({
@@ -239,7 +242,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: REMOVE_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({

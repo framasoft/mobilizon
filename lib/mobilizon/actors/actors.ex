@@ -1297,14 +1297,12 @@ defmodule Mobilizon.Actors do
     :ok
   end
 
-  @spec has_relay?(String.t()) :: boolean()
-  def has_relay?(domain) do
-    Actor
-    |> where(
-      [a],
-      a.preferred_username == "relay" and a.domain == ^domain and a.type == :Application
-    )
-    |> Repo.exists?()
+  @doc """
+  Returns a relay actor, either `relay@domain` (Mobilizon) or `domain@domain` (Mastodon)
+  """
+  @spec get_relay(String.t()) :: Actor.t() | nil
+  def get_relay(domain) do
+    get_actor_by_name("relay@#{domain}") || get_actor_by_name("#{domain}@#{domain}")
   end
 
   @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()

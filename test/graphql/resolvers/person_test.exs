@@ -13,23 +13,34 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
   @non_existent_username "nonexistent"
 
-  describe "Person Resolver" do
-    @get_person_query """
-    query Person($id: ID!) {
-        person(id: $id) {
-            preferredUsername,
-        }
+  @get_person_query """
+  query Person($id: ID!) {
+      person(id: $id) {
+          preferredUsername,
       }
-    """
+    }
+  """
 
-    @fetch_person_query """
-    query FetchPerson($preferredUsername: String!) {
-        fetchPerson(preferredUsername: $preferredUsername) {
-            preferredUsername,
-        }
+  @fetch_person_query """
+  query FetchPerson($preferredUsername: String!) {
+      fetchPerson(preferredUsername: $preferredUsername) {
+          preferredUsername,
       }
-    """
+    }
+  """
 
+  @fetch_identities_query """
+  {
+    identities {
+      avatar {
+        url
+      },
+      preferredUsername,
+    }
+  }
+  """
+
+  describe "Getting a person" do
     test "get_person/3 returns a person by its username", %{conn: conn} do
       user = insert(:user)
       actor = insert(:actor, user: user)
@@ -128,107 +139,114 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
 
       assert json_response(res, 200)["data"]["loggedPerson"]["avatar"]["url"] =~ Endpoint.url()
     end
+  end
 
-    test "create_person/3 creates a new identity", context do
+  describe "create_person/3" do
+    @create_person_mutation """
+    mutation CreatePerson(
+      $preferredUsername: String!
+      $name: String!
+      $summary: String
+      $avatar: MediaInput
+      $banner: MediaInput
+      ) {
+      createPerson(
+        preferredUsername: $preferredUsername
+        name: $name
+        summary: $summary
+        avatar: $avatar
+        banner: $banner
+      ) {
+        id
+        preferredUsername
+        avatar {
+          id,
+          url
+        },
+        banner {
+          id,
+          name,
+          url
+        }
+      }
+    }
+    """
+
+    test "creates a new identity", %{conn: conn} do
       user = insert(:user)
       actor = insert(:actor, user: user)
 
-      mutation = """
-          mutation {
-            createPerson(
-              preferredUsername: "new_identity",
-              name: "secret person",
-              summary: "no-one will know who I am"
-            ) {
-              id,
-              preferredUsername
-            }
-          }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @create_person_mutation,
+          variables: %{
+            preferredUsername: "new_identity",
+            name: "secret person",
+            summary: "no-one will know who I am"
+          }
+        )
 
-      assert json_response(res, 200)["data"]["createPerson"] == nil
+      assert res["data"]["createPerson"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You need to be logged in"
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_person_mutation,
+          variables: %{
+            preferredUsername: "new_identity",
+            name: "secret person",
+            summary: "no-one will know who I am"
+          }
+        )
 
-      assert json_response(res, 200)["data"]["createPerson"]["preferredUsername"] ==
+      assert res["data"]["createPerson"]["preferredUsername"] ==
                "new_identity"
 
-      query = """
-      {
-          identities {
-            avatar {
-              url
-            },
-            preferredUsername,
-          }
-        }
-      """
-
       res =
-        context.conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "identities"))
+        conn
+        |> AbsintheHelpers.graphql_query(query: @fetch_identities_query)
 
-      assert json_response(res, 200)["data"]["identities"] == nil
+      assert res["data"]["identities"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You need to be logged in"
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "identities"))
+        |> AbsintheHelpers.graphql_query(query: @fetch_identities_query)
 
-      assert json_response(res, 200)["data"]["identities"]
+      assert res["data"]["identities"]
              |> Enum.map(fn identity -> Map.get(identity, "preferredUsername") end)
              |> MapSet.new() ==
                MapSet.new([actor.preferred_username, "new_identity"])
     end
 
-    test "create_person/3 with an avatar and an banner creates a new identity", context do
+    test "with an avatar and an banner creates a new identity", %{conn: conn} do
       user = insert(:user)
       insert(:actor, user: user)
 
-      mutation = """
-          mutation {
-            createPerson(
-              preferredUsername: "new_identity",
-              name: "secret person",
-              summary: "no-one will know who I am",
-              banner: {
-                media: {
-                  file: "landscape.jpg",
-                  name: "irish landscape",
-                  alt: "The beautiful atlantic way"
-                }
-              }
-            ) {
-              id,
-              preferredUsername
-              avatar {
-                id,
-                url
-              },
-              banner {
-                id,
-                name,
-                url
-              }
-            }
+      variables = %{
+        preferredUsername: "new_identity",
+        name: "secret person",
+        summary: "no-one will know who I am",
+        banner: %{
+          media: %{
+            file: "landscape.jpg",
+            name: "irish landscape",
+            alt: "The beautiful atlantic way"
           }
-      """
+        }
+      }
 
       map = %{
-        "query" => mutation,
+        "query" => @create_person_mutation,
+        "variables" => variables,
         "landscape.jpg" => %Plug.Upload{
           path: "test/fixtures/picture.png",
           filename: "landscape.jpg"
@@ -236,34 +254,63 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       }
 
       res =
-        context.conn
+        conn
         |> put_req_header("content-type", "multipart/form-data")
-        |> post("/api", map)
+        |> post(
+          "/api",
+          map
+        )
+        |> json_response(200)
 
-      assert json_response(res, 200)["data"]["createPerson"] == nil
+      assert res["data"]["createPerson"] == nil
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You need to be logged in"
 
       res =
-        context.conn
+        conn
         |> auth_conn(user)
         |> put_req_header("content-type", "multipart/form-data")
-        |> post("/api", map)
+        |> post(
+          "/api",
+          map
+        )
+        |> json_response(200)
 
-      assert json_response(res, 200)["data"]["createPerson"]["preferredUsername"] ==
+      assert res["data"]["createPerson"]["preferredUsername"] ==
                "new_identity"
 
-      assert json_response(res, 200)["data"]["createPerson"]["banner"]["id"]
+      assert res["data"]["createPerson"]["banner"]["id"]
 
-      assert json_response(res, 200)["data"]["createPerson"]["banner"]["name"] ==
+      assert res["data"]["createPerson"]["banner"]["name"] ==
                "The beautiful atlantic way"
 
-      assert json_response(res, 200)["data"]["createPerson"]["banner"]["url"] =~
+      assert res["data"]["createPerson"]["banner"]["url"] =~
                Endpoint.url() <> "/media/"
     end
 
-    test "update_person/3 updates an existing identity", context do
+    test "with an username that is not acceptable", %{conn: conn} do
+      user = insert(:user)
+      _actor = insert(:actor, user: user)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_person_mutation,
+          variables: %{
+            preferredUsername: "me@no",
+            name: "wrong person"
+          }
+        )
+
+      assert hd(res["errors"])["message"] ==
+               ["Username must only contain alphanumeric lowercased characters and underscores."]
+    end
+  end
+
+  describe "update_person/3" do
+    test "updates an existing identity", context do
       user = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
 
@@ -333,7 +380,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert res_person["banner"]["url"] =~ Endpoint.url() <> "/media/"
     end
 
-    test "update_person/3 should fail to update a not owned identity", context do
+    test "should fail to update a not owned identity", context do
       user1 = insert(:user)
       user2 = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user2, preferred_username: "riri")
@@ -360,7 +407,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "Profile is not owned by authenticated user"
     end
 
-    test "update_person/3 should fail to update a not existing identity", context do
+    test "should fail to update a not existing identity", context do
       user = insert(:user)
       insert(:actor, user: user, preferred_username: "riri")
 
@@ -385,8 +432,10 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
       assert hd(json_response(res, 200)["errors"])["message"] ==
                "Profile not found"
     end
+  end
 
-    test "delete_person/3 should fail to update a not owned identity", context do
+  describe "delete_person/3" do
+    test "should fail to update a not owned identity", context do
       user1 = insert(:user)
       user2 = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user2, preferred_username: "riri")
@@ -410,7 +459,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "Profile is not owned by authenticated user"
     end
 
-    test "delete_person/3 should fail to delete a not existing identity", context do
+    test "should fail to delete a not existing identity", context do
       user = insert(:user)
       insert(:actor, user: user, preferred_username: "riri")
 
@@ -433,7 +482,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "Profile not found"
     end
 
-    test "delete_person/3 should fail to delete the last user identity", context do
+    test "should fail to delete the last user identity", context do
       user = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
 
@@ -456,7 +505,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "Cannot remove the last identity of a user"
     end
 
-    test "delete_person/3 should fail to delete an identity that is the last admin of a group",
+    test "should fail to delete an identity that is the last admin of a group",
          context do
       group = insert(:group)
       classic_user = insert(:user)
@@ -488,7 +537,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
                "Cannot remove the last administrator of a group"
     end
 
-    test "delete_person/3 should delete an actor identity", context do
+    test "should delete an actor identity", context do
       user = insert(:user)
       %Actor{id: person_id} = insert(:actor, user: user, preferred_username: "riri")
       insert(:actor, user: user, preferred_username: "fifi")

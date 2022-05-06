@@ -19,6 +19,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
   require Logger
 
@@ -224,9 +225,22 @@ defmodule Mobilizon.Actors.Actor do
     preferred_username_and_domain(actor)
   end
 
-  def display_name_and_username(%__MODULE__{name: name} = actor) do
+  def display_name_and_username(%__MODULE__{
+        type: :Application,
+        name: name,
+        preferred_username: "relay",
+        domain: domain
+      })
+      when domain not in [nil, ""] and name not in [nil, ""] do
+    "#{name} (#{domain})"
+  end
+
+  def display_name_and_username(%__MODULE__{name: name, preferred_username: username} = actor)
+      when username not in [nil, ""] do
     "#{name} (@#{preferred_username_and_domain(actor)})"
   end
+
+  def display_name_and_username(_), do: nil
 
   @doc """
   Returns the preferred username with the eventual @domain suffix if it's
@@ -235,8 +249,18 @@ defmodule Mobilizon.Actors.Actor do
   @spec preferred_username_and_domain(t) :: String.t()
   def preferred_username_and_domain(%__MODULE__{
         preferred_username: preferred_username,
-        domain: nil
-      }) do
+        domain: domain
+      })
+      when domain in [nil, ""] do
+    preferred_username
+  end
+
+  def preferred_username_and_domain(%__MODULE__{
+        type: :Application,
+        preferred_username: preferred_username,
+        domain: domain
+      })
+      when not is_nil(domain) and preferred_username == domain do
     preferred_username
   end
 
@@ -290,6 +314,7 @@ defmodule Mobilizon.Actors.Actor do
     |> build_urls()
     |> common_changeset(attrs)
     |> unique_username_validator()
+    |> username_validator()
     |> validate_required(@registration_required_attrs)
   end
 
@@ -333,6 +358,7 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:keys, Crypto.generate_rsa_2048_private_key())
     |> put_change(:type, :Group)
     |> unique_username_validator()
+    |> username_validator()
     |> validate_required(@group_creation_required_attrs)
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
@@ -357,6 +383,23 @@ defmodule Mobilizon.Actors.Actor do
 
   # When we don't even have any preferred_username, don't even try validating preferred_username
   defp unique_username_validator(changeset), do: changeset
+
+  defp username_validator(%Ecto.Changeset{} = changeset) do
+    username = Ecto.Changeset.fetch_field!(changeset, :preferred_username)
+
+    if is_valid_string(username) and Regex.match?(~r/^[a-z0-9_]+$/, username) do
+      changeset
+    else
+      add_error(
+        changeset,
+        :preferred_username,
+        dgettext(
+          "errors",
+          "Username must only contain alphanumeric lowercased characters and underscores."
+        )
+      )
+    end
+  end
 
   @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
