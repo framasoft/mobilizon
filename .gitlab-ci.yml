@@ -238,13 +238,13 @@ build-docker-tag:
 
 # Packaging app for amd64
 package-app:
-  image: mobilizon/buildpack:1.13.4-erlang-24.3.3-${OS}
+  image: mobilizon/buildpack:1.13.4-erlang-24.3.3-debian-buster
   stage: package
   variables: &release-variables
     MIX_ENV: "prod"
     DEBIAN_FRONTEND: noninteractive
     TZ: Etc/UTC
-    APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}_${OS}.tar.gz"
+    APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
   script: &release-script
     - mix local.hex --force
     - mix local.rebar --force
@@ -263,9 +263,6 @@ package-app:
     expire_in: 2 days
     paths:
       - ${APP_ASSET}
-  parallel:
-    matrix:
-      - OS: ["debian-bullseye", "debian-buster", "ubuntu-focal", "ubuntu-bionic", "fedora-35", "fedora-36", "alpine-3.14.5", "alpine-3.15.3"]
 
 package-app-dev:
   stage: package
@@ -288,9 +285,8 @@ multi-arch-release:
     DOCKER_TLS_VERIFY: 1
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
     DOCKER_DRIVER: overlay2
-    APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}_${OS}.tar.gz"
-    # For now, arm and arm64 are only build for debian bullseye version
-    OS: debian-bullseye
+    APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
+    OS: debian-buster
   services:
     - docker:20.10.12-dind
   cache: {}
