@@ -1307,6 +1307,14 @@ defmodule Mobilizon.Actors do
     |> Repo.exists?()
   end
 
+  @doc """
+  Returns a relay actor, either `relay@domain` (Mobilizon) or `domain@domain` (Mastodon)
+  """
+  @spec get_relay(String.t()) :: Actor.t() | nil
+  def get_relay(domain) do
+    get_actor_by_name("relay@#{domain}") || get_actor_by_name("#{domain}@#{domain}")
+  end
+
   @spec delete_files_if_media_changed(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp delete_files_if_media_changed(%Ecto.Changeset{changes: changes, data: data} = changeset) do
     Enum.each([:avatar, :banner], fn key ->

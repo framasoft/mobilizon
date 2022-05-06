@@ -469,7 +469,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       })
       when is_admin(role) do
     has_relay = Actors.has_relay?(domain)
-    remote_relay = Actors.get_actor_by_name("relay@#{domain}")
+    remote_relay = Actors.get_relay(domain)
     local_relay = Relay.get_actor()
 
     result = %{
