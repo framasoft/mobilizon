@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -7,72 +8,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2.1.0-rc.4 - 2022-05-03
 
 Changes since rc.3:
-* Use upstream dependencies for Ueberauth providers
-* Fix Ueberauth use of CSRF with session
-* Fix being an administrator when using 3rd-party auth provider
-* Include ongoing events in search
-* Send push notification into own task
-* Add Überauth CAS Strategy
+
+- Use upstream dependencies for Ueberauth providers
+- Fix Ueberauth use of CSRF with session
+- Fix being an administrator when using 3rd-party auth provider
+- Include ongoing events in search
+- Send push notification into own task
+- Add Überauth CAS Strategy
 
 ## 2.1.0-rc.3 - 2022-04-24
 
 Changes since rc.2:
-* Fix activity notifications by preloading user.activity_settings
-* Add "Accept-Language" header to sentry request metadata
-* Hide address blocks when address has no real data
-* Fix text overflow on group card description
-* Exclude tags with more than 40 characters from being extracted
-* Avoid duplicate tags with different casing
-* Fix invalid HTML (<div> inside <label>)
-* Remove attribute type="text/css" from <style> tags
-* Improve actor cards integration
-* Fix latest group not refreshing in admin section
-* Add missing "relay@" part of federated address to follow
+
+- Fix activity notifications by preloading user.activity_settings
+- Add "Accept-Language" header to sentry request metadata
+- Hide address blocks when address has no real data
+- Fix text overflow on group card description
+- Exclude tags with more than 40 characters from being extracted
+- Avoid duplicate tags with different casing
+- Fix invalid HTML (<div> inside <label>)
+- Remove attribute type="text/css" from <style> tags
+- Improve actor cards integration
+- Fix latest group not refreshing in admin section
+- Add missing "relay@" part of federated address to follow
 
 ## 2.1.0-rc.2 - 2022-04-20
 
 Changes since rc.1:
-* Hide the whole metadata block if group has no description
-* Increase task timeout in Refresher to 60 seconds
-* Allow webfinger to be fetched over http (not https) in dev mode
-* Fix rejecting instance follow
-* Allow instance to have non-standard ports
-* Improve reactions when approving/rejecting an instance follow
-* Improve instance admin view for mobile
-* Allow to reject instance following
-* Fix pagination of group events
-* Add pagination to the instances list
-* Upgrade deps
-* Eventually fetch actors in mentions
-* Add proper fallback for when a TZ isn't registered
-* Improve IdentityPicker
-* Hide side of report modal on low width screens
-* Improve JoinGroupWithAccount component
-* Various group and posts improvements
-* Fix Telegram Logo being replaced with Mastodon logo in ShareGroupModal
-* Change URL to Mastodon Share Manager
-* Improve ActorInline component
-* Avoid assuming we're on Debian-based in release build
-* Fix receiving Flag activities on federated events
-* Update schema.graphql file
+
+- Hide the whole metadata block if group has no description
+- Increase task timeout in Refresher to 60 seconds
+- Allow webfinger to be fetched over http (not https) in dev mode
+- Fix rejecting instance follow
+- Allow instance to have non-standard ports
+- Improve reactions when approving/rejecting an instance follow
+- Improve instance admin view for mobile
+- Allow to reject instance following
+- Fix pagination of group events
+- Add pagination to the instances list
+- Upgrade deps
+- Eventually fetch actors in mentions
+- Add proper fallback for when a TZ isn't registered
+- Improve IdentityPicker
+- Hide side of report modal on low width screens
+- Improve JoinGroupWithAccount component
+- Various group and posts improvements
+- Fix Telegram Logo being replaced with Mastodon logo in ShareGroupModal
+- Change URL to Mastodon Share Manager
+- Improve ActorInline component
+- Avoid assuming we're on Debian-based in release build
+- Fix receiving Flag activities on federated events
+- Update schema.graphql file
 
 ## 2.1.0-rc.1 - 2022-04-18
 
 Changes since beta.3:
-* Fix posts creation
-* Fix some typespecs
-* Remove Koena Connect button
-* Update dependencies
+
+- Fix posts creation
+- Fix some typespecs
+- Remove Koena Connect button
+- Update dependencies
 
 ## 2.1.0-beta.3 - 2022-04-09
 
 Changes since beta.2:
-* Add Fedora and Alpine builds
+
+- Add Fedora and Alpine builds
 
 ## 2.1.0-beta.2 - 2022-04-08
 
 Changes since beta.1 :
-* Build release packages for several distributions (Debian Bullseye, Debian Buster, Ubuntu Focal, Ubuntu Bionic) because of libc version changes
+
+- Build release packages for several distributions (Debian Bullseye, Debian Buster, Ubuntu Focal, Ubuntu Bionic) because of libc version changes
 
 ## 2.1.0-beta.1 - 2022-04-07
 
@@ -85,6 +92,7 @@ Changes since beta.1 :
 - Added a button to go to past events of a group if it has no upcoming events
 
 ### Changed
+
 - Changed mailer library from Bamboo to Swoosh, should fix emails being considered spam. **Some configuration changes are required, see below.**
 - Expose some fields to ActivityStreams event representation: `isOnline`, `remainingAttendeeCapacity` and `participantCount`
 - Expose a new field to ActivityStreams group representation: `memberCount`
@@ -165,6 +173,7 @@ Changes since beta.1 :
 - Fixed the admin page when a group/profile/user was not found
 - Fixed group members pagination on admin group profile view
 - Fixed admin edition of the instance's language
+
 ### Translations
 
 - Croatian
@@ -337,7 +346,6 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Slovenian
 - Spanish
 
-
 ## 2.0.0-rc.3 - 2021-11-22
 
 This lists changes since 2.0.0-rc.3. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
@@ -358,11 +366,13 @@ This lists changes since 2.0.0-rc.1. Please read the [UPGRADE.md](https://framag
 - Improve MyEvents page description text
 
 ### Fixed
+
 - Fix spacing in organizer picker
 - Increase number of close events and follow group events
 - Fix accessing user profile in admin section
 - Set initial values for some EventMetadata elements, fixing submitting them right away with no value
 - Avoid giving an error page if the apollo futureParticipations query is undefined
+
 ### Translations
 
 - German
@@ -383,6 +393,7 @@ This lists changes since 2.0.0-beta.2. Please read the [UPGRADE.md](https://fram
 - Add "formerType" and "delete" attributes on Tombstones ActivityPub objects representation
 
 ### Fixed
+
 - Fixed creating group activities when creating events with some fields
 - Move release package at correct path for CI upload
 - Fixed event contacts that were not exposed and fetched over federation
@@ -401,6 +412,7 @@ This lists changes since 2.0.0-beta.2. Please read the [UPGRADE.md](https://fram
 ## 2.0.0-beta.2 - 2021-11-15
 
 This lists changes since 2.0.0-beta.1. Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
 ### Added
 
 - Group followers and members get an notification email by default when a group publishes a new event (subject to activity notification settings)
@@ -437,6 +449,7 @@ This lists changes since 2.0.0-beta.1. Please read the [UPGRADE.md](https://fram
 ## 2.0.0-beta.1 - 2021-11-09
 
 Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md#upgrading-from-13-to-20) file as well.
+
 ### Added
 
 - Added possibility to follow groups and be notified from new upcoming events
@@ -501,6 +514,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 ### Security
 
 - Fixed private messages sent as event replies from Mastodon that were shown publically as public comments. They are now discarded.
+
 ### Translations
 
 - Czech
@@ -568,7 +582,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 ### Fixed
 
 - Fixed links contained in event & post description that didn't open in new tabs
-- Add back missing RSS/ical links on public group pages 
+- Add back missing RSS/ical links on public group pages
 - Fixed links to Framacolibri forum
 - Fixed drafts and restricted visibility events & posts listed on group page
 - Fixed notification page on Safari
@@ -589,7 +603,6 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Fixed Coordinates mixmatch between latitude and longitude in iCalendar export and federation
 - Fixed token refreshment issues
 - Fixed search from 404 page
-
 
 ### Translations
 
@@ -616,9 +629,10 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Fixed group discussions with deleted comments
 
 ## 1.2.2 - 2021-07-01
+
 ### Changed
 
-- Improved UI for participations when message is too long 
+- Improved UI for participations when message is too long
 
 ### Fixed
 
@@ -626,7 +640,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Fixed crash when trying to notify activities not from groups
 - Fixed imagemagick missing from Dockerfile
 - Fixed push notifications for group, members & post activities
-- Fixed ellipsis in DiscussionListView 
+- Fixed ellipsis in DiscussionListView
 - Fixed submission button for posts not visible on mobile
 - Fixed remote profile suspension
 
@@ -642,6 +656,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - Fixed compatibility check in Notification section for service workers
 
 ## 1.2.0 - 2021-06-29
+
 ### Added
 
 - **Notifications for various group and event activity, both by email and browser push notifications. Daily and weekly digests are also available.**
@@ -656,7 +671,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 - **Various improvements to mobile views**
 - Make JWT access tokens short-lived
 - Disabled Cldr warning that the `Cldr.Plug.AcceptLanguage` plug didn't many any known locale
-- Replaced GraphiQL web interface with graphql-playground 
+- Replaced GraphiQL web interface with graphql-playground
 
 ### Removed
 
@@ -816,7 +831,7 @@ Please read the [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/mai
 ### Changed
 
 - Added an unique index on the addresses url
-- Added org.opencontainers.image.source annotation to the Docker image 
+- Added org.opencontainers.image.source annotation to the Docker image
 - Improved the moderation action logs interface
 
 ### Fixes
@@ -937,7 +952,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed getting metadata from tweets when creating a resource
 - Fixed bad handling of duplicate usernames
 - Fixed handling of bad URIs to proxify
-- Fixed creating discussion with title containing only spaces 
+- Fixed creating discussion with title containing only spaces
 - Fixed registering new user account with same email as unconfirmed
 - Fixed handling changing default actor unlogged
 - Fixed handling getting organized events from an actor when not authorized
@@ -1009,6 +1024,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Hungarian
 - Russian
 - Spanish
+
 ## 1.1.0-rc.1 - 2021-03-29
 
 ### Added
@@ -1034,7 +1050,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed getting metadata from tweets when creating a resource
 - Fixed bad handling of duplicate usernames
 - Fixed handling of bad URIs to proxify
-- Fixed creating discussion with title containing only spaces 
+- Fixed creating discussion with title containing only spaces
 - Fixed registering new user account with same email as unconfirmed
 - Fixed handling changing default actor unlogged
 - Fixed handling getting organized events from an actor when not authorized
@@ -1056,11 +1072,13 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 ## 1.1.0-beta.6 - 2021-03-17
 
 ### Fixed
+
 - Fixed a typo in range/radius showing the wrong radius for close events on homepage
 
 ## 1.1.0-beta.5 - 2021-03-17
 
 ### Fixed
+
 - Fixed a typo in range/radius preventing close events from showing up
 
 ## 1.1.0-beta.4 - 2021-03-17
@@ -1074,15 +1092,18 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 ## 1.1.0-beta.3 - 2021-03-16
 
 ### Fixed
+
 - Handle ActivityPub Fetcher returning text that's not JSON
 - Fix accessing a group profile when not a member
 
 ## 1.1.0-beta.2 - 2021-03-16
 
 ### Fixed
+
 - Fixed geospatial configuration only being evaluated at compile-time, not at runtime
 
 ### Translations
+
 - Slovenian
 
 ## 1.1.0-beta.1 - 2021-03-10
@@ -1224,23 +1245,23 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 
 ### Special operations
 
-* **Reattach media files to their entity.**
+- **Reattach media files to their entity.**
   When media files were uploaded and added in events and posts bodies, they were only attached to the profile that uploaded them, not to the event or post. This task attaches them back to their entity so that the command to clean orphan media files doesn't remove them.
 
-  * Source install
+  - Source install
     `MIX_ENV=prod mix mobilizon.maintenance.fix_unattached_media_in_body`
-  * Docker
+  - Docker
     `docker-compose exec mobilizon mobilizon_ctl maintenance.fix_unattached_media_in_body`
 
-* **Refresh remote profiles to save avatars locally**
+- **Refresh remote profiles to save avatars locally**
   Profile avatars and banners were previously only proxified and cached. Now we save them locally. Refreshing all remote actors will save profile media locally instead.
 
-  * Source install
+  - Source install
     `MIX_ENV=prod mix mobilizon.actors.refresh --all`
-  * Docker
+  - Docker
     `docker-compose exec mobilizon mobilizon_ctl actors.refresh --all`
 
-* **imagemagick and webp are now a required dependency** to build Mobilizon.
+- **imagemagick and webp are now a required dependency** to build Mobilizon.
   Optimized versions of Mobilizon's pictures are now produced during front-end build.
   See [the documentation](https://docs.joinmobilizon.org/administration/dependencies/#misc) to make sure these dependencies are installed.
 
@@ -1283,7 +1304,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 - Fixed error message not showing up when you are already an anonymous participant for an event
 - Fixed error message not showing up when you pick an username already in user for a new profile or a group
 - Fixed translations not fallbacking properly to english when not found
-- 
+-
 
 ### Security
 
@@ -1292,6 +1313,7 @@ This version introduces a new way to install and host Mobilizon : Elixir releas
 ### Translations
 
 Updated translations:
+
 - Catalan
 - Dutch
 - English
@@ -1464,20 +1486,21 @@ Updated translations:
 
 ### Special operations
 
-* We added `application/ld+json` as acceptable MIME type for ActivityPub requests, so you'll need to recompile the `mime` library we use before recompiling Mobilizon:
-    ```
-    MIX_ENV=prod mix deps.clean mime --build
-    ```
+- We added `application/ld+json` as acceptable MIME type for ActivityPub requests, so you'll need to recompile the `mime` library we use before recompiling Mobilizon:
 
-* The [nginx configuration](https://framagit.org/framasoft/mobilizon/-/blob/main/support/nginx/mobilizon.conf) has been changed with improvements and support for custom error pages.
+  ```
+  MIX_ENV=prod mix deps.clean mime --build
+  ```
 
-* The cmake dependency has been added (see [our documentation](https://docs.joinmobilizon.org/administration/dependencies/#basic-tools))
+- The [nginx configuration](https://framagit.org/framasoft/mobilizon/-/blob/main/support/nginx/mobilizon.conf) has been changed with improvements and support for custom error pages.
+
+- The cmake dependency has been added (see [our documentation](https://docs.joinmobilizon.org/administration/dependencies/#basic-tools))
 
 ### Added
 
 - Possibility to login using LDAP
 - Possibility to login using OAuth providers
-- Enabled group features in production mode 
+- Enabled group features in production mode
   - including posts (that can be public, unlisted, or restricted to your group members)
   - resources (collections of links, with folders, accessible to your group members)
   - discussions (group private and organized chats)
@@ -1501,11 +1524,12 @@ Updated translations:
 ### Security
 
 - Fix group settings being accessible and editable by non-group-admins (thx @pigpig for reporting this responsibly)
-- Fix events being editable by profiles without permissions (thx @pigpig for reporting this responsibly) 
+- Fix events being editable by profiles without permissions (thx @pigpig for reporting this responsibly)
 
 ## [1.0.0-beta.3] - 2020-06-24
 
 ### Special operations
+
 Config has moved from `.env` files to a more traditional way to handle things in the Elixir world, with `.exs` files.
 
 To migrate existing configuration, you can simply run `mix mobilizon.instance gen` and fill in the adequate values previously in `.env` files (you don't need to perform the operations to create the database).
@@ -1515,6 +1539,7 @@ A minimal file template [is available](https://framagit.org/framasoft/mobilizon/
 Also make sure to remove the `EnvironmentFile=` line from the systemd service and set `Environment=MIX_ENV=prod` instead. See [the updated file](https://framagit.org/framasoft/mobilizon/blob/main/support/systemd/mobilizon.service).
 
 ### Added
+
 - Possibility to participate to an event without an account (confirmation through email required)
 - Possibility to participate to a remote event (being redirected by providing federated identity)
 - Possibility to add a note as a participant when event participation is manually validated (required when participating without an account)
@@ -1531,6 +1556,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Allow user to change language
 
 ### Changed
+
 - Configuration handling (see above)
 - Improved a bit color theme
 - Signature validation also now checks if `Date` header has acceptable values
@@ -1541,6 +1567,7 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 - Improved public event page
 
 ### Fixed
+
 - Fixed URL search
 - Fixed content accessed through URL search being public
 - Fix event links in some emails
@@ -1548,17 +1575,21 @@ Also make sure to remove the `EnvironmentFile=` line from the systemd service an
 ## [1.0.0-beta.2] - 2019-12-18
 
 ### Special operations
+
 These two operations couldn't be handled during migrations.
 They are optional, but you won't be able to search or get participant stats on existing events if they are not executed.
 These commands will be removed in Mobilizon 1.0.0-beta.3.
 
 In order to populate search index for existing events, you need to run the following command (with prod environment):
-* `mix mobilizon.setup_search`
+
+- `mix mobilizon.setup_search`
 
 In order to move participant stats to the event table for existing events, you need to run the following command (with prod environment):
-* `mix mobilizon.move_participant_stats`
+
+- `mix mobilizon.move_participant_stats`
 
 ### Added
+
 - Federation is active
 - Added an interface for admins to view and manage instance followers and followings
 - Ability to comment below events
@@ -1583,6 +1614,7 @@ In order to move participant stats to the event table for existing events, you n
 - Upgraded frontend and backend dependencies
 
 ### Changed
+
 - Move participant stats to event table **(read special instructions above)**
 - Limit length (20 characters) and number (10) of tags allowed
 - Added some backend changes and validation for field length
@@ -1596,6 +1628,7 @@ In order to move participant stats to the event table for existing events, you n
 - Also consider the PeerTube `CommentsEnabled` property to know if you can reply to an event
 
 ### Fixed
+
 - Fix event URL validation and check if hostname is correct before showing it
 - Fix participations stats on the MyEvents page
 - Fix event description lists margin
@@ -1625,8 +1658,11 @@ In order to move participant stats to the event table for existing events, you n
 - Fixed event HTML representation when `GET` request has no `Accept` header
 
 ### Security
+
 - Sanitize event title to avoid XSS
 
 ## [1.0.0-beta.1] - 2019-10-15
+
 ### Added
+
 - Initial release
