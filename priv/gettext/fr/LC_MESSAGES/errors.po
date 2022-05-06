@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-04-19 17:59+0200\n"
+"PO-Revision-Date: 2022-05-06 13:08+0200\n"
 "Last-Translator: Vincent Finance <linuxmario@linuxmario.net>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend-errors/fr/>\n"
 "Language: fr\n"
@@ -144,8 +144,8 @@ msgstr "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e
 
 #: lib/graphql/resolvers/feed_token.ex:28 lib/graphql/resolvers/participant.ex:32
 #: lib/graphql/resolvers/participant.ex:210 lib/graphql/resolvers/person.ex:236 lib/graphql/resolvers/person.ex:353
-#: lib/graphql/resolvers/person.ex:388 lib/graphql/resolvers/person.ex:395 lib/graphql/resolvers/person.ex:423
-#: lib/graphql/resolvers/person.ex:438
+#: lib/graphql/resolvers/person.ex:389 lib/graphql/resolvers/person.ex:396 lib/graphql/resolvers/person.ex:425
+#: lib/graphql/resolvers/person.ex:440
 msgid "Profile is not owned by authenticated user"
 msgstr "Le profil n'est pas possédé par l'utilisateur connecté"
 
@@ -157,11 +157,11 @@ msgstr "Les inscriptions ne sont pas ouvertes"
 msgid "The current password is invalid"
 msgstr "Le mot de passe actuel est invalid"
 
-#: lib/graphql/resolvers/admin.ex:340 lib/graphql/resolvers/user.ex:470
+#: lib/graphql/resolvers/admin.ex:334 lib/graphql/resolvers/user.ex:470
 msgid "The new email doesn't seem to be valid"
 msgstr "La nouvelle adresse e-mail ne semble pas être valide"
 
-#: lib/graphql/resolvers/admin.ex:343 lib/graphql/resolvers/user.ex:473
+#: lib/graphql/resolvers/admin.ex:337 lib/graphql/resolvers/user.ex:473
 msgid "The new email must be different"
 msgstr "La nouvelle adresse e-mail doit être différente"
 
@@ -504,15 +504,15 @@ msgstr "Vous devez être connecté·e et une modérateur·ice pour modifier un s
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Vous devez être connecté·e pour et une modérateur·ice pour visionner un signalement"
 
-#: lib/graphql/resolvers/admin.ex:256
+#: lib/graphql/resolvers/admin.ex:250
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux paramètres administrateur"
 
-#: lib/graphql/resolvers/admin.ex:240
+#: lib/graphql/resolvers/admin.ex:234
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux panneau de statistiques"
 
-#: lib/graphql/resolvers/admin.ex:282
+#: lib/graphql/resolvers/admin.ex:276
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegarder les paramètres administrateur"
 
@@ -741,7 +741,7 @@ msgstr "Impossible de quitter l'événement"
 msgid "Failed to update the group"
 msgstr "Impossible de mettre à jour le groupe"
 
-#: lib/graphql/resolvers/admin.ex:337 lib/graphql/resolvers/user.ex:467
+#: lib/graphql/resolvers/admin.ex:331 lib/graphql/resolvers/user.ex:467
 msgid "Failed to update user email"
 msgstr "Impossible de mettre à jour l'adresse e-mail de utilisateur"
 
@@ -845,22 +845,26 @@ msgstr "Vous devez être connecté⋅e pour supprimer un⋅e membre"
 msgid "Your email seems to be using an invalid format"
 msgstr "Votre email semble utiliser un format invalide"
 
-#: lib/graphql/resolvers/admin.ex:386
+#: lib/graphql/resolvers/admin.ex:380
 msgid "Can't confirm an already confirmed user"
 msgstr "Impossible de confirmer un⋅e utilisateur⋅ice déjà confirmé⋅e"
 
-#: lib/graphql/resolvers/admin.ex:390
+#: lib/graphql/resolvers/admin.ex:384
 msgid "Deconfirming users is not supported"
 msgstr "Dé-confirmer des utilisateur⋅ices n'est pas supporté"
 
-#: lib/graphql/resolvers/admin.ex:362
+#: lib/graphql/resolvers/admin.ex:356
 msgid "The new role must be different"
 msgstr "Le nouveau rôle doit être différent"
 
-#: lib/graphql/resolvers/admin.ex:313
+#: lib/graphql/resolvers/admin.ex:307
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour éditer les détails d'un⋅e utilisateur⋅ice"
 
 #: lib/graphql/api/groups.ex:33
 msgid "A profile or group with that name already exists"
 msgstr "Un profil ou un groupe avec ce nom existe déjà"
+
+#: lib/graphql/resolvers/admin.ex:506
+msgid "Unable to find an instance to follow at this address"
+msgstr "Impossible de trouver une instance à suivre à cette adresse"

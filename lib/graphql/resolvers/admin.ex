@@ -489,15 +489,25 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  @spec create_instance(any, map(), Absinthe.Resolution.t()) ::
+          {:error, atom() | binary()}
+          | {:ok, Mobilizon.Instances.Instance.t()}
   def create_instance(
         parent,
         %{domain: domain} = args,
         %{context: %{current_user: %User{role: role}}} = resolution
       )
       when is_admin(role) do
-    with {:ok, _activity, _follow} <- Relay.follow(domain) do
-      Instances.refresh()
-      get_instance(parent, args, resolution)
+    case Relay.follow(domain) do
+      {:ok, _activity, _follow} ->
+        Instances.refresh()
+        get_instance(parent, args, resolution)
+
+      {:error, :http_error} ->
+        {:error, dgettext("errors", "Unable to find an instance to follow at this address")}
+
+      {:error, err} ->
+        {:error, err}
     end
   end
 
