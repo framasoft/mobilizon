@@ -224,9 +224,22 @@ defmodule Mobilizon.Actors.Actor do
     preferred_username_and_domain(actor)
   end
 
-  def display_name_and_username(%__MODULE__{name: name} = actor) do
+  def display_name_and_username(%__MODULE__{
+        type: :Application,
+        name: name,
+        preferred_username: "relay",
+        domain: domain
+      })
+      when domain not in [nil, ""] and name not in [nil, ""] do
+    "#{name} (#{domain})"
+  end
+
+  def display_name_and_username(%__MODULE__{name: name, preferred_username: username} = actor)
+      when username not in [nil, ""] do
     "#{name} (@#{preferred_username_and_domain(actor)})"
   end
+
+  def display_name_and_username(_), do: nil
 
   @doc """
   Returns the preferred username with the eventual @domain suffix if it's
@@ -235,8 +248,18 @@ defmodule Mobilizon.Actors.Actor do
   @spec preferred_username_and_domain(t) :: String.t()
   def preferred_username_and_domain(%__MODULE__{
         preferred_username: preferred_username,
-        domain: nil
-      }) do
+        domain: domain
+      })
+      when domain in [nil, ""] do
+    preferred_username
+  end
+
+  def preferred_username_and_domain(%__MODULE__{
+        type: :Application,
+        preferred_username: preferred_username,
+        domain: domain
+      })
+      when not is_nil(domain) and preferred_username == domain do
     preferred_username
   end
 

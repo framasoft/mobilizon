@@ -44,11 +44,19 @@ defmodule Mobilizon.Web.Email.Follow do
 
     subject =
       if follower_type == :Application do
-        gettext(
-          "Instance %{name} (%{domain}) requests to follow your instance",
-          name: follower.name,
-          domain: follower.domain
-        )
+        # Mastodon instance actor has no name and an username equal to the domain
+        if is_nil(follower.name) and follower.preferred_username == follower.domain do
+          gettext(
+            "Instance %{domain} requests to follow your instance",
+            domain: follower.domain
+          )
+        else
+          gettext(
+            "Instance %{name} (%{domain}) requests to follow your instance",
+            name: follower.name || follower.preferred_username,
+            domain: follower.domain
+          )
+        end
       else
         gettext(
           "%{name} requests to follow your instance",
