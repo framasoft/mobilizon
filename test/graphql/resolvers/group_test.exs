@@ -8,7 +8,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
   alias Mobilizon.GraphQL.AbsintheHelpers
 
   @non_existent_username "nonexistent"
-  @new_group_params %{groupname: "new group"}
+  @new_group_params %{name: "new group", preferredUsername: "new_group"}
 
   setup %{conn: conn} do
     user = insert(:user)
@@ -17,48 +17,74 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
     {:ok, conn: conn, actor: actor, user: user}
   end
 
-  describe "create a group" do
-    test "create_group/3 creates a group and check a group with this name does not already exist",
+  describe "create_group/3" do
+    @create_group_mutation """
+    mutation CreateGroup(
+    $preferredUsername: String!
+    $name: String!
+    $summary: String
+    $avatar: MediaInput
+    $banner: MediaInput
+    ) {
+      createGroup(
+        preferredUsername: $preferredUsername
+        name: $name
+        summary: $summary
+        banner: $banner
+        avatar: $avatar
+      ) {
+        preferredUsername
+        type
+        banner {
+          id
+          url
+        }
+      }
+    }
+    """
+
+    test "creates a group and check a group with this name does not already exist",
          %{conn: conn, user: user} do
-      mutation = """
-          mutation {
-            createGroup(
-              preferred_username: "#{@new_group_params.groupname}"
-            ) {
-                preferred_username,
-                type
-              }
-            }
-      """
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_group_mutation,
+          variables: @new_group_params
+        )
+
+      assert res["errors"] == nil
+
+      assert res["data"]["createGroup"]["preferredUsername"] ==
+               @new_group_params.preferredUsername
+
+      assert res["data"]["createGroup"]["type"] == "GROUP"
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_group_mutation,
+          variables: @new_group_params
+        )
 
-      assert json_response(res, 200)["data"]["createGroup"]["preferred_username"] ==
-               @new_group_params.groupname
-
-      assert json_response(res, 200)["data"]["createGroup"]["type"] == "GROUP"
-
-      mutation = """
-          mutation {
-            createGroup(
-              preferred_username: "#{@new_group_params.groupname}"
-            ) {
-                preferred_username,
-                type
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "A profile or group with that name already exists"
+    end
+
+    test "doesn't creates a group if the username doesn't match the requirements",
+         %{conn: conn, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @create_group_mutation,
+          variables: Map.put(@new_group_params, :preferredUsername, "no@way")
+        )
+
+      assert hd(res["errors"])["message"] == [
+               "Username must only contain alphanumeric lowercased characters and underscores."
+             ]
     end
   end
 

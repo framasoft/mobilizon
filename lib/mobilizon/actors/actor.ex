@@ -19,6 +19,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
+  import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
   require Logger
 
@@ -313,6 +314,7 @@ defmodule Mobilizon.Actors.Actor do
     |> build_urls()
     |> common_changeset(attrs)
     |> unique_username_validator()
+    |> username_validator()
     |> validate_required(@registration_required_attrs)
   end
 
@@ -356,6 +358,7 @@ defmodule Mobilizon.Actors.Actor do
     |> put_change(:keys, Crypto.generate_rsa_2048_private_key())
     |> put_change(:type, :Group)
     |> unique_username_validator()
+    |> username_validator()
     |> validate_required(@group_creation_required_attrs)
     |> validate_length(:summary, max: 5000)
     |> validate_length(:preferred_username, max: 100)
@@ -380,6 +383,23 @@ defmodule Mobilizon.Actors.Actor do
 
   # When we don't even have any preferred_username, don't even try validating preferred_username
   defp unique_username_validator(changeset), do: changeset
+
+  defp username_validator(%Ecto.Changeset{} = changeset) do
+    username = Ecto.Changeset.fetch_field!(changeset, :preferred_username)
+
+    if is_valid_string(username) and Regex.match?(~r/^[a-z0-9_]+$/, username) do
+      changeset
+    else
+      add_error(
+        changeset,
+        :preferred_username,
+        dgettext(
+          "errors",
+          "Username must only contain alphanumeric lowercased characters and underscores."
+        )
+      )
+    end
+  end
 
   @spec build_urls(Ecto.Changeset.t(), atom()) :: Ecto.Changeset.t()
   defp build_urls(changeset, type \\ :Person)
