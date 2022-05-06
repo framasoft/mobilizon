@@ -468,12 +468,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         context: %{current_user: %User{role: role}}
       })
       when is_admin(role) do
-    has_relay = Actors.has_relay?(domain)
     remote_relay = Actors.get_relay(domain)
     local_relay = Relay.get_actor()
 
     result = %{
-      has_relay: has_relay,
+      has_relay: !is_nil(remote_relay),
+      relay_address:
+        if(is_nil(remote_relay),
+          do: nil,
+          else: "#{remote_relay.preferred_username}@#{remote_relay.domain}"
+        ),
       follower_status: follow_status(remote_relay, local_relay),
       followed_status: follow_status(local_relay, remote_relay)
     }

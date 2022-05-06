@@ -162,7 +162,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: ACCEPT_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({
@@ -194,7 +194,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: REJECT_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({
@@ -242,7 +242,7 @@ export default class Instance extends Vue {
       await this.$apollo.mutate({
         mutation: REMOVE_RELAY,
         variables: {
-          address: `relay@${this.domain}`,
+          address: this.instance.relayAddress,
         },
         update(cache: ApolloCache<any>) {
           cache.writeFragment({

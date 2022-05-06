@@ -1297,16 +1297,6 @@ defmodule Mobilizon.Actors do
     :ok
   end
 
-  @spec has_relay?(String.t()) :: boolean()
-  def has_relay?(domain) do
-    Actor
-    |> where(
-      [a],
-      a.preferred_username == "relay" and a.domain == ^domain and a.type == :Application
-    )
-    |> Repo.exists?()
-  end
-
   @doc """
   Returns a relay actor, either `relay@domain` (Mobilizon) or `domain@domain` (Mastodon)
   """
