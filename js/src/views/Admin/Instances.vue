@@ -21,6 +21,11 @@
               <b-button type="is-primary" native-type="submit">{{
                 $t("Add an instance")
               }}</b-button>
+              <b-loading
+                :is-full-page="true"
+                v-model="followInstanceLoading"
+                :can-cancel="false"
+              />
             </p>
           </b-field>
         </b-field>
@@ -171,7 +176,6 @@ import {
   InstanceFilterFollowStatus,
   InstanceFollowStatus,
 } from "@/types/enums";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 const { isNavigationFailure, NavigationFailureType } = VueRouter;
 
 const INSTANCES_PAGE_LIMIT = 10;
@@ -202,6 +206,8 @@ const INSTANCES_PAGE_LIMIT = 10;
 })
 export default class Follows extends Vue {
   RouteName = RouteName;
+
+  followInstanceLoading = false;
 
   newRelayAddress = "";
 
@@ -257,6 +263,7 @@ export default class Follows extends Vue {
 
   async followInstance(e: Event): Promise<void> {
     e.preventDefault();
+    this.followInstanceLoading = true;
     const domain = this.newRelayAddress.trim(); // trim to fix copy and paste domain name spaces and tabs
     try {
       await this.$apollo.mutate<{ relayFollowings: Paginate<IFollower> }>({
@@ -266,18 +273,18 @@ export default class Follows extends Vue {
         },
       });
       this.newRelayAddress = "";
+      this.followInstanceLoading = false;
       this.$router.push({
         name: RouteName.INSTANCE,
         params: { domain },
       });
-    } catch (err: any) {
-      if (err.message) {
-        Snackbar.open({
-          message: err.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
+    } catch (error: any) {
+      if (error.message) {
+        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+          this.$notifier.error(error.graphQLErrors[0].message);
+        }
       }
+      this.followInstanceLoading = false;
     }
   }
 

@@ -352,13 +352,6 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       resolve(&Admin.create_instance/3)
     end
 
-    @desc "Add a relay subscription"
-    field :add_relay, type: :follower do
-      arg(:address, non_null(:string), description: "The relay hostname to add")
-
-      resolve(&Admin.create_relay/3)
-    end
-
     @desc "Delete a relay subscription"
     field :remove_relay, type: :follower do
       arg(:address, non_null(:string), description: "The relay hostname to delete")

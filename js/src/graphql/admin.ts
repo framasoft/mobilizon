@@ -131,15 +131,6 @@ export const ADD_INSTANCE = gql`
   ${INSTANCE_FRAGMENT}
 `;
 
-export const ADD_RELAY = gql`
-  mutation addRelay($address: String!) {
-    addRelay(address: $address) {
-      ...relayFragment
-    }
-  }
-  ${RELAY_FRAGMENT}
-`;
-
 export const REMOVE_RELAY = gql`
   mutation removeRelay($address: String!) {
     removeRelay(address: $address) {

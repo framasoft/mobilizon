@@ -1906,12 +1906,6 @@ type RootMutationType {
     domain: String!
   ): Instance
 
-  "Add a relay subscription"
-  addRelay(
-    "The relay hostname to add"
-    address: String!
-  ): Follower
-
   "Delete a relay subscription"
   removeRelay(
     "The relay hostname to delete"

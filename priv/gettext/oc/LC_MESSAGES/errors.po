@@ -166,10 +166,10 @@ msgstr "Degun trobat d'amb aquesta email"
 #: lib/graphql/resolvers/participant.ex:210
 #: lib/graphql/resolvers/person.ex:236
 #: lib/graphql/resolvers/person.ex:353
-#: lib/graphql/resolvers/person.ex:388
-#: lib/graphql/resolvers/person.ex:395
-#: lib/graphql/resolvers/person.ex:423
-#: lib/graphql/resolvers/person.ex:438
+#: lib/graphql/resolvers/person.ex:389
+#: lib/graphql/resolvers/person.ex:396
+#: lib/graphql/resolvers/person.ex:425
+#: lib/graphql/resolvers/person.ex:440
 msgid "Profile is not owned by authenticated user"
 msgstr "Lo perhiu es pas proprietat del utilizator autenticat"
 
@@ -184,13 +184,13 @@ msgid "The current password is invalid"
 msgstr "Lo mòt de santa clara actuau es invalid"
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:340
+#: lib/graphql/resolvers/admin.ex:334
 #: lib/graphql/resolvers/user.ex:470
 msgid "The new email doesn't seem to be valid"
 msgstr "Lo email nau sèm invalid"
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:343
+#: lib/graphql/resolvers/admin.ex:337
 #: lib/graphql/resolvers/user.ex:473
 msgid "The new email must be different"
 msgstr "Lo email nau deb esser different"
@@ -652,17 +652,17 @@ msgid "You need to be logged-in and a moderator to view a report"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:256
+#: lib/graphql/resolvers/admin.ex:250
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:240
+#: lib/graphql/resolvers/admin.ex:234
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:282
+#: lib/graphql/resolvers/admin.ex:276
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 
@@ -954,7 +954,7 @@ msgid "Failed to update the group"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:337
+#: lib/graphql/resolvers/admin.ex:331
 #: lib/graphql/resolvers/user.ex:467
 msgid "Failed to update user email"
 msgstr ""
@@ -1085,26 +1085,31 @@ msgid "Your email seems to be using an invalid format"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:386
+#: lib/graphql/resolvers/admin.ex:380
 msgid "Can't confirm an already confirmed user"
 msgstr ""
 
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:390
+#: lib/graphql/resolvers/admin.ex:384
 msgid "Deconfirming users is not supported"
 msgstr ""
 
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/graphql/resolvers/admin.ex:362
+#: lib/graphql/resolvers/admin.ex:356
 msgid "The new role must be different"
 msgstr "Lo email nau deb esser different"
 
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/graphql/resolvers/admin.ex:313
+#: lib/graphql/resolvers/admin.ex:307
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
 
 #, elixir-autogen, elixir-format
 #: lib/graphql/api/groups.ex:33
 msgid "A profile or group with that name already exists"
+msgstr ""
+
+#, elixir-autogen, elixir-format
+#: lib/graphql/resolvers/admin.ex:506
+msgid "Unable to find an instance to follow at this address"
 msgstr ""
