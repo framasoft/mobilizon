@@ -511,15 +511,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     end
   end
 
-  @spec create_relay(any(), map(), Absinthe.Resolution.t()) ::
-          {:ok, Follower.t()} | {:error, any()}
-  def create_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
-      when is_admin(role) do
-    with {:ok, _activity, follow} <- Relay.follow(address) do
-      {:ok, follow}
-    end
-  end
-
   @spec remove_relay(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Follower.t()} | {:error, any()}
   def remove_relay(_parent, %{address: address}, %{context: %{current_user: %User{role: role}}})
