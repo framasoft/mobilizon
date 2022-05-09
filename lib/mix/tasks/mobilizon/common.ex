@@ -54,7 +54,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
   @spec shell_yes?(String.t()) :: boolean()
   def shell_yes?(message) do
     if mix_shell?(),
-      do: Mix.shell().yes?("Continue?"),
+      do: Mix.shell().yes?(message),
       else: shell_prompt(message, "Continue?") in ~w(Yn Y y)
   end
 
