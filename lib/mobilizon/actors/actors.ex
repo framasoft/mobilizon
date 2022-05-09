@@ -920,7 +920,7 @@ defmodule Mobilizon.Actors do
   end
 
   @doc """
-  Returns the number of followers for a group
+  Returns the number of members for a group
   """
   @spec count_members_for_group(Actor.t()) :: integer()
   def count_members_for_group(%Actor{id: actor_id}) do
