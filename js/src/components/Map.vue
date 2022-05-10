@@ -142,7 +142,9 @@ export default class Map extends Vue {
   }
 
   updateDraggableMarkerPosition(e: LatLng): void {
-    this.updateDraggableMarkerCallback(e, this.zoom);
+    if (this.updateDraggableMarkerCallback) {
+      this.updateDraggableMarkerCallback(e, this.zoom);
+    }
   }
 
   updateZoom(zoom: number): void {
