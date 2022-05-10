@@ -17,25 +17,27 @@ defmodule Mobilizon.Web.Email.Group do
     # TODO: When we have events restricted to members, don't send emails to followers
     group
     |> Actors.list_actors_to_notify_from_group_event()
+    |> Enum.reduce([], fn actor, users ->
+      # No emails for remote actors
+      if is_nil(actor.user_id) do
+        users
+      else
+        users ++ [Users.get_user_with_activity_settings!(actor.user_id)]
+      end
+    end)
     |> Enum.each(&notify_follower(event, group, &1))
   end
 
   def notify_of_new_event(%Event{}), do: :ok
 
-  defp notify_follower(%Event{} = _event, %Actor{}, %Actor{user_id: nil}), do: :ok
-
-  defp notify_follower(%Event{} = event, %Actor{type: :Group} = group, %Actor{
-         id: profile_id,
-         user_id: user_id
+  defp notify_follower(%Event{} = event, %Actor{type: :Group} = group, %User{
+         email: email,
+         locale: locale,
+         settings: %Setting{timezone: timezone},
+         activity_settings: activity_settings,
+         default_actor_id: default_actor_id
        }) do
-    %User{
-      email: email,
-      locale: locale,
-      settings: %Setting{timezone: timezone},
-      activity_settings: activity_settings
-    } = Users.get_user_with_activity_settings!(user_id)
-
-    if profile_id != event.organizer_actor_id &&
+    if default_actor_id != event.organizer_actor_id &&
          accepts_new_events_notifications(activity_settings) do
       Gettext.put_locale(locale)
 
