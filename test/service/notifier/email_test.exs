@@ -4,7 +4,7 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
   """
 
   alias Mobilizon.Activities.Activity
-  alias Mobilizon.Config
+  alias Mobilizon.{Config, Users}
   alias Mobilizon.Service.Notifier.Email
   alias Mobilizon.Users.{ActivitySetting, Setting, User}
 
@@ -101,12 +101,14 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
       %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
       %User{} = user = insert(:user)
 
+      old = DateTime.add(DateTime.utc_now(), -3600 * 24 * 3)
+
       %Setting{} =
         user_settings =
         insert(:settings,
           user_id: user.id,
           group_notifications: :one_day,
-          last_notification_sent: DateTime.add(DateTime.utc_now(), 3600)
+          last_notification_sent: old
         )
 
       %ActivitySetting{} =
@@ -114,7 +116,19 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
 
       user = %User{user | settings: user_settings, activity_settings: [activity_setting]}
 
-      assert {:ok, :skipped} == Email.send(user, activity)
+      assert {:ok, :sent} == Email.send(user, activity, recap: :one_day)
+
+      assert_email_sent(to: user.email)
+
+      assert %{last_notification_sent: updated_last_notification_sent} =
+               user_settings = Users.get_setting(user.id)
+
+      assert old != updated_last_notification_sent
+      assert DateTime.diff(DateTime.utc_now(), updated_last_notification_sent) < 5
+
+      user = %User{user | settings: user_settings, activity_settings: [activity_setting]}
+
+      assert {:ok, :skipped} == Email.send(user, activity, recap: :one_day)
 
       refute_email_sent()
     end

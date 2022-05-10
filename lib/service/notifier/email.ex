@@ -12,7 +12,8 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   import Mobilizon.Service.DateTime,
     only: [
-      is_delay_ok_since_last_notification_sent?: 1
+      is_delay_ok_since_last_notification_sent?: 1,
+      is_delay_ok_since_last_notification_sent?: 2
     ]
 
   require Logger
@@ -35,9 +36,10 @@ defmodule Mobilizon.Service.Notifier.Email do
   def send(%User{email: email, locale: locale} = user, activities, options)
       when is_list(activities) do
     activities = Enum.filter(activities, &can_send_activity?(&1, user, options))
+    nb_activities = length(activities)
 
-    if length(activities) > 0 do
-      Logger.debug("Found some activities to send by email")
+    if nb_activities > 0 do
+      Logger.info("Sending email containing #{nb_activities} activities to #{email}")
 
       email
       |> EmailActivity.direct_activity(activities, Keyword.put(options, :locale, locale))
@@ -119,6 +121,27 @@ defmodule Mobilizon.Service.Notifier.Email do
     is_delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
+  # Delay ok since last notification
+  defp match_group_notifications_setting(
+         :one_day,
+         _,
+         %DateTime{} = last_notification_sent,
+         options
+       ) do
+    is_delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 23) and
+      Keyword.get(options, :recap, false) != false
+  end
+
+  defp match_group_notifications_setting(
+         :one_week,
+         _,
+         %DateTime{} = last_notification_sent,
+         options
+       ) do
+    is_delay_ok_since_last_notification_sent?(last_notification_sent, 3_600 * 24 * 6) and
+      Keyword.get(options, :recap, false) != false
+  end
+
   # This is a recap
   defp match_group_notifications_setting(
          _group_notifications,
@@ -154,7 +177,8 @@ defmodule Mobilizon.Service.Notifier.Email do
   end
 
   @spec save_last_notification_time(User.t()) :: {:ok, Setting.t()} | {:error, Ecto.Changeset.t()}
-  defp save_last_notification_time(%User{id: user_id}) do
+  defp save_last_notification_time(%User{id: user_id, email: email}) do
+    Logger.debug("Saving last notification time for user #{email}")
     attrs = %{user_id: user_id, last_notification_sent: DateTime.utc_now()}
 
     case Users.get_setting(user_id) do
