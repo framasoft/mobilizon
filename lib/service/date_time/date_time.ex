@@ -205,9 +205,12 @@ defmodule Mobilizon.Service.DateTime do
     is_first_day_of_week(compare_to_day, locale) && is_between_hours?(options)
   end
 
-  @spec is_delay_ok_since_last_notification_sent?(DateTime.t()) :: boolean()
-  def is_delay_ok_since_last_notification_sent?(%DateTime{} = last_notification_sent) do
-    DateTime.compare(DateTime.add(last_notification_sent, 3_600), DateTime.utc_now()) ==
+  @spec is_delay_ok_since_last_notification_sent?(DateTime.t(), pos_integer()) :: boolean()
+  def is_delay_ok_since_last_notification_sent?(
+        %DateTime{} = last_notification_sent,
+        delay \\ 3_600
+      ) do
+    DateTime.compare(DateTime.add(last_notification_sent, delay), DateTime.utc_now()) ==
       :lt
   end
 

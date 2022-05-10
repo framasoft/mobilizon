@@ -10,6 +10,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
   alias Mobilizon.Service.Notifier.Email
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.{Setting, User}
+  require Logger
 
   import Mobilizon.Service.DateTime,
     only: [
@@ -20,6 +21,8 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
 
   @impl Oban.Worker
   def perform(%Job{}) do
+    Logger.info("Sending scheduled activity recap")
+
     Repo.transaction(
       fn ->
         Users.stream_users_for_recap()
