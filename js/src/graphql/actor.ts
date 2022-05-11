@@ -34,16 +34,6 @@ export const FETCH_PERSON = gql`
       feedTokens {
         token
       }
-      organizedEvents {
-        total
-        elements {
-          id
-          uuid
-          title
-          beginsOn
-          status
-        }
-      }
     }
   }
   ${ACTOR_FRAGMENT}
