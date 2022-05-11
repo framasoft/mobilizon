@@ -42,6 +42,10 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
                            %User{settings: %Setting{group_notifications: group_notifications}} =
                              user
                        } ->
+          Logger.info(
+            "Asking to send email notification #{group_notifications} to user #{user.email} for #{length(activities)} activities"
+          )
+
           Email.send(user, activities, recap: group_notifications)
         end)
       end,
