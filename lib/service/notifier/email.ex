@@ -178,7 +178,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   @spec save_last_notification_time(User.t()) :: {:ok, Setting.t()} | {:error, Ecto.Changeset.t()}
   defp save_last_notification_time(%User{id: user_id, email: email}) do
-    Logger.debug("Saving last notification time for user #{email}")
+    Logger.info("Saving last notification time for user #{email}")
     attrs = %{user_id: user_id, last_notification_sent: DateTime.utc_now()}
 
     case Users.get_setting(user_id) do

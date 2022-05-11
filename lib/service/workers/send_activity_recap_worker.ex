@@ -23,30 +23,41 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
   def perform(%Job{}) do
     Logger.info("Sending scheduled activity recap")
 
-    Repo.transaction(
-      fn ->
-        Users.stream_users_for_recap()
-        |> Enum.to_list()
-        |> Repo.preload([:settings, :activity_settings])
-        |> Enum.filter(&filter_elegible_users/1)
-        |> Enum.map(fn %User{} = user ->
-          %{
-            activities: activities_for_user(user),
-            user: user
-          }
-        end)
-        |> Enum.filter(fn %{activities: activities, user: _user} -> length(activities) > 0 end)
-        |> Enum.map(fn %{
-                         activities: activities,
-                         user:
-                           %User{settings: %Setting{group_notifications: group_notifications}} =
-                             user
-                       } ->
+    case Repo.transaction(&produce_notifications/0, timeout: :infinity) do
+      {:ok, res} ->
+        Logger.info("Processed #{length(res)} notifications to send")
+
+        Enum.each(res, fn %{
+                            activities: activities,
+                            user:
+                              %User{settings: %Setting{group_notifications: group_notifications}} =
+                                user
+                          } ->
+          Logger.info(
+            "Asking to send email notification #{group_notifications} to user #{user.email} for #{length(activities)} activities"
+          )
+
           Email.send(user, activities, recap: group_notifications)
         end)
-      end,
-      timeout: :infinity
-    )
+
+      {:error, err} ->
+        Logger.error("Error producing notifications #{inspect(err)}")
+        {:error, err}
+    end
+  end
+
+  defp produce_notifications do
+    Users.stream_users_for_recap()
+    |> Enum.to_list()
+    |> Repo.preload([:settings, :activity_settings])
+    |> Enum.filter(&filter_elegible_users/1)
+    |> Enum.map(fn %User{} = user ->
+      %{
+        activities: activities_for_user(user),
+        user: user
+      }
+    end)
+    |> Enum.filter(fn %{activities: activities, user: _user} -> length(activities) > 0 end)
   end
 
   defp activities_for_user(
@@ -83,6 +94,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
   defp filter_elegible_users(%User{
          settings: %Setting{last_notification_sent: nil, group_notifications: :one_hour}
        }) do
+    Logger.debug("Sending because never sent before, and we must do it at most once an hour")
     true
   end
 
@@ -92,6 +104,10 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            group_notifications: :one_hour
          }
        }) do
+    Logger.debug(
+      "Testing if it's less than an hour since the last time we sent an activity recap"
+    )
+
     is_delay_ok_since_last_notification_sent?(last_notification_sent)
   end
 
@@ -102,6 +118,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
+    Logger.debug("Testing if we're between daily sending hours")
     is_between_hours?(timezone: timezone || "Etc/UTC")
   end
 
@@ -113,6 +130,7 @@ defmodule Mobilizon.Service.Workers.SendActivityRecapWorker do
            timezone: timezone
          }
        }) do
+    Logger.debug("Testing if we're between weekly sending day and hours")
     is_between_hours_on_first_day?(timezone: timezone || "Etc/UTC", locale: locale)
   end
 end

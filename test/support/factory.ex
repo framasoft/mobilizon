@@ -263,6 +263,7 @@ defmodule Mobilizon.Factory do
       parent: build(:actor),
       actor: build(:actor),
       role: :not_approved,
+      member_since: nil,
       id: uuid,
       url: "#{Endpoint.url()}/member/#{uuid}"
     }
