@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0-rc.6 - 2022-05-11
+
+Changes since rc.5:
+
+- Allow the instance to be followed from Mastodon (through relays)
+- Make sure activity recipient can't be nil
+- Make sure users can't create profiles or groups with non-valid patterns
+- Add description field to address representation
+- Make sure prompt show the correct message and not just "Continue?" in mix mode
+- Add a CLI command to delete actors
+- Make sure activity notification recaps can't be sent multiple times
+- Fix group notification of new event being sent multiple times
+- Fix links to group page in group membership emails and participation
+- Fix clicking on map crashing the app
+- Remove unused fragment from FETCH_PERSON GraphQL query
+
 ## 2.1.0-rc.5 - 2022-05-06
 
 Changes since rc.4:
