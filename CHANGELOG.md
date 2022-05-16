@@ -5,6 +5,133 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.1.0 - 2022-05-16
+
+### Added
+
+- Added an event category field. Administrators can extend the pre-configured list of categories through configuration.
+- Added possibility for administrators to have analytics (Matomo, Plausible supported) and error handling (Sentry supported) on front-end.
+- Redesigned federation admin section with dedicated instance pages
+- Allow to filter moderation reports by domain
+- Added a button to go to past events of a group if it has no upcoming events
+- Add Überauth CAS Strategy
+- Add a CLI command to delete actors
+
+### Changed
+
+- Changed mailer library from Bamboo to Swoosh, should fix emails being considered spam. **Some configuration changes are required, see below.**
+- Expose some fields to ActivityStreams event representation: `isOnline`, `remainingAttendeeCapacity` and `participantCount`
+- Expose a new field to ActivityStreams group representation: `memberCount`
+- Improve group creation errors feedback
+- Only display locality in event card
+- Stale groups are now excluded from group search
+- Event default visibility is now set according to group privacy setting
+- Remove Koena Connect button
+- Hide the whole metadata block if group has no description
+- Increase task timeout in Refresher to 60 seconds
+- Allow webfinger to be fetched over http (not https) in dev mode
+- Improve reactions when approving/rejecting an instance follow
+- Improve instance admin view for mobile
+- Allow to reject instance following
+- Allow instance to have non-standard ports
+- Add pagination to the instances list
+- Eventually fetch actors in mentions
+- Improve IdentityPicker, JoinGroupWithAccount and ActorInline components
+- Various group and posts improvements
+- Update schema.graphql file
+- Add "Accept-Language" header to sentry request metadata
+- Hide address blocks when address has no real data
+- Remove obsolete attribute type="text/css" from <style> tags
+- Improve actor cards integration
+- Use upstream dependencies for Ueberauth providers
+- Include ongoing events in search
+- Send push notification into own task
+- Add appropriate timeouts for Repo.transactions
+- Add a proper error message when adding an instance follow that doesn't respond
+- Allow the instance to be followed from Mastodon (through relays)
+- Remove unused fragment from FETCH_PERSON GraphQL query
+
+### Fixed
+
+- Fixed actor refreshment being impossible
+- Fixed ical export for undefined datetimes
+- Fixed parsing links with hashtag characters
+- Fixed fetching link details from Twitter
+- Fixed Thunderbird accessing ICS feed endpoint with special `Accept` HTTP header
+- Make sure every ICS/Feed caches are emptied when modifying entities
+- Fixed time issues with DST changes
+- Fixed group preview card not truncating description
+- Fixed redirection after login
+- Fixed user admin section showing button to confirm user when the user is already confirmed
+- Fixed creating event from group view not always setting the group as organizer
+- Fixed invalid addresses blocking event metadata preview rendering
+- Fixed group deletion with comments that caused foreign key issues
+- Fixed incoming Accept activities from participations we don't already have
+- Fixed resources that didn't have metadata size limits
+- Properly fallback to UTC when sending notifications and the user doesn't have a timezone setting set
+- Fix posts creation
+- Fix rejecting instance follow
+- Fix pagination of group events
+- Add proper fallback for when a TZ isn't registered
+- Hide side of report modal on low width screens
+- Fix Telegram Logo being replaced with Mastodon logo in ShareGroupModal
+- Change URL for Mastodon Share Manager
+- Fix receiving Flag activities on federated events
+- Fix activity notifications by preloading user.activity_settings
+- Fix text overflow on group card description
+- Exclude tags with more than 40 characters from being extracted
+- Avoid duplicate tags with different casing
+- Fix invalid HTML (<div> inside <label>)
+- Fix latest group not refreshing in admin section
+- Add missing "relay@" part of federated address to follow
+- Fix Ueberauth use of CSRF with session
+- Fix being an administrator when using 3rd-party auth provider
+- Make sure activity recipient can't be nil
+- Make sure users can't create profiles or groups with non-valid patterns
+- Add description field to address representation
+- Make sure prompt show the correct message and not just "Continue?" in mix mode
+- Make sure activity notification recaps can't be sent multiple times
+- Fix group notification of new event being sent multiple times
+- Fix links to group page in group membership emails and participation
+- Fix clicking on map crashing the app
+
+### Translations
+
+- Arabic
+- Basque
+- Belarusian
+- Bengali
+- Catalan
+- Chinese (Traditional)
+- Croatian
+- Czech
+- Danish
+- Dutch
+- Esperanto
+- Finnish
+- French
+- Gaelic
+- Galician
+- German
+- Hebrew
+- Hungarian
+- Indonesian
+- Italian
+- Japanese
+- Kabyle
+- Kannada
+- Norwegian Nynorsk
+- Occitan
+- Persian
+- Polish
+- Portuguese
+- Portuguese (Brazil)
+- Russian
+- Slovenian
+- Spanish
+- Swedish
+- Welsh
+
 ## 2.1.0-rc.6 - 2022-05-11
 
 Changes since rc.5:
