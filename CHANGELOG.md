@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed mailer library from Bamboo to Swoosh, should fix emails being considered spam. **Some configuration changes are required, see below.**
+- Changed mailer library from Bamboo to Swoosh, should fix emails being considered spam. **Some configuration changes are required, see [UPGRADE.md](https://framagit.org/framasoft/mobilizon/-/blob/main/UPGRADE.md).**
 - Expose some fields to ActivityStreams event representation: `isOnline`, `remainingAttendeeCapacity` and `participantCount`
 - Expose a new field to ActivityStreams group representation: `memberCount`
 - Improve group creation errors feedback
@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update schema.graphql file
 - Add "Accept-Language" header to sentry request metadata
 - Hide address blocks when address has no real data
-- Remove obsolete attribute type="text/css" from <style> tags
+- Remove obsolete attribute `type="text/css"` from `<style>` tags
 - Improve actor cards integration
 - Use upstream dependencies for Ueberauth providers
 - Include ongoing events in search
@@ -81,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix text overflow on group card description
 - Exclude tags with more than 40 characters from being extracted
 - Avoid duplicate tags with different casing
-- Fix invalid HTML (<div> inside <label>)
+- Fix invalid HTML (`<div>` inside `<label>`)
 - Fix latest group not refreshing in admin section
 - Add missing "relay@" part of federated address to follow
 - Fix Ueberauth use of CSRF with session
