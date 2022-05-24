@@ -57,6 +57,22 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     category: EventMetadataCategories.ACCESSIBILITY,
   },
   {
+    icon: "smoking-off",
+    key: "mz:accessibility:smokeFree",
+    label: i18n.t("Smoke free") as string,
+    description: i18n.t(
+      "Whether smoking is prohibited during the event"
+    ) as string,
+    value: "false",
+    type: EventMetadataType.BOOLEAN,
+    keyType: EventMetadataKeyType.PLAIN,
+    choices: {
+      true: i18n.t("Smoke free") as string,
+      false: i18n.t("Smoking allowed") as string,
+    },
+    category: EventMetadataCategories.ACCESSIBILITY,
+  },
+  {
     icon: "youtube",
     key: "mz:replay:youtube:url",
     label: t("YouTube replay") as string,
