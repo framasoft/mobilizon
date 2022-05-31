@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-05-31 21:18+0000\n"
+"PO-Revision-Date: 2022-06-01 07:35+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -2262,7 +2262,7 @@ msgstr "Film a média"
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
-msgstr "Jídlo a nápoje"
+msgstr "Jídlo a pití"
 
 #: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
