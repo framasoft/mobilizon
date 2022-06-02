@@ -137,6 +137,19 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     category: EventMetadataCategories.LIVE,
   },
   {
+    icon: "mz:icon:owncast",
+    key: "mz:live:owncast:url",
+    label: i18n.t("Owncast live") as string,
+    description: i18n.t(
+      "The URL where the event can be watched live"
+    ) as string,
+    value: "",
+    type: EventMetadataType.STRING,
+    keyType: EventMetadataKeyType.URL,
+    pattern: /^https?:\/\/(([^/.]+)\.)+([a-z]+)\/?/,
+    category: EventMetadataCategories.LIVE,
+  },
+  {
     icon: "calendar-check",
     key: "mz:poll:framadate:url",
     label: i18n.t("Framadate poll") as string,
