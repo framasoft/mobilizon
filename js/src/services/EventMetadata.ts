@@ -139,7 +139,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "mz:icon:owncast",
     key: "mz:live:owncast:url",
-    label: i18n.t("Owncast live") as string,
+    label: i18n.t("Owncast") as string,
     description: i18n.t(
       "The URL where the event can be watched live"
     ) as string,
