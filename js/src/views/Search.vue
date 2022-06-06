@@ -297,6 +297,7 @@ const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
           groupPage: this.groupPage,
           limit: EVENT_PAGE_LIMIT,
           type: this.type,
+          eventCategory: this.eventCategory,
         };
       },
       update(data) {
