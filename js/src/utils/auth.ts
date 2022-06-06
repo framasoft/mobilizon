@@ -34,7 +34,7 @@ export function saveLocaleData(locale: string): void {
 }
 
 export function getLocaleData(): string | null {
-  return localStorage.getItem(USER_LOCALE);
+  return localStorage ? localStorage.getItem(USER_LOCALE) : null;
 }
 
 export function saveActorData(obj: IPerson): void {
