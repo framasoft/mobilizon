@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-04-03 01:20+0000\n"
+"PO-Revision-Date: 2022-06-07 18:17+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/cs/>\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.12\n"
 
-#, elixir-autogen
 #: lib/mobilizon/discussions/discussion.ex:69
+#, elixir-autogen
 msgid "can't be blank"
 msgstr "nemůže být prázdný"
 
@@ -101,27 +101,26 @@ msgstr "musí být větší nebo rovno %{number}"
 msgid "must be equal to %{number}"
 msgstr "se musí rovnat %{number}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:107
+#, elixir-autogen, elixir-format
 msgid "Cannot refresh the token"
 msgstr "Nelze obnovit token"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:272
+#, elixir-autogen, elixir-format
 msgid "Current profile is not a member of this group"
 msgstr "Aktuální profil není členem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:276
+#, elixir-autogen, elixir-format
 msgid "Current profile is not an administrator of the selected group"
 msgstr "Aktuální profil není správcem vybrané skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:610
+#, elixir-autogen, elixir-format
 msgid "Error while saving user settings"
 msgstr "Chyba při ukládání uživatelských nastavení"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:101
 #: lib/graphql/resolvers/group.ex:269
 #: lib/graphql/resolvers/group.ex:301
@@ -129,44 +128,44 @@ msgstr "Chyba při ukládání uživatelských nastavení"
 #: lib/graphql/resolvers/group.ex:369
 #: lib/graphql/resolvers/group.ex:418
 #: lib/graphql/resolvers/member.ex:81
+#, elixir-autogen, elixir-format
 msgid "Group not found"
 msgstr "Skupina nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:98
 #: lib/graphql/resolvers/group.ex:102
+#, elixir-autogen, elixir-format
 msgid "Group with ID %{id} not found"
 msgstr "Skupina s ID %{id} nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:85
+#, elixir-autogen, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr "Nelze ověřit, váš e-mail nebo heslo jsou neplatné."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:335
+#, elixir-autogen, elixir-format
 msgid "Member not found"
 msgstr "Člen nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:94
+#, elixir-autogen, elixir-format
 msgid "No profile found for the moderator user"
 msgstr "Pro uživatele moderátora nebyl nalezen žádný profil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:272
+#, elixir-autogen, elixir-format
 msgid "No user to validate with this email was found"
 msgstr ""
 "Nebyl nalezen žádný uživatel, kterého by bylo možné ověřit pomocí tohoto "
 "e-mailu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:314
 #: lib/graphql/resolvers/user.ex:296
+#, elixir-autogen, elixir-format
 msgid "No user with this email was found"
 msgstr "Nebyl nalezen žádný uživatel s tímto e-mailem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32
 #: lib/graphql/resolvers/participant.ex:210
@@ -176,316 +175,316 @@ msgstr "Nebyl nalezen žádný uživatel s tímto e-mailem"
 #: lib/graphql/resolvers/person.ex:396
 #: lib/graphql/resolvers/person.ex:425
 #: lib/graphql/resolvers/person.ex:440
+#, elixir-autogen, elixir-format
 msgid "Profile is not owned by authenticated user"
 msgstr "Profil není vlastněn ověřeným uživatelem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:159
+#, elixir-autogen, elixir-format
 msgid "Registrations are not open"
 msgstr "Registrace nejsou otevřeny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:427
+#, elixir-autogen, elixir-format
 msgid "The current password is invalid"
 msgstr "Aktuální heslo je neplatné"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:334
 #: lib/graphql/resolvers/user.ex:470
+#, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr "Nový e-mail se nezdá být platný"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:337
 #: lib/graphql/resolvers/user.ex:473
+#, elixir-autogen, elixir-format
 msgid "The new email must be different"
 msgstr "Nový e-mail musí být jiný"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:430
+#, elixir-autogen, elixir-format
 msgid "The new password must be different"
 msgstr "Nové heslo se musí lišit"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:477
 #: lib/graphql/resolvers/user.ex:539
 #: lib/graphql/resolvers/user.ex:542
+#, elixir-autogen, elixir-format
 msgid "The password provided is invalid"
 msgstr "Zadané heslo je neplatné"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:434
+#, elixir-autogen, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
 "Zvolené heslo je příliš krátké. Ujistěte se, že heslo obsahuje alespoň 6 "
 "znaků."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:292
+#, elixir-autogen, elixir-format
 msgid "This user can't reset their password"
 msgstr "Tento uživatel nemůže obnovit své heslo"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:81
+#, elixir-autogen, elixir-format
 msgid "This user has been disabled"
 msgstr "Tento uživatel byl deaktivován"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:251
 #: lib/graphql/resolvers/user.ex:256
+#, elixir-autogen, elixir-format
 msgid "Unable to validate user"
 msgstr "Nelze ověřit uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:520
+#, elixir-autogen, elixir-format
 msgid "User already disabled"
 msgstr "Uživatel je již deaktivován"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:585
+#, elixir-autogen, elixir-format
 msgid "User requested is not logged-in"
 msgstr "Požadovaný uživatel není přihlášen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:307
+#, elixir-autogen, elixir-format
 msgid "You are already a member of this group"
 msgstr "Jste již členem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:342
+#, elixir-autogen, elixir-format
 msgid "You can't leave this group because you are the only administrator"
 msgstr "Tuto skupinu nemůžete opustit, protože jste jediným správcem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:304
+#, elixir-autogen, elixir-format
 msgid "You cannot join this group"
 msgstr "K této skupině se nemůžete připojit"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:132
+#, elixir-autogen, elixir-format
 msgid "You may not list groups unless moderator."
 msgstr "Skupiny můžete uvádět pouze jako moderátor."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:485
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your email"
 msgstr "Pro změnu e-mailu musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:442
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your password"
 msgstr "Pro změnu hesla musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:281
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete a group"
 msgstr "Chcete-li skupinu odstranit, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:547
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete your account"
 msgstr "Chcete-li odstranit svůj účet, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:312
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to join a group"
 msgstr "Chcete-li se připojit ke skupině, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:347
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave a group"
 msgstr "Chcete-li opustit skupinu, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:245
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update a group"
 msgstr "Chcete-li aktualizovat skupinu, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:112
+#, elixir-autogen, elixir-format
 msgid "You need to have an existing token to get a refresh token"
 msgstr "Chcete-li získat token pro obnovení, musíte mít existující token"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:275
 #: lib/graphql/resolvers/user.ex:299
+#, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon"
 msgstr "Znovu jste si vyžádali potvrzovací e-mail příliš brzy"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:162
+#, elixir-autogen, elixir-format
 msgid "Your email is not on the allowlist"
 msgstr "Váš e-mail není na seznamu povolených položek"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:100
+#, elixir-autogen, elixir-format
 msgid "Error while performing background task"
 msgstr "Chyba při provádění úlohy na pozadí"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:32
+#, elixir-autogen, elixir-format
 msgid "No profile found with this ID"
 msgstr "Nebyl nalezen žádný profil s tímto ID"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:61
 #: lib/graphql/resolvers/actor.ex:97
+#, elixir-autogen, elixir-format
 msgid "No remote profile found with this ID"
 msgstr "Nebyl nalezen žádný vzdálený profil s tímto ID"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:72
+#, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
 msgstr "Profil mohou pozastavit pouze moderátoři a správci"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:105
+#, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
 msgstr "Profil mohou zrušit pouze moderátoři a správci"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:29
+#, elixir-autogen, elixir-format
 msgid "Only remote profiles may be refreshed"
 msgstr "Aktualizovat lze pouze vzdálené profily"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:64
+#, elixir-autogen, elixir-format
 msgid "Profile already suspended"
 msgstr "Profil již byl pozastaven"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:96
+#, elixir-autogen, elixir-format
 msgid "A valid email is required by your instance"
 msgstr "Vaše instance vyžaduje platný e-mail"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:90
 #: lib/graphql/resolvers/participant.ex:143
+#, elixir-autogen, elixir-format
 msgid "Anonymous participation is not enabled"
 msgstr "Anonymní účast není povolena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:210
+#, elixir-autogen, elixir-format
 msgid "Cannot remove the last administrator of a group"
 msgstr "Nelze odebrat posledního správce skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:207
+#, elixir-autogen, elixir-format
 msgid "Cannot remove the last identity of a user"
 msgstr "Nelze odstranit poslední identitu uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:126
+#, elixir-autogen, elixir-format
 msgid "Comment is already deleted"
 msgstr "Komentář je již smazán"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:103
 #: lib/graphql/resolvers/discussion.ex:69
+#, elixir-autogen, elixir-format
 msgid "Discussion not found"
 msgstr "Diskuse nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:71
 #: lib/graphql/resolvers/report.ex:90
+#, elixir-autogen, elixir-format
 msgid "Error while saving report"
 msgstr "Chyba při ukládání zprávy"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:110
+#, elixir-autogen, elixir-format
 msgid "Error while updating report"
 msgstr "Chyba při aktualizaci hlášení"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:131
+#, elixir-autogen, elixir-format
 msgid "Event id not found"
 msgstr "Id události nebylo nalezeno"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:100
 #: lib/graphql/resolvers/event.ex:360
 #: lib/graphql/resolvers/event.ex:412
+#, elixir-autogen, elixir-format
 msgid "Event not found"
 msgstr "Událost nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:87
 #: lib/graphql/resolvers/participant.ex:128
 #: lib/graphql/resolvers/participant.ex:155
 #: lib/graphql/resolvers/participant.ex:336
+#, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "Událost s tímto ID %{id} neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:103
+#, elixir-autogen, elixir-format
 msgid "Internal Error"
 msgstr "Interní chyba"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:219
+#, elixir-autogen, elixir-format
 msgid "No discussion with ID %{id}"
 msgstr "Žádná diskuse s ID %{id}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:80
 #: lib/graphql/resolvers/todos.ex:107
 #: lib/graphql/resolvers/todos.ex:179
 #: lib/graphql/resolvers/todos.ex:208
 #: lib/graphql/resolvers/todos.ex:237
+#, elixir-autogen, elixir-format
 msgid "No profile found for user"
 msgstr "Pro uživatele nebyl nalezen žádný profil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:64
+#, elixir-autogen, elixir-format
 msgid "No such feed token"
 msgstr "Žádný takový token"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:259
+#, elixir-autogen, elixir-format
 msgid "Participant already has role %{role}"
 msgstr "Účastník již má roli %{role}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:187
 #: lib/graphql/resolvers/participant.ex:220
 #: lib/graphql/resolvers/participant.ex:263
+#, elixir-autogen, elixir-format
 msgid "Participant not found"
 msgstr "Účastník nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:32
+#, elixir-autogen, elixir-format
 msgid "Person with ID %{id} not found"
 msgstr "Osoba s ID %{id} nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:56
+#, elixir-autogen, elixir-format
 msgid "Person with username %{username} not found"
 msgstr "Osoba s uživatelským jménem %{username} nenalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:169
 #: lib/graphql/resolvers/post.ex:203
+#, elixir-autogen, elixir-format
 msgid "Post ID is not a valid ID"
 msgstr "ID příspěvku není platné ID"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:172
 #: lib/graphql/resolvers/post.ex:206
+#, elixir-autogen, elixir-format
 msgid "Post doesn't exist"
 msgstr "Příspěvek neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:84
+#, elixir-autogen, elixir-format
 msgid "Profile invited doesn't exist"
 msgstr "Pozvaný profil neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:93
 #: lib/graphql/resolvers/member.ex:97
+#, elixir-autogen, elixir-format
 msgid "Profile is already a member of this group"
 msgstr "Profil je již členem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:133
 #: lib/graphql/resolvers/post.ex:175
 #: lib/graphql/resolvers/post.ex:209
@@ -499,633 +498,635 @@ msgstr "Profil je již členem této skupiny"
 #: lib/graphql/resolvers/todos.ex:182
 #: lib/graphql/resolvers/todos.ex:214
 #: lib/graphql/resolvers/todos.ex:246
+#, elixir-autogen, elixir-format
 msgid "Profile is not member of group"
 msgstr "Profil není členem skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:67
 #: lib/graphql/resolvers/person.ex:233
+#, elixir-autogen, elixir-format
 msgid "Profile not found"
 msgstr "Profil nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:48
+#, elixir-autogen, elixir-format
 msgid "Report not found"
 msgstr "Zpráva nebyla nalezena"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:172
 #: lib/graphql/resolvers/resource.ex:199
+#, elixir-autogen, elixir-format
 msgid "Resource doesn't exist"
 msgstr "Zdroj neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:124
+#, elixir-autogen, elixir-format
 msgid "The event has already reached its maximum capacity"
 msgstr "Kapacita akce již byla naplněna na maximum"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:282
+#, elixir-autogen, elixir-format
 msgid "This token is invalid"
 msgstr "Tento token je neplatný"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:176
 #: lib/graphql/resolvers/todos.ex:243
+#, elixir-autogen, elixir-format
 msgid "Todo doesn't exist"
 msgstr "Seznam úkolů neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:77
 #: lib/graphql/resolvers/todos.ex:211
 #: lib/graphql/resolvers/todos.ex:240
+#, elixir-autogen, elixir-format
 msgid "Todo list doesn't exist"
 msgstr "Seznam úkolů neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:73
+#, elixir-autogen, elixir-format
 msgid "Token does not exist"
 msgstr "Token neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:67
 #: lib/graphql/resolvers/feed_token.ex:70
+#, elixir-autogen, elixir-format
 msgid "Token is not a valid UUID"
 msgstr "Token není platný UUID"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:98
+#, elixir-autogen, elixir-format
 msgid "User not found"
 msgstr "Uživatel nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:310
+#, elixir-autogen, elixir-format
 msgid "You already have a profile for this user"
 msgstr "Pro tohoto uživatele již máte profil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:134
+#, elixir-autogen, elixir-format
 msgid "You are already a participant of this event"
 msgstr "Jste již účastníkem této akce"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:87
+#, elixir-autogen, elixir-format
 msgid "You are not a member of this group"
 msgstr "Nejste členem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:157
 #: lib/graphql/resolvers/member.ex:173
 #: lib/graphql/resolvers/member.ex:188
+#, elixir-autogen, elixir-format
 msgid "You are not a moderator or admin for this group"
 msgstr "Nejste moderátorem ani správcem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:59
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Pokud nejste připojeni, nemůžete vytvořit komentář"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:41
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to create a feed token if not connected"
 msgstr "Pokud nejste připojeni, nemůžete vytvořit token feedu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:134
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Pokud nejste připojeni, nemůžete komentář smazat"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:82
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Pokud nejste připojeni, nemůžete odstranit token kanálu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:93
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Pokud nejste připojeni, nemůžete komentář aktualizovat"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:181
 #: lib/graphql/resolvers/participant.ex:214
+#, elixir-autogen, elixir-format
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 "Nemůžete opustit událost, protože jste jediným účastníkem, který ji vytvořil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:192
+#, elixir-autogen, elixir-format
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "Pro tuto skupinu si nemůžete nastavit nižší roli člena, protože jste jediným "
 "správcem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:122
+#, elixir-autogen, elixir-format
 msgid "You cannot delete this comment"
 msgstr "Tento komentář nelze smazat"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:408
+#, elixir-autogen, elixir-format
 msgid "You cannot delete this event"
 msgstr "Tuto událost nelze odstranit"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:90
+#, elixir-autogen, elixir-format
 msgid "You cannot invite to this group"
 msgstr "Do této skupiny nelze zvát"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:76
+#, elixir-autogen, elixir-format
 msgid "You don't have permission to delete this token"
 msgstr "Nemáte oprávnění tento token odstranit"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:56
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
 "Abyste mohli vypsat protokoly akcí, musíte být přihlášeni a být moderátorem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:36
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list reports"
 msgstr "Abyste mohli vypisovat hlášení, musíte být přihlášeni a být moderátorem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:115
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to update a report"
 msgstr "Chcete-li aktualizovat zprávu, musíte být přihlášeni a být moderátorem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:53
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Pro zobrazení zprávy musíte být přihlášeni a být moderátorem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:250
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Pro přístup k nastavení správce musíte být přihlášeni jako správce"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:234
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 "Pro přístup ke statistikám ovládacího panelu musíte být přihlášeni jako "
 "správce"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:276
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 "Chcete-li uložit nastavení správce, musíte být přihlášeni a být správcem"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:84
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to access discussions"
 msgstr "Pro přístup do diskuzí musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:96
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to access resources"
 msgstr "Pro přístup ke zdrojům musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:318
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create events"
 msgstr "Chcete-li vytvářet události, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:141
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create posts"
 msgstr "Pro vytváření příspěvků musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:87
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create reports"
 msgstr "Chcete-li vytvářet hlášení, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:140
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create resources"
 msgstr "Chcete-li vytvářet zdroje, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:417
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete an event"
 msgstr "Chcete-li odstranit událost, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:214
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete posts"
 msgstr "Pro mazání příspěvků musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:207
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete resources"
 msgstr "Chcete-li odstranit zdroje, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:108
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to join an event"
 msgstr "Chcete-li se připojit k události, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:225
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave an event"
 msgstr "Chcete-li opustit událost, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:374
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update an event"
 msgstr "Chcete-li aktualizovat událost, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:180
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update posts"
 msgstr "Pro aktualizaci příspěvků musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:177
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update resources"
 msgstr "Chcete-li aktualizovat zdroje, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:236
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to view a resource preview"
 msgstr "Pro zobrazení náhledu zdroje musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:132
+#, elixir-autogen, elixir-format
 msgid "Parent resource doesn't belong to this group"
 msgstr "Nadřazený prostředek nepatří do této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:114
+#, elixir-autogen, elixir-format
 msgid "The chosen password is too short."
 msgstr "Zvolené heslo je příliš krátké."
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:142
+#, elixir-autogen, elixir-format
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr "Registrační token je již používán, vypadá to na problém na naší straně."
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:108
+#, elixir-autogen, elixir-format
 msgid "This email is already used."
 msgstr "Tento e-mail je již použit."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:99
+#, elixir-autogen, elixir-format
 msgid "Post not found"
 msgstr "Příspěvek nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:86
+#, elixir-autogen, elixir-format
 msgid "Invalid arguments passed"
 msgstr "Neplatné předané argumenty"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:92
+#, elixir-autogen, elixir-format
 msgid "Invalid credentials"
 msgstr "Neplatné pověření"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:90
+#, elixir-autogen, elixir-format
 msgid "Reset your password to login"
 msgstr "Obnovení hesla pro přihlášení"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:97
 #: lib/graphql/error.ex:102
+#, elixir-autogen, elixir-format
 msgid "Resource not found"
 msgstr "Zdroj nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:104
+#, elixir-autogen, elixir-format
 msgid "Something went wrong"
 msgstr "Něco se pokazilo"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:85
+#, elixir-autogen, elixir-format
 msgid "Unknown Resource"
 msgstr "Neznámý zdroj"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:95
+#, elixir-autogen, elixir-format
 msgid "You don't have permission to do this"
 msgstr "K tomu nemáte oprávnění"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:87
+#, elixir-autogen, elixir-format
 msgid "You need to be logged in"
 msgstr "Musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:118
+#, elixir-autogen, elixir-format
 msgid "You can't accept this invitation with this profile."
 msgstr "S tímto profilem nemůžete pozvánku přijmout."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:139
+#, elixir-autogen, elixir-format
 msgid "You can't reject this invitation with this profile."
 msgstr "S tímto profilem nemůžete pozvánku odmítnout."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/media.ex:71
+#, elixir-autogen, elixir-format
 msgid "File doesn't have an allowed MIME type."
 msgstr "Soubor nemá povolený typ MIME."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:240
+#, elixir-autogen, elixir-format
 msgid "Profile is not administrator for the group"
 msgstr "Profil není správcem skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:363
+#, elixir-autogen, elixir-format
 msgid "You can't edit this event."
 msgstr "Tuto událost nelze upravovat."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:366
+#, elixir-autogen, elixir-format
 msgid "You can't attribute this event to this profile."
 msgstr "Tuto událost nelze přiřadit k tomuto profilu."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:142
+#, elixir-autogen, elixir-format
 msgid "This invitation doesn't exist."
 msgstr "Tato pozvánka neexistuje."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:217
+#, elixir-autogen, elixir-format
 msgid "This member already has been rejected."
 msgstr "Tento člen již byl odmítnut."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:241
+#, elixir-autogen, elixir-format
 msgid "You don't have the right to remove this member."
 msgstr "Nemáte oprávnění tohoto člena odstranit."
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/actors/actor.ex:351
+#, elixir-autogen, elixir-format
 msgid "This username is already taken."
 msgstr "Toto uživatelské jméno je již obsazeno."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:81
+#, elixir-autogen, elixir-format
 msgid "You must provide either an ID or a slug to access a discussion"
 msgstr "Pro přístup do diskuse je nutné zadat ID nebo slug"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:313
+#, elixir-autogen, elixir-format
 msgid "Organizer profile is not owned by the user"
 msgstr "Profil organizátora není ve vlastnictví uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:93
+#, elixir-autogen, elixir-format
 msgid "Profile ID provided is not the anonymous profile one"
 msgstr "Poskytnuté ID profilu není anonymní ID profilu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:181
 #: lib/graphql/resolvers/group.ex:223
 #: lib/graphql/resolvers/person.ex:148
 #: lib/graphql/resolvers/person.ex:182
 #: lib/graphql/resolvers/person.ex:304
+#, elixir-autogen, elixir-format
 msgid "The provided picture is too heavy"
 msgstr "Poskytnutý obrázek je příliš velký"
 
-#, elixir-autogen, elixir-format
 #: lib/web/views/utils.ex:34
+#, elixir-autogen, elixir-format
 msgid "Index file not found. You need to recompile the front-end."
 msgstr "Indexový soubor nebyl nalezen. Je třeba překompilovat front-end."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:129
+#, elixir-autogen, elixir-format
 msgid "Error while creating resource"
 msgstr "Chyba při vytváření prostředku"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:503
+#, elixir-autogen, elixir-format
 msgid "Invalid activation token"
 msgstr "Neplatný aktivační token"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:226
+#, elixir-autogen, elixir-format
 msgid "Unable to fetch resource details from this URL."
 msgstr "Z této adresy URL nelze načíst podrobnosti o prostředku."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:164
 #: lib/graphql/resolvers/participant.ex:253
 #: lib/graphql/resolvers/participant.ex:328
+#, elixir-autogen, elixir-format
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "Za předpokladu, že profil nemá oprávnění moderátora této události"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:299
+#, elixir-autogen, elixir-format
 msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
 msgstr ""
 "Profil organizátora nemá oprávnění k vytvoření události jménem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:354
+#, elixir-autogen, elixir-format
 msgid "This profile doesn't have permission to update an event on behalf of this group"
 msgstr "Tento profil nemá oprávnění aktualizovat událost jménem této skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:166
+#, elixir-autogen, elixir-format
 msgid "Your e-mail has been denied registration or uses a disallowed e-mail provider"
 msgstr ""
 "Váš e-mail byl odmítnut k registraci nebo používá nepovoleného poskytovatele "
 "e-mailu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:129
+#, elixir-autogen, elixir-format
 msgid "Comment not found"
 msgstr "Komentář nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:123
+#, elixir-autogen, elixir-format
 msgid "Error while creating a discussion"
 msgstr "Chyba při vytváření diskuse"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:624
+#, elixir-autogen, elixir-format
 msgid "Error while updating locale"
 msgstr "Chyba při aktualizaci locale"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:307
+#, elixir-autogen, elixir-format
 msgid "Error while uploading pictures"
 msgstr "Chyba při nahrávání obrázků"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:190
+#, elixir-autogen, elixir-format
 msgid "Failed to leave the event"
 msgstr "Nepodařilo se opustit událost"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:236
+#, elixir-autogen, elixir-format
 msgid "Failed to update the group"
 msgstr "Nepodařilo se aktualizovat skupinu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:331
 #: lib/graphql/resolvers/user.ex:467
+#, elixir-autogen, elixir-format
 msgid "Failed to update user email"
 msgstr "Nepodařilo se aktualizovat e-mail uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:499
+#, elixir-autogen, elixir-format
 msgid "Failed to validate user email"
 msgstr "Nepodařilo se ověřit e-mail uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:146
+#, elixir-autogen, elixir-format
 msgid "The anonymous actor ID is invalid"
 msgstr "Anonymní ID aktéra je neplatné"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:165
+#, elixir-autogen, elixir-format
 msgid "Unknown error while updating resource"
 msgstr "Neznámá chyba při aktualizaci prostředku"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:84
+#, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
 msgstr "Nejste autorem komentáře"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:424
+#, elixir-autogen, elixir-format
 msgid "You cannot change your password."
 msgstr "Heslo nelze změnit."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:321
+#, elixir-autogen, elixir-format
 msgid "Format not supported"
 msgstr "Formát není podporován"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:305
+#, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr "Závislost potřebná k exportu do %{format} není nainstalována"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:313
+#, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
 msgstr "Při ukládání exportu došlo k chybě"
 
-#, elixir-autogen, elixir-format
 #: lib/web/controllers/export_controller.ex:30
+#, elixir-autogen, elixir-format
 msgid "Export to format %{format} is not enabled on this instance"
 msgstr "Export do formátu %{format} není v této instanci povolen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:187
+#, elixir-autogen, elixir-format
 msgid "Only admins can create groups"
 msgstr "Skupiny mohou vytvářet pouze správci"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:306
+#, elixir-autogen, elixir-format
 msgid "Only groups can create events"
 msgstr "Události mohou vytvářet pouze skupiny"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:292
+#, elixir-autogen, elixir-format
 msgid "Unknown error while creating event"
 msgstr "Neznámá chyba při vytváření události"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:480
+#, elixir-autogen, elixir-format
 msgid "User cannot change email"
 msgstr "Uživatel nemůže změnit e-mail"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:391
+#, elixir-autogen, elixir-format
 msgid "Follow does not match your account"
 msgstr "Sledování neodpovídá vašemu účtu"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:395
+#, elixir-autogen, elixir-format
 msgid "Follow not found"
 msgstr "Sledování nebylo nalezeno"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:345
+#, elixir-autogen, elixir-format
 msgid "Profile with username %{username} not found"
 msgstr "Profil s uživatelským jménem %{username} nebyl nalezen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:340
+#, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
 msgstr "Tento profil vám nepatří"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:365
+#, elixir-autogen, elixir-format
 msgid "You are already following this group"
 msgstr "Tuto skupinu již sledujete"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:374
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to follow a group"
 msgstr "Chcete-li sledovat skupinu, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:423
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to unfollow a group"
 msgstr "Chcete-li zrušit sledování skupiny, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:400
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update a group follow"
 msgstr "Chcete-li aktualizovat sledování skupiny, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:210
+#, elixir-autogen, elixir-format
 msgid "This member does not exist"
 msgstr "Tento člen neexistuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:234
+#, elixir-autogen, elixir-format
 msgid "You don't have the role needed to remove this member."
 msgstr "Nemáte roli potřebnou k odebrání tohoto člena."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:252
+#, elixir-autogen, elixir-format
 msgid "You must be logged-in to remove a member"
 msgstr "Chcete-li odebrat člena, musíte být přihlášeni"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/user.ex:156
+#, elixir-autogen, elixir-format
 msgid "Your email seems to be using an invalid format"
 msgstr "Váš e-mail zřejmě používá nesprávný formát"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:380
+#, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
 msgstr "Nelze potvrdit již potvrzeného uživatele"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:384
+#, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
 msgstr "Zrušení potvrzení uživatelů není podporováno"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:356
+#, elixir-autogen, elixir-format
 msgid "The new role must be different"
 msgstr "Nová role musí být jiná"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:307
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
 "Chcete-li upravit údaje uživatele, musíte být přihlášeni jako administrátor"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/api/groups.ex:33
+#, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
 msgstr "Profil nebo skupina s tímto názvem již existuje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:506
+#, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
 msgstr ""
+"Na této adrese se nepodařilo najít instanci, kterou by bylo možné sledovat"
