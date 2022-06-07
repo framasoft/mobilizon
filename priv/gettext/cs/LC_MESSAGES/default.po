@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-06-01 07:35+0000\n"
+"PO-Revision-Date: 2022-06-07 18:17+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/cs/>\n"
@@ -2222,12 +2222,12 @@ msgstr "Knižní kluby"
 #: lib/mobilizon/events/categories.ex:24
 #, elixir-autogen, elixir-format
 msgid "Business"
-msgstr "Podnikání"
+msgstr "Obchod"
 
 #: lib/mobilizon/events/categories.ex:28
 #, elixir-autogen, elixir-format
 msgid "Causes"
-msgstr "Příčiny"
+msgstr "Případy"
 
 #: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
@@ -2252,17 +2252,17 @@ msgstr "Rodina a vzdělávání"
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
-msgstr "Móda a kosmetika"
+msgstr "Móda a krása"
 
 #: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Film & Media"
-msgstr "Film a média"
+msgstr "Film a media"
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
-msgstr "Jídlo a pití"
+msgstr "Jídlo a nápoje"
 
 #: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
@@ -2307,7 +2307,7 @@ msgstr "Hudba"
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr "Kontakty"
+msgstr "Síťování"
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
@@ -2347,7 +2347,7 @@ msgstr "Duchovno, náboženství a víra"
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr "Sporty"
+msgstr "Sport"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
@@ -2360,6 +2360,6 @@ msgid "Read more: %{url}"
 msgstr "Více informací : %{url}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Aktivovat můj účet"
+msgstr "Aktivovat můj účet:"
