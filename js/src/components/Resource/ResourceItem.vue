@@ -36,8 +36,8 @@
             :class="{ 'is-hidden-mobile': !inline }"
             v-if="resource.updatedAt || resource.publishedAt"
             >{{
-              (resource.updatedAt || resource.publishedAt)
-                | formatDateTimeString
+              (resource.updatedAt || resource.publishedAt) |
+                formatDateTimeString
             }}</span
           >
         </div>

@@ -31,7 +31,7 @@ const CustomImage = Image.extend({
       new Plugin({
         props: {
           handleDOMEvents: {
-            drop(view: EditorView<any>, event: Event) {
+            drop(view: EditorView, event: Event) {
               const realEvent = event as DragEvent;
               if (
                 !(
