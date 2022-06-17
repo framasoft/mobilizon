@@ -62,7 +62,7 @@ exports[`ParticipationWithoutAccount handles being already a participant 1`] = `
           <!----><span>Send email</span>
           <!---->
         </button>
-        <div class="has-text-centered"><a type="button" class="button is-text">
+        <div class="has-text-centered"><a class="button is-text">
             <!----><span>Back to previous page</span>
             <!---->
           </a></div>

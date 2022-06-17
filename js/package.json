@@ -82,7 +82,7 @@
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^28.0.0",
     "@types/leaflet": "^1.5.2",
     "@types/leaflet.locatecontrol": "^0.74",
     "@types/lodash": "^4.14.141",
@@ -105,6 +105,7 @@
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^1.1.0",
     "@vue/vue2-jest": "^28.0.0",
+    "babel-jest": "^28.1.1",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.20.2",
