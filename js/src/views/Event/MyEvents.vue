@@ -427,7 +427,7 @@ export default class MyEvents extends Vue {
   }
 
   monthParticipationsIds(elements: Eventable[]): string[] {
-    let res = elements.filter((element: Eventable) => {
+    const res = elements.filter((element: Eventable) => {
       return "role" in element;
     }) as IParticipant[];
     return res.map(({ event }: { event: IEvent }) => {

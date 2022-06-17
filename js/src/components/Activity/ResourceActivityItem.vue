@@ -150,7 +150,7 @@ export default class ResourceActivityItem extends mixins(ActivityMixin) {
   get path(): Location {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    let path = this.parentPath(this.activity?.object?.path);
+    const path = this.parentPath(this.activity?.object?.path);
     if (path === "") {
       return {
         name: RouteName.RESOURCE_FOLDER_ROOT,
@@ -179,7 +179,7 @@ export default class ResourceActivityItem extends mixins(ActivityMixin) {
   }
 
   parentPath(parent: string): string {
-    let path = parent.split("/");
+    const path = parent.split("/");
     path.pop();
     return path.join("/").replace(/^\//, "");
   }

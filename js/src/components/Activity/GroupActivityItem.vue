@@ -117,7 +117,7 @@ export default class GroupActivityItem extends mixins(ActivityMixin) {
   }
 
   get details(): string[] {
-    let details = [];
+    const details = [];
     const changes = this.subjectParams.group_changes.split(",");
     if (changes.includes("name") && this.subjectParams.old_group_name) {
       details.push("{old_group_name} was renamed to {group}.");

@@ -542,7 +542,7 @@ export default class Search extends Vue {
   }
 
   set eventCategory(eventCategory: string | null) {
-    let query = { ...this.$route.query, eventCategory };
+    const query = { ...this.$route.query, eventCategory };
     if (query.eventCategory === null) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
