@@ -58,7 +58,7 @@
             <b slot="instance">{{ config.name }}</b>
           </i18n>
         </p>
-        <div v-if="this.events.total > 0">
+        <div v-if="events.total > 0">
           <multi-card :events="events.elements.slice(0, 6)" />
           <span class="view-all">
             <router-link :to="{ name: RouteName.SEARCH }"
@@ -258,7 +258,10 @@
       />
 
       <!-- Events close to you -->
-      <section class="events-close" v-if="canShowCloseEvents">
+      <section
+        class="events-close"
+        v-if="canShowCloseEvents && loggedUserSettings.location?.range"
+      >
         <h2 class="title">
           {{ $t("Events nearby") }}
         </h2>
@@ -266,10 +269,10 @@
           {{
             $tc(
               "Within {number} kilometers of {place}",
-              loggedUserSettings.location.range,
+              loggedUserSettings.location?.range,
               {
-                number: loggedUserSettings.location.range,
-                place: loggedUserSettings.location.name,
+                number: loggedUserSettings.location?.range,
+                place: loggedUserSettings.location?.name,
               }
             )
           }}
