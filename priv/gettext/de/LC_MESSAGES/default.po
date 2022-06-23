@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
 "PO-Revision-Date: 2022-06-23 14:03+0000\n"
-"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
+"Last-Translator: Hermann San <hermann-san@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -2308,7 +2308,7 @@ msgstr "Familie & Bildung"
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
-msgstr ""
+msgstr "Mode & Schönheit"
 
 #: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
