@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-05-19 12:37+0000\n"
-"Last-Translator: Kerstin <kerstin@erictapen.name>\n"
+"PO-Revision-Date: 2022-06-23 11:08+0000\n"
+"Last-Translator: Hermann San <hermann-san@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.13\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -101,7 +101,7 @@ msgstr "Teilnahme bestätigt"
 #: lib/web/templates/email/password_reset.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Password reset"
-msgstr "Passwort zurückgesetzt"
+msgstr "Passwort zurücksetzen"
 
 #: lib/web/templates/email/password_reset.text.eex:7
 #, elixir-autogen, elixir-format
@@ -1784,7 +1784,7 @@ msgstr "%{Veranstaltung}-Teilnehmer"
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
 msgid "Participant message"
-msgstr "Nachricht der Teilnehmer:in"
+msgstr "Teilnehmernachricht"
 
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
@@ -1794,7 +1794,7 @@ msgstr "Teilnahme bestätigt"
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
 msgid "Participant status"
-msgstr "Status der Teilnehmer:in"
+msgstr "Teilnehmerstatus"
 
 #: lib/service/export/participants/common.ex:52
 #: lib/web/templates/email/admin/_role.html.heex:3
@@ -1858,7 +1858,7 @@ msgstr "Teilnahme bestätigt"
 #: lib/service/export/participants/common.ex:88
 #, elixir-autogen, elixir-format
 msgid "Anonymous participant"
-msgstr "Anonyme Teilnehmer:in"
+msgstr "Anonyme Teilnehmer"
 
 #: lib/web/templates/email/date/event_tz_date.html.heex:12
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:20
@@ -1946,12 +1946,12 @@ msgstr "Details:"
 #: lib/web/templates/email/email.html.heex:182
 #, elixir-autogen, elixir-format
 msgid "Manage your notification settings"
-msgstr "Verwalten Sie Ihre Benachrichtigungseinstellungen"
+msgstr "Verwalten deine Benachrichtigungseinstellungen"
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Manage your participation:"
-msgstr "Verwalten Sie Ihre Teilnahme:"
+msgstr "Verwalte deine Teilnahmen:"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #: lib/web/templates/email/participation/card/_title.text.eex:3
@@ -2194,12 +2194,12 @@ msgstr "Alte Rolle:"
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "User"
-msgstr "Benutzer:in"
+msgstr "Benutzer"
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "You may now login using your credentials on the service."
-msgstr "Sie können sich nun mit Ihren Anmeldedaten anmelden."
+msgstr "Du kannst dich nun mit deinen Anmeldedaten an dem Dienst anmelden."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:5
 #, elixir-autogen, elixir-format
@@ -2266,12 +2266,12 @@ msgstr "Kunst"
 #: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
-msgstr ""
+msgstr "Autos, Boote, Luftfahrt"
 
 #: lib/mobilizon/events/categories.ex:20
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr ""
+msgstr "Buchklubs"
 
 #: lib/mobilizon/events/categories.ex:24
 #, elixir-autogen, elixir-format
@@ -2336,22 +2336,22 @@ msgstr "LGBTQ"
 #: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
-msgstr ""
+msgstr "Sprache & Kultur"
 
 #: lib/mobilizon/events/categories.ex:80
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Learning"
-msgstr "Warnung"
+msgstr "Lernen"
 
 #: lib/mobilizon/events/categories.ex:133
 #, elixir-autogen, elixir-format
 msgid "Meeting"
-msgstr ""
+msgstr "Besprechungen"
 
 #: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
-msgstr ""
+msgstr "Bewegungen und Politik"
 
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
@@ -2361,7 +2361,7 @@ msgstr "Musik & Konzerte"
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr "Networking"
+msgstr "Netzwerke"
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
@@ -2376,7 +2376,7 @@ msgstr "Party"
 #: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
-msgstr ""
+msgstr "Darstellende & bildende Kunst"
 
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
@@ -2396,7 +2396,7 @@ msgstr "Wissenschaft & Technologie"
 #: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr ""
+msgstr "Glaube, Religion & Spiritualität"
 
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
@@ -2414,6 +2414,6 @@ msgid "Read more: %{url}"
 msgstr "Weiterlesen: %{url}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Mein Konto aktivieren"
+msgstr "Aktiviere mein Konto:"
