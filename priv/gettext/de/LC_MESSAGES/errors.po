@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-06-23 14:03+0000\n"
+"PO-Revision-Date: 2022-07-08 20:40+0000\n"
 "Last-Translator: Hermann San <hermann-san@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.13.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1064,7 +1064,7 @@ msgstr "Folgender stimmt nicht mit Ihrem Konto überein"
 #: lib/graphql/resolvers/group.ex:395
 #, elixir-autogen, elixir-format
 msgid "Follow not found"
-msgstr ""
+msgstr "Folgender nicht gefunden"
 
 #: lib/graphql/resolvers/user.ex:345
 #, elixir-autogen, elixir-format
@@ -1142,9 +1142,9 @@ msgstr ""
 #: lib/graphql/api/groups.ex:33
 #, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
-msgstr ""
+msgstr "Ein Profil oder eine Gruppe mit diesem Namen existiert bereits"
 
 #: lib/graphql/resolvers/admin.ex:506
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
-msgstr ""
+msgstr "Keine Instanz gefunden um dieser Adresse zu folgen"
