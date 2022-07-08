@@ -1064,7 +1064,7 @@ msgstr "Follow stimmt nicht mit Ihrem Konto überein"
 #: lib/graphql/resolvers/group.ex:395
 #, elixir-autogen, elixir-format
 msgid "Follow not found"
-msgstr "Folgender nicht gefunden"
+msgstr "Follow nicht gefunden"
 
 #: lib/graphql/resolvers/user.ex:345
 #, elixir-autogen, elixir-format
