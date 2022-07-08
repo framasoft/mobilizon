@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-06-23 14:03+0000\n"
+"PO-Revision-Date: 2022-07-09 11:17+0000\n"
 "Last-Translator: Hermann San <hermann-san@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.13\n"
+"X-Generator: Weblate 4.13.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2278,12 +2278,12 @@ msgstr "Buchklubs"
 #: lib/mobilizon/events/categories.ex:24
 #, elixir-autogen, elixir-format
 msgid "Business"
-msgstr ""
+msgstr "Geschäftliches"
 
 #: lib/mobilizon/events/categories.ex:28
 #, elixir-autogen, elixir-format
 msgid "Causes"
-msgstr ""
+msgstr "Soli & Benefiz"
 
 #: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
@@ -2368,7 +2368,7 @@ msgstr "Netzwerke"
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
-msgstr ""
+msgstr "Natur & Abenteuer"
 
 #: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
