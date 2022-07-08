@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "PO-Revision-Date: 2022-07-08 20:40+0000\n"
-"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
+"Last-Translator: Hermann San <hermann-san@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
 "Language: de\n"
@@ -1059,7 +1059,7 @@ msgstr "Benutzer:in kann E-Mail nicht ändern"
 #: lib/graphql/resolvers/group.ex:391
 #, elixir-autogen, elixir-format
 msgid "Follow does not match your account"
-msgstr "Follow stimmt nicht mit Ihrem Konto überein"
+msgstr "Folgender stimmt nicht mit Ihrem Konto überein"
 
 #: lib/graphql/resolvers/group.ex:395
 #, elixir-autogen, elixir-format
