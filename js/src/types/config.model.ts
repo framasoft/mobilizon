@@ -3,7 +3,7 @@ import type { IProvider } from "./resource";
 
 export interface IOAuthProvider {
   id: string;
-  label: string;
+  label?: string;
 }
 
 export interface IKeyValueConfig {
@@ -16,6 +16,19 @@ export interface IAnalyticsConfig {
   id: string;
   enabled: boolean;
   configuration: IKeyValueConfig[];
+}
+
+export interface IAnonymousParticipationConfig {
+  allowed: boolean;
+  validation: {
+    email: {
+      enabled: boolean;
+      confirmationRequired: boolean;
+    };
+    captcha: {
+      enabled: boolean;
+    };
+  };
 }
 
 export interface IConfig {
@@ -37,18 +50,7 @@ export interface IConfig {
     // accuracyRadius: number;
   };
   anonymous: {
-    participation: {
-      allowed: boolean;
-      validation: {
-        email: {
-          enabled: boolean;
-          confirmationRequired: boolean;
-        };
-        captcha: {
-          enabled: boolean;
-        };
-      };
-    };
+    participation: IAnonymousParticipationConfig;
     eventCreation: {
       allowed: boolean;
       validation: {

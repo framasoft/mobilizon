@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Начать обсуждение",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> будет отображаться как контакт.|<b>{contact}</b> будут отображаться как контакты.",
   "@{group}": "@{group}",
-  "@{username}": "@{username}",
+  "{'@'}{username}": "{'@'}{username}",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "Запрос на подписку от @{username} принят",
   "@{username}'s follow request was rejected": "Запрос на подписку от @{username} отклонён",

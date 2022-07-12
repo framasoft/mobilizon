@@ -1,5 +1,5 @@
 <template>
-  <div v-if="editor">
+  <div v-if="editor !== null">
     <div
       class="editor"
       :class="{ short_mode: isShortMode, comment_mode: isCommentMode }"
@@ -14,64 +14,64 @@
         <button
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('bold') }"
-          @click="editor.chain().focus().toggleBold().run()"
+          @click="editor?.chain().focus().toggleBold().run()"
           type="button"
           :title="$t('Bold')"
         >
-          <b-icon icon="format-bold" />
+          <o-icon icon="format-bold" />
         </button>
 
         <button
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('italic') }"
-          @click="editor.chain().focus().toggleItalic().run()"
+          @click="editor?.chain().focus().toggleItalic().run()"
           type="button"
           :title="$t('Italic')"
         >
-          <b-icon icon="format-italic" />
+          <o-icon icon="format-italic" />
         </button>
 
         <button
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('underline') }"
-          @click="editor.chain().focus().toggleUnderline().run()"
+          @click="editor?.chain().focus().toggleUnderline().run()"
           type="button"
           :title="$t('Underline')"
         >
-          <b-icon icon="format-underline" />
+          <o-icon icon="format-underline" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-          @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+          @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"
           type="button"
           :title="$t('Heading Level 1')"
         >
-          <b-icon icon="format-header-1" />
+          <o-icon icon="format-header-1" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-          @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+          @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
           type="button"
           :title="$t('Heading Level 2')"
         >
-          <b-icon icon="format-header-2" />
+          <o-icon icon="format-header-2" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-          @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+          @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
           type="button"
           :title="$t('Heading Level 3')"
         >
-          <b-icon icon="format-header-3" />
+          <o-icon icon="format-header-3" />
         </button>
 
         <button
@@ -81,17 +81,17 @@
           type="button"
           :title="$t('Add link')"
         >
-          <b-icon icon="link" />
+          <o-icon icon="link" />
         </button>
 
         <button
           v-if="editor.isActive('link')"
           class="menubar__button"
-          @click="editor.chain().focus().unsetLink().run()"
+          @click="editor?.chain().focus().unsetLink().run()"
           type="button"
           :title="$t('Remove link')"
         >
-          <b-icon icon="link-off" />
+          <o-icon icon="link-off" />
         </button>
 
         <button
@@ -101,60 +101,60 @@
           type="button"
           :title="$t('Add picture')"
         >
-          <b-icon icon="image" />
+          <o-icon icon="image" />
         </button>
 
         <button
           class="menubar__button"
           v-if="!isBasicMode"
           :class="{ 'is-active': editor.isActive('bulletList') }"
-          @click="editor.chain().focus().toggleBulletList().run()"
+          @click="editor?.chain().focus().toggleBulletList().run()"
           type="button"
           :title="$t('Bullet list')"
         >
-          <b-icon icon="format-list-bulleted" />
+          <o-icon icon="format-list-bulleted" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('orderedList') }"
-          @click="editor.chain().focus().toggleOrderedList().run()"
+          @click="editor?.chain().focus().toggleOrderedList().run()"
           type="button"
           :title="$t('Ordered list')"
         >
-          <b-icon icon="format-list-numbered" />
+          <o-icon icon="format-list-numbered" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
           :class="{ 'is-active': editor.isActive('blockquote') }"
-          @click="editor.chain().focus().toggleBlockquote().run()"
+          @click="editor?.chain().focus().toggleBlockquote().run()"
           type="button"
           :title="$t('Quote')"
         >
-          <b-icon icon="format-quote-close" />
+          <o-icon icon="format-quote-close" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          @click="editor.chain().focus().undo().run()"
+          @click="editor?.chain().focus().undo().run()"
           type="button"
           :title="$t('Undo')"
         >
-          <b-icon icon="undo" />
+          <o-icon icon="undo" />
         </button>
 
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          @click="editor.chain().focus().redo().run()"
+          @click="editor?.chain().focus().redo().run()"
           type="button"
           :title="$t('Redo')"
         >
-          <b-icon icon="redo" />
+          <o-icon icon="redo" />
         </button>
       </div>
 
@@ -167,34 +167,33 @@
         <button
           class="menububble__button"
           :class="{ 'is-active': editor.isActive('bold') }"
-          @click="editor.chain().focus().toggleBold().run()"
+          @click="editor?.chain().focus().toggleBold().run()"
           type="button"
           :title="$t('Bold')"
         >
-          <b-icon icon="format-bold" />
+          <o-icon icon="format-bold" />
           <span class="visually-hidden">{{ $t("Bold") }}</span>
         </button>
 
         <button
           class="menububble__button"
           :class="{ 'is-active': editor.isActive('italic') }"
-          @click="editor.chain().focus().toggleItalic().run()"
+          @click="editor?.chain().focus().toggleItalic().run()"
           type="button"
           :title="$t('Italic')"
         >
-          <b-icon icon="format-italic" />
+          <o-icon icon="format-italic" />
           <span class="visually-hidden">{{ $t("Italic") }}</span>
         </button>
       </bubble-menu>
 
-      <editor-content class="editor__content" :editor="editor" />
+      <editor-content class="editor__content" :editor="editor" v-if="editor" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-2";
+<script lang="ts" setup>
+import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
 import Blockquote from "@tiptap/extension-blockquote";
 import BulletList from "@tiptap/extension-bullet-list";
 import Heading from "@tiptap/extension-heading";
@@ -211,7 +210,6 @@ import { IActor, IPerson, usernameWithDomain } from "../types/actor";
 import CustomImage from "./Editor/Image";
 import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
-import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import Mention from "@tiptap/extension-mention";
 import MentionOptions from "./Editor/Mention";
 import OrderedList from "@tiptap/extension-ordered-list";
@@ -219,190 +217,204 @@ import ListItem from "@tiptap/extension-list-item";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { AutoDir } from "./Editor/Autodir";
-import sanitizeHtml from "sanitize-html";
+// import sanitizeHtml from "sanitize-html";
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { Dialog } from "@/plugins/dialog";
+import { useI18n } from "vue-i18n";
+import { useMutation } from "@vue/apollo-composable";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  components: { EditorContent, BubbleMenu },
-  apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
+const props = withDefaults(
+  defineProps<{
+    modelValue: string;
+    mode?: string;
+    maxSize?: number;
+    ariaLabel?: string;
+    currentActor: IPerson;
+  }>(),
+  {
+    mode: "description",
+    maxSize: 100_000_000,
+  }
+);
+
+const emit = defineEmits(["update:modelValue"]);
+
+const editor = ref<Editor | null>(null);
+
+const isDescriptionMode = computed((): boolean => {
+  return props.mode === "description" || isBasicMode.value;
+});
+
+const isCommentMode = computed((): boolean => {
+  return props.mode === "comment";
+});
+
+const isShortMode = computed((): boolean => {
+  return isBasicMode.value;
+});
+
+const isBasicMode = computed((): boolean => {
+  return props.mode === "basic";
+});
+
+const insertMention = (obj: { range: any; attrs: any }) => {
+  console.log("initialize Mention");
+};
+
+const observer = ref<MutationObserver | null>(null);
+
+onMounted(() => {
+  editor.value = new Editor({
+    editorProps: {
+      attributes: {
+        "aria-multiline": isShortMode.value.toString(),
+        "aria-label": props.ariaLabel ?? "",
+        role: "textbox",
+      },
+      transformPastedHTML: transformPastedHTML,
     },
-  },
-})
-export default class EditorComponent extends Vue {
-  @Prop({ required: true }) value!: string;
+    extensions: [
+      Blockquote,
+      BulletList,
+      Heading,
+      Document,
+      Paragraph,
+      Text,
+      OrderedList,
+      ListItem,
+      Mention.configure(MentionOptions),
+      CustomImage,
+      AutoDir,
+      Underline,
+      Bold,
+      Italic,
+      Strike,
+      Dropcursor,
+      Gapcursor,
+      History,
+      Link.configure({
+        HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
+      }),
+    ],
+    injectCSS: false,
+    content: props.modelValue,
+    onUpdate: () => {
+      emit("update:modelValue", editor.value?.getHTML());
+    },
+  });
+});
 
-  @Prop({ required: false, default: "description" }) mode!: string;
-
-  @Prop({ required: false, default: 100_000_000 }) maxSize!: number;
-
-  @Prop({ required: false }) ariaLabel!: string;
-
-  currentActor!: IPerson;
-
-  editor: Editor | null = null;
-
-  get isDescriptionMode(): boolean {
-    return this.mode === "description" || this.isBasicMode;
-  }
-
-  get isCommentMode(): boolean {
-    return this.mode === "comment";
-  }
-
-  get isShortMode(): boolean {
-    return this.isBasicMode;
-  }
-
-  get isBasicMode(): boolean {
-    return this.mode === "basic";
-  }
-
-  // eslint-disable-next-line
-  insertMention(obj: { range: any; attrs: any }) {
-    console.log("initialize Mention");
-  }
-
-  observer!: MutationObserver | null;
-
-  mounted(): void {
-    this.editor = new Editor({
-      editorProps: {
-        attributes: {
-          "aria-multiline": this.isShortMode.toString(),
-          "aria-label": this.ariaLabel,
-          role: "textbox",
-        },
-        transformPastedHTML: this.transformPastedHTML,
-      },
-      extensions: [
-        Blockquote,
-        BulletList,
-        Heading,
-        Document,
-        Paragraph,
-        Text,
-        OrderedList,
-        ListItem,
-        Mention.configure(MentionOptions),
-        CustomImage,
-        AutoDir,
-        Underline,
-        Bold,
-        Italic,
-        Strike,
-        Dropcursor,
-        Gapcursor,
-        History,
-        Link.configure({
-          HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
-        }),
-      ],
-      injectCSS: false,
-      content: this.value,
-      onUpdate: () => {
-        this.$emit("input", this.editor?.getHTML());
-      },
-    });
-  }
-
-  transformPastedHTML(html: string): string {
-    // When using comment mode, limit to acceptable tags
-    if (this.isCommentMode) {
-      return sanitizeHtml(html, {
-        allowedTags: ["b", "i", "em", "strong", "a"],
-        allowedAttributes: {
-          a: ["href", "rel", "target"],
-        },
-      });
-    }
+const transformPastedHTML = (html: string): string => {
+  // When using comment mode, limit to acceptable tags
+  if (isCommentMode.value) {
+    // return sanitizeHtml(html, {
+    //   allowedTags: ["b", "i", "em", "strong", "a"],
+    //   allowedAttributes: {
+    //     a: ["href", "rel", "target"],
+    //   },
+    // });
     return html;
   }
+  return html;
+};
 
-  @Watch("value")
-  onValueChanged(val: string): void {
-    if (!this.editor) return;
-    if (val !== this.editor.getHTML()) {
-      this.editor.commands.setContent(val, false);
-    }
+const value = computed(() => props.modelValue);
+
+watch(value, (val: string) => {
+  if (!editor.value) return;
+  if (val !== editor.value.getHTML()) {
+    editor.value.commands.setContent(val, false);
   }
+});
 
-  /**
-   * Show a popup to get the link from the URL
-   */
-  showLinkMenu(): void {
-    this.$buefy.dialog.prompt({
-      message: this.$t("Enter the link URL") as string,
-      inputAttrs: {
-        type: "url",
-      },
-      trapFocus: true,
-      onConfirm: (value) => {
-        if (!this.editor) return undefined;
-        this.editor.chain().focus().setLink({ href: value }).run();
-      },
-    });
-  }
+const dialog = inject<Dialog>("dialog");
+const { t } = useI18n({ useScope: "global" });
 
-  /**
-   * Show a file prompt, upload picture and insert it into editor
-   */
-  async showImagePrompt(): Promise<void> {
-    const image = await listenFileUpload();
-    try {
-      const { data } = await this.$apollo.mutate({
-        mutation: UPLOAD_MEDIA,
-        variables: {
-          file: image,
-          name: image.name,
-        },
-      });
-      if (data.uploadMedia && data.uploadMedia.url && this.editor) {
-        this.editor
-          .chain()
-          .focus()
-          .setImage({
-            src: data.uploadMedia.url,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            "data-media-id": data.uploadMedia.id,
-          })
-          .run();
-      }
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+/**
+ * Show a popup to get the link from the URL
+ */
+const showLinkMenu = (): void => {
+  dialog?.prompt({
+    message: t("Enter the link URL"),
+    inputAttrs: {
+      type: "url",
+    },
+    onConfirm: (prompt: string) => {
+      if (!editor.value) return;
+      editor.value.chain().focus().setLink({ href: prompt }).run();
+    },
+  });
+};
 
-  /**
-   * We use this to programatically insert an actor mention when creating a reply to comment
-   */
-  replyToComment(actor: IActor): void {
-    if (!this.editor) return;
-    this.editor
+const {
+  mutate: uploadMediaMutation,
+  onDone: uploadMediaDone,
+  onError: uploadMediaError,
+} = useMutation(UPLOAD_MEDIA);
+
+/**
+ * Show a file prompt, upload picture and insert it into editor
+ */
+const showImagePrompt = async (): Promise<void> => {
+  const image = await listenFileUpload();
+  uploadMediaMutation({
+    file: image,
+    name: image.name,
+  });
+};
+
+uploadMediaDone(({ data }) => {
+  if (data.uploadMedia && data.uploadMedia.url && editor.value) {
+    editor.value
       .chain()
       .focus()
-      .insertContent({
-        type: "mention",
-        attrs: {
-          id: usernameWithDomain(actor),
-        },
+      .setImage({
+        src: data.uploadMedia.url,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        "data-media-id": data.uploadMedia.id,
       })
-      .insertContent(" ")
       .run();
   }
+});
 
-  focus(): void {
-    this.editor?.chain().focus("end");
-  }
+const notifier = inject<Notifier>("notifier");
 
-  beforeDestroy(): void {
-    this.editor?.destroy();
+uploadMediaError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
-}
+});
+
+/**
+ * We use this to programatically insert an actor mention when creating a reply to comment
+ */
+const replyToComment = (actor: IActor): void => {
+  if (!editor.value) return;
+  editor.value
+    .chain()
+    .focus()
+    .insertContent({
+      type: "mention",
+      attrs: {
+        id: usernameWithDomain(actor),
+      },
+    })
+    .insertContent(" ")
+    .run();
+};
+
+const focus = (): void => {
+  editor.value?.chain().focus("end");
+};
+
+defineExpose({ replyToComment, focus });
+
+onBeforeUnmount(() => {
+  editor.value?.destroy();
+});
 </script>
 <style lang="scss">
 @use "@/styles/_mixins" as *;
@@ -422,7 +434,7 @@ $color-white: #eee;
     border: 0;
     color: $color-black;
     padding: 0.2rem 0.5rem;
-    @include margin-right(0.2rem);
+    // @include margin-right(0.2rem);
     border-radius: 3px;
     cursor: pointer;
 
@@ -492,10 +504,10 @@ $color-white: #eee;
       font-size: 1.25em;
     }
 
-    ul,
-    ol {
-      @include padding-left(1rem);
-    }
+    // ul,
+    // ol {
+    //   @include padding-left(1rem);
+    // }
 
     ul {
       list-style-type: disc;
@@ -510,7 +522,7 @@ $color-white: #eee;
     blockquote {
       border-left: 3px solid rgba($color-black, 0.1);
       color: rgba($color-black, 0.8);
-      @include padding-left(0.8rem);
+      // @include padding-left(0.8rem);
       font-style: italic;
 
       p {

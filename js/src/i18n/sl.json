@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Začni razpravo",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> bo prikazan kot stik.|<b>{contact}</b> bodo prikazani kot stiki.",
   "@{group}": "@{group}",
-  "@{username}": "@{username}",
+  "{'@'}{username}": "{'@'}{username}",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "Prošnja za sledenje je bila sprejeta. @{username} vam sedaj sledi",
   "@{username}'s follow request was rejected": "Prošnja za sledenje od uporabnika @{username} je bila zavrnjena",

@@ -11,7 +11,7 @@
  */
 
 import { DomEvent } from "leaflet";
-import { findRealParent, propsBinder } from "vue2-leaflet";
+// import { findRealParent, propsBinder } from "vue2-leaflet";
 import Locatecontrol from "leaflet.locatecontrol";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
@@ -60,5 +60,5 @@ export default class Vue2LeafletLocateControl extends Vue {
 </script>
 
 <style>
-@import "~leaflet.locatecontrol/dist/L.Control.Locate.css";
+/* @import "~leaflet.locatecontrol/dist/L.Control.Locate.css"; */
 </style>

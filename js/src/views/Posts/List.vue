@@ -1,5 +1,5 @@
 <template>
-  <div class="container section" v-if="group">
+  <div class="container mx-auto section" v-if="group">
     <breadcrumbs-nav
       :links="[
         {
@@ -26,14 +26,16 @@
         <p v-if="isCurrentActorMember">
           {{ $t("Only group moderators can create, edit and delete posts.") }}
         </p>
-        <router-link
+        <o-button
+          tag="router-link"
           v-if="isCurrentActorAGroupModerator"
           :to="{
             name: RouteName.POST_CREATE,
             params: { preferredUsername: usernameWithDomain(group) },
           }"
-          class="button is-primary"
-          >{{ $t("+ Create a post") }}</router-link
+          variant="primary"
+          class="my-2"
+          >{{ $t("+ Create a post") }}</o-button
         >
       </div>
       <div class="post-list">
@@ -42,14 +44,18 @@
           :isCurrentActorMember="isCurrentActorMember"
         />
       </div>
-      <b-loading :active.sync="$apollo.loading"></b-loading>
-      <b-message
-        v-if="group.posts.elements.length === 0 && $apollo.loading === false"
-        type="is-danger"
+      <o-loading v-model:active="loading"></o-loading>
+      <o-notification
+        v-if="
+          group.posts.elements.length === 0 &&
+          membershipsLoading === false &&
+          groupLoading === false
+        "
+        variant="danger"
       >
         {{ $t("No posts found") }}
-      </b-message>
-      <b-pagination
+      </o-notification>
+      <o-pagination
         :total="group.posts.total"
         v-model="postsPage"
         :per-page="POSTS_PAGE_LIMIT"
@@ -58,105 +64,92 @@
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
       >
-      </b-pagination>
+      </o-pagination>
     </section>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { mixins } from "vue-class-component";
-import GroupMixin from "@/mixins/group";
-import { IMember } from "@/types/actor/member.model";
+<script lang="ts" setup>
+import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { FETCH_GROUP_POSTS } from "../../graphql/post";
-import { Paginate } from "../../types/paginate";
-import { IPost } from "../../types/post.model";
-import { usernameWithDomain, displayName } from "../../types/actor";
+import {
+  usernameWithDomain,
+  displayName,
+  IPerson,
+  IGroup,
+} from "../../types/actor";
 import RouteName from "../../router/name";
 import MultiPostListItem from "../../components/Post/MultiPostListItem.vue";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
+import { useHead } from "@vueuse/head";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { useI18n } from "vue-i18n";
+import { MemberRole } from "@/types/enums";
 
+const props = defineProps<{ preferredUsername: string }>();
+
+const postsPage = useRouteQuery("page", 1, integerTransformer);
 const POSTS_PAGE_LIMIT = 10;
 
-@Component({
-  apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
-    memberships: {
-      query: PERSON_MEMBERSHIPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-        };
-      },
-      update: (data) => data.person.memberships.elements,
-      skip() {
-        return !this.currentActor || !this.currentActor.id;
-      },
-    },
-    group: {
-      query: FETCH_GROUP_POSTS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          preferredUsername: this.preferredUsername,
-          page: this.postsPage,
-          limit: POSTS_PAGE_LIMIT,
-        };
-      },
-      skip() {
-        return !this.preferredUsername;
-      },
-    },
-  },
-  components: {
-    MultiPostListItem,
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { group } = this;
-    return {
-      title: this.$t("{group} posts", {
-        group: group?.name || usernameWithDomain(group),
-      }) as string,
-    };
-  },
-})
-export default class PostList extends mixins(GroupMixin) {
-  @Prop({ required: true, type: String }) preferredUsername!: string;
+const { currentActor } = useCurrentActorClient();
 
-  posts!: Paginate<IPost>;
+const { result: membershipsResult, loading: membershipsLoading } = useQuery<{
+  person: Pick<IPerson, "memberships">;
+}>(
+  PERSON_MEMBERSHIPS,
+  () => ({ id: currentActor.value?.id }),
+  () => ({ enabled: currentActor.value?.id !== undefined })
+);
+const memberships = computed(() => membershipsResult.value?.person.memberships);
 
-  memberships!: IMember[];
+const { result: groupPostsResult, loading: groupLoading } = useQuery<{
+  group: IGroup;
+}>(
+  FETCH_GROUP_POSTS,
+  () => ({
+    preferredUsername: props.preferredUsername,
+    page: postsPage.value,
+    limit: POSTS_PAGE_LIMIT,
+  }),
+  () => ({ enabled: props.preferredUsername !== undefined })
+);
 
-  postsPage = 1;
+const group = computed(() => groupPostsResult.value?.group);
 
-  RouteName = RouteName;
+const { t } = useI18n({ useScope: "global" });
 
-  usernameWithDomain = usernameWithDomain;
+useHead({
+  title: computed(() =>
+    t("{group} posts", {
+      group: displayName(group.value),
+    })
+  ),
+});
 
-  displayName = displayName;
+const loading = computed(() => membershipsLoading.value || groupLoading.value);
 
-  POSTS_PAGE_LIMIT = POSTS_PAGE_LIMIT;
+const isCurrentActorMember = computed((): boolean => {
+  if (!group.value || !memberships.value) return false;
+  return memberships.value.elements
+    .map(({ parent: { id } }) => id)
+    .includes(group.value.id);
+});
 
-  get isCurrentActorMember(): boolean {
-    if (!this.group || !this.memberships) return false;
-    return this.memberships
-      .map(({ parent: { id } }) => id)
-      .includes(this.group.id);
-  }
-}
+const isCurrentActorAGroupModerator = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+  ]);
+});
+
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  return (
+    memberships.value !== undefined &&
+    memberships.value?.total > 0 &&
+    roles.includes(memberships.value?.elements[0].role)
+  );
+};
 </script>
-<style lang="scss" scoped>
-.container.section {
-  background: $white;
-}
-
-section {
-  div.intro,
-  .post-list {
-    margin-bottom: 1rem;
-  }
-}
-</style>

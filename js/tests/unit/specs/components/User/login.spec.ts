@@ -1,86 +1,83 @@
-import { config, createLocalVue, mount, Wrapper } from "@vue/test-utils";
-import Login from "@/views/User/Login.vue";
-import Buefy from "buefy";
+const useRouterMock = vi.fn(() => ({
+  push: () => {},
+  replace: () => {},
+}));
+const useRouteMock = vi.fn(() => {});
+
+import { config, mount, VueWrapper } from "@vue/test-utils";
+import Login from "@/views/User/LoginView.vue";
 import {
   createMockClient,
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "@vue/apollo-option";
 import buildCurrentUserResolver from "@/apollo/user";
-import { configMock } from "../../mocks/config";
-import { i18n } from "@/utils/i18n";
-import { CONFIG } from "@/graphql/config";
+import { loginMock as loginConfigMock } from "../../mocks/config";
+import { LOGIN_CONFIG } from "@/graphql/config";
 import { loginMock, loginResponseMock } from "../../mocks/auth";
 import { LOGIN } from "@/graphql/auth";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import flushPromises from "flush-promises";
 import RouteName from "@/router/name";
-import { InMemoryCache } from "@apollo/client/cache";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import Oruga from "@oruga-ui/oruga-next";
+import { cache } from "@/apollo/memory";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-config.mocks.$t = (key: string): string => key;
-const $router = { push: jest.fn(), replace: jest.fn() };
+vi.mock("vue-router/dist/vue-router.mjs", () => ({
+  useRouter: useRouterMock,
+  useRoute: useRouteMock,
+}));
+
+config.global.plugins.push(Oruga);
 
 describe("Render login form", () => {
-  let wrapper: Wrapper<Vue>;
+  let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
-  let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
 
   const generateWrapper = (
     handlers: Record<string, unknown> = {},
     customProps: Record<string, unknown> = {},
-    baseData: Record<string, unknown> = {},
     customMocks: Record<string, unknown> = {}
   ) => {
-    const cache = new InMemoryCache({ addTypename: false });
-
     mockClient = createMockClient({
       cache,
       resolvers: buildCurrentUserResolver(cache),
     });
 
     requestHandlers = {
-      configQueryHandler: jest.fn().mockResolvedValue(configMock),
-      loginMutationHandler: jest.fn().mockResolvedValue(loginResponseMock),
+      configQueryHandler: vi.fn().mockResolvedValue(loginConfigMock),
+      loginMutationHandler: vi.fn().mockResolvedValue(loginResponseMock),
       ...handlers,
     };
-    mockClient.setRequestHandler(CONFIG, requestHandlers.configQueryHandler);
+    mockClient.setRequestHandler(
+      LOGIN_CONFIG,
+      requestHandlers.configQueryHandler
+    );
     mockClient.setRequestHandler(LOGIN, requestHandlers.loginMutationHandler);
 
-    apolloProvider = new VueApollo({
-      defaultClient: mockClient,
-    });
-
     wrapper = mount(Login, {
-      localVue,
-      i18n,
-      apolloProvider,
-      propsData: {
+      props: {
         ...customProps,
       },
       mocks: {
-        $route: { query: {} },
-        $router,
         ...customMocks,
       },
       stubs: ["router-link", "router-view"],
-      data() {
-        return {
-          ...baseData,
-        };
+      global: {
+        provide: {
+          [DefaultApolloClient]: mockClient,
+        },
       },
     });
   };
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper?.unmount();
+    cache.reset();
     mockClient = null;
-    apolloProvider = null;
-    $router.push.mockReset();
   });
 
   it("requires email and password to be filled", async () => {
@@ -90,10 +87,9 @@ describe("Render login form", () => {
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
     wrapper.find('form input[type="email"]').setValue("");
     wrapper.find('form input[type="password"]').setValue("");
-    wrapper.find("form button.button").trigger("click");
+    wrapper.find('form button[type="submit"]').trigger("click");
     const form = wrapper.find("form");
     expect(form.exists()).toBe(true);
     const formElement = form.element as HTMLFormElement;
@@ -101,13 +97,18 @@ describe("Render login form", () => {
   });
 
   it("renders and submits the login form", async () => {
+    const replace = vi.fn(); // needs to write this code before render()
+    const push = vi.fn();
+    useRouterMock.mockImplementationOnce(() => ({
+      replace,
+      push,
+    }));
     generateWrapper();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
     wrapper.find('form input[type="email"]').setValue("some@email.tld");
     wrapper.find('form input[type="password"]').setValue("somepassword");
     wrapper.find("form").trigger("submit");
@@ -125,14 +126,19 @@ describe("Render login form", () => {
     await flushPromises();
     expect(currentUser?.email).toBe("some@email.tld");
     expect(currentUser?.id).toBe("1");
-    expect(jest.isMockFunction(wrapper.vm.$router.replace)).toBe(true);
     await flushPromises();
-    expect($router.replace).toHaveBeenCalledWith({ name: RouteName.HOME });
+    expect(replace).toHaveBeenCalledWith({ name: RouteName.HOME });
   });
 
   it("handles a login error", async () => {
+    const replace = vi.fn(); // needs to write this code before render()
+    const push = vi.fn();
+    useRouterMock.mockImplementationOnce(() => ({
+      push,
+      replace,
+    }));
     generateWrapper({
-      loginMutationHandler: jest.fn().mockResolvedValue({
+      loginMutationHandler: vi.fn().mockResolvedValue({
         errors: [
           {
             message:
@@ -147,7 +153,6 @@ describe("Render login form", () => {
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
     wrapper.find('form input[type="email"]').setValue("some@email.tld");
     wrapper.find('form input[type="password"]').setValue("somepassword");
     wrapper.find("form").trigger("submit");
@@ -156,21 +161,23 @@ describe("Render login form", () => {
       ...loginMock,
     });
     await flushPromises();
-    expect(wrapper.find("article.message.is-danger").text()).toContain(
+    expect(wrapper.find(".o-notification--danger").text()).toContain(
       "Impossible to authenticate, either your email or password are invalid."
     );
-    expect($router.push).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("handles redirection after login", async () => {
-    generateWrapper(
-      {},
-      {},
-      {},
-      {
-        $route: { query: { redirect: "/about/instance" } },
-      }
-    );
+    const replace = vi.fn(); // needs to write this code before render()
+    const push = vi.fn();
+    useRouterMock.mockImplementationOnce(() => ({
+      replace,
+      push,
+    }));
+    useRouteMock.mockImplementationOnce(() => ({
+      query: { redirect: "/about/instance" },
+    }));
+    generateWrapper();
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -179,6 +186,6 @@ describe("Render login form", () => {
     wrapper.find('form input[type="password"]').setValue("somepassword");
     wrapper.find("form").trigger("submit");
     await flushPromises();
-    expect($router.push).toHaveBeenCalledWith("/about/instance");
+    expect(push).toHaveBeenCalledWith("/about/instance");
   });
 });

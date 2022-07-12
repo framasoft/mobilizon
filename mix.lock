@@ -141,6 +141,7 @@
   "ueberauth_twitter": {:hex, :ueberauth_twitter, "0.4.1", "92f88b1ad50322cdda719b439bb7f93b225dc0315723117bc25c782e627c8f33", [:mix], [{:httpoison, "~> 1.0", [hex: :httpoison, repo: "hexpm", optional: false]}, {:oauther, "~> 1.1", [hex: :oauther, repo: "hexpm", optional: false]}, {:ueberauth, "~> 0.7", [hex: :ueberauth, repo: "hexpm", optional: false]}], "hexpm", "83ca8ea3e1a3f976f1adbebfb323b9ebf53af453fbbf57d0486801a303b16065"},
   "unicode_util_compat": {:hex, :unicode_util_compat, "0.7.0", "bc84380c9ab48177092f43ac89e4dfa2c6d62b40b8bd132b1059ecc7232f9a78", [:rebar3], [], "hexpm", "25eee6d67df61960cf6a794239566599b09e17e668d3700247bc498638152521"},
   "unsafe": {:hex, :unsafe, "1.0.1", "a27e1874f72ee49312e0a9ec2e0b27924214a05e3ddac90e91727bc76f8613d8", [:mix], [], "hexpm", "6c7729a2d214806450d29766abc2afaa7a2cbecf415be64f36a6691afebb50e5"},
+  "vite_phx": {:hex, :vite_phx, "0.3.0", "c57fc4a66eb2252b3a78bab884e204267cd13a90920b7905001cb2fc67d2afec", [:mix], [{:jason, ">= 0.0.0", [hex: :jason, repo: "hexpm", optional: true]}, {:phoenix, ">= 0.0.0", [hex: :phoenix, repo: "hexpm", optional: false]}], "hexpm", "55cae911dc8c43e75f2dab032035d34414f92b87ef030e5dbfcba65b5c248947"},
   "web_push_encryption": {:git, "https://github.com/danhper/elixir-web-push-encryption.git", "70f00d06cbd88c9ac382e0ad2539e54448e9d8da", []},
   "xml_builder": {:hex, :xml_builder, "2.2.0", "cc5f1eeefcfcde6e90a9b77fb6c490a20bc1b856a7010ce6396f6da9719cbbab", [:mix], [], "hexpm", "9d66d52fb917565d358166a4314078d39ef04d552904de96f8e73f68f64a62c9"},
 }

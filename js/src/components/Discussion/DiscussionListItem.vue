@@ -1,126 +1,93 @@
 <template>
   <router-link
-    class="discussion-minimalist-card-wrapper"
+    class="flex gap-1 w-full items-center p-2 border-b-stone-200 border-b"
     dir="auto"
     :to="{
       name: RouteName.DISCUSSION,
       params: { slug: discussion.slug, id: discussion.id },
     }"
   >
-    <div class="media-left">
+    <div class="">
       <figure
-        class="image is-32x32"
+        class=""
         v-if="
-          discussion.lastComment.actor && discussion.lastComment.actor.avatar
+          discussion.lastComment?.actor && discussion.lastComment.actor.avatar
         "
       >
         <img
-          class="is-rounded"
+          class="rounded-xl"
           :src="discussion.lastComment.actor.avatar.url"
-          alt
+          alt=""
+          width="32"
+          height="32"
         />
       </figure>
-      <b-icon v-else size="is-medium" icon="account-circle" />
+      <account-circle :size="32" v-else />
     </div>
-    <div class="title-info-wrapper">
-      <div class="title-and-date">
-        <p class="discussion-minimalist-title">{{ discussion.title }}</p>
-        <span
-          class="has-text-grey-dark"
-          :title="actualDate | formatDateTimeString"
-        >
-          {{
-            formatDistanceToNowStrict(new Date(actualDate), {
-              locale: $dateFnsLocale,
-            }) || $t("Right now")
-          }}</span
+    <div class="flex-1">
+      <div class="flex items-center">
+        <p class="text-violet-3 dark:text-white text-lg font-semibold flex-1">
+          {{ discussion.title }}
+        </p>
+        <span class="" :title="formatDateTimeString(actualDate)">
+          {{ distanceToNow }}</span
         >
       </div>
       <div
-        class="ellipsis has-text-grey-dark"
+        class="line-clamp-2"
         dir="auto"
-        v-if="!discussion.lastComment.deletedAt"
+        v-if="!discussion.lastComment?.deletedAt"
       >
         {{ htmlTextEllipsis }}
       </div>
-      <div v-else class="has-text-grey-dark">
-        {{ $t("[This comment has been deleted]") }}
+      <div v-else class="">
+        {{ t("[This comment has been deleted]") }}
       </div>
     </div>
   </router-link>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { formatDistanceToNowStrict } from "date-fns";
-import { IDiscussion } from "../../types/discussions";
-import RouteName from "../../router/name";
+import { IDiscussion } from "@/types/discussions";
+import RouteName from "@/router/name";
+import { computed, inject } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import type { Locale } from "date-fns";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useI18n } from "vue-i18n";
 
-@Component
-export default class DiscussionListItem extends Vue {
-  @Prop({ required: true, type: Object }) discussion!: IDiscussion;
+const props = defineProps<{
+  discussion: IDiscussion;
+}>();
 
-  RouteName = RouteName;
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
+const { t } = useI18n({ useScope: "global" });
 
-  formatDistanceToNowStrict = formatDistanceToNowStrict;
+const distanceToNow = computed(() => {
+  return (
+    formatDistanceToNowStrict(new Date(actualDate.value), {
+      locale: dateFnsLocale,
+    }) ?? t("Right now")
+  );
+});
 
-  get htmlTextEllipsis(): string {
-    const element = document.createElement("div");
-    if (this.discussion.lastComment && this.discussion.lastComment.text) {
-      element.innerHTML = this.discussion.lastComment.text
-        .replace(/<br\s*\/?>/gi, " ")
-        .replace(/<p>/gi, " ");
-    }
-    return element.innerText;
+const htmlTextEllipsis = computed((): string => {
+  const element = document.createElement("div");
+  if (props.discussion.lastComment && props.discussion.lastComment.text) {
+    element.innerHTML = props.discussion.lastComment.text
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<p>/gi, " ");
   }
+  return element.innerText;
+});
 
-  get actualDate(): string | Date | undefined {
-    if (
-      this.discussion.updatedAt === this.discussion.insertedAt &&
-      this.discussion.lastComment
-    ) {
-      return this.discussion.lastComment.publishedAt;
-    }
-    return this.discussion.updatedAt;
+const actualDate = computed((): string => {
+  if (
+    props.discussion.updatedAt === props.discussion.insertedAt &&
+    props.discussion.lastComment?.publishedAt
+  ) {
+    return props.discussion.lastComment.publishedAt;
   }
-}
+  return props.discussion.updatedAt;
+});
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-.discussion-minimalist-card-wrapper {
-  text-decoration: none;
-  display: flex;
-  width: 100%;
-  color: initial;
-  border-bottom: 1px solid #e9e9e9;
-  align-items: center;
-
-  .calendar-icon {
-    @include margin-right(1rem);
-  }
-
-  .title-info-wrapper {
-    flex: 2;
-
-    .title-and-date {
-      display: flex;
-      align-items: center;
-
-      .discussion-minimalist-title {
-        color: #3c376e;
-        font-family: Roboto, Helvetica, Arial, serif;
-        font-size: 19px;
-        font-weight: 600;
-        flex: 1;
-      }
-    }
-
-    div.ellipsis {
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      font-size: 15px;
-    }
-  }
-}
-</style>

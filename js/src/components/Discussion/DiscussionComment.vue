@@ -1,23 +1,26 @@
 <template>
-  <article class="comment">
-    <div class="avatar">
-      <figure
-        class="image is-48x48"
-        v-if="comment.actor && comment.actor.avatar"
-      >
-        <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
+  <article class="flex gap-1">
+    <div class="">
+      <figure class="" v-if="comment.actor && comment.actor.avatar">
+        <img
+          class="rounded-xl"
+          :src="comment.actor.avatar.url"
+          alt=""
+          :width="48"
+          :height="48"
+        />
       </figure>
-      <b-icon v-else size="is-large" icon="account-circle" />
+      <AccountCircle :size="48" v-else />
     </div>
-    <div class="body">
-      <div class="meta" dir="auto">
-        <span
-          class="first-line name"
+    <div class="mb-2 pt-1 flex-1">
+      <div class="flex items-center gap-1" dir="auto">
+        <div
+          class="flex flex-1 flex-col"
           v-if="comment.actor && !comment.deletedAt"
         >
-          <strong>{{ comment.actor.name }}</strong>
+          <strong v-if="comment.actor.name">{{ comment.actor.name }}</strong>
           <small>@{{ usernameWithDomain(comment.actor) }}</small>
-        </span>
+        </div>
         <span v-else class="name comment-link has-text-grey">
           {{ $t("[deleted]") }}
         </span>
@@ -26,39 +29,44 @@
           v-if="
             comment.actor &&
             !comment.deletedAt &&
-            comment.actor.id === currentActor.id
+            comment.actor.id === currentActor?.id
           "
         >
-          <b-dropdown aria-role="list">
-            <b-icon slot="trigger" role="button" icon="dots-horizontal" />
+          <o-dropdown aria-role="list">
+            <template #trigger>
+              <o-icon role="button" icon="dots-horizontal" />
+            </template>
 
-            <b-dropdown-item
-              v-if="comment.actor.id === currentActor.id"
+            <o-dropdown-item
+              v-if="comment.actor?.id === currentActor?.id"
               @click="toggleEditMode"
               aria-role="menuitem"
             >
-              <b-icon icon="pencil"></b-icon>
+              <o-icon icon="pencil"></o-icon>
               {{ $t("Edit") }}
-            </b-dropdown-item>
-            <b-dropdown-item
-              v-if="comment.actor.id === currentActor.id"
-              @click="$emit('delete-comment', comment)"
+            </o-dropdown-item>
+            <o-dropdown-item
+              v-if="comment.actor?.id === currentActor?.id"
+              @click="emit('deleteComment', comment)"
               aria-role="menuitem"
             >
-              <b-icon icon="delete"></b-icon>
+              <o-icon icon="delete"></o-icon>
               {{ $t("Delete") }}
-            </b-dropdown-item>
-            <!-- <b-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
-              <b-icon icon="flag" />
+            </o-dropdown-item>
+            <!-- <o-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
+              <o-icon icon="flag" />
               {{ $t("Report") }}
-            </b-dropdown-item> -->
-          </b-dropdown>
+            </o-dropdown-item> -->
+          </o-dropdown>
         </span>
-        <div class="post-infos">
-          <span :title="comment.insertedAt | formatDateTimeString">
+        <div class="self-center">
+          <span
+            :title="formatDateTimeString(comment.updatedAt?.toString())"
+            v-if="comment.updatedAt"
+          >
             {{
-              formatDistanceToNow(new Date(comment.updatedAt), {
-                locale: $dateFnsLocale,
+              formatDistanceToNow(new Date(comment.updatedAt?.toString()), {
+                locale: dateFnsLocale,
               }) || $t("Right now")
             }}</span
           >
@@ -69,20 +77,24 @@
         class="text-wrapper"
         dir="auto"
       >
-        <div class="description-content" v-html="comment.text"></div>
+        <div
+          class="prose md:prose-lg lg:prose-xl dark:prose-invert"
+          v-html="comment.text"
+        ></div>
         <p
+          class="text-sm"
           v-if="
             comment.insertedAt &&
             comment.updatedAt &&
             new Date(comment.insertedAt).getTime() !==
               new Date(comment.updatedAt).getTime()
           "
-          :title="comment.updatedAt | formatDateTimeString"
+          :title="formatDateTimeString(comment.updatedAt.toString())"
         >
           {{
             $t("Edited {ago}", {
               ago: formatDistanceToNow(new Date(comment.updatedAt), {
-                locale: $dateFnsLocale,
+                locale: dateFnsLocale,
               }),
             })
           }}
@@ -92,66 +104,66 @@
         {{ $t("[This comment has been deleted by it's author]") }}
       </div>
       <form v-else class="edition" @submit.prevent="updateComment">
-        <editor v-model="updatedComment" :aria-label="$t('Comment body')" />
-        <div class="buttons">
-          <b-button
+        <Editor
+          v-model="updatedComment"
+          :aria-label="$t('Comment body')"
+          :current-actor="currentActor"
+        />
+        <div class="flex gap-2 mt-2">
+          <o-button
             native-type="submit"
             :disabled="['<p></p>', '', comment.text].includes(updatedComment)"
-            type="is-primary"
-            >{{ $t("Update") }}</b-button
+            variant="primary"
+            >{{ $t("Update") }}</o-button
           >
-          <b-button native-type="button" @click="toggleEditMode">{{
+          <o-button native-type="button" @click="toggleEditMode">{{
             $t("Cancel")
-          }}</b-button>
+          }}</o-button>
         </div>
       </form>
     </div>
   </article>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { formatDistanceToNow } from "date-fns";
 import { IComment } from "../../types/comment.model";
-import { usernameWithDomain, IPerson } from "../../types/actor";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
+import { IPerson, usernameWithDomain } from "../../types/actor";
+import { computed, defineAsyncComponent, inject, ref } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import type { Locale } from "date-fns";
 
-@Component({
-  apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
-  },
-  components: {
-    editor: () =>
-      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
-  },
-})
-export default class DiscussionComment extends Vue {
-  @Prop({ required: true, type: Object }) comment!: IComment;
+const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
 
-  editMode = false;
+const props = defineProps<{
+  modelValue: IComment;
+  currentActor: IPerson;
+}>();
 
-  updatedComment = "";
+const emit = defineEmits(["update:modelValue", "deleteComment"]);
 
-  currentActor!: IPerson;
+const comment = computed(() => props.modelValue);
 
-  usernameWithDomain = usernameWithDomain;
+const editMode = ref(false);
 
-  formatDistanceToNow = formatDistanceToNow;
+const updatedComment = ref("");
 
-  // isReportModalActive: boolean = false;
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
-  toggleEditMode(): void {
-    this.updatedComment = this.comment.text;
-    this.editMode = !this.editMode;
-  }
+// isReportModalActive: boolean = false;
 
-  updateComment(): void {
-    this.$emit("update-comment", {
-      ...this.comment,
-      text: this.updatedComment,
-    });
-    this.toggleEditMode();
-  }
-}
+const toggleEditMode = (): void => {
+  updatedComment.value = comment.value.text;
+  editMode.value = !editMode.value;
+};
+
+const updateComment = (): void => {
+  emit("update:modelValue", {
+    ...comment.value,
+    text: updatedComment.value,
+  });
+  toggleEditMode();
+};
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
@@ -170,7 +182,7 @@ article.comment {
       padding: 0 1rem 0.3em;
 
       .name {
-        @include margin-right(auto);
+        // @include margin-right(auto);
         flex: 1 1 auto;
         overflow: hidden;
 
@@ -200,33 +212,33 @@ article.comment {
       div.description-content {
         padding-bottom: 0.3rem;
 
-        ::v-deep h1 {
+        :deep(h1) {
           font-size: 2rem;
         }
 
-        ::v-deep h2 {
+        :deep(h2) {
           font-size: 1.5rem;
         }
 
-        ::v-deep h3 {
+        :deep(h3) {
           font-size: 1.25rem;
         }
 
-        ::v-deep ul {
+        :deep(ul) {
           list-style-type: disc;
         }
 
-        ::v-deep li {
+        :deep(li) {
           margin: 10px auto 10px 2rem;
         }
 
-        ::v-deep blockquote {
+        :deep(blockquote) {
           border-left: 0.2em solid #333;
           display: block;
-          @include padding-left(1em);
+          // @include padding-left(1em);
         }
 
-        ::v-deep p {
+        :deep(p) {
           margin: 10px auto;
 
           a {

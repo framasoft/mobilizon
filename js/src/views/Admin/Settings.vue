@@ -9,9 +9,9 @@
 
     <section v-if="settingsToWrite">
       <form @submit.prevent="updateSettings">
-        <b-field :label="$t('Instance Name')" label-for="instance-name">
-          <b-input v-model="settingsToWrite.instanceName" id="instance-name" />
-        </b-field>
+        <o-field :label="$t('Instance Name')" label-for="instance-name">
+          <o-input v-model="settingsToWrite.instanceName" id="instance-name" />
+        </o-field>
         <div class="field">
           <label class="label has-help" for="instance-description">{{
             $t("Instance Short Description")
@@ -23,7 +23,7 @@
               )
             }}
           </small>
-          <b-input
+          <o-input
             type="textarea"
             v-model="settingsToWrite.instanceDescription"
             rows="2"
@@ -41,7 +41,7 @@
               )
             }}
           </small>
-          <b-input
+          <o-input
             v-model="settingsToWrite.instanceSlogan"
             :placeholder="$t('Gather ⋅ Organize ⋅ Mobilize')"
             id="instance-slogan"
@@ -54,16 +54,21 @@
           <small>
             {{ $t("Can be an email or a link, or just plain text.") }}
           </small>
-          <b-input v-model="settingsToWrite.contact" id="instance-contact" />
+          <o-input v-model="settingsToWrite.contact" id="instance-contact" />
         </div>
-        <b-field :label="$t('Allow registrations')">
-          <b-switch v-model="settingsToWrite.registrationsOpen">
-            <p class="content" v-if="settingsToWrite.registrationsOpen">
+        <o-field :label="$t('Allow registrations')">
+          <o-switch v-model="settingsToWrite.registrationsOpen">
+            <p
+              class="prose dark:prose-invert"
+              v-if="settingsToWrite.registrationsOpen"
+            >
               {{ $t("Registration is allowed, anyone can register.") }}
             </p>
-            <p class="content" v-else>{{ $t("Registration is closed.") }}</p>
-          </b-switch>
-        </b-field>
+            <p class="prose dark:prose-invert" v-else>
+              {{ $t("Registration is closed.") }}
+            </p>
+          </o-switch>
+        </o-field>
         <div class="field">
           <label class="label has-help" for="instance-languages">{{
             $t("Instance languages")
@@ -71,7 +76,7 @@
           <small>
             {{ $t("Main languages you/your moderators speak") }}
           </small>
-          <b-taginput
+          <o-taginput
             v-model="instanceLanguages"
             :data="filteredLanguages"
             autocomplete
@@ -82,8 +87,8 @@
             @typing="getFilteredLanguages"
             id="instance-languages"
           >
-            <template slot="empty">{{ $t("No languages found") }}</template>
-          </b-taginput>
+            <template #empty>{{ $t("No languages found") }}</template>
+          </o-taginput>
         </div>
         <div class="field">
           <label class="label has-help" for="instance-long-description">{{
@@ -96,7 +101,7 @@
               )
             }}
           </small>
-          <b-input
+          <o-input
             type="textarea"
             v-model="settingsToWrite.instanceLongDescription"
             rows="4"
@@ -114,43 +119,43 @@
               )
             }}
           </small>
-          <b-input
+          <o-input
             type="textarea"
             v-model="settingsToWrite.instanceRules"
             id="instance-rules"
           />
         </div>
-        <b-field :label="$t('Instance Terms Source')">
+        <o-field :label="$t('Instance Terms Source')">
           <div class="columns">
             <div class="column is-one-third-desktop">
               <fieldset>
                 <legend>
                   {{ $t("Choose the source of the instance's Terms") }}
                 </legend>
-                <b-field>
-                  <b-radio
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.DEFAULT"
-                    >{{ $t("Default Mobilizon terms") }}</b-radio
+                    >{{ $t("Default Mobilizon terms") }}</o-radio
                   >
-                </b-field>
-                <b-field>
-                  <b-radio
+                </o-field>
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.URL"
-                    >{{ $t("Custom URL") }}</b-radio
+                    >{{ $t("Custom URL") }}</o-radio
                   >
-                </b-field>
-                <b-field>
-                  <b-radio
+                </o-field>
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.CUSTOM"
-                    >{{ $t("Custom text") }}</b-radio
+                    >{{ $t("Custom text") }}</o-radio
                   >
-                </b-field>
+                </o-field>
               </fieldset>
             </div>
             <div class="column">
@@ -162,19 +167,20 @@
                 "
               >
                 <b>{{ $t("Default") }}</b>
-                <i18n
+                <i18n-t
                   tag="p"
-                  class="content"
-                  path="The {default_terms} will be used. They will be translated in the user's language."
+                  class="prose dark:prose-invert"
+                  keypath="The {default_terms} will be used. They will be translated in the user's language."
                 >
-                  <a
-                    slot="default_terms"
-                    href="https://demo.mobilizon.org/terms"
-                    target="_blank"
-                    rel="noopener"
-                    >{{ $t("default Mobilizon terms") }}</a
-                  >
-                </i18n>
+                  <template #default_terms>
+                    <a
+                      href="https://demo.mobilizon.org/terms"
+                      target="_blank"
+                      rel="noopener"
+                      >{{ $t("default Mobilizon terms") }}</a
+                    >
+                  </template>
+                </i18n-t>
                 <b>{{
                   $t(
                     "NOTE! The default terms have not been checked over by a lawyer and thus are unlikely to provide full legal protection for all situations for an instance admin using them. They are also not specific to all countries and jurisdictions. If you are unsure, please check with a lawyer."
@@ -188,7 +194,7 @@
                 "
               >
                 <b>{{ $t("URL") }}</b>
-                <p class="content">
+                <p class="prose dark:prose-invert">
                   {{ $t("Set an URL to a page with your own terms.") }}
                 </p>
               </div>
@@ -199,77 +205,78 @@
                 "
               >
                 <b>{{ $t("Custom") }}</b>
-                <i18n
+                <i18n-t
                   tag="p"
-                  class="content"
-                  path="Enter your own terms. HTML tags allowed. The {mobilizon_terms} are provided as template."
+                  class="prose dark:prose-invert"
+                  keypath="Enter your own terms. HTML tags allowed. The {mobilizon_terms} are provided as template."
                 >
-                  <a
-                    slot="mobilizon_terms"
-                    href="https://demo.mobilizon.org/terms"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {{ $t("default Mobilizon terms") }}</a
-                  >
-                </i18n>
+                  <template #mobilizon_terms>
+                    <a
+                      href="https://demo.mobilizon.org/terms"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ $t("default Mobilizon terms") }}</a
+                    >
+                  </template>
+                </i18n-t>
               </div>
             </div>
           </div>
-        </b-field>
-        <b-field
+        </o-field>
+        <o-field
           :label="$t('Instance Terms URL')"
           label-for="instanceTermsUrl"
           v-if="settingsToWrite.instanceTermsType === InstanceTermsType.URL"
         >
-          <b-input
+          <o-input
             type="URL"
             v-model="settingsToWrite.instanceTermsUrl"
             id="instanceTermsUrl"
           />
-        </b-field>
-        <b-field
+        </o-field>
+        <o-field
           :label="$t('Instance Terms')"
           label-for="instanceTerms"
           v-if="settingsToWrite.instanceTermsType === InstanceTermsType.CUSTOM"
         >
-          <b-input
+          <o-input
             type="textarea"
             v-model="settingsToWrite.instanceTerms"
             id="instanceTerms"
           />
-        </b-field>
-        <b-field :label="$t('Instance Privacy Policy Source')">
+        </o-field>
+        <o-field :label="$t('Instance Privacy Policy Source')">
           <div class="columns">
             <div class="column is-one-third-desktop">
               <fieldset>
                 <legend>
                   {{ $t("Choose the source of the instance's Privacy Policy") }}
                 </legend>
-                <b-field>
-                  <b-radio
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.DEFAULT"
-                    >{{ $t("Default Mobilizon privacy policy") }}</b-radio
+                    >{{ $t("Default Mobilizon privacy policy") }}</o-radio
                   >
-                </b-field>
-                <b-field>
-                  <b-radio
+                </o-field>
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.URL"
-                    >{{ $t("Custom URL") }}</b-radio
+                    >{{ $t("Custom URL") }}</o-radio
                   >
-                </b-field>
-                <b-field>
-                  <b-radio
+                </o-field>
+                <o-field>
+                  <o-radio
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.CUSTOM"
-                    >{{ $t("Custom text") }}</b-radio
+                    >{{ $t("Custom text") }}</o-radio
                   >
-                </b-field>
+                </o-field>
               </fieldset>
             </div>
             <div class="column">
@@ -281,19 +288,20 @@
                 "
               >
                 <b>{{ $t("Default") }}</b>
-                <i18n
+                <i18n-t
                   tag="p"
-                  class="content"
-                  path="The {default_privacy_policy} will be used. They will be translated in the user's language."
+                  class="prose dark:prose-invert"
+                  keypath="The {default_privacy_policy} will be used. They will be translated in the user's language."
                 >
-                  <a
-                    slot="default_privacy_policy"
-                    href="https://demo.mobilizon.org/privacy"
-                    target="_blank"
-                    rel="noopener"
-                    >{{ $t("default Mobilizon privacy policy") }}</a
-                  >
-                </i18n>
+                  <template #default_privacy_policy>
+                    <a
+                      href="https://demo.mobilizon.org/privacy"
+                      target="_blank"
+                      rel="noopener"
+                      >{{ $t("default Mobilizon privacy policy") }}</a
+                    >
+                  </template>
+                </i18n-t>
               </div>
               <div
                 class="notification"
@@ -303,7 +311,7 @@
                 "
               >
                 <b>{{ $t("URL") }}</b>
-                <p class="content">
+                <p class="prose dark:prose-invert">
                   {{ $t("Set an URL to a page with your own privacy policy.") }}
                 </p>
               </div>
@@ -315,25 +323,26 @@
                 "
               >
                 <b>{{ $t("Custom") }}</b>
-                <i18n
+                <i18n-t
                   tag="p"
-                  class="content"
+                  class="prose dark:prose-invert"
                   path="Enter your own privacy policy. HTML tags allowed. The {mobilizon_privacy_policy} is provided as template."
                 >
-                  <a
-                    slot="mobilizon_privacy_policy"
-                    href="https://demo.mobilizon.org/privacy"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {{ $t("default Mobilizon privacy policy") }}</a
-                  >
-                </i18n>
+                  <template #mobilizon_privacy_policy>
+                    <a
+                      href="https://demo.mobilizon.org/privacy"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ $t("default Mobilizon privacy policy") }}</a
+                    >
+                  </template>
+                </i18n-t>
               </div>
             </div>
           </div>
-        </b-field>
-        <b-field
+        </o-field>
+        <o-field
           :label="$t('Instance Privacy Policy URL')"
           label-for="instancePrivacyPolicyUrl"
           v-if="
@@ -341,13 +350,13 @@
             InstancePrivacyType.URL
           "
         >
-          <b-input
+          <o-input
             type="URL"
             v-model="settingsToWrite.instancePrivacyPolicyUrl"
             id="instancePrivacyPolicyUrl"
           />
-        </b-field>
-        <b-field
+        </o-field>
+        <o-field
           :label="$t('Instance Privacy Policy')"
           label-for="instancePrivacyPolicy"
           v-if="
@@ -355,142 +364,147 @@
             InstancePrivacyType.CUSTOM
           "
         >
-          <b-input
+          <o-input
             type="textarea"
             v-model="settingsToWrite.instancePrivacyPolicy"
             id="instancePrivacyPolicy"
           />
-        </b-field>
-        <b-button native-type="submit" type="is-primary">{{
+        </o-field>
+        <o-button native-type="submit" variant="primary">{{
           $t("Save")
-        }}</b-button>
+        }}</o-button>
       </form>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import {
   ADMIN_SETTINGS,
   SAVE_ADMIN_SETTINGS,
   LANGUAGES,
 } from "@/graphql/admin";
 import { InstancePrivacyType, InstanceTermsType } from "@/types/enums";
-import { IAdminSettings, ILanguage } from "../../types/admin.model";
-import RouteName from "../../router/name";
+import { IAdminSettings, ILanguage } from "@/types/admin.model";
+import RouteName from "@/router/name";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { ref, computed, watch, inject } from "vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    adminSettings: ADMIN_SETTINGS,
-    languages: LANGUAGES,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Settings") as string,
-    };
-  },
-})
-export default class Settings extends Vue {
-  adminSettings: IAdminSettings = {
-    instanceName: "",
-    instanceDescription: "",
-    instanceSlogan: "",
-    instanceLongDescription: "",
-    contact: "",
-    instanceTerms: "",
-    instanceTermsType: InstanceTermsType.DEFAULT,
-    instanceTermsUrl: null,
-    instancePrivacyPolicy: "",
-    instancePrivacyPolicyType: InstanceTermsType.DEFAULT,
-    instancePrivacyPolicyUrl: null,
-    instanceRules: "",
-    registrationsOpen: false,
-    instanceLanguages: [],
-  };
+const { result: adminSettingsResult } = useQuery<{
+  adminSettings: IAdminSettings;
+}>(ADMIN_SETTINGS);
+const adminSettings = computed(
+  () =>
+    adminSettingsResult.value?.adminSettings ?? {
+      instanceName: "",
+      instanceDescription: "",
+      instanceSlogan: "",
+      instanceLongDescription: "",
+      contact: "",
+      instanceTerms: "",
+      instanceTermsType: InstanceTermsType.DEFAULT,
+      instanceTermsUrl: null,
+      instancePrivacyPolicy: "",
+      instancePrivacyPolicyType: InstanceTermsType.DEFAULT,
+      instancePrivacyPolicyUrl: null,
+      instanceRules: "",
+      registrationsOpen: false,
+      instanceLanguages: [],
+    }
+);
 
-  settingsToWrite: IAdminSettings = { ...this.adminSettings };
+const { result: languageResult } = useQuery<{ languages: ILanguage[] }>(
+  LANGUAGES
+);
+const languages = computed(() => languageResult.value?.languages);
 
-  @Watch("adminSettings")
-  updateSettingsToWrite(): void {
-    this.settingsToWrite = { ...this.adminSettings };
-  }
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Settings")),
+});
 
-  languages!: ILanguage[];
+const settingsToWrite = ref<IAdminSettings>({ ...adminSettings });
 
-  filteredLanguages: string[] = [];
+watch(adminSettings, () => {
+  // settingsToWrite.value = { ...adminSettings.value };
+});
 
-  InstanceTermsType = InstanceTermsType;
+const filteredLanguages = ref<string[]>([]);
 
-  InstancePrivacyType = InstancePrivacyType;
-
-  RouteName = RouteName;
-
-  get instanceLanguages(): string[] {
-    const languageCodes = [...this.adminSettings.instanceLanguages] || [];
+const instanceLanguages = computed({
+  get() {
+    const languageCodes = [...adminSettings.value.instanceLanguages] || [];
     return languageCodes
-      .map((code) => this.languageForCode(code))
+      .map((code) => languageForCode(code))
       .filter((language) => language) as string[];
-  }
-
-  set instanceLanguages(instanceLanguages: string[]) {
-    const newInstanceLanguages = instanceLanguages
+  },
+  set(newInstanceLanguages: string[]) {
+    const newFilteredInstanceLanguages = newInstanceLanguages
       .map((language) => {
-        return this.codeForLanguage(language);
+        return codeForLanguage(language);
       })
       .filter((code) => code !== undefined) as string[];
-    this.adminSettings = {
-      ...this.adminSettings,
-      instanceLanguages: newInstanceLanguages,
-    };
-  }
+    // adminSettings = {
+    //   ...adminSettings,
+    //   instanceLanguages: newInstanceLanguages,
+    // };
+  },
+});
 
-  async updateSettings(): Promise<void> {
-    const variables = { ...this.settingsToWrite };
-    try {
-      await this.$apollo.mutate({
-        mutation: SAVE_ADMIN_SETTINGS,
-        variables,
-      });
-      this.$notifier.success(
-        this.$t("Admin settings successfully saved.") as string
-      );
-    } catch (e) {
-      console.error(e);
-      this.$notifier.error(this.$t("Failed to save admin settings") as string);
-    }
-  }
+const notifier = inject<Notifier>("notifier");
 
-  getFilteredLanguages(text: string): void {
-    this.filteredLanguages = this.languages
-      ? this.languages
-          .filter((language: ILanguage) => {
-            return (
-              language.name
-                .toString()
-                .toLowerCase()
-                .indexOf(text.toLowerCase()) >= 0
-            );
-          })
-          .map(({ name }) => name)
-      : [];
-  }
+const {
+  mutate: saveAdminSettings,
+  onDone: saveAdminSettingsDone,
+  onError: saveAdminSettingsError,
+} = useMutation(SAVE_ADMIN_SETTINGS);
 
-  private codeForLanguage(language: string): string | undefined {
-    if (this.languages) {
-      const lang = this.languages.find(({ name }) => name === language);
-      if (lang) return lang.code;
-    }
-    return undefined;
-  }
+saveAdminSettingsDone(() => {
+  notifier?.success(t("Admin settings successfully saved.") as string);
+});
 
-  private languageForCode(codeGiven: string): string | undefined {
-    if (this.languages) {
-      const lang = this.languages.find(({ code }) => code === codeGiven);
-      if (lang) return lang.name;
-    }
-    return undefined;
+saveAdminSettingsError((e) => {
+  console.error(e);
+  notifier?.error(t("Failed to save admin settings") as string);
+});
+
+const updateSettings = async (): Promise<void> => {
+  const variables = { ...settingsToWrite };
+  saveAdminSettings(variables);
+};
+
+const getFilteredLanguages = (text: string): void => {
+  filteredLanguages.value = languages.value
+    ? languages.value
+        .filter((language: ILanguage) => {
+          return (
+            language.name
+              .toString()
+              .toLowerCase()
+              .indexOf(text.toLowerCase()) >= 0
+          );
+        })
+        .map(({ name }) => name)
+    : [];
+};
+
+const codeForLanguage = (language: string): string | undefined => {
+  if (languages.value) {
+    const lang = languages.value.find(({ name }) => name === language);
+    if (lang) return lang.code;
   }
-}
+  return undefined;
+};
+
+const languageForCode = (codeGiven: string): string | undefined => {
+  if (languages.value) {
+    const lang = languages.value.find(({ code }) => code === codeGiven);
+    if (lang) return lang.name;
+  }
+  return undefined;
+};
 </script>
 <style lang="scss" scoped>
 label.label.has-help {

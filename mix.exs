@@ -204,6 +204,7 @@ defmodule Mobilizon.Mixfile do
       {:tz_world, "~> 1.0"},
       {:tzdata, "~> 1.1"},
       {:codepagex, "~> 0.1.6"},
+      {:vite_phx, "~> 0.2"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

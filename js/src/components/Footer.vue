@@ -1,6 +1,9 @@
 <template>
-  <footer class="footer" ref="footer">
-    <picture>
+  <footer
+    class="bg-violet-2 color-secondary flex flex-col items-center py-2 px-3"
+    ref="footer"
+  >
+    <picture class="flex max-w-xl">
       <source
         :srcset="`/img/pics/footer_${random}-1024w.webp 1x, /img/pics/footer_${random}-1920w.webp 2x`"
         type="image/webp"
@@ -17,13 +20,14 @@
         loading="lazy"
       />
     </picture>
-    <ul>
+    <ul
+      class="inline-flex flex-wrap justify-around gap-3 text-lg text-white underline decoration-yellow-1"
+    >
       <li>
-        <b-select
-          :aria-label="$t('Language')"
-          v-if="$i18n"
+        <o-select
+          :aria-label="t('Language')"
           v-model="locale"
-          :placeholder="$t('Select a language')"
+          :placeholder="t('Select a language')"
         >
           <option
             v-for="(language, lang) in langs"
@@ -33,16 +37,16 @@
           >
             {{ language }}
           </option>
-        </b-select>
+        </o-select>
       </li>
       <li>
         <router-link :to="{ name: RouteName.ABOUT }">{{
-          $t("About")
+          t("About")
         }}</router-link>
       </li>
       <li>
         <router-link :to="{ name: RouteName.TERMS }">{{
-          $t("Terms")
+          t("Terms")
         }}</router-link>
       </li>
       <li>
@@ -51,131 +55,64 @@
           hreflang="en"
           href="https://framagit.org/framasoft/mobilizon/blob/main/LICENSE"
         >
-          {{ $t("License") }}
+          {{ t("License") }}
         </a>
       </li>
       <li>
-        <a href="#navbar">{{ $t("Back to top") }}</a>
+        <a href="#navbar">{{ t("Back to top") }}</a>
       </li>
     </ul>
-    <div class="content has-text-centered">
-      <i18n
+    <div class="text-center flex-1 pt-2 text-yellow-1">
+      <i18n-t
         tag="span"
-        path="Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}."
+        keypath="Powered by {mobilizon}. © 2018 - {date} The Mobilizon Contributors - Made with the financial support of {contributors}."
       >
-        <a rel="external" slot="mobilizon" href="https://joinmobilizon.org">{{
-          $t("Mobilizon")
-        }}</a>
-        <span slot="date">{{ new Date().getFullYear() }}</span>
-        <a
-          rel="external"
-          href="https://joinmobilizon.org/hall-of-fame"
-          slot="contributors"
-          >{{ $t("more than 1360 contributors") }}</a
+        <template #mobilizon>
+          <a
+            rel="external"
+            class="text-white underline decoration-yellow-1"
+            href="https://joinmobilizon.org"
+            >{{ t("Mobilizon") }}</a
+          >
+        </template>
+        <template #date
+          ><span>{{ new Date().getFullYear() }}</span></template
         >
-      </i18n>
+        <template #contributors>
+          <a
+            rel="external"
+            class="text-white underline decoration-yellow-1"
+            href="https://joinmobilizon.org/hall-of-fame"
+            >{{ t("more than 1360 contributors") }}</a
+          >
+        </template>
+      </i18n-t>
     </div>
   </footer>
 </template>
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script setup lang="ts">
 import { saveLocaleData } from "@/utils/auth";
 import { loadLanguageAsync } from "@/utils/i18n";
 import RouteName from "../router/name";
 import langs from "../i18n/langs.json";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component
-export default class Footer extends Vue {
-  RouteName = RouteName;
+const { locale, t } = useI18n({ useScope: "global" });
 
-  locale: string | null = this.$i18n.locale;
+const random = computed((): number => {
+  return Math.floor(Math.random() * 4) + 1;
+});
 
-  langs: Record<string, string> = langs;
-
-  // eslint-disable-next-line class-methods-use-this
-  get random(): number {
-    return Math.floor(Math.random() * 4) + 1;
+watch(locale, async () => {
+  if (locale) {
+    console.debug("Setting locale from footer");
+    await loadLanguageAsync(locale.value as string);
+    saveLocaleData(locale.value as string);
   }
+});
 
-  @Watch("locale")
-  // eslint-disable-next-line class-methods-use-this
-  async updateLocale(locale: string): Promise<void> {
-    if (locale) {
-      console.debug("Setting locale from footer");
-      await loadLanguageAsync(locale);
-      saveLocaleData(locale);
-    }
-  }
-
-  @Watch("$i18n.locale", { deep: true })
-  updateLocaleFromI18n(locale: string): void {
-    if (locale) {
-      this.locale = locale;
-    }
-  }
-
-  isLangSelected(lang: string): boolean {
-    return lang === this.locale;
-  }
-}
+const isLangSelected = (lang: string): boolean => {
+  return lang === locale.value;
+};
 </script>
-<style lang="scss" scoped>
-@import "~bulma/sass/utilities/mixins.sass";
-footer.footer {
-  color: $secondary;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 14px;
-  padding: 1rem 1.5rem;
-
-  img {
-    flex: 1;
-    max-width: 40rem;
-    @include mobile {
-      max-width: 100%;
-    }
-  }
-
-  div.content {
-    flex: 1;
-    padding-top: 10px;
-  }
-
-  ul {
-    display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-
-    li {
-      display: inline-flex;
-      margin: auto 5px;
-      padding: 2px 0;
-      a {
-        font-size: 1.1rem;
-      }
-    }
-  }
-
-  a {
-    color: $white;
-    text-decoration: underline;
-    text-decoration-color: $secondary;
-
-    &:focus {
-      background-color: #000;
-      color: #fff;
-      outline: 3px solid #000;
-      text-decoration: none;
-    }
-  }
-
-  ::v-deep span.select {
-    select,
-    option {
-      background: $background-color;
-      color: $white;
-    }
-  }
-}
-</style>

@@ -1,90 +1,61 @@
-import {EventJoinOptions} from "@/types/event.model";
-<docs>
-A button to set your participation
-
-##### If the participant has been confirmed
-```vue
-<ParticipationButton :participation="{ role: 'PARTICIPANT' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
-```
-
-##### If the participant has not being approved yet
-```vue
-<ParticipationButton :participation="{ role: 'NOT_APPROVED' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
-```
-
-##### If the participant has been rejected
-```vue
-<ParticipationButton :participation="{ role: 'REJECTED' }" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
-```
-
-##### If the participant doesn't exist yet
-```vue
-<ParticipationButton :participation="null" :currentActor="{ preferredUsername: 'test', avatar: { url: 'https://huit.re/EPX7vs1j' } }" />
-```
-</docs>
-
 <template>
-  <div class="participation-button">
-    <b-dropdown
-      aria-role="list"
-      position="is-bottom-left"
+  <div>
+    <o-dropdown
       v-if="participation && participation.role === ParticipantRole.PARTICIPANT"
     >
       <template #trigger="{ active }">
-        <b-button
-          type="is-success"
-          size="is-large"
+        <o-button
+          variant="success"
+          size="large"
           icon-left="check"
           :icon-right="active ? 'menu-up' : 'menu-down'"
         >
-          {{ $t("I participate") }}
-        </b-button>
+          {{ t("I participate") }}
+        </o-button>
       </template>
 
-      <b-dropdown-item
+      <o-dropdown-item
         :value="false"
         aria-role="listitem"
         @click="confirmLeave"
         @keyup.enter="confirmLeave"
-        class="has-text-danger"
-        >{{ $t("Cancel my participation…") }}</b-dropdown-item
-      >
-    </b-dropdown>
+        class=""
+        >{{ t("Cancel my participation…") }}
+      </o-dropdown-item>
+    </o-dropdown>
 
     <div
       v-else-if="
         participation && participation.role === ParticipantRole.NOT_APPROVED
       "
+      class="flex flex-col"
     >
-      <b-dropdown
-        aria-role="list"
-        position="is-bottom-left"
-        class="dropdown-disabled"
-      >
-        <button class="button is-success is-large" type="button" slot="trigger">
-          <b-icon icon="timer-sand-empty" />
-          <template>
-            <span>{{ $t("I participate") }}</span>
-          </template>
-          <b-icon icon="menu-down" />
-        </button>
+      <o-dropdown>
+        <template #trigger>
+          <o-button variant="success" size="large" type="button">
+            <template class="flex items-center">
+              <TimerSandEmpty />
+              <span>{{ t("I participate") }}</span>
+              <MenuDown />
+            </template>
+          </o-button>
+        </template>
 
-        <!--                <b-dropdown-item :value="false" aria-role="listitem">-->
-        <!--                  {{ $t('Change my identity…')}}-->
-        <!--                </b-dropdown-item>-->
+        <o-dropdown-item :value="false" aria-role="listitem">
+          {{ t("Change my identity…") }}
+        </o-dropdown-item>
 
-        <b-dropdown-item
+        <o-dropdown-item
           :value="false"
           aria-role="listitem"
           @click="confirmLeave"
           @keyup.enter="confirmLeave"
-          class="has-text-danger"
-          >{{ $t("Cancel my participation request…") }}</b-dropdown-item
+          class=""
+          >{{ t("Cancel my participation request…") }}</o-dropdown-item
         >
-      </b-dropdown>
-      <small>{{ $t("Participation requested!") }}</small>
-      <br />
-      <small>{{ $t("Waiting for organization team approval.") }}</small>
+      </o-dropdown>
+      <p>{{ t("Participation requested!") }}</p>
+      <p>{{ t("Waiting for organization team approval.") }}</p>
     </div>
 
     <div
@@ -94,63 +65,63 @@ A button to set your participation
     >
       <span>
         {{
-          $t(
+          t(
             "Unfortunately, your participation request was rejected by the organizers."
           )
         }}
       </span>
     </div>
 
-    <b-dropdown
-      aria-role="list"
-      position="is-bottom-left"
-      v-else-if="!participation && currentActor.id"
-    >
+    <o-dropdown v-else-if="!participation && currentActor?.id">
       <template #trigger="{ active }">
-        <b-button
-          type="is-primary"
-          size="is-large"
+        <o-button
+          variant="primary"
+          size="large"
           :icon-right="active ? 'menu-up' : 'menu-down'"
         >
-          {{ $t("Participate") }}
-        </b-button>
+          {{ t("Participate") }}
+        </o-button>
       </template>
 
-      <b-dropdown-item
+      <o-dropdown-item
         :value="true"
         aria-role="listitem"
         @click="joinEvent(currentActor)"
         @keyup.enter="joinEvent(currentActor)"
       >
-        <div class="media">
-          <div class="media-left" v-if="currentActor.avatar">
-            <figure class="image is-32x32">
-              <img class="is-rounded" :src="currentActor.avatar.url" alt />
-            </figure>
-          </div>
-          <div class="media-content">
+        <div class="flex gap-2 items-center">
+          <figure class="" v-if="currentActor?.avatar">
+            <img
+              class="rounded-xl"
+              :src="currentActor.avatar.url"
+              alt=""
+              width="24"
+              height="24"
+            />
+          </figure>
+          <AccountCircle v-else />
+          <div class="">
             <span>
               {{
-                $t("as {identity}", {
-                  identity:
-                    currentActor.name || `@${currentActor.preferredUsername}`,
+                t("as {identity}", {
+                  identity: displayName(currentActor),
                 })
               }}
             </span>
           </div>
         </div>
-      </b-dropdown-item>
+      </o-dropdown-item>
 
-      <b-dropdown-item
+      <o-dropdown-item
         :value="false"
         aria-role="listitem"
         @click="joinModal"
         @keyup.enter="joinModal"
-        v-if="identities.length > 1"
-        >{{ $t("with another identity…") }}</b-dropdown-item
+        v-if="(identities ?? []).length > 1"
+        >{{ t("with another identity…") }}</o-dropdown-item
       >
-    </b-dropdown>
-    <b-button
+    </o-dropdown>
+    <o-button
       rel="nofollow"
       tag="router-link"
       :to="{
@@ -158,110 +129,72 @@ A button to set your participation
         params: { uuid: event.uuid },
       }"
       v-else-if="!participation && hasAnonymousParticipationMethods"
-      type="is-primary"
-      size="is-large"
+      variant="primary"
+      size="large"
       native-type="button"
-      >{{ $t("Participate") }}</b-button
+      >{{ t("Participate") }}</o-button
     >
-    <b-button
+    <o-button
       tag="router-link"
       rel="nofollow"
       :to="{
         name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
         params: { uuid: event.uuid },
       }"
-      v-else-if="!currentActor.id"
-      type="is-primary"
-      size="is-large"
+      v-else-if="!currentActor?.id"
+      variant="primary"
+      size="large"
       native-type="button"
-      >{{ $t("Participate") }}</b-button
+      >{{ t("Participate") }}</o-button
     >
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import { IEvent } from "../../types/event.model";
-import { IPerson, Person } from "../../types/actor";
-import { CURRENT_ACTOR_CLIENT, IDENTITIES } from "../../graphql/actor";
-import { CURRENT_USER_CLIENT } from "../../graphql/user";
-import { CONFIG } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
+import { IPerson, displayName } from "../../types/actor";
 import RouteName from "../../router/name";
+import { computed } from "vue";
+import MenuDown from "vue-material-design-icons/MenuDown.vue";
+import { useI18n } from "vue-i18n";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import TimerSandEmpty from "vue-material-design-icons/TimerSandEmpty.vue";
 
-@Component({
-  apollo: {
-    currentUser: {
-      query: CURRENT_USER_CLIENT,
-    },
-    currentActor: CURRENT_ACTOR_CLIENT,
-    config: CONFIG,
-    identities: {
-      query: IDENTITIES,
-      update: ({ identities }) =>
-        identities
-          ? identities.map((identity: IPerson) => new Person(identity))
-          : [],
-      skip() {
-        return this.currentUser.isLoggedIn === false;
-      },
-    },
-  },
-})
-export default class ParticipationButton extends Vue {
-  @Prop({ required: true }) participation!: IParticipant;
+const props = defineProps<{
+  participation: IParticipant | undefined;
+  event: IEvent;
+  currentActor: IPerson;
+  identities: IPerson[];
+}>();
 
-  @Prop({ required: true }) event!: IEvent;
+const emit = defineEmits([
+  "join-event-with-confirmation",
+  "join-event",
+  "join-modal",
+  "confirm-leave",
+]);
 
-  @Prop({ required: true }) currentActor!: IPerson;
+const { t } = useI18n({ useScope: "global" });
 
-  ParticipantRole = ParticipantRole;
-
-  identities: IPerson[] = [];
-
-  config!: IConfig;
-
-  RouteName = RouteName;
-
-  joinEvent(actor: IPerson): void {
-    if (this.event.joinOptions === EventJoinOptions.RESTRICTED) {
-      this.$emit("join-event-with-confirmation", actor);
-    } else {
-      this.$emit("join-event", actor);
-    }
+const joinEvent = (actor: IPerson | undefined): void => {
+  if (props.event.joinOptions === EventJoinOptions.RESTRICTED) {
+    emit("join-event-with-confirmation", actor);
+  } else {
+    emit("join-event", actor);
   }
+};
 
-  joinModal(): void {
-    this.$emit("join-modal");
-  }
+const joinModal = (): void => {
+  emit("join-modal");
+};
 
-  confirmLeave(): void {
-    this.$emit("confirm-leave");
-  }
+const confirmLeave = (): void => {
+  emit("confirm-leave");
+};
 
-  get hasAnonymousParticipationMethods(): boolean {
-    return this.event.options.anonymousParticipation;
-  }
-}
+const hasAnonymousParticipationMethods = computed((): boolean => {
+  return props.event.options.anonymousParticipation;
+});
 </script>
-
-<style lang="scss" scoped>
-.participation-button {
-  .dropdown {
-    display: flex;
-    justify-content: flex-end;
-
-    &.dropdown-disabled button {
-      opacity: 0.5;
-    }
-  }
-}
-
-.anonymousParticipationModal {
-  ::v-deep .animation-content {
-    z-index: 1;
-  }
-}
-</style>

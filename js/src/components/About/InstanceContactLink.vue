@@ -4,49 +4,49 @@
       configLink.text
     }}</a>
     <span dir="auto" v-else-if="contact">{{ contact }}</span>
-    <span v-else>{{ $t("contact uninformed") }}</span>
+    <span v-else>{{ t("contact uninformed") }}</span>
   </p>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component
-export default class InstanceContactLink extends Vue {
-  @Prop({ required: true, type: String }) contact!: string;
+const props = defineProps<{
+  contact?: string;
+}>();
 
-  get configLink(): { uri: string; text: string } | null {
-    if (!this.contact) return null;
-    if (this.isContactEmail) {
-      return {
-        uri: `mailto:${this.contact}`,
-        text: this.contact,
-      };
-    }
-    if (this.isContactURL) {
-      return {
-        uri: this.contact,
-        text:
-          InstanceContactLink.urlToHostname(this.contact) ||
-          (this.$t("Contact") as string),
-      };
-    }
+const { t } = useI18n({ useScope: "global" });
+
+const configLink = computed((): { uri: string; text: string } | null => {
+  if (!props.contact) return null;
+  if (isContactEmail.value) {
+    return {
+      uri: `mailto:${props.contact}`,
+      text: props.contact,
+    };
+  }
+  if (isContactURL.value) {
+    return {
+      uri: props.contact,
+      text: urlToHostname(props.contact) ?? "Contact",
+    };
+  }
+  return null;
+});
+
+const isContactEmail = computed((): boolean => {
+  return (props.contact ?? "").includes("@");
+});
+
+const isContactURL = computed((): boolean => {
+  return (props.contact ?? "").match(/^https?:\/\//g) !== null;
+});
+
+const urlToHostname = (url: string): string | null => {
+  try {
+    return new URL(url).hostname;
+  } catch (e) {
     return null;
   }
-
-  get isContactEmail(): boolean {
-    return this.contact.includes("@");
-  }
-
-  get isContactURL(): boolean {
-    return this.contact.match(/^https?:\/\//g) !== null;
-  }
-
-  static urlToHostname(url: string): string | null {
-    try {
-      return new URL(url).hostname;
-    } catch (e) {
-      return null;
-    }
-  }
-}
+};
 </script>

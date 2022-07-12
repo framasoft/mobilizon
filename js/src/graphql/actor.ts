@@ -125,6 +125,15 @@ export const PERSON_FRAGMENT = gql`
   }
 `;
 
+export const PERSON_FRAGMENT_FEED_TOKENS = gql`
+  fragment PersonFeedTokensFragment on Person {
+    id
+    feedTokens {
+      token
+    }
+  }
+`;
+
 export const LIST_PROFILES = gql`
   query ListProfiles(
     $preferredUsername: String
@@ -177,10 +186,10 @@ export const CURRENT_ACTOR_CLIENT = gql`
 
 export const UPDATE_CURRENT_ACTOR_CLIENT = gql`
   mutation UpdateCurrentActor(
-    $id: String!
+    $id: String
     $avatar: String
-    $preferredUsername: String!
-    $name: String!
+    $preferredUsername: String
+    $name: String
   ) {
     updateCurrentActor(
       id: $id
@@ -342,7 +351,7 @@ export const PERSON_STATUS_GROUP = gql`
 `;
 
 export const PERSON_GROUP_MEMBERSHIPS = gql`
-  query PersonGroupMemberships($id: ID!, $groupId: ID!) {
+  query PersonGroupMemberships($id: ID!, $groupId: ID) {
     person(id: $id) {
       id
       memberships(groupId: $groupId) {

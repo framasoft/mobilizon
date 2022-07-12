@@ -1,5 +1,5 @@
 <template>
-  <section class="section container">
+  <section class="container mx-auto">
     <h1 class="title">{{ $t("My groups") }}</h1>
     <p>
       {{
@@ -8,14 +8,15 @@
         )
       }}
     </p>
-    <div class="buttons" v-if="!hideCreateGroupButton">
-      <router-link
-        class="button is-primary"
+    <div class="flex my-3" v-if="!hideCreateGroupButton">
+      <o-button
+        tag="router-link"
+        variant="primary"
         :to="{ name: RouteName.CREATE_GROUP }"
-        >{{ $t("Create group") }}</router-link
+        >{{ $t("Create group") }}</o-button
       >
     </div>
-    <b-loading :active.sync="$apollo.loading"></b-loading>
+    <o-loading v-model:active="loading"></o-loading>
     <invitations
       :invitations="invitations"
       @accept-invitation="acceptInvitation"
@@ -27,10 +28,11 @@
         v-for="member in memberships"
         :key="member.id"
         :member="member"
-        @leave="leaveGroup(member.parent)"
+        @leave="leaveGroup({ groupId: member.parent.id })"
       />
-      <b-pagination
+      <o-pagination
         :total="membershipsPages.total"
+        v-show="membershipsPages.total > limit"
         v-model="page"
         :per-page="limit"
         :aria-next-label="$t('Next page')"
@@ -38,30 +40,36 @@
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
       >
-      </b-pagination>
+      </o-pagination>
     </section>
     <section
-      class="has-text-centered not-found"
-      v-if="memberships.length === 0 && !$apollo.loading"
+      class="text-center not-found"
+      v-if="memberships.length === 0 && !loading"
     >
-      <div class="columns is-vertical is-centered">
-        <div class="column is-three-quarters">
+      <div class="">
+        <div class="">
           <div class="img-container" :class="{ webp: supportsWebPFormat }" />
-          <div class="content has-text-centered">
+          <div class="text-center">
             <p>
               {{ $t("You are not part of any group.") }}
-              <i18n path="Do you wish to {create_group} or {explore_groups}?">
-                <router-link
-                  :to="{ name: RouteName.CREATE_GROUP }"
-                  slot="create_group"
-                  >{{ $t("create a group") }}</router-link
-                >
-                <router-link
-                  :to="{ name: RouteName.SEARCH }"
-                  slot="explore_groups"
-                  >{{ $t("explore the groups") }}</router-link
-                >
-              </i18n>
+              <i18n-t
+                keypath="Do you wish to {create_group} or {explore_groups}?"
+              >
+                <template #create_group>
+                  <o-button
+                    tag="router-link"
+                    :to="{ name: RouteName.CREATE_GROUP }"
+                    >{{ $t("create a group") }}</o-button
+                  >
+                </template>
+                <template #explore_groups>
+                  <o-button
+                    tag="router-link"
+                    :to="{ name: RouteName.SEARCH }"
+                    >{{ $t("explore the groups") }}</o-button
+                  >
+                </template>
+              </i18n-t>
             </p>
           </div>
         </div>
@@ -70,137 +78,117 @@
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
+<script lang="ts" setup>
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import Invitations from "@/components/Group/Invitations.vue";
-import { Paginate } from "@/types/paginate";
 import { IGroup, usernameWithDomain } from "@/types/actor";
-import { Route } from "vue-router";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
 import { supportsWebPFormat } from "@/utils/support";
 import RouteName from "../../router/name";
+import { useRestrictions } from "@/composition/apollo/config";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { IUser } from "@/types/current-user.model";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { computed, inject } from "vue";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  components: {
-    GroupMemberCard,
-    Invitations,
-  },
-  apollo: {
-    config: {
-      query: CONFIG,
-    },
-    membershipsPages: {
-      query: LOGGED_USER_MEMBERSHIPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          page: this.page,
-          limit: this.limit,
-        };
-      },
-      update: (data) => data.loggedUser.memberships,
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("My groups") as string,
-      titleTemplate: "%s | Mobilizon",
-    };
-  },
-})
-export default class MyGroups extends Vue {
-  membershipsPages!: Paginate<IMember>;
+const page = useRouteQuery("page", 1, integerTransformer);
+const limit = 10;
 
-  RouteName = RouteName;
+const { result: membershipsResult, loading } = useQuery<{
+  loggedUser: Pick<IUser, "memberships">;
+}>(LOGGED_USER_MEMBERSHIPS, () => ({
+  page: page.value,
+  limit,
+}));
 
-  config!: IConfig;
-
-  page = 1;
-
-  limit = 10;
-
-  supportsWebPFormat = supportsWebPFormat;
-
-  acceptInvitation(member: IMember): Promise<Route> {
-    return this.$router.push({
-      name: RouteName.GROUP,
-      params: { preferredUsername: usernameWithDomain(member.parent) },
-    });
-  }
-
-  rejectInvitation({ id: memberId }: { id: string }): void {
-    const index = this.membershipsPages.elements.findIndex(
-      (membership) =>
-        membership.role === MemberRole.INVITED && membership.id === memberId
-    );
-    if (index > -1) {
-      this.membershipsPages.elements.splice(index, 1);
-      this.membershipsPages.total -= 1;
+const membershipsPages = computed(
+  () =>
+    membershipsResult.value?.loggedUser?.memberships ?? {
+      total: 0,
+      elements: [],
     }
-  }
+);
 
-  async leaveGroup(group: IGroup): Promise<void> {
-    try {
-      const { page, limit } = this;
-      await this.$apollo.mutate({
-        mutation: LEAVE_GROUP,
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: t("My groups"),
+});
+
+const notifier = inject<Notifier>("notifier");
+
+const router = useRouter();
+
+const acceptInvitation = (member: IMember) => {
+  return router.push({
+    name: RouteName.GROUP,
+    params: { preferredUsername: usernameWithDomain(member.parent) },
+  });
+};
+
+const rejectInvitation = ({ id: memberId }: { id: string }) => {
+  const index = membershipsPages.value.elements.findIndex(
+    (membership) =>
+      membership.role === MemberRole.INVITED && membership.id === memberId
+  );
+  if (index > -1) {
+    membershipsPages.value.elements.splice(index, 1);
+    membershipsPages.value.total -= 1;
+  }
+};
+
+const { mutate: leaveGroup, onError: onLeaveGroupError } = useMutation(
+  LEAVE_GROUP,
+  () => ({
+    refetchQueries: [
+      {
+        query: LOGGED_USER_MEMBERSHIPS,
         variables: {
-          groupId: group.id,
+          page,
+          limit,
         },
-        refetchQueries: [
-          {
-            query: LOGGED_USER_MEMBERSHIPS,
-            variables: {
-              page,
-              limit,
-            },
-          },
-        ],
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+      },
+    ],
+  })
+);
 
-  get invitations(): IMember[] {
-    if (!this.membershipsPages) return [];
-    return this.membershipsPages.elements.filter(
-      (member: IMember) => member.role === MemberRole.INVITED
-    );
+onLeaveGroupError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
+});
 
-  get memberships(): IMember[] {
-    if (!this.membershipsPages) return [];
-    return this.membershipsPages.elements.filter(
-      (member: IMember) =>
-        ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
-    );
-  }
+const invitations = computed((): IMember[] => {
+  if (!membershipsPages.value) return [];
+  return membershipsPages.value.elements.filter(
+    (member: IMember) => member.role === MemberRole.INVITED
+  );
+});
 
-  get hideCreateGroupButton(): boolean {
-    return !!this.config?.restrictions?.onlyAdminCanCreateGroups;
-  }
-}
+const memberships = computed((): IMember[] => {
+  if (!membershipsPages.value) return [];
+  return membershipsPages.value.elements.filter(
+    (member: IMember) =>
+      ![MemberRole.INVITED, MemberRole.REJECTED].includes(member.role)
+  );
+});
+
+const { restrictions } = useRestrictions();
+
+const hideCreateGroupButton = computed((): boolean => {
+  return restrictions.value?.onlyAdminCanCreateGroups === true;
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-main > .container {
-  background: $white;
-
-  & > h1 {
-    margin: 10px auto 5px;
-  }
-}
-
 .participation {
   margin: 1rem auto;
 }

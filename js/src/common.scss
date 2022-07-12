@@ -1,9 +1,9 @@
 @use "@/styles/_mixins" as *;
 @import "variables.scss";
 
-@import "~bulma";
-@import "~bulma-divider";
-@import "~buefy/src/scss/buefy";
+// @import "node_modules/bulma/bulma.sass";
+// @import "node_modules/bulma-divider/src/sass/index.sass";
+// @import "node_modules/buefy/src/scss/buefy";
 @import "styles/vue-announcer.scss";
 @import "styles/vue-skip-to.scss";
 
@@ -75,44 +75,44 @@ body {
   color: $violet-1;
 }
 
-$list-background-color: $scheme-main !default;
-$list-shadow: 0 2px 3px rgba($scheme-invert, 0.1),
-  0 0 0 1px rgba($scheme-invert, 0.1) !default;
-$list-radius: $radius !default;
+// $list-background-color: $scheme-main !default;
+// $list-shadow: 0 2px 3px rgba($scheme-invert, 0.1),
+//   0 0 0 1px rgba($scheme-invert, 0.1) !default;
+// $list-radius: $radius !default;
 
-$list-item-border: 1px solid $border !default;
-$list-item-color: $text !default;
-$list-item-active-background-color: $link !default;
-$list-item-active-color: $link-invert !default;
-$list-item-hover-background-color: $background !default;
+// $list-item-border: 1px solid $border !default;
+// $list-item-color: $text !default;
+// $list-item-active-background-color: $link !default;
+// $list-item-active-color: $link-invert !default;
+// $list-item-hover-background-color: $background !default;
 
-.list-item {
-  display: block;
-  padding: 0.5em 1em;
-  &:not(a) {
-    color: $list-item-color;
-  }
-  &:first-child {
-    border-top-left-radius: $list-radius;
-    border-top-right-radius: $list-radius;
-  }
-  &:last-child {
-    border-bottom-left-radius: $list-radius;
-    border-bottom-right-radius: $list-radius;
-  }
-  &:not(:last-child) {
-    border-bottom: $list-item-border;
-  }
-  &.is-active {
-    background-color: $list-item-active-background-color;
-    color: $list-item-active-color;
-  }
-}
+// .list-item {
+//   display: block;
+//   padding: 0.5em 1em;
+//   &:not(a) {
+//     color: $list-item-color;
+//   }
+//   &:first-child {
+//     border-top-left-radius: $list-radius;
+//     border-top-right-radius: $list-radius;
+//   }
+//   &:last-child {
+//     border-bottom-left-radius: $list-radius;
+//     border-bottom-right-radius: $list-radius;
+//   }
+//   &:not(:last-child) {
+//     border-bottom: $list-item-border;
+//   }
+//   &.is-active {
+//     background-color: $list-item-active-background-color;
+//     color: $list-item-active-color;
+//   }
+// }
 
-a.list-item {
-  background-color: $list-item-hover-background-color;
-  cursor: pointer;
-}
+// a.list-item {
+//   background-color: $list-item-hover-background-color;
+//   cursor: pointer;
+// }
 
 .setting-title {
   margin-top: 2rem;

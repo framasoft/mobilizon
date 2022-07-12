@@ -1,13 +1,13 @@
 <template>
   <div class="activity-item">
     <span>
-      <b-skeleton circle width="32px" height="32px"></b-skeleton>
+      <o-skeleton circle width="32px" height="32px"></o-skeleton>
     </span>
     <div class="subject">
-      <div class="content">
+      <div class="prose dark:prose-invert">
         <p>
-          <b-skeleton active></b-skeleton>
-          <b-skeleton active class="datetime"></b-skeleton>
+          <o-skeleton active></o-skeleton>
+          <o-skeleton active class="datetime"></o-skeleton>
         </p>
       </div>
     </div>

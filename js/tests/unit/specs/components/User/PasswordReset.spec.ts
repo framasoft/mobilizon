@@ -1,17 +1,23 @@
-import { config, createLocalVue, mount } from "@vue/test-utils";
+const useRouterMock = vi.fn(() => ({
+  push: () => {},
+}));
+
+import { config, mount } from "@vue/test-utils";
 import PasswordReset from "@/views/User/PasswordReset.vue";
-import Buefy from "buefy";
 import { createMockClient, RequestHandler } from "mock-apollo-client";
 import { RESET_PASSWORD } from "@/graphql/auth";
-import VueApollo from "@vue/apollo-option";
 import { resetPasswordResponseMock } from "../../mocks/auth";
 import RouteName from "@/router/name";
 import flushPromises from "flush-promises";
+import { describe, expect, it, vi } from "vitest";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import Oruga from "@oruga-ui/oruga-next";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-config.mocks.$t = (key: string): string => key;
-const $router = { push: jest.fn() };
+config.global.plugins.push(Oruga);
+
+vi.mock("vue-router/dist/vue-router.mjs", () => ({
+  useRouter: useRouterMock,
+}));
 
 let requestHandlers: Record<string, RequestHandler>;
 
@@ -22,7 +28,7 @@ const generateWrapper = (
   const mockClient = createMockClient();
 
   requestHandlers = {
-    resetPasswordMutationHandler: jest
+    resetPasswordMutationHandler: vi
       .fn()
       .mockResolvedValue(resetPasswordResponseMock),
     ...customRequestHandlers,
@@ -33,20 +39,18 @@ const generateWrapper = (
     requestHandlers.resetPasswordMutationHandler
   );
 
-  const apolloProvider = new VueApollo({
-    defaultClient: mockClient,
-  });
-
   return mount(PasswordReset, {
-    localVue,
-    mocks: {
-      $route: { query: {} },
-      $router,
-      ...customMocks,
-    },
-    apolloProvider,
-    propsData: {
+    props: {
       token: "some-token",
+    },
+    global: {
+      stubs: ["router-link", "router-view"],
+      mocks: {
+        ...customMocks,
+      },
+      provide: {
+        [DefaultApolloClient]: mockClient,
+      },
     },
   });
 };
@@ -60,12 +64,14 @@ describe("Reset page", () => {
 
   it("shows error if token is invalid", async () => {
     const wrapper = generateWrapper({
-      resetPasswordMutationHandler: jest.fn().mockResolvedValue({
+      resetPasswordMutationHandler: vi.fn().mockResolvedValue({
         errors: [{ message: "The token you provided is invalid." }],
       }),
     });
 
-    wrapper.findAll('input[type="password"').setValue("my password");
+    wrapper
+      .findAll('input[type="password"')
+      .forEach((inputField) => inputField.setValue("my password"));
     wrapper.find("form").trigger("submit");
 
     await wrapper.vm.$nextTick();
@@ -78,27 +84,30 @@ describe("Reset page", () => {
 
     await flushPromises();
 
-    expect(wrapper.find("article.message.is-danger").text()).toContain(
+    expect(wrapper.find(".o-notification--danger").text()).toContain(
       "The token you provided is invalid"
     );
     expect(wrapper.html()).toMatchSnapshot();
   });
 
   it("redirects to homepage if token is valid", async () => {
+    const push = vi.fn(); // needs to write this code before render()
+    useRouterMock.mockImplementationOnce(() => ({
+      push,
+    }));
     const wrapper = generateWrapper();
 
-    wrapper.findAll('input[type="password"').setValue("my password");
-    wrapper.find("form").trigger("submit");
-
-    await wrapper.vm.$nextTick();
+    wrapper
+      .findAll('input[type="password"')
+      .forEach((inputField) => inputField.setValue("my password"));
+    await wrapper.find("form").trigger("submit");
 
     expect(requestHandlers.resetPasswordMutationHandler).toBeCalledTimes(1);
     expect(requestHandlers.resetPasswordMutationHandler).toBeCalledWith({
       password: "my password",
       token: "some-token",
     });
-    expect(jest.isMockFunction(wrapper.vm.$router.push)).toBe(true);
     await flushPromises();
-    expect($router.push).toHaveBeenCalledWith({ name: RouteName.HOME });
+    expect(push).toHaveBeenCalledWith({ name: RouteName.HOME });
   });
 });

@@ -1,4 +1,5 @@
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { CURRENT_USER_LOCATION_CLIENT } from "@/graphql/location";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUserRole } from "@/types/enums";
 import { ApolloCache, NormalizedCacheObject } from "@apollo/client/cache";
@@ -33,6 +34,20 @@ export default function buildCurrentUserResolver(
     },
   });
 
+  cache.writeQuery({
+    query: CURRENT_USER_LOCATION_CLIENT,
+    data: {
+      currentUserLocation: {
+        lat: null,
+        lon: null,
+        accuracy: null,
+        isIPLocation: null,
+        name: null,
+        picture: null,
+      },
+    },
+  });
+
   return {
     Mutation: {
       updateCurrentUser: (
@@ -54,6 +69,8 @@ export default function buildCurrentUserResolver(
             __typename: "CurrentUser",
           },
         };
+
+        console.debug("updating current user", data);
 
         localCache.writeQuery({ data, query: CURRENT_USER_CLIENT });
       },
@@ -82,7 +99,44 @@ export default function buildCurrentUserResolver(
           },
         };
 
+        console.debug("updating current actor", data);
+
         localCache.writeQuery({ data, query: CURRENT_ACTOR_CLIENT });
+      },
+      updateCurrentUserLocation: (
+        _: any,
+        {
+          lat,
+          lon,
+          accuracy,
+          isIPLocation,
+          name,
+          picture,
+        }: {
+          lat: number;
+          lon: number;
+          accuracy: number;
+          isIPLocation: boolean;
+          name: string;
+          picture: any;
+        },
+        { cache: localCache }: { cache: ApolloCache<NormalizedCacheObject> }
+      ) => {
+        const data = {
+          currentUserLocation: {
+            lat,
+            lon,
+            accuracy,
+            isIPLocation,
+            name,
+            picture,
+            __typename: "CurrentUserLocation",
+          },
+        };
+
+        console.debug("updating current user location", data);
+
+        localCache.writeQuery({ data, query: CURRENT_USER_LOCATION_CLIENT });
       },
     },
   };

@@ -1,56 +1,65 @@
 <template>
-  <div class="address-autocomplete columns is-desktop">
-    <div class="column">
-      <b-field
+  <div class="address-autocomplete">
+    <div class="">
+      <o-field
         :label-for="id"
         expanded
         :message="fieldErrors"
-        :type="{ 'is-danger': fieldErrors.length }"
+        :type="{ 'is-danger': fieldErrors }"
+        class="!-mt-2"
       >
-        <template slot="label">
+        <template #label>
           {{ actualLabel }}
           <span
             class="is-size-6 has-text-weight-normal"
             v-if="gettingLocation"
-            >{{ $t("Getting location") }}</span
+            >{{ t("Getting location") }}</span
           >
         </template>
-        <p class="control" v-if="canShowLocateMeButton && !gettingLocation">
-          <b-button
+        <p class="control" v-if="canShowLocateMeButton">
+          <o-loading
+            :full-page="false"
+            v-model:active="gettingLocation"
+            :can-cancel="false"
+            :container="mapMarker?.$el"
+          />
+          <o-button
+            ref="mapMarker"
             icon-right="map-marker"
             @click="locateMe"
-            :title="$t('Use my location')"
+            :title="t('Use my location')"
           />
         </p>
-        <b-autocomplete
+        <o-autocomplete
           :data="addressData"
           v-model="queryText"
-          :placeholder="$t('e.g. 10 Rue Jangot')"
-          field="fullName"
+          :placeholder="placeholderWithDefault"
+          :customFormatter="(elem: IAddress) => addressFullName(elem)"
           :loading="isFetching"
-          @typing="fetchAsyncData"
+          :debounceTyping="debounceDelay"
+          @typing="asyncData"
           :icon="canShowLocateMeButton ? null : 'map-marker'"
           expanded
           @select="updateSelected"
-          v-bind="$attrs"
           :id="id"
           :disabled="disabled"
           dir="auto"
+          class="!mt-0"
         >
           <template #default="{ option }">
-            <b-icon :icon="option.poiInfos.poiIcon.icon" />
+            <o-icon :icon="option.poiInfos.poiIcon.icon" />
             <b>{{ option.poiInfos.name }}</b
             ><br />
             <small>{{ option.poiInfos.alternativeName }}</small>
           </template>
           <template #empty>
-            <span v-if="isFetching">{{ $t("Searching…") }}</span>
+            <span v-if="isFetching">{{ t("Searching…") }}</span>
             <div v-else-if="queryText.length >= 3" class="is-enabled">
               <span>{{
-                $t('No results for "{queryText}"', { queryText })
+                t('No results for "{queryText}"', { queryText })
               }}</span>
               <span>{{
-                $t(
+                t(
                   "You can try another search term or drag and drop the marker on the map",
                   {
                     queryText,
@@ -58,24 +67,24 @@
                 )
               }}</span>
               <!--                        <p class="control" @click="openNewAddressModal">-->
-              <!--                            <button type="button" class="button is-primary">{{ $t('Add') }}</button>-->
+              <!--                            <button type="button" class="button is-primary">{{ t('Add') }}</button>-->
               <!--                        </p>-->
             </div>
           </template>
-        </b-autocomplete>
-        <b-button
+        </o-autocomplete>
+        <o-button
           :disabled="!queryText"
           @click="resetAddress"
           class="reset-area"
           icon-left="close"
-          :title="$t('Clear address field')"
+          :title="t('Clear address field')"
         />
-      </b-field>
+      </o-field>
       <div
-        class="card"
-        v-if="!hideSelected && (selected.originId || selected.url)"
+        class="mt-2 p-2 rounded-lg shadow-md dark:bg-violet-3"
+        v-if="!hideSelected && (selected?.originId || selected?.url)"
       >
-        <div class="card-content">
+        <div class="">
           <address-info
             :address="selected"
             :show-icon="true"
@@ -86,7 +95,7 @@
       </div>
     </div>
     <div
-      class="map column"
+      class="map"
       v-if="!hideMap && selected && selected.geom && selected.poiInfos"
     >
       <map-leaflet
@@ -102,85 +111,245 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Watch, Mixins } from "vue-property-decorator";
-import { LatLng } from "leaflet";
-import { Address, IAddress } from "../../types/address.model";
-import AddressAutoCompleteMixin from "../../mixins/AddressAutoCompleteMixin";
+<script lang="ts" setup>
+import type { LatLng } from "leaflet";
+import { Address, IAddress, addressFullName } from "../../types/address.model";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
+import { computed, ref, watch, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
+import { useGeocodingAutocomplete } from "@/composition/apollo/config";
+import { ADDRESS } from "@/graphql/address";
+import { useReverseGeocode } from "@/composition/apollo/address";
+import { useLazyQuery } from "@vue/apollo-composable";
+const MapLeaflet = defineAsyncComponent(() => import("../Map.vue"));
 
-@Component({
-  inheritAttrs: false,
-  components: {
-    AddressInfo,
+const props = withDefaults(
+  defineProps<{
+    modelValue: IAddress | null;
+    label?: string;
+    userTimezone?: string;
+    disabled?: boolean;
+    hideMap?: boolean;
+    hideSelected?: boolean;
+    placeholder?: string;
+  }>(),
+  {
+    label: "",
+    disabled: false,
+    hideMap: false,
+    hideSelected: false,
+  }
+);
+
+const addressModalActive = ref(false);
+
+const componentId = 0;
+
+const emit = defineEmits(["update:modelValue"]);
+
+const gettingLocationError = ref<string | null>(null);
+const gettingLocation = ref(false);
+const mapDefaultZoom = ref(15);
+
+const addressData = ref<IAddress[]>([]);
+
+const selected = ref<IAddress | null>(null);
+
+const isFetching = ref(false);
+
+const mapMarker = ref();
+
+const placeholderWithDefault = computed(
+  () => props.placeholder ?? t("e.g. 10 Rue Jangot")
+);
+
+// created(): void {
+//   componentId += 1;
+// }
+
+const id = computed((): string => {
+  return `full-address-autocomplete-${componentId}`;
+});
+
+const modelValue = computed(() => props.modelValue);
+
+watch(modelValue, () => {
+  if (!modelValue.value) return;
+  selected.value = modelValue.value;
+});
+
+const updateSelected = (option: IAddress): void => {
+  if (option == null) return;
+  selected.value = option;
+  emit("update:modelValue", selected.value);
+};
+
+const resetPopup = (): void => {
+  selected.value = new Address();
+};
+
+const openNewAddressModal = (): void => {
+  resetPopup();
+  addressModalActive.value = true;
+};
+
+const checkCurrentPosition = (e: LatLng): boolean => {
+  if (!selected.value?.geom) return false;
+  const lat = parseFloat(selected.value?.geom.split(";")[1]);
+  const lon = parseFloat(selected.value?.geom.split(";")[0]);
+
+  return e.lat === lat && e.lng === lon;
+};
+
+const { t, locale } = useI18n({ useScope: "global" });
+
+const actualLabel = computed((): string => {
+  return props.label ?? (t("Find an address") as string);
+});
+
+// eslint-disable-next-line class-methods-use-this
+const canShowLocateMeButton = computed((): boolean => {
+  return window.isSecureContext;
+});
+
+const { geocodingAutocomplete } = useGeocodingAutocomplete();
+
+const debounceDelay = computed(() =>
+  geocodingAutocomplete.value === true ? 200 : 2000
+);
+
+const { onResult: onAddressSearchResult, load: searchAddress } = useLazyQuery<{
+  searchAddress: IAddress[];
+}>(ADDRESS);
+
+onAddressSearchResult((result) => {
+  if (result.loading) return;
+  const { data } = result;
+  addressData.value = data.searchAddress.map(
+    (address: IAddress) => new Address(address)
+  );
+  isFetching.value = false;
+});
+
+const asyncData = async (query: string): Promise<void> => {
+  if (!query.length) {
+    addressData.value = [];
+    selected.value = new Address();
+    return;
+  }
+
+  if (query.length < 3) {
+    addressData.value = [];
+    return;
+  }
+
+  isFetching.value = true;
+
+  searchAddress(undefined, {
+    query,
+    locale: locale.value,
+  });
+};
+
+const queryText = computed({
+  get() {
+    return selected.value ? addressFullName(selected.value) : "";
   },
-})
-export default class FullAddressAutoComplete extends Mixins(
-  AddressAutoCompleteMixin
-) {
-  @Prop({ required: false, default: "" }) label!: string;
-  @Prop({ required: false }) userTimezone!: string;
-  @Prop({ required: false, default: false, type: Boolean }) disabled!: boolean;
-  @Prop({ required: false, default: false, type: Boolean }) hideMap!: boolean;
-  @Prop({ required: false, default: false, type: Boolean })
-  hideSelected!: boolean;
+  set(text) {
+    if (text === "" && selected.value?.id) {
+      console.log("doing reset");
+      resetAddress();
+    }
+  },
+});
 
-  addressModalActive = false;
+const resetAddress = (): void => {
+  emit("update:modelValue", null);
+  selected.value = new Address();
+};
 
-  private static componentId = 0;
-
-  created(): void {
-    FullAddressAutoComplete.componentId += 1;
+const locateMe = async (): Promise<void> => {
+  gettingLocation.value = true;
+  gettingLocationError.value = null;
+  try {
+    const location = await getLocation();
+    mapDefaultZoom.value = 12;
+    reverseGeoCode(
+      new LatLng(location.coords.latitude, location.coords.longitude),
+      12
+    );
+  } catch (e: any) {
+    gettingLocationError.value = e.message;
   }
+  gettingLocation.value = false;
+};
 
-  get id(): string {
-    return `full-address-autocomplete-${FullAddressAutoComplete.componentId}`;
+const { onResult: onReverseGeocodeResult, load: loadReverseGeocode } =
+  useReverseGeocode();
+
+onReverseGeocodeResult((result) => {
+  if (result.loading !== false) return;
+  const { data } = result;
+  addressData.value = data.reverseGeocode.map(
+    (elem: IAddress) => new Address(elem)
+  );
+
+  if (addressData.value.length > 0) {
+    const defaultAddress = new Address(addressData.value[0]);
+    selected.value = defaultAddress;
+    emit("update:modelValue", selected.value);
   }
+});
 
-  @Watch("value")
-  updateEditing(): void {
-    if (!(this.value && this.value.id)) return;
-    this.selected = this.value;
-  }
+const reverseGeoCode = (e: LatLng, zoom: number) => {
+  // If the position has been updated through autocomplete selection, no need to geocode it!
+  if (checkCurrentPosition(e)) return;
 
-  updateSelected(option: IAddress): void {
-    if (option == null) return;
-    this.selected = option;
-    this.$emit("input", this.selected);
-  }
+  loadReverseGeocode(undefined, {
+    latitude: e.lat,
+    longitude: e.lng,
+    zoom,
+    locale: locale.value as string,
+  });
+};
 
-  resetPopup(): void {
-    this.selected = new Address();
-  }
+// eslint-disable-next-line no-undef
+const getLocation = async (): Promise<GeolocationPosition> => {
+  let errorMessage = t("Failed to get location.");
+  return new Promise((resolve, reject) => {
+    if (!("geolocation" in navigator)) {
+      reject(new Error(errorMessage as string));
+    }
 
-  openNewAddressModal(): void {
-    this.resetPopup();
-    this.addressModalActive = true;
-  }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        resolve(pos);
+      },
+      (err) => {
+        switch (err.code) {
+          case GeolocationPositionError.PERMISSION_DENIED:
+            errorMessage = t("The geolocation prompt was denied.");
+            break;
+          case GeolocationPositionError.POSITION_UNAVAILABLE:
+            errorMessage = t("Your position was not available.");
+            break;
+          case GeolocationPositionError.TIMEOUT:
+            errorMessage = t("Geolocation was not determined in time.");
+            break;
+          default:
+            errorMessage = err.message;
+        }
+        reject(new Error(errorMessage as string));
+      }
+    );
+  });
+};
 
-  checkCurrentPosition(e: LatLng): boolean {
-    if (!this.selected || !this.selected.geom) return false;
-    const lat = parseFloat(this.selected.geom.split(";")[1]);
-    const lon = parseFloat(this.selected.geom.split(";")[0]);
-
-    return e.lat === lat && e.lng === lon;
-  }
-
-  get actualLabel(): string {
-    return this.label || (this.$t("Find an address") as string);
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get canShowLocateMeButton(): boolean {
-    return window.isSecureContext;
-  }
-}
+const fieldErrors = computed(() => {
+  return gettingLocationError.value;
+});
 </script>
 <style lang="scss">
-.address-autocomplete {
-  margin-bottom: 0.75rem;
-}
-
 .autocomplete {
   .dropdown-menu {
     z-index: 2000;

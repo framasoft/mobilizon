@@ -1,27 +1,29 @@
 <template>
-  <article class="container post" v-if="post">
+  <article class="container mx-auto post" v-if="post">
     <header>
-      <div class="banner-container">
+      <div class="flex justify-center">
         <lazy-image-wrapper :picture="post.picture" />
       </div>
-      <div class="heading-section">
-        <div class="heading-wrapper" dir="auto">
-          <div class="title-metadata">
-            <div class="title-wrapper">
+      <div class="relative flex flex-col">
+        <div
+          class="px-2 py-3 flex flex-wrap justify-center items-center"
+          dir="auto"
+        >
+          <div class="flex-1">
+            <div class="inline">
               <b-tag
                 class="mr-2"
-                type="is-warning"
+                variant="warning"
                 size="is-medium"
                 v-if="post.draft"
                 >{{ $t("Draft") }}</b-tag
               >
-              <h1 class="title text-3xl" :lang="post.language">
+              <h1 class="inline" :lang="post.language">
                 {{ post.title }}
               </h1>
             </div>
-            <p class="metadata">
+            <p class="mt-2 flex flex-col flex-wrap justify-start">
               <router-link
-                slot="author"
                 :to="{
                   name: RouteName.GROUP,
                   params: {
@@ -29,65 +31,65 @@
                   },
                 }"
               >
-                <actor-inline :actor="post.attributedTo" />
+                <actor-inline
+                  v-if="post.attributedTo"
+                  :actor="post.attributedTo"
+                />
               </router-link>
-              <span class="published has-text-grey-dark" v-if="!post.draft">
-                <b-icon icon="clock" size="is-small" />
-                {{ post.publishAt | formatDateTimeString }}
+              <span
+                class="inline-flex gap-2 items-center mt-2"
+                v-if="!post.draft && post.publishAt"
+              >
+                <Clock :size="16" />
+                {{ formatDateTimeString(post.publishAt) }}
               </span>
               <span
-                class="published has-text-grey-dark"
+                class="inline-flex gap-2 items-center mt-2"
                 :title="
-                  $options.filters.formatDateTimeString(
-                    post.updatedAt,
-                    undefined,
-                    true,
-                    'short'
-                  )
+                  formatDateTimeString(post.updatedAt, undefined, true, 'short')
                 "
-                v-else
+                v-else-if="post.updatedAt"
               >
-                <b-icon icon="clock" size="is-small" />
+                <Clock :size="16" />
                 {{
                   $t("Edited {relative_time} ago", {
                     relative_time: formatDistanceToNowStrict(
                       new Date(post.updatedAt),
                       {
-                        locale: $dateFnsLocale,
+                        locale: dateFnsLocale,
                       }
                     ),
                   })
                 }}
               </span>
-              <span
-                v-if="post.visibility === PostVisibility.UNLISTED"
-                class="has-text-grey-dark"
-              >
-                <b-icon icon="link" size="is-small" />
+              <span v-if="post.visibility === PostVisibility.UNLISTED" class="">
+                <o-icon icon="link" size="small" />
                 {{ $t("Accessible only by link") }}
               </span>
               <span
                 v-else-if="post.visibility === PostVisibility.PRIVATE"
-                class="has-text-grey-dark"
+                class=""
               >
-                <b-icon icon="lock" size="is-small" />
+                <Lock :size="16" />
                 {{
                   $t("Accessible only to members", {
-                    group: post.attributedTo.name,
+                    group: post.attributedTo?.name,
                   })
                 }}
               </span>
             </p>
           </div>
-          <b-dropdown position="is-bottom-left" aria-role="list">
-            <b-button slot="trigger" role="button" icon-right="dots-horizontal">
-              {{ $t("Actions") }}
-            </b-button>
-            <b-dropdown-item
+          <o-dropdown position="bottom-left" aria-role="list">
+            <template #trigger>
+              <o-button role="button" icon-right="dots-horizontal">
+                {{ $t("Actions") }}
+              </o-button>
+            </template>
+            <o-dropdown-item
               aria-role="listitem"
               has-link
               v-if="
-                currentActor.id === post.author.id ||
+                currentActor?.id === post?.author?.id ||
                 isCurrentActorAGroupModerator
               "
             >
@@ -96,32 +98,32 @@
                   name: RouteName.POST_EDIT,
                   params: { slug: post.slug },
                 }"
-                >{{ $t("Edit") }} <b-icon icon="pencil"
+                >{{ $t("Edit") }} <o-icon icon="pencil"
               /></router-link>
-            </b-dropdown-item>
-            <b-dropdown-item
+            </o-dropdown-item>
+            <o-dropdown-item
               aria-role="listitem"
               v-if="
-                currentActor.id === post.author.id ||
+                currentActor?.id === post?.author?.id ||
                 isCurrentActorAGroupModerator
               "
               @click="openDeletePostModal"
               @keyup.enter="openDeletePostModal"
             >
               {{ $t("Delete") }}
-              <b-icon icon="delete" />
-            </b-dropdown-item>
+              <o-icon icon="delete" />
+            </o-dropdown-item>
 
             <hr
               role="presentation"
               class="dropdown-divider"
               aria-role="menuitem"
               v-if="
-                currentActor.id === post.author.id ||
+                currentActor?.id === post?.author?.id ||
                 isCurrentActorAGroupModerator
               "
             />
-            <b-dropdown-item
+            <o-dropdown-item
               aria-role="listitem"
               v-if="!post.draft"
               @click="triggerShare()"
@@ -129,11 +131,11 @@
             >
               <span>
                 {{ $t("Share this event") }}
-                <b-icon icon="share" />
+                <o-icon icon="share" />
               </span>
-            </b-dropdown-item>
+            </o-dropdown-item>
 
-            <b-dropdown-item
+            <o-dropdown-item
               aria-role="listitem"
               v-if="ableToReport"
               @click="isReportModalActive = true"
@@ -141,20 +143,21 @@
             >
               <span>
                 {{ $t("Report") }}
-                <b-icon icon="flag" />
+                <o-icon icon="flag" />
               </span>
-            </b-dropdown-item>
-          </b-dropdown>
+            </o-dropdown-item>
+          </o-dropdown>
         </div>
       </div>
     </header>
-    <b-message
+    <o-notification
       :title="$t('Members-only post')"
       class="mx-4"
-      type="is-warning"
+      variant="warning"
       :closable="false"
       v-if="
-        !$apollo.loading &&
+        !membershipsLoading &&
+        !postLoading &&
         isInstanceModerator &&
         !isCurrentActorAGroupMember &&
         post.visibility === PostVisibility.PRIVATE
@@ -165,15 +168,15 @@
           "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator."
         )
       }}
-    </b-message>
+    </o-notification>
 
     <section
       v-html="post.body"
       dir="auto"
-      class="content"
+      class="px-1 prose lg:prose-xl prose-p:mt-6 dark:prose-invert"
       :lang="post.language"
     />
-    <section class="tags" dir="auto">
+    <section class="flex gap-2 my-6" dir="auto">
       <router-link
         v-for="tag in post.tags"
         :key="tag.title"
@@ -182,9 +185,9 @@
         <tag>{{ tag.title }}</tag>
       </router-link>
     </section>
-    <b-modal
+    <o-modal
       :close-button-aria-label="$t('Close')"
-      :active.sync="isReportModalActive"
+      v-model:active="isReportModalActive"
       has-modal-card
       ref="reportModal"
     >
@@ -192,198 +195,228 @@
         :on-confirm="reportPost"
         :title="$t('Report this post')"
         :outside-domain="groupDomain"
-        @close="$refs.reportModal.close()"
+        @close="isReportModalActive = false"
       />
-    </b-modal>
-    <b-modal
-      :active.sync="isShareModalActive"
+    </o-modal>
+    <o-modal
+      v-model:active="isShareModalActive"
       has-modal-card
       ref="shareModal"
       :close-button-aria-label="$t('Close')"
     >
       <share-post-modal :post="post" />
-    </b-modal>
+    </o-modal>
   </article>
 </template>
 
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import GroupMixin from "@/mixins/group";
-import { ICurrentUserRole, PostVisibility } from "@/types/enums";
-import { IMember } from "@/types/actor/member.model";
+<script lang="ts" setup>
+import { ICurrentUserRole, MemberRole, PostVisibility } from "@/types/enums";
+import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import {
-  CURRENT_ACTOR_CLIENT,
-  PERSON_MEMBERSHIPS,
-  PERSON_STATUS_GROUP,
-} from "../../graphql/actor";
-import { usernameWithDomain } from "../../types/actor";
-import RouteName from "../../router/name";
-import Tag from "../../components/Tag.vue";
-import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
-import ActorInline from "../../components/Account/ActorInline.vue";
-import { formatDistanceToNowStrict } from "date-fns";
-import { CURRENT_USER_CLIENT } from "@/graphql/user";
-import { ICurrentUser } from "@/types/current-user.model";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
-import SharePostModal from "../../components/Post/SharePostModal.vue";
-import { IReport } from "@/types/report.model";
+  IGroup,
+  IPerson,
+  usernameWithDomain,
+  displayName,
+} from "@/types/actor";
+import RouteName from "@/router/name";
+import Tag from "@/components/Tag.vue";
+import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
+import ActorInline from "@/components/Account/ActorInline.vue";
+import { formatDistanceToNowStrict, Locale } from "date-fns";
+import SharePostModal from "@/components/Post/SharePostModal.vue";
 import { CREATE_REPORT } from "@/graphql/report";
-import ReportModal from "../../components/Report/ReportModal.vue";
-import PostMixin from "../../mixins/post";
+import ReportModal from "@/components/Report/ReportModal.vue";
+import { useAnonymousReportsConfig } from "@/composition/apollo/config";
+import {
+  useCurrentActorClient,
+  usePersonStatusGroup,
+} from "@/composition/apollo/actor";
+import { useCurrentUserClient } from "@/composition/apollo/user";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, inject, ref } from "vue";
+import { IPost } from "@/types/post.model";
+import { DELETE_POST, FETCH_POST } from "@/graphql/post";
+import { useHead } from "@vueuse/head";
+import { formatDateTimeString } from "@/filters/datetime";
+import { useRouter } from "vue-router";
+import { useCreateReport } from "@/composition/apollo/report";
+import Clock from "vue-material-design-icons/Clock.vue";
+import Lock from "vue-material-design-icons/Lock.vue";
+import { Dialog } from "@/plugins/dialog";
+import { useI18n } from "vue-i18n";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    config: CONFIG,
-    currentUser: CURRENT_USER_CLIENT,
-    currentActor: CURRENT_ACTOR_CLIENT,
-    memberships: {
-      query: PERSON_MEMBERSHIPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-        };
+const props = defineProps<{
+  slug: string;
+}>();
+
+const { anonymousReportsConfig } = useAnonymousReportsConfig();
+const { currentUser } = useCurrentUserClient();
+const { currentActor } = useCurrentActorClient();
+
+const { result: membershipsResult, loading: membershipsLoading } = useQuery<{
+  person: Pick<IPerson, "memberships">;
+}>(
+  PERSON_MEMBERSHIPS,
+  () => ({ id: currentActor.value?.id }),
+  () => ({ enabled: currentActor.value?.id !== undefined })
+);
+const memberships = computed(() => membershipsResult.value?.person.memberships);
+
+const { result: postResult, loading: postLoading } = useQuery<{
+  post: IPost;
+}>(FETCH_POST, () => ({ slug: props.slug }));
+
+const post = computed(() => postResult.value?.post);
+
+usePersonStatusGroup(usernameWithDomain(post.value?.attributedTo as IGroup));
+
+useHead({
+  title: computed(
+    () => `${post.value?.title} - ${displayName(post.value?.attributedTo)}`
+  ),
+});
+
+const notifier = inject<Notifier>("notifier");
+
+const isShareModalActive = ref(false);
+const isReportModalActive = ref(false);
+const reportModal = ref();
+
+const isCurrentActorMember = computed((): boolean => {
+  if (!post.value?.attributedTo || !memberships.value) return false;
+  return memberships.value.elements
+    .map(({ parent: { id } }) => id)
+    .includes(post.value?.attributedTo.id);
+});
+
+const isInstanceModerator = computed((): boolean => {
+  return (
+    currentUser.value?.role !== undefined &&
+    [ICurrentUserRole.ADMINISTRATOR, ICurrentUserRole.MODERATOR].includes(
+      currentUser.value?.role
+    )
+  );
+});
+
+const ableToReport = computed((): boolean => {
+  return (
+    currentActor.value?.id != undefined ||
+    anonymousReportsConfig.value?.allowed === true
+  );
+});
+
+const triggerShare = (): void => {
+  if (navigator.share) {
+    navigator
+      .share({
+        title: post.value?.title,
+        url: post.value?.url,
+      })
+      .then(() => console.log("Successful share"))
+      .catch((error: any) => console.log("Error sharing", error));
+  } else {
+    isShareModalActive.value = true;
+    // send popup
+  }
+};
+
+const {
+  mutate: createReportMutation,
+  onDone: onCreateReportDone,
+  onError: onCreateReportError,
+} = useCreateReport();
+
+onCreateReportDone(() => {
+  isReportModalActive.value = false;
+  reportModal.value.close();
+  const postTitle = post.value?.title;
+  notifier?.success(t("Post {eventTitle} reported", { postTitle }));
+});
+
+onCreateReportError((error) => {
+  console.error(error);
+});
+
+const reportPost = async (content: string, forward: boolean): Promise<void> => {
+  createReportMutation({
+    // postId: post.value?.id,
+    reportedId: post.value?.attributedTo?.id as string,
+    content,
+    forward,
+  });
+};
+const groupDomain = computed((): string | undefined | null => {
+  return post.value?.attributedTo?.domain;
+});
+
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
+
+const isCurrentActorAGroupModerator = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+  ]);
+});
+
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole)
+    ? givenRole
+    : ([givenRole] as MemberRole[]);
+  return (
+    (memberships.value?.total ?? 0) > 0 &&
+    roles.includes(memberships.value?.elements[0].role as MemberRole)
+  );
+};
+
+const isCurrentActorAGroupMember = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+    MemberRole.MEMBER,
+  ]);
+});
+
+const { t } = useI18n({ useScope: "global" });
+const dialog = inject<Dialog>("dialog");
+
+const openDeletePostModal = async (): Promise<void> => {
+  dialog?.confirm({
+    type: "danger",
+    title: t("Delete post"),
+    message: t(
+      "Are you sure you want to delete this post? This action cannot be reverted."
+    ),
+    onConfirm: () =>
+      deletePost({
+        id: post.value?.id,
+      }),
+  });
+};
+
+const router = useRouter();
+
+const {
+  mutate: deletePost,
+  onDone: onDeletePostDone,
+  onError: onDeletePostError,
+} = useMutation(DELETE_POST);
+
+onDeletePostDone(({ data }) => {
+  if (data && post.value?.attributedTo) {
+    router.push({
+      name: RouteName.POSTS,
+      params: {
+        preferredUsername: usernameWithDomain(post.value?.attributedTo),
       },
-      update: (data) => data.person.memberships.elements,
-      skip() {
-        return !this.currentActor || !this.currentActor.id;
-      },
-    },
-    person: {
-      query: PERSON_STATUS_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-          group: usernameWithDomain(this.post.attributedTo),
-        };
-      },
-      skip() {
-        return (
-          !this.currentActor ||
-          !this.currentActor.id ||
-          !this.post?.attributedTo
-        );
-      },
-    },
-  },
-  components: {
-    Tag,
-    LazyImageWrapper,
-    ActorInline,
-    SharePostModal,
-    ReportModal,
-  },
-  metaInfo() {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.post ? this.post.title : "",
-      // all titles will be injected into this template
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      titleTemplate: this.post ? "%s | Mobilizon" : "Mobilizon",
-    };
-  },
-})
-export default class Post extends mixins(GroupMixin, PostMixin) {
-  @Prop({ required: true, type: String }) slug!: string;
-
-  memberships!: IMember[];
-
-  config!: IConfig;
-
-  RouteName = RouteName;
-
-  currentUser!: ICurrentUser;
-
-  usernameWithDomain = usernameWithDomain;
-
-  formatDistanceToNowStrict = formatDistanceToNowStrict;
-
-  PostVisibility = PostVisibility;
-
-  isShareModalActive = false;
-
-  isReportModalActive = false;
-
-  get isCurrentActorMember(): boolean {
-    if (!this.post.attributedTo || !this.memberships) return false;
-    return this.memberships
-      .map(({ parent: { id } }) => id)
-      .includes(this.post.attributedTo.id);
+    });
   }
-
-  get isInstanceModerator(): boolean {
-    return [
-      ICurrentUserRole.ADMINISTRATOR,
-      ICurrentUserRole.MODERATOR,
-    ].includes(this.currentUser.role);
-  }
-
-  get ableToReport(): boolean {
-    return (
-      this.config &&
-      (this.currentActor.id != null || this.config.anonymous.reports.allowed)
-    );
-  }
-
-  triggerShare(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-start
-    if (navigator.share) {
-      navigator
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .share({
-          title: this.post.title,
-          url: this.post.url,
-        })
-        .then(() => console.log("Successful share"))
-        .catch((error: any) => console.log("Error sharing", error));
-    } else {
-      this.isShareModalActive = true;
-      // send popup
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-end
-  }
-
-  async reportPost(content: string, forward: boolean): Promise<void> {
-    this.isReportModalActive = false;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.$refs.reportModal.close();
-    const postTitle = this.post.title;
-
-    try {
-      await this.$apollo.mutate<IReport>({
-        mutation: CREATE_REPORT,
-        variables: {
-          postId: this.post.id,
-          reportedId: this.post.attributedTo?.id,
-          content,
-          forward,
-        },
-      });
-      this.$notifier.success(
-        this.$t("Post {eventTitle} reported", { postTitle }) as string
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  get groupDomain(): string | undefined | null {
-    return this.post.attributedTo?.domain;
-  }
-}
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
 article.post {
-  background: $white !important;
+  // background: $white !important;
   header {
     display: flex;
     flex-direction: column;
@@ -463,36 +496,6 @@ article.post {
     }
   }
 
-  & > section {
-    margin: 0 2rem;
-
-    &.content {
-      font-size: 1.1rem;
-    }
-
-    &.tags {
-      padding-bottom: 5rem;
-
-      a {
-        text-decoration: none;
-      }
-      span {
-        &.tag {
-          margin: 0 2px;
-        }
-      }
-    }
-  }
-
   margin: 0 auto;
-
-  a.dropdown-item,
-  .dropdown .dropdown-menu .has-link a,
-  button.dropdown-item {
-    white-space: nowrap;
-    width: 100%;
-    @include padding-right(1rem);
-    text-align: right;
-  }
 }
 </style>

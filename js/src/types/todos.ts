@@ -5,7 +5,7 @@ export interface ITodo {
   id?: string;
   title: string;
   status: boolean;
-  dueDate?: Date;
+  dueDate?: string;
   creator?: IActor;
   assignedTo?: IPerson;
   todoList?: ITodoList;

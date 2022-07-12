@@ -14,7 +14,7 @@ function formatDateString(value: string): string {
   });
 }
 
-function formatTimeString(value: string, timeZone: string): string {
+function formatTimeString(value: string, timeZone?: string): string {
   return parseDateTime(value).toLocaleTimeString(locale(), {
     hour: "numeric",
     minute: "numeric",
@@ -75,6 +75,6 @@ function formatDateTimeString(
   return format.format(parseDateTime(value));
 }
 
-const locale = () => i18n.locale.replace("_", "-");
+const locale = () => i18n.global.locale.replace("_", "-");
 
 export { formatDateString, formatTimeString, formatDateTimeString };

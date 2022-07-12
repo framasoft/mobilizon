@@ -1,0 +1,296 @@
+<template>
+  <div>
+    <breadcrumbs-nav
+      :links="[
+        {
+          name: RouteName.ACCOUNT_SETTINGS,
+          text: t('Account'),
+        },
+        {
+          name: RouteName.PREFERENCES,
+          text: t('Preferences'),
+        },
+      ]"
+    />
+    <div>
+      <o-field :label="t('Language')" label-for="setting-language">
+        <o-select
+          :loading="loadingTimezones || loadingUserSettings"
+          v-model="locale"
+          :placeholder="t('Select a language')"
+          id="setting-language"
+        >
+          <option v-for="(language, lang) in langs" :value="lang" :key="lang">
+            {{ language }}
+          </option>
+        </o-select>
+      </o-field>
+      <o-field
+        :label="t('Timezone')"
+        v-if="selectedTimezone"
+        label-for="setting-timezone"
+      >
+        <o-select
+          :placeholder="t('Select a timezone')"
+          :loading="loadingTimezones || loadingUserSettings"
+          v-model="selectedTimezone"
+          id="setting-timezone"
+        >
+          <optgroup
+            :label="group"
+            v-for="(groupTimezones, group) in timezones"
+            :key="group"
+          >
+            <option
+              v-for="timezone in groupTimezones"
+              :value="`${group}/${timezone}`"
+              :key="timezone"
+            >
+              {{ sanitize(timezone) }}
+            </option>
+          </optgroup>
+        </o-select>
+      </o-field>
+      <em v-if="Intl.DateTimeFormat().resolvedOptions().timeZone">{{
+        t("Timezone detected as {timezone}.", {
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        })
+      }}</em>
+      <o-notification v-else variant="danger">{{
+        t("Unable to detect timezone.")
+      }}</o-notification>
+      <hr role="presentation" />
+      <o-field grouped>
+        <o-field :label="t('City or region')" expanded label-for="setting-city">
+          <full-address-auto-complete
+            v-if="loggedUser?.settings"
+            :type="AddressSearchType.ADMINISTRATIVE"
+            :doGeoLocation="false"
+            v-model="address"
+            id="setting-city"
+            class="grid"
+            :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
+          />
+        </o-field>
+        <o-field :label="t('Radius')" label-for="setting-radius">
+          <o-select
+            :placeholder="t('Select a radius')"
+            v-model="locationRange"
+            id="setting-radius"
+          >
+            <option
+              v-for="index in [1, 5, 10, 25, 50, 100]"
+              :key="index"
+              :value="index"
+            >
+              {{ t("{count} km", { count: index }, index) }}
+            </option>
+          </o-select>
+        </o-field>
+        <o-button
+          :disabled="address == undefined"
+          @click="resetArea"
+          @keyup.enter="resetArea"
+          class="reset-area self-center"
+          icon-left="close"
+          :aria-label="t('Reset')"
+        />
+      </o-field>
+      <p>
+        {{
+          t(
+            "Your city or region and the radius will only be used to suggest you events nearby. The event radius will consider the administrative center of the area."
+          )
+        }}
+      </p>
+    </div>
+  </div>
+</template>
+<script lang="ts" setup>
+import ngeohash from "ngeohash";
+import { saveLocaleData } from "@/utils/auth";
+import {
+  USER_SETTINGS,
+  SET_USER_SETTINGS,
+  UPDATE_USER_LOCALE,
+} from "../../graphql/user";
+import langs from "../../i18n/langs.json";
+import RouteName from "../../router/name";
+import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
+import { AddressSearchType } from "@/types/enums";
+import { Address, IAddress } from "@/types/address.model";
+import { useTimezones } from "@/composition/apollo/config";
+import { useUserSettings } from "@/composition/apollo/user";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useMutation } from "@vue/apollo-composable";
+
+const { timezones: serverTimezones, loading: loadingTimezones } =
+  useTimezones();
+const { loggedUser, loading: loadingUserSettings } = useUserSettings();
+
+const { t, locale: i18nLocale } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Preferences")),
+});
+
+// langs: Record<string, string> = langs;
+
+const selectedTimezone = computed({
+  get() {
+    if (loggedUser.value?.settings?.timezone) {
+      return loggedUser.value.settings.timezone;
+    }
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (loggedUser.value?.settings?.timezone === null) {
+      updateUserSettings({ timezone: detectedTimezone });
+    }
+    return detectedTimezone;
+  },
+  set(newSelectedTimezone: string) {
+    if (newSelectedTimezone !== loggedUser.value?.settings?.timezone) {
+      updateUserSettings({ timezone: newSelectedTimezone });
+    }
+  },
+});
+
+const { mutate: updateUserLocale } = useMutation(UPDATE_USER_LOCALE);
+
+const locale = computed({
+  get(): string {
+    if (loggedUser.value?.locale) {
+      return loggedUser.value?.locale;
+    }
+    return i18nLocale.value as string;
+  },
+  set(newLocale: string) {
+    if (newLocale) {
+      updateUserLocale({
+        locale: newLocale,
+      });
+      saveLocaleData(newLocale);
+      console.log("changing locale", i18nLocale, newLocale);
+      i18nLocale.value = newLocale;
+    }
+  },
+});
+
+const sanitize = (timezone: string): string => {
+  return timezone
+    .split("_")
+    .join(" ")
+    .replace("St ", "St. ")
+    .split("/")
+    .join(" - ");
+};
+
+const timezones = computed((): Record<string, string[]> => {
+  if (!serverTimezones.value) return {};
+  return serverTimezones.value.reduce(
+    (acc: { [key: string]: Array<string> }, val: string) => {
+      const components = val.split("/");
+      const [prefix, suffix] = [
+        components.shift() as string,
+        components.join("/"),
+      ];
+      const pushOrCreate = (
+        acc2: { [key: string]: Array<string> },
+        prefix2: string,
+        suffix2: string
+      ) => {
+        // eslint-disable-next-line no-param-reassign
+        (acc2[prefix2] = acc2[prefix2] || []).push(suffix2);
+        return acc2;
+      };
+      if (suffix) {
+        return pushOrCreate(acc, prefix, suffix);
+      }
+      return pushOrCreate(acc, t("Other") as string, prefix);
+    },
+    {}
+  );
+});
+
+const address = computed({
+  get(): IAddress | null {
+    if (
+      loggedUser.value?.settings?.location?.name &&
+      loggedUser.value?.settings?.location?.geohash
+    ) {
+      const { latitude, longitude } = ngeohash.decode(
+        loggedUser.value?.settings?.location?.geohash
+      );
+      const name = loggedUser.value?.settings?.location?.name;
+      return {
+        description: name,
+        locality: "",
+        type: "administrative",
+        geom: `${longitude};${latitude}`,
+        street: "",
+        postalCode: "",
+        region: "",
+        country: "",
+      };
+    }
+    return null;
+  },
+  set(newAddress: IAddress | null) {
+    if (newAddress?.geom) {
+      const { geom } = newAddress;
+      const addressObject = new Address(newAddress);
+      const queryText = addressObject.poiInfos.name;
+      const [lon, lat] = geom.split(";");
+      const geohash = ngeohash.encode(lat, lon, 6);
+      if (queryText && geom) {
+        updateUserSettings({
+          location: {
+            geohash,
+            name: queryText,
+          },
+        });
+      }
+    }
+  },
+});
+
+const locationRange = computed({
+  get(): number | undefined | null {
+    return loggedUser.value?.settings?.location?.range;
+  },
+  set(newLocationRange: number | undefined | null) {
+    if (newLocationRange) {
+      updateUserSettings({
+        location: {
+          range: newLocationRange,
+        },
+      });
+    }
+  },
+});
+
+const resetArea = (): void => {
+  updateUserSettings({
+    location: {
+      geohash: null,
+      name: null,
+      range: null,
+    },
+  });
+};
+
+const { mutate: updateUserSettings } = useMutation<{ setUserSetting: string }>(
+  SET_USER_SETTINGS,
+  () => ({
+    refetchQueries: [{ query: USER_SETTINGS }],
+  })
+);
+</script>
+<style lang="scss" scoped>
+.reset-area {
+  align-self: center;
+  position: relative;
+  top: 10px;
+}
+</style>

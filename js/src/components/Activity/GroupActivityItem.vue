@@ -1,189 +1,176 @@
 <template>
   <div class="activity-item">
-    <b-icon :icon="'cog'" :type="iconColor" />
+    <o-icon :icon="'cog'" :type="iconColor" />
     <div class="subject">
-      <i18n :path="translation" tag="p">
-        <router-link
-          v-if="activity.object"
-          slot="group"
-          :to="{
-            name: RouteName.GROUP,
-            params: {
-              preferredUsername: subjectParams.group_federated_username,
-            },
-          }"
-          >{{ subjectParams.group_name }}</router-link
-        >
-        <b v-else slot="post">{{ subjectParams.group_name }}</b>
-        <popover-actor-card
-          :actor="activity.author"
-          :inline="true"
-          slot="profile"
-        >
-          <b>
-            {{
-              $t("@{username}", {
-                username: usernameWithDomain(activity.author),
-              })
-            }}</b
-          ></popover-actor-card
-        ></i18n
+      <i18n-t :keypath="translation" tag="p">
+        <template #group>
+          <router-link
+            v-if="activity.object"
+            :to="{
+              name: RouteName.GROUP,
+              params: {
+                preferredUsername: subjectParams.group_federated_username,
+              },
+            }"
+            >{{ subjectParams.group_name }}</router-link
+          >
+          <b v-else>{{ subjectParams.group_name }}</b>
+        </template>
+        <template #profile>
+          <popover-actor-card :actor="activity.author" :inline="true">
+            <b>
+              {{
+                $t("{'@'}{username}", {
+                  username: usernameWithDomain(activity.author),
+                })
+              }}</b
+            ></popover-actor-card
+          ></template
+        ></i18n-t
       >
-      <i18n
-        :path="detail"
+      <i18n-t
+        :keypath="detail"
         v-for="detail in details"
         :key="detail"
         tag="p"
         class="has-text-grey-dark"
       >
-        <popover-actor-card
-          :actor="activity.author"
-          :inline="true"
-          slot="profile"
-        >
-          <b>
-            {{
-              $t("@{username}", {
-                username: usernameWithDomain(activity.author),
-              })
-            }}</b
-          ></popover-actor-card
-        >
-        <router-link
-          v-if="activity.object"
-          slot="group"
-          :to="{
+        <template #profile>
+          <popover-actor-card :actor="activity.author" :inline="true">
+            <b>
+              {{
+                $t("{'@'}{username}", {
+                  username: usernameWithDomain(activity.author),
+                })
+              }}</b
+            ></popover-actor-card
+          >
+        </template>
+        <template #group>
+          <router-link
+            v-if="activity.object"
+            :to="{
             name: RouteName.GROUP,
-            params: { preferredUsername: usernameWithDomain(activity.object) },
+            params: { preferredUsername: usernameWithDomain(activity.object as IActor) },
           }"
-          >{{ subjectParams.group_name }}</router-link
-        >
-        <b v-else slot="post">{{ subjectParams.group_name }}</b>
-        <b v-if="subjectParams.old_group_name" slot="old_group_name">{{
-          subjectParams.old_group_name
-        }}</b>
-      </i18n>
+            >{{ subjectParams.group_name }}</router-link
+          >
+          <b v-else>{{ subjectParams.group_name }}</b>
+        </template>
+        <template #old_group_name>
+          <b v-if="subjectParams.old_group_name">{{
+            subjectParams.old_group_name
+          }}</b>
+        </template>
+      </i18n-t>
       <small class="has-text-grey-dark activity-date">{{
-        activity.insertedAt | formatTimeString
+        formatTimeString(activity.insertedAt)
       }}</small>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { usernameWithDomain } from "@/types/actor";
+<script lang="ts" setup>
+import {
+  useIsActivityAuthorCurrentActor,
+  useActivitySubjectParams,
+} from "@/composition/activity";
+import { IActivity } from "@/types/activity.model";
+import { IActor, IGroup, usernameWithDomain } from "@/types/actor";
 import { ActivityGroupSubject, GroupVisibility, Openness } from "@/types/enums";
-import { Component } from "vue-property-decorator";
+import { computed } from "vue";
 import RouteName from "../../router/name";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
-import ActivityMixin from "../../mixins/activity";
-import { mixins } from "vue-class-component";
+import { formatTimeString } from "@/filters/datetime";
 
-@Component({
-  components: {
-    PopoverActorCard,
-  },
-})
-export default class GroupActivityItem extends mixins(ActivityMixin) {
-  usernameWithDomain = usernameWithDomain;
-  RouteName = RouteName;
-  ActivityGroupSubject = ActivityGroupSubject;
+const props = defineProps<{
+  activity: IActivity;
+}>();
 
-  get translation(): string | undefined {
-    switch (this.activity.subject) {
-      case ActivityGroupSubject.GROUP_CREATED:
-        if (this.isAuthorCurrentActor) {
-          return "You created the group {group}.";
-        }
-        return "{profile} created the group {group}.";
-      case ActivityGroupSubject.GROUP_UPDATED:
-        if (this.isAuthorCurrentActor) {
-          return "You updated the group {group}.";
-        }
-        return "{profile} updated the group {group}.";
-      default:
-        return undefined;
-    }
-  }
+const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
 
-  get iconColor(): string | undefined {
-    switch (this.activity.subject) {
-      case ActivityGroupSubject.GROUP_CREATED:
-        return "is-success";
-      case ActivityGroupSubject.GROUP_UPDATED:
-        return "is-grey";
-      default:
-        return undefined;
-    }
-  }
+const subjectParams = useActivitySubjectParams()(props.activity);
 
-  get details(): string[] {
-    const details = [];
-    const changes = this.subjectParams.group_changes.split(",");
-    if (changes.includes("name") && this.subjectParams.old_group_name) {
-      details.push("{old_group_name} was renamed to {group}.");
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("visibility") && this.activity.object.visibility) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      switch (this.activity.object.visibility) {
-        case GroupVisibility.PRIVATE:
-          details.push("Visibility was set to private.");
-          break;
-        case GroupVisibility.PUBLIC:
-          details.push("Visibility was set to public.");
-          break;
-        default:
-          details.push("Visibility was set to an unknown value.");
-          break;
+const translation = computed((): string | undefined => {
+  switch (props.activity.subject) {
+    case ActivityGroupSubject.GROUP_CREATED:
+      if (isAuthorCurrentActor) {
+        return "You created the group {group}.";
       }
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("openness") && this.activity.object.openness) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      switch (this.activity.object.openness) {
-        case Openness.INVITE_ONLY:
-          details.push("The group can now only be joined with an invite.");
-          break;
-        case Openness.MODERATED:
-          details.push(
-            "The group can now be joined by anyone, but new members need to be approved by an administrator."
-          );
-          break;
-        case Openness.OPEN:
-          details.push("The group can now be joined by anyone.");
-          break;
-        default:
-          details.push("Unknown value for the openness setting.");
-          break;
+      return "{profile} created the group {group}.";
+    case ActivityGroupSubject.GROUP_UPDATED:
+      if (isAuthorCurrentActor) {
+        return "You updated the group {group}.";
       }
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("address") && this.activity.object.physicalAddress) {
-      details.push("The group's physical address was changed.");
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("avatar") && this.activity.object.avatar) {
-      details.push("The group's avatar was changed.");
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("banner") && this.activity.object.banner) {
-      details.push("The group's banner was changed.");
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (changes.includes("summary") && this.activity.object.summary) {
-      details.push("The group's short description was changed.");
-    }
-    return details;
+      return "{profile} updated the group {group}.";
+    default:
+      return undefined;
   }
-}
+});
+
+const iconColor = computed((): string | undefined => {
+  switch (props.activity.subject) {
+    case ActivityGroupSubject.GROUP_CREATED:
+      return "is-success";
+    case ActivityGroupSubject.GROUP_UPDATED:
+      return "is-grey";
+    default:
+      return undefined;
+  }
+});
+
+const group = computed(() => props.activity.object as IGroup);
+
+const details = computed((): string[] => {
+  const localDetails = [];
+  const changes = subjectParams.group_changes.split(",");
+  if (changes.includes("name") && subjectParams.old_group_name) {
+    localDetails.push("{old_group_name} was renamed to {group}.");
+  }
+  if (changes.includes("visibility") && group.value.visibility) {
+    switch (group.value.visibility) {
+      case GroupVisibility.PRIVATE:
+        localDetails.push("Visibility was set to private.");
+        break;
+      case GroupVisibility.PUBLIC:
+        localDetails.push("Visibility was set to public.");
+        break;
+      default:
+        localDetails.push("Visibility was set to an unknown value.");
+        break;
+    }
+  }
+  if (changes.includes("openness") && group.value.openness) {
+    switch (group.value.openness) {
+      case Openness.INVITE_ONLY:
+        localDetails.push("The group can now only be joined with an invite.");
+        break;
+      case Openness.MODERATED:
+        localDetails.push(
+          "The group can now be joined by anyone, but new members need to be approved by an administrator."
+        );
+        break;
+      case Openness.OPEN:
+        localDetails.push("The group can now be joined by anyone.");
+        break;
+      default:
+        localDetails.push("Unknown value for the openness setting.");
+        break;
+    }
+  }
+  if (changes.includes("address") && group.value.physicalAddress) {
+    localDetails.push("The group's physical address was changed.");
+  }
+  if (changes.includes("avatar") && group.value.avatar) {
+    localDetails.push("The group's avatar was changed.");
+  }
+  if (changes.includes("banner") && group.value.banner) {
+    localDetails.push("The group's banner was changed.");
+  }
+  if (changes.includes("summary") && group.value.summary) {
+    localDetails.push("The group's short description was changed.");
+  }
+  return localDetails;
+});
 </script>
 <style lang="scss" scoped>
 @import "./activity.scss";

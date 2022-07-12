@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Aloita keskustelu",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> näytetään kontaktina.|<b>{contact}</b> näytetään kontakteina.",
   "@{group}": "@{group}",
-  "@{username}": "@{username}",
+  "{'@'}{username}": "{'@'}{username}",
   "@{username} ({role})": "@{username} ({role)}",
   "@{username}'s follow request was accepted": "Käyttäjän @{username} seurauspyyntö hyväksyttiin",
   "@{username}'s follow request was rejected": "Käyttäjän @{username} seuraamispyyntö hylättiin",

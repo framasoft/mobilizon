@@ -4,122 +4,117 @@
       :to="{
         name: RouteName.RESOURCE_FOLDER,
         params: {
-          path: ResourceMixin.resourcePathArray(resource),
+          path: resourcePathArray(resource),
           preferredUsername: usernameWithDomain(group),
         },
       }"
     >
       <div class="preview">
-        <b-icon icon="folder" size="is-large" />
+        <Folder :size="48" />
       </div>
       <div class="body">
         <h3>{{ resource.title }}</h3>
-        <span class="host" v-if="inline">{{
-          resource.updatedAt | formatDateTimeString
+        <span class="host" v-if="inline && resource.updatedAt">{{
+          formatDateTimeString(resource.updatedAt?.toString())
         }}</span>
       </div>
-      <draggable
+      <!-- <draggable
         v-if="!inline"
         class="dropzone"
         v-model="list"
+        itemKey="id"
         :sort="false"
         :group="groupObject"
         @change="onChange"
-      />
+      /> -->
     </router-link>
     <resource-dropdown
       class="actions"
       v-if="!inline"
-      @delete="$emit('delete', resource.id)"
-      @move="$emit('move', resource)"
-      @rename="$emit('rename', resource)"
+      @delete="emit('delete', resource.id as string)"
+      @move="emit('move', resource)"
+      @rename="emit('rename', resource)"
     />
   </div>
 </template>
-<script lang="ts">
-import { Component, Mixins, Prop } from "vue-property-decorator";
-import { Route } from "vue-router";
-import Draggable, { ChangeEvent } from "vuedraggable";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
-import { IResource } from "../../types/resource";
-import RouteName from "../../router/name";
-import ResourceMixin from "../../mixins/resource";
-import { IGroup, usernameWithDomain } from "../../types/actor";
+<script lang="ts" setup>
+import { useRouter } from "vue-router";
+import Draggable, { ChangeEvent } from "@xiaoshuapp/draggable";
+// import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { IResource } from "@/types/resource";
+import RouteName from "@/router/name";
+import { IGroup, usernameWithDomain } from "@/types/actor";
 import ResourceDropdown from "./ResourceDropdown.vue";
-import { UPDATE_RESOURCE } from "../../graphql/resources";
+import { UPDATE_RESOURCE } from "@/graphql/resources";
+import { ref } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import { useMutation } from "@vue/apollo-composable";
+import { resourcePathArray } from "@/components/Resource/utils";
+import Folder from "vue-material-design-icons/Folder.vue";
 
-@Component({
-  components: { Draggable, ResourceDropdown },
-})
-export default class FolderItem extends Mixins(ResourceMixin) {
-  @Prop({ required: true, type: Object }) resource!: IResource;
+const props = withDefaults(
+  defineProps<{
+    resource: IResource;
+    group: IGroup;
+    inline?: boolean;
+  }>(),
+  { inline: false }
+);
 
-  @Prop({ required: true, type: Object }) group!: IGroup;
+const emit = defineEmits<{
+  (e: "move", resource: IResource): void;
+  (e: "rename", resource: IResource): void;
+  (e: "delete", resourceID: string): void;
+}>();
 
-  @Prop({ required: false, default: false }) inline!: boolean;
+const list = ref([]);
 
-  list = [];
+const groupObject: Record<string, unknown> = {
+  name: `folder-${props.resource?.title}`,
+  pull: false,
+  put: ["resources"],
+};
 
-  groupObject: Record<string, unknown> = {
-    name: `folder-${this.resource?.title}`,
-    pull: false,
-    put: ["resources"],
-  };
-
-  RouteName = RouteName;
-
-  ResourceMixin = ResourceMixin;
-
-  usernameWithDomain = usernameWithDomain;
-
-  async onChange(evt: ChangeEvent<IResource>): Promise<Route | undefined> {
-    if (evt.added && evt.added.element) {
-      const movedResource = evt.added.element as IResource;
-      const updatedResource = await this.moveResource(movedResource);
-      if (updatedResource && this.resource.path) {
-        // eslint-disable-next-line
-        // @ts-ignore
-        return this.$router.push({
-          name: RouteName.RESOURCE_FOLDER,
-          params: {
-            // eslint-disable-next-line
-            // @ts-ignore
-            path: ResourceMixin.resourcePathArray(this.resource),
-            preferredUsername: this.group.preferredUsername,
-          },
-        });
-      }
-    }
-    return undefined;
+const onChange = async (evt: ChangeEvent<IResource>) => {
+  if (evt.added && evt.added.element) {
+    const movedResource = evt.added.element as IResource;
+    moveResource({
+      id: props.resource.id,
+      path: `${props.resource.path}/${props.resource.title}`,
+      parentId: props.resource.id,
+    });
   }
+  return undefined;
+};
 
-  async moveResource(resource: IResource): Promise<IResource | undefined> {
-    try {
-      const { data } = await this.$apollo.mutate<{ updateResource: IResource }>(
-        {
-          mutation: UPDATE_RESOURCE,
-          variables: {
-            id: resource.id,
-            path: `${this.resource.path}/${resource.title}`,
-            parentId: this.resource.id,
-          },
-        }
-      );
-      if (!data) {
-        console.error("Error while updating resource");
-        return undefined;
-      }
-      return data.updateResource;
-    } catch (e: any) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
-      return undefined;
-    }
+const {
+  mutate: moveResource,
+  onDone: onMovedResource,
+  onError: onMovedResourceError,
+} = useMutation<{ updateResource: IResource }>(UPDATE_RESOURCE);
+
+const router = useRouter();
+
+onMovedResource(({ data }) => {
+  if (data?.updateResource && props.resource.path) {
+    return router.push({
+      name: RouteName.RESOURCE_FOLDER,
+      params: {
+        path: ResourceMixin.resourcePathArray(props.resource),
+        preferredUsername: props.group.preferredUsername,
+      },
+    });
   }
-}
+});
+
+onMovedResourceError((e) => {
+  // Snackbar.open({
+  //   message: e.message,
+  //   type: "is-danger",
+  //   position: "is-bottom",
+  // });
+  return undefined;
+});
 </script>
 <style lang="scss" scoped>
 .resource-wrapper {
@@ -147,7 +142,7 @@ export default class FolderItem extends Mixins(ResourceMixin) {
 a {
   display: flex;
   font-size: 14px;
-  color: #444b5d;
+  // color: #444b5d;
   text-decoration: none;
   overflow: hidden;
   flex: 1;
@@ -171,7 +166,7 @@ a {
       display: block;
       font-weight: 500;
       margin-bottom: 5px;
-      color: $primary;
+      // color: $primary;
       overflow: hidden;
       text-overflow: ellipsis;
       text-decoration: none;

@@ -1,72 +1,82 @@
 <template>
-  <section class="section container" v-if="event">
+  <section class="container mx-auto" v-if="event">
     <breadcrumbs-nav
       :links="[
-        { name: RouteName.MY_EVENTS, text: $t('My events') },
+        { name: RouteName.MY_EVENTS, text: t('My events') },
         {
           name: RouteName.EVENT,
           params: { uuid: event.uuid },
           text: event.title,
         },
         {
-          name: RouteName.PARTICIPANTS,
+          name: RouteName.PARTICIPATIONS,
           params: { uuid: event.uuid },
-          text: $t('Participants'),
+          text: t('Participants'),
         },
       ]"
     />
-    <h1 class="title">{{ $t("Participants") }}</h1>
-    <div class="level">
-      <div class="level-left">
-        <div class="level-item">
-          <b-field :label="$t('Status')" horizontal label-for="role-select">
-            <b-select v-model="role" id="role-select">
+    <h1>{{ t("Participants") }}</h1>
+    <div class="">
+      <div class="">
+        <div class="">
+          <o-field :label="t('Status')" horizontal label-for="role-select">
+            <o-select v-model="role" id="role-select">
               <option :value="null">
-                {{ $t("Everything") }}
+                {{ t("Everything") }}
               </option>
               <option :value="ParticipantRole.CREATOR">
-                {{ $t("Organizer") }}
+                {{ t("Organizer") }}
               </option>
               <option :value="ParticipantRole.PARTICIPANT">
-                {{ $t("Participant") }}
+                {{ t("Participant") }}
               </option>
               <option :value="ParticipantRole.NOT_APPROVED">
-                {{ $t("Not approved") }}
+                {{ t("Not approved") }}
               </option>
               <option :value="ParticipantRole.REJECTED">
-                {{ $t("Rejected") }}
+                {{ t("Rejected") }}
               </option>
-            </b-select>
-          </b-field>
+            </o-select>
+          </o-field>
         </div>
-        <div class="level-item" v-if="exportFormats.length > 0">
-          <b-dropdown aria-role="list">
+        <div class="" v-if="exportFormats.length > 0">
+          <o-dropdown aria-role="list">
             <template #trigger="{ active }">
-              <b-button
-                :label="$t('Export')"
-                type="is-primary"
+              <o-button
+                :label="t('Export')"
+                variant="primary"
                 :icon-right="active ? 'menu-up' : 'menu-down'"
               />
             </template>
 
-            <b-dropdown-item
+            <o-dropdown-item
               has-link
               v-for="format in exportFormats"
               :key="format"
               aria-role="listitem"
-              @click="exportParticipants(format)"
-              @keyup.enter="exportParticipants(format)"
+              @click="
+                exportParticipants({
+                  eventId: event?.id,
+                  format,
+                })
+              "
+              @keyup.enter="
+                exportParticipants({
+                  eventId: event.value?.id,
+                  format,
+                })
+              "
             >
               <button class="dropdown-button">
-                <b-icon :icon="formatToIcon(format)"></b-icon>
+                <o-icon :icon="formatToIcon(format)"></o-icon>
                 {{ format }}
               </button>
-            </b-dropdown-item>
-          </b-dropdown>
+            </o-dropdown-item>
+          </o-dropdown>
         </div>
       </div>
     </div>
-    <b-table
+    <o-table
       :data="event.participants.elements"
       ref="queueTable"
       detailed
@@ -76,26 +86,26 @@
       :is-row-checkable="(row) => row.role !== ParticipantRole.CREATOR"
       checkbox-position="left"
       :show-detail-icon="false"
-      :loading="this.$apollo.loading"
+      :loading="participantsLoading"
       paginated
       :current-page="page"
       backend-pagination
       :pagination-simple="true"
-      :aria-next-label="$t('Next page')"
-      :aria-previous-label="$t('Previous page')"
-      :aria-page-label="$t('Page')"
-      :aria-current-label="$t('Current page')"
+      :aria-next-label="t('Next page')"
+      :aria-previous-label="t('Previous page')"
+      :aria-page-label="t('Page')"
+      :aria-current-label="t('Current page')"
       :total="event.participants.total"
       :per-page="PARTICIPANTS_PER_PAGE"
       backend-sorting
       :default-sort-direction="'desc'"
       :default-sort="['insertedAt', 'desc']"
       @page-change="(newPage) => (page = newPage)"
-      @sort="(field, order) => $emit('sort', field, order)"
+      @sort="(field, order) => emit('sort', field, order)"
     >
-      <b-table-column
+      <o-table-column
         field="actor.preferredUsername"
-        :label="$t('Participant')"
+        :label="t('Participant')"
         v-slot="props"
       >
         <article class="media">
@@ -105,20 +115,13 @@
           >
             <img class="is-rounded" :src="props.row.actor.avatar.url" alt="" />
           </figure>
-          <b-icon
-            class="media-left"
+          <Incognito
             v-else-if="props.row.actor.preferredUsername === 'anonymous'"
-            size="is-large"
-            icon="incognito"
+            :size="48"
           />
-          <b-icon
-            class="media-left"
-            v-else
-            size="is-large"
-            icon="account-circle"
-          />
+          <AccountCircle v-else :size="48" />
           <div class="media-content">
-            <div class="content">
+            <div class="prose dark:prose-invert">
               <span v-if="props.row.actor.preferredUsername !== 'anonymous'">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
@@ -129,42 +132,42 @@
                 >
               </span>
               <span v-else>
-                {{ $t("Anonymous participant") }}
+                {{ t("Anonymous participant") }}
               </span>
             </div>
           </div>
         </article>
-      </b-table-column>
-      <b-table-column field="role" :label="$t('Role')" v-slot="props">
+      </o-table-column>
+      <o-table-column field="role" :label="t('Role')" v-slot="props">
         <b-tag
-          type="is-primary"
+          variant="primary"
           v-if="props.row.role === ParticipantRole.CREATOR"
         >
-          {{ $t("Organizer") }}
+          {{ t("Organizer") }}
         </b-tag>
         <b-tag v-else-if="props.row.role === ParticipantRole.PARTICIPANT">
-          {{ $t("Participant") }}
+          {{ t("Participant") }}
         </b-tag>
         <b-tag v-else-if="props.row.role === ParticipantRole.NOT_CONFIRMED">
-          {{ $t("Not confirmed") }}
+          {{ t("Not confirmed") }}
         </b-tag>
         <b-tag
-          type="is-warning"
+          variant="warning"
           v-else-if="props.row.role === ParticipantRole.NOT_APPROVED"
         >
-          {{ $t("Not approved") }}
+          {{ t("Not approved") }}
         </b-tag>
         <b-tag
-          type="is-danger"
+          variant="danger"
           v-else-if="props.row.role === ParticipantRole.REJECTED"
         >
-          {{ $t("Rejected") }}
+          {{ t("Rejected") }}
         </b-tag>
-      </b-table-column>
-      <b-table-column
+      </o-table-column>
+      <o-table-column
         field="metadata.message"
         class="column-message"
-        :label="$t('Message')"
+        :label="t('Message')"
         v-slot="props"
       >
         <div
@@ -176,7 +179,7 @@
           v-if="props.row.metadata && props.row.metadata.message"
         >
           <p v-if="props.row.metadata.message.length > MESSAGE_ELLIPSIS_LENGTH">
-            {{ props.row.metadata.message | ellipsize }}
+            {{ ellipsize(props.row.metadata.message) }}
           </p>
           <p v-else>
             {{ props.row.metadata.message }}
@@ -188,67 +191,64 @@
             @click.stop="toggleQueueDetails(props.row)"
           >
             {{
-              openDetailedRows[props.row.id] ? $t("View less") : $t("View more")
+              openDetailedRows[props.row.id] ? t("View less") : t("View more")
             }}
           </button>
         </div>
         <p v-else class="has-text-grey-dark">
-          {{ $t("No message") }}
+          {{ t("No message") }}
         </p>
-      </b-table-column>
-      <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
-        <span class="has-text-centered">
-          {{ props.row.insertedAt | formatDateString }}<br />{{
-            props.row.insertedAt | formatTimeString
+      </o-table-column>
+      <o-table-column field="insertedAt" :label="t('Date')" v-slot="props">
+        <span class="text-center">
+          {{ formatDateString(props.row.insertedAt) }}<br />{{
+            formatTimeString(props.row.insertedAt)
           }}
         </span>
-      </b-table-column>
+      </o-table-column>
       <template #detail="props">
         <article v-html="nl2br(props.row.metadata.message)" />
       </template>
-      <template slot="empty">
-        <section class="section">
-          <div class="content has-text-grey-dark has-text-centered">
-            <p>{{ $t("No participant matches the filters") }}</p>
-          </div>
-        </section>
+      <template #empty>
+        <EmptyContent icon="account-circle" :inline="true">
+          {{ t("No participant matches the filters") }}
+        </EmptyContent>
       </template>
-      <template slot="bottom-left">
-        <div class="buttons">
-          <b-button
+      <template #bottom-left>
+        <div class="flex gap-2">
+          <o-button
             @click="acceptParticipants(checkedRows)"
-            type="is-success"
+            variant="success"
             :disabled="!canAcceptParticipants"
           >
             {{
-              $tc(
+              t(
                 "No participant to approve|Approve participant|Approve {number} participants",
-                checkedRows.length,
-                { number: checkedRows.length }
+                { number: checkedRows.length },
+                checkedRows.length
               )
             }}
-          </b-button>
-          <b-button
+          </o-button>
+          <o-button
             @click="refuseParticipants(checkedRows)"
-            type="is-danger"
+            variant="danger"
             :disabled="!canRefuseParticipants"
           >
             {{
-              $tc(
+              t(
                 "No participant to reject|Reject participant|Reject {number} participants",
-                checkedRows.length,
-                { number: checkedRows.length }
+                { number: checkedRows.length },
+                checkedRows.length
               )
             }}
-          </b-button>
+          </o-button>
         </div>
       </template>
-    </b-table>
+    </o-table>
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Ref } from "vue-property-decorator";
+<script lang="ts" setup>
 import { ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import { IEvent, IEventParticipantStats } from "../../types/event.model";
@@ -257,263 +257,206 @@ import {
   PARTICIPANTS,
   UPDATE_PARTICIPANT,
 } from "../../graphql/event";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IPerson, usernameWithDomain } from "../../types/actor";
-import { EVENT_PARTICIPANTS } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
+import { usernameWithDomain } from "../../types/actor";
 import { nl2br } from "../../utils/html";
 import { asyncForEach } from "../../utils/asyncForEach";
 import RouteName from "../../router/name";
-import VueRouter from "vue-router";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useParticipantsExportFormats } from "@/composition/config";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import {
+  integerTransformer,
+  enumTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { computed, inject, ref } from "vue";
+import { formatDateString, formatTimeString } from "@/filters/datetime";
+import { useI18n } from "vue-i18n";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Incognito from "vue-material-design-icons/Incognito.vue";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import { Notifier } from "@/plugins/notifier";
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
 
 type exportFormat = "CSV" | "PDF" | "ODS";
 
-@Component({
-  apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
-    config: EVENT_PARTICIPANTS,
-    event: {
-      query: PARTICIPANTS,
-      variables() {
-        return {
-          uuid: this.eventId,
-          page: this.page,
-          limit: PARTICIPANTS_PER_PAGE,
-          roles: this.role,
-        };
-      },
-      skip() {
-        return !this.currentActor.id;
-      },
-    },
-  },
-  filters: {
-    ellipsize: (text?: string) =>
-      text && text.substr(0, MESSAGE_ELLIPSIS_LENGTH).concat("…"),
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Participants") as string,
-    };
-  },
-})
-export default class Participants extends Vue {
-  @Prop({ required: true }) eventId!: string;
+const props = defineProps<{
+  eventId: string;
+}>();
 
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
+const { t } = useI18n({ useScope: "global" });
 
-  set page(page: number) {
-    this.pushRouter(RouteName.PARTICIPATIONS, {
-      page: page.toString(),
+const { currentActor } = useCurrentActorClient();
+const participantsExportFormats = useParticipantsExportFormats();
+
+const ellipsize = (text?: string) =>
+  text && text.substring(0, MESSAGE_ELLIPSIS_LENGTH).concat("…");
+
+// metaInfo() {
+//   return {
+//     title: this.t("Participants") as string,
+//   };
+// },
+
+const page = useRouteQuery("page", 1, integerTransformer);
+const role = useRouteQuery(
+  "role",
+  ParticipantRole.PARTICIPANT,
+  enumTransformer(ParticipantRole)
+);
+
+const limit = ref(PARTICIPANTS_PER_PAGE);
+
+const checkedRows = ref<IParticipant[]>([]);
+
+// const queueTable = ref(null);
+
+const { result: participantsResult, loading: participantsLoading } = useQuery<{
+  event: IEvent;
+}>(
+  PARTICIPANTS,
+  () => ({
+    uuid: props.eventId,
+    page: page.value,
+    limit: PARTICIPANTS_PER_PAGE,
+    roles: role.value,
+  }),
+  () => ({
+    enabled:
+      currentActor.value?.id !== undefined &&
+      page.value !== undefined &&
+      role.value !== undefined,
+  })
+);
+
+const event = computed(() => participantsResult.value?.event);
+
+const participantStats = computed((): IEventParticipantStats | null => {
+  if (!event.value) return null;
+  return event.value.participantStats;
+});
+
+const { mutate: updateParticipant, onError: onUpdateParticipantError } =
+  useMutation(UPDATE_PARTICIPANT);
+
+onUpdateParticipantError((e) => console.error(e));
+
+const acceptParticipants = async (
+  participants: IParticipant[]
+): Promise<void> => {
+  await asyncForEach(participants, async (participant: IParticipant) => {
+    await updateParticipant({
+      id: participant.id,
+      role: ParticipantRole.PARTICIPANT,
     });
-  }
+  });
+  checkedRows.value = [];
+};
 
-  get role(): ParticipantRole | null {
-    if (
-      Object.values(ParticipantRole).includes(
-        this.$route.query.role as ParticipantRole
-      )
-    ) {
-      return this.$route.query.role as ParticipantRole;
-    }
-    return null;
-  }
-
-  set role(role: ParticipantRole | null) {
-    this.pushRouter(RouteName.PARTICIPATIONS, {
-      role: role || "",
+const refuseParticipants = async (
+  participants: IParticipant[]
+): Promise<void> => {
+  await asyncForEach(participants, async (participant: IParticipant) => {
+    await updateParticipant({
+      id: participant.id,
+      role: ParticipantRole.REJECTED,
     });
+  });
+  checkedRows.value = [];
+};
+
+const {
+  mutate: exportParticipants,
+  onDone: onExportParticipantsMutationDone,
+  onError: onExportParticipantsMutationError,
+} = useMutation(EXPORT_EVENT_PARTICIPATIONS);
+
+onExportParticipantsMutationDone(({ data }) => {
+  const link =
+    window.origin +
+    "/exports/" +
+    type.toLowerCase() +
+    "/" +
+    exportEventParticipants;
+  console.log(link);
+  const a = document.createElement("a");
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.href = link;
+  a.setAttribute("download", "true");
+  a.click();
+  window.URL.revokeObjectURL(a.href);
+  document.body.removeChild(a);
+});
+
+const notifier = inject<Notifier>("notifier");
+
+onExportParticipantsMutationError((e) => {
+  console.error(e);
+  if (e.graphQLErrors && e.graphQLErrors.length > 0) {
+    notifier?.error(e.graphQLErrors[0].message);
   }
+});
 
-  limit = PARTICIPANTS_PER_PAGE;
+const exportFormats = computed((): exportFormat[] => {
+  return (participantsExportFormats ?? []).map(
+    (key) => key.toUpperCase() as exportFormat
+  );
+});
 
-  event!: IEvent;
-
-  config!: IConfig;
-
-  ParticipantRole = ParticipantRole;
-
-  currentActor!: IPerson;
-
-  PARTICIPANTS_PER_PAGE = PARTICIPANTS_PER_PAGE;
-
-  checkedRows: IParticipant[] = [];
-
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-
-  @Ref("queueTable") readonly queueTable!: any;
-
-  get participantStats(): IEventParticipantStats | null {
-    if (!this.event) return null;
-    return this.event.participantStats;
+const formatToIcon = (format: exportFormat): string => {
+  switch (format) {
+    case "CSV":
+      return "file-delimited";
+    case "PDF":
+      return "file-pdf-box";
+    case "ODS":
+      return "google-spreadsheet";
   }
+};
 
-  async acceptParticipant(participant: IParticipant): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: UPDATE_PARTICIPANT,
-        variables: {
-          id: participant.id,
-          role: ParticipantRole.PARTICIPANT,
-        },
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async refuseParticipant(participant: IParticipant): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: UPDATE_PARTICIPANT,
-        variables: {
-          id: participant.id,
-          role: ParticipantRole.REJECTED,
-        },
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async acceptParticipants(participants: IParticipant[]): Promise<void> {
-    await asyncForEach(participants, async (participant: IParticipant) => {
-      await this.acceptParticipant(participant);
-    });
-    this.checkedRows = [];
-  }
-
-  async refuseParticipants(participants: IParticipant[]): Promise<void> {
-    await asyncForEach(participants, async (participant: IParticipant) => {
-      await this.refuseParticipant(participant);
-    });
-    this.checkedRows = [];
-  }
-
-  async exportParticipants(type: exportFormat): Promise<void> {
-    try {
-      const {
-        data: { exportEventParticipants },
-      } = await this.$apollo.mutate({
-        mutation: EXPORT_EVENT_PARTICIPATIONS,
-        variables: {
-          eventId: this.event.id,
-          format: type,
-        },
-      });
-      const link =
-        window.origin +
-        "/exports/" +
-        type.toLowerCase() +
-        "/" +
-        exportEventParticipants;
-      console.log(link);
-      const a = document.createElement("a");
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.href = link;
-      a.setAttribute("download", "true");
-      a.click();
-      window.URL.revokeObjectURL(a.href);
-      document.body.removeChild(a);
-    } catch (e: any) {
-      console.error(e);
-      if (e.graphQLErrors && e.graphQLErrors.length > 0) {
-        this.$notifier.error(e.graphQLErrors[0].message);
-      }
-    }
-  }
-
-  get exportFormats(): string[] {
-    return (this.config?.exportFormats?.eventParticipants || []).map((key) =>
-      key.toUpperCase()
-    );
-  }
-
-  formatToIcon(format: exportFormat): string {
-    switch (format) {
-      case "CSV":
-        return "file-delimited";
-      case "PDF":
-        return "file-pdf-box";
-      case "ODS":
-        return "google-spreadsheet";
-    }
-  }
-
-  /**
-   * We can accept participants if at least one of them is not approved
-   */
-  get canAcceptParticipants(): boolean {
-    return this.checkedRows.some((participant: IParticipant) =>
-      [ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(
-        participant.role
-      )
-    );
-  }
-
-  /**
-   * We can refuse participants if at least one of them is something different than not approved
-   */
-  get canRefuseParticipants(): boolean {
-    return this.checkedRows.some(
-      (participant: IParticipant) =>
-        participant.role !== ParticipantRole.REJECTED
-    );
-  }
-
-  MESSAGE_ELLIPSIS_LENGTH = MESSAGE_ELLIPSIS_LENGTH;
-
-  nl2br = nl2br;
-
-  toggleQueueDetails(row: IParticipant): void {
-    if (
-      row.metadata.message &&
-      row.metadata.message.length < MESSAGE_ELLIPSIS_LENGTH
+/**
+ * We can accept participants if at least one of them is not approved
+ */
+const canAcceptParticipants = (): boolean => {
+  return checkedRows.value.some((participant: IParticipant) =>
+    [ParticipantRole.NOT_APPROVED, ParticipantRole.REJECTED].includes(
+      participant.role
     )
-      return;
-    this.queueTable.toggleDetails(row);
-    if (row.id) {
-      this.openDetailedRows[row.id] = !this.openDetailedRows[row.id];
-    }
-  }
+  );
+};
 
-  openDetailedRows: Record<string, boolean> = {};
+/**
+ * We can refuse participants if at least one of them is something different than not approved
+ */
+const canRefuseParticipants = (): boolean => {
+  return checkedRows.value.some(
+    (participant: IParticipant) => participant.role !== ParticipantRole.REJECTED
+  );
+};
 
-  async pushRouter(
-    routeName: string,
-    args: Record<string, string>
-  ): Promise<void> {
-    try {
-      await this.$router.push({
-        name: routeName,
-        query: { ...this.$route.query, ...args },
-      });
-      this.$apollo.queries.event.refetch();
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
+const toggleQueueDetails = (row: IParticipant): void => {
+  if (
+    row.metadata.message &&
+    row.metadata.message.length < MESSAGE_ELLIPSIS_LENGTH
+  )
+    return;
+  queueTable.value.toggleDetails(row);
+  if (row.id) {
+    openDetailedRows.value[row.id] = !openDetailedRows.value[row.id];
   }
-}
+};
+
+const openDetailedRows = <Record<string, boolean>>{};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 section.container.container {
   padding: 1rem;
-  background: $white;
+  // background: $white;
 }
 
 .table {

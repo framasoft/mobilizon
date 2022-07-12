@@ -1,7 +1,7 @@
 <template>
   <div class="address-autocomplete">
-    <b-field expanded>
-      <b-autocomplete
+    <!-- <o-field expanded>
+      <o-autocomplete
         :data="addressData"
         v-model="queryText"
         :placeholder="$t('e.g. 10 Rue Jangot')"
@@ -15,31 +15,31 @@
         dir="auto"
       >
         <template #default="{ option }">
-          <b-icon :icon="option.poiInfos.poiIcon.icon" />
+          <o-icon :icon="option.poiInfos.poiIcon.icon" />
           <b>{{ option.poiInfos.name }}</b
           ><br />
           <small>{{ option.poiInfos.alternativeName }}</small>
         </template>
-      </b-autocomplete>
-    </b-field>
-    <b-field
+      </o-autocomplete>
+    </o-field>
+    <o-field
       v-if="canDoGeoLocation"
       :message="fieldErrors"
       :type="{ 'is-danger': fieldErrors.length }"
     >
-      <b-button
+      <o-button
         type="is-text"
         v-if="!gettingLocation"
         icon-right="target"
         @click="locateMe"
         @keyup.enter="locateMe"
-        >{{ $t("Use my location") }}</b-button
+        >{{ $t("Use my location") }}</o-button
       >
       <span v-else>{{ $t("Getting location") }}</span>
-    </b-field>
+    </o-field> -->
     <!--
     <div v-if="selected && selected.geom" class="control">
-      <b-checkbox  @input="togglemap" />
+      <o-checkbox  @input="togglemap" />
       <label class="label">{{ $t("Show map") }}</label>
     </div>
 
@@ -59,16 +59,14 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+import { Prop, Watch, Vue } from "vue-property-decorator";
 import { Address, IAddress } from "../../types/address.model";
-import AddressAutoCompleteMixin from "@/mixins/AddressAutoCompleteMixin";
+// import AddressAutoCompleteMixin from "@/mixins/AddressAutoCompleteMixin";
 
-@Component({
-  inheritAttrs: false,
-})
-export default class AddressAutoComplete extends Mixins(
-  AddressAutoCompleteMixin
-) {
+// @Component({
+//   inheritAttrs: false,
+// })
+export default class AddressAutoComplete extends Vue {
   @Prop({ required: false, default: false }) type!: string | false;
   @Prop({ required: false, default: true, type: Boolean })
   doGeoLocation!: boolean;
@@ -103,7 +101,7 @@ export default class AddressAutoComplete extends Mixins(
   updateSelected(option: IAddress): void {
     if (option == null) return;
     this.selected = option;
-    this.$emit("input", this.selected);
+    // this.$emit("input", this.selected);
   }
 
   resetPopup(): void {

@@ -11,9 +11,15 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "jest"],
+    "types": [
+      "webpack-env",
+      "jest",
+      "vite/client",
+      "@intlify/vite-plugin-vue-i18n/client"
+    ],
     "typeRoots": ["./@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]
@@ -32,7 +38,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "env.d.ts"
   ],
   "exclude": ["node_modules"]
 }

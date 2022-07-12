@@ -91,6 +91,109 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
   ${ACTOR_FRAGMENT}
 `;
 
+export const SEARCH_EVENTS = gql`
+  query SearchEvents(
+    $location: String
+    $radius: Float
+    $tags: String
+    $term: String
+    $type: EventType
+    $category: String
+    $beginsOn: DateTime
+    $endsOn: DateTime
+    $eventPage: Int
+    $limit: Int
+  ) {
+    searchEvents(
+      location: $location
+      radius: $radius
+      tags: $tags
+      term: $term
+      type: $type
+      category: $category
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+      page: $eventPage
+      limit: $limit
+    ) {
+      total
+      elements {
+        id
+        title
+        uuid
+        beginsOn
+        picture {
+          id
+          url
+        }
+        status
+        tags {
+          ...TagFragment
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        organizerActor {
+          ...ActorFragment
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        options {
+          ...EventOptions
+        }
+        __typename
+      }
+    }
+  }
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
+export const SEARCH_GROUPS = gql`
+  query SearchGroups(
+    $location: String
+    $radius: Float
+    $tags: String
+    $term: String
+    $category: String
+    $groupPage: Int
+    $limit: Int
+  ) {
+    searchGroups(
+      term: $term
+      location: $location
+      radius: $radius
+      page: $groupPage
+      limit: $limit
+    ) {
+      total
+      elements {
+        ...ActorFragment
+        banner {
+          id
+          url
+        }
+        members(roles: "member,moderator,administrator,creator") {
+          total
+        }
+        followers(approved: true) {
+          total
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+      }
+    }
+  }
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
 export const SEARCH_PERSONS = gql`
   query SearchPersons($searchText: String!, $page: Int, $limit: Int) {
     searchPersons(term: $searchText, page: $page, limit: $limit) {

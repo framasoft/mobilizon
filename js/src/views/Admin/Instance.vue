@@ -72,14 +72,22 @@
         v-if="instance.hasRelay"
       >
         <button
-          @click="removeInstanceFollow"
+          @click="
+            removeInstanceFollow({
+              address: instance?.relayAddress,
+            })
+          "
           v-if="instance.followedStatus == InstanceFollowStatus.APPROVED"
           class="bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
           {{ $t("Stop following instance") }}
         </button>
         <button
-          @click="removeInstanceFollow"
+          @click="
+            removeInstanceFollow({
+              address: instance?.relayAddress,
+            })
+          "
           v-else-if="instance.followedStatus == InstanceFollowStatus.PENDING"
           class="bg-primary hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
@@ -98,14 +106,22 @@
       </div>
       <div class="border bg-white p-6 shadow-md rounded-md flex flex-col gap-2">
         <button
-          @click="acceptInstance"
+          @click="
+            acceptInstance({
+              address: instance?.relayAddress,
+            })
+          "
           v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
           class="bg-green-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
           {{ $t("Accept follow") }}
         </button>
         <button
-          @click="rejectInstance"
+          @click="
+            rejectInstance({
+              address: instance?.relayAddress,
+            })
+          "
           v-if="instance.followerStatus != InstanceFollowStatus.NONE"
           class="bg-red-700 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50 text-white hover:text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto"
         >
@@ -118,151 +134,123 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import {
   ACCEPT_RELAY,
   ADD_INSTANCE,
   INSTANCE,
   REJECT_RELAY,
-  REMOVE_RELAY,
 } from "@/graphql/admin";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import { formatBytes } from "@/utils/datetime";
 import RouteName from "@/router/name";
 import { IInstance } from "@/types/instance.model";
 import { ApolloCache, gql, Reference } from "@apollo/client/core";
 import { InstanceFollowStatus } from "@/types/enums";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, inject } from "vue";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    instance: {
-      query: INSTANCE,
-      variables() {
-        return {
-          domain: this.domain,
-        };
-      },
+const props = defineProps<{ domain: string }>();
+
+const { result: instanceResult } = useQuery<{ instance: IInstance }>(
+  INSTANCE,
+  () => ({ domain: props.domain })
+);
+
+const instance = computed(() => instanceResult.value?.instance);
+
+const notifier = inject<Notifier>("notifier");
+
+const { mutate: acceptInstance, onError: onAcceptInstanceError } = useMutation(
+  ACCEPT_RELAY,
+  () => ({
+    update(cache: ApolloCache<any>) {
+      cache.writeFragment({
+        id: cache.identify(instance as unknown as Reference),
+        fragment: gql`
+          fragment InstanceFollowerStatus on Instance {
+            followerStatus
+          }
+        `,
+        data: {
+          followerStatus: InstanceFollowStatus.APPROVED,
+        },
+      });
     },
-  },
-})
-export default class Instance extends Vue {
-  @Prop({ type: String, required: true }) domain!: string;
+  })
+);
 
-  instance!: IInstance;
+onAcceptInstanceError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
 
-  InstanceFollowStatus = InstanceFollowStatus;
-
-  formatBytes = formatBytes;
-
-  RouteName = RouteName;
-
-  async acceptInstance(): Promise<void> {
-    try {
-      const { instance } = this;
-      await this.$apollo.mutate({
-        mutation: ACCEPT_RELAY,
-        variables: {
-          address: this.instance.relayAddress,
-        },
-        update(cache: ApolloCache<any>) {
-          cache.writeFragment({
-            id: cache.identify(instance as unknown as Reference),
-            fragment: gql`
-              fragment InstanceFollowerStatus on Instance {
-                followerStatus
-              }
-            `,
-            data: {
-              followerStatus: InstanceFollowStatus.APPROVED,
-            },
-          });
+/**
+ * Reject instance follow
+ */
+const { mutate: rejectInstance, onError: onRejectInstanceError } = useMutation(
+  REJECT_RELAY,
+  () => ({
+    update(cache: ApolloCache<any>) {
+      cache.writeFragment({
+        id: cache.identify(instance as unknown as Reference),
+        fragment: gql`
+          fragment InstanceFollowerStatus on Instance {
+            followerStatus
+          }
+        `,
+        data: {
+          followerStatus: InstanceFollowStatus.NONE,
         },
       });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+    },
+  })
+);
 
-  /**
-   * Reject instance follow
-   */
-  async rejectInstance(): Promise<void> {
-    try {
-      const { instance } = this;
-      await this.$apollo.mutate({
-        mutation: REJECT_RELAY,
-        variables: {
-          address: this.instance.relayAddress,
-        },
-        update(cache: ApolloCache<any>) {
-          cache.writeFragment({
-            id: cache.identify(instance as unknown as Reference),
-            fragment: gql`
-              fragment InstanceFollowerStatus on Instance {
-                followerStatus
-              }
-            `,
-            data: {
-              followerStatus: InstanceFollowStatus.NONE,
-            },
-          });
+onRejectInstanceError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
+
+const { mutate: followInstanceMutation, onError: onFollowInstanceError } =
+  useMutation(ADD_INSTANCE);
+
+onFollowInstanceError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
+
+const followInstance = async (e: Event): Promise<void> => {
+  e.preventDefault();
+  followInstanceMutation({ domain: props.domain });
+};
+
+/**
+ * Stop following instance
+ */
+const { mutate: removeInstanceFollow, onError: onRemoveInstanceFollowError } =
+  useMutation(REJECT_RELAY, () => ({
+    update(cache: ApolloCache<any>) {
+      cache.writeFragment({
+        id: cache.identify(instance as unknown as Reference),
+        fragment: gql`
+          fragment InstanceFollowedStatus on Instance {
+            followedStatus
+          }
+        `,
+        data: {
+          followedStatus: InstanceFollowStatus.NONE,
         },
       });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+    },
+  }));
 
-  async followInstance(e: Event): Promise<void> {
-    e.preventDefault();
-    try {
-      await this.$apollo.mutate<{ addInstance: Instance }>({
-        mutation: ADD_INSTANCE,
-        variables: {
-          domain: this.domain,
-        },
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
+onRemoveInstanceFollowError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
-
-  /**
-   * Stop following instance
-   */
-  async removeInstanceFollow(): Promise<void> {
-    const { instance } = this;
-    try {
-      await this.$apollo.mutate({
-        mutation: REMOVE_RELAY,
-        variables: {
-          address: this.instance.relayAddress,
-        },
-        update(cache: ApolloCache<any>) {
-          cache.writeFragment({
-            id: cache.identify(instance as unknown as Reference),
-            fragment: gql`
-              fragment InstanceFollowedStatus on Instance {
-                followedStatus
-              }
-            `,
-            data: {
-              followedStatus: InstanceFollowStatus.NONE,
-            },
-          });
-        },
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
-}
+});
 </script>

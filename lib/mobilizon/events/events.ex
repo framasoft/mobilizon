@@ -1605,6 +1605,13 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  def category_statistics do
+    Event
+    |> group_by([e], e.category)
+    |> select([e], {e.category, count(e.id)})
+    |> Repo.all()
+  end
+
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
   defp list_participations_for_user_query(user_id) do
     from(

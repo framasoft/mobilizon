@@ -4,6 +4,7 @@ defmodule Mobilizon.Service.Statistics do
   """
 
   alias Mobilizon.{Actors, Discussions, Events, Users}
+  alias Mobilizon.Events.Categories
   alias Mobilizon.Federation.ActivityPub.Relay
 
   @spec get_cached_value(String.t()) :: any() | nil
@@ -59,5 +60,24 @@ defmodule Mobilizon.Service.Statistics do
   defp create_cache(:instance_followings) do
     relay_actor = Relay.get_actor()
     Actors.count_followings_for_actor(relay_actor)
+  end
+
+  @spec category_statistics :: list({String.t(), non_neg_integer()})
+  def category_statistics do
+    case Cachex.fetch(:statistics, :categories, fn ->
+           allowed_categories =
+             Categories.list()
+             |> Enum.map(fn %{id: category} -> category |> Atom.to_string() |> String.upcase() end)
+
+           statistics =
+             Events.category_statistics()
+             |> Enum.filter(fn {category, _} -> category in allowed_categories end)
+             |> Enum.map(fn {category, number} -> %{key: category, number: number} end)
+
+           {:commit, statistics}
+         end) do
+      {status, value} when status in [:ok, :commit] -> value
+      _err -> nil
+    end
   end
 end

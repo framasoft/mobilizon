@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang={assigns.locale} dir={language_direction(assigns)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon-152x152.png" sizes="152x152">
+    <link rel="mask-icon" href="/img/icons/safari-pinned-tab.svg" color={theme_color()}>
+    <meta name="theme-color" content={theme_color()}>
+    <%= tags(assigns) || assigns.tags %>
+    <%= Vite.inlined_phx_manifest() %>
+    <%= Vite.vite_client() %>
+    <%= Vite.vite_snippet("src/main.ts") %>
+  </head>
+  <body>
+    <noscript>
+      <strong>
+        We're sorry but Mobilizon doesn't work properly without JavaScript enabled. Please enable it to continue.
+      </strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

@@ -14,15 +14,15 @@
           }}
         </p>
         <div class="has-text-centered">
-          <b-select
-            :loading="!config || !loggedUser"
+          <o-select
+            :loading="loading"
             v-model="locale"
             :placeholder="$t('Select a language')"
           >
             <option v-for="(language, lang) in langs" :value="lang" :key="lang">
               {{ language }}
             </option>
-          </b-select>
+          </o-select>
         </div>
       </div>
 
@@ -39,69 +39,52 @@
               timezone,
             })
           }}
-          <b-message
-            type="is-danger"
-            v-if="!$apollo.loading && !supportedTimezone"
+          <o-notification
+            variant="danger"
+            v-if="!loading && !supportedTimezone"
           >
             {{ $t("Your timezone {timezone} isn't supported.", { timezone }) }}
-          </b-message>
+          </o-notification>
         </p>
       </div>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Watch } from "vue-property-decorator";
-import { TIMEZONES } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
+<script lang="ts" setup>
+import { useTimezones } from "@/composition/apollo/config";
+import {
+  doUpdateSetting,
+  updateLocale,
+  useUserSettings,
+} from "@/composition/apollo/user";
 import { saveLocaleData } from "@/utils/auth";
-import { mixins } from "vue-class-component";
-import Onboarding from "@/mixins/onboarding";
-import { UPDATE_USER_LOCALE } from "../../graphql/user";
+import { computed, onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import langs from "../../i18n/langs.json";
 
-@Component({
-  apollo: {
-    config: TIMEZONES,
-  },
-})
-export default class SettingsOnboarding extends mixins(Onboarding) {
-  config!: IConfig;
+const { timezones, loading } = useTimezones();
 
-  notificationOnDay = true;
+const { t, locale } = useI18n({ useScope: "global" });
 
-  locale: string | null = this.$i18n.locale;
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  langs: Record<string, string> = langs;
+const { loggedUser } = useUserSettings();
 
-  timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+onMounted(() => {
+  updateLocale(locale.value);
+  doUpdateSetting({ timezone });
+});
 
-  mounted(): void {
-    this.doUpdateLocale(this.$i18n.locale);
-    this.doUpdateSetting({ timezone: this.timezone });
+watch(locale, () => {
+  if (locale.value) {
+    updateLocale(locale.value);
+    saveLocaleData(locale.value);
   }
+});
 
-  @Watch("locale")
-  async updateLocale(): Promise<void> {
-    if (this.locale) {
-      this.doUpdateLocale(this.locale);
-      saveLocaleData(this.locale);
-    }
-  }
-
-  private async doUpdateLocale(locale: string): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: UPDATE_USER_LOCALE,
-      variables: {
-        locale,
-      },
-    });
-  }
-
-  get supportedTimezone(): boolean {
-    return this.config && this.config.timezones.includes(this.timezone);
-  }
-}
+const supportedTimezone = computed((): boolean => {
+  return (timezones.value ?? []).includes(timezone);
+});
 </script>
 <style lang="scss" scoped>
 h3 {

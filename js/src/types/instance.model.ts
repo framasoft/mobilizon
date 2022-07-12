@@ -12,4 +12,5 @@ export interface IInstance {
   followingsCount: number;
   reportsCount: number;
   mediaSize: number;
+  eventCount: number;
 }

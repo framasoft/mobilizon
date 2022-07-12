@@ -1,5 +1,5 @@
 <template>
-  <div class="container section" v-if="discussion">
+  <div class="container mx-auto" v-if="discussion">
     <breadcrumbs-nav
       v-if="group"
       :links="[
@@ -24,57 +24,57 @@
         },
       ]"
     />
-    <b-message v-if="error" type="is-danger">
+    <o-notification v-if="error" variant="danger">
       {{ error }}
-    </b-message>
-    <section>
-      <div class="discussion-title" dir="auto">
-        <h1 class="title" v-if="discussion.title && !editTitleMode">
+    </o-notification>
+    <section v-if="currentActor">
+      <div class="flex items-center gap-2" dir="auto">
+        <h1 class="" v-if="discussion.title && !editTitleMode">
           {{ discussion.title }}
         </h1>
-        <b-button
+        <o-button
           icon-right="pencil"
-          size="is-small"
+          size="small"
           :title="$t('Update discussion title')"
           v-if="
             discussion.creator &&
             !editTitleMode &&
-            (currentActor.id === discussion.creator.id ||
+            (currentActor?.id === discussion.creator.id ||
               isCurrentActorAGroupModerator)
           "
           @click="
             () => {
-              newTitle = discussion.title;
+              newTitle = discussion?.title ?? '';
               editTitleMode = true;
             }
           "
         >
-        </b-button>
-        <b-skeleton
-          v-else-if="!editTitleMode && $apollo.loading"
+        </o-button>
+        <o-skeleton
+          v-else-if="!editTitleMode && discussionLoading"
           height="50px"
           animated
         />
         <form
-          v-else-if="!$apollo.loading && !error"
+          v-else-if="!discussionLoading && !error"
           @submit.prevent="updateDiscussion"
-          class="title-edit"
+          class="w-full"
         >
-          <b-field :label="$t('Title')" label-for="discussion-title">
-            <b-input
+          <o-field :label="$t('Title')" label-for="discussion-title">
+            <o-input
               :value="discussion.title"
               v-model="newTitle"
               id="discussion-title"
             />
-          </b-field>
-          <div class="buttons">
-            <b-button
-              type="is-primary"
+          </o-field>
+          <div class="flex gap-2 mt-2">
+            <o-button
+              variant="primary"
               native-type="submit"
               icon-right="check"
               :title="$t('Update discussion title')"
             />
-            <b-button
+            <o-button
               @click="
                 () => {
                   editTitleMode = false;
@@ -84,12 +84,12 @@
               icon-right="close"
               :title="$t('Cancel discussion title edition')"
             />
-            <b-button
+            <o-button
               @click="openDeleteDiscussionConfirmation"
-              type="is-danger"
+              variant="danger"
               native-type="button"
               icon-left="delete"
-              >{{ $t("Delete conversation") }}</b-button
+              >{{ $t("Delete conversation") }}</o-button
             >
           </div>
         </form>
@@ -97,31 +97,45 @@
       <discussion-comment
         v-for="comment in discussion.comments.elements"
         :key="comment.id"
-        :comment="comment"
-        @update-comment="updateComment"
-        @delete-comment="deleteComment"
+        :model-value="comment"
+        :current-actor="currentActor"
+        @update:modelValue="
+          (comment: IComment) =>
+            updateComment({
+              commentId: comment.id as string,
+              text: comment.text,
+            })
+        "
+        @delete-comment="(comment: IComment) => deleteComment({
+      commentId: comment.id as string,
+    })"
       />
-      <b-button
+      <o-button
         v-if="discussion.comments.elements.length < discussion.comments.total"
         @click="loadMoreComments"
-        >{{ $t("Fetch more") }}</b-button
+        >{{ $t("Fetch more") }}</o-button
       >
       <form @submit.prevent="reply" v-if="!error">
-        <b-field :label="$t('Text')">
-          <editor v-model="newComment" :aria-label="$t('Comment body')" />
-        </b-field>
-        <b-button
+        <o-field :label="$t('Text')">
+          <Editor
+            v-model="newComment"
+            :aria-label="$t('Comment body')"
+            v-if="currentActor"
+            :currentActor="currentActor"
+          />
+        </o-field>
+        <o-button
+          class="my-2"
           native-type="submit"
           :disabled="['<p></p>', ''].includes(newComment)"
-          type="is-primary"
-          >{{ $t("Reply") }}</b-button
+          variant="primary"
+          >{{ $t("Reply") }}</o-button
         >
       </form>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
+<script lang="ts" setup>
 import {
   GET_DISCUSSION,
   REPLY_TO_DISCUSSION,
@@ -130,311 +144,312 @@ import {
   DISCUSSION_COMMENT_CHANGED,
 } from "@/graphql/discussion";
 import { IDiscussion } from "@/types/discussions";
-import { Discussion as DiscussionModel } from "@/types/discussions";
-import { displayName, usernameWithDomain } from "@/types/actor";
+import { displayName, IPerson, usernameWithDomain } from "@/types/actor";
 import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
-import { GraphQLError } from "graphql";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
-import { ApolloCache, FetchResult, gql, Reference } from "@apollo/client/core";
-import { mixins } from "vue-class-component";
-import GroupMixin from "@/mixins/group";
+import { ApolloCache, FetchResult, gql } from "@apollo/client/core";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import {
+  defineAsyncComponent,
+  onMounted,
+  onUnmounted,
+  ref,
+  computed,
+  inject,
+} from "vue";
+import { useHead } from "@vueuse/head";
+import { useRouter } from "vue-router";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { AbsintheGraphQLError } from "@/types/errors.model";
+import { useGroup } from "@/composition/apollo/group";
+import { MemberRole } from "@/types/enums";
+import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
+import { Dialog } from "@/plugins/dialog";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  apollo: {
-    discussion: {
+const props = defineProps<{ slug: string }>();
+
+const page = ref(1);
+const COMMENTS_PER_PAGE = 10;
+
+const { currentActor } = useCurrentActorClient();
+
+const {
+  result: discussionResult,
+  onError: onDiscussionError,
+  subscribeToMore,
+  fetchMore,
+  loading: discussionLoading,
+} = useQuery<{ discussion: IDiscussion }>(
+  GET_DISCUSSION,
+  () => ({
+    slug: props.slug,
+    page: page.value,
+    limit: COMMENTS_PER_PAGE,
+  }),
+  () => ({
+    enabled: props.slug !== undefined,
+  })
+);
+
+subscribeToMore({
+  document: DISCUSSION_COMMENT_CHANGED,
+  variables: {
+    slug: props.slug,
+    page: page.value,
+    limit: COMMENTS_PER_PAGE,
+  },
+  updateQuery(
+    previousResult: any,
+    { subscriptionData }: { subscriptionData: any }
+  ) {
+    const previousDiscussion = previousResult.discussion;
+    const lastComment =
+      subscriptionData.data.discussionCommentChanged.lastComment;
+    hasMoreComments.value = !previousDiscussion.comments.elements.some(
+      (comment: IComment) => comment.id === lastComment.id
+    );
+    if (hasMoreComments.value) {
+      return {
+        discussion: {
+          ...previousDiscussion,
+          lastComment: lastComment,
+          comments: {
+            elements: [
+              ...previousDiscussion.comments.elements.filter(
+                ({ id }: { id: string }) => id !== lastComment.id
+              ),
+              lastComment,
+            ],
+            total: previousDiscussion.comments.total + 1,
+          },
+        },
+      };
+    }
+
+    return previousDiscussion;
+  },
+});
+
+const discussion = computed(() => discussionResult.value?.discussion);
+
+const { group } = useGroup(usernameWithDomain(discussion.value?.actor));
+
+const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
+
+useHead({
+  title: computed(() => discussion.value?.title ?? ""),
+});
+
+const newComment = ref("");
+const newTitle = ref("");
+const editTitleMode = ref(false);
+const hasMoreComments = ref(true);
+const error = ref<string | null>(null);
+
+const { mutate: replyToDiscussionMutation } = useMutation(REPLY_TO_DISCUSSION);
+
+const reply = () => {
+  if (newComment.value === "") return;
+
+  replyToDiscussionMutation({
+    discussionId: discussion.value?.id,
+    text: newComment.value,
+  });
+
+  newComment.value = "";
+};
+
+const { mutate: updateComment } = useMutation<
+  { updateComment: IComment },
+  { commentId: string; text: string }
+>(UPDATE_COMMENT, () => ({
+  update: (
+    store: ApolloCache<{ deleteComment: IComment }>,
+    { data }: FetchResult
+  ) => {
+    if (!data || !data.deleteComment) return;
+    const discussionData = store.readQuery<{
+      discussion: IDiscussion;
+    }>({
       query: GET_DISCUSSION,
-      variables() {
-        return {
-          slug: this.slug,
-          page: 1,
-          limit: this.COMMENTS_PER_PAGE,
-        };
+      variables: {
+        slug: props.slug,
+        page: page.value,
       },
-      skip() {
-        return !this.slug;
-      },
-      error({ graphQLErrors }) {
-        this.handleErrors(graphQLErrors);
-      },
-      subscribeToMore: {
-        document: DISCUSSION_COMMENT_CHANGED,
-        variables() {
-          return {
-            slug: this.$route.params.slug,
-            page: this.page,
-            limit: this.COMMENTS_PER_PAGE,
-          };
-        },
-        updateQuery: function (
-          previousResult: any,
-          { subscriptionData }: { subscriptionData: any }
-        ) {
-          const previousDiscussion = previousResult.discussion;
-          const lastComment =
-            subscriptionData.data.discussionCommentChanged.lastComment;
-          this.hasMoreComments = !previousDiscussion.comments.elements.some(
-            (comment: IComment) => comment.id === lastComment.id
-          );
-          if (this.hasMoreComments) {
-            return {
-              discussion: {
-                ...previousDiscussion,
-                lastComment: lastComment,
-                comments: {
-                  elements: [
-                    ...previousDiscussion.comments.elements.filter(
-                      ({ id }: { id: string }) => id !== lastComment.id
-                    ),
-                    lastComment,
-                  ],
-                  total: previousDiscussion.comments.total + 1,
-                },
-              },
-            };
+    });
+    if (!discussionData) return;
+    const { discussion: discussionCached } = discussionData;
+    const index = discussionCached.comments.elements.findIndex(
+      ({ id }) => id === data.deleteComment.id
+    );
+    if (index > -1) {
+      discussionCached.comments.elements.splice(index, 1);
+      discussionCached.comments.total -= 1;
+    }
+    store.writeQuery({
+      query: GET_DISCUSSION,
+      variables: { slug: props.slug, page: page.value },
+      data: { discussion: discussionCached },
+    });
+  },
+}));
+
+const { mutate: deleteComment } = useMutation<
+  { deleteComment: { id: string } },
+  { commentId: string }
+>(DELETE_COMMENT, () => ({
+  update: (store: ApolloCache<{ deleteComment: IComment }>, { data }) => {
+    const id = data?.deleteComment?.id;
+    if (!id) return;
+    store.writeFragment({
+      id: `Comment:${id}`,
+      fragment: gql`
+        fragment CommentDeleted on Comment {
+          deletedAt
+          actor {
+            id
           }
-
-          return previousDiscussion;
-        },
-      },
-    },
-  },
-  components: {
-    DiscussionComment,
-    editor: () =>
-      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
-  },
-  metaInfo() {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.discussion.title,
-    };
-  },
-})
-export default class Discussion extends mixins(GroupMixin) {
-  @Prop({ type: String, required: true }) slug!: string;
-
-  discussion: IDiscussion = new DiscussionModel();
-
-  newComment = "";
-
-  newTitle = "";
-
-  editTitleMode = false;
-
-  page = 1;
-
-  hasMoreComments = true;
-
-  COMMENTS_PER_PAGE = 10;
-
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-  displayName = displayName;
-  error: string | null = null;
-
-  async reply(): Promise<void> {
-    if (this.newComment === "") return;
-
-    await this.$apollo.mutate({
-      mutation: REPLY_TO_DISCUSSION,
-      variables: {
-        discussionId: this.discussion.id,
-        text: this.newComment,
-      },
-    });
-    this.newComment = "";
-  }
-
-  async updateComment(comment: IComment): Promise<void> {
-    await this.$apollo.mutate<{ deleteComment: IComment }>({
-      mutation: UPDATE_COMMENT,
-      variables: {
-        commentId: comment.id,
-        text: comment.text,
-      },
-      update: (
-        store: ApolloCache<{ deleteComment: IComment }>,
-        { data }: FetchResult
-      ) => {
-        if (!data || !data.deleteComment) return;
-        const discussionData = store.readQuery<{
-          discussion: IDiscussion;
-        }>({
-          query: GET_DISCUSSION,
-          variables: {
-            slug: this.slug,
-            page: this.page,
-          },
-        });
-        if (!discussionData) return;
-        const { discussion: discussionCached } = discussionData;
-        const index = discussionCached.comments.elements.findIndex(
-          ({ id }) => id === data.deleteComment.id
-        );
-        if (index > -1) {
-          discussionCached.comments.elements.splice(index, 1);
-          discussionCached.comments.total -= 1;
+          text
         }
-        store.writeQuery({
-          query: GET_DISCUSSION,
-          variables: { slug: this.slug, page: this.page },
-          data: { discussion: discussionCached },
-        });
+      `,
+      data: {
+        deletedAt: new Date(),
+        text: "",
+        actor: null,
       },
     });
-  }
+  },
+}));
 
-  async deleteComment(comment: IComment): Promise<void> {
-    await this.$apollo.mutate<{ deleteComment: IComment }>({
-      mutation: DELETE_COMMENT,
+const loadMoreComments = async (): Promise<void> => {
+  if (!hasMoreComments.value) return;
+  page.value++;
+  try {
+    await fetchMore({
+      // New variables
       variables: {
-        commentId: comment.id,
-      },
-      update: (store: ApolloCache<{ deleteComment: IComment }>) => {
-        store.writeFragment({
-          id: store.identify(comment as unknown as Reference),
-          fragment: gql`
-            fragment CommentDeleted on Comment {
-              deletedAt
-              actor {
-                id
-              }
-              text
-            }
-          `,
-          data: {
-            deletedAt: new Date(),
-            text: "",
-            actor: null,
-          },
-        });
+        slug: props.slug,
+        page: page.value,
+        limit: COMMENTS_PER_PAGE,
       },
     });
+    hasMoreComments.value = !discussion.value?.comments.elements
+      .map(({ id }) => id)
+      .includes(discussion.value?.lastComment?.id);
+  } catch (e) {
+    console.error(e);
   }
+};
 
-  async loadMoreComments(): Promise<void> {
-    if (!this.hasMoreComments) return;
-    this.page++;
-    try {
-      await this.$apollo.queries.discussion.fetchMore({
-        // New variables
-        variables: {
-          slug: this.slug,
-          page: this.page,
-          limit: this.COMMENTS_PER_PAGE,
-        },
-      });
-      this.hasMoreComments = !this.discussion.comments.elements
-        .map(({ id }) => id)
-        .includes(this.discussion?.lastComment?.id);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+const { mutate: updateDiscussionMutation } = useMutation<{
+  updateDiscussion: IDiscussion;
+}>(UPDATE_DISCUSSION);
 
-  async updateDiscussion(): Promise<void> {
-    await this.$apollo.mutate<{ updateDiscussion: IDiscussion }>({
-      mutation: UPDATE_DISCUSSION,
-      variables: {
-        discussionId: this.discussion.id,
-        title: this.newTitle,
+const updateDiscussion = async (): Promise<void> => {
+  updateDiscussionMutation({
+    discussionId: discussion.value?.id,
+    title: newTitle.value,
+  });
+
+  editTitleMode.value = false;
+};
+
+const { t } = useI18n({ useScope: "global" });
+const dialog = inject<Dialog>("dialog");
+
+const openDeleteDiscussionConfirmation = (): void => {
+  dialog?.confirm({
+    type: "is-danger",
+    title: t("Delete this discussion"),
+    message: t("Are you sure you want to delete this entire discussion?"),
+    confirmText: t("Delete discussion"),
+    cancelText: t("Cancel"),
+    onConfirm: () =>
+      deleteConversation({
+        discussionId: discussion.value?.id,
+      }),
+  });
+};
+
+const router = useRouter();
+
+const { mutate: deleteConversation, onDone: deleteConversationDone } =
+  useMutation(DELETE_DISCUSSION);
+
+deleteConversationDone(() => {
+  if (discussion.value?.actor) {
+    router.push({
+      name: RouteName.DISCUSSION_LIST,
+      params: {
+        preferredUsername: usernameWithDomain(discussion.value.actor),
       },
     });
-    this.editTitleMode = false;
   }
+});
 
-  openDeleteDiscussionConfirmation(): void {
-    this.$buefy.dialog.confirm({
-      type: "is-danger",
-      title: this.$t("Delete this discussion") as string,
-      message: this.$t(
-        "Are you sure you want to delete this entire discussion?"
-      ) as string,
-      confirmText: this.$t("Delete discussion") as string,
-      cancelText: this.$t("Cancel") as string,
-      onConfirm: () => this.deleteConversation(),
-    });
-  }
+onDiscussionError((discussionError) =>
+  handleErrors(discussionError.graphQLErrors as AbsintheGraphQLError[])
+);
 
-  async deleteConversation(): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: DELETE_DISCUSSION,
-      variables: {
-        discussionId: this.discussion.id,
-      },
-    });
-    if (this.discussion.actor) {
-      this.$router.push({
-        name: RouteName.DISCUSSION_LIST,
-        params: {
-          preferredUsername: usernameWithDomain(this.discussion.actor),
-        },
-      });
-    }
+const handleErrors = async (errors: AbsintheGraphQLError[]): Promise<void> => {
+  if (errors[0].message.includes("No such discussion")) {
+    await router.push({ name: RouteName.PAGE_NOT_FOUND });
   }
+  if (errors[0].code === "unauthorized") {
+    error.value = errors[0].message;
+  }
+};
 
-  async handleErrors(errors: GraphQLError[]): Promise<void> {
-    if (errors[0].message.includes("No such discussion")) {
-      await this.$router.push({ name: RouteName.PAGE_NOT_FOUND });
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    if (errors[0].code === "unauthorized") {
-      this.error = errors[0].message;
-    }
-  }
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+});
 
-  mounted(): void {
-    window.addEventListener("scroll", this.handleScroll);
-  }
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 
-  destroyed(): void {
-    window.removeEventListener("scroll", this.handleScroll);
+const handleScroll = (): void => {
+  const scrollTop =
+    (document.documentElement && document.documentElement.scrollTop) ||
+    document.body.scrollTop;
+  const scrollHeight =
+    (document.documentElement && document.documentElement.scrollHeight) ||
+    document.body.scrollHeight;
+  const clientHeight =
+    document.documentElement.clientHeight || window.innerHeight;
+  const scrolledToBottom =
+    Math.ceil(scrollTop + clientHeight + 800) >= scrollHeight;
+  if (scrolledToBottom) {
+    loadMoreComments();
   }
+};
 
-  handleScroll(): void {
-    const scrollTop =
-      (document.documentElement && document.documentElement.scrollTop) ||
-      document.body.scrollTop;
-    const scrollHeight =
-      (document.documentElement && document.documentElement.scrollHeight) ||
-      document.body.scrollHeight;
-    const clientHeight =
-      document.documentElement.clientHeight || window.innerHeight;
-    const scrolledToBottom =
-      Math.ceil(scrollTop + clientHeight + 800) >= scrollHeight;
-    if (scrolledToBottom) {
-      this.loadMoreComments();
-    }
-  }
-}
+const isCurrentActorAGroupModerator = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+  ]);
+});
+
+const { result: membershipsResult } = useQuery<{
+  person: Pick<IPerson, "memberships">;
+}>(
+  PERSON_MEMBERSHIPS,
+  () => ({ id: currentActor.value?.id }),
+  () => ({ enabled: currentActor.value?.id !== undefined })
+);
+const memberships = computed(() => membershipsResult.value?.person.memberships);
+
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole)
+    ? givenRole
+    : ([givenRole] as MemberRole[]);
+  return (
+    (memberships.value?.total ?? 0) > 0 &&
+    roles.includes(memberships.value?.elements[0].role as MemberRole)
+  );
+};
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-div.container.section {
-  background: white;
-  padding: 1rem 5% 4rem;
-
-  div.discussion-title {
-    margin-bottom: 1.75rem;
-    display: flex;
-    align-items: center;
-
-    h1.title {
-      margin-bottom: 0;
-      @include margin-right(10px);
-    }
-
-    form.title-edit {
-      flex: 1;
-      div.control {
-        margin-bottom: 0.75rem;
-      }
-    }
-  }
-}
-</style>

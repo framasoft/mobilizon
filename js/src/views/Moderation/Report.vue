@@ -5,54 +5,54 @@
       :links="[
         {
           name: RouteName.MODERATION,
-          text: $t('Moderation'),
+          text: t('Moderation'),
         },
         {
           name: RouteName.REPORTS,
-          text: $t('Reports'),
+          text: t('Reports'),
         },
         {
           name: RouteName.REPORT,
           params: { id: report.id },
-          text: $t('Report #{reportNumber}', { reportNumber: report.id }),
+          text: t('Report #{reportNumber}', { reportNumber: report.id }),
         },
       ]"
     />
     <section>
-      <b-message
+      <o-notification
         title="Error"
-        type="is-danger"
+        variant="danger"
         v-for="error in errors"
         :key="error"
       >
         {{ error }}
-      </b-message>
-      <div class="container" v-if="report">
-        <div class="buttons">
-          <b-button
+      </o-notification>
+      <div class="container mx-auto" v-if="report">
+        <div class="flex flex-wrap gap-2">
+          <o-button
             v-if="report.status !== ReportStatusEnum.RESOLVED"
             @click="updateReport(ReportStatusEnum.RESOLVED)"
-            type="is-primary"
-            >{{ $t("Mark as resolved") }}</b-button
+            variant="primary"
+            >{{ t("Mark as resolved") }}</o-button
           >
-          <b-button
+          <o-button
             v-if="report.status !== ReportStatusEnum.OPEN"
             @click="updateReport(ReportStatusEnum.OPEN)"
-            type="is-success"
-            >{{ $t("Reopen") }}</b-button
+            variant="success"
+            >{{ t("Reopen") }}</o-button
           >
-          <b-button
+          <o-button
             v-if="report.status !== ReportStatusEnum.CLOSED"
             @click="updateReport(ReportStatusEnum.CLOSED)"
-            type="is-danger"
-            >{{ $t("Close") }}</b-button
+            variant="danger"
+            >{{ t("Close") }}</o-button
           >
         </div>
-        <div class="table-container">
-          <table class="table is-striped is-fullwidth">
+        <div class="w-full">
+          <table class="table w-full">
             <tbody>
               <tr v-if="report.reported.__typename === 'Group'">
-                <td>{{ $t("Reported group") }}</td>
+                <td>{{ t("Reported group") }}</td>
                 <td>
                   <router-link
                     :to="{
@@ -72,7 +72,7 @@
               </tr>
               <tr v-else>
                 <td>
-                  {{ $t("Reported identity") }}
+                  {{ t("Reported identity") }}
                 </td>
                 <td>
                   <router-link
@@ -92,7 +92,7 @@
                 </td>
               </tr>
               <tr>
-                <td>{{ $t("Reported by") }}</td>
+                <td>{{ t("Reported by") }}</td>
                 <td v-if="report.reporter.type === ActorType.APPLICATION">
                   {{ report.reporter.domain }}
                 </td>
@@ -114,30 +114,30 @@
                 </td>
               </tr>
               <tr>
-                <td>{{ $t("Reported") }}</td>
-                <td>{{ report.insertedAt | formatDateTimeString }}</td>
+                <td>{{ t("Reported") }}</td>
+                <td>{{ formatDateTimeString(report.insertedAt) }}</td>
               </tr>
               <tr v-if="report.updatedAt !== report.insertedAt">
-                <td>{{ $t("Updated") }}</td>
-                <td>{{ report.updatedAt | formatDateTimeString }}</td>
+                <td>{{ t("Updated") }}</td>
+                <td>{{ formatDateTimeString(report.updatedAt) }}</td>
               </tr>
               <tr>
-                <td>{{ $t("Status") }}</td>
+                <td>{{ t("Status") }}</td>
                 <td>
                   <span v-if="report.status === ReportStatusEnum.OPEN">{{
-                    $t("Open")
+                    t("Open")
                   }}</span>
                   <span v-else-if="report.status === ReportStatusEnum.CLOSED">
-                    {{ $t("Closed") }}
+                    {{ t("Closed") }}
                   </span>
                   <span v-else-if="report.status === ReportStatusEnum.RESOLVED">
-                    {{ $t("Resolved") }}
+                    {{ t("Resolved") }}
                   </span>
-                  <span v-else>{{ $t("Unknown") }}</span>
+                  <span v-else>{{ t("Unknown") }}</span>
                 </td>
               </tr>
               <tr v-if="report.event && report.comments.length > 0">
-                <td>{{ $t("Event") }}</td>
+                <td>{{ t("Event") }}</td>
                 <td>
                   <router-link
                     :to="{
@@ -148,18 +148,18 @@
                     {{ report.event.title }}
                   </router-link>
                   <span class="is-pulled-right">
-                    <!--                                    <b-button-->
+                    <!--                                    <o-button-->
                     <!--                                            tag="router-link"-->
-                    <!--                                            type="is-primary"-->
+                    <!--                                            variant="primary"-->
                     <!--                                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
                     <!--                                            icon-left="pencil"-->
-                    <!--                                            size="is-small">{{ $t('Edit') }}</b-button>-->
-                    <b-button
-                      type="is-danger"
+                    <!--                                            size="small">{{ t('Edit') }}</o-button>-->
+                    <o-button
+                      variant="danger"
                       @click="confirmEventDelete()"
                       icon-left="delete"
-                      size="is-small"
-                      >{{ $t("Delete") }}</b-button
+                      size="small"
+                      >{{ t("Delete") }}</o-button
                     >
                   </span>
                 </td>
@@ -168,68 +168,68 @@
           </table>
         </div>
 
-        <div class="box report-content">
+        <div class="">
           <p v-if="report.content" v-html="nl2br(report.content)" />
-          <p v-else>{{ $t("No comment") }}</p>
+          <p v-else>{{ t("No comment") }}</p>
         </div>
 
-        <div class="box" v-if="report.event && report.comments.length === 0">
+        <div class="" v-if="report.event && report.comments.length === 0">
           <router-link
             :to="{ name: RouteName.EVENT, params: { uuid: report.event.uuid } }"
           >
             <h3 class="title">{{ report.event.title }}</h3>
             <p v-html="report.event.description" />
           </router-link>
-          <!--                <b-button-->
+          <!--                <o-button-->
           <!--                        tag="router-link"-->
-          <!--                        type="is-primary"-->
+          <!--                        variant="primary"-->
           <!--                        :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
           <!--                        icon-left="pencil"-->
-          <!--                        size="is-small">{{ $t('Edit') }}</b-button>-->
-          <b-button
-            type="is-danger"
+          <!--                        size="small">{{ t('Edit') }}</o-button>-->
+          <o-button
+            variant="danger"
             @click="confirmEventDelete()"
             icon-left="delete"
-            size="is-small"
-            >{{ $t("Delete") }}</b-button
+            size="small"
+            >{{ t("Delete") }}</o-button
           >
         </div>
 
         <div v-if="report.comments.length > 0">
           <ul v-for="comment in report.comments" :key="comment.id">
             <li>
-              <div class="box" v-if="comment">
-                <article class="media">
-                  <div class="media-left">
+              <div class="" v-if="comment">
+                <article class="flex gap-1">
+                  <div class="">
                     <figure
-                      class="image is-48x48"
+                      class=""
                       v-if="comment.actor && comment.actor.avatar"
                     >
-                      <img :src="comment.actor.avatar.url" alt="Image" />
+                      <img
+                        :src="comment.actor.avatar.url"
+                        alt=""
+                        width="48"
+                        height="48"
+                      />
                     </figure>
-                    <b-icon
-                      class="media-left"
-                      v-else
-                      size="is-large"
-                      icon="account-circle"
-                    />
+                    <AccountCircle :size="48" v-else />
                   </div>
-                  <div class="media-content">
-                    <div class="content">
+                  <div class="">
+                    <div class="prose dark:prose-invert">
                       <span v-if="comment.actor">
                         <strong>{{ comment.actor.name }}</strong>
                         <small>@{{ comment.actor.preferredUsername }}</small>
                       </span>
-                      <span v-else>{{ $t("Unknown actor") }}</span>
+                      <span v-else>{{ t("Unknown actor") }}</span>
                       <br />
                       <p v-html="comment.text" />
                     </div>
-                    <b-button
-                      type="is-danger"
+                    <o-button
+                      variant="danger"
                       @click="confirmCommentDelete(comment)"
                       icon-left="delete"
-                      size="is-small"
-                      >{{ $t("Delete") }}</b-button
+                      size="small"
+                      >{{ t("Delete") }}</o-button
                     >
                   </div>
                 </article>
@@ -238,7 +238,7 @@
           </ul>
         </div>
 
-        <h2 class="title" v-if="report.notes.length > 0">{{ $t("Notes") }}</h2>
+        <h2 v-if="report.notes.length > 0">{{ t("Notes") }}</h2>
         <div
           class="box note"
           v-for="note in report.notes"
@@ -253,8 +253,8 @@
             }"
           >
             <img
-              alt
-              class="image"
+              alt=""
+              class="rounded-full"
               :src="note.moderator.avatar.url"
               v-if="note.moderator.avatar"
             />
@@ -263,243 +263,245 @@
           <br />
           <small>
             <a :href="`#note-${note.id}`" v-if="note.insertedAt">
-              {{ note.insertedAt | formatDateTimeString }}
+              {{ formatDateTimeString(note.insertedAt) }}
             </a>
           </small>
         </div>
 
-        <form @submit="addNote()">
-          <b-field :label="$t('New note')" label-for="newNoteInput">
-            <b-input
+        <form
+          @submit="
+            createReportNoteMutation({
+              reportId: report?.id,
+              content: noteContent,
+            })
+          "
+        >
+          <o-field :label="t('New note')" label-for="newNoteInput">
+            <o-input
               type="textarea"
               v-model="noteContent"
               id="newNoteInput"
-            ></b-input>
-          </b-field>
-          <b-button type="submit" @click="addNote">{{
-            $t("Add a note")
-          }}</b-button>
+            ></o-input>
+          </o-field>
+          <o-button class="mt-2" type="submit">{{ t("Add a note") }}</o-button>
         </form>
       </div>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from "@/graphql/report";
 import { IReport, IReportNote } from "@/types/report.model";
-import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IPerson, displayNameAndUsername } from "@/types/actor";
+import { displayNameAndUsername } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import uniq from "lodash/uniq";
 import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
 import { ActorType, ReportStatusEnum } from "@/types/enums";
-import RouteName from "../../router/name";
+import RouteName from "@/router/name";
 import { GraphQLError } from "graphql";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+import { ref, computed, inject } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { Dialog } from "@/plugins/dialog";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    report: {
+const router = useRouter();
+
+const props = defineProps<{ reportId: string }>();
+
+const { currentActor } = useCurrentActorClient();
+
+const { result: reportResult, onError: onReportQueryError } = useQuery<{
+  report: IReport;
+}>(REPORT, () => ({
+  id: props.reportId,
+}));
+
+const report = computed(() => reportResult.value?.report);
+
+onReportQueryError(({ graphQLErrors }) => {
+  errors.value = uniq(
+    graphQLErrors.map(({ message }: GraphQLError) => message)
+  );
+});
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Report")),
+});
+
+const notifier = inject<Notifier>("notifier");
+
+const errors = ref<string[]>([]);
+
+const noteContent = ref("");
+
+const {
+  mutate: createReportNoteMutation,
+  onDone: createReportNoteMutationDone,
+  onError: createReportNoteMutationError,
+} = useMutation<{
+  createReportNote: IReportNote;
+}>(CREATE_REPORT_NOTE, () => ({
+  update: (
+    store: ApolloCache<{ createReportNote: IReportNote }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+    const cachedData = store.readQuery<{ report: IReport }>({
       query: REPORT,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.reportId,
-        };
-      },
-      error({ graphQLErrors }) {
-        this.errors = uniq(
-          graphQLErrors.map(({ message }: GraphQLError) => message)
-        );
-      },
-    },
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
+      variables: { id: report.value.id },
+    });
+    if (cachedData == null) return;
+    const { report } = cachedData;
+    if (report === null) {
+      console.error("Cannot update event notes cache, because of null value.");
+      return;
+    }
+    const note = data.createReportNote;
+    note.moderator = currentActor.value;
+
+    report.notes = report.notes.concat([note]);
+
+    store.writeQuery({
+      query: REPORT,
+      variables: { id: report.value.id },
+      data: { report },
+    });
   },
-  metaInfo() {
-    return {
-      title: this.$t("Report") as string,
-      titleTemplate: "%s | Mobilizon",
+}));
+
+createReportNoteMutationDone(() => {
+  noteContent.value = "";
+});
+
+createReportNoteMutationError((error) => {
+  console.error(error);
+});
+
+const dialog = inject<Dialog>("dialog");
+
+const confirmEventDelete = (): void => {
+  dialog?.confirm({
+    title: t("Deleting event"),
+    message: t(
+      "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead."
+    ),
+    confirmText: t("Delete Event"),
+    type: "danger",
+    hasIcon: true,
+    onConfirm: () => deleteEvent(),
+  });
+};
+
+const confirmCommentDelete = (comment: IComment): void => {
+  dialog?.confirm({
+    title: t("Deleting comment"),
+    message: t(
+      "Are you sure you want to <b>delete</b> this comment? This action cannot be undone."
+    ),
+    confirmText: t("Delete Comment"),
+    type: "danger",
+    hasIcon: true,
+    onConfirm: () => deleteCommentMutation({ commentId: comment.id }),
+  });
+};
+
+const {
+  mutate: deleteEventMutation,
+  onDone: deleteEventMutationDone,
+  onError: deleteEventMutationError,
+} = useMutation<{ deleteEvent: { id: string } }>(DELETE_EVENT);
+
+deleteEventMutationDone(() => {
+  const eventTitle = report.value?.event?.title;
+  notifier?.success(
+    t("Event {eventTitle} deleted", {
+      eventTitle,
+    })
+  );
+});
+
+deleteEventMutationError((error) => {
+  console.error(error);
+});
+
+const deleteEvent = async (): Promise<void> => {
+  if (!report.value?.event?.id) return;
+
+  deleteEventMutation({ eventId: report.value.event.id });
+};
+
+const {
+  mutate: deleteCommentMutation,
+  onDone: deleteCommentMutationDone,
+  onError: deleteCommentMutationError,
+} = useMutation<{ deleteComment: { id: string } }>(DELETE_COMMENT);
+
+deleteCommentMutationDone(() => {
+  notifier?.success(t("Comment deleted") as string);
+});
+
+deleteCommentMutationError((error) => {
+  console.error(error);
+});
+
+const {
+  mutate: updateReportMutation,
+  onDone: onUpdateReportMutation,
+  onError: onUpdateReportError,
+} = useMutation(UPDATE_REPORT, () => ({
+  update: (
+    store: ApolloCache<{ updateReportStatus: IReport }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+    const reportCachedData = store.readQuery<{ report: IReport }>({
+      query: REPORT,
+      variables: { id: report.value.id },
+    });
+    if (reportCachedData == null) return;
+    const { report } = reportCachedData;
+    if (report === null) {
+      console.error("Cannot update event notes cache, because of null value.");
+      return;
+    }
+    const updatedReport = {
+      ...report,
+      status: data.updateReportStatus.status,
     };
+
+    store.writeQuery({
+      query: REPORT,
+      variables: { id: report.value.id },
+      data: { report: updatedReport },
+    });
   },
-})
-export default class Report extends Vue {
-  @Prop({ required: true }) reportId!: number;
+}));
 
-  report!: IReport;
+onUpdateReportMutation(() => {
+  router.push({ name: RouteName.REPORTS });
+});
 
-  currentActor!: IPerson;
+onUpdateReportError((error) => {
+  console.error(error);
+});
 
-  errors: string[] = [];
-
-  ReportStatusEnum = ReportStatusEnum;
-
-  RouteName = RouteName;
-
-  ActorType = ActorType;
-
-  nl2br = nl2br;
-
-  noteContent = "";
-
-  displayNameAndUsername = displayNameAndUsername;
-
-  addNote(): void {
-    try {
-      this.$apollo.mutate<{ createReportNote: IReportNote }>({
-        mutation: CREATE_REPORT_NOTE,
-        variables: {
-          reportId: this.report.id,
-          content: this.noteContent,
-        },
-        update: (
-          store: ApolloCache<{ createReportNote: IReportNote }>,
-          { data }: FetchResult
-        ) => {
-          if (data == null) return;
-          const cachedData = store.readQuery<{ report: IReport }>({
-            query: REPORT,
-            variables: { id: this.report.id },
-          });
-          if (cachedData == null) return;
-          const { report } = cachedData;
-          if (report === null) {
-            console.error(
-              "Cannot update event notes cache, because of null value."
-            );
-            return;
-          }
-          const note = data.createReportNote;
-          note.moderator = this.currentActor;
-
-          report.notes = report.notes.concat([note]);
-
-          store.writeQuery({
-            query: REPORT,
-            variables: { id: this.report.id },
-            data: { report },
-          });
-        },
-      });
-
-      this.noteContent = "";
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  confirmEventDelete(): void {
-    this.$buefy.dialog.confirm({
-      title: this.$t("Deleting event") as string,
-      message: this.$t(
-        "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead."
-      ) as string,
-      confirmText: this.$t("Delete Event") as string,
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => this.deleteEvent(),
-    });
-  }
-
-  confirmCommentDelete(comment: IComment): void {
-    this.$buefy.dialog.confirm({
-      title: this.$t("Deleting comment") as string,
-      message: this.$t(
-        "Are you sure you want to <b>delete</b> this comment? This action cannot be undone."
-      ) as string,
-      confirmText: this.$t("Delete Comment") as string,
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => this.deleteComment(comment),
-    });
-  }
-
-  async deleteEvent(): Promise<void> {
-    if (!this.report.event || !this.report.event.id) return;
-    const eventTitle = this.report.event.title;
-
-    try {
-      await this.$apollo.mutate({
-        mutation: DELETE_EVENT,
-        variables: {
-          eventId: this.report.event.id.toString(),
-        },
-      });
-
-      this.$buefy.notification.open({
-        message: this.$t("Event {eventTitle} deleted", {
-          eventTitle,
-        }) as string,
-        type: "is-success",
-        position: "is-bottom-right",
-        duration: 5000,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async deleteComment(comment: IComment): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: DELETE_COMMENT,
-        variables: {
-          commentId: comment.id,
-        },
-      });
-      this.$notifier.success(this.$t("Comment deleted") as string);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async updateReport(status: ReportStatusEnum): Promise<void> {
-    try {
-      await this.$apollo.mutate<{ updateReportStatus: IReport }>({
-        mutation: UPDATE_REPORT,
-        variables: {
-          reportId: this.report.id,
-          status,
-        },
-        update: (
-          store: ApolloCache<{ updateReportStatus: IReport }>,
-          { data }: FetchResult
-        ) => {
-          if (data == null) return;
-          const reportCachedData = store.readQuery<{ report: IReport }>({
-            query: REPORT,
-            variables: { id: this.report.id },
-          });
-          if (reportCachedData == null) return;
-          const { report } = reportCachedData;
-          if (report === null) {
-            console.error(
-              "Cannot update event notes cache, because of null value."
-            );
-            return;
-          }
-          const updatedReport = {
-            ...report,
-            status: data.updateReportStatus.status,
-          };
-
-          store.writeQuery({
-            query: REPORT,
-            variables: { id: this.report.id },
-            data: { report: updatedReport },
-          });
-        },
-      });
-      await this.$router.push({ name: RouteName.REPORTS });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-}
+const updateReport = async (status: ReportStatusEnum): Promise<void> => {
+  updateReportMutation({
+    reportId: report.value?.id,
+    status,
+  });
+};
 </script>
 <style lang="scss" scoped>
 tbody td img.image,

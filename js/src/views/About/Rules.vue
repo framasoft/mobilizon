@@ -1,40 +1,31 @@
 <template>
-  <div class="container section" v-if="config">
-    <h2 class="title">{{ $t("Rules") }}</h2>
-    <div class="content" v-html="config.rules" v-if="config.rules" />
-    <p v-else>{{ $t("No rules defined yet.") }}</p>
+  <div class="container mx-auto px-2" v-if="config">
+    <h1>{{ t("Rules") }}</h1>
+    <div
+      class="prose dark:prose-invert"
+      v-html="config.rules"
+      v-if="config.rules"
+    />
+    <p v-else>{{ t("No rules defined yet.") }}</p>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { RULES } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import RouteName from "../../router/name";
+import { useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  apollo: {
-    config: {
-      query: RULES,
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Rules") as string,
-    };
-  },
-})
-export default class Rules extends Vue {
-  config!: IConfig;
+const { result: configResult } = useQuery<{ config: IConfig }>(RULES);
 
-  RouteName = RouteName;
-}
+const config = computed(() => configResult.value?.config);
+
+const { t } = useI18n({ useScope: "global" });
+
+// metaInfo() {
+//     return {
+//       title: this.t("Rules") as string,
+//     };
+//   },
 </script>
-<style lang="scss" scoped>
-main > .container {
-  background: $white;
-}
-.content ::v-deep li {
-  margin-bottom: 1rem;
-}
-</style>

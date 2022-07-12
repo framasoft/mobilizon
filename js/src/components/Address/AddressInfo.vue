@@ -1,22 +1,22 @@
 <template>
   <address dir="auto">
-    <b-icon
+    <o-icon
       v-if="showIcon"
-      :icon="address.poiInfos.poiIcon.icon"
+      :icon="poiInfos?.poiIcon.icon"
       size="is-medium"
       class="icon"
     />
     <p>
       <span
         class="addressDescription"
-        :title="address.poiInfos.name"
-        v-if="address.poiInfos.name"
+        :title="poiInfos.name"
+        v-if="poiInfos?.name"
       >
-        {{ address.poiInfos.name }}
+        {{ poiInfos.name }}
       </span>
-      <br v-if="address.poiInfos.name" />
-      <span class="has-text-grey-dark">
-        {{ address.poiInfos.alternativeName }}
+      <br v-if="poiInfos?.name" />
+      <span>
+        {{ poiInfos?.alternativeName }}
       </span>
       <br />
       <small
@@ -25,7 +25,6 @@
           longShortTimezoneNamesDifferent &&
           timezoneLongNameValid
         "
-        class="has-text-grey-dark"
       >
         🌐
         {{
@@ -35,72 +34,75 @@
           })
         }}
       </small>
-      <small v-else-if="userTimezoneDifferent" class="has-text-grey-dark">
+      <small v-else-if="userTimezoneDifferent" class="">
         🌐 {{ timezoneShortName }}
       </small>
     </p>
   </address>
 </template>
-<script lang="ts">
-import { IAddress } from "@/types/address.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { addressToPoiInfos, IAddress } from "@/types/address.model";
+import { computed } from "vue";
 
-@Component
-export default class AddressInfo extends Vue {
-  @Prop({ required: true, type: Object as PropType<IAddress> })
-  address!: IAddress;
-
-  @Prop({ required: false, default: false, type: Boolean }) showIcon!: boolean;
-  @Prop({ required: false, default: false, type: Boolean })
-  showTimezone!: boolean;
-  @Prop({ required: false, type: String }) userTimezone!: string;
-
-  get userTimezoneDifferent(): boolean {
-    return (
-      this.userTimezone != undefined &&
-      this.address.timezone != undefined &&
-      this.userTimezone !== this.address.timezone
-    );
+const props = withDefaults(
+  defineProps<{
+    address: IAddress;
+    showIcon?: boolean;
+    showTimezone?: boolean;
+    userTimezone?: string;
+  }>(),
+  {
+    showIcon: false,
+    showTimezone: false,
   }
+);
 
-  get longShortTimezoneNamesDifferent(): boolean {
-    return (
-      this.timezoneLongName != undefined &&
-      this.timezoneShortName != undefined &&
-      this.timezoneLongName !== this.timezoneShortName
-    );
-  }
+const poiInfos = computed(() => addressToPoiInfos(props.address));
 
-  get timezoneLongName(): string | undefined {
-    return this.timezoneName("long");
-  }
+const userTimezoneDifferent = computed((): boolean => {
+  return (
+    props.userTimezone != undefined &&
+    props.address.timezone != undefined &&
+    props.userTimezone !== props.address.timezone
+  );
+});
 
-  get timezoneShortName(): string | undefined {
-    return this.timezoneName("short");
-  }
+const longShortTimezoneNamesDifferent = computed((): boolean => {
+  return (
+    timezoneLongName.value != undefined &&
+    timezoneShortName.value != undefined &&
+    timezoneLongName.value !== timezoneShortName.value
+  );
+});
 
-  get timezoneLongNameValid(): boolean {
-    return (
-      this.timezoneLongName != undefined && !this.timezoneLongName.match(/UTC/)
-    );
-  }
+const timezoneLongName = computed((): string | undefined => {
+  return timezoneName("long");
+});
 
-  private timezoneName(format: "long" | "short"): string | undefined {
-    return this.extractTimezone(
-      new Intl.DateTimeFormat(undefined, {
-        timeZoneName: format,
-        timeZone: this.address.timezone,
-      }).formatToParts()
-    );
-  }
+const timezoneShortName = computed((): string | undefined => {
+  return timezoneName("short");
+});
 
-  private extractTimezone(
-    parts: Intl.DateTimeFormatPart[]
-  ): string | undefined {
-    return parts.find((part) => part.type === "timeZoneName")?.value;
-  }
-}
+const timezoneLongNameValid = computed((): boolean => {
+  return (
+    timezoneLongName.value != undefined && !timezoneLongName.value.match(/UTC/)
+  );
+});
+
+const timezoneName = (format: "long" | "short"): string | undefined => {
+  return extractTimezone(
+    new Intl.DateTimeFormat(undefined, {
+      timeZoneName: format,
+      timeZone: props.address.timezone,
+    }).formatToParts()
+  );
+};
+
+const extractTimezone = (
+  parts: Intl.DateTimeFormatPart[]
+): string | undefined => {
+  return parts.find((part) => part.type === "timeZoneName")?.value;
+};
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;

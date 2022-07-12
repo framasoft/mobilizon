@@ -1,6 +1,6 @@
 <template>
   <div class="list is-hoverable">
-    <b-input
+    <o-input
       dir="auto"
       :placeholder="$t('Filter by profile or group name')"
       v-model="actorFilter"
@@ -18,7 +18,7 @@
       <li
         class="relative focus-within:shadow-lg"
         v-for="availableActor in actualFilteredAvailableActors"
-        :key="availableActor.id"
+        :key="availableActor?.id"
       >
         <input
           class="sr-only peer"
@@ -26,126 +26,127 @@
           :value="availableActor"
           name="availableActors"
           v-model="selectedActor"
-          :id="`availableActor-${availableActor.id}`"
+          :id="`availableActor-${availableActor?.id}`"
         />
         <label
-          class="flex flex-wrap p-3 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
-          :for="`availableActor-${availableActor.id}`"
+          class="flex flex-wrap p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
+          :for="`availableActor-${availableActor?.id}`"
         >
-          <figure class="image is-48x48" v-if="availableActor.avatar">
+          <figure class="" v-if="availableActor?.avatar">
             <img
-              class="image is-rounded"
+              class="rounded"
               :src="availableActor.avatar.url"
               alt=""
+              width="48"
+              height="48"
             />
           </figure>
-          <b-icon v-else size="is-large" icon="account-circle" />
-          <div>
-            <h3>{{ availableActor.name }}</h3>
-            <small>{{ `@${availableActor.preferredUsername}` }}</small>
+          <AccountCircle v-else :size="48" />
+          <div class="flex-1">
+            <h3>{{ availableActor?.name }}</h3>
+            <small>{{ `@${availableActor?.preferredUsername}` }}</small>
           </div>
         </label>
       </li>
     </transition-group>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { IPerson, IActor, Actor } from "@/types/actor";
-import {
-  CURRENT_ACTOR_CLIENT,
-  IDENTITIES,
-  LOGGED_USER_MEMBERSHIPS,
-} from "@/graphql/actor";
-import { Paginate } from "@/types/paginate";
+<script lang="ts" setup>
+import { IActor } from "@/types/actor";
+import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
+import { computed, ref } from "vue";
+import {
+  useCurrentActorClient,
+  useCurrentUserIdentities,
+} from "@/composition/apollo/actor";
+import { IUser } from "@/types/current-user.model";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useQuery } from "@vue/apollo-composable";
 
-@Component({
-  apollo: {
-    groupMemberships: {
-      query: LOGGED_USER_MEMBERSHIPS,
-      update: (data) => data.loggedUser.memberships,
-      variables() {
-        return {
-          page: 1,
-          limit: 10,
-          membershipName: this.actorFilter,
-        };
-      },
-    },
-    identities: IDENTITIES,
-    currentActor: CURRENT_ACTOR_CLIENT,
-  },
-})
-export default class OrganizerPicker extends Vue {
-  @Prop() value!: IActor;
+const props = withDefaults(
+  defineProps<{ modelValue: IActor; restrictModeratorLevel?: boolean }>(),
+  { restrictModeratorLevel: false }
+);
 
-  @Prop({ required: false, default: false }) restrictModeratorLevel!: boolean;
+const emit = defineEmits(["update:modelValue"]);
 
-  groupMemberships: Paginate<IMember> = { elements: [], total: 0 };
+const { currentActor } = useCurrentActorClient();
+const { identities } = useCurrentUserIdentities();
 
-  currentActor!: IPerson;
+const actorFilter = ref("");
 
-  actorFilter = "";
-
-  get selectedActor(): IActor | undefined {
-    if (this.value?.id) {
-      return this.value;
+const { result: groupMembershipsResult } = useQuery<{
+  loggedUser: Pick<IUser, "memberships">;
+}>(LOGGED_USER_MEMBERSHIPS, () => ({
+  page: 1,
+  limit: 10,
+  membershipName: actorFilter.value,
+}));
+const groupMemberships = computed(
+  () =>
+    groupMembershipsResult.value?.loggedUser.memberships ?? {
+      elements: [],
+      total: 0,
     }
-    if (this.currentActor) {
-      return this.identities.find(
-        (identity) => identity.id === this.currentActor.id
+);
+
+const selectedActor = computed({
+  get(): IActor | undefined {
+    if (props.modelValue?.id) {
+      return props.modelValue;
+    }
+    if (currentActor.value) {
+      return (identities.value ?? []).find(
+        (identity) => identity.id === currentActor.value?.id
       );
     }
     return undefined;
+  },
+
+  set(actor: IActor | undefined) {
+    emit("update:modelValue", actor);
+  },
+});
+
+const actualMemberships = computed((): IMember[] => {
+  if (props.restrictModeratorLevel) {
+    return groupMemberships.value.elements.filter((membership: IMember) =>
+      [
+        MemberRole.ADMINISTRATOR,
+        MemberRole.MODERATOR,
+        MemberRole.CREATOR,
+      ].includes(membership.role)
+    );
   }
+  return groupMemberships.value.elements;
+});
 
-  set selectedActor(actor: IActor | undefined) {
-    this.$emit("input", actor);
-  }
+const actualAvailableActors = computed((): (IActor | undefined)[] => {
+  return [
+    currentActor.value,
+    ...(identities.value ?? []).filter(
+      (identity: IActor) => identity.id !== currentActor.value?.id
+    ),
+    ...actualMemberships.value.map((member) => member.parent),
+  ].filter((elem) => elem);
+});
 
-  identities: IActor[] = [];
-
-  Actor = Actor;
-
-  get actualMemberships(): IMember[] {
-    if (this.restrictModeratorLevel) {
-      return this.groupMemberships.elements.filter((membership: IMember) =>
-        [
-          MemberRole.ADMINISTRATOR,
-          MemberRole.MODERATOR,
-          MemberRole.CREATOR,
-        ].includes(membership.role)
-      );
-    }
-    return this.groupMemberships.elements;
-  }
-
-  get actualAvailableActors(): IActor[] {
+const actualFilteredAvailableActors = computed((): (IActor | undefined)[] => {
+  return (actualAvailableActors.value ?? []).filter((actor) => {
+    if (actor === undefined) return false;
     return [
-      this.currentActor,
-      ...this.identities.filter(
-        (identity: IActor) => identity.id !== this.currentActor?.id
-      ),
-      ...this.actualMemberships.map((member) => member.parent),
-    ].filter((elem) => elem);
-  }
-
-  get actualFilteredAvailableActors(): IActor[] {
-    return this.actualAvailableActors.filter((actor) => {
-      return [
-        actor.preferredUsername.toLowerCase(),
-        actor.name?.toLowerCase(),
-        actor.domain?.toLowerCase(),
-      ].some((match) => match?.includes(this.actorFilter.toLowerCase()));
-    });
-  }
-}
+      actor.preferredUsername.toLowerCase(),
+      actor.name?.toLowerCase(),
+      actor.domain?.toLowerCase(),
+    ].some((match) => match?.includes(actorFilter.value.toLowerCase()));
+  });
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-::v-deep .list-item {
+:deep(.list-item) {
   box-sizing: content-box;
 
   label.b-radio {
@@ -155,14 +156,14 @@ export default class OrganizerPicker extends Vue {
       padding: 0.25rem 0;
       align-items: center;
 
-      figure.image,
-      span.icon.media-left {
-        @include margin-right(0.5rem);
-      }
+      // figure.image,
+      // span.icon.media-left {
+      //   @include margin-right(0.5rem);
+      // }
 
-      span.icon.media-left {
-        @include margin-left(-0.25rem);
-      }
+      // span.icon.media-left {
+      //   @include margin-left(-0.25rem);
+      // }
     }
   }
 }

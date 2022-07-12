@@ -1,72 +1,47 @@
 <template>
-  <div class="container section">
-    <h2 class="title">{{ $t("Privacy Policy") }}</h2>
+  <div class="container mx-auto px-2">
+    <h1>{{ t("Privacy Policy") }}</h1>
     <div
-      class="content"
-      v-if="config && config.privacy"
+      class="prose dark:prose-invert"
+      v-if="config?.privacy"
       v-html="config.privacy.bodyHtml"
     />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import { PRIVACY } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { InstancePrivacyType } from "@/types/enums";
+import { useQuery } from "@vue/apollo-composable";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  apollo: {
-    config: {
-      query: PRIVACY,
-      variables() {
-        return {
-          locale: this.locale,
-        };
-      },
-      skip() {
-        return !this.locale;
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Privacy Policy") as string,
-    };
-  },
-})
-export default class Privacy extends Vue {
-  config!: IConfig;
+const { locale } = useI18n({ useScope: "global" });
 
-  locale: string | null = null;
+const { result: configResult } = useQuery<{ config: IConfig }>(
+  PRIVACY,
+  () => ({
+    locale: locale.value,
+  }),
+  () => ({
+    enabled: locale.value !== undefined,
+  })
+);
 
-  created(): void {
-    this.locale = this.$i18n.locale;
+const config = computed(() => configResult.value?.config);
+
+const { t } = useI18n({ useScope: "global" });
+
+// metaInfo() {
+//   return {
+//     title: this.t("Privacy Policy") as string,
+//   };
+// },
+
+watch(config, () => {
+  if (config.value?.privacy?.type === InstancePrivacyType.URL) {
+    window.location.replace(config.value?.privacy?.url);
   }
-
-  @Watch("config", { deep: true })
-  watchConfig(config: IConfig): void {
-    if (config?.privacy?.type) {
-      this.redirectToUrl();
-    }
-  }
-
-  redirectToUrl(): void {
-    if (this.config?.privacy?.type === InstancePrivacyType.URL) {
-      window.location.replace(this.config?.privacy?.url);
-    }
-  }
-}
+});
 </script>
-<style lang="scss" scoped>
-main > .container {
-  background: $white;
-
-  ::v-deep dt {
-    font-weight: bold;
-  }
-}
-.content ::v-deep li {
-  margin-bottom: 1rem;
-}
-</style>

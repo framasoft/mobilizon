@@ -4,19 +4,16 @@ import { IFollower } from "@/types/actor/follower.model";
 import { IParticipant } from "@/types/participant.model";
 import { Paginate } from "@/types/paginate";
 import { saveTokenData } from "@/utils/auth";
-import {
-  ApolloClient,
-  FieldPolicy,
-  NormalizedCacheObject,
-  Reference,
-  TypePolicies,
-} from "@apollo/client/core";
+import { FieldPolicy, Reference, TypePolicies } from "@apollo/client/core";
 import introspectionQueryResultData from "../../fragmentTypes.json";
 import { IMember } from "@/types/actor/member.model";
 import { IComment } from "@/types/comment.model";
 import { IEvent } from "@/types/event.model";
 import { IActivity } from "@/types/activity.model";
 import uniqBy from "lodash/uniqBy";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
+import { apolloClient } from "@/vue-apollo";
+import { IToken } from "@/types/login.model";
 
 type possibleTypes = { name: string };
 type schemaType = {
@@ -73,6 +70,9 @@ export const typePolicies: TypePolicies = {
   Instance: {
     keyFields: ["domain"],
   },
+  Config: {
+    merge: true,
+  },
   RootQueryType: {
     fields: {
       relayFollowers: paginatedLimitPagination<IFollower>(),
@@ -99,9 +99,7 @@ export const typePolicies: TypePolicies = {
   },
 };
 
-export async function refreshAccessToken(
-  apolloClient: ApolloClient<NormalizedCacheObject>
-): Promise<boolean> {
+export async function refreshAccessToken(): Promise<boolean> {
   // Remove invalid access token, so the next request is not authenticated
   localStorage.removeItem(AUTH_ACCESS_TOKEN);
 
@@ -114,21 +112,28 @@ export async function refreshAccessToken(
 
   console.log("Refreshing access token.");
 
-  try {
-    const res = await apolloClient.mutate({
-      mutation: REFRESH_TOKEN,
-      variables: {
-        refreshToken,
-      },
+  return new Promise((resolve, reject) => {
+    const { mutate, onDone, onError } = provideApolloClient(apolloClient)(() =>
+      useMutation<{ refreshToken: IToken }>(REFRESH_TOKEN)
+    );
+
+    mutate({
+      refreshToken,
     });
 
-    saveTokenData(res.data.refreshToken);
+    onDone(({ data }) => {
+      if (data?.refreshToken) {
+        saveTokenData(data?.refreshToken);
+        resolve(true);
+      }
+      reject(false);
+    });
 
-    return true;
-  } catch (err) {
-    console.debug("Failed to refresh token");
-    return false;
-  }
+    onError((err) => {
+      console.debug("Failed to refresh token");
+      reject(false);
+    });
+  });
 }
 
 type KeyArgs = FieldPolicy<any>["keyArgs"];

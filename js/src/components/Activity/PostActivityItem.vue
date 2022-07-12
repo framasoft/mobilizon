@@ -1,92 +1,92 @@
 <template>
   <div class="activity-item">
-    <b-icon :icon="'bullhorn'" :type="iconColor" />
+    <o-icon :icon="'bullhorn'" :type="iconColor" />
     <div class="subject">
-      <i18n :path="translation" tag="p">
-        <router-link
-          v-if="activity.object"
-          slot="post"
-          :to="{
-            name: RouteName.POST,
-            params: { slug: subjectParams.post_slug },
-          }"
-          >{{ subjectParams.post_title }}</router-link
-        >
-        <b v-else slot="post">{{ subjectParams.post_title }}</b>
-        <popover-actor-card
-          :actor="activity.author"
-          :inline="true"
-          slot="profile"
-        >
-          <b>
-            {{
-              $t("@{username}", {
-                username: usernameWithDomain(activity.author),
-              })
-            }}</b
-          ></popover-actor-card
-        ></i18n
+      <i18n-t :keypath="translation" tag="p">
+        <template #post>
+          <router-link
+            v-if="activity.object"
+            :to="{
+              name: RouteName.POST,
+              params: { slug: subjectParams.post_slug },
+            }"
+            >{{ subjectParams.post_title }}</router-link
+          >
+          <b v-else>{{ subjectParams.post_title }}</b>
+        </template>
+        <template #profile>
+          <popover-actor-card :actor="activity.author" :inline="true">
+            <b>
+              {{
+                $t("{'@'}{username}", {
+                  username: usernameWithDomain(activity.author),
+                })
+              }}</b
+            ></popover-actor-card
+          ></template
+        ></i18n-t
       >
-      <small class="has-text-grey-dark activity-date">{{
-        activity.insertedAt | formatTimeString
+      <small class="activity-date">{{
+        formatTimeString(activity.insertedAt)
       }}</small>
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { usernameWithDomain } from "@/types/actor";
 import { ActivityPostSubject } from "@/types/enums";
-import { Component } from "vue-property-decorator";
 import RouteName from "../../router/name";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
-import ActivityMixin from "../../mixins/activity";
-import { mixins } from "vue-class-component";
+import { formatTimeString } from "@/filters/datetime";
+import {
+  useIsActivityAuthorCurrentActor,
+  useActivitySubjectParams,
+} from "@/composition/activity";
+import { IActivity } from "@/types/activity.model";
+import { computed } from "vue";
 
-@Component({
-  components: {
-    PopoverActorCard,
-  },
-})
-export default class PostActivityItem extends mixins(ActivityMixin) {
-  usernameWithDomain = usernameWithDomain;
-  RouteName = RouteName;
-  ActivityPostSubject = ActivityPostSubject;
+const props = defineProps<{
+  activity: IActivity;
+}>();
 
-  get translation(): string | undefined {
-    switch (this.activity.subject) {
-      case ActivityPostSubject.POST_CREATED:
-        if (this.isAuthorCurrentActor) {
-          return "You created the post {post}.";
-        }
-        return "The post {post} was created by {profile}.";
-      case ActivityPostSubject.POST_UPDATED:
-        if (this.isAuthorCurrentActor) {
-          return "You updated the post {post}.";
-        }
-        return "The post {post} was updated by {profile}.";
-      case ActivityPostSubject.POST_DELETED:
-        if (this.isAuthorCurrentActor) {
-          return "You deleted the post {post}.";
-        }
-        return "The post {post} was deleted by {profile}.";
-      default:
-        return undefined;
-    }
+const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+
+const subjectParams = useActivitySubjectParams()(props.activity);
+
+const translation = computed((): string | undefined => {
+  switch (props.activity.subject) {
+    case ActivityPostSubject.POST_CREATED:
+      if (isAuthorCurrentActor) {
+        return "You created the post {post}.";
+      }
+      return "The post {post} was created by {profile}.";
+    case ActivityPostSubject.POST_UPDATED:
+      if (isAuthorCurrentActor) {
+        return "You updated the post {post}.";
+      }
+      return "The post {post} was updated by {profile}.";
+    case ActivityPostSubject.POST_DELETED:
+      if (isAuthorCurrentActor) {
+        return "You deleted the post {post}.";
+      }
+      return "The post {post} was deleted by {profile}.";
+    default:
+      return undefined;
   }
+});
 
-  get iconColor(): string | undefined {
-    switch (this.activity.subject) {
-      case ActivityPostSubject.POST_CREATED:
-        return "is-success";
-      case ActivityPostSubject.POST_UPDATED:
-        return "is-grey";
-      case ActivityPostSubject.POST_DELETED:
-        return "is-danger";
-      default:
-        return undefined;
-    }
+const iconColor = computed((): string | undefined => {
+  switch (props.activity.subject) {
+    case ActivityPostSubject.POST_CREATED:
+      return "is-success";
+    case ActivityPostSubject.POST_UPDATED:
+      return "is-grey";
+    case ActivityPostSubject.POST_DELETED:
+      return "is-danger";
+    default:
+      return undefined;
   }
-}
+});
 </script>
 <style lang="scss" scoped>
 @import "./activity.scss";

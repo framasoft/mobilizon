@@ -1,10 +1,9 @@
 import { UPLOAD_MEDIA } from "@/graphql/upload";
-import apolloProvider from "@/vue-apollo";
-import { ApolloClient } from "@apollo/client/core/ApolloClient";
+import { apolloClient } from "@/vue-apollo";
 import { Plugin } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import Image from "@tiptap/extension-image";
-import { NormalizedCacheObject } from "@apollo/client/cache";
+import { provideApolloClient, useMutation } from "@vue/apollo-composable";
 
 /* eslint-disable class-methods-use-this */
 
@@ -60,21 +59,25 @@ const CustomImage = Image.extend({
                 top: realEvent.clientY,
               });
               if (!coordinates) return false;
-              const client =
-                apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
 
-              try {
-                images.forEach(async (image) => {
-                  const { data } = await client.mutate({
-                    mutation: UPLOAD_MEDIA,
-                    variables: {
-                      file: image,
-                      name: image.name,
-                    },
-                  });
+              images.forEach((image) => {
+                const { onDone, onError } = provideApolloClient(apolloClient)(
+                  () =>
+                    useMutation<{ uploadMedia: { url: string; id: string } }>(
+                      UPLOAD_MEDIA,
+                      () => ({
+                        variables: {
+                          file: image,
+                          name: image.name,
+                        },
+                      })
+                    )
+                );
+
+                onDone(({ data }) => {
                   const node = schema.nodes.image.create({
-                    src: data.uploadMedia.url,
-                    "data-media-id": data.uploadMedia.id,
+                    src: data?.uploadMedia.url,
+                    "data-media-id": data?.uploadMedia.id,
                   });
                   const transaction = view.state.tr.insert(
                     coordinates.pos,
@@ -82,11 +85,13 @@ const CustomImage = Image.extend({
                   );
                   view.dispatch(transaction);
                 });
-                return true;
-              } catch (error) {
-                console.error(error);
-                return false;
-              }
+
+                onError((error) => {
+                  console.error(error);
+                  return false;
+                });
+              });
+              return true;
             },
           },
         },

@@ -3,60 +3,42 @@
     v-if="uri"
     :uri="uri"
     :pathAfterLogin="`/@${preferredUsername}`"
-    :sentence="sentence"
+    :sentence="
+      t(
+        `We will redirect you to your instance in order to interact with this group`
+      )
+    "
   />
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import RedirectWithAccount from "@/components/Utils/RedirectWithAccount.vue";
-import { FETCH_GROUP } from "@/graphql/group";
-import { displayName, IGroup } from "@/types/actor";
+import { useGroup } from "@/composition/apollo/group";
+import { displayName } from "@/types/actor";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  components: { RedirectWithAccount },
-  apollo: {
-    group: {
-      query: FETCH_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-          beforeDateTime: null,
-          afterDateTime: new Date(),
-        };
-      },
-      skip() {
-        return !this.$route.params.preferredUsername;
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.$t("Join group {group}", {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        group: this.groupTitle,
-      }) as string,
-    };
-  },
-})
-export default class JoinGroupWithAccount extends Vue {
-  @Prop({ type: String, required: true }) preferredUsername!: string;
+const props = defineProps<{
+  preferredUsername: string;
+}>();
 
-  group!: IGroup;
+const { group } = useGroup(props.preferredUsername);
 
-  get uri(): string {
-    return this.group?.url;
-  }
+const { t } = useI18n({ useScope: "global" });
 
-  get groupTitle(): undefined | string {
-    return this.group && displayName(this.group);
-  }
+useHead({
+  title: computed(() =>
+    t("Join group {group}", {
+      group: groupTitle.value,
+    })
+  ),
+});
 
-  sentence = this.$t(
-    "We will redirect you to your instance in order to interact with this group"
-  );
-}
+const uri = computed((): string | undefined => {
+  return group.value?.url;
+});
+
+const groupTitle = computed((): undefined | string => {
+  return group && displayName(group.value);
+});
 </script>

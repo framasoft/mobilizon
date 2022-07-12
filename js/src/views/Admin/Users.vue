@@ -11,27 +11,27 @@
     />
     <div v-if="users">
       <form @submit.prevent="activateFilters">
-        <b-field class="mb-5" grouped group-multiline>
-          <b-field :label="$t('Email')" expanded>
-            <b-input trap-focus icon="email" v-model="emailFilterFieldValue" />
-          </b-field>
-          <b-field :label="$t('IP Address')" expanded>
-            <b-input icon="web" v-model="ipFilterFieldValue" />
-          </b-field>
+        <o-field class="mb-5" grouped group-multiline>
+          <o-field :label="$t('Email')" expanded>
+            <o-input trap-focus icon="email" v-model="emailFilterFieldValue" />
+          </o-field>
+          <o-field :label="$t('IP Address')" expanded>
+            <o-input icon="web" v-model="ipFilterFieldValue" />
+          </o-field>
           <p class="control self-end mb-0">
-            <b-button type="is-primary" native-type="submit">{{
+            <o-button variant="primary" native-type="submit">{{
               $t("Filter")
-            }}</b-button>
+            }}</o-button>
           </p>
-        </b-field>
+        </o-field>
       </form>
-      <b-table
+      <o-table
         :data="users.elements"
-        :loading="$apollo.queries.users.loading"
+        :loading="usersLoading"
         paginated
         backend-pagination
         :debounce-search="500"
-        :current-page.sync="page"
+        v-model:current-page="page"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
@@ -41,10 +41,10 @@
         :per-page="USERS_PER_PAGE"
         @page-change="onPageChange"
       >
-        <b-table-column field="id" width="40" numeric v-slot="props">
+        <o-table-column field="id" width="40" numeric v-slot="props">
           {{ props.row.id }}
-        </b-table-column>
-        <b-table-column field="email" :label="$t('Email')">
+        </o-table-column>
+        <o-table-column field="email" :label="$t('Email')">
           <template v-slot:default="props">
             <router-link
               :to="{
@@ -56,8 +56,8 @@
               {{ props.row.email }}
             </router-link>
           </template>
-        </b-table-column>
-        <b-table-column
+        </o-table-column>
+        <o-table-column
           field="confirmedAt"
           :label="$t('Last seen on')"
           :centered="true"
@@ -65,171 +65,129 @@
         >
           <template v-if="props.row.currentSignInAt">
             <time :datetime="props.row.currentSignInAt">
-              {{ props.row.currentSignInAt | formatDateTimeString }}
+              {{ formatDateTimeString(props.row.currentSignInAt) }}
             </time>
           </template>
           <template v-else-if="props.row.confirmedAt"> - </template>
           <template v-else>
             {{ $t("Not confirmed") }}
           </template>
-        </b-table-column>
-        <b-table-column
+        </o-table-column>
+        <o-table-column
           field="locale"
           :label="$t('Language')"
           :centered="true"
           v-slot="props"
         >
           {{ getLanguageNameForCode(props.row.locale) }}
-        </b-table-column>
+        </o-table-column>
         <template #empty>
           <empty-content
-            v-if="!$apollo.loading && emailFilter"
+            v-if="!usersLoading && emailFilter"
             :inline="true"
             icon="account"
           >
             {{ $t("No user matches the filters") }}
             <template #desc>
-              <b-button type="is-primary" @click="resetFilters">
+              <o-button variant="primary" @click="resetFilters">
                 {{ $t("Reset filters") }}
-              </b-button>
+              </o-button>
             </template>
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { LIST_USERS } from "../../graphql/user";
 import RouteName from "../../router/name";
-import VueRouter from "vue-router";
 import { LANGUAGES_CODES } from "@/graphql/admin";
 import { IUser } from "@/types/current-user.model";
 import { Paginate } from "@/types/paginate";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useQuery } from "@vue/apollo-composable";
+import { ILanguage } from "@/types/admin.model";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { formatDateTimeString } from "@/filters/datetime";
 
 const USERS_PER_PAGE = 10;
 
-@Component({
-  apollo: {
-    users: {
-      query: LIST_USERS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          email: this.emailFilter,
-          currentSignInIp: this.ipFilter,
-          page: this.page,
-          limit: USERS_PER_PAGE,
-        };
-      },
+const emailFilter = useRouteQuery("emailFilter", "");
+const ipFilter = useRouteQuery("ipFilter", "");
+const page = useRouteQuery("page", 1, integerTransformer);
+
+const languagesCodes = computed((): string[] => {
+  return (users.value?.elements ?? []).map((user: IUser) => user.locale);
+});
+
+const {
+  result: usersResult,
+  fetchMore,
+  loading: usersLoading,
+} = useQuery<{ users: Paginate<IUser> }>(LIST_USERS, () => ({
+  email: emailFilter.value,
+  currentSignInIp: ipFilter.value,
+  page: page.value,
+  limit: USERS_PER_PAGE,
+}));
+
+const users = computed(() => usersResult.value?.users);
+
+const { result: languagesResult } = useQuery<{ languages: ILanguage[] }>(
+  LANGUAGES_CODES,
+  () => ({
+    codes: languagesCodes.value,
+  }),
+  () => ({
+    enabled: languagesCodes.value !== undefined,
+  })
+);
+
+const languages = computed(() => languagesResult.value?.languages);
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Users")),
+});
+
+const emailFilterFieldValue = ref(emailFilter.value);
+const ipFilterFieldValue = ref(ipFilter.value);
+
+const getLanguageNameForCode = (code: string): string => {
+  return (
+    (languages.value ?? []).find(({ code: languageCode }) => {
+      return languageCode === code;
+    })?.name || code
+  );
+};
+
+const onPageChange = async (newPage: number): Promise<void> => {
+  page.value = newPage;
+  await fetchMore({
+    variables: {
+      email: emailFilter.value,
+      currentSignInIp: ipFilter.value,
+      page: page.value,
+      limit: USERS_PER_PAGE,
     },
-    languages: {
-      query: LANGUAGES_CODES,
-      variables() {
-        return {
-          codes: this.languagesCodes,
-        };
-      },
-      skip() {
-        return this.languagesCodes.length < 1;
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Users") as string,
-    };
-  },
-  components: {
-    EmptyContent,
-  },
-})
-export default class Users extends Vue {
-  USERS_PER_PAGE = USERS_PER_PAGE;
+  });
+};
 
-  RouteName = RouteName;
+const activateFilters = (): void => {
+  emailFilter.value = emailFilterFieldValue.value;
+  ipFilter.value = ipFilterFieldValue.value;
+};
 
-  users!: Paginate<IUser>;
-  languages!: Array<{ code: string; name: string }>;
-
-  emailFilterFieldValue = this.emailFilter;
-  ipFilterFieldValue = this.ipFilter;
-
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  set page(page: number) {
-    this.pushRouter({ page: page.toString() });
-  }
-
-  get emailFilter(): string {
-    return (this.$route.query.emailFilter as string) || "";
-  }
-
-  set emailFilter(emailFilter: string) {
-    this.pushRouter({ emailFilter });
-  }
-
-  get ipFilter(): string {
-    return (this.$route.query.ipFilter as string) || "";
-  }
-
-  set ipFilter(ipFilter: string) {
-    this.pushRouter({ ipFilter });
-  }
-
-  get languagesCodes(): string[] {
-    return (this.users?.elements || []).map((user: IUser) => user.locale);
-  }
-
-  getLanguageNameForCode(code: string): string {
-    return (
-      (this.languages || []).find(({ code: languageCode }) => {
-        return languageCode === code;
-      })?.name || code
-    );
-  }
-
-  async onPageChange(page: number): Promise<void> {
-    this.page = page;
-    await this.$apollo.queries.users.fetchMore({
-      variables: {
-        email: this.emailFilter,
-        currentSignInIp: this.ipFilter,
-        page: this.page,
-        limit: USERS_PER_PAGE,
-      },
-    });
-  }
-
-  activateFilters(): void {
-    this.emailFilter = this.emailFilterFieldValue;
-    this.ipFilter = this.ipFilterFieldValue;
-  }
-
-  resetFilters(): void {
-    this.emailFilterFieldValue = "";
-    this.ipFilterFieldValue = "";
-    this.activateFilters();
-  }
-
-  private async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      await this.$router.push({
-        name: RouteName.USERS,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-}
+const resetFilters = (): void => {
+  emailFilterFieldValue.value = "";
+  ipFilterFieldValue.value = "";
+  activateFilters();
+};
 </script>
 
 <style lang="scss" scoped>

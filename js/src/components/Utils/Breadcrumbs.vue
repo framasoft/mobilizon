@@ -10,13 +10,13 @@
         <router-link
           v-if="index === 0"
           :to="element"
-          class="inline-flex items-center text-gray-800 hover:text-gray-900"
+          class="inline-flex items-center text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100"
         >
           {{ element.text }}
         </router-link>
         <div class="flex items-center" v-else-if="index === links.length - 1">
           <svg
-            class="w-6 h-6 text-gray-400 rtl:rotate-180"
+            class="w-6 h-6 text-gray-400 dark:text-gray-100 rtl:rotate-180"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -28,13 +28,13 @@
             ></path>
           </svg>
           <span
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-600 md:ltr:ml-2 md:rtl:mr-2"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-600 dark:text-gray-300 md:ltr:ml-2 md:rtl:mr-2"
             >{{ element.text }}</span
           >
         </div>
         <div class="flex items-center" v-else>
           <svg
-            class="w-6 h-6 text-gray-400 rtl:rotate-180"
+            class="w-6 h-6 text-gray-400 dark:text-gray-100 rtl:rotate-180"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@
           </svg>
           <router-link
             :to="element"
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-800 hover:text-gray-900 md:ltr:ml-2 md:rtl:mr-2"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100 md:ltr:ml-2 md:rtl:mr-2"
             >{{ element.text }}</router-link
           >
         </div>
@@ -56,14 +56,12 @@
     </ol>
   </nav>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Location } from "vue-router";
+<script lang="ts" setup>
+import { RouteLocationRaw } from "vue-router";
 
-type LinkElement = Location & { text: string };
+type LinkElement = RouteLocationRaw & { text: string };
 
-@Component
-export default class Breadcrumbs extends Vue {
-  @Prop({ type: Array, required: true }) links!: LinkElement[];
-}
+defineProps<{
+  links: LinkElement[];
+}>();
 </script>

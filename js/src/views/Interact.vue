@@ -1,99 +1,103 @@
 <template>
-  <div class="container section">
-    <b-notification v-if="$apollo.queries.interact.loading">
-      {{ $t("Redirecting to content…") }}
-    </b-notification>
-    <b-notification v-if="$apollo.queries.interact.skip" type="is-danger">
-      {{ $t("Resource provided is not an URL") }}
-    </b-notification>
-    <b-message
-      :title="$t('Error')"
-      type="is-danger"
+  <div class="container mx-auto section">
+    <o-notification v-if="loading">
+      {{ t("Redirecting to content…") }}
+    </o-notification>
+    <o-notification v-if="!isURI" variant="danger">
+      {{ t("Resource provided is not an URL") }}
+    </o-notification>
+    <o-notification
+      :title="t('Error')"
+      variant="danger"
       has-icon
       :closable="false"
-      v-if="!$apollo.loading && errors.length > 0"
+      v-if="!loading && errors.length > 0"
     >
       <p v-for="error in errors" :key="error">
         <b>{{ error }}</b>
       </p>
       <p>
         {{
-          $t(
+          t(
             "It is possible that the content is not accessible on this instance, because this instance has blocked the profiles or groups behind this content."
           )
         }}
       </p>
-    </b-message>
+    </o-notification>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { INTERACT } from "@/graphql/search";
 import { IEvent } from "@/types/event.model";
 import { IGroup, usernameWithDomain } from "@/types/actor";
 import RouteName from "../router/name";
 import { GraphQLError } from "graphql";
+import { useQuery } from "@vue/apollo-composable";
+import { computed, reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useRouteQuery } from "vue-use-route-query";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  apollo: {
-    interact: {
-      query: INTERACT,
-      variables() {
-        return {
-          uri: this.$route.query.uri,
-        };
-      },
-      skip() {
-        try {
-          const url = this.$route.query.uri as string;
-          const uri = new URL(url);
-          return !(uri instanceof URL);
-        } catch (e) {
-          return true;
-        }
-      },
-      error({ graphQLErrors, networkError }) {
-        if (networkError) {
-          this.errors = [networkError.message];
-        }
-        this.errors = graphQLErrors.map((error: GraphQLError) => error.message);
-      },
-      async result({ data: { interact } }) {
-        switch (interact.__typename) {
-          case "Group":
-            await this.$router.replace({
-              name: RouteName.GROUP,
-              params: { preferredUsername: usernameWithDomain(interact) },
-            });
-            break;
-          case "Event":
-            await this.$router.replace({
-              name: RouteName.EVENT,
-              params: { uuid: interact.uuid },
-            });
-            break;
-          default:
-            this.error = [this.$t("This URL is not supported")];
-        }
-        // await this.$router.replace({
-        //   name: RouteName.EVENT,
-        //   params: { uuid: event.uuid },
-        // });
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Interact with a remote content") as string,
-    };
-  },
-})
-export default class Interact extends Vue {
-  interact!: IEvent | IGroup;
+const router = useRouter();
+const route = useRoute();
+const { t } = useI18n({ useScope: "global" });
 
-  errors: string[] = [];
-}
+const uri = useRouteQuery("uri", "");
+
+const isURI = computed((): boolean => {
+  try {
+    const url = new URL(uri.value);
+    return !(url instanceof URL);
+  } catch (e) {
+    return true;
+  }
+});
+
+const errors = reactive<string[]>([]);
+
+const { onResult, onError, loading } = useQuery<{
+  interact: (IEvent | IGroup) & { __typename: string };
+}>(
+  INTERACT,
+  () => ({
+    uri: uri.value,
+  }),
+  () => ({
+    enabled: isURI.value !== false,
+  })
+);
+
+onResult(async ({ data: { interact } }) => {
+  switch (interact.__typename) {
+    case "Group":
+      await router.replace({
+        name: RouteName.GROUP,
+        params: { preferredUsername: usernameWithDomain(interact as IGroup) },
+      });
+      break;
+    case "Event":
+      await router.replace({
+        name: RouteName.EVENT,
+        params: { uuid: (interact as IEvent).uuid },
+      });
+      break;
+    default:
+      errors.push(t("This URL is not supported"));
+  }
+});
+
+onError(({ graphQLErrors, networkError }) => {
+  if (networkError) {
+    errors.push(networkError.message);
+  }
+  errors.push(...graphQLErrors.map((error: GraphQLError) => error.message));
+});
+
+useHead({
+  title: computed(() => t("Interact with a remote content")),
+});
 </script>
 <style lang="scss">
 main > .container {

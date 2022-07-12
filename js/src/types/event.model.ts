@@ -10,14 +10,13 @@ import type { IParticipant } from "./participant.model";
 import { EventOptions } from "./event-options.model";
 import type { IEventOptions } from "./event-options.model";
 import { EventJoinOptions, EventStatus, EventVisibility } from "./enums";
-import { IEventMetadata } from "./event-metadata";
+import { IEventMetadata, IEventMetadataDescription } from "./event-metadata";
 
 export interface IEventCardOptions {
-  hideDate: boolean;
-  loggedPerson: IPerson | boolean;
-  hideDetails: boolean;
-  organizerActor: IActor | null;
-  memberofGroup: boolean;
+  hideDate?: boolean;
+  loggedPerson?: IPerson | boolean;
+  hideDetails?: boolean;
+  organizerActor?: IActor | null;
 }
 
 export interface IEventParticipantStats {
@@ -65,9 +64,9 @@ export interface IEvent {
   title: string;
   slug: string;
   description: string;
-  beginsOn: Date;
-  endsOn: Date | null;
-  publishAt: Date;
+  beginsOn: string;
+  endsOn: string | null;
+  publishAt: string;
   status: EventStatus;
   visibility: EventVisibility;
   joinOptions: EventJoinOptions;
@@ -89,23 +88,23 @@ export interface IEvent {
 
   tags: ITag[];
   options: IEventOptions;
-  metadata: IEventMetadata[];
+  metadata: IEventMetadataDescription[];
   contacts: IActor[];
   language: string;
   category: string;
 
-  toEditJSON(): IEventEditJSON;
+  toEditJSON?(): IEventEditJSON;
 }
 
 export interface IEditableEvent extends Omit<IEvent, "beginsOn"> {
-  beginsOn: Date | null;
+  beginsOn: string | null;
 }
 export class EventModel implements IEvent {
   id?: string;
 
-  beginsOn = new Date();
+  beginsOn = new Date().toISOString();
 
-  endsOn: Date | null = new Date();
+  endsOn: string | null = new Date().toISOString();
 
   title = "";
 
@@ -135,7 +134,7 @@ export class EventModel implements IEvent {
 
   draft = true;
 
-  publishAt = new Date();
+  publishAt = new Date().toISOString();
 
   language = "und";
 
@@ -166,7 +165,7 @@ export class EventModel implements IEvent {
 
   options: IEventOptions = new EventOptions();
 
-  metadata: IEventMetadata[] = [];
+  metadata: IEventMetadataDescription[] = [];
 
   category = "MEETING";
 
@@ -183,15 +182,15 @@ export class EventModel implements IEvent {
     this.description = hash.description || "";
 
     if (hash.beginsOn) {
-      this.beginsOn = new Date(hash.beginsOn);
+      this.beginsOn = new Date(hash.beginsOn).toISOString();
     }
     if (hash.endsOn) {
-      this.endsOn = new Date(hash.endsOn);
+      this.endsOn = new Date(hash.endsOn).toISOString();
     } else {
       this.endsOn = null;
     }
 
-    this.publishAt = new Date(hash.publishAt);
+    this.publishAt = new Date(hash.publishAt).toISOString();
 
     this.status = hash.status;
     this.visibility = hash.visibility;
@@ -242,8 +241,8 @@ export function toEditJSON(event: IEditableEvent): IEventEditJSON {
     id: event.id,
     title: event.title,
     description: event.description,
-    beginsOn: event.beginsOn ? event.beginsOn.toISOString() : null,
-    endsOn: event.endsOn ? event.endsOn.toISOString() : null,
+    beginsOn: event.beginsOn ? event.beginsOn.toString() : null,
+    endsOn: event.endsOn ? event.endsOn.toString() : null,
     status: event.status,
     category: event.category,
     visibility: event.visibility,
@@ -278,6 +277,10 @@ export function organizer(event: IEvent): IActor | null {
     return event.organizerActor;
   }
   return null;
+}
+
+export function organizerAvatarUrl(event: IEvent): string | null {
+  return organizer(event)?.avatar?.url ?? null;
 }
 
 export function organizerDisplayName(event: IEvent): string | null {

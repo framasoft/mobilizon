@@ -1,53 +1,47 @@
 <template>
-  <aside class="section container">
-    <h1 class="title">{{ $t("Settings") }}</h1>
-    <div class="columns">
-      <aside class="column is-one-quarter-desktop">
+  <div class="container mx-auto">
+    <h1 class="">{{ t("Settings") }}</h1>
+    <div class="flex flex-wrap gap-2">
+      <aside class="max-w-xs flex-1">
         <ul>
           <SettingMenuSection
-            :title="$t('Settings')"
+            :title="t('Settings')"
             :to="{ name: RouteName.GROUP_SETTINGS }"
           >
             <SettingMenuItem
-              :title="this.$t('Public')"
+              :title="t('Public')"
               :to="{ name: RouteName.GROUP_PUBLIC_SETTINGS }"
             />
             <SettingMenuItem
-              :title="this.$t('Members')"
+              :title="t('Members')"
               :to="{ name: RouteName.GROUP_MEMBERS_SETTINGS }"
             />
             <SettingMenuItem
-              :title="this.$t('Followers')"
+              :title="t('Followers')"
               :to="{ name: RouteName.GROUP_FOLLOWERS_SETTINGS }"
             />
           </SettingMenuSection>
         </ul>
       </aside>
-      <div class="column">
+      <div class="flex-1">
         <router-view />
       </div>
     </div>
-  </aside>
+  </div>
 </template>
-<script lang="ts">
-import { Component } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import GroupMixin from "@/mixins/group";
-import RouteName from "../../router/name";
-import SettingMenuSection from "../../components/Settings/SettingMenuSection.vue";
-import SettingMenuItem from "../../components/Settings/SettingMenuItem.vue";
+<script lang="ts" setup>
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
+import RouteName from "@/router/name";
+import SettingMenuSection from "@/components/Settings/SettingMenuSection.vue";
+import SettingMenuItem from "@/components/Settings/SettingMenuItem.vue";
 
-@Component({
-  components: { SettingMenuSection, SettingMenuItem },
-  metaInfo() {
-    return {
-      title: this.$t("Group settings") as string,
-    };
-  },
-})
-export default class Settings extends mixins(GroupMixin) {
-  RouteName = RouteName;
-}
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Group settings")),
+});
 </script>
 
 <style lang="scss" scoped>

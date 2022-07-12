@@ -1,5 +1,4 @@
-import { RouteConfig, Route } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
 export enum GroupsRouteName {
   TODO_LISTS = "TODO_LISTS",
@@ -22,33 +21,29 @@ export enum GroupsRouteName {
   TIMELINE = "TIMELINE",
 }
 
-const resourceFolder = (): Promise<ImportedComponent> =>
+const resourceFolder = (): Promise<any> =>
   import("@/views/Resources/ResourceFolder.vue");
-const groupEvents = (): Promise<ImportedComponent> =>
-  import(/* webpackChunkName: "groupEvents" */ "@/views/Event/GroupEvents.vue");
+const groupEvents = (): Promise<any> => import("@/views/Event/GroupEvents.vue");
 
-export const groupsRoutes: RouteConfig[] = [
+export const groupsRoutes: RouteRecordRaw[] = [
   {
     path: "/@:preferredUsername/todo-lists",
     name: GroupsRouteName.TODO_LISTS,
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Todos/TodoLists.vue"),
+    component: (): Promise<any> => import("@/views/Todos/TodoLists.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
   {
     path: "/todo-lists/:id",
     name: GroupsRouteName.TODO_LIST,
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Todos/TodoList.vue"),
+    component: (): Promise<any> => import("@/views/Todos/TodoList.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
   {
     path: "/todo/:todoId",
     name: GroupsRouteName.TODO,
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Todos/Todo.vue"),
+    component: (): Promise<any> => import("@/views/Todos/TodoView.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
@@ -56,7 +51,10 @@ export const groupsRoutes: RouteConfig[] = [
     path: "/@:preferredUsername/resources",
     name: GroupsRouteName.RESOURCE_FOLDER_ROOT,
     component: resourceFolder,
-    props: { path: "/" },
+    props: (to) => ({
+      path: "/",
+      preferredUsername: to.params.preferredUsername,
+    }),
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
   {
@@ -68,8 +66,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/settings",
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Group/Settings.vue"),
+    component: (): Promise<any> => import("@/views/Group/Settings.vue"),
     props: true,
     meta: { requiredAuth: true },
     redirect: { name: GroupsRouteName.GROUP_PUBLIC_SETTINGS },
@@ -78,14 +75,15 @@ export const groupsRoutes: RouteConfig[] = [
       {
         path: "public",
         name: GroupsRouteName.GROUP_PUBLIC_SETTINGS,
-        component: (): Promise<ImportedComponent> =>
+        props: true,
+        component: (): Promise<any> =>
           import("../views/Group/GroupSettings.vue"),
         meta: { announcer: { skip: true } },
       },
       {
         path: "members",
         name: GroupsRouteName.GROUP_MEMBERS_SETTINGS,
-        component: (): Promise<ImportedComponent> =>
+        component: (): Promise<any> =>
           import("../views/Group/GroupMembers.vue"),
         props: true,
         meta: { announcer: { skip: true } },
@@ -93,7 +91,7 @@ export const groupsRoutes: RouteConfig[] = [
       {
         path: "followers",
         name: GroupsRouteName.GROUP_FOLLOWERS_SETTINGS,
-        component: (): Promise<ImportedComponent> =>
+        component: (): Promise<any> =>
           import("../views/Group/GroupFollowers.vue"),
         props: true,
         meta: { announcer: { skip: true } },
@@ -102,17 +100,15 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/p/new",
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Posts/Edit.vue"),
+    component: (): Promise<any> => import("@/views/Posts/Edit.vue"),
     props: true,
     name: GroupsRouteName.POST_CREATE,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
   {
     path: "/p/:slug/edit",
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Posts/Edit.vue"),
-    props: (route: Route): Record<string, unknown> => ({
+    component: (): Promise<any> => import("@/views/Posts/Edit.vue"),
+    props: (route: RouteLocationNormalized): Record<string, unknown> => ({
       ...route.params,
       ...{ isUpdate: true },
     }),
@@ -121,16 +117,14 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/p/:slug",
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Posts/Post.vue"),
+    component: (): Promise<any> => import("@/views/Posts/Post.vue"),
     props: true,
     name: GroupsRouteName.POST,
     meta: { requiredAuth: false, announcer: { skip: true } },
   },
   {
     path: "/@:preferredUsername/p",
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Posts/List.vue"),
+    component: (): Promise<any> => import("@/views/Posts/List.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
     meta: { requiredAuth: false, announcer: { skip: true } },
@@ -144,7 +138,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/join",
-    component: (): Promise<ImportedComponent> =>
+    component: (): Promise<any> =>
       import("@/components/Group/JoinGroupWithAccount.vue"),
     props: true,
     name: GroupsRouteName.GROUP_JOIN,
@@ -152,7 +146,7 @@ export const groupsRoutes: RouteConfig[] = [
   },
   {
     path: "/@:preferredUsername/follow",
-    component: (): Promise<ImportedComponent> =>
+    component: (): Promise<any> =>
       import("@/components/Group/JoinGroupWithAccount.vue"),
     props: true,
     name: GroupsRouteName.GROUP_FOLLOW,
@@ -161,8 +155,7 @@ export const groupsRoutes: RouteConfig[] = [
   {
     path: "/@:preferredUsername/timeline",
     name: GroupsRouteName.TIMELINE,
-    component: (): Promise<ImportedComponent> =>
-      import("@/views/Group/Timeline.vue"),
+    component: (): Promise<any> => import("@/views/Group/Timeline.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },

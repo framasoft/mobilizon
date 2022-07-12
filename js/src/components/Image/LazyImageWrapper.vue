@@ -8,10 +8,9 @@
     :rounded="rounded"
   />
 </template>
-<script lang="ts">
+<script lang="ts" setup>
+import { computed } from "vue";
 import { IMedia } from "@/types/media.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import LazyImage from "../Image/LazyImage.vue";
 
 const DEFAULT_CARD_URL = "/img/mobilizon_default_card.png";
@@ -27,28 +26,27 @@ const DEFAULT_PICTURE = {
   },
 };
 
-@Component({
-  components: {
-    LazyImage,
-  },
-})
-export default class LazyImageWrapper extends Vue {
-  @Prop({ required: false, type: Object as PropType<IMedia | null> })
-  picture!: IMedia | null;
-  @Prop({ required: false, type: Boolean, default: false }) rounded!: boolean;
-
-  get pictureOrDefault(): Partial<IMedia> {
-    if (this.picture === null) {
-      return DEFAULT_PICTURE;
-    }
-    return {
-      url: this?.picture?.url,
-      metadata: {
-        width: this?.picture?.metadata?.width,
-        height: this?.picture?.metadata?.height,
-        blurhash: this?.picture?.metadata?.blurhash,
-      },
-    };
+const props = withDefaults(
+  defineProps<{
+    picture?: IMedia | null;
+    rounded?: boolean;
+  }>(),
+  {
+    rounded: false,
   }
-}
+);
+
+const pictureOrDefault = computed(() => {
+  if (props.picture === null) {
+    return DEFAULT_PICTURE;
+  }
+  return {
+    url: props?.picture?.url,
+    metadata: {
+      width: props?.picture?.metadata?.width,
+      height: props?.picture?.metadata?.height,
+      blurhash: props?.picture?.metadata?.blurhash,
+    },
+  };
+});
 </script>

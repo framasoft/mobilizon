@@ -10,6 +10,7 @@ export interface IReportNote extends IActionLogObject {
   id: string;
   content: string;
   moderator: IActor;
+  insertedAt: string;
 }
 export interface IReport extends IActionLogObject {
   id: string;
@@ -19,8 +20,8 @@ export interface IReport extends IActionLogObject {
   comments: IComment[];
   content: string;
   notes: IReportNote[];
-  insertedAt: Date;
-  updatedAt: Date;
+  insertedAt: string;
+  updatedAt: string;
   status: ReportStatusEnum;
 }
 

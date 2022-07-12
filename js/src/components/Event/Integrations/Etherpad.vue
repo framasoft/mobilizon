@@ -9,16 +9,10 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEventMetadataDescription } from "@/types/event-metadata";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component
-export default class EtherpadIntegration extends Vue {
-  @Prop({ type: Object as PropType<IEventMetadataDescription>, required: true })
-  metadata!: IEventMetadataDescription;
-}
+defineProps<{ metadata: IEventMetadataDescription }>();
 </script>
 <style lang="scss" scoped>
 .etherpad {

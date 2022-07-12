@@ -4,44 +4,48 @@
       :links="[
         {
           name: RouteName.ACCOUNT_SETTINGS,
-          text: $t('Account'),
+          text: t('Account'),
         },
         {
           name: RouteName.ACCOUNT_SETTINGS_GENERAL,
-          text: $t('General'),
+          text: t('General'),
         },
       ]"
     />
     <section>
-      <div class="setting-title">
-        <h2>{{ $t("Email") }}</h2>
-      </div>
-      <i18n
+      <h2>{{ t("Email") }}</h2>
+      <i18n-t
         tag="p"
-        class="content"
+        class="prose dark:prose-invert"
         v-if="loggedUser"
-        path="Your current email is {email}. You use it to log in."
+        keypath="Your current email is {email}. You use it to log in."
       >
-        <b slot="email">{{ loggedUser.email }}</b>
-      </i18n>
-      <b-message v-if="!canChangeEmail" type="is-warning" :closable="false">
+        <template #email>
+          <b>{{ loggedUser.email }}</b>
+        </template>
+      </i18n-t>
+      <o-notification
+        v-if="!canChangeEmail && loggedUser.provider"
+        variant="warning"
+        :closable="false"
+      >
         {{
-          $t(
+          t(
             "Your email address was automatically set based on your {provider} account.",
             {
               provider: providerName(loggedUser.provider),
             }
           )
         }}
-      </b-message>
-      <b-notification
-        type="is-danger"
+      </o-notification>
+      <o-notification
+        variant="danger"
         has-icon
         aria-close-label="Close notification"
         role="alert"
         :key="error"
         v-for="error in changeEmailErrors"
-        >{{ error }}</b-notification
+        >{{ error }}</o-notification
       >
       <form
         @submit.prevent="resetEmailAction"
@@ -49,18 +53,18 @@
         class="form"
         v-if="canChangeEmail"
       >
-        <b-field :label="$t('New email')" label-for="account-email">
-          <b-input
+        <o-field :label="t('New email')" label-for="account-email">
+          <o-input
             aria-required="true"
             required
             type="email"
             id="account-email"
             v-model="newEmail"
           />
-        </b-field>
-        <p class="help">{{ $t("You'll receive a confirmation email.") }}</p>
-        <b-field :label="$t('Password')" label-for="account-password">
-          <b-input
+        </o-field>
+        <p class="help">{{ t("You'll receive a confirmation email.") }}</p>
+        <o-field :label="t('Password')" label-for="account-password">
+          <o-input
             aria-required="true"
             required
             type="password"
@@ -69,35 +73,38 @@
             minlength="6"
             v-model="passwordForEmailChange"
           />
-        </b-field>
-        <button
-          class="button is-primary"
-          :disabled="!($refs.emailForm && $refs.emailForm.checkValidity())"
+        </o-field>
+        <o-button
+          class="mt-2"
+          variant="primary"
+          :disabled="!(emailForm && emailForm.checkValidity())"
         >
-          {{ $t("Change my email") }}
-        </button>
+          {{ t("Change my email") }}
+        </o-button>
       </form>
-      <div class="setting-title">
-        <h2>{{ $t("Password") }}</h2>
-      </div>
-      <b-message v-if="!canChangePassword" type="is-warning" :closable="false">
+      <h2 class="mt-2">{{ t("Password") }}</h2>
+      <o-notification
+        v-if="!canChangePassword"
+        variant="warning"
+        :closable="false"
+      >
         {{
-          $t(
+          t(
             "You can't change your password because you are registered through {provider}.",
             {
               provider: providerName(loggedUser.provider),
             }
           )
         }}
-      </b-message>
-      <b-notification
-        type="is-danger"
+      </o-notification>
+      <o-notification
+        variant="danger"
         has-icon
         aria-close-label="Close notification"
         role="alert"
         :key="error"
         v-for="error in changePasswordErrors"
-        >{{ error }}</b-notification
+        >{{ error }}</o-notification
       >
       <form
         @submit.prevent="resetPasswordAction"
@@ -105,8 +112,8 @@
         class="form"
         v-if="canChangePassword"
       >
-        <b-field :label="$t('Old password')" label-for="account-old-password">
-          <b-input
+        <o-field :label="t('Old password')" label-for="account-old-password">
+          <o-input
             aria-required="true"
             required
             type="password"
@@ -115,9 +122,9 @@
             id="account-old-password"
             v-model="oldPassword"
           />
-        </b-field>
-        <b-field :label="$t('New password')" label-for="account-new-password">
-          <b-input
+        </o-field>
+        <o-field :label="t('New password')" label-for="account-new-password">
+          <o-input
             aria-required="true"
             required
             type="password"
@@ -126,302 +133,287 @@
             id="account-new-password"
             v-model="newPassword"
           />
-        </b-field>
-        <button
-          class="button is-primary"
-          :disabled="
-            !($refs.passwordForm && $refs.passwordForm.checkValidity())
-          "
+        </o-field>
+        <o-button
+          class="mt-2"
+          variant="primary"
+          :disabled="!(passwordForm && passwordForm.checkValidity())"
         >
-          {{ $t("Change my password") }}
-        </button>
+          {{ t("Change my password") }}
+        </o-button>
       </form>
-      <div class="setting-title">
-        <h2>{{ $t("Delete account") }}</h2>
-      </div>
-      <p class="content">
-        {{ $t("Deleting my account will delete all of my identities.") }}
+      <h2 class="mt-2">{{ t("Delete account") }}</h2>
+      <p class="prose dark:prose-invert">
+        {{ t("Deleting my account will delete all of my identities.") }}
       </p>
-      <b-button @click="openDeleteAccountModal" type="is-danger">
-        {{ $t("Delete my account") }}
-      </b-button>
+      <o-button @click="openDeleteAccountModal" variant="danger" class="mb-4">
+        {{ t("Delete my account") }}
+      </o-button>
 
-      <b-modal
-        :close-button-aria-label="$t('Close')"
-        :active.sync="isDeleteAccountModalActive"
+      <o-modal
+        :close-button-aria-label="t('Close')"
+        v-model:active="isDeleteAccountModalActive"
         has-modal-card
         full-screen
         :can-cancel="false"
       >
-        <section class="hero is-primary is-fullheight">
-          <div class="hero-body has-text-centered">
-            <div class="container">
-              <div class="columns">
-                <div
-                  class="column is-one-third-desktop is-offset-one-third-desktop"
-                >
+        <section class="">
+          <div class="">
+            <div class="container mx-auto max-w-md">
+              <div class="">
+                <div class="">
                   <h1 class="title">
-                    {{ $t("Deleting your Mobilizon account") }}
+                    {{ t("Deleting your Mobilizon account") }}
                   </h1>
-                  <p class="content">
+                  <p class="prose dark:prose-invert">
                     {{
-                      $t(
+                      t(
                         "Are you really sure you want to delete your whole account? You'll lose everything. Identities, settings, events created, messages and participations will be gone forever."
                       )
                     }}
                     <br />
-                    <b>{{
-                      $t("There will be no way to recover your data.")
-                    }}</b>
+                    <b>{{ t("There will be no way to recover your data.") }}</b>
                   </p>
-                  <p class="content" v-if="hasUserGotAPassword">
+                  <p class="prose dark:prose-invert" v-if="hasUserGotAPassword">
                     {{
-                      $t("Please enter your password to confirm this action.")
+                      t("Please enter your password to confirm this action.")
                     }}
                   </p>
                   <form @submit.prevent="deleteAccount">
-                    <b-field
+                    <o-field
                       :type="deleteAccountPasswordFieldType"
                       v-if="hasUserGotAPassword"
                       label-for="account-deletion-password"
                     >
-                      <b-input
+                      <o-input
                         type="password"
                         v-model="passwordForAccountDeletion"
                         password-reveal
                         id="account-deletion-password"
-                        :aria-label="$t('Password')"
+                        :aria-label="t('Password')"
                         icon="lock"
-                        :placeholder="$t('Password')"
+                        :placeholder="t('Password')"
                       />
                       <template #message>
-                        <b-message
-                          type="is-danger"
+                        <o-notification
+                          variant="danger"
                           v-for="message in deletePasswordErrors"
                           :key="message"
                         >
                           {{ message }}
-                        </b-message>
+                        </o-notification>
                       </template>
-                    </b-field>
-                    <b-button
+                    </o-field>
+                    <o-button
+                      class="mt-2"
                       native-type="submit"
-                      type="is-danger"
-                      size="is-large"
+                      variant="danger"
+                      size="large"
                     >
-                      {{ $t("Delete everything") }}
-                    </b-button>
+                      {{ t("Delete everything") }}
+                    </o-button>
                   </form>
-                  <div class="cancel-button">
-                    <b-button
-                      type="is-light"
+                  <div class="mt-4">
+                    <o-button
+                      variant="light"
                       @click="isDeleteAccountModalActive = false"
                     >
-                      {{ $t("Cancel") }}
-                    </b-button>
+                      {{ t("Cancel") }}
+                    </o-button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
-      </b-modal>
+      </o-modal>
     </section>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { useLoggedUser } from "@/composition/apollo/user";
+import { Notifier } from "@/plugins/notifier";
 import { IAuthProvider } from "@/types/enums";
+import { useMutation } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
 import { GraphQLError } from "graphql/error/GraphQLError";
-import { Component, Vue, Ref } from "vue-property-decorator";
-import { Route } from "vue-router";
+import { computed, inject, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import {
   CHANGE_EMAIL,
   CHANGE_PASSWORD,
   DELETE_ACCOUNT,
-  LOGGED_USER,
 } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { IUser } from "../../types/current-user.model";
 import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
 
-@Component({
-  apollo: {
-    loggedUser: LOGGED_USER,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("General settings") as string,
-    };
-  },
-})
-export default class AccountSettings extends Vue {
-  @Ref("passwordForm") readonly passwordForm!: HTMLElement;
+const { loggedUser } = useLoggedUser();
 
-  loggedUser!: IUser;
+const { t } = useI18n({ useScope: "global" });
 
-  passwordForEmailChange = "";
+useHead({
+  title: computed(() => t("General settings")),
+});
 
-  newEmail = "";
+const passwordForm = ref<HTMLElement>();
+const emailForm = ref<HTMLElement>();
 
-  changeEmailErrors: string[] = [];
+const passwordForEmailChange = ref("");
+const newEmail = ref("");
+const changeEmailErrors = ref<string[]>([]);
+const oldPassword = ref("");
+const newPassword = ref("");
+const changePasswordErrors = ref<string[]>([]);
+const deletePasswordErrors = ref<string[]>([]);
+const isDeleteAccountModalActive = ref(false);
+const passwordForAccountDeletion = ref("");
 
-  oldPassword = "";
+const notifier = inject<Notifier>("notifier");
 
-  newPassword = "";
+const {
+  mutate: changeEmailMutation,
+  onDone: changeEmailMutationDone,
+  onError: changeEmailMutationError,
+} = useMutation(CHANGE_EMAIL);
 
-  changePasswordErrors: string[] = [];
+changeEmailMutationDone(() => {
+  notifier?.info(
+    t(
+      "The account's email address was changed. Check your emails to verify it."
+    )
+  );
+  newEmail.value = "";
+  passwordForEmailChange.value = "";
+});
 
-  deletePasswordErrors: string[] = [];
+changeEmailMutationError((err) => {
+  handleErrors("email", err);
+});
 
-  isDeleteAccountModalActive = false;
+const resetEmailAction = async (): Promise<void> => {
+  changeEmailErrors.value = [];
 
-  passwordForAccountDeletion = "";
+  changeEmailMutation({
+    email: newEmail.value,
+    password: passwordForEmailChange.value,
+  });
+};
 
-  RouteName = RouteName;
+const {
+  mutate: changePasswordMutation,
+  onDone: onChangePasswordMutationDone,
+  onError: onChangePasswordMutationError,
+} = useMutation(CHANGE_PASSWORD);
 
-  async resetEmailAction(): Promise<void> {
-    this.changeEmailErrors = [];
+onChangePasswordMutationDone(() => {
+  oldPassword.value = "";
+  newPassword.value = "";
+  notifier?.success(t("The password was successfully changed"));
+});
 
-    try {
-      await this.$apollo.mutate({
-        mutation: CHANGE_EMAIL,
-        variables: {
-          email: this.newEmail,
-          password: this.passwordForEmailChange,
-        },
-      });
+onChangePasswordMutationError((err) => {
+  handleErrors("password", err);
+});
 
-      this.$notifier.info(
-        this.$t(
-          "The account's email address was changed. Check your emails to verify it."
-        ) as string
-      );
-      this.newEmail = "";
-      this.passwordForEmailChange = "";
-    } catch (err: any) {
-      this.handleErrors("email", err);
-    }
+const resetPasswordAction = async (): Promise<void> => {
+  changePasswordErrors.value = [];
+
+  changePasswordMutation({
+    oldPassword: oldPassword.value,
+    newPassword: newPassword.value,
+  });
+};
+
+const openDeleteAccountModal = (): void => {
+  passwordForAccountDeletion.value = "";
+  isDeleteAccountModalActive.value = true;
+};
+
+const router = useRouter();
+
+const {
+  mutate: deleteAccountMutation,
+  onDone: deleteAccountMutationDone,
+  onError: deleteAccountMutationError,
+} = useMutation<{ deleteAccount: { id: string } }, { password?: string }>(
+  DELETE_ACCOUNT
+);
+
+const { oruga } = useProgrammatic();
+
+deleteAccountMutationDone(async () => {
+  console.debug("Deleted account, logging out client...");
+  await logout(false);
+  oruga.notification.open({
+    message: t("Your account has been successfully deleted"),
+    variant: "success",
+    position: "bottom-right",
+    duration: 5000,
+  });
+
+  return router.push({ name: RouteName.HOME });
+});
+
+deleteAccountMutationError((err) => {
+  deletePasswordErrors.value = err.graphQLErrors.map(
+    ({ message }: GraphQLError) => message
+  );
+});
+
+const deleteAccount = () => {
+  deletePasswordErrors.value = [];
+  console.debug("Asking to delete account...");
+  deleteAccountMutation({
+    password: hasUserGotAPassword.value
+      ? passwordForAccountDeletion.value
+      : undefined,
+  });
+};
+
+const canChangePassword = computed((): boolean => {
+  return !loggedUser.value?.provider;
+});
+
+const canChangeEmail = computed((): boolean => {
+  return !loggedUser.value?.provider;
+});
+
+const providerName = (id: string): string => {
+  if (SELECTED_PROVIDERS[id]) {
+    return SELECTED_PROVIDERS[id];
   }
+  return id;
+};
 
-  async resetPasswordAction(): Promise<void> {
-    this.changePasswordErrors = [];
+const hasUserGotAPassword = computed((): boolean => {
+  return (
+    loggedUser.value?.provider == null ||
+    loggedUser.value?.provider === IAuthProvider.LDAP
+  );
+});
 
-    try {
-      await this.$apollo.mutate({
-        mutation: CHANGE_PASSWORD,
-        variables: {
-          oldPassword: this.oldPassword,
-          newPassword: this.newPassword,
-        },
-      });
+const deleteAccountPasswordFieldType = computed((): string | null => {
+  return deletePasswordErrors.value.length > 0 ? "is-danger" : null;
+});
 
-      this.oldPassword = "";
-      this.newPassword = "";
-      this.$notifier.success(
-        this.$t("The password was successfully changed") as string
-      );
-    } catch (err: any) {
-      this.handleErrors("password", err);
-    }
+const handleErrors = (type: string, err: any) => {
+  console.error(err);
+
+  if (err.graphQLErrors !== undefined) {
+    err.graphQLErrors.forEach(({ message }: { message: string }) => {
+      switch (type) {
+        case "password":
+          changePasswordErrors.value.push(message);
+          break;
+        case "email":
+        default:
+          changeEmailErrors.value.push(message);
+          break;
+      }
+    });
   }
-
-  protected openDeleteAccountModal(): void {
-    this.passwordForAccountDeletion = "";
-    this.isDeleteAccountModalActive = true;
-  }
-
-  async deleteAccount(): Promise<Route | void> {
-    try {
-      this.deletePasswordErrors = [];
-      console.debug("Asking to delete account...");
-      await this.$apollo.mutate({
-        mutation: DELETE_ACCOUNT,
-        variables: {
-          password: this.hasUserGotAPassword
-            ? this.passwordForAccountDeletion
-            : null,
-        },
-      });
-      console.debug("Deleted account, logging out client...");
-      await logout(this.$apollo.provider.defaultClient, false);
-      this.$buefy.notification.open({
-        message: this.$t(
-          "Your account has been successfully deleted"
-        ) as string,
-        type: "is-success",
-        position: "is-bottom-right",
-        duration: 5000,
-      });
-
-      return await this.$router.push({ name: RouteName.HOME });
-    } catch (err: any) {
-      this.deletePasswordErrors = err.graphQLErrors.map(
-        ({ message }: GraphQLError) => message
-      );
-    }
-  }
-
-  get canChangePassword(): boolean {
-    return !this.loggedUser.provider;
-  }
-
-  get canChangeEmail(): boolean {
-    return !this.loggedUser.provider;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  providerName(id: string): string {
-    if (SELECTED_PROVIDERS[id]) {
-      return SELECTED_PROVIDERS[id];
-    }
-    return id;
-  }
-
-  get hasUserGotAPassword(): boolean {
-    return (
-      this.loggedUser &&
-      (this.loggedUser.provider == null ||
-        this.loggedUser.provider === IAuthProvider.LDAP)
-    );
-  }
-
-  get deleteAccountPasswordFieldType(): string | null {
-    return this.deletePasswordErrors.length > 0 ? "is-danger" : null;
-  }
-
-  private handleErrors(type: string, err: any) {
-    console.error(err);
-
-    if (err.graphQLErrors !== undefined) {
-      err.graphQLErrors.forEach(({ message }: { message: string }) => {
-        switch (type) {
-          case "password":
-            this.changePasswordErrors.push(message);
-            break;
-          case "email":
-          default:
-            this.changeEmailErrors.push(message);
-            break;
-        }
-      });
-    }
-  }
-}
+};
 </script>
-
-<style lang="scss" scoped>
-.modal.is-active.is-full-screen {
-  .help.is-danger {
-    font-size: 1rem;
-  }
-}
-
-.cancel-button {
-  margin-top: 2rem;
-}
-
-::v-deep .modal .modal-background {
-  background-color: initial;
-}
-</style>

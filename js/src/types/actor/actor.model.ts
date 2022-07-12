@@ -6,7 +6,7 @@ export interface IActor {
   url: string;
   name: string;
   domain: string | null;
-  mediaSize: number;
+  mediaSize?: number;
   summary: string;
   preferredUsername: string;
   suspended: boolean;
@@ -56,7 +56,10 @@ export class Actor implements IActor {
   }
 }
 
-export function usernameWithDomain(actor: IActor, force = false): string {
+export function usernameWithDomain(
+  actor: IActor | undefined,
+  force = false
+): string {
   if (!actor) return "";
   if (actor?.domain) {
     return `${actor.preferredUsername}@${actor.domain}`;
@@ -67,7 +70,7 @@ export function usernameWithDomain(actor: IActor, force = false): string {
   return actor.preferredUsername;
 }
 
-export function displayName(actor: IActor): string {
+export function displayName(actor: IActor | undefined): string {
   return actor && actor.name != null && actor.name !== ""
     ? actor.name
     : usernameWithDomain(actor);

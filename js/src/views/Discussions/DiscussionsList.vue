@@ -1,5 +1,5 @@
 <template>
-  <div class="container section" v-if="group">
+  <div class="container mx-auto section" v-if="group">
     <breadcrumbs-nav
       :links="[
         {
@@ -26,13 +26,13 @@
           )
         }}
       </p>
-      <b-button
+      <o-button
         tag="router-link"
         :to="{
           name: RouteName.CREATE_DISCUSSION,
           params: { preferredUsername },
         }"
-        >{{ $t("New discussion") }}</b-button
+        >{{ $t("New discussion") }}</o-button
       >
       <div v-if="group.discussions.elements.length > 0">
         <discussion-list-item
@@ -40,7 +40,7 @@
           v-for="discussion in group.discussions.elements"
           :key="discussion.id"
         />
-        <b-pagination
+        <o-pagination
           class="discussion-pagination"
           :total="group.discussions.total"
           v-model="page"
@@ -50,13 +50,13 @@
           :aria-page-label="$t('Page')"
           :aria-current-label="$t('Current page')"
         >
-        </b-pagination>
+        </o-pagination>
       </div>
       <empty-content v-else icon="chat">
         {{ $t("There's no discussions yet") }}
       </empty-content>
     </section>
-    <section class="section" v-else-if="!$apollo.loading">
+    <section class="section" v-else-if="!groupLoading && !personLoading">
       <empty-content icon="chat">
         {{ $t("Only group members can access discussions") }}
         <template #desc>
@@ -70,157 +70,59 @@
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { FETCH_GROUP } from "@/graphql/group";
-import {
-  displayName,
-  IActor,
-  IGroup,
-  IPerson,
-  usernameWithDomain,
-} from "@/types/actor";
+<script lang="ts" setup>
+import { displayName, usernameWithDomain } from "@/types/actor";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import RouteName from "../../router/name";
 import { MemberRole } from "@/types/enums";
-import {
-  CURRENT_ACTOR_CLIENT,
-  GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-  PERSON_STATUS_GROUP,
-} from "@/graphql/actor";
+
 import { IMember } from "@/types/actor/member.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import VueRouter from "vue-router";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useGroup } from "@/composition/apollo/group";
+import { usePersonStatusGroup } from "@/composition/apollo/actor";
+import { useI18n } from "vue-i18n";
+import { useRouteQuery, integerTransformer } from "vue-use-route-query";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
 
+const page = useRouteQuery("page", 1, integerTransformer);
 const DISCUSSIONS_PER_PAGE = 10;
 
-@Component({
-  components: { DiscussionListItem, EmptyContent },
-  apollo: {
-    group: {
-      query: FETCH_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          name: this.preferredUsername,
-          discussionsPage: this.page,
-          discussionsLimit: DISCUSSIONS_PER_PAGE,
-        };
-      },
-      skip() {
-        return !this.preferredUsername;
-      },
-    },
-    person: {
-      query: PERSON_STATUS_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-          group: this.preferredUsername,
-        };
-      },
-      subscribeToMore: {
-        document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
-        variables() {
-          return {
-            actorId: this.currentActor.id,
-            group: this.preferredUsername,
-          };
-        },
-        skip() {
-          return (
-            !this.currentActor ||
-            !this.currentActor.id ||
-            !this.preferredUsername
-          );
-        },
-      },
-      skip() {
-        return (
-          !this.currentActor || !this.currentActor.id || !this.preferredUsername
-        );
-      },
-    },
-    currentActor: CURRENT_ACTOR_CLIENT,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Discussions") as string,
-    };
-  },
-})
-export default class DiscussionsList extends Vue {
-  @Prop({ type: String, required: true }) preferredUsername!: string;
+const props = defineProps<{ preferredUsername: string }>();
 
-  person!: IPerson;
+const { group, loading: groupLoading } = useGroup(props.preferredUsername, {
+  discussionsPage: page.value,
+  discussionsLimit: DISCUSSIONS_PER_PAGE,
+});
 
-  group!: IGroup;
+const { person, loading: personLoading } = usePersonStatusGroup(
+  props.preferredUsername
+);
 
-  currentActor!: IActor;
+const { t } = useI18n({ useScope: "global" });
 
-  RouteName = RouteName;
+useHead({
+  title: computed(() => t("Discussions")),
+});
 
-  usernameWithDomain = usernameWithDomain;
-  displayName = displayName;
+const groupMemberships = computed((): (string | undefined)[] => {
+  if (!person.value || !person.value.id) return [];
+  return person.value.memberships.elements
+    .filter(
+      (membership: IMember) =>
+        ![
+          MemberRole.REJECTED,
+          MemberRole.NOT_APPROVED,
+          MemberRole.INVITED,
+        ].includes(membership.role)
+    )
+    .map(({ parent: { id } }) => id);
+});
 
-  DISCUSSIONS_PER_PAGE = DISCUSSIONS_PER_PAGE;
-
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  set page(page: number) {
-    this.pushRouter(RouteName.DISCUSSION_LIST, {
-      page: page.toString(),
-    });
-  }
-
-  get groupMemberships(): (string | undefined)[] {
-    if (!this.person || !this.person.id) return [];
-    return this.person.memberships.elements
-      .filter(
-        (membership: IMember) =>
-          ![
-            MemberRole.REJECTED,
-            MemberRole.NOT_APPROVED,
-            MemberRole.INVITED,
-          ].includes(membership.role)
-      )
-      .map(({ parent: { id } }) => id);
-  }
-
-  get isCurrentActorAGroupMember(): boolean {
-    return (
-      this.groupMemberships !== undefined &&
-      this.groupMemberships.includes(this.group.id)
-    );
-  }
-
-  protected async pushRouter(
-    routeName: string,
-    args: Record<string, string>
-  ): Promise<void> {
-    try {
-      await this.$router.push({
-        name: routeName,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-}
+const isCurrentActorAGroupMember = computed((): boolean => {
+  return (
+    groupMemberships.value !== undefined &&
+    groupMemberships.value.includes(group.value?.id)
+  );
+});
 </script>
-<style lang="scss">
-div.container.section {
-  background: white;
-
-  .discussion-pagination {
-    margin-top: 1rem;
-  }
-}
-</style>

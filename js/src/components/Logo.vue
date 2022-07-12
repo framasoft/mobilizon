@@ -27,13 +27,13 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-@Component
-export default class Logo extends Vue {
-  @Prop({ type: Boolean, required: false, default: false }) invert!: boolean;
-}
+<script lang="ts" setup>
+withDefaults(
+  defineProps<{
+    invert?: boolean;
+  }>(),
+  { invert: false }
+);
 </script>
 <style lang="scss" scoped>
 svg {

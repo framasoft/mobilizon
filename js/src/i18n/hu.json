@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Megbeszélés indítása",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> meg lesz jelenítve kapcsolatként.|<b>{contact}</b> meg lesznek jelenítve kapcsolatokként.",
   "@{group}": "@{group}",
-  "@{username}": "@{username}",
+  "{'@'}{username}": "{'@'}{username}",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "@{username} követési kérése el lett fogadva",
   "@{username}'s follow request was rejected": "@{username} követési kérése vissza lett utasítva",

@@ -1,43 +1,43 @@
 <template>
-  <section class="section container">
-    <div class="columns is-mobile is-centered">
-      <div class="column is-half-desktop">
-        <h1 class="title" v-if="userAlreadyActivated">
+  <section class="container mx-auto">
+    <div class="">
+      <div class="">
+        <h1 class="text-2xl" v-if="userAlreadyActivated">
           {{ $t("Congratulations, your account is now created!") }}
         </h1>
-        <h1 class="title" v-else>
+        <h1 class="text-2xl" v-else>
           {{
             $t("Register an account on {instanceName}!", {
-              instanceName: config.name,
+              instanceName,
             })
           }}
         </h1>
-        <p class="content" v-if="userAlreadyActivated">
+        <p class="prose dark:prose-invert" v-if="userAlreadyActivated">
           {{ $t("Now, create your first profile:") }}
         </p>
         <form v-if="!validationSent" @submit.prevent="submit">
-          <b-field :label="$t('Displayed nickname')">
-            <b-input
+          <o-field :label="$t('Displayed nickname')">
+            <o-input
               aria-required="true"
               required
               v-model="identity.name"
-              @input="autoUpdateUsername($event)"
+              @input="autoUpdateUsername"
             />
-          </b-field>
+          </o-field>
 
-          <b-field
+          <o-field
             :label="$t('Username')"
             :type="errors.preferred_username ? 'is-danger' : null"
             :message="errors.preferred_username"
           >
-            <b-field
+            <o-field
               :message="
                 $t(
                   'Only alphanumeric lowercased characters and underscores are supported.'
                 )
               "
             >
-              <b-input
+              <o-input
                 aria-required="true"
                 required
                 expanded
@@ -53,8 +53,8 @@
               <p class="control">
                 <span class="button is-static">@{{ host }}</span>
               </p>
-            </b-field>
-          </b-field>
+            </o-field>
+          </o-field>
           <p class="description">
             {{
               $t(
@@ -63,16 +63,16 @@
             }}
           </p>
 
-          <b-field :label="$t('Short bio')">
-            <b-input
+          <o-field :label="$t('Short bio')">
+            <o-input
               type="textarea"
               maxlength="100"
               rows="2"
               v-model="identity.summary"
             />
-          </b-field>
+          </o-field>
 
-          <p class="content">
+          <p class="prose dark:prose-invert">
             {{
               $t(
                 "You will be able to add an avatar and set other options in your account settings."
@@ -81,28 +81,30 @@
           </p>
 
           <p class="control has-text-centered">
-            <b-button
-              type="is-primary"
-              size="is-large"
+            <o-button
+              variant="primary"
+              size="large"
               native-type="submit"
               :disabled="sendingValidation"
-              >{{ $t("Create my profile") }}</b-button
+              >{{ $t("Create my profile") }}</o-button
             >
           </p>
         </form>
 
         <div v-if="validationSent && !userAlreadyActivated">
-          <b-message type="is-success" :closable="false">
+          <o-notification variant="success" :closable="false">
             <h2 class="title">
               {{
                 $t("Your account is nearly ready, {username}", {
-                  username: identity.name || identity.preferredUsername,
+                  username: identity.name ?? identity.preferredUsername,
                 })
               }}
             </h2>
-            <i18n path="A validation email was sent to {email}" tag="p">
-              <code slot="email">{{ email }}</code>
-            </i18n>
+            <i18n-t keypath="A validation email was sent to {email}" tag="p">
+              <template #email>
+                <code>{{ email }}</code>
+              </template>
+            </i18n-t>
             <p>
               {{
                 $t(
@@ -110,120 +112,99 @@
                 )
               }}
             </p>
-          </b-message>
+          </o-notification>
         </div>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
-import { IPerson } from "../../types/actor";
-import { IDENTITIES, REGISTER_PERSON } from "../../graphql/actor";
+<script lang="ts" setup>
+import { Person } from "../../types/actor";
 import { MOBILIZON_INSTANCE_HOST } from "../../api/_entrypoint";
 import RouteName from "../../router/name";
-import { changeIdentity } from "../../utils/auth";
-import identityEditionMixin from "../../mixins/identityEdition";
-import { ApolloCache, FetchResult } from "@apollo/client/core";
-import { ActorType } from "@/types/enums";
+import { changeIdentity } from "../../utils/identity";
+import { useInstanceName } from "@/composition/apollo/config";
+import { ref, computed, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
+import { registerAccount } from "@/composition/apollo/user";
+import { convertToUsername } from "@/utils/username";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  apollo: {
-    config: CONFIG,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Register") as string,
-    };
-  },
-})
-export default class Register extends mixins(identityEditionMixin) {
-  @Prop({ type: String, required: true }) email!: string;
-
-  @Prop({ type: Boolean, required: false, default: false })
-  userAlreadyActivated!: boolean;
-
-  config!: IConfig;
-
-  host?: string = MOBILIZON_INSTANCE_HOST;
-
-  errors: Record<string, unknown> = {};
-
-  validationSent = false;
-
-  sendingValidation = false;
-
-  async created(): Promise<void> {
-    // Make sure no one goes to this page if we don't want to
-    if (!this.email) {
-      await this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
-    }
+const props = withDefaults(
+  defineProps<{
+    email: string;
+    userAlreadyActivated?: boolean;
+  }>(),
+  {
+    userAlreadyActivated: false,
   }
+);
 
-  async submit(): Promise<void> {
-    try {
-      this.sendingValidation = true;
-      this.errors = {};
-      const { data } = await this.$apollo.mutate<{ registerPerson: IPerson }>({
-        mutation: REGISTER_PERSON,
-        variables: { email: this.email, ...this.identity },
-        update: (
-          store: ApolloCache<{ registerPerson: IPerson }>,
-          { data: localData }: FetchResult
-        ) => {
-          if (this.userAlreadyActivated) {
-            const identitiesData = store.readQuery<{ identities: IPerson[] }>({
-              query: IDENTITIES,
-            });
+const { instanceName } = useInstanceName();
 
-            if (identitiesData && localData) {
-              const newPersonData = {
-                ...localData.registerPerson,
-                type: ActorType.PERSON,
-              };
+const router = useRouter();
 
-              store.writeQuery({
-                query: IDENTITIES,
-                data: {
-                  ...identitiesData,
-                  identities: [...identitiesData.identities, newPersonData],
-                },
-              });
-            }
-          }
-        },
-      });
-      if (data) {
-        this.validationSent = true;
-        window.localStorage.setItem("new-registered-user", "yes");
+const { t } = useI18n({ useScope: "global" });
 
-        if (this.userAlreadyActivated) {
-          await changeIdentity(
-            this.$apollo.provider.defaultClient,
-            data.registerPerson
-          );
+useHead({
+  title: computed(() => t("Register")),
+});
 
-          await this.$router.push({ name: RouteName.HOME });
-        }
-      }
-    } catch (errorCatched: any) {
-      this.errors = errorCatched.graphQLErrors.reduce(
-        (acc: { [key: string]: string }, error: any) => {
-          acc[error.details || error.field] = error.message;
-          return acc;
-        },
-        {}
-      );
-      console.error("Error while registering person", errorCatched);
-      console.error("Errors while registering person", this.errors);
-      this.sendingValidation = false;
-    }
+const host: string = MOBILIZON_INSTANCE_HOST;
+
+const errors = ref<Record<string, unknown>>({});
+
+const validationSent = ref(false);
+
+const sendingValidation = ref(false);
+
+const identity = ref(new Person());
+
+onBeforeMount(() => {
+  // Make sure no one goes to this page if we don't want to
+  if (!props.email) {
+    router.replace({ name: RouteName.PAGE_NOT_FOUND });
   }
-}
+});
+
+const autoUpdateUsername = () => {
+  identity.value.preferredUsername = convertToUsername(identity.value.name);
+};
+
+const submit = async (): Promise<void> => {
+  sendingValidation.value = true;
+  errors.value = {};
+  const { onDone, onError } = registerAccount(
+    { email: props.email, ...identity.value },
+    props.userAlreadyActivated
+  );
+
+  onDone(async ({ data }) => {
+    validationSent.value = true;
+    window.localStorage.setItem("new-registered-user", "yes");
+
+    if (data && props.userAlreadyActivated) {
+      await changeIdentity(data.registerPerson);
+
+      await router.push({ name: RouteName.HOME });
+    }
+  });
+
+  onError((err) => {
+    errors.value = err.graphQLErrors.reduce(
+      (acc: { [key: string]: string }, error: any) => {
+        acc[error.details || error.field] = error.message;
+        return acc;
+      },
+      {}
+    );
+    console.error("Error while registering person", err);
+    console.error("Errors while registering person", errors);
+    sendingValidation.value = false;
+  });
+};
 </script>
 
 <style lang="scss" scoped>

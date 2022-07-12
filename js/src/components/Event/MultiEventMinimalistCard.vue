@@ -9,25 +9,21 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEvent } from "@/types/event.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import EventMinimalistCard from "./EventMinimalistCard.vue";
 
-@Component({
-  components: {
-    EventMinimalistCard,
-  },
-})
-export default class MultiEventMinimalistCard extends Vue {
-  @Prop({ type: Array as PropType<IEvent[]>, required: true })
-  events!: IEvent[];
-  @Prop({ required: false, type: Boolean, default: false })
-  isCurrentActorMember!: boolean;
-  @Prop({ required: false, type: Boolean, default: false })
-  showOrganizer!: boolean;
-}
+withDefaults(
+  defineProps<{
+    events: IEvent[];
+    isCurrentActorMember?: boolean;
+    showOrganizer?: boolean;
+  }>(),
+  {
+    isCurrentActorMember: false,
+    showOrganizer: false,
+  }
+);
 </script>
 <style lang="scss" scoped>
 .events-wrapper {

@@ -2,347 +2,348 @@
   <li
     :class="{
       reply: comment.inReplyToComment,
-      announcement: comment.isAnnouncement,
-      selected: commentSelected,
+      'bg-purple-2': comment.isAnnouncement,
+      'bg-violet-1': commentSelected,
+      'shadow-none': !rootComment,
     }"
-    class="comment-element"
+    class="mbz-card p-2"
   >
-    <article class="media" :id="commentId" dir="auto">
-      <popover-actor-card
-        :actor="comment.actor"
-        :inline="true"
-        v-if="comment.actor"
-      >
-        <figure
-          class="image is-32x32 media-left"
-          v-if="!comment.deletedAt && comment.actor.avatar"
-        >
-          <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
-        </figure>
-        <b-icon class="media-left" v-else icon="account-circle" />
-      </popover-actor-card>
-      <div v-else class="media-left">
-        <figure
-          class="image is-32x32"
-          v-if="!comment.deletedAt && comment.actor.avatar"
-        >
-          <img class="is-rounded" :src="comment.actor.avatar.url" alt="" />
-        </figure>
-        <b-icon v-else icon="account-circle" />
-      </div>
-      <div class="media-content">
-        <div class="content">
-          <span class="first-line" v-if="!comment.deletedAt" dir="auto">
-            <strong :class="{ organizer: commentFromOrganizer }">{{
-              comment.actor.name
-            }}</strong>
-            <small dir="ltr">@{{ usernameWithDomain(comment.actor) }}</small>
-          </span>
-          <a v-else class="comment-link" :href="commentURL">
-            <span>{{ $t("[deleted]") }}</span>
+    <article :id="commentId" dir="auto">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1" v-if="actorComment">
+            <popover-actor-card
+              :actor="actorComment"
+              :inline="true"
+              v-if="!comment.deletedAt && actorComment.avatar"
+            >
+              <figure>
+                <img
+                  class="rounded-xl"
+                  :src="actorComment.avatar.url"
+                  alt=""
+                  width="24"
+                  height="24"
+                />
+              </figure>
+            </popover-actor-card>
+            <AccountCircle v-else />
+            <strong
+              v-if="!comment.deletedAt"
+              dir="auto"
+              :class="{ organizer: commentFromOrganizer }"
+              >{{ actorComment?.name }}</strong
+            >
+          </div>
+
+          <a v-else :href="commentURL">
+            <span>{{ t("[deleted]") }}</span>
           </a>
-          <a class="comment-link" :href="commentURL">
-            <small>{{
+          <a :href="commentURL">
+            <small v-if="comment.updatedAt">{{
               formatDistanceToNow(new Date(comment.updatedAt), {
-                locale: $dateFnsLocale,
+                locale: dateFnsLocale,
                 addSuffix: true,
               })
             }}</small>
           </a>
-          <span class="icons" v-if="!comment.deletedAt">
+          <div v-if="!comment.deletedAt" class="flex">
             <button
-              v-if="comment.actor.id === currentActor.id"
+              v-if="actorComment?.id === currentActor?.id"
               @click="deleteComment"
             >
-              <b-icon icon="delete" size="is-small" aria-hidden="true" />
-              <span class="visually-hidden">{{ $t("Delete") }}</span>
+              <Delete :size="16" />
+              <span class="sr-only">{{ t("Delete") }}</span>
             </button>
-            <button @click="reportModal()">
-              <b-icon icon="alert" size="is-small" />
-              <span class="visually-hidden">{{ $t("Report") }}</span>
+            <button @click="reportModal">
+              <Alert :size="16" />
+              <span class="sr-only">{{ t("Report") }}</span>
             </button>
-          </span>
-          <br />
-          <div
-            v-if="!comment.deletedAt"
-            v-html="comment.text"
-            dir="auto"
-            :lang="comment.language"
-          />
-          <div v-else>{{ $t("[This comment has been deleted]") }}</div>
-          <div class="load-replies" v-if="comment.totalReplies">
-            <p v-if="!showReplies" @click="fetchReplies">
-              <b-icon icon="chevron-down" class="reply-btn" />
-              <span class="reply-btn">{{
-                $tc("View a reply", comment.totalReplies, {
-                  totalReplies: comment.totalReplies,
-                })
-              }}</span>
-            </p>
-            <p
-              v-else-if="comment.totalReplies && showReplies"
-              @click="showReplies = false"
-            >
-              <b-icon icon="chevron-up" class="reply-btn" />
-              <span class="reply-btn">{{ $t("Hide replies") }}</span>
-            </p>
           </div>
         </div>
+        <div
+          v-if="!comment.deletedAt"
+          v-html="comment.text"
+          dir="auto"
+          :lang="comment.language"
+        />
+        <div v-else>{{ t("[This comment has been deleted]") }}</div>
+        <div class="" v-if="comment.totalReplies">
+          <p
+            v-if="!showReplies"
+            @click="showReplies = true"
+            class="flex cursor-pointer"
+          >
+            <ChevronDown />
+            <span>{{
+              t(
+                "View a reply",
+                {
+                  totalReplies: comment.totalReplies,
+                },
+                comment.totalReplies
+              )
+            }}</span>
+          </p>
+          <p
+            v-else-if="comment.totalReplies && showReplies"
+            @click="showReplies = false"
+            class="flex cursor-pointer"
+          >
+            <ChevronUp />
+            <span>{{ t("Hide replies") }}</span>
+          </p>
+        </div>
         <nav
-          class="reply-action level is-mobile"
           v-if="
-            currentActor.id &&
+            currentActor?.id &&
             event.options.commentModeration !== CommentModeration.CLOSED &&
             !comment.deletedAt
           "
+          @click="createReplyToComment()"
+          class="flex gap-1 cursor-pointer"
         >
-          <div class="level-left">
-            <span
-              style="cursor: pointer"
-              class="level-item reply-btn"
-              @click="createReplyToComment()"
-            >
-              <span class="icon is-small">
-                <b-icon icon="reply" />
-              </span>
-              <span>{{ $t("Reply") }}</span>
-            </span>
-          </div>
+          <Reply />
+          <span>{{ t("Reply") }}</span>
         </nav>
       </div>
     </article>
     <form
-      class="reply"
       @submit.prevent="replyToComment"
-      v-if="currentActor.id"
+      v-if="currentActor?.id"
       v-show="replyTo"
     >
-      <article class="media reply">
-        <figure class="media-left" v-if="currentActor.avatar">
-          <p class="image is-48x48">
-            <img :src="currentActor.avatar.url" alt="" />
-          </p>
+      <article class="flex gap-2">
+        <figure v-if="currentActor?.avatar" class="mt-4">
+          <img
+            :src="currentActor?.avatar.url"
+            alt=""
+            width="48"
+            height="48"
+            class="rounded-md"
+          />
         </figure>
-        <b-icon
-          class="media-left"
-          v-else
-          size="is-large"
-          icon="account-circle"
-        />
-        <div class="media-content">
-          <div class="content">
-            <span class="first-line">
-              <strong>{{ currentActor.name }}</strong>
-              <small dir="ltr">@{{ currentActor.preferredUsername }}</small>
-            </span>
-            <br />
-            <span class="editor-line">
-              <editor
-                class="editor"
-                ref="commentEditor"
-                v-model="newComment.text"
-                mode="comment"
-                :aria-label="$t('Comment body')"
-              />
-              <b-button
-                :disabled="newComment.text.trim().length === 0"
-                native-type="submit"
-                type="is-primary"
-                >{{ $t("Post a reply") }}</b-button
-              >
-            </span>
+        <AccountCircle v-else :size="48" />
+        <div class="flex-1">
+          <div class="flex gap-1 items-center">
+            <strong>{{ currentActor?.name }}</strong>
+            <small dir="ltr">@{{ currentActor?.preferredUsername }}</small>
+          </div>
+          <div class="flex flex-col gap-2">
+            <editor
+              ref="commentEditor"
+              v-model="newComment.text"
+              mode="comment"
+              :current-actor="currentActor"
+              :aria-label="t('Comment body')"
+              class="flex-1"
+            />
+            <o-button
+              :disabled="newComment.text.trim().length === 0"
+              native-type="submit"
+              variant="primary"
+              class="self-end"
+              >{{ t("Post a reply") }}</o-button
+            >
           </div>
         </div>
       </article>
     </form>
-    <div class="replies">
-      <div class="left">
-        <div class="vertical-border" @click="showReplies = false" />
+    <div>
+      <div>
+        <div @click="showReplies = false" />
       </div>
       <transition-group
         name="comment-replies"
         v-if="showReplies"
-        class="comment-replies"
         tag="ul"
+        class="flex flex-col gap-2"
       >
-        <comment
-          class="reply"
+        <Comment
           v-for="reply in comment.replies"
           :key="reply.id"
           :comment="reply"
           :event="event"
-          @create-comment="$emit('create-comment', $event)"
-          @delete-comment="$emit('delete-comment', $event)"
+          :currentActor="currentActor"
+          :rootComment="false"
+          @create-comment="emit('create-comment', $event)"
+          @delete-comment="emit('delete-comment', $event)"
+          @report-comment="emit('report-comment', $event)"
         />
       </transition-group>
     </div>
   </li>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue, Ref } from "vue-property-decorator";
+<script lang="ts" setup>
 import EditorComponent from "@/components/Editor.vue";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { formatDistanceToNow } from "date-fns";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IPerson, usernameWithDomain } from "../../types/actor";
+import { IPerson } from "../../types/actor";
 import { IEvent } from "../../types/event.model";
-import ReportModal from "../Report/ReportModal.vue";
-import { IReport } from "../../types/report.model";
-import { CREATE_REPORT } from "../../graphql/report";
 import PopoverActorCard from "../Account/PopoverActorCard.vue";
+import {
+  computed,
+  defineAsyncComponent,
+  inject,
+  onMounted,
+  ref,
+  nextTick,
+} from "vue";
+import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Delete from "vue-material-design-icons/Delete.vue";
+import Alert from "vue-material-design-icons/Alert.vue";
+import ChevronUp from "vue-material-design-icons/ChevronUp.vue";
+import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
+import Reply from "vue-material-design-icons/Reply.vue";
 
-@Component({
-  apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
-  },
-  components: {
-    editor: () =>
-      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
-    comment: () => import(/* webpackChunkName: "comment" */ "./Comment.vue"),
-    PopoverActorCard,
-  },
-})
-export default class Comment extends Vue {
-  @Prop({ required: true, type: Object }) comment!: IComment;
+const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
 
-  @Prop({ required: true, type: Object }) event!: IEvent;
+const props = withDefaults(
+  defineProps<{
+    comment: IComment;
+    event: IEvent;
+    currentActor: IPerson;
+    rootComment?: boolean;
+  }>(),
+  { rootComment: true }
+);
 
-  // Hack because Vue only exports it's own interface.
-  // See https://github.com/kaorun343/vue-property-decorator/issues/257
-  @Ref() readonly commentEditor!: EditorComponent & {
-    replyToComment: (comment: IComment) => void;
-    focus: () => void;
-  };
+const emit = defineEmits([
+  "create-comment",
+  "delete-comment",
+  "report-comment",
+]);
 
-  currentActor!: IPerson;
+const commentEditor = ref<typeof EditorComponent | null>(null);
 
-  newComment: IComment = new CommentModel();
+// Hack because Vue only exports it's own interface.
+// See https://github.com/kaorun343/vue-property-decorator/issues/257
+// @Ref() readonly commentEditor!: EditorComponent & {
+//   replyToComment: (comment: IComment) => void;
+//   focus: () => void;
+// };
 
-  replyTo = false;
+const newComment = ref<IComment>(new CommentModel());
+const replyTo = ref(false);
+const showReplies = ref(false);
+const route = useRoute();
+const { t } = useI18n({ useScope: "global" });
 
-  showReplies = false;
-
-  CommentModeration = CommentModeration;
-
-  usernameWithDomain = usernameWithDomain;
-
-  formatDistanceToNow = formatDistanceToNow;
-
-  async mounted(): Promise<void> {
-    const { hash } = this.$route;
-    if (hash.includes(`#comment-${this.comment.uuid}`)) {
-      this.fetchReplies();
-    }
+onMounted(() => {
+  if (route?.hash.includes(`#comment-${props.comment.uuid}`)) {
+    showReplies.value = true;
   }
+});
 
-  async createReplyToComment(): Promise<void> {
-    if (this.replyTo) {
-      this.replyTo = false;
-      this.newComment = new CommentModel();
-      return;
-    }
-    this.replyTo = true;
-    if (this.comment.actor) {
-      this.commentEditor.replyToComment(this.comment.actor);
-      await this.$nextTick; // wait for the mention to be injected
-      this.commentEditor.focus();
-    }
+const createReplyToComment = async (): Promise<void> => {
+  if (replyTo.value) {
+    replyTo.value = false;
+    newComment.value = new CommentModel();
+    return;
   }
+  replyTo.value = true;
+  if (props.comment.actor) {
+    commentEditor.value?.replyToComment(props.comment.actor);
+    await nextTick(); // wait for the mention to be injected
+    commentEditor.value?.focus();
+  }
+};
 
-  replyToComment(): void {
-    this.newComment.inReplyToComment = this.comment;
-    this.newComment.originComment = this.comment.originComment || this.comment;
-    this.newComment.actor = this.currentActor;
-    this.$emit("create-comment", this.newComment);
-    this.newComment = new CommentModel();
-    this.replyTo = false;
-    this.showReplies = true;
-  }
+const replyToComment = (): void => {
+  newComment.value.inReplyToComment = props.comment;
+  newComment.value.originComment = props.comment.originComment ?? props.comment;
+  newComment.value.actor = props.currentActor;
+  console.log(newComment.value);
+  emit("create-comment", newComment.value);
+  newComment.value = new CommentModel();
+  replyTo.value = false;
+  showReplies.value = true;
+};
 
-  deleteComment(): void {
-    this.$emit("delete-comment", this.comment);
-    this.showReplies = false;
-  }
+const deleteComment = (): void => {
+  emit("delete-comment", props.comment);
+  showReplies.value = false;
+};
 
-  fetchReplies(): void {
-    this.showReplies = true;
-  }
+const commentSelected = computed((): boolean => {
+  return `#${commentId.value}` === route?.hash;
+});
 
-  get commentSelected(): boolean {
-    return `#${this.commentId}` === this.$route.hash;
-  }
+const commentFromOrganizer = computed((): boolean => {
+  const organizerId =
+    props.event?.organizerActor?.id || props.event?.attributedTo?.id;
+  return organizerId !== undefined && props.comment?.actor?.id === organizerId;
+});
 
-  get commentFromOrganizer(): boolean {
-    const organizerId =
-      this.event?.organizerActor?.id || this.event?.attributedTo?.id;
-    return organizerId !== undefined && this.comment?.actor?.id === organizerId;
-  }
+const commentId = computed((): string => {
+  if (props.comment.originComment)
+    return `comment-${props.comment.originComment.uuid}-${props.comment.uuid}`;
+  return `comment-${props.comment.uuid}`;
+});
 
-  get commentId(): string {
-    if (this.comment.originComment)
-      return `comment-${this.comment.originComment.uuid}-${this.comment.uuid}`;
-    return `comment-${this.comment.uuid}`;
-  }
+const commentURL = computed((): string => {
+  if (!props.comment.local && props.comment.url) return props.comment.url;
+  return `#${commentId.value}`;
+});
 
-  get commentURL(): string {
-    if (!this.comment.local && this.comment.url) return this.comment.url;
-    return `#${this.commentId}`;
-  }
+const reportModal = (): void => {
+  if (!props.comment.actor) return;
+  emit("report-comment", props.comment);
+  // this.$buefy.modal.open({
+  //   component: ReportModal,
+  //   props: {
+  //     title: t("Report this comment"),
+  //     comment: props.comment,
+  //     onConfirm: reportComment,
+  //     outsideDomain: props.comment.actor?.domain,
+  //   },
+  //   // https://github.com/buefy/buefy/pull/3589
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   closeButtonAriaLabel: this.t("Close"),
+  // });
+};
 
-  reportModal(): void {
-    if (!this.comment.actor) return;
-    this.$buefy.modal.open({
-      parent: this,
-      component: ReportModal,
-      props: {
-        title: this.$t("Report this comment"),
-        comment: this.comment,
-        onConfirm: this.reportComment,
-        outsideDomain: this.comment.actor.domain,
-      },
-      // https://github.com/buefy/buefy/pull/3589
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      closeButtonAriaLabel: this.$t("Close"),
-    });
-  }
+// const reportComment = async (
+//   content: string,
+//   forward: boolean
+// ): Promise<void> => {
+//   try {
+//     if (!props.comment.actor) return;
 
-  async reportComment(content: string, forward: boolean): Promise<void> {
-    try {
-      if (!this.comment.actor) return;
-      await this.$apollo.mutate<IReport>({
-        mutation: CREATE_REPORT,
-        variables: {
-          eventId: this.event.id,
-          reportedId: this.comment.actor.id,
-          commentsIds: [this.comment.id],
-          content,
-          forward,
-        },
-      });
-      this.$buefy.notification.open({
-        message: this.$t("Comment from @{username} reported", {
-          username: this.comment.actor.preferredUsername,
-        }) as string,
-        type: "is-success",
-        position: "is-bottom-right",
-        duration: 5000,
-      });
-    } catch (e: any) {
-      if (e.message) {
-        Snackbar.open({
-          message: e.message,
-          type: "is-danger",
-          position: "is-bottom",
-        });
-      }
-    }
-  }
-}
+//     const { onError, onDone } = useMutation(CREATE_REPORT, () => ({
+//       variables: {
+//         eventId: props.event.id,
+//         reportedId: props.comment.actor?.id,
+//         commentsIds: [props.comment.id],
+//         content,
+//         forward,
+//       },
+//     }));
+
+//     // this.$buefy.notification.open({
+//     //   message: this.t("Comment from @{username} reported", {
+//     //     username: this.comment.actor.preferredUsername,
+//     //   }) as string,
+//     //   type: "is-success",
+//     //   position: "is-bottom-right",
+//     //   duration: 5000,
+//     // });
+//   } catch (e: any) {
+//     if (e.message) {
+//       // Snackbar.open({
+//       //   message: e.message,
+//       //   type: "is-danger",
+//       //   position: "is-bottom",
+//       // });
+//     }
+//   }
+// };
+const actorComment = computed(() => props.comment.actor);
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
@@ -364,9 +365,9 @@ form.reply {
     padding: 0 6px;
   }
 
-  & > small {
-    @include margin-left(0.3rem);
-  }
+  // & > small {
+  //   @include margin-left(0.3rem);
+  // }
 }
 
 .editor-line {
@@ -375,15 +376,15 @@ form.reply {
 
   .editor {
     flex: 1;
-    @include padding-right(10px);
+    // @include padding-right(10px);
     margin-bottom: 0;
   }
 }
 
 a.comment-link {
   text-decoration: none;
-  @include margin-left(5px);
-  color: $text;
+  // @include margin-left(5px);
+  color: text;
   &:hover {
     text-decoration: underline;
   }
@@ -425,9 +426,9 @@ a.comment-link {
     }
   }
 
-  .media-left {
-    @include margin-right(5px);
-  }
+  // .media-left {
+  //   @include margin-right(5px);
+  // }
 }
 
 .root-comment .replies {
@@ -437,7 +438,7 @@ a.comment-link {
     display: flex;
     flex-direction: column;
     align-items: center;
-    @include margin-right(10px);
+    // @include margin-right(10px);
 
     .vertical-border {
       width: 3px;
@@ -528,9 +529,9 @@ article {
   transform-origin: center top;
 }
 
-.reply-action .icon {
-  @include padding-right(0.4rem);
-}
+// .reply-action .icon {
+//   @include padding-right(0.4rem);
+// }
 
 .visually-hidden {
   display: none;

@@ -6,46 +6,31 @@
     :sentence="sentence"
   />
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import RedirectWithAccount from "@/components/Utils/RedirectWithAccount.vue";
-import { FETCH_EVENT } from "@/graphql/event";
-import { IEvent } from "@/types/event.model";
+import { useFetchEvent } from "@/composition/apollo/event";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  components: { RedirectWithAccount },
-  apollo: {
-    event: {
-      query: FETCH_EVENT,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          uuid: this.uuid,
-        };
-      },
-      skip() {
-        return !this.uuid;
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Participation with account") as string,
-      meta: [{ name: "robots", content: "noindex" }],
-    };
-  },
-})
-export default class ParticipationWithAccount extends Vue {
-  @Prop({ type: String, required: true }) uuid!: string;
+const props = defineProps<{
+  uuid: string;
+}>();
 
-  event!: IEvent;
+const { event } = useFetchEvent(props.uuid);
 
-  get uri(): string | undefined {
-    return this.event?.url;
-  }
+const { t } = useI18n({ useScope: "global" });
 
-  sentence = this.$t(
-    "We will redirect you to your instance in order to interact with this event"
-  );
-}
+useHead({
+  title: computed(() => t("Participation with account")),
+  meta: [{ name: "robots", content: "noindex" }],
+});
+
+const uri = computed((): string | undefined => {
+  return event.value?.url;
+});
+
+const sentence = t(
+  "We will redirect you to your instance in order to interact with this event"
+);
 </script>

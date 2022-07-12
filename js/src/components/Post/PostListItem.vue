@@ -1,123 +1,133 @@
 <template>
   <router-link
-    class="post-minimalist-card-wrapper"
+    class="block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md"
     dir="auto"
     :to="{ name: RouteName.POST, params: { slug: post.slug } }"
   >
     <lazy-image-wrapper
       :picture="post.picture"
       :rounded="true"
-      style="height: 120px"
+      class="object-cover flex-none h-48 md:h-auto md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg"
     />
-    <div class="title-info-wrapper has-text-grey-dark px-1">
-      <h3 class="post-minimalist-title" :lang="post.language">
+    <div class="flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1">
+      <h3
+        class="text-xl color-violet-3 line-clamp-3 mb-2 font-bold"
+        :lang="post.language"
+      >
         {{ post.title }}
       </h3>
-      <p class="post-publication-date">
-        <b-icon icon="clock" />
-        <span dir="auto" class="has-text-grey-dark" v-if="isBeforeLastWeek">{{
-          publishedAt | formatDateTimeString(undefined, false, "short")
+      <p class="flex gap-2">
+        <Clock />
+        <span dir="auto" class="" v-if="isBeforeLastWeek">{{
+          formatDateTimeString(
+            publishedAt.toString(),
+            undefined,
+            false,
+            "short"
+          )
         }}</span>
         <span v-else>{{
           formatDistanceToNow(publishedAt, {
-            locale: $dateFnsLocale,
+            locale: dateFnsLocale,
             addSuffix: true,
           })
         }}</span>
       </p>
-      <b-taglist v-if="post.tags.length > 0" style="display: inline">
-        <b-icon icon="tag" />
-        <b-tag v-for="tag in post.tags" :key="tag.slug">{{ tag.title }}</b-tag>
-      </b-taglist>
-      <p class="post-publisher has-text-grey-dark" v-if="isCurrentActorMember">
-        <b-icon icon="account-edit" />
-        <i18n path="Published by {name}">
-          <b class="has-text-weight-medium" slot="name">{{
-            displayName(post.author)
-          }}</b>
-        </i18n>
+      <div v-if="postTags.length > 0" class="flex flex-wrap gap-y-0 gap-x-2">
+        <Tag />
+        <mbz-tag v-for="tag in postTags" :key="tag.slug">{{
+          tag.title
+        }}</mbz-tag>
+      </div>
+      <p class="flex gap-1" v-if="isCurrentActorMember">
+        <AccountEdit />
+        <i18n-t keypath="Published by {name}">
+          <template v-slot:name>
+            <b class="">{{ displayName(post.author) }}</b>
+          </template>
+        </i18n-t>
       </p>
     </div>
   </router-link>
 </template>
-<script lang="ts">
-import { formatDistanceToNow, subWeeks, isBefore } from "date-fns";
-import { Component, Prop, Vue } from "vue-property-decorator";
-import RouteName from "../../router/name";
-import { IPost } from "../../types/post.model";
+<script lang="ts" setup>
+import { formatDistanceToNow, subWeeks, isBefore, Locale } from "date-fns";
+import RouteName from "@/router/name";
+import { IPost } from "@/types/post.model";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import { displayName } from "@/types/actor";
+import { computed, inject } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import Tag from "vue-material-design-icons/Tag.vue";
+import AccountEdit from "vue-material-design-icons/AccountEdit.vue";
+import Clock from "vue-material-design-icons/Clock.vue";
+import MbzTag from "@/components/Tag.vue";
 
-@Component({
-  components: {
-    LazyImageWrapper,
-  },
-})
-export default class PostListItem extends Vue {
-  @Prop({ required: true, type: Object }) post!: IPost;
-  @Prop({ required: false, type: Boolean, default: false })
-  isCurrentActorMember!: boolean;
+const props = withDefaults(
+  defineProps<{
+    post: IPost;
+    isCurrentActorMember?: boolean;
+  }>(),
+  { isCurrentActorMember: false }
+);
 
-  RouteName = RouteName;
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
-  formatDistanceToNow = formatDistanceToNow;
+const postTags = computed(() => (props.post.tags ?? []).slice(0, 3));
 
-  displayName = displayName;
+const publishedAt = computed((): Date => {
+  return new Date((props.post.publishAt ?? props.post.insertedAt) as Date);
+});
 
-  get publishedAt(): Date {
-    return new Date((this.post.publishAt || this.post.insertedAt) as Date);
-  }
-
-  get isBeforeLastWeek(): boolean {
-    return isBefore(this.publishedAt, subWeeks(new Date(), 1));
-  }
-}
+const isBeforeLastWeek = computed((): boolean => {
+  return isBefore(publishedAt.value, subWeeks(new Date(), 1));
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-@import "~bulma/sass/utilities/mixins.sass";
+// @import "node_modules/bulma/sass/utilities/mixins.sass";
 
-.post-minimalist-card-wrapper {
-  display: grid;
-  grid-gap: 5px 10px;
-  grid-template-areas: "preview" "body";
-  text-decoration: none;
-  width: 100%;
-  color: initial;
+// .post-minimalist-card-wrapper {
+//   display: grid;
+//   grid-gap: 5px 10px;
+//   grid-template-areas: "preview" "body";
+//   text-decoration: none;
+//   // width: 100%;
+//   // color: initial;
 
-  @include desktop {
-    grid-template-columns: 200px 3fr;
-    grid-template-areas: "preview body";
+//   // @include desktop {
+//   grid-template-columns: 200px 3fr;
+//   grid-template-areas: "preview body";
+//   // }
+
+.title-info-wrapper {
+  .post-minimalist-title {
+    // color: #3c376e;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 700;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
+}
+:deep(.icon) {
+  vertical-align: middle;
+  // @include margin-right(5px);
+}
 
-  .title-info-wrapper {
-    .post-minimalist-title {
-      color: #3c376e;
-      font-size: 18px;
-      line-height: 24px;
-      font-weight: 700;
+:deep(.tags) {
+  display: inline;
+
+  span.tag {
+    max-width: 200px;
+
+    & > span {
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-    }
-  }
-  ::v-deep .icon {
-    vertical-align: middle;
-    @include margin-right(5px);
-  }
-
-  ::v-deep .tags {
-    display: inline;
-
-    span.tag {
-      max-width: 200px;
-
-      & > span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+      text-overflow: ellipsis;
     }
   }
 }
+// }
 </style>

@@ -7,11 +7,12 @@ import { DiscussionRouteName } from "./discussion";
 import { UserRouteName } from "./user";
 
 enum GlobalRouteName {
-  HOME = "Home",
-  ABOUT = "About",
+  HOME = "HOME",
+  ABOUT = "ABOUT",
+  CATEGORIES = "CATEGORIES",
   ABOUT_INSTANCE = "ABOUT_INSTANCE",
   PAGE_NOT_FOUND = "PageNotFound",
-  SEARCH = "Search",
+  SEARCH = "SEARCH",
   TERMS = "TERMS",
   PRIVACY = "PRIVACY",
   GLOSSARY = "GLOSSARY",

@@ -2,10 +2,10 @@
   <div v-if="user" class="section">
     <breadcrumbs-nav
       :links="[
-        { name: RouteName.ADMIN, text: $t('Admin') },
+        { name: RouteName.ADMIN, text: t('Admin') },
         {
           name: RouteName.USERS,
-          text: $t('Users'),
+          text: t('Users'),
         },
         {
           name: RouteName.ADMIN_USER_PROFILE,
@@ -16,7 +16,7 @@
     />
 
     <section>
-      <h2 class="text-lg font-bold mb-3">{{ $t("Details") }}</h2>
+      <h2 class="text-lg font-bold mb-3">{{ t("Details") }}</h2>
       <div class="flex flex-col">
         <div class="overflow-x-auto sm:-mx-6">
           <div class="inline-block py-2 min-w-full sm:px-2">
@@ -25,19 +25,15 @@
                 <tbody>
                   <tr
                     class="odd:bg-white even:bg-gray-50 border-b"
-                    v-for="{ key, value, link, type } in metadata"
+                    v-for="{ key, value, type } in metadata"
                     :key="key"
                   >
                     <td class="py-4 px-2 whitespace-nowrap align-middle">
                       {{ key }}
                     </td>
-                    <td v-if="link" class="py-4 px-2 whitespace-nowrap">
-                      <router-link :to="link">
-                        {{ value }}
-                      </router-link>
-                    </td>
+
                     <td
-                      v-else-if="type === 'ip'"
+                      v-if="type === 'ip'"
                       class="py-4 px-2 whitespace-nowrap"
                     >
                       <code>{{ value }}</code>
@@ -65,72 +61,72 @@
                     </td>
                     <td
                       v-if="type === 'email'"
-                      class="py-4 px-2 whitespace-nowrap flex flex flex-col items-start"
+                      class="py-4 px-2 whitespace-nowrap flex flex flex-col items-start gap-2"
                     >
-                      <b-button
-                        size="is-small"
+                      <o-button
+                        size="small"
                         v-if="!user.disabled"
                         @click="isEmailChangeModalActive = true"
                         type="is-text"
                         icon-left="pencil"
-                        >{{ $t("Change email") }}</b-button
+                        >{{ t("Change email") }}</o-button
                       >
-                      <b-button
+                      <o-button
                         tag="router-link"
                         :to="{
                           name: RouteName.USERS,
                           query: { emailFilter: `@${userEmailDomain}` },
                         }"
-                        size="is-small"
+                        size="small"
                         type="is-text"
                         icon-left="magnify"
                         >{{
-                          $t("Other users with the same email domain")
-                        }}</b-button
+                          t("Other users with the same email domain")
+                        }}</o-button
                       >
                     </td>
                     <td
                       v-else-if="type === 'confirmed'"
                       class="py-4 px-2 whitespace-nowrap flex items-center"
                     >
-                      <b-button
-                        size="is-small"
+                      <o-button
+                        size="small"
                         v-if="!user.confirmedAt || user.disabled"
                         @click="isConfirmationModalActive = true"
                         type="is-text"
                         icon-left="check"
-                        >{{ $t("Confirm user") }}</b-button
+                        >{{ t("Confirm user") }}</o-button
                       >
                     </td>
                     <td
                       v-else-if="type === 'role'"
                       class="py-4 px-2 whitespace-nowrap flex items-center"
                     >
-                      <b-button
-                        size="is-small"
+                      <o-button
+                        size="small"
                         v-if="!user.disabled"
                         @click="isRoleChangeModalActive = true"
                         type="is-text"
                         icon-left="chevron-double-up"
-                        >{{ $t("Change role") }}</b-button
+                        >{{ t("Change role") }}</o-button
                       >
                     </td>
                     <td
                       v-else-if="type === 'ip' && user.currentSignInIp"
                       class="py-4 px-2 whitespace-nowrap flex items-center"
                     >
-                      <b-button
+                      <o-button
                         tag="router-link"
                         :to="{
                           name: RouteName.USERS,
                           query: { ipFilter: user.currentSignInIp },
                         }"
-                        size="is-small"
+                        size="small"
                         type="is-text"
                         icon-left="web"
                         >{{
-                          $t("Other users with the same IP address")
-                        }}</b-button
+                          t("Other users with the same IP address")
+                        }}</o-button
                       >
                     </td>
                     <td v-else></td>
@@ -143,10 +139,10 @@
       </div>
     </section>
     <section class="my-4">
-      <h2 class="text-lg font-bold mb-3">{{ $t("Profiles") }}</h2>
+      <h2 class="text-lg font-bold mb-3">{{ t("Profiles") }}</h2>
       <div
         class="flex flex-wrap justify-center sm:justify-start gap-4"
-        v-if="profiles.length > 0"
+        v-if="profiles && profiles.length > 0"
       >
         <router-link
           v-for="profile in profiles"
@@ -161,422 +157,370 @@
           />
         </router-link>
       </div>
-      <empty-content v-else-if="!$apollo.loading" :inline="true" icon="account">
-        {{ $t("This user doesn't have any profiles") }}
+      <empty-content v-else-if="!loadingUser" :inline="true" icon="account">
+        {{ t("This user doesn't have any profiles") }}
       </empty-content>
     </section>
     <section class="my-4">
-      <h2 class="text-lg font-bold mb-3">{{ $t("Actions") }}</h2>
+      <h2 class="text-lg font-bold mb-3">{{ t("Actions") }}</h2>
       <div class="buttons" v-if="!user.disabled">
-        <b-button @click="suspendAccount" type="is-danger">{{
-          $t("Suspend")
-        }}</b-button>
+        <o-button @click="suspendAccount" variant="danger">{{
+          t("Suspend")
+        }}</o-button>
       </div>
       <div
         v-else
         class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"
         role="alert"
       >
-        {{ $t("The user has been disabled") }}
+        {{ t("The user has been disabled") }}
       </div>
     </section>
-    <b-modal
-      :active="isEmailChangeModalActive"
+    <o-modal
+      v-model:active="isEmailChangeModalActive"
+      trap-focus
+      :destroy-on-hide="false"
+      aria-role="dialog"
+      :aria-label="t('Edit user email')"
+      :close-button-aria-label="t('Close')"
+      aria-modal
+    >
+      <form @submit.prevent="updateUserEmail">
+        <div class="" style="width: auto">
+          <header class="">
+            <h2>{{ t("Change user email") }}</h2>
+          </header>
+          <section class="">
+            <o-field :label="t('Previous email')">
+              <o-input type="email" :value="user.email" disabled> </o-input>
+            </o-field>
+            <o-field :label="t('New email')">
+              <o-input
+                type="email"
+                v-model="newUser.email"
+                :placeholder="t(`new{'@'}email.com`)"
+                required
+              >
+              </o-input>
+            </o-field>
+            <o-checkbox v-model="newUser.notify">{{
+              t("Notify the user of the change")
+            }}</o-checkbox>
+          </section>
+          <footer class="mt-2 flex gap-2">
+            <o-button @click="isEmailChangeModalActive = false">{{
+              t("Close")
+            }}</o-button>
+            <o-button native-type="submit" variant="primary">{{
+              t("Change email")
+            }}</o-button>
+          </footer>
+        </div>
+      </form>
+    </o-modal>
+    <o-modal
+      v-model:active="isRoleChangeModalActive"
       has-modal-card
       trap-focus
       :destroy-on-hide="false"
       aria-role="dialog"
-      :aria-label="$t('Edit user email')"
-      :close-button-aria-label="$t('Close')"
+      :aria-label="t('Edit user email')"
+      :close-button-aria-label="t('Close')"
       aria-modal
     >
-      <template>
-        <form @submit.prevent="updateUserEmail">
-          <div class="modal-card" style="width: auto">
-            <header class="modal-card-head">
-              <p class="modal-card-title">{{ $t("Change user email") }}</p>
-              <button
-                type="button"
-                class="delete"
-                @click="isEmailChangeModalActive = false"
-              />
-            </header>
-            <section class="modal-card-body">
-              <b-field :label="$t('Previous email')">
-                <b-input type="email" :value="user.email" disabled> </b-input>
-              </b-field>
-              <b-field :label="$t('New email')">
-                <b-input
-                  type="email"
-                  v-model="newUser.email"
-                  :placeholder="$t('new@email.com')"
-                  required
-                >
-                </b-input>
-              </b-field>
-              <b-checkbox v-model="newUser.notify">{{
-                $t("Notify the user of the change")
-              }}</b-checkbox>
-            </section>
-            <footer class="modal-card-foot">
-              <b-button @click="isEmailChangeModalActive = false">{{
-                $t("Close")
-              }}</b-button>
-              <b-button native-type="submit" type="is-primary">{{
-                $t("Change email")
-              }}</b-button>
-            </footer>
-          </div>
-        </form>
-      </template>
-    </b-modal>
-    <b-modal
-      :active="isRoleChangeModalActive"
+      <form @submit.prevent="updateUserRole">
+        <div>
+          <header>
+            <h2 class="modal-card-title">{{ t("Change user role") }}</h2>
+          </header>
+          <section>
+            <o-field>
+              <o-radio
+                v-model="newUser.role"
+                :native-value="ICurrentUserRole.ADMINISTRATOR"
+              >
+                {{ t("Administrator") }}
+              </o-radio>
+            </o-field>
+            <o-field>
+              <o-radio
+                v-model="newUser.role"
+                :native-value="ICurrentUserRole.MODERATOR"
+              >
+                {{ t("Moderator") }}
+              </o-radio>
+            </o-field>
+            <o-field>
+              <o-radio
+                v-model="newUser.role"
+                :native-value="ICurrentUserRole.USER"
+              >
+                {{ t("User") }}
+              </o-radio>
+            </o-field>
+            <o-checkbox v-model="newUser.notify">{{
+              t("Notify the user of the change")
+            }}</o-checkbox>
+          </section>
+          <footer class="mt-2 flex gap-2">
+            <o-button @click="isRoleChangeModalActive = false">{{
+              t("Close")
+            }}</o-button>
+            <o-button native-type="submit" variant="primary">{{
+              t("Change role")
+            }}</o-button>
+          </footer>
+        </div>
+      </form>
+    </o-modal>
+    <o-modal
+      v-model:active="isConfirmationModalActive"
       has-modal-card
       trap-focus
       :destroy-on-hide="false"
       aria-role="dialog"
-      :aria-label="$t('Edit user email')"
-      :close-button-aria-label="$t('Close')"
+      :aria-label="t('Edit user email')"
+      :close-button-aria-label="t('Close')"
       aria-modal
     >
-      <template>
-        <form @submit.prevent="updateUserRole">
-          <div class="modal-card" style="width: auto">
-            <header class="modal-card-head">
-              <p class="modal-card-title">{{ $t("Change user role") }}</p>
-              <button
-                type="button"
-                class="delete"
-                @click="isRoleChangeModalActive = false"
-              />
-            </header>
-            <section class="modal-card-body">
-              <b-field>
-                <b-radio
-                  v-model="newUser.role"
-                  :native-value="ICurrentUserRole.ADMINISTRATOR"
-                >
-                  {{ $t("Administrator") }}
-                </b-radio>
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="newUser.role"
-                  :native-value="ICurrentUserRole.MODERATOR"
-                >
-                  {{ $t("Moderator") }}
-                </b-radio>
-              </b-field>
-              <b-field>
-                <b-radio
-                  v-model="newUser.role"
-                  :native-value="ICurrentUserRole.USER"
-                >
-                  {{ $t("User") }}
-                </b-radio>
-              </b-field>
-              <b-checkbox v-model="newUser.notify">{{
-                $t("Notify the user of the change")
-              }}</b-checkbox>
-            </section>
-            <footer class="modal-card-foot">
-              <b-button @click="isRoleChangeModalActive = false">{{
-                $t("Close")
-              }}</b-button>
-              <b-button native-type="submit" type="is-primary">{{
-                $t("Change role")
-              }}</b-button>
-            </footer>
-          </div>
-        </form>
-      </template>
-    </b-modal>
-    <b-modal
-      :active="isConfirmationModalActive"
-      has-modal-card
-      trap-focus
-      :destroy-on-hide="false"
-      aria-role="dialog"
-      :aria-label="$t('Edit user email')"
-      :close-button-aria-label="$t('Close')"
-      aria-modal
-    >
-      <template>
-        <form @submit.prevent="confirmUser">
-          <div class="modal-card" style="width: auto">
-            <header class="modal-card-head">
-              <p class="modal-card-title">{{ $t("Confirm user") }}</p>
-              <button
-                type="button"
-                class="delete"
-                @click="isConfirmationModalActive = false"
-              />
-            </header>
-            <section class="modal-card-body">
-              <b-checkbox v-model="newUser.notify">{{
-                $t("Notify the user of the change")
-              }}</b-checkbox>
-            </section>
-            <footer class="modal-card-foot">
-              <b-button @click="isConfirmationModalActive = false">{{
-                $t("Close")
-              }}</b-button>
-              <b-button native-type="submit" type="is-primary">{{
-                $t("Confirm user")
-              }}</b-button>
-            </footer>
-          </div>
-        </form>
-      </template>
-    </b-modal>
+      <form @submit.prevent="confirmUser">
+        <div>
+          <header>
+            <h2>{{ t("Confirm user") }}</h2>
+          </header>
+          <section>
+            <o-checkbox v-model="newUser.notify">{{
+              t("Notify the user of the change")
+            }}</o-checkbox>
+          </section>
+          <footer>
+            <o-button @click="isConfirmationModalActive = false">{{
+              t("Close")
+            }}</o-button>
+            <o-button native-type="submit" variant="primary">{{
+              t("Confirm user")
+            }}</o-button>
+          </footer>
+        </div>
+      </form>
+    </o-modal>
   </div>
-  <empty-content v-else-if="!$apollo.loading" icon="account">
-    {{ $t("This user was not found") }}
+  <empty-content v-else-if="!loadingUser" icon="account">
+    {{ t("This user was not found") }}
     <template #desc>
-      <b-button
+      <o-button
         type="is-text"
         tag="router-link"
         :to="{ name: RouteName.USERS }"
-        >{{ $t("Back to user list") }}</b-button
+        >{{ t("Back to user list") }}</o-button
       >
     </template>
   </empty-content>
 </template>
-<script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import { formatBytes } from "@/utils/datetime";
 import { ICurrentUserRole } from "@/types/enums";
 import { GET_USER, SUSPEND_USER } from "../../graphql/user";
-import { IActor, usernameWithDomain } from "../../types/actor/actor.model";
 import RouteName from "../../router/name";
 import { IUser } from "../../types/current-user.model";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import { ADMIN_UPDATE_USER, LANGUAGES_CODES } from "@/graphql/admin";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { ILanguage } from "@/types/admin.model";
+import { computed, inject, reactive, ref, watch } from "vue";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { formatDateTimeString } from "@/filters/datetime";
+import { useRouter } from "vue-router";
+import { IPerson } from "@/types/actor";
+import { Dialog } from "@/plugins/dialog";
 
-@Component({
-  apollo: {
-    user: {
-      query: GET_USER,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.id,
-        };
-      },
-      skip() {
-        return !this.id;
-      },
-    },
-    languages: {
-      query: LANGUAGES_CODES,
-      variables() {
-        return {
-          codes: [this.languageCode],
-        };
-      },
-      skip() {
-        return !this.languageCode;
-      },
-    },
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { user } = this;
-    return {
-      title: user?.email,
-    };
-  },
-  components: {
-    EmptyContent,
-    ActorCard,
-  },
-})
-export default class AdminUserProfile extends Vue {
-  @Prop({ required: true }) id!: string;
+const props = defineProps<{ id: string }>();
 
-  user!: IUser;
+const { result: userResult, loading: loadingUser } = useQuery<{ user: IUser }>(
+  GET_USER,
+  () => ({
+    id: props.id,
+  })
+);
 
-  languages!: Array<{ code: string; name: string }>;
+const user = computed(() => userResult.value?.user);
 
-  usernameWithDomain = usernameWithDomain;
+const languageCode = computed(() => user.value?.locale);
 
-  RouteName = RouteName;
+const { result: languagesResult } = useQuery<{ languages: ILanguage[] }>(
+  LANGUAGES_CODES,
+  () => ({
+    codes: languageCode.value,
+  }),
+  () => ({
+    enabled: languageCode.value !== undefined,
+  })
+);
 
-  ICurrentUserRole = ICurrentUserRole;
+const languages = computed(() => languagesResult.value?.languages);
 
-  isEmailChangeModalActive = false;
+const { t } = useI18n({ useScope: "global" });
 
-  isRoleChangeModalActive = false;
+useHead({
+  title: computed(() => user.value?.email ?? ""),
+});
 
-  isConfirmationModalActive = false;
+const isEmailChangeModalActive = ref(false);
+const isRoleChangeModalActive = ref(false);
+const isConfirmationModalActive = ref(false);
 
-  newUser = {
-    email: "",
-    role: this?.user?.role,
-    confirm: false,
-    notify: true,
-  };
+const newUser = reactive({
+  email: "",
+  role: user.value?.role,
+  confirm: false,
+  notify: true,
+});
 
-  get metadata(): Array<Record<string, unknown>> {
-    if (!this.user) return [];
+const metadata = computed(
+  (): Array<{ key: string; value: string; type?: string }> => {
+    if (!user.value) return [];
     return [
       {
-        key: this.$i18n.t("Email"),
-        value: this.user.email,
+        key: t("Email"),
+        value: user.value.email,
         type: "email",
       },
       {
-        key: this.$i18n.t("Language"),
-        value: this.languages
-          ? this.languages[0].name
-          : this.$i18n.t("Unknown"),
+        key: t("Language"),
+        value: languages.value ? languages.value[0].name : t("Unknown"),
       },
       {
-        key: this.$i18n.t("Role"),
-        value: this.roleName(this.user.role),
+        key: t("Role"),
+        value: roleName(user.value.role),
         type: "role",
       },
       {
-        key: this.$i18n.t("Login status"),
-        value: this.user.disabled
-          ? this.$i18n.t("Disabled")
-          : this.$t("Activated"),
+        key: t("Login status"),
+        value: user.value.disabled ? t("Disabled") : t("Activated"),
       },
       {
-        key: this.$i18n.t("Confirmed"),
-        value:
-          this.$options.filters && this.user.confirmedAt
-            ? this.$options.filters.formatDateTimeString(this.user.confirmedAt)
-            : this.$i18n.t("Not confirmed"),
+        key: t("Confirmed"),
+        value: user.value.confirmedAt
+          ? formatDateTimeString(user.value.confirmedAt)
+          : t("Not confirmed"),
         type: "confirmed",
       },
       {
-        key: this.$i18n.t("Last sign-in"),
-        value:
-          this.$options.filters && this.user.currentSignInAt
-            ? this.$options.filters.formatDateTimeString(
-                this.user.currentSignInAt
-              )
-            : this.$t("Unknown"),
+        key: t("Last sign-in"),
+        value: user.value.currentSignInAt
+          ? formatDateTimeString(user.value.currentSignInAt)
+          : t("Unknown"),
       },
       {
-        key: this.$i18n.t("Last IP adress"),
-        value: this.user.currentSignInIp || this.$t("Unknown"),
-        type: this.user.currentSignInIp ? "ip" : undefined,
+        key: t("Last IP adress"),
+        value: user.value.currentSignInIp || t("Unknown"),
+        type: user.value.currentSignInIp ? "ip" : undefined,
       },
       {
-        key: this.$i18n.t("Total number of participations"),
-        value: this.user.participations.total,
+        key: t("Total number of participations"),
+        value: user.value.participations.total.toString(),
       },
       {
-        key: this.$i18n.t("Uploaded media total size"),
-        value: formatBytes(
-          this.user.mediaSize,
-          2,
-          this.$i18n.t("0 Bytes") as string
-        ),
+        key: t("Uploaded media total size"),
+        value: formatBytes(user.value.mediaSize, 2, t("0 Bytes")),
       },
     ];
   }
+);
 
-  roleName(role: ICurrentUserRole): string {
-    switch (role) {
-      case ICurrentUserRole.ADMINISTRATOR:
-        return this.$t("Administrator") as string;
-      case ICurrentUserRole.MODERATOR:
-        return this.$t("Moderator") as string;
-      case ICurrentUserRole.USER:
-      default:
-        return this.$t("User") as string;
-    }
+const roleName = (role: ICurrentUserRole): string => {
+  switch (role) {
+    case ICurrentUserRole.ADMINISTRATOR:
+      return t("Administrator");
+    case ICurrentUserRole.MODERATOR:
+      return t("Moderator");
+    case ICurrentUserRole.USER:
+    default:
+      return t("User");
   }
+};
 
-  async suspendAccount(): Promise<void> {
-    this.$buefy.dialog.confirm({
-      title: this.$t("Suspend the account?") as string,
-      message: this.$t(
-        "Do you really want to suspend this account? All of the user's profiles will be deleted."
-      ) as string,
-      confirmText: this.$t("Suspend the account") as string,
-      cancelText: this.$t("Cancel") as string,
-      type: "is-danger",
-      onConfirm: async () => {
-        await this.$apollo.mutate<{ suspendProfile: { id: string } }>({
-          mutation: SUSPEND_USER,
-          variables: {
-            userId: this.id,
-          },
-        });
-        return this.$router.push({ name: RouteName.USERS });
-      },
-    });
-  }
+const router = useRouter();
 
-  get profiles(): IActor[] {
-    return this.user.actors;
-  }
+const { mutate: suspendUser } = useMutation<
+  { suspendProfile: { id: string } },
+  { userId: string }
+>(SUSPEND_USER);
 
-  get languageCode(): string | undefined {
-    return this.user?.locale;
-  }
+const dialog = inject<Dialog>("dialog");
 
-  async confirmUser() {
-    this.isConfirmationModalActive = false;
-    await this.updateUser({
-      confirmed: true,
-      notify: this.newUser.notify,
-    });
-  }
+const suspendAccount = async (): Promise<void> => {
+  dialog?.confirm({
+    title: t("Suspend the account?"),
+    message: t(
+      "Do you really want to suspend this account? All of the user's profiles will be deleted."
+    ),
+    confirmText: t("Suspend the account"),
+    cancelText: t("Cancel"),
+    type: "is-danger",
+    onConfirm: async () => {
+      suspendUser({
+        userId: props.id,
+      });
+      return router.push({ name: RouteName.USERS });
+    },
+  });
+};
 
-  async updateUserRole() {
-    this.isRoleChangeModalActive = false;
-    await this.updateUser({
-      role: this.newUser.role,
-      notify: this.newUser.notify,
-    });
-  }
+const profiles = computed((): IPerson[] | undefined => {
+  return user.value?.actors;
+});
 
-  async updateUserEmail() {
-    this.isEmailChangeModalActive = false;
-    await this.updateUser({
-      email: this.newUser.email,
-      notify: this.newUser.notify,
-    });
-  }
+const confirmUser = async () => {
+  isConfirmationModalActive.value = false;
+  await updateUser({
+    id: props.id,
+    confirmed: true,
+    notify: newUser.notify,
+  });
+};
 
-  async updateUser(properties: {
+const updateUserRole = async () => {
+  isRoleChangeModalActive.value = false;
+  await updateUser({
+    id: props.id,
+    role: newUser.role,
+    notify: newUser.notify,
+  });
+};
+
+const updateUserEmail = async () => {
+  isEmailChangeModalActive.value = false;
+  await updateUser({
+    id: props.id,
+    email: newUser.email,
+    notify: newUser.notify,
+  });
+};
+
+const { mutate: updateUser } = useMutation<
+  { adminUpdateUser: IUser },
+  {
+    id: string;
     email?: string;
     notify: boolean;
     confirmed?: boolean;
     role?: ICurrentUserRole;
-  }) {
-    await this.$apollo.mutate<{ adminUpdateUser: IUser }>({
-      mutation: ADMIN_UPDATE_USER,
-      variables: {
-        id: this.id,
-        ...properties,
-      },
-    });
   }
+>(ADMIN_UPDATE_USER);
 
-  @Watch("user")
-  resetCurrentUserRole(
-    updatedUser: IUser | undefined,
-    oldUser: IUser | undefined
-  ) {
-    if (updatedUser?.role !== oldUser?.role) {
-      this.newUser.role = updatedUser?.role;
-    }
+watch(user, (updatedUser: IUser | undefined, oldUser: IUser | undefined) => {
+  if (updatedUser?.role !== oldUser?.role) {
+    newUser.role = updatedUser?.role;
   }
+});
 
-  get userEmailDomain(): string | undefined {
-    if (this?.user?.email) {
-      return this?.user?.email.split("@")[1];
-    }
-    return undefined;
+const userEmailDomain = computed((): string | undefined => {
+  if (user.value?.email) {
+    return user.value?.email.split("@")[1];
   }
-}
+  return undefined;
+});
 </script>

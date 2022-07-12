@@ -17,16 +17,18 @@
       >
     </div>
     <div v-if="groups">
-      <b-switch v-model="local">{{ $t("Local") }}</b-switch>
-      <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
-      <b-table
+      <div class="flex gap-2">
+        <o-switch v-model="local">{{ $t("Local") }}</o-switch>
+        <o-switch v-model="suspended">{{ $t("Suspended") }}</o-switch>
+      </div>
+      <o-table
         :data="groups.elements"
-        :loading="$apollo.queries.groups.loading"
+        :loading="loading"
         paginated
         backend-pagination
         backend-filtering
         :debounce-search="200"
-        :current-page.sync="page"
+        v-model:current-page="page"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
@@ -36,13 +38,13 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <b-table-column
+        <o-table-column
           field="preferredUsername"
           :label="$t('Username')"
           searchable
         >
           <template #searchable="props">
-            <b-input
+            <o-input
               :aria-label="$t('Filter')"
               v-model="props.filters.preferredUsername"
               :placeholder="$t('Filter')"
@@ -57,17 +59,19 @@
                 params: { id: props.row.id },
               }"
             >
-              <article class="media">
-                <figure class="media-left" v-if="props.row.avatar">
-                  <p class="image is-48x48">
-                    <img
-                      :src="props.row.avatar.url"
-                      :alt="props.row.avatar.alt || ''"
-                    />
-                  </p>
+              <article class="flex gap-1">
+                <figure class="" v-if="props.row.avatar">
+                  <img
+                    :src="props.row.avatar.url"
+                    :alt="props.row.avatar.alt || ''"
+                    width="48"
+                    height="48"
+                    class="rounded-full"
+                  />
                 </figure>
-                <div class="media-content">
-                  <div class="content">
+                <AccountGroup v-else :size="48" />
+                <div class="">
+                  <div class="prose dark:prose-invert">
                     <strong v-if="props.row.name">{{ props.row.name }}</strong
                     ><br v-if="props.row.name" />
                     <small>@{{ props.row.preferredUsername }}</small>
@@ -76,11 +80,11 @@
               </article>
             </router-link>
           </template>
-        </b-table-column>
+        </o-table-column>
 
-        <b-table-column field="domain" :label="$t('Domain')" searchable>
+        <o-table-column field="domain" :label="$t('Domain')" searchable>
           <template #searchable="props">
-            <b-input
+            <o-input
               :aria-label="$t('Filter')"
               v-model="props.filters.domain"
               :placeholder="$t('Filter')"
@@ -90,150 +94,100 @@
           <template v-slot:default="props">
             {{ props.row.domain }}
           </template>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account-group" :inline="true">
             {{ $t("No group matches the filters") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
+<script lang="ts" setup>
 import { LIST_GROUPS } from "@/graphql/group";
 import RouteName from "../../router/name";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import VueRouter from "vue-router";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useRestrictions } from "@/composition/apollo/config";
+import { useQuery } from "@vue/apollo-composable";
+import {
+  booleanTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
+import { Paginate } from "@/types/paginate";
+import { IGroup } from "@/types/actor";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 
 const PROFILES_PER_PAGE = 10;
 
-@Component({
-  apollo: {
-    config: CONFIG,
-    groups: {
-      query: LIST_GROUPS,
-      variables() {
-        return {
-          preferredUsername: this.preferredUsername,
-          name: this.name,
-          domain: this.domain,
-          local: this.local,
-          suspended: this.suspended,
-          page: this.page,
-          limit: PROFILES_PER_PAGE,
-        };
-      },
+const { restrictions } = useRestrictions();
+
+const preferredUsername = useRouteQuery("preferredUsername", "");
+const name = useRouteQuery("name", "");
+const domain = useRouteQuery("domain", "");
+const local = useRouteQuery("local", false, booleanTransformer);
+const suspended = useRouteQuery("suspended", false, booleanTransformer);
+const page = useRouteQuery("page", 1, integerTransformer);
+
+const {
+  result: groupsResult,
+  fetchMore,
+  loading,
+} = useQuery<{
+  groups: Paginate<IGroup>;
+}>(LIST_GROUPS, () => ({
+  preferredUsername: preferredUsername.value,
+  name: name.value,
+  domain: domain.value,
+  local: local.value,
+  suspended: suspended.value,
+  page: page.value,
+  limit: PROFILES_PER_PAGE,
+}));
+
+const groups = computed(() => groupsResult.value?.groups);
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({ title: computed(() => t("Groups")) });
+
+const onPageChange = async (): Promise<void> => {
+  await doFetchMore();
+};
+
+const showCreateGroupsButton = computed((): boolean => {
+  return !!restrictions.value?.onlyAdminCanCreateGroups;
+});
+
+const onFiltersChange = ({
+  preferredUsername: newPreferredUsername,
+  domain: newDomain,
+}: {
+  preferredUsername: string;
+  domain: string;
+}): void => {
+  preferredUsername.value = newPreferredUsername;
+  domain.value = newDomain;
+  doFetchMore();
+};
+
+const doFetchMore = async (): Promise<void> => {
+  await fetchMore({
+    variables: {
+      preferredUsername: preferredUsername.value,
+      name: name.value,
+      domain: domain.value,
+      local: local.value,
+      suspended: suspended.value,
+      page: page.value,
+      limit: PROFILES_PER_PAGE,
     },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Groups") as string,
-    };
-  },
-  components: {
-    EmptyContent,
-  },
-})
-export default class GroupProfiles extends Vue {
-  name = "";
-
-  PROFILES_PER_PAGE = PROFILES_PER_PAGE;
-
-  config!: IConfig;
-  RouteName = RouteName;
-
-  async onPageChange(): Promise<void> {
-    await this.doFetchMore();
-  }
-
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  set page(page: number) {
-    this.pushRouter({ page: page.toString() });
-  }
-
-  get domain(): string {
-    return (this.$route.query.domain as string) || "";
-  }
-
-  set domain(domain: string) {
-    this.pushRouter({ domain });
-  }
-
-  get preferredUsername(): string {
-    return (this.$route.query.preferredUsername as string) || "";
-  }
-
-  set preferredUsername(preferredUsername: string) {
-    this.pushRouter({ preferredUsername });
-  }
-
-  get local(): boolean {
-    return this.$route.query.local === "1";
-  }
-
-  set local(local: boolean) {
-    this.pushRouter({ local: local ? "1" : "0" });
-  }
-
-  get suspended(): boolean {
-    return this.$route.query.suspended === "1";
-  }
-
-  set suspended(suspended: boolean) {
-    this.pushRouter({ suspended: suspended ? "1" : "0" });
-  }
-
-  get showCreateGroupsButton(): boolean {
-    return !!this.config?.restrictions?.onlyAdminCanCreateGroups;
-  }
-
-  onFiltersChange({
-    preferredUsername,
-    domain,
-  }: {
-    preferredUsername: string;
-    domain: string;
-  }): void {
-    this.preferredUsername = preferredUsername;
-    this.domain = domain;
-    this.doFetchMore();
-  }
-
-  private async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      await this.$router.push({
-        name: RouteName.ADMIN_GROUPS,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-
-  private async doFetchMore(): Promise<void> {
-    await this.$apollo.queries.groups.fetchMore({
-      variables: {
-        preferredUsername: this.preferredUsername,
-        name: this.name,
-        domain: this.domain,
-        local: this.local,
-        suspended: this.suspended,
-        page: this.page,
-        limit: PROFILES_PER_PAGE,
-      },
-    });
-  }
-}
+  });
+};
 </script>
 <style lang="scss" scoped>
 a.profile {

@@ -2,8 +2,8 @@
 
 import { register } from "register-service-worker";
 
-if ("serviceWorker" in navigator && isProduction()) {
-  register(`${process.env.BASE_URL}service-worker.js`, {
+if ("serviceWorker" in navigator) {
+  register(`${import.meta.env.BASE_URL}service-worker.js`, {
     ready() {
       console.debug(
         "App is being served from cache by a service worker.\n" +
@@ -33,8 +33,4 @@ if ("serviceWorker" in navigator && isProduction()) {
       console.error("Error during service worker registration:", error);
     },
   });
-}
-
-function isProduction(): boolean {
-  return process.env.NODE_ENV === "production";
 }

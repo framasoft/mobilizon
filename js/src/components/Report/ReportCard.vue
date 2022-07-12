@@ -1,57 +1,55 @@
-<docs>
-```vue
-<report-card :report="{ reported: { name: 'Some bad guy', preferredUsername: 'kevin' }, reporter: { preferredUsername: 'somePerson34' }, reportContent: 'This is not good'}" />
-```
-</docs>
 <template>
-  <div class="card" v-if="report">
-    <div class="card-content">
-      <div class="media">
-        <div class="media-left">
-          <figure class="image is-48x48" v-if="report.reported.avatar">
-            <img alt="" :src="report.reported.avatar.url" />
-          </figure>
-          <b-icon v-else size="is-large" icon="account-circle" />
-        </div>
-        <div class="media-content">
-          <p class="title is-4">{{ report.reported.name }}</p>
-          <p class="subtitle is-6">@{{ report.reported.preferredUsername }}</p>
-        </div>
+  <div class="" v-if="report">
+    <div class="flex gap-1">
+      <figure class="" v-if="report.reported.avatar">
+        <img
+          alt=""
+          :src="report.reported.avatar.url"
+          class="rounded-full"
+          width="48"
+          height="48"
+        />
+      </figure>
+      <AccountCircle v-else :size="48" />
+      <div class="">
+        <p class="" v-if="report.reported.name">{{ report.reported.name }}</p>
+        <p class="">@{{ usernameWithDomain(report.reported) }}</p>
       </div>
+    </div>
 
-      <div class="content columns">
-        <div class="column is-one-quarter-desktop">
-          <span v-if="report.reporter.type === ActorType.APPLICATION">
-            {{
-              $t("Reported by someone on {domain}", {
-                domain: report.reporter.domain,
-              })
-            }}
-          </span>
-          <span v-else>
-            {{
-              $t("Reported by {reporter}", {
-                reporter: report.reporter.preferredUsername,
-              })
-            }}
-          </span>
-        </div>
-        <div class="column" v-if="report.content" v-html="report.content" />
+    <div class="reported_by">
+      <div class="">
+        <span v-if="report.reporter.type === ActorType.APPLICATION">
+          {{
+            t("Reported by someone on {domain}", {
+              domain: report.reporter.domain,
+            })
+          }}
+        </span>
+        <span v-else>
+          {{
+            t("Reported by {reporter}", {
+              reporter: usernameWithDomain(report.reporter),
+            })
+          }}
+        </span>
       </div>
+      <div class="" v-if="report.content" v-html="report.content" />
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { IReport } from "@/types/report.model";
 import { ActorType } from "@/types/enums";
+import { useI18n } from "vue-i18n";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { usernameWithDomain } from "@/types/actor";
 
-@Component
-export default class ReportCard extends Vue {
-  @Prop({ required: true }) report!: IReport;
+defineProps<{
+  report: IReport;
+}>();
 
-  ActorType = ActorType;
-}
+const { t } = useI18n({ useScope: "global" });
 </script>
 <style lang="scss">
 .content img.image {

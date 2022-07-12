@@ -1,5 +1,5 @@
 <template>
-  <div class="map-container" v-if="config">
+  <div class="map-container">
     <l-map
       :zoom="mergedOptions.zoom"
       :style="`height: ${mergedOptions.height}; width: ${mergedOptions.width}`"
@@ -9,20 +9,17 @@
       @update:zoom="updateZoom"
       :options="{ zoomControl: false }"
     >
-      <l-tile-layer
-        :url="config.maps.tiles.endpoint"
-        :attribution="attribution"
-      >
+      <l-tile-layer :url="tiles?.endpoint" :attribution="attribution">
       </l-tile-layer>
       <l-control-zoom
         position="topleft"
         :zoomInTitle="$t('Zoom in')"
         :zoomOutTitle="$t('Zoom out')"
       ></l-control-zoom>
-      <v-locatecontrol
+      <!-- <v-locatecontrol
         v-if="canDoGeoLocation"
         :options="{ icon: 'mdi mdi-map-marker' }"
-      />
+      /> -->
       <l-marker
         :lat-lng="[lat, lon]"
         @add="openPopup"
@@ -39,10 +36,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { Icon, LatLng, LeafletMouseEvent, LeafletEvent } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import {
   LMap,
   LTileLayer,
@@ -50,118 +46,96 @@ import {
   LPopup,
   LIcon,
   LControlZoom,
-} from "vue2-leaflet";
-import Vue2LeafletLocateControl from "@/components/Map/Vue2LeafletLocateControl.vue";
-import { CONFIG } from "../graphql/config";
-import { IConfig } from "../types/config.model";
+} from "@vue-leaflet/vue-leaflet";
+// import Vue2LeafletLocateControl from "@/components/Map/Vue2LeafletLocateControl.vue";
+import { computed, nextTick, onMounted, ref } from "vue";
+import { useMapTiles } from "@/composition/apollo/config";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  components: {
-    LTileLayer,
-    LMap,
-    LMarker,
-    LPopup,
-    LIcon,
-    LControlZoom,
-    "v-locatecontrol": Vue2LeafletLocateControl,
-  },
-  apollo: {
-    config: CONFIG,
-  },
-})
-export default class Map extends Vue {
-  @Prop({ type: Boolean, required: false, default: true }) readOnly!: boolean;
-
-  @Prop({ type: String, required: true }) coords!: string;
-
-  @Prop({ type: Object, required: false }) marker!: {
-    text: string | string[];
-    icon: string;
-  };
-
-  @Prop({ type: Object, required: false }) options!: Record<string, unknown>;
-
-  @Prop({ type: Function, required: false })
-  updateDraggableMarkerCallback!: (latlng: LatLng, zoom: number) => void;
-
-  defaultOptions: {
-    zoom: number;
-    height: string;
-    width: string;
-  } = {
-    zoom: 15,
-    height: "100%",
-    width: "100%",
-  };
-
-  zoom = this.defaultOptions.zoom;
-
-  config!: IConfig;
-
-  /* eslint-disable */
-  mounted() {
-    // this part resolve an issue where the markers would not appear
-    // @ts-ignore
-    delete Icon.Default.prototype._getIconUrl;
-
-    Icon.Default.mergeOptions({
-      iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-      iconUrl: require("leaflet/dist/images/marker-icon.png"),
-      shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-    });
+const props = withDefaults(
+  defineProps<{
+    readOnly?: boolean;
+    coords: string;
+    marker?: { text: string | string[]; icon: string };
+    options?: Record<string, unknown>;
+    updateDraggableMarkerCallback?: (latlng: LatLng, zoom: number) => void;
+  }>(),
+  {
+    readOnly: true,
   }
-  /* eslint-enable */
+);
 
-  openPopup(event: LeafletEvent): void {
-    this.$nextTick(() => {
-      event.target.openPopup();
-    });
-  }
+const defaultOptions: {
+  zoom: number;
+  height: string;
+  width: string;
+} = {
+  zoom: 15,
+  height: "100%",
+  width: "100%",
+};
 
-  get mergedOptions(): Record<string, unknown> {
-    return { ...this.defaultOptions, ...this.options };
-  }
+const zoom = ref(defaultOptions.zoom);
 
-  get lat(): number {
-    return this.$props.coords.split(";")[1];
-  }
+onMounted(() => {
+  // this part resolve an issue where the markers would not appear
+  // delete Icon.Default.prototype._getIconUrl;
+  // Icon.Default.mergeOptions({
+  //   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+  //   iconUrl: require("leaflet/dist/images/marker-icon.png"),
+  //   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
+  // });
+});
 
-  get lon(): number {
-    return this.$props.coords.split(";")[0];
-  }
+const openPopup = async (event: LeafletEvent): Promise<void> => {
+  await nextTick();
+  event.target.openPopup();
+};
 
-  get popupMultiLine(): Array<string> {
-    if (Array.isArray(this.marker.text)) {
-      return this.marker.text;
-    }
-    return [this.marker.text];
-  }
+const mergedOptions = computed((): Record<string, unknown> => {
+  return { ...defaultOptions, ...props.options };
+});
 
-  clickMap(event: LeafletMouseEvent): void {
-    this.updateDraggableMarkerPosition(event.latlng);
-  }
+const lat = computed((): number => {
+  return Number.parseFloat(props.coords?.split(";")[1]);
+});
 
-  updateDraggableMarkerPosition(e: LatLng): void {
-    if (this.updateDraggableMarkerCallback) {
-      this.updateDraggableMarkerCallback(e, this.zoom);
-    }
-  }
+const lon = computed((): number => {
+  return Number.parseFloat(props.coords.split(";")[0]);
+});
 
-  updateZoom(zoom: number): void {
-    this.zoom = zoom;
+const popupMultiLine = computed((): Array<string | undefined> => {
+  if (Array.isArray(props.marker?.text)) {
+    return props.marker?.text as string[];
   }
+  return [props.marker?.text];
+});
 
-  get attribution(): string {
-    return (
-      this.config.maps.tiles.attribution ||
-      (this.$t("© The OpenStreetMap Contributors") as string)
-    );
-  }
+const clickMap = (event: LeafletMouseEvent): void => {
+  updateDraggableMarkerPosition(event.latlng);
+};
 
-  get canDoGeoLocation(): boolean {
-    return window.isSecureContext;
+const updateDraggableMarkerPosition = (e: LatLng): void => {
+  if (props.updateDraggableMarkerCallback) {
+    props.updateDraggableMarkerCallback(e, zoom.value);
   }
-}
+};
+
+const updateZoom = (newZoom: number): void => {
+  zoom.value = newZoom;
+};
+
+const { tiles } = useMapTiles();
+
+const { t } = useI18n({ useScope: "global" });
+
+const attribution = computed((): string => {
+  return tiles.value?.attribution ?? t("© The OpenStreetMap Contributors");
+});
+
+const canDoGeoLocation = computed((): boolean => {
+  return window.isSecureContext;
+});
 </script>
 <style lang="scss" scoped>
 div.map-container {

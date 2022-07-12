@@ -9,7 +9,7 @@
   "+ Start a discussion": "",
   "<b>{contact}</b> will be displayed as contact.": "",
   "@{group}": "",
-  "@{username}": "",
+  "{'@'}{username}": "",
   "@{username} ({role})": "",
   "@{username}'s follow request was accepted": "",
   "@{username}'s follow request was rejected": "",

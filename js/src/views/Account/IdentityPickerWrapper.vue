@@ -1,122 +1,108 @@
 <template>
-  <div class="identity-picker">
+  <div>
     <div
       v-if="inline && currentIdentity"
-      class="inline box"
-      :class="{
-        'has-background-grey-lighter': masked,
-        'no-other-identity': !hasOtherIdentities,
-      }"
+      class="inline box cursor-pointer"
       @click="activateModal"
     >
-      <div class="media">
-        <div class="media-left">
-          <figure class="image is-48x48" v-if="currentIdentity.avatar">
+      <div class="flex gap-1">
+        <div class="">
+          <figure class="" v-if="currentIdentity.avatar">
             <img
-              class="image is-rounded"
+              class="rounded-full"
               :src="currentIdentity.avatar.url"
               alt=""
+              width="48"
+              height="48"
             />
           </figure>
-          <b-icon v-else size="is-large" icon="account-circle" />
+          <AccountCircle v-else :size="48" />
         </div>
-        <div class="media-content" v-if="currentIdentity.name">
-          <p class="is-4">{{ currentIdentity.name }}</p>
-          <p class="is-6 has-text-grey">
+        <div class="" v-if="currentIdentity.name">
+          <p class="">{{ currentIdentity.name }}</p>
+          <p class="">
             {{ `@${currentIdentity.preferredUsername}` }}
             <span v-if="masked">{{ $t("(Masked)") }}</span>
           </p>
         </div>
-        <div class="media-content" v-else>
+        <div class="" v-else>
           {{ `@${currentIdentity.preferredUsername}` }}
         </div>
-        <b-button
-          type="is-text"
-          v-if="identities.length > 1"
+        <o-button
+          variant="text"
+          v-if="identities && identities.length > 1"
           @click="activateModal"
         >
           {{ $t("Change") }}
-        </b-button>
+        </o-button>
       </div>
     </div>
-    <span v-else-if="currentIdentity" class="block" @click="activateModal">
-      <figure class="image is-48x48" v-if="currentIdentity.avatar">
-        <img class="is-rounded" :src="currentIdentity.avatar.url" alt="" />
+    <span
+      v-else-if="currentIdentity"
+      class="cursor-pointer"
+      @click="activateModal"
+    >
+      <figure class="" v-if="currentIdentity.avatar">
+        <img
+          class="rounded"
+          :src="currentIdentity.avatar.url"
+          alt=""
+          width="48"
+          height="48"
+        />
       </figure>
-      <b-icon v-else size="is-large" icon="account-circle" />
+      <AccountCircle v-else :size="48" />
     </span>
-    <b-modal
-      v-model="isComponentModalActive"
-      has-modal-card
+    <o-modal
+      v-model:active="isComponentModalActive"
       :close-button-aria-label="$t('Close')"
     >
-      <identity-picker v-model="currentIdentity" />
-    </b-modal>
+      <identity-picker v-if="currentIdentity" v-model="currentIdentity" />
+    </o-modal>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { IDENTITIES } from "@/graphql/actor";
-import { IActor } from "../../types/actor";
+<script lang="ts" setup>
+import { useCurrentUserIdentities } from "@/composition/apollo/actor";
+import { computed, ref } from "vue";
+import { IPerson } from "../../types/actor";
 import IdentityPicker from "./IdentityPicker.vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 
-@Component({
-  components: { IdentityPicker },
-  apollo: {
-    identities: {
-      query: IDENTITIES,
-    },
+const { identities } = useCurrentUserIdentities();
+
+const props = withDefaults(
+  defineProps<{
+    modelValue: IPerson;
+    inline?: boolean;
+    masked?: boolean;
+  }>(),
+  {
+    inline: true,
+    masked: false,
+  }
+);
+
+const emit = defineEmits(["update:modelValue"]);
+
+const isComponentModalActive = ref(false);
+
+const currentIdentity = computed({
+  get(): IPerson | undefined {
+    return props.modelValue;
   },
-})
-export default class IdentityPickerWrapper extends Vue {
-  @Prop() value!: IActor;
+  set(identity: IPerson | undefined) {
+    emit("update:modelValue", identity);
+    isComponentModalActive.value = false;
+  },
+});
 
-  @Prop({ default: true, type: Boolean }) inline!: boolean;
+const hasOtherIdentities = computed((): boolean => {
+  return identities.value !== undefined && identities.value.length > 1;
+});
 
-  @Prop({ type: Boolean, required: false, default: false }) masked!: boolean;
-
-  isComponentModalActive = false;
-
-  identities: IActor[] = [];
-
-  @Watch("value")
-  updateCurrentActor(value: IActor): void {
-    this.currentIdentity = value;
+const activateModal = (): void => {
+  if (hasOtherIdentities.value) {
+    isComponentModalActive.value = true;
   }
-
-  get currentIdentity(): IActor | undefined {
-    return this.value;
-  }
-
-  set currentIdentity(identity: IActor | undefined) {
-    this.$emit("input", identity);
-    this.isComponentModalActive = false;
-  }
-
-  get hasOtherIdentities(): boolean {
-    return this.identities.length > 1;
-  }
-
-  activateModal(): void {
-    if (this.hasOtherIdentities) {
-      this.isComponentModalActive = true;
-    }
-  }
-}
+};
 </script>
-<style lang="scss">
-.identity-picker {
-  .block {
-    cursor: pointer;
-  }
-
-  .inline:not(.no-other-identity) {
-    cursor: pointer;
-  }
-
-  .media {
-    border-top: none;
-    padding-top: 0;
-  }
-}
-</style>

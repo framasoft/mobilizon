@@ -1,153 +1,116 @@
 <template>
-  <section class="section container">
-    <div class="columns is-mobile is-centered">
-      <div class="column is-half-desktop">
-        <h1 class="title">
-          {{ $t("Forgot your password?") }}
-        </h1>
-        <p>
-          {{
-            $t(
-              "Enter your email address below, and we'll email you instructions on how to change your password."
-            )
-          }}
-        </p>
-        <b-message
-          title="Error"
-          type="is-danger"
-          v-for="error in errors"
-          :key="error"
-          @close="removeError(error)"
-        >
-          {{ error }}
-        </b-message>
-        <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
-          <b-field :label="$t('Email address')">
-            <b-input
-              aria-required="true"
-              required
-              type="email"
-              v-model="credentials.email"
-            />
-          </b-field>
-          <p class="control">
-            <b-button type="is-primary" native-type="submit">
-              {{ $t("Submit") }}
-            </b-button>
-            <router-link
-              :to="{ name: RouteName.LOGIN }"
-              class="button is-text"
-              >{{ $t("Cancel") }}</router-link
-            >
-          </p>
-        </form>
-        <div v-else>
-          <b-message type="is-success" :closable="false" title="Success">
-            {{
-              $t("We just sent an email to {email}", {
-                email: credentials.email,
-              })
-            }}
-          </b-message>
-          <b-message type="is-info">
-            {{
-              $t(
-                "Please check your spam folder if you didn't receive the email."
-              )
-            }}
-          </b-message>
-        </div>
-      </div>
+  <section class="container mx-auto">
+    <h1>
+      {{ t("Forgot your password?") }}
+    </h1>
+    <p>
+      {{
+        t(
+          "Enter your email address below, and we'll email you instructions on how to change your password."
+        )
+      }}
+    </p>
+    <o-notification
+      title="Error"
+      variant="danger"
+      v-for="error in errors"
+      :key="error"
+      @close="removeError(error)"
+    >
+      {{ error }}
+    </o-notification>
+    <form @submit="sendResetPasswordTokenAction" v-if="!validationSent">
+      <o-field :label="t('Email address')">
+        <o-input
+          aria-required="true"
+          required
+          type="email"
+          v-model="credentials.email"
+        />
+      </o-field>
+      <p class="control">
+        <o-button variant="primary" native-type="submit">
+          {{ t("Submit") }}
+        </o-button>
+        <router-link :to="{ name: RouteName.LOGIN }" class="button is-text">{{
+          t("Cancel")
+        }}</router-link>
+      </p>
+    </form>
+    <div v-else>
+      <o-notification variant="success" :closable="false" title="Success">
+        {{
+          t("We just sent an email to {email}", {
+            email: credentials.email,
+          })
+        }}
+      </o-notification>
+      <o-notification variant="info">
+        {{
+          t("Please check your spam folder if you didn't receive the email.")
+        }}
+      </o-notification>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import {
-  validateEmailField,
-  validateRequiredField,
-} from "../../utils/validators";
+<script lang="ts" setup>
 import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 import RouteName from "../../router/name";
+import { computed, reactive, ref } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  metaInfo() {
-    return {
-      title: this.$t("Reset password") as string,
-    };
-  },
-})
-export default class SendPasswordReset extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Reset password")),
+});
 
-  credentials = {
-    email: "",
-  } as { email: string };
+const props = withDefaults(
+  defineProps<{
+    email?: string;
+  }>(),
+  { email: "" }
+);
 
-  validationSent = false;
+const credentials = reactive<{ email: string }>({
+  email: props.email,
+});
 
-  RouteName = RouteName;
+const validationSent = ref(false);
 
-  errors: string[] = [];
+const errors = ref<string[]>([]);
 
-  state = {
-    email: {
-      status: null,
-      msg: "",
-    } as { status: boolean | null; msg: string },
-  };
+const removeError = (message: string): void => {
+  errors.value.splice(errors.value.indexOf(message));
+};
 
-  rules = {
-    required: validateRequiredField,
-    email: validateEmailField,
-  };
+const {
+  mutate: sendResetPasswordMutation,
+  onDone: sendResetPasswordDone,
+  onError: sendResetPasswordError,
+} = useMutation(SEND_RESET_PASSWORD);
 
-  mounted(): void {
-    this.credentials.email = this.email;
-  }
-
-  removeError(message: string): void {
-    this.errors.splice(this.errors.indexOf(message));
-  }
-
-  async sendResetPasswordTokenAction(e: Event): Promise<void> {
-    e.preventDefault();
-
-    try {
-      await this.$apollo.mutate({
-        mutation: SEND_RESET_PASSWORD,
-        variables: {
-          email: this.credentials.email,
-        },
-      });
-
-      this.validationSent = true;
-    } catch (err: any) {
-      console.error(err);
-      if (err.graphQLErrors) {
-        err.graphQLErrors.forEach(({ message }: { message: string }) => {
-          if (this.errors.indexOf(message) < 0) {
-            this.errors.push(message);
-          }
-        });
+sendResetPasswordDone(() => {
+  validationSent.value = true;
+});
+sendResetPasswordError((err) => {
+  console.error(err);
+  if (err.graphQLErrors) {
+    err.graphQLErrors.forEach(({ message }: { message: string }) => {
+      if (errors.value.indexOf(message) < 0) {
+        errors.value.push(message);
       }
-    }
+    });
   }
+});
 
-  resetState(): void {
-    this.state = {
-      email: {
-        status: null,
-        msg: "",
-      },
-    };
-  }
-}
+const sendResetPasswordTokenAction = async (e: Event): Promise<void> => {
+  e.preventDefault();
+
+  sendResetPasswordMutation({
+    email: credentials.email,
+  });
+};
 </script>
-
-<style lang="scss" scoped>
-.container .columns {
-  margin: 1rem auto 3rem;
-}
-</style>

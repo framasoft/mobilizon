@@ -1,47 +1,70 @@
-import Vue from "vue";
-import Buefy from "buefy";
-import Component from "vue-class-component";
+import { provide, createApp, h } from "vue";
+// import "../node_modules/bulma/css/bulma.min.css";
 import VueScrollTo from "vue-scrollto";
-import VueMeta from "vue-meta";
-import VTooltip from "v-tooltip";
-import VueAnnouncer from "@vue-a11y/announcer";
-import VueSkipTo from "@vue-a11y/skip-to";
+// import VueAnnouncer from "@vue-a11y/announcer";
+// import VueSkipTo from "@vue-a11y/skip-to";
 import App from "./App.vue";
-import router from "./router";
-import { NotifierPlugin } from "./plugins/notifier";
-import filters from "./filters";
-import { i18n } from "./utils/i18n";
-import apolloProvider from "./vue-apollo";
+import { router } from "./router";
+import { i18n, locale } from "./utils/i18n";
+import { apolloClient } from "./vue-apollo";
 import Breadcrumbs from "@/components/Utils/Breadcrumbs.vue";
+import { DefaultApolloClient } from "@vue/apollo-composable";
 import "./registerServiceWorker";
 import "./assets/tailwind.css";
+import { setAppForAnalytics } from "./services/statistics";
+import Button from "./components/core/Button.vue";
+import Message from "./components/core/Message.vue";
+import CoreInput from "./components/core/Input.vue";
+import CoreField from "./components/core/Field.vue";
+import { dateFnsPlugin } from "./plugins/dateFns";
+import { dialogPlugin } from "./plugins/dialog";
+import { snackbarPlugin } from "./plugins/snackbar";
+import { notifierPlugin } from "./plugins/notifier";
+import Tag from "./components/core/Tag.vue";
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
+import Oruga from "@oruga-ui/oruga-next";
+// import "@oruga-ui/oruga-next/dist/oruga-full-vars.css";
+import "@oruga-ui/oruga-next/dist/oruga.css";
+import "./assets/oruga-tailwindcss.css";
+import { orugaConfig } from "./oruga-config";
+import MaterialIcon from "./components/core/MaterialIcon.vue";
+import { createHead } from "@vueuse/head";
 
-Vue.config.productionTip = false;
+// Vue.use(VueScrollTo);
+// Vue.use(VueAnnouncer);
+// Vue.use(VueSkipTo);
 
-Vue.use(Buefy);
-Vue.use(NotifierPlugin);
-Vue.use(filters);
-Vue.use(VueMeta);
-Vue.use(VueScrollTo);
-Vue.use(VTooltip);
-Vue.use(VueAnnouncer);
-Vue.use(VueSkipTo);
-Vue.component("breadcrumbs-nav", Breadcrumbs);
+// const app = createApp(App);
 
-// Register the router hooks with their names
-Component.registerHooks([
-  "beforeRouteEnter",
-  "beforeRouteLeave",
-  "beforeRouteUpdate", // for vue-router 2.2+
-]);
+const head = createHead();
 
-/* eslint-disable no-new */
-new Vue({
-  router,
-  apolloProvider,
-  el: "#app",
-  template: "<App/>",
-  components: { App },
-  render: (h) => h(App),
-  i18n,
+const app = createApp({
+  setup() {
+    provide(DefaultApolloClient, apolloClient);
+  },
+  render: () => h(App),
 });
+// app.provide(DefaultApolloClient, apolloClient);
+
+app.use(router);
+app.use(i18n);
+app.use(dateFnsPlugin, { locale });
+app.use(dialogPlugin);
+app.use(snackbarPlugin);
+app.use(notifierPlugin);
+app.use(VueScrollTo);
+app.use(FloatingVue);
+app.use(head);
+app.component("breadcrumbs-nav", Breadcrumbs);
+app.component("b-button", Button);
+app.component("b-message", Message);
+app.component("b-input", CoreInput);
+app.component("b-field", CoreField);
+app.component("b-tag", Tag);
+app.component("material-icon", MaterialIcon);
+app.use(Oruga, orugaConfig);
+
+app.mount("#app");
+
+setAppForAnalytics(app);

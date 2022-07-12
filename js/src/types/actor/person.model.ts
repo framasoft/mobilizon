@@ -10,11 +10,12 @@ import { IFollower } from "./follower.model";
 
 export interface IPerson extends IActor {
   feedTokens: IFeedToken[];
-  goingToEvents: IEvent[];
-  participations: Paginate<IParticipant>;
-  memberships: Paginate<IMember>;
-  follows: Paginate<IFollower>;
+  goingToEvents?: IEvent[];
+  participations?: Paginate<IParticipant>;
+  memberships?: Paginate<IMember>;
+  follows?: Paginate<IFollower>;
   user?: ICurrentUser;
+  organizedEvents?: Paginate<IEvent>;
 }
 
 export class Person extends Actor implements IPerson {
@@ -25,6 +26,8 @@ export class Person extends Actor implements IPerson {
   participations!: Paginate<IParticipant>;
 
   memberships!: Paginate<IMember>;
+
+  organizedEvents!: Paginate<IEvent>;
 
   user!: ICurrentUser;
 

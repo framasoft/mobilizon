@@ -1,34 +1,31 @@
 <template>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">{{ $t("Pick an identity") }}</p>
+  <div class="p-6">
+    <header class="">
+      <h2 class="">{{ $t("Pick an identity") }}</h2>
     </header>
-    <section class="modal-card-body">
+    <section class="">
       <div class="list is-hoverable list-none">
         <a
-          class="list-item"
+          class="my-2 block dark:bg-violet-3 rounded-xl p-2"
           v-for="identity in identities"
           :key="identity.id"
           :class="{
-            'is-active': currentIdentity && identity.id === currentIdentity.id,
+            active: currentIdentity && identity.id === currentIdentity.id,
           }"
           @click="currentIdentity = identity"
         >
-          <div class="media">
+          <div class="flex gap-2">
             <img
-              class="media-left image is-48x48"
+              class="rounded"
               v-if="identity.avatar"
               :src="identity.avatar.url"
               alt=""
+              width="48"
+              height="48"
             />
-            <b-icon
-              class="media-left"
-              v-else
-              size="is-large"
-              icon="account-circle"
-            />
-            <div class="media-content">
-              <h3>@{{ identity.preferredUsername }}</h3>
+            <AccountCircle v-else :size="48" />
+            <div class="">
+              <p>@{{ identity.preferredUsername }}</p>
               <small>{{ identity.name }}</small>
             </div>
           </div>
@@ -38,34 +35,34 @@
     <slot name="footer" />
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { IActor } from "@/types/actor";
-import { IDENTITIES } from "@/graphql/actor";
+<script lang="ts" setup>
+import { IPerson } from "@/types/actor";
+import { useCurrentUserIdentities } from "@/composition/apollo/actor";
+import { computed } from "vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  apollo: {
-    identities: {
-      query: IDENTITIES,
-    },
+const { identities } = useCurrentUserIdentities();
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Identities")),
+});
+
+const props = defineProps<{
+  modelValue: IPerson;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
+
+const currentIdentity = computed<IPerson>({
+  get(): IPerson {
+    return props.modelValue;
   },
-  metaInfo() {
-    return {
-      title: this.$t("Identities") as string,
-    };
+  set(identity: IPerson) {
+    emit("update:modelValue", identity);
   },
-})
-export default class IdentityPicker extends Vue {
-  @Prop() value!: IActor;
-
-  identities: IActor[] = [];
-
-  get currentIdentity(): IActor {
-    return this.value;
-  }
-
-  set currentIdentity(identity: IActor) {
-    this.$emit("input", identity);
-  }
-}
+});
 </script>

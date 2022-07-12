@@ -1,5 +1,5 @@
 <template>
-  <div class="container section" v-if="group">
+  <div class="container mx-auto" v-if="group">
     <breadcrumbs-nav
       :links="[
         {
@@ -8,14 +8,14 @@
           text: displayName(group),
         },
         {
-          name: RouteName.EVENTS,
+          name: RouteName.GROUP_EVENTS,
           params: { preferredUsername: usernameWithDomain(group) },
           text: $t('Events'),
         },
       ]"
     />
     <section>
-      <h1 class="title" v-if="group">
+      <h1 class="" v-if="group">
         {{
           $t("{group}'s events", {
             group: displayName(group),
@@ -29,23 +29,24 @@
           )
         }}
       </p>
-      <router-link
+      <o-button
+        tag="router-link"
+        variant="primary"
         v-if="isCurrentActorAGroupModerator"
         :to="{
           name: RouteName.CREATE_EVENT,
           query: { actorId: group.id },
         }"
-        class="button is-primary"
-        >{{ $t("+ Create an event") }}</router-link
+        >{{ $t("+ Create an event") }}</o-button
       >
-      <b-loading :active.sync="$apollo.loading"></b-loading>
+      <o-loading v-model:active="groupLoading"></o-loading>
       <section v-if="group">
-        <subtitle>
+        <h2 class="text-2xl">
           {{ showPassedEvents ? $t("Past events") : $t("Upcoming events") }}
-        </subtitle>
-        <b-switch class="mb-4" v-model="showPassedEvents">{{
+        </h2>
+        <o-switch class="mb-4" v-model="showPassedEvents">{{
           $t("Past events")
-        }}</b-switch>
+        }}</o-switch>
         <grouped-multi-event-minimalist-card
           :events="group.organizedEvents.elements"
           :isCurrentActorMember="isCurrentActorMember"
@@ -53,7 +54,7 @@
         <empty-content
           v-if="
             group.organizedEvents.elements.length === 0 &&
-            $apollo.loading === false
+            groupLoading === false
           "
           icon="calendar"
           :inline="true"
@@ -69,13 +70,13 @@
                   )
                 }}
               </p>
-              <b-button type="is-text" tag="a" :href="group.url">
+              <o-button type="is-text" tag="a" :href="group.url">
                 {{ $t("View the group profile on the original instance") }}
-              </b-button>
+              </o-button>
             </div>
           </template>
         </empty-content>
-        <b-pagination
+        <o-pagination
           class="mt-4"
           :total="group.organizedEvents.total"
           v-model="page"
@@ -85,116 +86,93 @@
           :aria-page-label="$t('Page')"
           :aria-current-label="$t('Current page')"
         >
-        </b-pagination>
+        </o-pagination>
       </section>
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import RouteName from "@/router/name";
-import Subtitle from "@/components/Utils/Subtitle.vue";
 import GroupedMultiEventMinimalistCard from "@/components/Event/GroupedMultiEventMinimalistCard.vue";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { IMember } from "@/types/actor/member.model";
 import { FETCH_GROUP_EVENTS } from "@/graphql/event";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import { displayName, IGroup, usernameWithDomain } from "../../types/actor";
+import { displayName, IPerson, usernameWithDomain } from "../../types/actor";
+import { useQuery } from "@vue/apollo-composable";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import {
+  booleanTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { MemberRole } from "@/types/enums";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
 
 const EVENTS_PAGE_LIMIT = 10;
 
-@Component({
-  apollo: {
-    memberships: {
-      query: PERSON_MEMBERSHIPS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          id: this.currentActor.id,
-        };
-      },
-      update: (data) => data.person.memberships.elements,
-      skip() {
-        return !this.currentActor || !this.currentActor.id;
-      },
-    },
-    group: {
-      query: FETCH_GROUP_EVENTS,
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-          beforeDateTime: this.showPassedEvents ? new Date() : null,
-          afterDateTime: this.showPassedEvents ? null : new Date(),
-          organisedEventsPage: this.page,
-          organisedEventsLimit: EVENTS_PAGE_LIMIT,
-        };
-      },
-      update: (data) => data.group,
-    },
-  },
-  components: {
-    EmptyContent,
-    Subtitle,
-    GroupedMultiEventMinimalistCard,
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { group } = this;
-    return {
-      title: this.$t("{group} events", {
-        group: displayName(group),
-      }) as string,
-    };
-  },
-})
-export default class GroupEvents extends Vue {
-  group!: IGroup;
+const { currentActor } = useCurrentActorClient();
 
-  memberships!: IMember[];
+const { result: membershipsResult } = useQuery<{
+  person: Pick<IPerson, "memberships">;
+}>(
+  PERSON_MEMBERSHIPS,
+  () => ({ id: currentActor.value?.id }),
+  () => ({ enabled: currentActor.value?.id !== undefined })
+);
+const memberships = computed(
+  () => membershipsResult.value?.person.memberships.elements
+);
 
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
+const route = useRoute();
+const page = useRouteQuery("page", 1, integerTransformer);
+const showPassedEvents = useRouteQuery(
+  "showPassedEvents",
+  false,
+  booleanTransformer
+);
 
-  set page(page: number) {
-    this.$router.push({
-      name: RouteName.GROUP_EVENTS,
-      query: { ...this.$route.query, page: page.toString() },
-    });
-    this.$apollo.queries.group.refetch();
-  }
+const { result: groupResult, loading: groupLoading } = useQuery(
+  FETCH_GROUP_EVENTS,
+  () => ({
+    name: route.params.preferredUsername,
+    beforeDateTime: showPassedEvents.value ? new Date() : null,
+    afterDateTime: showPassedEvents.value ? null : new Date(),
+    organisedEventsPage: page.value,
+    organisedEventsLimit: EVENTS_PAGE_LIMIT,
+  })
+);
+const group = computed(() => groupResult.value?.group);
 
-  usernameWithDomain = usernameWithDomain;
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: t("{group} events", {
+    group: displayName(group.value),
+  }),
+});
 
-  displayName = displayName;
+const isCurrentActorMember = computed((): boolean => {
+  if (!group.value || !memberships.value) return false;
+  return (memberships.value ?? [])
+    .map(({ parent: { id } }) => id)
+    .includes(group.value.id);
+});
 
-  RouteName = RouteName;
+const isCurrentActorAGroupModerator = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+  ]);
+});
 
-  EVENTS_PAGE_LIMIT = EVENTS_PAGE_LIMIT;
-
-  get isCurrentActorMember(): boolean {
-    if (!this.group || !this.memberships) return false;
-    return this.memberships
-      .map(({ parent: { id } }) => id)
-      .includes(this.group.id);
-  }
-
-  get showPassedEvents(): boolean {
-    return this.$route.query.future === "false";
-  }
-
-  set showPassedEvents(value: boolean) {
-    this.$router.replace({ query: { future: (!value).toString() } });
-  }
-}
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  return (
+    memberships.value !== undefined &&
+    memberships.value?.length > 0 &&
+    roles.includes(memberships.value[0].role)
+  );
+};
 </script>
-<style lang="scss" scoped>
-.container.section {
-  background: $white;
-}
-
-div.event-list {
-  margin-bottom: 1rem;
-}
-</style>

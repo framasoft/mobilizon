@@ -9,25 +9,25 @@
         <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
         <div class="address" v-if="physicalAddress">
           <address-info :address="physicalAddress" />
-          <b-button
+          <o-button
             type="is-text"
             class="map-show-button"
             @click="$emit('showMapModal', true)"
             v-if="physicalAddress.geom"
           >
             {{ $t("Show map") }}
-          </b-button>
+          </o-button>
         </div>
       </div>
     </event-metadata-block>
     <event-metadata-block :title="$t('Date and time')" icon="calendar">
       <event-full-date
-        :beginsOn="event.beginsOn"
+        :beginsOn="event.beginsOn.toString()"
         :show-start-time="event.options.showStartTime"
         :show-end-time="event.options.showEndTime"
-        :timezone="event.options.timezone"
+        :timezone="event.options.timezone ?? undefined"
         :userTimezone="userTimezone"
-        :endsOn="event.endsOn"
+        :endsOn="event.endsOn?.toString()"
       />
     </event-metadata-block>
     <event-metadata-block
@@ -52,7 +52,11 @@
           :inline="true"
         />
       </router-link>
-      <actor-card v-else :actor="event.organizerActor" :inline="true" />
+      <actor-card
+        v-else-if="event.organizerActor"
+        :actor="event.organizerActor"
+        :inline="true"
+      />
       <actor-card
         :inline="true"
         :actor="contact"
@@ -129,107 +133,84 @@
     </event-metadata-block>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { Address } from "@/types/address.model";
-import { IConfig } from "@/types/config.model";
 import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed } from "vue";
 import RouteName from "../../router/name";
 import { usernameWithDomain } from "../../types/actor";
 import EventMetadataBlock from "./EventMetadataBlock.vue";
 import EventFullDate from "./EventFullDate.vue";
-import PopoverActorCard from "../Account/PopoverActorCard.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
-import {
-  IEventMetadata,
-  IEventMetadataDescription,
-} from "@/types/event-metadata";
+import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { IUser } from "@/types/current-user.model";
 
-@Component({
-  components: {
-    EventMetadataBlock,
-    EventFullDate,
-    PopoverActorCard,
-    ActorCard,
-    AddressInfo,
-  },
-})
-export default class EventMetadataSidebar extends Vue {
-  @Prop({ type: Object as PropType<IEvent>, required: true }) event!: IEvent;
-  @Prop({ type: Object as PropType<IConfig>, required: true }) config!: IConfig;
-  @Prop({ required: true }) user!: IUser | undefined;
-  @Prop({ required: false, default: false }) showMap!: boolean;
+const props = withDefaults(
+  defineProps<{
+    event: IEvent;
+    user: IUser | undefined;
+    showMap?: boolean;
+  }>(),
+  { showMap: false }
+);
 
-  RouteName = RouteName;
+const physicalAddress = computed((): Address | null => {
+  if (!props.event.physicalAddress) return null;
 
-  usernameWithDomain = usernameWithDomain;
+  return new Address(props.event.physicalAddress);
+});
 
-  eventMetaDataList = eventMetaDataList;
+const extraMetadata = computed((): IEventMetadataDescription[] => {
+  return props.event.metadata.map((val) => {
+    const def = eventMetaDataList.find((dat) => dat.key === val.key);
+    return {
+      ...def,
+      ...val,
+    };
+  });
+});
 
-  EventMetadataType = EventMetadataType;
-  EventMetadataKeyType = EventMetadataKeyType;
-
-  get physicalAddress(): Address | null {
-    if (!this.event.physicalAddress) return null;
-
-    return new Address(this.event.physicalAddress);
+const urlToHostname = (url: string | undefined): string | null => {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname;
+  } catch (e) {
+    return null;
   }
+};
 
-  get extraMetadata(): IEventMetadata[] {
-    return this.event.metadata.map((val) => {
-      const def = eventMetaDataList.find((dat) => dat.key === val.key);
-      return {
-        ...def,
-        ...val,
-      };
-    });
+const simpleURL = (url: string): string | null => {
+  try {
+    const uri = new URL(url);
+    return `${removeWWW(uri.hostname)}${uri.pathname}${uri.search}${uri.hash}`;
+  } catch (e) {
+    return null;
   }
+};
 
-  urlToHostname(url: string): string | null {
-    try {
-      return new URL(url).hostname;
-    } catch (e) {
-      return null;
+const removeWWW = (string: string): string => {
+  return string.replace(/^www./, "");
+};
+
+const accountURL = (extra: IEventMetadataDescription): string | undefined => {
+  switch (extra.key) {
+    case "mz:social:twitter:account": {
+      const handle =
+        extra.value[0] === "@" ? extra.value.slice(1) : extra.value;
+      return `https://twitter.com/${handle}`;
     }
   }
+};
 
-  simpleURL(url: string): string | null {
-    try {
-      const uri = new URL(url);
-      return `${this.removeWWW(uri.hostname)}${uri.pathname}${uri.search}${
-        uri.hash
-      }`;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  private removeWWW(string: string): string {
-    return string.replace(/^www./, "");
-  }
-
-  accountURL(extra: IEventMetadataDescription): string | undefined {
-    switch (extra.key) {
-      case "mz:social:twitter:account": {
-        const handle =
-          extra.value[0] === "@" ? extra.value.slice(1) : extra.value;
-        return `https://twitter.com/${handle}`;
-      }
-    }
-  }
-
-  get userTimezone(): string | undefined {
-    return this.user?.settings?.timezone;
-  }
-}
+const userTimezone = computed((): string | undefined => {
+  return props.user?.settings?.timezone;
+});
 </script>
 <style lang="scss" scoped>
-::v-deep .metadata-organized-by {
+:deep(.metadata-organized-by) {
   .v-popover.popover .trigger {
     width: 100%;
     .media-content {

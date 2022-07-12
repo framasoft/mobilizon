@@ -1,9 +1,10 @@
 <template>
   <div>
-    <h2>{{ title }}</h2>
-    <div class="eventMetadataBlock">
+    <h2 class="text-2xl">{{ title }}</h2>
+    <div class="flex items-center mb-3 gap-1 eventMetadataBlock">
+      <slot name="icon"></slot>
       <!-- Custom icons -->
-      <span
+      <!-- <span
         class="icon is-medium"
         v-if="icon && icon.substring(0, 7) === 'mz:icon'"
       >
@@ -13,30 +14,19 @@
           height="32"
         />
       </span>
-      <b-icon v-else-if="icon" :icon="icon" size="is-medium" />
-      <div class="content-wrapper" :class="{ 'padding-left': icon }">
+      <o-icon v-else-if="icon" :icon="icon" size="is-medium" /> -->
+      <div class="content-wrapper">
         <slot></slot>
       </div>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-@Component
-export default class EventMetadataBlock extends Vue {
-  @Prop({ required: false, type: String }) icon!: string;
-
-  @Prop({ required: true, type: String }) title!: string;
-}
+<script lang="ts" setup>
+defineProps<{
+  title: string;
+}>();
 </script>
 <style lang="scss" scoped>
-h2 {
-  font-size: 1.8rem;
-  font-weight: 500;
-  color: $violet;
-}
-
 div.eventMetadataBlock {
   display: flex;
   align-items: center;

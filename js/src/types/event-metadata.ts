@@ -14,9 +14,9 @@ export interface IEventMetadata {
 export interface IEventMetadataDescription extends IEventMetadata {
   icon?: string;
   placeholder?: string;
-  description: string;
+  description?: string;
   choices?: Record<string, string>;
-  keyType: EventMetadataKeyType;
+  keyType?: EventMetadataKeyType;
   pattern?: RegExp;
   label: string;
   category: EventMetadataCategories;

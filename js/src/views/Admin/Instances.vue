@@ -9,57 +9,57 @@
     <section>
       <h1 class="title">{{ $t("Instances") }}</h1>
       <form @submit="followInstance" class="my-4">
-        <b-field :label="$t('Follow a new instance')" horizontal>
-          <b-field grouped group-multiline expanded size="is-large">
+        <o-field :label="$t('Follow a new instance')" horizontal>
+          <o-field grouped group-multiline expanded size="large">
             <p class="control">
-              <b-input
+              <o-input
                 v-model="newRelayAddress"
                 :placeholder="$t('Ex: mobilizon.fr')"
               />
             </p>
             <p class="control">
-              <b-button type="is-primary" native-type="submit">{{
+              <o-button variant="primary" native-type="submit">{{
                 $t("Add an instance")
-              }}</b-button>
-              <b-loading
+              }}</o-button>
+              <o-loading
                 :is-full-page="true"
                 v-model="followInstanceLoading"
                 :can-cancel="false"
               />
             </p>
-          </b-field>
-        </b-field>
+          </o-field>
+        </o-field>
       </form>
       <div class="flex flex-wrap gap-2">
-        <b-field :label="$t('Follow status')">
-          <b-radio-button
+        <o-field :label="$t('Follow status')">
+          <o-radio
             v-model="followStatus"
             :native-value="InstanceFilterFollowStatus.ALL"
-            >{{ $t("All") }}</b-radio-button
+            >{{ $t("All") }}</o-radio
           >
-          <b-radio-button
+          <o-radio
             v-model="followStatus"
             :native-value="InstanceFilterFollowStatus.FOLLOWING"
-            >{{ $t("Following") }}</b-radio-button
+            >{{ $t("Following") }}</o-radio
           >
-          <b-radio-button
+          <o-radio
             v-model="followStatus"
             :native-value="InstanceFilterFollowStatus.FOLLOWED"
-            >{{ $t("Followed") }}</b-radio-button
+            >{{ $t("Followed") }}</o-radio
           >
-        </b-field>
-        <b-field
+        </o-field>
+        <o-field
           :label="$t('Domain')"
           label-for="domain-filter"
           class="flex-auto"
         >
-          <b-input
+          <o-input
             id="domain-filter"
             :placeholder="$t('mobilizon-instance.tld')"
             :value="filterDomain"
             @input="debouncedUpdateDomainFilter"
           />
-        </b-field>
+        </o-field>
       </div>
       <div v-if="instances && instances.elements.length > 0" class="mt-3">
         <router-link
@@ -78,7 +78,7 @@
               src="../../assets/logo.svg"
               alt=""
             />
-            <b-icon
+            <o-icon
               class="is-large"
               v-else
               custom-size="mdi-36px"
@@ -90,7 +90,7 @@
                 class="text-sm"
                 v-if="instance.followedStatus === InstanceFollowStatus.APPROVED"
               >
-                <b-icon icon="inbox-arrow-down" />
+                <o-icon icon="inbox-arrow-down" />
                 {{ $t("Followed") }}</span
               >
               <span
@@ -99,21 +99,21 @@
                   instance.followedStatus === InstanceFollowStatus.PENDING
                 "
               >
-                <b-icon icon="inbox-arrow-down" />
+                <o-icon icon="inbox-arrow-down" />
                 {{ $t("Followed, pending response") }}</span
               >
               <span
                 class="text-sm"
                 v-if="instance.followerStatus == InstanceFollowStatus.APPROVED"
               >
-                <b-icon icon="inbox-arrow-up" />
+                <o-icon icon="inbox-arrow-up" />
                 {{ $t("Follows us") }}</span
               >
               <span
                 class="text-sm"
                 v-if="instance.followerStatus == InstanceFollowStatus.PENDING"
               >
-                <b-icon icon="inbox-arrow-up" />
+                <o-icon icon="inbox-arrow-up" />
                 {{ $t("Follows us, pending approval") }}</span
               >
             </div>
@@ -129,7 +129,7 @@
             </p>
           </div>
         </router-link>
-        <b-pagination
+        <o-pagination
           v-show="instances.total > INSTANCES_PAGE_LIMIT"
           :total="instances.total"
           v-model="instancePage"
@@ -139,7 +139,7 @@
           :aria-page-label="$t('Page')"
           :aria-current-label="$t('Current page')"
         >
-        </b-pagination>
+        </o-pagination>
       </div>
       <div v-else-if="instances && instances.elements.length == 0">
         <empty-content icon="lan-disconnect" :inline="true">
@@ -162,145 +162,107 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { ADD_INSTANCE, INSTANCES } from "@/graphql/admin";
 import { Paginate } from "@/types/paginate";
-import { IFollower } from "@/types/actor/follower.model";
 import RouteName from "../../router/name";
 import { IInstance } from "@/types/instance.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import VueRouter from "vue-router";
-import { debounce } from "lodash";
+import debounce from "lodash/debounce";
 import {
   InstanceFilterFollowStatus,
   InstanceFollowStatus,
 } from "@/types/enums";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useI18n } from "vue-i18n";
+import {
+  enumTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useHead } from "@vueuse/head";
 
 const INSTANCES_PAGE_LIMIT = 10;
 
-@Component({
-  apollo: {
-    instances: {
-      query: INSTANCES,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          page: this.instancePage,
-          limit: INSTANCES_PAGE_LIMIT,
-          filterDomain: this.filterDomain,
-          filterFollowStatus: this.followStatus,
-        };
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Federation") as string,
-    };
-  },
-  components: {
-    EmptyContent,
-  },
-})
-export default class Follows extends Vue {
-  RouteName = RouteName;
+const instancePage = useRouteQuery("page", 1, integerTransformer);
+const filterDomain = useRouteQuery("filterDomain", "");
+const followStatus = useRouteQuery(
+  "followStatus",
+  InstanceFilterFollowStatus.ALL,
+  enumTransformer(InstanceFilterFollowStatus)
+);
 
-  followInstanceLoading = false;
+const { result: instancesResult } = useQuery<{
+  instances: Paginate<IInstance>;
+}>(INSTANCES, () => ({
+  page: instancePage.value,
+  limit: INSTANCES_PAGE_LIMIT,
+  filterDomain: filterDomain.value,
+  filterFollowStatus: followStatus.value,
+}));
 
-  newRelayAddress = "";
+const instances = computed(() => instancesResult.value?.instances);
 
-  instances!: Paginate<IInstance>;
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Federation")),
+});
 
-  instancePage = 1;
+const followInstanceLoading = ref(false);
 
-  relayFollowings: Paginate<IFollower> = { elements: [], total: 0 };
+const newRelayAddress = ref("");
 
-  relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
+// relayFollowings: Paginate<IFollower> = { elements: [], total: 0 };
 
-  InstanceFilterFollowStatus = InstanceFilterFollowStatus;
+// relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
 
-  InstanceFollowStatus = InstanceFollowStatus;
+const updateDomainFilter = (domain: string) => {
+  filterDomain.value = domain;
+};
 
-  INSTANCES_PAGE_LIMIT = INSTANCES_PAGE_LIMIT;
+const debouncedUpdateDomainFilter = debounce(updateDomainFilter, 500);
 
-  data(): Record<string, unknown> {
-    return {
-      debouncedUpdateDomainFilter: debounce(this.updateDomainFilter, 500),
-    };
-  }
+const hasFilter = computed((): boolean => {
+  return (
+    followStatus.value !== InstanceFilterFollowStatus.ALL ||
+    filterDomain.value !== ""
+  );
+});
 
-  updateDomainFilter(domain: string) {
-    this.filterDomain = domain;
-  }
+const router = useRouter();
 
-  get filterDomain(): string {
-    return (this.$route.query.domain as string) || "";
-  }
+const { mutate, onDone, onError } = useMutation<{
+  addInstance: IInstance;
+}>(ADD_INSTANCE);
 
-  set filterDomain(domain: string) {
-    this.pushRouter({ domain });
-  }
+onDone(({ data }) => {
+  newRelayAddress.value = "";
+  followInstanceLoading.value = false;
+  router.push({
+    name: RouteName.INSTANCE,
+    params: { domain: data?.addInstance.domain },
+  });
+});
 
-  get followStatus(): InstanceFilterFollowStatus {
-    return (
-      (this.$route.query.followStatus as InstanceFilterFollowStatus) ||
-      InstanceFilterFollowStatus.ALL
-    );
-  }
-
-  set followStatus(followStatus: InstanceFilterFollowStatus) {
-    this.pushRouter({ followStatus });
-  }
-
-  get hasFilter(): boolean {
-    return (
-      this.followStatus !== InstanceFilterFollowStatus.ALL ||
-      this.filterDomain !== ""
-    );
-  }
-
-  async followInstance(e: Event): Promise<void> {
-    e.preventDefault();
-    this.followInstanceLoading = true;
-    const domain = this.newRelayAddress.trim(); // trim to fix copy and paste domain name spaces and tabs
-    try {
-      await this.$apollo.mutate<{ relayFollowings: Paginate<IFollower> }>({
-        mutation: ADD_INSTANCE,
-        variables: {
-          domain,
-        },
-      });
-      this.newRelayAddress = "";
-      this.followInstanceLoading = false;
-      this.$router.push({
-        name: RouteName.INSTANCE,
-        params: { domain },
-      });
-    } catch (error: any) {
-      if (error.message) {
-        if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-          this.$notifier.error(error.graphQLErrors[0].message);
-        }
-      }
-      this.followInstanceLoading = false;
+onError((error) => {
+  if (error.message) {
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      notifier?.error(error.graphQLErrors[0].message);
     }
   }
+  followInstanceLoading.value = false;
+});
 
-  private async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      await this.$router.push({
-        name: RouteName.INSTANCES,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-}
+const followInstance = async (e: Event): Promise<void> => {
+  e.preventDefault();
+  followInstanceLoading.value = true;
+  const domain = newRelayAddress.value.trim(); // trim to fix copy and paste domain name spaces and tabs
+  mutate({
+    domain,
+  });
+};
 </script>
 <style lang="scss" scoped>
 .tab-item {

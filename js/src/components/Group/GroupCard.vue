@@ -4,26 +4,21 @@
       name: RouteName.GROUP,
       params: { preferredUsername: usernameWithDomain(group) },
     }"
-    class="card"
+    class="card flex flex-col max-w-md bg-white dark:bg-mbz-purple dark:text-white rounded shadow-lg"
   >
-    <div class="card-image">
-      <figure class="image is-16by9">
-        <lazy-image-wrapper
-          :picture="group.banner"
-          style="height: 100%; position: absolute; top: 0; left: 0; width: 100%"
-        />
-      </figure>
-    </div>
-    <div class="card-content">
-      <div class="media mb-2">
-        <div class="media-left">
-          <figure class="image is-48x48" v-if="group.avatar">
-            <img class="is-rounded" :src="group.avatar.url" alt="" />
+    <figure class="rounded-t-lg flex justify-center h-1/4">
+      <lazy-image-wrapper :picture="group.banner" :rounded="true" />
+    </figure>
+    <div class="py-2 pl-2">
+      <div class="flex gap-1 mb-2">
+        <div class="">
+          <figure class="" v-if="group.avatar">
+            <img class="rounded-xl" :src="group.avatar.url" alt="" />
           </figure>
-          <b-icon v-else size="is-large" icon="account-group" />
+          <AccountGroup v-else :size="48" />
         </div>
-        <div class="media-content">
-          <h3 class="is-size-5 group-title" dir="auto">
+        <div class="">
+          <h3 class="text-2xl" dir="auto">
             {{ displayName(group) }}
           </h3>
           <span class="is-6 has-text-grey-dark group-federated-username">
@@ -34,19 +29,18 @@
       <div class="mb-2 line-clamp-3" dir="auto" v-html="group.summary" />
       <div>
         <inline-address
-          class="has-text-grey-dark"
           v-if="group.physicalAddress && addressFullName(group.physicalAddress)"
           :physicalAddress="group.physicalAddress"
         />
-        <p class="has-text-grey-dark">
-          <b-icon icon="account" />
+        <p class="flex">
+          <Account />
           {{
-            $tc(
+            t(
               "{count} members or followers",
-              group.members.total + group.followers.total,
               {
                 count: group.members.total + group.followers.total,
-              }
+              },
+              group.members.total + group.followers.total
             )
           }}
         </p>
@@ -55,85 +49,19 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { displayName, IGroup, usernameWithDomain } from "@/types/actor";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import RouteName from "../../router/name";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
 import { addressFullName } from "@/types/address.model";
+import { useI18n } from "vue-i18n";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
+import Account from "vue-material-design-icons/Account.vue";
 
-@Component({
-  components: {
-    LazyImageWrapper,
-    InlineAddress,
-  },
-})
-export default class GroupCard extends Vue {
-  @Prop({ required: true }) group!: IGroup;
+defineProps<{
+  group: IGroup;
+}>();
 
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-
-  addressFullName = addressFullName;
-}
+const { t } = useI18n({ useScope: "global" });
 </script>
-<style lang="scss" scoped>
-.card {
-  .card-content {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    .content {
-      flex: 1;
-    }
-
-    ::v-deep .content {
-      & > *:first-child {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin-bottom: 0;
-
-        * {
-          font-weight: normal;
-          text-transform: none;
-          font-style: normal;
-          text-decoration: none;
-        }
-      }
-      & > *:not(:first-child) {
-        display: none;
-      }
-    }
-
-    .media-left {
-      margin-right: inherit;
-      margin-inline-end: 0.5rem;
-    }
-
-    .media-content {
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      .group-title {
-        line-height: 1.5rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-weight: bold;
-      }
-      .group-federated-username {
-        font-size: 14px;
-      }
-    }
-  }
-}
-</style>

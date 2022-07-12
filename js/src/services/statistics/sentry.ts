@@ -1,7 +1,7 @@
-import Vue from "vue";
-
 import * as Sentry from "@sentry/vue";
 import { Integrations } from "@sentry/tracing";
+
+const app: any = null;
 
 export const sentry = (environment: any, sentryConfiguration: any) => {
   console.debug("Loading Sentry statistics");
@@ -12,7 +12,7 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
   // Don't attach errors to previous events
   window.sessionStorage.removeItem("lastEventId");
   Sentry.init({
-    Vue,
+    app: environment.app,
     dsn: sentryConfiguration.dsn,
     integrations: [
       new Integrations.BrowserTracing({

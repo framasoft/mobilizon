@@ -3,18 +3,18 @@
     <div class="mb-4">
       <div v-for="(item, index) in metadata" :key="item.key" class="my-2">
         <event-metadata-item
-          :value="metadata[index]"
-          @input="updateSingleMetadata"
+          :modelValue="metadata[index]"
+          @update:modelValue="updateSingleMetadata"
           @removeItem="removeItem"
         />
       </div>
     </div>
-    <b-field
+    <o-field
       grouped
       :label="$t('Find or add an element')"
       label-for="event-metadata-autocomplete"
     >
-      <b-autocomplete
+      <o-autocomplete
         expanded
         :clear-on-select="true"
         v-model="search"
@@ -25,12 +25,12 @@
         open-on-focus
         :placeholder="$t('e.g. Accessibility, Twitch, PeerTube')"
         id="event-metadata-autocomplete"
-        @select="(option) => addElement(option)"
+        @select="addElement"
         dir="auto"
       >
-        <template slot-scope="props">
-          <div class="media">
-            <div class="media-left">
+        <template v-slot="props">
+          <div class="dark:bg-violet-3 p-1 flex items-center gap-1">
+            <div class="">
               <img
                 v-if="
                   props.option.icon &&
@@ -41,10 +41,10 @@
                 height="24"
                 alt=""
               />
-              <b-icon v-else-if="props.option.icon" :icon="props.option.icon" />
-              <b-icon v-else icon="help-circle" />
+              <o-icon v-else-if="props.option.icon" :icon="props.option.icon" />
+              <o-icon v-else icon="help-circle" />
             </div>
-            <div class="media-content">
+            <div class="">
               <b>{{ props.option.label }}</b>
               <br />
               <small>
@@ -56,14 +56,14 @@
         <template #empty>{{
           $t("No results for {search}", { search })
         }}</template>
-      </b-autocomplete>
+      </o-autocomplete>
       <p class="control">
-        <b-button @click="showNewElementModal = true">
+        <o-button @click="showNewElementModal = true">
           {{ $t("Add new…") }}
-        </b-button>
+        </o-button>
       </p>
-    </b-field>
-    <b-modal
+    </o-field>
+    <o-modal
       has-modal-card
       v-model="showNewElementModal"
       :close-button-aria-label="$t('Close')"
@@ -78,147 +78,142 @@
         </header>
         <div class="modal-card-body">
           <form @submit="addNewElement">
-            <b-field :label="$t('Element title')">
-              <b-input v-model="newElement.title" />
-            </b-field>
-            <b-field :label="$t('Element value')">
-              <b-input v-model="newElement.value" />
-            </b-field>
-            <b-button type="is-primary" native-type="submit">{{
+            <o-field :label="$t('Element title')">
+              <o-input v-model="newElement.title" />
+            </o-field>
+            <o-field :label="$t('Element value')">
+              <o-input v-model="newElement.value" />
+            </o-field>
+            <o-button variant="primary" native-type="submit">{{
               $t("Add")
-            }}</b-button>
+            }}</o-button>
           </form>
         </div>
       </div>
-    </b-modal>
+    </o-modal>
   </section>
 </template>
-<script lang="ts">
-import {
-  IEventMetadata,
-  IEventMetadataDescription,
-} from "@/types/event-metadata";
+<script lang="ts" setup>
+import { IEventMetadataDescription } from "@/types/event-metadata";
 import cloneDeep from "lodash/cloneDeep";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed, reactive, ref } from "vue";
 import EventMetadataItem from "./EventMetadataItem.vue";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { EventMetadataCategories, EventMetadataType } from "@/types/enums";
+import { useI18n } from "vue-i18n";
 
 type GroupedIEventMetadata = Array<{
   category: string;
-  items: IEventMetadata[];
+  items: IEventMetadataDescription[];
 }>;
 
-@Component({
-  components: {
-    EventMetadataItem,
-  },
-})
-export default class EventMetadataList extends Vue {
-  @Prop({ type: Array as PropType<Array<IEventMetadata>>, required: true })
-  value!: IEventMetadata[];
+const props = defineProps<{
+  modelValue: IEventMetadataDescription[];
+}>();
 
-  newElement = {
-    title: "",
-    value: "",
-  };
+const emit = defineEmits(["update:modelValue"]);
 
-  search = "";
+const newElement = reactive({
+  title: "",
+  value: "",
+});
 
-  data: IEventMetadataDescription[] = eventMetaDataList;
+const { t } = useI18n({ useScope: "global" });
 
-  showNewElementModal = false;
+const search = ref("");
 
-  get metadata(): IEventMetadata[] {
-    return this.value.map((val) => {
-      const def = this.data.find((dat) => dat.key === val.key);
+const data: IEventMetadataDescription[] = eventMetaDataList;
+
+const showNewElementModal = ref(false);
+
+const metadata = computed({
+  get(): IEventMetadataDescription[] {
+    return props.modelValue.map((val) => {
+      const def = data.find((dat) => dat.key === val.key);
       return {
         ...def,
         ...val,
       };
     }) as any[];
-  }
-
-  set metadata(metadata: IEventMetadata[]) {
-    this.$emit(
-      "input",
+  },
+  set(metadata: IEventMetadataDescription[]) {
+    emit(
+      "update:modelValue",
       metadata.filter((elem) => elem)
     );
-  }
+  },
+});
 
-  localizedCategories: Record<EventMetadataCategories, string> = {
-    [EventMetadataCategories.ACCESSIBILITY]: this.$t("Accessibility") as string,
-    [EventMetadataCategories.LIVE]: this.$t("Live") as string,
-    [EventMetadataCategories.REPLAY]: this.$t("Replay") as string,
-    [EventMetadataCategories.TOOLS]: this.$t("Tools") as string,
-    [EventMetadataCategories.SOCIAL]: this.$t("Social") as string,
-    [EventMetadataCategories.DETAILS]: this.$t("Details") as string,
-    [EventMetadataCategories.BOOKING]: this.$t("Booking") as string,
-    [EventMetadataCategories.VIDEO_CONFERENCE]: this.$t(
-      "Video Conference"
-    ) as string,
-  };
+const localizedCategories: Record<EventMetadataCategories, string> = {
+  [EventMetadataCategories.ACCESSIBILITY]: t("Accessibility") as string,
+  [EventMetadataCategories.LIVE]: t("Live") as string,
+  [EventMetadataCategories.REPLAY]: t("Replay") as string,
+  [EventMetadataCategories.TOOLS]: t("Tools") as string,
+  [EventMetadataCategories.SOCIAL]: t("Social") as string,
+  [EventMetadataCategories.DETAILS]: t("Details") as string,
+  [EventMetadataCategories.BOOKING]: t("Booking") as string,
+  [EventMetadataCategories.VIDEO_CONFERENCE]: t("Video Conference") as string,
+};
 
-  get filteredDataArray(): GroupedIEventMetadata {
-    return this.data
-      .filter((option) => {
-        return (
-          option.label
-            .toString()
-            .toLowerCase()
-            .indexOf(this.search.toLowerCase()) >= 0
-        );
-      })
-      .filter(({ key }) => {
-        return !this.metadata.map(({ key: key2 }) => key2).includes(key);
-      })
-      .reduce(
-        (acc: GroupedIEventMetadata, current: IEventMetadataDescription) => {
-          const group = acc.find(
-            (elem) =>
-              elem.category === this.localizedCategories[current.category]
-          );
-          if (group) {
-            group.items.push(current);
-          } else {
-            acc.push({
-              category: this.localizedCategories[current.category],
-              items: [current],
-            });
-          }
-          return acc;
-        },
-        []
+const filteredDataArray = computed((): GroupedIEventMetadata => {
+  return data
+    .filter((option) => {
+      return (
+        option.label
+          .toString()
+          .toLowerCase()
+          .indexOf(search.value.toLowerCase()) >= 0
       );
-  }
+    })
+    .filter(({ key }) => {
+      return !metadata.value.map(({ key: key2 }) => key2).includes(key);
+    })
+    .reduce(
+      (acc: GroupedIEventMetadata, current: IEventMetadataDescription) => {
+        const group = acc.find(
+          (elem) => elem.category === localizedCategories[current.category]
+        );
+        if (group) {
+          group.items.push(current);
+        } else {
+          acc.push({
+            category: localizedCategories[current.category],
+            items: [current],
+          });
+        }
+        return acc;
+      },
+      []
+    );
+});
 
-  updateSingleMetadata(element: IEventMetadataDescription): void {
-    const metadataClone = cloneDeep(this.metadata);
-    const index = metadataClone.findIndex((elem) => elem.key === element.key);
-    metadataClone.splice(index, 1, element);
-    this.$emit("input", metadataClone);
-  }
+const updateSingleMetadata = (element: IEventMetadataDescription): void => {
+  const metadataClone = cloneDeep(metadata.value);
+  const index = metadataClone.findIndex((elem) => elem.key === element.key);
+  metadataClone.splice(index, 1, element);
+  emit("update:modelValue", metadataClone);
+};
 
-  removeItem(itemKey: string): void {
-    const metadataClone = cloneDeep(this.metadata);
-    const index = metadataClone.findIndex((elem) => elem.key === itemKey);
-    metadataClone.splice(index, 1);
-    this.$emit("input", metadataClone);
-  }
+const removeItem = (itemKey: string): void => {
+  const metadataClone = cloneDeep(metadata.value);
+  const index = metadataClone.findIndex((elem) => elem.key === itemKey);
+  metadataClone.splice(index, 1);
+  emit("update:modelValue", metadataClone);
+};
 
-  addElement(element: IEventMetadata): void {
-    this.metadata = [...this.metadata, element];
-  }
+const addElement = (element: IEventMetadataDescription): void => {
+  metadata.value = [...metadata.value, element];
+};
 
-  addNewElement(e: Event): void {
-    e.preventDefault();
-    this.addElement({
-      ...this.newElement,
-      type: EventMetadataType.STRING,
-      key: `mz:plain:${(Math.random() + 1).toString(36).substring(7)}`,
-    });
-    this.showNewElementModal = false;
-  }
-}
+const addNewElement = (e: Event): void => {
+  e.preventDefault();
+  addElement({
+    ...newElement,
+    type: EventMetadataType.STRING,
+    key: `mz:plain:${(Math.random() + 1).toString(36).substring(7)}`,
+    category: EventMetadataCategories.DETAILS,
+    label: "",
+  });
+  showNewElementModal.value = false;
+};
 </script>

@@ -1,28 +1,35 @@
 <template>
-  <div class="observer" />
+  <div class="observer" ref="observed" />
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import "intersection-observer";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { onMounted, onUnmounted, ref } from "vue";
 
-@Component
-export default class Observer extends Vue {
-  @Prop({ required: false, default: () => ({}) }) options!: Record<string, any>;
+const props = withDefaults(
+  defineProps<{
+    options?: Record<string, any>;
+  }>(),
+  { options: () => ({}) }
+);
 
-  observer!: IntersectionObserver;
-  mounted(): void {
-    this.observer = new IntersectionObserver(([entry]) => {
-      if (entry && entry.isIntersecting) {
-        this.$emit("intersect");
-      }
-    }, this.options);
+const observer = ref<IntersectionObserver>();
+const observed = ref<HTMLElement>();
+const emit = defineEmits(["intersect"]);
 
-    this.observer.observe(this.$el);
+onMounted(() => {
+  observer.value = new IntersectionObserver(([entry]) => {
+    if (entry && entry.isIntersecting) {
+      emit("intersect");
+    }
+  }, props.options);
+
+  if (observed.value) {
+    observer.value.observe(observed.value);
   }
+});
 
-  destroyed(): void {
-    this.observer.disconnect();
-  }
-}
+onUnmounted(() => {
+  observer.value?.disconnect();
+});
 </script>

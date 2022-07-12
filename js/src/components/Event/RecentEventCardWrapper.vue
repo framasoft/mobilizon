@@ -2,8 +2,8 @@
   <div>
     <p class="time">
       {{
-        formatDistanceToNow(new Date(event.publishAt || event.insertedAt), {
-          locale: $dateFnsLocale,
+        formatDistanceToNow(new Date(event.publishAt), {
+          locale: dateFnsLocale,
           addSuffix: true,
         }) || $t("Right now")
       }}
@@ -11,22 +11,16 @@
     <EventCard :event="event" />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEvent } from "@/types/event.model";
 import { formatDistanceToNow } from "date-fns";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { inject } from "vue";
 import EventCard from "./EventCard.vue";
+defineProps<{
+  event: IEvent;
+}>();
 
-@Component({
-  components: {
-    EventCard,
-  },
-})
-export default class RecentEventCardWrapper extends Vue {
-  @Prop({ required: true, type: Object }) event!: IEvent;
-
-  formatDistanceToNow = formatDistanceToNow;
-}
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
 </script>
 <style lang="scss" scoped>
 p.time {

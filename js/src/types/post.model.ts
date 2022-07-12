@@ -16,6 +16,8 @@ export interface IPost {
   visibility: PostVisibility;
   author?: IActor;
   attributedTo?: IActor;
-  publishAt?: Date;
-  insertedAt?: Date;
+  publishAt?: string;
+  insertedAt?: string;
+  language?: string;
+  updatedAt?: string;
 }

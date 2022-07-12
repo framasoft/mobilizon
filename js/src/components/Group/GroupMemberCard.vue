@@ -1,22 +1,37 @@
 <template>
-  <div class="card">
-    <div class="identity-header" dir="auto">
-      <figure class="image is-24x24" v-if="member.actor.avatar">
-        <img class="is-rounded" :src="member.actor.avatar.url" alt="" />
+  <div class="rounded shadow-lg bg-white dark:bg-mbz-purple dark:text-white">
+    <div
+      class="bg-yellow-2 text-black flex items-center gap-1 p-2 rounded-t-lg"
+      dir="auto"
+    >
+      <figure class="" v-if="member.actor.avatar">
+        <img
+          class="rounded-xl"
+          :src="member.actor.avatar.url"
+          alt=""
+          width="24"
+          height="24"
+        />
       </figure>
-      <b-icon v-else icon="account-circle" />
+      <AccountCircle v-else :size="24" />
       {{ displayNameAndUsername(member.actor) }}
     </div>
-    <div class="card-content" dir="auto">
-      <div>
-        <div class="media">
-          <div class="media-left">
-            <figure class="image is-48x48" v-if="member.parent.avatar">
-              <img class="is-rounded" :src="member.parent.avatar.url" alt="" />
+    <div class="flex items-center gap-2 p-2 pr-4" dir="auto">
+      <div class="flex-1">
+        <div class="p-2 flex gap-2">
+          <div class="">
+            <figure class="" v-if="member.parent.avatar">
+              <img
+                class="rounded-lg"
+                :src="member.parent.avatar.url"
+                alt=""
+                width="48"
+                height="48"
+              />
             </figure>
-            <b-icon v-else size="is-large" icon="account-group" />
+            <AccountGroup v-else :size="48" />
           </div>
-          <div class="media-content" dir="auto">
+          <div class="" dir="auto">
             <router-link
               :to="{
                 name: RouteName.GROUP,
@@ -25,94 +40,65 @@
                 },
               }"
             >
-              <h2>{{ member.parent.name }}</h2>
-              <p class="is-6 has-text-grey-dark">
-                <span>{{ `@${usernameWithDomain(member.parent)}` }}</span>
-                <b-taglist>
-                  <b-tag
-                    type="is-info"
+              <h2 class="text-2xl">{{ member.parent.name }}</h2>
+              <div class="">
+                <span class="text-sm">{{
+                  `@${usernameWithDomain(member.parent)}`
+                }}</span>
+                <div>
+                  <tag
+                    variant="info"
                     v-if="member.role === MemberRole.ADMINISTRATOR"
-                    >{{ $t("Administrator") }}</b-tag
+                    >{{ $t("Administrator") }}</tag
                   >
-                  <b-tag
-                    type="is-info"
+                  <tag
+                    variant="info"
                     v-else-if="member.role === MemberRole.MODERATOR"
-                    >{{ $t("Moderator") }}</b-tag
+                    >{{ $t("Moderator") }}</tag
                   >
-                </b-taglist>
-              </p>
+                </div>
+              </div>
             </router-link>
           </div>
         </div>
-        <div class="content" v-if="member.parent.summary">
+        <div class="mt-3 prose lg:prose-xl" v-if="member.parent.summary">
           <p v-html="member.parent.summary" />
         </div>
       </div>
       <div>
-        <b-dropdown aria-role="list" position="is-bottom-left">
-          <b-icon icon="dots-horizontal" slot="trigger" />
+        <o-dropdown aria-role="list" position="bottom-left">
+          <template #trigger>
+            <DotsHorizontal class="cursor-pointer" />
+          </template>
 
-          <b-dropdown-item aria-role="listitem" @click="$emit('leave')">
-            <b-icon icon="exit-to-app" />
+          <o-dropdown-item
+            class="inline-flex gap-1"
+            aria-role="listitem"
+            @click="emit('leave')"
+          >
+            <ExitToApp />
             {{ $t("Leave") }}
-          </b-dropdown-item>
-        </b-dropdown>
+          </o-dropdown-item>
+        </o-dropdown>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { displayNameAndUsername, usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
 import RouteName from "../../router/name";
+import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
+import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Tag from "@/components/Tag.vue";
 
-@Component
-export default class GroupMemberCard extends Vue {
-  @Prop({ required: true }) member!: IMember;
+defineProps<{
+  member: IMember;
+}>();
 
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayNameAndUsername = displayNameAndUsername;
-
-  MemberRole = MemberRole;
-}
+const emit = defineEmits(["leave"]);
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-.card {
-  .card-content {
-    display: flex;
-    align-items: center;
-
-    & > div:first-child {
-      flex: 1;
-    }
-
-    & > div:last-child {
-      cursor: pointer;
-    }
-
-    .media-content {
-      ::v-deep .tags {
-        margin-bottom: 0;
-      }
-    }
-  }
-
-  .identity-header {
-    background: $yellow-2;
-    display: flex;
-    padding: 5px;
-
-    figure,
-    span.icon {
-      @include padding-right(3px);
-    }
-  }
-}
-</style>

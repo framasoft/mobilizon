@@ -1,10 +1,8 @@
-import VueRouter from "vue-router";
-import Vue from "vue";
 import { VuePlausible } from "vue-plausible";
-export default (router: VueRouter, plausibleConfiguration: any) => {
+export default (environment: any, plausibleConfiguration: any) => {
   console.debug("Loading Plausible statistics");
 
-  Vue.use(VuePlausible, {
+  environment.app.use(VuePlausible, {
     // see configuration section
     ...plausibleConfiguration,
   });

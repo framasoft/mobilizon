@@ -1,61 +1,53 @@
 <template>
-  <div class="container section">
-    <h2 class="title">{{ $t("Terms") }}</h2>
-    <div class="content" v-if="config" v-html="config.terms.bodyHtml" />
+  <div class="container mx-auto px-2">
+    <h1>{{ t("Terms") }}</h1>
+    <o-loading v-model="termsLoading" />
+    <div
+      class="prose dark:prose-invert"
+      v-if="config"
+      v-html="config.terms.bodyHtml"
+    />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import { TERMS } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { InstanceTermsType } from "@/types/enums";
+import { useQuery } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  apollo: {
-    config: {
-      query: TERMS,
-      variables() {
-        return {
-          locale: this.locale,
-        };
-      },
-      skip() {
-        return !this.locale;
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Terms") as string,
-    };
-  },
-})
-export default class Terms extends Vue {
-  config!: IConfig;
+const { t, locale } = useI18n({ useScope: "global" });
 
-  locale: string | null = null;
+const { result: termsResult, loading: termsLoading } = useQuery<{
+  config: IConfig;
+}>(
+  TERMS,
+  () => ({
+    locale: locale.value,
+  }),
+  () => ({
+    enabled: locale.value !== undefined,
+  })
+);
 
-  created(): void {
-    this.locale = this.$i18n.locale;
+const config = computed(() => termsResult.value?.config);
+
+watch(config, () => {
+  if (config.value?.terms?.type) {
+    redirectToUrl();
   }
+});
 
-  @Watch("config", { deep: true })
-  watchConfig(config: IConfig): void {
-    if (config?.terms?.type) {
-      this.redirectToUrl();
-    }
+const redirectToUrl = (): void => {
+  if (config.value?.terms?.type === InstanceTermsType.URL) {
+    window.location.replace(config.value?.terms?.url);
   }
+};
 
-  redirectToUrl(): void {
-    if (this.config?.terms?.type === InstanceTermsType.URL) {
-      window.location.replace(this.config?.terms?.url);
-    }
-  }
-}
+useHead({
+  title: computed(() => t("Terms")),
+});
 </script>
-<style lang="scss" scoped>
-.content ::v-deep li {
-  margin-bottom: 1rem;
-}
-</style>

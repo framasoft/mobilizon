@@ -1,71 +1,51 @@
-<docs>
-### Example
-```vue
-  <DateCalendarIcon date="2019-10-05T18:41:11.720Z" />
-```
-
-```vue
-  <DateCalendarIcon
-    :date="new Date()"
-  />
-```
-</docs>
-
 <template>
   <div
-    class="datetime-container"
+    class="datetime-container flex flex-col rounded-lg text-center justify-center overflow-hidden items-stretch bg-white dark:bg-gray-700 text-violet-3 dark:text-white"
     :class="{ small }"
     :style="`--small: ${smallStyle}`"
   >
     <div class="datetime-container-header" />
     <div class="datetime-container-content">
-      <time :datetime="dateObj.toISOString()" class="day">{{ day }}</time>
-      <time :datetime="dateObj.toISOString()" class="month">{{ month }}</time>
+      <time :datetime="dateObj.toISOString()" class="day block font-semibold">{{
+        day
+      }}</time>
+      <time
+        :datetime="dateObj.toISOString()"
+        class="month font-semibold block uppercase py-1 px-0"
+        >{{ month }}</time
+      >
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { computed } from "vue";
 
-@Component
-export default class DateCalendarIcon extends Vue {
-  /**
-   * `date` can be a string or an actual date object.
-   */
-  @Prop({ required: true }) date!: string;
-  @Prop({ required: false, default: false }) small!: boolean;
+const props = withDefaults(
+  defineProps<{
+    date: string;
+    small?: boolean;
+  }>(),
+  { small: false }
+);
 
-  get dateObj(): Date {
-    return new Date(this.$props.date);
-  }
+const dateObj = computed<Date>(() => new Date(props.date));
 
-  get month(): string {
-    return this.dateObj.toLocaleString(undefined, { month: "short" });
-  }
+const month = computed<string>(() =>
+  dateObj.value.toLocaleString(undefined, { month: "short" })
+);
 
-  get day(): string {
-    return this.dateObj.toLocaleString(undefined, { day: "numeric" });
-  }
-  get smallStyle(): string {
-    return this.small ? "1.2" : "2";
-  }
-}
+const day = computed<string>(() =>
+  dateObj.value.toLocaleString(undefined, { day: "numeric" })
+);
+
+const smallStyle = computed<string>(() => (props.small ? "1.2" : "2"));
 </script>
 
 <style lang="scss" scoped>
 div.datetime-container {
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  overflow-y: hidden;
-  overflow-x: hidden;
-  align-items: stretch;
   width: calc(40px * var(--small));
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
   height: calc(40px * var(--small));
-  background: #fff;
 
   .datetime-container-header {
     height: calc(10px * var(--small));
@@ -76,15 +56,9 @@ div.datetime-container {
   }
 
   time {
-    display: block;
-    font-weight: 600;
-    color: $violet-3;
-
     &.month {
-      padding: 2px 0;
       font-size: 12px;
       line-height: 12px;
-      text-transform: uppercase;
     }
 
     &.day {

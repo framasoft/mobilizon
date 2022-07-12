@@ -1,64 +1,67 @@
 <template>
-  <div class="container">
-    <b-loading :active.sync="$apollo.queries.event.loading" />
-    <div class="wrapper">
-      <event-banner :picture="event.picture" />
+  <div class="container mx-auto">
+    <o-loading v-model:active="eventLoading" />
+    <div class="wrapper mb-3">
+      <event-banner :picture="event?.picture" />
       <div class="intro-wrapper">
-        <div class="date-calendar-icon-wrapper">
-          <date-calendar-icon :date="event.beginsOn" />
+        <div class="date-calendar-icon-wrapper" v-if="event?.beginsOn">
+          <date-calendar-icon :date="event.beginsOn.toString()" />
         </div>
+
         <section class="intro" dir="auto">
-          <div class="columns">
-            <div class="column">
+          <div class="flex flex-wrap">
+            <div class="flex-1 min-w-fit">
               <h1
-                class="title"
-                style="margin: 0"
+                class="text-4xl font-bold m-0"
                 dir="auto"
-                :lang="event.language"
+                :lang="event?.language"
               >
-                {{ event.title }}
+                {{ event?.title }}
               </h1>
               <div class="organizer">
-                <div v-if="event.organizerActor && !event.attributedTo">
+                <div v-if="event?.organizerActor && !event?.attributedTo">
                   <popover-actor-card
                     :actor="event.organizerActor"
                     :inline="true"
                   >
-                    <i18n
-                      path="By {username}"
+                    <i18n-t
+                      keypath="By {username}"
                       dir="auto"
                       class="block truncate max-w-xs md:max-w-sm"
                     >
-                      <span dir="ltr" slot="username">{{
-                        displayName(event.organizerActor)
-                      }}</span>
-                    </i18n>
+                      <template #username>
+                        <span dir="ltr">{{
+                          displayName(event.organizerActor)
+                        }}</span>
+                      </template>
+                    </i18n-t>
                   </popover-actor-card>
                 </div>
-                <span v-else-if="event.attributedTo">
+                <span v-else-if="event?.attributedTo">
                   <popover-actor-card
                     :actor="event.attributedTo"
                     :inline="true"
                   >
-                    <i18n
-                      path="By {group}"
+                    <i18n-t
+                      keypath="By {group}"
                       dir="auto"
                       class="block truncate max-w-xs md:max-w-sm"
                     >
-                      <router-link
-                        :to="{
-                          name: RouteName.GROUP,
-                          params: {
-                            preferredUsername: usernameWithDomain(
-                              event.attributedTo
-                            ),
-                          },
-                        }"
-                        dir="ltr"
-                        slot="group"
-                        >{{ displayName(event.attributedTo) }}</router-link
-                      >
-                    </i18n>
+                      <template #group>
+                        <router-link
+                          :to="{
+                            name: RouteName.GROUP,
+                            params: {
+                              preferredUsername: usernameWithDomain(
+                                event.attributedTo
+                              ),
+                            },
+                          }"
+                          dir="ltr"
+                          >{{ displayName(event.attributedTo) }}</router-link
+                        >
+                      </template>
+                    </i18n-t>
                   </popover-actor-card>
                 </span>
               </div>
@@ -67,92 +70,110 @@
                   eventCategory
                 }}</tag>
                 <router-link
-                  v-for="tag in event.tags"
+                  v-for="tag in event?.tags ?? []"
                   :key="tag.title"
                   :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
                 >
                   <tag>{{ tag.title }}</tag>
                 </router-link>
               </p>
-              <b-tag type="is-warning" size="is-medium" v-if="event.draft"
-                >{{ $t("Draft") }}
+              <b-tag variant="warning" size="is-medium" v-if="event?.draft"
+                >{{ t("Draft") }}
               </b-tag>
               <span
                 class="event-status"
-                v-if="event.status !== EventStatus.CONFIRMED"
+                v-if="event?.status !== EventStatus.CONFIRMED"
               >
                 <b-tag
-                  type="is-warning"
-                  v-if="event.status === EventStatus.TENTATIVE"
-                  >{{ $t("Event to be confirmed") }}</b-tag
+                  variant="warning"
+                  v-if="event?.status === EventStatus.TENTATIVE"
+                  >{{ t("Event to be confirmed") }}</b-tag
                 >
                 <b-tag
-                  type="is-danger"
-                  v-if="event.status === EventStatus.CANCELLED"
-                  >{{ $t("Event cancelled") }}</b-tag
+                  variant="danger"
+                  v-if="event?.status === EventStatus.CANCELLED"
+                  >{{ t("Event cancelled") }}</b-tag
                 >
               </span>
             </div>
-            <div class="column is-3-tablet">
+
+            <div class="">
               <participation-section
+                v-if="
+                  event &&
+                  currentActor &&
+                  identities &&
+                  anonymousParticipationConfig
+                "
                 :participation="participations[0]"
                 :event="event"
                 :anonymousParticipation="anonymousParticipation"
+                :currentActor="currentActor"
+                :identities="identities"
+                :anonymousParticipationConfig="anonymousParticipationConfig"
                 @join-event="joinEvent"
                 @join-modal="isJoinModalActive = true"
                 @join-event-with-confirmation="joinEventWithConfirmation"
                 @confirm-leave="confirmLeave"
                 @cancel-anonymous-participation="cancelAnonymousParticipation"
               />
-              <div class="has-text-right">
-                <template v-if="!event.draft">
-                  <p v-if="event.visibility === EventVisibility.PUBLIC">
-                    {{ $t("Public event") }}
-                    <b-icon icon="earth" />
+              <div class="flex flex-col">
+                <template v-if="!event?.draft">
+                  <p
+                    v-if="event?.visibility === EventVisibility.PUBLIC"
+                    class="inline-flex gap-1"
+                  >
+                    <Earth />
+                    {{ t("Public event") }}
                   </p>
-                  <p v-if="event.visibility === EventVisibility.UNLISTED">
-                    {{ $t("Private event") }}
-                    <b-icon icon="link" />
+                  <p
+                    v-if="event?.visibility === EventVisibility.UNLISTED"
+                    class="inline-flex gap-1"
+                  >
+                    <Link />
+                    {{ t("Private event") }}
                   </p>
                 </template>
-                <template v-if="!event.local && organizer.domain">
-                  <a :href="event.url">
-                    <tag>{{ organizer.domain }}</tag>
+                <template v-if="!event?.local && organizer?.domain">
+                  <a :href="event?.url">
+                    <tag>{{ organizer?.domain }}</tag>
                   </a>
                 </template>
-                <p>
+                <p class="inline-flex gap-1">
+                  <TicketConfirmationOutline />
                   <router-link
                     class="participations-link"
-                    v-if="canManageEvent && event.draft === false"
+                    v-if="canManageEvent && event?.draft === false"
                     :to="{
                       name: RouteName.PARTICIPATIONS,
                       params: { eventId: event.uuid },
                     }"
                   >
-                    <!-- We retire one because of the event creator who is a participant -->
+                    <!-- We retire one because of the event creator who is a
+                    participant -->
                     <span v-if="maximumAttendeeCapacity">
                       {{
-                        $tc(
+                        t(
                           "{available}/{capacity} available places",
-                          maximumAttendeeCapacity -
-                            event.participantStats.participant,
                           {
                             available:
                               maximumAttendeeCapacity -
                               event.participantStats.participant,
                             capacity: maximumAttendeeCapacity,
-                          }
+                          },
+                          maximumAttendeeCapacity -
+                            event.participantStats.participant
                         )
                       }}
                     </span>
                     <span v-else>
                       {{
-                        $tc(
+                        t(
                           "No one is participating|One person participating|{going} people participating",
-                          event.participantStats.participant,
                           {
                             going: event.participantStats.participant,
-                          }
+                          },
+                          event.participantStats.participant
                         )
                       }}
                     </span>
@@ -160,144 +181,150 @@
                   <span v-else>
                     <span v-if="maximumAttendeeCapacity">
                       {{
-                        $tc(
+                        t(
                           "{available}/{capacity} available places",
-                          maximumAttendeeCapacity -
-                            event.participantStats.participant,
                           {
                             available:
                               maximumAttendeeCapacity -
-                              event.participantStats.participant,
+                              (event?.participantStats.participant ?? 0),
                             capacity: maximumAttendeeCapacity,
-                          }
+                          },
+                          maximumAttendeeCapacity -
+                            (event?.participantStats.participant ?? 0)
                         )
                       }}
                     </span>
                     <span v-else>
                       {{
-                        $tc(
+                        t(
                           "No one is participating|One person participating|{going} people participating",
-                          event.participantStats.participant,
                           {
-                            going: event.participantStats.participant,
-                          }
+                            going: event?.participantStats.participant,
+                          },
+                          event?.participantStats.participant ?? 0
                         )
                       }}
                     </span>
                   </span>
-                  <b-tooltip
-                    type="is-dark"
-                    v-if="!event.local"
-                    :label="
-                      $t(
-                        'The actual number of participants may differ, as this event is hosted on another instance.'
-                      )
-                    "
-                  >
-                    <b-icon size="is-small" icon="help-circle-outline" />
-                  </b-tooltip>
-                  <b-icon icon="ticket-confirmation-outline" />
+                  <VTooltip v-if="event?.local === false">
+                    <HelpCircleOutline :size="16" />
+                    <template #popper>
+                      {{
+                        t(
+                          "The actual number of participants may differ, as this event is hosted on another instance."
+                        )
+                      }}
+                    </template>
+                  </VTooltip>
                 </p>
-                <b-dropdown position="is-bottom-left" aria-role="list">
-                  <b-button
-                    slot="trigger"
-                    role="button"
-                    icon-right="dots-horizontal"
-                  >
-                    {{ $t("Actions") }}
-                  </b-button>
-                  <b-dropdown-item
+                <o-dropdown>
+                  <template #trigger>
+                    <o-button
+                      icon-right="dots-horizontal"
+                      #default="{ active }"
+                    >
+                      {{ t("Actions") }}
+                    </o-button>
+                  </template>
+                  <o-dropdown-item
                     aria-role="listitem"
                     has-link
-                    v-if="canManageEvent || event.draft"
+                    v-if="canManageEvent || event?.draft"
                   >
                     <router-link
+                      class="flex gap-1"
                       :to="{
                         name: RouteName.EDIT_EVENT,
-                        params: { eventId: event.uuid },
+                        params: { eventId: event?.uuid },
                       }"
                     >
-                      {{ $t("Edit") }}
-                      <b-icon icon="pencil" />
+                      <Pencil />
+                      {{ t("Edit") }}
                     </router-link>
-                  </b-dropdown-item>
-                  <b-dropdown-item
+                  </o-dropdown-item>
+                  <o-dropdown-item
                     aria-role="listitem"
                     has-link
-                    v-if="canManageEvent || event.draft"
+                    v-if="canManageEvent || event?.draft"
                   >
                     <router-link
+                      class="flex gap-1"
                       :to="{
                         name: RouteName.DUPLICATE_EVENT,
-                        params: { eventId: event.uuid },
+                        params: { eventId: event?.uuid },
                       }"
                     >
-                      {{ $t("Duplicate") }}
-                      <b-icon icon="content-duplicate" />
+                      <ContentDuplicate />
+                      {{ t("Duplicate") }}
                     </router-link>
-                  </b-dropdown-item>
-                  <b-dropdown-item
+                  </o-dropdown-item>
+                  <o-dropdown-item
                     aria-role="listitem"
-                    v-if="canManageEvent || event.draft"
+                    v-if="canManageEvent || event?.draft"
                     @click="openDeleteEventModalWrapper"
                     @keyup.enter="openDeleteEventModalWrapper"
-                  >
-                    {{ $t("Delete") }}
-                    <b-icon icon="delete" />
-                  </b-dropdown-item>
+                    ><span class="flex gap-1">
+                      <Delete />
+                      {{ t("Delete") }}
+                    </span>
+                  </o-dropdown-item>
 
                   <hr
                     role="presentation"
                     class="dropdown-divider"
-                    aria-role="menuitem"
-                    v-if="canManageEvent || event.draft"
+                    aria-role="o-dropdown-item"
+                    v-if="canManageEvent || event?.draft"
                   />
-                  <b-dropdown-item
+                  <o-dropdown-item
                     aria-role="listitem"
-                    v-if="!event.draft"
+                    v-if="event?.draft === false"
                     @click="triggerShare()"
                     @keyup.enter="triggerShare()"
+                    class="p-1"
                   >
-                    <span>
-                      {{ $t("Share this event") }}
-                      <b-icon icon="share" />
+                    <span class="flex gap-1">
+                      <Share />
+                      {{ t("Share this event") }}
                     </span>
-                  </b-dropdown-item>
-                  <b-dropdown-item
+                  </o-dropdown-item>
+                  <o-dropdown-item
                     aria-role="listitem"
                     @click="downloadIcsEvent()"
                     @keyup.enter="downloadIcsEvent()"
-                    v-if="!event.draft"
+                    v-if="event?.draft === false"
                   >
-                    <span>
-                      {{ $t("Add to my calendar") }}
-                      <b-icon icon="calendar-plus" />
+                    <span class="flex gap-1">
+                      <CalendarPlus />
+                      {{ t("Add to my calendar") }}
                     </span>
-                  </b-dropdown-item>
-                  <b-dropdown-item
+                  </o-dropdown-item>
+                  <o-dropdown-item
                     aria-role="listitem"
                     v-if="ableToReport"
                     @click="isReportModalActive = true"
                     @keyup.enter="isReportModalActive = true"
+                    class="p-1"
                   >
-                    <span>
-                      {{ $t("Report") }}
-                      <b-icon icon="flag" />
+                    <span class="flex gap-1">
+                      <Flag />
+                      {{ t("Report") }}
                     </span>
-                  </b-dropdown-item>
-                </b-dropdown>
+                  </o-dropdown-item>
+                </o-dropdown>
               </div>
             </div>
           </div>
         </section>
       </div>
-      <div class="event-description-wrapper">
-        <aside class="event-metadata">
+
+      <div
+        class="event-description-wrapper rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse"
+      >
+        <aside class="event-metadata rounded dark:bg-gray-600 shadow-md">
           <div class="sticky">
             <event-metadata-sidebar
-              v-if="event && config"
+              v-if="event && loggedUser"
               :event="event"
-              :config="config"
               :user="loggedUser"
               @showMapModal="showMap = true"
             />
@@ -305,13 +332,13 @@
         </aside>
         <div class="event-description-comments">
           <section class="event-description">
-            <subtitle>{{ $t("About this event") }}</subtitle>
-            <p v-if="!event.description">
-              {{ $t("The event organizer didn't add any description.") }}
+            <h2 class="text-xl">{{ t("About this event") }}</h2>
+            <p v-if="!event?.description">
+              {{ t("The event organizer didn't add any description.") }}
             </p>
             <div v-else>
               <div
-                :lang="event.language"
+                :lang="event?.language"
                 dir="auto"
                 class="description-content"
                 ref="eventDescriptionElement"
@@ -329,47 +356,47 @@
           </section>
           <section class="comments" ref="commentsObserver">
             <a href="#comments">
-              <subtitle id="comments">{{ $t("Comments") }}</subtitle>
+              <h2 class="text-xl" id="comments">{{ t("Comments") }}</h2>
             </a>
-            <comment-tree v-if="loadComments" :event="event" />
+            <comment-tree v-if="event && loadComments" :event="event" />
           </section>
         </div>
       </div>
+
       <section
         class="more-events section"
-        v-if="event.relatedEvents.length > 0"
+        v-if="(event?.relatedEvents ?? []).length > 0"
       >
         <h3 class="title has-text-centered">
-          {{ $t("These events may interest you") }}
+          {{ t("These events may interest you") }}
         </h3>
-        <multi-card :events="event.relatedEvents" />
+        <multi-card :events="event?.relatedEvents ?? []" />
       </section>
-      <b-modal
-        :active.sync="isReportModalActive"
+      <o-modal
+        v-model:active="isReportModalActive"
         has-modal-card
         ref="reportModal"
-        :close-button-aria-label="$t('Close')"
+        :close-button-aria-label="t('Close')"
       >
         <report-modal
           :on-confirm="reportEvent"
-          :title="$t('Report this event')"
+          :title="t('Report this event')"
           :outside-domain="organizerDomain"
-          @close="$refs.reportModal.close()"
         />
-      </b-modal>
-      <b-modal
-        :close-button-aria-label="$t('Close')"
-        :active.sync="isShareModalActive"
+      </o-modal>
+      <o-modal
+        :close-button-aria-label="t('Close')"
+        v-model:active="isShareModalActive"
         has-modal-card
         ref="shareModal"
       >
         <share-event-modal :event="event" :eventCapacityOK="eventCapacityOK" />
-      </b-modal>
-      <b-modal
-        :active.sync="isJoinModalActive"
+      </o-modal>
+      <o-modal
+        v-model:active="isJoinModalActive"
         has-modal-card
         ref="participationModal"
-        :close-button-aria-label="$t('Close')"
+        :close-button-aria-label="t('Close')"
       >
         <identity-picker v-model="identity">
           <template v-slot:footer>
@@ -380,45 +407,46 @@
                 @click="isJoinModalActive = false"
                 @keyup.enter="isJoinModalActive = false"
               >
-                {{ $t("Cancel") }}
+                {{ t("Cancel") }}
               </button>
               <button
+                v-if="identity"
                 class="button is-primary"
                 ref="confirmButton"
                 @click="
-                  event.joinOptions === EventJoinOptions.RESTRICTED
+                  event?.joinOptions === EventJoinOptions.RESTRICTED
                     ? joinEventWithConfirmation(identity)
                     : joinEvent(identity)
                 "
                 @keyup.enter="
-                  event.joinOptions === EventJoinOptions.RESTRICTED
+                  event?.joinOptions === EventJoinOptions.RESTRICTED
                     ? joinEventWithConfirmation(identity)
                     : joinEvent(identity)
                 "
               >
-                {{ $t("Confirm my particpation") }}
+                {{ t("Confirm my particpation") }}
               </button>
             </footer>
           </template>
         </identity-picker>
-      </b-modal>
-      <b-modal
-        :active.sync="isJoinConfirmationModalActive"
+      </o-modal>
+      <o-modal
+        v-model:active="isJoinConfirmationModalActive"
         has-modal-card
         ref="joinConfirmationModal"
-        :close-button-aria-label="$t('Close')"
+        :close-button-aria-label="t('Close')"
       >
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title">
-              {{ $t("Participation confirmation") }}
+              {{ t("Participation confirmation") }}
             </p>
           </header>
 
           <section class="modal-card-body">
             <p>
               {{
-                $t(
+                t(
                   "The event organiser has chosen to validate manually participations. Do you want to add a little note to explain why you want to participate to this event?"
                 )
               }}
@@ -428,55 +456,62 @@
                 joinEvent(actorForConfirmation, messageForConfirmation)
               "
             >
-              <b-field :label="$t('Message')">
-                <b-input
+              <o-field :label="t('Message')">
+                <o-input
                   type="textarea"
                   size="is-medium"
                   v-model="messageForConfirmation"
                   minlength="10"
-                ></b-input>
-              </b-field>
+                ></o-input>
+              </o-field>
               <div class="buttons">
-                <b-button
+                <o-button
                   native-type="button"
                   class="button"
                   ref="cancelButton"
                   @click="isJoinConfirmationModalActive = false"
                   @keyup.enter="isJoinConfirmationModalActive = false"
-                  >{{ $t("Cancel") }}
-                </b-button>
-                <b-button type="is-primary" native-type="submit">
-                  {{ $t("Confirm my participation") }}
-                </b-button>
+                  >{{ t("Cancel") }}
+                </o-button>
+                <o-button variant="primary" native-type="submit">
+                  {{ t("Confirm my participation") }}
+                </o-button>
               </div>
             </form>
           </section>
         </div>
-      </b-modal>
-      <b-modal
-        :close-button-aria-label="$t('Close')"
+      </o-modal>
+      <o-modal
+        v-model:active="showMap"
+        :close-button-aria-label="t('Close')"
         class="map-modal"
-        v-if="event.physicalAddress && event.physicalAddress.geom"
-        :active.sync="showMap"
+        v-if="event?.physicalAddress?.geom"
         has-modal-card
         full-screen
         :can-cancel="['escape', 'outside']"
       >
         <template #default="props">
-          <event-map
+          <!-- <event-map
             :routingType="routingType"
             :address="event.physicalAddress"
             @close="props.close"
-          />
+          /> -->
         </template>
-      </b-modal>
+      </o-modal>
+      <dialog
+        variant="danger"
+        :title="t('Delete event')"
+        :message="deleteEventMessage"
+        :confirmText="t('Delete {eventTitle}', { eventTitle: event?.title })"
+        :onConfirm="
+          () => (event?.id ? deleteEvent({ eventId: event?.id }) : null)
+        "
+      ></dialog>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Watch } from "vue-property-decorator";
-import BIcon from "buefy/src/components/icon/Icon.vue";
+<script lang="ts" setup>
 import {
   EventJoinOptions,
   EventStatus,
@@ -519,7 +554,6 @@ import {
   removeAnonymousParticipation,
 } from "../../services/AnonymousParticipationStorage";
 import { IConfig } from "../../types/config.model";
-import Subtitle from "../../components/Utils/Subtitle.vue";
 import Tag from "../../components/Tag.vue";
 import EventMetadataSidebar from "../../components/Event/EventMetadataSidebar.vue";
 import EventBanner from "../../components/Event/EventBanner.vue";
@@ -531,643 +565,655 @@ import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
+import { useDeleteEvent, useFetchEvent } from "@/composition/apollo/event";
+import {
+  computed,
+  handleError,
+  onMounted,
+  ref,
+  watch,
+  defineAsyncComponent,
+  inject,
+} from "vue";
+import { useRoute, useRouter } from "vue-router";
+import Earth from "vue-material-design-icons/Earth.vue";
+import Link from "vue-material-design-icons/Link.vue";
+import Flag from "vue-material-design-icons/Flag.vue";
+import CalendarPlus from "vue-material-design-icons/CalendarPlus.vue";
+import ContentDuplicate from "vue-material-design-icons/ContentDuplicate.vue";
+import Delete from "vue-material-design-icons/Delete.vue";
+import Pencil from "vue-material-design-icons/Pencil.vue";
+import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+import TicketConfirmationOutline from "vue-material-design-icons/TicketConfirmationOutline.vue";
+import {
+  useCurrentActorClient,
+  useCurrentUserIdentities,
+  usePersonStatusGroup,
+} from "@/composition/apollo/actor";
+import { useLoggedUser } from "@/composition/apollo/user";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import {
+  useAnonymousActorId,
+  useAnonymousParticipationConfig,
+  useAnonymousReportsConfig,
+  useEventCategories,
+} from "@/composition/apollo/config";
+import { useCreateReport } from "@/composition/apollo/report";
+import Share from "vue-material-design-icons/Share.vue";
+import { useI18n } from "vue-i18n";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { Dialog } from "@/plugins/dialog";
+import { Notifier } from "@/plugins/notifier";
 
-// noinspection TypeScriptValidateTypes
-@Component({
-  components: {
-    Subtitle,
-    MultiCard,
-    BIcon,
-    DateCalendarIcon,
-    ReportModal,
-    IdentityPicker,
-    ParticipationSection,
-    CommentTree,
-    Tag,
-    PopoverActorCard,
-    EventBanner,
-    EventMetadataSidebar,
-    EventMap,
-    ShareEventModal: () =>
-      import(
-        /* webpackChunkName: "shareEventModal" */ "../../components/Event/ShareEventModal.vue"
-      ),
-    "integration-twitch": () =>
-      import(
-        /* webpackChunkName: "twitchIntegration" */ "../../components/Event/Integrations/Twitch.vue"
-      ),
-    "integration-peertube": () =>
-      import(
-        /* webpackChunkName: "PeerTubeIntegration" */ "../../components/Event/Integrations/PeerTube.vue"
-      ),
-    "integration-youtube": () =>
-      import(
-        /* webpackChunkName: "YouTubeIntegration" */ "../../components/Event/Integrations/YouTube.vue"
-      ),
-    "integration-jitsi-meet": () =>
-      import(
-        /* webpackChunkName: "JitsiMeetIntegration" */ "../../components/Event/Integrations/JitsiMeet.vue"
-      ),
-    "integration-etherpad": () =>
-      import(
-        /* webpackChunkName: "EtherpadIntegration" */ "../../components/Event/Integrations/Etherpad.vue"
-      ),
-  },
-  apollo: {
-    event: {
-      query: FETCH_EVENT,
-      variables() {
-        return {
-          uuid: this.uuid,
-        };
-      },
-      error({ graphQLErrors }) {
-        this.handleErrors(graphQLErrors);
-      },
+const ShareEventModal = defineAsyncComponent(
+  () => import("../../components/Event/ShareEventModal.vue")
+);
+const IntegrationTwitch = defineAsyncComponent(
+  () => import("../../components/Event/Integrations/Twitch.vue")
+);
+const IntegrationPeertube = defineAsyncComponent(
+  () => import("../../components/Event/Integrations/PeerTube.vue")
+);
+const IntegrationYoutube = defineAsyncComponent(
+  () => import("../../components/Event/Integrations/YouTube.vue")
+);
+const IntegrationJitsiMeet = defineAsyncComponent(
+  () => import("../../components/Event/Integrations/JitsiMeet.vue")
+);
+const IntegrationEtherpad = defineAsyncComponent(
+  () => import("../../components/Event/Integrations/Etherpad.vue")
+);
+
+const props = defineProps<{
+  uuid: string;
+}>();
+
+const { t } = useI18n({ useScope: "global" });
+
+const {
+  event,
+  onError: onFetchEventError,
+  loading: eventLoading,
+} = useFetchEvent(props.uuid);
+const eventId = computed(() => event.value?.id);
+const { currentActor } = useCurrentActorClient();
+const currentActorId = computed(() => currentActor.value?.id);
+const { loggedUser } = useLoggedUser();
+const {
+  result: participationsResult,
+  subscribeToMore: subscribeToMoreParticipation,
+} = useQuery<{ person: IPerson }>(
+  EVENT_PERSON_PARTICIPATION,
+  () => ({
+    eventId: event.value?.id,
+    actorId: currentActorId.value,
+  }),
+  () => ({
+    enabled:
+      currentActorId.value !== undefined &&
+      currentActorId.value !== null &&
+      eventId.value !== undefined,
+  })
+);
+
+// subscribeToMoreParticipation(() => ({
+//   document: EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
+//   variables: {
+//     eventId: eventId,
+//     actorId: currentActorId,
+//   },
+// }));
+
+const participations = computed(
+  () => participationsResult.value?.person.participations.elements ?? []
+);
+
+const { person } = usePersonStatusGroup(
+  usernameWithDomain(event.value?.attributedTo)
+);
+
+const { anonymousReportsConfig } = useAnonymousReportsConfig();
+const { anonymousActorId } = useAnonymousActorId();
+const { eventCategories } = useEventCategories();
+
+const { anonymousParticipationConfig } = useAnonymousParticipationConfig();
+const { identities } = useCurrentUserIdentities();
+
+// metaInfo() {
+//   return {
+//     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//     // @ts-ignore
+//     title: this.eventTitle,
+//     meta: [
+//       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//       // @ts-ignore
+//       { name: "description", content: this.eventDescription },
+//     ],
+//   };
+// },
+
+const identity = ref<IPerson | null>(null);
+
+const reportModal = ref();
+const oldParticipationRole = ref<string | undefined>(undefined);
+const isReportModalActive = ref(false);
+const isShareModalActive = ref(false);
+const isJoinModalActive = ref(false);
+const isJoinConfirmationModalActive = ref(false);
+
+const observer = ref<IntersectionObserver | null>(null);
+const commentsObserver = ref<Element | null>(null);
+
+const loadComments = ref(false);
+
+const anonymousParticipation = ref<boolean | null>(null);
+const actorForConfirmation = ref<IPerson | null>(null);
+const messageForConfirmation = ref("");
+
+const eventTitle = computed((): undefined | string => {
+  return event.value?.title;
+});
+
+const eventDescription = computed((): undefined | string => {
+  return event.value?.description;
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const eventDescriptionElement = ref<HTMLElement | null>(null);
+
+onMounted(async () => {
+  identity.value = currentActor.value;
+  if (route.hash.includes("#comment-")) {
+    loadComments.value = true;
+  }
+
+  try {
+    if (window.isSecureContext) {
+      anonymousParticipation.value = await anonymousParticipationConfirmed();
+    }
+  } catch (e) {
+    if (e instanceof AnonymousParticipationNotFoundError) {
+      anonymousParticipation.value = null;
+    } else {
+      console.error(e);
+    }
+  }
+
+  observer.value = new IntersectionObserver(
+    (entries) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const entry of entries) {
+        if (entry) {
+          loadComments.value = entry.isIntersecting || loadComments.value;
+        }
+      }
     },
-    currentActor: CURRENT_ACTOR_CLIENT,
-    loggedUser: USER_SETTINGS,
-    participations: {
+    {
+      rootMargin: "-50px 0px -50px",
+    }
+  );
+  if (commentsObserver.value) {
+    observer.value.observe(commentsObserver.value);
+  }
+
+  watch(eventDescription, () => {
+    if (!eventDescription.value) return;
+    if (!eventDescriptionElement.value) return;
+
+    eventDescriptionElement.value.addEventListener("click", ($event) => {
+      // TODO: Find the right type for target
+      let { target }: { target: any } = $event;
+      while (target && target.tagName !== "A") target = target.parentNode;
+      // handle only links that occur inside the component and do not reference external resources
+      if (target && target.matches(".hashtag") && target.href) {
+        // some sanity checks taken from vue-router:
+        // https://github.com/vuejs/vue-router/blob/dev/src/components/link.js#L106
+        const { altKey, ctrlKey, metaKey, shiftKey, button, defaultPrevented } =
+          $event;
+        // don't handle with control keys
+        if (metaKey || altKey || ctrlKey || shiftKey) return;
+        // don't handle when preventDefault called
+        if (defaultPrevented) return;
+        // don't handle right clicks
+        if (button !== undefined && button !== 0) return;
+        // don't handle if `target="_blank"`
+        if (target && target.getAttribute) {
+          const linkTarget = target.getAttribute("target");
+          if (/\b_blank\b/i.test(linkTarget)) return;
+        }
+        // don't handle same page links/anchors
+        const url = new URL(target.href);
+        const to = url.pathname;
+        if (window.location.pathname !== to && $event.preventDefault) {
+          $event.preventDefault();
+          router.push(to);
+        }
+      }
+    });
+  });
+
+  // this.$on("event-deleted", () => {
+  //   return router.push({ name: RouteName.HOME });
+  // });
+});
+/**
+ * Delete the event, then redirect to home.
+ */
+const openDeleteEventModalWrapper = async (): Promise<void> => {
+  await openDeleteEventModal(event.value);
+};
+
+const deleteEventMessage = computed(() => {
+  const participantsLength = event.value?.participantStats.participant;
+  const prefix = participantsLength
+    ? t(
+        "There are {participants} participants.",
+        {
+          participants: event.value.participantStats.participant,
+        },
+        event.value.participantStats.participant
+      )
+    : "";
+  return `${prefix}
+        ${t(
+          "Are you sure you want to delete this event? This action cannot be reverted."
+        )}
+        <br><br>
+        ${t('To confirm, type your event title "{eventTitle}"', {
+          eventTitle: event.value?.title,
+        })}`;
+});
+
+const { mutate: deleteEvent } = useDeleteEvent();
+
+const openDeleteEventModal = async (
+  event: IEvent | undefined
+): Promise<void> => {
+  function escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  }
+};
+
+const notifier = inject<Notifier>("notifier");
+
+const reportEvent = async (
+  content: string,
+  forward: boolean
+): Promise<void> => {
+  isReportModalActive.value = false;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  reportModal.value.close();
+  if (!organizer.value) return;
+
+  const { mutate, onDone, onError } = useCreateReport();
+
+  mutate({
+    eventId: event.value?.id ?? "",
+    reportedId: organizer.value?.id ?? "",
+    content,
+    forward,
+  });
+
+  onDone(() => {
+    notifier?.success(t("Event {eventTitle} reported", { eventTitle }));
+  });
+
+  onError((error) => {
+    console.error(error);
+  });
+};
+
+const joinEventWithConfirmation = (actor: IPerson): void => {
+  isJoinConfirmationModalActive.value = true;
+  actorForConfirmation.value = actor;
+};
+
+const {
+  mutate: joinEventMutation,
+  onDone: onJoinEventMutationDone,
+  onError: onJoinEventMutationError,
+} = useMutation<{
+  joinEvent: IParticipant;
+}>(JOIN_EVENT, () => ({
+  update: (
+    store: ApolloCache<{
+      joinEvent: IParticipant;
+    }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+
+    const participationCachedData = store.readQuery<{ person: IPerson }>({
       query: EVENT_PERSON_PARTICIPATION,
-      variables() {
-        return {
-          eventId: this.event.id,
-          actorId: this.currentActor.id,
-        };
-      },
-      subscribeToMore: {
-        document: EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
-        variables() {
-          return {
-            eventId: this.event.id,
-            actorId: this.currentActor.id,
-          };
+      variables: { eventId: event.value?.id, actorId: identity.value.id },
+    });
+
+    if (participationCachedData?.person == undefined) {
+      console.error(
+        "Cannot update participation cache, because of null value."
+      );
+      return;
+    }
+    store.writeQuery({
+      query: EVENT_PERSON_PARTICIPATION,
+      variables: { eventId: event.value?.id, actorId: identity.value.id },
+      data: {
+        person: {
+          ...participationCachedData?.person,
+          participations: {
+            elements: [data.joinEvent],
+            total: 1,
+          },
         },
       },
-      update: (data) => {
-        if (data && data.person) return data.person.participations.elements;
-        return [];
+    });
+
+    const cachedData = store.readQuery<{ event: IEvent }>({
+      query: FETCH_EVENT,
+      variables: { uuid: event.value?.uuid },
+    });
+    if (cachedData == null) return;
+    const { event: cachedEvent } = cachedData;
+    if (cachedEvent === null) {
+      console.error(
+        "Cannot update event participant cache, because of null value."
+      );
+      return;
+    }
+    const participantStats = { ...cachedEvent.participantStats };
+
+    if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
+      participantStats.notApproved += 1;
+    } else {
+      participantStats.going += 1;
+      participantStats.participant += 1;
+    }
+
+    store.writeQuery({
+      query: FETCH_EVENT,
+      variables: { uuid: props.uuid },
+      data: {
+        event: {
+          ...cachedEvent,
+          participantStats,
+        },
       },
-      skip() {
-        return (
-          !this.currentActor ||
-          !this.event ||
-          !this.event.id ||
-          !this.currentActor.id
-        );
-      },
-    },
-    person: {
-      query: PERSON_STATUS_GROUP,
-      variables() {
-        return {
-          id: this.currentActor.id,
-          group: usernameWithDomain(this.event?.attributedTo),
-        };
-      },
-      skip() {
-        return (
-          !this.currentActor.id ||
-          !this.event?.attributedTo ||
-          !this.event?.attributedTo?.preferredUsername
-        );
-      },
-    },
-    config: CONFIG,
+    });
   },
-  metaInfo() {
-    return {
+}));
+
+const joinEvent = async (
+  identity: IPerson,
+  message: string | null = null
+): Promise<void> => {
+  isJoinConfirmationModalActive.value = false;
+  isJoinModalActive.value = false;
+  joinEventMutation({
+    eventId: event.value?.id,
+    actorId: identity?.id,
+    message,
+  });
+};
+
+onJoinEventMutationDone(({ data }) => {
+  if (data) {
+    if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
+      participationRequestedMessage();
+    } else {
+      participationConfirmedMessage();
+    }
+  }
+});
+
+onJoinEventMutationError((error) => {
+  console.error(error);
+});
+
+const dialog = inject<Dialog>("dialog");
+
+const confirmLeave = (): void => {
+  dialog?.confirm({
+    title: t('Leaving event "{title}"', {
+      title: event.value?.title,
+    }),
+    message: t(
+      'Are you sure you want to cancel your participation at event "{title}"?',
+      {
+        title: event.value?.title,
+      }
+    ),
+    confirmText: t("Leave event"),
+    cancelText: t("Cancel"),
+    type: "danger",
+    hasIcon: true,
+    onConfirm: () => {
+      if (currentActor.value?.id) {
+        leaveEvent(event.value, currentActor.value.id);
+      }
+    },
+  });
+};
+
+watch(participations, () => {
+  if (participations.value.length > 0) {
+    if (
+      oldParticipationRole.value &&
+      participations.value[0].role !== ParticipantRole.NOT_APPROVED &&
+      oldParticipationRole.value !== participations.value[0].role
+    ) {
+      switch (participations.value[0].role) {
+        case ParticipantRole.PARTICIPANT:
+          participationConfirmedMessage();
+          break;
+        case ParticipantRole.REJECTED:
+          participationRejectedMessage();
+          break;
+        default:
+          participationChangedMessage();
+          break;
+      }
+    }
+    oldParticipationRole.value = participations.value[0].role;
+  }
+});
+
+const participationConfirmedMessage = () => {
+  notifier?.success(t("Your participation has been confirmed"));
+};
+
+const participationRequestedMessage = () => {
+  notifier?.success(t("Your participation has been requested"));
+};
+
+const participationRejectedMessage = () => {
+  notifier?.error(t("Your participation has been rejected"));
+};
+
+const participationChangedMessage = () => {
+  notifier?.info(t("Your participation status has been changed"));
+};
+
+const downloadIcsEvent = async (): Promise<void> => {
+  const data = await (
+    await fetch(`${GRAPHQL_API_ENDPOINT}/events/${props.uuid}/export/ics`)
+  ).text();
+  const blob = new Blob([data], { type: "text/calendar" });
+  const link = document.createElement("a");
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `${event.value?.title}.ics`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const triggerShare = (): void => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore-start
+  if (navigator.share) {
+    navigator
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      title: this.eventTitle,
-      meta: [
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        { name: "description", content: this.eventDescription },
-      ],
-    };
-  },
-})
-export default class Event extends EventMixin {
-  @Prop({ type: String, required: true }) uuid!: string;
-
-  event: IEvent = new EventModel();
-
-  currentActor!: IPerson;
-
-  identity: IPerson = new Person();
-
-  config!: IConfig;
-
-  person!: IPerson;
-
-  loggedUser!: IUser;
-
-  participations: IParticipant[] = [];
-
-  oldParticipationRole!: string;
-
-  isReportModalActive = false;
-
-  isShareModalActive = false;
-
-  isJoinModalActive = false;
-
-  isJoinConfirmationModalActive = false;
-
-  EventVisibility = EventVisibility;
-
-  EventStatus = EventStatus;
-
-  EventJoinOptions = EventJoinOptions;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-
-  RouteName = RouteName;
-
-  observer!: IntersectionObserver;
-
-  loadComments = false;
-
-  anonymousParticipation: boolean | null = null;
-
-  actorForConfirmation!: IPerson;
-
-  messageForConfirmation = "";
-
-  get eventTitle(): undefined | string {
-    if (!this.event) return undefined;
-    return this.event.title;
-  }
-
-  get eventDescription(): undefined | string {
-    if (!this.event) return undefined;
-    return this.event.description;
-  }
-
-  async mounted(): Promise<void> {
-    this.identity = this.currentActor;
-    if (this.$route.hash.includes("#comment-")) {
-      this.loadComments = true;
-    }
-
-    try {
-      if (window.isSecureContext) {
-        this.anonymousParticipation =
-          await this.anonymousParticipationConfirmed();
-      }
-    } catch (e) {
-      if (e instanceof AnonymousParticipationNotFoundError) {
-        this.anonymousParticipation = null;
-      } else {
-        console.error(e);
-      }
-    }
-
-    this.observer = new IntersectionObserver(
-      (entries) => {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const entry of entries) {
-          if (entry) {
-            this.loadComments = entry.isIntersecting || this.loadComments;
-          }
-        }
-      },
-      {
-        rootMargin: "-50px 0px -50px",
-      }
-    );
-    this.observer.observe(this.$refs.commentsObserver as Element);
-
-    this.$watch("eventDescription", (eventDescription) => {
-      if (!eventDescription) return;
-      const eventDescriptionElement = this.$refs
-        .eventDescriptionElement as HTMLElement;
-
-      eventDescriptionElement.addEventListener("click", ($event) => {
-        // TODO: Find the right type for target
-        let { target }: { target: any } = $event;
-        while (target && target.tagName !== "A") target = target.parentNode;
-        // handle only links that occur inside the component and do not reference external resources
-        if (target && target.matches(".hashtag") && target.href) {
-          // some sanity checks taken from vue-router:
-          // https://github.com/vuejs/vue-router/blob/dev/src/components/link.js#L106
-          const {
-            altKey,
-            ctrlKey,
-            metaKey,
-            shiftKey,
-            button,
-            defaultPrevented,
-          } = $event;
-          // don't handle with control keys
-          if (metaKey || altKey || ctrlKey || shiftKey) return;
-          // don't handle when preventDefault called
-          if (defaultPrevented) return;
-          // don't handle right clicks
-          if (button !== undefined && button !== 0) return;
-          // don't handle if `target="_blank"`
-          if (target && target.getAttribute) {
-            const linkTarget = target.getAttribute("target");
-            if (/\b_blank\b/i.test(linkTarget)) return;
-          }
-          // don't handle same page links/anchors
-          const url = new URL(target.href);
-          const to = url.pathname;
-          if (window.location.pathname !== to && $event.preventDefault) {
-            $event.preventDefault();
-            this.$router.push(to);
-          }
-        }
-      });
-    });
-
-    this.$on("event-deleted", () => {
-      return this.$router.push({ name: RouteName.HOME });
-    });
-  }
-
-  /**
-   * Delete the event, then redirect to home.
-   */
-  async openDeleteEventModalWrapper(): Promise<void> {
-    await this.openDeleteEventModal(this.event);
-  }
-
-  async reportEvent(content: string, forward: boolean): Promise<void> {
-    this.isReportModalActive = false;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.$refs.reportModal.close();
-    if (!this.organizer) return;
-    const eventTitle = this.event.title;
-
-    try {
-      await this.$apollo.mutate<IReport>({
-        mutation: CREATE_REPORT,
-        variables: {
-          eventId: this.event.id,
-          reportedId: this.organizer ? this.organizer.id : null,
-          content,
-          forward,
-        },
-      });
-      this.$notifier.success(
-        this.$t("Event {eventTitle} reported", { eventTitle }) as string
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  joinEventWithConfirmation(actor: IPerson): void {
-    this.isJoinConfirmationModalActive = true;
-    this.actorForConfirmation = actor;
-  }
-
-  async joinEvent(
-    identity: IPerson,
-    message: string | null = null
-  ): Promise<void> {
-    this.isJoinConfirmationModalActive = false;
-    this.isJoinModalActive = false;
-    try {
-      const { data: mutationData } = await this.$apollo.mutate<{
-        joinEvent: IParticipant;
-      }>({
-        mutation: JOIN_EVENT,
-        variables: {
-          eventId: this.event.id,
-          actorId: identity.id,
-          message,
-        },
-        update: (
-          store: ApolloCache<{
-            joinEvent: IParticipant;
-          }>,
-          { data }: FetchResult
-        ) => {
-          if (data == null) return;
-
-          const participationCachedData = store.readQuery<{ person: IPerson }>({
-            query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, actorId: identity.id },
-          });
-
-          if (participationCachedData?.person == undefined) {
-            console.error(
-              "Cannot update participation cache, because of null value."
-            );
-            return;
-          }
-          store.writeQuery({
-            query: EVENT_PERSON_PARTICIPATION,
-            variables: { eventId: this.event.id, actorId: identity.id },
-            data: {
-              person: {
-                ...participationCachedData?.person,
-                participations: {
-                  elements: [data.joinEvent],
-                  total: 1,
-                },
-              },
-            },
-          });
-
-          const cachedData = store.readQuery<{ event: IEvent }>({
-            query: FETCH_EVENT,
-            variables: { uuid: this.event.uuid },
-          });
-          if (cachedData == null) return;
-          const { event } = cachedData;
-          if (event === null) {
-            console.error(
-              "Cannot update event participant cache, because of null value."
-            );
-            return;
-          }
-          const participantStats = { ...event.participantStats };
-
-          if (data.joinEvent.role === ParticipantRole.NOT_APPROVED) {
-            participantStats.notApproved += 1;
-          } else {
-            participantStats.going += 1;
-            participantStats.participant += 1;
-          }
-
-          store.writeQuery({
-            query: FETCH_EVENT,
-            variables: { uuid: this.uuid },
-            data: {
-              event: {
-                ...event,
-                participantStats,
-              },
-            },
-          });
-        },
-      });
-      if (mutationData) {
-        if (mutationData.joinEvent.role === ParticipantRole.NOT_APPROVED) {
-          this.participationRequestedMessage();
-        } else {
-          this.participationConfirmedMessage();
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  confirmLeave(): void {
-    this.$buefy.dialog.confirm({
-      title: this.$t('Leaving event "{title}"', {
-        title: this.event.title,
-      }) as string,
-      message: this.$t(
-        'Are you sure you want to cancel your participation at event "{title}"?',
-        {
-          title: this.event.title,
-        }
-      ) as string,
-      confirmText: this.$t("Leave event") as string,
-      cancelText: this.$t("Cancel") as string,
-      type: "is-danger",
-      hasIcon: true,
-      onConfirm: () => {
-        if (this.currentActor.id) {
-          this.leaveEvent(this.event, this.currentActor.id);
-        }
-      },
-    });
-  }
-
-  @Watch("participations")
-  watchParticipations(): void {
-    if (this.participations.length > 0) {
-      if (
-        this.oldParticipationRole &&
-        this.participations[0].role !== ParticipantRole.NOT_APPROVED &&
-        this.oldParticipationRole !== this.participations[0].role
-      ) {
-        switch (this.participations[0].role) {
-          case ParticipantRole.PARTICIPANT:
-            this.participationConfirmedMessage();
-            break;
-          case ParticipantRole.REJECTED:
-            this.participationRejectedMessage();
-            break;
-          default:
-            this.participationChangedMessage();
-            break;
-        }
-      }
-      this.oldParticipationRole = this.participations[0].role;
-    }
-  }
-
-  private participationConfirmedMessage() {
-    this.$notifier.success(
-      this.$t("Your participation has been confirmed") as string
-    );
-  }
-
-  private participationRequestedMessage() {
-    this.$notifier.success(
-      this.$t("Your participation has been requested") as string
-    );
-  }
-
-  private participationRejectedMessage() {
-    this.$notifier.error(
-      this.$t("Your participation has been rejected") as string
-    );
-  }
-
-  private participationChangedMessage() {
-    this.$notifier.info(
-      this.$t("Your participation status has been changed") as string
-    );
-  }
-
-  async downloadIcsEvent(): Promise<void> {
-    const data = await (
-      await fetch(`${GRAPHQL_API_ENDPOINT}/events/${this.uuid}/export/ics`)
-    ).text();
-    const blob = new Blob([data], { type: "text/calendar" });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = `${this.event.title}.ics`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  triggerShare(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-start
-    if (navigator.share) {
-      navigator
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .share({
-          title: this.event.title,
-          url: this.event.url,
-        })
-        .then(() => console.log("Successful share"))
-        .catch((error: any) => console.log("Error sharing", error));
-    } else {
-      this.isShareModalActive = true;
-      // send popup
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-end
-  }
-
-  handleErrors(errors: any[]): void {
-    if (
-      errors.some((error) => error.status_code === 404) ||
-      errors.some(({ message }) => message.includes("has invalid value $uuid"))
-    ) {
-      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
-    }
-  }
-
-  get actorIsParticipant(): boolean {
-    if (this.actorIsOrganizer) return true;
-
-    return (
-      this.participations.length > 0 &&
-      this.participations[0].role === ParticipantRole.PARTICIPANT
-    );
-  }
-
-  get actorIsOrganizer(): boolean {
-    return (
-      this.participations.length > 0 &&
-      this.participations[0].role === ParticipantRole.CREATOR
-    );
-  }
-
-  get hasGroupPrivileges(): boolean {
-    return (
-      this.person?.memberships?.total > 0 &&
-      [MemberRole.MODERATOR, MemberRole.ADMINISTRATOR].includes(
-        this.person?.memberships?.elements[0].role
-      )
-    );
-  }
-
-  get canManageEvent(): boolean {
-    return this.actorIsOrganizer || this.hasGroupPrivileges;
-  }
-
-  get endDate(): Date {
-    return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
-      ? this.event.endsOn
-      : this.event.beginsOn;
-  }
-
-  get maximumAttendeeCapacity(): number {
-    return this.event?.options?.maximumAttendeeCapacity;
-  }
-
-  get eventCapacityOK(): boolean {
-    if (this.event.draft) return true;
-    if (!this.maximumAttendeeCapacity) return true;
-    return (
-      this.event?.options?.maximumAttendeeCapacity >
-      this.event.participantStats.participant
-    );
-  }
-
-  get numberOfPlacesStillAvailable(): number {
-    if (this.event.draft) return this.maximumAttendeeCapacity;
-    return (
-      this.maximumAttendeeCapacity - this.event.participantStats.participant
-    );
-  }
-
-  async anonymousParticipationConfirmed(): Promise<boolean> {
-    return isParticipatingInThisEvent(this.uuid);
-  }
-
-  async cancelAnonymousParticipation(): Promise<void> {
-    const token = (await getLeaveTokenForParticipation(this.uuid)) as string;
-    await this.leaveEvent(this.event, this.config.anonymous.actorId, token);
-    await removeAnonymousParticipation(this.uuid);
-    this.anonymousParticipation = null;
-  }
-
-  get ableToReport(): boolean {
-    return (
-      this.config &&
-      (this.currentActor.id != null || this.config.anonymous.reports.allowed)
-    );
-  }
-
-  get organizer(): IActor | null {
-    if (this.event.attributedTo && this.event.attributedTo.id) {
-      return this.event.attributedTo;
-    }
-    if (this.event.organizerActor) {
-      return this.event.organizerActor;
-    }
-    return null;
-  }
-
-  get organizerDomain(): string | null {
-    if (this.organizer) {
-      return this.organizer.domain;
-    }
-    return null;
-  }
-
-  metadataToComponent: Record<string, string> = {
-    "mz:live:twitch:url": "integration-twitch",
-    "mz:live:peertube:url": "integration-peertube",
-    "mz:live:youtube:url": "integration-youtube",
-    "mz:visio:jitsi_meet": "integration-jitsi-meet",
-    "mz:notes:etherpad:url": "integration-etherpad",
-  };
-
-  get integrations(): Record<string, IEventMetadataDescription> {
-    return this.event.metadata
-      .map((val) => {
-        const def = eventMetaDataList.find((dat) => dat.key === val.key);
-        return {
-          ...def,
-          ...val,
-        };
+      .share({
+        title: event.value?.title,
+        url: event.value?.url,
       })
-      .reduce((acc: Record<string, IEventMetadataDescription>, metadata) => {
-        const component = this.metadataToComponent[metadata.key];
-        if (component !== undefined) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          acc[component] = metadata;
-        }
-        return acc;
-      }, {});
+      .then(() => console.log("Successful share"))
+      .catch((error: any) => console.log("Error sharing", error));
+  } else {
+    isShareModalActive.value = true;
+    // send popup
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore-end
+};
 
-  showMap = false;
-
-  get routingType(): string | undefined {
-    return this.config?.maps?.routing?.type;
+const handleErrors = (errors: any[]): void => {
+  if (
+    errors.some((error) => error.status_code === 404) ||
+    errors.some(({ message }) => message.includes("has invalid value $uuid"))
+  ) {
+    router.replace({ name: RouteName.PAGE_NOT_FOUND });
   }
+};
 
-  get eventCategory(): string | undefined {
-    if (this.event?.category === "MEETING") {
-      return undefined;
-    }
-    return this.config.eventCategories.find((eventCategory) => {
-      return eventCategory.id === this.event?.category;
-    })?.label as string;
+onFetchEventError(({ graphQlErrors }) => handleErrors(graphQLErrors));
+
+const actorIsParticipant = computed((): boolean => {
+  if (actorIsOrganizer.value) return true;
+
+  return (
+    participations.value.length > 0 &&
+    participations.value[0].role === ParticipantRole.PARTICIPANT
+  );
+});
+
+const actorIsOrganizer = computed((): boolean => {
+  return (
+    participations.value.length > 0 &&
+    participations.value[0].role === ParticipantRole.CREATOR
+  );
+});
+
+const hasGroupPrivileges = computed((): boolean => {
+  return (
+    person.value?.memberships !== undefined &&
+    person.value?.memberships?.total > 0 &&
+    [MemberRole.MODERATOR, MemberRole.ADMINISTRATOR].includes(
+      person.value?.memberships?.elements[0].role
+    )
+  );
+});
+
+const canManageEvent = computed((): boolean => {
+  return actorIsOrganizer.value || hasGroupPrivileges.value;
+});
+
+const endDate = computed((): Date | undefined => {
+  return event.value?.endsOn && event.value.endsOn > event.value.beginsOn
+    ? event.value.endsOn
+    : event.value?.beginsOn;
+});
+
+const maximumAttendeeCapacity = computed((): number | undefined => {
+  return event.value?.options?.maximumAttendeeCapacity;
+});
+
+const eventCapacityOK = computed((): boolean => {
+  if (event.value?.draft) return true;
+  if (!maximumAttendeeCapacity.value) return true;
+  return (
+    event.value?.options?.maximumAttendeeCapacity !== undefined &&
+    event.value.participantStats.participant !== undefined &&
+    event.value?.options?.maximumAttendeeCapacity >
+      event.value.participantStats.participant
+  );
+});
+
+const numberOfPlacesStillAvailable = computed((): number | undefined => {
+  if (event.value?.draft) return maximumAttendeeCapacity.value;
+  return (
+    (maximumAttendeeCapacity.value ?? 0) -
+    (event.value?.participantStats.participant ?? 0)
+  );
+});
+
+const anonymousParticipationConfirmed = async (): Promise<boolean> => {
+  return isParticipatingInThisEvent(props.uuid);
+};
+
+const cancelAnonymousParticipation = async (): Promise<void> => {
+  const token = (await getLeaveTokenForParticipation(props.uuid)) as string;
+  await leaveEvent(event.value, anonymousActorId.value, token);
+  await removeAnonymousParticipation(props.uuid);
+  anonymousParticipation.value = null;
+};
+
+const ableToReport = computed((): boolean => {
+  return (
+    currentActor.value?.id != null ||
+    anonymousReportsConfig.value?.allowed === true
+  );
+});
+
+const organizer = computed((): IActor | null => {
+  if (event.value?.attributedTo?.id) {
+    return event.value.attributedTo;
   }
-}
+  if (event.value?.organizerActor) {
+    return event.value.organizerActor;
+  }
+  return null;
+});
+
+const organizerDomain = computed((): string | undefined => {
+  return organizer.value?.domain ?? undefined;
+});
+
+const metadataToComponent: Record<string, string> = {
+  "mz:live:twitch:url": "IntegrationTwitch",
+  "mz:live:peertube:url": "IntegrationPeertube",
+  "mz:live:youtube:url": "IntegrationYoutube",
+  "mz:visio:jitsi_meet": "IntegrationJitsiMeet",
+  "mz:notes:etherpad:url": "IntegrationEtherpad",
+};
+
+const integrations = computed((): Record<string, IEventMetadataDescription> => {
+  return (event.value?.metadata ?? [])
+    .map((val) => {
+      const def = eventMetaDataList.find((dat) => dat.key === val.key);
+      return {
+        ...def,
+        ...val,
+      };
+    })
+    .reduce((acc: Record<string, IEventMetadataDescription>, metadata) => {
+      const component = metadataToComponent[metadata.key];
+      if (component !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        acc[component] = metadata;
+      }
+      return acc;
+    }, {});
+});
+
+const showMap = ref(false);
+
+const routingType = computed((): string | undefined => {
+  return config.value?.maps?.routing?.type;
+});
+
+const eventCategory = computed((): string | undefined => {
+  if (event.value?.category === "MEETING") {
+    return undefined;
+  }
+  return (eventCategories.value ?? []).find((eventCategory) => {
+    return eventCategory.id === event.value?.category;
+  })?.label as string;
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
@@ -1219,7 +1265,7 @@ div.sidebar {
 }
 
 .intro {
-  background: white;
+  // background: white;
 
   .is-3-tablet {
     width: initial;
@@ -1239,32 +1285,15 @@ div.sidebar {
 }
 
 .event-description-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
   padding: 0;
-
-  @media all and (min-width: 672px) {
-    flex-direction: row-reverse;
-  }
-
-  & > aside,
-  & > div {
-    @media all and (min-width: 672px) {
-      margin: 2rem auto;
-    }
-  }
 
   aside.event-metadata {
     min-width: 20rem;
     flex: 1;
-    @media all and (min-width: 672px) {
-      @include padding-left(1rem);
-    }
 
     .sticky {
-      position: sticky;
-      background: white;
+      // position: sticky;
+      // background: white;
       top: 50px;
       padding: 1rem;
     }
@@ -1274,37 +1303,37 @@ div.sidebar {
     min-width: 20rem;
     padding: 1rem;
     flex: 2;
-    background: white;
+    // background: white;
   }
 
   .description-content {
-    ::v-deep h1 {
+    :deep(h1) {
       font-size: 2rem;
     }
 
-    ::v-deep h2 {
+    :deep(h2) {
       font-size: 1.5rem;
     }
 
-    ::v-deep h3 {
+    :deep(h3) {
       font-size: 1.25rem;
     }
 
-    ::v-deep ul {
+    :deep(ul) {
       list-style-type: disc;
     }
 
-    ::v-deep li {
+    :deep(li) {
       margin: 10px auto 10px 2rem;
     }
 
-    ::v-deep blockquote {
+    :deep(blockquote) {
       border-left: 0.2em solid #333;
       display: block;
       @include padding-left(1rem);
     }
 
-    ::v-deep p {
+    :deep(p) {
       margin: 10px auto;
 
       a {
@@ -1330,7 +1359,7 @@ div.sidebar {
 }
 
 .more-events {
-  background: white;
+  // background: white;
   padding: 1rem 1rem 4rem;
 
   & > .title {
@@ -1338,18 +1367,18 @@ div.sidebar {
   }
 }
 
-.dropdown .dropdown-trigger span {
-  cursor: pointer;
-}
+// .dropdown .dropdown-trigger span {
+//   cursor: pointer;
+// }
 
-a.dropdown-item,
-.dropdown .dropdown-menu .has-link a,
-button.dropdown-item {
-  white-space: nowrap;
-  width: 100%;
-  @include padding-right(1rem);
-  text-align: right;
-}
+// a.dropdown-item,
+// .dropdown .dropdown-menu .has-link a,
+// button.dropdown-item {
+//   white-space: nowrap;
+//   width: 100%;
+//   @include padding-right(1rem);
+//   text-align: right;
+// }
 
 a.participations-link {
   text-decoration: none;
@@ -1373,7 +1402,7 @@ a.participations-link {
 .intro-wrapper {
   position: relative;
   padding: 0 16px 16px;
-  background: #fff;
+  // background: #fff;
 
   .date-calendar-icon-wrapper {
     margin-top: 16px;

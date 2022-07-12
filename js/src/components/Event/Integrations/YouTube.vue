@@ -13,30 +13,25 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEventMetadataDescription } from "@/types/event-metadata";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed } from "vue";
 
-@Component
-export default class YouTubeIntegration extends Vue {
-  @Prop({ type: Object as PropType<IEventMetadataDescription>, required: true })
-  metadata!: IEventMetadataDescription;
+const props = defineProps<{ metadata: IEventMetadataDescription }>();
 
-  get videoID(): string | null {
-    if (this.metadata.pattern) {
-      const matches = this.metadata.pattern.exec(this.metadata.value);
-      if (matches && matches[1]) {
-        return matches[1];
-      }
+const videoID = computed((): string | null => {
+  if (props.metadata.pattern) {
+    const matches = props.metadata.pattern.exec(props.metadata.value);
+    if (matches && matches[1]) {
+      return matches[1];
     }
-    return null;
   }
+  return null;
+});
 
-  get origin(): string {
-    return window.location.hostname;
-  }
-}
+const origin = computed((): string => {
+  return window.location.hostname;
+});
 </script>
 <style lang="scss" scoped>
 .youtube {

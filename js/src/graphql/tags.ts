@@ -21,7 +21,7 @@ export const TAGS = gql`
 `;
 
 export const FILTER_TAGS = gql`
-  query FilterTags($filter: String) {
+  query FilterTags($filter: String!) {
     tags(filter: $filter) {
       ...TagFragment
     }

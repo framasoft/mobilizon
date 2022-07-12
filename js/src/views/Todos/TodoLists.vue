@@ -1,5 +1,5 @@
 <template>
-  <div class="container section" v-if="group">
+  <div class="container mx-auto" v-if="group">
     <breadcrumbs-nav
       :links="[
         {
@@ -22,11 +22,19 @@
           )
         }}
       </p>
-      <form class="form" @submit.prevent="createNewTodoList">
-        <b-field :label="$t('List title')">
-          <b-input v-model="newTodoList.title" />
-        </b-field>
-        <b-button native-type="submit">{{ $t("Create a new list") }}</b-button>
+      <form
+        class="form"
+        @submit.prevent="
+          createNewTodoList({
+            title: newTodoList.title,
+            groupId: group?.id,
+          })
+        "
+      >
+        <o-field :label="$t('List title')">
+          <o-input v-model="newTodoList.title" />
+        </o-field>
+        <o-button native-type="submit">{{ $t("Create a new list") }}</o-button>
       </form>
       <div v-for="todoList in todoLists" :key="todoList.id">
         <router-link
@@ -50,74 +58,43 @@
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { FETCH_GROUP } from "@/graphql/group";
-import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
+<script lang="ts" setup>
+import { usernameWithDomain, displayName } from "@/types/actor";
 import { CREATE_TODO_LIST } from "@/graphql/todos";
 import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
+import { useGroup } from "@/composition/apollo/group";
+import { computed, reactive } from "vue";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { useMutation } from "@vue/apollo-composable";
 
-@Component({
-  apollo: {
-    group: {
-      query: FETCH_GROUP,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-        };
-      },
-    },
-  },
-  components: {
-    CompactTodo,
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { group } = this;
-    return {
-      title: this.$t("{group}'s todolists", {
-        group: group.name || usernameWithDomain(group),
-      }) as string,
-    };
-  },
-})
-export default class TodoLists extends Vue {
-  @Prop({ type: String, required: true }) preferredUsername!: string;
+const props = defineProps<{ preferredUsername: string }>();
 
-  group!: IGroup;
+const { group } = useGroup(props.preferredUsername);
 
-  newTodoList: ITodoList = {
-    title: "",
-    id: "",
-    todos: { elements: [], total: 0 },
-  };
+const { t } = useI18n({ useScope: "global" });
 
-  RouteName = RouteName;
+useHead({
+  title: computed(() =>
+    t("{group}'s todolists", { group: displayName(group.value) })
+  ),
+});
 
-  usernameWithDomain = usernameWithDomain;
+const newTodoList = reactive<ITodoList>({
+  title: "",
+  id: "",
+  todos: { elements: [], total: 0 },
+});
 
-  displayName = displayName;
+const todoLists = computed((): ITodoList[] => {
+  return group.value?.todoLists.elements ?? [];
+});
 
-  get todoLists(): ITodoList[] {
-    return this.group.todoLists.elements;
-  }
+// const todoListsCount = computed((): number => {
+//   return group.value?.todoLists.total ?? 0;
+// });
 
-  get todoListsCount(): number {
-    return this.group.todoLists.total;
-  }
-
-  async createNewTodoList(): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: CREATE_TODO_LIST,
-      variables: {
-        title: this.newTodoList.title,
-        groupId: this.group.id,
-      },
-    });
-  }
-}
+const { mutate: createNewTodoList } = useMutation(CREATE_TODO_LIST);
 </script>

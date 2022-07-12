@@ -1,25 +1,41 @@
-function withOpacityValue(variable) {
-  return ({ opacityValue }) => {
-    if (opacityValue === undefined) {
-      return `rgb(var(${variable}))`;
-    }
-    return `rgb(var(${variable}) / ${opacityValue})`;
-  };
-}
-
 module.exports = {
   content: ["./public/**/*.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        primary: withOpacityValue("--color-primary"),
-        secondary: withOpacityValue("--color-secondary"),
-        "violet-title": withOpacityValue("--color-violet-title"),
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
+        "violet-title": "rgb(var(--color-violet-title) / <alpha-value>)",
+        tag: "rgb(var(--color-tag) / <alpha-value>)",
+        "frama-violet": "#725794",
+        "frama-orange": "#cc4e13",
+        "mbz-yellow": "#ffd599",
+        "mbz-purple": "#424056",
+        "mbz-bluegreen": "#1e7d97",
+        "mbz-yellow-2": "rgb(var(--color-mbz-yellow-2) / <alpha-value>)",
+        "violet-1": "#3a384c",
+        "violet-2": "#474467",
+        "violet-3": "#3c376e",
+        "yellow-1": "#ffd599",
+        "yellow-2": "#fff1de",
+        "body-background-color": "#efeef4",
+        "purple-1": "#757199",
+        "purple-2": "#cdcaea",
+        "purple-3": "#e6e4f4",
+        "mbz-info": "#36bcd4",
+        "mbz-danger": "#cd2026",
+        "mbz-success": "#0d8758",
+        // primary: "#272633",
+        // secondary: "#ED8D07",
       },
       lineClamp: {
         10: "10",
       },
     },
   },
-  plugins: [require("@tailwindcss/line-clamp")],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/line-clamp"),
+    require("@tailwindcss/typography"),
+  ],
 };

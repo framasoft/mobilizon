@@ -1,44 +1,38 @@
 <template>
-  <v-popover
-    offset="16"
-    trigger="hover"
+  <VMenu
+    :distance="16"
+    :triggers="['hover']"
     class="popover"
     :class="{ inline, clickable: actor && actor.type === ActorType.GROUP }"
   >
     <slot></slot>
-    <template slot="popover">
+    <template #popper>
       <actor-card :full="true" :actor="actor" :popover="true" />
     </template>
-  </v-popover>
+  </VMenu>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { ActorType } from "@/types/enums";
-import { Component, Vue, Prop } from "vue-property-decorator";
 import { IActor } from "../../types/actor";
 import ActorCard from "./ActorCard.vue";
 
-@Component({
-  components: {
-    ActorCard,
-  },
-})
-export default class PopoverActorCard extends Vue {
-  @Prop({ required: true, type: Object }) actor!: IActor;
-
-  @Prop({ required: false, type: Boolean, default: false }) inline!: boolean;
-
-  ActorType = ActorType;
-}
+withDefaults(
+  defineProps<{
+    actor: IActor;
+    inline?: boolean;
+  }>(),
+  {
+    inline: false,
+  }
+);
 </script>
 
-<style lang="scss" scoped>
-.inline {
-  display: inline;
+<style lang="scss">
+.v-popper__inner {
+  padding: 0 !important;
+  background-color: transparent !important;
 }
-.popover {
-  cursor: default;
-}
-.clickable {
-  cursor: pointer;
+.v-popper__arrow-outer {
+  border-color: $violet-1 !important;
 }
 </style>

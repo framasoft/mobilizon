@@ -2,14 +2,11 @@
   <div>a</div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import RouteName from "@/router/name";
+import { useRouter } from "vue-router";
 
-@Component
-export default class HomepageRedirectComponent extends Vue {
-  created(): void {
-    this.$router.replace({ name: RouteName.HOME });
-  }
-}
+const router = useRouter();
+
+router.replace({ name: RouteName.HOME });
 </script>

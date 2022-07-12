@@ -1,78 +1,75 @@
 <template>
-  <div class="section container">
-    <h1 class="title">
-      {{ $t("My events") }}
+  <div class="container mx-auto">
+    <h1 class="text-4xl">
+      {{ t("My events") }}
     </h1>
     <p>
       {{
-        $t(
+        t(
           "You will find here all the events you have created or of which you are a participant, as well as events organized by groups you follow or are a member of."
         )
       }}
     </p>
-    <div class="buttons" v-if="!hideCreateEventButton">
-      <router-link
-        class="button is-primary"
+    <div class="my-2" v-if="!hideCreateEventButton">
+      <o-button
+        tag="router-link"
+        variant="primary"
         :to="{ name: RouteName.CREATE_EVENT }"
-        >{{ $t("Create event") }}</router-link
+        >{{ t("Create event") }}</o-button
       >
     </div>
-    <b-loading :active.sync="$apollo.loading"></b-loading>
-    <div class="wrapper">
-      <div class="event-filter">
-        <b-field grouped group-multiline>
-          <b-field>
-            <b-switch v-model="showUpcoming">{{
-              showUpcoming ? $t("Upcoming events") : $t("Past events")
-            }}</b-switch>
-          </b-field>
-          <b-field v-if="showUpcoming">
-            <b-checkbox v-model="showDrafts">{{ $t("Drafts") }}</b-checkbox>
-          </b-field>
-          <b-field v-if="showUpcoming">
-            <b-checkbox v-model="showAttending">{{
-              $t("Attending")
-            }}</b-checkbox>
-          </b-field>
-          <b-field v-if="showUpcoming">
-            <b-checkbox v-model="showMyGroups">{{
-              $t("From my groups")
-            }}</b-checkbox>
-          </b-field>
-          <p v-if="!showUpcoming">
-            {{
-              $tc(
-                "You have attended {count} events in the past.",
-                pastParticipations.total,
-                {
-                  count: pastParticipations.total,
-                }
-              )
-            }}
-          </p>
-          <b-field
-            class="date-filter"
-            expanded
-            :label="
-              showUpcoming
-                ? $t('Showing events starting on')
-                : $t('Showing events before')
-            "
-          >
-            <b-datepicker
-              v-model="dateFilter"
-              :first-day-of-week="firstDayOfWeek"
-            />
-            <b-button
-              @click="dateFilter = new Date()"
-              class="reset-area"
-              icon-left="close"
-              :title="$t('Clear date filter field')"
-            />
-          </b-field>
-        </b-field>
+    <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
+    <div class="wrapper flex flex-wrap gap-4 items-start">
+      <div class="event-filter text-violet-1 flex-auto md:flex-none">
+        <o-field>
+          <o-switch v-model="showUpcoming">{{
+            showUpcoming ? t("Upcoming events") : t("Past events")
+          }}</o-switch>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showDrafts">{{ t("Drafts") }}</o-checkbox>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showAttending">{{ t("Attending") }}</o-checkbox>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showMyGroups">{{
+            t("From my groups")
+          }}</o-checkbox>
+        </o-field>
+        <p v-if="!showUpcoming">
+          {{
+            t(
+              "You have attended {count} events in the past.",
+              {
+                count: pastParticipations.total,
+              },
+              pastParticipations.total
+            )
+          }}
+        </p>
+        <o-field
+          class="date-filter"
+          expanded
+          :label="
+            showUpcoming
+              ? t('Showing events starting on')
+              : t('Showing events before')
+          "
+        >
+          <o-datepicker
+            v-model="dateFilter"
+            :first-day-of-week="firstDayOfWeek"
+          />
+          <o-button
+            @click="dateFilter = new Date()"
+            class="reset-area"
+            icon-left="close"
+            :title="t('Clear date filter field')"
+          />
+        </o-field>
       </div>
-      <div class="my-events">
+      <div class="my-events flex-1">
         <section
           class="py-4"
           v-if="showUpcoming && showDrafts && drafts.length > 0"
@@ -82,13 +79,15 @@
         <section
           class="py-4"
           v-if="
-            showUpcoming && monthlyFutureEvents && monthlyFutureEvents.size > 0
+            showUpcoming &&
+            monthlyFutureEvents &&
+            monthlyFutureEvents.length > 0
           "
         >
           <transition-group name="list" tag="p">
             <div
               class="mb-5"
-              v-for="month in monthlyFutureEvents"
+              v-for="month of monthlyFutureEvents()"
               :key="month[0]"
             >
               <span class="upcoming-month">{{ month[0] }}</span>
@@ -102,7 +101,8 @@
                 />
                 <event-minimalist-card
                   v-else-if="
-                    !monthParticipationsIds(month[1]).includes(element.id)
+                    element.id &&
+                    !monthParticipationsIds(month[1]).includes(element?.id)
                   "
                   :event="element"
                   class="participation"
@@ -111,7 +111,7 @@
             </div>
           </transition-group>
           <div class="columns is-centered">
-            <b-button
+            <o-button
               class="column is-narrow"
               v-if="
                 hasMoreFutureParticipations &&
@@ -119,9 +119,9 @@
                 futureParticipations.length === limit
               "
               @click="loadMoreFutureParticipations"
-              size="is-large"
-              type="is-primary"
-              >{{ $t("Load more") }}</b-button
+              size="large"
+              variant="primary"
+              >{{ t("Load more") }}</o-button
             >
           </div>
         </section>
@@ -130,34 +130,34 @@
           v-if="
             showUpcoming &&
             monthlyFutureEvents &&
-            monthlyFutureEvents.size === 0 &&
-            !$apollo.loading
+            monthlyFutureEvents.length === 0 &&
+            true // !$apollo.loading
           "
         >
-          <div class="img-container" :class="{ webp: supportsWebPFormat }" />
+          <div class="img-container h-64" />
           <div class="content has-text-centered">
             <p>
               {{
-                $t(
+                t(
                   "You don't have any upcoming events. Maybe try another filter?"
                 )
               }}
             </p>
-            <i18n
-              path="Do you wish to {create_event} or {explore_events}?"
+            <i18n-t
+              keypath="Do you wish to {create_event} or {explore_events}?"
               tag="p"
             >
-              <router-link
-                :to="{ name: RouteName.CREATE_EVENT }"
-                slot="create_event"
-                >{{ $t("create an event") }}</router-link
-              >
-              <router-link
-                :to="{ name: RouteName.SEARCH }"
-                slot="explore_events"
-                >{{ $t("explore the events") }}</router-link
-              >
-            </i18n>
+              <template v-slot:create_event>
+                <router-link :to="{ name: RouteName.CREATE_EVENT }">{{
+                  t("create an event")
+                }}</router-link>
+              </template>
+              <template v-slot:explore_events>
+                <router-link :to="{ name: RouteName.SEARCH }">{{
+                  t("explore the events")
+                }}</router-link>
+              </template>
+            </i18n-t>
           </div>
         </section>
         <section v-if="!showUpcoming && pastParticipations.elements.length > 0">
@@ -167,7 +167,7 @@
               <event-participation-card
                 v-for="participation in month[1]"
                 :key="participation.id"
-                :participation="participation"
+                :participation="(participation as IParticipant)"
                 :options="{ hideDate: false }"
                 @event-deleted="eventDeleted"
                 class="participation"
@@ -175,16 +175,16 @@
             </div>
           </transition-group>
           <div class="columns is-centered">
-            <b-button
+            <o-button
               class="column is-narrow"
               v-if="
                 hasMorePastParticipations &&
                 pastParticipations.elements.length === limit
               "
               @click="loadMorePastParticipations"
-              size="is-large"
-              type="is-primary"
-              >{{ $t("Load more") }}</b-button
+              size="large"
+              variant="primary"
+              >{{ t("Load more") }}</o-button
             >
           </div>
         </section>
@@ -193,302 +193,230 @@
   </div>
 </template>
 
-<script lang="ts">
-import { CONFIG } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
-import { supportsWebPFormat } from "@/utils/support";
-import { IParticipant, Participant } from "../../types/participant.model";
+import { IParticipant } from "../../types/participant.model";
 import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
-import { EventModel, IEvent } from "../../types/event.model";
+import { IEvent } from "../../types/event.model";
 import EventParticipationCard from "../../components/Event/EventParticipationCard.vue";
 import MultiEventMinimalistCard from "../../components/Event/MultiEventMinimalistCard.vue";
 import EventMinimalistCard from "../../components/Event/EventMinimalistCard.vue";
-import Subtitle from "../../components/Utils/Subtitle.vue";
 import {
   LOGGED_USER_PARTICIPATIONS,
   LOGGED_USER_UPCOMING_EVENTS,
 } from "@/graphql/participant";
-import { Paginate } from "@/types/paginate";
+import { useQuery } from "@vue/apollo-composable";
+import { computed, inject, ref } from "vue";
+import { IUser } from "@/types/current-user.model";
+import { booleanTransformer, useRouteQuery } from "vue-use-route-query";
+import { Locale } from "date-fns";
+import { useI18n } from "vue-i18n";
+import { useRestrictions } from "@/composition/apollo/config";
 
 type Eventable = IParticipant | IEvent;
 
-@Component({
-  components: {
-    Subtitle,
-    MultiEventMinimalistCard,
-    EventParticipationCard,
-    EventMinimalistCard,
-  },
-  apollo: {
-    config: CONFIG,
-    userUpcomingEvents: {
-      query: LOGGED_USER_UPCOMING_EVENTS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          page: 1,
-          limit: 10,
-          afterDateTime: this.dateFilter,
-        };
-      },
-      update(data) {
-        this.futureParticipations = data.loggedUser.participations.elements.map(
-          (participation: IParticipant) => new Participant(participation)
-        );
-        this.groupEvents = data.loggedUser.followedGroupEvents.elements.map(
-          ({ event }: { event: IEvent }) => event
-        );
-      },
-    },
-    drafts: {
-      query: LOGGED_USER_DRAFTS,
-      fetchPolicy: "cache-and-network",
-      variables: {
-        page: 1,
-        limit: 10,
-      },
-      update: (data) =>
-        data.loggedUser.drafts.map((event: IEvent) => new EventModel(event)),
-    },
-    pastParticipations: {
-      query: LOGGED_USER_PARTICIPATIONS,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          page: 1,
-          limit: 10,
-          beforeDateTime: this.dateFilter,
-        };
-      },
-      update: (data) => data.loggedUser.participations,
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("My events") as string,
-    };
-  },
-})
-export default class MyEvents extends Vue {
-  futurePage = 1;
+const { t } = useI18n({ useScope: "global" });
 
-  pastPage = 1;
+const futurePage = ref(1);
+const pastPage = ref(1);
+const limit = ref(10);
 
-  limit = 10;
-
-  get showUpcoming(): boolean {
-    return ((this.$route.query.showUpcoming as string) || "true") === "true";
-  }
-
-  set showUpcoming(showUpcoming: boolean) {
-    this.$router.push({
-      name: RouteName.MY_EVENTS,
-      query: { ...this.$route.query, showUpcoming: showUpcoming.toString() },
-    });
-  }
-
-  get showDrafts(): boolean {
-    return ((this.$route.query.showDrafts as string) || "true") === "true";
-  }
-
-  set showDrafts(showDrafts: boolean) {
-    this.$router.push({
-      name: RouteName.MY_EVENTS,
-      query: { ...this.$route.query, showDrafts: showDrafts.toString() },
-    });
-  }
-
-  get showAttending(): boolean {
-    return ((this.$route.query.showAttending as string) || "true") === "true";
-  }
-
-  set showAttending(showAttending: boolean) {
-    this.$router.push({
-      name: RouteName.MY_EVENTS,
-      query: { ...this.$route.query, showAttending: showAttending.toString() },
-    });
-  }
-
-  get showMyGroups(): boolean {
-    return ((this.$route.query.showMyGroups as string) || "false") === "true";
-  }
-
-  set showMyGroups(showMyGroups: boolean) {
-    this.$router.push({
-      name: RouteName.MY_EVENTS,
-      query: { ...this.$route.query, showMyGroups: showMyGroups.toString() },
-    });
-  }
-
-  get dateFilter(): Date {
-    const query = this.$route.query.dateFilter as string;
+const showUpcoming = useRouteQuery("showUpcoming", true, booleanTransformer);
+const showDrafts = useRouteQuery("showDrafts", true, booleanTransformer);
+const showAttending = useRouteQuery("showAttending", true, booleanTransformer);
+const showMyGroups = useRouteQuery("showMyGroups", false, booleanTransformer);
+const dateFilter = useRouteQuery("dateFilter", new Date(), {
+  fromQuery(query) {
     if (query && /(\d{4}-\d{2}-\d{2})/.test(query)) {
       return new Date(`${query}T00:00:00Z`);
     }
     return new Date();
-  }
-
-  set dateFilter(date: Date) {
+  },
+  toQuery(value: Date) {
     const pad = (number: number) => {
       if (number < 10) {
         return "0" + number;
       }
       return number;
     };
-    const stringifiedDate = `${date.getFullYear()}-${pad(
-      date.getMonth() + 1
-    )}-${pad(date.getDate())}`;
+    return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
+      value.getDate()
+    )}`;
+  },
+});
 
-    if (this.$route.query.dateFilter !== stringifiedDate) {
-      this.$router.push({
-        name: RouteName.MY_EVENTS,
-        query: {
-          ...this.$route.query,
-          dateFilter: stringifiedDate,
-        },
-      });
+const hasMoreFutureParticipations = ref(true);
+const hasMorePastParticipations = ref(true);
+
+// config: CONFIG
+
+const {
+  result: loggedUserUpcomingEventsResult,
+  fetchMore: fetchMoreUpcomingEvents,
+} = useQuery<{
+  loggedUser: IUser;
+}>(LOGGED_USER_UPCOMING_EVENTS, () => ({
+  page: 1,
+  limit: 10,
+  afterDateTime: dateFilter.value,
+}));
+
+const futureParticipations = computed(
+  () =>
+    loggedUserUpcomingEventsResult.value?.loggedUser.participations.elements ??
+    []
+);
+const groupEvents = computed(
+  () =>
+    loggedUserUpcomingEventsResult.value?.loggedUser.followedGroupEvents
+      .elements ?? []
+);
+
+const { result: draftsResult } = useQuery<{
+  loggedUser: Pick<IUser, "drafts">;
+}>(LOGGED_USER_DRAFTS, () => ({ page: 1, limit: 10 }));
+const drafts = computed(() => draftsResult.value?.loggedUser.drafts ?? []);
+
+const { result: participationsResult, fetchMore: fetchMoreParticipations } =
+  useQuery<{
+    loggedUser: Pick<IUser, "participations">;
+  }>(LOGGED_USER_PARTICIPATIONS, () => ({ page: 1, limit: 10 }));
+const pastParticipations = computed(
+  () =>
+    participationsResult.value?.loggedUser.participations ?? {
+      elements: [],
+      total: 0,
     }
-  }
+);
 
-  config!: IConfig;
+// metaInfo() {
+//   return {
+//     title: this.t("My events") as string,
+//   };
+// },
 
-  futureParticipations: IParticipant[] = [];
-
-  groupEvents: IEvent[] = [];
-
-  hasMoreFutureParticipations = true;
-
-  pastParticipations: Paginate<IParticipant> = { elements: [], total: 0 };
-
-  hasMorePastParticipations = true;
-
-  drafts: IEvent[] = [];
-
-  RouteName = RouteName;
-
-  supportsWebPFormat = supportsWebPFormat;
-
-  static monthlyEvents(
-    elements: Eventable[],
-    revertSort = false
-  ): Map<string, Eventable[]> {
-    const res = elements.filter((element: Eventable) => {
-      if ("role" in element) {
-        return (
-          element.event.beginsOn != null &&
-          element.role !== ParticipantRole.REJECTED
-        );
-      }
-      return element.beginsOn != null;
+const monthlyEvents = (
+  elements: Eventable[],
+  revertSort = false
+): Map<string, Eventable[]> => {
+  const res = elements.filter((element: Eventable) => {
+    if ("role" in element) {
+      return (
+        element.event.beginsOn != null &&
+        element.role !== ParticipantRole.REJECTED
+      );
+    }
+    return element.beginsOn != null;
+  });
+  if (revertSort) {
+    res.sort((a: Eventable, b: Eventable) => {
+      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
+      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
     });
-    if (revertSort) {
-      res.sort((a: Eventable, b: Eventable) => {
-        const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
-        const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
-        return new Date(bTime).getTime() - new Date(aTime).getTime();
-      });
-    } else {
-      res.sort((a: Eventable, b: Eventable) => {
-        const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
-        const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
-        return new Date(aTime).getTime() - new Date(bTime).getTime();
-      });
-    }
-    return res.reduce((acc: Map<string, Eventable[]>, element: Eventable) => {
-      const month = new Date(
-        "role" in element ? element.event.beginsOn : element.beginsOn
-      ).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-      });
-      const filteredElements: Eventable[] = acc.get(month) || [];
-      filteredElements.push(element);
-      acc.set(month, filteredElements);
-      return acc;
-    }, new Map());
-  }
-
-  get monthlyFutureEvents(): Map<string, Eventable[]> {
-    let eventable = [] as Eventable[];
-    if (this.showAttending) {
-      eventable = [...eventable, ...this.futureParticipations];
-    }
-    if (this.showMyGroups) {
-      eventable = [...eventable, ...this.groupEvents];
-    }
-    return MyEvents.monthlyEvents(eventable);
-  }
-
-  get monthlyPastParticipations(): Map<string, Eventable[]> {
-    return MyEvents.monthlyEvents(this.pastParticipations.elements, true);
-  }
-
-  monthParticipationsIds(elements: Eventable[]): string[] {
-    const res = elements.filter((element: Eventable) => {
-      return "role" in element;
-    }) as IParticipant[];
-    return res.map(({ event }: { event: IEvent }) => {
-      return event.id as string;
+  } else {
+    res.sort((a: Eventable, b: Eventable) => {
+      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
+      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
+      return new Date(aTime).getTime() - new Date(bTime).getTime();
     });
   }
+  return res.reduce((acc: Map<string, Eventable[]>, element: Eventable) => {
+    const month = new Date(
+      "role" in element ? element.event.beginsOn : element.beginsOn
+    ).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+    });
+    const filteredElements: Eventable[] = acc.get(month) || [];
+    filteredElements.push(element);
+    acc.set(month, filteredElements);
+    return acc;
+  }, new Map());
+};
 
-  loadMoreFutureParticipations(): void {
-    this.futurePage += 1;
-    if (this.$apollo.queries.futureParticipations) {
-      this.$apollo.queries.futureParticipations.fetchMore({
-        // New variables
-        variables: {
-          page: this.futurePage,
-          limit: this.limit,
-        },
-      });
-    }
+const monthlyFutureEvents = (): Map<string, Eventable[]> => {
+  let eventable = [] as Eventable[];
+  if (showAttending.value) {
+    eventable = [...eventable, ...futureParticipations.value];
   }
-
-  loadMorePastParticipations(): void {
-    this.pastPage += 1;
-    if (this.$apollo.queries.pastParticipations) {
-      this.$apollo.queries.pastParticipations.fetchMore({
-        // New variables
-        variables: {
-          page: this.pastPage,
-          limit: this.limit,
-        },
-      });
-    }
+  if (showMyGroups.value) {
+    eventable = [...eventable, ...groupEvents.value];
   }
+  return monthlyEvents(eventable);
+};
 
-  eventDeleted(eventid: string): void {
-    this.futureParticipations = this.futureParticipations.filter(
+const monthlyPastParticipations = computed((): Map<string, Eventable[]> => {
+  return monthlyEvents(pastParticipations.value.elements, true);
+});
+
+const monthParticipationsIds = (elements: Eventable[]): string[] => {
+  const res = elements.filter((element: Eventable) => {
+    return "role" in element;
+  }) as IParticipant[];
+  return res.map(({ event }: { event: IEvent }) => {
+    return event.id as string;
+  });
+};
+
+const loadMoreFutureParticipations = (): void => {
+  futurePage.value += 1;
+  if (fetchMoreUpcomingEvents) {
+    fetchMoreUpcomingEvents({
+      // New variables
+      variables: {
+        page: futurePage.value,
+        limit: limit.value,
+      },
+    });
+  }
+};
+
+const loadMorePastParticipations = (): void => {
+  pastPage.value += 1;
+  if (fetchMoreParticipations) {
+    fetchMoreParticipations({
+      // New variables
+      variables: {
+        page: pastPage.value,
+        limit: limit.value,
+      },
+    });
+  }
+};
+
+const eventDeleted = (eventid: string): void => {
+  futureParticipations.value = futureParticipations.value.filter(
+    (participation) => participation.event.id !== eventid
+  );
+  pastParticipations.value = {
+    elements: pastParticipations.value.elements.filter(
       (participation) => participation.event.id !== eventid
-    );
-    this.pastParticipations = {
-      elements: this.pastParticipations.elements.filter(
-        (participation) => participation.event.id !== eventid
-      ),
-      total: this.pastParticipations.total - 1,
-    };
-  }
+    ),
+    total: pastParticipations.value.total - 1,
+  };
+};
 
-  get hideCreateEventButton(): boolean {
-    return !!this.config?.restrictions?.onlyGroupsCanCreateEvents;
-  }
+const { restrictions } = useRestrictions();
 
-  get firstDayOfWeek(): number {
-    return this.$dateFnsLocale?.options?.weekStartsOn || 0;
-  }
-}
+const hideCreateEventButton = computed((): boolean => {
+  return restrictions.value?.onlyGroupsCanCreateEvents === true;
+});
+
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
+
+const firstDayOfWeek = computed((): number => {
+  return dateFnsLocale?.options?.weekStartsOn ?? 0;
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import "~bulma/sass/utilities/mixins.sass";
+// @import "node_modules/bulma/sass/utilities/mixins.sass";
 
 main > .container {
-  background: $white;
+  // background: $white;
 
   & > h1 {
     margin: 10px auto 5px;
@@ -524,24 +452,18 @@ section {
 .not-found {
   margin-top: 2rem;
   .img-container {
-    background-image: url("../../../public/img/pics/event_creation-480w.jpg");
+    background-image: url("/img/pics/event_creation-480w.webp");
     @media (min-resolution: 2dppx) {
       & {
-        background-image: url("../../../public/img/pics/event_creation-1024w.jpg");
-      }
-    }
-
-    &.webp {
-      background-image: url("../../../public/img/pics/event_creation-480w.webp");
-      @media (min-resolution: 2dppx) {
-        & {
-          background-image: url("../../../public/img/pics/event_creation-1024w.webp");
-        }
+        background-image: url("/img/pics/event_creation-1024w.webp");
       }
     }
     max-width: 450px;
     height: 300px;
     box-shadow: 0 0 8px 8px white inset;
+    @media (prefers-color-scheme: dark) {
+      box-shadow: 0 0 8px 8px #374151 inset;
+    }
     background-size: cover;
     border-radius: 10px;
     margin: auto auto 1rem;
@@ -549,15 +471,15 @@ section {
 }
 
 .wrapper {
-  display: grid;
-  grid-template-areas: "filter" "events";
-  align-items: start;
+  // display: grid;
+  // grid-template-areas: "filter" "events";
+  // align-items: start;
 
-  @include desktop {
-    gap: 2rem;
-    grid-template-columns: 1fr 3fr;
-    grid-template-areas: "filter events";
-  }
+  // // @include desktop {
+  // gap: 2rem;
+  // grid-template-columns: 1fr 3fr;
+  // grid-template-areas: "filter events";
+  // // }
 
   .event-filter {
     grid-area: filter;
@@ -565,18 +487,18 @@ section {
     border-radius: 5px;
     padding: 0.75rem 1.25rem 0.25rem;
 
-    @include desktop {
-      padding: 2rem 1.25rem;
-      ::v-deep .field.is-grouped {
-        display: block;
-      }
-    }
+    // @include desktop {
+    //   padding: 2rem 1.25rem;
+    //   :deep(.field.is-grouped) {
+    //     display: block;
+    //   }
+    // }
 
-    ::v-deep .field > .field {
+    :deep(.field > .field) {
       margin: 0 auto 1.25rem !important;
     }
 
-    .date-filter ::v-deep .field-body {
+    .date-filter :deep(.field-body) {
       display: block;
     }
   }

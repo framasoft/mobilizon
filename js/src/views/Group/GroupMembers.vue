@@ -11,194 +11,190 @@
         {
           name: RouteName.GROUP_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Settings'),
+          text: t('Settings'),
         },
         {
           name: RouteName.GROUP_MEMBERS_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Members'),
+          text: t('Members'),
         },
       ]"
     />
-    <b-loading :active="$apollo.loading" />
+    <o-loading :active="groupMembersLoading" />
     <section
-      class="container section"
+      class="container mx-auto section"
       v-if="group && isCurrentActorAGroupAdmin"
     >
       <form @submit.prevent="inviteMember">
-        <b-field
-          :label="$t('Invite a new member')"
+        <o-field
+          :label="t('Invite a new member')"
           custom-class="add-relay"
           label-for="new-member-field"
           horizontal
         >
-          <b-field
+          <o-field
             grouped
             expanded
-            size="is-large"
+            size="large"
             :type="inviteError ? 'is-danger' : null"
             :message="inviteError"
           >
             <p class="control">
-              <b-input
+              <o-input
                 id="new-member-field"
                 v-model="newMemberUsername"
-                :placeholder="$t('Ex: someone@mobilizon.org')"
+                :placeholder="t(`Ex: someone{'@'}mobilizon.org`)"
               />
             </p>
             <p class="control">
-              <b-button type="is-primary" native-type="submit">{{
-                $t("Invite member")
-              }}</b-button>
+              <o-button variant="primary" native-type="submit">{{
+                t("Invite member")
+              }}</o-button>
             </p>
-          </b-field>
-        </b-field>
+          </o-field>
+        </o-field>
       </form>
-      <h1>{{ $t("Group Members") }} ({{ group.members.total }})</h1>
-      <b-field
-        :label="$t('Status')"
+      <h1>{{ t("Group Members") }} ({{ group.members.total }})</h1>
+      <o-field
+        :label="t('Status')"
         horizontal
         label-for="group-members-status-filter"
       >
-        <b-select v-model="roles" id="group-members-status-filter">
+        <o-select v-model="roles" id="group-members-status-filter">
           <option value="">
-            {{ $t("Everything") }}
+            {{ t("Everything") }}
           </option>
           <option :value="MemberRole.ADMINISTRATOR">
-            {{ $t("Administrator") }}
+            {{ t("Administrator") }}
           </option>
           <option :value="MemberRole.MODERATOR">
-            {{ $t("Moderator") }}
+            {{ t("Moderator") }}
           </option>
           <option :value="MemberRole.MEMBER">
-            {{ $t("Member") }}
+            {{ t("Member") }}
           </option>
           <option :value="MemberRole.INVITED">
-            {{ $t("Invited") }}
+            {{ t("Invited") }}
           </option>
           <option :value="MemberRole.NOT_APPROVED">
-            {{ $t("Not approved") }}
+            {{ t("Not approved") }}
           </option>
           <option :value="MemberRole.REJECTED">
-            {{ $t("Rejected") }}
+            {{ t("Rejected") }}
           </option>
-        </b-select>
-      </b-field>
-      <b-table
+        </o-select>
+      </o-field>
+      <o-table
         v-if="members"
         :data="members.elements"
         ref="queueTable"
-        :loading="this.$apollo.loading"
+        :loading="groupMembersLoading"
         paginated
         backend-pagination
-        :current-page.sync="page"
+        v-model:current-page="page"
         :pagination-simple="true"
-        :aria-next-label="$t('Next page')"
-        :aria-previous-label="$t('Previous page')"
-        :aria-page-label="$t('Page')"
-        :aria-current-label="$t('Current page')"
+        :aria-next-label="t('Next page')"
+        :aria-previous-label="t('Previous page')"
+        :aria-page-label="t('Page')"
+        :aria-current-label="t('Current page')"
         :total="members.total"
         :per-page="MEMBERS_PER_PAGE"
         backend-sorting
         :default-sort-direction="'desc'"
         :default-sort="['insertedAt', 'desc']"
-        @page-change="triggerLoadMoreMemberPageChange"
+        @page-change="loadMoreMembers"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <b-table-column
+        <o-table-column
           field="actor.preferredUsername"
-          :label="$t('Member')"
+          :label="t('Member')"
           v-slot="props"
         >
-          <article class="media">
-            <figure
-              class="media-left image is-48x48"
-              v-if="props.row.actor.avatar"
-            >
+          <article class="flex">
+            <figure v-if="props.row.actor.avatar">
               <img
-                class="is-rounded"
+                class="rounded"
                 :src="props.row.actor.avatar.url"
                 :alt="props.row.actor.avatar.alt || ''"
+                height="48"
+                width="48"
               />
             </figure>
-            <b-icon
-              class="media-left"
-              v-else
-              size="is-large"
-              icon="account-circle"
-            />
-            <div class="media-content">
-              <div class="content">
+            <AccountCircle v-else :size="48" />
+
+            <div class="">
+              <div class="">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey-dark"
-                  >@{{ usernameWithDomain(props.row.actor) }}</span
-                >
+                <span class="">@{{ usernameWithDomain(props.row.actor) }}</span>
               </div>
             </div>
           </article>
-        </b-table-column>
-        <b-table-column field="role" :label="$t('Role')" v-slot="props">
+        </o-table-column>
+        <o-table-column field="role" :label="t('Role')" v-slot="props">
           <b-tag
-            type="is-primary"
+            variant="info"
             v-if="props.row.role === MemberRole.ADMINISTRATOR"
           >
-            {{ $t("Administrator") }}
+            {{ t("Administrator") }}
           </b-tag>
           <b-tag
-            type="is-primary"
+            variant="info"
             v-else-if="props.row.role === MemberRole.MODERATOR"
           >
-            {{ $t("Moderator") }}
+            {{ t("Moderator") }}
           </b-tag>
           <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
-            {{ $t("Member") }}
+            {{ t("Member") }}
           </b-tag>
           <b-tag
-            type="is-warning"
+            variant="warning"
             v-else-if="props.row.role === MemberRole.NOT_APPROVED"
           >
-            {{ $t("Not approved") }}
+            {{ t("Not approved") }}
           </b-tag>
           <b-tag
-            type="is-danger"
+            variant="danger"
             v-else-if="props.row.role === MemberRole.REJECTED"
           >
-            {{ $t("Rejected") }}
+            {{ t("Rejected") }}
           </b-tag>
           <b-tag
-            type="is-warning"
+            variant="warning"
             v-else-if="props.row.role === MemberRole.INVITED"
           >
-            {{ $t("Invited") }}
+            {{ t("Invited") }}
           </b-tag>
-        </b-table-column>
-        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+        </o-table-column>
+        <o-table-column field="insertedAt" :label="t('Date')" v-slot="props">
           <span class="has-text-centered">
-            {{ props.row.insertedAt | formatDateString }}<br />{{
-              props.row.insertedAt | formatTimeString
+            {{ formatDateString(props.row.insertedAt) }}<br />{{
+              formatTimeString(props.row.insertedAt)
             }}
           </span>
-        </b-table-column>
-        <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
-          <div class="buttons" v-if="props.row.actor.id !== currentActor.id">
-            <b-button
-              type="is-success"
+        </o-table-column>
+        <o-table-column field="actions" :label="t('Actions')" v-slot="props">
+          <div
+            class="flex flex-wrap gap-2"
+            v-if="props.row.actor.id !== currentActor?.id"
+          >
+            <o-button
+              variant="success"
               v-if="props.row.role === MemberRole.NOT_APPROVED"
-              @click="approveMember(props.row)"
+              @click="approveMember(props.row.id)"
               icon-left="check"
-              >{{ $t("Approve member") }}</b-button
+              >{{ t("Approve member") }}</o-button
             >
-            <b-button
-              type="is-danger"
+            <o-button
+              variant="danger"
               v-if="props.row.role === MemberRole.NOT_APPROVED"
               @click="rejectMember(props.row)"
               icon-left="exit-to-app"
-              >{{ $t("Reject member") }}</b-button
+              >{{ t("Reject member") }}</o-button
             >
-            <b-button
+            <o-button
               v-if="
                 [MemberRole.MEMBER, MemberRole.MODERATOR].includes(
                   props.row.role
@@ -206,9 +202,9 @@
               "
               @click="promoteMember(props.row)"
               icon-left="chevron-double-up"
-              >{{ $t("Promote") }}</b-button
+              >{{ t("Promote") }}</o-button
             >
-            <b-button
+            <o-button
               v-if="
                 [MemberRole.ADMINISTRATOR, MemberRole.MODERATOR].includes(
                   props.row.role
@@ -216,293 +212,304 @@
               "
               @click="demoteMember(props.row)"
               icon-left="chevron-double-down"
-              >{{ $t("Demote") }}</b-button
+              >{{ t("Demote") }}</o-button
             >
-            <b-button
+            <o-button
               v-if="props.row.role === MemberRole.MEMBER"
               @click="removeMember(props.row)"
-              type="is-danger"
+              variant="danger"
               icon-left="exit-to-app"
-              >{{ $t("Remove") }}</b-button
+              >{{ t("Remove") }}</o-button
             >
           </div>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account" inline>
-            {{ $t("No member matches the filters") }}
+            {{ t("No member matches the filters") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </section>
-    <b-message v-else-if="!$apollo.loading && group">
-      {{ $t("You are not an administrator for this group.") }}
-    </b-message>
+    <o-notification v-else-if="!groupMembersLoading && group">
+      {{ t("You are not an administrator for this group.") }}
+    </o-notification>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Watch } from "vue-property-decorator";
-import GroupMixin from "@/mixins/group";
-import { mixins } from "vue-class-component";
+<script lang="ts" setup>
 import { FETCH_GROUP } from "@/graphql/group";
 import { MemberRole } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
-import RouteName from "../../router/name";
+import RouteName from "@/router/name";
 import {
   INVITE_MEMBER,
   GROUP_MEMBERS,
   REMOVE_MEMBER,
   UPDATE_MEMBER,
   APPROVE_MEMBER,
-} from "../../graphql/member";
-import { usernameWithDomain, displayName } from "../../types/actor";
+} from "@/graphql/member";
+import { usernameWithDomain, displayName, IGroup } from "@/types/actor";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, inject, ref, watch } from "vue";
+import {
+  enumTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { useRoute, useRouter } from "vue-router";
+import {
+  useCurrentActorClient,
+  usePersonStatusGroup,
+} from "@/composition/apollo/actor";
+import { formatTimeString, formatDateString } from "@/filters/datetime";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    members: {
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Group members")),
+});
+
+const props = defineProps<{ preferredUsername: string }>();
+
+const { currentActor } = useCurrentActorClient();
+
+const loading = ref(true);
+const newMemberUsername = ref("");
+const inviteError = ref("");
+const page = useRouteQuery("page", 1, integerTransformer);
+const roles = useRouteQuery("roles", undefined, enumTransformer(MemberRole));
+const MEMBERS_PER_PAGE = 10;
+const notifier = inject<Notifier>("notifier");
+
+const {
+  result: groupMembersResult,
+  fetchMore: fetchMoreGroupMembers,
+  loading: groupMembersLoading,
+} = useQuery<{ group: IGroup }>(GROUP_MEMBERS, () => ({
+  groupName: props.preferredUsername,
+  page: page.value,
+  limit: MEMBERS_PER_PAGE,
+  roles: roles.value,
+}));
+const group = computed(() => groupMembersResult.value?.group);
+
+const members = computed(
+  () => group.value?.members ?? { total: 0, elements: [] }
+);
+
+const {
+  mutate: inviteMemberMutation,
+  onDone: onInviteMemberDone,
+  onError: onInviteMemberError,
+} = useMutation<{ inviteMember: IMember }>(INVITE_MEMBER, () => ({
+  refetchQueries: [
+    {
       query: GROUP_MEMBERS,
-      variables() {
-        return {
-          groupName: this.$route.params.preferredUsername,
-          page: this.page,
-          limit: this.MEMBERS_PER_PAGE,
-          roles: this.roles,
-        };
-      },
-      update: (data) => data.group.members,
     },
-  },
-  components: {
-    EmptyContent,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Group Members") as string,
-    };
-  },
-})
-export default class GroupMembers extends mixins(GroupMixin) {
-  loading = true;
+  ],
+}));
 
-  newMemberUsername = "";
-
-  inviteError = "";
-
-  MemberRole = MemberRole;
-
-  roles: MemberRole | "" = "";
-
-  RouteName = RouteName;
-
-  page = parseInt((this.$route.query.page as string) || "1", 10);
-
-  MEMBERS_PER_PAGE = 10;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-
-  mounted(): void {
-    const roleQuery = this.$route.query.role as string;
-    if (Object.values(MemberRole).includes(roleQuery as MemberRole)) {
-      this.roles = roleQuery as MemberRole;
-    }
-    this.page = parseInt((this.$route.query.page as string) || "1", 10);
+onInviteMemberError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    inviteError.value = error.graphQLErrors[0].message;
   }
+});
 
-  async inviteMember(): Promise<void> {
-    try {
-      this.inviteError = "";
-      const { roles, MEMBERS_PER_PAGE, group, page } = this;
-      const variables = {
-        groupName: usernameWithDomain(group),
+onInviteMemberDone(() => {
+  notifier?.success(
+    t("{username} was invited to {group}", {
+      username: newMemberUsername.value,
+      group: displayName(group.value),
+    })
+  );
+  newMemberUsername.value = "";
+});
+
+const inviteMember = async (): Promise<void> => {
+  inviteError.value = "";
+  inviteMemberMutation({
+    groupId: group.value?.id,
+    targetActorUsername: newMemberUsername.value,
+  });
+};
+
+const router = useRouter();
+const route = useRoute();
+
+const loadMoreMembers = async (): Promise<void> => {
+  await fetchMoreGroupMembers({
+    // New variables
+    variables() {
+      return {
+        name: usernameWithDomain(group.value),
         page,
         limit: MEMBERS_PER_PAGE,
         roles,
       };
-      console.log("variables", variables);
-      await this.$apollo.mutate<{ inviteMember: IMember }>({
-        mutation: INVITE_MEMBER,
-        variables: {
-          groupId: this.group.id,
-          targetActorUsername: this.newMemberUsername,
-        },
-        refetchQueries: [
-          {
-            query: GROUP_MEMBERS,
-            variables,
-          },
-        ],
-      });
-      this.$notifier.success(
-        this.$t("{username} was invited to {group}", {
-          username: this.newMemberUsername,
-          group: displayName(this.group),
-        }) as string
-      );
-      this.newMemberUsername = "";
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.inviteError = error.graphQLErrors[0].message;
-      }
-    }
-  }
+    },
+  });
+};
 
-  @Watch("page")
-  triggerLoadMoreMemberPageChange(page: string): void {
-    this.$router.replace({
-      name: RouteName.GROUP_MEMBERS_SETTINGS,
-      query: { ...this.$route.query, page },
-    });
-  }
+const {
+  mutate: mutateRemoveMember,
+  onDone: onRemoveMemberDone,
+  onError: onRemoveMemberError,
+} = useMutation(REMOVE_MEMBER, () => ({
+  refetchQueries: [
+    {
+      query: GROUP_MEMBERS,
+    },
+  ],
+}));
 
-  @Watch("roles")
-  triggerLoadMoreMemberRoleChange(roles: string): void {
-    this.$router.replace({
-      name: RouteName.GROUP_MEMBERS_SETTINGS,
-      query: { ...this.$route.query, roles },
-    });
+onRemoveMemberDone(() => {
+  let message = t("The member was removed from the group {group}", {
+    group: displayName(group.value),
+  }) as string;
+  if (oldMember.role === MemberRole.NOT_APPROVED) {
+    message = t("The membership request from {profile} was rejected", {
+      group: displayName(oldMember.actor),
+    }) as string;
   }
+  notifier?.success(message);
+});
 
-  async loadMoreMembers(): Promise<void> {
-    const { roles, MEMBERS_PER_PAGE, group, page } = this;
-    await this.$apollo.queries.members.fetchMore({
-      // New variables
-      variables() {
-        return {
-          name: usernameWithDomain(group),
-          page,
-          limit: MEMBERS_PER_PAGE,
-          roles,
-        };
-      },
-    });
+onRemoveMemberError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
+});
 
-  async removeMember(oldMember: IMember): Promise<void> {
-    const { roles, MEMBERS_PER_PAGE, group, page } = this;
-    const variables = {
-      groupName: usernameWithDomain(group),
-      page,
-      limit: MEMBERS_PER_PAGE,
-      roles,
-    };
-    try {
-      await this.$apollo.mutate<{ removeMember: IMember }>({
-        mutation: REMOVE_MEMBER,
-        variables: {
-          groupId: this.group.id,
-          memberId: oldMember.id,
-        },
-        refetchQueries: [
-          {
-            query: GROUP_MEMBERS,
-            variables,
-          },
-        ],
-      });
-      let message = this.$t("The member was removed from the group {group}", {
-        group: displayName(this.group),
-      }) as string;
+const removeMember = (oldMember: IMember) => {
+  mutateRemoveMember({
+    groupId: group.value?.id,
+    memberId: oldMember.id,
+  });
+};
+
+const promoteMember = (member: IMember): void => {
+  if (!member.id) return;
+  if (member.role === MemberRole.MODERATOR) {
+    updateMember(member, MemberRole.ADMINISTRATOR);
+  }
+  if (member.role === MemberRole.MEMBER) {
+    updateMember(member, MemberRole.MODERATOR);
+  }
+};
+
+const demoteMember = (member: IMember): void => {
+  if (!member.id) return;
+  if (member.role === MemberRole.MODERATOR) {
+    updateMember(member, MemberRole.MEMBER);
+  }
+  if (member.role === MemberRole.ADMINISTRATOR) {
+    updateMember(member, MemberRole.MODERATOR);
+  }
+};
+
+const {
+  mutate: approveMember,
+  onDone: onApproveMemberDone,
+  onError: onApproveMemberError,
+} = useMutation<{ approveMember: IMember }, { memberId: string }>(
+  APPROVE_MEMBER
+);
+
+onApproveMemberDone(() => {
+  notifier?.success(t("The member was approved"));
+});
+
+onApproveMemberError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
+
+const rejectMember = (member: IMember): void => {
+  if (!member.id) return;
+  removeMember(member);
+};
+
+const {
+  mutate: updateMemberMutation,
+  onDone: onUpdateMutationDone,
+  onError: onUpdateMutationError,
+} = useMutation<
+  { id: string; role: MemberRole },
+  { memberId: string; role: MemberRole; oldRole: MemberRole }
+>(UPDATE_MEMBER, () => ({
+  refetchQueries: [
+    {
+      query: FETCH_GROUP,
+      variables: { name: props.preferredUsername },
+    },
+  ],
+}));
+
+onUpdateMutationDone(({ data, context }) => {
+  let successMessage;
+  console.debug("onUpdateMutationDone", context);
+  switch (data?.role) {
+    case MemberRole.MODERATOR:
+      successMessage = "The member role was updated to moderator";
+      break;
+    case MemberRole.ADMINISTRATOR:
+      successMessage = "The member role was updated to administrator";
+      break;
+    case MemberRole.MEMBER:
       if (oldMember.role === MemberRole.NOT_APPROVED) {
-        message = this.$t(
-          "The membership request from {profile} was rejected",
-          {
-            group: displayName(oldMember.actor),
-          }
-        ) as string;
+        successMessage = "The member was approved";
+      } else {
+        successMessage = "The member role was updated to simple member";
       }
-      this.$notifier.success(message);
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
+      break;
+    default:
+      successMessage = "The member role was updated";
   }
+  notifier?.success(t(successMessage));
+});
 
-  promoteMember(member: IMember): void {
-    if (!member.id) return;
-    if (member.role === MemberRole.MODERATOR) {
-      this.updateMember(member, MemberRole.ADMINISTRATOR);
-    }
-    if (member.role === MemberRole.MEMBER) {
-      this.updateMember(member, MemberRole.MODERATOR);
-    }
+onUpdateMutationError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
+});
 
-  demoteMember(member: IMember): void {
-    if (!member.id) return;
-    if (member.role === MemberRole.MODERATOR) {
-      this.updateMember(member, MemberRole.MEMBER);
-    }
-    if (member.role === MemberRole.ADMINISTRATOR) {
-      this.updateMember(member, MemberRole.MODERATOR);
-    }
-  }
+const updateMember = async (
+  oldMember: IMember,
+  role: MemberRole
+): Promise<void> => {
+  updateMemberMutation({
+    memberId: oldMember.id as string,
+    role,
+    oldRole: oldMember.role,
+  });
+};
 
-  async approveMember(member: IMember): Promise<void> {
-    try {
-      await this.$apollo.mutate<{ approveMember: IMember }>({
-        mutation: APPROVE_MEMBER,
-        variables: { memberId: member.id },
-      });
-      this.$notifier.success(this.$t("The member was approved") as string);
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+const isCurrentActorAGroupAdmin = computed((): boolean => {
+  return hasCurrentActorThisRole(MemberRole.ADMINISTRATOR);
+});
 
-  rejectMember(member: IMember): void {
-    if (!member.id) return;
-    this.removeMember(member);
-  }
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  return (
+    personMemberships.value?.total > 0 &&
+    roles.includes(personMemberships.value?.elements[0].role)
+  );
+};
 
-  async updateMember(oldMember: IMember, role: MemberRole): Promise<void> {
-    try {
-      await this.$apollo.mutate<{ updateMember: IMember }>({
-        mutation: UPDATE_MEMBER,
-        variables: {
-          memberId: oldMember.id,
-          role,
-        },
-        refetchQueries: [
-          {
-            query: FETCH_GROUP,
-            variables: { name: this.$route.params.preferredUsername },
-          },
-        ],
-      });
-      let successMessage;
-      switch (role) {
-        case MemberRole.MODERATOR:
-          successMessage = "The member role was updated to moderator";
-          break;
-        case MemberRole.ADMINISTRATOR:
-          successMessage = "The member role was updated to administrator";
-          break;
-        case MemberRole.MEMBER:
-          if (oldMember.role === MemberRole.NOT_APPROVED) {
-            successMessage = "The member was approved";
-          } else {
-            successMessage = "The member role was updated to simple member";
-          }
-          break;
-        default:
-          successMessage = "The member role was updated";
-      }
-      this.$notifier.success(this.$t(successMessage) as string);
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
-}
+const personMemberships = computed(
+  () => person.value?.memberships ?? { total: 0, elements: [] }
+);
+
+const { person } = usePersonStatusGroup(props.preferredUsername);
 </script>

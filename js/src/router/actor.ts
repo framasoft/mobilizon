@@ -1,6 +1,7 @@
-import { RouteConfig } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
+import { RouteRecordRaw } from "vue-router";
 import { i18n } from "@/utils/i18n";
+
+const { t } = i18n.global;
 
 export enum ActorRouteName {
   GROUP = "Group",
@@ -9,33 +10,30 @@ export enum ActorRouteName {
   MY_GROUPS = "MY_GROUPS",
 }
 
-export const actorRoutes: RouteConfig[] = [
+export const actorRoutes: RouteRecordRaw[] = [
   {
     path: "/groups/create",
     name: ActorRouteName.CREATE_GROUP,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "CreateGroup" */ "@/views/Group/Create.vue"),
+    component: (): Promise<any> => import("@/views/Group/Create.vue"),
     meta: {
       requiredAuth: true,
-      announcer: { message: (): string => i18n.t("Create group") as string },
+      announcer: { message: (): string => t("Create group") as string },
     },
   },
   {
     path: "/@:preferredUsername",
     name: ActorRouteName.GROUP,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "Group" */ "@/views/Group/Group.vue"),
+    component: (): Promise<any> => import("@/views/Group/Group.vue"),
     props: true,
     meta: { requiredAuth: false, announcer: { skip: true } },
   },
   {
     path: "/groups/me",
     name: ActorRouteName.MY_GROUPS,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "MyGroups" */ "@/views/Group/MyGroups.vue"),
+    component: (): Promise<any> => import("@/views/Group/MyGroups.vue"),
     meta: {
       requiredAuth: true,
-      announcer: { message: (): string => i18n.t("My groups") as string },
+      announcer: { message: (): string => t("My groups") as string },
     },
   },
 ];

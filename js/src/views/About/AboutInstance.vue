@@ -1,111 +1,117 @@
 <template>
   <div v-if="config">
-    <section class="hero is-primary">
-      <div class="hero-body">
-        <div class="container">
-          <h1 class="title" dir="auto">{{ config.name }}</h1>
-          <p dir="auto">{{ config.description }}</p>
-        </div>
-      </div>
+    <section class="p-6 bg-primary text-white">
+      <h1 dir="auto">{{ config.name }}</h1>
+      <p dir="auto">{{ config.description }}</p>
     </section>
-    <section class="columns contact-statistics" v-if="statistics">
-      <div class="column is-three-quarters-desktop statistics">
-        <i18n tag="p" path="Home to {number} users">
-          <strong slot="number">{{ statistics.numberOfUsers }}</strong>
-        </i18n>
-        <i18n tag="p" path="and {number} groups">
-          <strong slot="number">{{ statistics.numberOfLocalGroups }}</strong>
-        </i18n>
-        <i18n tag="p" path="Who published {number} events">
-          <strong slot="number">{{ statistics.numberOfLocalEvents }}</strong>
-        </i18n>
-        <i18n tag="p" path="And {number} comments">
-          <strong slot="number">{{ statistics.numberOfLocalComments }}</strong>
-        </i18n>
+    <section
+      class="px-2 flex flex-wrap gap-2 contact-statistics"
+      v-if="statistics"
+    >
+      <div class="statistics flex-1 min-w-[20rem]">
+        <i18n-t tag="p" keypath="Home to {number} users">
+          <template v-slot:number>
+            <strong>{{ statistics.numberOfUsers }}</strong>
+          </template>
+        </i18n-t>
+        <i18n-t tag="p" keypath="and {number} groups">
+          <template v-slot:number>
+            <strong>{{ statistics.numberOfLocalGroups }}</strong>
+          </template>
+        </i18n-t>
+        <i18n-t tag="p" keypath="Who published {number} events">
+          <template v-slot:number>
+            <strong>{{ statistics.numberOfLocalEvents }}</strong>
+          </template>
+        </i18n-t>
+        <i18n-t tag="p" keypath="And {number} comments">
+          <template v-slot:number>
+            <strong>{{ statistics.numberOfLocalComments }}</strong>
+          </template>
+        </i18n-t>
       </div>
-      <div class="column contact">
-        <p class="has-text-weight-bold">{{ $t("Contact") }}</p>
+      <div class="">
+        <p class="font-bold">{{ t("Contact") }}</p>
         <instance-contact-link
           v-if="config && config.contact"
           :contact="config.contact"
         />
-        <p v-else>{{ $t("No information") }}</p>
+        <p v-else>{{ t("No information") }}</p>
       </div>
     </section>
-    <hr role="presentation" />
+    <hr role="presentation" v-if="config.longDescription" />
     <section class="long-description content">
       <div v-html="config.longDescription" />
     </section>
     <hr role="presentation" />
-    <section class="config">
-      <h2 class="subtitle">{{ $t("Instance configuration") }}</h2>
-      <table class="table is-fullwidth">
-        <tr>
-          <td>{{ $t("Instance languages") }}</td>
+    <section class="px-3">
+      <h2 class="text-xl">{{ t("Instance configuration") }}</h2>
+      <table class="border-collapse table-auto w-full">
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Instance languages") }}</td>
           <td
             v-if="config.languages.length > 0"
-            :title="this.config ? this.config.languages.join(', ') : ''"
+            :title="config.languages.join(', ') ?? ''"
           >
             {{ formattedLanguageList }}
           </td>
-          <td v-else>{{ $t("No information") }}</td>
+          <td v-else>{{ t("No information") }}</td>
         </tr>
-        <tr>
-          <td>{{ $t("Mobilizon version") }}</td>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Mobilizon version") }}</td>
           <td>{{ config.version }}</td>
         </tr>
-        <tr>
-          <td>{{ $t("Registrations") }}</td>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Registrations") }}</td>
           <td v-if="config.registrationsOpen && config.registrationsAllowlist">
-            {{ $t("Restricted") }}
+            {{ t("Restricted") }}
           </td>
           <td v-if="config.registrationsOpen && !config.registrationsAllowlist">
-            {{ $t("Open") }}
+            {{ t("Open") }}
           </td>
-          <td v-else>{{ $t("Closed") }}</td>
+          <td v-else>{{ t("Closed") }}</td>
         </tr>
-        <tr>
-          <td>{{ $t("Federation") }}</td>
-          <td v-if="config.federating">{{ $t("Enabled") }}</td>
-          <td v-else>{{ $t("Disabled") }}</td>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Federation") }}</td>
+          <td v-if="config.federating">{{ t("Enabled") }}</td>
+          <td v-else>{{ t("Disabled") }}</td>
         </tr>
-        <tr>
-          <td>{{ $t("Anonymous participations") }}</td>
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Anonymous participations") }}</td>
           <td v-if="config.anonymous.participation.allowed">
-            {{ $t("If allowed by organizer") }}
+            {{ t("If allowed by organizer") }}
           </td>
-          <td v-else>{{ $t("Disabled") }}</td>
+          <td v-else>{{ t("Disabled") }}</td>
         </tr>
-        <tr class="instance-feeds">
-          <td>{{ $t("Instance feeds") }}</td>
-          <td v-if="config.instanceFeeds.enabled" class="buttons">
-            <b-button
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td>{{ t("Instance feeds") }}</td>
+          <td v-if="config.instanceFeeds.enabled" class="flex gap-2">
+            <o-button
               tag="a"
-              size="is-small"
+              size="small"
               icon-left="rss"
               href="/feed/instance/atom"
               target="_blank"
-              >{{ $t("RSS/Atom Feed") }}</b-button
+              >{{ t("RSS/Atom Feed") }}</o-button
             >
 
-            <b-button
+            <o-button
               tag="a"
-              size="is-small"
+              size="small"
               icon-left="calendar-sync"
               href="/feed/instance/ics"
               target="_blank"
-              >{{ $t("ICS/WebCal Feed") }}</b-button
+              >{{ t("ICS/WebCal Feed") }}</o-button
             >
           </td>
-          <td v-else>{{ $t("Disabled") }}</td>
+          <td v-else>{{ t("Disabled") }}</td>
         </tr>
       </table>
     </section>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { formatList } from "@/utils/i18n";
 import InstanceContactLink from "@/components/About/InstanceContactLink.vue";
 import { LANGUAGES_CODES } from "@/graphql/admin";
@@ -114,51 +120,51 @@ import { ABOUT } from "../../graphql/config";
 import { STATISTICS } from "../../graphql/statistics";
 import { IConfig } from "../../types/config.model";
 import { IStatistics } from "../../types/statistics.model";
+import { useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  apollo: {
-    config: ABOUT,
-    statistics: STATISTICS,
-    languages: {
-      query: LANGUAGES_CODES,
-      variables() {
-        return {
-          codes: this?.config.languages,
-        };
-      },
-      skip() {
-        return !this.config || !this.config?.languages;
-      },
-    },
-  },
-  components: {
-    InstanceContactLink,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("About {instance}", {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        instance: this?.config?.name,
-      }) as string,
-    };
-  },
-})
-export default class AboutInstance extends Vue {
-  config!: IConfig;
+const { result: configResult } = useQuery<{ config: IConfig }>(ABOUT);
 
-  statistics!: IStatistics;
+const config = computed(() => configResult.value?.config);
 
-  languages!: ILanguage[];
+const { result: statisticsResult } = useQuery<{ statistics: IStatistics }>(
+  STATISTICS
+);
 
-  get formattedLanguageList(): string {
-    if (this.languages) {
-      const list = this.languages.map(({ name }) => name);
-      return formatList(list);
-    }
-    return "";
+const statistics = computed(() => statisticsResult.value?.statistics);
+
+const { result: languagesResult } = useQuery<{ languages: ILanguage[] }>(
+  LANGUAGES_CODES,
+  () => ({
+    codes: config.value?.languages,
+  }),
+  () => ({
+    enabled: config.value?.languages !== undefined,
+  })
+);
+
+const languages = computed(() => languagesResult.value?.languages);
+
+const formattedLanguageList = computed((): string => {
+  if (languages.value) {
+    const list = languages.value?.map(({ name }) => name) ?? [];
+    return formatList(list);
   }
-}
+  return "";
+});
+
+const { t } = useI18n({ useScope: "global" });
+
+// metaInfo() {
+//   return {
+//     title: this.t("About {instance}", {
+//       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//       // @ts-ignore
+//       instance: this?.config?.name,
+//     }) as string,
+//   };
+// }
 </script>
 
 <style lang="scss" scoped>
@@ -192,17 +198,6 @@ section {
           font-size: 32px;
           line-height: 48px;
         }
-      }
-    }
-    .contact {
-      h3 {
-        font-weight: bold;
-      }
-      p {
-        width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
     }
   }

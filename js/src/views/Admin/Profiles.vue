@@ -10,16 +10,16 @@
       ]"
     />
     <div v-if="persons">
-      <b-switch v-model="local">{{ $t("Local") }}</b-switch>
-      <b-switch v-model="suspended">{{ $t("Suspended") }}</b-switch>
-      <b-table
+      <o-switch v-model="local">{{ $t("Local") }}</o-switch>
+      <o-switch v-model="suspended">{{ $t("Suspended") }}</o-switch>
+      <o-table
         :data="persons.elements"
-        :loading="$apollo.queries.persons.loading"
+        :loading="loading"
         paginated
         backend-pagination
         backend-filtering
         :debounce-search="200"
-        :current-page.sync="page"
+        v-model:current-page="page"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
@@ -29,13 +29,13 @@
         @page-change="onPageChange"
         @filters-change="onFiltersChange"
       >
-        <b-table-column
+        <o-table-column
           field="preferredUsername"
           :label="$t('Username')"
           searchable
         >
           <template #searchable="props">
-            <b-input
+            <o-input
               v-model="props.filters.preferredUsername"
               :aria-label="$t('Filter')"
               :placeholder="$t('Filter')"
@@ -50,17 +50,18 @@
                 params: { id: props.row.id },
               }"
             >
-              <article class="media">
-                <figure class="media-left" v-if="props.row.avatar">
-                  <p class="image is-48x48">
-                    <img
-                      :src="props.row.avatar.url"
-                      :alt="props.row.avatar.alt || ''"
-                    />
-                  </p>
+              <article class="flex gap-2">
+                <figure class="" v-if="props.row.avatar">
+                  <img
+                    :src="props.row.avatar.url"
+                    :alt="props.row.avatar.alt || ''"
+                    width="48"
+                    height="48"
+                  />
                 </figure>
-                <div class="media-content">
-                  <div class="content">
+                <Account v-else :size="48" />
+                <div class="">
+                  <div class="prose dark:prose-invert">
                     <strong v-if="props.row.name">{{ props.row.name }}</strong
                     ><br v-if="props.row.name" />
                     <small>@{{ props.row.preferredUsername }}</small>
@@ -69,11 +70,11 @@
               </article>
             </router-link>
           </template>
-        </b-table-column>
+        </o-table-column>
 
-        <b-table-column field="domain" :label="$t('Domain')" searchable>
+        <o-table-column field="domain" :label="$t('Domain')" searchable>
           <template #searchable="props">
-            <b-input
+            <o-input
               v-model="props.filters.domain"
               :aria-label="$t('Filter')"
               :placeholder="$t('Filter')"
@@ -83,140 +84,79 @@
           <template v-slot:default="props">
             {{ props.row.domain }}
           </template>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account" :inline="true">
             {{ $t("No profile matches the filters") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { LIST_PROFILES } from "../../graphql/actor";
-import RouteName from "../../router/name";
-import EmptyContent from "../../components/Utils/EmptyContent.vue";
-import VueRouter from "vue-router";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+<script lang="ts" setup>
+import { LIST_PROFILES } from "@/graphql/actor";
+import RouteName from "@/router/name";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import { useQuery } from "@vue/apollo-composable";
+import { useI18n } from "vue-i18n";
+import { computed } from "vue";
+import { useHead } from "@vueuse/head";
+import {
+  useRouteQuery,
+  booleanTransformer,
+  integerTransformer,
+} from "vue-use-route-query";
+import { Paginate } from "@/types/paginate";
+import { IPerson } from "@/types/actor/person.model";
+import Account from "vue-material-design-icons/Account.vue";
 
 const PROFILES_PER_PAGE = 10;
 
-@Component({
-  apollo: {
-    persons: {
-      query: LIST_PROFILES,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          preferredUsername: this.preferredUsername,
-          name: this.name,
-          domain: this.domain,
-          local: this.local,
-          suspended: this.suspended,
-          page: this.page,
-          limit: PROFILES_PER_PAGE,
-        };
-      },
-    },
-  },
-  components: {
-    EmptyContent,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Profiles") as string,
-    };
-  },
-})
-export default class Profiles extends Vue {
-  PROFILES_PER_PAGE = PROFILES_PER_PAGE;
+const preferredUsername = useRouteQuery("preferredUsername", "");
+const name = useRouteQuery("name", "");
+const domain = useRouteQuery("domain", "");
+const local = useRouteQuery("local", false, booleanTransformer);
+const suspended = useRouteQuery("suspended", false, booleanTransformer);
+const page = useRouteQuery("page", 1, integerTransformer);
 
-  RouteName = RouteName;
+const {
+  result: personResult,
+  loading,
+  fetchMore,
+} = useQuery<{ persons: Paginate<IPerson> }>(LIST_PROFILES, () => ({
+  preferredUsername: preferredUsername.value,
+  name: name.value,
+  domain: domain.value,
+  local: local.value,
+  suspended: suspended.value,
+  page: page.value,
+  limit: PROFILES_PER_PAGE,
+}));
 
-  async onPageChange(): Promise<void> {
-    await this.doFetchMore();
-  }
+const persons = computed(() => personResult.value?.persons);
 
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
+const { t } = useI18n({ useScope: "global" });
 
-  set page(page: number) {
-    this.pushRouter({ page: page.toString() });
-  }
+useHead({
+  title: computed(() => t("Profiles")),
+});
 
-  get domain(): string {
-    return (this.$route.query.domain as string) || "";
-  }
+const onPageChange = async (): Promise<void> => {
+  await fetchMore();
+};
 
-  set domain(domain: string) {
-    this.pushRouter({ domain });
-  }
-
-  get preferredUsername(): string {
-    return (this.$route.query.preferredUsername as string) || "";
-  }
-
-  set preferredUsername(preferredUsername: string) {
-    this.pushRouter({ preferredUsername });
-  }
-
-  get local(): boolean {
-    return this.$route.query.local === "1";
-  }
-
-  set local(local: boolean) {
-    this.pushRouter({ local: local ? "1" : "0" });
-  }
-
-  get suspended(): boolean {
-    return this.$route.query.suspended === "1";
-  }
-
-  set suspended(suspended: boolean) {
-    this.pushRouter({ suspended: suspended ? "1" : "0" });
-  }
-
-  private async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      await this.$router.push({
-        name: RouteName.PROFILES,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-
-  private async doFetchMore(): Promise<void> {
-    await this.$apollo.queries.persons.fetchMore({
-      variables: {
-        preferredUsername: this.preferredUsername,
-        domain: this.domain,
-        local: this.local,
-        suspended: this.suspended,
-        page: this.page,
-        limit: PROFILES_PER_PAGE,
-      },
-    });
-  }
-
-  onFiltersChange({
-    preferredUsername,
-    domain,
-  }: {
-    preferredUsername: string;
-    domain: string;
-  }): void {
-    this.preferredUsername = preferredUsername;
-    this.domain = domain;
-    this.doFetchMore();
-  }
-}
+const onFiltersChange = ({
+  preferredUsername: newPreferredUsername,
+  domain: newDomain,
+}: {
+  preferredUsername: string;
+  domain: string;
+}): void => {
+  preferredUsername.value = newPreferredUsername;
+  domain.value = newDomain;
+  fetchMore();
+};
 </script>
 <style lang="scss" scoped>
 a.profile {

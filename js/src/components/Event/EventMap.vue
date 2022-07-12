@@ -6,6 +6,7 @@
     <div class="modal-card-body">
       <section class="map">
         <map-leaflet
+          v-if="physicalAddress?.geom"
           :coords="physicalAddress.geom"
           :marker="{
             text: physicalAddress.fullName,
@@ -15,7 +16,7 @@
       </section>
       <section class="columns is-centered map-footer">
         <div class="column is-half has-text-centered">
-          <p class="address">
+          <p class="address" v-if="physicalAddress?.fullName">
             <i class="mdi mdi-map-marker"></i>
             {{ physicalAddress.fullName }}
           </p>
@@ -66,11 +67,10 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { Address, IAddress } from "@/types/address.model";
 import { RoutingTransportationType, RoutingType } from "@/types/enums";
-import { PropType } from "vue";
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { computed } from "vue";
 
 const RoutingParamType = {
   [RoutingType.OPENSTREETMAP]: {
@@ -87,77 +87,73 @@ const RoutingParamType = {
   },
 };
 
-@Component({
-  components: {
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
-  },
-})
-export default class EventMap extends Vue {
-  @Prop({ type: Object as PropType<IAddress> }) address!: IAddress;
-  @Prop({ type: String }) routingType!: RoutingType;
+const MapLeaflet = import("../../components/Map.vue");
 
-  get physicalAddress(): Address | null {
-    if (!this.address) return null;
+const props = defineProps<{
+  address: IAddress;
+  routingType: RoutingType;
+}>();
 
-    return new Address(this.address);
-  }
+const physicalAddress = computed((): Address | null => {
+  if (!props.address) return null;
 
-  makeNavigationPath(
-    transportationType: RoutingTransportationType
-  ): string | undefined {
-    const geometry = this.physicalAddress?.geom;
-    if (geometry) {
-      /**
-       * build urls to routing map
-       */
-      if (!RoutingParamType[this.routingType][transportationType]) {
-        return;
-      }
+  return new Address(props.address);
+});
 
-      const urlGeometry = geometry.split(";").reverse().join(",");
+const makeNavigationPath = (
+  transportationType: RoutingTransportationType
+): string | undefined => {
+  const geometry = physicalAddress.value?.geom;
+  if (geometry) {
+    /**
+     * build urls to routing map
+     */
+    if (!RoutingParamType[props.routingType][transportationType]) {
+      return;
+    }
 
-      switch (this.routingType) {
-        case RoutingType.GOOGLE_MAPS:
-          return `https://maps.google.com/?saddr=Current+Location&daddr=${urlGeometry}&${
-            RoutingParamType[this.routingType][transportationType]
-          }`;
-        case RoutingType.OPENSTREETMAP:
-        default: {
-          const bboxX = geometry.split(";").reverse()[0];
-          const bboxY = geometry.split(";").reverse()[1];
-          return `https://www.openstreetmap.org/directions?from=&to=${urlGeometry}&${
-            RoutingParamType[this.routingType][transportationType]
-          }#map=14/${bboxX}/${bboxY}`;
-        }
+    const urlGeometry = geometry.split(";").reverse().join(",");
+
+    switch (props.routingType) {
+      case RoutingType.GOOGLE_MAPS:
+        return `https://maps.google.com/?saddr=Current+Location&daddr=${urlGeometry}&${
+          RoutingParamType[props.routingType][transportationType]
+        }`;
+      case RoutingType.OPENSTREETMAP:
+      default: {
+        const bboxX = geometry.split(";").reverse()[0];
+        const bboxY = geometry.split(";").reverse()[1];
+        return `https://www.openstreetmap.org/directions?from=&to=${urlGeometry}&${
+          RoutingParamType[props.routingType][transportationType]
+        }#map=14/${bboxX}/${bboxY}`;
       }
     }
   }
+};
 
-  get addressLinkToRouteByCar(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.CAR);
-  }
+const addressLinkToRouteByCar = computed((): undefined | string => {
+  return makeNavigationPath(RoutingTransportationType.CAR);
+});
 
-  get addressLinkToRouteByBike(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.BIKE);
-  }
+const addressLinkToRouteByBike = computed((): undefined | string => {
+  return makeNavigationPath(RoutingTransportationType.BIKE);
+});
 
-  get addressLinkToRouteByFeet(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.FOOT);
-  }
+const addressLinkToRouteByFeet = computed((): undefined | string => {
+  return makeNavigationPath(RoutingTransportationType.FOOT);
+});
 
-  get addressLinkToRouteByTransit(): undefined | string {
-    return this.makeNavigationPath(RoutingTransportationType.TRANSIT);
-  }
-}
+const addressLinkToRouteByTransit = computed((): undefined | string => {
+  return makeNavigationPath(RoutingTransportationType.TRANSIT);
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
 .modal-card-head {
   justify-content: flex-end;
-  button.delete {
-    @include margin-right(1rem);
-  }
+  // button.delete {
+  //   @include margin-right(1rem);
+  // }
 }
 
 section.map {

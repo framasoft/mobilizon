@@ -1,10 +1,10 @@
 <template>
-  <div class="container is-widescreen">
-    <div class="header">
+  <div class="container mx-auto is-widescreen">
+    <div class="header flex flex-col">
       <breadcrumbs-nav
         v-if="group"
         :links="[
-          { name: RouteName.MY_GROUPS, text: $t('My groups') },
+          { name: RouteName.MY_GROUPS, text: t('My groups') },
           {
             name: RouteName.GROUP,
             params: { preferredUsername: usernameWithDomain(group) },
@@ -12,40 +12,44 @@
           },
         ]"
       />
-      <b-loading :active.sync="$apollo.loading"></b-loading>
+      <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
       <header class="block-container presentation" v-if="group">
         <div class="banner-container">
           <lazy-image-wrapper :picture="group.banner" />
         </div>
-        <div class="header">
-          <div class="avatar-container">
-            <figure class="image is-128x128" v-if="group.avatar">
-              <img class="is-rounded" :src="group.avatar.url" alt="" />
+        <div class="header flex flex-col">
+          <div class="flex self-center h-0 mt-4 items-end">
+            <figure class="" v-if="group.avatar">
+              <img
+                class="rounded-full border"
+                :src="group.avatar.url"
+                alt=""
+                width="128"
+                height="128"
+              />
             </figure>
-            <b-icon v-else size="is-large" icon="account-group" />
+            <AccountGroup v-else :size="128" />
           </div>
-          <div class="title-container">
-            <h1 v-if="group.name">{{ group.name }}</h1>
-            <b-skeleton v-else :animated="true" />
-            <span
-              dir="ltr"
-              class="has-text-grey-dark"
-              v-if="group.preferredUsername"
+          <div class="title-container flex flex-1 flex-col text-center">
+            <h1 class="m-0" v-if="group.name">
+              {{ group.name }}
+            </h1>
+            <!-- <o-skeleton v-else :animated="true" /> -->
+            <span dir="ltr" class="" v-if="group.preferredUsername"
               >@{{ usernameWithDomain(group) }}</span
             >
-            <b-skeleton v-else :animated="true" />
+            <!-- <o-skeleton v-else :animated="true" /> -->
             <br />
           </div>
-          <div class="group-metadata">
+          <div class="flex flex-wrap justify-center flex-col md:flex-row">
             <div
-              class="block-column members"
+              class="flex flex-col items-center flex-1 m-0"
               v-if="isCurrentActorAGroupMember && !previewPublic"
             >
-              <div>
+              <div class="flex gap-1">
                 <figure
-                  class="image is-32x32"
                   :title="
-                    $t(`@{username} ({role})`, {
+                    t(`{'@'}{username} ({role})`, {
                       username: usernameWithDomain(member.actor),
                       role: member.role,
                     })
@@ -54,19 +58,25 @@
                   :key="member.actor.id"
                 >
                   <img
-                    class="is-rounded"
+                    class="rounded-full"
                     :src="member.actor.avatar.url"
                     v-if="member.actor.avatar"
-                    alt
+                    alt=""
+                    width="32"
+                    height="32"
                   />
-                  <b-icon v-else size="is-medium" icon="account-circle" />
+                  <AccountCircle v-else :size="32" />
                 </figure>
               </div>
               <p>
                 {{
-                  $tc("{count} members", group.members.total, {
-                    count: group.members.total,
-                  })
+                  t(
+                    "{count} members",
+                    {
+                      count: group.members.total,
+                    },
+                    group.members.total
+                  )
                 }}
                 <router-link
                   v-if="isCurrentActorAGroupAdmin"
@@ -74,12 +84,12 @@
                     name: RouteName.GROUP_MEMBERS_SETTINGS,
                     params: { preferredUsername: usernameWithDomain(group) },
                   }"
-                  >{{ $t("Add / Remove…") }}</router-link
+                  >{{ t("Add / Remove…") }}</router-link
                 >
               </p>
             </div>
-            <div class="flex gap-2">
-              <b-button
+            <div class="flex flex-wrap gap-3 justify-center">
+              <o-button
                 outlined
                 icon-left="timeline-text"
                 v-if="isCurrentActorAGroupMember && !previewPublic"
@@ -88,9 +98,9 @@
                   name: RouteName.TIMELINE,
                   params: { preferredUsername: usernameWithDomain(group) },
                 }"
-                >{{ $t("Activity") }}</b-button
+                >{{ t("Activity") }}</o-button
               >
-              <b-button
+              <o-button
                 outlined
                 icon-left="cog"
                 v-if="isCurrentActorAGroupAdmin && !previewPublic"
@@ -99,37 +109,38 @@
                   name: RouteName.GROUP_PUBLIC_SETTINGS,
                   params: { preferredUsername: usernameWithDomain(group) },
                 }"
-                >{{ $t("Group settings") }}</b-button
+                >{{ t("Group settings") }}</o-button
               >
-              <b-dropdown
+              <o-dropdown
                 aria-role="list"
-                trap-focus
-                v-show="showJoinButton && showFollowButton"
+                v-if="showJoinButton && showFollowButton"
               >
                 <template #trigger>
-                  <b-button
-                    :label="$t('Follow')"
-                    type="is-primary"
+                  <o-button
+                    variant="primary"
                     icon-left="rss"
                     icon-right="menu-down"
-                  />
+                  >
+                    {{ t("Follow") }}
+                  </o-button>
                 </template>
 
-                <b-dropdown-item
+                <o-dropdown-item
                   aria-role="listitem"
                   class="p-0"
                   custom
                   :focusable="false"
                   :disabled="
-                    isCurrentActorPendingFollow && currentActor.id !== undefined
+                    isCurrentActorPendingFollow &&
+                    currentActor?.id !== undefined
                   "
                 >
                   <button class="media py-4 px-2 w-full" @click="followGroup">
-                    <b-icon class="media-left" icon="rss" />
-                    <div class="media-content">
-                      <h3 class="font-medium text-lg">{{ $t("Follow") }}</h3>
+                    <RSS />
+                    <div class="pl-2">
+                      <h3 class="font-medium text-lg">{{ t("Follow") }}</h3>
                       <p class="whitespace-normal md:whitespace-nowrap text-sm">
-                        {{ $t("Get informed of the upcoming public events") }}
+                        {{ t("Get informed of the upcoming public events") }}
                       </p>
                       <p
                         v-if="
@@ -139,22 +150,22 @@
                         class="whitespace-normal md:whitespace-nowrap text-sm italic"
                       >
                         {{
-                          $t(
+                          t(
                             "Follow requests will be approved by a group moderator"
                           )
                         }}
                       </p>
                       <p
-                        v-if="isCurrentActorPendingFollow && currentActor.id"
+                        v-if="isCurrentActorPendingFollow && currentActor?.id"
                         class="whitespace-normal md:whitespace-nowrap text-sm italic"
                       >
-                        {{ $t("Follow request pending approval") }}
+                        {{ t("Follow request pending approval") }}
                       </p>
                     </div>
                   </button>
-                </b-dropdown-item>
+                </o-dropdown-item>
 
-                <b-dropdown-item
+                <o-dropdown-item
                   aria-role="listitem"
                   class="p-0 border-t border-solid"
                   custom
@@ -164,18 +175,15 @@
                   "
                 >
                   <button class="media py-4 px-2 w-full" @click="joinGroup">
-                    <b-icon
-                      class="media-left"
-                      icon="account-multiple-plus"
-                    ></b-icon>
-                    <div class="media-content">
-                      <h3 class="font-medium text-lg">{{ $t("Join") }}</h3>
+                    <AccountMultiplePlus />
+                    <div class="pl-2">
+                      <h3 class="font-medium text-lg">{{ t("Join") }}</h3>
                       <div v-if="showJoinButton">
                         <p
                           class="whitespace-normal md:whitespace-nowrap text-sm"
                         >
                           {{
-                            $t(
+                            t(
                               "Become part of the community and start organizing events"
                             )
                           }}
@@ -184,7 +192,7 @@
                           v-if="isGroupInviteOnly"
                           class="whitespace-normal md:whitespace-nowrap text-sm italic"
                         >
-                          {{ $t("This group is invite-only") }}
+                          {{ t("This group is invite-only") }}
                         </p>
                         <p
                           v-if="
@@ -194,7 +202,7 @@
                           class="whitespace-normal md:whitespace-nowrap text-sm italic"
                         >
                           {{
-                            $t(
+                            t(
                               "Membership requests will be approved by a group moderator"
                             )
                           }}
@@ -203,37 +211,37 @@
                           v-if="isCurrentActorAPendingGroupMember"
                           class="whitespace-normal md:whitespace-nowrap text-sm italic"
                         >
-                          {{ $t("Your membership is pending approval") }}
+                          {{ t("Your membership is pending approval") }}
                         </p>
                       </div>
                     </div>
                   </button>
-                </b-dropdown-item>
-              </b-dropdown>
-              <b-button
+                </o-dropdown-item>
+              </o-dropdown>
+              <o-button
                 outlined
                 v-if="isCurrentActorAPendingGroupMember"
                 @click="leaveGroup"
                 @keyup.enter="leaveGroup"
-                type="is-primary"
-                >{{ $t("Cancel membership request") }}</b-button
+                variant="primary"
+                >{{ t("Cancel membership request") }}</o-button
               >
-              <b-button
+              <o-button
                 outlined
-                v-if="isCurrentActorPendingFollow && currentActor.id"
+                v-if="isCurrentActorPendingFollow && currentActor?.id"
                 @click="unFollowGroup"
                 @keyup.enter="unFollowGroup"
-                type="is-primary"
-                >{{ $t("Cancel follow request") }}</b-button
-              ><b-button
+                variant="primary"
+                >{{ t("Cancel follow request") }}</o-button
+              ><o-button
                 v-if="
-                  isCurrentActorFollowing && !previewPublic && currentActor.id
+                  isCurrentActorFollowing && !previewPublic && currentActor?.id
                 "
-                type="is-primary"
+                variant="primary"
                 @click="unFollowGroup"
-                >{{ $t("Unfollow") }}</b-button
+                >{{ t("Unfollow") }}</o-button
               >
-              <b-button
+              <o-button
                 v-if="isCurrentActorFollowing"
                 @click="toggleFollowNotify"
                 @keyup.enter="toggleFollowNotify"
@@ -247,312 +255,200 @@
               >
                 <span class="sr-only">{{
                   isCurrentActorFollowingNotify
-                    ? $t("Activate notifications")
-                    : $t("Deactivate notifications")
+                    ? t("Activate notifications")
+                    : t("Deactivate notifications")
                 }}</span>
-              </b-button>
-              <b-button
+              </o-button>
+              <o-button
                 outlined
                 icon-left="share"
                 @click="triggerShare()"
                 @keyup.enter="triggerShare()"
                 v-if="!isCurrentActorAGroupMember || previewPublic"
               >
-                {{ $t("Share") }}
-              </b-button>
-              <b-dropdown
-                class="menu-dropdown"
-                position="is-bottom-left"
-                aria-role="menu"
-              >
-                <b-button
-                  slot="trigger"
-                  outlined
-                  role="button"
-                  icon-left="dots-horizontal"
-                  :aria-label="$t('Other actions')"
-                />
-                <b-dropdown-item
+                {{ t("Share") }}
+              </o-button>
+              <o-dropdown aria-role="list">
+                <template #trigger>
+                  <o-button
+                    outlined
+                    icon-left="dots-horizontal"
+                    :aria-label="t('Other actions')"
+                  ></o-button>
+                </template>
+                <o-dropdown-item
                   aria-role="menuitem"
                   v-if="isCurrentActorAGroupMember || previewPublic"
                 >
-                  <b-switch v-model="previewPublic">{{
-                    $t("Public preview")
-                  }}</b-switch>
-                </b-dropdown-item>
-                <b-dropdown-item
+                  <o-switch v-model="previewPublic">{{
+                    t("Public preview")
+                  }}</o-switch>
+                </o-dropdown-item>
+                <o-dropdown-item
                   v-if="!previewPublic && isCurrentActorAGroupMember"
                   aria-role="menuitem"
                   @click="triggerShare()"
                   @keyup.enter="triggerShare()"
                 >
-                  <span>
-                    <b-icon icon="share" />
-                    {{ $t("Share") }}
+                  <span class="inline-flex gap-1">
+                    <Share />
+                    {{ t("Share") }}
                   </span>
-                </b-dropdown-item>
+                </o-dropdown-item>
                 <hr
                   role="presentation"
                   class="dropdown-divider"
                   v-if="isCurrentActorAGroupMember"
                 />
-                <b-dropdown-item has-link aria-role="menuitem">
+                <o-dropdown-item has-link aria-role="menuitem">
                   <a
                     :href="`@${preferredUsername}/feed/atom`"
-                    :title="$t('Atom feed for events and posts')"
+                    :title="t('Atom feed for events and posts')"
+                    class="inline-flex gap-1"
                   >
-                    <b-icon icon="rss" />
-                    {{ $t("RSS/Atom Feed") }}
+                    <RSS />
+                    {{ t("RSS/Atom Feed") }}
                   </a>
-                </b-dropdown-item>
-                <b-dropdown-item has-link aria-role="menuitem">
+                </o-dropdown-item>
+                <o-dropdown-item has-link aria-role="menuitem">
                   <a
                     :href="`@${preferredUsername}/feed/ics`"
-                    :title="$t('ICS feed for events')"
+                    :title="t('ICS feed for events')"
+                    class="inline-flex gap-1"
                   >
-                    <b-icon icon="calendar-sync" />
-                    {{ $t("ICS/WebCal Feed") }}
+                    <CalendarSync />
+                    {{ t("ICS/WebCal Feed") }}
                   </a>
-                </b-dropdown-item>
+                </o-dropdown-item>
                 <hr role="presentation" class="dropdown-divider" />
-                <b-dropdown-item
+                <o-dropdown-item
                   v-if="ableToReport"
                   aria-role="menuitem"
                   @click="isReportModalActive = true"
                   @keyup.enter="isReportModalActive = true"
                 >
-                  <span>
-                    <b-icon icon="flag" />
-                    {{ $t("Report") }}
+                  <span class="inline-flex gap-1">
+                    <Flag />
+                    {{ t("Report") }}
                   </span>
-                </b-dropdown-item>
-                <b-dropdown-item
+                </o-dropdown-item>
+                <o-dropdown-item
                   aria-role="menuitem"
                   v-if="isCurrentActorAGroupMember && !previewPublic"
                   @click="openLeaveGroupModal"
                   @keyup.enter="openLeaveGroupModal"
                 >
-                  <span>
-                    <b-icon icon="exit-to-app" />
-                    {{ $t("Leave") }}
+                  <span class="inline-flex gap-1">
+                    <ExitToApp />
+                    {{ t("Leave") }}
                   </span>
-                </b-dropdown-item>
-              </b-dropdown>
+                </o-dropdown-item>
+              </o-dropdown>
             </div>
           </div>
           <invitations
-            v-if="isCurrentActorAnInvitedGroupMember"
+            v-if="
+              isCurrentActorAnInvitedGroupMember && groupMember !== undefined
+            "
             :invitations="[groupMember]"
           />
-          <b-message v-if="isCurrentActorARejectedGroupMember" type="is-danger">
-            {{ $t("You have been removed from this group's members.") }}
-          </b-message>
-          <b-message
+          <o-notification
+            v-if="isCurrentActorARejectedGroupMember"
+            variant="danger"
+          >
+            {{ t("You have been removed from this group's members.") }}
+          </o-notification>
+          <o-notification
             v-if="
               isCurrentActorAGroupMember &&
               isCurrentActorARecentMember &&
               isCurrentActorOnADifferentDomainThanGroup
             "
-            type="is-info"
+            variant="info"
           >
             {{
-              $t(
+              t(
                 "Since you are a new member, private content can take a few minutes to appear."
               )
             }}
-          </b-message>
+          </o-notification>
         </div>
       </header>
     </div>
     <div
       v-if="isCurrentActorAGroupMember && !previewPublic"
-      class="block-container"
+      class="block-container flex gap-2 flex-wrap mt-3"
     >
       <!-- Private things -->
-      <div class="block-column">
+      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
         <!-- Group discussions -->
-        <group-section
-          :title="$t('Discussions')"
-          icon="chat"
-          :route="{
-            name: RouteName.DISCUSSION_LIST,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-        >
-          <template v-slot:default>
-            <div v-if="group.discussions.total > 0">
-              <discussion-list-item
-                v-for="discussion in group.discussions.elements"
-                :key="discussion.id"
-                :discussion="discussion"
-              />
-            </div>
-            <empty-content v-else icon="chat" :inline="true">
-              {{ $t("No discussions yet") }}
-            </empty-content>
-          </template>
-          <template v-slot:create>
-            <router-link
-              :to="{
-                name: RouteName.CREATE_DISCUSSION,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ $t("+ Start a discussion") }}</router-link
-            >
-          </template>
-        </group-section>
+        <Discussions :group="group" class="flex-1" />
         <!-- Resources -->
-        <group-section
-          :title="$t('Resources')"
-          icon="link"
-          :route="{
-            name: RouteName.RESOURCE_FOLDER_ROOT,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-        >
-          <template v-slot:default>
-            <div v-if="group.resources.elements.length > 0">
-              <div
-                v-for="resource in group.resources.elements"
-                :key="resource.id"
-              >
-                <resource-item
-                  :resource="resource"
-                  v-if="resource.type !== 'folder'"
-                  :inline="true"
-                />
-                <folder-item
-                  :resource="resource"
-                  :group="group"
-                  v-else
-                  :inline="true"
-                />
-              </div>
-            </div>
-            <empty-content v-else icon="link" :inline="true">
-              {{ $t("No resources yet") }}
-            </empty-content>
-          </template>
-          <template v-slot:create>
-            <router-link
-              :to="{
-                name: RouteName.RESOURCE_FOLDER_ROOT,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ $t("+ Add a resource") }}</router-link
-            >
-          </template>
-        </group-section>
+        <Resources :group="group" class="flex-1" />
       </div>
       <!-- Public things -->
-      <div class="block-column">
+      <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
         <!-- Events -->
-        <group-section
-          :title="$t('Events')"
-          icon="calendar"
-          :privateSection="false"
-          :route="{
-            name: RouteName.GROUP_EVENTS,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-        >
-          <template v-slot:default>
-            <div
-              class="organized-events-wrapper"
-              v-if="group && group.organizedEvents.total > 0"
-            >
-              <event-minimalist-card
-                v-for="event in group.organizedEvents.elements.slice(0, 3)"
-                :event="event"
-                :key="event.uuid"
-                class="organized-event"
-              />
-            </div>
-            <empty-content v-else-if="group" icon="calendar" :inline="true">
-              {{ $t("No public upcoming events") }}
-            </empty-content>
-            <b-skeleton animated v-else></b-skeleton>
-          </template>
-          <template v-slot:create>
-            <router-link
-              v-if="isCurrentActorAGroupModerator"
-              :to="{
-                name: RouteName.CREATE_EVENT,
-                query: { actorId: group.id },
-              }"
-              class="button is-primary"
-              >{{ $t("+ Create an event") }}</router-link
-            >
-          </template>
-        </group-section>
+        <Events
+          :group="group"
+          :isModerator="isCurrentActorAGroupModerator"
+          class="flex-1"
+        />
         <!-- Posts -->
-        <group-section
-          :title="$t('Public page')"
-          icon="bullhorn"
-          :privateSection="false"
-          :route="{
-            name: RouteName.POSTS,
-            params: { preferredUsername: usernameWithDomain(group) },
-          }"
-        >
-          <template v-slot:default>
-            <multi-post-list-item
-              v-if="group.posts.total > 0"
-              :posts="group.posts.elements.slice(0, 3)"
-              :isCurrentActorMember="isCurrentActorAGroupMember"
-            />
-            <empty-content v-else-if="group" icon="bullhorn" :inline="true">
-              {{ $t("No posts yet") }}
-            </empty-content>
-          </template>
-          <template v-slot:create>
-            <router-link
-              v-if="isCurrentActorAGroupModerator"
-              :to="{
-                name: RouteName.POST_CREATE,
-                params: { preferredUsername: usernameWithDomain(group) },
-              }"
-              class="button is-primary"
-              >{{ $t("+ Create a post") }}</router-link
-            >
-          </template>
-        </group-section>
+        <Posts
+          :group="group"
+          :isModerator="isCurrentActorAGroupModerator"
+          :isMember="isCurrentActorAGroupMember"
+          class="flex-1"
+        />
       </div>
     </div>
-    <b-message v-else-if="!group && $apollo.loading === false" type="is-danger">
-      {{ $t("No group found") }}
-    </b-message>
-    <div v-else-if="group" class="public-container">
+    <o-notification
+      v-else-if="!group && groupLoading === false"
+      variant="danger"
+    >
+      {{ t("No group found") }}
+    </o-notification>
+    <div v-else-if="group" class="public-container flex flex-col">
       <aside class="group-metadata">
         <div class="sticky">
-          <b-message v-if="group.domain && !isCurrentActorAGroupMember">
+          <o-notification v-if="group.domain && !isCurrentActorAGroupMember">
             {{
-              $t(
+              t(
                 "This profile is from another instance, the informations shown here may be incomplete."
               )
             }}
             <a :href="group.url" rel="noopener noreferrer external">{{
-              $t("View full profile")
+              t("View full profile")
             }}</a>
-          </b-message>
+          </o-notification>
           <event-metadata-block
-            :title="$t('About')"
+            :title="t('About')"
             v-if="group.summary && group.summary !== '<p></p>'"
           >
-            <div dir="auto" v-html="group.summary" />
+            <div
+              dir="auto"
+              class="prose lg:prose-xl dark:prose-invert"
+              v-html="group.summary"
+            />
           </event-metadata-block>
-          <event-metadata-block :title="$t('Members')" icon="account-group">
+          <event-metadata-block :title="t('Members')">
+            <template #icon>
+              <AccountGroup :size="48" />
+            </template>
             {{
-              $tc("{count} members", group.members.total, {
-                count: group.members.total,
-              })
+              t(
+                "{count} members",
+                {
+                  count: group.members.total,
+                },
+                group.members.total
+              )
             }}
           </event-metadata-block>
           <event-metadata-block
             v-if="physicalAddress && physicalAddress.url"
-            :title="$t('Location')"
+            :title="t('Location')"
             :icon="
               physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'
             "
@@ -560,7 +456,7 @@
             <div class="address-wrapper">
               <span
                 v-if="!physicalAddress || !addressFullName(physicalAddress)"
-                >{{ $t("No address defined") }}</span
+                >{{ t("No address defined") }}</span
               >
               <div class="address" v-if="physicalAddress">
                 <div>
@@ -576,25 +472,25 @@
                     </p>
                   </address>
                 </div>
-                <b-button
+                <o-button
                   class="map-show-button"
                   type="is-text"
                   @click="showMap = !showMap"
                   @keyup.enter="showMap = !showMap"
                   v-if="physicalAddress.geom"
                 >
-                  {{ $t("Show map") }}
-                </b-button>
+                  {{ t("Show map") }}
+                </o-button>
               </div>
             </div>
           </event-metadata-block>
         </div>
       </aside>
-      <div class="main-content">
+      <div class="main-content min-w-min flex-auto py-0 px-2">
         <section>
-          <subtitle>{{ $t("Upcoming events") }}</subtitle>
+          <h2 class="text-2xl font-bold">{{ t("Upcoming events") }}</h2>
           <div
-            class="organized-events-wrapper"
+            class="flex flex-col gap-3"
             v-if="group && organizedEvents.elements.length > 0"
           >
             <event-minimalist-card
@@ -610,21 +506,21 @@
             :inline="true"
             description-classes="flex flex-col items-stretch"
           >
-            {{ $t("No public upcoming events") }}
+            {{ t("No public upcoming events") }}
             <template #desc>
               <template v-if="isCurrentActorFollowing">
-                <i18n
+                <i18n-t
                   class="has-text-grey-dark"
-                  path="You will receive notifications about this group's public activity depending on %{notification_settings}."
+                  keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
                 >
-                  <router-link
-                    :to="{ name: RouteName.NOTIFICATIONS }"
-                    slot="notification_settings"
-                    >{{ $t("your notification settings") }}</router-link
-                  >
-                </i18n>
+                  <template v-slot:notification_settings>
+                    <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
+                      t("your notification settings")
+                    }}</router-link>
+                  </template>
+                </i18n-t>
               </template>
-              <b-button
+              <o-button
                 tag="router-link"
                 class="my-2 self-center"
                 type="is-text"
@@ -633,13 +529,13 @@
                   params: { preferredUsername: usernameWithDomain(group) },
                   query: { future: false },
                 }"
-                >{{ $t("View past events") }}</b-button
+                >{{ t("View past events") }}</o-button
               >
             </template>
           </empty-content>
-          <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
+          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
           <div class="flex justify-center">
-            <b-button
+            <o-button
               tag="router-link"
               class="my-4"
               type="is-text"
@@ -649,12 +545,12 @@
                 params: { preferredUsername: usernameWithDomain(group) },
                 query: { future: organizedEvents.elements.length > 0 },
               }"
-              >{{ $t("View all events") }}</b-button
+              >{{ t("View all events") }}</o-button
             >
           </div>
         </section>
         <section class="flex flex-col items-stretch">
-          <subtitle class="ml-0">{{ $t("Latest posts") }}</subtitle>
+          <h2 class="ml-0 text-2xl font-bold">{{ t("Latest posts") }}</h2>
 
           <multi-post-list-item
             v-if="
@@ -671,10 +567,10 @@
             "
           />
           <empty-content v-else-if="group" icon="bullhorn" :inline="true">
-            {{ $t("No posts yet") }}
+            {{ t("No posts yet") }}
           </empty-content>
-          <b-skeleton animated v-else-if="$apollo.loading"></b-skeleton>
-          <b-button
+          <!-- <o-skeleton animated v-else-if="$apollo.loading"></o-skeleton> -->
+          <o-button
             class="self-center my-2"
             v-if="posts.total > 0"
             tag="router-link"
@@ -683,14 +579,14 @@
               name: RouteName.POSTS,
               params: { preferredUsername: usernameWithDomain(group) },
             }"
-            >{{ $t("View all posts") }}</b-button
+            >{{ t("View all posts") }}</o-button
           >
         </section>
       </div>
-      <b-modal
+      <o-modal
         v-if="physicalAddress && physicalAddress.geom"
-        :active.sync="showMap"
-        :close-button-aria-label="$t('Close')"
+        v-model:active="showMap"
+        :close-button-aria-label="t('Close')"
       >
         <div class="map">
           <map-leaflet
@@ -701,62 +597,46 @@
             }"
           />
         </div>
-      </b-modal>
+      </o-modal>
     </div>
-    <b-modal
-      :close-button-aria-label="$t('Close')"
-      :active.sync="isReportModalActive"
-      has-modal-card
-      ref="reportModal"
-      v-if="group"
-    >
+    <o-modal v-if="group" v-model:active="isReportModalActive">
       <report-modal
         :on-confirm="reportGroup"
-        :title="$t('Report this group')"
+        :title="t('Report this group')"
         :outside-domain="group.domain"
-        @close="$refs.reportModal.close()"
+        @close="isReportModalActive = false"
       />
-    </b-modal>
-    <b-modal
-      :close-button-aria-label="$t('Close')"
-      v-if="group"
-      :active.sync="isShareModalActive"
-      has-modal-card
-      ref="shareModal"
-    >
-      <share-group-modal :group="group" />
-    </b-modal>
+    </o-modal>
+    <o-modal v-model:active="isShareModalActive" v-if="group">
+      <ShareGroupModal :group="group" />
+    </o-modal>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Watch } from "vue-property-decorator";
-import EventCard from "@/components/Event/EventCard.vue";
-import { displayName, IActor, usernameWithDomain } from "@/types/actor";
-import Subtitle from "@/components/Utils/Subtitle.vue";
-import CompactTodo from "@/components/Todo/CompactTodo.vue";
+<script lang="ts" setup>
+// import EventCard from "@/components/Event/EventCard.vue";
+import {
+  displayName,
+  IActor,
+  IFollower,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
+// import CompactTodo from "@/components/Todo/CompactTodo.vue";
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
-import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
-import ResourceItem from "@/components/Resource/ResourceItem.vue";
-import FolderItem from "@/components/Resource/FolderItem.vue";
 import { Address, addressFullName } from "@/types/address.model";
 import Invitations from "@/components/Group/Invitations.vue";
 import addMinutes from "date-fns/addMinutes";
-import { CONFIG } from "@/graphql/config";
-import { CREATE_REPORT } from "@/graphql/report";
-import { IReport } from "@/types/report.model";
-import { IConfig } from "@/types/config.model";
-import GroupMixin from "@/mixins/group";
-import { mixins } from "vue-class-component";
 import { JOIN_GROUP } from "@/graphql/member";
 import { MemberRole, Openness, PostVisibility } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
-import GroupSection from "../../components/Group/GroupSection.vue";
 import ReportModal from "../../components/Report/ReportModal.vue";
-import { PERSON_STATUS_GROUP } from "@/graphql/actor";
-import { LEAVE_GROUP } from "@/graphql/group";
+import {
+  GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+  PERSON_STATUS_GROUP,
+} from "@/graphql/actor";
 import LazyImageWrapper from "../../components/Image/LazyImageWrapper.vue";
 import EventMetadataBlock from "../../components/Event/EventMetadataBlock.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
@@ -768,442 +648,489 @@ import {
   UNFOLLOW_GROUP,
   UPDATE_GROUP_FOLLOW,
 } from "@/graphql/followers";
+import { useAnonymousReportsConfig } from "../../composition/apollo/config";
+import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useGroup, useLeaveGroup } from "@/composition/apollo/group";
+import { useRouter } from "vue-router";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import RSS from "vue-material-design-icons/Rss.vue";
+import Share from "vue-material-design-icons/Share.vue";
+import CalendarSync from "vue-material-design-icons/CalendarSync.vue";
+import Flag from "vue-material-design-icons/Flag.vue";
+import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
+import AccountMultiplePlus from "vue-material-design-icons/AccountMultiplePlus.vue";
+import { useI18n } from "vue-i18n";
+import { useCreateReport } from "@/composition/apollo/report";
+import { useHead } from "@vueuse/head";
+import Discussions from "@/components/Group/Sections/Discussions.vue";
+import Resources from "@/components/Group/Sections/Resources.vue";
+import Posts from "@/components/Group/Sections/Posts.vue";
+import Events from "@/components/Group/Sections/Events.vue";
+import { Dialog } from "@/plugins/dialog";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    config: CONFIG,
+const props = defineProps<{
+  preferredUsername: string;
+}>();
+
+const { anonymousReportsConfig } = useAnonymousReportsConfig();
+const { currentActor } = useCurrentActorClient();
+const {
+  group,
+  loading: groupLoading,
+  refetch: refetchGroup,
+} = useGroup(props.preferredUsername);
+const router = useRouter();
+
+const { t } = useI18n({ useScope: "global" });
+
+// const { person } = usePersonStatusGroup(group);
+
+const { result, subscribeToMore } = useQuery<{
+  person: IPerson;
+}>(
+  PERSON_STATUS_GROUP,
+  () => ({
+    id: currentActor.value?.id,
+    group: usernameWithDomain(group.value),
+  }),
+  () => ({
+    enabled:
+      currentActor.value?.id !== undefined &&
+      group.value?.preferredUsername !== undefined,
+  })
+);
+subscribeToMore<{ actorId: string; group: string }>({
+  document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
+  variables: {
+    actorId: currentActor.value?.id as string,
+    group: usernameWithDomain(group.value),
   },
-  components: {
-    DiscussionListItem,
-    MultiPostListItem,
-    EventMinimalistCard,
-    CompactTodo,
-    Subtitle,
-    EventCard,
-    FolderItem,
-    ResourceItem,
-    GroupSection,
-    Invitations,
-    ReportModal,
-    LazyImageWrapper,
-    EventMetadataBlock,
-    EmptyContent,
-    "map-leaflet": () =>
-      import(/* webpackChunkName: "map" */ "../../components/Map.vue"),
-    ShareGroupModal: () =>
-      import(
-        /* webpackChunkName: "shareGroupModal" */ "../../components/Group/ShareGroupModal.vue"
-      ),
-  },
-  metaInfo() {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.groupTitle,
-      meta: [
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        { name: "description", content: this.groupSummary },
-      ],
-    };
-  },
-})
-export default class Group extends mixins(GroupMixin) {
-  @Prop({ type: String, required: true }) preferredUsername!: string;
+});
+const person = computed(() => result.value?.person);
 
-  config!: IConfig;
+const MapLeaflet = defineAsyncComponent(
+  () => import("../../components/Map.vue")
+);
+const ShareGroupModal = defineAsyncComponent(
+  () => import("../../components/Group/ShareGroupModal.vue")
+);
 
-  loading = true;
+const showMap = ref(false);
+const isReportModalActive = ref(false);
+const isShareModalActive = ref(false);
+const previewPublic = ref(false);
 
-  RouteName = RouteName;
+const notifier = inject<Notifier>("notifier");
 
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-
-  addressFullName = addressFullName;
-
-  PostVisibility = PostVisibility;
-
-  Openness = Openness;
-
-  showMap = false;
-
-  isReportModalActive = false;
-
-  isShareModalActive = false;
-
-  previewPublic = false;
-
-  @Watch("currentActor")
-  watchCurrentActor(currentActor: IActor, oldActor: IActor): void {
-    if (currentActor.id && oldActor && currentActor.id !== oldActor.id) {
-      this.$apollo.queries.group.refetch();
-    }
+watch(currentActor, (watchedCurrentActor: IActor, oldActor: IActor) => {
+  if (
+    watchedCurrentActor.id &&
+    oldActor &&
+    watchedCurrentActor.id !== oldActor.id
+  ) {
+    refetchGroup();
   }
+});
 
-  async joinGroup(): Promise<void> {
-    if (!this.currentActor?.id) {
-      this.$router.push({
-        name: RouteName.GROUP_JOIN,
-        params: { preferredUsername: usernameWithDomain(this.group) },
-      });
-      return;
-    }
-    try {
-      const [group, currentActorId] = [
-        usernameWithDomain(this.group),
-        this.currentActor.id,
-      ];
-      await this.$apollo.mutate({
-        mutation: JOIN_GROUP,
-        variables: {
-          groupId: this.group.id,
-        },
-        refetchQueries: [
-          {
-            query: PERSON_STATUS_GROUP,
-            variables: {
-              id: currentActorId,
-              group,
-            },
-          },
-        ],
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
+const { mutate: joinGroupMutation, onError: onJoinGroupError } =
+  useMutation(JOIN_GROUP);
 
-  protected async openLeaveGroupModal(): Promise<void> {
-    this.$buefy.dialog.confirm({
-      type: "is-danger",
-      title: this.$t("Leave group") as string,
-      message: this.$t(
-        "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
-        { groupName: `<b>${displayName(this.group)}</b>` }
-      ) as string,
-      onConfirm: () => this.leaveGroup(),
-      confirmText: this.$t("Leave group") as string,
-      cancelText: this.$t("Cancel") as string,
+const joinGroup = async (): Promise<void> => {
+  if (!currentActor.value?.id) {
+    router.push({
+      name: RouteName.GROUP_JOIN,
+      params: { preferredUsername: usernameWithDomain(group.value) },
     });
+    return;
   }
+  const [groupUsername, currentActorId] = [
+    usernameWithDomain(group.value),
+    currentActor.value?.id,
+  ];
 
-  async leaveGroup(): Promise<void> {
-    try {
-      const [group, currentActorId] = [
-        usernameWithDomain(this.group),
-        this.currentActor.id,
-      ];
-      await this.$apollo.mutate({
-        mutation: LEAVE_GROUP,
-        variables: {
-          groupId: this.group.id,
-        },
-        refetchQueries: [
-          {
-            query: PERSON_STATUS_GROUP,
-            variables: {
-              id: currentActorId,
-              group,
-            },
+  joinGroupMutation(
+    {
+      groupId: group.value?.id,
+    },
+    {
+      refetchQueries: [
+        {
+          query: PERSON_STATUS_GROUP,
+          variables: {
+            id: currentActorId,
+            group: groupUsername,
           },
-        ],
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
-  }
-
-  async followGroup(): Promise<void> {
-    if (!this.currentActor?.id) {
-      this.$router.push({
-        name: RouteName.GROUP_FOLLOW,
-        params: { preferredUsername: usernameWithDomain(this.group) },
-      });
-      return;
-    }
-    try {
-      const [group, currentActorId] = [
-        usernameWithDomain(this.group),
-        this.currentActor.id,
-      ];
-      await this.$apollo.mutate({
-        mutation: FOLLOW_GROUP,
-        variables: {
-          groupId: this.group.id,
         },
-        refetchQueries: [
-          {
-            query: PERSON_STATUS_GROUP,
-            variables: {
-              id: currentActorId,
-              group,
-            },
-          },
-        ],
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
+      ],
     }
-  }
+  );
 
-  async unFollowGroup(): Promise<void> {
-    console.debug("unfollow group");
-    try {
-      const [group, currentActorId] = [
-        usernameWithDomain(this.group),
-        this.currentActor.id,
-      ];
-      await this.$apollo.mutate({
-        mutation: UNFOLLOW_GROUP,
-        variables: {
-          groupId: this.group.id,
+  onJoinGroupError((error) => {
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      notifier?.error(error.graphQLErrors[0].message);
+    }
+  });
+};
+
+const dialog = inject<Dialog>("dialog");
+
+const openLeaveGroupModal = async (): Promise<void> => {
+  dialog?.confirm({
+    type: "danger",
+    title: t("Leave group"),
+    message: t(
+      "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
+      { groupName: `<b>${displayName(group.value)}</b>` }
+    ),
+    onConfirm: () => leaveGroup(),
+    confirmText: t("Leave group"),
+    cancelText: t("Cancel"),
+  });
+};
+
+const leaveGroup = () => {
+  const { mutate: leaveGroupMutation, onError: onLeaveGroupError } =
+    useLeaveGroup();
+
+  const [groupFederatedUsername, currentActorId] = [
+    usernameWithDomain(group.value),
+    currentActor.value?.id,
+  ];
+
+  leaveGroupMutation(
+    {
+      groupId: group.value?.id,
+    },
+    {
+      refetchQueries: [
+        {
+          query: PERSON_STATUS_GROUP,
+          variables: {
+            id: currentActorId,
+            group: groupFederatedUsername,
+          },
         },
-        refetchQueries: [
-          {
-            query: PERSON_STATUS_GROUP,
-            variables: {
-              id: currentActorId,
-              group,
-            },
-          },
-        ],
-      });
-    } catch (error: any) {
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
+      ],
     }
-  }
+  );
 
-  async toggleFollowNotify(): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: UPDATE_GROUP_FOLLOW,
-      variables: {
-        followId: this.currentActorFollow?.id,
-        notify: !this.isCurrentActorFollowingNotify,
+  onLeaveGroupError((error: any) => {
+    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+      notifier?.error(error.graphQLErrors[0].message);
+    }
+  });
+};
+
+const { mutate: followGroupMutation, onError: onFollowGroupError } =
+  useMutation(FOLLOW_GROUP, () => ({
+    refetchQueries: [
+      {
+        query: PERSON_STATUS_GROUP,
+        variables: {
+          id: currentActor.value?.id,
+          group: usernameWithDomain(group.value),
+        },
+      },
+    ],
+  }));
+
+onFollowGroupError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
+
+const followGroup = async (): Promise<void> => {
+  if (!currentActor.value?.id) {
+    router.push({
+      name: RouteName.GROUP_FOLLOW,
+      params: {
+        preferredUsername: usernameWithDomain(group.value),
       },
     });
+    return;
   }
+  followGroupMutation({
+    groupId: group.value?.id,
+  });
+};
 
-  async reportGroup(content: string, forward: boolean): Promise<void> {
-    this.isReportModalActive = false;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.$refs.reportModal.close();
-    const groupTitle = this.group.name || usernameWithDomain(this.group);
-    try {
-      await this.$apollo.mutate<IReport>({
-        mutation: CREATE_REPORT,
+const { mutate: unfollowGroupMutation, onError: onUnfollowGroupError } =
+  useMutation(FOLLOW_GROUP, () => ({
+    refetchQueries: [
+      {
+        query: PERSON_STATUS_GROUP,
         variables: {
-          reportedId: this.group.id,
-          content,
-          forward,
+          id: currentActor.value?.id,
+          group: usernameWithDomain(group.value),
         },
-      });
-      this.$notifier.success(
-        this.$t("Group {groupTitle} reported", { groupTitle }) as string
-      );
-    } catch (error: any) {
-      console.error(error);
-      this.$notifier.error(
-        this.$t("Error while reporting group {groupTitle}", {
-          groupTitle,
-        }) as string
-      );
-    }
-  }
+      },
+    ],
+  }));
 
-  triggerShare(): void {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-start
-    if (navigator.share) {
-      navigator
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .share({
-          title: displayName(this.group),
-          url: this.group.url,
-        })
-        .then(() => console.log("Successful share"))
-        .catch((error: any) => console.log("Error sharing", error));
-    } else {
-      this.isShareModalActive = true;
-      // send popup
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore-end
+onUnfollowGroupError((error) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
+});
 
-  get groupTitle(): undefined | string {
-    return this.group?.name || this.group?.preferredUsername;
-  }
+const unFollowGroup = async (): Promise<void> => {
+  console.debug("unfollow group");
 
-  get groupSummary(): undefined | string {
-    return this.group?.summary;
-  }
+  unfollowGroupMutation({
+    groupId: group.value?.id,
+  });
+};
 
-  get groupMember(): IMember | undefined {
-    if (this.person?.memberships?.total > 0) {
-      return this.person?.memberships?.elements[0];
-    }
-    return undefined;
-  }
+const { mutate: updateGroupFollowMutation } = useMutation(UPDATE_GROUP_FOLLOW);
 
-  @Watch("isCurrentActorAGroupMember")
-  refetchGroupData(): void {
-    this.$apollo.queries.group.refetch();
-  }
+const toggleFollowNotify = () => {
+  updateGroupFollowMutation({
+    followId: currentActorFollow.value?.id,
+    notify: !isCurrentActorFollowingNotify.value,
+  });
+};
 
-  get isCurrentActorARejectedGroupMember(): boolean {
-    return (
-      this.person &&
-      this.person.memberships.elements
-        .filter((membership) => membership.role === MemberRole.REJECTED)
-        .map(({ parent: { id } }) => id)
-        .includes(this.group.id)
+const reportGroup = async (content: string, forward: boolean) => {
+  isReportModalActive.value = false;
+  reportModal.value.close();
+
+  const {
+    mutate: createReportMutation,
+    onError: onCreateReportError,
+    onDone: oneCreateReportDone,
+  } = useCreateReport();
+
+  createReportMutation({
+    reportedId: group.value?.id ?? "",
+    content,
+    forward,
+  });
+
+  oneCreateReportDone(() => {
+    notifier?.success(t("Group {groupTitle} reported", { groupTitle }));
+  });
+
+  onCreateReportError((error: any) => {
+    console.error(error);
+    notifier?.error(
+      t("Error while reporting group {groupTitle}", {
+        groupTitle,
+      })
     );
-  }
+  });
+};
 
-  get isCurrentActorAnInvitedGroupMember(): boolean {
-    return (
-      this.person &&
-      this.person.memberships.elements
-        .filter((membership) => membership.role === MemberRole.INVITED)
-        .map(({ parent: { id } }) => id)
-        .includes(this.group.id)
-    );
+const triggerShare = (): void => {
+  if (navigator.share) {
+    navigator
+      .share({
+        title: displayName(group.value),
+        url: group.value?.url,
+      })
+      .then(() => console.log("Successful share"))
+      .catch((error: any) => console.log("Error sharing", error));
+  } else {
+    isShareModalActive.value = true;
+    // send popup
   }
+};
 
-  /**
-   * New members, if on a different server,
-   * can take a while to refresh the group and fetch all private data
-   */
-  get isCurrentActorARecentMember(): boolean {
-    return (
-      this.groupMember !== undefined &&
-      this.groupMember.role === MemberRole.MEMBER &&
-      addMinutes(new Date(`${this.groupMember.updatedAt}Z`), 10) > new Date()
-    );
+const groupTitle = computed((): undefined | string => {
+  return displayName(group.value);
+});
+
+const groupSummary = computed((): undefined | string => {
+  return group.value?.summary;
+});
+
+useHead({
+  title: computed(() => groupTitle.value ?? ""),
+  meta: [{ name: "description", content: computed(() => groupSummary.value) }],
+});
+
+const personMemberships = computed(
+  () => person.value?.memberships ?? { total: 0, elements: [] }
+);
+
+const groupMember = computed((): IMember | undefined => {
+  if (personMemberships.value?.total > 0) {
+    return personMemberships.value?.elements[0];
   }
+  return undefined;
+});
 
-  get isCurrentActorOnADifferentDomainThanGroup(): boolean {
-    return this.group.domain !== null;
-  }
+const isCurrentActorARejectedGroupMember = computed((): boolean => {
+  return personMemberships.value.elements
+    .filter((membership) => membership.role === MemberRole.REJECTED)
+    .map(({ parent: { id } }) => id)
+    .includes(group.value?.id);
+});
 
-  get members(): IMember[] {
-    return this.group.members.elements.filter(
-      (member) =>
+const isCurrentActorAnInvitedGroupMember = computed((): boolean => {
+  return personMemberships.value.elements
+    .filter((membership) => membership.role === MemberRole.INVITED)
+    .map(({ parent: { id } }) => id)
+    .includes(group.value?.id);
+});
+
+/**
+ * New members, if on a different server,
+ * can take a while to refresh the group and fetch all private data
+ */
+const isCurrentActorARecentMember = computed((): boolean => {
+  return (
+    groupMember.value !== undefined &&
+    groupMember.value?.role === MemberRole.MEMBER &&
+    addMinutes(new Date(`${groupMember.value?.updatedAt}Z`), 10) > new Date()
+  );
+});
+
+const isCurrentActorOnADifferentDomainThanGroup = computed((): boolean => {
+  return group.value?.domain !== null;
+});
+
+const members = computed((): IMember[] => {
+  return (
+    group.value?.members.elements.filter(
+      (member: IMember) =>
         ![
           MemberRole.INVITED,
           MemberRole.REJECTED,
           MemberRole.NOT_APPROVED,
         ].includes(member.role)
-    );
-  }
+    ) ?? []
+  );
+});
 
-  get physicalAddress(): Address | null {
-    if (!this.group.physicalAddress) return null;
-    return new Address(this.group.physicalAddress);
-  }
+const physicalAddress = computed((): Address | null => {
+  if (!group.value?.physicalAddress) return null;
+  return new Address(group.value?.physicalAddress);
+});
 
-  get ableToReport(): boolean {
-    return (
-      this.config &&
-      (this.currentActor.id !== undefined ||
-        this.config.anonymous.reports.allowed)
-    );
-  }
+const ableToReport = computed((): boolean | undefined => {
+  return anonymousReportsConfig.value?.allowed;
+});
 
-  get organizedEvents(): Paginate<IEvent> {
-    return {
-      total: this.group.organizedEvents.total,
-      elements: this.group.organizedEvents.elements.filter((event: IEvent) => {
-        if (this.previewPublic) {
+const organizedEvents = computed((): Paginate<IEvent> => {
+  return {
+    total: group.value?.organizedEvents.total ?? 0,
+    elements:
+      group.value?.organizedEvents.elements.filter((event: IEvent) => {
+        if (previewPublic.value) {
           return !event.draft; // TODO when events get visibility access add visibility constraint like below for posts
         }
         return true;
-      }),
-    };
-  }
+      }) ?? [],
+  };
+});
 
-  get posts(): Paginate<IPost> {
-    return {
-      total: this.group.posts.total,
-      elements: this.group.posts.elements.filter((post: IPost) => {
-        if (this.previewPublic || !this.isCurrentActorAGroupMember) {
+const posts = computed((): Paginate<IPost> => {
+  return {
+    total: group.value?.posts.total ?? 0,
+    elements:
+      group.value?.posts.elements.filter((post: IPost) => {
+        if (previewPublic.value || !isCurrentActorAGroupMember.value) {
           return !post.draft && post.visibility == PostVisibility.PUBLIC;
         }
         return true;
-      }),
-    };
-  }
+      }) ?? [],
+  };
+});
 
-  get showFollowButton(): boolean {
-    return (
-      (!this.isCurrentActorFollowing || this.previewPublic) &&
-      this.currentActor?.id !== undefined
-    );
-  }
+const showFollowButton = computed((): boolean => {
+  return !isCurrentActorFollowing.value || previewPublic.value;
+});
 
-  get showJoinButton(): boolean {
-    return (
-      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
-      this.currentActor?.id !== undefined
-    );
-  }
+const showJoinButton = computed((): boolean => {
+  return !isCurrentActorAGroupMember.value || previewPublic.value;
+});
 
-  get isGroupInviteOnly(): boolean {
-    return (
-      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
-      this.group?.openness === Openness.INVITE_ONLY
-    );
-  }
+const isGroupInviteOnly = computed((): boolean => {
+  return (
+    (!isCurrentActorAGroupMember.value || previewPublic) &&
+    group.value?.openness === Openness.INVITE_ONLY
+  );
+});
 
-  get areGroupMembershipsModerated(): boolean {
-    return (
-      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
-      this.group?.openness === Openness.MODERATED
-    );
-  }
+const areGroupMembershipsModerated = computed((): boolean => {
+  return (
+    (!isCurrentActorAGroupMember.value || previewPublic) &&
+    group.value?.openness === Openness.MODERATED
+  );
+});
 
-  get doesGroupManuallyApprovesFollowers(): boolean {
-    return (
-      (!this.isCurrentActorAGroupMember || this.previewPublic) &&
-      this.group?.manuallyApprovesFollowers
-    );
+const doesGroupManuallyApprovesFollowers = computed((): boolean | undefined => {
+  return (
+    (!isCurrentActorAGroupMember.value || previewPublic) &&
+    group.value?.manuallyApprovesFollowers
+  );
+});
+
+const isCurrentActorAGroupAdmin = computed((): boolean => {
+  return hasCurrentActorThisRole(MemberRole.ADMINISTRATOR);
+});
+
+const isCurrentActorAGroupModerator = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+  ]);
+});
+
+const isCurrentActorAGroupMember = computed((): boolean => {
+  return hasCurrentActorThisRole([
+    MemberRole.MODERATOR,
+    MemberRole.ADMINISTRATOR,
+    MemberRole.MEMBER,
+  ]);
+});
+
+const isCurrentActorAPendingGroupMember = computed((): boolean => {
+  return hasCurrentActorThisRole([MemberRole.NOT_APPROVED]);
+});
+
+const currentActorFollow = computed((): IFollower | undefined => {
+  if (person?.value && person?.value?.follows?.total > 0) {
+    return person?.value?.follows?.elements[0];
   }
-}
+  return undefined;
+});
+
+const isCurrentActorFollowing = computed((): boolean => {
+  return currentActorFollow.value?.approved === true;
+});
+
+const isCurrentActorPendingFollow = computed((): boolean => {
+  return currentActorFollow.value?.approved === false;
+});
+
+const isCurrentActorFollowingNotify = computed((): boolean => {
+  return (
+    isCurrentActorFollowing.value && currentActorFollow.value?.notify === true
+  );
+});
+
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  return (
+    personMemberships.value?.total > 0 &&
+    roles.includes(personMemberships.value?.elements[0].role)
+  );
+};
+
+watch(isCurrentActorAGroupMember, () => {
+  refetchGroup();
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-@import "~bulma/sass/utilities/mixins.sass";
+// @import "node_modules/bulma/sass/utilities/mixins.sass";
 div.container {
-  margin-bottom: 3rem;
-
-  .header,
-  .public-container {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .header {
-    background: $white;
-    padding-top: 1rem;
-  }
-
-  .header .breadcrumb {
-    margin-bottom: 0.5rem;
-    @include margin-left(0.5rem);
-  }
-
   .block-container {
     display: flex;
     flex-wrap: wrap;
@@ -1215,11 +1142,11 @@ div.container {
       position: relative;
       flex-direction: column;
 
-      h1 {
-        color: $purple-1;
-        font-size: 2rem;
-        font-weight: 500;
-      }
+      // h1 {
+      //   color: $purple-1;
+      //   font-size: 2rem;
+      //   font-weight: 500;
+      // }
 
       .button.is-outlined {
         border-color: $purple-2;
@@ -1234,7 +1161,7 @@ div.container {
         display: flex;
         justify-content: center;
         height: 30vh;
-        ::v-deep img {
+        :deep(img) {
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -1251,16 +1178,6 @@ div.container {
 
       .map-show-button {
         cursor: pointer;
-      }
-
-      p.buttons {
-        margin-top: 1rem;
-        justify-content: end;
-        align-content: space-between;
-
-        & > span {
-          @include margin-right(0.5rem);
-        }
       }
 
       address {
@@ -1283,50 +1200,6 @@ div.container {
       }
     }
 
-    .block-column {
-      flex: 1;
-      margin: 0;
-      max-width: 576px;
-
-      @include desktop {
-        margin: 0 0.5rem;
-
-        &:first-child {
-          @include margin-left(0);
-        }
-        &:last-child {
-          @include margin-right(0);
-        }
-      }
-
-      section {
-        background: $white;
-
-        &.presentation {
-          .media-left {
-            span.icon.is-large {
-              height: 5rem;
-              width: 5rem;
-
-              ::v-deep i.mdi.mdi-account-group.mdi-48px:before {
-                font-size: 100px;
-              }
-            }
-          }
-
-          .media-content {
-            h2 {
-              color: #3c376e;
-              font-family: "Liberation Sans", "Helvetica Neue", Roboto,
-                Helvetica, Arial, serif;
-              font-size: 1.5rem;
-              font-weight: 700;
-            }
-          }
-        }
-      }
-    }
-
     .header {
       display: flex;
       flex-wrap: wrap;
@@ -1336,66 +1209,13 @@ div.container {
       margin: 0;
       align-items: center;
 
-      .avatar-container {
-        display: flex;
-        align-self: center;
-        height: 0;
-        margin-top: 16px;
-        align-items: flex-end;
-
-        ::v-deep .icon {
-          border-radius: 290486px;
-          border: 1px solid #cdcaea;
-          background: white;
-          height: 5rem;
-          width: 5rem;
-          i::before {
-            font-size: 60px;
-          }
-        }
-
-        figure {
-          position: relative;
-
-          img {
-            position: absolute;
-            background: #fff;
-          }
-        }
-      }
-
-      .title-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-
-        h1 {
-          font-size: 32px;
-          line-height: 38px;
-        }
-      }
-
       .group-metadata {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
 
-        & > .buttons {
-          justify-content: center;
-
-          ::v-deep .b-tooltip {
-            @include padding-right(0.5em);
-          }
-        }
-
         .members {
-          display: flex;
-          flex-direction: column;
-          min-width: 300px;
-          align-items: center;
-
           div {
             display: flex;
           }
@@ -1418,34 +1238,16 @@ div.container {
     .group-metadata {
       min-width: 20rem;
       flex: 1;
-      @include padding-left(1rem);
-      @include mobile {
-        @include padding-left(0);
-      }
+      // @include padding-left(1rem);
+      // @include mobile {
+      //   @include padding-left(0);
+      // }
 
       .sticky {
         position: sticky;
-        background: white;
+        // background: white;
         top: 50px;
         padding: 1rem;
-      }
-    }
-    .main-content {
-      min-width: 20rem;
-      flex: 2;
-      background: white;
-      padding: 0 5px;
-
-      @include desktop {
-        padding: 10px;
-      }
-
-      @include mobile {
-        margin-top: 1rem;
-      }
-
-      h2 {
-        margin: 0 auto 10px;
       }
     }
 
@@ -1453,26 +1255,9 @@ div.container {
       margin-top: 0;
     }
   }
-
-  .menu-dropdown {
-    ::v-deep .dropdown-item,
-    ::v-deep .has-link a {
-      @include padding-right(1rem);
-    }
-  }
-
-  .organized-events-wrapper,
-  .posts-wrapper {
-    display: grid;
-    grid-gap: 20px;
-    grid-template: 1fr;
-  }
 }
 .map {
   height: 60vh;
   width: 100%;
-}
-button.button.notification-button ::v-deep span.icon.is-small {
-  margin: 0 !important;
 }
 </style>

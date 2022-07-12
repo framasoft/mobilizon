@@ -1,5 +1,5 @@
 <template>
-  <div class="container section">
+  <div class="container mx-auto section">
     <breadcrumbs-nav
       v-if="group"
       :links="[
@@ -17,87 +17,69 @@
     />
 
     <section class="timeline">
-      <b-field>
-        <b-radio-button v-model="activityType" :native-value="undefined">
-          <b-icon icon="timeline-text"></b-icon>
-          {{ $t("All activities") }}</b-radio-button
+      <o-field>
+        <o-radio v-model="activityType" :native-value="undefined">
+          <TimelineText />
+          {{ $t("All activities") }}</o-radio
         >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.MEMBER"
+        <o-radio v-model="activityType" :native-value="ActivityType.MEMBER">
+          <o-icon icon="account-multiple-plus"></o-icon>
+          {{ $t("Members") }}</o-radio
         >
-          <b-icon icon="account-multiple-plus"></b-icon>
-          {{ $t("Members") }}</b-radio-button
+        <o-radio v-model="activityType" :native-value="ActivityType.GROUP">
+          <o-icon icon="cog"></o-icon>
+          {{ $t("Settings") }}</o-radio
         >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.GROUP"
+        <o-radio v-model="activityType" :native-value="ActivityType.EVENT">
+          <o-icon icon="calendar"></o-icon>
+          {{ $t("Events") }}</o-radio
         >
-          <b-icon icon="cog"></b-icon>
-          {{ $t("Settings") }}</b-radio-button
+        <o-radio v-model="activityType" :native-value="ActivityType.POST">
+          <o-icon icon="bullhorn"></o-icon>
+          {{ $t("Posts") }}</o-radio
         >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.EVENT"
+        <o-radio v-model="activityType" :native-value="ActivityType.DISCUSSION">
+          <o-icon icon="chat"></o-icon>
+          {{ $t("Discussions") }}</o-radio
         >
-          <b-icon icon="calendar"></b-icon>
-          {{ $t("Events") }}</b-radio-button
+        <o-radio v-model="activityType" :native-value="ActivityType.RESOURCE">
+          <o-icon icon="link"></o-icon>
+          {{ $t("Resources") }}</o-radio
         >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.POST"
+      </o-field>
+      <o-field>
+        <o-radio v-model="activityAuthor" :native-value="undefined">
+          <TimelineText />
+          {{ $t("All activities") }}</o-radio
         >
-          <b-icon icon="bullhorn"></b-icon>
-          {{ $t("Posts") }}</b-radio-button
-        >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.DISCUSSION"
-        >
-          <b-icon icon="chat"></b-icon>
-          {{ $t("Discussions") }}</b-radio-button
-        >
-        <b-radio-button
-          v-model="activityType"
-          :native-value="ActivityType.RESOURCE"
-        >
-          <b-icon icon="link"></b-icon>
-          {{ $t("Resources") }}</b-radio-button
-        >
-      </b-field>
-      <b-field>
-        <b-radio-button v-model="activityAuthor" :native-value="undefined">
-          <b-icon icon="timeline-text"></b-icon>
-          {{ $t("All activities") }}</b-radio-button
-        >
-        <b-radio-button
+        <o-radio
           v-model="activityAuthor"
           :native-value="ActivityAuthorFilter.SELF"
         >
-          <b-icon icon="account"></b-icon>
-          {{ $t("From yourself") }}</b-radio-button
+          <o-icon icon="account"></o-icon>
+          {{ $t("From yourself") }}</o-radio
         >
-        <b-radio-button
+        <o-radio
           v-model="activityAuthor"
           :native-value="ActivityAuthorFilter.BY"
         >
-          <b-icon icon="account-multiple"></b-icon>
-          {{ $t("By others") }}</b-radio-button
+          <o-icon icon="account-multiple"></o-icon>
+          {{ $t("By others") }}</o-radio
         >
-      </b-field>
+      </o-field>
       <transition-group name="timeline-list" tag="div">
         <div
           class="day"
           v-for="[date, activityItems] in Object.entries(activities)"
           :key="date"
         >
-          <b-skeleton
+          <o-skeleton
             v-if="date.search(/skeleton/) !== -1"
             width="300px"
             height="48px"
           />
           <h2 class="is-size-3 has-text-weight-bold" v-else-if="isToday(date)">
-            <span v-tooltip="$options.filters.formatDateString(date)">
+            <span v-tooltip="formatDateString(date)">
               {{ $t("Today") }}
             </span>
           </h2>
@@ -105,12 +87,12 @@
             class="is-size-3 has-text-weight-bold"
             v-else-if="isYesterday(date)"
           >
-            <span v-tooltip="$options.filters.formatDateString(date)">{{
+            <span v-tooltip="formatDateString(date)">{{
               $t("Yesterday")
             }}</span>
           </h2>
           <h2 v-else class="is-size-3 has-text-weight-bold">
-            {{ date | formatDateString }}
+            {{ formatDateString(date) }}
           </h2>
           <ul>
             <li v-for="activityItem in activityItems" :key="activityItem.id">
@@ -126,7 +108,7 @@
       <empty-content
         icon="timeline-text"
         v-if="
-          !$apollo.loading &&
+          !loading &&
           activity.elements.length > 0 &&
           activity.elements.length >= activity.total
         "
@@ -134,7 +116,7 @@
         {{ $t("No more activity to display.") }}
       </empty-content>
       <empty-content
-        v-if="!$apollo.loading && activity.total === 0"
+        v-if="!loading && activity.total === 0"
         icon="timeline-text"
       >
         {{
@@ -144,24 +126,30 @@
         }}
       </empty-content>
       <observer @intersect="loadMore" />
-      <b-button
+      <o-button
         v-if="activity.elements.length < activity.total"
         @click="loadMore"
-        >{{ $t("Load more activities") }}</b-button
+        >{{ $t("Load more activities") }}</o-button
       >
     </section>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { GROUP_TIMELINE } from "@/graphql/group";
 import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
 import { ActivityType } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import { IActivity } from "../../types/activity.model";
 import Observer from "../../components/Utils/Observer.vue";
 import SkeletonActivityItem from "../../components/Activity/SkeletonActivityItem.vue";
 import RouteName from "../../router/name";
+import TimelineText from "vue-material-design-icons/TimelineText.vue";
+import { useQuery } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
+import { enumTransformer, useRouteQuery } from "vue-use-route-query";
+import { computed, defineAsyncComponent, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { formatDateString } from "@/filters/datetime";
 
 const PAGINATION_LIMIT = 25;
 const SKELETON_DAY_ITEMS = 2;
@@ -173,223 +161,182 @@ enum ActivityAuthorFilter {
   BY = "BY",
 }
 
-export type ActivityFilter = ActivityType | ActivityAuthorFilter | null;
+type ActivityFilter = ActivityType | ActivityAuthorFilter | null;
 
-@Component({
-  apollo: {
-    group: {
-      query: GROUP_TIMELINE,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          preferredUsername: this.preferredUsername,
-          page: 1,
-          limit: PAGINATION_LIMIT,
-          type: this.activityType,
-          author: this.activityAuthor,
-        };
-      },
-    },
-  },
-  components: {
-    Observer,
-    SkeletonActivityItem,
-    "event-activity-item": () =>
-      import("../../components/Activity/EventActivityItem.vue"),
-    "post-activity-item": () =>
-      import("../../components/Activity/PostActivityItem.vue"),
-    "member-activity-item": () =>
-      import("../../components/Activity/MemberActivityItem.vue"),
-    "resource-activity-item": () =>
-      import("../../components/Activity/ResourceActivityItem.vue"),
-    "discussion-activity-item": () =>
-      import("../../components/Activity/DiscussionActivityItem.vue"),
-    "group-activity-item": () =>
-      import("../../components/Activity/GroupActivityItem.vue"),
-    "empty-content": () => import("../../components/Utils/EmptyContent.vue"),
-  },
-  metaInfo() {
-    return {
-      title: this.$t("{group} activity timeline", {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        group: this.group?.name,
-      }) as string,
-      titleTemplate: "%s | Mobilizon",
-    };
-  },
-})
-export default class Timeline extends Vue {
-  @Prop({ required: true, type: String }) preferredUsername!: string;
+const props = defineProps<{ preferredUsername: string }>();
 
-  group!: IGroup;
+const { t } = useI18n({ useScope: "global" });
 
-  RouteName = RouteName;
+const EventActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/EventActivityItem.vue")
+);
+const PostActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/PostActivityItem.vue")
+);
+const MemberActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/MemberActivityItem.vue")
+);
+const ResourceActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/ResourceActivityItem.vue")
+);
+const DiscussionActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/DiscussionActivityItem.vue")
+);
+const GroupActivityItem = defineAsyncComponent(
+  () => import("../../components/Activity/GroupActivityItem.vue")
+);
+const EmptyContent = defineAsyncComponent(
+  () => import("../../components/Utils/EmptyContent.vue")
+);
 
-  usernameWithDomain = usernameWithDomain;
+const activityType = useRouteQuery(
+  "activityType",
+  undefined,
+  enumTransformer(ActivityType)
+);
+const activityAuthor = useRouteQuery(
+  "activityAuthor",
+  undefined,
+  enumTransformer(ActivityAuthorFilter)
+);
 
-  displayName = displayName;
+const page = ref(1);
 
-  ActivityType = ActivityType;
+const {
+  result: groupTimelineResult,
+  fetchMore: fetchMoreActivities,
+  loading,
+} = useQuery<{ group: IGroup }>(GROUP_TIMELINE, () => ({
+  preferredUsername: props.preferredUsername,
+  page: page.value,
+  limit: PAGINATION_LIMIT,
+  type: activityType.value,
+  author: activityAuthor.value,
+}));
 
-  ActivityAuthorFilter = ActivityAuthorFilter;
+const group = computed(() => groupTimelineResult.value?.group);
 
-  get activityType(): ActivityType | undefined {
-    if (this.$route?.query?.type) {
-      return this.$route?.query?.type as ActivityType;
-    }
-    return undefined;
+useHead({
+  title: computed(() =>
+    t("{group} activity timeline", { group: group.value?.name })
+  ),
+});
+
+const activity = computed((): Paginate<IActivitySkeleton> => {
+  if (group.value) {
+    return group.value.activity;
   }
+  return {
+    total: 0,
+    elements: skeletons.value.map((skeleton) => ({
+      skeleton,
+    })),
+  };
+});
 
-  set activityType(type: ActivityType | undefined) {
-    this.$router.push({
-      name: RouteName.TIMELINE,
-      params: {
-        preferredUsername: this.preferredUsername,
-      },
-      query: { ...this.$route.query, type },
-    });
+const limit = PAGINATION_LIMIT;
+
+const component = (type: ActivityType): any | undefined => {
+  switch (type) {
+    case ActivityType.EVENT:
+      return EventActivityItem;
+    case ActivityType.POST:
+      return PostActivityItem;
+    case ActivityType.MEMBER:
+      return MemberActivityItem;
+    case ActivityType.RESOURCE:
+      return ResourceActivityItem;
+    case ActivityType.DISCUSSION:
+      return DiscussionActivityItem;
+    case ActivityType.GROUP:
+      return GroupActivityItem;
   }
+};
 
-  get activityAuthor(): ActivityAuthorFilter | undefined {
-    if (this.$route?.query?.author) {
-      return this.$route?.query?.author as ActivityAuthorFilter;
-    }
-    return undefined;
-  }
-
-  set activityAuthor(author: ActivityAuthorFilter | undefined) {
-    this.$router.push({
-      name: RouteName.TIMELINE,
-      params: {
-        preferredUsername: this.preferredUsername,
-      },
-      query: { ...this.$route.query, author },
-    });
-  }
-
-  get activity(): Paginate<IActivitySkeleton> {
-    if (this.group) {
-      return this.group.activity;
-    }
-    return {
-      total: 0,
-      elements: this.skeletons.map((skeleton) => ({
-        skeleton,
-      })),
-    };
-  }
-
-  page = 1;
-  limit = PAGINATION_LIMIT;
-
-  component(type: ActivityType): string | undefined {
-    switch (type) {
-      case ActivityType.EVENT:
-        return "event-activity-item";
-      case ActivityType.POST:
-        return "post-activity-item";
-      case ActivityType.MEMBER:
-        return "member-activity-item";
-      case ActivityType.RESOURCE:
-        return "resource-activity-item";
-      case ActivityType.DISCUSSION:
-        return "discussion-activity-item";
-      case ActivityType.GROUP:
-        return "group-activity-item";
-    }
-  }
-
-  get skeletons(): string[] {
-    return [...Array(SKELETON_DAY_ITEMS)]
-      .map((_, i) => {
-        return [...Array(SKELETON_ITEMS_PER_DAY)].map((_a, j) => {
-          return `${i}-${j}`;
-        });
-      })
-      .flat();
-  }
-
-  async loadMore(): Promise<void> {
-    if (this.page * PAGINATION_LIMIT >= this.activity.total) {
-      return;
-    }
-    this.page++;
-    try {
-      await this.$apollo.queries.group.fetchMore({
-        variables: {
-          page: this.page,
-          limit: PAGINATION_LIMIT,
-        },
+const skeletons = computed((): string[] => {
+  return [...Array(SKELETON_DAY_ITEMS)]
+    .map((_, i) => {
+      return [...Array(SKELETON_ITEMS_PER_DAY)].map((_a, j) => {
+        return `${i}-${j}`;
       });
-    } catch (e) {
-      console.error(e);
-    }
-  }
+    })
+    .flat();
+});
 
-  get activities(): Record<string, IActivitySkeleton[]> {
-    return this.activity.elements.reduce(
-      (acc: Record<string, IActivitySkeleton[]>, elem) => {
-        let key;
-        if (this.isIActivity(elem)) {
-          const insertedAt = new Date(elem.insertedAt);
-          insertedAt.setHours(0);
-          insertedAt.setMinutes(0);
-          insertedAt.setSeconds(0);
-          insertedAt.setMilliseconds(0);
-          key = insertedAt.toISOString();
-        } else {
-          key = `skeleton-${elem.skeleton.split("-")[0]}`;
-        }
-        const existing = acc[key];
-        if (existing) {
-          acc[key] = [...existing, ...[elem]];
-        } else {
-          acc[key] = [elem];
-        }
-        return acc;
+const loadMore = async (): Promise<void> => {
+  if (page.value * PAGINATION_LIMIT >= activity.value.total) {
+    return;
+  }
+  page.value++;
+  try {
+    await fetchMoreActivities({
+      variables: {
+        page: page.value,
+        limit: PAGINATION_LIMIT,
       },
-      {}
-    );
+    });
+  } catch (e) {
+    console.error(e);
   }
+};
 
-  isIActivity(object: IActivitySkeleton): object is IActivity {
-    return !("skeleton" in object);
-  }
+const activities = computed((): Record<string, IActivitySkeleton[]> => {
+  return activity.value.elements.reduce(
+    (acc: Record<string, IActivitySkeleton[]>, elem) => {
+      let key;
+      if (isIActivity(elem)) {
+        const insertedAt = new Date(elem.insertedAt);
+        insertedAt.setHours(0);
+        insertedAt.setMinutes(0);
+        insertedAt.setSeconds(0);
+        insertedAt.setMilliseconds(0);
+        key = insertedAt.toISOString();
+      } else {
+        key = `skeleton-${elem.skeleton.split("-")[0]}`;
+      }
+      const existing = acc[key];
+      if (existing) {
+        acc[key] = [...existing, ...[elem]];
+      } else {
+        acc[key] = [elem];
+      }
+      return acc;
+    },
+    {}
+  );
+});
 
-  getRandomInt(min: number, max: number): number {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
-  }
+const isIActivity = (object: IActivitySkeleton): object is IActivity => {
+  return !("skeleton" in object);
+};
+const getRandomInt = (min: number, max: number): number => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+};
 
-  isToday(dateString: string): boolean {
-    const now = new Date();
-    const date = new Date(dateString);
-    return (
-      now.getFullYear() === date.getFullYear() &&
-      now.getMonth() === date.getMonth() &&
-      now.getDate() === date.getDate()
-    );
-  }
+const isToday = (dateString: string): boolean => {
+  const now = new Date();
+  const date = new Date(dateString);
+  return (
+    now.getFullYear() === date.getFullYear() &&
+    now.getMonth() === date.getMonth() &&
+    now.getDate() === date.getDate()
+  );
+};
 
-  isYesterday(dateString: string): boolean {
-    const date = new Date(dateString);
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return (
-      yesterday.getFullYear() === date.getFullYear() &&
-      yesterday.getMonth() === date.getMonth() &&
-      yesterday.getDate() === date.getDate()
-    );
-  }
-}
+const isYesterday = (dateString: string): boolean => {
+  const date = new Date(dateString);
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return (
+    yesterday.getFullYear() === date.getFullYear() &&
+    yesterday.getMonth() === date.getMonth() &&
+    yesterday.getDate() === date.getDate()
+  );
+};
 </script>
 <style lang="scss" scoped>
-.container.section {
-  background: $white;
-}
-
 .timeline {
   ul {
     // padding: 0.5rem 0;

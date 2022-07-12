@@ -1,35 +1,16 @@
-<docs>
-#### Give a translated and localized text that give the starting and ending datetime for an event.
-
-##### Start date with no ending
-```vue
-<EventFullDate beginsOn="2015-10-06T18:41:11.720Z" />
-```
-
-##### Start date with an ending the same day
-```vue
-<EventFullDate beginsOn="2015-10-06T18:41:11.720Z" endsOn="2015-10-06T20:41:11.720Z" />
-```
-
-##### Start date with an ending on a different day
-```vue
-<EventFullDate beginsOn="2015-10-06T18:41:11.720Z" endsOn="2032-10-06T18:41:11.720Z" />
-```
-</docs>
-
 <template>
   <p v-if="!endsOn">
     <span>{{
       formatDateTimeString(beginsOn, timezoneToShow, showStartTime)
     }}</span>
     <br />
-    <b-switch
-      size="is-small"
+    <o-switch
+      size="small"
       v-model="showLocalTimezone"
       v-if="differentFromUserTimezone"
     >
       {{ singleTimeZone }}
-    </b-switch>
+    </o-switch>
   </p>
   <p v-else-if="isSameDay() && showStartTime && showEndTime">
     <span>{{
@@ -40,13 +21,13 @@
       })
     }}</span>
     <br />
-    <b-switch
-      size="is-small"
+    <o-switch
+      size="small"
       v-model="showLocalTimezone"
       v-if="differentFromUserTimezone"
     >
       {{ singleTimeZone }}
-    </b-switch>
+    </o-switch>
   </p>
   <p v-else-if="isSameDay() && showStartTime && !showEndTime">
     {{
@@ -74,13 +55,13 @@
       }}
     </span>
     <br />
-    <b-switch
-      size="is-small"
+    <o-switch
+      size="small"
       v-model="showLocalTimezone"
       v-if="differentFromUserTimezone"
     >
       {{ multipleTimeZones }}
-    </b-switch>
+    </o-switch>
   </p>
   <p v-else-if="endsOn && showStartTime">
     <span>
@@ -93,120 +74,117 @@
       }}
     </span>
     <br />
-    <b-switch
-      size="is-small"
+    <o-switch
+      size="small"
       v-model="showLocalTimezone"
       v-if="differentFromUserTimezone"
     >
       {{ singleTimeZone }}
-    </b-switch>
+    </o-switch>
   </p>
   <p v-else-if="endsOn">
     {{
-      $t("From the {startDate} to the {endDate}", {
+      t("From the {startDate} to the {endDate}", {
         startDate: formatDate(beginsOn),
         endDate: formatDate(endsOn),
       })
     }}
   </p>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
+import {
+  formatDateString,
+  formatDateTimeString,
+  formatTimeString,
+} from "@/filters/datetime";
 import { getTimezoneOffset } from "date-fns-tz";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
-@Component
-export default class EventFullDate extends Vue {
-  @Prop({ required: true }) beginsOn!: string;
-
-  @Prop({ required: false }) endsOn!: string;
-
-  @Prop({ required: false, default: true }) showStartTime!: boolean;
-
-  @Prop({ required: false, default: true }) showEndTime!: boolean;
-
-  @Prop({ required: false }) timezone!: string;
-
-  @Prop({ required: false }) userTimezone!: string;
-
-  showLocalTimezone = true;
-
-  get timezoneToShow(): string {
-    if (this.showLocalTimezone) {
-      return this.timezone;
-    }
-    return this.userActualTimezone;
+const props = withDefaults(
+  defineProps<{
+    beginsOn: string;
+    endsOn?: string;
+    showStartTime?: boolean;
+    showEndTime?: boolean;
+    timezone?: string;
+    userTimezone?: string;
+  }>(),
+  {
+    showStartTime: true,
+    showEndTime: true,
   }
+);
 
-  get userActualTimezone(): string {
-    if (this.userTimezone) {
-      return this.userTimezone;
-    }
-    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+const { t } = useI18n({ useScope: "global" });
+
+const showLocalTimezone = ref(true);
+
+const timezoneToShow = computed((): string | undefined => {
+  if (showLocalTimezone.value) {
+    return props.timezone;
   }
+  return userActualTimezone.value;
+});
 
-  formatDate(value: Date): string | undefined {
-    if (!this.$options.filters) return undefined;
-    return this.$options.filters.formatDateString(value);
+const userActualTimezone = computed((): string => {
+  if (props.userTimezone) {
+    return props.userTimezone;
   }
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+});
 
-  formatTime(value: Date, timezone: string): string | undefined {
-    if (!this.$options.filters) return undefined;
-    return this.$options.filters.formatTimeString(value, timezone || undefined);
-  }
+const formatDate = (value: string): string | undefined => {
+  return formatDateString(value);
+};
 
-  formatDateTimeString(
-    value: Date,
-    timezone: string,
-    showTime: boolean
-  ): string | undefined {
-    if (!this.$options.filters) return undefined;
-    return this.$options.filters.formatDateTimeString(
-      value,
-      timezone,
-      showTime
-    );
-  }
+const formatTime = (
+  value: string,
+  timezone: string | undefined = undefined
+): string | undefined => {
+  return formatTimeString(value, timezone ?? "Etc/UTC");
+};
 
-  isSameDay(): boolean {
-    const sameDay =
-      this.beginsOnDate.toDateString() === new Date(this.endsOn).toDateString();
-    return this.endsOn !== undefined && sameDay;
-  }
+const isSameDay = (): boolean => {
+  if (!props.endsOn) return false;
+  return (
+    beginsOnDate.value.toDateString() === new Date(props.endsOn).toDateString()
+  );
+};
 
-  get beginsOnDate(): Date {
-    return new Date(this.beginsOn);
-  }
+const beginsOnDate = computed((): Date => {
+  return new Date(props.beginsOn);
+});
 
-  get differentFromUserTimezone(): boolean {
-    return (
-      !!this.timezone &&
-      !!this.userActualTimezone &&
-      getTimezoneOffset(this.timezone, this.beginsOnDate) !==
-        getTimezoneOffset(this.userActualTimezone, this.beginsOnDate) &&
-      this.timezone !== this.userActualTimezone
-    );
-  }
+const differentFromUserTimezone = computed((): boolean => {
+  return (
+    !!props.timezone &&
+    !!userActualTimezone.value &&
+    getTimezoneOffset(props.timezone, beginsOnDate.value) !==
+      getTimezoneOffset(userActualTimezone.value, beginsOnDate.value) &&
+    props.timezone !== userActualTimezone.value
+  );
+});
 
-  get singleTimeZone(): string {
-    if (this.showLocalTimezone) {
-      return this.$t("Local time ({timezone})", {
-        timezone: this.timezoneToShow,
-      }) as string;
-    }
-    return this.$t("Time in your timezone ({timezone})", {
-      timezone: this.timezoneToShow,
+const singleTimeZone = computed((): string => {
+  if (showLocalTimezone.value) {
+    return t("Local time ({timezone})", {
+      timezone: timezoneToShow,
     }) as string;
   }
+  return t("Time in your timezone ({timezone})", {
+    timezone: timezoneToShow,
+  }) as string;
+});
 
-  get multipleTimeZones(): string {
-    if (this.showLocalTimezone) {
-      return this.$t("Local time ({timezone})", {
-        timezone: this.timezoneToShow,
-      }) as string;
-    }
-    return this.$t("Times in your timezone ({timezone})", {
-      timezone: this.timezoneToShow,
+const multipleTimeZones = computed((): string => {
+  if (showLocalTimezone.value) {
+    return t("Local time ({timezone})", {
+      timezone: timezoneToShow,
     }) as string;
   }
-}
+  return t("Times in your timezone ({timezone})", {
+    timezone: timezoneToShow,
+  }) as string;
+});
 </script>

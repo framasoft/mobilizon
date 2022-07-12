@@ -1,22 +1,20 @@
 <template>
-  <div ref="wrapper" class="wrapper" v-bind="$attrs">
-    <div class="relative container">
+  <div ref="wrapper" class="" v-bind="$attrs">
+    <div class="h-full w-full">
       <!-- Show the placeholder as background -->
       <blurhash-img
         v-if="blurhash"
         :hash="blurhash"
         :aspect-ratio="height / width"
-        class="top-0 left-0 transition-opacity duration-500"
-        :class="isLoaded ? 'opacity-0' : 'opacity-100'"
+        class="transition-opacity duration-500"
+        :class="blurhashOpacity"
       />
 
       <!-- Show the real image on the top and fade in after loading -->
       <img
         ref="image"
-        :width="width"
-        :height="height"
-        class="absolute top-0 left-0 transition-opacity duration-500"
-        :class="{ isLoaded: isLoaded ? 'opacity-100' : 'opacity-0', rounded }"
+        class="transition-opacity duration-500 rounded-lg object-cover w-full h-full"
+        :class="imageOpacity"
         alt=""
         src=""
       />
@@ -24,101 +22,70 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Prop, Component, Vue, Ref, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import BlurhashImg from "./BlurhashImg.vue";
 
-@Component({
-  components: {
-    BlurhashImg,
-  },
-})
-export default class LazyImage extends Vue {
-  @Prop({ type: String, required: true }) src!: string;
-  @Prop({ type: String, required: false, default: null }) blurhash!: string;
-  @Prop({ type: Number, default: 1 }) width!: number;
-  @Prop({ type: Number, default: 1 }) height!: number;
-  @Prop({ type: Boolean, default: false }) rounded!: boolean;
+import { computed, ref, onMounted, onUnmounted, watchEffect } from "vue";
 
-  inheritAttrs = false;
-  isLoaded = false;
+const props = withDefaults(
+  defineProps<{
+    src: string;
+    blurhash?: string | null;
+    width?: number;
+    height?: number;
+    rounded?: boolean;
+  }>(),
+  { blurhash: null, width: 100, height: 100, rounded: false }
+);
 
-  observer!: IntersectionObserver;
+const isLoaded = ref(false);
+const observer = ref<IntersectionObserver | null>(null);
 
-  @Ref("wrapper") readonly wrapper!: any;
-  @Ref("image") image!: any;
+const wrapper = ref<HTMLElement | null>(null);
+const image = ref<HTMLImageElement | null>(null);
 
-  mounted(): void {
-    this.observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        this.onEnter();
-      }
-    });
+const src = computed(() => props.src);
 
-    this.observer.observe(this.wrapper);
+const isIntersecting = ref(false);
+
+const blurhashOpacity = computed(() =>
+  isLoaded.value ? "opacity-0 hidden" : "opacity-100"
+);
+
+const imageOpacity = computed(() =>
+  isLoaded.value ? "opacity-100" : "opacity-0"
+);
+
+onMounted(() => {
+  console.debug("on lazy image mounted");
+  observer.value = new IntersectionObserver((entries) => {
+    isIntersecting.value = entries[0].isIntersecting;
+  });
+
+  if (wrapper.value) {
+    console.debug("starting observing");
+    observer.value.observe(wrapper.value);
   }
+});
 
-  unmounted(): void {
-    this.observer.disconnect();
+onUnmounted(() => {
+  if (observer.value) {
+    observer.value.disconnect();
   }
+});
 
-  onEnter(): void {
-    // Image is visible (means: has entered the viewport),
-    // so start loading by setting the src attribute
-    if (this.image) {
-      this.image.src = this.src;
+watchEffect(() => {
+  console.debug("src changed");
+  // Image is visible (means: has entered the viewport),
+  // so start loading by setting the src attribute
+  if (image.value) {
+    console.debug("image is ok, setting it");
+    image.value.src = src.value;
 
-      this.image.onload = () => {
-        // Image is loaded, so start fading in
-        this.isLoaded = true;
-      };
-    }
+    image.value.onload = () => {
+      // Image is loaded, so start fading in
+      isLoaded.value = true;
+    };
   }
-
-  @Watch("src")
-  updateImageWithSrcChange(): void {
-    this.onEnter();
-  }
-}
+});
 </script>
-<style lang="scss" scoped>
-.relative {
-  position: relative;
-}
-.absolute {
-  position: absolute;
-}
-.top-0 {
-  top: 0;
-}
-.left-0 {
-  left: 0;
-}
-.opacity-100 {
-  opacity: 100%;
-}
-.opacity-0 {
-  opacity: 0;
-}
-.transition-opacity {
-  transition-property: opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-.duration-500 {
-  transition-duration: 0.5s;
-}
-.wrapper,
-.container {
-  display: flex;
-  flex: 1;
-}
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 50%;
-  &.rounded {
-    border-radius: 8px;
-  }
-}
-</style>

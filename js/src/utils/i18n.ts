@@ -1,10 +1,9 @@
-import Vue from "vue";
-import VueI18n from "vue-i18n";
-import { DateFnsPlugin } from "@/plugins/dateFns";
+import { createI18n } from "vue-i18n";
 import en from "../i18n/en_US.json";
 import langs from "../i18n/langs.json";
 import { getLocaleData } from "./auth";
 import pluralizationRules from "../i18n/pluralRules";
+// import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
 const DEFAULT_LOCALE = "en_US";
 
@@ -39,17 +38,18 @@ export const locale =
 
 console.debug("chosen locale", locale);
 
-Vue.use(VueI18n);
-
-export const i18n = new VueI18n({
-  locale: DEFAULT_LOCALE, // set locale
+export const i18n = createI18n({
+  legacy: false,
+  locale: locale, // set locale
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
+  // messages, // set locale messages
   messages: en, // set locale messages
   fallbackLocale: DEFAULT_LOCALE,
   formatFallbackMessages: true,
   pluralizationRules,
   fallbackRootWithEmptyString: true,
+  globalInjection: true,
 });
 
 console.debug("set VueI18n with default locale", DEFAULT_LOCALE);
@@ -58,7 +58,7 @@ const loadedLanguages = [DEFAULT_LOCALE];
 
 function setI18nLanguage(lang: string): string {
   console.debug("setting i18n locale to", lang);
-  i18n.locale = lang;
+  i18n.global.locale = lang;
   setLanguageInDOM(lang);
   return lang;
 }
@@ -93,19 +93,9 @@ function vueI18NfileForLanguage(lang: string) {
   return fileForLanguage(matches, lang);
 }
 
-function dateFnsfileForLanguage(lang: string) {
-  const matches: Record<string, string> = {
-    en_US: "en-US",
-    en: "en-US",
-  };
-  return fileForLanguage(matches, lang);
-}
-
-Vue.use(DateFnsPlugin, { locale: dateFnsfileForLanguage(locale) });
-
 export async function loadLanguageAsync(lang: string): Promise<string> {
   // If the same language
-  if (i18n.locale === lang) {
+  if (i18n.global.locale === lang) {
     console.debug("already using language", lang);
     return Promise.resolve(setI18nLanguage(lang));
   }
@@ -118,11 +108,9 @@ export async function loadLanguageAsync(lang: string): Promise<string> {
   // If the language hasn't been loaded yet
   console.debug("loading language", lang);
   const newMessages = await import(
-    /* webpackChunkName: "lang-[request]" */ `@/i18n/${vueI18NfileForLanguage(
-      lang
-    )}.json`
+    `../i18n/${vueI18NfileForLanguage(lang)}.json`
   );
-  i18n.setLocaleMessage(lang, newMessages.default);
+  i18n.global.setLocaleMessage(lang, newMessages.default);
   loadedLanguages.push(lang);
   return setI18nLanguage(lang);
 }

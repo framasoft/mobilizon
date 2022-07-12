@@ -1,121 +1,92 @@
 <template>
-  <section class="section container">
-    <div class="columns is-mobile is-centered">
-      <div class="column is-half-desktop">
-        <h1 class="title">
-          {{ $t("Resend confirmation email") }}
-        </h1>
-        <form v-if="!validationSent" @submit="resendConfirmationAction">
-          <b-field :label="$t('Email address')">
-            <b-input
-              aria-required="true"
-              required
-              type="email"
-              v-model="credentials.email"
-            />
-          </b-field>
-          <p class="control">
-            <b-button type="is-primary" native-type="submit">
-              {{ $t("Send the confirmation email again") }}
-            </b-button>
-            <router-link
-              :to="{ name: RouteName.LOGIN }"
-              class="button is-text"
-              >{{ $t("Cancel") }}</router-link
-            >
-          </p>
-        </form>
-        <div v-else>
-          <b-message type="is-success" :closable="false" title="Success">
-            {{
-              $t(
-                "If an account with this email exists, we just sent another confirmation email to {email}",
-                { email: credentials.email }
-              )
-            }}
-          </b-message>
-          <b-message type="is-info">
-            {{
-              $t(
-                "Please check your spam folder if you didn't receive the email."
-              )
-            }}
-          </b-message>
-        </div>
-      </div>
+  <section class="container mx-auto pt-4 max-w-2xl">
+    <h1>
+      {{ $t("Resend confirmation email") }}
+    </h1>
+    <form v-if="!validationSent" @submit="resendConfirmationAction">
+      <o-field :label="$t('Email address')">
+        <o-input
+          aria-required="true"
+          required
+          type="email"
+          v-model="credentials.email"
+        />
+      </o-field>
+      <p class="flex flex-wrap gap-1">
+        <o-button variant="primary" native-type="submit">
+          {{ $t("Send the confirmation email again") }}
+        </o-button>
+        <o-button
+          variant="primary"
+          outlined
+          tag="router-link"
+          :to="{ name: RouteName.LOGIN }"
+          >{{ $t("Cancel") }}</o-button
+        >
+      </p>
+    </form>
+    <div v-else>
+      <o-notification variant="success" :closable="false" title="Success">
+        {{
+          $t(
+            "If an account with this email exists, we just sent another confirmation email to {email}",
+            { email: credentials.email }
+          )
+        }}
+      </o-notification>
+      <o-notification variant="info">
+        {{
+          $t("Please check your spam folder if you didn't receive the email.")
+        }}
+      </o-notification>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import {
-  validateEmailField,
-  validateRequiredField,
-} from "../../utils/validators";
-import { RESEND_CONFIRMATION_EMAIL } from "../../graphql/auth";
-import RouteName from "../../router/name";
+<script lang="ts" setup>
+import { RESEND_CONFIRMATION_EMAIL } from "@/graphql/auth";
+import RouteName from "@/router/name";
+import { reactive, ref, computed } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  metaInfo() {
-    return {
-      title: this.$t("Resend confirmation email") as string,
-      meta: [{ name: "robots", content: "noindex" }],
-    };
-  },
-})
-export default class ResendConfirmation extends Vue {
-  @Prop({ type: String, required: false, default: "" }) email!: string;
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Resend confirmation email")),
+  meta: [{ name: "robots", content: "noindex" }],
+});
 
-  credentials = {
-    email: "",
-  };
+const props = withDefaults(defineProps<{ email: string }>(), { email: "" });
 
-  validationSent = false;
+const credentials = reactive({
+  email: props.email,
+});
 
-  error = false;
+const validationSent = ref(false);
+const error = ref(false);
 
-  RouteName = RouteName;
+const {
+  mutate: resendConfirmationEmail,
+  onDone: resentConfirmationEmail,
+  onError: resentConfirmationEmailError,
+} = useMutation(RESEND_CONFIRMATION_EMAIL);
 
-  state = {
-    email: {
-      status: null,
-      msg: "",
-    },
-  };
+resentConfirmationEmail(() => {
+  validationSent.value = true;
+});
 
-  rules = {
-    required: validateRequiredField,
-    email: validateEmailField,
-  };
+resentConfirmationEmailError((err) => {
+  console.error(err);
+  error.value = true;
+});
 
-  mounted(): void {
-    this.credentials.email = this.email;
-  }
+const resendConfirmationAction = async (e: Event): Promise<void> => {
+  e.preventDefault();
+  error.value = false;
 
-  async resendConfirmationAction(e: Event): Promise<void> {
-    e.preventDefault();
-    this.error = false;
-
-    try {
-      await this.$apollo.mutate({
-        mutation: RESEND_CONFIRMATION_EMAIL,
-        variables: {
-          email: this.credentials.email,
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      this.error = true;
-    } finally {
-      this.validationSent = true;
-    }
-  }
-}
+  resendConfirmationEmail({
+    email: credentials.email,
+  });
+};
 </script>
-
-<style lang="scss" scoped>
-.container .columns {
-  margin: 1rem auto 3rem;
-}
-</style>

@@ -1,0 +1,117 @@
+<template>
+  <div class="relative pt-10">
+    <div class="w-full flex flex-wrap gap-3 mb-2 items-center">
+      <h1
+        class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
+      >
+        <slot name="title" />
+      </h1>
+      <button
+        v-if="suggestGeoloc && isIPLocation"
+        class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
+        @click="$emit('doGeoLoc')"
+      >
+        {{ t("Geolocate me") }}
+      </button>
+    </div>
+    <div class="hidden sm:block" v-show="showScrollLeftButton">
+      <button
+        @click="scrollLeft"
+        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white w-10 h-10 border border-shadowColor -left-5"
+      >
+        <div class="">&lt;</div>
+      </button>
+    </div>
+    <div class="overflow-hidden">
+      <div
+        class="relative w-full flex gap-6 snap-x overflow-x-auto pb-6"
+        ref="scrollContainer"
+        @scroll="scrollHandler"
+      >
+        <slot name="content" />
+      </div>
+    </div>
+    <div class="hidden sm:block" v-show="showScrollRightButton">
+      <button
+        @click="scrollRight"
+        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white w-10 h-10 border border-shadowColor -right-5"
+      >
+        <div class="">&gt;</div>
+      </button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { computed, inject, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { LocationType } from "../../types/user-location.model";
+
+withDefaults(
+  defineProps<{
+    suggestGeoloc?: boolean;
+  }>(),
+  { suggestGeoloc: true }
+);
+
+const emit = defineEmits(["doGeoLoc"]);
+
+const { t } = useI18n({ useScope: "global" });
+
+const userLocationInjection = inject<{
+  userLocation: LocationType;
+}>("userLocation");
+
+const isIPLocation = computed(
+  () => userLocationInjection?.userLocation.isIPLocation
+);
+
+const showScrollRightButton = ref(true);
+const showScrollLeftButton = ref(false);
+
+const scrollContainer = ref<any>();
+
+const scrollHandler = () => {
+  if (scrollContainer.value) {
+    showScrollRightButton.value =
+      scrollContainer.value.scrollLeft <
+      scrollContainer.value.scrollWidth - scrollContainer.value.clientWidth;
+    showScrollLeftButton.value = scrollContainer.value.scrollLeft > 0;
+  }
+};
+
+const doScroll = (e: Event, left: number) => {
+  e.preventDefault();
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollBy({
+      left,
+      behavior: "smooth",
+    });
+  }
+};
+
+const scrollLeft = (e: Event) => {
+  doScroll(e, -300);
+};
+
+const scrollRight = (e: Event) => {
+  doScroll(e, 300);
+};
+
+const scrollHorizontalToVertical = (evt: WheelEvent) => {
+  evt.deltaY > 0 ? doScroll(evt, 600) : doScroll(evt, -600);
+};
+
+onMounted(async () => {
+  scrollContainer.value.addEventListener("wheel", scrollHorizontalToVertical);
+});
+
+onUnmounted(() => {
+  if (scrollContainer.value) {
+    scrollContainer.value.removeEventListener(
+      "wheel",
+      scrollHorizontalToVertical
+    );
+  }
+});
+</script>

@@ -1,32 +1,36 @@
 <template>
   <router-link
-    class="event-minimalist-card-wrapper bg-white rounded-lg shadow-md"
+    class="block md:flex gap-x-2 gap-y-3 bg-white dark:bg-violet-2 rounded-lg shadow-md w-full"
     dir="auto"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
     <div class="event-preview mr-0 ml-0">
-      <div>
-        <div class="date-component">
-          <date-calendar-icon :date="event.beginsOn" :small="true" />
+      <div class="relative w-full">
+        <div class="flex absolute bottom-2 left-2 z-10 date-component">
+          <date-calendar-icon :date="event.beginsOn.toString()" :small="true" />
         </div>
         <lazy-image-wrapper
           :picture="event.picture"
           :rounded="true"
-          style="height: 100%; position: absolute; top: 0; left: 0; width: 100%"
+          class="object-cover flex-none h-32 md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg"
         />
       </div>
     </div>
-    <div class="title-info-wrapper has-text-grey-dark">
-      <h3 class="event-minimalist-title" :lang="event.language" dir="auto">
+    <div class="title-info-wrapper p-2">
+      <h3
+        class="event-minimalist-title pb-2 text-lg leading-6 line-clamp-3 font-bold text-violet-title dark:text-white"
+        :lang="event.language"
+        dir="auto"
+      >
         <b-tag
-          type="is-info"
+          variant="info"
           class="mr-1"
           v-if="event.status === EventStatus.TENTATIVE"
         >
           {{ $t("Tentative") }}
         </b-tag>
         <b-tag
-          type="is-danger"
+          variant="danger"
           class="mr-1"
           v-if="event.status === EventStatus.CANCELLED"
         >
@@ -34,7 +38,7 @@
         </b-tag>
         <b-tag
           class="mr-2"
-          type="is-warning"
+          variant="warning"
           size="is-medium"
           v-if="event.draft"
           >{{ $t("Draft") }}</b-tag
@@ -50,47 +54,51 @@
         class="event-subtitle"
         v-else-if="event.options && event.options.isOnline"
       >
-        <b-icon icon="video" />
+        <Video />
         <span>{{ $t("Online") }}</span>
       </div>
-      <div class="event-subtitle event-organizer" v-if="showOrganizer">
+      <div class="event-subtitle event-organizer flex" v-if="showOrganizer">
         <figure
           class="image is-24x24"
-          v-if="organizer(event) && organizer(event).avatar"
+          v-if="organizer(event) && organizer(event)?.avatar"
         >
-          <img class="is-rounded" :src="organizer(event).avatar.url" alt="" />
+          <img class="is-rounded" :src="organizer(event)?.avatar?.url" alt="" />
         </figure>
-        <b-icon v-else icon="account-circle" />
+        <AccountCircle v-else />
         <span class="organizer-name">
           {{ organizerDisplayName(event) }}
         </span>
       </div>
-      <p class="participant-metadata">
-        <b-icon icon="account-multiple" />
+      <p class="flex gap-1">
+        <AccountMultiple />
         <span v-if="event.options.maximumAttendeeCapacity !== 0">
           {{
-            $tc(
+            $t(
               "{available}/{capacity} available places",
-              event.options.maximumAttendeeCapacity -
-                event.participantStats.participant,
               {
                 available:
                   event.options.maximumAttendeeCapacity -
                   event.participantStats.participant,
                 capacity: event.options.maximumAttendeeCapacity,
-              }
+              },
+              event.options.maximumAttendeeCapacity -
+                event.participantStats.participant
             )
           }}
         </span>
         <span v-else>
           {{
-            $tc("{count} participants", event.participantStats.participant, {
-              count: event.participantStats.participant,
-            })
+            $t(
+              "{count} participants",
+              {
+                count: event.participantStats.participant,
+              },
+              event.participantStats.participant
+            )
           }}
         </span>
         <span v-if="event.participantStats.notApproved > 0">
-          <b-button
+          <o-button
             type="is-text"
             @click="
               gotToWithCheck(participation, {
@@ -101,105 +109,92 @@
             "
           >
             {{
-              $tc(
+              $t(
                 "{count} requests waiting",
-                event.participantStats.notApproved,
+
                 {
                   count: event.participantStats.notApproved,
-                }
+                },
+                event.participantStats.notApproved
               )
             }}
-          </b-button>
+          </o-button>
         </span>
       </p>
     </div>
   </router-link>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { IEvent, organizer, organizerDisplayName } from "@/types/event.model";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import { EventStatus, ParticipantRole } from "@/types/enums";
 import RouteName from "../../router/name";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
+import Video from "vue-material-design-icons/Video.vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 
-@Component({
-  components: {
-    DateCalendarIcon,
-    LazyImageWrapper,
-    InlineAddress,
-  },
-})
-export default class EventMinimalistCard extends Vue {
-  @Prop({ required: true, type: Object }) event!: IEvent;
-  @Prop({ required: false, type: Boolean, default: false })
-  showOrganizer!: boolean;
-
-  RouteName = RouteName;
-
-  ParticipantRole = ParticipantRole;
-
-  organizerDisplayName = organizerDisplayName;
-
-  organizer = organizer;
-
-  EventStatus = EventStatus;
-}
+withDefaults(
+  defineProps<{
+    event: IEvent;
+    showOrganizer?: boolean;
+  }>(),
+  { showOrganizer: false }
+);
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-@use "@/styles/_event-card";
-@import "~bulma/sass/utilities/mixins.sass";
-@import "@/variables.scss";
+// @import "node_modules/bulma/sass/utilities/mixins.sass";
+// @import "@/variables.scss";
 
 .event-minimalist-card-wrapper {
-  display: grid;
-  grid-gap: 5px 10px;
+  // display: grid;
+  // grid-gap: 5px 10px;
   grid-template-areas: "preview" "body";
-  color: initial;
+  // color: initial;
 
-  @include desktop {
-    grid-template-columns: 200px 3fr;
-    grid-template-areas: "preview body";
-  }
+  // @include desktop {
+  grid-template-columns: 200px 3fr;
+  grid-template-areas: "preview body";
+  // }
 
-  .event-preview {
-    & > div {
-      position: relative;
-      height: 120px;
-      width: 100%;
+  // .event-preview {
+  //   & > div {
+  //     position: relative;
+  //     height: 120px;
+  //     width: 100%;
 
-      div.date-component {
-        display: flex;
-        position: absolute;
-        bottom: 5px;
-        left: 5px;
-        z-index: 1;
-      }
-    }
-  }
+  //     div.date-component {
+  //       display: flex;
+  //       position: absolute;
+  //       bottom: 5px;
+  //       left: 5px;
+  //       z-index: 1;
+  //     }
+  //   }
+  // }
 
-  .calendar-icon {
-    @include margin-right(1rem);
-  }
+  // .calendar-icon {
+  //   @include margin-right(1rem);
+  // }
 
   .title-info-wrapper {
     flex: 2;
 
-    .event-minimalist-title {
-      padding-bottom: 5px;
-      font-size: 18px;
-      line-height: 24px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      font-weight: bold;
-      color: $title-color;
-    }
+    // .event-minimalist-title {
+    //   padding-bottom: 5px;
+    //   font-size: 18px;
+    //   line-height: 24px;
+    //   display: -webkit-box;
+    //   -webkit-line-clamp: 3;
+    //   -webkit-box-orient: vertical;
+    //   overflow: hidden;
+    //   font-weight: bold;
+    //   color: $title-color;
+    // }
 
-    ::v-deep .icon {
+    :deep(.icon) {
       vertical-align: middle;
     }
   }

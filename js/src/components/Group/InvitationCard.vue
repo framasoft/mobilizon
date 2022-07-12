@@ -2,20 +2,22 @@
   <div class="card">
     <div class="card-content media">
       <div class="media-content">
-        <div class="content">
-          <i18n
+        <div class="prose dark:prose-invert">
+          <i18n-t
             tag="p"
-            path="You have been invited by {invitedBy} to the following group:"
+            keypath="You have been invited by {invitedBy} to the following group:"
           >
-            <b slot="invitedBy">{{ member.invitedBy.name }}</b>
-          </i18n>
+            <template v-slot:invitedBy>
+              <b>{{ member?.invitedBy?.name }}</b>
+            </template>
+          </i18n-t>
         </div>
         <div class="media subfield">
           <div class="media-left">
             <figure class="image is-48x48" v-if="member.parent.avatar">
               <img class="is-rounded" :src="member.parent.avatar.url" alt="" />
             </figure>
-            <b-icon v-else size="is-large" icon="account-group" />
+            <o-icon v-else size="large" icon="account-group" />
           </div>
           <div class="media-content">
             <div class="level">
@@ -45,20 +47,20 @@
               </div>
               <div class="level-right">
                 <div class="level-item">
-                  <b-button
-                    type="is-success"
+                  <o-button
+                    variant="success"
                     @click="$emit('accept', member.id)"
                   >
                     {{ $t("Accept") }}
-                  </b-button>
+                  </o-button>
                 </div>
                 <div class="level-item">
-                  <b-button
-                    type="is-danger"
+                  <o-button
+                    variant="danger"
                     @click="$emit('reject', member.id)"
                   >
                     {{ $t("Decline") }}
-                  </b-button>
+                  </o-button>
                 </div>
               </div>
             </div>
@@ -69,20 +71,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
 
-@Component
-export default class InvitationCard extends Vue {
-  @Prop({ required: true }) member!: IMember;
-
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-}
+defineProps<{
+  member: IMember;
+}>();
 </script>
 
 <style lang="scss" scoped>

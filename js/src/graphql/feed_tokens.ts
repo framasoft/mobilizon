@@ -15,7 +15,7 @@ export const CREATE_FEED_TOKEN_ACTOR = gql`
 `;
 
 export const CREATE_FEED_TOKEN = gql`
-  mutation {
+  mutation CreateFeedToken {
     createFeedToken {
       token
       actor {
@@ -29,7 +29,7 @@ export const CREATE_FEED_TOKEN = gql`
 `;
 
 export const DELETE_FEED_TOKEN = gql`
-  mutation deleteFeedToken($token: String!) {
+  mutation DeleteFeedToken($token: String!) {
     deleteFeedToken(token: $token) {
       actor {
         id

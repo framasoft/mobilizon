@@ -1,30 +1,29 @@
-import { shallowMount, createLocalVue, Wrapper, config } from "@vue/test-utils";
+const useRouterMock = vi.fn(() => ({
+  push: () => {},
+}));
+
+import { shallowMount, VueWrapper } from "@vue/test-utils";
 import NavBar from "@/components/NavBar.vue";
 import {
   createMockClient,
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "@vue/apollo-option";
-import { CONFIG } from "@/graphql/config";
-import { USER_SETTINGS } from "@/graphql/user";
 import buildCurrentUserResolver from "@/apollo/user";
-import Buefy from "buefy";
-import { configMock } from "../mocks/config";
 import { InMemoryCache } from "@apollo/client/cache";
+import { describe, it, vi, expect, afterEach } from "vitest";
+import { DefaultApolloClient } from "@vue/apollo-composable";
 
-const localVue = createLocalVue();
-localVue.use(VueApollo);
-localVue.use(Buefy);
-config.mocks.$t = (key: string): string => key;
+vi.mock("vue-router/dist/vue-router.mjs", () => ({
+  useRouter: useRouterMock,
+}));
 
 describe("App component", () => {
-  let wrapper: Wrapper<Vue>;
+  let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
-  let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
 
-  const createComponent = (handlers = {}, baseData = {}) => {
+  const createComponent = (handlers = {}) => {
     const cache = new InMemoryCache({ addTypename: false });
 
     mockClient = createMockClient({
@@ -32,50 +31,34 @@ describe("App component", () => {
       resolvers: buildCurrentUserResolver(cache),
     });
 
-    requestHandlers = {
-      configQueryHandler: jest.fn().mockResolvedValue(configMock),
-      loggedUserQueryHandler: jest.fn().mockResolvedValue(null),
-      ...handlers,
-    };
-
-    mockClient.setRequestHandler(CONFIG, requestHandlers.configQueryHandler);
-
-    mockClient.setRequestHandler(
-      USER_SETTINGS,
-      requestHandlers.loggedUserQueryHandler
-    );
-
-    apolloProvider = new VueApollo({
-      defaultClient: mockClient,
-    });
+    requestHandlers = { ...handlers };
 
     wrapper = shallowMount(NavBar, {
-      localVue,
-      apolloProvider,
-      stubs: ["router-link", "router-view"],
-      data() {
-        return {
-          ...baseData,
-        };
+      // stubs: ["router-link", "router-view", "o-dropdown", "o-dropdown-item"],
+      global: {
+        provide: {
+          [DefaultApolloClient]: mockClient,
+        },
       },
     });
   };
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper?.unmount();
     mockClient = null;
-    apolloProvider = null;
   });
 
   it("renders a Vue component", async () => {
+    const push = vi.fn();
+    useRouterMock.mockImplementationOnce(() => ({
+      push,
+    }));
     createComponent();
 
     await wrapper.vm.$nextTick();
 
     expect(wrapper.exists()).toBe(true);
-    expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
     expect(wrapper.html()).toMatchSnapshot();
-    expect(wrapper.findComponent({ name: "b-navbar" }).exists()).toBeTruthy();
+    // expect(wrapper.findComponent({ name: "b-navbar" }).exists()).toBeTruthy();
   });
 });

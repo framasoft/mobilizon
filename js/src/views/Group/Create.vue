@@ -1,31 +1,35 @@
 <template>
-  <section class="section container">
-    <h1 class="title">{{ $t("Create a new group") }}</h1>
+  <section class="container mx-auto">
+    <h1>{{ $t("Create a new group") }}</h1>
 
-    <b-message type="is-danger" v-for="(value, index) in errors" :key="index">
+    <o-notification
+      variant="danger"
+      v-for="(value, index) in errors"
+      :key="index"
+    >
       {{ value }}
-    </b-message>
+    </o-notification>
 
     <form @submit.prevent="createGroup">
-      <b-field :label="$t('Group display name')" label-for="group-display-name">
-        <b-input
+      <o-field :label="$t('Group display name')" label-for="group-display-name">
+        <o-input
           aria-required="true"
           required
           v-model="group.name"
           id="group-display-name"
         />
-      </b-field>
+      </o-field>
 
       <div class="field">
         <label class="label" for="group-preferred-username">{{
           $t("Federated Group Name")
         }}</label>
         <div class="field-body">
-          <b-field
+          <o-field
             :message="preferredUsernameErrors[0]"
             :type="preferredUsernameErrors[1]"
           >
-            <b-input
+            <o-input
               ref="preferredUsernameInput"
               aria-required="true"
               required
@@ -45,26 +49,28 @@
             <p class="control">
               <span class="button is-static">@{{ host }}</span>
             </p>
-          </b-field>
+          </o-field>
         </div>
-        <p
-          v-html="
-            $t(
-              'This is like your federated username (<code>{username}</code>) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.',
-              { username: usernameWithDomain(currentActor, true) }
-            )
-          "
-        />
+        <i18n-t
+          v-if="currentActor"
+          keypath="This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique."
+        >
+          <template #username>
+            <code>
+              {{ usernameWithDomain(currentActor, true) }}
+            </code>
+          </template>
+        </i18n-t>
       </div>
 
-      <b-field
+      <o-field
         :label="$t('Description')"
         label-for="group-summary"
         :message="summaryErrors[0]"
         :type="summaryErrors[1]"
       >
-        <b-input v-model="group.summary" type="textarea" id="group-summary" />
-      </b-field>
+        <o-input v-model="group.summary" type="textarea" id="group-summary" />
+      </o-field>
 
       <div>
         <b>{{ $t("Avatar") }}</b>
@@ -91,198 +97,163 @@
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Watch } from "vue-property-decorator";
-import { Group, IPerson, usernameWithDomain } from "@/types/actor";
-import { CURRENT_ACTOR_CLIENT, PERSON_MEMBERSHIPS } from "@/graphql/actor";
-import { CREATE_GROUP } from "@/graphql/group";
-import { mixins } from "vue-class-component";
-import IdentityEditionMixin from "@/mixins/identityEdition";
-import { MemberRole } from "@/types/enums";
+<script lang="ts" setup>
+import { Group, usernameWithDomain, displayName } from "@/types/actor";
 import RouteName from "../../router/name";
 import { convertToUsername } from "../../utils/username";
 import PictureUpload from "../../components/PictureUpload.vue";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
 import { ErrorResponse } from "@/types/errors.model";
 import { ServerParseError } from "@apollo/client/link/http";
-import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useUploadLimits } from "@/composition/apollo/config";
+import { computed, inject, reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useCreateGroup } from "@/composition/apollo/group";
+import {
+  useAvatarMaxSize,
+  useBannerMaxSize,
+  useHost,
+} from "@/composition/config";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  components: {
-    PictureUpload,
-  },
-  apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
-    config: CONFIG,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Create a new group") as string,
-    };
-  },
-})
-export default class CreateGroup extends mixins(IdentityEditionMixin) {
-  currentActor!: IPerson;
+const { currentActor } = useCurrentActorClient();
+const { uploadLimits } = useUploadLimits();
 
-  group = new Group();
+const { t } = useI18n({ useScope: "global" });
 
-  config!: IConfig;
+useHead({
+  title: computed(() => t("Create a new group")),
+});
 
-  avatarFile: File | null = null;
+const group = ref(new Group());
 
-  bannerFile: File | null = null;
+const avatarFile = ref<File | null>(null);
+const bannerFile = ref<File | null>(null);
 
-  errors: string[] = [];
+const errors = ref<string[]>([]);
 
-  fieldErrors: Record<string, string | undefined> = {
-    preferred_username: undefined,
-    summary: undefined,
+const fieldErrors = reactive<Record<string, string | undefined>>({
+  preferred_username: undefined,
+  summary: undefined,
+});
+
+const router = useRouter();
+
+const host = useHost();
+const avatarMaxSize = useAvatarMaxSize();
+const bannerMaxSize = useBannerMaxSize();
+
+const notifier = inject<Notifier>("notifier");
+
+const createGroup = async (): Promise<void> => {
+  errors.value = [];
+  fieldErrors.preferred_username = undefined;
+  fieldErrors.summary = undefined;
+  const variables = buildVariables();
+  const { onDone, onError } = useCreateGroup(variables);
+
+  onDone(() => {
+    notifier?.success(
+      t("Group {displayName} created", {
+        displayName: displayName(group),
+      })
+    );
+
+    router.push({
+      name: RouteName.GROUP,
+      params: { preferredUsername: usernameWithDomain(group.value) },
+    });
+  });
+
+  onError((err) => handleError(err as unknown as ErrorResponse));
+};
+
+watch(group, (newGroup) => {
+  group.value.preferredUsername = convertToUsername(newGroup.name);
+});
+
+const buildVariables = () => {
+  let avatarObj = {};
+  let bannerObj = {};
+
+  const groupBasic = {
+    preferredUsername: group.value.preferredUsername,
+    name: group.value.name,
+    summary: group.value.summary,
   };
 
-  usernameWithDomain = usernameWithDomain;
-
-  async createGroup(): Promise<void> {
-    try {
-      this.errors = [];
-      this.fieldErrors = { preferred_username: undefined, summary: undefined };
-      await this.$apollo.mutate({
-        mutation: CREATE_GROUP,
-        variables: this.buildVariables(),
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
-          const query = {
-            query: PERSON_MEMBERSHIPS,
-            variables: {
-              id: this.currentActor.id,
-            },
-          };
-          const membershipData = store.readQuery<{ person: IPerson }>(query);
-          if (!membershipData) return;
-          const { person } = membershipData;
-          person.memberships.elements.push({
-            parent: data?.createGroup,
-            role: MemberRole.ADMINISTRATOR,
-            actor: this.currentActor,
-            insertedAt: new Date().toString(),
-            updatedAt: new Date().toString(),
-          });
-          store.writeQuery({ ...query, data: { person } });
+  if (avatarFile.value) {
+    avatarObj = {
+      avatar: {
+        media: {
+          name: avatarFile.value?.name,
+          alt: `${group.value.preferredUsername}'s avatar`,
+          file: avatarFile.value,
         },
-      });
-
-      await this.$router.push({
-        name: RouteName.GROUP,
-        params: { preferredUsername: usernameWithDomain(this.group) },
-      });
-
-      this.$notifier.success(
-        this.$t("Group {displayName} created", {
-          displayName: this.group.displayName(),
-        }) as string
-      );
-    } catch (err: any) {
-      this.handleError(err);
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get host(): string {
-    return window.location.hostname;
-  }
-
-  get avatarMaxSize(): number | undefined {
-    return this?.config?.uploadLimits?.avatar;
-  }
-
-  get bannerMaxSize(): number | undefined {
-    return this?.config?.uploadLimits?.banner;
-  }
-
-  @Watch("group.name")
-  updateUsername(groupName: string): void {
-    this.group.preferredUsername = convertToUsername(groupName);
-  }
-
-  private buildVariables() {
-    let avatarObj = {};
-    let bannerObj = {};
-
-    if (this.avatarFile) {
-      avatarObj = {
-        avatar: {
-          media: {
-            name: this.avatarFile.name,
-            alt: `${this.group.preferredUsername}'s avatar`,
-            file: this.avatarFile,
-          },
-        },
-      };
-    }
-
-    if (this.bannerFile) {
-      bannerObj = {
-        banner: {
-          media: {
-            name: this.bannerFile.name,
-            alt: `${this.group.preferredUsername}'s banner`,
-            file: this.bannerFile,
-          },
-        },
-      };
-    }
-
-    return {
-      ...this.group,
-      ...avatarObj,
-      ...bannerObj,
+      },
     };
   }
 
-  private handleError(err: ErrorResponse) {
-    if (err?.networkError?.name === "ServerParseError") {
-      const error = err?.networkError as ServerParseError;
+  if (bannerFile.value) {
+    bannerObj = {
+      banner: {
+        media: {
+          name: bannerFile.value?.name,
+          alt: `${group.value.preferredUsername}'s banner`,
+          file: bannerFile.value,
+        },
+      },
+    };
+  }
 
-      if (error?.response?.status === 413) {
-        this.errors.push(
-          this.$t(
-            "Unable to create the group. One of the pictures may be too heavy."
-          ) as string
-        );
-      }
+  return {
+    ...groupBasic,
+    ...avatarObj,
+    ...bannerObj,
+  };
+};
+
+const handleError = (err: ErrorResponse) => {
+  if (err?.networkError?.name === "ServerParseError") {
+    const error = err?.networkError as ServerParseError;
+
+    if (error?.response?.status === 413) {
+      errors.value.push(
+        t(
+          "Unable to create the group. One of the pictures may be too heavy."
+        ) as string
+      );
     }
-    err.graphQLErrors?.forEach((error) => {
-      if (error.field) {
-        if (Array.isArray(error.message)) {
-          this.fieldErrors[error.field] = error.message[0];
-        } else {
-          this.fieldErrors[error.field] = error.message;
-        }
+  }
+  err.graphQLErrors?.forEach((error) => {
+    if (error.field) {
+      if (Array.isArray(error.message)) {
+        fieldErrors[error.field] = error.message[0];
       } else {
-        this.errors.push(error.message);
+        fieldErrors[error.field] = error.message;
       }
-    });
-  }
+    } else {
+      errors.value.push(error.message);
+    }
+  });
+};
 
-  get summaryErrors() {
-    const message = this.fieldErrors.summary
-      ? this.fieldErrors.summary
-      : undefined;
-    const type = this.fieldErrors.summary ? "is-danger" : undefined;
-    return [message, type];
-  }
+const summaryErrors = computed(() => {
+  const message = fieldErrors.summary ? fieldErrors.summary : undefined;
+  const type = fieldErrors.summary ? "is-danger" : undefined;
+  return [message, type];
+});
 
-  get preferredUsernameErrors() {
-    const message = this.fieldErrors.preferred_username
-      ? this.fieldErrors.preferred_username
-      : this.$t(
-          "Only alphanumeric lowercased characters and underscores are supported."
-        );
-    const type = this.fieldErrors.preferred_username ? "is-danger" : undefined;
-    return [message, type];
-  }
-}
+const preferredUsernameErrors = computed(() => {
+  const message = fieldErrors.preferred_username
+    ? fieldErrors.preferred_username
+    : t(
+        "Only alphanumeric lowercased characters and underscores are supported."
+      );
+  const type = fieldErrors.preferred_username ? "is-danger" : undefined;
+  return [message, type];
+});
 </script>
 
 <style>

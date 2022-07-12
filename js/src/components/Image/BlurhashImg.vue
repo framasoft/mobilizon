@@ -2,37 +2,33 @@
   <canvas ref="canvas" width="32" height="32" />
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { decode } from "blurhash";
-import { Component, Prop, Ref, Vue } from "vue-property-decorator";
 
-@Component
-export default class BlurhashImg extends Vue {
-  @Prop({ type: String, required: true }) hash!: string;
-  @Prop({ type: Number, default: 1 }) aspectRatio!: string;
+import { ref, onMounted } from "vue";
 
-  @Ref("canvas") readonly canvas!: any;
+const props = withDefaults(
+  defineProps<{
+    hash: string;
+    aspectRatio?: number;
+  }>(),
+  { aspectRatio: 1 }
+);
 
-  mounted(): void {
-    try {
-      const pixels = decode(this.hash, 32, 32);
+const canvas = ref<HTMLCanvasElement | undefined>(undefined);
+
+onMounted(() => {
+  try {
+    if (canvas.value) {
+      const pixels = decode(props.hash, 32, 32);
       const imageData = new ImageData(pixels, 32, 32);
-      const context = this.canvas.getContext("2d");
-      context.putImageData(imageData, 0, 0);
-    } catch (e) {
-      console.error(e);
+      const context = canvas.value.getContext("2d");
+      if (context) {
+        context.putImageData(imageData, 0, 0);
+      }
     }
+  } catch (e) {
+    console.error(e);
   }
-}
+});
 </script>
-<style lang="scss" scoped>
-canvas {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-}
-</style>

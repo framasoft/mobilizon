@@ -7,25 +7,26 @@
       ]"
     />
     <section>
-      <h1 class="title">{{ $t("Administration") }}</h1>
+      <h1>{{ $t("Administration") }}</h1>
       <div class="tile is-ancestor" v-if="dashboard">
         <div class="tile is-vertical">
           <div class="tile">
             <div class="tile is-parent is-vertical is-6">
               <article class="tile is-child box">
                 <p class="dashboard-number">{{ dashboard.numberOfEvents }}</p>
-                <p
-                  v-html="
-                    $t(
-                      'Published events with <b>{comments}</b> comments and <b>{participations}</b> confirmed participations',
-                      {
-                        comments: dashboard.numberOfComments,
-                        participations:
-                          dashboard.numberOfConfirmedParticipationsToLocalEvents,
-                      }
-                    )
-                  "
-                />
+                <i18n-t
+                  keypath="Published events with {comments} comments and {participations} confirmed participations"
+                  tag="p"
+                >
+                  <template #comments>
+                    <b>{{ dashboard.numberOfComments }}</b>
+                  </template>
+                  <template #participations>
+                    <b>{{
+                      dashboard.numberOfConfirmedParticipationsToLocalEvents
+                    }}</b>
+                  </template>
+                </i18n-t>
               </article>
               <article class="tile is-child box">
                 <router-link :to="{ name: RouteName.ADMIN_GROUPS }">
@@ -133,38 +134,31 @@
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { DASHBOARD } from "@/graphql/admin";
 import { IDashboard } from "@/types/admin.model";
 import { usernameWithDomain } from "@/types/actor";
-import RouteName from "../../router/name";
+import RouteName from "@/router/name";
+import { useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  apollo: {
-    dashboard: {
-      query: DASHBOARD,
-      fetchPolicy: "cache-and-network",
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Administration") as string,
-    };
-  },
-})
-export default class Dashboard extends Vue {
-  dashboard!: IDashboard;
+const { result: dashboardResult } = useQuery<{ dashboard: IDashboard }>(
+  DASHBOARD
+);
 
-  RouteName = RouteName;
+const dashboard = computed(() => dashboardResult.value?.dashboard);
 
-  usernameWithDomain = usernameWithDomain;
-}
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Administration")),
+});
 </script>
 
 <style lang="scss" scoped>
 .dashboard-number {
-  color: #3c376e;
   font-size: 40px;
   font-weight: 700;
   line-height: 1.125;
@@ -172,7 +166,6 @@ export default class Dashboard extends Vue {
 
 .tile a,
 article.tile a {
-  color: #4a4a4a;
   text-decoration: none;
 }
 

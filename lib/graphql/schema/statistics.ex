@@ -26,10 +26,20 @@ defmodule Mobilizon.GraphQL.Schema.StatisticsType do
     )
   end
 
+  object :category_statistics do
+    field(:key, :string, description: "The key for the category")
+    field(:number, :integer, description: "The number of events for the given category")
+  end
+
   object :statistics_queries do
     @desc "Get the instance statistics"
     field :statistics, :statistics do
       resolve(&Statistics.get_statistics/3)
+    end
+
+    @desc "Get the instance's category statistics"
+    field :category_statistics, list_of(:category_statistics) do
+      resolve(&Statistics.get_category_statistics/3)
     end
   end
 end

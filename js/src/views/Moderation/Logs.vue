@@ -22,180 +22,193 @@
               :alt="log.actor.avatar.alt || ''"
               v-if="log.actor.avatar"
             />
-            <i18n
+            <i18n-t
               v-if="log.action === ActionLogAction.REPORT_UPDATE_CLOSED"
               tag="span"
-              path="{moderator} closed {report}"
+              keypath="{moderator} closed {report}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                :to="{
-                  name: RouteName.REPORT,
-                  params: { reportId: log.object.id },
-                }"
-                slot="report"
-                >{{
-                  $t("report #{report_number}", {
-                    report_number: log.object.id,
-                  })
-                }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #report>
+                <router-link
+                  :to="{
+                    name: RouteName.REPORT,
+                    params: { reportId: log.object.id },
+                  }"
+                  >{{
+                    $t("report #{report_number}", {
+                      report_number: log.object.id,
+                    })
+                  }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="log.action === ActionLogAction.REPORT_UPDATE_OPENED"
               tag="span"
-              path="{moderator} reopened {report}"
+              keypath="{moderator} reopened {report}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                :to="{
-                  name: RouteName.REPORT,
-                  params: { reportId: log.object.id },
-                }"
-                slot="report"
-                >{{
-                  $t("report #{report_number}", {
-                    report_number: log.object.id,
-                  })
-                }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #report>
+                <router-link
+                  :to="{
+                    name: RouteName.REPORT,
+                    params: { reportId: log.object.id },
+                  }"
+                  >{{
+                    $t("report #{report_number}", {
+                      report_number: log.object.id,
+                    })
+                  }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="log.action === ActionLogAction.REPORT_UPDATE_RESOLVED"
               tag="span"
-              path="{moderator} marked {report} as resolved"
+              keypath="{moderator} marked {report} as resolved"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                :to="{
-                  name: RouteName.REPORT,
-                  params: { reportId: log.object.id },
-                }"
-                slot="report"
-                >{{
-                  $t("report #{report_number}", {
-                    report_number: log.object.id,
-                  })
-                }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #report>
+                <router-link
+                  :to="{
+                    name: RouteName.REPORT,
+                    params: { reportId: log.object.id },
+                  }"
+                  >{{
+                    $t("report #{report_number}", {
+                      report_number: log.object.id,
+                    })
+                  }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="log.action === ActionLogAction.NOTE_CREATION"
               tag="span"
-              path="{moderator} added a note on {report}"
+              keypath="{moderator} added a note on {report}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                v-if="log.object.report"
-                :to="{
-                  name: RouteName.REPORT,
-                  params: { reportId: log.object.report.id },
-                }"
-                slot="report"
-                >{{
-                  $t("report #{report_number}", {
-                    report_number: log.object.report.id,
-                  })
-                }}
-              </router-link>
-              <span v-else slot="report">{{
-                $t("a non-existent report")
-              }}</span>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #report>
+                <router-link
+                  v-if="log.object.report"
+                  :to="{
+                    name: RouteName.REPORT,
+                    params: { reportId: log.object.report.id },
+                  }"
+                  >{{
+                    $t("report #{report_number}", {
+                      report_number: log.object.report.id,
+                    })
+                  }}
+                </router-link>
+                <span v-else>{{ $t("a non-existent report") }}</span>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="log.action === ActionLogAction.EVENT_DELETION"
               tag="span"
-              path='{moderator} deleted an event named "{title}"'
+              keypath='{moderator} deleted an event named "{title}"'
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <b slot="title">{{ log.object.title }}</b>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #title>
+                <b>{{ log.object.title }}</b>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="
                 log.action === ActionLogAction.ACTOR_SUSPENSION &&
                 log.object.__typename == 'Person'
               "
               tag="span"
-              path="{moderator} suspended profile {profile}"
+              keypath="{moderator} suspended profile {profile}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                slot="profile"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.object.id },
-                }"
-                >{{ displayNameAndUsername(log.object) }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #profile>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.object.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object) }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="
                 log.action === ActionLogAction.ACTOR_UNSUSPENSION &&
                 log.object.__typename == 'Person'
               "
               tag="span"
-              path="{moderator} has unsuspended profile {profile}"
+              keypath="{moderator} has unsuspended profile {profile}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                slot="profile"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.object.id },
-                }"
-                >{{ displayNameAndUsername(log.object) }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #profile>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.object.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object) }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="
                 log.action === ActionLogAction.ACTOR_SUSPENSION &&
                 log.object.__typename == 'Group'
@@ -203,155 +216,167 @@
               tag="span"
               path="{moderator} suspended group {profile}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                slot="profile"
-                :to="{
-                  name: RouteName.ADMIN_GROUP_PROFILE,
-                  params: { id: log.object.id },
-                }"
-                >{{ displayNameAndUsername(log.object) }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #profile>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_GROUP_PROFILE,
+                    params: { id: log.object.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object) }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="
                 log.action === ActionLogAction.ACTOR_UNSUSPENSION &&
                 log.object.__typename == 'Group'
               "
               tag="span"
-              path="{moderator} has unsuspended group {profile}"
+              keypath="{moderator} has unsuspended group {profile}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                slot="profile"
-                :to="{
-                  name: RouteName.ADMIN_GROUP_PROFILE,
-                  params: { id: log.object.id },
-                }"
-                >{{ displayNameAndUsername(log.object) }}
-              </router-link>
-            </i18n>
-            <i18n
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #profile>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_GROUP_PROFILE,
+                    params: { id: log.object.id },
+                  }"
+                  >{{ displayNameAndUsername(log.object) }}
+                </router-link>
+              </template>
+            </i18n-t>
+            <i18n-t
               v-else-if="log.action === ActionLogAction.USER_DELETION"
               tag="span"
-              path="{moderator} has deleted user {user}"
+              keypath="{moderator} has deleted user {user}"
             >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-              <router-link
-                v-if="log.object.confirmedAt"
-                slot="user"
-                :to="{
-                  name: RouteName.ADMIN_USER_PROFILE,
-                  params: { id: log.object.id },
-                }"
-                >{{ log.object.email }}
-              </router-link>
-              <b v-else slot="user">{{ log.object.email }}</b>
-            </i18n>
+              <template #moderator>
+                <router-link
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: log.actor.id },
+                  }"
+                  >@{{ log.actor.preferredUsername }}</router-link
+                >
+              </template>
+              <template #user>
+                <router-link
+                  v-if="log.object.confirmedAt"
+                  :to="{
+                    name: RouteName.ADMIN_USER_PROFILE,
+                    params: { id: log.object.id },
+                  }"
+                  >{{ log.object.email }}
+                </router-link>
+                <b v-else>{{ log.object.email }}</b>
+              </template>
+            </i18n-t>
             <span
               v-else-if="
                 log.action === ActionLogAction.COMMENT_DELETION &&
                 log.object.event
               "
             >
-              <i18n
+              <i18n-t
                 tag="span"
-                path="{moderator} has deleted a comment from {author} under the event {event}"
+                keypath="{moderator} has deleted a comment from {author} under the event {event}"
               >
-                <router-link
-                  slot="moderator"
-                  :to="{
-                    name: RouteName.ADMIN_PROFILE,
-                    params: { id: log.actor.id },
-                  }"
-                  >@{{ log.actor.preferredUsername }}</router-link
-                >
-                <router-link
-                  v-if="log.object.event && log.object.event.uuid"
-                  slot="event"
-                  :to="{
-                    name: RouteName.EVENT,
-                    params: { uuid: log.object.event.uuid },
-                  }"
-                  >{{ log.object.event.title }}
-                </router-link>
-                <b v-else slot="event">{{ log.object.event.title }}</b>
-                <router-link
-                  slot="author"
-                  :to="{
-                    name: RouteName.ADMIN_PROFILE,
-                    params: { id: log.object.actor.id },
-                  }"
-                  >{{ displayNameAndUsername(log.object.actor) }}
-                </router-link>
-              </i18n>
+                <template #moderator>
+                  <router-link
+                    :to="{
+                      name: RouteName.ADMIN_PROFILE,
+                      params: { id: log.actor.id },
+                    }"
+                    >@{{ log.actor.preferredUsername }}</router-link
+                  >
+                </template>
+                <template #event>
+                  <router-link
+                    v-if="log.object.event && log.object.event.uuid"
+                    :to="{
+                      name: RouteName.EVENT,
+                      params: { uuid: log.object.event.uuid },
+                    }"
+                    >{{ log.object.event.title }}
+                  </router-link>
+                  <b v-else>{{ log.object.event.title }}</b>
+                </template>
+                <template #author>
+                  <router-link
+                    :to="{
+                      name: RouteName.ADMIN_PROFILE,
+                      params: { id: log.object.actor.id },
+                    }"
+                    >{{ displayNameAndUsername(log.object.actor) }}
+                  </router-link>
+                </template>
+              </i18n-t>
               <pre v-html="log.object.text" />
             </span>
             <span v-else-if="log.action === ActionLogAction.COMMENT_DELETION">
-              <i18n
+              <i18n-t
                 tag="span"
-                path="{moderator} has deleted a comment from {author}"
+                keypath="{moderator} has deleted a comment from {author}"
               >
+                <template #moderator>
+                  <router-link
+                    :to="{
+                      name: RouteName.ADMIN_PROFILE,
+                      params: { id: log.actor.id },
+                    }"
+                    >@{{ log.actor.preferredUsername }}</router-link
+                  >
+                </template>
+                <template #author>
+                  <router-link
+                    :to="{
+                      name: RouteName.ADMIN_PROFILE,
+                      params: { id: log.object.actor.id },
+                    }"
+                    >{{ displayNameAndUsername(log.object.actor) }}
+                  </router-link>
+                </template>
+              </i18n-t>
+              <pre v-html="log.object.text" />
+            </span>
+            <i18n-t
+              v-else
+              tag="span"
+              keypath="{moderator} has done an unknown action"
+            >
+              <template #moderator>
                 <router-link
-                  slot="moderator"
                   :to="{
                     name: RouteName.ADMIN_PROFILE,
                     params: { id: log.actor.id },
                   }"
                   >@{{ log.actor.preferredUsername }}</router-link
                 >
-                <router-link
-                  slot="author"
-                  :to="{
-                    name: RouteName.ADMIN_PROFILE,
-                    params: { id: log.object.actor.id },
-                  }"
-                  >{{ displayNameAndUsername(log.object.actor) }}
-                </router-link>
-              </i18n>
-              <pre v-html="log.object.text" />
-            </span>
-            <i18n
-              v-else
-              tag="span"
-              path="{moderator} has done an unknown action"
-            >
-              <router-link
-                slot="moderator"
-                :to="{
-                  name: RouteName.ADMIN_PROFILE,
-                  params: { id: log.actor.id },
-                }"
-                >@{{ log.actor.preferredUsername }}</router-link
-              >
-            </i18n>
+              </template>
+            </i18n-t>
             <br />
-            <small>{{ log.insertedAt | formatDateTimeString }}</small>
+            <small>{{ formatDateTimeString(log.insertedAt) }}</small>
           </div>
         </li>
       </ul>
-      <b-pagination
+      <o-pagination
         :total="actionLogs.total"
         v-model="page"
         :per-page="LOGS_PER_PAGE"
@@ -360,70 +385,49 @@
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
       >
-      </b-pagination>
+      </o-pagination>
     </section>
     <div v-else>
-      <b-message type="is-info">{{ $t("No moderation logs yet") }}</b-message>
+      <o-notification variant="info">{{
+        $t("No moderation logs yet")
+      }}</o-notification>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import { IActionLog } from "@/types/report.model";
 import { LOGS } from "@/graphql/report";
-import ReportCard from "@/components/Report/ReportCard.vue";
 import { ActionLogAction } from "@/types/enums";
 import RouteName from "../../router/name";
 import { displayNameAndUsername } from "../../types/actor";
 import { Paginate } from "@/types/paginate";
+import { useQuery } from "@vue/apollo-composable";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { formatDateTimeString } from "@/filters/datetime";
 
-@Component({
-  components: {
-    ReportCard,
-  },
-  apollo: {
-    actionLogs: {
-      fetchPolicy: "cache-and-network",
-      query: LOGS,
-      variables() {
-        return {
-          page: this.page,
-          limit: this.LOGS_PER_PAGE,
-        };
-      },
-    },
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Moderation logs") as string,
-    };
-  },
-})
-export default class ReportList extends Vue {
-  actionLogs?: Paginate<IActionLog> = { total: 0, elements: [] };
+const LOGS_PER_PAGE = 10;
 
-  page = parseInt((this.$route.query.page as string) || "1", 10);
+const page = useRouteQuery("page", 1, integerTransformer);
 
-  LOGS_PER_PAGE = 10;
+const { result: actionLogsResult } = useQuery<{
+  actionLogs: Paginate<IActionLog>;
+}>(LOGS, () => ({
+  page: page.value,
+  limit: LOGS_PER_PAGE,
+}));
 
-  ActionLogAction = ActionLogAction;
+const actionLogs = computed(
+  () => actionLogsResult.value?.actionLogs ?? { total: 0, elements: [] }
+);
 
-  RouteName = RouteName;
+const { t } = useI18n({ useScope: "global" });
 
-  displayNameAndUsername = displayNameAndUsername;
-
-  mounted(): void {
-    this.page = parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  @Watch("page")
-  triggerLoadMoreMemberPageChange(page: string): void {
-    this.$router.replace({
-      name: RouteName.REPORT_LOGS,
-      query: { ...this.$route.query, page },
-    });
-  }
-}
+useHead({
+  title: computed(() => t("Moderation logs")),
+});
 </script>
 <style lang="scss" scoped>
 img.image {

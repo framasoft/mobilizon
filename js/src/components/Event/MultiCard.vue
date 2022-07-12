@@ -8,20 +8,14 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEvent } from "@/types/event.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+
 import EventCard from "./EventCard.vue";
-@Component({
-  components: {
-    EventCard,
-  },
-})
-export default class MultiCard extends Vue {
-  @Prop({ type: Array as PropType<IEvent[]>, required: true })
-  events!: IEvent[];
-}
+
+defineProps<{
+  events: IEvent[];
+}>();
 </script>
 <style lang="scss" scoped>
 .multi-card-event {

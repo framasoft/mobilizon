@@ -3,7 +3,7 @@
     <breadcrumbs-nav :links="breadcrumbsLinks" />
     <div class="root" v-if="identity">
       <h1 class="title">
-        <span v-if="isUpdate">{{ identity.displayName() }}</span>
+        <span v-if="isUpdate">{{ displayName(identity) }}</span>
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
 
@@ -14,22 +14,22 @@
         class="picture-upload"
       />
 
-      <b-field
+      <o-field
         horizontal
         :label="$t('Display name')"
         label-for="identity-display-name"
       >
-        <b-input
+        <o-input
           aria-required="true"
           required
           v-model="identity.name"
-          @input="autoUpdateUsername($event)"
+          @input="autoUpdateUsername()"
           id="identity-display-name"
           dir="auto"
         />
-      </b-field>
+      </o-field>
 
-      <b-field
+      <o-field
         horizontal
         custom-class="username-field"
         expanded
@@ -37,8 +37,8 @@
         label-for="identity-username"
         :message="message"
       >
-        <b-field expanded>
-          <b-input
+        <o-field expanded>
+          <o-input
             aria-required="true"
             required
             v-model="identity.preferredUsername"
@@ -52,55 +52,53 @@
           <p class="control">
             <span class="button is-static">@{{ getInstanceHost }}</span>
           </p>
-        </b-field>
-      </b-field>
+        </o-field>
+      </o-field>
 
-      <b-field
+      <o-field
         horizontal
         :label="$t('Description')"
         label-for="identity-summary"
       >
-        <b-input
+        <o-input
           type="textarea"
           dir="auto"
           aria-required="false"
           v-model="identity.summary"
           id="identity-summary"
         />
-      </b-field>
+      </o-field>
 
-      <b-notification
-        type="is-danger"
+      <o-notification
+        variant="danger"
         has-icon
         aria-close-label="Close notification"
         role="alert"
         :key="error"
         v-for="error in errors"
-        >{{ error }}</b-notification
+        >{{ error }}</o-notification
       >
 
-      <b-field class="submit">
+      <o-field class="submit">
         <div class="control">
-          <button type="button" class="button is-primary" @click="submit()">
+          <o-button type="button" variant="primary" @click="submit()">
             {{ $t("Save") }}
-          </button>
+          </o-button>
         </div>
-      </b-field>
+      </o-field>
 
-      <b-field class="delete-identity">
-        <b-button
+      <o-field class="delete-identity">
+        <o-button
           v-if="isUpdate"
           @click="openDeleteIdentityConfirmation()"
           type="is-text"
         >
           {{ $t("Delete this identity") }}
-        </b-button>
-      </b-field>
+        </o-button>
+      </o-field>
 
       <section v-if="isUpdate">
-        <div class="setting-title">
-          <h2>{{ $t("Profile feeds") }}</h2>
-        </div>
+        <h2>{{ $t("Profile feeds") }}</h2>
         <p>
           {{
             $t(
@@ -110,60 +108,60 @@
         </p>
         <div v-if="identity.feedTokens && identity.feedTokens.length > 0">
           <div
-            class="buttons"
+            class="flex flex-wrap gap-2"
             v-for="feedToken in identity.feedTokens"
             :key="feedToken.token"
           >
-            <b-tooltip
+            <o-tooltip
               :label="$t('URL copied to clipboard')"
               :active="showCopiedTooltip.atom"
               always
-              type="is-success"
-              position="is-left"
+              variant="success"
+              position="left"
             >
-              <b-button
+              <o-button
                 tag="a"
                 icon-left="rss"
                 @click="
-                  (e) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+                  (e: Event) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
                 "
                 :href="tokenToURL(feedToken.token, 'atom')"
                 target="_blank"
-                >{{ $t("RSS/Atom Feed") }}</b-button
+                >{{ $t("RSS/Atom Feed") }}</o-button
               >
-            </b-tooltip>
-            <b-tooltip
+            </o-tooltip>
+            <o-tooltip
               :label="$t('URL copied to clipboard')"
               :active="showCopiedTooltip.ics"
               always
-              type="is-success"
-              position="is-left"
+              variant="success"
+              position="left"
             >
-              <b-button
+              <o-button
                 tag="a"
                 @click="
-                  (e) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+                  (e: Event) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
                 "
                 icon-left="calendar-sync"
                 :href="tokenToURL(feedToken.token, 'ics')"
                 target="_blank"
-                >{{ $t("ICS/WebCal Feed") }}</b-button
+                >{{ $t("ICS/WebCal Feed") }}</o-button
               >
-            </b-tooltip>
-            <b-button
+            </o-tooltip>
+            <o-button
               icon-left="refresh"
-              type="is-text"
+              variant="text"
               @click="openRegenerateFeedTokensConfirmation"
-              >{{ $t("Regenerate new links") }}</b-button
+              >{{ $t("Regenerate new links") }}</o-button
             >
           </div>
         </div>
         <div v-else>
-          <b-button
+          <o-button
             icon-left="refresh"
-            type="is-text"
+            variant="text"
             @click="generateFeedTokens"
-            >{{ $t("Create new links") }}</b-button
+            >{{ $t("Create new links") }}</o-button
           >
         </div>
       </section>
@@ -196,482 +194,564 @@ h1 {
   margin-bottom: 0;
 }
 
-::v-deep .buttons > *:not(:last-child) .button {
+:deep(.buttons > *:not(:last-child) .button) {
   @include margin-right(0.5rem);
 }
 </style>
 
-<script lang="ts">
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { mixins } from "vue-class-component";
+<script lang="ts" setup>
 import {
   CREATE_PERSON,
-  CURRENT_ACTOR_CLIENT,
   DELETE_PERSON,
   FETCH_PERSON,
   IDENTITIES,
   PERSON_FRAGMENT,
+  PERSON_FRAGMENT_FEED_TOKENS,
   UPDATE_PERSON,
 } from "../../../graphql/actor";
-import { IPerson, Person } from "../../../types/actor";
+import { IPerson, displayName } from "../../../types/actor";
 import PictureUpload from "../../../components/PictureUpload.vue";
 import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
 import RouteName from "../../../router/name";
 import { buildFileVariable } from "../../../utils/image";
-import { changeIdentity } from "../../../utils/auth";
-import identityEditionMixin from "../../../mixins/identityEdition";
+import { changeIdentity } from "../../../utils/identity";
+// import identityEditionMixin from "../../../mixins/identityEdition";
 import {
   CREATE_FEED_TOKEN_ACTOR,
   DELETE_FEED_TOKEN,
 } from "@/graphql/feed_tokens";
 import { IFeedToken } from "@/types/feedtoken.model";
-import { IConfig } from "@/types/config.model";
-import { CONFIG } from "@/graphql/config";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import pick from "lodash/pick";
 import { ActorType } from "@/types/enums";
-import { Location } from "vue-router";
+import { useRouter } from "vue-router";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useMutation, useQuery, useApolloClient } from "@vue/apollo-composable";
+import { useAvatarMaxSize } from "@/composition/config";
+import { computed, inject, reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { convertToUsername } from "@/utils/username";
+import { Dialog } from "@/plugins/dialog";
+import { Notifier } from "@/plugins/notifier";
+import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
-@Component({
-  components: {
-    PictureUpload,
-  },
-  apollo: {
-    currentActor: {
-      query: CURRENT_ACTOR_CLIENT,
-    },
-    identity: {
-      query: FETCH_PERSON,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          username: this.identityName,
-        };
-      },
-      skip() {
-        return !this.identityName;
-      },
-      update: (data) => new Person(data.fetchPerson),
-      error({ graphQLErrors }) {
-        this.handleErrors(graphQLErrors);
-      },
-    },
-    config: CONFIG,
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { isUpdate, identityName } = this;
-    let title = this.$t("Create a new profile") as string;
-    if (isUpdate) {
-      title = this.$t("Edit profile {profile}", {
-        profile: identityName,
-      }) as string;
+const { t } = useI18n({ useScope: "global" });
+const router = useRouter();
+
+const props = defineProps<{ isUpdate: boolean; identityName?: string }>();
+
+const { currentActor } = useCurrentActorClient();
+
+const { result: personResult, onError: onPersonError } = useQuery<{
+  fetchPerson: IPerson;
+}>(
+  FETCH_PERSON,
+  () => ({
+    username: props.identityName,
+  }),
+  () => ({
+    enabled: props.identityName !== undefined,
+  })
+);
+
+onPersonError((err) => handleErrors(err as unknown as AbsintheGraphQLErrors));
+
+const person = computed(() => personResult.value?.fetchPerson);
+
+const baseIdentity: IPerson = {
+  id: undefined,
+  avatar: null,
+  name: "",
+  preferredUsername: "",
+  summary: "",
+  feedTokens: [],
+  url: "",
+  domain: null,
+  type: ActorType.PERSON,
+  suspended: false,
+};
+
+const identity = ref(baseIdentity);
+
+watch(person, () => {
+  console.debug("person changed", person.value);
+  if (person.value) {
+    identity.value = person.value;
+  }
+});
+
+const avatarMaxSize = useAvatarMaxSize();
+
+// error({ graphQLErrors }) {
+//   this.handleErrors(graphQLErrors);
+// },
+// metaInfo() {
+//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//   // @ts-ignore
+//   const { isUpdate, identityName } = this;
+//   let title = t("Create a new profile") as string;
+//   if (isUpdate) {
+//     title = t("Edit profile {profile}", {
+//       profile: identityName,
+//     }) as string;
+//   }
+//   return {
+//     title,
+//   };
+// },
+
+const errors = ref<string[]>([]);
+const avatarFile = ref<File | null>(null);
+const showCopiedTooltip = reactive({ ics: false, atom: false });
+
+const isUpdate = computed(() => props.isUpdate);
+const identityName = computed(() => props.identityName);
+
+const message = computed((): string | null => {
+  if (props.isUpdate) return null;
+  return t(
+    "Only alphanumeric lowercased characters and underscores are supported."
+  );
+});
+
+watch(isUpdate, () => {
+  resetFields();
+});
+
+watch(identityName, async () => {
+  // Only used when we update the identity
+  if (!isUpdate.value) {
+    identity.value = baseIdentity;
+    return;
+  }
+
+  await redirectIfNoIdentitySelected(identityName.value);
+
+  if (!identityName.value) {
+    router.push({ name: "CreateIdentity" });
+  }
+
+  if (identityName.value && identity.value) {
+    avatarFile.value = null;
+  }
+});
+
+const submit = (): Promise<void> => {
+  if (props.isUpdate) return updateIdentity();
+
+  return createIdentity();
+};
+
+const {
+  mutate: deletePersonMutation,
+  onDone: deletePersonDone,
+  onError: deletePersonError,
+} = useMutation(DELETE_PERSON, () => ({
+  update: (store: ApolloCache<InMemoryCache>) => {
+    const data = store.readQuery<{ identities: IPerson[] }>({
+      query: IDENTITIES,
+    });
+
+    if (data) {
+      store.writeQuery({
+        query: IDENTITIES,
+        data: {
+          identities: data.identities.filter((i) => i.id !== identity.value.id),
+        },
+      });
     }
-    return {
-      title,
-    };
   },
-})
-export default class EditIdentity extends mixins(identityEditionMixin) {
-  @Prop({ type: Boolean }) isUpdate!: boolean;
+}));
 
-  @Prop({ type: String }) identityName!: string;
+const notifier = inject<Notifier>("notifier");
 
-  config!: IConfig;
+const { resolveClient } = useApolloClient();
 
-  errors: string[] = [];
-
-  avatarFile: File | null = null;
-
-  private currentActor: IPerson | null = null;
-
-  RouteName = RouteName;
-
-  showCopiedTooltip = { ics: false, atom: false };
-
-  get message(): string | null {
-    if (this.isUpdate) return null;
-    return this.$t(
-      "Only alphanumeric lowercased characters and underscores are supported."
-    ) as string;
-  }
-
-  @Watch("isUpdate")
-  async isUpdateChanged(): Promise<void> {
-    this.resetFields();
-  }
-
-  @Watch("identityName", { immediate: true })
-  async onIdentityParamChanged(val: string): Promise<void> {
-    // Only used when we update the identity
-    if (!this.isUpdate) return;
-
-    await this.redirectIfNoIdentitySelected(val);
-
-    if (!this.identityName) {
-      this.$router.push({ name: "CreateIdentity" });
-    }
-
-    if (this.identityName && this.identity) {
-      this.avatarFile = null;
-    }
-  }
-
-  submit(): Promise<void> {
-    if (this.isUpdate) return this.updateIdentity();
-
-    return this.createIdentity();
-  }
-
+deletePersonDone(async () => {
+  notifier?.success(
+    t("Identity {displayName} deleted", {
+      displayName: displayName(identity.value),
+    })
+  );
   /**
-   * Delete an identity
+   * If we just deleted the current identity,
+   * we need to change it to the next one
    */
-  async deleteIdentity(): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: DELETE_PERSON,
-        variables: {
-          id: this.identity.id,
-        },
-        update: (store: ApolloCache<InMemoryCache>) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({
-            query: IDENTITIES,
-          });
-
-          if (data) {
-            store.writeQuery({
-              query: IDENTITIES,
-              data: {
-                identities: data.identities.filter(
-                  (i) => i.id !== this.identity.id
-                ),
-              },
-            });
-          }
-        },
-      });
-
-      this.$notifier.success(
-        this.$t("Identity {displayName} deleted", {
-          displayName: this.identity.displayName(),
-        }) as string
-      );
-      /**
-       * If we just deleted the current identity,
-       * we need to change it to the next one
-       */
-      const data = this.$apollo.provider.defaultClient.readQuery<{
-        identities: IPerson[];
-      }>({ query: IDENTITIES });
-      if (data) {
-        await this.maybeUpdateCurrentActorCache(data.identities[0]);
-      }
-
-      await this.redirectIfNoIdentitySelected();
-    } catch (err) {
-      this.handleError(err);
-    }
+  const client = resolveClient();
+  const data = client.readQuery<{
+    identities: IPerson[];
+  }>({ query: IDENTITIES });
+  if (data) {
+    await maybeUpdateCurrentActorCache(data.identities[0]);
   }
 
-  async updateIdentity(): Promise<void> {
-    try {
-      const variables = await this.buildVariables();
+  await redirectIfNoIdentitySelected();
+});
 
-      await this.$apollo.mutate({
-        mutation: UPDATE_PERSON,
-        variables,
-        update: (
-          store: ApolloCache<InMemoryCache>,
-          { data: updateData }: FetchResult
-        ) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({
-            query: IDENTITIES,
-          });
+deletePersonError((err) => handleError(err));
 
-          if (data && updateData?.updatePerson) {
-            this.maybeUpdateCurrentActorCache(updateData?.updatePerson);
+/**
+ * Delete an identity
+ */
+const deleteIdentity = async (): Promise<void> => {
+  deletePersonMutation({
+    id: identity.value?.id,
+  });
+};
 
-            store.writeFragment({
-              fragment: PERSON_FRAGMENT,
-              id: `Person:${updateData?.updatePerson.id}`,
-              data: {
-                ...updateData?.updatePerson,
-                type: ActorType.PERSON,
-              },
-            });
-          }
-        },
-      });
-
-      this.$notifier.success(
-        this.$t("Identity {displayName} updated", {
-          displayName: this.identity.displayName(),
-        }) as string
-      );
-    } catch (err) {
-      this.handleError(err);
-    }
-  }
-
-  async createIdentity(): Promise<void> {
-    try {
-      const variables = await this.buildVariables();
-
-      await this.$apollo.mutate({
-        mutation: CREATE_PERSON,
-        variables,
-        update: (
-          store: ApolloCache<InMemoryCache>,
-          { data: updateData }: FetchResult
-        ) => {
-          const data = store.readQuery<{ identities: IPerson[] }>({
-            query: IDENTITIES,
-          });
-
-          if (data && updateData?.createPerson) {
-            store.writeQuery({
-              query: IDENTITIES,
-              data: {
-                identities: [
-                  ...data.identities,
-                  { ...updateData?.createPerson, type: ActorType.PERSON },
-                ],
-              },
-            });
-          }
-        },
-      });
-
-      this.$notifier.success(
-        this.$t("Identity {displayName} created", {
-          displayName: this.identity.displayName(),
-        }) as string
-      );
-
-      await this.$router.push({
-        name: RouteName.UPDATE_IDENTITY,
-        params: { identityName: this.identity.preferredUsername },
-      });
-    } catch (err) {
-      this.handleError(err);
-    }
-  }
-
-  handleErrors(errors: any[]): void {
-    if (errors.some((error) => error.status_code === 401)) {
-      this.$router.push({ name: RouteName.LOGIN });
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  get getInstanceHost(): string {
-    return MOBILIZON_INSTANCE_HOST;
-  }
-
-  tokenToURL(token: string, format: string): string {
-    return `${window.location.origin}/events/going/${token}/${format}`;
-  }
-
-  copyURL(e: Event, url: string, format: "ics" | "atom"): void {
-    if (navigator.clipboard) {
-      e.preventDefault();
-      navigator.clipboard.writeText(url);
-      this.showCopiedTooltip[format] = true;
-      setTimeout(() => {
-        this.showCopiedTooltip[format] = false;
-      }, 2000);
-    }
-  }
-
-  get avatarMaxSize(): number | undefined {
-    return this?.config?.uploadLimits?.avatar;
-  }
-
-  async generateFeedTokens(): Promise<void> {
-    const newToken = await this.createNewFeedToken();
-    this.identity.feedTokens = [...this.identity.feedTokens, newToken];
-  }
-
-  async regenerateFeedTokens(): Promise<void> {
-    if (this.identity?.feedTokens.length < 1) return;
-    await this.deleteFeedToken(this.identity.feedTokens[0].token);
-    const newToken = await this.createNewFeedToken();
-    const feedTokens = this.identity.feedTokens.slice(0, -1);
-    this.identity.feedTokens = [...feedTokens, newToken];
-  }
-
-  private async deleteFeedToken(token: string): Promise<void> {
-    await this.$apollo.mutate({
-      mutation: DELETE_FEED_TOKEN,
-      variables: { token },
-    });
-  }
-
-  private async createNewFeedToken(): Promise<IFeedToken> {
-    const { data } = await this.$apollo.mutate({
-      mutation: CREATE_FEED_TOKEN_ACTOR,
-      variables: { actor_id: this.identity?.id },
+const {
+  mutate: updateIdentityMutation,
+  onDone: updateIdentityDone,
+  onError: updateIdentityError,
+} = useMutation(UPDATE_PERSON, () => ({
+  update: (
+    store: ApolloCache<InMemoryCache>,
+    { data: updateData }: FetchResult
+  ) => {
+    const data = store.readQuery<{ identities: IPerson[] }>({
+      query: IDENTITIES,
     });
 
-    return data.createFeedToken;
-  }
+    if (data && updateData?.updatePerson) {
+      maybeUpdateCurrentActorCache(updateData?.updatePerson);
 
-  openRegenerateFeedTokensConfirmation(): void {
-    this.$buefy.dialog.confirm({
-      type: "is-warning",
-      title: this.$t("Regenerate new links") as string,
-      message: this.$t(
-        "You'll need to change the URLs where there were previously entered."
-      ) as string,
-      confirmText: this.$t("Regenerate new links") as string,
-      cancelText: this.$t("Cancel") as string,
-      onConfirm: () => this.regenerateFeedTokens(),
+      store.writeFragment({
+        fragment: PERSON_FRAGMENT,
+        id: `Person:${updateData?.updatePerson.id}`,
+        data: {
+          ...updateData?.updatePerson,
+          type: ActorType.PERSON,
+        },
+      });
+    }
+  },
+}));
+
+updateIdentityDone(() => {
+  notifier?.success(
+    t("Identity {displayName} updated", {
+      displayName: displayName(identity.value),
+    }) as string
+  );
+});
+
+updateIdentityError((err) => handleError(err));
+
+const updateIdentity = async (): Promise<void> => {
+  const variables = await buildVariables();
+
+  updateIdentityMutation(variables);
+};
+
+const {
+  mutate: createIdentityMutation,
+  onDone: createIdentityDone,
+  onError: createIdentityError,
+} = useMutation(CREATE_PERSON, () => ({
+  update: (
+    store: ApolloCache<InMemoryCache>,
+    { data: updateData }: FetchResult
+  ) => {
+    const data = store.readQuery<{ identities: IPerson[] }>({
+      query: IDENTITIES,
     });
-  }
 
-  openDeleteIdentityConfirmation(): void {
-    this.$buefy.dialog.prompt({
-      type: "is-danger",
-      title: this.$t("Delete your identity") as string,
-      message: `${this.$t(
-        "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity."
-      )}
+    if (data && updateData?.createPerson) {
+      store.writeQuery({
+        query: IDENTITIES,
+        data: {
+          identities: [
+            ...data.identities,
+            { ...updateData?.createPerson, type: ActorType.PERSON },
+          ],
+        },
+      });
+    }
+  },
+}));
+
+createIdentityDone(() => {
+  notifier?.success(
+    t("Identity {displayName} created", {
+      displayName: displayName(identity.value),
+    })
+  );
+
+  router.push({
+    name: RouteName.UPDATE_IDENTITY,
+    params: { identityName: identity.value.preferredUsername },
+  });
+});
+
+createIdentityError((err) => handleError(err));
+
+const createIdentity = async (): Promise<void> => {
+  const variables = await buildVariables();
+
+  createIdentityMutation(variables);
+};
+
+const handleErrors = (absintheErrors: AbsintheGraphQLErrors): void => {
+  if (absintheErrors.some((error) => error.status_code === 401)) {
+    router.push({ name: RouteName.LOGIN });
+  }
+};
+
+// eslint-disable-next-line class-methods-use-this
+const getInstanceHost = computed((): string => {
+  return MOBILIZON_INSTANCE_HOST;
+});
+
+const tokenToURL = (token: string, format: string): string => {
+  return `${window.location.origin}/events/going/${token}/${format}`;
+};
+
+const copyURL = (e: Event, url: string, format: "ics" | "atom"): void => {
+  if (navigator.clipboard) {
+    e.preventDefault();
+    navigator.clipboard.writeText(url);
+    showCopiedTooltip[format] = true;
+    setTimeout(() => {
+      showCopiedTooltip[format] = false;
+    }, 2000);
+  }
+};
+
+const generateFeedTokens = async (): Promise<void> => {
+  await createNewFeedToken({ actorId: identity.value?.id });
+};
+
+const regenerateFeedTokens = async (): Promise<void> => {
+  if (identity.value?.feedTokens.length < 1) return;
+  await deleteFeedToken({ token: identity.value.feedTokens[0].token });
+  await createNewFeedToken(
+    { actorId: identity.value?.id },
+    {
+      update(cache, { data }) {
+        const actorId = data?.createFeedToken.actor?.id;
+        const newFeedToken = data?.createFeedToken.token;
+
+        if (!newFeedToken) return;
+
+        let cachedData = cache.readFragment<{
+          id: string | undefined;
+          feedTokens: { token: string }[];
+        }>({
+          id: `Person:${actorId}`,
+          fragment: PERSON_FRAGMENT_FEED_TOKENS,
+        });
+        // Remove the old token
+        cachedData = {
+          id: cachedData?.id,
+          feedTokens: [
+            ...(cachedData?.feedTokens ?? []).slice(0, -1),
+            { token: newFeedToken },
+          ],
+        };
+        cache.writeFragment({
+          id: `Person:${actorId}`,
+          fragment: PERSON_FRAGMENT_FEED_TOKENS,
+          data: cachedData,
+        });
+      },
+    }
+  );
+};
+
+const { mutate: deleteFeedToken } = useMutation(DELETE_FEED_TOKEN);
+
+const { mutate: createNewFeedToken } = useMutation<{
+  createFeedToken: IFeedToken;
+}>(CREATE_FEED_TOKEN_ACTOR, () => ({
+  update(cache, { data }) {
+    const actorId = data?.createFeedToken.actor?.id;
+    const newFeedToken = data?.createFeedToken.token;
+
+    if (!newFeedToken) return;
+
+    let cachedData = cache.readFragment<{
+      id: string | undefined;
+      feedTokens: { token: string }[];
+    }>({
+      id: `Person:${actorId}`,
+      fragment: PERSON_FRAGMENT_FEED_TOKENS,
+    });
+    // Add the new token to the list
+    cachedData = {
+      id: cachedData?.id,
+      feedTokens: [...(cachedData?.feedTokens ?? []), { token: newFeedToken }],
+    };
+    cache.writeFragment({
+      id: `Person:${actorId}`,
+      fragment: PERSON_FRAGMENT_FEED_TOKENS,
+      data: cachedData,
+    });
+  },
+}));
+
+const dialog = inject<Dialog>("dialog");
+
+const openRegenerateFeedTokensConfirmation = (): void => {
+  dialog?.confirm({
+    type: "is-warning",
+    title: t("Regenerate new links") as string,
+    message: t(
+      "You'll need to change the URLs where there were previously entered."
+    ) as string,
+    confirmText: t("Regenerate new links") as string,
+    cancelText: t("Cancel") as string,
+    onConfirm: () => regenerateFeedTokens(),
+  });
+};
+
+const openDeleteIdentityConfirmation = (): void => {
+  dialog?.prompt({
+    type: "danger",
+    title: t("Delete your identity") as string,
+    message: `${t(
+      "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity."
+    )}
             <br /><br />
-            ${this.$t(
+            ${t(
               "If this identity is the only administrator of some groups, you need to delete them before being able to delete this identity."
             )}
-            ${this.$t(
+            ${t(
               "Otherwise this identity will just be removed from the group administrators."
             )}
             <br /><br />
-            ${this.$t(
+            ${t(
               'To confirm, type your identity username "{preferredUsername}"',
               {
-                preferredUsername: this.identity.preferredUsername,
+                preferredUsername: identity.value.preferredUsername,
               }
             )}`,
-      confirmText: this.$t("Delete {preferredUsername}", {
-        preferredUsername: this.identity.preferredUsername,
-      }) as string,
-      inputAttrs: {
-        placeholder: this.identity.preferredUsername,
-        pattern: this.identity.preferredUsername,
-      },
+    confirmText: t("Delete {preferredUsername}", {
+      preferredUsername: identity.value.preferredUsername,
+    }),
+    inputAttrs: {
+      placeholder: identity.value.preferredUsername,
+      pattern: identity.value.preferredUsername,
+    },
+    onConfirm: () => deleteIdentity(),
+  });
+};
 
-      onConfirm: () => this.deleteIdentity(),
-    });
+const handleError = (err: any) => {
+  console.error(err);
+
+  if (err?.networkError?.name === "ServerParseError") {
+    const error = err?.networkError as ServerParseError;
+
+    if (error?.response?.status === 413) {
+      const errorMessage = props.isUpdate
+        ? t(
+            "Unable to update the profile. The avatar picture may be too heavy."
+          )
+        : t(
+            "Unable to create the profile. The avatar picture may be too heavy."
+          );
+      errors.value.push(errorMessage as string);
+    }
   }
 
-  private handleError(err: any) {
-    console.error(err);
-
-    if (err?.networkError?.name === "ServerParseError") {
-      const error = err?.networkError as ServerParseError;
-
-      if (error?.response?.status === 413) {
-        const errorMessage = this.isUpdate
-          ? this.$t(
-              "Unable to update the profile. The avatar picture may be too heavy."
-            )
-          : this.$t(
-              "Unable to create the profile. The avatar picture may be too heavy."
-            );
-        this.errors.push(errorMessage as string);
+  if (err.graphQLErrors !== undefined) {
+    err.graphQLErrors.forEach(
+      ({ message: errorMessage }: { message: string }) => {
+        notifier?.error(errorMessage);
       }
-    }
-
-    if (err.graphQLErrors !== undefined) {
-      err.graphQLErrors.forEach(({ message }: { message: string }) => {
-        this.$notifier.error(message);
-      });
-    }
+    );
   }
+};
 
-  private async buildVariables(): Promise<Record<string, unknown>> {
-    /**
-     * We set the avatar only if user has selected one
-     */
-    let avatarObj: Record<string, unknown> = { avatar: null };
-    if (this.avatarFile) {
-      avatarObj = buildFileVariable(
-        this.avatarFile,
-        "avatar",
-        `${this.identity.preferredUsername}'s avatar`
-      );
-    }
-    return pick({ ...this.identity, ...avatarObj }, [
-      "id",
-      "preferredUsername",
-      "name",
-      "summary",
+const buildVariables = async (): Promise<Record<string, unknown>> => {
+  /**
+   * We set the avatar only if user has selected one
+   */
+  let avatarObj: Record<string, unknown> = { avatar: null };
+  if (avatarFile.value) {
+    avatarObj = buildFileVariable(
+      avatarFile.value,
       "avatar",
-    ]);
+      `${identity.value.preferredUsername}'s avatar`
+    );
   }
+  return pick({ ...identity.value, ...avatarObj }, [
+    "id",
+    "preferredUsername",
+    "name",
+    "summary",
+    "avatar",
+  ]);
+};
 
-  private async redirectIfNoIdentitySelected(identityParam?: string) {
-    if (identityParam) return;
+const redirectIfNoIdentitySelected = async (identityParam?: string) => {
+  if (identityParam) return;
 
-    await this.loadLoggedPersonIfNeeded();
+  // await loadLoggedPersonIfNeeded();
 
-    if (this.currentActor) {
-      await this.$router.push({
-        params: { identityName: this.currentActor.preferredUsername },
-      });
-    }
-  }
-
-  private async maybeUpdateCurrentActorCache(identity: IPerson) {
-    if (this.currentActor) {
-      if (
-        this.currentActor.preferredUsername === this.identity.preferredUsername
-      ) {
-        await changeIdentity(this.$apollo.provider.defaultClient, identity);
-      }
-      this.currentActor = identity;
-    }
-  }
-
-  private async loadLoggedPersonIfNeeded(bypassCache = false) {
-    if (this.currentActor) return;
-
-    const result = await this.$apollo.query({
-      query: CURRENT_ACTOR_CLIENT,
-      fetchPolicy: bypassCache ? "network-only" : undefined,
+  if (currentActor.value) {
+    await router.push({
+      params: { identityName: currentActor.value?.preferredUsername },
     });
-
-    this.currentActor = result.data.currentActor;
   }
+};
 
-  private resetFields() {
-    this.identity = new Person();
-    this.oldDisplayName = null;
-    this.avatarFile = null;
+const maybeUpdateCurrentActorCache = async (newIdentity: IPerson) => {
+  if (currentActor.value) {
+    if (
+      currentActor.value.preferredUsername === identity.value.preferredUsername
+    ) {
+      await changeIdentity(newIdentity);
+    }
+    // currentActor.value = newIdentity;
   }
+};
 
-  get breadcrumbsLinks(): (Location & { text: string })[] {
+// const loadLoggedPersonIfNeeded = async (bypassCache = false) => {
+//   if (currentActor.value) return;
+
+//   const result = await this.$apollo.query({
+//     query: CURRENT_ACTOR_CLIENT,
+//     fetchPolicy: bypassCache ? "network-only" : undefined,
+//   });
+
+//   currentActor.value = result.data.currentActor;
+// };
+
+const resetFields = () => {
+  // identity.value = new Person();
+  // oldDisplayName.value = null;
+  avatarFile.value = null;
+};
+
+const breadcrumbsLinks = computed(
+  (): { name: string; params: Record<string, any>; text: string }[] => {
     const links = [
       {
         name: RouteName.IDENTITIES,
         params: {},
-        text: this.$t("Profiles") as string,
+        text: t("Profiles") as string,
       },
     ];
-    if (this.isUpdate && this.identity) {
+    if (props.isUpdate && identity.value) {
       links.push({
         name: RouteName.UPDATE_IDENTITY,
-        params: { identityName: this.identity.preferredUsername },
-        text: this.identity.name,
+        params: { identityName: identity.value.preferredUsername },
+        text: identity.value.name,
       });
     } else {
       links.push({
         name: RouteName.CREATE_IDENTITY,
         params: {},
-        text: this.$t("New profile") as string,
+        text: t("New profile") as string,
       });
     }
     return links;
   }
-}
+);
+
+const autoUpdateUsername = () => {
+  identity.value.preferredUsername = convertToUsername(identity.value.name);
+};
 </script>

@@ -230,3 +230,184 @@ export const EVENT_PARTICIPANTS = gql`
     }
   }
 `;
+
+export const ANONYMOUS_PARTICIPATION_CONFIG = gql`
+  query AnonymousParticipationConfig {
+    config {
+      anonymous {
+        participation {
+          allowed
+          validation {
+            email {
+              enabled
+              confirmationRequired
+            }
+            captcha {
+              enabled
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const ANONYMOUS_REPORTS_CONFIG = gql`
+  query AnonymousParticipationConfig {
+    config {
+      anonymous {
+        reports {
+          allowed
+        }
+      }
+    }
+  }
+`;
+
+export const INSTANCE_NAME = gql`
+  query InstanceName {
+    config {
+      name
+    }
+  }
+`;
+
+export const ANONYMOUS_ACTOR_ID = gql`
+  query AnonymousActorId {
+    config {
+      anonymous {
+        actorId
+      }
+    }
+  }
+`;
+
+export const UPLOAD_LIMITS = gql`
+  query UploadLimits {
+    config {
+      uploadLimits {
+        default
+        avatar
+        banner
+      }
+    }
+  }
+`;
+
+export const EVENT_CATEGORIES = gql`
+  query EventCategories {
+    config {
+      eventCategories {
+        id
+        label
+      }
+    }
+  }
+`;
+
+export const RESTRICTIONS = gql`
+  query OnlyGroupsCanCreateEvents {
+    config {
+      restrictions {
+        onlyGroupsCanCreateEvents
+        onlyAdminCanCreateGroups
+      }
+    }
+  }
+`;
+
+export const GEOCODING_AUTOCOMPLETE = gql`
+  query GeoCodingAutocomplete {
+    config {
+      geocoding {
+        autocomplete
+      }
+    }
+  }
+`;
+
+export const MAPS_TILES = gql`
+  query MapsTiles {
+    config {
+      maps {
+        tiles {
+          endpoint
+          attribution
+        }
+      }
+    }
+  }
+`;
+
+export const FEATURES = gql`
+  query Features {
+    config {
+      features {
+        groups
+        eventCreation
+      }
+    }
+  }
+`;
+
+export const RESOURCE_PROVIDERS = gql`
+  query ResourceProviders {
+    config {
+      resourceProviders {
+        type
+        endpoint
+        software
+      }
+    }
+  }
+`;
+
+export const LOGIN_CONFIG = gql`
+  query LoginConfig {
+    config {
+      auth {
+        oauthProviders {
+          id
+          label
+        }
+      }
+      registrationsOpen
+    }
+  }
+`;
+
+export const LOCATION = gql`
+  query Location {
+    config {
+      location {
+        latitude
+        longitude
+        # accuracyRadius
+      }
+    }
+  }
+`;
+
+export const DEMO_MODE = gql`
+  query DemoMode {
+    config {
+      demoMode
+    }
+  }
+`;
+
+export const ANALYTICS = gql`
+  query Analytics {
+    config {
+      analytics {
+        id
+        enabled
+        configuration {
+          key
+          value
+          type
+        }
+      }
+    }
+  }
+`;
