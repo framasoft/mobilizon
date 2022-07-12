@@ -250,9 +250,9 @@ import RouteName from "../../router/name";
 import { logout, SELECTED_PROVIDERS } from "../../utils/auth";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 
-const { loggedUser } = useLoggedUser();
-
 const { t } = useI18n({ useScope: "global" });
+
+const { loggedUser } = useLoggedUser();
 
 useHead({
   title: computed(() => t("General settings")),

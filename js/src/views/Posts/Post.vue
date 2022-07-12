@@ -416,7 +416,6 @@ onDeletePostDone(({ data }) => {
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
 article.post {
-  // background: $white !important;
   header {
     display: flex;
     flex-direction: column;
@@ -487,7 +486,6 @@ article.post {
         height: 0.2rem;
         content: " ";
         display: block;
-        background-color: $purple-1;
       }
 
       .buttons {

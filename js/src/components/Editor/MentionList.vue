@@ -90,11 +90,5 @@ const selectItem = (index: number): void => {
   background: transparent;
   border: none;
   padding: 0.5rem 0.75rem;
-
-  &.is-selected,
-  &:hover {
-    color: $background-color;
-    background: rgba($background-color, 0.1);
-  }
 }
 </style>

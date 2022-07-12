@@ -1,6 +1,7 @@
 <template>
   <o-button
     outlined
+    variant="primary"
     :icon-left="oauthProvider.id"
     v-if="isProviderSelected && !oauthProvider.label"
     :href="`/auth/${oauthProvider.id}`"
@@ -9,6 +10,7 @@
   >
   <o-button
     outlined
+    variant="primary"
     :href="`/auth/${oauthProvider.id}`"
     v-else-if="isProviderSelected"
     icon-left="lock"

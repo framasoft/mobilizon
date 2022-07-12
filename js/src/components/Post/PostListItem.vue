@@ -102,7 +102,6 @@ const isBeforeLastWeek = computed((): boolean => {
 
 .title-info-wrapper {
   .post-minimalist-title {
-    // color: #3c376e;
     font-size: 18px;
     line-height: 24px;
     font-weight: 700;

@@ -2,23 +2,23 @@
   <div>
     <breadcrumbs-nav
       :links="[
-        { name: RouteName.ADMIN, text: $t('Admin') },
-        { text: $t('Instance settings') },
+        { name: RouteName.ADMIN, text: t('Admin') },
+        { text: t('Instance settings') },
       ]"
     />
 
     <section v-if="settingsToWrite">
       <form @submit.prevent="updateSettings">
-        <o-field :label="$t('Instance Name')" label-for="instance-name">
+        <o-field :label="t('Instance Name')" label-for="instance-name">
           <o-input v-model="settingsToWrite.instanceName" id="instance-name" />
         </o-field>
-        <div class="field">
-          <label class="label has-help" for="instance-description">{{
-            $t("Instance Short Description")
+        <div class="field flex flex-col">
+          <label class="" for="instance-description">{{
+            t("Instance Short Description")
           }}</label>
           <small>
             {{
-              $t(
+              t(
                 "Displayed on homepage and meta tags. Describe what Mobilizon is and what makes this instance special in a single paragraph."
               )
             }}
@@ -30,73 +30,71 @@
             id="instance-description"
           />
         </div>
-        <div class="field">
-          <label class="label has-help" for="instance-slogan">{{
-            $t("Instance Slogan")
+        <div class="field flex flex-col">
+          <label class="" for="instance-slogan">{{
+            t("Instance Slogan")
           }}</label>
           <small>
             {{
-              $t(
+              t(
                 'A short tagline for your instance homepage. Defaults to "Gather ⋅ Organize ⋅ Mobilize"'
               )
             }}
           </small>
           <o-input
             v-model="settingsToWrite.instanceSlogan"
-            :placeholder="$t('Gather ⋅ Organize ⋅ Mobilize')"
+            :placeholder="t('Gather ⋅ Organize ⋅ Mobilize')"
             id="instance-slogan"
           />
         </div>
-        <div class="field">
-          <label class="label has-help" for="instance-contact">{{
-            $t("Contact")
-          }}</label>
+        <div class="field flex flex-col">
+          <label class="" for="instance-contact">{{ t("Contact") }}</label>
           <small>
-            {{ $t("Can be an email or a link, or just plain text.") }}
+            {{ t("Can be an email or a link, or just plain text.") }}
           </small>
           <o-input v-model="settingsToWrite.contact" id="instance-contact" />
         </div>
-        <o-field :label="$t('Allow registrations')">
+        <o-field :label="t('Allow registrations')">
           <o-switch v-model="settingsToWrite.registrationsOpen">
             <p
               class="prose dark:prose-invert"
               v-if="settingsToWrite.registrationsOpen"
             >
-              {{ $t("Registration is allowed, anyone can register.") }}
+              {{ t("Registration is allowed, anyone can register.") }}
             </p>
             <p class="prose dark:prose-invert" v-else>
-              {{ $t("Registration is closed.") }}
+              {{ t("Registration is closed.") }}
             </p>
           </o-switch>
         </o-field>
-        <div class="field">
-          <label class="label has-help" for="instance-languages">{{
-            $t("Instance languages")
+        <div class="field flex flex-col">
+          <label class="" for="instance-languages">{{
+            t("Instance languages")
           }}</label>
           <small>
-            {{ $t("Main languages you/your moderators speak") }}
+            {{ t("Main languages you/your moderators speak") }}
           </small>
-          <o-taginput
+          <o-inputitems
             v-model="instanceLanguages"
             :data="filteredLanguages"
             autocomplete
             :open-on-focus="true"
             field="name"
             icon="label"
-            :placeholder="$t('Select languages')"
+            :placeholder="t('Select languages')"
             @typing="getFilteredLanguages"
             id="instance-languages"
           >
-            <template #empty>{{ $t("No languages found") }}</template>
-          </o-taginput>
+            <template #empty>{{ t("No languages found") }}</template>
+          </o-inputitems>
         </div>
-        <div class="field">
-          <label class="label has-help" for="instance-long-description">{{
-            $t("Instance Long Description")
+        <div class="field flex flex-col">
+          <label class="" for="instance-long-description">{{
+            t("Instance Long Description")
           }}</label>
           <small>
             {{
-              $t(
+              t(
                 "A place to explain who you are and the things that set your instance apart. You can use HTML tags."
               )
             }}
@@ -108,13 +106,11 @@
             id="instance-long-description"
           />
         </div>
-        <div class="field">
-          <label class="label has-help" for="instance-rules">{{
-            $t("Instance Rules")
-          }}</label>
+        <div class="field flex flex-col">
+          <label class="" for="instance-rules">{{ t("Instance Rules") }}</label>
           <small>
             {{
-              $t(
+              t(
                 "A place for your code of conduct, rules or guidelines. You can use HTML tags."
               )
             }}
@@ -125,19 +121,19 @@
             id="instance-rules"
           />
         </div>
-        <o-field :label="$t('Instance Terms Source')">
-          <div class="columns">
-            <div class="column is-one-third-desktop">
+        <o-field :label="t('Instance Terms Source')">
+          <div class="">
+            <div class="">
               <fieldset>
                 <legend>
-                  {{ $t("Choose the source of the instance's Terms") }}
+                  {{ t("Choose the source of the instance's Terms") }}
                 </legend>
                 <o-field>
                   <o-radio
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.DEFAULT"
-                    >{{ $t("Default Mobilizon terms") }}</o-radio
+                    >{{ t("Default Mobilizon terms") }}</o-radio
                   >
                 </o-field>
                 <o-field>
@@ -145,7 +141,7 @@
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.URL"
-                    >{{ $t("Custom URL") }}</o-radio
+                    >{{ t("Custom URL") }}</o-radio
                   >
                 </o-field>
                 <o-field>
@@ -153,20 +149,20 @@
                     v-model="settingsToWrite.instanceTermsType"
                     name="instanceTermsType"
                     :native-value="InstanceTermsType.CUSTOM"
-                    >{{ $t("Custom text") }}</o-radio
+                    >{{ t("Custom text") }}</o-radio
                   >
                 </o-field>
               </fieldset>
             </div>
-            <div class="column">
-              <div
-                class="notification"
+            <div class="">
+              <o-notification
+                class="bg-slate-700"
                 v-if="
                   settingsToWrite.instanceTermsType ===
                   InstanceTermsType.DEFAULT
                 "
               >
-                <b>{{ $t("Default") }}</b>
+                <b>{{ t("Default") }}</b>
                 <i18n-t
                   tag="p"
                   class="prose dark:prose-invert"
@@ -177,25 +173,25 @@
                       href="https://demo.mobilizon.org/terms"
                       target="_blank"
                       rel="noopener"
-                      >{{ $t("default Mobilizon terms") }}</a
+                      >{{ t("default Mobilizon terms") }}</a
                     >
                   </template>
                 </i18n-t>
                 <b>{{
-                  $t(
+                  t(
                     "NOTE! The default terms have not been checked over by a lawyer and thus are unlikely to provide full legal protection for all situations for an instance admin using them. They are also not specific to all countries and jurisdictions. If you are unsure, please check with a lawyer."
                   )
                 }}</b>
-              </div>
+              </o-notification>
               <div
                 class="notification"
                 v-if="
                   settingsToWrite.instanceTermsType === InstanceTermsType.URL
                 "
               >
-                <b>{{ $t("URL") }}</b>
+                <b>{{ t("URL") }}</b>
                 <p class="prose dark:prose-invert">
-                  {{ $t("Set an URL to a page with your own terms.") }}
+                  {{ t("Set an URL to a page with your own terms.") }}
                 </p>
               </div>
               <div
@@ -204,7 +200,7 @@
                   settingsToWrite.instanceTermsType === InstanceTermsType.CUSTOM
                 "
               >
-                <b>{{ $t("Custom") }}</b>
+                <b>{{ t("Custom") }}</b>
                 <i18n-t
                   tag="p"
                   class="prose dark:prose-invert"
@@ -216,7 +212,7 @@
                       target="_blank"
                       rel="noopener"
                     >
-                      {{ $t("default Mobilizon terms") }}</a
+                      {{ t("default Mobilizon terms") }}</a
                     >
                   </template>
                 </i18n-t>
@@ -225,7 +221,7 @@
           </div>
         </o-field>
         <o-field
-          :label="$t('Instance Terms URL')"
+          :label="t('Instance Terms URL')"
           label-for="instanceTermsUrl"
           v-if="settingsToWrite.instanceTermsType === InstanceTermsType.URL"
         >
@@ -236,7 +232,7 @@
           />
         </o-field>
         <o-field
-          :label="$t('Instance Terms')"
+          :label="t('Instance Terms')"
           label-for="instanceTerms"
           v-if="settingsToWrite.instanceTermsType === InstanceTermsType.CUSTOM"
         >
@@ -246,19 +242,19 @@
             id="instanceTerms"
           />
         </o-field>
-        <o-field :label="$t('Instance Privacy Policy Source')">
-          <div class="columns">
-            <div class="column is-one-third-desktop">
+        <o-field :label="t('Instance Privacy Policy Source')">
+          <div class="">
+            <div class="">
               <fieldset>
                 <legend>
-                  {{ $t("Choose the source of the instance's Privacy Policy") }}
+                  {{ t("Choose the source of the instance's Privacy Policy") }}
                 </legend>
                 <o-field>
                   <o-radio
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.DEFAULT"
-                    >{{ $t("Default Mobilizon privacy policy") }}</o-radio
+                    >{{ t("Default Mobilizon privacy policy") }}</o-radio
                   >
                 </o-field>
                 <o-field>
@@ -266,7 +262,7 @@
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.URL"
-                    >{{ $t("Custom URL") }}</o-radio
+                    >{{ t("Custom URL") }}</o-radio
                   >
                 </o-field>
                 <o-field>
@@ -274,12 +270,12 @@
                     v-model="settingsToWrite.instancePrivacyPolicyType"
                     name="instancePrivacyType"
                     :native-value="InstancePrivacyType.CUSTOM"
-                    >{{ $t("Custom text") }}</o-radio
+                    >{{ t("Custom text") }}</o-radio
                   >
                 </o-field>
               </fieldset>
             </div>
-            <div class="column">
+            <div class="">
               <div
                 class="notification"
                 v-if="
@@ -287,7 +283,7 @@
                   InstancePrivacyType.DEFAULT
                 "
               >
-                <b>{{ $t("Default") }}</b>
+                <b>{{ t("Default") }}</b>
                 <i18n-t
                   tag="p"
                   class="prose dark:prose-invert"
@@ -298,7 +294,7 @@
                       href="https://demo.mobilizon.org/privacy"
                       target="_blank"
                       rel="noopener"
-                      >{{ $t("default Mobilizon privacy policy") }}</a
+                      >{{ t("default Mobilizon privacy policy") }}</a
                     >
                   </template>
                 </i18n-t>
@@ -310,9 +306,9 @@
                   InstancePrivacyType.URL
                 "
               >
-                <b>{{ $t("URL") }}</b>
+                <b>{{ t("URL") }}</b>
                 <p class="prose dark:prose-invert">
-                  {{ $t("Set an URL to a page with your own privacy policy.") }}
+                  {{ t("Set an URL to a page with your own privacy policy.") }}
                 </p>
               </div>
               <div
@@ -322,11 +318,11 @@
                   InstancePrivacyType.CUSTOM
                 "
               >
-                <b>{{ $t("Custom") }}</b>
+                <b>{{ t("Custom") }}</b>
                 <i18n-t
                   tag="p"
                   class="prose dark:prose-invert"
-                  path="Enter your own privacy policy. HTML tags allowed. The {mobilizon_privacy_policy} is provided as template."
+                  keypath="Enter your own privacy policy. HTML tags allowed. The {mobilizon_privacy_policy} is provided as template."
                 >
                   <template #mobilizon_privacy_policy>
                     <a
@@ -334,7 +330,7 @@
                       target="_blank"
                       rel="noopener"
                     >
-                      {{ $t("default Mobilizon privacy policy") }}</a
+                      {{ t("default Mobilizon privacy policy") }}</a
                     >
                   </template>
                 </i18n-t>
@@ -343,7 +339,7 @@
           </div>
         </o-field>
         <o-field
-          :label="$t('Instance Privacy Policy URL')"
+          :label="t('Instance Privacy Policy URL')"
           label-for="instancePrivacyPolicyUrl"
           v-if="
             settingsToWrite.instancePrivacyPolicyType ===
@@ -357,7 +353,7 @@
           />
         </o-field>
         <o-field
-          :label="$t('Instance Privacy Policy')"
+          :label="t('Instance Privacy Policy')"
           label-for="instancePrivacyPolicy"
           v-if="
             settingsToWrite.instancePrivacyPolicyType ===
@@ -371,7 +367,7 @@
           />
         </o-field>
         <o-button native-type="submit" variant="primary">{{
-          $t("Save")
+          t("Save")
         }}</o-button>
       </form>
     </section>
@@ -390,29 +386,30 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { ref, computed, watch, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
-import { Notifier } from "@/plugins/notifier";
+import type { Notifier } from "@/plugins/notifier";
+
+const defaultAdminSettings: IAdminSettings = {
+  instanceName: "",
+  instanceDescription: "",
+  instanceSlogan: "",
+  instanceLongDescription: "",
+  contact: "",
+  instanceTerms: "",
+  instanceTermsType: InstanceTermsType.DEFAULT,
+  instanceTermsUrl: null,
+  instancePrivacyPolicy: "",
+  instancePrivacyPolicyType: InstancePrivacyType.DEFAULT,
+  instancePrivacyPolicyUrl: null,
+  instanceRules: "",
+  registrationsOpen: false,
+  instanceLanguages: [],
+};
 
 const { result: adminSettingsResult } = useQuery<{
   adminSettings: IAdminSettings;
 }>(ADMIN_SETTINGS);
 const adminSettings = computed(
-  () =>
-    adminSettingsResult.value?.adminSettings ?? {
-      instanceName: "",
-      instanceDescription: "",
-      instanceSlogan: "",
-      instanceLongDescription: "",
-      contact: "",
-      instanceTerms: "",
-      instanceTermsType: InstanceTermsType.DEFAULT,
-      instanceTermsUrl: null,
-      instancePrivacyPolicy: "",
-      instancePrivacyPolicyType: InstanceTermsType.DEFAULT,
-      instancePrivacyPolicyUrl: null,
-      instanceRules: "",
-      registrationsOpen: false,
-      instanceLanguages: [],
-    }
+  () => adminSettingsResult.value?.adminSettings ?? defaultAdminSettings
 );
 
 const { result: languageResult } = useQuery<{ languages: ILanguage[] }>(
@@ -425,10 +422,10 @@ useHead({
   title: computed(() => t("Settings")),
 });
 
-const settingsToWrite = ref<IAdminSettings>({ ...adminSettings });
+const settingsToWrite = ref<IAdminSettings>(defaultAdminSettings);
 
 watch(adminSettings, () => {
-  // settingsToWrite.value = { ...adminSettings.value };
+  settingsToWrite.value = { ...adminSettings.value };
 });
 
 const filteredLanguages = ref<string[]>([]);

@@ -416,8 +416,6 @@ const firstDayOfWeek = computed((): number => {
 // @import "node_modules/bulma/sass/utilities/mixins.sass";
 
 main > .container {
-  // background: $white;
-
   & > h1 {
     margin: 10px auto 5px;
   }
@@ -436,7 +434,6 @@ section {
     font-size: 1.3rem;
 
     &::after {
-      background: $orange-3;
       position: absolute;
       left: 0;
       right: 0;

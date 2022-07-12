@@ -93,7 +93,8 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/dashboard",
         name: SettingsRouteName.ADMIN_DASHBOARD,
-        component: (): Promise<any> => import("@/views/Admin/Dashboard.vue"),
+        component: (): Promise<any> =>
+          import("@/views/Admin/DashboardView.vue"),
         meta: {
           requiredAuth: true,
           announcer: {

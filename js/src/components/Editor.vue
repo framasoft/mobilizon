@@ -420,9 +420,6 @@ onBeforeUnmount(() => {
 @use "@/styles/_mixins" as *;
 @import "./Editor/style.scss";
 
-$color-black: #000;
-$color-white: #eee;
-
 .menubar {
   margin-bottom: 1rem;
   transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
@@ -432,19 +429,10 @@ $color-white: #eee;
     display: inline-flex;
     background: transparent;
     border: 0;
-    color: $color-black;
     padding: 0.2rem 0.5rem;
     // @include margin-right(0.2rem);
     border-radius: 3px;
     cursor: pointer;
-
-    &:hover {
-      background-color: rgba($color-black, 0.05);
-    }
-
-    &.is-active {
-      background-color: rgba($color-black, 0.1);
-    }
   }
 }
 
@@ -487,7 +475,6 @@ $color-white: #eee;
       padding: 12px 6px;
 
       &:focus {
-        border-color: $background-color;
         outline: none;
       }
     }
@@ -520,8 +507,6 @@ $color-white: #eee;
     }
 
     blockquote {
-      border-left: 3px solid rgba($color-black, 0.1);
-      color: rgba($color-black, 0.8);
       // @include padding-left(0.8rem);
       font-style: italic;
 
@@ -562,7 +547,6 @@ $color-white: #eee;
 
 .suggestion-list {
   padding: 0.2rem;
-  border: 2px solid rgba($color-black, 0.1);
   font-size: 0.8rem;
   font-weight: bold;
   &__no-results {
@@ -576,10 +560,6 @@ $color-white: #eee;
     &:last-child {
       margin-bottom: 0;
     }
-    &.is-selected,
-    &:hover {
-      background-color: rgba($color-white, 0.2);
-    }
     &.is-empty {
       opacity: 0.5;
     }
@@ -591,11 +571,9 @@ $color-white: #eee;
   }
 }
 .tippy-box[data-theme~="dark"] {
-  background-color: $color-black;
   padding: 0;
   font-size: 1rem;
   text-align: inherit;
-  color: $color-white;
   border-radius: 5px;
 }
 

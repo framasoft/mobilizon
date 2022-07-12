@@ -832,9 +832,7 @@ const { mutate: createNewFeedToken } = useMutation(CREATE_FEED_TOKEN, () => ({
   }
 
   a.change-timezone {
-    color: $primary;
     text-decoration: underline;
-    text-decoration-color: #fea72b;
     text-decoration-thickness: 2px;
     @include margin-left(5px);
   }

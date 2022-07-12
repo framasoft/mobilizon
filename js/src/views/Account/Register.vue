@@ -230,8 +230,4 @@ p.description {
   margin-bottom: 15px;
   margin-top: -10px;
 }
-
-section.section {
-  background: $white;
-}
 </style>

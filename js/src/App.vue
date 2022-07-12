@@ -268,10 +268,6 @@ const { isDemoMode } = useIsDemoMode();
 </script>
 
 <style lang="scss">
-@import "variables";
-
-@import "common";
-
 #mobilizon {
   min-height: 100vh;
   display: flex;

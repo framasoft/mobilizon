@@ -196,7 +196,6 @@ a.user-profile {
   text-decoration: none;
 }
 a.disabled {
-  color: $danger;
   text-decoration: line-through;
 }
 </style>

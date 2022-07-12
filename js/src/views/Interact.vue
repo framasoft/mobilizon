@@ -99,8 +99,3 @@ useHead({
   title: computed(() => t("Interact with a remote content")),
 });
 </script>
-<style lang="scss">
-main > .container {
-  background: $white;
-}
-</style>

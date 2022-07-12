@@ -618,7 +618,6 @@ article.box {
         //     line-height: 24px;
         //     margin: auto 0;
         //     font-weight: bold;
-        //     color: $title-color;
         //   }
         // }
       }
@@ -626,7 +625,6 @@ article.box {
   }
 
   // .identity-header {
-  //   background: $yellow-2;
   //   display: flex;
   //   padding: 5px;
 

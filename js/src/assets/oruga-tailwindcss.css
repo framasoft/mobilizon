@@ -7,17 +7,28 @@ body {
   outline: none !important;
   @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded h-10;
 }
+.btn:hover {
+  @apply text-slate-200;
+}
 .btn-rounded {
   @apply rounded-full;
 }
+.btn-outlined-,
 .btn-outlined-primary {
-  @apply bg-transparent text-blue-700 font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
+  @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
 }
+.btn-outlined-:hover,
 .btn-outlined-primary:hover {
   @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
 }
 .btn-disabled {
   @apply opacity-50 cursor-not-allowed;
+}
+.btn-danger {
+  @apply bg-mbz-danger;
+}
+.btn-success {
+  @apply bg-mbz-success;
 }
 
 /* Field */
@@ -100,7 +111,7 @@ body {
   @apply bg-white dark:bg-gray-700 shadow-lg rounded-sm;
 }
 .dropdown-item {
-  @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer;
+  @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer w-full;
 }
 
 .dropdown-item-active {
@@ -157,7 +168,7 @@ button.menubar__button {
 
 /* Notification */
 .notification {
-  @apply p-7;
+  @apply p-7 bg-secondary text-black rounded;
 }
 
 .notification-primary {
@@ -178,7 +189,7 @@ button.menubar__button {
 
 /* Table */
 .table tr {
-  @apply odd:bg-white even:bg-gray-50 border-b;
+  @apply odd:bg-white dark:odd:bg-gray-800 even:bg-gray-50 dark:even:bg-gray-900 border-b;
 }
 
 .table-td {

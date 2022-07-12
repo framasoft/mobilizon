@@ -15,8 +15,8 @@
       <img
         :src="`/img/pics/footer_${random}-1024w.jpg`"
         alt=""
-        width="5234"
-        height="2189"
+        width="1024"
+        height="428"
         loading="lazy"
       />
     </picture>

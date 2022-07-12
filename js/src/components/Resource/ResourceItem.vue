@@ -131,7 +131,6 @@ a {
       white-space: nowrap;
       display: inline-block;
       font-weight: 500;
-      // color: $primary;
       overflow: hidden;
       text-overflow: ellipsis;
       text-decoration: none;

@@ -78,12 +78,8 @@
               src="../../assets/logo.svg"
               alt=""
             />
-            <o-icon
-              class="is-large"
-              v-else
-              custom-size="mdi-36px"
-              icon="cloud-question"
-            />
+            <CloudQuestion v-else :size="36" />
+
             <div class="">
               <h4 class="text-lg truncate">{{ instance.domain }}</h4>
               <span
@@ -183,6 +179,7 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useHead } from "@vueuse/head";
+import CloudQuestion from "../../../node_modules/vue-material-design-icons/CloudQuestion.vue";
 
 const INSTANCES_PAGE_LIMIT = 10;
 

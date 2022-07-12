@@ -43,12 +43,3 @@ useHead({
   title: computed(() => t("Group settings")),
 });
 </script>
-
-<style lang="scss" scoped>
-aside.section {
-  padding-top: 1rem;
-}
-.container.section {
-  background: $white;
-}
-</style>

@@ -26,6 +26,8 @@
         class="w-full h-36 w-36 md:h-52 md:w-52 object-cover"
         :src="`/img/categories/${category.key.toLowerCase()}.jpg`"
         :srcset="`/img/categories/${category.key.toLowerCase()}-small.jpg `"
+        width="384"
+        height="384"
         alt=""
       />
     </picture>

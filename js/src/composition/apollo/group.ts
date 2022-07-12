@@ -11,7 +11,7 @@ import { MemberRole } from "@/types/enums";
 import { IMediaUploadWrapper } from "@/types/media.model";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
+import { computed, Ref, unref } from "vue";
 import { useCurrentActorClient } from "./actor";
 
 type useGroupOptions = {
@@ -28,7 +28,7 @@ type useGroupOptions = {
 };
 
 export function useGroup(
-  name: string | undefined,
+  name: string | undefined | Ref<string | undefined>,
   options: useGroupOptions = {}
 ) {
   console.debug("using group with", name);
@@ -52,11 +52,11 @@ export function useGroup(
     }
   >(
     FETCH_GROUP,
-    {
-      name: "hello",
+    () => ({
+      name: unref(name),
       ...options,
-    },
-    { enabled: name !== undefined }
+    }),
+    () => ({ enabled: unref(name) !== undefined })
   );
   const group = computed(() => result.value?.group);
   return { group, error, loading, onError, refetch };
@@ -84,7 +84,7 @@ export function useCreateGroup(variables: {
       if (!membershipData) return;
       if (!currentActor.value) return;
       const { person } = membershipData;
-      person.memberships.elements.push({
+      person.memberships?.elements.push({
         parent: data?.createGroup,
         role: MemberRole.ADMINISTRATOR,
         actor: currentActor.value,

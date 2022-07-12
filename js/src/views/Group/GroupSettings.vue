@@ -403,7 +403,7 @@ const confirmDeleteGroup = (): void => {
     ),
     confirmText: t("Delete group"),
     cancelText: t("Cancel"),
-    type: "danger",
+    variant: "danger",
     hasIcon: true,
     onConfirm: () =>
       deleteGroupMutation({

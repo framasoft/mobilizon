@@ -75,11 +75,9 @@ onUnmounted(() => {
 });
 
 watchEffect(() => {
-  console.debug("src changed");
   // Image is visible (means: has entered the viewport),
   // so start loading by setting the src attribute
   if (image.value) {
-    console.debug("image is ok, setting it");
     image.value.src = src.value;
 
     image.value.onload = () => {

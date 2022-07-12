@@ -46,7 +46,7 @@
         </div>
         <div class="flex-1 w-full flex flex-col justify-between">
           <h3
-            class="text-lg leading-5 line-clamp-3 font-bold"
+            class="text-lg leading-5 line-clamp-3 font-bold text-violet-3"
             :title="event.title"
             dir="auto"
             :lang="event.language"
@@ -54,7 +54,7 @@
             {{ event.title }}
           </h3>
           <div class="pt-3">
-            <div class="flex items-center" dir="auto">
+            <div class="flex items-center text-violet-3" dir="auto">
               <figure class="" v-if="actorAvatarURL">
                 <img
                   class="rounded-xl"

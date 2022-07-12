@@ -135,7 +135,10 @@
                     currentActor?.id !== undefined
                   "
                 >
-                  <button class="media py-4 px-2 w-full" @click="followGroup">
+                  <button
+                    class="flex gap-1 text-start py-4 px-2 w-full"
+                    @click="followGroup"
+                  >
                     <RSS />
                     <div class="pl-2">
                       <h3 class="font-medium text-lg">{{ t("Follow") }}</h3>
@@ -174,7 +177,10 @@
                     isGroupInviteOnly || isCurrentActorAPendingGroupMember
                   "
                 >
-                  <button class="media py-4 px-2 w-full" @click="joinGroup">
+                  <button
+                    class="flex gap-1 text-start py-4 px-2 w-full"
+                    @click="joinGroup"
+                  >
                     <AccountMultiplePlus />
                     <div class="pl-2">
                       <h3 class="font-medium text-lg">{{ t("Join") }}</h3>
@@ -346,7 +352,7 @@
               </o-dropdown>
             </div>
           </div>
-          <invitations
+          <InvitationsList
             v-if="
               isCurrentActorAnInvitedGroupMember && groupMember !== undefined
             "
@@ -626,7 +632,7 @@ import {
 import EventMinimalistCard from "@/components/Event/EventMinimalistCard.vue";
 import MultiPostListItem from "@/components/Post/MultiPostListItem.vue";
 import { Address, addressFullName } from "@/types/address.model";
-import Invitations from "@/components/Group/Invitations.vue";
+import InvitationsList from "@/components/Group/InvitationsList.vue";
 import addMinutes from "date-fns/addMinutes";
 import { JOIN_GROUP } from "@/graphql/member";
 import { MemberRole, Openness, PostVisibility } from "@/types/enums";
@@ -1129,7 +1135,6 @@ watch(isCurrentActorAGroupMember, () => {
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-// @import "node_modules/bulma/sass/utilities/mixins.sass";
 div.container {
   .block-container {
     display: flex;
@@ -1137,20 +1142,9 @@ div.container {
     margin-top: 15px;
 
     &.presentation {
-      border: 2px solid $purple-2;
       padding: 0 0 10px;
       position: relative;
       flex-direction: column;
-
-      // h1 {
-      //   color: $purple-1;
-      //   font-size: 2rem;
-      //   font-weight: 500;
-      // }
-
-      .button.is-outlined {
-        border-color: $purple-2;
-      }
 
       & > *:not(img) {
         position: relative;

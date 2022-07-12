@@ -208,14 +208,13 @@ import {
   PERSON_FRAGMENT,
   PERSON_FRAGMENT_FEED_TOKENS,
   UPDATE_PERSON,
-} from "../../../graphql/actor";
-import { IPerson, displayName } from "../../../types/actor";
-import PictureUpload from "../../../components/PictureUpload.vue";
-import { MOBILIZON_INSTANCE_HOST } from "../../../api/_entrypoint";
-import RouteName from "../../../router/name";
-import { buildFileVariable } from "../../../utils/image";
-import { changeIdentity } from "../../../utils/identity";
-// import identityEditionMixin from "../../../mixins/identityEdition";
+} from "@/graphql/actor";
+import { IPerson, displayName } from "@/types/actor";
+import PictureUpload from "@/components/PictureUpload.vue";
+import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
+import RouteName from "@/router/name";
+import { buildFileVariable } from "@/utils/image";
+import { changeIdentity } from "@/utils/identity";
 import {
   CREATE_FEED_TOKEN_ACTOR,
   DELETE_FEED_TOKEN,

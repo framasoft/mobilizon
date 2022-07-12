@@ -411,7 +411,6 @@ useHead({
 form {
   nav.navbar {
     // min-height: 2rem !important;
-    background: lighten($secondary, 10%);
 
     .container {
       // min-height: 2rem;
@@ -419,7 +418,6 @@ form {
       .navbar-menu,
       .navbar-end {
         // display: flex !important;
-        background: lighten($secondary, 10%);
         // flex-wrap: wrap;
       }
 

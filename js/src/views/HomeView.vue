@@ -288,12 +288,12 @@
 <script lang="ts" setup>
 import { EventSortField, ParticipantRole, SortDirection } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
-import { IParticipant, Participant } from "../types/participant.model";
+import { IParticipant } from "../types/participant.model";
 import { FETCH_EVENTS } from "../graphql/event";
 import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
-import { displayName, IPerson, Person } from "../types/actor";
+import { IPerson, Person } from "../types/actor";
 import ngeohash from "ngeohash";
 import {
   ICurrentUser,
@@ -471,10 +471,8 @@ const locationName = computed(
 //   () => closeEventsResult.value?.searchEvents || { total: 0, elements: [] }
 // );
 
-const currentUserParticipations = computed(() =>
-  loggedUser.value?.participations.elements.map(
-    (participation: IParticipant) => new Participant(participation)
-  )
+const currentUserParticipations = computed(
+  () => loggedUser.value?.participations.elements
 );
 
 const instanceName = computed((): string | undefined => config.value?.name);
@@ -635,6 +633,6 @@ watch(loggedUser, (loggedUserValue) => {
 // },
 
 useHead({
-  title: computed(() => instanceName.value),
+  title: computed(() => instanceName.value ?? ""),
 });
 </script>

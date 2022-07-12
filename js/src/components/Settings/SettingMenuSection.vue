@@ -1,6 +1,11 @@
 <template>
-  <li>
-    <router-link v-if="to" :to="to">{{ title }}</router-link>
+  <li class="bg-yellow-1 text-violet-2 text-xl">
+    <router-link
+      class="cursor-pointer my-2 mx-0 py-2 px-3 font-medium block no-underline"
+      v-if="to"
+      :to="to"
+      >{{ title }}</router-link
+    >
     <b v-else>{{ title }}</b>
     <ul>
       <slot></slot>
@@ -29,26 +34,3 @@ defineProps<{
 //   return false;
 // });
 </script>
-
-<style lang="scss" scoped>
-li {
-  font-size: 1.3rem;
-  background-color: $secondary;
-  color: $background-color;
-  margin: 2px auto;
-
-  &.active {
-    background-color: #fea72b;
-  }
-
-  a,
-  b {
-    cursor: pointer;
-    margin: 5px 0;
-    display: block;
-    padding: 5px 10px;
-    color: inherit;
-    font-weight: 500;
-  }
-}
-</style>

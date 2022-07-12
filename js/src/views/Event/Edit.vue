@@ -496,7 +496,6 @@
 <style lang="scss" scoped>
 // @use "@/styles/_mixins" as *;
 // main section > .container {
-//   // background: $white;
 
 //   form {
 //     h2 {
@@ -528,7 +527,6 @@
 //   span {
 //     padding: 5px 7px;
 //     display: inline;
-//     background: $secondary;
 //   }
 // }
 
@@ -553,7 +551,6 @@
 
 //   nav.navbar {
 //     min-height: 2rem !important;
-//     background: lighten($secondary, 10%);
 
 //     .container {
 //       min-height: 2rem;
@@ -561,7 +558,6 @@
 //       .navbar-menu,
 //       .navbar-end {
 //         display: flex !important;
-//         background: lighten($secondary, 10%);
 //       }
 
 //       .navbar-end {
@@ -625,7 +621,6 @@ import {
   CREATE_EVENT,
   EDIT_EVENT,
   EVENT_PERSON_PARTICIPATION,
-  FETCH_EVENT,
 } from "../../graphql/event";
 import {
   EventModel,
@@ -634,20 +629,8 @@ import {
   removeTypeName,
   toEditJSON,
 } from "../../types/event.model";
-import {
-  CURRENT_ACTOR_CLIENT,
-  IDENTITIES,
-  LOGGED_USER_DRAFTS,
-  PERSON_STATUS_GROUP,
-} from "../../graphql/actor";
-import { FETCH_GROUP } from "../../graphql/group";
-import {
-  displayNameAndUsername,
-  IActor,
-  IGroup,
-  IPerson,
-  usernameWithDomain,
-} from "../../types/actor";
+import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
+import { IActor, IGroup, IPerson, usernameWithDomain } from "../../types/actor";
 import {
   buildFileFromIMedia,
   buildFileVariable,
@@ -655,8 +638,6 @@ import {
 } from "../../utils/image";
 import RouteName from "../../router/name";
 import "intersection-observer";
-import { CONFIG_EDIT_EVENT } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
 import {
   ApolloCache,
   FetchResult,
@@ -664,8 +645,6 @@ import {
 } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import { IEventOptions } from "@/types/event-options.model";
-import { USER_SETTINGS } from "@/graphql/user";
-import { IUser } from "@/types/current-user.model";
 import { IAddress } from "@/types/address.model";
 import { LOGGED_USER_PARTICIPATIONS } from "@/graphql/participant";
 import {
@@ -690,6 +669,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@vueuse/head";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
+import type { Locale } from "date-fns";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -1033,10 +1013,10 @@ const handleError = (err: any) => {
  * Put in cache the updated or created event.
  * If the event is not a draft anymore, also put in cache the participation
  */
-const postCreateOrUpdate = (store: any, updateEvent: IEvent) => {
-  const resultEvent: IEvent = { ...updateEvent };
+const postCreateOrUpdate = (store: any, updatedEvent: IEvent) => {
+  const resultEvent: IEvent = { ...updatedEvent };
   console.debug("resultEvent", resultEvent);
-  if (!updateEvent.draft) {
+  if (!updatedEvent.draft) {
     store.writeQuery({
       query: EVENT_PERSON_PARTICIPATION,
       variables: {
@@ -1077,9 +1057,9 @@ const postCreateOrUpdate = (store: any, updateEvent: IEvent) => {
  */
 // eslint-disable-next-line class-methods-use-this
 const postRefetchQueries = (
-  updateEvent: IEvent
+  updatedEvent: IEvent
 ): InternalRefetchQueriesInclude => {
-  if (updateEvent.draft) {
+  if (updatedEvent.draft) {
     return [
       {
         query: LOGGED_USER_DRAFTS,
@@ -1253,10 +1233,10 @@ const beginsOn = computed({
     // }
     return event.value.beginsOn ? new Date(event.value.beginsOn) : null;
   },
-  set(beginsOn: Date | null) {
-    event.value.beginsOn = beginsOn?.toISOString() ?? null;
-    if (!event.value.endsOn || !beginsOn) return;
-    const dateBeginsOn = new Date(beginsOn);
+  set(newBeginsOn: Date | null) {
+    event.value.beginsOn = newBeginsOn?.toISOString() ?? null;
+    if (!event.value.endsOn || !newBeginsOn) return;
+    const dateBeginsOn = new Date(newBeginsOn);
     const dateEndsOn = new Date(event.value.endsOn);
     let endsOn = new Date(event.value.endsOn);
     if (dateEndsOn < dateBeginsOn) {
@@ -1277,8 +1257,8 @@ const endsOn = computed({
     // }
     return event.value.endsOn ? new Date(event.value.endsOn) : null;
   },
-  set(endsOn: Date | null) {
-    event.value.endsOn = endsOn?.toISOString() ?? null;
+  set(newEndsOn: Date | null) {
+    event.value.endsOn = newEndsOn?.toISOString() ?? null;
   },
 });
 
@@ -1324,10 +1304,10 @@ const timezone = computed({
   get(): string | null {
     return event.value.options.timezone;
   },
-  set(timezone: string | null) {
+  set(newTimezone: string | null) {
     event.value.options = {
       ...event.value.options,
-      timezone,
+      timezone: newTimezone,
     };
   },
 });
@@ -1368,10 +1348,10 @@ const isOnline = computed({
   get(): boolean {
     return event.value.options.isOnline;
   },
-  set(isOnline: boolean) {
+  set(newIsOnline: boolean) {
     event.value.options = {
       ...event.value.options,
-      isOnline,
+      isOnline: newIsOnline,
     };
   },
 });
@@ -1391,13 +1371,13 @@ onFetchEventResult((result) => {
   }
 });
 
-const { person } = usePersonStatusGroup(
+const groupFederatedUsername = computed(() =>
   usernameWithDomain(fetchedEvent.value?.attributedTo)
 );
 
-const { group } = useGroup(
-  usernameWithDomain(fetchedEvent.value?.attributedTo)
-);
+const { person } = usePersonStatusGroup(groupFederatedUsername);
+
+const { group } = useGroup(groupFederatedUsername);
 
 watch(group, () => {
   if (!props.isUpdate && group.value?.visibility == GroupVisibility.UNLISTED) {

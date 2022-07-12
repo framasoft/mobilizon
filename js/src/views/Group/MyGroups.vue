@@ -17,7 +17,7 @@
       >
     </div>
     <o-loading v-model:active="loading"></o-loading>
-    <invitations
+    <InvitationsList
       :invitations="invitations"
       @accept-invitation="acceptInvitation"
       @reject-invitation="rejectInvitation"
@@ -82,8 +82,8 @@
 import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
 import { LEAVE_GROUP } from "@/graphql/group";
 import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
-import Invitations from "@/components/Group/Invitations.vue";
-import { IGroup, usernameWithDomain } from "@/types/actor";
+import InvitationsList from "@/components/Group/InvitationsList.vue";
+import { usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
 import { supportsWebPFormat } from "@/utils/support";

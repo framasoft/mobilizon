@@ -190,8 +190,6 @@ article.comment {
           display: block;
           line-height: 1rem;
         }
-
-        color: #3c376e;
       }
 
       .icons {
@@ -244,7 +242,6 @@ article.comment {
           a {
             display: inline-block;
             padding: 0.3rem;
-            background: $secondary;
             color: #111;
 
             &:empty {

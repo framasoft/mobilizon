@@ -4,7 +4,7 @@
       class="container mx-auto flex flex-wrap justify-between items-center mx-auto"
     >
       <router-link :to="{ name: RouteName.HOME }" class="flex items-center">
-        <logo class="w-40" />
+        <MobilizonLogo class="w-40" />
       </router-link>
       <div class="flex items-center md:order-2" v-if="currentActor?.id">
         <o-dropdown>
@@ -300,20 +300,21 @@
 </template>
 
 <script lang="ts" setup>
-import Logo from "@/components/Logo.vue";
+import MobilizonLogo from "@/components/MobilizonLogo.vue";
 import { ICurrentUserRole } from "@/types/enums";
 import { logout } from "../utils/auth";
-import { IDENTITIES } from "../graphql/actor";
-import { displayName, IPerson, Person } from "../types/actor";
+import { displayName } from "../types/actor";
 import RouteName from "../router/name";
-import { useQuery } from "@vue/apollo-composable";
-import { reactive, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 // import { useProgrammatic } from "@oruga-ui/oruga-next";
 import { useCurrentUserClient } from "@/composition/apollo/user";
-import { useCurrentActorClient } from "@/composition/apollo/actor";
+import {
+  useCurrentActorClient,
+  useCurrentUserIdentities,
+} from "@/composition/apollo/actor";
 // import { useRestrictions } from "@/composition/apollo/config";
 
 const { currentUser } = useCurrentUserClient();
@@ -325,7 +326,7 @@ const { currentActor } = useCurrentActorClient();
 const router = useRouter();
 // const route = useRoute();
 
-const identities = reactive<any[]>([]);
+const { identities } = useCurrentUserIdentities();
 
 // const mobileNavbarActive = ref(false);
 
@@ -336,42 +337,23 @@ const identities = reactive<any[]>([]);
 
 const { t } = useI18n({ useScope: "global" });
 
-// TODO: Refactor this
-const { onResult } = useQuery<{ identities: IPerson[] }>(
-  IDENTITIES,
-  {},
-  () => ({
-    enabled:
-      currentUser.value?.id !== undefined && currentUser.value?.id !== null,
-  })
-);
-
-onResult(async ({ data }) => {
-  identities.push([
-    ...data.identities.map((identity: IPerson) => new Person(identity)),
-  ]);
-
+watch(identities, () => {
   // If we don't have any identities, the user has validated their account,
   // is logging for the first time but didn't create an identity somehow
-  if (identities.length === 0) {
-    console.debug("We have no identities listed for current user", identities);
+  if (identities.value && identities.value.length === 0) {
+    console.debug(
+      "We have no identities listed for current user",
+      identities.value
+    );
     console.debug("Pushing route to REGISTER_PROFILE");
-    try {
-      await router.push({
-        name: RouteName.REGISTER_PROFILE,
-        params: {
-          email: currentUser.value?.email,
-          userAlreadyActivated: "true",
-        },
-      });
-    } catch (err) {
-      return undefined;
-    }
+    router.push({
+      name: RouteName.REGISTER_PROFILE,
+      params: {
+        email: currentUser.value?.email,
+        userAlreadyActivated: "true",
+      },
+    });
   }
-});
-
-watch(currentActor, async () => {
-  if (!currentUser.value?.isLoggedIn) return;
 });
 
 // watch(loggedUser, () => {
@@ -472,56 +454,3 @@ watch(currentActor, async () => {
 
 const showMobileMenu = ref(false);
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-nav {
-  .navbar-item {
-    a.button {
-      font-weight: bold;
-    }
-
-    svg {
-      height: 1.75rem;
-    }
-  }
-
-  .navbar-dropdown .navbar-item {
-    cursor: pointer;
-
-    span {
-      display: flex;
-    }
-
-    &.is-active {
-      background: $secondary;
-    }
-
-    span.icon.is-medium {
-      display: flex;
-    }
-
-    img {
-      max-height: 2.5em;
-    }
-  }
-
-  .navbar-item.has-dropdown a.navbar-link figure {
-    // @include margin-right(0.75rem);
-    display: flex;
-    align-items: center;
-  }
-
-  a.navbar-item:focus-within {
-    background-color: inherit;
-  }
-
-  .identity-wrapper {
-    display: flex;
-
-    .media-content span {
-      display: flex;
-      color: $violet-2;
-    }
-  }
-}
-</style>

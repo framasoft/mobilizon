@@ -47,25 +47,25 @@
       </h3>
       <inline-address
         v-if="event.physicalAddress"
-        class="event-subtitle"
+        class=""
         :physical-address="event.physicalAddress"
       />
-      <div
-        class="event-subtitle"
-        v-else-if="event.options && event.options.isOnline"
-      >
+      <div class="" v-else-if="event.options && event.options.isOnline">
         <Video />
         <span>{{ $t("Online") }}</span>
       </div>
-      <div class="event-subtitle event-organizer flex" v-if="showOrganizer">
-        <figure
-          class="image is-24x24"
-          v-if="organizer(event) && organizer(event)?.avatar"
-        >
-          <img class="is-rounded" :src="organizer(event)?.avatar?.url" alt="" />
+      <div class="flex gap-1" v-if="showOrganizer">
+        <figure class="" v-if="organizer(event) && organizer(event)?.avatar">
+          <img
+            class="rounded-full"
+            :src="organizer(event)?.avatar?.url"
+            alt=""
+            width="24"
+            height="24"
+          />
         </figure>
-        <AccountCircle v-else />
-        <span class="organizer-name">
+        <AccountCircle v-else :size="24" />
+        <span class="">
           {{ organizerDisplayName(event) }}
         </span>
       </div>
@@ -145,8 +145,6 @@ withDefaults(
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-// @import "node_modules/bulma/sass/utilities/mixins.sass";
-// @import "@/variables.scss";
 
 .event-minimalist-card-wrapper {
   // display: grid;
@@ -191,8 +189,7 @@ withDefaults(
     //   -webkit-box-orient: vertical;
     //   overflow: hidden;
     //   font-weight: bold;
-    //   color: $title-color;
-    // }
+    d    // }
 
     :deep(.icon) {
       vertical-align: middle;

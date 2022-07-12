@@ -69,7 +69,6 @@ const monthName = (event: IEvent): string => {
     font-size: 1.3rem;
 
     &::after {
-      background: $orange-3;
       position: absolute;
       left: 0;
       right: 0;

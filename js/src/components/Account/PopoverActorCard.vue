@@ -26,13 +26,3 @@ withDefaults(
   }
 );
 </script>
-
-<style lang="scss">
-.v-popper__inner {
-  padding: 0 !important;
-  background-color: transparent !important;
-}
-.v-popper__arrow-outer {
-  border-color: $violet-1 !important;
-}
-</style>

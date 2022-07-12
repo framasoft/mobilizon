@@ -1,5 +1,10 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248.16 46.78">
+  <svg
+    class="bg-white dark:bg-gray-900 dark:fill-white"
+    :class="{ 'bg-gray-900': invert }"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 248.16 46.78"
+  >
     <title>Mobilizon Logo</title>
     <g data-name="header">
       <path
@@ -35,12 +40,3 @@ withDefaults(
   { invert: false }
 );
 </script>
-<style lang="scss" scoped>
-svg {
-  fill: $background-color;
-
-  &.invert {
-    fill: $secondary;
-  }
-}
-</style>

@@ -8,7 +8,7 @@
       <div class="" v-if="hasIcon && (icon || iconByType)">
         <o-icon
           :icon="icon ? icon : iconByType"
-          :type="type"
+          :variant="variant"
           :both="!icon"
           custom-size="48"
         />
@@ -37,11 +37,11 @@
       </div>
     </section>
 
-    <footer v-if="canCancel" class="flex gap-2">
-      <o-button ref="cancelButton" @click="cancel('button')">{{
+    <footer v-if="canCancel" class="flex gap-2 my-2">
+      <o-button ref="cancelButton" outlined @click="cancel('button')">{{
         cancelText ?? t("Cancel")
       }}</o-button>
-      <o-button :type="type" ref="confirmButton" @click="confirm">{{
+      <o-button :variant="variant" ref="confirmButton" @click="confirm">{{
         confirmText ?? t("Confirm")
       }}</o-button>
     </footer>
@@ -58,7 +58,7 @@ const props = withDefaults(
     message: string | string[];
     icon?: string;
     hasIcon?: boolean;
-    type?: string;
+    variant?: string;
     size?: string;
     canCancel?: boolean;
     confirmText?: string;
@@ -71,7 +71,12 @@ const props = withDefaults(
     hasInput?: boolean;
     inputAttrs?: Record<string, any>;
   }>(),
-  { type: "primary", canCancel: true, hasInput: false, inputAttrs: () => ({}) }
+  {
+    variant: "primary",
+    canCancel: true,
+    hasInput: false,
+    inputAttrs: () => ({}),
+  }
 );
 
 const emit = defineEmits(["confirm", "cancel", "close"]);
@@ -91,7 +96,7 @@ const dialogClass = computed(() => {
  * Icon name (MDI) based on the type.
  */
 const iconByType = computed(() => {
-  switch (props.type) {
+  switch (props.variant) {
     case "info":
       return "information";
     case "success":

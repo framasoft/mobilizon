@@ -16,14 +16,10 @@ import { IEvent } from "@/types/event.model";
 import { formatDistanceToNow } from "date-fns";
 import { inject } from "vue";
 import EventCard from "./EventCard.vue";
+import type { Locale } from "date-fns";
 defineProps<{
   event: IEvent;
 }>();
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 </script>
-<style lang="scss" scoped>
-p.time {
-  color: $violet-3;
-}
-</style>

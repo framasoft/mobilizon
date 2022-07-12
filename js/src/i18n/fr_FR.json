@@ -1338,11 +1338,12 @@
   "View all categories": "Voir toutes les catégories",
   "{instanceName} ({domain})": "{instanceName} ({domain})",
   "This instance, {instanceName}, hosts your profile, so remember its name.": "Cette instance, {instanceName}, héberge votre profil, donc souvenez-vous de son nom.",
-  "Keyword, event title, group name, etc.": "Keyword, event title, group name, etc.",
+  "Keyword, event title, group name, etc.": "Mot clé, titre d'un événement, nom d'un groupe, etc.",
   "Go!": "Go!",
   "Explore!": "Explorer !",
   "Join {instance}, a Mobilizon instance": "Rejoignez {instance}, une instance Mobilizon",
   "Open user menu": "Ouvrir le menu utilisateur",
   "Open main menu": "Ouvrir le menu principal",
-  "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "C'est comme votre adresse fédérée ({username}) pour les groupes. Cela permettra au groupe d'être trouvable sur la fédération, et est garanti d'être unique."
+  "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "C'est comme votre adresse fédérée ({username}) pour les groupes. Cela permettra au groupe d'être trouvable sur la fédération, et est garanti d'être unique.",
+  "Published events with {comments} comments and {participations} confirmed participations": "Événements publiés avec {comments} commentaires et {participations} participations confirmées"
 }

@@ -219,6 +219,14 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/Email.vue`),
   ChatAlert: () =>
     import(`../../../node_modules/vue-material-design-icons/ChatAlert.vue`),
+  InboxArrowDown: () =>
+    import(
+      `../../../node_modules/vue-material-design-icons/InboxArrowDown.vue`
+    ),
+  LanDisconnect: () =>
+    import(`../../../node_modules/vue-material-design-icons/LanDisconnect.vue`),
+  CloudQuestion: () =>
+    import(`../../../node_modules/vue-material-design-icons/CloudQuestion.vue`),
 };
 
 const props = withDefaults(
@@ -235,15 +243,6 @@ const name = computed(() => toPascalCase(props.icon[1]));
 const componentInstance = computed(() =>
   defineAsyncComponent(icons[name.value])
 );
-
-/*
- defineAsyncComponent(
-  async () =>
-    await import(
-      `../../../node_modules/vue-material-design-icons/${name.value}.vue`
-    )
-);
-*/
 
 const realSize = computed(() => Number.parseInt(props.size ?? "18"));
 

@@ -198,7 +198,6 @@ const sentryProvider = computed((): IAnalyticsConfig | undefined => {
 <style lang="scss" scoped>
 #error-wrapper {
   width: 100%;
-  background: $white;
 
   section {
     margin-bottom: 2rem;

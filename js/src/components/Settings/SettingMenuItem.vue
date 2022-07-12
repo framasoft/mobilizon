@@ -32,7 +32,6 @@ const isActive = computed((): boolean => {
 li.setting-menu-item {
   font-size: 1.05rem;
   background-color: #fff1de;
-  color: $background-color;
   margin: auto;
 
   span {

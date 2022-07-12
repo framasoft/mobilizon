@@ -1354,5 +1354,10 @@
   "Open user menu": "Open user menu",
   "Open main menu": "Open main menu",
   "{'@'}{username} ({role})": "{'@'}{username} ({role})",
-  "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique."
+  "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.": "This is like your federated username ({username}) for groups. It will allow the group to be found on the federation, and is guaranteed to be unique.",
+  "Confirm": "Confirm",
+  "Published events with {comments} comments and {participations} confirmed participations": "Published events with {comments} comments and {participations} confirmed participations",
+  "Ex: someone{'@'}mobilizon.org": "Ex: someone{'@'}mobilizon.org",
+  "Group members": "Group members",
+  "e.g. Nantes, Berlin, Cork, …": "e.g. Nantes, Berlin, Cork, …"
 }

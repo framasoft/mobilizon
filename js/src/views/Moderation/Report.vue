@@ -515,10 +515,6 @@ tbody td img.image,
   justify-content: flex-end;
 }
 
-.report-content {
-  border-left: 4px solid $primary;
-}
-
 .box a {
   text-decoration: none;
   color: inherit;

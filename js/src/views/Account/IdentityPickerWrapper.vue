@@ -1,3 +1,4 @@
+import { useI18n } from "vue-i18n";
 <template>
   <div>
     <div
@@ -22,7 +23,7 @@
           <p class="">{{ currentIdentity.name }}</p>
           <p class="">
             {{ `@${currentIdentity.preferredUsername}` }}
-            <span v-if="masked">{{ $t("(Masked)") }}</span>
+            <span v-if="masked">{{ t("(Masked)") }}</span>
           </p>
         </div>
         <div class="" v-else>
@@ -33,7 +34,7 @@
           v-if="identities && identities.length > 1"
           @click="activateModal"
         >
-          {{ $t("Change") }}
+          {{ t("Change") }}
         </o-button>
       </div>
     </div>
@@ -55,7 +56,7 @@
     </span>
     <o-modal
       v-model:active="isComponentModalActive"
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
       <identity-picker v-if="currentIdentity" v-model="currentIdentity" />
     </o-modal>
@@ -67,6 +68,7 @@ import { computed, ref } from "vue";
 import { IPerson } from "../../types/actor";
 import IdentityPicker from "./IdentityPicker.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useI18n } from "vue-i18n";
 
 const { identities } = useCurrentUserIdentities();
 
@@ -83,6 +85,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits(["update:modelValue"]);
+
+const { t } = useI18n({ useScope: "global" });
 
 const isComponentModalActive = ref(false);
 

@@ -17,8 +17,10 @@ import { IMember } from "@/types/actor/member.model";
 import { IGroup, IPerson, usernameWithDomain } from "@/types/actor";
 import { useMutation } from "@vue/apollo-composable";
 import { ErrorResponse } from "@/types/errors.model";
+import { inject } from "vue";
+import type { Notifier } from "@/plugins/notifier";
 
-const props = defineProps<{
+defineProps<{
   invitations: IMember[];
 }>();
 

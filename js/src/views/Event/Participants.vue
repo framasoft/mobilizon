@@ -456,7 +456,6 @@ const openDetailedRows = <Record<string, boolean>>{};
 <style lang="scss" scoped>
 section.container.container {
   padding: 1rem;
-  // background: $white;
 }
 
 .table {
@@ -477,12 +476,6 @@ section.container.container {
 
     button {
       display: inline;
-    }
-  }
-
-  span.tag {
-    &.is-primary {
-      background-color: $primary;
     }
   }
 }

@@ -29,7 +29,10 @@ export function useCurrentUserIdentities() {
     IDENTITIES,
     {},
     () => ({
-      enabled: currentUser.value?.isLoggedIn === true,
+      enabled:
+        currentUser.value?.id !== undefined &&
+        currentUser.value?.id !== null &&
+        currentUser.value?.isLoggedIn === true,
     })
   );
 

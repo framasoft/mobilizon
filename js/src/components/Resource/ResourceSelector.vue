@@ -171,7 +171,6 @@ const moveDisabled = computed((): boolean | undefined => {
   }
 
   &.is-primary .panel-heading {
-    background: $primary;
     color: #fff;
   }
 }

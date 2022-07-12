@@ -198,6 +198,7 @@ import Alert from "vue-material-design-icons/Alert.vue";
 import ChevronUp from "vue-material-design-icons/ChevronUp.vue";
 import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
 import Reply from "vue-material-design-icons/Reply.vue";
+import type { Locale } from "date-fns";
 
 const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
 
@@ -359,7 +360,6 @@ form.reply {
   }
 
   strong.organizer {
-    background: $background-color;
     border-radius: 12px;
     color: white;
     padding: 0 6px;
@@ -400,29 +400,18 @@ a.comment-link {
   border-radius: 5px;
 
   &.announcement {
-    background: $purple-2;
-
     small {
       color: hsl(0, 0%, 21%);
     }
   }
 
   &.selected {
-    background-color: $violet-1;
-    color: $white;
     .reply-btn,
     small,
     span,
     strong,
-    .icons button {
-      color: $white;
-    }
     a.comment-link:hover {
       text-decoration: underline;
-      text-decoration-color: $white;
-      small {
-        color: $purple-3;
-      }
     }
   }
 
@@ -484,13 +473,11 @@ a.comment-link {
 
   & > p > span {
     font-weight: bold;
-    color: $violet-2;
   }
 }
 
 .level-item.reply-btn {
   font-weight: bold;
-  color: $violet-2;
 }
 
 article {

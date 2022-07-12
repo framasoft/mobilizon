@@ -80,13 +80,3 @@ defineProps<{
   member: IMember;
 }>();
 </script>
-
-<style lang="scss" scoped>
-.media:not(.subfield) {
-  background: lighten($primary, 40%);
-  padding: 10px;
-}
-h3 {
-  color: $violet-3;
-}
-</style>

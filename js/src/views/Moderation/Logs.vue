@@ -214,7 +214,7 @@
                 log.object.__typename == 'Group'
               "
               tag="span"
-              path="{moderator} suspended group {profile}"
+              keypath="{moderator} suspended group {profile}"
             >
               <template #moderator>
                 <router-link

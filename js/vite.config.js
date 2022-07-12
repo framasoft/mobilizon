@@ -61,9 +61,6 @@ export default defineConfig(({ command }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `
-        @use "@/variables.scss" as *;
-        `,
           sassOptions: {
             quietDeps: true,
           },

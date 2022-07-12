@@ -3,9 +3,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "rgb(var(--color-primary) / <alpha-value>)",
-        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
-        "violet-title": "rgb(var(--color-violet-title) / <alpha-value>)",
+        primary: "#1e7d97",
+        secondary: "#ffd599",
+        "violet-title": "#3c376e",
         tag: "rgb(var(--color-tag) / <alpha-value>)",
         "frama-violet": "#725794",
         "frama-orange": "#cc4e13",

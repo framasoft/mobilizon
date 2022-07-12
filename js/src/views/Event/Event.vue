@@ -1339,7 +1339,6 @@ div.sidebar {
       a {
         display: inline-block;
         padding: 0.3rem;
-        background: $secondary;
         color: #111;
 
         &:empty {
