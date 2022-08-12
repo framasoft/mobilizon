@@ -56,17 +56,17 @@
               >
                 <picture class="brightness-50">
                   <source
-                    :srcset="`/img/categories/${key.toLowerCase()}.jpg 2x, /img/categories/${key.toLowerCase()}.jpg`"
+                    :srcset="`/img/categories/${key.toLowerCase()}.webp 2x, /img/categories/${key.toLowerCase()}.webp`"
                     media="(min-width: 1000px)"
                   />
                   <source
-                    :srcset="`/img/categories/${key.toLowerCase()}.jpg 2x, /img/categories/${key.toLowerCase()}-small.jpg`"
+                    :srcset="`/img/categories/${key.toLowerCase()}.webp 2x, /img/categories/${key.toLowerCase()}-small.webp`"
                     media="(min-width: 300px)"
                   />
                   <img
                     class="w-full h-12 w-12 object-cover"
-                    :src="`/img/categories/${key.toLowerCase()}.jpg`"
-                    :srcset="`/img/categories/${key.toLowerCase()}-small.jpg `"
+                    :src="`/img/categories/${key.toLowerCase()}.webp`"
+                    :srcset="`/img/categories/${key.toLowerCase()}-small.webp `"
                     alt=""
                   />
                 </picture>

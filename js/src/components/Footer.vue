@@ -8,12 +8,8 @@
         :srcset="`/img/pics/footer_${random}-1024w.webp 1x, /img/pics/footer_${random}-1920w.webp 2x`"
         type="image/webp"
       />
-      <source
-        :srcset="`/img/pics/footer_${random}-1024w.jpg 1x, /img/pics/footer_${random}-1920w.jpg 2x`"
-        type="image/jpeg"
-      />
       <img
-        :src="`/img/pics/footer_${random}-1024w.jpg`"
+        :src="`/img/pics/footer_${random}-1024w.webp`"
         alt=""
         width="1024"
         height="428"

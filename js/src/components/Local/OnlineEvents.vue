@@ -31,7 +31,7 @@
           },
         }"
         :picture="{
-          url: '/img/online-event.jpg',
+          url: '/img/online-event.webp',
           author: {
             name: 'Chris Montgomery',
             url: 'https://unsplash.com/@cwmonty',

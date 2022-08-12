@@ -8,13 +8,8 @@
               :srcset="`/img/pics/error-480w.webp  1x, /img/pics/error-1024w.webp 2x`"
               type="image/webp"
             />
-            <source
-              :srcset="`/img/pics/error-480w.jpg 1x, /img/pics/error-1024w.jpg 2x`"
-              type="image/jpeg"
-            />
-
             <img
-              :src="`/img/pics/error-480w.jpg`"
+              :src="`/img/pics/error-480w.webp`"
               alt=""
               width="480"
               height="312"

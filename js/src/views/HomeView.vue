@@ -102,7 +102,7 @@
           />
 
           <img
-            :src="`/img/pics/homepage-1024w.jpg`"
+            :src="`/img/pics/homepage-1024w.webp`"
             width="3840"
             height="2719"
             alt=""

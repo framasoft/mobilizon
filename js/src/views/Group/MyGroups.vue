@@ -205,11 +205,11 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("../../../public/img/pics/group-480w.jpg");
+    background-image: url("../../../public/img/pics/group-480w.webp");
 
     @media (min-resolution: 2dppx) {
       & {
-        background-image: url("../../../public/img/pics/group-1024w.jpg");
+        background-image: url("../../../public/img/pics/group-1024w.webp");
       }
     }
     &.webp {
