@@ -42,7 +42,7 @@
       <p class="flex gap-1" v-if="isCurrentActorMember">
         <AccountEdit />
         <i18n-t keypath="Published by {name}">
-          <template v-slot:name>
+          <template #name>
             <b class="">{{ displayName(post.author) }}</b>
           </template>
         </i18n-t>

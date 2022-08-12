@@ -42,7 +42,7 @@
               icon="magnify"
             />
           </template>
-          <template v-slot:default="props">
+          <template #default="props">
             <router-link
               class="profile"
               :to="{
@@ -81,7 +81,7 @@
               icon="magnify"
             />
           </template>
-          <template v-slot:default="props">
+          <template #default="props">
             {{ props.row.domain }}
           </template>
         </o-table-column>

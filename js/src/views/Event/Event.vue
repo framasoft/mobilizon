@@ -399,7 +399,7 @@
         :close-button-aria-label="t('Close')"
       >
         <identity-picker v-model="identity">
-          <template v-slot:footer>
+          <template #footer>
             <footer class="modal-card-foot">
               <button
                 class="button"

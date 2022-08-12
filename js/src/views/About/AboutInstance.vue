@@ -10,22 +10,22 @@
     >
       <div class="statistics flex-1 min-w-[20rem]">
         <i18n-t tag="p" keypath="Home to {number} users">
-          <template v-slot:number>
+          <template #number>
             <strong>{{ statistics.numberOfUsers }}</strong>
           </template>
         </i18n-t>
         <i18n-t tag="p" keypath="and {number} groups">
-          <template v-slot:number>
+          <template #number>
             <strong>{{ statistics.numberOfLocalGroups }}</strong>
           </template>
         </i18n-t>
         <i18n-t tag="p" keypath="Who published {number} events">
-          <template v-slot:number>
+          <template #number>
             <strong>{{ statistics.numberOfLocalEvents }}</strong>
           </template>
         </i18n-t>
         <i18n-t tag="p" keypath="And {number} comments">
-          <template v-slot:number>
+          <template #number>
             <strong>{{ statistics.numberOfLocalComments }}</strong>
           </template>
         </i18n-t>

@@ -35,10 +35,10 @@
             tag="span"
             keypath="{instanceName} is an instance of {mobilizon_link}, a free software built with the community."
           >
-            <template v-slot:instanceName>
+            <template #instanceName>
               <b>{{ config?.name }}</b>
             </template>
-            <template v-slot:mobilizon_link>
+            <template #mobilizon_link>
               <a href="https://joinmobilizon.org">{{ t("Mobilizon") }}</a>
             </template>
           </i18n-t>

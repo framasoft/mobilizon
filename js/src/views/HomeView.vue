@@ -46,7 +46,7 @@
             tag="span"
             keypath="On {instance} and other federated instances"
           >
-            <template v-slot:instance>
+            <template #instance>
               <b>{{ config.name }}</b>
             </template>
           </i18n-t>
@@ -252,7 +252,7 @@
             tag="span"
             keypath="On {instance} and other federated instances"
           >
-            <template v-slot:instance>
+            <template #instance>
               <b>{{ config.name }}</b>
             </template>
           </i18n-t>

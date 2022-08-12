@@ -54,7 +54,7 @@
           tag="dd"
           keypath="SSL and it's successor TLS are encryption technologies to secure data communications when using the service. You can recognize an encrypted connection in your browser's address line when the URL begins with {https} and the lock icon is displayed in your browser's address bar."
         >
-          <template v-slot:https><code>https://</code></template>
+          <template #https><code>https://</code></template>
         </i18n-t>
         <dt>{{ t("Cookies and Local storage") }}</dt>
         <dd>

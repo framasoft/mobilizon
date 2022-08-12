@@ -516,10 +516,9 @@
             <template #desc>
               <template v-if="isCurrentActorFollowing">
                 <i18n-t
-                  class="has-text-grey-dark"
                   keypath="You will receive notifications about this group's public activity depending on %{notification_settings}."
                 >
-                  <template v-slot:notification_settings>
+                  <template #notification_settings>
                     <router-link :to="{ name: RouteName.NOTIFICATIONS }">{{
                       t("your notification settings")
                     }}</router-link>

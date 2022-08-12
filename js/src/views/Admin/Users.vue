@@ -45,7 +45,7 @@
           {{ props.row.id }}
         </o-table-column>
         <o-table-column field="email" :label="$t('Email')">
-          <template v-slot:default="props">
+          <template #default="props">
             <router-link
               :to="{
                 name: RouteName.ADMIN_USER_PROFILE,

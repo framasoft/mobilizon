@@ -21,7 +21,7 @@
     <i18n-t
       keypath="This instance, {instanceName}, hosts your profile, so remember its name."
     >
-      <template v-slot:instanceName>
+      <template #instanceName>
         <b>{{
           t("{instanceName} ({domain})", {
             domain,

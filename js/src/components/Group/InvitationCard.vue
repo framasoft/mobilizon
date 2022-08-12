@@ -7,7 +7,7 @@
             tag="p"
             keypath="You have been invited by {invitedBy} to the following group:"
           >
-            <template v-slot:invitedBy>
+            <template #invitedBy>
               <b>{{ member?.invitedBy?.name }}</b>
             </template>
           </i18n-t>

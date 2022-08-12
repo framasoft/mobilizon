@@ -147,12 +147,12 @@
               keypath="Do you wish to {create_event} or {explore_events}?"
               tag="p"
             >
-              <template v-slot:create_event>
+              <template #create_event>
                 <router-link :to="{ name: RouteName.CREATE_EVENT }">{{
                   t("create an event")
                 }}</router-link>
               </template>
-              <template v-slot:explore_events>
+              <template #explore_events>
                 <router-link :to="{ name: RouteName.SEARCH }">{{
                   t("explore the events")
                 }}</router-link>

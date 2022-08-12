@@ -12,10 +12,10 @@
         tag="p"
         keypath="{instanceName} is an instance of the {mobilizon} software."
       >
-        <template v-slot:instanceName>
+        <template #instanceName>
           <b>{{ config?.name }}</b>
         </template>
-        <template v-slot:mobilizon>
+        <template #mobilizon>
           <a href="https://joinmobilizon.org" target="_blank" class="out">{{
             t("Mobilizon")
           }}</a>
@@ -73,12 +73,12 @@
           <i18n-t
             keypath="Please read the {fullRules} published by {instance}'s administrators."
             tag="p"
-            ><template v-slot:fullRules>
+            ><template #fullRules>
               <router-link class="out" :to="{ name: RouteName.RULES }">{{
                 t("full rules")
               }}</router-link>
             </template>
-            <template v-slot:instance>
+            <template #instance>
               <b>{{ config?.name }}</b>
             </template>
           </i18n-t>
@@ -141,12 +141,12 @@
                 tag="span"
                 keypath="I agree to the {instanceRules} and {termsOfService}"
               >
-                <template v-slot:instanceRules>
+                <template #instanceRules>
                   <router-link class="out" :to="{ name: RouteName.RULES }">{{
                     t("instance rules")
                   }}</router-link>
                 </template>
-                <template v-slot:termsOfService>
+                <template #termsOfService>
                   <router-link class="out" :to="{ name: RouteName.TERMS }">{{
                     t("terms of service")
                   }}</router-link>

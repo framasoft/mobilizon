@@ -3,7 +3,7 @@
     <h1 class="">{{ $t("Explore") }}</h1>
     <section v-if="tag">
       <i18n-t keypath="Events tagged with {tag}">
-        <template v-slot:tag>
+        <template #tag>
           <b-tag variant="light">{{ $t("#{tag}", { tag }) }}</b-tag>
         </template>
       </i18n-t>
