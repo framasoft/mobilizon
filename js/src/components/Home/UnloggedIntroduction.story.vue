@@ -1,19 +1,23 @@
 <template>
-  <Story :setup-app="setupApp">
+  <Story>
     <Variant :title="'Open'">
-      <UnloggedIntroduction />
+      <UnloggedIntroduction :config="config" />
     </Variant>
     <Variant :title="'Closed'">
-      <UnloggedIntroduction />
+      <UnloggedIntroduction :config="configClosed" />
     </Variant>
   </Story>
 </template>
 <script lang="ts" setup>
-import { apolloClient } from "@/vue-apollo";
-import { DefaultApolloClient } from "@vue/apollo-composable";
+import { reactive } from "vue";
 import UnloggedIntroduction from "./UnloggedIntroduction.vue";
 
-function setupApp({ app }) {
-  app.provide(DefaultApolloClient, apolloClient);
-}
+const config = reactive({
+  name: "My instance name",
+  description: "An instance that doesn't exist",
+  slogan: "Test! Test! Test!",
+  registrationsOpen: true,
+});
+
+const configClosed = reactive({ ...config, registrationsOpen: false });
 </script>

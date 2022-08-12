@@ -23,7 +23,7 @@
 import { PostVisibility } from "@/types/enums";
 import { IPost } from "../../types/post.model";
 import RouteName from "@/router/name";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import ShareModal from "@/components/Share/ShareModal.vue";

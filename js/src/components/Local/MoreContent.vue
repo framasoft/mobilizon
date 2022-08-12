@@ -1,7 +1,7 @@
 <template>
   <router-link
     :to="to"
-    class="mbz-card flex flex-col items-center dark:border-gray-700 shadow-md md:flex-col my-4 snap-center shrink-0 first:pl-8 w-[18rem]"
+    class="mbz-card flex flex-col items-center dark:border-gray-700 shadow-md md:flex-col snap-center shrink-0 first:pl-8 w-[18rem]"
   >
     <div class="relative w-full group">
       <img

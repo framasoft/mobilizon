@@ -69,7 +69,7 @@
         />
       </o-field>
 
-      <p class="control has-text-centered" v-if="!submitted">
+      <p class="text-center my-2" v-if="!submitted">
         <o-button
           variant="primary"
           size="large"

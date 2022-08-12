@@ -1,7 +1,9 @@
 <template>
-  <div class="multi-card-event">
+  <div
+    class="grid auto-rows-[1fr] gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))]"
+  >
     <event-card
-      class="event-card"
+      class="flex flex-col h-full"
       v-for="event in events"
       :event="event"
       :key="event.uuid"
@@ -17,17 +19,3 @@ defineProps<{
   events: IEvent[];
 }>();
 </script>
-<style lang="scss" scoped>
-.multi-card-event {
-  display: grid;
-  grid-auto-rows: 1fr;
-  grid-column-gap: 20px;
-  grid-row-gap: 30px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  .event-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-}
-</style>

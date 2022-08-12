@@ -21,6 +21,9 @@ body {
 .btn-outlined-primary:hover {
   @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
 }
+.btn-size-large {
+  @apply text-2xl py-6;
+}
 .btn-disabled {
   @apply opacity-50 cursor-not-allowed;
 }
@@ -108,7 +111,7 @@ body {
 }
 .dropdown-menu {
   min-width: 12em;
-  @apply bg-white dark:bg-gray-700 shadow-lg rounded-sm;
+  @apply bg-white dark:bg-gray-700 shadow-lg rounded text-start py-2;
 }
 .dropdown-item {
   @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer w-full;

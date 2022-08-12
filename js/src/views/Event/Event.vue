@@ -65,7 +65,7 @@
                   </popover-actor-card>
                 </span>
               </div>
-              <p class="tags" dir="auto">
+              <p class="flex gap-1 items-center" dir="auto">
                 <tag v-if="eventCategory" class="category">{{
                   eventCategory
                 }}</tag>
@@ -363,13 +363,10 @@
         </div>
       </div>
 
-      <section
-        class="more-events section"
-        v-if="(event?.relatedEvents ?? []).length > 0"
-      >
-        <h3 class="title has-text-centered">
+      <section class="" v-if="(event?.relatedEvents ?? []).length > 0">
+        <h2 class="">
           {{ t("These events may interest you") }}
-        </h3>
+        </h2>
         <multi-card :events="event?.relatedEvents ?? []" />
       </section>
       <o-modal
@@ -524,45 +521,45 @@ import {
   EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
   FETCH_EVENT,
   JOIN_EVENT,
-} from "../../graphql/event";
-import { CURRENT_ACTOR_CLIENT, PERSON_STATUS_GROUP } from "../../graphql/actor";
-import { EventModel, IEvent } from "../../types/event.model";
+} from "@/graphql/event";
+import { CURRENT_ACTOR_CLIENT, PERSON_STATUS_GROUP } from "@/graphql/actor";
+import { EventModel, IEvent } from "@/types/event.model";
 import {
   displayName,
   IActor,
   IPerson,
   Person,
   usernameWithDomain,
-} from "../../types/actor";
-import { GRAPHQL_API_ENDPOINT } from "../../api/_entrypoint";
-import DateCalendarIcon from "../../components/Event/DateCalendarIcon.vue";
-import MultiCard from "../../components/Event/MultiCard.vue";
-import ReportModal from "../../components/Report/ReportModal.vue";
-import { IReport } from "../../types/report.model";
-import { CREATE_REPORT } from "../../graphql/report";
-import EventMixin from "../../mixins/event";
+} from "@/types/actor";
+import { GRAPHQL_API_ENDPOINT } from "@/api/_entrypoint";
+import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import MultiCard from "@/components/Event/MultiCard.vue";
+import ReportModal from "@/components/Report/ReportModal.vue";
+import { IReport } from "@/types/report.model";
+import { CREATE_REPORT } from "@/graphql/report";
+import EventMixin from "@/mixins/event";
 import IdentityPicker from "../Account/IdentityPicker.vue";
-import ParticipationSection from "../../components/Participation/ParticipationSection.vue";
-import RouteName from "../../router/name";
-import CommentTree from "../../components/Comment/CommentTree.vue";
+import ParticipationSection from "@/components/Participation/ParticipationSection.vue";
+import RouteName from "@/router/name";
+import CommentTree from "@/components/Comment/CommentTree.vue";
 import "intersection-observer";
-import { CONFIG } from "../../graphql/config";
+import { CONFIG } from "@/graphql/config";
 import {
   AnonymousParticipationNotFoundError,
   getLeaveTokenForParticipation,
   isParticipatingInThisEvent,
   removeAnonymousParticipation,
-} from "../../services/AnonymousParticipationStorage";
-import { IConfig } from "../../types/config.model";
-import Tag from "../../components/Tag.vue";
-import EventMetadataSidebar from "../../components/Event/EventMetadataSidebar.vue";
-import EventBanner from "../../components/Event/EventBanner.vue";
-import EventMap from "../../components/Event/EventMap.vue";
-import PopoverActorCard from "../../components/Account/PopoverActorCard.vue";
-import { IParticipant } from "../../types/participant.model";
+} from "@/services/AnonymousParticipationStorage";
+import { IConfig } from "@/types/config.model";
+import Tag from "@/components/Tag.vue";
+import EventMetadataSidebar from "@/components/Event/EventMetadataSidebar.vue";
+import EventBanner from "@/components/Event/EventBanner.vue";
+import EventMap from "@/components/Event/EventMap.vue";
+import PopoverActorCard from "@/components/Account/PopoverActorCard.vue";
+import { IParticipant } from "@/types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { IEventMetadataDescription } from "@/types/event-metadata";
-import { eventMetaDataList } from "../../services/EventMetadata";
+import { eventMetaDataList } from "@/services/EventMetadata";
 import { USER_SETTINGS } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
 import { useDeleteEvent, useFetchEvent } from "@/composition/apollo/event";
@@ -606,22 +603,22 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 
 const ShareEventModal = defineAsyncComponent(
-  () => import("../../components/Event/ShareEventModal.vue")
+  () => import("@/components/Event/ShareEventModal.vue")
 );
 const IntegrationTwitch = defineAsyncComponent(
-  () => import("../../components/Event/Integrations/Twitch.vue")
+  () => import("@/components/Event/Integrations/Twitch.vue")
 );
 const IntegrationPeertube = defineAsyncComponent(
-  () => import("../../components/Event/Integrations/PeerTube.vue")
+  () => import("@/components/Event/Integrations/PeerTube.vue")
 );
 const IntegrationYoutube = defineAsyncComponent(
-  () => import("../../components/Event/Integrations/YouTube.vue")
+  () => import("@/components/Event/Integrations/YouTube.vue")
 );
 const IntegrationJitsiMeet = defineAsyncComponent(
-  () => import("../../components/Event/Integrations/JitsiMeet.vue")
+  () => import("@/components/Event/Integrations/JitsiMeet.vue")
 );
 const IntegrationEtherpad = defineAsyncComponent(
-  () => import("../../components/Event/Integrations/Etherpad.vue")
+  () => import("@/components/Event/Integrations/Etherpad.vue")
 );
 
 const props = defineProps<{

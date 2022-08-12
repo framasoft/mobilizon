@@ -27,9 +27,9 @@ export default defineConfig(({ command }) => {
         srcDir: "src",
         filename: "service-worker.ts",
         // injectRegister: "auto",
-        devOptions: {
-          enabled: true,
-        },
+        // devOptions: {
+        //   enabled: true,
+        // },
       }),
       // vueI18n({
       //   /* options */

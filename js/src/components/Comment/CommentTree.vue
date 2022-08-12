@@ -9,6 +9,7 @@
       <o-notification
         v-if="isEventOrganiser && !areCommentsClosed"
         :closable="false"
+        class="my-2"
         >{{ t("Comments are closed for everybody else.") }}</o-notification
       >
       <article class="flex flex-wrap items-start gap-2">

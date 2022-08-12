@@ -1359,5 +1359,11 @@
   "Published events with {comments} comments and {participations} confirmed participations": "Published events with {comments} comments and {participations} confirmed participations",
   "Ex: someone{'@'}mobilizon.org": "Ex: someone{'@'}mobilizon.org",
   "Group members": "Group members",
-  "e.g. Nantes, Berlin, Cork, …": "e.g. Nantes, Berlin, Cork, …"
+  "e.g. Nantes, Berlin, Cork, …": "e.g. Nantes, Berlin, Cork, …",
+  "find, create and organise events": "find, create and organise events",
+  "tool designed to serve you": "tool designed to serve you",
+  "multitude of interconnected Mobilizon websites": "multitude of interconnected Mobilizon websites",
+  "Mobilizon is a tool that helps you {find_create_organize_events}.": "Mobilizon is a tool that helps you {find_create_organize_events}.",
+  "Ethical alternative to Facebook events, groups and pages, Mobilizon is a {tool_designed_to_serve_you}. Period.": "Ethical alternative to Facebook events, groups and pages, Mobilizon is a {tool_designed_to_serve_you}. Period.",
+  "Mobilizon is not a giant platform, but a {multitude_of_interconnected_mobilizon_websites}.": "Mobilizon is not a giant platform, but a {multitude_of_interconnected_mobilizon_websites}."
 }

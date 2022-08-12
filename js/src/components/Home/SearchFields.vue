@@ -32,7 +32,7 @@ import { IAddress } from "@/types/address.model";
 import { AddressSearchType } from "@/types/enums";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import FullAddressAutoComplete from "../Event/FullAddressAutoComplete.vue";
+import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 
 const props = defineProps<{
   location: IAddress;

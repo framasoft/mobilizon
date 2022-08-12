@@ -28,7 +28,7 @@
             </o-tooltip>
           </p>
         </o-field>
-        <div class="flex">
+        <div class="flex flex-wrap gap-1">
           <a
             :href="twitterShare"
             target="_blank"

@@ -1,5 +1,5 @@
 <template>
-  <article class="flex gap-1">
+  <article class="flex gap-2">
     <div class="">
       <figure class="" v-if="comment.actor && comment.actor.avatar">
         <img

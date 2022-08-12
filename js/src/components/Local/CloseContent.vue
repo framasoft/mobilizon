@@ -1,5 +1,5 @@
 <template>
-  <div class="relative pt-10">
+  <div class="relative pt-10 px-2">
     <div class="w-full flex flex-wrap gap-3 mb-2 items-center">
       <h1
         class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
@@ -9,7 +9,7 @@
       <button
         v-if="suggestGeoloc && isIPLocation"
         class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
-        @click="$emit('doGeoLoc')"
+        @click="emit('doGeoLoc')"
       >
         {{ t("Geolocate me") }}
       </button>
@@ -24,7 +24,7 @@
     </div>
     <div class="overflow-hidden">
       <div
-        class="relative w-full flex gap-6 snap-x overflow-x-auto pb-6"
+        class="relative w-full snap-x overflow-x-auto pb-6 grid auto-rows-[1fr] gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))]"
         ref="scrollContainer"
         @scroll="scrollHandler"
       >

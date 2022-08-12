@@ -21,7 +21,7 @@
     </div>
     <div class="list-card flex flex-col relative">
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gapt-x-3"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gapt-x-3 pb-2"
       >
         <div class="mr-0 ml-0">
           <div class="h-36 relative w-full">
@@ -89,6 +89,7 @@
             :physical-address="participation.event.physicalAddress"
           />
           <div
+            class="flex gap-1"
             v-else-if="
               participation.event.options &&
               participation.event.options.isOnline
@@ -182,7 +183,7 @@
           </div>
         </div>
 
-        <o-dropdown aria-role="list">
+        <o-dropdown aria-role="list" class="text-center self-center">
           <template #trigger>
             <o-button icon-right="dots-horizontal">
               {{ $t("Actions") }}

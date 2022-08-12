@@ -8,6 +8,7 @@ export const orugaConfig = {
     roundedClass: "btn-rounded",
     outlinedClass: "btn-outlined-",
     disabledClass: "btn-disabled",
+    sizeClass: "btn-size-",
   },
   field: {
     rootClass: "field",

@@ -4,10 +4,9 @@ import {
   IDENTITIES,
   PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
-import { IGroup, IPerson, usernameWithDomain } from "@/types/actor";
+import { IPerson } from "@/types/actor";
 import { useQuery } from "@vue/apollo-composable";
-import { group } from "console";
-import { computed, ref, Ref, unref } from "vue";
+import { computed, Ref, unref } from "vue";
 import { useCurrentUserClient } from "./user";
 
 export function useCurrentActorClient() {

@@ -46,7 +46,7 @@ const notifier = inject<Notifier>("notifier");
 const onError = (error: ErrorResponse) => {
   console.error(error);
   if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-    notifier.error(error.graphQLErrors[0].message);
+    notifier?.error(error.graphQLErrors[0].message);
   }
 };
 

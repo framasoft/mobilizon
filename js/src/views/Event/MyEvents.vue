@@ -1,6 +1,6 @@
 <template>
-  <div class="container mx-auto">
-    <h1 class="text-4xl">
+  <div class="container mx-auto px-1">
+    <h1>
       {{ t("My events") }}
     </h1>
     <p>
@@ -126,7 +126,7 @@
           </div>
         </section>
         <section
-          class="has-text-centered not-found"
+          class="text-center not-found"
           v-if="
             showUpcoming &&
             monthlyFutureEvents &&
@@ -135,7 +135,7 @@
           "
         >
           <div class="img-container h-64" />
-          <div class="content has-text-centered">
+          <div class="text-center prose dark:prose-invert">
             <p>
               {{
                 t(
@@ -411,16 +411,7 @@ const firstDayOfWeek = computed((): number => {
 });
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-// @import "node_modules/bulma/sass/utilities/mixins.sass";
-
-main > .container {
-  & > h1 {
-    margin: 10px auto 5px;
-  }
-}
-
 .participation {
   margin: 1rem auto;
 }

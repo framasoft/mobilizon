@@ -1,7 +1,7 @@
 <template>
   <div
-    class="flex flex-col items-center mt-80"
-    :class="{ 'mt-40 mb-10': inline, 'text-center': center }"
+    class="flex flex-col items-center"
+    :class="{ 'mt-20 mb-10': inline, 'mt-80': !inline, 'text-center': center }"
     role="note"
   >
     <o-icon :icon="icon" customSize="48" />

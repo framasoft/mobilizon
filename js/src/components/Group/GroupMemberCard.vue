@@ -40,30 +40,30 @@
                 },
               }"
             >
-              <h2 class="text-2xl">{{ member.parent.name }}</h2>
-              <div class="">
+              <h2 class="mt-0">{{ member.parent.name }}</h2>
+              <div class="flex flex-col">
                 <span class="text-sm">{{
                   `@${usernameWithDomain(member.parent)}`
                 }}</span>
-                <div>
-                  <tag
-                    variant="info"
-                    v-if="member.role === MemberRole.ADMINISTRATOR"
-                    >{{ $t("Administrator") }}</tag
-                  >
-                  <tag
-                    variant="info"
-                    v-else-if="member.role === MemberRole.MODERATOR"
-                    >{{ $t("Moderator") }}</tag
-                  >
-                </div>
+                <tag
+                  variant="info"
+                  v-if="member.role === MemberRole.ADMINISTRATOR"
+                  >{{ $t("Administrator") }}</tag
+                >
+                <tag
+                  variant="info"
+                  v-else-if="member.role === MemberRole.MODERATOR"
+                  >{{ $t("Moderator") }}</tag
+                >
               </div>
             </router-link>
           </div>
         </div>
-        <div class="mt-3 prose lg:prose-xl" v-if="member.parent.summary">
-          <p v-html="member.parent.summary" />
-        </div>
+        <div
+          class="mt-3 prose dark:prose-invert lg:prose-xl line-clamp-2"
+          v-if="member.parent.summary"
+          v-html="flattenHTMLParagraphs(member.parent.summary)"
+        />
       </div>
       <div>
         <o-dropdown aria-role="list" position="bottom-left">
@@ -95,6 +95,7 @@ import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Tag from "@/components/Tag.vue";
+import { flattenHTMLParagraphs } from "@/utils/html";
 
 defineProps<{
   member: IMember;

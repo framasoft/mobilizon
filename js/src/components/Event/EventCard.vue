@@ -44,9 +44,9 @@
             :date="event.beginsOn.toString()"
           />
         </div>
-        <div class="flex-1 w-full flex flex-col justify-between">
+        <div class="w-full flex flex-col justify-between">
           <h3
-            class="text-lg leading-5 line-clamp-3 font-bold text-violet-3"
+            class="text-lg leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
             :title="event.title"
             dir="auto"
             :lang="event.language"
@@ -54,7 +54,10 @@
             {{ event.title }}
           </h3>
           <div class="pt-3">
-            <div class="flex items-center text-violet-3" dir="auto">
+            <div
+              class="flex items-center text-violet-3 dark:text-white"
+              dir="auto"
+            >
               <figure class="" v-if="actorAvatarURL">
                 <img
                   class="rounded-xl"
@@ -78,7 +81,7 @@
               dir="auto"
               v-else-if="event.options && event.options.isOnline"
             >
-              <o-icon icon="video" />
+              <Video />
               <span class="ltr:pl-2 rtl:pr-2">{{ $t("Online") }}</span>
             </div>
           </div>
@@ -104,6 +107,7 @@ import InlineAddress from "@/components/Address/InlineAddress.vue";
 import { computed } from "vue";
 import MobilizonTag from "../Tag.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Video from "vue-material-design-icons/Video.vue";
 
 const props = defineProps<{ event: IEvent; options?: IEventCardOptions }>();
 const defaultOptions: IEventCardOptions = {

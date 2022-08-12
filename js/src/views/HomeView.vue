@@ -1,13 +1,7 @@
 <template>
   <div>
     <!-- <o-loading v-model:active="$apollo.loading" /> -->
-    <section
-      class="mt-5 sm:mt-24"
-      v-if="
-        config &&
-        (!currentUser || !currentUser.id || !currentActor || !currentActor.id)
-      "
-    >
+    <section class="mt-5 sm:mt-24">
       <div class="-z-10 overflow-hidden">
         <img
           alt=""
@@ -29,7 +23,7 @@
         />
       </div>
     </section>
-    <unlogged-introduction />
+    <unlogged-introduction :config="config" v-if="config && !isLoggedIn" />
     <search-fields v-model:search="search" v-model:location="location" />
     <categories-preview />
     <div
@@ -37,7 +31,7 @@
       class="container mx-auto section"
       v-if="config && (!currentUser || !currentActor)"
     >
-      <section class="events-recent">
+      <section class="events-recent px-2">
         <h2 class="title">
           {{ $t("Last published events") }}
         </h2>
@@ -254,7 +248,7 @@
         class="home-separator"
         v-if="canShowMyUpcomingEvents"
       />
-      <section class="events-recent">
+      <section class="events-recent px-2">
         <h2 class="dark:text-white text-2xl font-bold">
           {{ $t("Last published events") }}
         </h2>
@@ -285,7 +279,7 @@
         <o-notification v-else variant="danger"
           >{{ $t("No events found") }}<br />
           <div v-if="goingToEvents.size > 0">
-            <!-- <o-icon size="small" icon="information-outline" /> -->
+            <InformationOutline :size="16" />
             <small>{{
               $t("The events you created are not shown here.")
             }}</small>
@@ -335,6 +329,7 @@ import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@vueuse/head";
+import InformationOutline from "vue-material-design-icons/InformationOutline.vue";
 
 const { result: resultEvents } = useQuery<{ events: Paginate<IEvent> }>(
   FETCH_EVENTS,
@@ -643,6 +638,8 @@ watch(loggedUser, (loggedUserValue) => {
 //     titleTemplate: "%s | Mobilizon",
 //   };
 // },
+
+const isLoggedIn = computed(() => loggedUser.value?.id !== undefined);
 
 useHead({
   title: computed(() => instanceName.value ?? ""),

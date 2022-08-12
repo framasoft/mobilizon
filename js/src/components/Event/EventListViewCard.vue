@@ -9,7 +9,7 @@
       <router-link
         :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
       >
-        <h2 class="text-2xl line-clamp-2">{{ event.title }}</h2>
+        <h2 class="mt-0 line-clamp-2">{{ event.title }}</h2>
       </router-link>
     </div>
     <div class="">

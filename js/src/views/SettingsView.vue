@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto">
-    <h1 class="text-violet-3">{{ t("Settings") }}</h1>
+    <h1 class="text-violet-3 dark:text-white">{{ t("Settings") }}</h1>
     <div class="flex flex-wrap gap-4">
       <SettingsMenu class="max-w-xs w-full" />
       <div class="flex-1">

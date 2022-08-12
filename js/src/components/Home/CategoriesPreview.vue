@@ -8,14 +8,13 @@
       :category="category"
       :with-details="false"
     />
-    <router-link :to="{ name: RouteName.CATEGORIES }">
-      <div
-        class="flex items-end brightness-85 h-36 w-36 md:h-52 md:w-52 rounded-lg font-semibold text-lg md:text-xl p-4 text-white bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500"
-      >
-        <span>
-          {{ t("View all categories") }}
-        </span>
-      </div>
+    <router-link
+      :to="{ name: RouteName.CATEGORIES }"
+      class="flex items-end brightness-85 h-36 w-36 md:h-52 md:w-52 rounded-lg font-semibold text-lg md:text-xl p-4 text-white bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:text-slate-200"
+    >
+      <span>
+        {{ t("View all categories") }}
+      </span>
     </router-link>
   </section>
 </template>
@@ -63,6 +62,6 @@ const promotedCategories = computed((): CategoryStatsModel[] => {
       number,
       label: eventCategoryLabel(key),
     }))
-    .slice(0, 10);
+    .slice(0, 9);
 });
 </script>

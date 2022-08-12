@@ -1,7 +1,7 @@
 <template>
-  <section v-if="config" class="container mx-auto px-2 my-3">
+  <section class="container mx-auto px-2 my-3">
     <h1 class="dark:text-white font-bold">
-      {{ config.slogan || t("Gather ⋅ Organize ⋅ Mobilize") }}
+      {{ config.slogan ?? t("Gather ⋅ Organize ⋅ Mobilize") }}
     </h1>
     <i18n-t
       keypath="Join {instance}, a Mobilizon instance"
@@ -37,16 +37,11 @@
   </section>
 </template>
 <script lang="ts" setup>
-import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
-import { useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
 import RouteName from "@/router/name";
 import { useI18n } from "vue-i18n";
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
-
-const config = computed(() => configResult.value?.config);
+defineProps<{ config: IConfig }>();
 
 const { t } = useI18n({ useScope: "global" });
 </script>

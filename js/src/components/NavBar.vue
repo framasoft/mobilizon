@@ -1,12 +1,10 @@
 <template>
   <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
-    <div
-      class="container mx-auto flex flex-wrap justify-between items-center mx-auto"
-    >
+    <div class="container mx-auto flex flex-wrap items-center mx-auto gap-4">
       <router-link :to="{ name: RouteName.HOME }" class="flex items-center">
         <MobilizonLogo class="w-40" />
       </router-link>
-      <div class="flex items-center md:order-2" v-if="currentActor?.id">
+      <div class="flex items-center md:order-2 ml-auto" v-if="currentActor?.id">
         <o-dropdown>
           <template #trigger>
             <button
@@ -80,7 +78,7 @@
         </o-dropdown>
       </div>
       <button
-        @click="showMobileMenu = true"
+        @click="showMobileMenu = !showMobileMenu"
         type="button"
         class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
         aria-controls="mobile-menu-2"
@@ -109,6 +107,20 @@
         <ul
           class="flex flex-col md:flex-row md:space-x-8 mt-2 md:mt-0 md:text-sm md:font-medium"
         >
+          <li v-if="currentActor?.id">
+            <router-link
+              :to="{ name: RouteName.MY_EVENTS }"
+              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("My events") }}</router-link
+            >
+          </li>
+          <li v-if="currentActor?.id">
+            <router-link
+              :to="{ name: RouteName.MY_GROUPS }"
+              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              >{{ t("My groups") }}</router-link
+            >
+          </li>
           <li v-if="!currentActor?.id">
             <router-link
               :to="{ name: RouteName.LOGIN }"

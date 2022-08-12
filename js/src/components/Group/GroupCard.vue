@@ -4,7 +4,7 @@
       name: RouteName.GROUP,
       params: { preferredUsername: usernameWithDomain(group) },
     }"
-    class="card flex flex-col max-w-md bg-white dark:bg-mbz-purple dark:text-white rounded shadow-lg"
+    class="card flex flex-col max-w-md bg-white dark:bg-mbz-purple dark:text-white rounded-lg shadow-lg"
   >
     <figure class="rounded-t-lg flex justify-center h-1/4">
       <lazy-image-wrapper :picture="group.banner" :rounded="true" />

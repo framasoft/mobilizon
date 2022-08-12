@@ -44,6 +44,7 @@ const comment = reactive<IComment>({
 
 const deletedComment = reactive<IComment>({
   ...comment,
+  actor: null,
   deletedAt: new Date().toString(),
 });
 </script>
