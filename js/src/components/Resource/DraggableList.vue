@@ -9,9 +9,13 @@
         <div class="actions" v-if="validCheckedResources.length > 0">
           <small>
             {{
-              $tc("No resources selected", validCheckedResources.length, {
-                count: validCheckedResources.length,
-              })
+              $t(
+                "No resources selected",
+                {
+                  count: validCheckedResources.length,
+                },
+                validCheckedResources.length
+              )
             }}
           </small>
           <o-button

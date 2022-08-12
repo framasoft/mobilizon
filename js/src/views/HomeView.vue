@@ -144,21 +144,33 @@
             v-if="isInLessThanSevenDays(row[0])"
           >
             <span v-if="isToday(row[0])">{{
-              $tc("You have one event today.", row[1].size, {
-                count: row[1].size,
-              })
+              $t(
+                "You have one event today.",
+                {
+                  count: row[1].size,
+                },
+                row[1].size
+              )
             }}</span>
             <span v-else-if="isTomorrow(row[0])">{{
-              $tc("You have one event tomorrow.", row[1].size, {
-                count: row[1].size,
-              })
+              $t(
+                "You have one event tomorrow.",
+                {
+                  count: row[1].size,
+                },
+                row[1].size
+              )
             }}</span>
             <span v-else-if="isInLessThanSevenDays(row[0])">
               {{
-                $tc("You have one event in {days} days.", row[1].size, {
-                  count: row[1].size,
-                  days: calculateDiffDays(row[0]),
-                })
+                $t(
+                  "You have one event in {days} days.",
+                  {
+                    count: row[1].size,
+                    days: calculateDiffDays(row[0]),
+                  },
+                  row[1].size
+                )
               }}
             </span>
           </p>
@@ -223,10 +235,10 @@
         </h2>
         <p>
           {{
-            $tc("Within {number} kilometers of {place}", radius, {
+            $t("Within {number} kilometers of {place}", {
               radius,
               place: locationName,
-            })
+            }, radius)
           }}
           <router-link
             :to="{ name: RouteName.PREFERENCES }"

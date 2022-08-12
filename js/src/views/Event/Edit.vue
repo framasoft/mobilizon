@@ -169,16 +169,17 @@
               v-if="event.contacts && event.contacts.length"
               v-html="
                 ' ' +
-                $tc(
+                $t(
                   '<b>{contact}</b> will be displayed as contact.',
-                  event.contacts.length,
+
                   {
                     contact: formatList(
                       event.contacts.map((contact) =>
                         displayNameAndUsername(contact)
                       )
                     ),
-                  }
+                  },
+                  event.contacts.length
                 )
               "
             />

@@ -42,10 +42,14 @@
         >
           <h3 class="is-size-3">
             {{
-              $tc("{title} ({count} todos)", todoList.todos.total, {
-                count: todoList.todos.total,
-                title: todoList.title,
-              })
+              $t(
+                "{title} ({count} todos)",
+                {
+                  count: todoList.todos.total,
+                  title: todoList.title,
+                },
+                todoList.todos.total
+              )
             }}
           </h3>
         </router-link>

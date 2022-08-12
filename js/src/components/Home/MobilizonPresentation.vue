@@ -5,40 +5,43 @@
         <h3 class="dark:text-white text-3xl font-bold">
           {{ t("A practical tool") }}
         </h3>
-        <p
+        <i18n-t
+          tag="p"
           class="dark:text-white"
-          v-html="
-            t(
-              'Mobilizon is a tool that helps you <b>find, create and organise events</b>.'
-            )
-          "
-        />
+          keypath="Mobilizon is a tool that helps you {find_create_organize_events}."
+        >
+          <template #find_create_organize_events>
+            <b>{{ t("find, create and organise events") }}</b>
+          </template>
+        </i18n-t>
       </div>
       <div>
         <h3 class="dark:text-white text-3xl font-bold">
           {{ t("An ethical alternative") }}
         </h3>
-        <p
+        <i18n-t
+          tag="p"
           class="dark:text-white"
-          v-html="
-            t(
-              'Ethical alternative to Facebook events, groups and pages, Mobilizon is a <b>tool designed to serve you</b>. Period.'
-            )
-          "
-        />
+          keypath="Ethical alternative to Facebook events, groups and pages, Mobilizon is a {tool_designed_to_serve_you}. Period."
+        >
+          <template #tool_designed_to_serve_you>
+            <b>{{ t("tool designed to serve you") }}</b>
+          </template>
+        </i18n-t>
       </div>
       <div>
         <h3 class="dark:text-white text-3xl font-bold">
           {{ t("A federated software") }}
         </h3>
-        <p
+        <i18n-t
+          tag="p"
           class="dark:text-white"
-          v-html="
-            t(
-              'Mobilizon is not a giant platform, but a <b>multitude of interconnected Mobilizon websites</b>.'
-            )
-          "
-        />
+          keypath="Mobilizon is not a giant platform, but a {multitude_of_interconnected_mobilizon_websites}."
+        >
+          <template #multitude_of_interconnected_mobilizon_websites>
+            <b>{{ t("multitude of interconnected Mobilizon websites") }}</b>
+          </template>
+        </i18n-t>
       </div>
     </div>
     <div class="mt-4 text-center">
