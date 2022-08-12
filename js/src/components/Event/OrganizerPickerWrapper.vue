@@ -63,15 +63,20 @@
           <h2 class="">{{ $t("Pick a profile or a group") }}</h2>
         </header>
         <section class="">
-          <div class="flex gap-2">
-            <div class="actor-picker">
+          <div class="flex flex-wrap gap-2 items-center">
+            <div class="max-h-[400px] overflow-y-auto flex-1">
               <organizer-picker
+                v-if="currentActor"
+                :current-actor="currentActor"
+                :identities="identities ?? []"
                 v-model="selectedActor"
-                @input="relay"
+                @update:model-value="relay"
                 :restrict-moderator-level="true"
+                :group-memberships="groupMemberships"
+                v-model:actorFilter="actorFilter"
               />
             </div>
-            <div class="contact-picker">
+            <div class="max-h-[400px] overflow-y-auto">
               <div v-if="isSelectedActorAGroup">
                 <p>{{ $t("Add a contact") }}</p>
                 <o-input
@@ -132,7 +137,7 @@
             </div>
           </div>
         </section>
-        <footer class="">
+        <footer class="my-2">
           <o-button variant="primary" @click="pickActor">
             {{ $t("Pick") }}
           </o-button>
@@ -145,7 +150,10 @@
 import { IActor, IGroup, usernameWithDomain } from "../../types/actor";
 import OrganizerPicker from "./OrganizerPicker.vue";
 import EmptyContent from "../Utils/EmptyContent.vue";
-import { PERSON_GROUP_MEMBERSHIPS } from "../../graphql/actor";
+import {
+  LOGGED_USER_MEMBERSHIPS,
+  PERSON_GROUP_MEMBERSHIPS,
+} from "../../graphql/actor";
 import { GROUP_MEMBERS } from "@/graphql/member";
 import { ActorType, MemberRole } from "@/types/enums";
 import { useQuery } from "@vue/apollo-composable";
@@ -157,6 +165,7 @@ import {
 import { useRoute } from "vue-router";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import debounce from "lodash/debounce";
+import { IUser } from "@/types/current-user.model";
 
 const MEMBER_ROLES = [
   MemberRole.CREATOR,
@@ -212,8 +221,8 @@ const selectedActor = computed({
     }
     return undefined;
   },
-  set(selectedActor: IActor | undefined) {
-    emit("update:modelValue", selectedActor);
+  set(newSelectedActor: IActor | undefined) {
+    emit("update:modelValue", newSelectedActor);
   },
 });
 
@@ -292,13 +301,17 @@ const filteredActorMembers = computed((): IActor[] => {
 const isSelectedActorAGroup = computed((): boolean => {
   return selectedActor.value?.type === ActorType.GROUP;
 });
+
+const actorFilter = ref("");
+
+const { result: groupMembershipsResult } = useQuery<{
+  loggedUser: Pick<IUser, "memberships">;
+}>(LOGGED_USER_MEMBERSHIPS, () => ({
+  page: 1,
+  limit: 10,
+  membershipName: actorFilter.value,
+}));
+const groupMemberships = computed(
+  () => groupMembershipsResult.value?.loggedUser.memberships.elements ?? []
+);
 </script>
-<style lang="scss" scoped>
-.modal-card-body .columns .column {
-  &.actor-picker,
-  &.contact-picker {
-    overflow-y: auto;
-    max-height: 400px;
-  }
-}
-</style>

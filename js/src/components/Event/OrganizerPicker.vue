@@ -1,13 +1,15 @@
 <template>
-  <div class="list is-hoverable">
+  <div class="max-w-md mx-auto">
     <o-input
       dir="auto"
-      :placeholder="$t('Filter by profile or group name')"
-      v-model="actorFilter"
+      :placeholder="t('Filter by profile or group name')"
+      v-model="actorFilterProxy"
+      class=""
     />
     <transition-group
       tag="ul"
       class="grid grid-cols-1 gap-y-3 m-5 max-w-md mx-auto"
+      :class="{ hidden: actualFilteredAvailableActors.length === 0 }"
       enter-active-class="duration-300 ease-out"
       enter-from-class="transform opacity-0"
       enter-to-class="opacity-100"
@@ -52,54 +54,37 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { IActor } from "@/types/actor";
-import { LOGGED_USER_MEMBERSHIPS } from "@/graphql/actor";
+import { IActor, IPerson } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import { MemberRole } from "@/types/enums";
-import { computed, ref } from "vue";
-import {
-  useCurrentActorClient,
-  useCurrentUserIdentities,
-} from "@/composition/apollo/actor";
-import { IUser } from "@/types/current-user.model";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-import { useQuery } from "@vue/apollo-composable";
 
 const props = withDefaults(
-  defineProps<{ modelValue: IActor; restrictModeratorLevel?: boolean }>(),
+  defineProps<{
+    currentActor: IPerson;
+    modelValue: IActor;
+    restrictModeratorLevel?: boolean;
+    identities: IActor[];
+    actorFilter: string;
+    groupMemberships: IMember[];
+  }>(),
   { restrictModeratorLevel: false }
 );
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "update:actorFilter"]);
 
-const { currentActor } = useCurrentActorClient();
-const { identities } = useCurrentUserIdentities();
-
-const actorFilter = ref("");
-
-const { result: groupMembershipsResult } = useQuery<{
-  loggedUser: Pick<IUser, "memberships">;
-}>(LOGGED_USER_MEMBERSHIPS, () => ({
-  page: 1,
-  limit: 10,
-  membershipName: actorFilter.value,
-}));
-const groupMemberships = computed(
-  () =>
-    groupMembershipsResult.value?.loggedUser.memberships ?? {
-      elements: [],
-      total: 0,
-    }
-);
+const { t } = useI18n({ useScope: "global" });
 
 const selectedActor = computed({
   get(): IActor | undefined {
     if (props.modelValue?.id) {
       return props.modelValue;
     }
-    if (currentActor.value) {
-      return (identities.value ?? []).find(
-        (identity) => identity.id === currentActor.value?.id
+    if (props.currentActor) {
+      return props.identities.find(
+        (identity) => identity.id === props.currentActor?.id
       );
     }
     return undefined;
@@ -112,7 +97,7 @@ const selectedActor = computed({
 
 const actualMemberships = computed((): IMember[] => {
   if (props.restrictModeratorLevel) {
-    return groupMemberships.value.elements.filter((membership: IMember) =>
+    return props.groupMemberships.filter((membership: IMember) =>
       [
         MemberRole.ADMINISTRATOR,
         MemberRole.MODERATOR,
@@ -120,14 +105,14 @@ const actualMemberships = computed((): IMember[] => {
       ].includes(membership.role)
     );
   }
-  return groupMemberships.value.elements;
+  return props.groupMemberships;
 });
 
 const actualAvailableActors = computed((): (IActor | undefined)[] => {
   return [
-    currentActor.value,
-    ...(identities.value ?? []).filter(
-      (identity: IActor) => identity.id !== currentActor.value?.id
+    props.currentActor,
+    ...props.identities.filter(
+      (identity: IActor) => identity.id !== props.currentActor?.id
     ),
     ...actualMemberships.value.map((member) => member.parent),
   ].filter((elem) => elem);
@@ -137,11 +122,20 @@ const actualFilteredAvailableActors = computed((): (IActor | undefined)[] => {
   return (actualAvailableActors.value ?? []).filter((actor) => {
     if (actor === undefined) return false;
     return [
-      actor.preferredUsername.toLowerCase(),
+      actor.preferredUsername?.toLowerCase(),
       actor.name?.toLowerCase(),
       actor.domain?.toLowerCase(),
-    ].some((match) => match?.includes(actorFilter.value.toLowerCase()));
+    ].some((match) => match?.includes(actorFilterProxy.value.toLowerCase()));
   });
+});
+
+const actorFilterProxy = computed({
+  get() {
+    return props.actorFilter;
+  },
+  set(newActorFilter: string) {
+    emit("update:actorFilter", newActorFilter);
+  },
 });
 </script>
 <style lang="scss" scoped>
