@@ -216,77 +216,9 @@
           >
         </span>
       </section>
-      <hr
-        role="presentation"
-        class="home-separator"
-        v-if="canShowFollowedGroupEvents"
-      />
 
-      <!-- Events close to you -->
-      <!-- <section class="events-close" v-if="canShowCloseEvents && radius">
-        <h2 class="title">
-          {{ $t("Events nearby") }}
-        </h2>
-        <p>
-          {{
-            $t("Within {number} kilometers of {place}", {
-              radius,
-              place: locationName,
-            }, radius)
-          }}
-          <router-link
-            :to="{ name: RouteName.PREFERENCES }"
-            :title="$t('Change')"
-          >
-            <o-icon class="clickable" icon="pencil" size="small" />
-          </router-link>
-        </p>
-        <multi-card :events="closeEvents.elements.slice(0, 4)" />
-      </section> -->
-      <hr
-        role="presentation"
-        class="home-separator"
-        v-if="canShowMyUpcomingEvents"
-      />
-      <section class="events-recent px-2">
-        <h2 class="dark:text-white text-2xl font-bold">
-          {{ $t("Last published events") }}
-        </h2>
-        <p class="mb-3">
-          <i18n-t
-            class="text-slate-700 dark:text-slate-300"
-            tag="span"
-            keypath="On {instance} and other federated instances"
-          >
-            <template #instance>
-              <b>{{ config.name }}</b>
-            </template>
-          </i18n-t>
-        </p>
-
-        <div v-if="events && events.total > 0">
-          <multi-card :events="events.elements.slice(0, 8)" />
-          <span
-            class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
-          >
-            <router-link
-              :to="{ name: RouteName.SEARCH }"
-              class="hover:text-slate-800 hover:dark:text-slate-400"
-              >{{ $t("View everything") }} >></router-link
-            >
-          </span>
-        </div>
-        <o-notification v-else variant="danger"
-          >{{ $t("No events found") }}<br />
-          <div v-if="goingToEvents.size > 0">
-            <InformationOutline :size="16" />
-            <small>{{
-              $t("The events you created are not shown here.")
-            }}</small>
-          </div>
-        </o-notification>
-      </section>
-      <close-events @doGeoLoc="performGeoLocation()" />
+      <CloseEvents @doGeoLoc="performGeoLocation()" />
+      <LastEvents :instanceName="config.name" class="mb-10" />
     </div>
   </div>
 </template>
@@ -314,6 +246,7 @@ import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 // import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import CloseEvents from "@/components/Local/CloseEvents.vue";
+import LastEvents from "@/components/Local/LastEvents.vue";
 import { computed, onMounted, reactive, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";

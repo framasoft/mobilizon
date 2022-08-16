@@ -540,7 +540,7 @@ const searchVariables = reactive({
   groupPage: groupPage,
   limit: EVENT_PAGE_LIMIT,
   type: type.value === "" ? undefined : type,
-  eventCategory: eventCategory,
+  category: eventCategory,
 });
 
 const {

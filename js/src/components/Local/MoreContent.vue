@@ -60,12 +60,11 @@
 </template>
 <script lang="ts" setup>
 import { computed } from "vue";
-import { RouteLocationNormalizedLoaded } from "vue-router";
 import { CategoryPictureLicencing } from "../Categories/constants";
 
 const props = defineProps<{
   to: { name: string; query: Record<string, string> };
-  picture: CategoryPictureLicencing & { url: string };
+  picture?: CategoryPictureLicencing & { url: string };
 }>();
 
 const imageAuthor = computed(

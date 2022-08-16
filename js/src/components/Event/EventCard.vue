@@ -1,9 +1,9 @@
 <template>
   <router-link
-    class="mbz-card max-w-xs"
+    class="mbz-card max-w-xs shrink-0 w-[18rem] snap-center"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
-    <div class="bg-secondary">
+    <div class="bg-secondary rounded-lg">
       <figure class="block relative pt-40">
         <lazy-image-wrapper
           :picture="event.picture"
@@ -35,7 +35,7 @@
         </div>
       </figure>
     </div>
-    <div class="h-full p-2">
+    <div class="p-2">
       <div class="relative flex flex-col h-full">
         <div class="-mt-3 h-0 flex mb-3 ltr:ml-0 rtl:mr-0 items-end self-start">
           <date-calendar-icon

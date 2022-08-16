@@ -1,18 +1,22 @@
 <template>
   <div class="relative pt-10 px-2">
-    <div class="w-full flex flex-wrap gap-3 mb-2 items-center">
-      <h1
-        class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
-      >
-        <slot name="title" />
-      </h1>
-      <button
-        v-if="suggestGeoloc && isIPLocation"
-        class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
-        @click="emit('doGeoLoc')"
-      >
-        {{ t("Geolocate me") }}
-      </button>
+    <div class="mb-2">
+      <div class="w-full flex flex-wrap gap-3 items-center">
+        <h2
+          class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
+        >
+          <slot name="title" />
+        </h2>
+
+        <button
+          v-if="suggestGeoloc && isIPLocation"
+          class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
+          @click="emit('doGeoLoc')"
+        >
+          {{ t("Geolocate me") }}
+        </button>
+      </div>
+      <slot name="subtitle" />
     </div>
     <div class="hidden sm:block" v-show="showScrollLeftButton">
       <button
@@ -24,7 +28,7 @@
     </div>
     <div class="overflow-hidden">
       <div
-        class="relative w-full snap-x overflow-x-auto pb-6 grid auto-rows-[1fr] gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))]"
+        class="relative w-full snap-x snap-always snap-mandatory overflow-x-auto flex pb-6 gap-x-5 gap-y-8"
         ref="scrollContainer"
         @scroll="scrollHandler"
       >
@@ -99,7 +103,7 @@ const scrollRight = (e: Event) => {
 };
 
 const scrollHorizontalToVertical = (evt: WheelEvent) => {
-  evt.deltaY > 0 ? doScroll(evt, 600) : doScroll(evt, -600);
+  evt.deltaY > 0 ? doScroll(evt, 300) : doScroll(evt, -300);
 };
 
 onMounted(async () => {
