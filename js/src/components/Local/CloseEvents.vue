@@ -164,7 +164,7 @@ const { result: eventsResult, loading: loadingEvents } = useQuery<{
   location: geohash,
   beginsOn: new Date(),
   endsOn: undefined,
-  radius: 2500,
+  radius: 25,
   eventPage: 1,
   limit: EVENT_PAGE_LIMIT,
   type: "IN_PERSON",
