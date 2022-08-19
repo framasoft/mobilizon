@@ -9,7 +9,7 @@ defmodule Mobilizon.Mixfile do
       version: @version,
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       xref: [exclude: [:eldap]],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -163,11 +163,11 @@ defmodule Mobilizon.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:atomex, "~> 0.4"},
       {:cachex, "~> 3.1"},
-      {:geohax, "~> 0.4.0"},
+      {:geohax, "~> 1.0.0"},
       {:mogrify, "~> 0.9"},
       {:linkify, "~> 0.3"},
       {:http_signatures, "~> 0.1.0"},
-      {:ex_cldr, "~> 2.30.0"},
+      {:ex_cldr, "~> 2.33"},
       {:ex_cldr_dates_times, "~> 2.2"},
       {:ex_cldr_plugs, "~> 1.0"},
       {:ex_optimizer, "~> 0.1"},
@@ -219,7 +219,7 @@ defmodule Mobilizon.Mixfile do
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
       {:sobelow, "~> 0.8", only: [:dev, :test]},
-      {:doctor, "~> 0.18.0", only: :dev},
+      {:doctor, "~> 0.19.0", only: :dev},
       {:haversine, "~> 0.1.0"}
     ] ++ oauth_deps()
   end

@@ -91,7 +91,7 @@
     "vue-use-route-query": "^1.1.0"
   },
   "devDependencies": {
-    "@histoire/plugin-vue": "^0.9.0",
+    "@histoire/plugin-vue": "^0.10.0",
     "@intlify/vite-plugin-vue-i18n": "^6.0.0",
     "@rushstack/eslint-patch": "^1.1.4",
     "@tailwindcss/forms": "^0.5.2",
@@ -106,8 +106,8 @@
     "@types/prosemirror-state": "^1.2.4",
     "@types/prosemirror-view": "^1.11.4",
     "@types/sanitize-html": "^2.5.0",
-    "@vitejs/plugin-vue": "^2.3.2",
-    "@vitest/ui": "^0.21.1",
+    "@vitejs/plugin-vue": "^3.0.3",
+    "@vitest/ui": "^0.22.1",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^2.0.2",
@@ -117,7 +117,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^9.3.0",
     "flush-promises": "^1.0.2",
-    "histoire": "^0.9.0",
+    "histoire": "^0.10.4",
     "jsdom": "^20.0.0",
     "mock-apollo-client": "^1.1.0",
     "prettier": "^2.2.1",
@@ -125,9 +125,9 @@
     "rollup-plugin-visualizer": "^5.7.1",
     "sass": "^1.34.1",
     "typescript": "~4.7.4",
-    "vite": "^2.9.0",
+    "vite": "^3.0.9",
     "vite-plugin-pwa": "^0.12.3",
-    "vitest": "^0.21.0",
+    "vitest": "^0.22.1",
     "vue-i18n-extract": "^2.0.4"
   }
 }

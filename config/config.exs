@@ -133,7 +133,7 @@ config :vite_phx,
   # optional
   phx_manifest: "priv/static/cache_manifest.json",
   # optional
-  dev_server_address: "http://localhost:3000"
+  dev_server_address: "http://localhost:5173"
 
 # Configures Elixir's Logger
 config :logger, :console,
