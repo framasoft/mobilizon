@@ -19,6 +19,8 @@
       :type="AddressSearchType.ADMINISTRATIVE"
       :doGeoLocation="false"
       v-model="location"
+      :hide-map="true"
+      :hide-selected="true"
     />
     <o-button type="submit" icon-left="magnify">
       <template v-if="search">{{ t("Go!") }}</template>

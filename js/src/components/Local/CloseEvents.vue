@@ -5,7 +5,12 @@
     v-on="attrs"
   >
     <template #title>
-      {{ t("Events nearby {position}", { position: userLocationName }) }}
+      <template v-if="userLocationName">
+        {{ t("Events nearby {position}", { position: userLocationName }) }}
+      </template>
+      <template v-else>
+        {{ t("Events close to you") }}
+      </template>
     </template>
     <template #content>
       <skeleton-event-result

@@ -112,7 +112,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { LatLng } from "leaflet";
+import { LatLng } from "leaflet";
 import { Address, IAddress, addressFullName } from "../../types/address.model";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
 import { computed, ref, watch, defineAsyncComponent } from "vue";

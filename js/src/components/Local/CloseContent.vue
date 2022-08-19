@@ -3,7 +3,7 @@
     <div class="mb-2">
       <div class="w-full flex flex-wrap gap-3 items-center">
         <h2
-          class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100"
+          class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-0"
         >
           <slot name="title" />
         </h2>
