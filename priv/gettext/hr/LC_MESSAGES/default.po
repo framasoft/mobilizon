@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-08-18 23:27+0000\n"
+"PO-Revision-Date: 2022-08-22 00:59+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -50,7 +50,7 @@ msgstr "Događaj"
 #: lib/web/email/user.ex:49
 #, elixir-autogen, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr ""
+msgstr "Upute za obnavljanje lozinke na %{instance}"
 
 #: lib/web/templates/email/report.text.eex:21
 #, elixir-autogen, elixir-format
@@ -132,7 +132,7 @@ msgstr "Novi naslov: %{title}"
 #: lib/web/templates/email/password_reset.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on %{instance}."
-msgstr ""
+msgstr "Zatražio/la si novu lozinku za tvoj račun na %{instance}."
 
 #: lib/web/templates/email/email.html.heex:105
 #, elixir-autogen, elixir-format
@@ -752,7 +752,7 @@ msgstr ""
 #: lib/web/templates/email/password_reset.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
-msgstr ""
+msgstr "Zatražio/la si novu lozinku za tvoj račun na <b>%{instance}</b>."
 
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-autogen, elixir-format
@@ -844,6 +844,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message. Your password won't be changed until you click the link above."
 msgstr ""
+"Ako nisi pokrenuo/la promjenu, zanemari ovu poruku. Tvoja se lozinka neće "
+"promijeniti sve dok ne pritisneš gornju poveznicu."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:103
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
@@ -1148,6 +1150,8 @@ msgstr ""
 msgctxt "terms"
 msgid "We are not liable for any loss you may incur as a result of someone else using your email or password, either with or without your knowledge."
 msgstr ""
+"Nismo odgovorni za gubitke kad netko drugi koristi tvoju e-mail adresu ili "
+"lozinku, neovisno o tome je li ti to poznato ili ne."
 
 #: lib/web/templates/api/terms.html.heex:140
 #, elixir-autogen, elixir-format
@@ -1178,6 +1182,10 @@ msgstr ""
 msgctxt "terms"
 msgid "When you create an account you agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>."
 msgstr ""
+"Kada otvoriš račun, slažeš se da ćeš održavati sigurnost i povjerljivost "
+"tvoje lozinke i da prihvaćaš sve rizike neovlaštenog pristupa podacima tvog "
+"računa i svim drugim informacijama koje pružaš na instanci "
+"<b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.heex:134
 #, elixir-autogen, elixir-format
@@ -1343,12 +1351,12 @@ msgstr "%{name} feed"
 #: lib/service/export/feed.ex:120
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
-msgstr ""
+msgstr "Feed privatnih događaja aktera %{actor} na %{instance}"
 
 #: lib/service/export/feed.ex:115
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
-msgstr ""
+msgstr "Feed javnih događaja aktera %{actor} na %{instance}"
 
 #: lib/service/export/feed.ex:224
 #, elixir-autogen, elixir-format
@@ -1383,7 +1391,7 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:316
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
-msgstr ""
+msgstr "Odabrana lozinka je prekratka. Lozinka mora sadržati barem 6 znakova."
 
 #: lib/graphql/resolvers/user.ex:322
 #, elixir-autogen, elixir-format
@@ -1400,6 +1408,9 @@ msgstr "Tvoje sudjelovanje događaju %{event} je otkazano!"
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend %{actor_name} (%{actor_address}). All of their events have been removed and your participation to event %{event} cancelled."
 msgstr ""
+"Tim za moderiranje tvoje instance odlučio je isključiti aktera %{actor_name} "
+"(%{actor_address}). Svi njegovi događaji su uklonjeni, a tvoje sudjelovanje "
+"u događaju %{event} je otkazano."
 
 #: lib/web/templates/email/group_suspension.html.heex:50
 #, elixir-autogen, elixir-format
@@ -1968,7 +1979,7 @@ msgid "Music"
 msgstr "Glazba"
 
 #: lib/mobilizon/events/categories.ex:92
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Networking"
 msgstr "Umrežavanje"
 
