@@ -374,9 +374,7 @@ onMounted(() => {
 const router = useRouter();
 
 watch(loggedUser, (loggedUserValue) => {
-  console.debug("Try to detect empty user settings", loggedUserValue);
   if (loggedUserValue?.id && loggedUserValue?.settings === null) {
-    console.debug("No user settings, pushing to onboarding assistant");
     router.push({
       name: RouteName.WELCOME_SCREEN,
       params: { step: "1" },

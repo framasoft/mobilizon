@@ -178,7 +178,6 @@ const initializeCurrentUser = () => {
   const role = localStorage.getItem(AUTH_USER_ROLE);
 
   if (userId && userEmail && accessToken && role) {
-    console.log("Saving current user client from localstorage", role);
     updateCurrentUser({
       id: userId,
       email: userEmail,
@@ -197,19 +196,16 @@ const refreshApp = async (
   if (!worker) {
     return Promise.resolve();
   }
-  console.debug("Doing worker.skipWaiting().");
   return new Promise((resolve, reject) => {
     const channel = new MessageChannel();
 
     channel.port1.onmessage = (event) => {
-      console.debug("Done worker.skipWaiting().");
       if (event.data.error) {
         reject(event.data);
       } else {
         resolve(event.data);
       }
     };
-    console.debug("calling skip waiting");
     worker?.postMessage({ type: "skip-waiting" }, [channel.port2]);
   });
 };

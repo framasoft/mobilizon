@@ -16,7 +16,6 @@ export function saveActorData(obj: IPerson): void {
 }
 
 export async function changeIdentity(identity: IPerson): Promise<void> {
-  console.debug("Changing identity to", identity);
   if (!identity.id) return;
   const { mutate: updateCurrentActorClient } = provideApolloClient(
     apolloClient
@@ -35,21 +34,14 @@ export async function changeIdentity(identity: IPerson): Promise<void> {
  */
 export async function initializeCurrentActor(): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
-  console.debug(
-    "initializing current actor, using actorId from localstorage",
-    actorId
-  );
 
   const { result: identitiesResult } = provideApolloClient(apolloClient)(() =>
     useQuery<{ identities: IPerson[] }>(IDENTITIES)
   );
 
-  console.debug("identitiesResult", identitiesResult);
-
   const identities = computed(() => identitiesResult.value?.identities);
 
   watch(identities, async () => {
-    console.debug("identities found", identities.value);
     if (identities.value && identities.value.length < 1) {
       console.warn("Logged user has no identities!");
       throw new NoIdentitiesException();
@@ -59,10 +51,7 @@ export async function initializeCurrentActor(): Promise<void> {
         (identity: IPerson | undefined) => identity?.id === actorId
       ) || ((identities.value || [])[0] as IPerson);
 
-    console.debug("active identity is", activeIdentity);
-
     if (activeIdentity) {
-      console.debug("active identity found, setting it up");
       await changeIdentity(activeIdentity);
     }
   });

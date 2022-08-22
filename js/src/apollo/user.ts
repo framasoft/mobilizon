@@ -99,8 +99,6 @@ export default function buildCurrentUserResolver(
           },
         };
 
-        console.debug("updating current actor", data);
-
         localCache.writeQuery({ data, query: CURRENT_ACTOR_CLIENT });
       },
       updateCurrentUserLocation: (
