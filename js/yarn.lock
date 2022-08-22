@@ -1670,9 +1670,9 @@
   integrity sha512-rr20mmx41OkWx4q5du2dv2sESR/6xH2tzScUQXwO8SiaQWa6PYTuan1nqBtA76FR9qkVfZY7nwQwZNC9StX/Ww==
 
 "@types/node@*":
-  version "18.7.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.6.tgz#31743bc5772b6ac223845e18c3fc26f042713c83"
-  integrity sha512-EdxgKRXgYsNITy5mjjXjVE/CS8YENSdhiagGrLqjG0pvA2owgJ6i4l7wy/PFZGC0B1/H20lWKN7ONVDNYDZm7A==
+  version "18.7.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.9.tgz#180bfc495c91dc62573967edf047e15dbdce1491"
+  integrity sha512-0N5Y1XAdcl865nDdjbO0m3T6FdmQ4ijE89/urOHLREyTXbpMWbSafx9y7XIsgWGtwUP2iYTinLyyW3FatAxBLQ==
 
 "@types/node@^10.0.3":
   version "10.17.60"
@@ -2433,9 +2433,9 @@ camelcase-css@^2.0.1:
   integrity sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==
 
 caniuse-lite@^1.0.30001370, caniuse-lite@^1.0.30001373:
-  version "1.0.30001378"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001378.tgz#3d2159bf5a8f9ca093275b0d3ecc717b00f27b67"
-  integrity sha512-JVQnfoO7FK7WvU4ZkBRbPjaot4+YqxogSDosHv0Hv5mWpUESmN+UubMU6L/hGz8QlQ2aY5U0vR6MOs6j/CXpNA==
+  version "1.0.30001381"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001381.tgz#e62955310e6e69cdf4b40bc5bc0895aa24bc4b8b"
+  integrity sha512-fEnkDOKpvp6qc+olg7+NzE1SqyfiyKf4uci7fAU38M3zxs0YOyKOxW/nMZ2l9sJbt7KZHcDIxUnbI0Iime7V4w==
 
 case@^1.6.3:
   version "1.6.3"
@@ -3402,9 +3402,9 @@ flat-cache@^3.0.4:
     rimraf "^3.0.2"
 
 flatted@^3.1.0:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.6.tgz#022e9218c637f9f3fc9c35ab9c9193f05add60b2"
-  integrity sha512-0sQoMh9s0BYsm+12Huy/rkKxVu4R1+r96YX5cG44rHV0pQ6iC3Q+mkoMFaGWObMFYQxCVT+ssG1ksneA2MI9KQ==
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.7.tgz#609f39207cb614b89d0765b477cb2d437fbf9787"
+  integrity sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==
 
 flexsearch@^0.7.21:
   version "0.7.21"
@@ -4440,13 +4440,13 @@ minimist@^1.2.0, minimist@^1.2.6:
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
 
 mlly@^0.5.13, mlly@^0.5.7:
-  version "0.5.13"
-  resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.5.13.tgz#2ee8fbaadda0fccad4d1096d024b1fb0aaeea11e"
-  integrity sha512-0SK2fqoan+PMjADs4I2egAtrtNtpjqRez6PDTCeAdGjUQNJCvO5o9v2NEq52WA1jFmMU97qBr/JgdvCquehDbA==
+  version "0.5.14"
+  resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.5.14.tgz#1aead555f8ffafd29f192676f4697805e25112c3"
+  integrity sha512-DgRgNUSX9NIxxCxygX4Xeg9C7GX7OUx1wuQ8cXx9o9LE0e9wrH+OZ9fcnrlEedsC/rtqry3ZhUddC759XD/L0w==
   dependencies:
     acorn "^8.8.0"
-    pathe "^0.3.4"
-    pkg-types "^0.3.3"
+    pathe "^0.3.5"
+    pkg-types "^0.3.4"
     ufo "^0.8.5"
 
 mock-apollo-client@^1.1.0:
@@ -4705,7 +4705,7 @@ pathe@^0.2.0:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-0.2.0.tgz#30fd7bbe0a0d91f0e60bae621f5d19e9e225c339"
   integrity sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==
 
-pathe@^0.3.4, pathe@^0.3.5:
+pathe@^0.3.5:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-0.3.5.tgz#87e5c1164ded1bebeb9dea5dab63563144062303"
   integrity sha512-grU/QeYP0ChuE5kjU2/k8VtAeODzbernHlue0gTa27+ayGIu3wqYBIPGfP9r5xSqgCgDd4nWrjKXEfxMillByg==
@@ -4735,7 +4735,7 @@ pify@^2.3.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
   integrity sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==
 
-pkg-types@^0.3.3:
+pkg-types@^0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/pkg-types/-/pkg-types-0.3.4.tgz#bafb9ce824f78c93e50aaafb5accf41d8f2ef92f"
   integrity sha512-s214f/xkRpwlwVBToWq9Mu0XlU3HhZMYCnr2var8+jjbavBHh/VCh4pBLsJW29rJ//B1jb4HlpMIaNIMH+W2/w==
@@ -4976,9 +4976,9 @@ prosemirror-view@1.26.2:
     prosemirror-transform "^1.1.0"
 
 prosemirror-view@^1.0.0, prosemirror-view@^1.1.0:
-  version "1.27.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.27.1.tgz#0990547f8c83e3959c1ca00c53631641375d8d77"
-  integrity sha512-aUb5W6o3BdPQhbOKOvyPJZckVDfbEoCTN5Z24CYdYkoUIT2QAWHwlfTpMCBn4hkaHiTI6trbdFDQhAwaKjYSiw==
+  version "1.27.2"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.27.2.tgz#7f1e9b73698ba2622c515e2a617fd49232d214c4"
+  integrity sha512-RE2GLUaYXUyrpUl58vHoznZ3wKAj7z8f1ZZolivljwwOe1yiSzsEsuJPZmm3mpBXRgHGk7LWh5v+uhdDXAbjkA==
   dependencies:
     prosemirror-model "^1.16.0"
     prosemirror-state "^1.0.0"
@@ -5184,9 +5184,9 @@ rollup-plugin-terser@^7.0.0:
     terser "^5.0.0"
 
 rollup-plugin-visualizer@^5.7.1:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-visualizer/-/rollup-plugin-visualizer-5.7.1.tgz#7af30b02e6579155368a90b37b6ee9137b391d06"
-  integrity sha512-E/IgOMnmXKlc6ICyf53ok1b6DxPeNVUs3R0kYYPuDpGfofT4bkiG+KtSMlGjMACFmfwbbqTVDZBIF7sMZVKJbA==
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-visualizer/-/rollup-plugin-visualizer-5.8.0.tgz#32f2fe23d4299e977c06c59c07255590354e3445"
+  integrity sha512-pY6j/7qHz5I9rB7d/bQoA5gX+2FbV3MBG055wrsFxDn550bgl0FNViRj6wDHh85PMswv+JVdZjhnMBzz/hdAHA==
   dependencies:
     nanoid "^3.3.4"
     open "^8.4.0"
@@ -5261,9 +5261,9 @@ sanitize-html@^2.5.3:
     postcss "^8.3.11"
 
 sass@^1.34.1:
-  version "1.54.4"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.54.4.tgz#803ff2fef5525f1dd01670c3915b4b68b6cba72d"
-  integrity sha512-3tmF16yvnBwtlPrNBHw/H907j8MlOX8aTBnlNX1yrKx24RKcJGPyLhFUwkoKBKesR3unP93/2z14Ll8NicwQUA==
+  version "1.54.5"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.54.5.tgz#93708f5560784f6ff2eab8542ade021a4a947b3a"
+  integrity sha512-p7DTOzxkUPa/63FU0R3KApkRHwcVZYC0PLnLm5iyZACyp15qSi32x7zVUhRdABAATmkALqgGrjCJAcWvobmhHw==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
