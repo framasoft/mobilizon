@@ -79,15 +79,13 @@
         <section
           class="py-4"
           v-if="
-            showUpcoming &&
-            monthlyFutureEvents &&
-            monthlyFutureEvents.length > 0
+            showUpcoming && monthlyFutureEvents && monthlyFutureEvents.size > 0
           "
         >
           <transition-group name="list" tag="p">
             <div
               class="mb-5"
-              v-for="month of monthlyFutureEvents()"
+              v-for="month of monthlyFutureEvents"
               :key="month[0]"
             >
               <span class="upcoming-month">{{ month[0] }}</span>
@@ -336,7 +334,7 @@ const monthlyEvents = (
   }, new Map());
 };
 
-const monthlyFutureEvents = (): Map<string, Eventable[]> => {
+const monthlyFutureEvents = computed((): Map<string, Eventable[]> => {
   let eventable = [] as Eventable[];
   if (showAttending.value) {
     eventable = [...eventable, ...futureParticipations.value];
@@ -345,7 +343,7 @@ const monthlyFutureEvents = (): Map<string, Eventable[]> => {
     eventable = [...eventable, ...groupEvents.value];
   }
   return monthlyEvents(eventable);
-};
+});
 
 const monthlyPastParticipations = computed((): Map<string, Eventable[]> => {
   return monthlyEvents(pastParticipations.value.elements, true);

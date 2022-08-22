@@ -204,3 +204,35 @@ button.menubar__button {
   @apply text-white;
   background: #363636;
 }
+
+/** Pagination */
+.pagination {
+  @apply flex items-center text-center justify-between;
+}
+.pagination-link {
+  @apply inline-flex items-center relative justify-center cursor-pointer rounded h-10 m-1 p-2 bg-white text-lg;
+}
+.pagination-list {
+  @apply flex items-center text-center list-none flex-wrap grow shrink justify-start;
+}
+.pagination-next,
+.pagination-previous {
+  @apply px-3;
+}
+.pagination-link-current {
+  @apply bg-primary cursor-not-allowed pointer-events-none border-primary text-white;
+}
+.pagination-ellipsis {
+  @apply text-center m-1 text-gray-300;
+}
+
+/** Tabs */
+.tabs-nav {
+  @apply flex items-center justify-start pb-0.5;
+}
+.tabs-nav-item-boxed {
+  @apply flex items-center justify-center px-2 py-2 rounded-t border-transparent;
+}
+.tabs-nav-item-active-boxed {
+  @apply bg-white border-gray-300 text-primary;
+}

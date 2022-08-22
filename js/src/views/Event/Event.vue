@@ -66,7 +66,7 @@
                 </span>
               </div>
               <p class="flex gap-1 items-center" dir="auto">
-                <tag v-if="eventCategory" class="category">{{
+                <tag v-if="eventCategory" class="category" capitalize>{{
                   eventCategory
                 }}</tag>
                 <router-link
@@ -77,22 +77,22 @@
                   <tag>{{ tag.title }}</tag>
                 </router-link>
               </p>
-              <b-tag variant="warning" size="is-medium" v-if="event?.draft"
+              <tag variant="warning" size="is-medium" v-if="event?.draft"
                 >{{ t("Draft") }}
-              </b-tag>
+              </tag>
               <span
                 class="event-status"
                 v-if="event?.status !== EventStatus.CONFIRMED"
               >
-                <b-tag
+                <tag
                   variant="warning"
                   v-if="event?.status === EventStatus.TENTATIVE"
-                  >{{ t("Event to be confirmed") }}</b-tag
+                  >{{ t("Event to be confirmed") }}</tag
                 >
-                <b-tag
+                <tag
                   variant="danger"
                   v-if="event?.status === EventStatus.CANCELLED"
-                  >{{ t("Event cancelled") }}</b-tag
+                  >{{ t("Event cancelled") }}</tag
                 >
               </span>
             </div>

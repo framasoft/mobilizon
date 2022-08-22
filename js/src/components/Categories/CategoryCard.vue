@@ -3,7 +3,7 @@
     :to="{
       name: 'SEARCH',
       query: {
-        eventCategory: category.key,
+        categoryOneOf: [category.key],
         contentType: 'EVENTS',
         radius: undefined,
       },

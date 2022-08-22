@@ -530,6 +530,8 @@ defmodule Mobilizon.Events do
     |> events_for_begins_on(args)
     |> events_for_ends_on(args)
     |> events_for_category(args)
+    |> events_for_categories(args)
+    |> events_for_statuses(args)
     |> events_for_tags(args)
     |> events_for_location(args)
     |> filter_online(args)
@@ -1319,6 +1321,19 @@ defmodule Mobilizon.Events do
   end
 
   defp events_for_category(query, _args), do: query
+
+  @spec events_for_categories(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
+  defp events_for_categories(query, %{category_one_of: category_one_of}) when length(category_one_of) > 0 do
+    where(query, [q], q.category in ^category_one_of)
+  end
+
+  defp events_for_categories(query, _args), do: query
+
+  defp events_for_statuses(query, %{status_one_of: status_one_of}) when length(status_one_of) > 0 do
+    where(query, [q], q.status in ^status_one_of)
+  end
+
+  defp events_for_statuses(query, _args), do: query
 
   @spec events_for_tags(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_tags(query, %{tags: tags}) when is_valid_string(tags) do

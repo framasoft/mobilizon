@@ -11,7 +11,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $tags: String
     $term: String
     $type: EventType
-    $category: String
+    $categoryOneOf: [String]
+    $statusOneOf: [EventStatus]
     $beginsOn: DateTime
     $endsOn: DateTime
     $eventPage: Int
@@ -24,7 +25,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       tags: $tags
       term: $term
       type: $type
-      category: $category
+      categoryOneOf: $categoryOneOf
+      statusOneOf: $statusOneOf
       beginsOn: $beginsOn
       endsOn: $endsOn
       page: $eventPage
@@ -156,9 +158,7 @@ export const SEARCH_GROUPS = gql`
   query SearchGroups(
     $location: String
     $radius: Float
-    $tags: String
     $term: String
-    $category: String
     $groupPage: Int
     $limit: Int
   ) {
@@ -188,8 +188,6 @@ export const SEARCH_GROUPS = gql`
       }
     }
   }
-  ${EVENT_OPTIONS_FRAGMENT}
-  ${TAG_FRAGMENT}
   ${ADDRESS_FRAGMENT}
   ${ACTOR_FRAGMENT}
 `;

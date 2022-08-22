@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="mbz-card max-w-xs shrink-0 w-[18rem] snap-center"
+    class="mbz-card max-w-xs shrink-0 w-[18rem] snap-center dark:bg-mbz-purple"
     :to="{ name: RouteName.EVENT, params: { uuid: event.uuid } }"
   >
     <div class="bg-secondary rounded-lg">

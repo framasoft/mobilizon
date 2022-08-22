@@ -134,8 +134,6 @@ export default function buildCurrentUserResolver(
           },
         };
 
-        console.debug("updating current user location", data);
-
         localCache.writeQuery({ data, query: CURRENT_USER_LOCATION_CLIENT });
       },
     },

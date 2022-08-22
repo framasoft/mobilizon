@@ -11,16 +11,9 @@ const localeInLocalStorage = getLocaleData();
 
 export const AVAILABLE_LANGUAGES = Object.keys(langs);
 
-console.debug("localeInLocalStorage", localeInLocalStorage);
-
 let language =
   localeInLocalStorage ||
   (document.documentElement.getAttribute("lang") as string);
-
-console.debug(
-  "localeInLocalStorage or fallback to lang html attribute",
-  language
-);
 
 language =
   language ||
@@ -29,14 +22,10 @@ language =
     "_"
   );
 
-console.debug("language or fallback to window.navigator language", language);
-
 export const locale =
   language && Object.prototype.hasOwnProperty.call(langs, language)
     ? language
     : language.split("-")[0];
-
-console.debug("chosen locale", locale);
 
 export const i18n = createI18n({
   legacy: false,
@@ -52,12 +41,9 @@ export const i18n = createI18n({
   globalInjection: true,
 });
 
-console.debug("set VueI18n with default locale", DEFAULT_LOCALE);
-
 const loadedLanguages = [DEFAULT_LOCALE];
 
 function setI18nLanguage(lang: string): string {
-  console.debug("setting i18n locale to", lang);
   i18n.global.locale = lang;
   setLanguageInDOM(lang);
   return lang;
@@ -74,7 +60,6 @@ function setLanguageInDOM(lang: string): void {
   const direction = ["ar", "ae", "he", "fa", "ku", "ur"].includes(fixedLang)
     ? "rtl"
     : "ltr";
-  console.debug("setDirection with", [fixedLang, direction]);
   html.setAttribute("dir", direction);
 }
 
@@ -96,17 +81,14 @@ function vueI18NfileForLanguage(lang: string) {
 export async function loadLanguageAsync(lang: string): Promise<string> {
   // If the same language
   if (i18n.global.locale === lang) {
-    console.debug("already using language", lang);
     return Promise.resolve(setI18nLanguage(lang));
   }
 
   // If the language was already loaded
   if (loadedLanguages.includes(lang)) {
-    console.debug("language already loaded", lang);
     return Promise.resolve(setI18nLanguage(lang));
   }
   // If the language hasn't been loaded yet
-  console.debug("loading language", lang);
   const newMessages = await import(
     `../i18n/${vueI18NfileForLanguage(lang)}.json`
   );
@@ -115,9 +97,7 @@ export async function loadLanguageAsync(lang: string): Promise<string> {
   return setI18nLanguage(lang);
 }
 
-console.debug("loading async locale", locale);
 loadLanguageAsync(locale);
-console.debug("loaded async locale", locale);
 
 export function formatList(list: string[]): string {
   if (window.Intl && Intl.ListFormat) {

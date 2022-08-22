@@ -130,6 +130,12 @@ export enum SearchTabs {
   GROUPS = 1,
 }
 
+export enum ContentType {
+  ALL = "ALL",
+  EVENTS = "EVENTS",
+  GROUPS = "GROUPS",
+}
+
 export enum ActorType {
   PERSON = "PERSON",
   APPLICATION = "APPLICATION",

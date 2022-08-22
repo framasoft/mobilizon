@@ -1,9 +1,6 @@
 <template>
-  <article class="bg-white dark:bg-mbz-purple mb-5 mt-4 p-0">
-    <div
-      class="bg-mbz-yellow-2 flex p-2 text-violet-title rounded-t-lg"
-      dir="auto"
-    >
+  <article class="bg-white dark:bg-mbz-purple mb-5 mt-4 pb-2 md:p-0">
+    <div class="bg-yellow-2 flex p-2 text-violet-title rounded-t-lg" dir="auto">
       <figure
         class="image is-24x24 ltr:pr-1 rtl:pl-1"
         v-if="participation.actor.avatar"
@@ -21,7 +18,7 @@
     </div>
     <div class="list-card flex flex-col relative">
       <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-1.5 gapt-x-3 pb-2"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-1.5 md:gap-y-3 gapt-x-3"
       >
         <div class="mr-0 ml-0">
           <div class="h-36 relative w-full">
@@ -52,24 +49,24 @@
             </router-link>
           </div>
         </div>
-        <div class="list-card-content lg:col-span-2 flex-1 p-2">
+        <div class="list-card-content lg:col-span-4 flex-1 p-2">
           <div class="flex items-center pt-2" dir="auto">
-            <b-tag
+            <Tag
               variant="info"
               class="mr-1 mb-1"
-              size="is-medium"
+              size="medium"
               v-if="participation.event.status === EventStatus.TENTATIVE"
             >
-              {{ $t("Tentative") }}
-            </b-tag>
-            <b-tag
+              {{ t("Tentative") }}
+            </Tag>
+            <Tag
               variant="danger"
               class="mr-1 mb-1"
-              size="is-medium"
+              size="medium"
               v-if="participation.event.status === EventStatus.CANCELLED"
             >
-              {{ $t("Cancelled") }}
-            </b-tag>
+              {{ t("Cancelled") }}
+            </Tag>
             <router-link
               :to="{
                 name: RouteName.EVENT,
@@ -96,7 +93,7 @@
             "
           >
             <Video />
-            <span>{{ $t("Online") }}</span>
+            <span>{{ t("Online") }}</span>
           </div>
           <div class="flex gap-1">
             <figure class="" v-if="actorAvatarURL">
@@ -122,7 +119,7 @@
               <!-- Less than 10 seats left -->
               <span class="has-text-danger" v-if="lastSeatsLeft">
                 {{
-                  $t("{number} seats left", {
+                  t("{number} seats left", {
                     number: seatsLeft,
                   })
                 }}
@@ -133,7 +130,7 @@
                 "
               >
                 {{
-                  $t(
+                  t(
                     "{available}/{capacity} available places",
                     {
                       available:
@@ -149,7 +146,7 @@
               </span>
               <span v-else>
                 {{
-                  $t(
+                  t(
                     "{count} participants",
                     {
                       count: participation.event.participantStats.participant,
@@ -170,7 +167,7 @@
                 "
               >
                 {{
-                  $t(
+                  t(
                     "{count} requests waiting",
                     {
                       count: participation.event.participantStats.notApproved,
@@ -183,10 +180,13 @@
           </div>
         </div>
 
-        <o-dropdown aria-role="list" class="text-center self-center">
+        <o-dropdown
+          aria-role="list"
+          class="text-center self-center md:col-span-2 lg:col-span-1"
+        >
           <template #trigger>
             <o-button icon-right="dots-horizontal">
-              {{ $t("Actions") }}
+              {{ t("Actions") }}
             </o-button>
           </template>
           <o-dropdown-item
@@ -208,7 +208,7 @@
               "
             >
               <Pencil />
-              {{ $t("Edit") }}
+              {{ t("Edit") }}
             </div>
           </o-dropdown-item>
 
@@ -226,7 +226,7 @@
               "
             >
               <ContentDuplicate />
-              {{ $t("Duplicate") }}
+              {{ t("Duplicate") }}
             </div>
           </o-dropdown-item>
 
@@ -241,7 +241,7 @@
           >
             <div @click="openDeleteEventModalWrapper" class="flex gap-1">
               <Delete />
-              {{ $t("Delete") }}
+              {{ t("Delete") }}
             </div>
           </o-dropdown-item>
 
@@ -264,7 +264,7 @@
               "
             >
               <AccountMultiplePlus />
-              {{ $t("Manage participations") }}
+              {{ t("Manage participations") }}
             </div>
           </o-dropdown-item>
 
@@ -277,7 +277,7 @@
               }"
             >
               <ViewCompact />
-              {{ $t("View event page") }}
+              {{ t("View event page") }}
             </router-link>
           </o-dropdown-item>
         </o-dropdown>
@@ -288,12 +288,11 @@
 
 <script lang="ts" setup>
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
-import { EventStatus, EventVisibility, ParticipantRole } from "@/types/enums";
+import { EventStatus, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "@/types/participant.model";
 import {
   IEvent,
   IEventCardOptions,
-  organizer,
   organizerAvatarUrl,
   organizerDisplayName,
 } from "@/types/event.model";
@@ -319,6 +318,7 @@ import { useI18n } from "vue-i18n";
 import { Dialog } from "@/plugins/dialog";
 import { Snackbar } from "@/plugins/snackbar";
 import { useDeleteEvent } from "@/composition/apollo/event";
+import Tag from "@/components/Tag.vue";
 
 const defaultOptions: IEventCardOptions = {
   hideDate: true,

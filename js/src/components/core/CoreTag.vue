@@ -1,6 +1,6 @@
 <template>
   <div v-if="attached && closable" class="tags has-addons">
-    <span class="tag" :class="[type, size, { 'is-rounded': rounded }]">
+    <span class="tag" :class="[variant, size, { rounded }]">
       <!-- <o-icon
         v-if="icon"
         :icon="icon"
@@ -15,7 +15,7 @@
       class="tag"
       role="button"
       :aria-label="ariaCloseLabel"
-      :tabindex="tabstop ? 0 : false"
+      :tabindex="tabstop ? 0 : undefined"
       :disabled="disabled"
       :class="[
         size,
@@ -35,7 +35,7 @@
       /> -->
     </a>
   </div>
-  <span v-else class="tag" :class="[type, size, { 'is-rounded': rounded }]">
+  <span v-else class="tag" :class="[variant, size, { 'is-rounded': rounded }]">
     <!-- <o-icon
       v-if="icon"
       :icon="icon"
@@ -53,7 +53,7 @@
       class="delete is-small"
       :class="closeType"
       :disabled="disabled"
-      :tabindex="tabstop ? 0 : false"
+      :tabindex="tabstop ? 0 : undefined"
       @click="close"
       @keyup.delete.prevent="close"
     />
@@ -64,7 +64,7 @@ const props = withDefaults(
   defineProps<{
     attached?: boolean;
     closable?: boolean;
-    type?: string;
+    variant?: string;
     size?: string;
     rounded?: boolean;
     disabled?: boolean;

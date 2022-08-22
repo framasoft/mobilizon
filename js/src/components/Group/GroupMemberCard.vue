@@ -62,7 +62,7 @@
         <div
           class="mt-3 prose dark:prose-invert lg:prose-xl line-clamp-2"
           v-if="member.parent.summary"
-          v-html="flattenHTMLParagraphs(member.parent.summary)"
+          v-html="htmlToText(member.parent.summary)"
         />
       </div>
       <div>
@@ -95,7 +95,7 @@ import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Tag from "@/components/Tag.vue";
-import { flattenHTMLParagraphs } from "@/utils/html";
+import { htmlToText } from "@/utils/html";
 
 defineProps<{
   member: IMember;

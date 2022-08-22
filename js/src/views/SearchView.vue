@@ -1,234 +1,500 @@
 <template>
-  <div class="container mx-auto mb-4">
-    <h1 class="">{{ $t("Explore") }}</h1>
-    <section v-if="tag">
-      <i18n-t keypath="Events tagged with {tag}">
-        <template #tag>
-          <b-tag variant="light">{{ $t("#{tag}", { tag }) }}</b-tag>
-        </template>
-      </i18n-t>
-    </section>
-    <section class="" v-else>
-      <div class="">
-        <form @submit.prevent="submit()">
-          <o-field
-            :label="$t('Key words')"
-            label-for="search"
-            class="text-black"
-          >
-            <o-input
-              icon="Magnify"
-              type="search"
-              id="search"
-              ref="autocompleteSearchInput"
-              :modelValue="search"
-              @modelValue:update="debouncedUpdateSearchQuery"
-              dir="auto"
-              :placeholder="
-                $t('For instance: London, Taekwondo, Architecture…')
-              "
-            />
-          </o-field>
-          <full-address-auto-complete
-            :label="$t('Location')"
-            v-model="location"
-            id="location"
-            ref="aac"
-            :placeholder="$t('For instance: London')"
-            :hideMap="true"
-            :hideSelected="true"
-          />
-          <o-field
-            :label="$t('Radius')"
-            label-for="radius"
-            class="searchRadius"
-          >
-            <o-select expanded v-model="radius" id="radius">
-              <option
-                v-for="(radiusOption, index) in radiusOptions"
-                :key="index"
-                :value="radiusOption"
-              >
-                {{ radiusString(radiusOption) }}
-              </option>
-            </o-select>
-          </o-field>
-          <o-field :label="$t('Date')" label-for="date">
-            <o-select
-              expanded
-              v-model="when"
-              id="date"
-              :disabled="activeTab !== 0"
-            >
-              <option
-                v-for="(option, index) in dateOptions"
-                :key="index"
-                :value="index"
-              >
-                {{ option.label }}
-              </option>
-            </o-select>
-          </o-field>
-          <o-field
-            expanded
-            :label="$t('Type')"
-            label-for="type"
-            class="searchType"
-          >
-            <o-select
-              expanded
-              v-model="type"
-              id="type"
-              :disabled="activeTab !== 0"
-            >
-              <option :value="null">
-                {{ $t("Any type") }}
-              </option>
-              <option :value="'ONLINE'">
-                {{ $t("Online") }}
-              </option>
-              <option :value="'IN_PERSON'">
-                {{ $t("In person") }}
-              </option>
-            </o-select>
-          </o-field>
-          <o-field
-            v-if="config"
-            expanded
-            :label="$t('Category')"
-            label-for="category"
-            class="searchCategory"
-          >
-            <o-select
-              expanded
-              v-model="eventCategory"
-              id="category"
-              :disabled="activeTab !== 0"
-            >
-              <option :value="null">
-                {{ $t("Any category") }}
-              </option>
-              <option
-                :value="category.id"
-                v-for="category in config.eventCategories"
-                :key="category.id"
-              >
-                {{ category.label }}
-              </option>
-            </o-select>
-          </o-field>
-        </form>
-      </div>
-    </section>
-    <section class="mt-4" v-if="!canSearchEvents && !canSearchGroups">
-      <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
-      <h2>{{ $t("Featured events") }}</h2>
-      <div v-if="events && events.elements.length > 0">
-        <multi-card class="my-4" :events="events?.elements" />
-        <div
-          class="pagination"
-          v-if="events && events.total > EVENT_PAGE_LIMIT"
+  <div
+    class="container mx-auto md:py-3 md:px-4 flex flex-col lg:flex-row gap-x-5 gap-y-1"
+  >
+    <aside
+      class="flex-none lg:block lg:sticky top-8 rounded-md px-2 pt-2 w-full lg:w-80 flex-col justify-between mt-2 lg:pb-10 lg:px-8 overflow-y-auto dark:text-slate-100 bg-white dark:bg-mbz-purple"
+    >
+      <o-button
+        @click="toggleFilters"
+        icon-left="filter"
+        class="w-full inline-flex lg:!hidden text-white px-4 py-2 justify-center"
+      >
+        <span v-if="!filtersPanelOpened">{{ t("Hide filters") }}</span>
+        <span v-else>{{ t("Show filters") }}</span>
+      </o-button>
+      <form
+        @submit.prevent="doNewSearch"
+        :class="{ hidden: filtersPanelOpened }"
+        class="lg:block mt-2"
+      >
+        <p class="sr-only">{{ t("Type") }}</p>
+        <ul
+          class="font-medium text-gray-900 dark:text-slate-100 space-y-4 pb-4 border-b border-gray-200 dark:border-gray-500"
         >
+          <li
+            v-for="content in contentTypeMapping"
+            :key="content.contentType"
+            class="flex gap-1"
+          >
+            <Magnify
+              v-if="content.contentType === ContentType.ALL"
+              :size="24"
+            />
+
+            <Calendar
+              v-if="content.contentType === ContentType.EVENTS"
+              :size="24"
+            />
+
+            <AccountMultiple
+              v-if="content.contentType === ContentType.GROUPS"
+              :size="24"
+            />
+
+            <router-link
+              :to="{
+                ...$route,
+                query: { ...$route.query, contentType: content.contentType },
+              }"
+            >
+              {{ content.label }}
+            </router-link>
+          </li>
+        </ul>
+
+        <div
+          class="py-4 border-b border-gray-200 dark:border-gray-500"
+          v-show="contentType !== 'GROUPS'"
+        >
+          <o-switch v-model="isOnline">{{ t("Online events") }}</o-switch>
+        </div>
+
+        <filter-section
+          v-show="contentType !== 'GROUPS'"
+          v-model:opened="searchFilterSectionsOpenStatus.eventDate"
+          :title="t('Event date')"
+        >
+          <template #options>
+            <fieldset class="flex flex-col">
+              <legend class="sr-only">{{ t("Event date") }}</legend>
+              <div
+                v-for="(eventStartDateRangeOption, key) in dateOptions"
+                :key="key"
+              >
+                <input
+                  :id="key"
+                  v-model="when"
+                  type="radio"
+                  name="eventStartDateRange"
+                  :value="key"
+                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  :for="key"
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ eventStartDateRangeOption.label }}</label
+                >
+              </div>
+            </fieldset>
+          </template>
+          <template #preview>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+            >
+              {{
+                Object.entries(dateOptions).find(([key]) => key === when)?.[1]
+                  ?.label
+              }}
+            </span>
+          </template>
+        </filter-section>
+
+        <filter-section
+          v-show="!isOnline"
+          v-model:opened="searchFilterSectionsOpenStatus.eventDistance"
+          :title="t('Distance')"
+        >
+          <template #options>
+            <fieldset class="flex flex-col">
+              <legend class="sr-only">{{ t("Distance") }}</legend>
+              <div
+                v-for="distanceOption in eventDistance"
+                :key="distanceOption.id"
+              >
+                <input
+                  :id="distanceOption.id"
+                  v-model="distance"
+                  type="radio"
+                  name="eventDistance"
+                  :value="distanceOption.id"
+                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  :for="distanceOption.id"
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ distanceOption.label }}</label
+                >
+              </div>
+            </fieldset>
+          </template>
+          <template #preview>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+            >
+              {{ eventDistance.find(({ id }) => id === distance)?.label }}
+            </span>
+          </template>
+        </filter-section>
+
+        <filter-section
+          v-show="contentType !== 'GROUPS'"
+          v-model:opened="searchFilterSectionsOpenStatus.eventCategory"
+          :title="t('Categories')"
+        >
+          <template #options>
+            <fieldset class="flex flex-col">
+              <legend class="sr-only">{{ t("Categories") }}</legend>
+              <div v-for="category in eventCategories" :key="category.id">
+                <input
+                  :id="category.id"
+                  v-model="categoryOneOf"
+                  type="checkbox"
+                  name="category"
+                  :value="category.id"
+                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  :for="category.id"
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ category.label }}</label
+                >
+              </div>
+            </fieldset>
+          </template>
+          <template #preview>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-if="categoryOneOf.length > 2"
+            >
+              {{
+                t("{numberOfCategories} selected", {
+                  numberOfCategories: categoryOneOf.length,
+                })
+              }}
+            </span>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-else-if="categoryOneOf.length > 0"
+            >
+              {{
+                listShortDisjunctionFormatter(
+                  categoryOneOf.map(
+                    (category) =>
+                      (eventCategories ?? []).find(({ id }) => id === category)
+                        ?.label ?? ""
+                  )
+                )
+              }}
+            </span>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-else-if="categoryOneOf.length === 0"
+            >
+              {{ t("Categories", "All") }}
+            </span>
+          </template>
+        </filter-section>
+        <filter-section
+          v-show="contentType !== 'GROUPS'"
+          v-model:opened="searchFilterSectionsOpenStatus.eventStatus"
+          :title="t('Event status')"
+        >
+          <template #options>
+            <fieldset class="flex flex-col">
+              <legend class="sr-only">{{ t("Event status") }}</legend>
+              <div
+                v-for="eventStatusOption in eventStatuses"
+                :key="eventStatusOption.id"
+              >
+                <input
+                  :id="eventStatusOption.id"
+                  v-model="statusOneOf"
+                  type="checkbox"
+                  name="eventStatus"
+                  :value="eventStatusOption.id"
+                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  :for="eventStatusOption.id"
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ eventStatusOption.label }}</label
+                >
+              </div>
+            </fieldset>
+          </template>
+          <template #preview>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-if="statusOneOf.length === Object.values(EventStatus).length"
+            >
+              {{ t("Statuses", "All") }}
+            </span>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-else-if="statusOneOf.length > 0"
+            >
+              {{
+                listShortDisjunctionFormatter(
+                  statusOneOf.map(
+                    (status) =>
+                      eventStatuses.find(({ id }) => id === status)?.label ?? ""
+                  )
+                )
+              }}
+            </span>
+          </template>
+        </filter-section>
+
+        <filter-section
+          v-model:opened="searchFilterSectionsOpenStatus.eventLanguage"
+          :title="t('Languages')"
+        >
+          <template #options>
+            <fieldset class="flex flex-col">
+              <legend class="sr-only">{{ t("Languages") }}</legend>
+              <div v-for="(language, key) in langs" :key="key">
+                <input
+                  :id="key"
+                  type="checkbox"
+                  name="eventStartDateRange"
+                  :value="key"
+                  v-model="languageOneOf"
+                  class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  :for="key"
+                  class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ language }}</label
+                >
+              </div>
+            </fieldset>
+          </template>
+          <template #preview>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-if="languageOneOf.length > 2"
+            >
+              {{
+                t("{numberOfLanguages} selected", {
+                  numberOfLanguages: languageOneOf.length,
+                })
+              }}
+            </span>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-else-if="languageOneOf.length > 0"
+            >
+              {{
+                listShortDisjunctionFormatter(
+                  languageOneOf.map((lang) => langs[lang])
+                )
+              }}
+            </span>
+            <span
+              class="bg-blue-100 text-blue-800 text-sm font-semibold p-0.5 rounded dark:bg-blue-200 dark:text-blue-800 grow-0"
+              v-else-if="languageOneOf.length === 0"
+            >
+              {{ t("Languages", "All") }}
+            </span>
+          </template>
+        </filter-section>
+
+        <!--
+
+            <div class="">
+              <label v-translate class="font-bold" for="host">Mobilizon instance</label>
+
+              <input
+                id="host"
+                v-model="formHost"
+                type="text"
+                name="host"
+                placeholder="mobilizon.fr"
+                class="dark:text-black md:max-w-fit w-full"
+              />
+            </div>
+
+            <div class="">
+              <label v-translate class="inline font-bold" for="tagsAllOf">All of these tags</label>
+              <button
+                v-if="formTagsAllOf.length !== 0"
+                v-translate
+                class="text-sm ml-2"
+                @click="resetField('tagsAllOf')"
+              >
+                Reset
+              </button>
+
+              <vue-tags-input
+                v-model="formTagAllOf"
+                :placeholder="tagsPlaceholder"
+                :tags="formTagsAllOf"
+                @tags-changed="(newTags) => (formTagsAllOf = newTags)"
+              />
+            </div>
+
+            <div>
+              <div>
+                <label v-translate class="inline font-bold" for="tagsOneOf">One of these tags</label>
+                <button
+                  v-if="formTagsOneOf.length !== 0"
+                  v-translate
+                  class="text-sm ml-2"
+                  @click="resetField('tagsOneOf')"
+                >
+                  Reset
+                </button>
+              </div>
+
+              <vue-tags-input
+                v-model="formTagOneOf"
+                :placeholder="tagsPlaceholder"
+                :tags="formTagsOneOf"
+                @tags-changed="(newTags) => (formTagsOneOf = newTags)"
+              />
+            </div>-->
+
+        <div class="sr-only">
+          <button
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            type="submit"
+          >
+            {{ t("Apply filters") }}
+          </button>
+        </div>
+
+        <o-button
+          @click="toggleFilters"
+          icon-left="filter"
+          class="w-full inline-flex lg:!hidden text-white px-4 py-2 justify-center"
+        >
+          {{ t("Hide filters") }}
+        </o-button>
+      </form>
+    </aside>
+    <div class="flex-1 px-2">
+      <o-tabs type="boxed" v-if="contentType == ContentType.ALL">
+        <o-tab-item>
+          <template #header>
+            <Calendar />
+
+            <span>
+              {{ t("Events") }}
+              <b-tag rounded>{{ searchEvents?.total }}</b-tag>
+            </span>
+          </template>
+          <div v-if="searchEvents && searchEvents.total > 0">
+            <multi-card class="my-4" :events="searchEvents?.elements" />
+            <div
+              class="pagination"
+              v-if="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
+            >
+              <o-pagination
+                :total="searchEvents.total"
+                v-model:current="eventPage"
+                :per-page="EVENT_PAGE_LIMIT"
+                :aria-next-label="t('Next page')"
+                :aria-previous-label="t('Previous page')"
+                :aria-page-label="t('Page')"
+                :aria-current-label="t('Current page')"
+              >
+              </o-pagination>
+            </div>
+          </div>
+          <o-notification v-else-if="searchLoading === false" variant="info">
+            <p>{{ t("No events found") }}</p>
+            <p v-if="searchIsUrl && !currentUser?.id">
+              {{
+                t(
+                  "Only registered users may fetch remote events from their URL."
+                )
+              }}
+            </p>
+          </o-notification>
+        </o-tab-item>
+
+        <o-tab-item>
+          <template #header>
+            <AccountMultiple />
+            <span>
+              {{ t("Groups") }} <b-tag rounded>{{ searchGroups?.total }}</b-tag>
+            </span>
+          </template>
+          <o-notification v-if="features && !features.groups" variant="danger">
+            {{ t("Groups are not enabled on this instance.") }}
+          </o-notification>
+          <div v-else-if="searchGroups && searchGroups?.total > 0">
+            <multi-group-card class="my-4" :groups="searchGroups?.elements" />
+            <div class="pagination">
+              <o-pagination
+                :total="searchGroups?.total"
+                v-model:current="groupPage"
+                :per-page="GROUP_PAGE_LIMIT"
+                :aria-next-label="t('Next page')"
+                :aria-previous-label="t('Previous page')"
+                :aria-page-label="t('Page')"
+                :aria-current-label="t('Current page')"
+              >
+              </o-pagination>
+            </div>
+          </div>
+          <o-notification v-else-if="searchLoading === false" variant="danger">
+            {{ t("No groups found") }}
+          </o-notification>
+        </o-tab-item>
+      </o-tabs>
+      <div v-else-if="contentType === ContentType.EVENTS">
+        <div v-if="searchEvents && searchEvents.total > 0">
+          <multi-card class="my-4" :events="searchEvents?.elements" />
           <o-pagination
-            :total="events.total"
-            v-model="featuredEventPage"
+            v-show="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
+            :total="searchEvents.total"
+            v-model:current="eventPage"
             :per-page="EVENT_PAGE_LIMIT"
-            :aria-next-label="$t('Next page')"
-            :aria-previous-label="$t('Previous page')"
-            :aria-page-label="$t('Page')"
-            :aria-current-label="$t('Current page')"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
           >
           </o-pagination>
         </div>
-      </div>
-      <o-notification
-        v-else-if="
-          events &&
-          events.elements.length === 0 &&
-          featuredEventsLoading === false
-        "
-        variant="info"
-        >{{ $t("No events found") }}</o-notification
-      >
-    </section>
-    <o-tabs v-else v-model="activeTab" type="is-boxed">
-      <!-- <o-loading v-model:active="searchLoading"></o-loading> -->
-      <o-tab-item :value="SearchTabs.EVENTS">
-        <template #header>
-          <Calendar />
-          <span>
-            {{ $t("Events") }}
-            <b-tag rounded>{{ searchEvents?.total }}</b-tag>
-          </span>
-        </template>
-        <div v-if="searchEvents && searchEvents.total > 0">
-          <multi-card class="my-4" :events="searchEvents?.elements" />
-          <div
-            class="pagination"
-            v-if="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
-          >
-            <o-pagination
-              :total="searchEvents.total"
-              v-model="eventPage"
-              :per-page="EVENT_PAGE_LIMIT"
-              :aria-next-label="$t('Next page')"
-              :aria-previous-label="$t('Previous page')"
-              :aria-page-label="$t('Page')"
-              :aria-current-label="$t('Current page')"
-            >
-            </o-pagination>
-          </div>
-        </div>
-        <o-notification v-else-if="searchLoading === false" variant="primary">
-          <p>{{ $t("No events found") }}</p>
+        <o-notification v-else-if="searchLoading === false" variant="info">
+          <p>{{ t("No events found") }}</p>
           <p v-if="searchIsUrl && !currentUser?.id">
             {{
-              $t(
-                "Only registered users may fetch remote events from their URL."
-              )
+              t("Only registered users may fetch remote events from their URL.")
             }}
           </p>
         </o-notification>
-      </o-tab-item>
-      <o-tab-item v-if="!tag" :value="SearchTabs.GROUPS">
-        <template #header>
-          <AccountMultiple />
-
-          <span>
-            {{ $t("Groups") }} <b-tag rounded>{{ searchGroups?.total }}</b-tag>
-          </span>
-        </template>
-        <o-notification
-          v-if="config && !config.features.groups"
-          variant="danger"
-        >
-          {{ $t("Groups are not enabled on this instance.") }}
+      </div>
+      <div v-else-if="contentType === ContentType.GROUPS">
+        <o-notification v-if="features && !features.groups" variant="danger">
+          {{ t("Groups are not enabled on this instance.") }}
         </o-notification>
         <div v-else-if="searchGroups && searchGroups?.total > 0">
           <multi-group-card class="my-4" :groups="searchGroups?.elements" />
-          <div class="pagination">
-            <o-pagination
-              :total="searchGroups?.total"
-              v-model="groupPage"
-              :per-page="GROUP_PAGE_LIMIT"
-              :aria-next-label="$t('Next page')"
-              :aria-previous-label="$t('Previous page')"
-              :aria-page-label="$t('Page')"
-              :aria-current-label="$t('Current page')"
-            >
-            </o-pagination>
-          </div>
+          <o-pagination
+            v-show="searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT"
+            :total="searchGroups?.total"
+            v-model:current="groupPage"
+            :per-page="GROUP_PAGE_LIMIT"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
+          >
+          </o-pagination>
         </div>
         <o-notification v-else-if="searchLoading === false" variant="danger">
-          {{ $t("No groups found") }}
+          {{ t("No groups found") }}
         </o-notification>
-      </o-tab-item>
-    </o-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import ngeohash, { GeographicPoint } from "ngeohash";
 import {
   endOfToday,
   addDays,
@@ -242,78 +508,86 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
-import { SearchTabs } from "@/types/enums";
+import { ContentType, EventStatus } from "@/types/enums";
 import MultiCard from "../components/Event/MultiCard.vue";
-import { FETCH_EVENTS } from "../graphql/event";
 import { IEvent } from "../types/event.model";
-import { IAddress, Address } from "../types/address.model";
 import FullAddressAutoComplete from "../components/Event/FullAddressAutoComplete.vue";
 import { SEARCH_EVENTS_AND_GROUPS } from "../graphql/search";
 import { Paginate } from "../types/paginate";
 import { IGroup } from "../types/actor";
 import MultiGroupCard from "../components/Group/MultiGroupCard.vue";
-import { CONFIG } from "../graphql/config";
-import { REVERSE_GEOCODE } from "../graphql/address";
-import debounce from "lodash/debounce";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, inject, onMounted, ref, reactive } from "vue";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   floatTransformer,
   integerTransformer,
   useRouteQuery,
+  enumTransformer,
+  booleanTransformer,
+  RouteQueryTransformer,
 } from "vue-use-route-query";
-import { IConfig } from "@/types/config.model";
 import Calendar from "vue-material-design-icons/Calendar.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
+import Magnify from "vue-material-design-icons/Magnify.vue";
+
 import { useHead } from "@vueuse/head";
 import type { Locale } from "date-fns";
+import FilterSection from "@/components/Search/filters/FilterSection.vue";
+import { listShortDisjunctionFormatter } from "@/utils/listFormat";
+import langs from "@/i18n/langs.json";
+import { useEventCategories, useFeatures } from "@/composition/apollo/config";
 
 const search = useRouteQuery("search", "");
 
 interface ISearchTimeOption {
   label: string;
-  start?: Date | null;
-  end?: Date | null;
+  start?: string | null;
+  end?: string | null;
 }
 
-const featuredEventPage = useRouteQuery(
-  "featuredEventPage",
-  1,
-  integerTransformer
-);
+const arrayTransformer: RouteQueryTransformer<string[]> = {
+  fromQuery(query: string) {
+    return query.split(",");
+  },
+  toQuery(value: string[]) {
+    return value.join(",");
+  },
+};
+
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
 const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
-const activeTab = useRouteQuery(
-  "searchType",
-  SearchTabs.EVENTS,
-  integerTransformer
-);
+
 const geohash = useRouteQuery("geohash", "");
 const radius = useRouteQuery("radius", null, floatTransformer);
+const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
-const type = useRouteQuery("type", "");
-const eventCategory = useRouteQuery("eventCategory", "any");
+const contentType = useRouteQuery(
+  "contentType",
+  ContentType.ALL,
+  enumTransformer(ContentType)
+);
+const isOnline = useRouteQuery("isOnline", false, booleanTransformer);
+const categoryOneOf = useRouteQuery("categoryOneOf", [], arrayTransformer);
+const statusOneOf = useRouteQuery(
+  "statusOneOf",
+  [EventStatus.CONFIRMED],
+  arrayTransformer
+);
+const languageOneOf = useRouteQuery("languageOneOf", [], arrayTransformer);
 
-const EVENT_PAGE_LIMIT = 12;
+const EVENT_PAGE_LIMIT = 16;
 
-const GROUP_PAGE_LIMIT = 12;
-
-// const DEFAULT_RADIUS = 25; // value to set if radius is null but location set
-
-const DEFAULT_ZOOM = 11; // zoom on a city
-
-// const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
+const GROUP_PAGE_LIMIT = 16;
 
 const props = defineProps<{
   tag?: string;
 }>();
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
-
-const config = computed(() => configResult.value?.config);
+const { features } = useFeatures();
+const { eventCategories } = useEventCategories();
 
 const searchEvents = computed(() => searchElementsResult.value?.searchEvents);
 const searchGroups = computed(() => searchElementsResult.value?.searchGroups);
@@ -324,13 +598,11 @@ const { result: currentUserResult } = useQuery<{ currentUser: ICurrentUser }>(
 
 const currentUser = computed(() => currentUserResult.value?.currentUser);
 
-const { t, locale } = useI18n({ useScope: "global" });
+const { t } = useI18n({ useScope: "global" });
 
 useHead({
   title: computed(() => t("Explore events")),
 });
-
-const location = ref<IAddress>(new Address());
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
@@ -349,44 +621,46 @@ const dateOptions: Record<string, ISearchTimeOption> = {
   past: {
     label: t("In the past") as string,
     start: null,
-    end: new Date(),
+    end: new Date().toISOString(),
   },
   today: {
     label: t("Today") as string,
-    start: new Date(),
-    end: endOfToday(),
+    start: new Date().toISOString(),
+    end: endOfToday().toISOString(),
   },
   tomorrow: {
     label: t("Tomorrow") as string,
-    start: startOfDay(addDays(new Date(), 1)),
-    end: endOfDay(addDays(new Date(), 1)),
+    start: startOfDay(addDays(new Date(), 1)).toISOString(),
+    end: endOfDay(addDays(new Date(), 1)).toISOString(),
   },
   weekend: {
     label: t("This weekend") as string,
-    start: weekend.value.start,
-    end: weekend.value.end,
+    start: weekend.value.start.toISOString(),
+    end: weekend.value.end.toISOString(),
   },
   week: {
     label: t("This week") as string,
-    start: new Date(),
-    end: endOfWeek(new Date(), { locale: dateFnsLocale }),
+    start: new Date().toISOString(),
+    end: endOfWeek(new Date(), { locale: dateFnsLocale }).toISOString(),
   },
   next_week: {
     label: t("Next week") as string,
     start: startOfWeek(addWeeks(new Date(), 1), {
       locale: dateFnsLocale,
-    }),
-    end: endOfWeek(addWeeks(new Date(), 1), { locale: dateFnsLocale }),
+    }).toISOString(),
+    end: endOfWeek(addWeeks(new Date(), 1), {
+      locale: dateFnsLocale,
+    }).toISOString(),
   },
   month: {
     label: t("This month") as string,
-    start: new Date(),
-    end: endOfMonth(new Date()),
+    start: new Date().toISOString(),
+    end: endOfMonth(new Date()).toISOString(),
   },
   next_month: {
     label: t("Next month") as string,
-    start: startOfMonth(addMonths(new Date(), 1)),
-    end: endOfMonth(addMonths(new Date(), 1)),
+    start: startOfMonth(addMonths(new Date(), 1)).toISOString(),
+    end: endOfMonth(addMonths(new Date(), 1)).toISOString(),
   },
   any: {
     label: t("Any day") as string,
@@ -395,118 +669,19 @@ const dateOptions: Record<string, ISearchTimeOption> = {
   },
 };
 
-// $refs!: {
-//   aac: FullAddressAutoComplete;
-//   autocompleteSearchInput: any;
-// };
-
-onMounted(() => {
-  prepareLocation(geohash.value);
-});
-
-const radiusString = (radiusValue: number | null): string => {
-  if (radiusValue) {
-    return t("{nb} km", { nb: radiusValue }, radiusValue) as string;
-  }
-  return t("any distance") as string;
-};
-
-const radiusOptions: (number | null)[] = [1, 5, 10, 25, 50, 100, 150, null];
-
-const submit = (): void => {
-  refetchSearchElements();
-};
-
-const updateSearchQuery = (searchQuery: string): void => {
-  search.value = searchQuery;
-};
-
-const debouncedUpdateSearchQuery = debounce(updateSearchQuery, 500);
-
-const prepareLocation = (value: string | undefined): void => {
-  if (value !== undefined) {
-    // decode
-    const latlon = ngeohash.decode(value);
-    // set location
-    reverseGeoCode(latlon, DEFAULT_ZOOM);
-  }
-};
-
-// const { onResult: onReverseGeocodeResult, load: loadReverseGeocode } =
-//   useReverseGeocode();
-
-const reverseGeoCode = async (
-  e: GeographicPoint,
-  zoom: number
-): Promise<void> => {
-  const { result: reverseGeocodeResult } = useQuery<{
-    reverseGeocode: IAddress[];
-  }>(REVERSE_GEOCODE, () => ({
-    latitude: e.latitude,
-    longitude: e.longitude,
-    zoom,
-    locale: locale.value,
-  }));
-
-  const addressData = computed(
-    () => reverseGeocodeResult.value?.reverseGeocode
-  );
-  if (addressData.value && addressData.value.length > 0) {
-    location.value = addressData.value[0];
-  }
-};
-
-// const locchange = (e: IAddress): void => {
-//   if (radius.value === undefined || radius.value === null) {
-//     radius.value = DEFAULT_RADIUS;
-//   }
-//   if (e?.geom) {
-//     const [lon, lat] = e.geom.split(";");
-//     geohash.value = ngeohash.encode(lat, lon, GEOHASH_DEPTH);
-//   } else {
-//     geohash.value = "";
-//   }
-// };
-
-const start = computed((): Date | undefined | null => {
+const start = computed((): string | undefined | null => {
   if (dateOptions[when.value]) {
     return dateOptions[when.value].start;
   }
   return undefined;
 });
 
-const end = computed((): Date | undefined | null => {
+const end = computed((): string | undefined | null => {
   if (dateOptions[when.value]) {
     return dateOptions[when.value].end;
   }
   return undefined;
 });
-
-const canSearchGroups = computed((): boolean => {
-  return (
-    stringExists(search.value) ||
-    (stringExists(geohash.value) && valueExists(radius.value))
-  );
-});
-
-const canSearchEvents = computed((): boolean => {
-  return (
-    stringExists(search.value) ||
-    stringExists(props.tag) ||
-    stringExists(type.value) ||
-    (stringExists(geohash.value) && valueExists(radius.value)) ||
-    valueExists(end.value)
-  );
-});
-
-// helper functions for skip
-const valueExists = (value: any): boolean => {
-  return value !== undefined && value !== null;
-};
-
-const stringExists = (value: string | null | undefined): boolean => {
-  return valueExists(value) && (value as string).length > 0;
-};
 
 const searchIsUrl = computed((): boolean => {
   let url;
@@ -520,35 +695,137 @@ const searchIsUrl = computed((): boolean => {
   return url.protocol === "http:" || url.protocol === "https:";
 });
 
-const { result: eventResult, loading: featuredEventsLoading } = useQuery<{
-  events: Paginate<IEvent>;
-}>(FETCH_EVENTS, () => ({
-  page: featuredEventPage.value,
-  limit: EVENT_PAGE_LIMIT,
-}));
-
-const events = computed(() => eventResult.value?.events);
-
-const searchVariables = reactive({
-  term: search,
-  tags: props.tag,
-  location: geohash,
-  beginsOn: start,
-  endsOn: end,
-  radius: radius,
-  eventPage: eventPage,
-  groupPage: groupPage,
-  limit: EVENT_PAGE_LIMIT,
-  type: type.value === "" ? undefined : type,
-  category: eventCategory,
+const contentTypeMapping = computed(() => {
+  return [
+    {
+      contentType: "ALL",
+      label: t("Everything"),
+    },
+    {
+      contentType: "EVENTS",
+      label: t("Events"),
+    },
+    {
+      contentType: "GROUPS",
+      label: t("Groups"),
+    },
+  ];
 });
 
-const {
-  result: searchElementsResult,
-  refetch: refetchSearchElements,
-  loading: searchLoading,
-} = useQuery<{
+const eventDistance = computed(() => {
+  return [
+    {
+      id: "anywhere",
+      label: t("Any distance"),
+    },
+    {
+      id: "5_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 5,
+        },
+        5
+      ),
+    },
+    {
+      id: "10_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 10,
+        },
+        10
+      ),
+    },
+    {
+      id: "25_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 25,
+        },
+        25
+      ),
+    },
+    {
+      id: "50_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 50,
+        },
+        50
+      ),
+    },
+    {
+      id: "100_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 100,
+        },
+        100
+      ),
+    },
+    {
+      id: "150_km",
+      label: t(
+        "{number} kilometers",
+        {
+          number: 150,
+        },
+        150
+      ),
+    },
+  ];
+});
+
+const eventStatuses = computed(() => {
+  return [
+    {
+      id: EventStatus.CONFIRMED,
+      label: t("Confirmed"),
+    },
+    {
+      id: EventStatus.TENTATIVE,
+      label: t("Tentative"),
+    },
+    {
+      id: EventStatus.CANCELLED,
+      label: t("Cancelled"),
+    },
+  ];
+});
+
+const searchFilterSectionsOpenStatus = ref({
+  eventDate: true,
+  eventLanguage: false,
+  eventCategory: false,
+  eventStatus: false,
+  eventDistance: false,
+});
+
+const filtersPanelOpened = ref(true);
+
+const toggleFilters = () =>
+  (filtersPanelOpened.value = !filtersPanelOpened.value);
+
+const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchEvents: Paginate<IEvent>;
   searchGroups: Paginate<IGroup>;
-}>(SEARCH_EVENTS_AND_GROUPS, searchVariables);
+}>(SEARCH_EVENTS_AND_GROUPS, () => ({
+  term: search.value,
+  tags: props.tag,
+  location: geohash.value,
+  beginsOn: start.value,
+  endsOn: end.value,
+  radius: radius.value,
+  eventPage: eventPage.value,
+  groupPage: groupPage.value,
+  limit: EVENT_PAGE_LIMIT,
+  type: isOnline.value ? "ONLINE" : "IN_PERSON",
+  categoryOneOf: categoryOneOf.value,
+  statusOneOf: statusOneOf.value,
+}));
 </script>

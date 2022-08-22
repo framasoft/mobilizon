@@ -12,7 +12,6 @@ module.exports = {
         "mbz-yellow": "#ffd599",
         "mbz-purple": "#424056",
         "mbz-bluegreen": "#1e7d97",
-        "mbz-yellow-2": "rgb(var(--color-mbz-yellow-2) / <alpha-value>)",
         "violet-1": "#3a384c",
         "violet-2": "#474467",
         "violet-3": "#3c376e",

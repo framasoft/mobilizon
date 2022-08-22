@@ -227,6 +227,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/LanDisconnect.vue`),
   CloudQuestion: () =>
     import(`../../../node_modules/vue-material-design-icons/CloudQuestion.vue`),
+  Filter: () =>
+    import(`../../../node_modules/vue-material-design-icons/Filter.vue`),
 };
 
 const props = withDefaults(

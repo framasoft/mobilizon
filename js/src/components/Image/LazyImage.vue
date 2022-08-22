@@ -57,13 +57,11 @@ const imageOpacity = computed(() =>
 );
 
 onMounted(() => {
-  console.debug("on lazy image mounted");
   observer.value = new IntersectionObserver((entries) => {
     isIntersecting.value = entries[0].isIntersecting;
   });
 
   if (wrapper.value) {
-    console.debug("starting observing");
     observer.value.observe(wrapper.value);
   }
 });

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid auto-rows-[1fr] gap-x-5 gap-y-8 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))]"
+    class="grid auto-rows-[1fr] gap-x-2 gap-y-4 md:gap-x-6 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] justify-items-center"
   >
     <event-card
       class="flex flex-col h-full"

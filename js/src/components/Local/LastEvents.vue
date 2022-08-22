@@ -1,5 +1,6 @@
 <template>
   <close-content
+    class="container mx-auto px-2"
     v-show="loadingEvents || (events && events.total > 0)"
     :suggestGeoloc="false"
     v-on="attrs"

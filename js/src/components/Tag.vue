@@ -1,7 +1,7 @@
 <template>
   <span
-    class="rounded-md my-1 truncate text-sm text-violet-title capitalize px-2 py-1"
-    :class="typeClasses"
+    class="rounded-md my-1 truncate text-sm text-violet-title px-2 py-1"
+    :class="[typeClasses, capitalize]"
   >
     <slot />
   </span>
@@ -12,8 +12,9 @@ import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
     variant?: "info" | "danger" | "warning" | "light";
+    capitalize: boolean;
   }>(),
-  { variant: "light" }
+  { variant: "light", capitalize: false }
 );
 
 const typeClasses = computed(() => {
@@ -23,6 +24,8 @@ const typeClasses = computed(() => {
       return "bg-purple-3 dark:text-violet-3";
     case "info":
       return "bg-mbz-info dark:text-white";
+    case "warning":
+      return "bg-yellow-1";
     case "danger":
       return "bg-mbz-danger dark:text-white";
   }

@@ -20,7 +20,7 @@ import { dateFnsPlugin } from "./plugins/dateFns";
 import { dialogPlugin } from "./plugins/dialog";
 import { snackbarPlugin } from "./plugins/snackbar";
 import { notifierPlugin } from "./plugins/notifier";
-import Tag from "./components/core/Tag.vue";
+import Tag from "./components/core/CoreTag.vue";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 import Oruga from "@oruga-ui/oruga-next";

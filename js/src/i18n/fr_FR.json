@@ -1351,5 +1351,21 @@
   "multitude of interconnected Mobilizon websites": "multitude de sites web Mobilizon interconnectés",
   "Mobilizon is a tool that helps you {find_create_organize_events}.": "Mobilizon est un outil qui vous permet de {find_create_organize_events}.",
   "Ethical alternative to Facebook events, groups and pages, Mobilizon is a {tool_designed_to_serve_you}. Period.": "Alternative éthique aux événements, groupes et pages Facebook, Mobilizon est un {tool_designed_to_serve_you}. Point.",
-  "Mobilizon is not a giant platform, but a {multitude_of_interconnected_mobilizon_websites}.": "Mobilizon n’est pas une plateforme géante, mais une {multitude_of_interconnected_mobilizon_websites}."
+  "Mobilizon is not a giant platform, but a {multitude_of_interconnected_mobilizon_websites}.": "Mobilizon n’est pas une plateforme géante, mais une {multitude_of_interconnected_mobilizon_websites}.",
+  "Events close to you": "Événements proches de vous",
+  "Popular groups close to you": "Groupes populaires proches de vous",
+  "View more events": "Voir plus d'événements",
+  "Hide filters": "Masquer les filtres",
+  "Show filters": "Afficher les filtres",
+  "Online events": "Événements en ligne",
+  "Event date": "Date de l'événement",
+  "Distance": "Distance",
+  "{numberOfCategories} selected": "{numberOfCategories} sélectionnées",
+  "Event status": "Statut de l'événement",
+  "Statuses": "Statuts",
+  "Languages": "Langues",
+  "{numberOfLanguages} selected": "{numberOfLanguages} sélectionnées",
+  "Apply filters": "Appliquer les filtres",
+  "Any distance": "N'importe quelle distance",
+  "{number} kilometers": "{number} kilomètres"
 }

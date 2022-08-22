@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
-
 import { register } from "register-service-worker";
 
-if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
   register(`${import.meta.env.BASE_URL}service-worker.js`, {
     ready() {
       console.debug(

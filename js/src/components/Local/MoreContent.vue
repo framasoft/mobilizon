@@ -1,7 +1,7 @@
 <template>
   <router-link
     :to="to"
-    class="mbz-card flex flex-col items-center dark:border-gray-700 shadow-md md:flex-col snap-center shrink-0 first:pl-8 w-[18rem]"
+    class="mbz-card flex flex-col items-center dark:border-gray-700 shadow-md md:flex-col snap-center shrink-0 first:pl-8 w-[18rem] dark:bg-mbz-purple"
   >
     <div class="relative w-full group">
       <img
@@ -63,7 +63,7 @@ import { computed } from "vue";
 import { CategoryPictureLicencing } from "../Categories/constants";
 
 const props = defineProps<{
-  to: { name: string; query: Record<string, string> };
+  to: { name: string; query: Record<string, string | undefined> };
   picture?: CategoryPictureLicencing & { url: string };
 }>();
 

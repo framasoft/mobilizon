@@ -1,226 +1,171 @@
 <template>
-  <div>
-    <!-- <o-loading v-model:active="$apollo.loading" /> -->
-    <section class="mt-5 sm:mt-24">
-      <div class="-z-10 overflow-hidden">
-        <img
-          alt=""
-          src="/img/shape-1.svg"
-          class="-z-10 absolute left-[2%] top-36"
-          width="300"
-        />
-        <img
-          alt=""
-          src="/img/shape-2.svg"
-          class="-z-10 absolute left-[50%] top-[5%] -translate-x-2/4 opacity-60"
-          width="800"
-        />
-        <img
-          alt=""
-          src="/img/shape-3.svg"
-          class="-z-10 absolute top-0 right-36"
-          width="200"
-        />
-      </div>
-    </section>
-    <unlogged-introduction :config="config" v-if="config && !isLoggedIn" />
-    <search-fields v-model:search="search" v-model:location="location" />
-    <categories-preview />
-    <div
-      id="recent_events"
-      class="container mx-auto section"
-      v-if="config && (!currentUser || !currentActor)"
-    >
-      <section class="events-recent px-2">
-        <h2 class="title">
-          {{ $t("Last published events") }}
-        </h2>
-        <p>
-          <i18n-t
-            tag="span"
-            keypath="On {instance} and other federated instances"
-          >
-            <template #instance>
-              <b>{{ config.name }}</b>
-            </template>
-          </i18n-t>
-        </p>
-        <div v-if="events.total > 0">
-          <multi-card :events="events.elements.slice(0, 6)" />
-          <span
-            class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
-          >
-            <router-link
-              :to="{ name: RouteName.SEARCH }"
-              class="hover:text-slate-800 hover:dark:text-slate-400"
-              >{{ $t("View everything") }} >></router-link
-            >
-          </span>
-        </div>
-        <o-notification v-else variant="danger">{{
-          $t("No events found")
-        }}</o-notification>
-      </section>
-    </div>
-    <div
-      id="picture"
-      v-if="config && (!currentUser || !currentUser.isLoggedIn)"
-    >
-      <div class="container mx-auto">
-        <close-events @doGeoLoc="performGeoLocation()" />
-      </div>
-      <div class="picture-container">
-        <picture>
-          <source
-            media="(max-width: 799px)"
-            :srcset="`/img/pics/homepage-480w.webp`"
-            type="image/webp"
-          />
-
-          <source
-            media="(max-width: 1024px)"
-            :srcset="`/img/pics/homepage-1024w.webp`"
-            type="image/webp"
-          />
-
-          <source
-            media="(max-width: 1920px)"
-            :srcset="`/img/pics/homepage-1920w.webp`"
-            type="image/webp"
-          />
-
-          <source
-            media="(min-width: 1921px)"
-            :srcset="`/img/pics/homepage.webp`"
-            type="image/webp"
-          />
-
-          <img
-            :src="`/img/pics/homepage-1024w.webp`"
-            width="3840"
-            height="2719"
-            alt=""
-            loading="lazy"
-          />
-        </picture>
-      </div>
-      <presentation />
-    </div>
-    <div class="container mx-auto" v-if="config && loggedUserSettings">
-      <section
-        v-if="
-          currentActor && currentActor.id && (welcomeBack || newRegisteredUser)
-        "
-      >
-        <o-notification variant="info" v-if="welcomeBack">{{
-          $t("Welcome back {username}!", {
-            username: currentActor.displayName(),
-          })
-        }}</o-notification>
-        <o-notification variant="info" v-if="newRegisteredUser">{{
-          $t("Welcome to Mobilizon, {username}!", {
-            username: currentActor.displayName(),
-          })
-        }}</o-notification>
-      </section>
-      <!-- Your upcoming events -->
-      <section v-if="canShowMyUpcomingEvents">
-        <h2 class="dark:text-white text-2xl font-bold">
-          {{ $t("Your upcoming events") }}
-        </h2>
-        <div
-          v-for="row of goingToEvents"
-          class="text-slate-700 dark:text-slate-300"
-          :key="row[0]"
-        >
-          <p
-            class="date-component-container"
-            v-if="isInLessThanSevenDays(row[0])"
-          >
-            <span v-if="isToday(row[0])">{{
-              $t(
-                "You have one event today.",
-                {
-                  count: row[1].size,
-                },
-                row[1].size
-              )
-            }}</span>
-            <span v-else-if="isTomorrow(row[0])">{{
-              $t(
-                "You have one event tomorrow.",
-                {
-                  count: row[1].size,
-                },
-                row[1].size
-              )
-            }}</span>
-            <span v-else-if="isInLessThanSevenDays(row[0])">
-              {{
-                $t(
-                  "You have one event in {days} days.",
-                  {
-                    count: row[1].size,
-                    days: calculateDiffDays(row[0]),
-                  },
-                  row[1].size
-                )
-              }}
-            </span>
-          </p>
-          <div>
-            <event-participation-card
-              v-for="participation in thisWeek(row)"
-              :key="participation[1].id"
-              :participation="participation[1]"
-            />
-          </div>
-        </div>
-        <span
-          class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
-        >
-          <router-link
-            :to="{ name: RouteName.MY_EVENTS }"
-            class="hover:text-slate-800 hover:dark:text-slate-400"
-            >{{ $t("View everything") }} >></router-link
-          >
-        </span>
-      </section>
-      <hr
-        role="presentation"
-        class="home-separator"
-        v-if="canShowMyUpcomingEvents && canShowFollowedGroupEvents"
+  <!-- <o-loading v-model:active="$apollo.loading" /> -->
+  <!-- Nice looking SVGs -->
+  <section class="mt-5 sm:mt-24">
+    <div class="-z-10 overflow-hidden">
+      <img
+        alt=""
+        src="/img/shape-1.svg"
+        class="-z-10 absolute left-[2%] top-36"
+        width="300"
       />
-      <!-- Events from your followed groups -->
-      <section class="followActivity" v-if="canShowFollowedGroupEvents">
-        <h2 class="title">
-          {{ $t("Upcoming events from your groups") }}
-        </h2>
-        <p>{{ $t("That you follow or of which you are a member") }}</p>
-        <multi-card :events="filteredFollowedGroupsEvents" />
-        <span
-          class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
-        >
-          <router-link
-            class="hover:text-slate-800 hover:dark:text-slate-400"
-            :to="{
-              name: RouteName.MY_EVENTS,
-              query: {
-                showUpcoming: 'true',
-                showDrafts: 'false',
-                showAttending: 'false',
-                showMyGroups: 'true',
-              },
-            }"
-            >{{ $t("View everything") }} >></router-link
-          >
-        </span>
-      </section>
-
-      <CloseEvents @doGeoLoc="performGeoLocation()" />
-      <LastEvents :instanceName="config.name" class="mb-10" />
+      <img
+        alt=""
+        src="/img/shape-2.svg"
+        class="-z-10 absolute left-[50%] top-[5%] -translate-x-2/4 opacity-60"
+        width="800"
+      />
+      <img
+        alt=""
+        src="/img/shape-3.svg"
+        class="-z-10 absolute top-0 right-36"
+        width="200"
+      />
     </div>
-  </div>
+  </section>
+  <!-- Unlogged introduction -->
+  <unlogged-introduction :config="config" v-if="config && !isLoggedIn" />
+  <!-- Search fields -->
+  <search-fields v-model:search="search" v-model:location="location" />
+  <!-- Categories preview -->
+  <categories-preview />
+  <!-- Welcome back -->
+  <section v-if="currentActor?.id && (welcomeBack || newRegisteredUser)">
+    <o-notification variant="info" v-if="welcomeBack">{{
+      $t("Welcome back {username}!", {
+        username: displayName(currentActor),
+      })
+    }}</o-notification>
+    <o-notification variant="info" v-if="newRegisteredUser">{{
+      $t("Welcome to Mobilizon, {username}!", {
+        username: displayName(currentActor),
+      })
+    }}</o-notification>
+  </section>
+  <!-- Your upcoming events -->
+  <section v-if="canShowMyUpcomingEvents" class="container mx-auto">
+    <h2 class="dark:text-white font-bold">
+      {{ $t("Your upcoming events") }}
+    </h2>
+    <div
+      v-for="row of goingToEvents"
+      class="text-slate-700 dark:text-slate-300"
+      :key="row[0]"
+    >
+      <p class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
+        <span v-if="isToday(row[0])">{{
+          $t(
+            "You have one event today.",
+            {
+              count: row[1].size,
+            },
+            row[1].size
+          )
+        }}</span>
+        <span v-else-if="isTomorrow(row[0])">{{
+          $t(
+            "You have one event tomorrow.",
+            {
+              count: row[1].size,
+            },
+            row[1].size
+          )
+        }}</span>
+        <span v-else-if="isInLessThanSevenDays(row[0])">
+          {{
+            $t(
+              "You have one event in {days} days.",
+              {
+                count: row[1].size,
+                days: calculateDiffDays(row[0]),
+              },
+              row[1].size
+            )
+          }}
+        </span>
+      </p>
+      <div>
+        <event-participation-card
+          v-for="participation in thisWeek(row)"
+          :key="participation[1].id"
+          :participation="participation[1]"
+        />
+      </div>
+    </div>
+    <span
+      class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
+    >
+      <router-link
+        :to="{ name: RouteName.MY_EVENTS }"
+        class="hover:text-slate-800 hover:dark:text-slate-400"
+        >{{ $t("View everything") }} >></router-link
+      >
+    </span>
+  </section>
+  <!-- Events from your followed groups -->
+  <section class="followActivity" v-if="canShowFollowedGroupEvents">
+    <h2 class="title">
+      {{ $t("Upcoming events from your groups") }}
+    </h2>
+    <p>{{ $t("That you follow or of which you are a member") }}</p>
+    <multi-card :events="filteredFollowedGroupsEvents" />
+    <span
+      class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
+    >
+      <router-link
+        class="hover:text-slate-800 hover:dark:text-slate-400"
+        :to="{
+          name: RouteName.MY_EVENTS,
+          query: {
+            showUpcoming: 'true',
+            showDrafts: 'false',
+            showAttending: 'false',
+            showMyGroups: 'true',
+          },
+        }"
+        >{{ $t("View everything") }} >></router-link
+      >
+    </span>
+  </section>
+  <!-- Recent events -->
+  <CloseEvents @doGeoLoc="performGeoLocation()" :userLocation="userLocation" />
+  <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
+  <LastEvents v-if="config" :instanceName="config.name" />
+  <!-- Unlogged content section -->
+  <picture v-if="!currentUser?.isLoggedIn">
+    <source
+      media="(max-width: 799px)"
+      :srcset="`/img/pics/homepage-480w.webp`"
+      type="image/webp"
+    />
+
+    <source
+      media="(max-width: 1024px)"
+      :srcset="`/img/pics/homepage-1024w.webp`"
+      type="image/webp"
+    />
+
+    <source
+      media="(max-width: 1920px)"
+      :srcset="`/img/pics/homepage-1920w.webp`"
+      type="image/webp"
+    />
+
+    <source
+      media="(min-width: 1921px)"
+      :srcset="`/img/pics/homepage.webp`"
+      type="image/webp"
+    />
+
+    <img
+      :src="`/img/pics/homepage-1024w.webp`"
+      width="3840"
+      height="2719"
+      alt=""
+      loading="lazy"
+    />
+  </picture>
+  <presentation v-if="!currentUser?.isLoggedIn" />
 </template>
 
 <script lang="ts" setup>
@@ -231,8 +176,7 @@ import { FETCH_EVENTS } from "../graphql/event";
 import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
-import { IPerson, Person } from "../types/actor";
-import ngeohash from "ngeohash";
+import { IPerson, displayName } from "../types/actor";
 import {
   ICurrentUser,
   IUser,
@@ -246,6 +190,7 @@ import { CONFIG } from "../graphql/config";
 import { IConfig } from "../types/config.model";
 // import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import CloseEvents from "@/components/Local/CloseEvents.vue";
+import CloseGroups from "@/components/Local/CloseGroups.vue";
 import LastEvents from "@/components/Local/LastEvents.vue";
 import { computed, onMounted, reactive, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -262,7 +207,7 @@ import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@vueuse/head";
-import InformationOutline from "vue-material-design-icons/InformationOutline.vue";
+import { geoHashToCoords } from "@/utils/location";
 
 const { result: resultEvents } = useQuery<{ events: Paginate<IEvent> }>(
   FETCH_EVENTS,
@@ -278,8 +223,8 @@ const events = computed(
 const { result: currentActorResult } = useQuery<{ currentActor: IPerson }>(
   CURRENT_ACTOR_CLIENT
 );
-const currentActor = computed<Person | undefined>(
-  () => new Person(currentActorResult.value?.currentActor)
+const currentActor = computed<IPerson | undefined>(
+  () => currentActorResult.value?.currentActor
 );
 
 const { result: currentUserResult } = useQuery<{
@@ -304,112 +249,6 @@ const loggedUser = computed(() => userResult.value?.loggedUser);
 const followedGroupEvents = computed(
   () => userResult.value?.loggedUser?.followedGroupEvents
 );
-
-const userSettingsLocation = computed(
-  () => loggedUser.value?.settings?.location
-);
-
-const { result: currentUserLocationResult } = useQuery<{
-  currentUserLocation: LocationType;
-}>(CURRENT_USER_LOCATION_CLIENT);
-
-const currentUserLocation = computed(() => {
-  return currentUserLocationResult.value?.currentUserLocation;
-});
-
-const { mutate: saveCurrentUserLocation } = useMutation<any, LocationType>(
-  UPDATE_CURRENT_USER_LOCATION_CLIENT
-);
-
-const reverseGeoCodeInformation = reactive<{
-  latitude: number | undefined;
-  longitude: number | undefined;
-  accuracy: number | undefined;
-}>({
-  latitude: undefined,
-  longitude: undefined,
-  accuracy: undefined,
-});
-
-const { onResult: onReverseGeocodeResult } = useQuery<{
-  reverseGeocode: IAddress[];
-}>(REVERSE_GEOCODE, reverseGeoCodeInformation, () => ({
-  enabled: reverseGeoCodeInformation.latitude !== undefined,
-}));
-
-onReverseGeocodeResult((result) => {
-  if (!result?.data) return;
-  const geoLocationInformation = result?.data?.reverseGeocode[0];
-  console.debug("geoLocationInformation", result.data);
-  const placeName =
-    geoLocationInformation.locality ??
-    geoLocationInformation.region ??
-    geoLocationInformation.country;
-  console.log("place name", placeName);
-
-  saveCurrentUserLocation({
-    lat: reverseGeoCodeInformation.latitude,
-    lon: reverseGeoCodeInformation.longitude,
-    accuracy: Math.round(reverseGeoCodeInformation.accuracy ?? 12) / 1000,
-    isIPLocation: false,
-    name: placeName,
-    picture: geoLocationInformation.pictureInfo,
-  });
-});
-
-const fetchAndSaveCurrentLocationName = async ({
-  coords: { latitude, longitude, accuracy },
-}: GeolocationPosition) => {
-  console.debug(
-    "data found from navigator geocoding",
-    latitude,
-    longitude,
-    accuracy
-  );
-  reverseGeoCodeInformation.latitude = latitude;
-  reverseGeoCodeInformation.longitude = longitude;
-  reverseGeoCodeInformation.accuracy = accuracy;
-};
-
-const performGeoLocation = () => {
-  navigator.geolocation.getCurrentPosition(fetchAndSaveCurrentLocationName);
-};
-
-const GEOHASH_DEPTH = 9; // put enough accuracy, radius will be used anyway
-
-const geohash = computed(
-  () => userSettingsLocation.value?.geohash ?? currentUserLocationGeoHash
-);
-
-const currentUserLocationGeoHash = computed(() => {
-  if (currentUserLocation.value?.lat && currentUserLocation.value?.lon) {
-    return ngeohash.encode(
-      currentUserLocation.value?.lat,
-      currentUserLocation.value?.lon,
-      GEOHASH_DEPTH
-    );
-  }
-  return undefined;
-});
-
-const radius = computed(
-  () => userSettingsLocation.value?.range ?? currentUserLocation.value?.accuracy
-);
-const locationName = computed(
-  () => userSettingsLocation.value?.name ?? currentUserLocation.value?.name
-);
-
-// const { result: closeEventsResult } = useQuery<{
-//   searchEvents: Paginate<IEvent>;
-// }>(
-//   CLOSE_CONTENT,
-//   { location: geohash, radius },
-//   { enabled: geohash.value !== undefined }
-// );
-
-// const closeEvents = computed(
-//   () => closeEventsResult.value?.searchEvents || { total: 0, elements: [] }
-// );
 
 const currentUserParticipations = computed(
   () => loggedUser.value?.participations.elements
@@ -499,16 +338,6 @@ const goingToEvents = computed<Map<string, Map<string, IParticipant>>>(() => {
   );
 });
 
-// const eventDeleted = (eventid: string): void => {
-//   currentUserParticipations = currentUserParticipations?.filter(
-//     (participation) => participation.event.id !== eventid
-//   );
-// }
-
-// viewEvent(event: IEvent): void {
-//   this.$router.push({ name: RouteName.EVENT, params: { uuid: event.uuid } });
-// }
-
 const loggedUserSettings = computed<IUserSettings | undefined>(() => {
   return loggedUser.value?.settings;
 });
@@ -516,14 +345,6 @@ const loggedUserSettings = computed<IUserSettings | undefined>(() => {
 const canShowMyUpcomingEvents = computed<boolean>(() => {
   return currentActor.value?.id != undefined && goingToEvents.value.size > 0;
 });
-
-// const canShowCloseEvents = computed<boolean>(() => {
-//   return (
-//     loggedUser.value?.settings?.location != undefined &&
-//     closeEvents.value != undefined &&
-//     closeEvents.value?.total > 0
-//   );
-// });
 
 const canShowFollowedGroupEvents = computed<boolean>(() => {
   return filteredFollowedGroupsEvents.value.length > 0;
@@ -562,18 +383,134 @@ watch(loggedUser, (loggedUserValue) => {
     });
   }
 });
-
-// metaInfo() {
-//   return {
-//     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//     // @ts-ignore
-//     title: this.instanceName,
-//     titleTemplate: "%s | Mobilizon",
-//   };
-// },
-
 const isLoggedIn = computed(() => loggedUser.value?.id !== undefined);
 
+/**
+ * Geolocation stuff
+ */
+
+// The location hash saved in the user settings (should be the default)
+const userSettingsLocationGeoHash = computed(
+  () => loggedUser.value?.settings?.location?.geohash
+);
+
+// The location provided by the server
+const serverLocation = computed(() => config.value?.location);
+
+// The coords from the user location or the server provided location
+const coords = computed(() => {
+  const userSettingsCoords = geoHashToCoords(
+    userSettingsLocationGeoHash.value ?? undefined
+  );
+
+  if (userSettingsCoords) {
+    return { ...userSettingsCoords, isIPLocation: false };
+  }
+
+  return { ...serverLocation.value, isIPLocation: true };
+});
+
+const { result: reverseGeocodeResult } = useQuery<{
+  reverseGeocode: IAddress[];
+}>(REVERSE_GEOCODE, coords, () => ({
+  enabled: coords.value?.longitude != undefined,
+}));
+
+const userSettingsLocation = computed(() => {
+  const address = reverseGeocodeResult.value?.reverseGeocode[0];
+  const placeName = address?.locality ?? address?.region ?? address?.country;
+  return {
+    lat: coords.value?.latitude,
+    lon: coords.value?.longitude,
+    name: placeName,
+    picture: address?.pictureInfo,
+    isIPLocation: coords.value?.isIPLocation,
+  };
+});
+
+const { result: currentUserLocationResult } = useQuery<{
+  currentUserLocation: LocationType;
+}>(CURRENT_USER_LOCATION_CLIENT);
+
+// The user's location currently in the Apollo cache
+const currentUserLocation = computed(() => {
+  return {
+    ...(currentUserLocationResult.value?.currentUserLocation ?? {
+      lat: undefined,
+      lon: undefined,
+      accuracy: undefined,
+      isIPLocation: undefined,
+      name: undefined,
+      picture: undefined,
+    }),
+    isIPLocation: false,
+  };
+});
+
+const userLocation = computed(() => {
+  if (
+    !userSettingsLocation.value ||
+    (userSettingsLocation.value?.isIPLocation &&
+      currentUserLocation.value?.name)
+  ) {
+    return currentUserLocation.value;
+  }
+  return userSettingsLocation.value;
+});
+
+const { mutate: saveCurrentUserLocation } = useMutation<any, LocationType>(
+  UPDATE_CURRENT_USER_LOCATION_CLIENT
+);
+
+const reverseGeoCodeInformation = reactive<{
+  latitude: number | undefined;
+  longitude: number | undefined;
+  accuracy: number | undefined;
+}>({
+  latitude: undefined,
+  longitude: undefined,
+  accuracy: undefined,
+});
+
+const { onResult: onReverseGeocodeResult } = useQuery<{
+  reverseGeocode: IAddress[];
+}>(REVERSE_GEOCODE, reverseGeoCodeInformation, () => ({
+  enabled: reverseGeoCodeInformation.latitude !== undefined,
+}));
+
+onReverseGeocodeResult((result) => {
+  if (!result?.data) return;
+  const geoLocationInformation = result?.data?.reverseGeocode[0];
+  const placeName =
+    geoLocationInformation.locality ??
+    geoLocationInformation.region ??
+    geoLocationInformation.country;
+
+  saveCurrentUserLocation({
+    lat: reverseGeoCodeInformation.latitude,
+    lon: reverseGeoCodeInformation.longitude,
+    accuracy: Math.round(reverseGeoCodeInformation.accuracy ?? 12) / 1000,
+    isIPLocation: false,
+    name: placeName,
+    picture: geoLocationInformation.pictureInfo,
+  });
+});
+
+const fetchAndSaveCurrentLocationName = async ({
+  coords: { latitude, longitude, accuracy },
+}: GeolocationPosition) => {
+  reverseGeoCodeInformation.latitude = latitude;
+  reverseGeoCodeInformation.longitude = longitude;
+  reverseGeoCodeInformation.accuracy = accuracy;
+};
+
+const performGeoLocation = () => {
+  navigator.geolocation.getCurrentPosition(fetchAndSaveCurrentLocationName);
+};
+
+/**
+ * View Head
+ */
 useHead({
   title: computed(() => instanceName.value ?? ""),
 });

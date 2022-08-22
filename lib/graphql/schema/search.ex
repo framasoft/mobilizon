@@ -95,6 +95,14 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:type, :event_type, description: "Whether the event is online or in person")
       arg(:category, :string, description: "The category for the event")
 
+      arg(:category_one_of, list_of(:string),
+        description: "The list of categories the event can be in"
+      )
+
+      arg(:status_one_of, list_of(:event_status),
+        description: "The list of statuses this event can have"
+      )
+
       arg(:radius, :float,
         default_value: 50,
         description: "Radius around the location to search in"
