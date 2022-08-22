@@ -23,14 +23,14 @@
           </figure>
           <AccountGroup v-else :size="64" />
         </div>
-        <div class="px-1">
+        <div class="px-1 overflow-hidden">
           <h3
             class="text-2xl leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
             dir="auto"
           >
             {{ displayName(group) }}
           </h3>
-          <span>
+          <span class="block truncate">
             {{ `@${usernameWithDomain(group)}` }}
           </span>
         </div>

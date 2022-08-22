@@ -539,6 +539,8 @@ import FilterSection from "@/components/Search/filters/FilterSection.vue";
 import { listShortDisjunctionFormatter } from "@/utils/listFormat";
 import langs from "@/i18n/langs.json";
 import { useEventCategories, useFeatures } from "@/composition/apollo/config";
+import geohash from "ngeohash";
+import { coordsToGeoHash } from "@/utils/location";
 
 const search = useRouteQuery("search", "");
 
@@ -560,8 +562,9 @@ const arrayTransformer: RouteQueryTransformer<string[]> = {
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
 const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
 
-const geohash = useRouteQuery("geohash", "");
-const radius = useRouteQuery("radius", null, floatTransformer);
+const latitude = useRouteQuery("lat", undefined, floatTransformer);
+const longitude = useRouteQuery("lon", undefined, floatTransformer);
+
 const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(
@@ -811,13 +814,19 @@ const filtersPanelOpened = ref(true);
 const toggleFilters = () =>
   (filtersPanelOpened.value = !filtersPanelOpened.value);
 
+const geoHashLocation = computed(() =>
+  coordsToGeoHash(latitude.value, longitude.value)
+);
+
+const radius = computed(() => Number.parseInt(distance.value.slice(0, -3)));
+
 const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchEvents: Paginate<IEvent>;
   searchGroups: Paginate<IGroup>;
 }>(SEARCH_EVENTS_AND_GROUPS, () => ({
   term: search.value,
   tags: props.tag,
-  location: geohash.value,
+  location: geoHashLocation.value,
   beginsOn: start.value,
   endsOn: end.value,
   radius: radius.value,
