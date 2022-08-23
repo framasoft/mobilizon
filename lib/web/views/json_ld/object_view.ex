@@ -176,6 +176,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
     []
     |> render_location(event)
     |> render_virtual_location(event)
+    |> maybe_render_single_element()
   end
 
   @spec render_location(list(), map()) :: list()
@@ -206,6 +207,10 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   end
 
   defp render_virtual_location(locations, _), do: locations
+
+  @spec maybe_render_single_element(list(map())) :: list(map()) | map()
+  defp maybe_render_single_element([location]), do: location
+  defp maybe_render_single_element(locations), do: locations
 
   defp render_address(%{physical_address: %Address{} = address}),
     do: render_one(address, ObjectView, "address.json", as: :address)
