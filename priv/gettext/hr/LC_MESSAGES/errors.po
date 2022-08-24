@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-08-20 19:04+0000\n"
+"PO-Revision-Date: 2022-08-24 11:43+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.13.1\n"
+"X-Generator: Weblate 4.14\n"
 
 ## This file is a PO Template file.
 ##
@@ -28,95 +28,95 @@ msgstr ""
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
 msgid "can't be blank"
-msgstr ""
+msgstr "ne smije biti prazno"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
-msgstr ""
+msgstr "već je zauzeto"
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
-msgstr ""
+msgstr "je neispravno"
 
 ## From Ecto.Changeset.validate_acceptance/3
 msgid "must be accepted"
-msgstr ""
+msgstr "mora se prihvatiti"
 
 ## From Ecto.Changeset.validate_format/3
 msgid "has invalid format"
-msgstr ""
+msgstr "ima neispravan format"
 
 ## From Ecto.Changeset.validate_subset/3
 msgid "has an invalid entry"
-msgstr ""
+msgstr "ima neispravan unos"
 
 ## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
-msgstr ""
+msgstr "je rezervirano"
 
 ## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
-msgstr ""
+msgstr "ne odgovara potvrdi"
 
 ## From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
-msgstr ""
+msgstr "je još uvijek povezan s ovim unosom"
 
 msgid "are still associated with this entry"
-msgstr ""
+msgstr "su još uvijek povezani s ovim unosom"
 
 ## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "trebao bi biti %{count} znak"
+msgstr[1] "trebalo bi biti %{count} znaka"
+msgstr[2] "trebalo bi biti %{count} znakova"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "treba imati %{count} element"
+msgstr[1] "treba imati %{count} elementa"
+msgstr[2] "treba imati %{count} elemenata"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "treba imati barem %{count} znak"
+msgstr[1] "treba imati barem %{count} znaka"
+msgstr[2] "treba imati barem %{count} znakova"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "treba imati barem %{count} element"
+msgstr[1] "treba imati barem %{count} elementa"
+msgstr[2] "treba imati barem %{count} elemenata"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "treba imati ne više od %{count} znak"
+msgstr[1] "treba imati ne više od %{count} znaka"
+msgstr[2] "treba imati ne više od %{count} znakova"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "treba imati ne više od %{count} elementa"
+msgstr[1] "treba imati ne više od %{count} elementa"
+msgstr[2] "treba imati ne više od %{count} elemenata"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
-msgstr ""
+msgstr "mora biti manje od %{number}"
 
 msgid "must be greater than %{number}"
-msgstr ""
+msgstr "mora biti više od %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr ""
+msgstr "mora biti manje ili jednako %{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr ""
+msgstr "mora biti veće ili jednako %{number}"
 
 msgid "must be equal to %{number}"
-msgstr ""
+msgstr "mora biti jednako %{number}"
 
 #: lib/graphql/resolvers/user.ex:107
 #, elixir-autogen, elixir-format
@@ -202,7 +202,7 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:427
 #, elixir-autogen, elixir-format
 msgid "The current password is invalid"
-msgstr ""
+msgstr "Aktualna lozinka nije ispravna"
 
 #: lib/graphql/resolvers/admin.ex:334
 #: lib/graphql/resolvers/user.ex:470
@@ -272,154 +272,154 @@ msgstr ""
 #: lib/graphql/resolvers/group.ex:304
 #, elixir-autogen, elixir-format
 msgid "You cannot join this group"
-msgstr ""
+msgstr "Ne možeš se pridružiti ovoj grupi"
 
 #: lib/graphql/resolvers/group.ex:132
 #, elixir-autogen, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr ""
+msgstr "Ne možeš izraditi popis grupa ako nisi moderator."
 
 #: lib/graphql/resolvers/user.ex:485
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your email"
-msgstr ""
+msgstr "Za mijenjanje e-mail adrese moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/user.ex:442
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your password"
-msgstr ""
+msgstr "Za mijenjanje lozinke moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/group.ex:281
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete a group"
-msgstr ""
+msgstr "Za brisanje grupe moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/user.ex:547
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete your account"
-msgstr ""
+msgstr "Za brisanje tvog računa moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/group.ex:312
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to join a group"
-msgstr ""
+msgstr "Za pridruživanje grupi moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/group.ex:347
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave a group"
-msgstr ""
+msgstr "Za napuštanje grupe moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/group.ex:245
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update a group"
-msgstr ""
+msgstr "Za aktualiziranje grupe moraš biti prijavljen/a"
 
 #: lib/graphql/resolvers/user.ex:112
 #, elixir-autogen, elixir-format
 msgid "You need to have an existing token to get a refresh token"
-msgstr ""
+msgstr "Za primanje tokena za osvježavanje moraš imati postojeći token"
 
 #: lib/graphql/resolvers/user.ex:275
 #: lib/graphql/resolvers/user.ex:299
 #, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon"
-msgstr ""
+msgstr "Ponovo si zatražio/la potvrdni e-mail prerano"
 
 #: lib/graphql/resolvers/user.ex:162
 #, elixir-autogen, elixir-format
 msgid "Your email is not on the allowlist"
-msgstr ""
+msgstr "Tvoja e-mail adresa nije na popisu dopuštenih"
 
 #: lib/graphql/resolvers/actor.ex:100
 #, elixir-autogen, elixir-format
 msgid "Error while performing background task"
-msgstr ""
+msgstr "Greška tijekom izvođenja pozadinskog zadatka"
 
 #: lib/graphql/resolvers/actor.ex:32
 #, elixir-autogen, elixir-format
 msgid "No profile found with this ID"
-msgstr ""
+msgstr "Nijedan profil s ovom ID oznakom nije pronađen"
 
 #: lib/graphql/resolvers/actor.ex:61
 #: lib/graphql/resolvers/actor.ex:97
 #, elixir-autogen, elixir-format
 msgid "No remote profile found with this ID"
-msgstr ""
+msgstr "Nijedan profil s ovom ID oznakom na udaljenom uređaju nije pronađen"
 
 #: lib/graphql/resolvers/actor.ex:72
 #, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
-msgstr ""
+msgstr "Samo moderatori i administratori mogu isključiti profil"
 
 #: lib/graphql/resolvers/actor.ex:105
 #, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
-msgstr ""
+msgstr "Samo moderatori i administratori mogu ponovo uključiti profil"
 
 #: lib/graphql/resolvers/actor.ex:29
 #, elixir-autogen, elixir-format
 msgid "Only remote profiles may be refreshed"
-msgstr ""
+msgstr "Osvježiti se mogu samo profili na udaljenim uređajima"
 
 #: lib/graphql/resolvers/actor.ex:64
 #, elixir-autogen, elixir-format
 msgid "Profile already suspended"
-msgstr ""
+msgstr "Profil već je isključen"
 
 #: lib/graphql/resolvers/participant.ex:96
 #, elixir-autogen, elixir-format
 msgid "A valid email is required by your instance"
-msgstr ""
+msgstr "Za tvoju instancu je potrebna ispravna e-mail adresa"
 
 #: lib/graphql/resolvers/participant.ex:90
 #: lib/graphql/resolvers/participant.ex:143
 #, elixir-autogen, elixir-format
 msgid "Anonymous participation is not enabled"
-msgstr ""
+msgstr "Anonimno sudjelovanje nije aktivirano"
 
 #: lib/graphql/resolvers/person.ex:210
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last administrator of a group"
-msgstr ""
+msgstr "Nije moguće ukloniti zadnjeg administratora jedne grupe"
 
 #: lib/graphql/resolvers/person.ex:207
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last identity of a user"
-msgstr ""
+msgstr "Nije moguće ukloniti zadnji identitet jednog korisnika"
 
 #: lib/graphql/resolvers/comment.ex:126
 #, elixir-autogen, elixir-format
 msgid "Comment is already deleted"
-msgstr ""
+msgstr "Komentar je već izbrisan"
 
 #: lib/graphql/error.ex:103
 #: lib/graphql/resolvers/discussion.ex:69
 #, elixir-autogen, elixir-format
 msgid "Discussion not found"
-msgstr ""
+msgstr "Diskusija nije pronađena"
 
 #: lib/graphql/resolvers/report.ex:71
 #: lib/graphql/resolvers/report.ex:90
 #, elixir-autogen, elixir-format
 msgid "Error while saving report"
-msgstr ""
+msgstr "Greška tijekom spremanja izvještaja"
 
 #: lib/graphql/resolvers/report.ex:110
 #, elixir-autogen, elixir-format
 msgid "Error while updating report"
-msgstr ""
+msgstr "Greška tijekom aktualiziranja izvještaja"
 
 #: lib/graphql/resolvers/participant.ex:131
 #, elixir-autogen, elixir-format
 msgid "Event id not found"
-msgstr ""
+msgstr "ID događaja nije pronađen"
 
 #: lib/graphql/error.ex:100
 #: lib/graphql/resolvers/event.ex:360
 #: lib/graphql/resolvers/event.ex:412
 #, elixir-autogen, elixir-format
 msgid "Event not found"
-msgstr ""
+msgstr "Događaj nije pronađen"
 
 #: lib/graphql/resolvers/participant.ex:87
 #: lib/graphql/resolvers/participant.ex:128
