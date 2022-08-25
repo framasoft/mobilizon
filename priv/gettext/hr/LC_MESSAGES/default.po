@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-08-22 00:59+0000\n"
+"PO-Revision-Date: 2022-08-25 13:57+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.13.1\n"
+"X-Generator: Weblate 4.14\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -823,6 +823,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Dobre vijesti: jedan od organizatora događaja upravo je odobrio tvoj "
+"zahtjev. Aktualiziraj svoj kalendar jer se sada nalaziš na popisu gostiju!"
 
 #: lib/web/templates/email/email_changed_new.html.heex:47
 #, elixir-autogen, elixir-format
@@ -997,6 +999,10 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »."
 msgstr ""
+"Primaš ovu e-mail poruku jer si odabrao/la primati obavijesti o neriješenim "
+"zahtjevima za prisustvovanje tvojim događajima. Postavke obavijesti možeš "
+"deaktivirati ili promijeniti u postavkama korisničkog računa pod "
+"„Obavijesti”."
 
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-autogen, elixir-format
