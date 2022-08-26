@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
 "PO-Revision-Date: 2022-08-27 00:20+0000\n"
-"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
+"Last-Translator: Norwin <frama@nroo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -1956,7 +1956,7 @@ msgstr "Benachrichtigungseinstellungen anpassen"
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Manage your participation:"
-msgstr "Verwalten Sie Ihre Teilnahmen:"
+msgstr "Teilnahme bearbeiten:"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #: lib/web/templates/email/participation/card/_title.text.eex:3
