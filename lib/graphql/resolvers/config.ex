@@ -172,7 +172,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
           get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
       },
       export_formats: Config.instance_export_formats(),
-      analytics: FrontEndAnalytics.config()
+      analytics: FrontEndAnalytics.config(),
+      search: %{
+        global: %{
+          is_enabled:
+            Application.get_env(:mobilizon, :search) |> get_in([:global]) |> get_in([:is_enabled]),
+          is_default:
+            Application.get_env(:mobilizon, :search)
+            |> get_in([:global])
+            |> get_in([:is_default_search])
+        }
+      }
     }
   end
 end

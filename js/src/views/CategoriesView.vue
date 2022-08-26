@@ -104,20 +104,15 @@ import {
   CategoryPictureLicencing,
   CategoryPictureLicencingElement,
 } from "@/components/Categories/constants";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
 import { useI18n } from "vue-i18n";
+import { useEventCategories } from "@/composition/apollo/config";
 
 const { t } = useI18n({ useScope: "global" });
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
-
-const config = computed(() => configResult.value?.config);
-
-const eventCategories = computed(() => config.value?.eventCategories ?? []);
+const { eventCategories } = useEventCategories();
 
 const eventCategoryLabel = (categoryId: string): string | undefined => {
-  return eventCategories.value.find(({ id }) => categoryId == id)?.label;
+  return eventCategories.value?.find(({ id }) => categoryId == id)?.label;
 };
 
 const { result: categoryStatsResult } = useQuery<{
@@ -132,7 +127,7 @@ const promotedCategories = computed((): CategoryStatsModel[] => {
     .map(({ key, number }) => ({
       key,
       number,
-      label: eventCategoryLabel(key),
+      label: eventCategoryLabel(key) as string,
     }))
     .filter(
       ({ key, number, label }) =>

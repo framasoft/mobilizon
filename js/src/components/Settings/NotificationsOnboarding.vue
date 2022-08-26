@@ -56,8 +56,8 @@ const updateSetting = async (
   } catch (e: any) {
     // Snackbar.open({
     //   message: e.message,
-    //   type: "is-danger",
-    //   position: "is-bottom",
+    //   variant: "danger",
+    //   position: "bottom",
     // });
   }
 };

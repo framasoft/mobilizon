@@ -15,14 +15,17 @@
         <GroupCard :group="groupWithFollowersOrMembers" />
       </div>
     </Variant>
+    <Variant title="Row mode">
+      <GroupCard :group="groupWithFollowersOrMembers" mode="row" />
+    </Variant>
   </Story>
 </template>
 
 <script lang="ts" setup>
-import { IActor } from "@/types/actor";
+import { IGroup } from "@/types/actor";
 import GroupCard from "./GroupCard.vue";
 
-const basicGroup: IActor = {
+const basicGroup: IGroup = {
   name: "Framasoft",
   preferredUsername: "framasoft",
   avatar: null,
@@ -34,7 +37,7 @@ const basicGroup: IActor = {
   followers: { total: 0, elements: [] },
 };
 
-const groupWithMedia = {
+const groupWithMedia: IGroup = {
   ...basicGroup,
   banner: {
     url: "https://mobilizon.fr/media/7b340fe641e7ad711ebb6f8821b5ce824992db08701e37ebb901c175436aaafc.jpg?name=framasoft%27s%20banner.jpg",
@@ -44,9 +47,14 @@ const groupWithMedia = {
   },
 };
 
-const groupWithFollowersOrMembers = {
+const groupWithFollowersOrMembers: IGroup = {
   ...groupWithMedia,
   members: { total: 2, elements: [] },
   followers: { total: 5, elements: [] },
+  summary:
+    "You can also use variant modifiers to target media queries like responsive breakpoints, dark mode, prefers-reduced-motion, and more. For example, use md:h-full to apply the h-full utility at only medium screen sizes and above.",
+  physicalAddress: {
+    description: "Nantes",
+  },
 };
 </script>

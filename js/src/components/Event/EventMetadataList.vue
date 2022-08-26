@@ -136,10 +136,10 @@ const metadata = computed({
       };
     }) as any[];
   },
-  set(metadata: IEventMetadataDescription[]) {
+  set(newMetadata: IEventMetadataDescription[]) {
     emit(
       "update:modelValue",
-      metadata.filter((elem) => elem)
+      newMetadata.filter((elem) => elem)
     );
   },
 });

@@ -1,11 +1,11 @@
 <template>
-  <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-gray-900">
+  <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-zinc-900">
     <div class="container mx-auto flex flex-wrap items-center mx-auto gap-4">
       <router-link :to="{ name: RouteName.HOME }" class="flex items-center">
         <MobilizonLogo class="w-40" />
       </router-link>
       <div class="flex items-center md:order-2 ml-auto" v-if="currentActor?.id">
-        <o-dropdown>
+        <o-dropdown position="bottom-left">
           <template #trigger>
             <button
               type="button"
@@ -14,33 +14,80 @@
               aria-expanded="false"
             >
               <span class="sr-only">{{ t("Open user menu") }}</span>
-              <figure class="" v-if="currentActor?.avatar">
+              <figure class="h-8 w-8" v-if="currentActor?.avatar">
                 <img
-                  class="rounded-full"
+                  class="rounded-full w-full h-full object-cover"
                   alt=""
                   :src="currentActor?.avatar.url"
                   width="32"
                   height="32"
                 />
               </figure>
-              <AccountCircle :size="32" />
+              <AccountCircle v-else :size="32" />
             </button>
           </template>
 
           <!-- Dropdown menu -->
           <div
-            class="z-50 mt-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+            class="z-50 text-base list-none bg-white rounded divide-y divide-gray-100 dark:bg-zinc-700 dark:divide-gray-600 max-w-xs"
             position="bottom-left"
           >
             <o-dropdown-item aria-role="listitem">
-              <div class="">
-                <span class="block text-sm text-gray-900 dark:text-white">{{
+              <div class="px-4">
+                <span class="block text-sm text-zinc-900 dark:text-white">{{
                   displayName(currentActor)
                 }}</span>
                 <span
-                  class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400"
-                  >{{ currentUser?.role }}</span
+                  class="block text-sm font-medium text-zinc-500 truncate dark:text-zinc-400"
+                  v-if="currentUser?.role === ICurrentUserRole.ADMINISTRATOR"
+                  >{{ t("Administrator") }}</span
                 >
+                <span
+                  class="block text-sm font-medium text-zinc-500 truncate dark:text-zinc-400"
+                  v-if="currentUser?.role === ICurrentUserRole.MODERATOR"
+                  >{{ t("Moderator") }}</span
+                >
+              </div>
+            </o-dropdown-item>
+            <o-dropdown-item
+              v-for="identity in identities"
+              :active="identity.id === currentActor.id"
+              :key="identity.id"
+              tabindex="0"
+              @click="
+                setIdentity({
+                  preferredUsername: identity.preferredUsername,
+                })
+              "
+              @keyup.enter="
+                setIdentity({
+                  preferredUsername: identity.preferredUsername,
+                })
+              "
+            >
+              <div class="flex gap-1 items-center">
+                <div class="flex-none">
+                  <figure class="" v-if="identity.avatar">
+                    <img
+                      class="rounded-full h-8 w-8"
+                      loading="lazy"
+                      :src="identity.avatar.url"
+                      alt=""
+                      height="32"
+                      width="32"
+                    />
+                  </figure>
+                  <AccountCircle v-else :size="32" />
+                </div>
+
+                <div
+                  class="text-base text-zinc-700 dark:text-zinc-100 flex flex-col flex-auto overflow-hidden items-start"
+                >
+                  <p class="truncate">{{ displayName(identity) }}</p>
+                  <p class="truncate text-sm" v-if="identity.name">
+                    @{{ identity.preferredUsername }}
+                  </p>
+                </div>
               </div>
             </o-dropdown-item>
             <o-dropdown-item
@@ -49,7 +96,7 @@
               :to="{ name: RouteName.SETTINGS }"
             >
               <span
-                class="block py-2 px-4 text-sm text-gray-700 dark:text-gray-200 dark:hover:text-white"
+                class="block py-2 px-4 text-sm text-zinc-700 dark:text-zinc-200 dark:hover:text-white"
                 >{{ t("My account") }}</span
               >
             </o-dropdown-item>
@@ -60,7 +107,7 @@
               :to="{ name: RouteName.ADMIN_DASHBOARD }"
             >
               <span
-                class="block py-2 px-4 text-sm text-gray-700 dark:text-gray-200 dark:hover:text-white"
+                class="block py-2 px-4 text-sm text-zinc-700 dark:text-zinc-200 dark:hover:text-white"
                 >{{ t("Administration") }}</span
               >
             </o-dropdown-item>
@@ -70,7 +117,7 @@
               @keyup.enter="logout"
             >
               <span
-                class="block py-2 px-4 text-sm text-gray-700 dark:text-gray-200 dark:hover:text-white"
+                class="block py-2 px-4 text-sm text-zinc-700 dark:text-zinc-200 dark:hover:text-white"
                 >{{ t("Log out") }}</span
               >
             </o-dropdown-item>
@@ -80,7 +127,7 @@
       <button
         @click="showMobileMenu = !showMobileMenu"
         type="button"
-        class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        class="inline-flex items-center p-2 ml-1 text-sm text-zinc-500 rounded-lg md:hidden hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-gray-600"
         aria-controls="mobile-menu-2"
         aria-expanded="false"
       >
@@ -105,33 +152,33 @@
         :class="{ hidden: !showMobileMenu }"
       >
         <ul
-          class="flex flex-col md:flex-row md:space-x-8 mt-2 md:mt-0 md:text-sm md:font-medium"
+          class="flex flex-col md:flex-row md:space-x-8 mt-2 md:mt-0 md:font-lightbold"
         >
           <li v-if="currentActor?.id">
             <router-link
               :to="{ name: RouteName.MY_EVENTS }"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("My events") }}</router-link
             >
           </li>
           <li v-if="currentActor?.id">
             <router-link
               :to="{ name: RouteName.MY_GROUPS }"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("My groups") }}</router-link
             >
           </li>
           <li v-if="!currentActor?.id">
             <router-link
               :to="{ name: RouteName.LOGIN }"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Login") }}</router-link
             >
           </li>
           <li v-if="!currentActor?.id">
             <router-link
               :to="{ name: RouteName.REGISTER }"
-              class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+              class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >{{ t("Register") }}</router-link
             >
           </li>
@@ -327,6 +374,9 @@ import {
   useCurrentActorClient,
   useCurrentUserIdentities,
 } from "@/composition/apollo/actor";
+import { useMutation } from "@vue/apollo-composable";
+import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
+import { changeIdentity } from "@/utils/identity";
 // import { useRestrictions } from "@/composition/apollo/config";
 
 const { currentUser } = useCurrentUserClient();
@@ -400,11 +450,17 @@ watch(identities, () => {
 //   await router.push({ name: RouteName.HOME });
 // };
 
-// const { onDone, mutate: setIdentity } = useMutation(UPDATE_DEFAULT_ACTOR);
+const { onDone, mutate: setIdentity } = useMutation<{
+  changeDefaultActor: { id: string; defaultActor: { id: string } };
+}>(UPDATE_DEFAULT_ACTOR);
 
-// onDone(() => {
-//   changeIdentity(identity);
-// });
+onDone(({ data }) => {
+  const identity = identities.value?.find(
+    ({ id }) => id === data?.changeDefaultActor?.defaultActor?.id
+  );
+  if (!identity) return;
+  changeIdentity(identity);
+});
 
 // const hideCreateEventsButton = computed((): boolean => {
 //   return !!restrictions.value?.onlyGroupsCanCreateEvents;

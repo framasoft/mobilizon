@@ -41,7 +41,7 @@
         </o-upload>
       </o-field>
       <o-button
-        type="is-text"
+        variant="text"
         v-if="imageSrc"
         @click="removeOrClearPicture"
         @keyup.enter="removeOrClearPicture"

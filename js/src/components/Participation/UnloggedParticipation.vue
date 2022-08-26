@@ -33,7 +33,7 @@
                 }}
               </small>
               <o-tooltip
-                type="is-dark"
+                variant="dark"
                 :label="
                   $t(
                     'Mobilizon is a federated network. You can interact with this event from a different server.'
@@ -90,7 +90,7 @@
           </div>
         </div>
         <div class="has-text-centered">
-          <o-button tag="a" type="is-text" @click="router.go(-1)">{{
+          <o-button tag="a" variant="text" @click="router.go(-1)">{{
             $t("Back to previous page")
           }}</o-button>
         </div>

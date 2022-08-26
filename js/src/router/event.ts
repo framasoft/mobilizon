@@ -3,10 +3,10 @@ import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
 const t = i18n.global.t;
 
-const participations = () => import("@/views/Event/Participants.vue");
-const editEvent = () => import("@/views/Event/Edit.vue");
-const event = () => import("@/views/Event/Event.vue");
-const myEvents = () => import("@/views/Event/MyEvents.vue");
+const participations = () => import("@/views/Event/ParticipantsView.vue");
+const editEvent = () => import("@/views/Event/EditView.vue");
+const event = () => import("@/views/Event/EventView.vue");
+const myEvents = () => import("@/views/Event/MyEventsView.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",

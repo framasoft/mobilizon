@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="icon" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="icon" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #member>
           <popover-actor-card
@@ -144,14 +144,14 @@ const iconColor = computed((): string | undefined => {
     case ActivityMemberSubject.MEMBER_JOINED:
     case ActivityMemberSubject.MEMBER_APPROVED:
     case ActivityMemberSubject.MEMBER_ACCEPTED_INVITATION:
-      return "is-success";
+      return "success";
     case ActivityMemberSubject.MEMBER_REQUEST:
     case ActivityMemberSubject.MEMBER_UPDATED:
-      return "is-grey";
+      return "grey";
     case ActivityMemberSubject.MEMBER_REMOVED:
     case ActivityMemberSubject.MEMBER_REJECTED_INVITATION:
     case ActivityMemberSubject.MEMBER_QUIT:
-      return "is-danger";
+      return "danger";
     default:
       return undefined;
   }

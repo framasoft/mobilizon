@@ -55,8 +55,8 @@ onDone(() => {
 onError((e) => {
   // Snackbar.open({
   //   message: e.message,
-  //   type: "is-danger",
-  //   position: "is-bottom",
+  //   variant: "danger",
+  //   position: "bottom",
   // });
 });
 </script>

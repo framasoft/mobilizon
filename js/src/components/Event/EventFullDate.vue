@@ -14,7 +14,7 @@
   </p>
   <p v-else-if="isSameDay() && showStartTime && showEndTime">
     <span>{{
-      $t("On {date} from {startTime} to {endTime}", {
+      t("On {date} from {startTime} to {endTime}", {
         date: formatDate(beginsOn),
         startTime: formatTime(beginsOn, timezoneToShow),
         endTime: formatTime(endsOn, timezoneToShow),
@@ -31,27 +31,24 @@
   </p>
   <p v-else-if="isSameDay() && showStartTime && !showEndTime">
     {{
-      $t("On {date} starting at {startTime}", {
+      t("On {date} starting at {startTime}", {
         date: formatDate(beginsOn),
         startTime: formatTime(beginsOn),
       })
     }}
   </p>
   <p v-else-if="isSameDay()">
-    {{ $t("On {date}", { date: formatDate(beginsOn) }) }}
+    {{ t("On {date}", { date: formatDate(beginsOn) }) }}
   </p>
   <p v-else-if="endsOn && showStartTime && showEndTime">
     <span>
       {{
-        $t(
-          "From the {startDate} at {startTime} to the {endDate} at {endTime}",
-          {
-            startDate: formatDate(beginsOn),
-            startTime: formatTime(beginsOn, timezoneToShow),
-            endDate: formatDate(endsOn),
-            endTime: formatTime(endsOn, timezoneToShow),
-          }
-        )
+        t("From the {startDate} at {startTime} to the {endDate} at {endTime}", {
+          startDate: formatDate(beginsOn),
+          startTime: formatTime(beginsOn, timezoneToShow),
+          endDate: formatDate(endsOn),
+          endTime: formatTime(endsOn, timezoneToShow),
+        })
       }}
     </span>
     <br />
@@ -66,7 +63,7 @@
   <p v-else-if="endsOn && showStartTime">
     <span>
       {{
-        $t("From the {startDate} at {startTime} to the {endDate}", {
+        t("From the {startDate} at {startTime} to the {endDate}", {
           startDate: formatDate(beginsOn),
           startTime: formatTime(beginsOn, timezoneToShow),
           endDate: formatDate(endsOn),
@@ -169,22 +166,22 @@ const differentFromUserTimezone = computed((): boolean => {
 const singleTimeZone = computed((): string => {
   if (showLocalTimezone.value) {
     return t("Local time ({timezone})", {
-      timezone: timezoneToShow,
-    }) as string;
+      timezone: timezoneToShow.value,
+    });
   }
   return t("Time in your timezone ({timezone})", {
-    timezone: timezoneToShow,
-  }) as string;
+    timezone: timezoneToShow.value,
+  });
 });
 
 const multipleTimeZones = computed((): string => {
   if (showLocalTimezone.value) {
-    return t("Local time ({timezone})", {
-      timezone: timezoneToShow,
-    }) as string;
+    return t("Local times ({timezone})", {
+      timezone: timezoneToShow.value,
+    });
   }
   return t("Times in your timezone ({timezone})", {
-    timezone: timezoneToShow,
-  }) as string;
+    timezone: timezoneToShow.value,
+  });
 });
 </script>

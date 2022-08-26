@@ -10,7 +10,7 @@ export interface IPost {
   local: boolean;
   title: string;
   body: string;
-  tags?: ITag[];
+  tags: ITag[];
   picture?: IMedia | null;
   draft: boolean;
   visibility: PostVisibility;

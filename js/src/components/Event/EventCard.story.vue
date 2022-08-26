@@ -14,6 +14,9 @@
     <Variant title="cancelled">
       <EventCard :event="cancelledEvent" />
     </Variant>
+    <Variant title="Row mode">
+      <EventCard :event="longEvent" mode="row" />
+    </Variant>
   </Story>
 </template>
 
@@ -53,8 +56,8 @@ const baseEvent: IEvent = {
   uuid: "",
   title: "A very interesting event",
   description: "Things happen",
-  beginsOn: new Date(),
-  endsOn: new Date(),
+  beginsOn: new Date().toISOString(),
+  endsOn: new Date().toISOString(),
   physicalAddress: {
     description: "Somewhere",
     street: "",
@@ -74,7 +77,7 @@ const baseEvent: IEvent = {
   url: "",
   local: true,
   slug: "",
-  publishAt: new Date(),
+  publishAt: new Date().toISOString(),
   status: EventStatus.CONFIRMED,
   visibility: EventVisibility.PUBLIC,
   joinOptions: EventJoinOptions.FREE,
@@ -130,7 +133,7 @@ const event = reactive<IEvent>(baseEvent);
 const longEvent = reactive<IEvent>({
   ...baseEvent,
   title:
-    "A very long title that will have trouble to display because it will take multiple lines but where will it stop ?! Maybe after 3 lines is enough. Let's say so.",
+    "A very long title that will have trouble to display because it will take multiple lines but where will it stop ?! Maybe after 3 lines is enough. Let's say so. But if it doesn't work, we really need to truncate it at some point. Definitively.",
 });
 
 const tentativeEvent = reactive<IEvent>({

@@ -66,7 +66,7 @@ export const groupsRoutes: RouteRecordRaw[] = [
   },
   {
     path: "/@:preferredUsername/settings",
-    component: (): Promise<any> => import("@/views/Group/Settings.vue"),
+    component: (): Promise<any> => import("@/views/Group/SettingsView.vue"),
     props: true,
     meta: { requiredAuth: true },
     redirect: { name: GroupsRouteName.GROUP_PUBLIC_SETTINGS },
@@ -100,14 +100,14 @@ export const groupsRoutes: RouteRecordRaw[] = [
   },
   {
     path: "/@:preferredUsername/p/new",
-    component: (): Promise<any> => import("@/views/Posts/Edit.vue"),
+    component: (): Promise<any> => import("@/views/Posts/EditView.vue"),
     props: true,
     name: GroupsRouteName.POST_CREATE,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },
   {
     path: "/p/:slug/edit",
-    component: (): Promise<any> => import("@/views/Posts/Edit.vue"),
+    component: (): Promise<any> => import("@/views/Posts/EditView.vue"),
     props: (route: RouteLocationNormalized): Record<string, unknown> => ({
       ...route.params,
       ...{ isUpdate: true },
@@ -117,14 +117,14 @@ export const groupsRoutes: RouteRecordRaw[] = [
   },
   {
     path: "/p/:slug",
-    component: (): Promise<any> => import("@/views/Posts/Post.vue"),
+    component: (): Promise<any> => import("@/views/Posts/PostView.vue"),
     props: true,
     name: GroupsRouteName.POST,
     meta: { requiredAuth: false, announcer: { skip: true } },
   },
   {
     path: "/@:preferredUsername/p",
-    component: (): Promise<any> => import("@/views/Posts/List.vue"),
+    component: (): Promise<any> => import("@/views/Posts/ListView.vue"),
     props: true,
     name: GroupsRouteName.POSTS,
     meta: { requiredAuth: false, announcer: { skip: true } },
@@ -155,7 +155,7 @@ export const groupsRoutes: RouteRecordRaw[] = [
   {
     path: "/@:preferredUsername/timeline",
     name: GroupsRouteName.TIMELINE,
-    component: (): Promise<any> => import("@/views/Group/Timeline.vue"),
+    component: (): Promise<any> => import("@/views/Group/TimelineView.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },

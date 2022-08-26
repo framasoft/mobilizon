@@ -106,21 +106,28 @@
 </template>
 
 <script lang="ts" setup>
-import { CONFIG } from "@/graphql/config";
+import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import RouteName from "../router/name";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
 const { currentUser } = useCurrentUserClient();
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
+const { result: configResult } = useQuery<{ config: IConfig }>(ABOUT);
 
 const config = computed(() => configResult.value?.config);
 
 const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() =>
+    t("About {instance}", { instance: config.value?.name })
+  ),
+});
 
 // metaInfo() {
 //   return {

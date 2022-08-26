@@ -516,6 +516,7 @@
   "Loading comments…": "Chargement des commentaires…",
   "Local": "Local·e",
   "Local time ({timezone})": "Heure locale ({timezone})",
+  "Local times ({timezone})": "Heures locales ({timezone})",
   "Locality": "Commune",
   "Location": "Lieu",
   "Log in": "Se connecter",
@@ -1367,5 +1368,11 @@
   "{numberOfLanguages} selected": "{numberOfLanguages} sélectionnées",
   "Apply filters": "Appliquer les filtres",
   "Any distance": "N'importe quelle distance",
-  "{number} kilometers": "{number} kilomètres"
+  "{number} kilometers": "{number} kilomètres",
+  "The pad will be created on {service}": "Le pad sera créé sur {service}",
+  "The calc will be created on {service}": "Le calc sera créé sur {service}",
+  "The videoconference will be created on {service}": "La visio-conférence sera créée sur {service}",
+  "Search target": "Cible de la recherche",
+  "In this instance's network": "Dans le réseau de cette instance",
+  "On the Fediverse": "Dans le fediverse"
 }

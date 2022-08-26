@@ -1,7 +1,7 @@
 <template>
   <div class="events-wrapper">
     <div class="flex flex-col gap-4" v-for="key of keys" :key="key">
-      <h2 class="is-size-5 month-name">
+      <h2 class="month-name">
         {{ monthName(groupEvents(key)[0]) }}
       </h2>
       <event-minimalist-card

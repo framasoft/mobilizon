@@ -85,7 +85,7 @@ updateTodoError((e) => {
   snackbar?.open({
     message: e.message,
     variant: "danger",
-    position: "is-bottom",
+    position: "bottom",
   });
 });
 

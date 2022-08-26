@@ -281,7 +281,7 @@
           </o-tooltip>
           <o-button
             icon-left="refresh"
-            type="is-text"
+            variant="text"
             @click="openRegenerateFeedTokensConfirmation"
             @keyup.enter="openRegenerateFeedTokensConfirmation"
             >{{ $t("Regenerate new links") }}</o-button
@@ -291,7 +291,7 @@
       <div v-else>
         <o-button
           icon-left="refresh"
-          type="is-text"
+          variant="text"
           @click="generateFeedTokens"
           @keyup.enter="generateFeedTokens"
           >{{ $t("Create new links") }}</o-button
@@ -739,7 +739,7 @@ const {
 } = useMutation(UNREGISTER_PUSH_MUTATION);
 
 onUnregisterPushMutationDone(({ data }) => {
-  console.log(data);
+  console.debug(data);
   subscribed.value = false;
 });
 

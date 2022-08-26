@@ -104,6 +104,12 @@ export const CONFIG = gql`
           type
         }
       }
+      search {
+        global {
+          isEnabled
+          isDefault
+        }
+      }
     }
   }
 `;
@@ -155,6 +161,7 @@ export const ABOUT = gql`
       name
       description
       longDescription
+      slogan
       contact
       languages
       registrationsOpen
@@ -406,6 +413,19 @@ export const ANALYTICS = gql`
           key
           value
           type
+        }
+      }
+    }
+  }
+`;
+
+export const SEARCH_CONFIG = gql`
+  query SearchConfig {
+    config {
+      search {
+        global {
+          isEnabled
+          isDefault
         }
       }
     }

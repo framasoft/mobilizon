@@ -104,7 +104,7 @@ async function isClientFocused(): Promise<boolean> {
 self.addEventListener("push", async (event: PushEvent) => {
   if (!event.data) return;
   const payload = event.data.json();
-  console.log("received push", payload);
+  console.debug("received push", payload);
   const options = {
     body: payload.body,
     icon: "/img/icons/android-chrome-512x512.png",
@@ -157,7 +157,7 @@ self.addEventListener("message", (event: ExtendableMessageEvent) => {
   const replyPort = event.ports[0];
   const message = event.data;
   if (replyPort && message && message.type === "skip-waiting") {
-    console.log("doing skip waiting");
+    console.debug("doing skip waiting");
     event.waitUntil(
       self.skipWaiting().then(
         () => replyPort.postMessage({ error: null }),

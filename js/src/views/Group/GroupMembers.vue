@@ -25,6 +25,7 @@
       class="container mx-auto section"
       v-if="group && isCurrentActorAGroupAdmin"
     >
+      <h1>{{ t("Group Members") }} ({{ group.members.total }})</h1>
       <form @submit.prevent="inviteMember">
         <o-field
           :label="t('Invite a new member')"
@@ -54,14 +55,14 @@
           </o-field>
         </o-field>
       </form>
-      <h1>{{ t("Group Members") }} ({{ group.members.total }})</h1>
       <o-field
+        class="my-2"
         :label="t('Status')"
         horizontal
         label-for="group-members-status-filter"
       >
         <o-select v-model="roles" id="group-members-status-filter">
-          <option value="">
+          <option :value="undefined">
             {{ t("Everything") }}
           </option>
           <option :value="MemberRole.ADMINISTRATOR">
@@ -103,7 +104,7 @@
         :default-sort-direction="'desc'"
         :default-sort="['insertedAt', 'desc']"
         @page-change="loadMoreMembers"
-        @sort="(field, order) => $emit('sort', field, order)"
+        @sort="(field: string, order: string) => emit('sort', field, order)"
       >
         <o-table-column
           field="actor.preferredUsername"
@@ -123,7 +124,7 @@
             <AccountCircle v-else :size="48" />
 
             <div class="">
-              <div class="">
+              <div class="text-start">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
@@ -134,39 +135,39 @@
           </article>
         </o-table-column>
         <o-table-column field="role" :label="t('Role')" v-slot="props">
-          <b-tag
+          <tag
             variant="info"
             v-if="props.row.role === MemberRole.ADMINISTRATOR"
           >
             {{ t("Administrator") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="info"
             v-else-if="props.row.role === MemberRole.MODERATOR"
           >
             {{ t("Moderator") }}
-          </b-tag>
-          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+          </tag>
+          <tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ t("Member") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="warning"
             v-else-if="props.row.role === MemberRole.NOT_APPROVED"
           >
             {{ t("Not approved") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="danger"
             v-else-if="props.row.role === MemberRole.REJECTED"
           >
             {{ t("Rejected") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="warning"
             v-else-if="props.row.role === MemberRole.INVITED"
           >
             {{ t("Invited") }}
-          </b-tag>
+          </tag>
         </o-table-column>
         <o-table-column field="insertedAt" :label="t('Date')" v-slot="props">
           <span class="has-text-centered">
@@ -253,13 +254,12 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { useHead } from "@vueuse/head";
 import { useI18n } from "vue-i18n";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, ref } from "vue";
 import {
   enumTransformer,
   integerTransformer,
   useRouteQuery,
 } from "vue-use-route-query";
-import { useRoute, useRouter } from "vue-router";
 import {
   useCurrentActorClient,
   usePersonStatusGroup,
@@ -267,6 +267,7 @@ import {
 import { formatTimeString, formatDateString } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { Notifier } from "@/plugins/notifier";
+import Tag from "@/components/Tag.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -276,9 +277,10 @@ useHead({
 
 const props = defineProps<{ preferredUsername: string }>();
 
+const emit = defineEmits(["sort"]);
+
 const { currentActor } = useCurrentActorClient();
 
-const loading = ref(true);
 const newMemberUsername = ref("");
 const inviteError = ref("");
 const page = useRouteQuery("page", 1, integerTransformer);
@@ -339,9 +341,6 @@ const inviteMember = async (): Promise<void> => {
   });
 };
 
-const router = useRouter();
-const route = useRoute();
-
 const loadMoreMembers = async (): Promise<void> => {
   await fetchMoreGroupMembers({
     // New variables
@@ -368,13 +367,13 @@ const {
   ],
 }));
 
-onRemoveMemberDone(() => {
+onRemoveMemberDone(({ context }) => {
   let message = t("The member was removed from the group {group}", {
     group: displayName(group.value),
   }) as string;
-  if (oldMember.role === MemberRole.NOT_APPROVED) {
+  if (context?.oldMember.role === MemberRole.NOT_APPROVED) {
     message = t("The membership request from {profile} was rejected", {
-      group: displayName(oldMember.actor),
+      group: displayName(context?.oldMember.actor),
     }) as string;
   }
   notifier?.success(message);
@@ -388,10 +387,15 @@ onRemoveMemberError((error) => {
 });
 
 const removeMember = (oldMember: IMember) => {
-  mutateRemoveMember({
-    groupId: group.value?.id,
-    memberId: oldMember.id,
-  });
+  mutateRemoveMember(
+    {
+      groupId: group.value?.id,
+      memberId: oldMember.id,
+    },
+    {
+      context: { oldMember },
+    }
+  );
 };
 
 const promoteMember = (member: IMember): void => {
@@ -465,7 +469,7 @@ onUpdateMutationDone(({ data, context }) => {
       successMessage = "The member role was updated to administrator";
       break;
     case MemberRole.MEMBER:
-      if (oldMember.role === MemberRole.NOT_APPROVED) {
+      if (context?.oldMember.role === MemberRole.NOT_APPROVED) {
         successMessage = "The member was approved";
       } else {
         successMessage = "The member role was updated to simple member";
@@ -488,11 +492,14 @@ const updateMember = async (
   oldMember: IMember,
   role: MemberRole
 ): Promise<void> => {
-  updateMemberMutation({
-    memberId: oldMember.id as string,
-    role,
-    oldRole: oldMember.role,
-  });
+  updateMemberMutation(
+    {
+      memberId: oldMember.id as string,
+      role,
+      oldRole: oldMember.role,
+    },
+    { context: { oldMember } }
+  );
 };
 
 const isCurrentActorAGroupAdmin = computed((): boolean => {
@@ -500,10 +507,10 @@ const isCurrentActorAGroupAdmin = computed((): boolean => {
 });
 
 const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
-  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  const rolesToConsider = Array.isArray(givenRole) ? givenRole : [givenRole];
   return (
     personMemberships.value?.total > 0 &&
-    roles.includes(personMemberships.value?.elements[0].role)
+    rolesToConsider.includes(personMemberships.value?.elements[0].role)
   );
 };
 

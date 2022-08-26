@@ -1,7 +1,11 @@
 <template>
   <span
     class="rounded-md my-1 truncate text-sm text-violet-title px-2 py-1"
-    :class="[typeClasses, capitalize]"
+    :class="[
+      typeClasses,
+      capitalize,
+      withHashTag ? `before:content-['#']` : '',
+    ]"
   >
     <slot />
   </span>
@@ -11,10 +15,11 @@ import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    variant?: "info" | "danger" | "warning" | "light";
-    capitalize: boolean;
+    variant?: "info" | "danger" | "warning" | "light" | "primary";
+    capitalize?: boolean;
+    withHashTag?: boolean;
   }>(),
-  { variant: "light", capitalize: false }
+  { variant: "light", capitalize: false, withHashTag: false }
 );
 
 const typeClasses = computed(() => {
@@ -23,7 +28,7 @@ const typeClasses = computed(() => {
     case "light":
       return "bg-purple-3 dark:text-violet-3";
     case "info":
-      return "bg-mbz-info dark:text-white";
+      return "bg-mbz-info dark:text-black";
     case "warning":
       return "bg-yellow-1";
     case "danger":
@@ -33,9 +38,7 @@ const typeClasses = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-span.tag {
-  &:not(.category)::before {
-    content: "#";
-  }
+span.withHashTag::before {
+  content: "#";
 }
 </style>

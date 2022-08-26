@@ -83,7 +83,7 @@ const errorLink = onError(
       graphQLErrors.map(
         (graphQLError: GraphQLError & { status_code?: number }) => {
           if (graphQLError?.status_code !== 401) {
-            console.log(
+            console.debug(
               `[GraphQL error]: Message: ${graphQLError.message}, Location: ${graphQLError.locations}, Path: ${graphQLError.path}`
             );
           }

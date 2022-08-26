@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="'chat'" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="'chat'" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #discussion>
           <router-link
@@ -102,12 +102,12 @@ const iconColor = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityDiscussionSubject.DISCUSSION_CREATED:
     case ActivityDiscussionSubject.DISCUSSION_REPLIED:
-      return "is-success";
+      return "success";
     case ActivityDiscussionSubject.DISCUSSION_RENAMED:
     case ActivityDiscussionSubject.DISCUSSION_ARCHIVED:
-      return "is-grey";
+      return "grey";
     case ActivityDiscussionSubject.DISCUSSION_DELETED:
-      return "is-danger";
+      return "danger";
     default:
       return undefined;
   }

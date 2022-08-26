@@ -130,7 +130,8 @@
   <!-- Recent events -->
   <CloseEvents @doGeoLoc="performGeoLocation()" :userLocation="userLocation" />
   <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
-  <LastEvents v-if="config" :instanceName="config.name" />
+  <OnlineEvents />
+  <LastEvents v-if="instanceName" :instanceName="instanceName" />
   <!-- Unlogged content section -->
   <picture v-if="!currentUser?.isLoggedIn">
     <source
@@ -169,30 +170,23 @@
 </template>
 
 <script lang="ts" setup>
-import { EventSortField, ParticipantRole, SortDirection } from "@/types/enums";
-import { Paginate } from "@/types/paginate";
+import { ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../types/participant.model";
-import { FETCH_EVENTS } from "../graphql/event";
 import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IPerson, displayName } from "../types/actor";
-import {
-  ICurrentUser,
-  IUser,
-  IUserSettings,
-} from "../types/current-user.model";
+import { ICurrentUser, IUser } from "../types/current-user.model";
 import { CURRENT_USER_CLIENT } from "../graphql/user";
 import { HOME_USER_QUERIES } from "../graphql/home";
 import RouteName from "../router/name";
 import { IEvent } from "../types/event.model";
-import { CONFIG } from "../graphql/config";
-import { IConfig } from "../types/config.model";
 // import { IFollowedGroupEvent } from "../types/followedGroupEvent.model";
 import CloseEvents from "@/components/Local/CloseEvents.vue";
 import CloseGroups from "@/components/Local/CloseGroups.vue";
 import LastEvents from "@/components/Local/LastEvents.vue";
-import { computed, onMounted, reactive, watch } from "vue";
+import OnlineEvents from "@/components/Local/OnlineEvents.vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { REVERSE_GEOCODE } from "@/graphql/address";
@@ -208,17 +202,18 @@ import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
 import { useHead } from "@vueuse/head";
 import { geoHashToCoords } from "@/utils/location";
+import { useServerProvidedLocation } from "@/composition/apollo/config";
+import { ABOUT } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
 
-const { result: resultEvents } = useQuery<{ events: Paginate<IEvent> }>(
-  FETCH_EVENTS,
-  {
-    orderBy: EventSortField.INSERTED_AT,
-    direction: SortDirection.DESC,
-  }
-);
-const events = computed(
-  () => resultEvents.value?.events || { total: 0, elements: [] }
-);
+const { result: aboutConfigResult } = useQuery<{
+  config: Pick<
+    IConfig,
+    "name" | "description" | "slogan" | "registrationsOpen"
+  >;
+}>(ABOUT);
+
+const config = computed(() => aboutConfigResult.value?.config);
 
 const { result: currentActorResult } = useQuery<{ currentActor: IPerson }>(
   CURRENT_ACTOR_CLIENT
@@ -233,9 +228,7 @@ const { result: currentUserResult } = useQuery<{
 
 const currentUser = computed(() => currentUserResult.value?.currentUser);
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
-
-const config = computed<IConfig | undefined>(() => configResult.value?.config);
+const instanceName = computed(() => config.value?.name);
 
 const { result: userResult } = useQuery<{ loggedUser: IUser }>(
   HOME_USER_QUERIES,
@@ -254,14 +247,8 @@ const currentUserParticipations = computed(
   () => loggedUser.value?.participations.elements
 );
 
-const instanceName = computed((): string | undefined => config.value?.name);
-const welcomeBack = computed<boolean>(
-  () => window.localStorage.getItem("welcome-back") === "yes"
-);
-
-const newRegisteredUser = computed<boolean>(
-  () => window.localStorage.getItem("new-registered-user") === "yes"
-);
+const location = ref(null);
+const search = ref("");
 
 const isToday = (date: string): boolean => {
   return new Date(date).toDateString() === new Date().toDateString();
@@ -338,10 +325,6 @@ const goingToEvents = computed<Map<string, Map<string, IParticipant>>>(() => {
   );
 });
 
-const loggedUserSettings = computed<IUserSettings | undefined>(() => {
-  return loggedUser.value?.settings;
-});
-
 const canShowMyUpcomingEvents = computed<boolean>(() => {
   return currentActor.value?.id != undefined && goingToEvents.value.size > 0;
 });
@@ -362,11 +345,16 @@ const filteredFollowedGroupsEvents = computed<IEvent[]>(() => {
     .slice(0, 4);
 });
 
+const welcomeBack = ref(false);
+const newRegisteredUser = ref(false);
+
 onMounted(() => {
   if (window.localStorage.getItem("welcome-back")) {
+    welcomeBack.value = true;
     window.localStorage.removeItem("welcome-back");
   }
   if (window.localStorage.getItem("new-registered-user")) {
+    newRegisteredUser.value = true;
     window.localStorage.removeItem("new-registered-user");
   }
 });
@@ -393,7 +381,7 @@ const userSettingsLocationGeoHash = computed(
 );
 
 // The location provided by the server
-const serverLocation = computed(() => config.value?.location);
+const { location: serverLocation } = useServerProvidedLocation();
 
 // The coords from the user location or the server provided location
 const coords = computed(() => {
@@ -496,7 +484,8 @@ onReverseGeocodeResult((result) => {
 
 const fetchAndSaveCurrentLocationName = async ({
   coords: { latitude, longitude, accuracy },
-}: GeolocationPosition) => {
+}: // eslint-disable-next-line no-undef
+GeolocationPosition) => {
   reverseGeoCodeInformation.latitude = latitude;
   reverseGeoCodeInformation.longitude = longitude;
   reverseGeoCodeInformation.accuracy = accuracy;

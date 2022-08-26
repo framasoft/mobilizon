@@ -112,33 +112,27 @@
           :label="t('Member')"
           v-slot="props"
         >
-          <article class="media">
-            <figure
-              class="media-left image is-48x48"
-              v-if="props.row.actor.avatar"
-            >
-              <img
-                class="is-rounded"
-                :src="props.row.actor.avatar.url"
-                alt=""
-              />
-            </figure>
-            <o-icon
-              class="media-left"
-              v-else
-              size="large"
-              icon="account-circle"
-            />
-            <div class="media-content">
+          <article class="flex gap-1">
+            <div class="flex-none">
+              <figure v-if="props.row.actor.avatar">
+                <img
+                  class="rounded"
+                  :src="props.row.actor.avatar.url"
+                  alt=""
+                  width="48"
+                  height="48"
+                />
+              </figure>
+              <AccountCircle :size="48" v-else />
+            </div>
+            <div>
               <div class="prose dark:prose-invert">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
                 ><span v-else>@{{ usernameWithDomain(props.row.actor) }}</span
                 ><br />
-                <span
-                  v-if="props.row.actor.name"
-                  class="is-size-7 has-text-grey"
+                <span v-if="props.row.actor.name"
                   >@{{ usernameWithDomain(props.row.actor) }}</span
                 >
               </div>
@@ -146,39 +140,39 @@
           </article>
         </o-table-column>
         <o-table-column field="role" :label="t('Role')" v-slot="props">
-          <b-tag
+          <tag
             variant="primary"
             v-if="props.row.role === MemberRole.ADMINISTRATOR"
           >
             {{ t("Administrator") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="primary"
             v-else-if="props.row.role === MemberRole.MODERATOR"
           >
             {{ t("Moderator") }}
-          </b-tag>
-          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+          </tag>
+          <tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ t("Member") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="warning"
             v-else-if="props.row.role === MemberRole.NOT_APPROVED"
           >
             {{ t("Not approved") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="danger"
             v-else-if="props.row.role === MemberRole.REJECTED"
           >
             {{ t("Rejected") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="danger"
             v-else-if="props.row.role === MemberRole.INVITED"
           >
             {{ t("Invited") }}
-          </b-tag>
+          </tag>
         </o-table-column>
         <o-table-column field="insertedAt" :label="t('Date')" v-slot="props">
           <span class="has-text-centered">
@@ -225,9 +219,7 @@
             :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
           >
             {{ props.row.title }}
-            <b-tag variant="info" v-if="props.row.draft">{{
-              t("Draft")
-            }}</b-tag>
+            <tag variant="info" v-if="props.row.draft">{{ t("Draft") }}</tag>
           </router-link>
         </o-table-column>
         <o-table-column field="beginsOn" :label="t('Begins on')" v-slot="props">
@@ -271,9 +263,7 @@
             :to="{ name: RouteName.POST, params: { slug: props.row.slug } }"
           >
             {{ props.row.title }}
-            <b-tag variant="info" v-if="props.row.draft">{{
-              t("Draft")
-            }}</b-tag>
+            <tag variant="info" v-if="props.row.draft">{{ t("Draft") }}</tag>
           </router-link>
         </o-table-column>
         <o-table-column
@@ -295,7 +285,7 @@
     {{ t("This group was not found") }}
     <template #desc>
       <o-button
-        type="is-text"
+        variant="text"
         tag="router-link"
         :to="{ name: RouteName.ADMIN_GROUPS }"
         >{{ t("Back to group list") }}</o-button
@@ -330,6 +320,8 @@ import {
 } from "@/filters/datetime";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Tag from "@/components/Tag.vue";
 
 const EVENTS_PER_PAGE = 10;
 const POSTS_PER_PAGE = 10;
@@ -396,23 +388,21 @@ const dialog = inject<Dialog>("dialog");
 const notifier = inject<Notifier>("notifier");
 
 const confirmSuspendProfile = (): void => {
-  const message = (
-    group.value.domain
-      ? t(
-          "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
-          { instance: group.value.domain }
-        )
-      : t(
-          "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
-        )
-  ) as string;
+  const message = group.value.domain
+    ? t(
+        "Are you sure you want to <b>suspend</b> this group? As this group originates from instance {instance}, this will only remove local members and delete the local data, as well as rejecting all the future data.",
+        { instance: group.value.domain }
+      )
+    : t(
+        "Are you sure you want to <b>suspend</b> this group? All members - including remote ones - will be notified and removed from the group, and <b>all of the group data (events, posts, discussions, todos…) will be irretrievably destroyed</b>."
+      );
 
   dialog?.confirm({
-    title: t("Suspend group") as string,
+    title: t("Suspend group"),
     message,
-    confirmText: t("Suspend group") as string,
-    cancelText: t("Cancel") as string,
-    type: "danger",
+    confirmText: t("Suspend group"),
+    cancelText: t("Cancel"),
+    variant: "danger",
     hasIcon: true,
     onConfirm: () =>
       suspendProfile({

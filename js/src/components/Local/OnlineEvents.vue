@@ -1,7 +1,8 @@
 <template>
   <close-content
+    class="container mx-auto px-2"
     :suggest-geoloc="false"
-    v-show="loadingEvents || events.length > 0"
+    v-show="loadingEvents || (events?.elements && events?.elements.length > 0)"
   >
     <template #title>
       {{ $t("Online upcoming events") }}
@@ -15,7 +16,7 @@
       />
       <event-card
         class="scroll-ml-6 snap-center shrink-0 first:pl-8 last:pr-8 w-[18rem]"
-        v-for="event in events"
+        v-for="event in events?.elements"
         :key="event.id"
         :event="event"
         view-mode="column"
@@ -24,7 +25,7 @@
       />
       <more-content
         :to="{
-          name: 'SEARCH',
+          name: RouteName.SEARCH,
           query: {
             contentType: 'EVENTS',
             isOnline: 'true',
@@ -50,25 +51,27 @@
 
 <script lang="ts" setup>
 import { computed } from "vue";
-import SkeletonEventResult from "../result/SkeletonEventResult.vue";
+import SkeletonEventResult from "@/components/Event/SkeletonEventResult.vue";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
 import { SEARCH_EVENTS } from "@/graphql/search";
-import EventCard from "../../components/Event/EventCard.vue";
+import EventCard from "@/components/Event/EventCard.vue";
 import { useQuery } from "@vue/apollo-composable";
+import RouteName from "@/router/name";
+import { Paginate } from "@/types/paginate";
+import { IEvent } from "@/types/event.model";
 
 const EVENT_PAGE_LIMIT = 12;
 
-const { result: searchEventResult, loading: loadingEvents } = useQuery(
-  SEARCH_EVENTS,
-  () => ({
-    beginsOn: new Date(),
-    endsOn: undefined,
-    eventPage: 1,
-    limit: EVENT_PAGE_LIMIT,
-    type: "ONLINE",
-  })
-);
+const { result: searchEventResult, loading: loadingEvents } = useQuery<{
+  searchEvents: Paginate<IEvent>;
+}>(SEARCH_EVENTS, () => ({
+  beginsOn: new Date(),
+  endsOn: undefined,
+  eventPage: 1,
+  limit: EVENT_PAGE_LIMIT,
+  type: "ONLINE",
+}));
 
-const events = computed(() => searchEventResult.value.searchEvents);
+const events = computed(() => searchEventResult.value?.searchEvents);
 </script>

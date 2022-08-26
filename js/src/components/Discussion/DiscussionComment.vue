@@ -1,5 +1,5 @@
 <template>
-  <article class="flex gap-2">
+  <article class="flex gap-2 bg-white dark:bg-transparent">
     <div class="">
       <figure class="" v-if="comment.actor && comment.actor.avatar">
         <img
@@ -32,7 +32,7 @@
             comment.actor.id === currentActor?.id
           "
         >
-          <o-dropdown aria-role="list">
+          <o-dropdown aria-role="list" position="bottom-left">
             <template #trigger>
               <o-icon role="button" icon="dots-horizontal" />
             </template>
@@ -133,7 +133,9 @@ import { formatDateTimeString } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import type { Locale } from "date-fns";
 
-const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
+const Editor = defineAsyncComponent(
+  () => import("@/components/TextEditor.vue")
+);
 
 const props = defineProps<{
   modelValue: IComment;

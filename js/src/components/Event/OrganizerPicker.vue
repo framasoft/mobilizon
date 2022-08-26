@@ -34,9 +34,9 @@
           class="flex flex-wrap p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
           :for="`availableActor-${availableActor?.id}`"
         >
-          <figure class="" v-if="availableActor?.avatar">
+          <figure class="h-12 w-12" v-if="availableActor?.avatar">
             <img
-              class="rounded"
+              class="rounded-full h-full w-full object-cover"
               :src="availableActor.avatar.url"
               alt=""
               width="48"

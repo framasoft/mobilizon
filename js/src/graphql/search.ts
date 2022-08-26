@@ -4,6 +4,22 @@ import { ADDRESS_FRAGMENT } from "./address";
 import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
 import { TAG_FRAGMENT } from "./tags";
 
+export const GROUP_RESULT_FRAGMENT = gql`
+  fragment GroupResultFragment on GroupSearchResult {
+    id
+    avatar {
+      id
+      url
+    }
+    type
+    preferredUsername
+    name
+    domain
+    summary
+    url
+  }
+`;
+
 export const SEARCH_EVENTS_AND_GROUPS = gql`
   query SearchEventsAndGroups(
     $location: String
@@ -13,6 +29,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $type: EventType
     $categoryOneOf: [String]
     $statusOneOf: [EventStatus]
+    $languageOneOf: [String]
+    $searchTarget: SearchTarget
     $beginsOn: DateTime
     $endsOn: DateTime
     $eventPage: Int
@@ -27,6 +45,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       type: $type
       categoryOneOf: $categoryOneOf
       statusOneOf: $statusOneOf
+      languageOneOf: $languageOneOf
+      searchTarget: $searchTarget
       beginsOn: $beginsOn
       endsOn: $endsOn
       page: $eventPage
@@ -42,6 +62,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
           id
           url
         }
+        url
         status
         tags {
           ...TagFragment
@@ -56,7 +77,7 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
           ...ActorFragment
         }
         options {
-          ...EventOptions
+          isOnline
         }
         __typename
       }
@@ -65,31 +86,41 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       term: $term
       location: $location
       radius: $radius
+      languageOneOf: $languageOneOf
+      searchTarget: $searchTarget
       page: $groupPage
       limit: $limit
     ) {
       total
       elements {
-        ...ActorFragment
+        __typename
+        id
+        avatar {
+          id
+          url
+        }
+        type
+        preferredUsername
+        name
+        domain
+        summary
+        url
+        ...GroupResultFragment
         banner {
           id
           url
         }
-        members(roles: "member,moderator,administrator,creator") {
-          total
-        }
-        followers(approved: true) {
-          total
-        }
+        followersCount
+        membersCount
         physicalAddress {
           ...AdressFragment
         }
       }
     }
   }
-  ${EVENT_OPTIONS_FRAGMENT}
   ${TAG_FRAGMENT}
   ${ADDRESS_FRAGMENT}
+  ${GROUP_RESULT_FRAGMENT}
   ${ACTOR_FRAGMENT}
 `;
 
@@ -176,12 +207,8 @@ export const SEARCH_GROUPS = gql`
           id
           url
         }
-        members(roles: "member,moderator,administrator,creator") {
-          total
-        }
-        followers(approved: true) {
-          total
-        }
+        membersCount
+        followersCount
         physicalAddress {
           ...AdressFragment
         }

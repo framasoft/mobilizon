@@ -1,5 +1,5 @@
 <template>
-  <span class="icon has-text-primary is-large">
+  <span class="text-primary dark:text-white">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 216.4144 232.00976">
       <title>Mastodon logo</title>
       <path

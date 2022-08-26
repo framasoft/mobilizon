@@ -45,7 +45,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
         _context
       ) do
     addresses =
-      Geospatial.service().geocode(longitude, latitude, lang: locale, zoom: zoom)
+      longitude
+      |> Geospatial.service().geocode(latitude, lang: locale, zoom: zoom)
       |> Enum.map(fn address ->
         picture_info =
           Pictures.service().search(address.locality || address.region || address.country)

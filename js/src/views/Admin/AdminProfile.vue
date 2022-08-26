@@ -34,14 +34,14 @@
                   <tr
                     v-for="{ key, value, link } in metadata"
                     :key="key"
-                    class="odd:bg-white even:bg-gray-50 border-b"
+                    class="odd:bg-white dark:odd:bg-zinc-800 even:bg-gray-50 dark:even:bg-zinc-700 border-b"
                   >
                     <td class="py-4 px-2 whitespace-nowrap">
                       {{ key }}
                     </td>
                     <td
                       v-if="link"
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
+                      class="py-4 px-2 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap"
                     >
                       <router-link :to="link">
                         {{ value }}
@@ -49,7 +49,7 @@
                     </td>
                     <td
                       v-else
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
+                      class="py-4 px-2 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap"
                     >
                       {{ value }}
                     </td>
@@ -102,7 +102,7 @@
     <section class="mt-4 mb-3">
       <h2 class="">{{ $t("Organized events") }}</h2>
       <o-table
-        :data="person.organizedEvents.elements"
+        :data="person.organizedEvents?.elements"
         :loading="loading"
         paginated
         backend-pagination
@@ -111,7 +111,7 @@
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.organizedEvents.total"
+        :total="person.organizedEvents?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
       >
@@ -140,7 +140,7 @@
       <h2 class="">{{ $t("Participations") }}</h2>
       <o-table
         :data="
-          person.participations.elements.map(
+          person.participations?.elements.map(
             (participation) => participation.event
           )
         "
@@ -152,7 +152,7 @@
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.participations.total"
+        :total="person.participations?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onParticipationsPageChange"
       >
@@ -180,7 +180,7 @@
     <section class="mt-4 mb-3">
       <h2 class="">{{ $t("Memberships") }}</h2>
       <o-table
-        :data="person.memberships.elements"
+        :data="person.memberships?.elements"
         :loading="loading"
         paginated
         backend-pagination
@@ -189,7 +189,7 @@
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.memberships.total"
+        :total="person.memberships?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onMembershipsPageChange"
       >
@@ -215,47 +215,45 @@
                   props.row.parent.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey"
-                  >@{{ usernameWithDomain(props.row.parent) }}</span
-                >
+                <span>@{{ usernameWithDomain(props.row.parent) }}</span>
               </div>
             </div>
           </article>
         </o-table-column>
         <o-table-column field="role" :label="$t('Role')" v-slot="props">
-          <b-tag
+          <tag
             variant="primary"
             v-if="props.row.role === MemberRole.ADMINISTRATOR"
           >
             {{ $t("Administrator") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="primary"
             v-else-if="props.row.role === MemberRole.MODERATOR"
           >
             {{ $t("Moderator") }}
-          </b-tag>
-          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+          </tag>
+          <tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ $t("Member") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="warning"
             v-else-if="props.row.role === MemberRole.NOT_APPROVED"
           >
             {{ $t("Not approved") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="danger"
             v-else-if="props.row.role === MemberRole.REJECTED"
           >
             {{ $t("Rejected") }}
-          </b-tag>
-          <b-tag
+          </tag>
+          <tag
             variant="danger"
             v-else-if="props.row.role === MemberRole.INVITED"
           >
             {{ $t("Invited") }}
-          </b-tag>
+          </tag>
         </o-table-column>
         <o-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
           <span class="has-text-centered">
@@ -276,7 +274,7 @@
     {{ $t("This profile was not found") }}
     <template #desc>
       <o-button
-        type="is-text"
+        variant="text"
         tag="router-link"
         :to="{ name: RouteName.PROFILES }"
         >{{ $t("Back to profile list") }}</o-button
@@ -310,6 +308,7 @@ import {
   formatDateTimeString,
 } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Tag from "@/components/Tag.vue";
 
 const EVENTS_PER_PAGE = 10;
 const PARTICIPATIONS_PER_PAGE = 10;
@@ -423,7 +422,7 @@ const { mutate: suspendProfile } = useMutation<
     });
 
     if (!profileData) return;
-    const { person } = profileData;
+    const { person: cachedPerson } = profileData;
     store.writeQuery({
       query: GET_PERSON,
       variables: {
@@ -431,7 +430,7 @@ const { mutate: suspendProfile } = useMutation<
       },
       data: {
         person: {
-          ...cloneDeep(person),
+          ...cloneDeep(cachedPerson),
           participations: { total: 0, elements: [] },
           suspended: true,
           avatar: null,

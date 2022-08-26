@@ -7,6 +7,97 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
   alias Mobilizon.GraphQL.Resolvers.Search
+  alias Mobilizon.Service.GlobalSearch.{EventResult, GroupResult}
+
+  interface :event_search_result do
+    field(:id, :id, description: "Internal ID for this event")
+    field(:uuid, :uuid, description: "The Event UUID")
+    field(:url, :string, description: "The ActivityPub Event URL")
+    field(:title, :string, description: "The event's title")
+    field(:begins_on, :datetime, description: "Datetime for when the event begins")
+    field(:ends_on, :datetime, description: "Datetime for when the event ends")
+    field(:status, :event_status, description: "Status of the event")
+    field(:picture, :media, description: "The event's picture")
+    field(:physical_address, :address, description: "The event's physical address")
+    field(:attributed_to, :actor, description: "Who the event is attributed to (often a group)")
+    field(:organizer_actor, :actor, description: "The event's organizer (as a person)")
+    field(:tags, list_of(:tag), description: "The event's tags")
+    field(:category, :event_category, description: "The event's category")
+    field(:options, :event_options, description: "The event options")
+
+    resolve_type(fn
+      %Event{}, _ ->
+        :event
+
+      %EventResult{}, _ ->
+        :event_result
+
+      _, _ ->
+        nil
+    end)
+  end
+
+  @desc "Search event result"
+  object :event_result do
+    interfaces([:event_search_result])
+    field(:id, :id, description: "Internal ID for this event")
+    field(:uuid, :uuid, description: "The Event UUID")
+    field(:url, :string, description: "The ActivityPub Event URL")
+    field(:title, :string, description: "The event's title")
+    field(:begins_on, :datetime, description: "Datetime for when the event begins")
+    field(:ends_on, :datetime, description: "Datetime for when the event ends")
+    field(:status, :event_status, description: "Status of the event")
+    field(:picture, :media, description: "The event's picture")
+    field(:physical_address, :address, description: "The event's physical address")
+    field(:attributed_to, :actor, description: "Who the event is attributed to (often a group)")
+    field(:organizer_actor, :actor, description: "The event's organizer (as a person)")
+    field(:tags, list_of(:tag), description: "The event's tags")
+    field(:category, :event_category, description: "The event's category")
+    field(:options, :event_options, description: "The event options")
+  end
+
+  interface :group_search_result do
+    field(:id, :id, description: "Internal ID for this group")
+    field(:url, :string, description: "The ActivityPub actor's URL")
+    field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
+    field(:name, :string, description: "The actor's displayed name")
+    field(:domain, :string, description: "The actor's domain if (null if it's this instance)")
+    field(:summary, :string, description: "The actor's summary")
+    field(:preferred_username, :string, description: "The actor's preferred username")
+    field(:avatar, :media, description: "The actor's avatar media")
+    field(:banner, :media, description: "The actor's banner media")
+    field(:followers_count, :integer, description: "Number of followers for this actor")
+    field(:members_count, :integer, description: "Number of followers for this actor")
+    field(:physical_address, :address, description: "The type of the event's address")
+
+    resolve_type(fn
+      %Actor{type: :Group}, _ ->
+        :group
+
+      %GroupResult{}, _ ->
+        :group_result
+
+      _, _ ->
+        nil
+    end)
+  end
+
+  @desc "Search group result"
+  object :group_result do
+    interfaces([:group_search_result])
+    field(:id, :id, description: "Internal ID for this group")
+    field(:url, :string, description: "The ActivityPub actor's URL")
+    field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
+    field(:name, :string, description: "The actor's displayed name")
+    field(:domain, :string, description: "The actor's domain if (null if it's this instance)")
+    field(:summary, :string, description: "The actor's summary")
+    field(:preferred_username, :string, description: "The actor's preferred username")
+    field(:avatar, :media, description: "The actor's avatar media")
+    field(:banner, :media, description: "The actor's banner media")
+    field(:followers_count, :integer, description: "Number of followers for this actor")
+    field(:members_count, :integer, description: "Number of followers for this actor")
+    field(:physical_address, :address, description: "The type of the event's address")
+  end
 
   @desc "Search persons result"
   object :persons do
@@ -17,13 +108,13 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   @desc "Search groups result"
   object :groups do
     field(:total, non_null(:integer), description: "Total elements")
-    field(:elements, non_null(list_of(:group)), description: "Group elements")
+    field(:elements, non_null(list_of(:group_search_result)), description: "Group elements")
   end
 
   @desc "Search events result"
   object :events do
     field(:total, non_null(:integer), description: "Total elements")
-    field(:elements, non_null(list_of(:event)), description: "Event elements")
+    field(:elements, non_null(list_of(:event_search_result)), description: "Event elements")
   end
 
   @desc """
@@ -51,6 +142,14 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     )
 
     value(:online, description: "The event will only happen online. It has no physical address")
+  end
+
+  enum :search_target do
+    value(:internal,
+      description: "Search on content from this instance and from the followed instances"
+    )
+
+    value(:global, description: "Search using the global fediverse search")
   end
 
   object :search_queries do
@@ -81,6 +180,15 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         description: "Radius around the location to search in"
       )
 
+      arg(:language_one_of, list_of(:string),
+        description: "The list of languages this event can be in"
+      )
+
+      arg(:search_target, :search_target,
+        default_value: :internal,
+        description: "The target of the search (internal or global)"
+      )
+
       arg(:page, :integer, default_value: 1, description: "Result page")
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")
 
@@ -101,6 +209,15 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
       arg(:status_one_of, list_of(:event_status),
         description: "The list of statuses this event can have"
+      )
+
+      arg(:language_one_of, list_of(:string),
+        description: "The list of languages this event can be in"
+      )
+
+      arg(:search_target, :search_target,
+        default_value: :internal,
+        description: "The target of the search (internal or global)"
       )
 
       arg(:radius, :float,

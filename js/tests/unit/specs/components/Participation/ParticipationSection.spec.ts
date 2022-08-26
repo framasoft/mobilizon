@@ -94,7 +94,7 @@ describe("ParticipationSection", () => {
       "Cancel anonymous participation"
     );
 
-    wrapper.find(".event-participation small .is-clickable").trigger("click");
+    wrapper.find(".event-participation small span").trigger("click");
     expect(
       wrapper
         .findComponent({ ref: "anonymous-participation-modal" })
@@ -123,7 +123,7 @@ describe("ParticipationSection", () => {
       "Cancel anonymous participation"
     );
 
-    wrapper.find(".event-participation small .is-clickable").trigger("click");
+    wrapper.find(".event-participation small span").trigger("click");
 
     await wrapper.vm.$nextTick();
     const modal = wrapper.findComponent({

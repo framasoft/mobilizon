@@ -1,5 +1,5 @@
 <template>
-  <span class="icon has-text-primary is-large">
+  <span class="text-primary dark:text-white dark:fill-white">
     <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <title>Telegram</title>
       <path

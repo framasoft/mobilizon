@@ -1,7 +1,7 @@
 <template>
-  <div class="card">
-    <div class="card-content media">
-      <div class="media-content">
+  <div class="">
+    <div class="">
+      <div class="">
         <div class="prose dark:prose-invert">
           <i18n-t
             tag="p"
@@ -12,12 +12,18 @@
             </template>
           </i18n-t>
         </div>
-        <div class="media subfield">
-          <div class="media-left">
-            <figure class="image is-48x48" v-if="member.parent.avatar">
-              <img class="is-rounded" :src="member.parent.avatar.url" alt="" />
+        <div class="">
+          <div class="">
+            <figure v-if="member.parent.avatar">
+              <img
+                class="rounded"
+                :src="member.parent.avatar.url"
+                alt=""
+                height="48"
+                width="48"
+              />
             </figure>
-            <o-icon v-else size="large" icon="account-group" />
+            <AccountGroup :size="48" v-else />
           </div>
           <div class="media-content">
             <div class="level">
@@ -31,8 +37,8 @@
                       },
                     }"
                   >
-                    <h3 class="is-size-5">{{ member.parent.name }}</h3>
-                    <p class="is-size-7 has-text-grey-dark">
+                    <h3 class="">{{ member.parent.name }}</h3>
+                    <p class="">
                       <span v-if="member.parent.domain">
                         {{
                           `@${member.parent.preferredUsername}@${member.parent.domain}`
@@ -45,8 +51,8 @@
                   </router-link>
                 </div>
               </div>
-              <div class="level-right">
-                <div class="level-item">
+              <div class="">
+                <div class="">
                   <o-button
                     variant="success"
                     @click="$emit('accept', member.id)"
@@ -54,7 +60,7 @@
                     {{ $t("Accept") }}
                   </o-button>
                 </div>
-                <div class="level-item">
+                <div class="">
                   <o-button
                     variant="danger"
                     @click="$emit('reject', member.id)"
@@ -75,6 +81,7 @@
 import { usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 
 defineProps<{
   member: IMember;

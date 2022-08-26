@@ -1,4 +1,4 @@
-import DialogComponent from "@/components/core/Dialog.vue";
+import DialogComponent from "@/components/core/CustomDialog.vue";
 import { App } from "vue";
 
 export class Dialog {

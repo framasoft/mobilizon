@@ -51,6 +51,7 @@
     "@vue-leaflet/vue-leaflet": "^0.6.1",
     "@vue/apollo-composable": "^4.0.0-alpha.17",
     "@vue/compiler-sfc": "^3.2.37",
+    "@vueuse/core": "^9.1.0",
     "@vueuse/head": "^0.7.9",
     "@vueuse/router": "^9.0.2",
     "@xiaoshuapp/draggable": "^4.1.0",
@@ -93,6 +94,7 @@
   "devDependencies": {
     "@histoire/plugin-vue": "^0.10.0",
     "@intlify/vite-plugin-vue-i18n": "^6.0.0",
+    "@playwright/test": "^1.25.1",
     "@rushstack/eslint-patch": "^1.1.4",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/typography": "^0.5.4",

@@ -25,7 +25,7 @@
       >
         {{ displayName(actor) }}
       </h5>
-      <p class="text-gray-500 truncate" v-if="actor.name">
+      <p class="text-gray-500 dark:text-gray-200 truncate" v-if="actor.name">
         <span dir="ltr">@{{ usernameWithDomain(actor) }}</span>
       </p>
       <div

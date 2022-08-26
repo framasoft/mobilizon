@@ -73,6 +73,9 @@ export const typePolicies: TypePolicies = {
   Config: {
     merge: true,
   },
+  Address: {
+    keyFields: ["id"],
+  },
   RootQueryType: {
     fields: {
       relayFollowers: paginatedLimitPagination<IFollower>(),
@@ -110,7 +113,7 @@ export async function refreshAccessToken(): Promise<boolean> {
     return false;
   }
 
-  console.log("Refreshing access token.");
+  console.debug("Refreshing access token.");
 
   return new Promise((resolve, reject) => {
     const { mutate, onDone, onError } = provideApolloClient(apolloClient)(() =>
@@ -130,7 +133,7 @@ export async function refreshAccessToken(): Promise<boolean> {
     });
 
     onError((err) => {
-      console.debug("Failed to refresh token");
+      console.debug("Failed to refresh token", err);
       reject(false);
     });
   });

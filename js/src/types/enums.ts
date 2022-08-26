@@ -286,3 +286,8 @@ export enum InstanceFollowStatus {
   PENDING = "PENDING",
   NONE = "NONE",
 }
+
+export enum SearchTargets {
+  INTERNAL = "INTERNAL",
+  GLOBAL = "GLOBAL",
+}

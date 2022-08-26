@@ -171,7 +171,7 @@ const locale = computed({
         locale: newLocale,
       });
       saveLocaleData(newLocale);
-      console.log("changing locale", i18nLocale, newLocale);
+      console.debug("changing locale", i18nLocale, newLocale);
       i18nLocale.value = newLocale;
     }
   },

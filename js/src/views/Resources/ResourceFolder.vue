@@ -9,11 +9,11 @@
 
           <o-dropdown-item aria-role="listitem" @click="createFolderModal">
             <Folder />
-            {{ $t("New folder") }}
+            {{ t("New folder") }}
           </o-dropdown-item>
           <o-dropdown-item aria-role="listitem" @click="createLinkModal">
             <Link />
-            {{ $t("New link") }}
+            {{ t("New link") }}
           </o-dropdown-item>
           <hr
             role="presentation"
@@ -48,21 +48,21 @@
       :total="resource.children.total"
       v-model="page"
       :per-page="RESOURCES_PER_PAGE"
-      :aria-next-label="$t('Next page')"
-      :aria-previous-label="$t('Previous page')"
-      :aria-page-label="$t('Page')"
-      :aria-current-label="$t('Current page')"
+      :aria-next-label="t('Next page')"
+      :aria-previous-label="t('Previous page')"
+      :aria-page-label="t('Page')"
+      :aria-current-label="t('Current page')"
     >
     </o-pagination>
     <o-modal
       v-model:active="renameModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
       <div class="w-full md:w-[640px]">
         <section>
           <form @submit.prevent="renameResource">
-            <o-field :label="$t('Title')">
+            <o-field :label="t('Title')">
               <o-input
                 ref="resourceRenameInput"
                 aria-required="true"
@@ -70,9 +70,7 @@
               />
             </o-field>
 
-            <o-button native-type="submit">{{
-              $t("Rename resource")
-            }}</o-button>
+            <o-button native-type="submit">{{ t("Rename resource") }}</o-button>
           </form>
         </section>
       </div>
@@ -80,7 +78,7 @@
     <o-modal
       v-model:active="moveModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
       <div class="w-full md:w-[640px]">
         <section>
@@ -96,36 +94,41 @@
     <o-modal
       v-model:active="createResourceModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       trap-focus
     >
-      <div class="w-full md:w-[640px]">
-        <section>
-          <o-notification variant="danger" v-if="modalError">
-            {{ modalError }}
-          </o-notification>
-          <form @submit.prevent="createResource">
-            <o-field :label="$t('Title')" label-for="new-resource-title">
-              <o-input
-                ref="modalNewResourceInput"
-                aria-required="true"
-                v-model="newResource.title"
-                id="new-resource-title"
-              />
-            </o-field>
+      <section class="w-full md:w-[640px]">
+        <o-notification variant="danger" v-if="modalError">
+          {{ modalError }}
+        </o-notification>
+        <form @submit.prevent="createResource">
+          <p v-if="newResource.type !== 'folder'">
+            {{
+              t("The pad will be created on {service}", {
+                service: newResourceHost,
+              })
+            }}
+          </p>
+          <o-field :label="t('Title')" label-for="new-resource-title">
+            <o-input
+              ref="modalNewResourceInput"
+              aria-required="true"
+              v-model="newResource.title"
+              id="new-resource-title"
+            />
+          </o-field>
 
-            <o-button native-type="submit">{{
-              createResourceButtonLabel
-            }}</o-button>
-          </form>
-        </section>
-      </div>
+          <o-button class="mt-2" native-type="submit">{{
+            createResourceButtonLabel
+          }}</o-button>
+        </form>
+      </section>
     </o-modal>
     <o-modal
       v-model:active="createLinkResourceModal"
       has-modal-card
       aria-modal
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       trap-focus
       :width="640"
     >
@@ -135,7 +138,7 @@
             {{ modalError }}
           </o-notification>
           <form @submit.prevent="createResource">
-            <o-field expanded :label="$t('URL')" label-for="new-resource-url">
+            <o-field expanded :label="t('URL')" label-for="new-resource-url">
               <o-input
                 id="new-resource-url"
                 type="url"
@@ -150,7 +153,7 @@
               <resource-item :resource="newResource" :preview="true" />
             </div>
 
-            <o-field :label="$t('Title')" label-for="new-resource-link-title">
+            <o-field :label="t('Title')" label-for="new-resource-link-title">
               <o-input
                 aria-required="true"
                 v-model="newResource.title"
@@ -158,10 +161,7 @@
               />
             </o-field>
 
-            <o-field
-              :label="$t('Description')"
-              label-for="new-resource-summary"
-            >
+            <o-field :label="t('Description')" label-for="new-resource-summary">
               <o-input
                 type="textarea"
                 v-model="newResource.summary"
@@ -170,7 +170,7 @@
             </o-field>
 
             <o-button native-type="submit" class="mt-2">{{
-              $t("Create resource")
+              t("Create resource")
             }}</o-button>
           </form>
         </section>
@@ -245,8 +245,6 @@ const resource = computed(() => resourceResult.value?.resource);
 onGetResourceError(({ graphQLErrors }) => {
   handleErrors(graphQLErrors);
 });
-
-const { currentActor } = useCurrentActorClient();
 
 const { resourceProviders } = useResourceProviders();
 
@@ -489,7 +487,7 @@ const { mutate: updateResourceMutation } = useMutation<{
     if (!data || data.updateResource == null || parentPath == null) return;
     if (!resource.value?.actor) return;
 
-    console.log("Removing ressource from old parent");
+    console.debug("Removing ressource from old parent");
     const oldParentCachedData = store.readQuery<{ resource: IResource }>({
       query: GET_RESOURCE,
       variables: {
@@ -525,11 +523,11 @@ const { mutate: updateResourceMutation } = useMutation<{
         },
       },
     });
-    console.log("Finished removing ressource from old parent");
+    console.debug("Finished removing ressource from old parent");
 
-    console.log("Adding resource to new parent");
+    console.debug("Adding resource to new parent");
     if (!updatedResource.parent || !updatedResource.parent.path) {
-      console.log("No cache found for new parent");
+      console.debug("No cache found for new parent");
       return;
     }
     const newParentCachedData = store.readQuery<{ resource: IResource }>({
@@ -562,7 +560,7 @@ const { mutate: updateResourceMutation } = useMutation<{
         },
       },
     });
-    console.log("Finished adding resource to new parent");
+    console.debug("Finished adding resource to new parent");
   },
 }));
 
@@ -633,12 +631,17 @@ const breadcrumbLinks = computed(() => {
   return links;
 });
 
+const newResourceHost = computed(() => {
+  if (!newResource.resourceUrl) return;
+  return new URL(newResource.resourceUrl).host;
+});
+
 useHead({
   title: computed(() =>
     isRoot.value
       ? t("Resources")
       : t("{folder} - Resources", {
-          folder: lastFragment,
+          folder: lastFragment.value,
         })
   ),
 });

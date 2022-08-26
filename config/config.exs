@@ -365,6 +365,14 @@ config :mobilizon, Mobilizon.Service.Pictures.Unsplash,
   app_name: "Mobilizon",
   access_key: nil
 
+config :mobilizon, :search, global: [is_default_search: false, is_enabled: true]
+
+config :mobilizon, Mobilizon.Service.GlobalSearch,
+  service: Mobilizon.Service.GlobalSearch.SearchMobilizon
+
+config :mobilizon, Mobilizon.Service.GlobalSearch.SearchMobilizon,
+  endpoint: "https://search.joinmobilizon.org"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

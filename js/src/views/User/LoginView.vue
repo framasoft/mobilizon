@@ -96,7 +96,7 @@
             name: RouteName.SEND_PASSWORD_RESET,
             params: { email: credentials.email },
           }"
-          >{{ t("Forgot your password ?") }}</o-button
+          >{{ t("Forgot your password?") }}</o-button
         >
         <o-button
           tag="router-link"
@@ -145,6 +145,7 @@ import AuthProviders from "@/components/User/AuthProviders.vue";
 import RouteName from "@/router/name";
 import { LoginError, LoginErrorCode } from "@/types/enums";
 import { useCurrentUserClient } from "@/composition/apollo/user";
+import { useHead } from "@vueuse/head";
 
 const props = withDefaults(
   defineProps<{
@@ -198,7 +199,9 @@ onLoginMutationDone(async (result) => {
     router.push(redirect.value);
     return;
   }
+  console.debug("No redirect, going to homepage");
   if (window.localStorage) {
+    console.debug("Has localstorage, setting welcome back");
     window.localStorage.setItem("welcome-back", "yes");
   }
   router.replace({ name: RouteName.HOME });
@@ -235,7 +238,6 @@ const { onDone: onCurrentUserMutationDone, mutate: updateCurrentUserMutation } =
   useMutation(UPDATE_CURRENT_USER_CLIENT);
 
 onCurrentUserMutationDone(async () => {
-  console.debug("saved current user client, now for actor client");
   try {
     await initializeCurrentActor();
   } catch (err: any) {
@@ -252,7 +254,6 @@ onCurrentUserMutationDone(async () => {
 });
 
 const setupClientUserAndActors = async (login: ILogin): Promise<void> => {
-  console.debug("setuping client user and actors after login", login);
   updateCurrentUserMutation({
     id: login.user.id,
     email: credentials.email,
@@ -276,7 +277,7 @@ const caseWarningText = computed<string | undefined>(() => {
 
 const caseWarningType = computed<string | undefined>(() => {
   if (hasCaseWarning.value) {
-    return "is-warning";
+    return "warning";
   }
   return undefined;
 });
@@ -305,5 +306,9 @@ onMounted(() => {
     );
     router.push("/");
   }
+});
+
+useHead({
+  title: computed(() => t("Login")),
 });
 </script>

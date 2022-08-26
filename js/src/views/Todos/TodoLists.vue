@@ -40,7 +40,7 @@
         <router-link
           :to="{ name: RouteName.TODO_LIST, params: { id: todoList.id } }"
         >
-          <h3 class="is-size-3">
+          <h3>
             {{
               $t(
                 "{title} ({count} todos)",

@@ -28,8 +28,7 @@ import { CATEGORY_STATISTICS } from "@/graphql/statistics";
 import { useI18n } from "vue-i18n";
 import shuffle from "lodash/shuffle";
 import { categoriesWithPictures } from "../Categories/constants";
-import { IConfig } from "@/types/config.model";
-import { CONFIG } from "@/graphql/config";
+import { useEventCategories } from "@/composition/apollo/config";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -40,14 +39,10 @@ const categoryStats = computed(
   () => categoryStatsResult.value?.categoryStatistics ?? []
 );
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
-
-const config = computed(() => configResult.value?.config);
-
-const eventCategories = computed(() => config.value?.eventCategories ?? []);
+const { eventCategories } = useEventCategories();
 
 const eventCategoryLabel = (categoryId: string): string | undefined => {
-  return eventCategories.value.find(({ id }) => categoryId == id)?.label;
+  return eventCategories.value?.find(({ id }) => categoryId == id)?.label;
 };
 
 const promotedCategories = computed((): CategoryStatsModel[] => {

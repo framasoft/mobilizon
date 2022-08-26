@@ -1,6 +1,6 @@
 <template>
   <svg
-    class="bg-white dark:bg-gray-900 dark:fill-white"
+    class="bg-white dark:bg-zinc-900 dark:fill-white"
     :class="{ 'bg-gray-900': invert }"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 248.16 46.78"

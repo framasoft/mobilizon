@@ -5,13 +5,13 @@
     </header>
 
     <section class="flex">
-      <div class="">
+      <div class="w-full">
         <slot></slot>
         <o-field :label="inputLabel" label-for="url-text">
           <o-input id="url-text" ref="URLInput" :modelValue="url" expanded />
           <p class="control">
             <o-tooltip
-              :label="$t('URL copied to clipboard')"
+              :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip"
               always
               variant="success"
@@ -23,7 +23,7 @@
                 native-type="button"
                 @click="copyURL"
                 @keyup.enter="copyURL"
-                :title="$t('Copy URL to clipboard')"
+                :title="t('Copy URL to clipboard')"
               />
             </o-tooltip>
           </p>
@@ -34,7 +34,7 @@
             target="_blank"
             rel="nofollow noopener"
             title="Twitter"
-            ><Twitter :size="48"
+            ><Twitter :size="48" class="dark:text-white"
           /></a>
           <a
             :href="mastodonShare"
@@ -50,14 +50,14 @@
             target="_blank"
             rel="nofollow noopener"
             title="Facebook"
-            ><Facebook :size="48"
+            ><Facebook :size="48" class="dark:text-white"
           /></a>
           <a
             :href="whatsAppShare"
             target="_blank"
             rel="nofollow noopener"
             title="WhatsApp"
-            ><Whatsapp :size="48"
+            ><Whatsapp :size="48" class="dark:text-white"
           /></a>
           <a
             :href="telegramShare"
@@ -73,7 +73,7 @@
             target="_blank"
             rel="nofollow noopener"
             title="LinkedIn"
-            ><LinkedIn :size="48"
+            ><LinkedIn :size="48" class="dark:text-white"
           /></a>
           <a
             :href="diasporaShare"
@@ -90,7 +90,7 @@
             rel="nofollow noopener"
             title="Email"
           >
-            <Email :size="48" />
+            <Email :size="48" class="dark:text-white" />
           </a>
         </div>
       </div>
@@ -118,6 +118,7 @@ import {
   twitterShareUrl,
   whatsAppShareUrl,
 } from "@/utils/share";
+import { useI18n } from "vue-i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -129,7 +130,9 @@ const props = withDefaults(
   {}
 );
 
-const URLInput = ref<HTMLElement | null>(null);
+const { t } = useI18n({ useScope: "global" });
+
+const URLInput = ref<{ $refs: { input: HTMLInputElement } } | null>(null);
 
 const showCopiedTooltip = ref(false);
 
@@ -159,7 +162,6 @@ const mastodonShare = computed((): string | undefined =>
 );
 
 const copyURL = (): void => {
-  console.log("URLInput", URLInput.value);
   URLInput.value?.$refs.input.select();
   document.execCommand("copy");
   showCopiedTooltip.value = true;

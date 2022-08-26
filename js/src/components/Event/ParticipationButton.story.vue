@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { IActor, IPerson } from "@/types/actor";
+import { IPerson } from "@/types/actor";
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import ParticipationButton from "./ParticipationButton.vue";

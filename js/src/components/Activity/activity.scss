@@ -1,6 +1,6 @@
 .activity-item {
   display: flex;
-  span.icon {
+  span.o-icon {
     width: 2em;
     height: 2em;
     box-sizing: border-box;
@@ -9,9 +9,5 @@
     z-index: 2;
     flex-shrink: 0;
 
-  }
-
-  .subject {
-    padding: 0.25rem 0 0 0.5rem;
   }
 }

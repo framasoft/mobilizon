@@ -50,7 +50,7 @@ export function deleteUserData(): void {
 }
 
 export async function logout(performServerLogout = true): Promise<void> {
-  const { mutate: logout } = provideApolloClient(apolloClient)(() =>
+  const { mutate: logoutMutation } = provideApolloClient(apolloClient)(() =>
     useMutation(LOGOUT)
   );
   const { mutate: cleanUserClient } = provideApolloClient(apolloClient)(() =>
@@ -61,7 +61,7 @@ export async function logout(performServerLogout = true): Promise<void> {
   );
 
   if (performServerLogout) {
-    logout({
+    logoutMutation({
       refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),
     });
   }

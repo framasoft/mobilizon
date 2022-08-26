@@ -2,10 +2,10 @@
   <div>
     <breadcrumbs-nav
       :links="[
-        { name: RouteName.MODERATION, text: $t('Moderation') },
+        { name: RouteName.MODERATION, text: t('Moderation') },
         {
           name: RouteName.ADMIN_GROUPS,
-          text: $t('Groups'),
+          text: t('Groups'),
         },
       ]"
     />
@@ -13,13 +13,13 @@
       <router-link
         class="button is-primary"
         :to="{ name: RouteName.CREATE_GROUP }"
-        >{{ $t("Create group") }}</router-link
+        >{{ t("Create group") }}</router-link
       >
     </div>
     <div v-if="groups">
       <div class="flex gap-2">
-        <o-switch v-model="local">{{ $t("Local") }}</o-switch>
-        <o-switch v-model="suspended">{{ $t("Suspended") }}</o-switch>
+        <o-switch v-model="local">{{ t("Local") }}</o-switch>
+        <o-switch v-model="suspended">{{ t("Suspended") }}</o-switch>
       </div>
       <o-table
         :data="groups.elements"
@@ -29,10 +29,10 @@
         backend-filtering
         :debounce-search="200"
         v-model:current-page="page"
-        :aria-next-label="$t('Next page')"
-        :aria-previous-label="$t('Previous page')"
-        :aria-page-label="$t('Page')"
-        :aria-current-label="$t('Current page')"
+        :aria-next-label="t('Next page')"
+        :aria-previous-label="t('Previous page')"
+        :aria-page-label="t('Page')"
+        :aria-current-label="t('Current page')"
         :total="groups.total"
         :per-page="PROFILES_PER_PAGE"
         @page-change="onPageChange"
@@ -40,14 +40,14 @@
       >
         <o-table-column
           field="preferredUsername"
-          :label="$t('Username')"
+          :label="t('Username')"
           searchable
         >
           <template #searchable="props">
             <o-input
-              :aria-label="$t('Filter')"
+              :aria-label="t('Filter')"
               v-model="props.filters.preferredUsername"
-              :placeholder="$t('Filter')"
+              :placeholder="t('Filter')"
               icon="magnify"
             />
           </template>
@@ -82,12 +82,12 @@
           </template>
         </o-table-column>
 
-        <o-table-column field="domain" :label="$t('Domain')" searchable>
+        <o-table-column field="domain" :label="t('Domain')" searchable>
           <template #searchable="props">
             <o-input
-              :aria-label="$t('Filter')"
+              :aria-label="t('Filter')"
               v-model="props.filters.domain"
-              :placeholder="$t('Filter')"
+              :placeholder="t('Filter')"
               icon="magnify"
             />
           </template>
@@ -97,7 +97,7 @@
         </o-table-column>
         <template #empty>
           <empty-content icon="account-group" :inline="true">
-            {{ $t("No group matches the filters") }}
+            {{ t("No group matches the filters") }}
           </empty-content>
         </template>
       </o-table>

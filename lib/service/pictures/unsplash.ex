@@ -3,8 +3,8 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
   [Unsplash](https://unsplash.com) backend.
   """
 
-  alias Mobilizon.Service.Pictures.{Information, Provider}
   alias Mobilizon.Service.HTTP.GenericJSONClient
+  alias Mobilizon.Service.Pictures.{Information, Provider}
   require Logger
 
   @unsplash_api "/search/photos"
@@ -24,12 +24,12 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
       GenericJSONClient.client(headers: [{:Authorization, "Client-ID #{unsplash_access_key()}"}])
 
     with {:ok, %{status: 200, body: body}} <- GenericJSONClient.get(client, url),
-         selectedPicture <- Enum.random(body["results"]) do
+         selected_picture <- Enum.random(body["results"]) do
       %Information{
-        url: selectedPicture["urls"]["small"],
+        url: selected_picture["urls"]["small"],
         author: %{
-          name: selectedPicture["user"]["name"],
-          url: "#{selectedPicture["user"]["links"]["html"]}#{unsplash_utm_source()}"
+          name: selected_picture["user"]["name"],
+          url: "#{selected_picture["user"]["links"]["html"]}#{unsplash_utm_source()}"
         },
         source: %{
           name: @unsplash_name,

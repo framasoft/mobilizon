@@ -1,3 +1,6 @@
+import type { Locale } from "date-fns";
+import { format } from "date-fns";
+
 function localeMonthNames(): string[] {
   const monthNames: string[] = [];
   for (let i = 0; i < 12; i += 1) {
@@ -31,4 +34,22 @@ function formatBytes(bytes: number, decimals = 2, zero = "0 Bytes"): string {
   return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
-export { localeMonthNames, localeShortWeekDayNames, formatBytes };
+function roundToNearestMinute(date = new Date()) {
+  const minutes = 1;
+  const ms = 1000 * 60 * minutes;
+
+  // 👇️ replace Math.round with Math.ceil to always round UP
+  return new Date(Math.round(date.getTime() / ms) * ms);
+}
+
+function formatDateTimeForEvent(dateTime: Date, locale: Locale): string {
+  return format(dateTime, "PPp", { locale });
+}
+
+export {
+  localeMonthNames,
+  localeShortWeekDayNames,
+  formatBytes,
+  roundToNearestMinute,
+  formatDateTimeForEvent,
+};

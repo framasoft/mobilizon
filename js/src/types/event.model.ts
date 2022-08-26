@@ -17,6 +17,8 @@ export interface IEventCardOptions {
   loggedPerson?: IPerson | boolean;
   hideDetails?: boolean;
   organizerActor?: IActor | null;
+  isRemoteEvent?: boolean;
+  isLoggedIn?: boolean;
 }
 
 export interface IEventParticipantStats {

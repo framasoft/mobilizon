@@ -68,7 +68,7 @@
         </p>
 
         <details>
-          <summary class="is-size-5">{{ t("Technical details") }}</summary>
+          <summary>{{ t("Technical details") }}</summary>
           <p>{{ t("Error message") }}</p>
           <pre>{{ error }}</pre>
           <p>{{ t("Error stacktrace") }}</p>

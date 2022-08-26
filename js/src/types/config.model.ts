@@ -124,4 +124,10 @@ export interface IConfig {
     eventParticipants: string[];
   };
   analytics: IAnalyticsConfig[];
+  search: {
+    global: {
+      isEnabled: boolean;
+      isDefault: boolean;
+    };
+  };
 }

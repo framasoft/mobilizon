@@ -1,11 +1,10 @@
 body {
-  @apply bg-body-background-color dark:bg-gray-700 dark:text-white;
+  @apply bg-body-background-color dark:bg-zinc-800 dark:text-white;
 }
 
 /* Button */
 .btn {
-  outline: none !important;
-  @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded h-10;
+  @apply font-bold py-2 px-4 bg-mbz-bluegreen hover:bg-mbz-bluegreen-600 text-white rounded h-10 outline-none focus:ring ring-offset-1 ring-offset-slate-50 ring-blue-300;
 }
 .btn:hover {
   @apply text-slate-200;
@@ -28,10 +27,13 @@ body {
   @apply opacity-50 cursor-not-allowed;
 }
 .btn-danger {
-  @apply bg-mbz-danger;
+  @apply bg-mbz-danger hover:bg-mbz-danger/90;
 }
 .btn-success {
   @apply bg-mbz-success;
+}
+.btn-text {
+  @apply bg-transparent border-transparent text-black dark:text-white font-normal underline hover:bg-zinc-200 hover:text-black;
 }
 
 /* Field */
@@ -62,13 +64,17 @@ body {
 
 /* Input */
 .input {
-  @apply appearance-none border w-full py-2 px-3 text-black leading-tight;
+  @apply appearance-none border w-full py-2 px-3 text-black leading-tight dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50;
 }
 .input-danger {
   @apply border-red-500;
 }
 .input-icon-right {
   right: 0.5rem;
+}
+.input[type="text"]:disabled,
+.input[type="email"]:disabled {
+  @apply bg-zinc-200 dark:bg-zinc-400;
 }
 
 .icon-warning {
@@ -77,6 +83,12 @@ body {
 
 .icon-danger {
   @apply text-red-500;
+}
+.icon-success {
+  @apply text-mbz-success;
+}
+.icon-grey {
+  @apply text-gray-500;
 }
 
 .o-input__icon-left {
@@ -111,25 +123,27 @@ body {
 }
 .dropdown-menu {
   min-width: 12em;
-  @apply bg-white dark:bg-gray-700 shadow-lg rounded text-start py-2;
+  @apply bg-white dark:bg-zinc-700 shadow-lg rounded text-start py-2;
 }
 .dropdown-item {
   @apply relative inline-flex gap-1 no-underline p-2 cursor-pointer w-full;
 }
 
 .dropdown-item-active {
-  /* @apply bg-violet-2; */
-  @apply bg-white;
+  @apply bg-white text-black;
+}
+.dropdown-button {
+  @apply inline-flex gap-1;
 }
 
 /* Checkbox */
 
 .checkbox {
-  @apply appearance-none bg-blue-500 border-blue-500;
+  @apply appearance-none bg-primary border-primary;
 }
 
 .checkbox-checked {
-  @apply bg-blue-500;
+  @apply bg-primary text-primary;
 }
 
 .checkbox-label {
@@ -139,7 +153,7 @@ body {
 /* Modal */
 
 .modal-content {
-  @apply bg-white dark:bg-gray-700 rounded px-2 py-4 w-full;
+  @apply bg-white dark:bg-zinc-800 rounded px-2 py-4 w-full;
 }
 
 /* Switch */
@@ -151,14 +165,18 @@ body {
   @apply pl-2;
 }
 
+.switch-check-checked {
+  @apply bg-primary;
+}
+
 /* Select */
 .select {
-  @apply dark:bg-white dark:text-black rounded pl-2 pr-6 border-2 border-transparent h-10 shadow-none;
+  @apply dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50 rounded pl-2 pr-6 border-2 border-transparent h-10 shadow-none;
 }
 
 /* Radio */
 .form-radio {
-  @apply bg-none;
+  @apply bg-none text-primary accent-primary;
 }
 .radio-label {
   @apply pl-2;
@@ -171,7 +189,7 @@ button.menubar__button {
 
 /* Notification */
 .notification {
-  @apply p-7 bg-secondary text-black rounded;
+  @apply p-7 bg-mbz-yellow-alt-200 dark:bg-mbz-purple-600 text-black dark:text-white rounded;
 }
 
 .notification-primary {
@@ -187,16 +205,24 @@ button.menubar__button {
 }
 
 .notification-danger {
-  @apply bg-mbz-danger;
+  @apply bg-mbz-danger text-white;
 }
 
 /* Table */
 .table tr {
-  @apply odd:bg-white dark:odd:bg-gray-800 even:bg-gray-50 dark:even:bg-gray-900 border-b;
+  @apply odd:bg-white dark:odd:bg-zinc-600 even:bg-gray-50 dark:even:bg-zinc-700 border-b rounded;
 }
 
 .table-td {
   @apply py-4 px-2 whitespace-nowrap;
+}
+
+.table-th {
+  @apply p-2;
+}
+
+.table-root {
+  @apply mt-4;
 }
 
 /* Snackbar */
@@ -210,14 +236,14 @@ button.menubar__button {
   @apply flex items-center text-center justify-between;
 }
 .pagination-link {
-  @apply inline-flex items-center relative justify-center cursor-pointer rounded h-10 m-1 p-2 bg-white text-lg;
+  @apply inline-flex items-center relative justify-center cursor-pointer rounded h-10 m-1 p-2 bg-white dark:bg-zinc-300 text-lg text-black;
 }
 .pagination-list {
   @apply flex items-center text-center list-none flex-wrap grow shrink justify-start;
 }
 .pagination-next,
 .pagination-previous {
-  @apply px-3;
+  @apply px-3 dark:text-black;
 }
 .pagination-link-current {
   @apply bg-primary cursor-not-allowed pointer-events-none border-primary text-white;
@@ -235,4 +261,20 @@ button.menubar__button {
 }
 .tabs-nav-item-active-boxed {
   @apply bg-white border-gray-300 text-primary;
+}
+
+/** Tooltip */
+.tooltip-content {
+  @apply bg-zinc-800 text-white dark:bg-zinc-300 dark:text-black rounded py-1 px-2;
+}
+.tooltip-arrow {
+  @apply text-zinc-800 dark:text-zinc-200;
+}
+.tooltip-content-success {
+  @apply bg-mbz-success text-white;
+}
+
+/** Tiptap editor */
+.menubar__button {
+  @apply hover:bg-[rgba(0,0,0,.05)];
 }

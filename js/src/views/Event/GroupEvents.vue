@@ -70,7 +70,7 @@
                   )
                 }}
               </p>
-              <o-button type="is-text" tag="a" :href="group.url">
+              <o-button variant="text" tag="a" :href="group.url">
                 {{ $t("View the group profile on the original instance") }}
               </o-button>
             </div>

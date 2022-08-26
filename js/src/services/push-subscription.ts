@@ -1,6 +1,4 @@
 import { apolloClient } from "@/vue-apollo";
-import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
-import { ApolloClient } from "@apollo/client/core/ApolloClient";
 import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { WEB_PUSH } from "../graphql/config";
 import { IConfig } from "../types/config.model";
@@ -49,15 +47,15 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
 }
 
 export async function unsubscribeUserToPush(): Promise<string | undefined> {
-  console.log("performing unsubscribeUserToPush");
+  console.debug("performing unsubscribeUserToPush");
   const registration = await navigator.serviceWorker.ready;
-  console.log("found registration", registration);
+  console.debug("found registration", registration);
   const subscription = await registration.pushManager?.getSubscription();
-  console.log("found subscription", subscription);
+  console.debug("found subscription", subscription);
   if (subscription && (await subscription?.unsubscribe()) === true) {
-    console.log("done unsubscription");
+    console.debug("done unsubscription");
     return subscription?.endpoint;
   }
-  console.log("went wrong");
+  console.debug("went wrong");
   return undefined;
 }

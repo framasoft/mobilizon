@@ -10,7 +10,7 @@
         <div class="address" v-if="physicalAddress">
           <address-info :address="physicalAddress" />
           <o-button
-            type="is-text"
+            variant="text"
             class="map-show-button"
             @click="$emit('showMapModal', true)"
             v-if="physicalAddress.geom"

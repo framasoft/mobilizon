@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="'bullhorn'" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="'bullhorn'" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #post>
           <router-link
@@ -78,11 +78,11 @@ const translation = computed((): string | undefined => {
 const iconColor = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityPostSubject.POST_CREATED:
-      return "is-success";
+      return "success";
     case ActivityPostSubject.POST_UPDATED:
-      return "is-grey";
+      return "grey";
     case ActivityPostSubject.POST_DELETED:
-      return "is-danger";
+      return "danger";
     default:
       return undefined;
   }

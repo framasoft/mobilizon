@@ -22,27 +22,23 @@
         :lang="event.language"
         dir="auto"
       >
-        <b-tag
+        <tag
           variant="info"
           class="mr-1"
           v-if="event.status === EventStatus.TENTATIVE"
         >
           {{ $t("Tentative") }}
-        </b-tag>
-        <b-tag
+        </tag>
+        <tag
           variant="danger"
           class="mr-1"
           v-if="event.status === EventStatus.CANCELLED"
         >
           {{ $t("Cancelled") }}
-        </b-tag>
-        <b-tag
-          class="mr-2"
-          variant="warning"
-          size="is-medium"
-          v-if="event.draft"
-          >{{ $t("Draft") }}</b-tag
-        >
+        </tag>
+        <tag class="mr-2" variant="warning" size="medium" v-if="event.draft">{{
+          $t("Draft")
+        }}</tag>
         {{ event.title }}
       </h3>
       <inline-address
@@ -99,7 +95,7 @@
         </span>
         <span v-if="event.participantStats.notApproved > 0">
           <o-button
-            type="is-text"
+            variant="text"
             @click="
               gotToWithCheck(participation, {
                 name: RouteName.PARTICIPATIONS,
@@ -134,6 +130,7 @@ import InlineAddress from "@/components/Address/InlineAddress.vue";
 import Video from "vue-material-design-icons/Video.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
+import Tag from "@/components/Tag.vue";
 
 withDefaults(
   defineProps<{

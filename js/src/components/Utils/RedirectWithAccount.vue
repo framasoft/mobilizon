@@ -6,7 +6,7 @@
           <div class="column has-text-centered">
             <o-button
               variant="primary"
-              size="is-medium"
+              size="medium"
               tag="router-link"
               :to="{
                 name: RouteName.LOGIN,
@@ -46,7 +46,7 @@
           </div>
         </div>
         <div class="has-text-centered">
-          <o-button tag="a" type="is-text" @click="$router.go(-1)">{{
+          <o-button tag="a" variant="text" @click="$router.go(-1)">{{
             $t("Back to previous page")
           }}</o-button>
         </div>
@@ -74,9 +74,9 @@ const host = computed((): string => {
 });
 
 const redirectToInstance = async (): Promise<void> => {
-  const [, host] = remoteActorAddress.value.split("@", 2);
+  const [, hostname] = remoteActorAddress.value.split("@", 2);
   const remoteInteractionURI = await webFingerFetch(
-    host,
+    hostname,
     remoteActorAddress.value
   );
   window.open(remoteInteractionURI);

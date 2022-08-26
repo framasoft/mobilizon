@@ -16,8 +16,8 @@ import TagInput from "./TagInput.vue";
 
 const tags = reactive<ITag[]>([{ title: "Hello", slug: "hello" }]);
 
-const fetchTags = async (text: string) =>
-  new Promise<ITag[]>((resolve, reject) => {
+const fetchTags = async () =>
+  new Promise<ITag[]>((resolve) => {
     resolve([{ title: "Welcome", slug: "welcome" }]);
   });
 </script>

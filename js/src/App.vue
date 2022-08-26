@@ -32,17 +32,17 @@
 </template>
 
 <script lang="ts" setup>
-import NavBar from "./components/NavBar.vue";
+import NavBar from "@/components/NavBar.vue";
 import {
   AUTH_ACCESS_TOKEN,
   AUTH_USER_EMAIL,
   AUTH_USER_ID,
   AUTH_USER_ROLE,
-} from "./constants";
-import { UPDATE_CURRENT_USER_CLIENT } from "./graphql/user";
-import MobilizonFooter from "./components/Footer.vue";
+} from "@/constants";
+import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
+import MobilizonFooter from "@/components/PageFooter.vue";
 import jwt_decode, { JwtPayload } from "jwt-decode";
-import { refreshAccessToken } from "./apollo/utils";
+import { refreshAccessToken } from "@/apollo/utils";
 import {
   reactive,
   ref,
@@ -52,25 +52,30 @@ import {
   onBeforeMount,
   inject,
   defineAsyncComponent,
+  computed,
+  watch,
 } from "vue";
-import { LocationType } from "./types/user-location.model";
-import { useMutation } from "@vue/apollo-composable";
-import { initializeCurrentActor } from "./utils/identity";
+import { LocationType } from "@/types/user-location.model";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { initializeCurrentActor } from "@/utils/identity";
 import { useI18n } from "vue-i18n";
-import { Snackbar } from "./plugins/snackbar";
-import { Notifier } from "./plugins/notifier";
-import {
-  useIsDemoMode,
-  useServerProvidedLocation,
-} from "./composition/apollo/config";
+import { Snackbar } from "@/plugins/snackbar";
+import { Notifier } from "@/plugins/notifier";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
+import { useRouter } from "vue-router";
+
+const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
+
+const config = computed(() => configResult.value?.config);
 
 const ErrorComponent = defineAsyncComponent(
-  () => import("./components/ErrorComponent.vue")
+  () => import("@/components/ErrorComponent.vue")
 );
 
 const { t } = useI18n({ useScope: "global" });
 
-const { location } = useServerProvidedLocation();
+const location = computed(() => config.value?.location);
 
 const userLocation = reactive<LocationType>({
   lon: undefined,
@@ -251,16 +256,19 @@ const showOfflineNetworkWarning = (): void => {
 //   }, 0);
 // });
 
-// watch(config, async (configWatched: IConfig) => {
-//   if (configWatched) {
-//     const { statistics } = (await import("./services/statistics")) as {
-//       statistics: (config: IConfig, environment: Record<string, any>) => void;
-//     };
-//     statistics(configWatched, { router, version: configWatched.version });
-//   }
-// });
+const router = useRouter();
 
-const { isDemoMode } = useIsDemoMode();
+watch(config, async (configWatched: IConfig | undefined) => {
+  if (configWatched) {
+    const { statistics } = await import("@/services/statistics");
+    statistics(configWatched?.analytics, {
+      router,
+      version: configWatched.version,
+    });
+  }
+});
+
+const isDemoMode = computed(() => config.value?.demoMode);
 </script>
 
 <style lang="scss">

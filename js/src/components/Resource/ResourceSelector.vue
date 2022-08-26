@@ -69,7 +69,7 @@
       />
     </article>
     <div class="flex gap-2 mt-2">
-      <o-button type="is-text" @click="emit('close-move-modal')">{{
+      <o-button variant="text" @click="emit('close-move-modal')">{{
         $t("Cancel")
       }}</o-button>
       <o-button

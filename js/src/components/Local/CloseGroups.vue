@@ -18,12 +18,12 @@
       </template>
     </template>
     <template #content>
-      <!-- <skeleton-group-result
+      <skeleton-group-result
         v-for="i in [...Array(6).keys()]"
         class="scroll-ml-6 snap-center shrink-0 w-[18rem] my-4"
         :key="i"
         v-show="loadingGroups"
-      /> -->
+      />
       <group-card
         v-for="group in selectedGroups"
         :key="group.id"
@@ -37,7 +37,7 @@
       <more-content
         v-if="userLocationName"
         :to="{
-          name: 'SEARCH',
+          name: RouteName.SEARCH,
           query: {
             locationName: userLocationName,
             lat: userLocation.lat?.toString(),
@@ -59,9 +59,9 @@
 </template>
 
 <script lang="ts" setup>
-// import SkeletonGroupResult from "../../components/result/SkeletonGroupResult.vue";
+import SkeletonGroupResult from "@/components/Group/SkeletonGroupResult.vue";
 import sampleSize from "lodash/sampleSize";
-import { LocationType } from "../../types/user-location.model";
+import { LocationType } from "@/types/user-location.model";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
 import { IGroup } from "@/types/actor";
@@ -72,6 +72,7 @@ import { computed } from "vue";
 import GroupCard from "@/components/Group/GroupCard.vue";
 import { coordsToGeoHash } from "@/utils/location";
 import { useI18n } from "vue-i18n";
+import RouteName from "@/router/name";
 
 const props = defineProps<{ userLocation: LocationType }>();
 const emit = defineEmits(["doGeoLoc"]);

@@ -12,9 +12,9 @@
     >
       <div class="flex gap-1 p-4">
         <div class="">
-          <figure class="" v-if="selectedActor.avatar">
+          <figure class="h-12 w-12" v-if="selectedActor.avatar">
             <img
-              class="rounded"
+              class="rounded-full h-full w-full object-cover"
               :src="selectedActor.avatar.url"
               :alt="selectedActor.avatar.alt ?? ''"
               height="48"
@@ -207,7 +207,7 @@ const props = withDefaults(
   { inline: true, contacts: () => [] }
 );
 
-const emit = defineEmits(["update:modelValue", "update:Contacts"]);
+const emit = defineEmits(["update:modelValue", "update:contacts"]);
 
 const selectedActor = computed({
   get(): IActor | undefined {
@@ -252,7 +252,7 @@ const actualContacts = computed({
   },
   set(contactsIds: (string | undefined)[]) {
     emit(
-      "update:Contacts",
+      "update:contacts",
       actorMembers.value.filter(({ id }) => contactsIds.includes(id))
     );
   },

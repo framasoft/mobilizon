@@ -24,7 +24,7 @@
               <table v-if="metadata.length > 0" class="min-w-full">
                 <tbody>
                   <tr
-                    class="odd:bg-white even:bg-gray-50 border-b"
+                    class="border-b"
                     v-for="{ key, value, type } in metadata"
                     :key="key"
                   >
@@ -67,7 +67,7 @@
                         size="small"
                         v-if="!user.disabled"
                         @click="isEmailChangeModalActive = true"
-                        type="is-text"
+                        variant="text"
                         icon-left="pencil"
                         >{{ t("Change email") }}</o-button
                       >
@@ -78,7 +78,7 @@
                           query: { emailFilter: `@${userEmailDomain}` },
                         }"
                         size="small"
-                        type="is-text"
+                        variant="text"
                         icon-left="magnify"
                         >{{
                           t("Other users with the same email domain")
@@ -93,7 +93,7 @@
                         size="small"
                         v-if="!user.confirmedAt || user.disabled"
                         @click="isConfirmationModalActive = true"
-                        type="is-text"
+                        variant="text"
                         icon-left="check"
                         >{{ t("Confirm user") }}</o-button
                       >
@@ -106,7 +106,7 @@
                         size="small"
                         v-if="!user.disabled"
                         @click="isRoleChangeModalActive = true"
-                        type="is-text"
+                        variant="text"
                         icon-left="chevron-double-up"
                         >{{ t("Change role") }}</o-button
                       >
@@ -122,7 +122,7 @@
                           query: { ipFilter: user.currentSignInIp },
                         }"
                         size="small"
-                        type="is-text"
+                        variant="text"
                         icon-left="web"
                         >{{
                           t("Other users with the same IP address")
@@ -192,7 +192,7 @@
           </header>
           <section class="">
             <o-field :label="t('Previous email')">
-              <o-input type="email" :value="user.email" disabled> </o-input>
+              <o-input type="email" v-model="user.email" disabled />
             </o-field>
             <o-field :label="t('New email')">
               <o-input
@@ -208,7 +208,7 @@
             }}</o-checkbox>
           </section>
           <footer class="mt-2 flex gap-2">
-            <o-button @click="isEmailChangeModalActive = false">{{
+            <o-button outlined @click="isEmailChangeModalActive = false">{{
               t("Close")
             }}</o-button>
             <o-button native-type="submit" variant="primary">{{
@@ -309,7 +309,7 @@
     {{ t("This user was not found") }}
     <template #desc>
       <o-button
-        type="is-text"
+        variant="text"
         tag="router-link"
         :to="{ name: RouteName.USERS }"
         >{{ t("Back to user list") }}</o-button
@@ -459,7 +459,7 @@ const suspendAccount = async (): Promise<void> => {
     ),
     confirmText: t("Suspend the account"),
     cancelText: t("Cancel"),
-    type: "is-danger",
+    variant: "danger",
     onConfirm: async () => {
       suspendUser({
         userId: props.id,

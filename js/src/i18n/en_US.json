@@ -1158,6 +1158,7 @@
   "When the post is private, you'll need to share the link around.": "When the post is private, you'll need to share the link around.",
   "Reset": "Reset",
   "Local time ({timezone})": "Local time ({timezone})",
+  "Local times ({timezone})": "Local times ({timezone})",
   "Time in your timezone ({timezone})": "Time in your timezone ({timezone})",
   "Export": "Export",
   "Times in your timezone ({timezone})": "Times in your timezone ({timezone})",
@@ -1383,5 +1384,11 @@
   "{numberOfLanguages} selected": "{numberOfLanguages} selected",
   "Apply filters": "Apply filters",
   "Any distance": "Any distance",
-  "{number} kilometers": "{number} kilometers"
+  "{number} kilometers": "{number} kilometers",
+  "The pad will be created on {service}": "The pad will be created on {service}",
+  "The calc will be created on {service}": "The calc will be created on {service}",
+  "The videoconference will be created on {service}": "The videoconference will be created on {service}",
+  "Search target": "Search target",
+  "In this instance's network": "In this instance's network",
+  "On the Fediverse": "On the Fediverse"
 }

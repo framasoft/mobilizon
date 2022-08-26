@@ -1,5 +1,5 @@
 <template>
-  <aside>
+  <aside class="mb-6">
     <ul>
       <SettingMenuSection
         :title="t('Account')"

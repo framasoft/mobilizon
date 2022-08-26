@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="'link'" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="'link'" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #resource>
           <router-link v-if="activity.object" :to="path">{{
@@ -142,12 +142,12 @@ const translation = computed((): string | undefined => {
 const iconColor = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityResourceSubject.RESOURCE_CREATED:
-      return "is-success";
+      return "success";
     case ActivityResourceSubject.RESOURCE_MOVED:
     case ActivityResourceSubject.RESOURCE_UPDATED:
-      return "is-grey";
+      return "grey";
     case ActivityResourceSubject.RESOURCE_DELETED:
-      return "is-danger";
+      return "danger";
     default:
       return undefined;
   }

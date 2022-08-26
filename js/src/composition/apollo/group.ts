@@ -7,7 +7,8 @@ import {
   UPDATE_GROUP,
 } from "@/graphql/group";
 import { IGroup, IPerson } from "@/types/actor";
-import { MemberRole } from "@/types/enums";
+import { IAddress } from "@/types/address.model";
+import { GroupVisibility, MemberRole, Openness } from "@/types/enums";
 import { IMediaUploadWrapper } from "@/types/media.model";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -31,9 +32,7 @@ export function useGroup(
   name: string | undefined | Ref<string | undefined>,
   options: useGroupOptions = {}
 ) {
-  console.debug("using group with", name);
-
-  const { result, error, loading, onError, refetch } = useQuery<
+  const { result, error, loading, onResult, onError, refetch } = useQuery<
     {
       group: IGroup;
     },
@@ -59,20 +58,22 @@ export function useGroup(
     () => ({ enabled: unref(name) !== undefined })
   );
   const group = computed(() => result.value?.group);
-  return { group, error, loading, onError, refetch };
+  return { group, error, loading, onResult, onError, refetch };
 }
 
-export function useCreateGroup(variables: {
-  preferredUsername: string;
-  name: string;
-  summary?: string;
-  avatar?: IMediaUploadWrapper;
-  banner?: IMediaUploadWrapper;
-}) {
+export function useCreateGroup() {
   const { currentActor } = useCurrentActorClient();
 
-  return useMutation(CREATE_GROUP, () => ({
-    variables,
+  return useMutation<
+    { createGroup: IGroup },
+    {
+      preferredUsername: string;
+      name: string;
+      summary?: string;
+      avatar?: IMediaUploadWrapper;
+      banner?: IMediaUploadWrapper;
+    }
+  >(CREATE_GROUP, () => ({
     update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
       const query = {
         query: PERSON_MEMBERSHIPS,
@@ -96,10 +97,19 @@ export function useCreateGroup(variables: {
   }));
 }
 
-export function useUpdateGroup(variables: any) {
-  return useMutation<{ updateGroup: IGroup }>(UPDATE_GROUP, () => ({
-    variables,
-  }));
+export function useUpdateGroup() {
+  return useMutation<
+    { updateGroup: IGroup },
+    {
+      id: string;
+      name?: string;
+      summary?: string;
+      openness?: Openness;
+      visibility?: GroupVisibility;
+      physicalAddress?: IAddress;
+      manuallyApprovesFollowers?: boolean;
+    }
+  >(UPDATE_GROUP);
 }
 
 export function useDeleteGroup(variables: { groupId: string }) {

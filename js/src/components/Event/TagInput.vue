@@ -3,7 +3,7 @@
     <template #label>
       {{ $t("Add some tags") }}
       <o-tooltip
-        type="dark"
+        variant="dark"
         :label="
           $t('You can add tags by hitting the Enter key or by adding a comma')
         "
@@ -77,9 +77,9 @@ const tagsStrings = computed({
   get(): string[] {
     return props.modelValue.map((tag: ITag) => tag.title);
   },
-  set(tagsStrings: string[]) {
-    console.debug("tagsStrings", tagsStrings);
-    const tagEntities = tagsStrings.map((tag: string | ITag) => {
+  set(newTagsStrings: string[]) {
+    console.debug("tagsStrings", newTagsStrings);
+    const tagEntities = newTagsStrings.map((tag: string | ITag) => {
       if (typeof tag !== "string") {
         return tag;
       }

@@ -37,7 +37,7 @@ import { useI18n } from "vue-i18n";
 import { IEvent } from "@/types/event.model";
 import ShareModal from "@/components/Share/ShareModal.vue";
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     event: IEvent;
     eventCapacityOK?: boolean;

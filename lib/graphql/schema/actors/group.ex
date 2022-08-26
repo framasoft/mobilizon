@@ -29,7 +29,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   Represents a group of actors
   """
   object :group do
-    interfaces([:actor, :interactable, :activity_object, :action_log_object])
+    interfaces([:actor, :interactable, :activity_object, :action_log_object, :group_search_result])
 
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
@@ -59,8 +59,17 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     # These one should have a privacy setting
-    field(:followersCount, :integer, description: "Number of followers for this actor")
-    field(:followingCount, :integer, description: "Number of actors following this actor")
+    field(:followers_count, :integer,
+      description: "Number of followers for this actor",
+      resolve: &Followers.count_followers_for_group/3
+    )
+
+    field(:following_count, :integer, description: "Number of follows for this actor")
+
+    field(:members_count, :integer,
+      description: "Number of members for this actor",
+      resolve: &Member.count_members_for_group/3
+    )
 
     field(:media_size, :integer,
       resolve: &Media.actor_size/3,

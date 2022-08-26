@@ -8,22 +8,22 @@ export class Notifier {
   }
 
   success(message: string): void {
-    this.notification(message, "is-success");
+    this.notification(message, "success");
   }
 
   error(message: string): void {
-    this.notification(message, "is-danger");
+    this.notification(message, "danger");
   }
 
   info(message: string): void {
-    this.notification(message, "is-info");
+    this.notification(message, "info");
   }
 
   private notification(message: string, type: string) {
     this.app.config.globalProperties.$oruga.notification.open({
       message,
       duration: 5000,
-      position: "is-bottom-right",
+      position: "bottom-right",
       type,
       hasIcon: true,
     });

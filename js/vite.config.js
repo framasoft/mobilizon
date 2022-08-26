@@ -75,6 +75,7 @@ export default defineConfig(({ command }) => {
         },
       },
       setupFiles: path.resolve(__dirname, "./tests/unit/setup.ts"),
+      include: [path.resolve(__dirname, "./tests/unit/specs/**/*.spec.ts")],
     },
   };
 });

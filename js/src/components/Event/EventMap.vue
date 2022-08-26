@@ -87,7 +87,7 @@ const RoutingParamType = {
   },
 };
 
-const MapLeaflet = import("../../components/Map.vue");
+const MapLeaflet = import("@/components/LeafletMap.vue");
 
 const props = defineProps<{
   address: IAddress;

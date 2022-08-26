@@ -105,7 +105,7 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/settings",
         name: SettingsRouteName.ADMIN_SETTINGS,
-        component: (): Promise<any> => import("@/views/Admin/Settings.vue"),
+        component: (): Promise<any> => import("@/views/Admin/SettingsView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -117,7 +117,7 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/users",
         name: SettingsRouteName.USERS,
-        component: (): Promise<any> => import("@/views/Admin/Users.vue"),
+        component: (): Promise<any> => import("@/views/Admin/UsersView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -138,7 +138,7 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/profiles",
         name: SettingsRouteName.PROFILES,
-        component: (): Promise<any> => import("@/views/Admin/Profiles.vue"),
+        component: (): Promise<any> => import("@/views/Admin/ProfilesView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -176,7 +176,8 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/instances",
         name: SettingsRouteName.INSTANCES,
-        component: (): Promise<any> => import("@/views/Admin/Instances.vue"),
+        component: (): Promise<any> =>
+          import("@/views/Admin/InstancesView.vue"),
         meta: {
           requiredAuth: true,
           announcer: {
@@ -188,7 +189,7 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "admin/instances/:domain",
         name: SettingsRouteName.INSTANCE,
-        component: (): Promise<any> => import("@/views/Admin/Instance.vue"),
+        component: (): Promise<any> => import("@/views/Admin/InstanceView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -207,7 +208,7 @@ export const settingsRoutes: RouteRecordRaw[] = [
         path: "/moderation/reports",
         name: SettingsRouteName.REPORTS,
         component: (): Promise<any> =>
-          import("@/views/Moderation/ReportList.vue"),
+          import("@/views/Moderation/ReportListView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -219,7 +220,8 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "/moderation/report/:reportId",
         name: SettingsRouteName.REPORT,
-        component: (): Promise<any> => import("@/views/Moderation/Report.vue"),
+        component: (): Promise<any> =>
+          import("@/views/Moderation/ReportView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -229,7 +231,8 @@ export const settingsRoutes: RouteRecordRaw[] = [
       {
         path: "/moderation/logs",
         name: SettingsRouteName.REPORT_LOGS,
-        component: (): Promise<any> => import("@/views/Moderation/Logs.vue"),
+        component: (): Promise<any> =>
+          import("@/views/Moderation/LogsView.vue"),
         props: true,
         meta: {
           requiredAuth: true,

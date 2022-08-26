@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-1 items-center w-full" dir="auto">
     <a :href="resource.resourceUrl" target="_blank">
-      <div class="preview">
+      <div class="preview text-mbz-purple dark:text-mbz-purple-300">
         <div
           v-if="
             resource.type &&
@@ -79,7 +79,7 @@ const emit = defineEmits<{
   (e: "delete", resourceID: string): void;
 }>();
 
-const list = ref([]);
+// const list = ref([]);
 
 const urlHostname = computed((): string | undefined => {
   if (props.resource?.resourceUrl) {

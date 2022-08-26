@@ -1,4 +1,4 @@
-import SnackbarComponent from "@/components/core/Snackbar.vue";
+import SnackbarComponent from "@/components/core/CustomSnackbar.vue";
 import { App } from "vue";
 
 export class Snackbar {
@@ -10,8 +10,6 @@ export class Snackbar {
 
   open({
     message,
-    queue,
-    indefinite,
     variant,
     position,
     actionText,

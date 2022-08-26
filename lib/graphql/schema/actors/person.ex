@@ -43,9 +43,16 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field(:avatar, :media, description: "The actor's avatar media")
     field(:banner, :media, description: "The actor's banner media")
 
-    # These one should have a privacy setting
-    field(:followersCount, :integer, description: "Number of followers for this actor")
-    field(:followingCount, :integer, description: "Number of actors following this actor")
+    # Persons have zero followers/followings
+    field(:followers_count, :integer,
+      description: "Number of followers for this actor",
+      resolve: fn _, _, _ -> {:ok, 0} end
+    )
+
+    field(:following_count, :integer,
+      description: "Number of actors following this actor",
+      resolve: fn _, _, _ -> {:ok, 0} end
+    )
 
     field(:media_size, :integer,
       resolve: &Media.actor_size/3,

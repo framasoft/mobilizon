@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="'cog'" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="'cog'" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #group>
           <router-link
@@ -28,13 +28,7 @@
           ></template
         ></i18n-t
       >
-      <i18n-t
-        :keypath="detail"
-        v-for="detail in details"
-        :key="detail"
-        tag="p"
-        class="has-text-grey-dark"
-      >
+      <i18n-t :keypath="detail" v-for="detail in details" :key="detail" tag="p">
         <template #profile>
           <popover-actor-card :actor="activity.author" :inline="true">
             <b>
@@ -63,9 +57,7 @@
           }}</b>
         </template>
       </i18n-t>
-      <small class="has-text-grey-dark activity-date">{{
-        formatTimeString(activity.insertedAt)
-      }}</small>
+      <small>{{ formatTimeString(activity.insertedAt) }}</small>
     </div>
   </div>
 </template>
@@ -110,9 +102,9 @@ const translation = computed((): string | undefined => {
 const iconColor = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityGroupSubject.GROUP_CREATED:
-      return "is-success";
+      return "success";
     case ActivityGroupSubject.GROUP_UPDATED:
-      return "is-grey";
+      return "grey";
     default:
       return undefined;
   }

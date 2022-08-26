@@ -13,6 +13,7 @@ import {
   MAPS_TILES,
   RESOURCE_PROVIDERS,
   RESTRICTIONS,
+  SEARCH_CONFIG,
   TIMEZONES,
   UPLOAD_LIMITS,
 } from "@/graphql/config";
@@ -191,4 +192,13 @@ export function useAnalytics() {
 
   const analytics = computed(() => result.value?.config.analytics);
   return { analytics, error, loading };
+}
+
+export function useSearchConfig() {
+  const { result, error, loading, onResult } = useQuery<{
+    config: Pick<IConfig, "search">;
+  }>(SEARCH_CONFIG);
+
+  const searchConfig = computed(() => result.value?.config.search);
+  return { searchConfig, error, loading, onResult };
 }

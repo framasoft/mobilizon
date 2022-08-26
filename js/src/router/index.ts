@@ -76,7 +76,7 @@ export const routes = [
         path: "instance",
         name: RouteName.ABOUT_INSTANCE,
         component: (): Promise<any> =>
-          import("@/views/About/AboutInstance.vue"),
+          import("@/views/About/AboutInstanceView.vue"),
         meta: {
           announcer: {
             message: (): string => t("About instance") as string,
@@ -86,7 +86,7 @@ export const routes = [
       {
         path: "/terms",
         name: RouteName.TERMS,
-        component: (): Promise<any> => import("@/views/About/Terms.vue"),
+        component: (): Promise<any> => import("@/views/About/TermsView.vue"),
         meta: {
           requiredAuth: false,
           announcer: { message: (): string => t("Terms") as string },
@@ -95,7 +95,7 @@ export const routes = [
       {
         path: "/privacy",
         name: RouteName.PRIVACY,
-        component: (): Promise<any> => import("@/views/About/Privacy.vue"),
+        component: (): Promise<any> => import("@/views/About/PrivacyView.vue"),
         meta: {
           requiredAuth: false,
           announcer: { message: (): string => t("Privacy") as string },
@@ -104,7 +104,7 @@ export const routes = [
       {
         path: "/rules",
         name: RouteName.RULES,
-        component: (): Promise<any> => import("@/views/About/Rules.vue"),
+        component: (): Promise<any> => import("@/views/About/RulesView.vue"),
         meta: {
           requiredAuth: false,
           announcer: { message: (): string => t("Rules") as string },
@@ -113,7 +113,7 @@ export const routes = [
       {
         path: "/glossary",
         name: RouteName.GLOSSARY,
-        component: (): Promise<any> => import("@/views/About/Glossary.vue"),
+        component: (): Promise<any> => import("@/views/About/GlossaryView.vue"),
         meta: {
           requiredAuth: false,
           announcer: { message: (): string => t("Glossary") as string },
@@ -124,8 +124,7 @@ export const routes = [
   {
     path: "/interact",
     name: RouteName.INTERACT,
-    component: (): Promise<any> =>
-      import(/* webpackChunkName: "interact" */ "@/views/Interact.vue"),
+    component: (): Promise<any> => import("@/views/InteractView.vue"),
     meta: {
       requiredAuth: false,
       announcer: { message: (): string => t("Interact") as string },

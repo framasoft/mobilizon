@@ -3,7 +3,7 @@
     <o-icon
       v-if="showIcon"
       :icon="poiInfos?.poiIcon.icon"
-      size="is-medium"
+      size="medium"
       class="icon"
     />
     <p>

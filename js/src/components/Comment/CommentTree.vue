@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts" setup>
-import Comment from "@/components/Comment/Comment.vue";
+import Comment from "@/components/Comment/EventComment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
@@ -122,7 +122,9 @@ const props = defineProps<{
   newComment?: IComment;
 }>();
 
-const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
+const Editor = defineAsyncComponent(
+  () => import("@/components/TextEditor.vue")
+);
 
 const newComment = ref<IComment>(props.newComment ?? new CommentModel());
 
@@ -284,7 +286,7 @@ const { mutate: deleteComment, onError: deleteCommentMutationError } =
           replies: updatedReplies,
           totalReplies: parentComment.totalReplies - 1,
         });
-        console.log("updatedComments", updatedComments);
+        console.debug("updatedComments", updatedComments);
       } else {
         // we have deleted a thread itself
         updatedComments = updatedComments.map((reply) => {

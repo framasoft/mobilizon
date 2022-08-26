@@ -26,10 +26,7 @@
           <template #popper>
             {{ t("Click for more information") }}
           </template>
-          <span
-            class="is-clickable"
-            @click="isAnonymousParticipationModalOpen = true"
-          >
+          <span @click="isAnonymousParticipationModalOpen = true">
             <InformationOutline :size="16" />
           </span>
         </VTooltip>
@@ -102,7 +99,8 @@
           </p>
           <div class="buttons" v-if="isSecureContext()">
             <o-button
-              type="is-danger is-outlined"
+              variant="danger"
+              outlined
               @click="clearEventParticipationData"
             >
               {{ t("Clear participation data for this event") }}
@@ -197,7 +195,7 @@ const isEventNotAlreadyPassed = computed((): boolean => {
   return new Date(endDate.value) > new Date();
 });
 
-const endDate = computed((): Date => {
+const endDate = computed((): string => {
   return props.event.endsOn !== null &&
     props.event.endsOn > props.event.beginsOn
     ? props.event.endsOn

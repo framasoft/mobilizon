@@ -28,7 +28,7 @@
     </div>
     <div class="overflow-hidden">
       <div
-        class="relative w-full snap-x snap-always snap-mandatory overflow-x-auto flex pb-6 gap-x-5 gap-y-8"
+        class="relative w-full snap-x snap-always snap-mandatory overflow-x-auto flex pb-6 gap-x-5 gap-y-8 p-1"
         ref="scrollContainer"
         @scroll="scrollHandler"
       >

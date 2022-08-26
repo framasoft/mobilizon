@@ -1,6 +1,7 @@
-import { RouteConfig } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
+import { RouteRecordRaw } from "vue-router";
 import { i18n } from "@/utils/i18n";
+
+const t = i18n.global.t;
 
 export enum DiscussionRouteName {
   DISCUSSION_LIST = "DISCUSSION_LIST",
@@ -8,44 +9,37 @@ export enum DiscussionRouteName {
   DISCUSSION = "DISCUSSION",
 }
 
-export const discussionRoutes: RouteConfig[] = [
+export const discussionRoutes: RouteRecordRaw[] = [
   {
     path: "/@:preferredUsername/discussions",
     name: DiscussionRouteName.DISCUSSION_LIST,
-    component: (): Promise<ImportedComponent> =>
-      import(
-        /* webpackChunkName: "DiscussionsList" */ "@/views/Discussions/DiscussionsList.vue"
-      ),
+    component: (): Promise<any> =>
+      import("@/views/Discussions/DiscussionsListView.vue"),
     props: true,
     meta: {
       requiredAuth: true,
       announcer: {
-        message: (): string => i18n.t("Discussions list") as string,
+        message: (): string => t("Discussions list") as string,
       },
     },
   },
   {
     path: "/@:preferredUsername/discussions/new",
     name: DiscussionRouteName.CREATE_DISCUSSION,
-    component: (): Promise<ImportedComponent> =>
-      import(
-        /* webpackChunkName: "CreateDiscussion" */ "@/views/Discussions/Create.vue"
-      ),
+    component: (): Promise<any> => import("@/views/Discussions/CreateView.vue"),
     props: true,
     meta: {
       requiredAuth: true,
       announcer: {
-        message: (): string => i18n.t("Create discussion") as string,
+        message: (): string => t("Create discussion") as string,
       },
     },
   },
   {
     path: "/@:preferredUsername/c/:slug/:comment_id?",
     name: DiscussionRouteName.DISCUSSION,
-    component: (): Promise<ImportedComponent> =>
-      import(
-        /* webpackChunkName: "Discussion" */ "@/views/Discussions/Discussion.vue"
-      ),
+    component: (): Promise<any> =>
+      import("@/views/Discussions/DiscussionView.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
   },

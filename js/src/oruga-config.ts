@@ -60,6 +60,7 @@ export const orugaConfig = {
   },
   switch: {
     labelClass: "switch-label",
+    checkCheckedClass: "switch-check-checked",
   },
   select: {
     selectClass: "select",
@@ -76,6 +77,8 @@ export const orugaConfig = {
   table: {
     tableClass: "table",
     tdClass: "table-td",
+    thClass: "table-th",
+    rootClass: "table-root",
   },
   pagination: {
     rootClass: "pagination",
@@ -97,5 +100,11 @@ export const orugaConfig = {
     tabItemWrapperClass: "tabs-nav-item-wrapper",
     itemHeaderTypeClass: "tabs-nav-item-",
     itemHeaderActiveClass: "tabs-nav-item-active-",
+  },
+  tooltip: {
+    rootClass: "tooltip",
+    contentClass: "tooltip-content",
+    arrowClass: "tooltip-arrow",
+    variantClass: "tooltip-content-",
   },
 };

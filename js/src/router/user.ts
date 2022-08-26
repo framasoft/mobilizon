@@ -30,7 +30,7 @@ export const userRoutes: RouteRecordRaw[] = [
   {
     path: "/register/profile",
     name: UserRouteName.REGISTER_PROFILE,
-    component: (): Promise<any> => import("@/views/Account/Register.vue"),
+    component: (): Promise<any> => import("@/views/Account/RegisterView.vue"),
     // We can only pass string values through params, therefore
     props: (route: RouteLocationNormalized): Record<string, unknown> => ({
       email: route.params.email,

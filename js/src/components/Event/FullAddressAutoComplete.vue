@@ -7,14 +7,11 @@
         :message="fieldErrors"
         :type="{ 'is-danger': fieldErrors }"
         class="!-mt-2"
+        :labelClass="labelClass"
       >
         <template #label>
           {{ actualLabel }}
-          <span
-            class="is-size-6 has-text-weight-normal"
-            v-if="gettingLocation"
-            >{{ t("Getting location") }}</span
-          >
+          <span v-if="gettingLocation">{{ t("Getting location") }}</span>
         </template>
         <p class="control" v-if="canShowLocateMeButton">
           <o-loading
@@ -54,7 +51,7 @@
           </template>
           <template #empty>
             <span v-if="isFetching">{{ t("Searching…") }}</span>
-            <div v-else-if="queryText.length >= 3" class="is-enabled">
+            <div v-else-if="queryText.length >= 3" class="enabled">
               <span>{{
                 t('No results for "{queryText}"', { queryText })
               }}</span>
@@ -121,12 +118,16 @@ import { useGeocodingAutocomplete } from "@/composition/apollo/config";
 import { ADDRESS } from "@/graphql/address";
 import { useReverseGeocode } from "@/composition/apollo/address";
 import { useLazyQuery } from "@vue/apollo-composable";
-const MapLeaflet = defineAsyncComponent(() => import("../Map.vue"));
+const MapLeaflet = defineAsyncComponent(
+  () => import("@/components/LeafletMap.vue")
+);
 
 const props = withDefaults(
   defineProps<{
     modelValue: IAddress | null;
+    defaultText?: string | null;
     label?: string;
+    labelClass?: string;
     userTimezone?: string;
     disabled?: boolean;
     hideMap?: boolean;
@@ -134,7 +135,8 @@ const props = withDefaults(
     placeholder?: string;
   }>(),
   {
-    label: "",
+    labelClass: "",
+    defaultText: "",
     disabled: false,
     hideMap: false,
     hideSelected: false,
@@ -204,7 +206,7 @@ const checkCurrentPosition = (e: LatLng): boolean => {
 const { t, locale } = useI18n({ useScope: "global" });
 
 const actualLabel = computed((): string => {
-  return props.label ?? (t("Find an address") as string);
+  return props.label ?? t("Find an address");
 });
 
 // eslint-disable-next-line class-methods-use-this
@@ -253,11 +255,14 @@ const asyncData = async (query: string): Promise<void> => {
 
 const queryText = computed({
   get() {
-    return selected.value ? addressFullName(selected.value) : "";
+    return (
+      (selected.value ? addressFullName(selected.value) : props.defaultText) ??
+      ""
+    );
   },
   set(text) {
     if (text === "" && selected.value?.id) {
-      console.log("doing reset");
+      console.debug("doing reset");
       resetAddress();
     }
   },

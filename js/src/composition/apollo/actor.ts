@@ -61,7 +61,7 @@ export function usePersonStatusGroup(
   subscribeToMore(() => ({
     document: GROUP_MEMBERSHIP_SUBSCRIPTION_CHANGED,
     variables: {
-      id: currentActor.value?.id,
+      actorId: currentActor.value?.id,
       group: unref(groupFederatedUsername),
     },
   }));

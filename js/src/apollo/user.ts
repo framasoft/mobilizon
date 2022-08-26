@@ -8,7 +8,7 @@ import { Resolvers } from "@apollo/client/core/types";
 export default function buildCurrentUserResolver(
   cache: ApolloCache<NormalizedCacheObject>
 ): Resolvers {
-  cache.writeQuery({
+  cache?.writeQuery({
     query: CURRENT_USER_CLIENT,
     data: {
       currentUser: {
@@ -21,7 +21,7 @@ export default function buildCurrentUserResolver(
     },
   });
 
-  cache.writeQuery({
+  cache?.writeQuery({
     query: CURRENT_ACTOR_CLIENT,
     data: {
       currentActor: {
@@ -34,7 +34,7 @@ export default function buildCurrentUserResolver(
     },
   });
 
-  cache.writeQuery({
+  cache?.writeQuery({
     query: CURRENT_USER_LOCATION_CLIENT,
     data: {
       currentUserLocation: {
@@ -69,8 +69,6 @@ export default function buildCurrentUserResolver(
             __typename: "CurrentUser",
           },
         };
-
-        console.debug("updating current user", data);
 
         localCache.writeQuery({ data, query: CURRENT_USER_CLIENT });
       },

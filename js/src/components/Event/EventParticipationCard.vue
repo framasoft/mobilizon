@@ -1,12 +1,17 @@
 <template>
-  <article class="bg-white dark:bg-mbz-purple mb-5 mt-4 pb-2 md:p-0">
-    <div class="bg-yellow-2 flex p-2 text-violet-title rounded-t-lg" dir="auto">
+  <article
+    class="bg-white dark:bg-mbz-purple dark:hover:bg-mbz-purple-400 mb-5 mt-4 pb-2 md:p-0 rounded-t-lg"
+  >
+    <div
+      class="bg-mbz-yellow-alt-100 flex p-2 text-violet-title rounded-t-lg"
+      dir="auto"
+    >
       <figure
         class="image is-24x24 ltr:pr-1 rtl:pl-1"
         v-if="participation.actor.avatar"
       >
         <img
-          class="is-rounded"
+          class="rounded"
           :src="participation.actor.avatar.url"
           alt=""
           height="24"
@@ -157,7 +162,7 @@
               </span>
               <o-button
                 v-if="participation.event.participantStats.notApproved > 0"
-                type="is-text"
+                variant="text"
                 @click="
                   gotToWithCheck(participation, {
                     name: RouteName.PARTICIPATIONS,
@@ -330,7 +335,7 @@ const defaultOptions: IEventCardOptions = {
 const props = withDefaults(
   defineProps<{
     participation: IParticipant;
-    options: IEventCardOptions;
+    options?: IEventCardOptions;
   }>(),
   {
     options: () => ({

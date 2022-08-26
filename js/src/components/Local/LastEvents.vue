@@ -33,7 +33,7 @@
       />
       <more-content
         :to="{
-          name: 'SEARCH',
+          name: RouteName.SEARCH,
           query: {
             contentType: 'EVENTS',
           },
@@ -57,6 +57,7 @@ import SkeletonEventResult from "../Event/SkeletonEventResult.vue";
 import { EventSortField, SortDirection } from "@/types/enums";
 import { FETCH_EVENTS } from "@/graphql/event";
 import { useI18n } from "vue-i18n";
+import RouteName from "@/router/name";
 
 defineProps<{
   instanceName: string;

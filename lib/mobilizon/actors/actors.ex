@@ -923,10 +923,10 @@ defmodule Mobilizon.Actors do
   Returns the number of members for a group
   """
   @spec count_members_for_group(Actor.t()) :: integer()
-  def count_members_for_group(%Actor{id: actor_id}) do
+  def count_members_for_group(%Actor{id: actor_id}, roles \\ @member_roles) do
     actor_id
     |> members_for_group_query()
-    # |> where([m], m.role in @member_roles)
+    |> where([m], m.role in ^roles)
     |> Repo.aggregate(:count)
   end
 

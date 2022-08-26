@@ -26,6 +26,8 @@ export interface IGroup extends IActor {
   manuallyApprovesFollowers: boolean;
   activity: Paginate<IActivity>;
   followers: Paginate<IFollower>;
+  membersCount?: number;
+  followersCount?: number;
 }
 
 export class Group extends Actor implements IGroup {

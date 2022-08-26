@@ -1,16 +1,16 @@
 <template>
   <section class="container mx-auto">
     <h1 class="title" v-if="loading">
-      {{ $t("Your participation request is being validated") }}
+      {{ t("Your participation request is being validated") }}
     </h1>
     <div v-else>
       <div v-if="failed && participation === undefined">
         <o-notification
-          :title="$t('Error while validating participation request')"
+          :title="t('Error while validating participation request')"
           variant="danger"
         >
           {{
-            $t(
+            t(
               "Either the participation request has already been validated, either the validation token is incorrect."
             )
           }}
@@ -18,27 +18,25 @@
       </div>
       <div v-else>
         <h1 class="title">
-          {{ $t("Your participation request has been validated") }}
+          {{ t("Your participation request has been validated") }}
         </h1>
         <p
           class="prose dark:prose-invert"
           v-if="participation?.event.joinOptions == EventJoinOptions.RESTRICTED"
         >
           {{
-            $t("Your participation still has to be approved by the organisers.")
+            t("Your participation still has to be approved by the organisers.")
           }}
         </p>
         <div v-if="failed">
           <o-notification
             :title="
-              $t(
-                'Error while updating participation status inside this browser'
-              )
+              t('Error while updating participation status inside this browser')
             "
             variant="warning"
           >
             {{
-              $t(
+              t(
                 "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue."
               )
             }}
@@ -46,15 +44,15 @@
         </div>
         <div class="columns has-text-centered">
           <div class="column">
-            <router-link
-              native-type="button"
-              tag="a"
-              class="button is-primary is-large"
+            <o-button
+              tag="router-link"
+              variant="primary"
+              size="large"
               :to="{
                 name: RouteName.EVENT,
                 params: { uuid: participation?.event.uuid },
               }"
-              >{{ $t("Go to the event page") }}</router-link
+              >{{ t("Go to the event page") }}</o-button
             >
           </div>
         </div>

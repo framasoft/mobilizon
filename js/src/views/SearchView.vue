@@ -1,9 +1,17 @@
 <template>
+  <div class="max-w-4xl mx-auto">
+    <SearchFields
+      class="md:ml-10 mr-2"
+      v-model:search="searchDebounced"
+      v-model:location="location"
+      :locationDefaultText="locationName"
+    />
+  </div>
   <div
     class="container mx-auto md:py-3 md:px-4 flex flex-col lg:flex-row gap-x-5 gap-y-1"
   >
     <aside
-      class="flex-none lg:block lg:sticky top-8 rounded-md px-2 pt-2 w-full lg:w-80 flex-col justify-between mt-2 lg:pb-10 lg:px-8 overflow-y-auto dark:text-slate-100 bg-white dark:bg-mbz-purple"
+      class="flex-none lg:block lg:sticky top-8 rounded-md w-full lg:w-80 flex-col justify-between mt-2 lg:pb-10 lg:px-8 overflow-y-auto dark:text-slate-100 bg-white dark:bg-mbz-purple"
     >
       <o-button
         @click="toggleFilters"
@@ -16,7 +24,7 @@
       <form
         @submit.prevent="doNewSearch"
         :class="{ hidden: filtersPanelOpened }"
-        class="lg:block mt-2"
+        class="lg:block mt-4 px-2"
       >
         <p class="sr-only">{{ t("Type") }}</p>
         <ul
@@ -52,6 +60,46 @@
             </router-link>
           </li>
         </ul>
+
+        <div
+          class="py-4 border-b border-gray-200 dark:border-gray-500"
+          v-show="globalSearchEnabled"
+        >
+          <fieldset class="flex flex-col">
+            <legend class="sr-only">{{ t("Search target") }}</legend>
+
+            <div>
+              <input
+                id="internalTarget"
+                v-model="searchTarget"
+                type="radio"
+                name="searchTarget"
+                :value="SearchTargets.INTERNAL"
+                class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="internalTarget"
+                class="ml-3 font-medium text-gray-900 dark:text-gray-300"
+                >{{ t("In this instance's network") }}</label
+              >
+            </div>
+            <div>
+              <input
+                id="globalTarget"
+                v-model="searchTarget"
+                type="radio"
+                name="searchTarget"
+                :value="SearchTargets.GLOBAL"
+                class="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="globalTarget"
+                class="ml-3 font-medium text-gray-900 dark:text-gray-300"
+                >{{ t("On the Fediverse") }}</label
+              >
+            </div>
+          </fieldset>
+        </div>
 
         <div
           class="py-4 border-b border-gray-200 dark:border-gray-500"
@@ -374,81 +422,48 @@
       </form>
     </aside>
     <div class="flex-1 px-2">
-      <o-tabs type="boxed" v-if="contentType == ContentType.ALL">
-        <o-tab-item>
-          <template #header>
-            <Calendar />
-
-            <span>
-              {{ t("Events") }}
-              <b-tag rounded>{{ searchEvents?.total }}</b-tag>
-            </span>
-          </template>
-          <div v-if="searchEvents && searchEvents.total > 0">
-            <multi-card class="my-4" :events="searchEvents?.elements" />
-            <div
-              class="pagination"
-              v-if="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
-            >
-              <o-pagination
-                :total="searchEvents.total"
-                v-model:current="eventPage"
-                :per-page="EVENT_PAGE_LIMIT"
-                :aria-next-label="t('Next page')"
-                :aria-previous-label="t('Previous page')"
-                :aria-page-label="t('Page')"
-                :aria-current-label="t('Current page')"
-              >
-              </o-pagination>
-            </div>
-          </div>
-          <o-notification v-else-if="searchLoading === false" variant="info">
-            <p>{{ t("No events found") }}</p>
-            <p v-if="searchIsUrl && !currentUser?.id">
-              {{
-                t(
-                  "Only registered users may fetch remote events from their URL."
-                )
-              }}
-            </p>
-          </o-notification>
-        </o-tab-item>
-
-        <o-tab-item>
-          <template #header>
-            <AccountMultiple />
-            <span>
-              {{ t("Groups") }} <b-tag rounded>{{ searchGroups?.total }}</b-tag>
-            </span>
-          </template>
-          <o-notification v-if="features && !features.groups" variant="danger">
-            {{ t("Groups are not enabled on this instance.") }}
-          </o-notification>
-          <div v-else-if="searchGroups && searchGroups?.total > 0">
-            <multi-group-card class="my-4" :groups="searchGroups?.elements" />
-            <div class="pagination">
-              <o-pagination
-                :total="searchGroups?.total"
-                v-model:current="groupPage"
-                :per-page="GROUP_PAGE_LIMIT"
-                :aria-next-label="t('Next page')"
-                :aria-previous-label="t('Previous page')"
-                :aria-page-label="t('Page')"
-                :aria-current-label="t('Current page')"
-              >
-              </o-pagination>
-            </div>
-          </div>
-          <o-notification v-else-if="searchLoading === false" variant="danger">
-            {{ t("No groups found") }}
-          </o-notification>
-        </o-tab-item>
-      </o-tabs>
-      <div v-else-if="contentType === ContentType.EVENTS">
-        <div v-if="searchEvents && searchEvents.total > 0">
-          <multi-card class="my-4" :events="searchEvents?.elements" />
+      <template v-if="contentType === ContentType.ALL">
+        <o-notification v-if="features && !features.groups" variant="danger">
+          {{ t("Groups are not enabled on this instance.") }}
+        </o-notification>
+        <div v-else-if="searchGroups && searchGroups?.total > 0">
+          <GroupCard
+            v-for="group in searchGroups?.elements"
+            :group="group"
+            :key="group.id"
+            :isRemoteGroup="group.__typename === 'GroupResult'"
+            :isLoggedIn="currentUser?.isLoggedIn"
+            mode="row"
+          />
           <o-pagination
-            v-show="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
+            v-if="searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT"
+            :total="searchGroups?.total"
+            v-model:current="groupPage"
+            :per-page="GROUP_PAGE_LIMIT"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
+          >
+          </o-pagination>
+        </div>
+        <o-notification v-else-if="searchLoading === false" variant="danger">
+          {{ t("No groups found") }}
+        </o-notification>
+        <div v-if="searchEvents && searchEvents.total > 0">
+          <event-card
+            mode="row"
+            v-for="event in searchEvents?.elements"
+            :event="event"
+            :key="event.uuid"
+            :options="{
+              isRemoteEvent: event.__typename === 'EventResult',
+              isLoggedIn: currentUser?.isLoggedIn,
+            }"
+            class="my-4"
+          />
+          <o-pagination
+            v-if="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
             :total="searchEvents.total"
             v-model:current="eventPage"
             :per-page="EVENT_PAGE_LIMIT"
@@ -467,13 +482,55 @@
             }}
           </p>
         </o-notification>
-      </div>
-      <div v-else-if="contentType === ContentType.GROUPS">
+      </template>
+      <template v-else-if="contentType === ContentType.EVENTS">
+        <template v-if="searchEvents && searchEvents.total > 0">
+          <event-card
+            mode="row"
+            v-for="event in searchEvents?.elements"
+            :event="event"
+            :key="event.uuid"
+            :options="{
+              isRemoteEvent: event.__typename === 'EventResult',
+              isLoggedIn: currentUser?.isLoggedIn,
+            }"
+            class="my-4"
+          />
+          <o-pagination
+            v-show="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
+            :total="searchEvents.total"
+            v-model:current="eventPage"
+            :per-page="EVENT_PAGE_LIMIT"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
+          >
+          </o-pagination>
+        </template>
+        <o-notification v-else-if="searchLoading === false" variant="info">
+          <p>{{ t("No events found") }}</p>
+          <p v-if="searchIsUrl && !currentUser?.id">
+            {{
+              t("Only registered users may fetch remote events from their URL.")
+            }}
+          </p>
+        </o-notification>
+      </template>
+      <template v-else-if="contentType === ContentType.GROUPS">
         <o-notification v-if="features && !features.groups" variant="danger">
           {{ t("Groups are not enabled on this instance.") }}
         </o-notification>
-        <div v-else-if="searchGroups && searchGroups?.total > 0">
-          <multi-group-card class="my-4" :groups="searchGroups?.elements" />
+
+        <template v-else-if="searchGroups && searchGroups?.total > 0">
+          <GroupCard
+            v-for="group in searchGroups?.elements"
+            :group="group"
+            :key="group.id"
+            :isRemoteGroup="group.__typename === 'GroupResult'"
+            :isLoggedIn="currentUser?.isLoggedIn"
+            mode="row"
+          />
           <o-pagination
             v-show="searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT"
             :total="searchGroups?.total"
@@ -485,11 +542,11 @@
             :aria-current-label="t('Current page')"
           >
           </o-pagination>
-        </div>
+        </template>
         <o-notification v-else-if="searchLoading === false" variant="danger">
           {{ t("No groups found") }}
         </o-notification>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -508,18 +565,17 @@ import {
   startOfMonth,
   eachWeekendOfInterval,
 } from "date-fns";
-import { ContentType, EventStatus } from "@/types/enums";
-import MultiCard from "../components/Event/MultiCard.vue";
-import { IEvent } from "../types/event.model";
-import FullAddressAutoComplete from "../components/Event/FullAddressAutoComplete.vue";
-import { SEARCH_EVENTS_AND_GROUPS } from "../graphql/search";
-import { Paginate } from "../types/paginate";
-import { IGroup } from "../types/actor";
-import MultiGroupCard from "../components/Group/MultiGroupCard.vue";
+import { ContentType, EventStatus, SearchTargets } from "@/types/enums";
+import EventCard from "@/components/Event/EventCard.vue";
+import { IEvent } from "@/types/event.model";
+import { SEARCH_EVENTS_AND_GROUPS } from "@/graphql/search";
+import { Paginate } from "@/types/paginate";
+import { IGroup } from "@/types/actor";
+import GroupCard from "@/components/Group/GroupCard.vue";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   floatTransformer,
@@ -538,11 +594,35 @@ import type { Locale } from "date-fns";
 import FilterSection from "@/components/Search/filters/FilterSection.vue";
 import { listShortDisjunctionFormatter } from "@/utils/listFormat";
 import langs from "@/i18n/langs.json";
-import { useEventCategories, useFeatures } from "@/composition/apollo/config";
-import geohash from "ngeohash";
+import {
+  useEventCategories,
+  useFeatures,
+  useSearchConfig,
+} from "@/composition/apollo/config";
 import { coordsToGeoHash } from "@/utils/location";
+import SearchFields from "@/components/Home/SearchFields.vue";
+import { refDebounced } from "@vueuse/core";
+import { IAddress } from "@/types/address.model";
+import { IConfig } from "@/types/config.model";
 
 const search = useRouteQuery("search", "");
+const searchDebounced = refDebounced(search, 1000);
+const locationName = useRouteQuery("locationName", null);
+const location = ref<IAddress | null>(null);
+
+watch(location, (newLocation) => {
+  console.debug("location change");
+  if (newLocation?.geom) {
+    latitude.value = parseFloat(newLocation?.geom.split(";")[1]);
+    longitude.value = parseFloat(newLocation?.geom.split(";")[0]);
+    locationName.value = newLocation?.description;
+  } else {
+    console.debug("location emptied");
+    latitude.value = undefined;
+    longitude.value = undefined;
+    locationName.value = null;
+  }
+});
 
 interface ISearchTimeOption {
   label: string;
@@ -580,6 +660,11 @@ const statusOneOf = useRouteQuery(
   arrayTransformer
 );
 const languageOneOf = useRouteQuery("languageOneOf", [], arrayTransformer);
+const searchTarget = useRouteQuery(
+  "target",
+  SearchTargets.INTERNAL,
+  enumTransformer(SearchTargets)
+);
 
 const EVENT_PAGE_LIMIT = 16;
 
@@ -667,8 +752,8 @@ const dateOptions: Record<string, ISearchTimeOption> = {
   },
   any: {
     label: t("Any day") as string,
-    start: undefined,
-    end: undefined,
+    start: new Date().toISOString(),
+    end: null,
   },
 };
 
@@ -688,9 +773,9 @@ const end = computed((): string | undefined | null => {
 
 const searchIsUrl = computed((): boolean => {
   let url;
-  if (!search.value) return false;
+  if (!searchDebounced.value) return false;
   try {
-    url = new URL(search.value);
+    url = new URL(searchDebounced.value);
   } catch (_) {
     return false;
   }
@@ -820,21 +905,48 @@ const geoHashLocation = computed(() =>
 
 const radius = computed(() => Number.parseInt(distance.value.slice(0, -3)));
 
+const { searchConfig, onResult: onSearchConfigResult } = useSearchConfig();
+
+onSearchConfigResult(({ data }) =>
+  handleSearchConfigChanged(data?.config?.search)
+);
+
+const handleSearchConfigChanged = (
+  searchConfigChanged: IConfig["search"] | undefined
+) => {
+  if (
+    searchConfigChanged?.global?.isEnabled &&
+    searchConfigChanged?.global?.isDefault
+  ) {
+    searchTarget.value = SearchTargets.GLOBAL;
+  }
+};
+
+watch(searchConfig, (newSearchConfig) =>
+  handleSearchConfigChanged(newSearchConfig)
+);
+
+const globalSearchEnabled = computed(
+  () => searchConfig.value?.global?.isEnabled
+);
+
 const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchEvents: Paginate<IEvent>;
   searchGroups: Paginate<IGroup>;
 }>(SEARCH_EVENTS_AND_GROUPS, () => ({
-  term: search.value,
+  term: searchDebounced.value,
   tags: props.tag,
   location: geoHashLocation.value,
   beginsOn: start.value,
   endsOn: end.value,
-  radius: radius.value,
+  radius: geoHashLocation.value ? radius.value : undefined,
   eventPage: eventPage.value,
   groupPage: groupPage.value,
   limit: EVENT_PAGE_LIMIT,
-  type: isOnline.value ? "ONLINE" : "IN_PERSON",
+  type: isOnline.value ? "ONLINE" : undefined,
   categoryOneOf: categoryOneOf.value,
   statusOneOf: statusOneOf.value,
+  languageOneOf: languageOneOf.value,
+  searchTarget: searchTarget.value,
 }));
 </script>

@@ -14,7 +14,7 @@ export const actorRoutes: RouteRecordRaw[] = [
   {
     path: "/groups/create",
     name: ActorRouteName.CREATE_GROUP,
-    component: (): Promise<any> => import("@/views/Group/Create.vue"),
+    component: (): Promise<any> => import("@/views/Group/CreateView.vue"),
     meta: {
       requiredAuth: true,
       announcer: { message: (): string => t("Create group") as string },
@@ -23,7 +23,7 @@ export const actorRoutes: RouteRecordRaw[] = [
   {
     path: "/@:preferredUsername",
     name: ActorRouteName.GROUP,
-    component: (): Promise<any> => import("@/views/Group/Group.vue"),
+    component: (): Promise<any> => import("@/views/Group/GroupView.vue"),
     props: true,
     meta: { requiredAuth: false, announcer: { skip: true } },
   },

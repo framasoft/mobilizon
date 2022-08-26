@@ -1,8 +1,6 @@
 import * as Sentry from "@sentry/vue";
 import { Integrations } from "@sentry/tracing";
 
-const app: any = null;
-
 export const sentry = (environment: any, sentryConfiguration: any) => {
   console.debug("Loading Sentry statistics");
   console.debug(

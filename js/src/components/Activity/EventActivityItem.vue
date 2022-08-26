@@ -1,7 +1,7 @@
 <template>
   <div class="activity-item">
-    <o-icon :icon="'calendar'" :type="iconColor" />
-    <div class="subject">
+    <o-icon :icon="'calendar'" :variant="iconColor" custom-size="24" />
+    <div class="mt-1 ml-2 prose dark:prose-invert prose-p:m-0">
       <i18n-t :keypath="translation" tag="p">
         <template #event>
           <router-link
@@ -93,11 +93,11 @@ const iconColor = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityEventSubject.EVENT_CREATED:
     case ActivityEventCommentSubject.COMMENT_POSTED:
-      return "is-success";
+      return "success";
     case ActivityEventSubject.EVENT_UPDATED:
-      return "is-grey";
+      return "grey";
     case ActivityEventSubject.EVENT_DELETED:
-      return "is-danger";
+      return "danger";
     default:
       return undefined;
   }

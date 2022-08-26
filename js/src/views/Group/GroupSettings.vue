@@ -11,60 +11,60 @@
         {
           name: RouteName.GROUP_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Settings'),
+          text: t('Settings'),
         },
         {
           name: RouteName.GROUP_PUBLIC_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Group settings'),
+          text: t('Group settings'),
         },
       ]"
     />
     <o-loading :active="loading" />
     <section
-      class="container mx-auto section"
+      class="container mx-auto mb-6"
       v-if="group && isCurrentActorAGroupAdmin"
     >
-      <form @submit.prevent="updateGroup">
-        <o-field :label="$t('Group name')" label-for="group-settings-name">
+      <form @submit.prevent="updateGroup(buildVariables)" v-if="editableGroup">
+        <o-field :label="t('Group name')" label-for="group-settings-name">
           <o-input v-model="editableGroup.name" id="group-settings-name" />
         </o-field>
-        <o-field :label="$t('Group short description')">
+        <o-field :label="t('Group short description')">
           <Editor
             mode="basic"
             v-model="editableGroup.summary"
             :maxSize="500"
-            :aria-label="$t('Group description body')"
+            :aria-label="t('Group description body')"
             v-if="currentActor"
             :currentActor="currentActor"
         /></o-field>
-        <o-field :label="$t('Avatar')">
+        <o-field :label="t('Avatar')">
           <picture-upload
-            :textFallback="$t('Avatar')"
+            :textFallback="t('Avatar')"
             v-model="avatarFile"
             :defaultImage="group.avatar"
             :maxSize="avatarMaxSize"
           />
         </o-field>
 
-        <o-field :label="$t('Banner')">
+        <o-field :label="t('Banner')">
           <picture-upload
-            :textFallback="$t('Banner')"
+            :textFallback="t('Banner')"
             v-model="bannerFile"
             :defaultImage="group.banner"
             :maxSize="bannerMaxSize"
           />
         </o-field>
-        <p class="label">{{ $t("Group visibility") }}</p>
+        <p class="label">{{ t("Group visibility") }}</p>
         <div class="field">
           <o-radio
             v-model="editableGroup.visibility"
             name="groupVisibility"
             :native-value="GroupVisibility.PUBLIC"
           >
-            {{ $t("Visible everywhere on the web") }}<br />
+            {{ t("Visible everywhere on the web") }}<br />
             <small>{{
-              $t(
+              t(
                 "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page."
               )
             }}</small>
@@ -75,9 +75,9 @@
             v-model="editableGroup.visibility"
             name="groupVisibility"
             :native-value="GroupVisibility.UNLISTED"
-            >{{ $t("Only accessible through link") }}<br />
+            >{{ t("Only accessible through link") }}<br />
             <small>{{
-              $t(
+              t(
                 "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines."
               )
             }}</small>
@@ -86,7 +86,7 @@
             <code>{{ group.url }}</code>
             <o-tooltip
               v-if="canShowCopyButton"
-              :label="$t('URL copied to clipboard')"
+              :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip"
               always
               variant="success"
@@ -103,16 +103,16 @@
           </p>
         </div>
 
-        <p class="label">{{ $t("New members") }}</p>
+        <p class="label">{{ t("New members") }}</p>
         <div class="field">
           <o-radio
             v-model="editableGroup.openness"
             name="groupOpenness"
             :native-value="Openness.OPEN"
           >
-            {{ $t("Anyone can join freely") }}<br />
+            {{ t("Anyone can join freely") }}<br />
             <small>{{
-              $t(
+              t(
                 "Anyone wanting to be a member from your group will be able to from your group page."
               )
             }}</small>
@@ -123,9 +123,9 @@
             v-model="editableGroup.openness"
             name="groupOpenness"
             :native-value="Openness.MODERATED"
-            >{{ $t("Moderate new members") }}<br />
+            >{{ t("Moderate new members") }}<br />
             <small>{{
-              $t(
+              t(
                 "Anyone can request being a member, but an administrator needs to approve the membership."
               )
             }}</small>
@@ -136,9 +136,9 @@
             v-model="editableGroup.openness"
             name="groupOpenness"
             :native-value="Openness.INVITE_ONLY"
-            >{{ $t("Manually invite new members") }}<br />
+            >{{ t("Manually invite new members") }}<br />
             <small>{{
-              $t(
+              t(
                 "The only way for your group to get new members is if an admininistrator invites them."
               )
             }}</small>
@@ -146,26 +146,26 @@
         </div>
 
         <o-field
-          :label="$t('Followers')"
-          :message="$t('Followers will receive new public events and posts.')"
+          :label="t('Followers')"
+          :message="t('Followers will receive new public events and posts.')"
         >
           <o-checkbox v-model="editableGroup.manuallyApprovesFollowers">
-            {{ $t("Manually approve new followers") }}
+            {{ t("Manually approve new followers") }}
           </o-checkbox>
         </o-field>
 
         <full-address-auto-complete
-          :label="$t('Group address')"
+          :label="t('Group address')"
           v-model="currentAddress"
           :hideMap="true"
         />
 
         <div class="flex flex-wrap gap-2 my-2">
           <o-button native-type="submit" variant="primary">{{
-            $t("Update group")
+            t("Update group")
           }}</o-button>
           <o-button @click="confirmDeleteGroup" variant="danger">{{
-            $t("Delete group")
+            t("Delete group")
           }}</o-button>
         </div>
       </form>
@@ -178,7 +178,7 @@
       </o-notification>
     </section>
     <o-notification v-else-if="!loading">
-      {{ $t("You are not an administrator for this group.") }}
+      {{ t("You are not an administrator for this group.") }}
     </o-notification>
   </div>
 </template>
@@ -187,7 +187,7 @@
 import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { GroupVisibility, MemberRole, Openness } from "@/types/enums";
-import { Group, IGroup, usernameWithDomain, displayName } from "@/types/actor";
+import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
 import { Address, IAddress } from "@/types/address.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ErrorResponse } from "@apollo/client/link/error";
@@ -208,13 +208,19 @@ import { Dialog } from "@/plugins/dialog";
 import { useHead } from "@vueuse/head";
 import { Notifier } from "@/plugins/notifier";
 
-const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
+const Editor = defineAsyncComponent(
+  () => import("@/components/TextEditor.vue")
+);
 
 const props = defineProps<{ preferredUsername: string }>();
 
 const { currentActor } = useCurrentActorClient();
 
-const { group, loading } = useGroup(props.preferredUsername);
+const {
+  group,
+  loading,
+  onResult: onGroupResult,
+} = useGroup(props.preferredUsername);
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -231,20 +237,17 @@ const errors = ref<string[]>([]);
 
 const showCopiedTooltip = ref(false);
 
-const editableGroup = ref<IGroup>(new Group());
+const editableGroup = ref<IGroup>();
 
-const updateGroup = async (): Promise<void> => {
-  const variables = buildVariables();
-  const { onDone, onError } = useUpdateGroup(variables);
+const { onDone, onError, mutate: updateGroup } = useUpdateGroup();
 
-  onDone(() => {
-    notifier?.success(t("Group settings saved") as string);
-  });
+onDone(() => {
+  notifier?.success(t("Group settings saved"));
+});
 
-  onError((err) => {
-    handleError(err as unknown as ErrorResponse);
-  });
-};
+onError((err) => {
+  handleError(err as unknown as ErrorResponse);
+});
 
 const copyURL = async (): Promise<void> => {
   await window.navigator.clipboard.writeText(group.value?.url ?? "");
@@ -254,28 +257,40 @@ const copyURL = async (): Promise<void> => {
   }, 2000);
 };
 
-watch(group, async (oldGroup: IGroup, newGroup: IGroup) => {
-  try {
-    if (
-      oldGroup?.avatar !== undefined &&
-      oldGroup?.avatar !== newGroup?.avatar
-    ) {
-      avatarFile.value = await buildFileFromIMedia(group.value?.avatar);
-    }
-    if (
-      oldGroup?.banner !== undefined &&
-      oldGroup?.banner !== newGroup?.banner
-    ) {
-      bannerFile.value = await buildFileFromIMedia(group.value?.banner);
-    }
-  } catch (e) {
-    // Catch errors while building media
-    console.error(e);
-  }
-  editableGroup.value = { ...group.value };
+onGroupResult(({ data }) => {
+  editableGroup.value = data.group;
 });
 
-const buildVariables = () => {
+watch(
+  group,
+  async (newGroup: IGroup, oldGroup: IGroup) => {
+    console.debug("watching group");
+    if (!newGroup) return;
+    try {
+      if (
+        oldGroup?.avatar !== undefined &&
+        oldGroup?.avatar !== newGroup?.avatar
+      ) {
+        avatarFile.value = await buildFileFromIMedia(newGroup?.avatar);
+      }
+      if (
+        oldGroup?.banner !== undefined &&
+        oldGroup?.banner !== newGroup?.banner
+      ) {
+        bannerFile.value = await buildFileFromIMedia(newGroup?.banner);
+      }
+    } catch (e) {
+      // Catch errors while building media
+      console.error(e);
+    }
+    editableGroup.value = { ...newGroup };
+  },
+  {
+    immediate: true,
+  }
+);
+
+const buildVariables = computed(() => {
   let avatarObj = {};
   let bannerObj = {};
   const variables = { ...editableGroup.value };
@@ -309,7 +324,7 @@ const buildVariables = () => {
         media: {
           name: avatarFile.value?.name,
           alt: `${editableGroup.value?.preferredUsername}'s avatar`,
-          file: avatarFile,
+          file: avatarFile.value,
         },
       },
     };
@@ -321,13 +336,13 @@ const buildVariables = () => {
         media: {
           name: bannerFile.value?.name,
           alt: `${editableGroup.value?.preferredUsername}'s banner`,
-          file: bannerFile,
+          file: bannerFile.value,
         },
       },
     };
   }
   return {
-    id: group.value?.id,
+    id: group.value?.id ?? "",
     name: editableGroup.value?.name,
     summary: editableGroup.value?.summary,
     visibility: editableGroup.value?.visibility,
@@ -337,7 +352,7 @@ const buildVariables = () => {
     ...avatarObj,
     ...bannerObj,
   };
-};
+});
 
 const canShowCopyButton = computed((): boolean => {
   return window.isSecureContext;
@@ -348,7 +363,9 @@ const currentAddress = computed({
     return new Address(editableGroup.value?.physicalAddress);
   },
   set(address: IAddress) {
-    editableGroup.value.physicalAddress = address;
+    if (editableGroup.value) {
+      editableGroup.value.physicalAddress = address;
+    }
   },
 });
 

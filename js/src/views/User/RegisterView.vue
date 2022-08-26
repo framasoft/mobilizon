@@ -209,14 +209,14 @@ import RouteName from "../../router/name";
 import { IConfig } from "../../types/config.model";
 import { CONFIG } from "../../graphql/config";
 import AuthProviders from "../../components/User/AuthProviders.vue";
-import { AbsintheGraphQLError } from "../../types/apollo";
 import { computed, reactive, ref, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useHead } from "@vueuse/head";
+import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
-type errorType = "is-danger" | "is-warning";
+type errorType = "danger" | "warning";
 type errorMessage = { type: errorType; message: string };
 type credentialsType = { email: string; password: string; locale: string };
 
@@ -271,24 +271,25 @@ onDone(() => {
 });
 
 onError((error) => {
-  // @ts-ignore
-  error.graphQLErrors.forEach(({ field, message }: AbsintheGraphQLError) => {
-    switch (field) {
-      case "email":
-        emailErrors.value.push({
-          type: "is-danger" as errorType,
-          message: message[0] as string,
-        });
-        break;
-      case "password":
-        passwordErrors.value.push({
-          type: "is-danger" as errorType,
-          message: message[0] as string,
-        });
-        break;
-      default:
+  (error.graphQLErrors as AbsintheGraphQLErrors).forEach(
+    ({ field, message }) => {
+      switch (field) {
+        case "email":
+          emailErrors.value.push({
+            type: "danger" as errorType,
+            message: message[0] as string,
+          });
+          break;
+        case "password":
+          passwordErrors.value.push({
+            type: "danger" as errorType,
+            message: message[0] as string,
+          });
+          break;
+        default:
+      }
     }
-  });
+  );
   sendingForm.value = false;
 });
 
@@ -310,10 +311,10 @@ const submit = async (): Promise<void> => {
 watch(credentials, () => {
   if (credentials.email !== credentials.email.toLowerCase()) {
     const error = {
-      type: "is-warning" as errorType,
+      type: "warning" as errorType,
       message: t(
         "Emails usually don't contain capitals, make sure you haven't made a typo."
-      ) as string,
+      ),
     };
     emailErrors.value = [error];
   }
@@ -322,9 +323,9 @@ watch(credentials, () => {
 const maxErrorType = (errors: errorMessage[]): errorType | undefined => {
   if (!errors || errors.length === 0) return undefined;
   return errors.reduce<errorType>((acc, error) => {
-    if (error.type === "is-danger" || acc === "is-danger") return "is-danger";
-    return "is-warning";
-  }, "is-warning");
+    if (error.type === "danger" || acc === "danger") return "danger";
+    return "warning";
+  }, "warning");
 };
 
 const errorEmailType = computed((): errorType | undefined => {

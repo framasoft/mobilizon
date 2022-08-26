@@ -91,7 +91,7 @@
         <o-button
           v-if="isUpdate"
           @click="openDeleteIdentityConfirmation()"
-          type="is-text"
+          variant="text"
         >
           {{ $t("Delete this identity") }}
         </o-button>
@@ -593,7 +593,7 @@ const dialog = inject<Dialog>("dialog");
 
 const openRegenerateFeedTokensConfirmation = (): void => {
   dialog?.confirm({
-    type: "is-warning",
+    variant: "warning",
     title: t("Regenerate new links") as string,
     message: t(
       "You'll need to change the URLs where there were previously entered."
@@ -606,7 +606,7 @@ const openRegenerateFeedTokensConfirmation = (): void => {
 
 const openDeleteIdentityConfirmation = (): void => {
   dialog?.prompt({
-    type: "danger",
+    variant: "danger",
     title: t("Delete your identity") as string,
     message: `${t(
       "This will delete / anonymize all content (events, comments, messages, participations…) created from this identity."

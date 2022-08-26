@@ -11,7 +11,7 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:vue/vue3-essential",
-    "@vue/eslint-config-typescript",
+    "@vue/eslint-config-typescript/recommended",
     "plugin:prettier/recommended",
     "@vue/eslint-config-prettier",
   ],
@@ -24,12 +24,11 @@ module.exports = {
   },
 
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-underscore-dangle": [
       "error",
       {
-        allow: ["__typename"],
+        allow: ["__typename", "__schema"],
       },
     ],
     "@typescript-eslint/no-explicit-any": "off",

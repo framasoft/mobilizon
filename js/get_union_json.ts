@@ -1,5 +1,5 @@
-const fetch = require("node-fetch");
-const fs = require("fs");
+import fetch from "node-fetch";
+import fs from "fs";
 
 fetch(`http://localhost:4000/api`, {
   method: "POST",

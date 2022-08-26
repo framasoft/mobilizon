@@ -43,7 +43,7 @@
       <o-button
         v-if="stepIndex >= 2"
         variant="success"
-        size="is-big"
+        size="big"
         tag="router-link"
         :to="{ name: RouteName.HOME }"
       >

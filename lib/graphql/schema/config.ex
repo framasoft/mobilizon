@@ -79,6 +79,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:analytics, list_of(:analytics),
       description: "Configuration for diverse analytics services"
     )
+
+    field(:search, :search_settings, description: "The instance's search settings")
   end
 
   @desc """
@@ -352,6 +354,15 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
     field(:key, :string, description: "The key for the analytics configuration element")
     field(:value, :string, description: "The value for the analytics configuration element")
     field(:type, :analytics_configuration_type, description: "The analytics configuration type")
+  end
+
+  object :search_settings do
+    field(:global, :global_search_settings, description: "The instance's global search settings")
+  end
+
+  object :global_search_settings do
+    field(:is_enabled, :boolean, description: "Whether global search is enabled")
+    field(:is_default, :boolean, description: "Whether global search is the default")
   end
 
   @desc """

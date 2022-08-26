@@ -67,4 +67,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Followers do
   end
 
   def update_follower(_, _, _), do: {:error, :unauthenticated}
+
+  def count_followers_for_group(%Actor{type: :Group} = group, _args, _resolution) do
+    {:ok, Actors.count_followers_for_actor(group)}
+  end
 end

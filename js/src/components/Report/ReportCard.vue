@@ -1,5 +1,5 @@
 <template>
-  <div class="" v-if="report">
+  <div class="dark:bg-zinc-700 p-2 rounded" v-if="report">
     <div class="flex gap-1">
       <figure class="" v-if="report.reported.avatar">
         <img

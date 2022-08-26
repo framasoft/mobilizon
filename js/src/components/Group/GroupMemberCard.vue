@@ -41,19 +41,19 @@
               }"
             >
               <h2 class="mt-0">{{ member.parent.name }}</h2>
-              <div class="flex flex-col">
+              <div class="flex flex-col items-start">
                 <span class="text-sm">{{
                   `@${usernameWithDomain(member.parent)}`
                 }}</span>
                 <tag
                   variant="info"
                   v-if="member.role === MemberRole.ADMINISTRATOR"
-                  >{{ $t("Administrator") }}</tag
+                  >{{ t("Administrator") }}</tag
                 >
                 <tag
                   variant="info"
                   v-else-if="member.role === MemberRole.MODERATOR"
-                  >{{ $t("Moderator") }}</tag
+                  >{{ t("Moderator") }}</tag
                 >
               </div>
             </router-link>
@@ -77,7 +77,7 @@
             @click="emit('leave')"
           >
             <ExitToApp />
-            {{ $t("Leave") }}
+            {{ t("Leave") }}
           </o-dropdown-item>
         </o-dropdown>
       </div>
@@ -96,10 +96,13 @@ import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Tag from "@/components/Tag.vue";
 import { htmlToText } from "@/utils/html";
+import { useI18n } from "vue-i18n";
 
 defineProps<{
   member: IMember;
 }>();
 
 const emit = defineEmits(["leave"]);
+
+const { t } = useI18n({ useScope: "global" });
 </script>

@@ -9,7 +9,7 @@
         },
       }"
     >
-      <div class="preview">
+      <div class="preview text-mbz-purple dark:text-mbz-purple-300">
         <Folder :size="48" />
       </div>
       <div class="body">
@@ -39,7 +39,7 @@
 </template>
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-import Draggable, { ChangeEvent } from "@xiaoshuapp/draggable";
+// import Draggable, { ChangeEvent } from "@xiaoshuapp/draggable";
 // import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { IResource } from "@/types/resource";
 import RouteName from "@/router/name";
@@ -110,8 +110,8 @@ onMovedResource(({ data }) => {
 onMovedResourceError((e) => {
   // Snackbar.open({
   //   message: e.message,
-  //   type: "is-danger",
-  //   position: "is-bottom",
+  //   variant: "danger",
+  //   position: "bottom",
   // });
   return undefined;
 });
