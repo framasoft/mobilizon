@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
 "PO-Revision-Date: 2022-08-27 00:20+0000\n"
-"Last-Translator: Valentin Bachem <vbachem@gmx.de>\n"
+"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -1789,7 +1789,7 @@ msgstr "%{Veranstaltung}-Teilnehmer"
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
 msgid "Participant message"
-msgstr "Teilnehmernachricht"
+msgstr "Nachricht des/der Teilnehmer:in"
 
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
@@ -1799,7 +1799,7 @@ msgstr "Teilnahme bestätigt"
 #: lib/service/export/participants/common.ex:61
 #, elixir-autogen, elixir-format
 msgid "Participant status"
-msgstr "Teilnehmerstatus"
+msgstr "Status des/der Teilnehmer:in"
 
 #: lib/service/export/participants/common.ex:52
 #: lib/web/templates/email/admin/_role.html.heex:3
@@ -2230,7 +2230,7 @@ msgstr ""
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name} fragt an, Ihrer Instanz folgen zu dürfen."
+msgstr "%{name} hat soeben beantragt, Ihrer Instanz zu folgen."
 
 #: lib/web/templates/email/instance_follow.html.heex:48
 #, elixir-autogen, elixir-format
