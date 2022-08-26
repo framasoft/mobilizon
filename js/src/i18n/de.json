@@ -1129,7 +1129,7 @@
   "You deleted the post {post}.": "Sie haben den Beitrag {post} gelöscht.",
   "You deleted the resource {resource}.": "Sie haben die Ressource {resource} gelöscht.",
   "You demoted the member {member} to an unknown role.": "Sie haben {member} zu einer unbekannten Rolle zurückgestuft.",
-  "You demoted {member} to moderator.": "Sie haben {member} zum Moderator zurückgestuft",
+  "You demoted {member} to moderator.": "Sie haben {member} zum Moderator zurückgestuft.",
   "You demoted {member} to simple member.": "Sie haben {member} zu einem einfachen Mitglied zurückgestuft.",
   "You didn't create or join any event yet.": "Sie haben keine Veranstaltung erstellt oder nehmen an einer teil.",
   "You don't follow any instances yet.": "Sie folgen noch keinen Instanzen.",
