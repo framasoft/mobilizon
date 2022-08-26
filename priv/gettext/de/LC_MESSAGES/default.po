@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-08-26 16:28+0000\n"
+"PO-Revision-Date: 2022-08-26 18:25+0000\n"
 "Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -18,9 +18,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
-"Wenn Du diese E-Mail nicht angefordert hast, ignoriere sie bitte. Dein "
-"Passwort wird sich nicht ändern, solange Du den Link unten nicht besuchst "
-"und ein neues erstellst."
+"Wenn Sie diese E-Mail nicht angefordert baben, ignoriere Sie sie bitte. Ihr "
+"Passwort wird sich nicht ändern, solange Sie den Link unten nicht besuchen "
+"und ein neues erstellen."
 
 #: lib/web/templates/email/report.html.heex:120
 #, elixir-autogen, elixir-format
@@ -36,7 +36,7 @@ msgstr "Mein Konto aktivieren"
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr "Richte deine Fragen an die Gemeinschaft auf Framacolibri"
+msgstr "Richten SIe Ihre Fragen an die Framacolibri Community"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-autogen, elixir-format
@@ -52,7 +52,7 @@ msgstr "Veranstaltung"
 #: lib/web/email/user.ex:49
 #, elixir-autogen, elixir-format
 msgid "Instructions to reset your password on %{instance}"
-msgstr "Anweisungen um dein Passwort auf %{instance} zurückzusetzen"
+msgstr "Anweisungen um Ihr Passwort auf %{instance} zurückzusetzen"
 
 #: lib/web/templates/email/report.text.eex:21
 #, elixir-autogen, elixir-format
@@ -68,8 +68,8 @@ msgstr "Passwort zurücksetzen"
 #, elixir-autogen, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
-"Dein Passwort zurückzusetzen ist einfach. Klicke einfach auf den Button "
-"unten und folge den Anweisungen. Wir kümmern uns um den Rest."
+"Ihr Passwort zurückzusetzen ist einfach. Klicken Sie einfach auf den Button "
+"unten und folgen Sie den Anweisungen. Wir kümmern uns um den Rest."
 
 #: lib/web/email/user.ex:26
 #, elixir-autogen, elixir-format
@@ -85,7 +85,7 @@ msgstr "Neue Meldung auf der Mobilizon-Instanz %{instance}"
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "Go to event page"
-msgstr "Gehe zur Veranstaltungs-Seite"
+msgstr "zur Veranstaltungs-Seite"
 
 #: lib/web/templates/email/report.text.eex:1
 #, elixir-autogen, elixir-format
@@ -107,26 +107,26 @@ msgstr "Zurücksetzen des Passworts"
 #, elixir-autogen, elixir-format
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
-"Dein Passwort zurückzusetzen ist einfach. Klicke einfach auf den Button "
-"unten und folge den Anweisungen. Wir kümmern uns um den Rest."
+"Ihr Passwort zurückzusetzen ist einfach. Klicken Sie einfach auf den Button "
+"unten und folgen Sie den Anweisungen. Wir kümmern uns um den Rest."
 
 #: lib/web/templates/email/registration_confirmation.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
-"Du hast einen Account auf %{host} mit dieser E-Mail-Adresse. Du bist nur ein "
-"Klick von der Aktivierung entfernt. Wenn Du das nicht warst, ignoriere diese "
-"E-Mail bitte."
+"Sie haben einen Account auf %{host} mit dieser E-Mail-Adresse. Sie sind nur "
+"ein Klick von der Aktivierung entfernt. Wenn Sie das nicht waren, ignorieren "
+"SIe diese E-Mail bitte."
 
 #: lib/web/email/participation.ex:114
 #, elixir-autogen, elixir-format
 msgid "Your participation to event %{title} has been approved"
-msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde akzeptiert"
+msgstr "Ihre Teilnahme an der Veranstaltung %{title}wurde akzeptiert"
 
 #: lib/web/email/participation.ex:67
 #, elixir-autogen, elixir-format
 msgid "Your participation to event %{title} has been rejected"
-msgstr "Deine Teilnahme an der Veranstaltung %{title}wurde abgelehnt"
+msgstr "Ihre Teilnahme an der Veranstaltung %{title}wurde abgelehnt"
 
 #: lib/web/email/event.ex:44
 #, elixir-autogen, elixir-format
@@ -142,7 +142,7 @@ msgstr "Neuer Titel: %{title}"
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on %{instance}."
 msgstr ""
-"Du hast ein neues Passwort für deinen Account auf %{instance} angefragt."
+"Sie haben ein neues Passwort für Ihren Account auf %{instance} angefragt."
 
 #: lib/web/templates/email/email.html.heex:105
 #, elixir-autogen, elixir-format
@@ -158,7 +158,7 @@ msgstr "Meine Teilnahme an der Veranstaltung %{title} zusagen"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
-msgstr "Eine interne ID für deine aktuell ausgewählte Identität"
+msgstr "Eine interne ID für Ihre aktuell ausgewählte Identität"
 
 #: lib/web/templates/api/privacy.html.heex:105
 #, elixir-autogen, elixir-format
@@ -202,7 +202,7 @@ msgstr "Benutzen wir Cookies?"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "How do we protect your information?"
-msgstr "Wie schützen wir deinen Informationen?"
+msgstr "Wie schützen wir Ihre Informationen?"
 
 #: lib/web/templates/api/privacy.html.heex:36
 #, elixir-autogen, elixir-format
@@ -228,7 +228,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Tokens to authenticate you"
-msgstr "Tokens, um dich zu authentifizieren"
+msgstr "Tokens, um Sie zu authentifizieren"
 
 #: lib/web/templates/api/privacy.html.heex:38
 #, elixir-autogen, elixir-format
@@ -243,8 +243,8 @@ msgstr ""
 msgctxt "terms"
 msgid "We store the following information on your device when you connect:"
 msgstr ""
-"Wir speichern auf deines Gerät die folgenden Informationen wann Du "
-"einloggst :"
+"Wir speichern auf Ihrem Gerät die folgenden Informationen wenn Sie sich "
+"einloggen:"
 
 #: lib/web/templates/api/privacy.html.heex:84
 #, elixir-autogen, elixir-format
@@ -256,7 +256,7 @@ msgstr "Wir werden uns nach besten Wissen und Gewissen dazu bemühen:"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What do we use your information for?"
-msgstr "Für was nutzen wir deine Informationen?"
+msgstr "Für was nutzen wir Ihre Informationen?"
 
 #: lib/web/templates/api/privacy.html.heex:83
 #, elixir-autogen, elixir-format
@@ -268,7 +268,7 @@ msgstr "Was ist unsere Richtlinie zur Datenspeicherung?"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "You may irreversibly delete your account at any time."
-msgstr "Du kannst jederzeit dein Konto löschen."
+msgstr "Sie können jederzeit ihr Konto löschen."
 
 #: lib/web/templates/api/privacy.html.heex:158
 #, elixir-autogen, elixir-format
@@ -381,13 +381,13 @@ msgstr[1] "%{nb_events} wurden heute geplannt"
 #, elixir-format
 msgid "You have one event today:"
 msgid_plural "You have %{total} events today:"
-msgstr[0] "Du hast heute ein Event:"
-msgstr[1] "Du hast heute %{total} Events:"
+msgstr[0] "Sie haben ein neues Event:"
+msgstr[1] "Sie haben heute %{total} Events:"
 
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "%{inviter} just invited you to join their group %{group}"
-msgstr "%{inviter} hat dich gerade in die Gruppe %{group} eingeladen"
+msgstr "%{inviter} hat Sie gerade in die Gruppe %{group} eingeladen"
 
 #: lib/web/templates/email/group_invite.html.heex:18
 #: lib/web/templates/email/group_invite.text.eex:1
@@ -398,13 +398,13 @@ msgstr "Komm rein!"
 #: lib/web/email/notification.ex:24
 #, elixir-autogen, elixir-format
 msgid "Don't forget to go to %{title}"
-msgstr "Vergesse nicht zu %{title} gehen"
+msgstr "Vergessen Sie nicht zu %{title} gehen"
 
 #: lib/web/templates/email/before_event_notification.html.heex:47
 #: lib/web/templates/email/before_event_notification.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "Get ready for %{title}"
-msgstr "Mach dich bereit für %{title}"
+msgstr "Machen Sie sich bereit für %{title}"
 
 #: lib/web/templates/email/group_invite.html.heex:83
 #, elixir-autogen, elixir-format
@@ -425,7 +425,7 @@ msgstr "Zeige die aktualisierte Veranstaltung unter: %{link}"
 #: lib/web/email/member.ex:30
 #, elixir-autogen, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
-msgstr "Du wurdest von %{inviter} eingeladen, der Gruppe %{group} beizutreten"
+msgstr "Sie wurden von %{inviter} eingeladen, der Gruppe %{group} beizutreten"
 
 #: lib/web/email/notification.ex:81
 #, elixir-format
@@ -448,8 +448,8 @@ msgstr[1] ""
 #, elixir-format
 msgid "You have one event this week:"
 msgid_plural "You have %{total} events this week:"
-msgstr[0] "Du hast diese Woche eine Veranstaltung:"
-msgstr[1] "Du hast diese Woche %{total} Veranstaltungen:"
+msgstr[0] "Sie haben diese Woche eine Veranstaltung:"
+msgstr[1] "Sie haben diese Woche %{total} Veranstaltungen:"
 
 #: lib/service/metadata/utils.ex:53
 #, elixir-autogen, elixir-format
@@ -925,14 +925,14 @@ msgstr ""
 #: lib/web/templates/email/email.text.eex:8
 #, elixir-autogen, elixir-format
 msgid "Need help? Is something not working as expected?"
-msgstr "Brauchst Du Hilfe? Funktioniert etwas nicht richtig?"
+msgstr "Brauchsten Sie Hilfe? Funktioniert etwas nicht richtig?"
 
 #: lib/web/templates/email/registration_confirmation.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You created an account on <b>%{host}</b> with this email address. You are one click away from activating it."
 msgstr ""
-"Du hast einen Account auf <b>%{host}</b> mit dieser E-Mail-Adresse. Du bist "
-"nur ein Klick von der Aktivierung entfernt."
+"Sie haben einen Account auf <b>%{host}</b> mit dieser E-Mail-Adresse. Sie "
+"sind nur ein Klick von der Aktivierung entfernt."
 
 #: lib/web/templates/email/report.html.heex:18
 #, elixir-autogen, elixir-format
@@ -948,7 +948,7 @@ msgstr "Die E-Mail-Adresse für Ihr Konto auf <b>%{host}</b> wird geändert in:"
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr ""
-"Du hast ein neues Passwort für deinen Account auf <b>%{instance}</b> "
+"Sie haben ein neues Passwort für deinen Account auf <b>%{instance}</b> "
 "angefragt."
 
 #: lib/web/templates/email/email.text.eex:5
@@ -968,12 +968,12 @@ msgstr "Bitte verwenden Sie es nicht für reale Zwecke."
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
-"Wenn Du die Teilnahme absagen musst, gehe einfach über obenstehenden Link "
-"auf die Veranstaltungs-Seite und klicke auf den Teilnahme-Button."
+"Wenn Sie die Teilnahme absagen müssen, gehen Sie einfach über obenstehenden "
+"Link auf die Veranstaltungs-Seite und klicken Sie auf den Teilnahme-Button."
 msgstr[1] ""
-"Wenn Du die Teilnahme für ein oder mehrere Veranstaltungen absagen musst, "
-"gehe einfach über obenstehenden Link auf die Veranstaltungs-Seite und klicke "
-"auf den Teilnahme-Button."
+"Wenn Sie die Teilnahme für ein oder mehrere Veranstaltungen absagen müssen, "
+"gehen Sie einfach über obenstehenden Link auf die Veranstaltungs-Seite und "
+"klicken Sie auf den Teilnahme-Button."
 
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
@@ -1082,7 +1082,7 @@ msgstr ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
 msgid "Learn more about Mobilizon here!"
-msgstr "Lerne mehr über Mobilizon!"
+msgstr "Lernen Sie mehr über Mobilizon!"
 
 #: lib/web/templates/email/event_updated.html.heex:123
 #: lib/web/templates/export/event_participants.html.heex:129
@@ -1239,7 +1239,7 @@ msgstr "Sie haben eine Anfrage zur Teilnahme an %{title} gestellt."
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "You recently requested to attend %{title}."
-msgstr "Du hast angefragt, an der Veranstaltung %{title} teilzunehmen."
+msgstr "Sie haben angefragt, an der Veranstaltung %{title} teilzunehmen."
 
 #: lib/web/templates/email/event_participation_approved.html.heex:18
 #: lib/web/templates/email/event_participation_confirmed.html.heex:18
@@ -1273,7 +1273,7 @@ msgstr ""
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "So long, and thanks for the fish!"
-msgstr "Macht's gut und danke für den Fisch!"
+msgstr "Mach's gut und danke für den Fisch!"
 
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
@@ -1284,7 +1284,7 @@ msgstr "Sie wurden aus der Gruppe %{group} entfernt"
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
-"Du wurdest aus der Gruppe %{group} entfernt. Sie werden nicht mehr auf den "
+"Sie wurden aus der Gruppe %{group} entfernt. Sie werden nicht mehr auf den "
 "privaten Inhalt dieser Gruppe zugreifen können."
 
 #: lib/web/templates/email/group_invite.html.heex:47
@@ -1314,7 +1314,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
 msgstr ""
-"Da sich diese Gruppe auf dieser Instanz befand, wurden alle ihre Daten "
+"Da sich diese Gruppe auf dieser Instanz befand, wurden alle Ihre Daten "
 "unwiederbringlich gelöscht."
 
 #: lib/web/templates/email/group_suspension.html.heex:18
@@ -1705,15 +1705,15 @@ msgstr "Feed für %{email} auf %{instance}"
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may contact the server administrator at %{contact}."
 msgstr ""
-"Falls das Problem bestehen bleibt, kontaktieren Sie den/die Server-"
-"Administrator/in unter %{contact}."
+"Falls das Problem bestehen bleibt, kontaktieren Sie den Server-Administrator "
+"unter %{contact}."
 
 #: lib/web/templates/error/500_page.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may try to contact the server administrator."
 msgstr ""
-"Falls das Problem bestehen bleibt, versuchen Sie den/die Server-"
-"Administrator/in zu kontaktieren."
+"Falls das Problem bestehen bleibt, versuchen Sie den Server-Administrator zu "
+"kontaktieren."
 
 #: lib/web/templates/error/500_page.html.heex:82
 #, elixir-autogen, elixir-format
@@ -1803,19 +1803,19 @@ msgstr "Teilnehmerstatus"
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Administrator"
-msgstr "Administrator:in"
+msgstr "Administrator"
 
 #: lib/service/export/participants/common.ex:55
 #, elixir-autogen, elixir-format
 msgid "Creator"
-msgstr "Ersteller:in"
+msgstr "Ersteller"
 
 #: lib/service/export/participants/common.ex:49
 #: lib/web/templates/email/admin/_role.html.heex:5
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Moderator"
-msgstr "Moderator:in"
+msgstr "Moderator"
 
 #: lib/service/export/participants/common.ex:37
 #, elixir-autogen, elixir-format
@@ -1850,7 +1850,7 @@ msgstr "Ende"
 #: lib/web/templates/export/event_participants.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Number of participants"
-msgstr "Anzahl der Treilnehmenden"
+msgstr "Anzahl der Teilnehmer"
 
 #: lib/web/templates/export/event_participants.html.heex:120
 #, elixir-autogen, elixir-format
@@ -1860,7 +1860,7 @@ msgstr "Teilnahme bestätigt"
 #: lib/service/export/participants/common.ex:88
 #, elixir-autogen, elixir-format
 msgid "Anonymous participant"
-msgstr "Anonyme Teilnehmer"
+msgstr "Anonymer Teilnehmer"
 
 #: lib/web/templates/email/date/event_tz_date.html.heex:12
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:20
@@ -1953,13 +1953,13 @@ msgstr "Verwalten deine Benachrichtigungseinstellungen"
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Manage your participation:"
-msgstr "Verwalte deine Teilnahmen:"
+msgstr "Verwalten Sie Ihre Teilnahmen:"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "Organizer: %{organizer}"
-msgstr "Veranstalter:in: %{organizer}"
+msgstr "Veranstalter: %{organizer}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:91
 #, elixir-autogen, elixir-format
@@ -2060,12 +2060,12 @@ msgstr[1] ""
 #: lib/web/templates/email/admin_user_role_changed.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator changed your role"
-msgstr "Eine Administrator:in hat Ihre Rolle geändert"
+msgstr "Ein Administrator hat Ihre Rolle geändert"
 
 #: lib/web/email/admin.ex:122
 #, elixir-autogen, elixir-format
 msgid "An administrator confirmed your account on %{instance}"
-msgstr "Eine Administrator:in hat Ihr Konto auf %{instance} bestätigt"
+msgstr "Ein Administrator hat Ihr Konto auf %{instance} bestätigt"
 
 #: lib/web/templates/email/admin_user_email_changed_new.html.heex:18
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:1
@@ -2074,27 +2074,26 @@ msgstr "Eine Administrator:in hat Ihr Konto auf %{instance} bestätigt"
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account"
 msgstr ""
-"Eine Administrator:in hat die mit Ihrem Konto verknüpfte E-Mail manuell "
-"geändert"
+"Ein Administrator hat die mit Ihrem Konto verknüpfte E-Mail manuell geändert"
 
 #: lib/web/email/admin.ex:43
 #: lib/web/email/admin.ex:70
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account on %{instance}"
 msgstr ""
-"Eine Administrator:in hat die mit Ihrem Konto verknüpfte E-Mail auf "
-"%{instance} manuell geändert"
+"Ein Administrator hat die mit Ihrem Konto verknüpfte E-Mail auf %{instance} "
+"manuell geändert"
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:18
 #: lib/web/templates/email/admin_user_confirmation.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator manually confirmed your account"
-msgstr "Eine Administrator:in hat Ihr Konto manuell bestätigt"
+msgstr "Ein Administrator hat Ihr Konto manuell bestätigt"
 
 #: lib/web/email/admin.ex:98
 #, elixir-autogen, elixir-format
 msgid "An administrator updated your role on %{instance}"
-msgstr "Eine Administrator:in hat Ihre Rolle auf %{instance} aktualisiert"
+msgstr "Ein Administrator hat Ihre Rolle auf %{instance} aktualisiert"
 
 #: lib/web/templates/email/email_changed_new.text.eex:3
 #, elixir-autogen, elixir-format
@@ -2119,24 +2118,24 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from %{instance} just manually confirmed your account."
 msgstr ""
-"Hallo! Wir wollten Sie informieren, dass eine Administrator:in von <b> "
+"Hallo! Wir wollten Sie informieren, dass eine Administrator von <b> "
 "%{instance}</b> eben manuell Ihr Kontos bestätigte."
 
 #: lib/web/templates/email/admin_user_email_changed_old.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just manually changed your account email from <b>%{old_email}</b> (this one) to <b>%{new_email}</b>."
 msgstr ""
-"Hallo! Wir wollten Sie nur informieren, dass eine Administrator:in von <b>"
-"%{instance}</b> soeben manuell die mit Ihrem Konto verknüpfte E-Mail von <b>"
-"%{old_email}</b> (diese hier) zu <b>%{new_email}</b> geändert hat."
+"Hallo! Wir wollten Sie nur informieren, dass eine Administrator von "
+"<b>%{instance}</b> soeben manuell die mit Ihrem Konto verknüpfte E-Mail von "
+"<b>%{old_email}</b> (diese hier) zu <b>%{new_email}</b> geändert hat."
 
 #: lib/web/templates/email/admin_user_email_changed_new.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just manually changed your account email from <b>%{old_email}</b> to <b>%{new_email}</b> (this one)."
 msgstr ""
-"Hallo! Wir wollten Sie nur informieren, dass eine Administrator:in von <b>"
-"%{instance}</b> soeben manuell die mit Ihrem Konto verknüpfte E-Mail von <b>"
-"%{old_email}</b> zu <b>%{new_email}</b> (diese hier) geändert hat."
+"Hallo! Wir wollten Sie nur informieren, dass eine Administrator von "
+"<b>%{instance}</b> soeben manuell die mit Ihrem Konto verknüpfte E-Mail von "
+"<b>%{old_email}</b> zu <b>%{new_email}</b> (diese hier) geändert hat."
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:47
 #, elixir-autogen, elixir-format
@@ -2153,8 +2152,8 @@ msgstr ""
 msgid "If something doesn't feel right to you, please contact the instance administrator through the contact methods %{start_link}on the instance's about page%{end_link}."
 msgstr ""
 "Wenn Ihnen etwas nicht richtig vorkommt, kontaktieren Sie bitte die "
-"Instanzadministrator:in über die aufgeführten Kontaktmethoden %{start_link} "
-"auf der About-Seite%{end_link} der Instanz."
+"Instanzadministrator über die aufgeführten Kontaktmethoden %{start_link} auf "
+"der About-Seite%{end_link} der Instanz."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:7
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:4
@@ -2164,8 +2163,8 @@ msgstr ""
 msgid "If something doesn't feel right to you, please contact the instance administrator through the contact methods on the instance's about page: %{about_page}."
 msgstr ""
 "Wenn Ihnen etwas nicht richtig vorkommt, kontaktieren Sie bitte die "
-"Instanzadministrator:in über die Kontaktmethoden auf der Über-Seite der "
-"Instanz: %{about_page}."
+"Instanzadministrator über die Kontaktmethoden auf der Über-Seite der Instanz:"
+" %{about_page}."
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
@@ -2219,7 +2218,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just changed your account role."
 msgstr ""
-"Hallo! Wir wollten Sie informieren, dass eine Administrator:in von <b> "
+"Hallo! Wir wollten Sie informieren, dass ein Administrator von <b> "
 "%{instance}</b> änderte die Rolle Ihres Kontos."
 
 #: lib/web/templates/email/instance_follow.text.eex:5
@@ -2251,8 +2250,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr ""
-"Um diese Einladung anzunehmen, gehen Sie zu den Administrator:in-"
-"Einstellungen der Instanz."
+"Um diese Einladung anzunehmen, gehen Sie zu den Administrator-Einstellungen "
+"der Instanz."
 
 #: lib/web/templates/email/instance_follow.html.heex:119
 #: lib/web/templates/email/instance_follow.html.heex:129
@@ -2273,7 +2272,7 @@ msgstr "Autos, Boote, Luftfahrt"
 #: lib/mobilizon/events/categories.ex:20
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr "Buchklubs"
+msgstr "Buchclubs"
 
 #: lib/mobilizon/events/categories.ex:24
 #, elixir-autogen, elixir-format
