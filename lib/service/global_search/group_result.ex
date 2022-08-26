@@ -10,7 +10,6 @@ defmodule Mobilizon.Service.GlobalSearch.GroupResult do
     :domain,
     :avatar,
     :summary,
-    :url,
     :members_count,
     :follower_count,
     :type,
