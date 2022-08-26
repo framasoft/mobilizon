@@ -1632,6 +1632,10 @@ defmodule Mobilizon.Events do
 
   def category_statistics do
     Event
+    |> filter_future_events(true)
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> filter_cancelled_events()
     |> filter_local_or_from_followed_instances_events()
     |> group_by([e], e.category)
     |> select([e], {e.category, count(e.id)})
