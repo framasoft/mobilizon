@@ -32,6 +32,10 @@ defmodule Mobilizon.Service.GlobalSearch.Provider do
               Page.t(EventResult.t())
   @callback search_groups(search_options :: keyword) ::
               Page.t(GroupResult.t())
+  @doc """
+  The CSP configuration to add for the service to work
+  """
+  @callback csp() :: keyword()
 
   @spec endpoint(atom()) :: String.t()
   def endpoint(provider) do

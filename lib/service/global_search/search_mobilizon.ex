@@ -113,6 +113,16 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
     end
   end
 
+  @impl Provider
+  @doc """
+  Returns the CSP configuration for this search provider to work
+  """
+  def csp do
+    :mobilizon
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(:csp_policy, [])
+  end
+
   defp build_event(data) do
     picture =
       if data["banner"] do
