@@ -6,6 +6,7 @@ export const CONFIG = gql`
       name
       description
       slogan
+      version
       registrationsOpen
       registrationsAllowlist
       demoMode
