@@ -12,12 +12,13 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
   Sentry.init({
     app: environment.app,
     dsn: sentryConfiguration.dsn,
+    debug: import.meta.env.DEV,
     integrations: [
       new Integrations.BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(
           environment.router
         ),
-        tracingOrigins: ["localhost", "mobilizon1.com", /^\//],
+        tracingOrigins: [window.origin, /^\//],
       }),
     ],
     beforeSend(event) {
@@ -33,6 +34,7 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
     // We recommend adjusting this value in production
     tracesSampleRate: sentryConfiguration.tracesSampleRate,
     release: environment.version,
+    logErrors: true,
   });
 };
 

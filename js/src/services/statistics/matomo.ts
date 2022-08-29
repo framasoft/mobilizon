@@ -9,5 +9,6 @@ export const matomo = (environment: any, matomoConfiguration: any) => {
   environment.app.use(VueMatomo, {
     ...matomoConfiguration,
     router: environment.router,
+    debug: import.meta.env.DEV,
   });
 };
