@@ -22,16 +22,39 @@ function localeShortWeekDayNames(): string[] {
 }
 
 // https://stackoverflow.com/a/18650828/10204399
-function formatBytes(bytes: number, decimals = 2, zero = "0 Bytes"): string {
-  if (bytes === 0) return zero;
+function formatBytes(
+  bytes: number,
+  decimals = 2,
+  locale: string | undefined = undefined
+): string {
+  const formatNumber = (value = 0, unit = "byte") =>
+    new Intl.NumberFormat(locale, {
+      style: "unit",
+      unit,
+      unitDisplay: "long",
+    }).format(value);
+
+  if (bytes === 0) return formatNumber(0);
+  if (bytes < 0 || bytes > Number.MAX_SAFE_INTEGER) {
+    throw new RangeError(
+      "Number mustn't be negative and be inferior to Number.MAX_SAFE_INTEGER"
+    );
+  }
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const sizes = [
+    "byte",
+    "kilobyte",
+    "megabyte",
+    "gigabyte",
+    "terabyte",
+    "petabyte",
+  ];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
+  return formatNumber(parseFloat((bytes / k ** i).toFixed(dm)), sizes[i]);
 }
 
 function roundToNearestMinute(date = new Date()) {
