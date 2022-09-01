@@ -424,7 +424,7 @@
     <div class="flex-1 px-2">
       <div
         id="results-anchor"
-        class="hidden sm:flex items-center justify-between dark:text-slate-100"
+        class="hidden sm:flex items-center justify-between dark:text-slate-100 mb-2"
       >
         <p v-if="totalCount === 0">
           <span v-if="contentType === ContentType.EVENTS">{{
@@ -465,7 +465,14 @@
           </span>
         </p>
         <div class="flex gap-2">
-          <o-select :placeholder="t('Sort by')" v-model="sortBy">
+          <label class="sr-only" for="sortOptionSelect">{{
+            t("Sort by")
+          }}</label>
+          <o-select
+            :placeholder="t('Sort by')"
+            v-model="sortBy"
+            id="sortOptionSelect"
+          >
             <option
               v-for="sortOption in sortOptions"
               :key="sortOption.key"

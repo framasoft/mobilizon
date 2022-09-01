@@ -21,6 +21,7 @@
     >
       <li>
         <o-select
+          class="text-black dark:text-white"
           :aria-label="t('Language')"
           v-model="locale"
           :placeholder="t('Select a language')"

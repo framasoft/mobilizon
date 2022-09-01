@@ -197,7 +197,7 @@ button.menubar__button {
 }
 
 .notification-info {
-  @apply bg-mbz-info;
+  @apply bg-mbz-info text-black;
 }
 
 .notification-warning {
