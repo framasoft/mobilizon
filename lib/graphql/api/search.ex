@@ -52,6 +52,7 @@ defmodule Mobilizon.GraphQL.API.Search do
                 actor_type: result_type,
                 radius: Map.get(args, :radius),
                 location: Map.get(args, :location),
+                bbox: Map.get(args, :bbox),
                 minimum_visibility: Map.get(args, :minimum_visibility, :public),
                 current_actor_id: Map.get(args, :current_actor_id),
                 exclude_my_groups: Map.get(args, :exclude_my_groups, false),

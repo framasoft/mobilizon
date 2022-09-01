@@ -228,7 +228,6 @@ export class EventModel implements IEvent {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function removeTypeName(entity: any): any {
   if (entity?.__typename) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -291,4 +290,8 @@ export function organizerDisplayName(event: IEvent): string | null {
     return displayName(organizerActor);
   }
   return null;
+}
+
+export function instanceOfIEvent(object: any): object is IEvent {
+  return "organizerActor" in object;
 }

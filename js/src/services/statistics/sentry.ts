@@ -32,7 +32,7 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
     // We recommend adjusting this value in production
-    tracesSampleRate: sentryConfiguration.tracesSampleRate,
+    tracesSampleRate: Number.parseFloat(sentryConfiguration.tracesSampleRate),
     release: environment.version,
     logErrors: true,
   });

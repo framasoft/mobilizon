@@ -3,7 +3,7 @@
     class="mbz-card snap-center dark:bg-mbz-purple"
     :class="{
       'sm:flex sm:items-start': mode === 'row',
-      'max-w-xs w-[18rem] shrink-0 flex flex-col': mode === 'column',
+      'sm:max-w-xs sm:w-[18rem] shrink-0 flex flex-col': mode === 'column',
     }"
     :to="to"
     :isInternal="isInternal"

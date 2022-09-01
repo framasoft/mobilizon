@@ -33,6 +33,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $searchTarget: SearchTarget
     $beginsOn: DateTime
     $endsOn: DateTime
+    $bbox: String
+    $zoom: Int
     $eventPage: Int
     $groupPage: Int
     $limit: Int
@@ -49,6 +51,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       searchTarget: $searchTarget
       beginsOn: $beginsOn
       endsOn: $endsOn
+      bbox: $bbox
+      zoom: $zoom
       page: $eventPage
       limit: $limit
     ) {
@@ -88,6 +92,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       radius: $radius
       languageOneOf: $languageOneOf
       searchTarget: $searchTarget
+      bbox: $bbox
+      zoom: $zoom
       page: $groupPage
       limit: $limit
     ) {

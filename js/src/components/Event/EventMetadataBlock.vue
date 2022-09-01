@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-2xl">{{ title }}</h2>
+    <h2>{{ title }}</h2>
     <div class="flex items-center mb-3 gap-1 eventMetadataBlock">
       <slot name="icon"></slot>
       <!-- Custom icons -->
@@ -15,7 +15,7 @@
         />
       </span>
       <o-icon v-else-if="icon" :icon="icon" size="is-medium" /> -->
-      <div class="content-wrapper">
+      <div class="content-wrapper overflow-hidden w-full">
         <slot></slot>
       </div>
     </div>
@@ -28,13 +28,7 @@ defineProps<{
 </script>
 <style lang="scss" scoped>
 div.eventMetadataBlock {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.75rem;
-
   .content-wrapper {
-    overflow: hidden;
-    width: 100%;
     max-width: calc(100vw - 32px - 20px);
 
     &.padding-left {

@@ -461,10 +461,15 @@
           <event-metadata-block
             v-if="physicalAddress && physicalAddress.url"
             :title="t('Location')"
-            :icon="
-              physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'
-            "
           >
+            <template #icon>
+              <o-icon
+                v-if="physicalAddress.poiInfos.poiIcon.icon"
+                :icon="physicalAddress.poiInfos.poiIcon.icon"
+                customSize="48"
+              />
+              <Earth v-else :size="48" />
+            </template>
             <div class="address-wrapper">
               <span
                 v-if="!physicalAddress || !addressFullName(physicalAddress)"
@@ -670,6 +675,7 @@ import CalendarSync from "vue-material-design-icons/CalendarSync.vue";
 import Flag from "vue-material-design-icons/Flag.vue";
 import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
 import AccountMultiplePlus from "vue-material-design-icons/AccountMultiplePlus.vue";
+import Earth from "vue-material-design-icons/Earth.vue";
 import { useI18n } from "vue-i18n";
 import { useCreateReport } from "@/composition/apollo/report";
 import { useHead } from "@vueuse/head";

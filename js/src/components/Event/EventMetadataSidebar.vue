@@ -2,11 +2,11 @@
   <div>
     <event-metadata-block
       v-if="!event.options.isOnline"
-      :title="$t('Location')"
-      :icon="physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'"
+      :title="t('Location')"
+      :icon="addressPOIInfos?.poiIcon?.icon ?? 'earth'"
     >
       <div class="address-wrapper">
-        <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
+        <span v-if="!physicalAddress">{{ t("No address defined") }}</span>
         <div class="address" v-if="physicalAddress">
           <address-info :address="physicalAddress" />
           <o-button
@@ -15,12 +15,23 @@
             @click="$emit('showMapModal', true)"
             v-if="physicalAddress.geom"
           >
-            {{ $t("Show map") }}
+            {{ t("Show map") }}
           </o-button>
         </div>
       </div>
+      <template #icon>
+        <o-icon
+          v-if="addressPOIInfos?.poiIcon?.icon"
+          :icon="addressPOIInfos?.poiIcon?.icon"
+          customSize="36"
+        />
+        <Earth v-else :size="36" />
+      </template>
     </event-metadata-block>
-    <event-metadata-block :title="$t('Date and time')" icon="calendar">
+    <event-metadata-block :title="t('Date and time')">
+      <template #icon>
+        <Calendar :size="36" />
+      </template>
       <event-full-date
         :beginsOn="event.beginsOn.toString()"
         :show-start-time="event.options.showStartTime"
@@ -32,7 +43,7 @@
     </event-metadata-block>
     <event-metadata-block
       class="metadata-organized-by"
-      :title="$t('Organized by')"
+      :title="t('Organized by')"
     >
       <router-link
         v-if="event.attributedTo"
@@ -66,16 +77,18 @@
     </event-metadata-block>
     <event-metadata-block
       v-if="event.onlineAddress && urlToHostname(event.onlineAddress)"
-      icon="link"
-      :title="$t('Website')"
+      :title="t('Website')"
     >
+      <template #icon>
+        <Link :size="36" />
+      </template>
       <a
         target="_blank"
         class="hover:underline"
         rel="noopener noreferrer ugc"
         :href="event.onlineAddress"
         :title="
-          $t('View page on {hostname} (in a new window)', {
+          t('View page on {hostname} (in a new window)', {
             hostname: urlToHostname(event.onlineAddress),
           })
         "
@@ -85,9 +98,9 @@
     <event-metadata-block
       v-for="extra in extraMetadata"
       :title="extra.title || extra.label"
-      :icon="extra.icon"
       :key="extra.key"
     >
+      <template #icon> <o-icon :icon="extra.icon" customSize="36" /> </template>
       <span
         v-if="
           ((extra.type == EventMetadataType.STRING &&
@@ -108,7 +121,7 @@
         rel="noopener noreferrer ugc"
         :href="extra.value"
         :title="
-          $t('View page on {hostname} (in a new window)', {
+          t('View page on {hostname} (in a new window)', {
             hostname: urlToHostname(extra.value),
           })
         "
@@ -123,7 +136,7 @@
         rel="noopener noreferrer ugc"
         :href="accountURL(extra)"
         :title="
-          $t('View account on {hostname} (in a new window)', {
+          t('View account on {hostname} (in a new window)', {
             hostname: urlToHostname(accountURL(extra)),
           })
         "
@@ -134,7 +147,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { Address } from "@/types/address.model";
+import { Address, addressToPoiInfos } from "@/types/address.model";
 import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import { computed } from "vue";
@@ -147,6 +160,10 @@ import AddressInfo from "../../components/Address/AddressInfo.vue";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { IUser } from "@/types/current-user.model";
+import { useI18n } from "vue-i18n";
+import Earth from "vue-material-design-icons/Earth.vue";
+import Calendar from "vue-material-design-icons/Calendar.vue";
+import Link from "vue-material-design-icons/Link.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -157,10 +174,17 @@ const props = withDefaults(
   { showMap: false }
 );
 
+const { t } = useI18n({ useScope: "global" });
+
 const physicalAddress = computed((): Address | null => {
   if (!props.event.physicalAddress) return null;
 
   return new Address(props.event.physicalAddress);
+});
+
+const addressPOIInfos = computed(() => {
+  if (!props.event.physicalAddress) return null;
+  return addressToPoiInfos(props.event.physicalAddress);
 });
 
 const extraMetadata = computed((): IEventMetadataDescription[] => {

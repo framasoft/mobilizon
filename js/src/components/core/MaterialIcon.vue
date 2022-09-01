@@ -104,6 +104,7 @@ const icons: Record<string, () => Promise<any>> = {
     ),
   Earth: () =>
     import(`../../../node_modules/vue-material-design-icons/Earth.vue`),
+  Map: () => import(`../../../node_modules/vue-material-design-icons/Map.vue`),
   MapMarker: () =>
     import(`../../../node_modules/vue-material-design-icons/MapMarker.vue`),
   Close: () =>
@@ -231,6 +232,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/Filter.vue`),
   CheckCircle: () =>
     import(`../../../node_modules/vue-material-design-icons/CheckCircle.vue`),
+  ViewList: () =>
+    import(`../../../node_modules/vue-material-design-icons/ViewList.vue`),
 };
 
 const props = withDefaults(

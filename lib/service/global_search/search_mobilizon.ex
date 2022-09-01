@@ -40,7 +40,8 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         distance: if(options[:radius], do: "#{options[:radius]}_km", else: nil),
         count: options[:limit],
         start: (options[:page] - 1) * options[:limit],
-        latlon: to_lat_lon(options[:location])
+        latlon: to_lat_lon(options[:location]),
+        bbox: options[:bbox]
       )
       |> Keyword.take([
         :search,
@@ -53,6 +54,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :distance,
         :sort,
         :statusOneOf,
+        :bbox,
         :start,
         :count
       ])
@@ -86,7 +88,8 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         distance: if(options[:radius], do: "#{options[:radius]}_km", else: nil),
         count: options[:limit],
         start: (options[:page] - 1) * options[:limit],
-        latlon: to_lat_lon(options[:location])
+        latlon: to_lat_lon(options[:location]),
+        bbox: options[:bbox]
       )
       |> Keyword.take([
         :search,
@@ -95,7 +98,8 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :distance,
         :sort,
         :start,
-        :count
+        :count,
+        :bbox
       ])
       |> Keyword.reject(fn {_key, val} -> is_nil(val) end)
 
@@ -138,6 +142,27 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         nil
       end
 
+    address =
+      if data["location"] do
+        %Address{
+          id: data["location"]["id"],
+          country: data["location"]["address"]["addressCountry"],
+          locality: data["location"]["address"]["addressLocality"],
+          region: data["location"]["address"]["addressRegion"],
+          postal_code: data["location"]["address"]["postalCode"],
+          street: data["location"]["address"]["streetAddress"],
+          url: data["location"]["id"],
+          description: data["location"]["name"],
+          geom: %Geo.Point{
+            coordinates:
+              {data["location"]["location"]["lon"], data["location"]["location"]["lat"]},
+            srid: 4326
+          }
+        }
+      else
+        nil
+      end
+
     %EventResult{
       id: data["id"],
       uuid: data["uuid"],
@@ -153,6 +178,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         preferred_username: data["creator"]["name"],
         avatar: organizer_actor_avatar
       },
+      physical_address: address,
       tags:
         Enum.map(data["tags"], fn tag ->
           tag = String.trim_leading(tag, "#")
@@ -224,12 +250,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
   defp to_lat_lon(nil), do: nil
 
   defp to_lat_lon(location) do
-    case Geohax.decode(location) do
-      {lon, lat} ->
-        "#{lat}:#{lon}"
-
-      _ ->
-        nil
-    end
+    {lon, lat} = Geohax.decode(location)
+    "#{lat}:#{lon}"
   end
 end

@@ -1390,5 +1390,20 @@
   "The videoconference will be created on {service}": "The videoconference will be created on {service}",
   "Search target": "Search target",
   "In this instance's network": "In this instance's network",
-  "On the Fediverse": "On the Fediverse"
+  "On the Fediverse": "On the Fediverse",
+  "Report reason": "Report reason",
+  "Reported content": "Reported content",
+  "No results found": "No results found",
+  "{eventsCount} events found": "No events found|One event found|{eventsCount} events found",
+  "{groupsCount} groups found": "No groups found|One group found|{groupsCount} groups found",
+  "{resultsCount} results found": "No results found|On result found|{resultsCount} results found",
+  "Loading map": "Loading map",
+  "Sort by": "Sort by",
+  "Map": "Map",
+  "List": "List",
+  "Best match": "Best match",
+  "Most recently published": "Most recently published",
+  "Least recently published": "Least recently published",
+  "With the most participants": "With the most participants",
+  "Number of members": "Number of members"
 }

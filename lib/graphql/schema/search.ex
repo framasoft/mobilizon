@@ -189,6 +189,9 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         description: "The target of the search (internal or global)"
       )
 
+      arg(:bbox, :string, description: "The bbox to search groups into")
+      arg(:zoom, :integer, description: "The zoom level for searching groups")
+
       arg(:page, :integer, default_value: 1, description: "Result page")
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")
 
@@ -224,6 +227,9 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         default_value: 50,
         description: "Radius around the location to search in"
       )
+
+      arg(:bbox, :string, description: "The bbox to search events into")
+      arg(:zoom, :integer, description: "The zoom level for searching events")
 
       arg(:page, :integer, default_value: 1, description: "Result page")
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")

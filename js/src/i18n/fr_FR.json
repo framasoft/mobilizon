@@ -1374,5 +1374,20 @@
   "The videoconference will be created on {service}": "La visio-conférence sera créée sur {service}",
   "Search target": "Cible de la recherche",
   "In this instance's network": "Dans le réseau de cette instance",
-  "On the Fediverse": "Dans le fediverse"
+  "On the Fediverse": "Dans le fediverse",
+  "Report reason": "Raison du signalement",
+  "Reported content": "Contenu signalé",
+  "No results found": "Aucun résultat trouvé",
+  "{eventsCount} events found": "Aucun événement trouvé|Un événement trouvé|{eventsCount} événements trouvés",
+  "{groupsCount} groups found": "Aucun groupe trouvé|Un groupe trouvé|{groupsCount} groupes trouvés",
+  "{resultsCount} results found": "Aucun résultat trouvé|Un résultat trouvé|{resultsCount} résultats trouvés",
+  "Loading map": "Chargement de la carte",
+  "Sort by": "Trier par",
+  "Map": "Carte",
+  "List": "Liste",
+  "Best match": "Pertinence",
+  "Most recently published": "Publié récemment",
+  "Least recently published": "Le moins récemment publié",
+  "With the most participants": "Avec le plus de participants",
+  "Number of members": "Nombre de membres"
 }

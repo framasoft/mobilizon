@@ -322,7 +322,7 @@
         <aside class="event-metadata rounded dark:bg-gray-600 shadow-md">
           <div class="sticky">
             <event-metadata-sidebar
-              v-if="event && loggedUser"
+              v-if="event"
               :event="event"
               :user="loggedUser"
               @showMapModal="showMap = true"

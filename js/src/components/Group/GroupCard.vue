@@ -5,7 +5,7 @@
     class="mbz-card shrink-0 dark:bg-mbz-purple dark:text-white rounded-lg shadow-lg my-4 flex items-center flex-col"
     :class="{
       'sm:flex-row': mode === 'row',
-      'max-w-xs w-[18rem] shrink-0 flex flex-col': mode === 'column',
+      'sm:max-w-xs sm:w-[18rem] shrink-0 flex flex-col': mode === 'column',
     }"
   >
     <div class="flex-none p-2 md:p-4">
@@ -25,7 +25,7 @@
       :class="{ 'sm:flex-1': mode === 'row' }"
     >
       <div class="flex gap-1 mb-2">
-        <div class="px-1 overflow-hidden flex-auto">
+        <div class="overflow-hidden flex-auto">
           <h3
             class="text-2xl leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
             dir="auto"

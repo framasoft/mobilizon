@@ -30,7 +30,10 @@
   <!-- Categories preview -->
   <categories-preview />
   <!-- Welcome back -->
-  <section v-if="currentActor?.id && (welcomeBack || newRegisteredUser)">
+  <section
+    class="container mx-auto"
+    v-if="currentActor?.id && (welcomeBack || newRegisteredUser)"
+  >
     <o-notification variant="info" v-if="welcomeBack">{{
       $t("Welcome back {username}!", {
         username: displayName(currentActor),
