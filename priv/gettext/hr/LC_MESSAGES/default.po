@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-08-26 16:28+0000\n"
+"PO-Revision-Date: 2022-09-11 18:18+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -19,6 +19,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
+"Ako ovo nisi zatražio/la, zanemari ovu e-maila poruku. Tvoja se lozinka neće "
+"promijeniti sve dok ne pristupiš donjoj poveznici i ne stvoriš novu lozinku."
 
 #: lib/web/templates/email/report.html.heex:120
 #, elixir-autogen, elixir-format
@@ -34,7 +36,7 @@ msgstr "Aktiviraj moj račun"
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr ""
+msgstr "Pitaj zajednicu na Framacolibri"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-autogen, elixir-format
@@ -66,11 +68,13 @@ msgstr "Obnovi lozinku"
 #, elixir-autogen, elixir-format
 msgid "Resetting your password is easy. Just press the button below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Ponovno postavljanje lozinke je jednostavno. Pritisni donji gumb i slijedi "
+"upute. Moći ćeš nastaviti s radom u tren oka."
 
 #: lib/web/email/user.ex:26
 #, elixir-autogen, elixir-format
 msgid "Instructions to confirm your Mobilizon account on %{instance}"
-msgstr ""
+msgstr "Upute za potvrdu tvog Mobilizon računa na instanci %{instance}"
 
 #: lib/web/email/admin.ex:22
 #, elixir-autogen, elixir-format
@@ -103,6 +107,8 @@ msgstr "Obnavljanje lozinke"
 #, elixir-autogen, elixir-format
 msgid "Resetting your password is easy. Just click the link below and follow the instructions. We'll have you up and running in no time."
 msgstr ""
+"Ponovno postavljanje lozinke je jednostavno. Pritisni donji gumb i slijedi "
+"upute. Moći ćeš nastaviti s radom u tren oka."
 
 #: lib/web/templates/email/registration_confirmation.text.eex:5
 #, elixir-autogen, elixir-format
@@ -172,7 +178,7 @@ msgstr "Osnovne informacije računa"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Do not share any dangerous information over Mobilizon."
-msgstr ""
+msgstr "Nemoj dijeliti opasne informacije putem Mobilizona."
 
 #: lib/web/templates/api/privacy.html.heex:123
 #, elixir-autogen, elixir-format
@@ -184,25 +190,25 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Do we use cookies?"
-msgstr ""
+msgstr "Je li koristimo kolačiće?"
 
 #: lib/web/templates/api/privacy.html.heex:76
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "How do we protect your information?"
-msgstr ""
+msgstr "Kako štitimo tvoje podatke?"
 
 #: lib/web/templates/api/privacy.html.heex:36
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "IPs and other metadata"
-msgstr ""
+msgstr "IP protokoli i drugi metapodaci"
 
 #: lib/web/templates/api/privacy.html.heex:23
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Published events and comments"
-msgstr ""
+msgstr "Objavljeni događaji i komentari"
 
 #: lib/web/templates/api/privacy.html.heex:93
 #, elixir-autogen, elixir-format
@@ -214,7 +220,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Tokens to authenticate you"
-msgstr ""
+msgstr "Tokeni za tvoju identifikaciju"
 
 #: lib/web/templates/api/privacy.html.heex:38
 #, elixir-autogen, elixir-format
@@ -226,25 +232,25 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "We store the following information on your device when you connect:"
-msgstr ""
+msgstr "Sljedeće informacije spremamo na tvoj uređaj kad se povežeš:"
 
 #: lib/web/templates/api/privacy.html.heex:84
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "We will make a good faith effort to:"
-msgstr ""
+msgstr "U dobroj vjeri nastojat ćemo:"
 
 #: lib/web/templates/api/privacy.html.heex:45
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What do we use your information for?"
-msgstr ""
+msgstr "Za što koristimo tvoje podatke?"
 
 #: lib/web/templates/api/privacy.html.heex:83
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What is our data retention policy?"
-msgstr ""
+msgstr "Koja je naša politika spremanja podataka?"
 
 #: lib/web/templates/api/privacy.html.heex:99
 #, elixir-autogen, elixir-format
@@ -256,7 +262,7 @@ msgstr "Svoj račun možeš nepovratno izbrisati u bilo kojem trenutku."
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Changes to our Privacy Policy"
-msgstr ""
+msgstr "Promjene u našim pravilima privatnosti"
 
 #: lib/web/templates/api/privacy.html.heex:139
 #, elixir-autogen, elixir-format
@@ -326,9 +332,9 @@ msgstr "Mobilizon na %{instance}: e-mail adresa se promijenila"
 #, elixir-format
 msgid "One event planned today"
 msgid_plural "%{nb_events} events planned today"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Za danas je planiran jedan događaj"
+msgstr[1] "Za danas su planirana %{nb_events} događaja"
+msgstr[2] "Za danas je planirano %{nb_events} događaja"
 
 #: lib/web/templates/email/on_day_notification.html.heex:47
 #: lib/web/templates/email/on_day_notification.text.eex:3
@@ -859,6 +865,10 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on <b>%{instance}</b>. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
+"Bok! Čini se da želiš promijeniti e-mail adresu koja je povezana s tvojim "
+"računom na instanci <b>%{instance}</b>. Ako želiš nastaviti, pritisni donji "
+"gumb za potvrđivanje promjene. Nakon toga ćeš se moći prijaviti na instanci "
+"%{instance} s ovom novom e-mail adresom."
 
 #: lib/web/templates/email/email_changed_old.text.eex:3
 #, elixir-autogen, elixir-format
@@ -891,6 +901,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgstr ""
+"Ako želiš otkazati svoje prisustvovanje, posjeti stranicu događaja putem "
+"gornje poveznice i pritisni gumb „Prisustvovanje”."
 
 #: lib/web/templates/email/email.html.heex:193
 #: lib/web/templates/email/email.text.eex:11
@@ -1060,7 +1072,7 @@ msgstr ""
 #: lib/web/templates/email/email.html.heex:112
 #, elixir-autogen, elixir-format
 msgid "<b>Please do not use it for real purposes.</b>"
-msgstr ""
+msgstr "<b>Nemoj to koristiti u stvarne svrhe.</b>"
 
 #: lib/web/templates/email/group_member_removal.html.heex:64
 #: lib/web/templates/email/group_member_removal.text.eex:5
@@ -1506,12 +1518,12 @@ msgstr "Moderator"
 #: lib/service/export/participants/common.ex:37
 #, elixir-autogen, elixir-format
 msgid "Not approved"
-msgstr "Nije odobreno"
+msgstr "Neodobreno"
 
 #: lib/service/export/participants/common.ex:40
 #, elixir-autogen, elixir-format
 msgid "Not confirmed"
-msgstr "Nije potvrđeno"
+msgstr "Nepotvrđeno"
 
 #: lib/service/export/participants/common.ex:46
 #, elixir-autogen, elixir-format
@@ -1828,7 +1840,7 @@ msgstr ""
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Login on %{instance}"
-msgstr "Prijava na %{instance}"
+msgstr "Prijava na instancu %{instance}"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:72
 #, elixir-autogen, elixir-format
