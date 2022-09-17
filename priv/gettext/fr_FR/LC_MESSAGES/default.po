@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-10 21:04+0000\n"
-"PO-Revision-Date: 2022-09-11 13:50+0000\n"
+"PO-Revision-Date: 2022-09-17 14:31+0000\n"
 "Last-Translator: CHALLET Olivier <challet.olivier@gmail.com>\n"
 "Language-Team: French (France) <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/fr_FR/>\n"
@@ -1465,91 +1465,134 @@ msgstr ""
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
+"Lorsque nous disons « nous », « notre » ou « nos » dans ce document, nous "
+"faisons référence aux propriétaires, opérateurs et administrateurs de cette "
+"instance de Mobilizon.\n"
+"Le logiciel Mobilizon est fourni par l'équipe des contributeurs de "
+"Mobilizon, soutenue par <a href=\"https://framasoft.org\">Framasoft</a>, une "
+"organisation française d'éducation populaire à but non lucratif qui défend "
+"les logiciels libres. Sauf mention explicite, cette instance de Mobilizon "
+"est un service indépendant utilisant le code source de Mobilizon. Vous "
+"pouvez trouver plus d'informations sur cette instance sur la page <a href=\"/"
+"about/instance\">« A propos de cette instance »</a>."
 
 #: lib/web/templates/api/terms.html.heex:105
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "When you create an account you agree to maintain the security and confidentiality of your password and accept all risks of unauthorized access to your account data and any other information you provide to <b>%{instance_name}</b>."
 msgstr ""
+"Lorsque vous créez un compte, vous acceptez également de maintenir la "
+"sécurité et la confidentialité de votre mot de passe et vous acceptez tous "
+"les risques d'un accès non autorisé aux données de votre compte et à toute "
+"autre information que vous fournissez à <b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.heex:134
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "When you post, link or otherwise make available content to the Service, you grant us the right and license to display and distribute your content on or through the Service (including via applications). We may format your content for display throughout the Service, but we will not edit or revise the substance of your content itself. The displaying and distribution of your content happens only according to the visibility rules you have set for the content. We will not modify the visibility of the content you have set."
 msgstr ""
+"Lorsque vous publiez, liez ou mettez à disposition un contenu sur le "
+"service, vous nous accordez le droit et la licence d'afficher et de "
+"distribuer votre contenu sur ou via le service (y compris via des "
+"applications). Nous pouvons formater votre contenu pour l'afficher dans le "
+"service, mais nous ne modifierons pas ou ne réviserons pas la substance de "
+"votre contenu lui-même. L'affichage et la distribution de votre contenu se "
+"fait strictement selon les règles de visibilité que vous avez définies pour "
+"le contenu. Nous ne modifierons pas la visibilité du contenu que vous avez "
+"défini."
 
 #: lib/web/templates/api/privacy.html.heex:25
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Your <b>events</b> and <b>comments</b> are delivered to other instances that follow your own, meaning they are delivered to different instances and copies are stored there. When you delete events or comments, this is likewise delivered to these other instances. All interactions related to event features - such as joining an event - or group features - such as managing resources - are federated as well. Please keep in mind that the operators of the instance and any receiving instances may view such messages and information, and that recipients may screenshot, copy or otherwise re-share them."
 msgstr ""
+"Vos <b>événements</b> et <b>commentaires</b> sont transmis aux instances qui "
+"suivent la vôtre, ce qui signifie que d'autres instances posséderont des "
+"copies de ces contenus. Lorsque vous supprimez un événement ou un "
+"commentaire, cette demande de suppression est transmise de la même façon aux "
+"autres instances. Toutes les interactions liées aux fonctionnalités des "
+"événements, comme rejoindre un événement, ou bien aux fonctionnalités de "
+"groupes, comme gérer ses ressources, sont également fédérées. Veuillez noter "
+"que les administrateurs de cette instance et de toutes les instances "
+"fédérées peuvent voir ces messages, et que les destinataires peuvent les "
+"copier, en faire des captures d'écran et les repartager de différentes "
+"façons."
 
 #: lib/web/templates/api/privacy.html.heex:132
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Your content may be downloaded by other instances in the network. Your public events and comments are delivered to the instances following your own instance. Content created through a group is forwarded to all the instances of all the members of the group, insofar as these members reside on a different instance than this one."
 msgstr ""
+"Votre contenu peut être téléchargé par d'autres instances du réseau. Vos "
+"événements publics et commentaires sont transmis aux instances abonnées à "
+"votre instance. Le contenu créé à travers un groupe est transmis à toutes "
+"les instances de tous les membres du groupe, si ceux-ci sont inscrits sur "
+"une autre instance que la vôtre."
 
 #: lib/web/templates/email/event_participation_confirmed.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "You have confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Vous avez confirmé votre participation. Mettez à jour votre agenda, car vous "
+"êtes maintenant sur la liste des invités !"
 
 #: lib/web/templates/email/event_participation_approved.html.heex:47
 #: lib/web/templates/email/event_participation_confirmed.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You recently requested to attend <b>%{title}</b>."
-msgstr ""
+msgstr "Vous avez demandé à participer à l'événement <b>%{title}</b>."
 
 #: lib/web/email/participation.ex:91
 #, elixir-autogen, elixir-format
 msgid "Your participation to event %{title} has been confirmed"
-msgstr ""
+msgstr "Votre participation à l'événement %{title} a été approuvée"
 
 #: lib/web/templates/email/report.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr ""
+msgstr "<b>%{reporter}</b> a signalé le contenu suivant."
 
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "Le groupe %{group} a été signalé"
 
 #: lib/web/templates/email/report.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Group reported"
-msgstr ""
+msgstr "Groupe signalé"
 
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "Le profil %{profile} a été signalé"
 
 #: lib/web/templates/email/report.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Profile reported"
-msgstr ""
+msgstr "Profil signalé"
 
 #: lib/web/templates/email/event_participation_confirmed.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
+"Vous avez maintenant confirmé votre participation. Mettez à jour votre "
+"agenda, car vous êtes maintenant sur la liste des invités !"
 
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
-msgstr ""
+msgstr "Un texte est requis pour le poste"
 
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
-msgstr ""
+msgstr "Un titre est requis pour le poste"
 
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr ""
+msgstr "%{name} (%{domain}) vient de demander à suivre votre instance."
 
 #: lib/web/email/follow.ex:53
 #, elixir-autogen, elixir-format
