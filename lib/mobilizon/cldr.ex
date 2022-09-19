@@ -11,7 +11,8 @@ defmodule Mobilizon.Cldr do
         do: Mobilizon.Web.Gettext,
         else: nil
       ),
-    providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language]
+    providers: [Cldr.Number, Cldr.Calendar, Cldr.DateTime, Cldr.Language],
+    precompile_transliterations: [{:latn, :arabext}]
 
   def known_locale?(locale) do
     Mobilizon.Cldr.known_locale_names()
