@@ -272,11 +272,11 @@ const isBasicMode = computed((): boolean => {
   return props.mode === "basic";
 });
 
-const insertMention = (obj: { range: any; attrs: any }) => {
-  console.debug("initialize Mention");
-};
+// const insertMention = (obj: { range: any; attrs: any }) => {
+//   console.debug("initialize Mention");
+// };
 
-const observer = ref<MutationObserver | null>(null);
+// const observer = ref<MutationObserver | null>(null);
 
 onMounted(() => {
   editor.value = new Editor({

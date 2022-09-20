@@ -24,14 +24,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-// import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import Account from "vue-material-design-icons/Account.vue";
 import { formatDateString } from "@/filters/datetime";
+import { Snackbar } from "@/plugins/snackbar";
 
 const props = defineProps<{ todo: ITodo }>();
 
@@ -41,8 +41,8 @@ const status = computed({
   get() {
     return props.todo.status;
   },
-  set(status: boolean) {
-    updateTodo({ status, id: props.todo.id });
+  set(newStatus: boolean) {
+    updateTodo({ status: newStatus, id: props.todo.id });
   },
 });
 
@@ -52,11 +52,13 @@ onDone(() => {
   editMode.value = false;
 });
 
+const snackbar = inject<Snackbar>("snackbar");
+
 onError((e) => {
-  // Snackbar.open({
-  //   message: e.message,
-  //   variant: "danger",
-  //   position: "bottom",
-  // });
+  snackbar?.open({
+    message: e.message,
+    variant: "danger",
+    position: "bottom",
+  });
 });
 </script>

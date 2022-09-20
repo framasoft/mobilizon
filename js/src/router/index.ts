@@ -68,7 +68,7 @@ export const routes = [
   {
     path: "/about",
     name: RouteName.ABOUT,
-    component: (): Promise<any> => import("@/views/About.vue"),
+    component: (): Promise<any> => import("@/views/AboutView.vue"),
     meta: { requiredAuth: false },
     redirect: { name: RouteName.ABOUT_INSTANCE },
     children: [

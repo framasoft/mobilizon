@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 import { it, expect } from "vitest";
 
 const tagContent = "My tag";

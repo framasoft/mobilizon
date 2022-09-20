@@ -97,7 +97,6 @@
                 <event-participation-card
                   v-if="'role' in element"
                   :participation="element"
-                  :options="{ hideDate: false }"
                   @event-deleted="eventDeleted"
                   class="participation"
                 />

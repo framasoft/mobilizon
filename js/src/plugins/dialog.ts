@@ -19,6 +19,7 @@ export class Dialog {
     onConfirm,
     onCancel,
     inputAttrs,
+    hasInput,
   }: {
     title?: string;
     message: string;
@@ -29,7 +30,8 @@ export class Dialog {
     size?: string;
     onConfirm?: (prompt: string) => void;
     onCancel?: (source: string) => void;
-    inputAttrs: Record<string, any>;
+    inputAttrs?: Record<string, any>;
+    hasInput?: boolean;
   }) {
     this.app.config.globalProperties.$oruga.modal.open({
       component: DialogComponent,
@@ -44,6 +46,7 @@ export class Dialog {
         onConfirm,
         onCancel,
         inputAttrs,
+        hasInput,
       },
     });
   }

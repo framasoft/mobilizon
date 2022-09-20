@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="section">
+  <div v-if="user">
     <breadcrumbs-nav
       :links="[
         { name: RouteName.ADMIN, text: t('Admin') },
@@ -18,10 +18,10 @@
     <section>
       <h2 class="text-lg font-bold mb-3">{{ t("Details") }}</h2>
       <div class="flex flex-col">
-        <div class="overflow-x-auto sm:-mx-6">
+        <div class="overflow-x-auto">
           <div class="inline-block py-2 min-w-full sm:px-2">
             <div class="overflow-hidden shadow-md sm:rounded-lg">
-              <table v-if="metadata.length > 0" class="min-w-full">
+              <table v-if="metadata.length > 0" class="table w-full">
                 <tbody>
                   <tr
                     class="border-b"
@@ -229,48 +229,46 @@
       aria-modal
     >
       <form @submit.prevent="updateUserRole">
-        <div>
-          <header>
-            <h2 class="modal-card-title">{{ t("Change user role") }}</h2>
-          </header>
-          <section>
-            <o-field>
-              <o-radio
-                v-model="newUser.role"
-                :native-value="ICurrentUserRole.ADMINISTRATOR"
-              >
-                {{ t("Administrator") }}
-              </o-radio>
-            </o-field>
-            <o-field>
-              <o-radio
-                v-model="newUser.role"
-                :native-value="ICurrentUserRole.MODERATOR"
-              >
-                {{ t("Moderator") }}
-              </o-radio>
-            </o-field>
-            <o-field>
-              <o-radio
-                v-model="newUser.role"
-                :native-value="ICurrentUserRole.USER"
-              >
-                {{ t("User") }}
-              </o-radio>
-            </o-field>
-            <o-checkbox v-model="newUser.notify">{{
-              t("Notify the user of the change")
-            }}</o-checkbox>
-          </section>
-          <footer class="mt-2 flex gap-2">
-            <o-button @click="isRoleChangeModalActive = false">{{
-              t("Close")
-            }}</o-button>
-            <o-button native-type="submit" variant="primary">{{
-              t("Change role")
-            }}</o-button>
-          </footer>
-        </div>
+        <header>
+          <h2>{{ t("Change user role") }}</h2>
+        </header>
+        <section>
+          <o-field>
+            <o-radio
+              v-model="newUser.role"
+              :native-value="ICurrentUserRole.ADMINISTRATOR"
+            >
+              {{ t("Administrator") }}
+            </o-radio>
+          </o-field>
+          <o-field>
+            <o-radio
+              v-model="newUser.role"
+              :native-value="ICurrentUserRole.MODERATOR"
+            >
+              {{ t("Moderator") }}
+            </o-radio>
+          </o-field>
+          <o-field>
+            <o-radio
+              v-model="newUser.role"
+              :native-value="ICurrentUserRole.USER"
+            >
+              {{ t("User") }}
+            </o-radio>
+          </o-field>
+          <o-checkbox v-model="newUser.notify">{{
+            t("Notify the user of the change")
+          }}</o-checkbox>
+        </section>
+        <footer class="mt-2 flex gap-2">
+          <o-button @click="isRoleChangeModalActive = false" outlined>{{
+            t("Close")
+          }}</o-button>
+          <o-button native-type="submit" variant="primary">{{
+            t("Change role")
+          }}</o-button>
+        </footer>
       </form>
     </o-modal>
     <o-modal
@@ -284,24 +282,22 @@
       aria-modal
     >
       <form @submit.prevent="confirmUser">
-        <div>
-          <header>
-            <h2>{{ t("Confirm user") }}</h2>
-          </header>
-          <section>
-            <o-checkbox v-model="newUser.notify">{{
-              t("Notify the user of the change")
-            }}</o-checkbox>
-          </section>
-          <footer>
-            <o-button @click="isConfirmationModalActive = false">{{
-              t("Close")
-            }}</o-button>
-            <o-button native-type="submit" variant="primary">{{
-              t("Confirm user")
-            }}</o-button>
-          </footer>
-        </div>
+        <header>
+          <h2>{{ t("Confirm user") }}</h2>
+        </header>
+        <section>
+          <o-checkbox v-model="newUser.notify">{{
+            t("Notify the user of the change")
+          }}</o-checkbox>
+        </section>
+        <footer>
+          <o-button @click="isConfirmationModalActive = false">{{
+            t("Close")
+          }}</o-button>
+          <o-button native-type="submit" variant="primary">{{
+            t("Confirm user")
+          }}</o-button>
+        </footer>
       </form>
     </o-modal>
   </div>
@@ -424,7 +420,7 @@ const metadata = computed(
       },
       {
         key: t("Uploaded media total size"),
-        value: formatBytes(user.value.mediaSize, 2, t("0 Bytes")),
+        value: formatBytes(user.value.mediaSize),
       },
     ];
   }

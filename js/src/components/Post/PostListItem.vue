@@ -61,7 +61,7 @@ import { formatDateTimeString } from "@/filters/datetime";
 import Tag from "vue-material-design-icons/Tag.vue";
 import AccountEdit from "vue-material-design-icons/AccountEdit.vue";
 import Clock from "vue-material-design-icons/Clock.vue";
-import MbzTag from "@/components/Tag.vue";
+import MbzTag from "@/components/TagElement.vue";
 
 const props = withDefaults(
   defineProps<{

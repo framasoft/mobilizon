@@ -75,7 +75,7 @@ import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import { ref, watch } from "vue";
 import { IResource } from "@/types/resource";
-import Draggable from "@xiaoshuapp/draggable";
+import Draggable from "vuedraggable";
 import { IGroup } from "@/types/actor";
 
 const props = withDefaults(
@@ -124,13 +124,13 @@ watch(checkedAll, () => {
   });
 });
 
-const deleteResource = (resourceID: string) => {
-  validCheckedResources.value = validCheckedResources.value.filter(
-    (id) => id !== resourceID
-  );
-  delete checkedResources.value[resourceID];
-  emit("delete", resourceID);
-};
+// const deleteResource = (resourceID: string) => {
+//   validCheckedResources.value = validCheckedResources.value.filter(
+//     (id) => id !== resourceID
+//   );
+//   delete checkedResources.value[resourceID];
+//   emit("delete", resourceID);
+// };
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;

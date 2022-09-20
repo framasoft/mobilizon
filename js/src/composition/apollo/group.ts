@@ -55,7 +55,7 @@ export function useGroup(
       name: unref(name),
       ...options,
     }),
-    () => ({ enabled: unref(name) !== undefined })
+    () => ({ enabled: unref(name) !== undefined && unref(name) !== "" })
   );
   const group = computed(() => result.value?.group);
   return { group, error, loading, onResult, onError, refetch };

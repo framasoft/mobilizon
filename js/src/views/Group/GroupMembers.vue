@@ -267,7 +267,7 @@ import {
 import { formatTimeString, formatDateString } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { Notifier } from "@/plugins/notifier";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 
 const { t } = useI18n({ useScope: "global" });
 

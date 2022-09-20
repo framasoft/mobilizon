@@ -18,7 +18,7 @@
           formatDateTimeString(resource.updatedAt?.toString())
         }}</span>
       </div>
-      <!-- <draggable
+      <draggable
         v-if="!inline"
         class="dropzone"
         v-model="list"
@@ -26,7 +26,7 @@
         :sort="false"
         :group="groupObject"
         @change="onChange"
-      /> -->
+      />
     </router-link>
     <resource-dropdown
       class="actions"
@@ -39,18 +39,18 @@
 </template>
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-// import Draggable, { ChangeEvent } from "@xiaoshuapp/draggable";
-// import { SnackbarProgrammatic as Snackbar } from "buefy";
+import Draggable, { ChangeEvent } from "vuedraggable";
 import { IResource } from "@/types/resource";
 import RouteName from "@/router/name";
 import { IGroup, usernameWithDomain } from "@/types/actor";
 import ResourceDropdown from "./ResourceDropdown.vue";
 import { UPDATE_RESOURCE } from "@/graphql/resources";
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { formatDateTimeString } from "@/filters/datetime";
 import { useMutation } from "@vue/apollo-composable";
 import { resourcePathArray } from "@/components/Resource/utils";
 import Folder from "vue-material-design-icons/Folder.vue";
+import { Snackbar } from "@/plugins/snackbar";
 
 const props = withDefaults(
   defineProps<{
@@ -77,7 +77,7 @@ const groupObject: Record<string, unknown> = {
 
 const onChange = async (evt: ChangeEvent<IResource>) => {
   if (evt.added && evt.added.element) {
-    const movedResource = evt.added.element as IResource;
+    // const movedResource = evt.added.element as IResource;
     moveResource({
       id: props.resource.id,
       path: `${props.resource.path}/${props.resource.title}`,
@@ -100,19 +100,20 @@ onMovedResource(({ data }) => {
     return router.push({
       name: RouteName.RESOURCE_FOLDER,
       params: {
-        path: ResourceMixin.resourcePathArray(props.resource),
+        path: resourcePathArray(props.resource),
         preferredUsername: props.group.preferredUsername,
       },
     });
   }
 });
+const snackbar = inject<Snackbar>("snackbar");
 
 onMovedResourceError((e) => {
-  // Snackbar.open({
-  //   message: e.message,
-  //   variant: "danger",
-  //   position: "bottom",
-  // });
+  snackbar?.open({
+    message: e.message,
+    variant: "danger",
+    position: "bottom",
+  });
   return undefined;
 });
 </script>

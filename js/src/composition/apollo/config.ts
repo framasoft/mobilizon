@@ -13,14 +13,14 @@ import {
   MAPS_TILES,
   RESOURCE_PROVIDERS,
   RESTRICTIONS,
+  ROUTING_TYPE,
   SEARCH_CONFIG,
   TIMEZONES,
   UPLOAD_LIMITS,
 } from "@/graphql/config";
-import { IAnonymousParticipationConfig, IConfig } from "@/types/config.model";
-import { ApolloError } from "@apollo/client/core";
+import { IConfig } from "@/types/config.model";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 
 export function useTimezones() {
   const {
@@ -36,26 +36,19 @@ export function useTimezones() {
 }
 
 export function useAnonymousParticipationConfig() {
-  const anonymousParticipationConfig = ref<
-    IAnonymousParticipationConfig | undefined
-  >(undefined);
+  const {
+    result: configResult,
+    error,
+    loading,
+  } = useQuery<{
+    config: Pick<IConfig, "anonymous">;
+  }>(ANONYMOUS_PARTICIPATION_CONFIG);
 
-  const error = ref<ApolloError | null>(null);
+  const anonymousParticipationConfig = computed(
+    () => configResult.value?.config?.anonymous?.participation
+  );
 
-  if (!anonymousParticipationConfig.value) {
-    const { onError, onResult } = useQuery<{
-      config: Pick<IConfig, "anonymous">;
-    }>(ANONYMOUS_PARTICIPATION_CONFIG);
-
-    onResult(({ data }) => {
-      anonymousParticipationConfig.value =
-        data.config?.anonymous?.participation;
-    });
-
-    onError((err) => (error.value = err));
-  }
-
-  return { anonymousParticipationConfig, error };
+  return { anonymousParticipationConfig, error, loading };
 }
 
 export function useAnonymousReportsConfig() {
@@ -145,6 +138,15 @@ export function useMapTiles() {
 
   const tiles = computed(() => result.value?.config.maps.tiles);
   return { tiles, error, loading };
+}
+
+export function useRoutingType() {
+  const { result, error, loading } = useQuery<{
+    config: Pick<IConfig, "maps">;
+  }>(ROUTING_TYPE);
+
+  const routingType = computed(() => result.value?.config.maps.routing.type);
+  return { routingType, error, loading };
 }
 
 export function useFeatures() {

@@ -153,7 +153,7 @@ body {
 /* Modal */
 
 .modal-content {
-  @apply bg-white dark:bg-zinc-800 rounded px-2 py-4 w-full;
+  @apply bg-white dark:bg-zinc-800 rounded px-2 py-4 w-full z-0;
 }
 
 /* Switch */
@@ -210,7 +210,7 @@ button.menubar__button {
 
 /* Table */
 .table tr {
-  @apply odd:bg-white dark:odd:bg-zinc-600 even:bg-gray-50 dark:even:bg-zinc-700 border-b rounded;
+  @apply odd:bg-white dark:odd:bg-zinc-600 last:border-b-0 even:bg-gray-50 dark:even:bg-zinc-700 border-b rounded;
 }
 
 .table-td {

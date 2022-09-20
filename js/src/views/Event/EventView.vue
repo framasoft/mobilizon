@@ -218,10 +218,7 @@
                 </p>
                 <o-dropdown>
                   <template #trigger>
-                    <o-button
-                      icon-right="dots-horizontal"
-                      #default="{ active }"
-                    >
+                    <o-button icon-right="dots-horizontal">
                       {{ t("Actions") }}
                     </o-button>
                   </template>
@@ -260,8 +257,8 @@
                   <o-dropdown-item
                     aria-role="listitem"
                     v-if="canManageEvent || event?.draft"
-                    @click="openDeleteEventModalWrapper"
-                    @keyup.enter="openDeleteEventModalWrapper"
+                    @click="openDeleteEventModal"
+                    @keyup.enter="openDeleteEventModal"
                     ><span class="flex gap-1">
                       <Delete />
                       {{ t("Delete") }}
@@ -386,7 +383,11 @@
         has-modal-card
         ref="shareModal"
       >
-        <share-event-modal :event="event" :eventCapacityOK="eventCapacityOK" />
+        <share-event-modal
+          v-if="event"
+          :event="event"
+          :eventCapacityOK="eventCapacityOK"
+        />
       </o-modal>
       <o-modal
         v-model:active="isJoinModalActive"
@@ -394,34 +395,34 @@
         ref="participationModal"
         :close-button-aria-label="t('Close')"
       >
-        <identity-picker v-model="identity">
+        <identity-picker v-if="identity" v-model="identity">
           <template #footer>
-            <footer class="modal-card-foot">
-              <button
-                class="button"
+            <footer class="flex gap-2">
+              <o-button
+                outlined
                 ref="cancelButton"
                 @click="isJoinModalActive = false"
                 @keyup.enter="isJoinModalActive = false"
               >
                 {{ t("Cancel") }}
-              </button>
-              <button
+              </o-button>
+              <o-button
                 v-if="identity"
-                class="button is-primary"
+                variant="primary"
                 ref="confirmButton"
                 @click="
                   event?.joinOptions === EventJoinOptions.RESTRICTED
-                    ? joinEventWithConfirmation(identity)
-                    : joinEvent(identity)
+                    ? joinEventWithConfirmation(identity as IPerson)
+                    : joinEvent(identity as IPerson)
                 "
                 @keyup.enter="
                   event?.joinOptions === EventJoinOptions.RESTRICTED
-                    ? joinEventWithConfirmation(identity)
-                    : joinEvent(identity)
+                    ? joinEventWithConfirmation(identity as IPerson)
+                    : joinEvent(identity as IPerson)
                 "
               >
                 {{ t("Confirm my particpation") }}
-              </button>
+              </o-button>
             </footer>
           </template>
         </identity-picker>
@@ -449,7 +450,10 @@
             </p>
             <form
               @submit.prevent="
-                joinEvent(actorForConfirmation, messageForConfirmation)
+                joinEvent(
+                  actorForConfirmation as IPerson,
+                  messageForConfirmation
+                )
               "
             >
               <o-field :label="t('Message')">
@@ -487,22 +491,13 @@
         :can-cancel="['escape', 'outside']"
       >
         <template #default="props">
-          <!-- <event-map
-            :routingType="routingType"
+          <event-map
+            :routingType="routingType ?? RoutingType.OPENSTREETMAP"
             :address="event.physicalAddress"
             @close="props.close"
-          /> -->
+          />
         </template>
       </o-modal>
-      <dialog
-        variant="danger"
-        :title="t('Delete event')"
-        :message="deleteEventMessage"
-        :confirmText="t('Delete {eventTitle}', { eventTitle: event?.title })"
-        :onConfirm="
-          () => (event?.id ? deleteEvent({ eventId: event?.id }) : null)
-        "
-      ></dialog>
     </div>
   </div>
 </template>
@@ -514,12 +509,14 @@ import {
   EventVisibility,
   MemberRole,
   ParticipantRole,
+  RoutingType,
 } from "@/types/enums";
 import {
   EVENT_PERSON_PARTICIPATION,
-  EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
+  // EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
   FETCH_EVENT,
   JOIN_EVENT,
+  LEAVE_EVENT,
 } from "@/graphql/event";
 import { IEvent } from "@/types/event.model";
 import {
@@ -543,7 +540,7 @@ import {
   isParticipatingInThisEvent,
   removeAnonymousParticipation,
 } from "@/services/AnonymousParticipationStorage";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 import EventMetadataSidebar from "@/components/Event/EventMetadataSidebar.vue";
 import EventBanner from "@/components/Event/EventBanner.vue";
 import EventMap from "@/components/Event/EventMap.vue";
@@ -583,19 +580,21 @@ import {
   useAnonymousParticipationConfig,
   useAnonymousReportsConfig,
   useEventCategories,
+  useRoutingType,
 } from "@/composition/apollo/config";
 import { useCreateReport } from "@/composition/apollo/report";
 import Share from "vue-material-design-icons/Share.vue";
 import { useI18n } from "vue-i18n";
-import { useProgrammatic } from "@oruga-ui/oruga-next";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { useHead } from "@vueuse/head";
+import { Snackbar } from "@/plugins/snackbar";
 
 const ShareEventModal = defineAsyncComponent(
   () => import("@/components/Event/ShareEventModal.vue")
 );
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const IntegrationTwitch = defineAsyncComponent(
   () => import("@/components/Event/Integrations/TwitchIntegration.vue")
 );
@@ -611,6 +610,7 @@ const IntegrationJitsiMeet = defineAsyncComponent(
 const IntegrationEtherpad = defineAsyncComponent(
   () => import("@/components/Event/Integrations/EtherpadIntegration.vue")
 );
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 const props = defineProps<{
   uuid: string;
@@ -629,7 +629,7 @@ const currentActorId = computed(() => currentActor.value?.id);
 const { loggedUser } = useLoggedUser();
 const {
   result: participationsResult,
-  subscribeToMore: subscribeToMoreParticipation,
+  // subscribeToMore: subscribeToMoreParticipation,
 } = useQuery<{ person: IPerson }>(
   EVENT_PERSON_PARTICIPATION,
   () => ({
@@ -653,7 +653,7 @@ const {
 // }));
 
 const participations = computed(
-  () => participationsResult.value?.person.participations.elements ?? []
+  () => participationsResult.value?.person.participations?.elements ?? []
 );
 
 const { person } = usePersonStatusGroup(
@@ -680,7 +680,7 @@ const { identities } = useCurrentUserIdentities();
 //   };
 // },
 
-const identity = ref<IPerson | null>(null);
+const identity = ref<IPerson | undefined | null>(null);
 
 const reportModal = ref();
 const oldParticipationRole = ref<string | undefined>(undefined);
@@ -786,12 +786,6 @@ onMounted(async () => {
   //   return router.push({ name: RouteName.HOME });
   // });
 });
-/**
- * Delete the event, then redirect to home.
- */
-const openDeleteEventModalWrapper = async (): Promise<void> => {
-  await openDeleteEventModal(event.value);
-};
 
 const deleteEventMessage = computed(() => {
   const participantsLength = event.value?.participantStats.participant;
@@ -814,17 +808,62 @@ const deleteEventMessage = computed(() => {
         })}`;
 });
 
-const { mutate: deleteEvent } = useDeleteEvent();
+const notifier = inject<Notifier>("notifier");
+const dialog = inject<Dialog>("dialog");
 
-const openDeleteEventModal = async (
-  event: IEvent | undefined
-): Promise<void> => {
-  function escapeRegExp(string: string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-  }
+const {
+  mutate: deleteEvent,
+  onDone: onDeleteEventDone,
+  onError: onDeleteEventError,
+} = useDeleteEvent();
+
+const escapeRegExp = (string: string) => {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 };
 
-const notifier = inject<Notifier>("notifier");
+const openDeleteEventModal = () => {
+  dialog?.prompt({
+    title: t("Delete event"),
+    message: deleteEventMessage.value,
+    confirmText: t("Delete event"),
+    cancelText: t("Cancel"),
+    variant: "danger",
+    hasIcon: true,
+    hasInput: true,
+    inputAttrs: {
+      placeholder: event.value?.title,
+      pattern: escapeRegExp(event.value?.title ?? ""),
+    },
+    onConfirm: (result: string) => {
+      console.log("calling delete event", result);
+      if (result.trim() === event.value?.title) {
+        event.value?.id ? deleteEvent({ eventId: event.value?.id }) : null;
+      }
+    },
+  });
+};
+
+onDeleteEventDone(() => {
+  router.push({ name: RouteName.MY_EVENTS });
+});
+
+onDeleteEventError((error) => {
+  console.error(error);
+});
+
+const {
+  mutate: createReportMutation,
+  onDone: onCreateReportDone,
+  onError: onCreateReportError,
+} = useCreateReport();
+
+onCreateReportDone(() => {
+  notifier?.success(t("Event {eventTitle} reported", { eventTitle }));
+});
+
+onCreateReportError((error) => {
+  console.error(error);
+});
 
 const reportEvent = async (
   content: string,
@@ -836,21 +875,11 @@ const reportEvent = async (
   reportModal.value.close();
   if (!organizer.value) return;
 
-  const { mutate, onDone, onError } = useCreateReport();
-
-  mutate({
+  createReportMutation({
     eventId: event.value?.id ?? "",
     reportedId: organizer.value?.id ?? "",
     content,
     forward,
-  });
-
-  onDone(() => {
-    notifier?.success(t("Event {eventTitle} reported", { eventTitle }));
-  });
-
-  onError((error) => {
-    console.error(error);
   });
 };
 
@@ -876,7 +905,7 @@ const {
 
     const participationCachedData = store.readQuery<{ person: IPerson }>({
       query: EVENT_PERSON_PARTICIPATION,
-      variables: { eventId: event.value?.id, actorId: identity.value.id },
+      variables: { eventId: event.value?.id, actorId: identity.value?.id },
     });
 
     if (participationCachedData?.person == undefined) {
@@ -887,7 +916,7 @@ const {
     }
     store.writeQuery({
       query: EVENT_PERSON_PARTICIPATION,
-      variables: { eventId: event.value?.id, actorId: identity.value.id },
+      variables: { eventId: event.value?.id, actorId: identity.value?.id },
       data: {
         person: {
           ...participationCachedData?.person,
@@ -934,14 +963,14 @@ const {
 }));
 
 const joinEvent = async (
-  identity: IPerson,
+  identityForJoin: IPerson,
   message: string | null = null
 ): Promise<void> => {
   isJoinConfirmationModalActive.value = false;
   isJoinModalActive.value = false;
   joinEventMutation({
     eventId: event.value?.id,
-    actorId: identity?.id,
+    actorId: identityForJoin?.id,
     message,
   });
 };
@@ -960,8 +989,6 @@ onJoinEventMutationError((error) => {
   console.error(error);
 });
 
-const dialog = inject<Dialog>("dialog");
-
 const confirmLeave = (): void => {
   dialog?.confirm({
     title: t('Leaving event "{title}"', {
@@ -975,10 +1002,11 @@ const confirmLeave = (): void => {
     ),
     confirmText: t("Leave event"),
     cancelText: t("Cancel"),
-    type: "danger",
+    variant: "danger",
     hasIcon: true,
     onConfirm: () => {
-      if (currentActor.value?.id) {
+      if (event.value && currentActor.value?.id) {
+        console.log("calling leave event");
         leaveEvent(event.value, currentActor.value.id);
       }
     },
@@ -1071,14 +1099,14 @@ onFetchEventError(({ graphQLErrors }) =>
   handleErrors(graphQLErrors as AbsintheGraphQLErrors)
 );
 
-const actorIsParticipant = computed((): boolean => {
-  if (actorIsOrganizer.value) return true;
+// const actorIsParticipant = computed((): boolean => {
+//   if (actorIsOrganizer.value) return true;
 
-  return (
-    participations.value.length > 0 &&
-    participations.value[0].role === ParticipantRole.PARTICIPANT
-  );
-});
+//   return (
+//     participations.value.length > 0 &&
+//     participations.value[0].role === ParticipantRole.PARTICIPANT
+//   );
+// });
 
 const actorIsOrganizer = computed((): boolean => {
   return (
@@ -1101,11 +1129,11 @@ const canManageEvent = computed((): boolean => {
   return actorIsOrganizer.value || hasGroupPrivileges.value;
 });
 
-const endDate = computed((): string | undefined => {
-  return event.value?.endsOn && event.value.endsOn > event.value.beginsOn
-    ? event.value.endsOn
-    : event.value?.beginsOn;
-});
+// const endDate = computed((): string | undefined => {
+//   return event.value?.endsOn && event.value.endsOn > event.value.beginsOn
+//     ? event.value.endsOn
+//     : event.value?.beginsOn;
+// });
 
 const maximumAttendeeCapacity = computed((): number | undefined => {
   return event.value?.options?.maximumAttendeeCapacity;
@@ -1122,21 +1150,22 @@ const eventCapacityOK = computed((): boolean => {
   );
 });
 
-const numberOfPlacesStillAvailable = computed((): number | undefined => {
-  if (event.value?.draft) return maximumAttendeeCapacity.value;
-  return (
-    (maximumAttendeeCapacity.value ?? 0) -
-    (event.value?.participantStats.participant ?? 0)
-  );
-});
+// const numberOfPlacesStillAvailable = computed((): number | undefined => {
+//   if (event.value?.draft) return maximumAttendeeCapacity.value;
+//   return (
+//     (maximumAttendeeCapacity.value ?? 0) -
+//     (event.value?.participantStats.participant ?? 0)
+//   );
+// });
 
 const anonymousParticipationConfirmed = async (): Promise<boolean> => {
   return isParticipatingInThisEvent(props.uuid);
 };
 
 const cancelAnonymousParticipation = async (): Promise<void> => {
+  if (!event.value || !anonymousActorId.value) return;
   const token = (await getLeaveTokenForParticipation(props.uuid)) as string;
-  await leaveEvent(event.value, anonymousActorId.value, token);
+  leaveEvent(event.value, anonymousActorId.value, token);
   await removeAnonymousParticipation(props.uuid);
   anonymousParticipation.value = null;
 };
@@ -1192,17 +1221,132 @@ const integrations = computed((): Record<string, IEventMetadataDescription> => {
 
 const showMap = ref(false);
 
-const routingType = computed((): string | undefined => {
-  return config.value?.maps?.routing?.type;
-});
+const { routingType } = useRoutingType();
 
 const eventCategory = computed((): string | undefined => {
   if (event.value?.category === "MEETING") {
     return undefined;
   }
-  return (eventCategories.value ?? []).find((eventCategory) => {
-    return eventCategory.id === event.value?.category;
+  return (eventCategories.value ?? []).find((eventCategoryToFind) => {
+    return eventCategoryToFind.id === event.value?.category;
   })?.label as string;
+});
+
+const {
+  mutate: leaveEventMutation,
+  onDone: onLeaveEventMutationDone,
+  onError: onLeaveEventMutationError,
+} = useMutation<{ leaveEvent: { actor: { id: string } } }>(LEAVE_EVENT, () => ({
+  update: (
+    store: ApolloCache<{
+      leaveEvent: IParticipant;
+    }>,
+    { data }: FetchResult,
+    { context, variables }
+  ) => {
+    if (data == null) return;
+    let participation;
+
+    const token = context?.token;
+    const actorId = variables?.actorId;
+    const localEventId = variables?.eventId;
+    const eventUUID = context?.eventUUID;
+    const isAnonymousParticipationConfirmed =
+      context?.isAnonymousParticipationConfirmed;
+
+    if (!token) {
+      const participationCachedData = store.readQuery<{
+        person: IPerson;
+      }>({
+        query: EVENT_PERSON_PARTICIPATION,
+        variables: { eventId: localEventId, actorId },
+      });
+      if (participationCachedData == null) return;
+      const { person: cachedPerson } = participationCachedData;
+      [participation] = cachedPerson?.participations?.elements ?? [undefined];
+
+      store.modify({
+        id: `Person:${actorId}`,
+        fields: {
+          participations() {
+            return {
+              elements: [],
+              total: 0,
+            };
+          },
+        },
+      });
+    }
+
+    const eventCachedData = store.readQuery<{ event: IEvent }>({
+      query: FETCH_EVENT,
+      variables: { uuid: eventUUID },
+    });
+    if (eventCachedData == null) return;
+    const { event: eventCached } = eventCachedData;
+    if (eventCached === null) {
+      console.error("Cannot update event cache, because of null value.");
+      return;
+    }
+    const participantStats = { ...eventCached.participantStats };
+    if (participation && participation?.role === ParticipantRole.NOT_APPROVED) {
+      participantStats.notApproved -= 1;
+    } else if (isAnonymousParticipationConfirmed === false) {
+      participantStats.notConfirmed -= 1;
+    } else {
+      participantStats.going -= 1;
+      participantStats.participant -= 1;
+    }
+    store.writeQuery({
+      query: FETCH_EVENT,
+      variables: { uuid: eventUUID },
+      data: {
+        event: {
+          ...eventCached,
+          participantStats,
+        },
+      },
+    });
+  },
+}));
+
+const leaveEvent = (
+  eventToLeave: IEvent,
+  actorId: string,
+  token: string | null = null,
+  isAnonymousParticipationConfirmed: boolean | null = null
+): void => {
+  leaveEventMutation(
+    {
+      eventId: eventToLeave.id,
+      actorId,
+      token,
+    },
+    {
+      context: {
+        token,
+        isAnonymousParticipationConfirmed,
+        eventUUID: eventToLeave.uuid,
+      },
+    }
+  );
+};
+
+onLeaveEventMutationDone(({ data }) => {
+  if (data) {
+    notifier?.success(t("You have cancelled your participation"));
+  }
+});
+
+const snackbar = inject<Snackbar>("snackbar");
+
+onLeaveEventMutationError((error) => {
+  snackbar?.open({
+    message: error.message,
+    variant: "danger",
+    position: "bottom",
+  });
+  console.error(error);
 });
 
 useHead({

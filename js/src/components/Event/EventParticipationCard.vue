@@ -301,7 +301,7 @@ import {
   organizerAvatarUrl,
   organizerDisplayName,
 } from "@/types/event.model";
-import { displayNameAndUsername, IActor, IPerson } from "@/types/actor";
+import { displayNameAndUsername, IPerson } from "@/types/actor";
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
 import RouteName from "@/router/name";
 import { changeIdentity } from "@/utils/identity";
@@ -323,39 +323,18 @@ import { useI18n } from "vue-i18n";
 import { Dialog } from "@/plugins/dialog";
 import { Snackbar } from "@/plugins/snackbar";
 import { useDeleteEvent } from "@/composition/apollo/event";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 
-const defaultOptions: IEventCardOptions = {
-  hideDate: true,
-  loggedPerson: false,
-  hideDetails: false,
-  organizerActor: null,
-};
-
-const props = withDefaults(
-  defineProps<{
-    participation: IParticipant;
-    options?: IEventCardOptions;
-  }>(),
-  {
-    options: () => ({
-      hideDate: true,
-      loggedPerson: false,
-      hideDetails: false,
-      organizerActor: null,
-    }),
-  }
-);
+const props = defineProps<{
+  participation: IParticipant;
+  options?: IEventCardOptions;
+}>();
 
 const emit = defineEmits(["eventDeleted"]);
 
 const { result: currentActorResult } = useQuery(CURRENT_ACTOR_CLIENT);
 const currentActor = computed(() => currentActorResult.value?.currentActor);
 const { t } = useI18n({ useScope: "global" });
-
-const mergedOptions = computed<IEventCardOptions>(() => {
-  return { ...defaultOptions, ...props.options };
-});
 
 const dialog = inject<Dialog>("dialog");
 
@@ -441,9 +420,8 @@ onDeleteEventError((error) => {
  * Delete the event
  */
 const openDeleteEventModalWrapper = () => {
-  openDeleteEventModal(
-    props.participation.event,
-    deleteEvent(props.participation.event)
+  openDeleteEventModal(props.participation.event, (event: IEvent) =>
+    deleteEvent({ eventId: event.id ?? "" })
   );
 };
 
@@ -474,15 +452,15 @@ const gotToWithCheck = async (
   return router.push(route);
 };
 
-const organizerActor = computed<IActor | undefined>(() => {
-  if (
-    props.participation.event.attributedTo &&
-    props.participation.event.attributedTo.id
-  ) {
-    return props.participation.event.attributedTo;
-  }
-  return props.participation.event.organizerActor;
-});
+// const organizerActor = computed<IActor | undefined>(() => {
+//   if (
+//     props.participation.event.attributedTo &&
+//     props.participation.event.attributedTo.id
+//   ) {
+//     return props.participation.event.attributedTo;
+//   }
+//   return props.participation.event.organizerActor;
+// });
 
 const seatsLeft = computed<number | null>(() => {
   if (props.participation.event.options.maximumAttendeeCapacity > 0) {

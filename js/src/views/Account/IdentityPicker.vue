@@ -1,36 +1,53 @@
 <template>
-  <div class="p-6">
+  <div>
     <header class="">
-      <h2 class="">{{ $t("Pick an identity") }}</h2>
+      <h2 class="">{{ t("Pick an identity") }}</h2>
     </header>
     <section class="">
-      <div class="list is-hoverable list-none">
-        <a
-          class="my-2 block dark:bg-violet-3 rounded-xl p-2"
+      <transition-group
+        tag="ul"
+        class="grid grid-cols-1 gap-y-3 m-5 max-w-md"
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0"
+      >
+        <li
+          class="relative focus-within:shadow-lg"
           v-for="identity in identities"
-          :key="identity.id"
-          :class="{
-            active: currentIdentity && identity.id === currentIdentity.id,
-          }"
-          @click="currentIdentity = identity"
+          :key="identity?.id"
         >
-          <div class="flex gap-2">
-            <img
-              class="rounded"
-              v-if="identity.avatar"
-              :src="identity.avatar.url"
-              alt=""
-              width="48"
-              height="48"
-            />
+          <input
+            class="sr-only peer"
+            type="radio"
+            :value="identity"
+            name="availableActors"
+            v-model="currentIdentity"
+            :id="`availableActor-${identity?.id}`"
+          />
+          <label
+            class="flex flex-wrap p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
+            :for="`availableActor-${identity?.id}`"
+          >
+            <figure class="h-12 w-12" v-if="identity?.avatar">
+              <img
+                class="rounded-full h-full w-full object-cover"
+                :src="identity.avatar.url"
+                alt=""
+                width="48"
+                height="48"
+              />
+            </figure>
             <AccountCircle v-else :size="48" />
-            <div class="">
-              <p>@{{ identity.preferredUsername }}</p>
-              <small>{{ identity.name }}</small>
+            <div class="flex-1">
+              <h3>{{ identity?.name }}</h3>
+              <small>{{ `@${identity?.preferredUsername}` }}</small>
             </div>
-          </div>
-        </a>
-      </div>
+          </label>
+        </li>
+      </transition-group>
     </section>
     <slot name="footer" />
   </div>

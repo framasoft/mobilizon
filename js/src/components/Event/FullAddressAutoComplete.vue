@@ -143,7 +143,7 @@ const props = withDefaults(
   }
 );
 
-const addressModalActive = ref(false);
+// const addressModalActive = ref(false);
 
 const componentId = 0;
 
@@ -186,14 +186,14 @@ const updateSelected = (option: IAddress): void => {
   emit("update:modelValue", selected.value);
 };
 
-const resetPopup = (): void => {
-  selected.value = new Address();
-};
+// const resetPopup = (): void => {
+//   selected.value = new Address();
+// };
 
-const openNewAddressModal = (): void => {
-  resetPopup();
-  addressModalActive.value = true;
-};
+// const openNewAddressModal = (): void => {
+//   resetPopup();
+//   addressModalActive.value = true;
+// };
 
 const checkCurrentPosition = (e: LatLng): boolean => {
   if (!selected.value?.geom) return false;

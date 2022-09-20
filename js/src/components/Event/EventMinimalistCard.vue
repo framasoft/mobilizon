@@ -130,7 +130,7 @@ import InlineAddress from "@/components/Address/InlineAddress.vue";
 import Video from "vue-material-design-icons/Video.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 
 withDefaults(
   defineProps<{

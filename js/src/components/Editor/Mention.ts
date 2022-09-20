@@ -62,9 +62,10 @@ const mentionOptions: MentionOptions = {
       let popup: any;
 
       return {
-        onStart: (props: any) => {
+        onStart: (props: Record<string, any>) => {
           component = new VueRenderer(MentionList, {
-            propsData: props,
+            props,
+            editor: props.editor,
           });
 
           popup = tippy("body", {

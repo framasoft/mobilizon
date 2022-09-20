@@ -202,7 +202,6 @@ import {
   InternalRefetchQueriesInclude,
 } from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { computed, nextTick, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
@@ -275,7 +274,7 @@ const moveModal = ref(false);
 const renameModal = ref(false);
 const modalError = ref("");
 
-const resourceRenameInput = ref<HTMLElement>();
+const resourceRenameInput = ref<any>();
 const modalNewResourceInput = ref<HTMLElement>();
 const modalNewResourceLinkInput = ref<HTMLElement>();
 
@@ -307,7 +306,7 @@ const {
   refetchQueries: () => postRefreshQueries(),
 }));
 
-createResourceDone(({ data }) => {
+createResourceDone(() => {
   createLinkResourceModal.value = false;
   createResourceModal.value = false;
   newResource.title = "";
@@ -447,25 +446,25 @@ const { mutate: deleteResource, onError: onDeleteResourceError } = useMutation(
 
 onDeleteResourceError((e) => console.error(e));
 
-const handleRename = async (resource: IResource): Promise<void> => {
+const handleRename = async (resourceToRename: IResource): Promise<void> => {
   renameModal.value = true;
-  updatedResource.value = { ...resource };
+  updatedResource.value = { ...resourceToRename };
   await nextTick();
   resourceRenameInput.value?.$el.focus();
   resourceRenameInput.value?.$el.querySelector("input")?.select();
 };
 
-const handleMove = (resource: IResource): void => {
+const handleMove = (resourceToMove: IResource): void => {
   moveModal.value = true;
-  updatedResource.value = { ...resource };
+  updatedResource.value = { ...resourceToMove };
 };
 
 const moveResource = async (
-  resource: IResource,
+  resourceToMove: IResource,
   oldParent: IResource | undefined
 ): Promise<void> => {
   const parentPath = oldParent && oldParent.path ? oldParent.path || "/" : "/";
-  await updateResource(resource, parentPath);
+  await updateResource(resourceToMove, parentPath);
   moveModal.value = false;
 };
 
@@ -501,10 +500,10 @@ const { mutate: updateResourceMutation } = useMutation<{
       console.error("Cannot update resource cache, because of null value.");
       return;
     }
-    const updatedResource: IResource = data.updateResource;
+    const postUpdatedResource: IResource = data.updateResource;
 
     const updatedElementList = oldParentCachedResource.children.elements.filter(
-      (cachedResource) => cachedResource.id !== updatedResource.id
+      (cachedResource) => cachedResource.id !== postUpdatedResource.id
     );
 
     store.writeQuery({
@@ -526,14 +525,14 @@ const { mutate: updateResourceMutation } = useMutation<{
     console.debug("Finished removing ressource from old parent");
 
     console.debug("Adding resource to new parent");
-    if (!updatedResource.parent || !updatedResource.parent.path) {
+    if (!postUpdatedResource.parent || !postUpdatedResource.parent.path) {
       console.debug("No cache found for new parent");
       return;
     }
     const newParentCachedData = store.readQuery<{ resource: IResource }>({
       query: GET_RESOURCE,
       variables: {
-        path: updatedResource.parent.path,
+        path: postUpdatedResource.parent.path,
         username: resource.value.actor.preferredUsername,
       },
     });
@@ -547,7 +546,7 @@ const { mutate: updateResourceMutation } = useMutation<{
     store.writeQuery({
       query: GET_RESOURCE,
       variables: {
-        path: updatedResource.parent.path,
+        path: postUpdatedResource.parent.path,
         username: resource.value.actor.preferredUsername,
       },
       data: {
@@ -565,15 +564,15 @@ const { mutate: updateResourceMutation } = useMutation<{
 }));
 
 const updateResource = async (
-  resource: IResource,
+  resourceToUpdate: IResource,
   parentPath: string | null = null
 ): Promise<void> => {
   updateResourceMutation(
     {
-      id: resource.id,
-      title: resource.title,
-      parentId: resource.parent ? resource.parent.id : null,
-      path: resource.path,
+      id: resourceToUpdate.id,
+      title: resourceToUpdate.title,
+      parentId: resourceToUpdate.parent ? resourceToUpdate.parent.id : null,
+      path: resourceToUpdate.path,
     },
     { context: { parentPath } }
   );

@@ -86,6 +86,7 @@ import { IMedia } from "@/types/media.model";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import Upload from "vue-material-design-icons/Upload.vue";
+import { formatBytes } from "@/utils/datetime";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -139,15 +140,5 @@ watch(imageSrc, () => {
 
 const showImageLoadingError = (): void => {
   imagePreviewLoadingError.value = true;
-};
-
-// https://gist.github.com/zentala/1e6f72438796d74531803cc3833c039c
-const formatBytes = (bytes: number, decimals?: number): string => {
-  if (bytes == 0) return "0 Bytes";
-  const k = 1024,
-    dm = decimals || 2,
-    sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-    i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 };
 </script>

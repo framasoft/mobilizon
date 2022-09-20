@@ -94,7 +94,7 @@ import ExitToApp from "vue-material-design-icons/ExitToApp.vue";
 import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 import { htmlToText } from "@/utils/html";
 import { useI18n } from "vue-i18n";
 

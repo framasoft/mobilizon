@@ -22,12 +22,17 @@
       </div>
       <div class="">
         <div class="" v-if="comment">
-          <article class="media">
-            <div class="media-left">
-              <figure class="image is-48x48" v-if="comment?.actor?.avatar">
-                <img :src="comment.actor.avatar.url" alt="" />
+          <article class="">
+            <div class="">
+              <figure class="h-8 w-8" v-if="comment?.actor?.avatar">
+                <img
+                  :src="comment.actor.avatar.url"
+                  alt=""
+                  width="48"
+                  height="48"
+                />
               </figure>
-              <o-icon v-else size="large" icon="account-circle" />
+              <AccountCircle v-else :size="48" />
             </div>
             <div class="">
               <div class="prose dark:prose-invert">
@@ -65,7 +70,7 @@
     </section>
 
     <footer class="flex gap-2 py-3">
-      <o-button ref="cancelButton" @click="close">
+      <o-button ref="cancelButton" outlined @click="close">
         {{ translatedCancelText }}
       </o-button>
       <o-button

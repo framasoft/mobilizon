@@ -135,7 +135,7 @@ import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
 import { ActivityType } from "@/types/enums";
 import { Paginate } from "@/types/paginate";
 import { IActivity } from "../../types/activity.model";
-import Observer from "../../components/Utils/Observer.vue";
+import Observer from "../../components/Utils/ObserverElement.vue";
 import SkeletonActivityItem from "../../components/Activity/SkeletonActivityItem.vue";
 import RouteName from "../../router/name";
 import TimelineText from "vue-material-design-icons/TimelineText.vue";

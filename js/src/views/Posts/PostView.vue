@@ -219,7 +219,7 @@ import {
   displayName,
 } from "@/types/actor";
 import RouteName from "@/router/name";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import ActorInline from "@/components/Account/ActorInline.vue";
 import { formatDistanceToNowStrict, Locale } from "date-fns";

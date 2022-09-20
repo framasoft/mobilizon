@@ -321,7 +321,7 @@ import {
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 
 const EVENTS_PER_PAGE = 10;
 const POSTS_PER_PAGE = 10;

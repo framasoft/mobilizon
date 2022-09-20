@@ -443,10 +443,10 @@ const instanceLanguages = computed({
         return codeForLanguage(language);
       })
       .filter((code) => code !== undefined) as string[];
-    // adminSettings = {
-    //   ...adminSettings,
-    //   instanceLanguages: newInstanceLanguages,
-    // };
+    settingsToWrite.value = {
+      ...settingsToWrite.value,
+      instanceLanguages: newFilteredInstanceLanguages,
+    };
   },
 });
 

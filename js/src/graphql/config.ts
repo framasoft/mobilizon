@@ -347,6 +347,18 @@ export const MAPS_TILES = gql`
   }
 `;
 
+export const ROUTING_TYPE = gql`
+  query RoutingType {
+    config {
+      maps {
+        routing {
+          type
+        }
+      }
+    }
+  }
+`;
+
 export const FEATURES = gql`
   query Features {
     config {

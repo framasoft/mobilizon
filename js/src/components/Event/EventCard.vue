@@ -150,7 +150,7 @@ import RouteName from "../../router/name";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
 
 import { computed, inject } from "vue";
-import MobilizonTag from "@/components/Tag.vue";
+import MobilizonTag from "@/components/TagElement.vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Video from "vue-material-design-icons/Video.vue";
 import { formatDateTimeForEvent } from "@/utils/datetime";

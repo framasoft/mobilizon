@@ -283,7 +283,7 @@ import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Incognito from "vue-material-design-icons/Incognito.vue";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { Notifier } from "@/plugins/notifier";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/TagElement.vue";
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;

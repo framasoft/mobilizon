@@ -1,4 +1,3 @@
-import { computed } from "vue";
 import { useExportFormats, useUploadLimits } from "./apollo/config";
 
 export const useHost = (): string => {

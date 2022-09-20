@@ -84,7 +84,7 @@
       </template>
       <a
         target="_blank"
-        class="hover:underline"
+        class="underline"
         rel="noopener noreferrer ugc"
         :href="event.onlineAddress"
         :title="

@@ -8,6 +8,8 @@
       @click="clickMap"
       @update:zoom="updateZoom"
       :options="{ zoomControl: false }"
+      ref="mapComponent"
+      @ready="onMapReady"
     >
       <l-tile-layer :url="tiles?.endpoint" :attribution="attribution">
       </l-tile-layer>
@@ -16,28 +18,36 @@
         :zoomInTitle="$t('Zoom in')"
         :zoomOutTitle="$t('Zoom out')"
       ></l-control-zoom>
-      <!-- <v-locatecontrol
-        v-if="canDoGeoLocation"
-        :options="{ icon: 'mdi mdi-map-marker' }"
-      /> -->
       <l-marker
         :lat-lng="[lat, lon]"
         @add="openPopup"
         @update:latLng="updateDraggableMarkerPosition"
         :draggable="!readOnly"
       >
-        <l-popup v-if="popupMultiLine">
+        <l-icon>
+          <MapMarker :size="48" class="text-mbz-purple" />
+        </l-icon>
+        <l-popup v-if="popupMultiLine" :options="{ offset: new Point(22, 8) }">
           <span v-for="line in popupMultiLine" :key="line"
             >{{ line }}<br
           /></span>
         </l-popup>
       </l-marker>
     </l-map>
+    <CrosshairsGps ref="locationIcon" class="hidden" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Icon, LatLng, LeafletMouseEvent, LeafletEvent } from "leaflet";
+import {
+  LatLng,
+  LeafletMouseEvent,
+  LeafletEvent,
+  Control,
+  DomUtil,
+  Map,
+  Point,
+} from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
   LMap,
@@ -47,10 +57,12 @@ import {
   LIcon,
   LControlZoom,
 } from "@vue-leaflet/vue-leaflet";
-// import Vue2LeafletLocateControl from "@/components/Map/Vue2LeafletLocateControl.vue";
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useMapTiles } from "@/composition/apollo/config";
 import { useI18n } from "vue-i18n";
+import Locatecontrol from "leaflet.locatecontrol";
+import CrosshairsGps from "vue-material-design-icons/CrosshairsGps.vue";
+import MapMarker from "vue-material-design-icons/MapMarker.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -77,8 +89,18 @@ const defaultOptions: {
 
 const zoom = ref(defaultOptions.zoom);
 
-onMounted(() => {
+const mapComponent = ref();
+const mapObject = ref<Map>();
+const locateControl = ref<Control.Locate>();
+const locationIcon = ref();
+
+const locationIconHTML = computed(() => locationIcon.value?.$el.innerHTML);
+
+onMounted(async () => {
   // this part resolve an issue where the markers would not appear
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  // eslint-disable-next-line no-underscore-dangle
   // delete Icon.Default.prototype._getIconUrl;
   // Icon.Default.mergeOptions({
   //   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -86,6 +108,50 @@ onMounted(() => {
   //   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
   // });
 });
+
+const onMapReady = async () => {
+  mapObject.value = mapComponent.value.leafletObject;
+  mountLocateControl();
+};
+
+const mountLocateControl = () => {
+  if (canDoGeoLocation.value && mapObject.value) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    locateControl.value = new Locatecontrol({
+      strings: { title: t("Show me where I am") as string },
+      position: "topleft",
+      drawCircle: false,
+      drawMarker: false,
+      createButtonCallback(container: HTMLElement | undefined, options: any) {
+        const link = DomUtil.create(
+          "a",
+          "leaflet-bar-part leaflet-bar-part-single",
+          container
+        );
+        link.title = options.strings.title;
+        link.href = "#";
+        link.setAttribute("role", "button");
+
+        const icon = DomUtil.create(
+          "span",
+          "material-design-icon rss-icon",
+          link
+        );
+        icon.setAttribute("aria-hidden", "true");
+        icon.setAttribute("role", "img");
+        icon.insertAdjacentHTML("beforeend", locationIconHTML.value);
+        console.log("icon for location", {
+          link,
+          icon,
+        });
+        return { link, icon };
+      },
+      ...props.options,
+    }) as Control.Locate;
+    locateControl.value?.addTo(mapObject.value);
+  }
+};
 
 const openPopup = async (event: LeafletEvent): Promise<void> => {
   await nextTick();
@@ -146,4 +212,7 @@ div.map-container {
     z-index: 20;
   }
 }
+</style>
+<style>
+@import "leaflet.locatecontrol/dist/L.Control.Locate.css";
 </style>

@@ -26,13 +26,12 @@
         <o-field v-if="hasInput">
           <o-input
             v-model="prompt"
+            expanded
             class="input"
             ref="input"
-            :class="{ 'is-danger': validationMessage }"
             v-bind="inputAttrs"
             @keydown.enter="confirm"
           />
-          <p class="help is-danger">{{ validationMessage }}</p>
         </o-field>
       </div>
     </section>
@@ -83,15 +82,14 @@ const emit = defineEmits(["confirm", "cancel", "close"]);
 
 const { t } = useI18n({ useScope: "global" });
 
-const modalOpened = ref(false);
-const validationMessage = ref("");
+// const modalOpened = ref(false);
 
 const prompt = ref<string>(props.hasInput ? props.inputAttrs?.value ?? "" : "");
 const input = ref();
 
-const dialogClass = computed(() => {
-  return [props.size];
-});
+// const dialogClass = computed(() => {
+//   return [props.size];
+// });
 /**
  * Icon name (MDI) based on the type.
  */
@@ -114,10 +112,11 @@ const iconByType = computed(() => {
  * Call the onConfirm prop (function) and close the Dialog.
  */
 const confirm = () => {
+  console.log("dialog confirmed", input.value.$el);
   if (input.value !== undefined) {
-    if (!input.value.checkValidity()) {
-      validationMessage.value = input.value.validationMessage;
-      nextTick(() => input.value.select());
+    const inputElement = input.value.$el.querySelector("input");
+    if (!inputElement.checkValidity()) {
+      nextTick(() => inputElement.select());
       return;
     }
   }

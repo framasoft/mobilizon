@@ -53,4 +53,7 @@ module.exports = {
   },
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],
+  globals: {
+    GeolocationPositionError: true,
+  },
 };

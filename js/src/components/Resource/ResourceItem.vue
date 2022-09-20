@@ -60,7 +60,7 @@
 <script lang="ts" setup>
 import { IResource, mapServiceTypeToIcon } from "@/types/resource";
 import ResourceDropdown from "@/components/Resource/ResourceDropdown.vue";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { formatDateTimeString } from "@/filters/datetime";
 import Link from "vue-material-design-icons/Link.vue";
 

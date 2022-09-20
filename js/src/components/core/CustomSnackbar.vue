@@ -54,7 +54,9 @@ const props = withDefaults(
     indefinite?: boolean;
   }>(),
   {
-    onAction: () => {},
+    onAction: () => {
+      // do nothing
+    },
     cancelText: null,
     variant: "dark",
     position: "bottom-right",

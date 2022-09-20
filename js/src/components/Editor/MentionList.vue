@@ -20,7 +20,7 @@ import { ref, watch } from "vue";
 
 const props = defineProps<{
   items: IPerson[];
-  command: ({ id }: { id: string }) => {};
+  command: ({ id }: { id: string }) => any;
 }>();
 
 // @Prop({ type: Function, required: true }) command!: any;
@@ -31,37 +31,37 @@ watch(props.items, () => {
   selectedIndex.value = 0;
 });
 
-const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
-  if (event.key === "ArrowUp") {
-    upHandler();
-    return true;
-  }
+// const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
+//   if (event.key === "ArrowUp") {
+//     upHandler();
+//     return true;
+//   }
 
-  if (event.key === "ArrowDown") {
-    downHandler();
-    return true;
-  }
+//   if (event.key === "ArrowDown") {
+//     downHandler();
+//     return true;
+//   }
 
-  if (event.key === "Enter") {
-    enterHandler();
-    return true;
-  }
+//   if (event.key === "Enter") {
+//     enterHandler();
+//     return true;
+//   }
 
-  return false;
-};
+//   return false;
+// };
 
-const upHandler = (): void => {
-  selectedIndex.value =
-    (selectedIndex.value + props.items.length - 1) % props.items.length;
-};
+// const upHandler = (): void => {
+//   selectedIndex.value =
+//     (selectedIndex.value + props.items.length - 1) % props.items.length;
+// };
 
-const downHandler = (): void => {
-  selectedIndex.value = (selectedIndex.value + 1) % props.items.length;
-};
+// const downHandler = (): void => {
+//   selectedIndex.value = (selectedIndex.value + 1) % props.items.length;
+// };
 
-const enterHandler = (): void => {
-  selectItem(selectedIndex.value);
-};
+// const enterHandler = (): void => {
+//   selectItem(selectedIndex.value);
+// };
 
 const selectItem = (index: number): void => {
   const item = props.items[index];
