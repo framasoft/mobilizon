@@ -63,7 +63,7 @@ describe("ReportModal", () => {
       },
     });
 
-    const commentContainer = wrapper.find("article.media");
+    const commentContainer = wrapper.find("article");
     expect(commentContainer.find("strong").text()).toContain(
       "I am the comment author"
     );

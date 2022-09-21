@@ -9,8 +9,8 @@ exports[`ReportModal > renders report modal with basic informations and submits 
     </div>
     <div class=\\"\\" data-v-e0cceef3=\\"\\">
       <!--v-if-->
-      <div class=\\"o-field o-field--filled\\" data-v-e0cceef3=\\"\\"><label for=\\"additonal-comments\\" class=\\"o-field__label\\">Additional comments</label>
-        <div class=\\"o-ctrl-input\\" data-v-e0cceef3=\\"\\"><textarea id=\\"additonal-comments\\" class=\\"o-input o-input__textarea\\"></textarea>
+      <div class=\\"o-field o-field--filled\\" data-v-e0cceef3=\\"\\"><label for=\\"additional-comments\\" class=\\"o-field__label\\">Additional comments</label>
+        <div class=\\"o-ctrl-input\\" data-v-e0cceef3=\\"\\"><textarea id=\\"additional-comments\\" class=\\"o-input o-input__textarea\\"></textarea>
           <!--v-if-->
           <!--v-if-->
           <!--v-if-->

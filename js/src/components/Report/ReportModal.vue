@@ -49,9 +49,9 @@
 
         <o-field
           :label="t('Additional comments')"
-          label-for="additonal-comments"
+          label-for="additional-comments"
         >
-          <o-input v-model="content" type="textarea" id="additonal-comments" />
+          <o-input v-model="content" type="textarea" id="additional-comments" />
         </o-field>
 
         <div class="control" v-if="outsideDomain">
