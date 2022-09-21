@@ -9,11 +9,13 @@ defmodule Mix.Tasks.Mobilizon.Common do
   """
   require Logger
 
+  @env Application.compile_env(:mobilizon, :env)
+
   @spec start_mobilizon :: any()
   def start_mobilizon do
     if mix_task?(), do: Mix.Task.run("app.config")
 
-    unless System.get_env("DEBUG") || Application.compile_env(:mobilizon, :env) == :test do
+    unless System.get_env("DEBUG") || @env == :test do
       Logger.configure(level: :error)
     end
 
@@ -73,7 +75,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
       IO.puts(:stderr, message)
     end
 
-    if Application.compile_env(:mobilizon, :env) != :test do
+    if @env != :test do
       exit({:shutdown, Keyword.get(options, :error_code, 1)})
     end
   end

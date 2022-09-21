@@ -4,7 +4,7 @@ defmodule Mobilizon.Cldr do
   """
 
   use Cldr,
-    locales: locales(),
+    locales: Application.compile_env(:mobilizon, :cldr)[:locales],
     add_fallback_locales: true,
     gettext:
       if(Application.compile_env(:mobilizon, :env) == :prod,
@@ -26,9 +26,5 @@ defmodule Mobilizon.Cldr do
     else
       default
     end
-  end
-
-  defp locales do
-    Application.get_env(:mobilizon, :cldr)[:locales]
   end
 end

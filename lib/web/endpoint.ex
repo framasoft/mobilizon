@@ -3,7 +3,7 @@ defmodule Mobilizon.Web.Endpoint do
   Endpoint for Mobilizon app
   """
 
-  if Application.compile_env(:mobilizon, :env) !== :test && sentry_dsn_config() != nil do
+  if Application.compile_env(:mobilizon, :env) !== :test do
     use Sentry.PlugCapture
   end
 
@@ -61,7 +61,8 @@ defmodule Mobilizon.Web.Endpoint do
   plug(Plug.RequestId)
   plug(Plug.Logger)
 
-  upload_limit = Keyword.get(instance_config(), :upload_limit, 10_485_760)
+  upload_limit =
+    Keyword.get(Application.compile_env(:mobilizon, :instance, []), :upload_limit, 10_485_760)
 
   plug(
     Plug.Parsers,
@@ -79,19 +80,7 @@ defmodule Mobilizon.Web.Endpoint do
     String.replace_leading(url(), "http", "ws")
   end
 
-  defp sentry_dsn_config do
-    Application.get_env(:sentry, :dsn)
-  end
-
-  defp endpoint_config do
-    Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)
-  end
-
-  defp instance_config do
-    Application.get_env(:mobilizon, :instance, [])
-  end
-
-  if Application.compile_env(:mobilizon, :env) !== :test && sentry_dsn_config() != nil do
+  if Application.compile_env(:mobilizon, :env) !== :test do
     plug(Sentry.PlugContext)
   end
 end
