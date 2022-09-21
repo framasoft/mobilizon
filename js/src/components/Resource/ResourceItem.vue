@@ -1,14 +1,18 @@
 <template>
-  <div class="resource-wrapper" dir="auto">
+  <div class="flex flex-1 items-center w-full" dir="auto">
     <a :href="resource.resourceUrl" target="_blank">
-      <div class="preview">
+      <div class="preview text-mbz-purple dark:text-mbz-purple-300">
         <div
           v-if="
             resource.type &&
             Object.keys(mapServiceTypeToIcon).includes(resource.type)
           "
         >
-          <b-icon :icon="mapServiceTypeToIcon[resource.type]" size="is-large" />
+          <o-icon
+            :icon="mapServiceTypeToIcon[resource.type]"
+            size="large"
+            customSize="48"
+          />
         </div>
         <div
           class="preview-image"
@@ -16,91 +20,81 @@
           :style="`background-image: url(${resource.metadata.imageRemoteUrl})`"
         />
         <div class="preview-type" v-else>
-          <b-icon icon="link" size="is-large" />
+          <Link :size="48" />
         </div>
       </div>
-      <div class="body">
-        <div class="title-wrapper">
+      <div class="body flex-1 px-1 pb-1">
+        <div class="flex items-center gap-1 max-w-[65vw]">
           <img
             class="favicon"
             alt=""
             v-if="resource.metadata && resource.metadata.faviconUrl"
             :src="resource.metadata.faviconUrl"
           />
-          <h3>{{ resource.title }}</h3>
+          <h3 class="dark:text-white">{{ resource.title }}</h3>
         </div>
         <div class="metadata-wrapper">
           <span class="host" v-if="!inline || preview">{{ urlHostname }}</span>
           <span
-            class="published-at"
-            :class="{ 'is-hidden-mobile': !inline }"
+            class="hidden md:inline"
+            :class="{ inline }"
             v-if="resource.updatedAt || resource.publishedAt"
             >{{
-              (resource.updatedAt || resource.publishedAt) |
-                formatDateTimeString
+              formatDateTimeString(
+                resource.updatedAt ?? resource.publishedAt ?? ""
+              )
             }}</span
           >
         </div>
       </div>
     </a>
     <resource-dropdown
-      class="actions"
+      class="flex-0 block mx-auto my-2 cursor-pointer mr-2"
       v-if="!inline && !preview"
-      @delete="$emit('delete', resource.id)"
-      @move="$emit('move', resource)"
-      @rename="$emit('rename', resource)"
+      @delete="emit('delete', resource.id as string)"
+      @move="emit('move', resource)"
+      @rename="emit('rename', resource)"
     />
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { IResource, mapServiceTypeToIcon } from "@/types/resource";
 import ResourceDropdown from "@/components/Resource/ResourceDropdown.vue";
+import { computed } from "vue";
+import { formatDateTimeString } from "@/filters/datetime";
+import Link from "vue-material-design-icons/Link.vue";
 
-@Component({
-  components: { ResourceDropdown },
-})
-export default class ResourceItem extends Vue {
-  @Prop({ required: true, type: Object }) resource!: IResource;
+const props = withDefaults(
+  defineProps<{
+    resource: IResource;
+    inline?: boolean;
+    preview?: boolean;
+  }>(),
+  { inline: false, preview: false }
+);
 
-  @Prop({ required: false, default: false }) inline!: boolean;
-  @Prop({ required: false, default: false }) preview!: boolean;
+const emit = defineEmits<{
+  (e: "move", resource: IResource): void;
+  (e: "rename", resource: IResource): void;
+  (e: "delete", resourceID: string): void;
+}>();
 
-  list = [];
+// const list = ref([]);
 
-  mapServiceTypeToIcon = mapServiceTypeToIcon;
-
-  get urlHostname(): string | undefined {
-    if (this.resource?.resourceUrl) {
-      return new URL(this.resource.resourceUrl).hostname.replace(
-        /^(www\.)/,
-        ""
-      );
-    }
-    return undefined;
+const urlHostname = computed((): string | undefined => {
+  if (props.resource?.resourceUrl) {
+    return new URL(props.resource.resourceUrl).hostname.replace(/^(www\.)/, "");
   }
-}
+  return undefined;
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-.resource-wrapper {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  width: 100%;
-
-  .actions {
-    flex: 0;
-    display: block;
-    margin: auto 1rem;
-    cursor: pointer;
-  }
-}
 
 a {
   display: flex;
   font-size: 14px;
-  color: #444b5d;
+  // color: #444b5d;
   text-decoration: none;
   overflow: hidden;
   flex: 1;
@@ -125,20 +119,11 @@ a {
   }
 
   .body {
-    padding: 8px;
-    flex: 1 1 auto;
-    overflow: hidden;
-
-    .title-wrapper {
-      display: flex;
-      max-width: calc(100vw - 122px);
-    }
-
     img.favicon {
       display: inline-block;
       width: 16px;
       height: 16px;
-      @include margin-right(6px);
+      // @include margin-right(6px);
       vertical-align: middle;
     }
 
@@ -146,7 +131,6 @@ a {
       white-space: nowrap;
       display: inline-block;
       font-weight: 500;
-      color: $primary;
       overflow: hidden;
       text-overflow: ellipsis;
       text-decoration: none;

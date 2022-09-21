@@ -10,12 +10,14 @@ export interface IPost {
   local: boolean;
   title: string;
   body: string;
-  tags?: ITag[];
+  tags: ITag[];
   picture?: IMedia | null;
   draft: boolean;
   visibility: PostVisibility;
   author?: IActor;
   attributedTo?: IActor;
-  publishAt?: Date;
-  insertedAt?: Date;
+  publishAt?: string;
+  insertedAt?: string;
+  language?: string;
+  updatedAt?: string;
 }

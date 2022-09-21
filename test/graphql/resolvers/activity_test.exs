@@ -182,7 +182,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       event = insert(:event, attributed_to: group, organizer_actor: actor)
       EventActivity.insert_activity(event, subject: "event_created")
 
-      assert %{success: 1, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 1, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :activity)
 
       assert Activities.list_activities() |> length() == 1
@@ -234,7 +234,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       EventActivity.insert_activity(event, subject: "event_created")
       PostActivity.insert_activity(post, subject: "post_created")
 
-      assert %{success: 2, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 2, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :activity)
 
       assert Activities.list_activities() |> length() == 2
@@ -281,7 +281,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       EventActivity.insert_activity(event, subject: "event_created")
       PostActivity.insert_activity(post, subject: "post_created")
 
-      assert %{success: 2, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 2, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :activity)
 
       assert Activities.list_activities() |> length() == 2
@@ -328,7 +328,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
       Posts.delete_post(post)
       PostActivity.insert_activity(post, subject: "post_deleted")
 
-      assert %{success: 2, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 2, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :activity)
 
       assert Activities.list_activities() |> length() == 2

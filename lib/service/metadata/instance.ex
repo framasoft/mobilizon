@@ -44,7 +44,11 @@ defmodule Mobilizon.Service.Metadata.Instance do
       Tag.tag(:meta, property: "og:description", content: description),
       Tag.tag(:meta, property: "og:type", content: "website"),
       HTML.raw(instance_json_ld)
-    ] ++ maybe_add_instance_feeds(Config.get([:instance, :enable_instance_feeds]))
+    ] ++ maybe_add_instance_feeds(enable_instance_feeds())
+  end
+
+  defp enable_instance_feeds do
+    get_in(Application.get_env(:mobilizon, :instance), [:enable_instance_feeds])
   end
 
   @spec maybe_add_instance_feeds(boolean()) :: list()

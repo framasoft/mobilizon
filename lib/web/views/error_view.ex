@@ -3,18 +3,11 @@ defmodule Mobilizon.Web.ErrorView do
   View for errors
   """
   use Mobilizon.Web, :view
-  alias Mobilizon.Service.Metadata.Instance
-  import Mobilizon.Web.Views.Utils
+  alias Mobilizon.Web.PageView
 
   @spec render(String.t(), map()) :: map() | String.t() | Plug.Conn.t()
-  def render("404.html", %{conn: conn}) do
-    with tags <- Instance.build_tags(),
-         {:ok, html} <- inject_tags(tags, get_locale(conn)) do
-      html
-    else
-      {:error, error} ->
-        return_error(conn, error)
-    end
+  def render("404.html", _assigns) do
+    PageView.render("index.html")
   end
 
   def render("404.json", _assigns) do

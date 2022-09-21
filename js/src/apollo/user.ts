@@ -1,4 +1,5 @@
 import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
+import { CURRENT_USER_LOCATION_CLIENT } from "@/graphql/location";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUserRole } from "@/types/enums";
 import { ApolloCache, NormalizedCacheObject } from "@apollo/client/cache";
@@ -7,7 +8,7 @@ import { Resolvers } from "@apollo/client/core/types";
 export default function buildCurrentUserResolver(
   cache: ApolloCache<NormalizedCacheObject>
 ): Resolvers {
-  cache.writeQuery({
+  cache?.writeQuery({
     query: CURRENT_USER_CLIENT,
     data: {
       currentUser: {
@@ -20,7 +21,7 @@ export default function buildCurrentUserResolver(
     },
   });
 
-  cache.writeQuery({
+  cache?.writeQuery({
     query: CURRENT_ACTOR_CLIENT,
     data: {
       currentActor: {
@@ -29,6 +30,20 @@ export default function buildCurrentUserResolver(
         preferredUsername: null,
         name: null,
         avatar: null,
+      },
+    },
+  });
+
+  cache?.writeQuery({
+    query: CURRENT_USER_LOCATION_CLIENT,
+    data: {
+      currentUserLocation: {
+        lat: null,
+        lon: null,
+        accuracy: null,
+        isIPLocation: null,
+        name: null,
+        picture: null,
       },
     },
   });
@@ -83,6 +98,39 @@ export default function buildCurrentUserResolver(
         };
 
         localCache.writeQuery({ data, query: CURRENT_ACTOR_CLIENT });
+      },
+      updateCurrentUserLocation: (
+        _: any,
+        {
+          lat,
+          lon,
+          accuracy,
+          isIPLocation,
+          name,
+          picture,
+        }: {
+          lat: number;
+          lon: number;
+          accuracy: number;
+          isIPLocation: boolean;
+          name: string;
+          picture: any;
+        },
+        { cache: localCache }: { cache: ApolloCache<NormalizedCacheObject> }
+      ) => {
+        const data = {
+          currentUserLocation: {
+            lat,
+            lon,
+            accuracy,
+            isIPLocation,
+            name,
+            picture,
+            __typename: "CurrentUserLocation",
+          },
+        };
+
+        localCache.writeQuery({ data, query: CURRENT_USER_LOCATION_CLIENT });
       },
     },
   };

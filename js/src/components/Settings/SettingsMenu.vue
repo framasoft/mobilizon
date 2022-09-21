@@ -1,25 +1,25 @@
 <template>
-  <aside>
+  <aside class="mb-6">
     <ul>
       <SettingMenuSection
-        :title="$t('Account')"
+        :title="t('Account')"
         :to="{ name: RouteName.ACCOUNT_SETTINGS }"
       >
         <SettingMenuItem
-          :title="this.$t('General')"
+          :title="t('General')"
           :to="{ name: RouteName.ACCOUNT_SETTINGS_GENERAL }"
         />
         <SettingMenuItem
-          :title="$t('Preferences')"
+          :title="t('Preferences')"
           :to="{ name: RouteName.PREFERENCES }"
         />
         <SettingMenuItem
-          :title="this.$t('Notifications')"
+          :title="t('Notifications')"
           :to="{ name: RouteName.NOTIFICATIONS }"
         />
       </SettingMenuSection>
       <SettingMenuSection
-        :title="$t('Profiles')"
+        :title="t('Profiles')"
         :to="{ name: RouteName.IDENTITIES }"
       >
         <SettingMenuItem
@@ -32,95 +32,76 @@
           }"
         />
         <SettingMenuItem
-          :title="$t('New profile')"
+          :title="t('New profile')"
           :to="{ name: RouteName.CREATE_IDENTITY }"
         />
       </SettingMenuSection>
       <SettingMenuSection
         v-if="
+          currentUser?.role &&
           [ICurrentUserRole.MODERATOR, ICurrentUserRole.ADMINISTRATOR].includes(
-            this.currentUser.role
+            currentUser?.role
           )
         "
-        :title="$t('Moderation')"
+        :title="t('Moderation')"
         :to="{ name: RouteName.MODERATION }"
       >
         <SettingMenuItem
-          :title="$t('Reports')"
+          :title="t('Reports')"
           :to="{ name: RouteName.REPORTS }"
         />
         <SettingMenuItem
-          :title="$t('Moderation log')"
+          :title="t('Moderation log')"
           :to="{ name: RouteName.REPORT_LOGS }"
         />
-        <SettingMenuItem :title="$t('Users')" :to="{ name: RouteName.USERS }" />
+        <SettingMenuItem :title="t('Users')" :to="{ name: RouteName.USERS }" />
         <SettingMenuItem
-          :title="$t('Profiles')"
+          :title="t('Profiles')"
           :to="{ name: RouteName.PROFILES }"
         />
         <SettingMenuItem
-          :title="$t('Groups')"
+          :title="t('Groups')"
           :to="{ name: RouteName.ADMIN_GROUPS }"
         />
       </SettingMenuSection>
       <SettingMenuSection
-        v-if="this.currentUser.role == ICurrentUserRole.ADMINISTRATOR"
-        :title="$t('Admin')"
+        v-if="currentUser?.role == ICurrentUserRole.ADMINISTRATOR"
+        :title="t('Admin')"
         :to="{ name: RouteName.ADMIN }"
       >
         <SettingMenuItem
-          :title="$t('Dashboard')"
+          :title="t('Dashboard')"
           :to="{ name: RouteName.ADMIN_DASHBOARD }"
         />
         <SettingMenuItem
-          :title="$t('Instance settings')"
+          :title="t('Instance settings')"
           :to="{ name: RouteName.ADMIN_SETTINGS }"
         />
         <SettingMenuItem
-          :title="$t('Federation')"
+          :title="t('Federation')"
           :to="{ name: RouteName.INSTANCES }"
         />
       </SettingMenuSection>
     </ul>
   </aside>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { ICurrentUserRole } from "@/types/enums";
 import SettingMenuSection from "./SettingMenuSection.vue";
 import SettingMenuItem from "./SettingMenuItem.vue";
-import { IDENTITIES } from "../../graphql/actor";
-import { IPerson, Person } from "../../types/actor";
-import { CURRENT_USER_CLIENT } from "../../graphql/user";
-import { ICurrentUser } from "../../types/current-user.model";
 
 import RouteName from "../../router/name";
+import { useCurrentUserClient } from "@/composition/apollo/user";
+import { useCurrentUserIdentities } from "@/composition/apollo/actor";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  components: { SettingMenuSection, SettingMenuItem },
-  apollo: {
-    identities: {
-      query: IDENTITIES,
-      update: (data) =>
-        data.identities.map((identity: IPerson) => new Person(identity)),
-    },
-    currentUser: CURRENT_USER_CLIENT,
-  },
-})
-export default class SettingsMenu extends Vue {
-  profiles = [];
+const { currentUser } = useCurrentUserClient();
+const { identities } = useCurrentUserIdentities();
 
-  currentUser!: ICurrentUser;
-
-  identities!: IPerson[];
-
-  ICurrentUserRole = ICurrentUserRole;
-
-  RouteName = RouteName;
-}
+const { t } = useI18n({ useScope: "global" });
 </script>
 <style lang="scss" scoped>
-::v-deep a {
+:deep(a) {
   text-decoration: none;
 }
 </style>

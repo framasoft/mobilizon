@@ -1,9 +1,9 @@
 <template>
   <div
-    class="bg-white rounded-lg flex space-x-4 items-center"
+    class="bg-white dark:bg-mbz-purple rounded-lg flex space-x-4 items-center"
     :class="{ 'flex-col p-4 shadow-md sm:p-8 pb-10 w-80': !inline }"
   >
-    <div>
+    <div class="flex pl-2">
       <figure class="w-12 h-12" v-if="actor.avatar">
         <img
           class="rounded-lg"
@@ -13,20 +13,19 @@
           height="48"
         />
       </figure>
-      <b-icon
+      <AccountCircle
         v-else
-        :size="inline ? 'is-medium' : 'is-large'"
-        icon="account-circle"
+        :size="inline ? 24 : 48"
         class="ltr:-mr-0.5 rtl:-ml-0.5"
       />
     </div>
     <div :class="{ 'text-center': !inline }" class="overflow-hidden w-full">
       <h5
-        class="text-xl font-medium violet-title tracking-tight text-gray-900 whitespace-pre-line line-clamp-2"
+        class="text-xl font-medium violet-title tracking-tight text-gray-900 dark:text-gray-200 whitespace-pre-line line-clamp-2"
       >
         {{ displayName(actor) }}
       </h5>
-      <p class="text-gray-500 truncate" v-if="actor.name">
+      <p class="text-gray-500 dark:text-gray-200 truncate" v-if="actor.name">
         <span dir="ltr">@{{ usernameWithDomain(actor) }}</span>
       </p>
       <div
@@ -54,9 +53,9 @@
           height="48"
         />
       </figure>
-      <b-icon
+      <o-icon
         v-else
-        size="is-large"
+        size="large"
         icon="account-circle"
         class="ltr:-mr-0.5 rtl:-ml-0.5"
       />
@@ -78,29 +77,28 @@
     </div>
   </div> -->
 </template>
-<script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+<script lang="ts" setup>
 import { displayName, IActor, usernameWithDomain } from "../../types/actor";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 
-@Component
-export default class ActorCard extends Vue {
-  @Prop({ required: true, type: Object }) actor!: IActor;
-
-  @Prop({ required: false, type: Boolean, default: false }) full!: boolean;
-
-  @Prop({ required: false, type: Boolean, default: false }) inline!: boolean;
-
-  @Prop({ required: false, type: Boolean, default: false }) popover!: boolean;
-
-  @Prop({ required: false, type: Boolean, default: true }) limit!: boolean;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-}
+withDefaults(
+  defineProps<{
+    actor: IActor;
+    full?: boolean;
+    inline?: boolean;
+    popover?: boolean;
+    limit?: boolean;
+  }>(),
+  {
+    full: false,
+    inline: false,
+    popover: false,
+    limit: true,
+  }
+);
 </script>
 <style scoped>
-.only-first-child ::v-deep :not(:first-child) {
+.only-first-child :deep(:not(:first-child)) {
   display: none;
 }
 </style>

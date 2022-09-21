@@ -1,13 +1,14 @@
 <template>
   <div
-    class="truncate"
+    class="truncate flex gap-1"
+    dir="auto"
     :title="
       isDescriptionDifferentFromLocality
         ? `${physicalAddress.description}, ${physicalAddress.locality}`
         : physicalAddress.description
     "
   >
-    <b-icon icon="map-marker" />
+    <MapMarker />
     <span v-if="physicalAddress.locality">
       {{ physicalAddress.locality }}
     </span>
@@ -16,21 +17,19 @@
     </span>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IAddress } from "@/types/address.model";
-import { PropType } from "vue";
-import { Prop, Vue, Component } from "vue-property-decorator";
+import MapMarker from "vue-material-design-icons/MapMarker.vue";
+import { computed } from "vue";
 
-@Component
-export default class InlineAddress extends Vue {
-  @Prop({ required: true, type: Object as PropType<IAddress> })
-  physicalAddress!: IAddress;
+const props = defineProps<{
+  physicalAddress: IAddress;
+}>();
 
-  get isDescriptionDifferentFromLocality(): boolean {
-    return (
-      this.physicalAddress?.description !== this.physicalAddress?.locality &&
-      this.physicalAddress?.description !== undefined
-    );
-  }
-}
+const isDescriptionDifferentFromLocality = computed<boolean>(() => {
+  return (
+    props.physicalAddress?.description !== props.physicalAddress?.locality &&
+    props.physicalAddress?.description !== undefined
+  );
+});
 </script>

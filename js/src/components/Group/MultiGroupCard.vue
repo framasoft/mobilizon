@@ -8,20 +8,13 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IGroup } from "@/types/actor";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import GroupCard from "./GroupCard.vue";
-@Component({
-  components: {
-    GroupCard,
-  },
-})
-export default class MultiGroupCard extends Vue {
-  @Prop({ type: Array as PropType<IGroup[]>, required: true })
-  groups!: IGroup[];
-}
+
+defineProps<{
+  groups: IGroup[];
+}>();
 </script>
 <style lang="scss" scoped>
 .multi-card-group {

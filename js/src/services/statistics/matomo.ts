@@ -1,4 +1,3 @@
-import Vue from "vue";
 import VueMatomo from "vue-matomo";
 
 export const matomo = (environment: any, matomoConfiguration: any) => {
@@ -7,8 +6,9 @@ export const matomo = (environment: any, matomoConfiguration: any) => {
     "Calling VueMatomo with the following configuration",
     matomoConfiguration
   );
-  Vue.use(VueMatomo, {
+  environment.app.use(VueMatomo, {
     ...matomoConfiguration,
     router: environment.router,
+    debug: import.meta.env.DEV,
   });
 };

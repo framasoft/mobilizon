@@ -54,7 +54,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   secret_key_base: "1yOazsoE0Wqu4kXk3uC5gu3jDbShOimTCzyFL3OjCdBmOXMyHX87Qmf3+Tu9s0iM",
   render_errors: [view: Mobilizon.Web.ErrorView, accepts: ~w(html json)],
   pubsub_server: Mobilizon.PubSub,
-  cache_static_manifest: "priv/static/manifest.json",
+  cache_static_manifest: "priv/static/cache_manifest.json",
   has_reverse_proxy: true
 
 config :mime, :types, %{
@@ -122,6 +122,18 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   retries: 1,
   # can be `true`
   no_mx_lookups: false
+
+config :vite_phx,
+  release_app: :mobilizon,
+  # to tell prod and dev env appart
+  environment: config_env(),
+  # this manifest is different from the Phoenix "cache_manifest.json"!
+  # optional
+  vite_manifest: "priv/static/manifest.json",
+  # optional
+  phx_manifest: "priv/static/cache_manifest.json",
+  # optional
+  dev_server_address: "http://localhost:5173"
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -346,6 +358,23 @@ config :mobilizon, :exports,
   ]
 
 config :mobilizon, :analytics, providers: []
+
+config :mobilizon, Mobilizon.Service.Pictures, service: Mobilizon.Service.Pictures.Unsplash
+
+config :mobilizon, Mobilizon.Service.Pictures.Unsplash,
+  app_name: "Mobilizon",
+  access_key: nil
+
+config :mobilizon, :search, global: [is_default_search: false, is_enabled: true]
+
+config :mobilizon, Mobilizon.Service.GlobalSearch,
+  service: Mobilizon.Service.GlobalSearch.SearchMobilizon
+
+config :mobilizon, Mobilizon.Service.GlobalSearch.SearchMobilizon,
+  endpoint: "https://search.joinmobilizon.org",
+  csp_policy: [
+    img_src: "search.joinmobilizon.org"
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

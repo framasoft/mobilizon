@@ -1,46 +1,50 @@
 <template>
-  <b-field label-for="navSearchField" class="-mt-2">
-    <b-input
+  <p label-for="navSearchField" class="-mt-2">
+    <input
       :placeholder="defaultPlaceHolder"
       type="search"
       id="navSearchField"
-      icon="magnify"
+      icon="Magnify"
       icon-clickable
       rounded
       custom-class="searchField"
       dir="auto"
       v-model="search"
-      @keyup.native.enter="enter"
-    >
-    </b-input>
-    <template #label>
+      @keyup.enter="enter"
+    />
+    <label>
       <span class="sr-only">{{ defaultPlaceHolder }}</span>
-    </template>
-  </b-field>
+    </label>
+  </p>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import RouteName from "../router/name";
 
-@Component
-export default class SearchField extends Vue {
-  @Prop({ type: String, required: false }) placeholder!: string;
+const router = useRouter();
+const { t } = useI18n({ useScope: "global" });
+const emit = defineEmits(["navbar-search"]);
 
-  search = "";
+const props = defineProps<{
+  placeholder?: string;
+}>();
 
-  async enter(): Promise<void> {
-    this.$emit("navbar-search");
-    await this.$router.push({
-      name: RouteName.SEARCH,
-      query: { term: this.search },
-    });
-  }
+const search = ref("");
 
-  get defaultPlaceHolder(): string {
-    // We can't use "this" inside @Prop's default value.
-    return this.placeholder || (this.$t("Search") as string);
-  }
-}
+const enter = async (): Promise<void> => {
+  emit("navbar-search");
+  await router.push({
+    name: RouteName.SEARCH,
+    query: { term: search.value },
+  });
+};
+
+const defaultPlaceHolder = computed((): string => {
+  // We can't use "this" inside @Prop's default value.
+  return props.placeholder ?? t("Search");
+});
 </script>
 
 <style lang="scss">

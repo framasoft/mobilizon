@@ -1,27 +1,38 @@
 import { SEARCH_PERSONS } from "@/graphql/search";
-import { VueRenderer } from "@tiptap/vue-2";
+import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 import MentionList from "./MentionList.vue";
-import { ApolloClient } from "@apollo/client/core/ApolloClient";
-import apolloProvider from "@/vue-apollo";
+import { apolloClient } from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
-import { NormalizedCacheObject } from "@apollo/client/cache/inmemory/types";
 import { MentionOptions } from "@tiptap/extension-mention";
 import { Editor } from "@tiptap/core";
+import { provideApolloClient, useQuery } from "@vue/apollo-composable";
+import { Paginate } from "@/types/paginate";
+import { onError } from "@apollo/client/link/error";
 
-const client =
-  apolloProvider.defaultClient as ApolloClient<NormalizedCacheObject>;
+const fetchItems = (query: string): Promise<IPerson[]> => {
+  return new Promise((resolve, reject) => {
+    const { onResult } = provideApolloClient(apolloClient)(() => {
+      return useQuery<{ searchPersons: Paginate<IPerson> }>(
+        SEARCH_PERSONS,
+        () => ({
+          variables: {
+            searchText: query,
+          },
+        })
+      );
+    });
 
-const fetchItems = async (query: string): Promise<IPerson[]> => {
-  const result = await client.query({
-    query: SEARCH_PERSONS,
-    variables: {
-      searchText: query,
-    },
+    onResult(({ data }) => {
+      resolve(data.searchPersons.elements);
+    });
+
+    onError(reject);
   });
-  // TipTap doesn't handle async for onFilter, hence the following line.
-  return result.data.searchPersons.elements;
+
+  // // TipTap doesn't handle async for onFilter, hence the following line.
+  // return result.data.searchPersons.elements;
 };
 
 const debouncedFetchItems = pDebounce(fetchItems, 200);
@@ -51,10 +62,10 @@ const mentionOptions: MentionOptions = {
       let popup: any;
 
       return {
-        onStart: (props: any) => {
+        onStart: (props: Record<string, any>) => {
           component = new VueRenderer(MentionList, {
-            parent: this,
-            propsData: props,
+            props,
+            editor: props.editor,
           });
 
           popup = tippy("body", {

@@ -6,6 +6,8 @@ defmodule Mobilizon.Service.Activity.Utils do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Service.Activity, as: ActivityService
 
+  @env Application.compile_env(:mobilizon, :env)
+
   def transform_activity(%Activity{} = activity) do
     activity
     |> Map.update(:subject_params, %{}, &transform_params/1)
@@ -30,7 +32,7 @@ defmodule Mobilizon.Service.Activity.Utils do
 
   @spec maybe_inserted_at :: map()
   def maybe_inserted_at do
-    if Application.fetch_env!(:mobilizon, :env) == :test do
+    if @env == :test do
       %{}
     else
       %{"inserted_at" => DateTime.utc_now()}

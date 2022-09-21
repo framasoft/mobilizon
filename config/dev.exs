@@ -15,13 +15,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   check_origin: false,
   watchers: [
     node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch",
-      "--watch-options-stdin",
-      "--config",
-      "node_modules/@vue/cli-service/webpack.config.js",
+      "node_modules/.bin/vite",
       cd: Path.expand("../js", __DIR__)
     ]
   ]
@@ -102,3 +96,5 @@ config :mobilizon, :anonymous,
   reports: [
     allowed: true
   ]
+
+config :unplug, :init_mode, :runtime

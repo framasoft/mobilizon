@@ -1,34 +1,33 @@
 <template>
-  <a
-    class="button is-light"
-    v-if="isProviderSelected && oauthProvider.label === null"
+  <o-button
+    outlined
+    variant="primary"
+    :icon-left="oauthProvider.id"
+    v-if="isProviderSelected && !oauthProvider.label"
     :href="`/auth/${oauthProvider.id}`"
   >
-    <b-icon :icon="oauthProvider.id" />
-    <span>{{ SELECTED_PROVIDERS[oauthProvider.id] }}</span></a
+    <span>{{ SELECTED_PROVIDERS[oauthProvider.id] }}</span></o-button
   >
-  <a
-    class="button is-light"
+  <o-button
+    outlined
+    variant="primary"
     :href="`/auth/${oauthProvider.id}`"
     v-else-if="isProviderSelected"
+    icon-left="lock"
   >
-    <b-icon icon="lock" />
     <span>{{ oauthProvider.label }}</span>
-  </a>
+  </o-button>
 </template>
-<script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { IOAuthProvider } from "../../types/config.model";
-import { SELECTED_PROVIDERS } from "../../utils/auth";
+<script lang="ts" setup>
+import { computed } from "vue";
+import { IOAuthProvider } from "@/types/config.model";
+import { SELECTED_PROVIDERS } from "@/utils/auth";
 
-@Component
-export default class AuthProvider extends Vue {
-  @Prop({ required: true, type: Object }) oauthProvider!: IOAuthProvider;
+const props = defineProps<{
+  oauthProvider: IOAuthProvider;
+}>();
 
-  SELECTED_PROVIDERS = SELECTED_PROVIDERS;
-
-  get isProviderSelected(): boolean {
-    return Object.keys(SELECTED_PROVIDERS).includes(this.oauthProvider.id);
-  }
-}
+const isProviderSelected = computed((): boolean => {
+  return Object.keys(SELECTED_PROVIDERS).includes(props.oauthProvider.id);
+});
 </script>

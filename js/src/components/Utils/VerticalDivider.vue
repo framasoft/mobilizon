@@ -1,20 +1,14 @@
 <template>
   <div class="is-divider-vertical" :data-content="dataContent"></div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { computed } from "vue";
 
-@Component
-export default class VerticalDivider extends Vue {
-  @Prop({ default: "Or" }) content!: string;
+const props = withDefaults(defineProps<{ content?: string }>(), {
+  content: "Or",
+});
 
-  get dataContent(): string {
-    return this.content.toLocaleUpperCase();
-  }
-}
+const dataContent = computed((): string => {
+  return props.content.toLocaleUpperCase();
+});
 </script>
-<style lang="scss" scoped>
-.is-divider-vertical[data-content]::after {
-  background-color: $body-background-color;
-}
-</style>

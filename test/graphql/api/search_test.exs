@@ -51,6 +51,7 @@ defmodule Mobilizon.GraphQL.API.SearchTest do
             actor_type: :Person,
             radius: nil,
             location: nil,
+            bbox: nil,
             minimum_visibility: :public,
             current_actor_id: nil,
             exclude_my_groups: false,

@@ -83,8 +83,6 @@ defmodule Mobilizon.Web.ReverseProxy do
           | {:inline_content_types, boolean | [String.t()]}
           | {:redirect_on_failure, boolean}
 
-  @hackney Application.get_env(:mobilizon, :hackney, :hackney)
-
   @default_hackney_options []
 
   @inline_content_types [
@@ -171,7 +169,7 @@ defmodule Mobilizon.Web.ReverseProxy do
     Logger.debug("#{__MODULE__} #{method} #{url} #{inspect(headers)}")
     method = method |> String.downcase() |> String.to_existing_atom()
 
-    case @hackney.request(method, url, headers, "", hackney_opts) do
+    case hackney().request(method, url, headers, "", hackney_opts) do
       {:ok, code, headers, client} when code in @valid_resp_codes ->
         {:ok, code, downcase_headers(headers), client}
 
@@ -231,7 +229,7 @@ defmodule Mobilizon.Web.ReverseProxy do
              duration,
              Keyword.get(opts, :max_read_duration, @max_read_duration)
            ),
-         {:ok, data} <- @hackney.stream_body(client),
+         {:ok, data} <- hackney().stream_body(client),
          {:ok, duration} <- increase_read_duration({duration, now}),
          sent_so_far = sent_so_far + byte_size(data),
          :ok <- body_size_constraint(sent_so_far, Keyword.get(opts, :max_body_size)),
@@ -451,5 +449,9 @@ defmodule Mobilizon.Web.ReverseProxy do
   defp valid_uri?(url) do
     uri = URI.parse(url)
     uri.scheme != nil && uri.host =~ "."
+  end
+
+  defp hackney do
+    Application.get_env(:mobilizon, :hackney, :hackney)
   end
 end

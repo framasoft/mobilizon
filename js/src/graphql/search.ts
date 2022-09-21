@@ -4,8 +4,134 @@ import { ADDRESS_FRAGMENT } from "./address";
 import { EVENT_OPTIONS_FRAGMENT } from "./event_options";
 import { TAG_FRAGMENT } from "./tags";
 
+export const GROUP_RESULT_FRAGMENT = gql`
+  fragment GroupResultFragment on GroupSearchResult {
+    id
+    avatar {
+      id
+      url
+    }
+    type
+    preferredUsername
+    name
+    domain
+    summary
+    url
+  }
+`;
+
 export const SEARCH_EVENTS_AND_GROUPS = gql`
   query SearchEventsAndGroups(
+    $location: String
+    $radius: Float
+    $tags: String
+    $term: String
+    $type: EventType
+    $categoryOneOf: [String]
+    $statusOneOf: [EventStatus]
+    $languageOneOf: [String]
+    $searchTarget: SearchTarget
+    $beginsOn: DateTime
+    $endsOn: DateTime
+    $bbox: String
+    $zoom: Int
+    $eventPage: Int
+    $groupPage: Int
+    $limit: Int
+  ) {
+    searchEvents(
+      location: $location
+      radius: $radius
+      tags: $tags
+      term: $term
+      type: $type
+      categoryOneOf: $categoryOneOf
+      statusOneOf: $statusOneOf
+      languageOneOf: $languageOneOf
+      searchTarget: $searchTarget
+      beginsOn: $beginsOn
+      endsOn: $endsOn
+      bbox: $bbox
+      zoom: $zoom
+      page: $eventPage
+      limit: $limit
+    ) {
+      total
+      elements {
+        id
+        title
+        uuid
+        beginsOn
+        picture {
+          id
+          url
+        }
+        url
+        status
+        tags {
+          ...TagFragment
+        }
+        physicalAddress {
+          ...AdressFragment
+        }
+        organizerActor {
+          ...ActorFragment
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        options {
+          isOnline
+        }
+        __typename
+      }
+    }
+    searchGroups(
+      term: $term
+      location: $location
+      radius: $radius
+      languageOneOf: $languageOneOf
+      searchTarget: $searchTarget
+      bbox: $bbox
+      zoom: $zoom
+      page: $groupPage
+      limit: $limit
+    ) {
+      total
+      elements {
+        __typename
+        id
+        avatar {
+          id
+          url
+        }
+        type
+        preferredUsername
+        name
+        domain
+        summary
+        url
+        ...GroupResultFragment
+        banner {
+          id
+          url
+        }
+        followersCount
+        membersCount
+        physicalAddress {
+          ...AdressFragment
+        }
+      }
+    }
+  }
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${GROUP_RESULT_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
+export const SEARCH_EVENTS = gql`
+  query SearchEvents(
     $location: String
     $radius: Float
     $tags: String
@@ -15,7 +141,6 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $beginsOn: DateTime
     $endsOn: DateTime
     $eventPage: Int
-    $groupPage: Int
     $limit: Int
   ) {
     searchEvents(
@@ -59,6 +184,21 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         __typename
       }
     }
+  }
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
+export const SEARCH_GROUPS = gql`
+  query SearchGroups(
+    $location: String
+    $radius: Float
+    $term: String
+    $groupPage: Int
+    $limit: Int
+  ) {
     searchGroups(
       term: $term
       location: $location
@@ -73,20 +213,14 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
           id
           url
         }
-        members(roles: "member,moderator,administrator,creator") {
-          total
-        }
-        followers(approved: true) {
-          total
-        }
+        membersCount
+        followersCount
         physicalAddress {
           ...AdressFragment
         }
       }
     }
   }
-  ${EVENT_OPTIONS_FRAGMENT}
-  ${TAG_FRAGMENT}
   ${ADDRESS_FRAGMENT}
   ${ACTOR_FRAGMENT}
 `;

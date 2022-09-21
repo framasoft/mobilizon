@@ -1,39 +1,44 @@
 <template>
-  <li class="setting-menu-item" :class="{ active: isActive }">
+  <li
+    class="setting-menu-item"
+    :class="{
+      'cursor-pointer bg-mbz-yellow-alt-500 dark:bg-mbz-purple-500': isActive,
+      'bg-mbz-yellow-alt-100 hover:bg-mbz-yellow-alt-200 dark:bg-mbz-purple-300 dark:hover:bg-mbz-purple-400 dark:text-white':
+        !isActive,
+    }"
+  >
     <router-link v-if="to" :to="to">
       <span>{{ title }}</span>
     </router-link>
     <span v-else>{{ title }}</span>
   </li>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Route } from "vue-router";
+<script lang="ts" setup>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-@Component
-export default class SettingMenuItem extends Vue {
-  @Prop({ required: false, type: String }) title!: string;
+const props = defineProps<{
+  title?: string;
+  to: { name: string; params?: Record<string, any> };
+}>();
 
-  @Prop({ required: true, type: Object }) to!: Route;
+const route = useRoute();
 
-  get isActive(): boolean {
-    if (!this.to) return false;
-    if (this.to.name === this.$route.name) {
-      if (this.to.params) {
-        return this.to.params.identityName === this.$route.params.identityName;
-      }
-      return true;
+const isActive = computed((): boolean => {
+  if (props.to.name === route.name) {
+    if (props.to.params) {
+      return props.to.params.identityName === route.params.identityName;
     }
-    return false;
+    return true;
   }
-}
+  return false;
+});
 </script>
 
 <style lang="scss" scoped>
 li.setting-menu-item {
   font-size: 1.05rem;
-  background-color: #fff1de;
-  color: $background-color;
+  // background-color: #fff1de;
   margin: auto;
 
   span {
@@ -49,7 +54,7 @@ li.setting-menu-item {
   &:hover,
   &.active {
     cursor: pointer;
-    background-color: lighten(#fea72b, 10%);
+    // background-color: lighten(#fea72b, 10%);
   }
 }
 </style>

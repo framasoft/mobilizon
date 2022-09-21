@@ -1,0 +1,47 @@
+<template>
+  <div class="container mx-auto px-2">
+    <h1>{{ t("Privacy Policy") }}</h1>
+    <div
+      class="prose dark:prose-invert"
+      v-if="config?.privacy"
+      v-html="config.privacy.bodyHtml"
+    />
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { PRIVACY } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
+import { InstancePrivacyType } from "@/types/enums";
+import { useQuery } from "@vue/apollo-composable";
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { locale } = useI18n({ useScope: "global" });
+
+const { result: configResult } = useQuery<{ config: IConfig }>(
+  PRIVACY,
+  () => ({
+    locale: locale.value,
+  }),
+  () => ({
+    enabled: locale.value !== undefined,
+  })
+);
+
+const config = computed(() => configResult.value?.config);
+
+const { t } = useI18n({ useScope: "global" });
+
+// metaInfo() {
+//   return {
+//     title: this.t("Privacy Policy") as string,
+//   };
+// },
+
+watch(config, () => {
+  if (config.value?.privacy?.type === InstancePrivacyType.URL) {
+    window.location.replace(config.value?.privacy?.url);
+  }
+});
+</script>

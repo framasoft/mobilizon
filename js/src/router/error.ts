@@ -1,19 +1,19 @@
-import { RouteConfig } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
+import { RouteRecordRaw } from "vue-router";
 import { i18n } from "@/utils/i18n";
+
+const { t } = i18n.global.t;
 
 export enum ErrorRouteName {
   ERROR = "Error",
 }
 
-export const errorRoutes: RouteConfig[] = [
+export const errorRoutes: RouteRecordRaw[] = [
   {
     path: "/error",
     name: ErrorRouteName.ERROR,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "Error" */ "../views/Error.vue"),
+    component: (): Promise<any> => import("../views/ErrorView.vue"),
     meta: {
-      announcer: { message: (): string => i18n.t("Error") as string },
+      announcer: { message: (): string => t("Error") },
     },
   },
 ];

@@ -14,11 +14,26 @@ export const ADDRESS_FRAGMENT = gql`
     url
     originId
     timezone
+    pictureInfo {
+      url
+      author {
+        name
+        url
+      }
+      source {
+        name
+        url
+      }
+    }
   }
 `;
 
 export const ADDRESS = gql`
-  query ($query: String!, $locale: String, $type: AddressSearchType) {
+  query SearchAddress(
+    $query: String!
+    $locale: String
+    $type: AddressSearchType
+  ) {
     searchAddress(query: $query, locale: $locale, type: $type) {
       ...AdressFragment
     }
@@ -27,7 +42,12 @@ export const ADDRESS = gql`
 `;
 
 export const REVERSE_GEOCODE = gql`
-  query ($latitude: Float!, $longitude: Float!, $zoom: Int, $locale: String) {
+  query ReverseGeocode(
+    $latitude: Float!
+    $longitude: Float!
+    $zoom: Int
+    $locale: String
+  ) {
     reverseGeocode(
       latitude: $latitude
       longitude: $longitude

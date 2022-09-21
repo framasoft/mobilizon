@@ -1,62 +1,59 @@
 <template>
-  <section class="section container">
+  <section class="container mx-auto">
     <h1 class="title" v-if="loading">
-      {{ $t("Your email is being changed") }}
+      {{ t("Your email is being changed") }}
     </h1>
     <div v-else>
       <div v-if="failed">
-        <b-message :title="$t('Error while changing email')" type="is-danger">
+        <o-notification
+          :title="t('Error while changing email')"
+          variant="danger"
+        >
           {{
-            $t(
+            t(
               "Either the email has already been changed, either the validation token is incorrect."
             )
           }}
-        </b-message>
+        </o-notification>
       </div>
-      <h1 class="title" v-else>{{ $t("Your email has been changed") }}</h1>
+      <h1 class="title" v-else>{{ t("Your email has been changed") }}</h1>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { useMutation } from "@vue/apollo-composable";
+import { ref, onBeforeMount } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { VALIDATE_EMAIL } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { ICurrentUser } from "../../types/current-user.model";
 
-@Component({
-  metaInfo() {
-    return {
-      title: this.$t("Validating email") as string,
-    };
-  },
-})
-export default class Validate extends Vue {
-  @Prop({ type: String, required: true }) token!: string;
+// metaInfo() {
+//   return {
+//     title: this.t("Validating email") as string,
+//   };
+// },
+const props = defineProps<{
+  token: string;
+}>();
 
-  loading = true;
+const loading = ref(true);
+const failed = ref(false);
+const router = useRouter();
+const { t } = useI18n({ useScope: "global" });
 
-  failed = false;
+onBeforeMount(() => validateEmail({ token: props.token }));
 
-  async created(): Promise<void> {
-    await this.validateAction();
-  }
+const { mutate: validateEmail, onDone, onError } = useMutation(VALIDATE_EMAIL);
 
-  async validateAction(): Promise<void> {
-    try {
-      await this.$apollo.mutate<{ validateEmail: ICurrentUser }>({
-        mutation: VALIDATE_EMAIL,
-        variables: {
-          token: this.token,
-        },
-      });
-      this.loading = false;
-      await this.$router.push({ name: RouteName.HOME });
-    } catch (err) {
-      this.loading = false;
-      console.error(err);
-      this.failed = true;
-    }
-  }
-}
+onDone(async () => {
+  loading.value = false;
+  await router.push({ name: RouteName.HOME });
+});
+onError((err) => {
+  loading.value = false;
+  console.error(err);
+  failed.value = true;
+});
 </script>

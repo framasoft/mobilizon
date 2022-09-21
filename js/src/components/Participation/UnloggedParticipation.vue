@@ -1,10 +1,10 @@
 <template>
-  <section class="section container hero">
+  <section class="container mx-auto hero">
     <div class="hero-body" v-if="event">
-      <div class="container">
-        <subtitle>{{
-          $t("You wish to participate to the following event")
-        }}</subtitle>
+      <div class="container mx-auto">
+        <h2 class="text-2xl">
+          {{ $t("You wish to participate to the following event") }}
+        </h2>
         <EventListViewCard v-if="event" :event="event" />
         <div class="columns has-text-centered">
           <div class="column">
@@ -17,9 +17,9 @@
                   alt="Profile illustration"
                 />
               </figure>
-              <b-button type="is-primary">{{
+              <o-button variant="primary">{{
                 $t("I have a Mobilizon account")
-              }}</b-button>
+              }}</o-button>
             </router-link>
             <p>
               <small>
@@ -32,16 +32,16 @@
                   )
                 }}
               </small>
-              <b-tooltip
-                type="is-dark"
+              <o-tooltip
+                variant="dark"
                 :label="
                   $t(
                     'Mobilizon is a federated network. You can interact with this event from a different server.'
                   )
                 "
               >
-                <b-icon size="is-small" icon="help-circle-outline" />
-              </b-tooltip>
+                <o-icon size="small" icon="help-circle-outline" />
+              </o-tooltip>
             </p>
           </div>
           <vertical-divider
@@ -65,9 +65,9 @@
                   alt="Privacy illustration"
                 />
               </figure>
-              <b-button type="is-primary">{{
+              <o-button variant="primary">{{
                 $t("I don't have a Mobilizon account")
-              }}</b-button>
+              }}</o-button>
             </router-link>
             <a :href="`${event.url}/participate/without-account`" v-else>
               <figure class="image is-128x128">
@@ -76,9 +76,9 @@
                   alt="Privacy illustration"
                 />
               </figure>
-              <b-button type="is-primary">{{
+              <o-button variant="primary">{{
                 $t("I don't have a Mobilizon account")
-              }}</b-button>
+              }}</o-button>
             </a>
             <p>
               <small>{{ $t("Participate using your email address") }}</small>
@@ -90,78 +90,56 @@
           </div>
         </div>
         <div class="has-text-centered">
-          <b-button tag="a" type="is-text" @click="$router.go(-1)">{{
+          <o-button tag="a" variant="text" @click="router.go(-1)">{{
             $t("Back to previous page")
-          }}</b-button>
+          }}</o-button>
         </div>
       </div>
     </div>
   </section>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { FETCH_EVENT } from "@/graphql/event";
+<script lang="ts" setup>
 import EventListViewCard from "@/components/Event/EventListViewCard.vue";
-import { EventModel, IEvent } from "@/types/event.model";
 import VerticalDivider from "@/components/Utils/VerticalDivider.vue";
-import { CONFIG } from "@/graphql/config";
-import { IConfig } from "@/types/config.model";
-import Subtitle from "@/components/Utils/Subtitle.vue";
 import RouteName from "../../router/name";
+import { useFetchEvent } from "@/composition/apollo/event";
+import { useAnonymousParticipationConfig } from "@/composition/apollo/config";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
 
-@Component({
-  components: {
-    VerticalDivider,
-    EventListViewCard,
-    Subtitle,
-  },
-  apollo: {
-    event: {
-      query: FETCH_EVENT,
-      variables() {
-        return {
-          uuid: this.uuid,
-        };
-      },
-      skip() {
-        return !this.uuid;
-      },
-      update: (data) => new EventModel(data.event),
-    },
-    config: CONFIG,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Unlogged participation") as string,
-      meta: [{ name: "robots", content: "noindex" }],
-    };
-  },
-})
-export default class UnloggedParticipation extends Vue {
-  @Prop({ type: String, required: true }) uuid!: string;
+const props = defineProps<{ uuid: string }>();
 
-  RouteName = RouteName;
+const { event } = useFetchEvent(props.uuid);
 
-  event!: IEvent;
+const { anonymousParticipationConfig } = useAnonymousParticipationConfig();
 
-  config!: IConfig;
+const router = useRouter();
 
-  // eslint-disable-next-line class-methods-use-this
-  get host(): string {
-    return window.location.hostname;
-  }
+const { t } = useI18n({ useScope: "global" });
 
-  get anonymousParticipationAllowed(): boolean {
-    return this.event.options.anonymousParticipation;
-  }
+useHead({
+  title: computed(() => t("Unlogged participation")),
+  meta: [{ name: "robots", content: "noindex" }],
+});
 
-  get hasAnonymousEmailParticipationMethod(): boolean {
+const host = computed((): string => {
+  return window.location.hostname;
+});
+
+const anonymousParticipationAllowed = computed((): boolean | undefined => {
+  return event.value?.options.anonymousParticipation;
+});
+
+const hasAnonymousEmailParticipationMethod = computed(
+  (): boolean | undefined => {
     return (
-      this.config.anonymous.participation.allowed &&
-      this.config.anonymous.participation.validation.email.enabled
+      anonymousParticipationConfig.value?.allowed &&
+      anonymousParticipationConfig.value?.validation.email.enabled
     );
   }
-}
+);
 </script>
 <style lang="scss" scoped>
 .column > a {

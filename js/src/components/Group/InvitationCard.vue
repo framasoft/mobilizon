@@ -1,21 +1,29 @@
 <template>
-  <div class="card">
-    <div class="card-content media">
-      <div class="media-content">
-        <div class="content">
-          <i18n
+  <div class="">
+    <div class="">
+      <div class="">
+        <div class="prose dark:prose-invert">
+          <i18n-t
             tag="p"
-            path="You have been invited by {invitedBy} to the following group:"
+            keypath="You have been invited by {invitedBy} to the following group:"
           >
-            <b slot="invitedBy">{{ member.invitedBy.name }}</b>
-          </i18n>
+            <template #invitedBy>
+              <b>{{ member?.invitedBy?.name }}</b>
+            </template>
+          </i18n-t>
         </div>
-        <div class="media subfield">
-          <div class="media-left">
-            <figure class="image is-48x48" v-if="member.parent.avatar">
-              <img class="is-rounded" :src="member.parent.avatar.url" alt="" />
+        <div class="">
+          <div class="">
+            <figure v-if="member.parent.avatar">
+              <img
+                class="rounded"
+                :src="member.parent.avatar.url"
+                alt=""
+                height="48"
+                width="48"
+              />
             </figure>
-            <b-icon v-else size="is-large" icon="account-group" />
+            <AccountGroup :size="48" v-else />
           </div>
           <div class="media-content">
             <div class="level">
@@ -29,8 +37,8 @@
                       },
                     }"
                   >
-                    <h3 class="is-size-5">{{ member.parent.name }}</h3>
-                    <p class="is-size-7 has-text-grey-dark">
+                    <h3 class="">{{ member.parent.name }}</h3>
+                    <p class="">
                       <span v-if="member.parent.domain">
                         {{
                           `@${member.parent.preferredUsername}@${member.parent.domain}`
@@ -43,22 +51,22 @@
                   </router-link>
                 </div>
               </div>
-              <div class="level-right">
-                <div class="level-item">
-                  <b-button
-                    type="is-success"
+              <div class="">
+                <div class="">
+                  <o-button
+                    variant="success"
                     @click="$emit('accept', member.id)"
                   >
                     {{ $t("Accept") }}
-                  </b-button>
+                  </o-button>
                 </div>
-                <div class="level-item">
-                  <b-button
-                    type="is-danger"
+                <div class="">
+                  <o-button
+                    variant="danger"
                     @click="$emit('reject', member.id)"
                   >
                     {{ $t("Decline") }}
-                  </b-button>
+                  </o-button>
                 </div>
               </div>
             </div>
@@ -69,28 +77,13 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "../../router/name";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 
-@Component
-export default class InvitationCard extends Vue {
-  @Prop({ required: true }) member!: IMember;
-
-  RouteName = RouteName;
-
-  usernameWithDomain = usernameWithDomain;
-}
+defineProps<{
+  member: IMember;
+}>();
 </script>
-
-<style lang="scss" scoped>
-.media:not(.subfield) {
-  background: lighten($primary, 40%);
-  padding: 10px;
-}
-h3 {
-  color: $violet-3;
-}
-</style>

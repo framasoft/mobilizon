@@ -4,6 +4,9 @@ import type { Paginate } from "./paginate";
 import type { IParticipant } from "./participant.model";
 import { ICurrentUserRole, INotificationPendingEnum } from "./enums";
 import { IFollowedGroupEvent } from "./followedGroupEvent.model";
+import { PictureInformation } from "./picture";
+import { IMember } from "./actor/member.model";
+import { IFeedToken } from "./feedtoken.model";
 
 export interface ICurrentUser {
   id: string;
@@ -17,6 +20,12 @@ export interface IUserPreferredLocation {
   range?: number | null;
   name?: string | null;
   geohash?: string | null;
+}
+
+export interface ExtendedIUserPreferredLocation extends IUserPreferredLocation {
+  lat: number | undefined;
+  lon: number | undefined;
+  picture?: PictureInformation;
 }
 
 export interface IUserSettings {
@@ -39,8 +48,8 @@ export interface IActivitySetting {
 }
 
 export interface IUser extends ICurrentUser {
-  confirmedAt: Date;
-  confirmationSendAt: Date;
+  confirmedAt: string;
+  confirmationSendAt: string;
   actors: IPerson[];
   disabled: boolean;
   participations: Paginate<IParticipant>;
@@ -55,4 +64,6 @@ export interface IUser extends ICurrentUser {
   lastSignInIp: string;
   currentSignInIp: string;
   currentSignInAt: string;
+  memberships: Paginate<IMember>;
+  feedTokens: IFeedToken[];
 }

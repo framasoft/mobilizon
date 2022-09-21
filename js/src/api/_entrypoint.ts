@@ -14,7 +14,8 @@ export const MOBILIZON_INSTANCE_HOST = window.location.hostname;
  *
  * Example: https://framameet.org
  */
-export const GRAPHQL_API_ENDPOINT = window.location.origin;
+export const GRAPHQL_API_ENDPOINT =
+  import.meta.env.VITE_SERVER_URL ?? window.location.origin;
 
 /**
  * URL with path on which the API is. Replaces GRAPHQL_API_ENDPOINT if used
@@ -23,4 +24,4 @@ export const GRAPHQL_API_ENDPOINT = window.location.origin;
  *
  * Example: https://framameet.org/api
  */
-export const GRAPHQL_API_FULL_PATH = `${window.location.origin}/api`;
+export const GRAPHQL_API_FULL_PATH = `${GRAPHQL_API_ENDPOINT}/api`;

@@ -1,18 +1,19 @@
 <template>
   <div class="card" v-if="todo">
     <div class="card-content">
-      <b-checkbox v-model="status" />
+      <o-checkbox v-model="status" />
       <router-link
         :to="{ name: RouteName.TODO, params: { todoId: todo.id } }"
         >{{ todo.title }}</router-link
       >
-      <span class="details has-text-grey">
-        <span v-if="todo.dueDate" class="due_date">
-          <b-icon icon="calendar" />
-          {{ todo.dueDate | formatDateString }}
+      <span class="">
+        <span v-if="todo.dueDate" class="">
+          <o-icon icon="calendar" />
+          {{ formatDateString(todo.dueDate) }}
         </span>
-        <span v-if="todo.assignedTo" class="assigned_to">
-          <b-icon icon="account" />
+        <span v-if="todo.assignedTo" class="">
+          <Account />
+          <o-icon icon="account" />
           {{ `@${todo.assignedTo.preferredUsername}` }}
           <span v-if="todo.assignedTo.domain">{{
             `@${todo.assignedTo.domain}`
@@ -22,52 +23,42 @@
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
+<script lang="ts" setup>
 import { ITodo } from "../../types/todos";
 import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
+import { computed, inject, ref } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import Account from "vue-material-design-icons/Account.vue";
+import { formatDateString } from "@/filters/datetime";
+import { Snackbar } from "@/plugins/snackbar";
 
-@Component
-export default class Todo extends Vue {
-  @Prop({ required: true, type: Object }) todo!: ITodo;
+const props = defineProps<{ todo: ITodo }>();
 
-  RouteName = RouteName;
+const editMode = ref(false);
 
-  editMode = false;
+const status = computed({
+  get() {
+    return props.todo.status;
+  },
+  set(newStatus: boolean) {
+    updateTodo({ status: newStatus, id: props.todo.id });
+  },
+});
 
-  get status(): boolean {
-    return this.todo.status;
-  }
+const { mutate: updateTodo, onDone, onError } = useMutation(UPDATE_TODO);
 
-  set status(status: boolean) {
-    this.updateTodo({ status });
-  }
+onDone(() => {
+  editMode.value = false;
+});
 
-  async updateTodo(params: Record<string, unknown>): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: UPDATE_TODO,
-        variables: {
-          id: this.todo.id,
-          ...params,
-        },
-      });
-      this.editMode = false;
-    } catch (e: any) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
-    }
-  }
-}
+const snackbar = inject<Snackbar>("snackbar");
+
+onError((e) => {
+  snackbar?.open({
+    message: e.message,
+    variant: "danger",
+    position: "bottom",
+  });
+});
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-span.details {
-  @include margin-left(1rem);
-}
-</style>

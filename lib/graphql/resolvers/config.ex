@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
   """
   @spec get_config(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def get_config(_parent, _params, %{context: %{ip: ip}}) do
+    # ip = "2a01:e0a:184:2000:1112:e19d:9779:88c8"
     geolix = Geolix.lookup(ip)
 
     country_code =
@@ -171,7 +172,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
           get_in(Application.get_env(:web_push_encryption, :vapid_details), [:public_key])
       },
       export_formats: Config.instance_export_formats(),
-      analytics: FrontEndAnalytics.config()
+      analytics: FrontEndAnalytics.config(),
+      search: %{
+        global: %{
+          is_enabled:
+            Application.get_env(:mobilizon, :search) |> get_in([:global]) |> get_in([:is_enabled]),
+          is_default:
+            Application.get_env(:mobilizon, :search)
+            |> get_in([:global])
+            |> get_in([:is_default_search])
+        }
+      }
     }
   end
 end

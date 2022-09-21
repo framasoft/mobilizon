@@ -1,26 +1,26 @@
-import { config, createLocalVue, mount, Wrapper } from "@vue/test-utils";
+import { config, mount, VueWrapper } from "@vue/test-utils";
 import ParticipationSection from "@/components/Participation/ParticipationSection.vue";
-import Buefy from "buefy";
-import VueRouter from "vue-router";
+import { createRouter, createWebHistory, Router } from "vue-router";
 import { routes } from "@/router";
 import { CommentModeration, EventJoinOptions } from "@/types/enums";
-import {
-  createMockClient,
-  MockApolloClient,
-  RequestHandler,
-} from "mock-apollo-client";
-import { CONFIG } from "@/graphql/config";
-import VueApollo from "@vue/apollo-option";
-import { configMock } from "../../mocks/config";
 import { InMemoryCache } from "@apollo/client/cache";
-import { defaultResolvers } from "../../common";
+import { beforeEach, describe, expect, vi, it } from "vitest";
+import Oruga from "@oruga-ui/oruga-next";
+import FloatingVue from "floating-vue";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-localVue.use(VueRouter);
-const router = new VueRouter({ routes, mode: "history" });
-config.mocks.$t = (key: string): string => key;
+config.global.plugins.push(Oruga);
+config.global.plugins.push(FloatingVue);
 
+let router: Router;
+
+beforeEach(async () => {
+  router = createRouter({
+    history: createWebHistory(),
+    routes: routes,
+  });
+
+  // await router.isReady();
+});
 const eventData = {
   id: "1",
   uuid: "e37910ea-fd5a-4756-7634-00971f3f4107",
@@ -32,49 +32,31 @@ const eventData = {
 };
 
 describe("ParticipationSection", () => {
-  let wrapper: Wrapper<Vue>;
-  let mockClient: MockApolloClient;
-  let apolloProvider;
-  let requestHandlers: Record<string, RequestHandler>;
+  let wrapper: VueWrapper;
 
   const generateWrapper = (
-    handlers: Record<string, unknown> = {},
     customProps: Record<string, unknown> = {},
     baseData: Record<string, unknown> = {}
   ) => {
     const cache = new InMemoryCache({ addTypename: false });
 
-    mockClient = createMockClient({
-      cache,
-      resolvers: defaultResolvers,
-    });
-    requestHandlers = {
-      configQueryHandler: jest.fn().mockResolvedValue(configMock),
-      ...handlers,
-    };
-    mockClient.setRequestHandler(CONFIG, requestHandlers.configQueryHandler);
-
-    apolloProvider = new VueApollo({
-      defaultClient: mockClient,
-    });
-
     wrapper = mount(ParticipationSection, {
-      localVue,
-      router,
-      apolloProvider,
       stubs: {
         ParticipationButton: true,
       },
-      propsData: {
+      props: {
         participation: null,
         event: eventData,
         anonymousParticipation: null,
+        currentActor: { id: "5" },
+        identities: [],
+        anonymousParticipationConfig: {
+          allowed: true,
+        },
         ...customProps,
       },
-      data() {
-        return {
-          ...baseData,
-        };
+      global: {
+        plugins: [router],
       },
     });
   };
@@ -84,8 +66,6 @@ describe("ParticipationSection", () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.exists()).toBe(true);
-    expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
 
     expect(wrapper.find(".event-participation").exists()).toBeTruthy();
 
@@ -101,20 +81,20 @@ describe("ParticipationSection", () => {
   });
 
   it("renders the participation section with existing confimed anonymous participation", async () => {
-    generateWrapper({}, { anonymousParticipation: true });
+    generateWrapper({ anonymousParticipation: true });
 
     expect(wrapper.find(".event-participation > small").text()).toContain(
       "You are participating in this event anonymously"
     );
 
     const cancelAnonymousParticipationButton = wrapper.find(
-      ".event-participation > button.button.is-text"
+      ".event-participation > button.o-btn--text"
     );
     expect(cancelAnonymousParticipationButton.text()).toBe(
       "Cancel anonymous participation"
     );
 
-    wrapper.find(".event-participation small .is-clickable").trigger("click");
+    wrapper.find(".event-participation small span").trigger("click");
     expect(
       wrapper
         .findComponent({ ref: "anonymous-participation-modal" })
@@ -127,33 +107,30 @@ describe("ParticipationSection", () => {
   });
 
   it("renders the participation section with existing confimed anonymous participation but event moderation", async () => {
-    generateWrapper(
-      {},
-      {
-        anonymousParticipation: true,
-        event: { ...eventData, joinOptions: EventJoinOptions.RESTRICTED },
-      }
-    );
+    generateWrapper({
+      anonymousParticipation: true,
+      event: { ...eventData, joinOptions: EventJoinOptions.RESTRICTED },
+    });
 
     expect(wrapper.find(".event-participation > small").text()).toContain(
       "You are participating in this event anonymously"
     );
 
     const cancelAnonymousParticipationButton = wrapper.find(
-      ".event-participation > button.button.is-text"
+      ".event-participation > button.o-btn--text"
     );
     expect(cancelAnonymousParticipationButton.text()).toBe(
       "Cancel anonymous participation"
     );
 
-    wrapper.find(".event-participation small .is-clickable").trigger("click");
+    wrapper.find(".event-participation small span").trigger("click");
 
     await wrapper.vm.$nextTick();
     const modal = wrapper.findComponent({
       ref: "anonymous-participation-modal",
     });
     expect(modal.isVisible()).toBeTruthy();
-    expect(modal.find("article.notification.is-primary").text()).toBe(
+    expect(modal.find(".o-notification--primary").text()).toBe(
       "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
     );
 
@@ -163,7 +140,7 @@ describe("ParticipationSection", () => {
   });
 
   it("renders the participation section with existing unconfirmed anonymous participation", async () => {
-    generateWrapper({}, { anonymousParticipation: false });
+    generateWrapper({ anonymousParticipation: false });
 
     expect(wrapper.find(".event-participation > small").text()).toContain(
       "You are participating in this event anonymously but didn't confirm participation"
@@ -171,19 +148,16 @@ describe("ParticipationSection", () => {
   });
 
   it("renders the participation section but the event is already passed", async () => {
-    generateWrapper(
-      {},
-      {
-        event: {
-          ...eventData,
-          beginsOn: "2020-12-02T10:52:56Z",
-          endsOn: "2020-12-03T10:52:56Z",
-        },
-      }
-    );
+    generateWrapper({
+      event: {
+        ...eventData,
+        beginsOn: "2020-12-02T10:52:56Z",
+        endsOn: "2020-12-03T10:52:56Z",
+      },
+    });
 
     expect(wrapper.find(".event-participation").exists()).toBeFalsy();
-    expect(wrapper.find("button.button.is-primary").text()).toBe(
+    expect(wrapper.find("button.o-btn--primary").text()).toBe(
       "Event already passed"
     );
   });

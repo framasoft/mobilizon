@@ -4,6 +4,8 @@ import { ExecutionResult, GraphQLError } from "graphql";
 
 export declare class AbsintheGraphQLError extends GraphQLError {
   field?: string;
+  code?: string;
+  status_code?: number;
 }
 export declare type AbsintheGraphQLErrors = ReadonlyArray<AbsintheGraphQLError>;
 

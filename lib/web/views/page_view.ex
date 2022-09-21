@@ -63,28 +63,27 @@ defmodule Mobilizon.Web.PageView do
     |> Map.merge(Utils.make_json_ld_header())
   end
 
-  def render(page, %{object: object, conn: conn} = _assigns)
+  def render(page, %{object: object, conn: conn} = assigns)
       when page in ["actor.html", "event.html", "comment.html", "post.html"] do
     with locale <- get_locale(conn),
          tags <- object |> Metadata.build_tags(locale),
-         {:ok, html} <- inject_tags(tags, locale) do
-      html
-    else
-      {:error, error} ->
-        return_error(conn, error)
+         assigns <- Map.put(assigns, :tags, tags) do
+      render("index.html", assigns)
     end
   end
 
   # Discussions are private, no need to embed metadata
   def render("discussion.html", params), do: render("index.html", params)
 
-  def render("index.html", %{conn: conn}) do
-    with tags <- Instance.build_tags(),
-         {:ok, html} <- inject_tags(tags, get_locale(conn)) do
-      html
-    else
-      {:error, error} ->
-        return_error(conn, error)
-    end
+  def tags(assigns) do
+    Map.get(assigns, :tags, Instance.build_tags())
+  end
+
+  def theme_color do
+    "#ffd599"
+  end
+
+  def language_direction(assigns) do
+    assigns |> Map.get(:locale, "en") |> get_language_direction()
   end
 end

@@ -36,6 +36,10 @@ export const UPDATE_FOLLOWER = gql`
     updateFollower(id: $id, approved: $approved) {
       id
       approved
+      actor {
+        id
+        preferredUsername
+      }
     }
   }
 `;

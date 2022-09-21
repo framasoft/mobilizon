@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Start een discussie",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> wordt weergegeven als contactpersoon.|<b>{contact}</b> worden weergegeven als contactpersonen.",
   "@{group}": "@{group}",
-  "@{username}": "@{username}",
+  "{'@'}{username}": "{'@'}{username}",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "@{username}'s volg verzoek is geaccepteerd",
   "@{username}'s follow request was rejected": "@{username}'s volg verzoek is afgewezen",

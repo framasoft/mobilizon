@@ -24,7 +24,7 @@
       />
     </div>
     <section class="mt-4 mb-3">
-      <h2 class="text-lg font-bold">{{ $t("Details") }}</h2>
+      <h2 class="">{{ $t("Details") }}</h2>
       <div class="flex flex-col">
         <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div class="inline-block py-2 min-w-full sm:px-2 lg:px-8">
@@ -34,14 +34,14 @@
                   <tr
                     v-for="{ key, value, link } in metadata"
                     :key="key"
-                    class="odd:bg-white even:bg-gray-50 border-b"
+                    class="odd:bg-white dark:odd:bg-zinc-800 even:bg-gray-50 dark:even:bg-zinc-700 border-b"
                   >
                     <td class="py-4 px-2 whitespace-nowrap">
                       {{ key }}
                     </td>
                     <td
                       v-if="link"
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
+                      class="py-4 px-2 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap"
                     >
                       <router-link :to="link">
                         {{ value }}
@@ -49,7 +49,7 @@
                     </td>
                     <td
                       v-else
-                      class="py-4 px-2 text-sm text-gray-500 whitespace-nowrap"
+                      class="py-4 px-2 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap"
                     >
                       {{ value }}
                     </td>
@@ -62,19 +62,19 @@
       </div>
     </section>
     <section class="mt-4 mb-3">
-      <h2 class="text-lg font-bold">{{ $t("Actions") }}</h2>
+      <h2 class="">{{ $t("Actions") }}</h2>
       <div class="buttons" v-if="person.domain">
-        <b-button
-          @click="suspendProfile"
+        <o-button
+          @click="suspendProfile({ id })"
           v-if="person.domain && !person.suspended"
-          type="is-primary"
-          >{{ $t("Suspend") }}</b-button
+          variant="primary"
+          >{{ $t("Suspend") }}</o-button
         >
-        <b-button
-          @click="unsuspendProfile"
+        <o-button
+          @click="unsuspendProfile({ id })"
           v-if="person.domain && person.suspended"
-          type="is-primary"
-          >{{ $t("Unsuspend") }}</b-button
+          variant="primary"
+          >{{ $t("Unsuspend") }}</o-button
         >
       </div>
       <p v-else></p>
@@ -83,8 +83,8 @@
         class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg"
         role="alert"
       >
-        <i18n
-          path="This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it."
+        <i18n-t
+          keypath="This profile is located on this instance, so you need to {access_the_corresponding_account} to suspend it."
         >
           <template #access_the_corresponding_account>
             <router-link
@@ -96,450 +96,395 @@
               >{{ $t("access the corresponding account") }}</router-link
             >
           </template>
-        </i18n>
+        </i18n-t>
       </div>
     </section>
     <section class="mt-4 mb-3">
-      <h2 class="text-lg font-bold">{{ $t("Organized events") }}</h2>
-      <b-table
-        :data="person.organizedEvents.elements"
-        :loading="$apollo.queries.person.loading"
+      <h2 class="">{{ $t("Organized events") }}</h2>
+      <o-table
+        :data="person.organizedEvents?.elements"
+        :loading="loading"
         paginated
         backend-pagination
-        :current-page.sync="organizedEventsPage"
+        v-model:current-page="organizedEventsPage"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.organizedEvents.total"
+        :total="person.organizedEvents?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onOrganizedEventsPageChange"
       >
-        <b-table-column
+        <o-table-column
           field="beginsOn"
           :label="$t('Begins on')"
           v-slot="props"
         >
-          {{ props.row.beginsOn | formatDateTimeString }}
-        </b-table-column>
-        <b-table-column field="title" :label="$t('Title')" v-slot="props">
+          {{ formatDateTimeString(props.row.beginsOn) }}
+        </o-table-column>
+        <o-table-column field="title" :label="$t('Title')" v-slot="props">
           <router-link
             :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
           >
             {{ props.row.title }}
           </router-link>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account-group" :inline="true">
             {{ $t("No organized events listed") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </section>
     <section class="mt-4 mb-3">
-      <h2 class="text-lg font-bold">{{ $t("Participations") }}</h2>
-      <b-table
+      <h2 class="">{{ $t("Participations") }}</h2>
+      <o-table
         :data="
-          person.participations.elements.map(
+          person.participations?.elements.map(
             (participation) => participation.event
           )
         "
-        :loading="$apollo.loading"
+        :loading="loading"
         paginated
         backend-pagination
-        :current-page.sync="participationsPage"
+        v-model:current-page="participationsPage"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.participations.total"
+        :total="person.participations?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onParticipationsPageChange"
       >
-        <b-table-column
+        <o-table-column
           field="beginsOn"
           :label="$t('Begins on')"
           v-slot="props"
         >
-          {{ props.row.beginsOn | formatDateTimeString }}
-        </b-table-column>
-        <b-table-column field="title" :label="$t('Title')" v-slot="props">
+          {{ formatDateTimeString(props.row.beginsOn) }}
+        </o-table-column>
+        <o-table-column field="title" :label="$t('Title')" v-slot="props">
           <router-link
             :to="{ name: RouteName.EVENT, params: { uuid: props.row.uuid } }"
           >
             {{ props.row.title }}
           </router-link>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account-group" :inline="true">
             {{ $t("No participations listed") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </section>
     <section class="mt-4 mb-3">
-      <h2 class="text-lg font-bold">{{ $t("Memberships") }}</h2>
-      <b-table
-        :data="person.memberships.elements"
-        :loading="$apollo.loading"
+      <h2 class="">{{ $t("Memberships") }}</h2>
+      <o-table
+        :data="person.memberships?.elements"
+        :loading="loading"
         paginated
         backend-pagination
-        :current-page.sync="membershipsPage"
+        v-model:current-page="membershipsPage"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
         :aria-page-label="$t('Page')"
         :aria-current-label="$t('Current page')"
-        :total="person.memberships.total"
+        :total="person.memberships?.total"
         :per-page="EVENTS_PER_PAGE"
         @page-change="onMembershipsPageChange"
       >
-        <b-table-column
+        <o-table-column
           field="parent.preferredUsername"
           :label="$t('Group')"
           v-slot="props"
         >
-          <article class="media">
-            <figure
-              class="media-left image is-48x48"
-              v-if="props.row.parent.avatar"
-            >
+          <article class="flex gap-2">
+            <figure class="" v-if="props.row.parent.avatar">
               <img
-                class="is-rounded"
+                class="rounded-full"
                 :src="props.row.parent.avatar.url"
                 alt=""
+                width="48"
+                height="48"
               />
             </figure>
-            <b-icon
-              class="media-left"
-              v-else
-              size="is-large"
-              icon="account-circle"
-            />
-            <div class="media-content">
-              <div class="content">
+            <AccountCircle v-else :size="48" />
+            <div class="">
+              <div class="prose dark:prose-invert">
                 <span v-if="props.row.parent.name">{{
                   props.row.parent.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey"
-                  >@{{ usernameWithDomain(props.row.parent) }}</span
-                >
+                <span>@{{ usernameWithDomain(props.row.parent) }}</span>
               </div>
             </div>
           </article>
-        </b-table-column>
-        <b-table-column field="role" :label="$t('Role')" v-slot="props">
-          <b-tag
-            type="is-primary"
+        </o-table-column>
+        <o-table-column field="role" :label="$t('Role')" v-slot="props">
+          <tag
+            variant="primary"
             v-if="props.row.role === MemberRole.ADMINISTRATOR"
           >
             {{ $t("Administrator") }}
-          </b-tag>
-          <b-tag
-            type="is-primary"
+          </tag>
+          <tag
+            variant="primary"
             v-else-if="props.row.role === MemberRole.MODERATOR"
           >
             {{ $t("Moderator") }}
-          </b-tag>
-          <b-tag v-else-if="props.row.role === MemberRole.MEMBER">
+          </tag>
+          <tag v-else-if="props.row.role === MemberRole.MEMBER">
             {{ $t("Member") }}
-          </b-tag>
-          <b-tag
-            type="is-warning"
+          </tag>
+          <tag
+            variant="warning"
             v-else-if="props.row.role === MemberRole.NOT_APPROVED"
           >
             {{ $t("Not approved") }}
-          </b-tag>
-          <b-tag
-            type="is-danger"
+          </tag>
+          <tag
+            variant="danger"
             v-else-if="props.row.role === MemberRole.REJECTED"
           >
             {{ $t("Rejected") }}
-          </b-tag>
-          <b-tag
-            type="is-danger"
+          </tag>
+          <tag
+            variant="danger"
             v-else-if="props.row.role === MemberRole.INVITED"
           >
             {{ $t("Invited") }}
-          </b-tag>
-        </b-table-column>
-        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+          </tag>
+        </o-table-column>
+        <o-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
           <span class="has-text-centered">
-            {{ props.row.insertedAt | formatDateString }}<br />{{
-              props.row.insertedAt | formatTimeString
+            {{ formatDateString(props.row.insertedAt) }}<br />{{
+              formatTimeString(props.row.insertedAt)
             }}
           </span>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account-group" :inline="true">
             {{ $t("No memberships found") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </section>
   </div>
-  <empty-content v-else-if="!$apollo.loading" icon="account">
+  <empty-content v-else-if="!loading" icon="account">
     {{ $t("This profile was not found") }}
     <template #desc>
-      <b-button
-        type="is-text"
+      <o-button
+        variant="text"
         tag="router-link"
         :to="{ name: RouteName.PROFILES }"
-        >{{ $t("Back to profile list") }}</b-button
+        >{{ $t("Back to profile list") }}</o-button
       >
     </template>
   </empty-content>
 </template>
-<script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+<script lang="ts" setup>
 import { formatBytes } from "@/utils/datetime";
 import {
   GET_PERSON,
   SUSPEND_PROFILE,
   UNSUSPEND_PROFILE,
-} from "../../graphql/actor";
-import { IPerson } from "../../types/actor";
-import { displayName, usernameWithDomain } from "../../types/actor/actor.model";
-import RouteName from "../../router/name";
-import ActorCard from "../../components/Account/ActorCard.vue";
-import EmptyContent from "../../components/Utils/EmptyContent.vue";
+} from "@/graphql/actor";
+import { IPerson } from "@/types/actor";
+import { displayName, usernameWithDomain } from "@/types/actor/actor.model";
+import RouteName from "@/router/name";
+import ActorCard from "@/components/Account/ActorCard.vue";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
-import VueRouter from "vue-router";
 import { MemberRole } from "@/types/enums";
 import cloneDeep from "lodash/cloneDeep";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import {
+  formatDateString,
+  formatTimeString,
+  formatDateTimeString,
+} from "@/filters/datetime";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Tag from "@/components/TagElement.vue";
 
 const EVENTS_PER_PAGE = 10;
 const PARTICIPATIONS_PER_PAGE = 10;
 const MEMBERSHIPS_PER_PAGE = 10;
 
-@Component({
-  apollo: {
-    person: {
-      query: GET_PERSON,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        return {
-          actorId: this.id,
-          organizedEventsPage: this.organizedEventsPage,
-          organizedEventsLimit: EVENTS_PER_PAGE,
-          participationsPage: this.participationsPage,
-          participationLimit: PARTICIPATIONS_PER_PAGE,
-          membershipsPage: this.membershipsPage,
-          membershipsLimit: MEMBERSHIPS_PER_PAGE,
-        };
-      },
-      skip() {
-        return !this.id;
-      },
-    },
-  },
-  components: {
-    ActorCard,
-    EmptyContent,
-  },
-  metaInfo() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { person } = this;
-    return {
-      title: person ? person.name || usernameWithDomain(person) : "",
-    };
-  },
-})
-export default class AdminProfile extends Vue {
-  @Prop({ required: true }) id!: string;
+const props = defineProps<{ id: string }>();
 
-  person!: IPerson;
+const organizedEventsPage = useRouteQuery(
+  "organizedEventsPage",
+  1,
+  integerTransformer
+);
+const participationsPage = useRouteQuery(
+  "participationsPage",
+  1,
+  integerTransformer
+);
+const membershipsPage = useRouteQuery("membershipsPage", 1, integerTransformer);
 
-  usernameWithDomain = usernameWithDomain;
+const {
+  result: personResult,
+  fetchMore,
+  loading,
+} = useQuery<{ person: IPerson }>(GET_PERSON, () => ({
+  actorId: props.id,
+  organizedEventsPage: organizedEventsPage.value,
+  organizedEventsLimit: EVENTS_PER_PAGE,
+  participationsPage: participationsPage.value,
+  participationLimit: PARTICIPATIONS_PER_PAGE,
+  membershipsPage: membershipsPage.value,
+  membershipsLimit: MEMBERSHIPS_PER_PAGE,
+}));
 
-  displayName = displayName;
+const person = computed(() => personResult.value?.person);
 
-  RouteName = RouteName;
+const { t } = useI18n({ useScope: "global" });
 
-  EVENTS_PER_PAGE = EVENTS_PER_PAGE;
+useHead({
+  title: computed(() => displayName(person.value)),
+});
 
-  PARTICIPATIONS_PER_PAGE = PARTICIPATIONS_PER_PAGE;
-
-  MEMBERSHIPS_PER_PAGE = MEMBERSHIPS_PER_PAGE;
-
-  MemberRole = MemberRole;
-
-  get organizedEventsPage(): number {
-    return parseInt(
-      (this.$route.query.organizedEventsPage as string) || "1",
-      10
-    );
-  }
-
-  set organizedEventsPage(page: number) {
-    this.pushRouter({ organizedEventsPage: page.toString() });
-  }
-
-  get participationsPage(): number {
-    return parseInt(
-      (this.$route.query.participationsPage as string) || "1",
-      10
-    );
-  }
-
-  set participationsPage(page: number) {
-    this.pushRouter({ participationsPage: page.toString() });
-  }
-
-  get membershipsPage(): number {
-    return parseInt((this.$route.query.membershipsPage as string) || "1", 10);
-  }
-
-  set membershipsPage(page: number) {
-    this.pushRouter({ membershipsPage: page.toString() });
-  }
-
-  get metadata(): Array<Record<string, unknown>> {
-    if (!this.person) return [];
-    const res: Record<string, unknown>[] = [
+const metadata = computed(
+  (): Array<{
+    key: string;
+    value: string;
+    link?: { name: string; params: Record<string, any> };
+  }> => {
+    if (!person.value) return [];
+    const res: {
+      key: string;
+      value: string;
+      link?: { name: string; params: Record<string, any> };
+    }[] = [
       {
-        key: this.$t("Status") as string,
-        value: this.person.suspended ? this.$t("Suspended") : this.$t("Active"),
+        key: t("Status"),
+        value: person.value.suspended ? t("Suspended") : t("Active"),
       },
       {
-        key: this.$t("Domain") as string,
-        value: this.person.domain ? this.person.domain : this.$t("Local"),
-        link: this.person.domain
+        key: t("Domain"),
+        value: person.value.domain ? person.value.domain : t("Local"),
+        link: person.value.domain
           ? {
               name: RouteName.INSTANCE,
-              params: { domain: this.person.domain },
+              params: { domain: person.value.domain },
             }
           : undefined,
       },
       {
-        key: this.$i18n.t("Uploaded media size"),
-        value: formatBytes(this.person.mediaSize),
+        key: t("Uploaded media size"),
+        value: formatBytes(person.value.mediaSize ?? 0),
       },
     ];
-    if (!this.person.domain && this.person.user) {
+    if (!person.value.domain && person.value.user) {
       res.push({
-        key: this.$t("User") as string,
+        key: t("User"),
         link: {
           name: RouteName.ADMIN_USER_PROFILE,
-          params: { id: this.person.user.id },
+          params: { id: person.value.user.id },
         },
-        value: this.person.user.email,
+        value: person.value.user.email,
       });
     }
     return res;
   }
+);
 
-  async suspendProfile(): Promise<void> {
-    this.$apollo.mutate<{ suspendProfile: { id: string } }>({
-      mutation: SUSPEND_PROFILE,
+const { mutate: suspendProfile } = useMutation<
+  {
+    suspendProfile: { id: string };
+  },
+  { id: string }
+>(SUSPEND_PROFILE, () => ({
+  update: (
+    store: ApolloCache<{ suspendProfile: { id: string } }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+    const profileId = props.id;
+
+    const profileData = store.readQuery<{ person: IPerson }>({
+      query: GET_PERSON,
       variables: {
-        id: this.id,
-      },
-      update: (
-        store: ApolloCache<{ suspendProfile: { id: string } }>,
-        { data }: FetchResult
-      ) => {
-        if (data == null) return;
-        const profileId = this.id;
-
-        const profileData = store.readQuery<{ person: IPerson }>({
-          query: GET_PERSON,
-          variables: {
-            actorId: profileId,
-            organizedEventsPage: 1,
-            organizedEventsLimit: EVENTS_PER_PAGE,
-            participationsPage: 1,
-            participationLimit: PARTICIPATIONS_PER_PAGE,
-            membershipsPage: 1,
-            membershipsLimit: MEMBERSHIPS_PER_PAGE,
-          },
-        });
-
-        if (!profileData) return;
-        const { person } = profileData;
-        store.writeQuery({
-          query: GET_PERSON,
-          variables: {
-            actorId: profileId,
-          },
-          data: {
-            person: {
-              ...cloneDeep(person),
-              participations: { total: 0, elements: [] },
-              suspended: true,
-              avatar: null,
-              name: "",
-              summary: "",
-            },
-          },
-        });
-      },
-    });
-  }
-
-  async unsuspendProfile(): Promise<void> {
-    const profileID = this.id;
-    this.$apollo.mutate<{ unsuspendProfile: { id: string } }>({
-      mutation: UNSUSPEND_PROFILE,
-      variables: {
-        id: this.id,
-      },
-      refetchQueries: [
-        {
-          query: GET_PERSON,
-          variables: {
-            actorId: profileID,
-            organizedEventsPage: 1,
-            organizedEventsLimit: EVENTS_PER_PAGE,
-          },
-        },
-      ],
-    });
-  }
-
-  async onOrganizedEventsPageChange(): Promise<void> {
-    await this.$apollo.queries.person.fetchMore({
-      variables: {
-        actorId: this.id,
-        organizedEventsPage: this.organizedEventsPage,
+        actorId: profileId,
+        organizedEventsPage: 1,
         organizedEventsLimit: EVENTS_PER_PAGE,
-      },
-    });
-  }
-
-  async onParticipationsPageChange(): Promise<void> {
-    await this.$apollo.queries.person.fetchMore({
-      variables: {
-        actorId: this.id,
-        participationPage: this.participationsPage,
+        participationsPage: 1,
         participationLimit: PARTICIPATIONS_PER_PAGE,
-      },
-    });
-  }
-
-  async onMembershipsPageChange(): Promise<void> {
-    await this.$apollo.queries.person.fetchMore({
-      variables: {
-        actorId: this.id,
-        membershipsPage: this.participationsPage,
+        membershipsPage: 1,
         membershipsLimit: MEMBERSHIPS_PER_PAGE,
       },
     });
-  }
 
-  private async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      await this.$router.push({
-        name: RouteName.ADMIN_PROFILE,
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-}
+    if (!profileData) return;
+    const { person: cachedPerson } = profileData;
+    store.writeQuery({
+      query: GET_PERSON,
+      variables: {
+        actorId: profileId,
+      },
+      data: {
+        person: {
+          ...cloneDeep(cachedPerson),
+          participations: { total: 0, elements: [] },
+          suspended: true,
+          avatar: null,
+          name: "",
+          summary: "",
+        },
+      },
+    });
+  },
+}));
+
+const { mutate: unsuspendProfile } = useMutation<
+  { unsuspendProfile: { id: string } },
+  { id: string }
+>(UNSUSPEND_PROFILE, () => ({
+  refetchQueries: [
+    {
+      query: GET_PERSON,
+      variables: {
+        actorId: props.id,
+        organizedEventsPage: 1,
+        organizedEventsLimit: EVENTS_PER_PAGE,
+      },
+    },
+  ],
+}));
+
+const onOrganizedEventsPageChange = async (): Promise<void> => {
+  await fetchMore({
+    variables: {
+      actorId: props.id,
+      organizedEventsPage: organizedEventsPage.value,
+      organizedEventsLimit: EVENTS_PER_PAGE,
+    },
+  });
+};
+
+const onParticipationsPageChange = async (): Promise<void> => {
+  await fetchMore({
+    variables: {
+      actorId: props.id,
+      participationPage: participationsPage.value,
+      participationLimit: PARTICIPATIONS_PER_PAGE,
+    },
+  });
+};
+
+const onMembershipsPageChange = async (): Promise<void> => {
+  await fetchMore({
+    variables: {
+      actorId: props.id,
+      membershipsPage: participationsPage.value,
+      membershipsLimit: MEMBERSHIPS_PER_PAGE,
+    },
+  });
+};
 </script>

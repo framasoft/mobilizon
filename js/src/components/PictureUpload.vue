@@ -1,5 +1,5 @@
 <template>
-  <div class="root">
+  <div class="flex items-center">
     <figure class="image" v-if="imageSrc && !imagePreviewLoadingError">
       <img :src="imageSrc" @error="showImageLoadingError" />
     </figure>
@@ -11,18 +11,20 @@
         <span class="has-text-centered" v-if="imagePreviewLoadingError">{{
           $t("Error while loading the preview")
         }}</span>
-        <span class="has-text-centered" v-else>{{ textFallback }}</span>
+        <span class="has-text-centered" v-else>{{
+          textFallbackWithDefault
+        }}</span>
       </div>
     </figure>
 
-    <div class="action-buttons">
-      <p v-if="pictureFile" class="metadata">
-        <span class="name" :title="pictureFile.name">{{
-          pictureFile.name
+    <div class="flex flex-col">
+      <p v-if="modelValue" class="inline-flex">
+        <span class="block truncate max-w-[200px]" :title="modelValue.name">{{
+          modelValue.name
         }}</span>
-        <span class="size">({{ formatBytes(pictureFile.size) }})</span>
+        <span>({{ formatBytes(modelValue.size) }})</span>
       </p>
-      <p v-if="pictureTooBig" class="picture-too-big">
+      <p v-if="pictureTooBig" class="text-mbz-danger">
         {{
           $t(
             "The selected picture is too heavy. You need to select a file smaller than {size}.",
@@ -30,35 +32,30 @@
           )
         }}
       </p>
-      <b-field class="file is-primary">
-        <b-upload @input="onFileChanged" :accept="accept" class="file-label">
-          <span class="file-cta">
-            <b-icon class="file-icon" icon="upload" />
+      <o-field class="justify-center" variant="primary">
+        <o-upload @update:modelValue="onFileChanged" :accept="accept" drag-drop>
+          <span>
+            <Upload />
             <span>{{ $t("Click to upload") }}</span>
           </span>
-        </b-upload>
-      </b-field>
-      <b-button
-        type="is-text"
+        </o-upload>
+      </o-field>
+      <o-button
+        variant="text"
         v-if="imageSrc"
         @click="removeOrClearPicture"
         @keyup.enter="removeOrClearPicture"
       >
         {{ $t("Clear") }}
-      </b-button>
+      </o-button>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 @use "@/styles/_mixins" as *;
-.root {
-  display: flex;
-  align-items: center;
-}
-
 figure.image {
-  @include margin-right(30px);
+  // @include margin-right(30px);
   max-height: 200px;
   max-width: 200px;
   overflow: hidden;
@@ -82,112 +79,66 @@ figure.image {
     color: #eee;
   }
 }
-
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-
-  .file {
-    justify-content: center;
-  }
-
-  .metadata {
-    display: inline-flex;
-
-    .name {
-      max-width: 200px;
-      display: block;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      @include margin-right(5px);
-    }
-  }
-}
-
-.picture-too-big {
-  color: $danger;
-}
 </style>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { IMedia } from "@/types/media.model";
-import { Component, Model, Prop, Vue, Watch } from "vue-property-decorator";
+import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import Upload from "vue-material-design-icons/Upload.vue";
+import { formatBytes } from "@/utils/datetime";
 
-@Component
-export default class PictureUpload extends Vue {
-  @Model("change", { type: File }) readonly pictureFile!: File;
+const { t } = useI18n({ useScope: "global" });
 
-  @Prop({ type: Object, required: false }) defaultImage!: IMedia;
-
-  @Prop({
-    type: String,
-    required: false,
-    default: "image/gif,image/png,image/jpeg,image/webp",
-  })
-  accept!: string;
-
-  @Prop({
-    type: String,
-    required: false,
-    default() {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return this.$t("Avatar");
-    },
-  })
-  textFallback!: string;
-
-  @Prop({ type: Number, required: false, default: 10_485_760 })
-  maxSize!: number;
-
-  file!: File | null;
-
-  imagePreviewLoadingError = false;
-
-  get pictureTooBig(): boolean {
-    return this.pictureFile?.size > this.maxSize;
+const props = withDefaults(
+  defineProps<{
+    modelValue: File | null;
+    defaultImage?: IMedia | null;
+    accept?: string;
+    textFallback?: string;
+    maxSize?: number;
+  }>(),
+  {
+    accept: "image/gif,image/png,image/jpeg,image/webp",
+    maxSize: 10_485_760,
   }
+);
 
-  get imageSrc(): string | null {
-    if (this.pictureFile !== undefined) {
-      if (this.pictureFile === null) return null;
-      try {
-        return URL.createObjectURL(this.pictureFile);
-      } catch (e) {
-        console.error(e);
-      }
+const textFallbackWithDefault = props.textFallback ?? t("Avatar");
+
+const emit = defineEmits(["update:modelValue"]);
+
+const imagePreviewLoadingError = ref(false);
+
+const pictureTooBig = computed((): boolean => {
+  return props.modelValue != null && props.modelValue?.size > props.maxSize;
+});
+
+const imageSrc = computed((): string | null | undefined => {
+  if (props.modelValue !== undefined) {
+    if (props.modelValue === null) return null;
+    try {
+      return URL.createObjectURL(props.modelValue);
+    } catch (e) {
+      console.error(e, props.modelValue);
     }
-    return this.defaultImage?.url;
   }
+  return props.defaultImage?.url;
+});
 
-  onFileChanged(file: File | null): void {
-    this.$emit("change", file);
+const onFileChanged = (file: File | null): void => {
+  emit("update:modelValue", file);
+};
 
-    this.file = file;
-  }
+const removeOrClearPicture = async (): Promise<void> => {
+  onFileChanged(null);
+};
 
-  async removeOrClearPicture(): Promise<void> {
-    this.onFileChanged(null);
-  }
+watch(imageSrc, () => {
+  imagePreviewLoadingError.value = false;
+});
 
-  @Watch("imageSrc")
-  resetImageLoadingError(): void {
-    this.imagePreviewLoadingError = false;
-  }
-
-  showImageLoadingError(): void {
-    this.imagePreviewLoadingError = true;
-  }
-
-  // https://gist.github.com/zentala/1e6f72438796d74531803cc3833c039c
-  formatBytes(bytes: number, decimals: number): string {
-    if (bytes == 0) return "0 Bytes";
-    const k = 1024,
-      dm = decimals || 2,
-      sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-      i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
-  }
-}
+const showImageLoadingError = (): void => {
+  imagePreviewLoadingError.value = true;
+};
 </script>

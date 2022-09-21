@@ -127,3 +127,28 @@ export const configMock = {
     },
   },
 };
+
+export const loginMock = {
+  data: {
+    config: {
+      __typename: "Config",
+      auth: {
+        __typename: "Auth",
+        oauthProviders: [],
+      },
+      registrationsOpen: true,
+    },
+  },
+};
+
+export const anonymousActorIdMock = {
+  data: {
+    config: {
+      __typename: "Config",
+      anonymous: {
+        __typename: "Anonymous",
+        actorId: "1",
+      },
+    },
+  },
+};

@@ -1,71 +1,85 @@
 <template>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">{{ $t("Pick an identity") }}</p>
+  <div>
+    <header class="">
+      <h2 class="">{{ t("Pick an identity") }}</h2>
     </header>
-    <section class="modal-card-body">
-      <div class="list is-hoverable list-none">
-        <a
-          class="list-item"
+    <section class="">
+      <transition-group
+        tag="ul"
+        class="grid grid-cols-1 gap-y-3 m-5 max-w-md"
+        enter-active-class="duration-300 ease-out"
+        enter-from-class="transform opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="transform opacity-0"
+      >
+        <li
+          class="relative focus-within:shadow-lg"
           v-for="identity in identities"
-          :key="identity.id"
-          :class="{
-            'is-active': currentIdentity && identity.id === currentIdentity.id,
-          }"
-          @click="currentIdentity = identity"
+          :key="identity?.id"
         >
-          <div class="media">
-            <img
-              class="media-left image is-48x48"
-              v-if="identity.avatar"
-              :src="identity.avatar.url"
-              alt=""
-            />
-            <b-icon
-              class="media-left"
-              v-else
-              size="is-large"
-              icon="account-circle"
-            />
-            <div class="media-content">
-              <h3>@{{ identity.preferredUsername }}</h3>
-              <small>{{ identity.name }}</small>
+          <input
+            class="sr-only peer"
+            type="radio"
+            :value="identity"
+            name="availableActors"
+            v-model="currentIdentity"
+            :id="`availableActor-${identity?.id}`"
+          />
+          <label
+            class="flex flex-wrap p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
+            :for="`availableActor-${identity?.id}`"
+          >
+            <figure class="h-12 w-12" v-if="identity?.avatar">
+              <img
+                class="rounded-full h-full w-full object-cover"
+                :src="identity.avatar.url"
+                alt=""
+                width="48"
+                height="48"
+              />
+            </figure>
+            <AccountCircle v-else :size="48" />
+            <div class="flex-1">
+              <h3>{{ identity?.name }}</h3>
+              <small>{{ `@${identity?.preferredUsername}` }}</small>
             </div>
-          </div>
-        </a>
-      </div>
+          </label>
+        </li>
+      </transition-group>
     </section>
     <slot name="footer" />
   </div>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { IActor } from "@/types/actor";
-import { IDENTITIES } from "@/graphql/actor";
+<script lang="ts" setup>
+import { IPerson } from "@/types/actor";
+import { useCurrentUserIdentities } from "@/composition/apollo/actor";
+import { computed } from "vue";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  apollo: {
-    identities: {
-      query: IDENTITIES,
-    },
+const { identities } = useCurrentUserIdentities();
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({
+  title: computed(() => t("Identities")),
+});
+
+const props = defineProps<{
+  modelValue: IPerson;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
+
+const currentIdentity = computed<IPerson>({
+  get(): IPerson {
+    return props.modelValue;
   },
-  metaInfo() {
-    return {
-      title: this.$t("Identities") as string,
-    };
+  set(identity: IPerson) {
+    emit("update:modelValue", identity);
   },
-})
-export default class IdentityPicker extends Vue {
-  @Prop() value!: IActor;
-
-  identities: IActor[] = [];
-
-  get currentIdentity(): IActor {
-    return this.value;
-  }
-
-  set currentIdentity(identity: IActor) {
-    this.$emit("input", identity);
-  }
-}
+});
 </script>

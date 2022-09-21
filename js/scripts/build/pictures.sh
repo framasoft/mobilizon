@@ -30,11 +30,6 @@ convert_image () {
     convert -geometry "$resolution"x $file $output
 }
 
-produce_webp () {
-    name=$(file_name)
-    output="$output_dir/$name.webp"
-    cwebp $file -quiet -o $output
-}
 
 progress() {
     local w=80 p=$1;  shift
@@ -65,26 +60,6 @@ do
             progress $(($i*100/$tasks)) still working...
             i=$((i+1))
         done
-    fi
-done
-echo -e "\nDone!"
-
-echo "Generating optimized versions of the pictures…"
-
-if ! command -v cwebp &> /dev/null
-then
-    echo "$(tput setaf 1)ERROR: The cwebp command could not be found. You need to install webp.$(tput sgr 0)"
-    exit 1
-fi
-
-nb_files=$( shopt -s nullglob ; set -- $output_dir/* ; echo $#)
-i=1
-for file in $output_dir/*
-do
-    if [[ -f $file ]]; then
-        produce_webp
-        progress $(($i*100/$nb_files)) still working...
-        i=$((i+1))
     fi
 done
 echo -e "\nDone!"

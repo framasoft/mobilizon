@@ -2,9 +2,10 @@
   <% :post_created -> %>
     <%= dgettext("activity", "The post %{post} was created by %{profile}.", %{
       profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-      post: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-      :post,
-      @activity.subject_params["post_slug"]) |> URI.decode()}\">
+      post:
+        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+        :post,
+        @activity.subject_params["post_slug"]) |> URI.decode()}\">
                             #{@activity.subject_params["post_title"]}
                         </a>"
     })
@@ -12,9 +13,10 @@
   <% :post_updated -> %>
     <%= dgettext("activity", "The post %{post} was updated by %{profile}.", %{
       profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-      post: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-      :post,
-      @activity.subject_params["post_slug"]) |> URI.decode()}\">
+      post:
+        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+        :post,
+        @activity.subject_params["post_slug"]) |> URI.decode()}\">
                             #{@activity.subject_params["post_title"]}
                         </a>"
     })

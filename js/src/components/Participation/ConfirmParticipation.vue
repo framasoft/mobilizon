@@ -1,60 +1,58 @@
 <template>
-  <section class="section container">
+  <section class="container mx-auto">
     <h1 class="title" v-if="loading">
-      {{ $t("Your participation request is being validated") }}
+      {{ t("Your participation request is being validated") }}
     </h1>
     <div v-else>
       <div v-if="failed && participation === undefined">
-        <b-message
-          :title="$t('Error while validating participation request')"
-          type="is-danger"
+        <o-notification
+          :title="t('Error while validating participation request')"
+          variant="danger"
         >
           {{
-            $t(
+            t(
               "Either the participation request has already been validated, either the validation token is incorrect."
             )
           }}
-        </b-message>
+        </o-notification>
       </div>
       <div v-else>
         <h1 class="title">
-          {{ $t("Your participation request has been validated") }}
+          {{ t("Your participation request has been validated") }}
         </h1>
         <p
-          class="content"
-          v-if="participation.event.joinOptions == EventJoinOptions.RESTRICTED"
+          class="prose dark:prose-invert"
+          v-if="participation?.event.joinOptions == EventJoinOptions.RESTRICTED"
         >
           {{
-            $t("Your participation still has to be approved by the organisers.")
+            t("Your participation still has to be approved by the organisers.")
           }}
         </p>
         <div v-if="failed">
-          <b-message
+          <o-notification
             :title="
-              $t(
-                'Error while updating participation status inside this browser'
-              )
+              t('Error while updating participation status inside this browser')
             "
-            type="is-warning"
+            variant="warning"
           >
             {{
-              $t(
+              t(
                 "We couldn't save your participation inside this browser. Not to worry, you have successfully confirmed your participation, we just couldn't save it's status in this browser because of a technical issue."
               )
             }}
-          </b-message>
+          </o-notification>
         </div>
         <div class="columns has-text-centered">
           <div class="column">
-            <router-link
-              native-type="button"
-              tag="a"
-              class="button is-primary is-large"
+            <o-button
+              tag="router-link"
+              variant="primary"
+              size="large"
               :to="{
                 name: RouteName.EVENT,
-                params: { uuid: this.participation.event.uuid },
+                params: { uuid: participation?.event.uuid },
               }"
-              >{{ $t("Go to the event page") }}</router-link
+              >{{ t("Go to the event page") }}</o-button
             >
           </div>
         </div>
@@ -63,60 +61,50 @@
   </section>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { confirmLocalAnonymousParticipation } from "@/services/AnonymousParticipationStorage";
 import { EventJoinOptions } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import RouteName from "../../router/name";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
+import { computed, ref } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
-@Component({
-  metaInfo() {
-    return {
-      title: this.$t("Confirm participation") as string,
-    };
-  },
-})
-export default class ConfirmParticipation extends Vue {
-  @Prop({ type: String, required: true }) token!: string;
+const { t } = useI18n({ useScope: "global" });
 
-  loading = true;
+useHead({
+  title: computed(() => t("Confirm participation")),
+});
 
-  failed = false;
+const props = defineProps<{
+  token: string;
+}>();
 
-  participation!: IParticipant;
+const loading = ref(true);
+const failed = ref(false);
+const participation = ref<IParticipant | null | undefined>(null);
 
-  EventJoinOptions = EventJoinOptions;
+const { onDone, onError, mutate } = useMutation<{
+  confirmParticipation: IParticipant;
+}>(CONFIRM_PARTICIPATION);
 
-  RouteName = RouteName;
+mutate({
+  token: props.token,
+});
 
-  async created(): Promise<void> {
-    await this.validateAction();
+onDone(async ({ data }) => {
+  participation.value = data?.confirmParticipation;
+  if (participation.value) {
+    await confirmLocalAnonymousParticipation(participation.value?.event.uuid);
   }
+  loading.value = false;
+});
 
-  async validateAction(): Promise<void> {
-    try {
-      const { data } = await this.$apollo.mutate<{
-        confirmParticipation: IParticipant;
-      }>({
-        mutation: CONFIRM_PARTICIPATION,
-        variables: {
-          token: this.token,
-        },
-      });
-
-      if (data) {
-        const { confirmParticipation: participation } = data;
-        this.participation = participation;
-        await confirmLocalAnonymousParticipation(this.participation.event.uuid);
-      }
-    } catch (err) {
-      console.error(err);
-      this.failed = true;
-    } finally {
-      this.loading = false;
-    }
-  }
-}
+onError((err) => {
+  console.error(err);
+  failed.value = true;
+  loading.value = false;
+});
 </script>

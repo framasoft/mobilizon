@@ -2,37 +2,48 @@
   <div>
     <event-metadata-block
       v-if="!event.options.isOnline"
-      :title="$t('Location')"
-      :icon="physicalAddress ? physicalAddress.poiInfos.poiIcon.icon : 'earth'"
+      :title="t('Location')"
+      :icon="addressPOIInfos?.poiIcon?.icon ?? 'earth'"
     >
       <div class="address-wrapper">
-        <span v-if="!physicalAddress">{{ $t("No address defined") }}</span>
+        <span v-if="!physicalAddress">{{ t("No address defined") }}</span>
         <div class="address" v-if="physicalAddress">
           <address-info :address="physicalAddress" />
-          <b-button
-            type="is-text"
+          <o-button
+            variant="text"
             class="map-show-button"
             @click="$emit('showMapModal', true)"
             v-if="physicalAddress.geom"
           >
-            {{ $t("Show map") }}
-          </b-button>
+            {{ t("Show map") }}
+          </o-button>
         </div>
       </div>
+      <template #icon>
+        <o-icon
+          v-if="addressPOIInfos?.poiIcon?.icon"
+          :icon="addressPOIInfos?.poiIcon?.icon"
+          customSize="36"
+        />
+        <Earth v-else :size="36" />
+      </template>
     </event-metadata-block>
-    <event-metadata-block :title="$t('Date and time')" icon="calendar">
+    <event-metadata-block :title="t('Date and time')">
+      <template #icon>
+        <Calendar :size="36" />
+      </template>
       <event-full-date
-        :beginsOn="event.beginsOn"
+        :beginsOn="event.beginsOn.toString()"
         :show-start-time="event.options.showStartTime"
         :show-end-time="event.options.showEndTime"
-        :timezone="event.options.timezone"
+        :timezone="event.options.timezone ?? undefined"
         :userTimezone="userTimezone"
-        :endsOn="event.endsOn"
+        :endsOn="event.endsOn?.toString()"
       />
     </event-metadata-block>
     <event-metadata-block
       class="metadata-organized-by"
-      :title="$t('Organized by')"
+      :title="t('Organized by')"
     >
       <router-link
         v-if="event.attributedTo"
@@ -52,7 +63,11 @@
           :inline="true"
         />
       </router-link>
-      <actor-card v-else :actor="event.organizerActor" :inline="true" />
+      <actor-card
+        v-else-if="event.organizerActor"
+        :actor="event.organizerActor"
+        :inline="true"
+      />
       <actor-card
         :inline="true"
         :actor="contact"
@@ -62,16 +77,18 @@
     </event-metadata-block>
     <event-metadata-block
       v-if="event.onlineAddress && urlToHostname(event.onlineAddress)"
-      icon="link"
-      :title="$t('Website')"
+      :title="t('Website')"
     >
+      <template #icon>
+        <Link :size="36" />
+      </template>
       <a
         target="_blank"
-        class="hover:underline"
+        class="underline"
         rel="noopener noreferrer ugc"
         :href="event.onlineAddress"
         :title="
-          $t('View page on {hostname} (in a new window)', {
+          t('View page on {hostname} (in a new window)', {
             hostname: urlToHostname(event.onlineAddress),
           })
         "
@@ -81,9 +98,9 @@
     <event-metadata-block
       v-for="extra in extraMetadata"
       :title="extra.title || extra.label"
-      :icon="extra.icon"
       :key="extra.key"
     >
+      <template #icon> <o-icon :icon="extra.icon" customSize="36" /> </template>
       <span
         v-if="
           ((extra.type == EventMetadataType.STRING &&
@@ -104,7 +121,7 @@
         rel="noopener noreferrer ugc"
         :href="extra.value"
         :title="
-          $t('View page on {hostname} (in a new window)', {
+          t('View page on {hostname} (in a new window)', {
             hostname: urlToHostname(extra.value),
           })
         "
@@ -119,7 +136,7 @@
         rel="noopener noreferrer ugc"
         :href="accountURL(extra)"
         :title="
-          $t('View account on {hostname} (in a new window)', {
+          t('View account on {hostname} (in a new window)', {
             hostname: urlToHostname(accountURL(extra)),
           })
         "
@@ -129,107 +146,95 @@
     </event-metadata-block>
   </div>
 </template>
-<script lang="ts">
-import { Address } from "@/types/address.model";
-import { IConfig } from "@/types/config.model";
+<script lang="ts" setup>
+import { Address, addressToPoiInfos } from "@/types/address.model";
 import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { computed } from "vue";
 import RouteName from "../../router/name";
 import { usernameWithDomain } from "../../types/actor";
 import EventMetadataBlock from "./EventMetadataBlock.vue";
 import EventFullDate from "./EventFullDate.vue";
-import PopoverActorCard from "../Account/PopoverActorCard.vue";
 import ActorCard from "../../components/Account/ActorCard.vue";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
-import {
-  IEventMetadata,
-  IEventMetadataDescription,
-} from "@/types/event-metadata";
+import { IEventMetadataDescription } from "@/types/event-metadata";
 import { eventMetaDataList } from "../../services/EventMetadata";
 import { IUser } from "@/types/current-user.model";
+import { useI18n } from "vue-i18n";
+import Earth from "vue-material-design-icons/Earth.vue";
+import Calendar from "vue-material-design-icons/Calendar.vue";
+import Link from "vue-material-design-icons/Link.vue";
 
-@Component({
-  components: {
-    EventMetadataBlock,
-    EventFullDate,
-    PopoverActorCard,
-    ActorCard,
-    AddressInfo,
-  },
-})
-export default class EventMetadataSidebar extends Vue {
-  @Prop({ type: Object as PropType<IEvent>, required: true }) event!: IEvent;
-  @Prop({ type: Object as PropType<IConfig>, required: true }) config!: IConfig;
-  @Prop({ required: true }) user!: IUser | undefined;
-  @Prop({ required: false, default: false }) showMap!: boolean;
+const props = withDefaults(
+  defineProps<{
+    event: IEvent;
+    user: IUser | undefined;
+    showMap?: boolean;
+  }>(),
+  { showMap: false }
+);
 
-  RouteName = RouteName;
+const { t } = useI18n({ useScope: "global" });
 
-  usernameWithDomain = usernameWithDomain;
+const physicalAddress = computed((): Address | null => {
+  if (!props.event.physicalAddress) return null;
 
-  eventMetaDataList = eventMetaDataList;
+  return new Address(props.event.physicalAddress);
+});
 
-  EventMetadataType = EventMetadataType;
-  EventMetadataKeyType = EventMetadataKeyType;
+const addressPOIInfos = computed(() => {
+  if (!props.event.physicalAddress) return null;
+  return addressToPoiInfos(props.event.physicalAddress);
+});
 
-  get physicalAddress(): Address | null {
-    if (!this.event.physicalAddress) return null;
+const extraMetadata = computed((): IEventMetadataDescription[] => {
+  return props.event.metadata.map((val) => {
+    const def = eventMetaDataList.find((dat) => dat.key === val.key);
+    return {
+      ...def,
+      ...val,
+    };
+  });
+});
 
-    return new Address(this.event.physicalAddress);
+const urlToHostname = (url: string | undefined): string | null => {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname;
+  } catch (e) {
+    return null;
   }
+};
 
-  get extraMetadata(): IEventMetadata[] {
-    return this.event.metadata.map((val) => {
-      const def = eventMetaDataList.find((dat) => dat.key === val.key);
-      return {
-        ...def,
-        ...val,
-      };
-    });
+const simpleURL = (url: string): string | null => {
+  try {
+    const uri = new URL(url);
+    return `${removeWWW(uri.hostname)}${uri.pathname}${uri.search}${uri.hash}`;
+  } catch (e) {
+    return null;
   }
+};
 
-  urlToHostname(url: string): string | null {
-    try {
-      return new URL(url).hostname;
-    } catch (e) {
-      return null;
+const removeWWW = (string: string): string => {
+  return string.replace(/^www./, "");
+};
+
+const accountURL = (extra: IEventMetadataDescription): string | undefined => {
+  switch (extra.key) {
+    case "mz:social:twitter:account": {
+      const handle =
+        extra.value[0] === "@" ? extra.value.slice(1) : extra.value;
+      return `https://twitter.com/${handle}`;
     }
   }
+};
 
-  simpleURL(url: string): string | null {
-    try {
-      const uri = new URL(url);
-      return `${this.removeWWW(uri.hostname)}${uri.pathname}${uri.search}${
-        uri.hash
-      }`;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  private removeWWW(string: string): string {
-    return string.replace(/^www./, "");
-  }
-
-  accountURL(extra: IEventMetadataDescription): string | undefined {
-    switch (extra.key) {
-      case "mz:social:twitter:account": {
-        const handle =
-          extra.value[0] === "@" ? extra.value.slice(1) : extra.value;
-        return `https://twitter.com/${handle}`;
-      }
-    }
-  }
-
-  get userTimezone(): string | undefined {
-    return this.user?.settings?.timezone;
-  }
-}
+const userTimezone = computed((): string | undefined => {
+  return props.user?.settings?.timezone;
+});
 </script>
 <style lang="scss" scoped>
-::v-deep .metadata-organized-by {
+:deep(.metadata-organized-by) {
   .v-popover.popover .trigger {
     width: 100%;
     .media-content {

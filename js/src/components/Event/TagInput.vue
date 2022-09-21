@@ -1,104 +1,91 @@
 <template>
-  <b-field :label-for="id">
-    <template slot="label">
+  <o-field :label-for="id">
+    <template #label>
       {{ $t("Add some tags") }}
-      <b-tooltip
-        type="is-dark"
+      <o-tooltip
+        variant="dark"
         :label="
           $t('You can add tags by hitting the Enter key or by adding a comma')
         "
       >
-        <b-icon size="is-small" icon="help-circle-outline"></b-icon>
-      </b-tooltip>
+        <HelpCircleOutline :size="16" />
+      </o-tooltip>
     </template>
-    <b-taginput
+    <o-inputitems
       v-model="tagsStrings"
       :data="filteredTags"
-      autocomplete
+      :autocomplete="true"
       :allow-new="true"
       :field="'title'"
       icon="label"
-      maxlength="20"
-      maxtags="10"
+      :maxlength="20"
+      :maxitems="10"
       :placeholder="$t('Eg: Stockholm, Dance, Chess…')"
       @typing="debouncedGetFilteredTags"
       :id="id"
       dir="auto"
     >
-    </b-taginput>
-  </b-field>
+    </o-inputitems>
+  </o-field>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import differenceBy from "lodash/differenceBy";
 import { ITag } from "../../types/tag.model";
-import { FILTER_TAGS } from "@/graphql/tags";
 import debounce from "lodash/debounce";
+import { computed, onBeforeMount, ref } from "vue";
+import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
 
-@Component({
-  apollo: {
-    tags: {
-      query: FILTER_TAGS,
-      variables() {
-        return {
-          filter: this.text,
-        };
-      },
-    },
+const props = defineProps<{
+  modelValue: ITag[];
+  fetchTags: (text: string) => Promise<ITag[]>;
+}>();
+
+const emit = defineEmits(["update:modelValue"]);
+
+const text = ref("");
+
+const tags = ref<ITag[]>([]);
+
+let componentId = 0;
+
+onBeforeMount(() => {
+  componentId += 1;
+});
+
+const id = computed((): string => {
+  return `tag-input-${componentId}`;
+});
+
+const getFilteredTags = async (newText: string): Promise<void> => {
+  text.value = newText;
+  tags.value = await props.fetchTags(newText);
+};
+
+const debouncedGetFilteredTags = debounce(getFilteredTags, 200);
+
+const filteredTags = computed((): ITag[] => {
+  return differenceBy(tags.value, props.modelValue, "id").filter(
+    (option) =>
+      option.title.toString().toLowerCase().indexOf(text.value.toLowerCase()) >=
+        0 ||
+      option.slug.toString().toLowerCase().indexOf(text.value.toLowerCase()) >=
+        0
+  );
+});
+
+const tagsStrings = computed({
+  get(): string[] {
+    return props.modelValue.map((tag: ITag) => tag.title);
   },
-})
-export default class TagInput extends Vue {
-  @Prop({ required: true }) value!: ITag[];
-
-  tags!: ITag[];
-
-  text = "";
-
-  private static componentId = 0;
-
-  created(): void {
-    TagInput.componentId += 1;
-  }
-
-  get id(): string {
-    return `tag-input-${TagInput.componentId}`;
-  }
-
-  data(): Record<string, unknown> {
-    return {
-      debouncedGetFilteredTags: debounce(this.getFilteredTags, 200),
-    };
-  }
-
-  async getFilteredTags(text: string): Promise<void> {
-    this.text = text;
-    await this.$apollo.queries.tags.refetch();
-  }
-
-  get filteredTags(): ITag[] {
-    return differenceBy(this.tags, this.value, "id").filter(
-      (option) =>
-        option.title
-          .toString()
-          .toLowerCase()
-          .indexOf(this.text.toLowerCase()) >= 0 ||
-        option.slug.toString().toLowerCase().indexOf(this.text.toLowerCase()) >=
-          0
-    );
-  }
-
-  get tagsStrings(): string[] {
-    return (this.value || []).map((tag: ITag) => tag.title);
-  }
-
-  set tagsStrings(tagsStrings: string[]) {
-    const tagEntities = tagsStrings.map((tag: string | ITag) => {
+  set(newTagsStrings: string[]) {
+    console.debug("tagsStrings", newTagsStrings);
+    const tagEntities = newTagsStrings.map((tag: string | ITag) => {
       if (typeof tag !== "string") {
         return tag;
       }
       return { title: tag, slug: tag } as ITag;
     });
-    this.$emit("input", tagEntities);
-  }
-}
+    emit("update:modelValue", tagEntities);
+  },
+});
 </script>

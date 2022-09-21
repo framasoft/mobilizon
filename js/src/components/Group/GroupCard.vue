@@ -1,139 +1,132 @@
 <template>
-  <router-link
-    :to="{
-      name: RouteName.GROUP,
-      params: { preferredUsername: usernameWithDomain(group) },
+  <LinkOrRouterLink
+    :to="to"
+    :isInternal="isInternal"
+    class="mbz-card shrink-0 dark:bg-mbz-purple dark:text-white rounded-lg shadow-lg my-4 flex items-center flex-col"
+    :class="{
+      'sm:flex-row': mode === 'row',
+      'sm:max-w-xs sm:w-[18rem] shrink-0 flex flex-col': mode === 'column',
     }"
-    class="card"
   >
-    <div class="card-image">
-      <figure class="image is-16by9">
-        <lazy-image-wrapper
-          :picture="group.banner"
-          style="height: 100%; position: absolute; top: 0; left: 0; width: 100%"
+    <div class="flex-none p-2 md:p-4">
+      <figure class="" v-if="group.avatar">
+        <img
+          class="rounded-full"
+          :src="group.avatar.url"
+          alt=""
+          height="128"
+          width="128"
         />
       </figure>
+      <AccountGroup v-else :size="128" />
     </div>
-    <div class="card-content">
-      <div class="media mb-2">
-        <div class="media-left">
-          <figure class="image is-48x48" v-if="group.avatar">
-            <img class="is-rounded" :src="group.avatar.url" alt="" />
-          </figure>
-          <b-icon v-else size="is-large" icon="account-group" />
-        </div>
-        <div class="media-content">
-          <h3 class="is-size-5 group-title" dir="auto">
+    <div
+      class="py-2 px-2 md:px-4 flex flex-col h-full justify-between w-full"
+      :class="{ 'sm:flex-1': mode === 'row' }"
+    >
+      <div class="flex gap-1 mb-2">
+        <div class="overflow-hidden flex-auto">
+          <h3
+            class="text-2xl leading-5 line-clamp-3 font-bold text-violet-3 dark:text-white"
+            dir="auto"
+          >
             {{ displayName(group) }}
           </h3>
-          <span class="is-6 has-text-grey-dark group-federated-username">
+          <span class="block truncate">
             {{ `@${usernameWithDomain(group)}` }}
           </span>
         </div>
       </div>
-      <div class="mb-2 line-clamp-3" dir="auto" v-html="group.summary" />
+      <div
+        class="mb-2 line-clamp-3"
+        dir="auto"
+        v-html="saneSummary"
+        v-if="showSummary"
+      />
       <div>
         <inline-address
-          class="has-text-grey-dark"
           v-if="group.physicalAddress && addressFullName(group.physicalAddress)"
           :physicalAddress="group.physicalAddress"
         />
-        <p class="has-text-grey-dark">
-          <b-icon icon="account" />
+        <p
+          class="flex gap-1"
+          v-if="group?.members?.total && group?.followers?.total"
+        >
+          <Account />
           {{
-            $tc(
+            t(
               "{count} members or followers",
-              group.members.total + group.followers.total,
               {
                 count: group.members.total + group.followers.total,
-              }
+              },
+              group.members.total + group.followers.total
+            )
+          }}
+        </p>
+        <p
+          class="flex gap-1"
+          v-else-if="group?.membersCount || group?.followersCount"
+        >
+          <Account />
+          {{
+            t(
+              "{count} members or followers",
+              {
+                count: (group.membersCount ?? 0) + (group.followersCount ?? 0),
+              },
+              (group.membersCount ?? 0) + (group.followersCount ?? 0)
             )
           }}
         </p>
       </div>
     </div>
-  </router-link>
+  </LinkOrRouterLink>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { displayName, IGroup, usernameWithDomain } from "@/types/actor";
-import LazyImageWrapper from "@/components/Image/LazyImageWrapper.vue";
 import RouteName from "../../router/name";
 import InlineAddress from "@/components/Address/InlineAddress.vue";
 import { addressFullName } from "@/types/address.model";
+import { useI18n } from "vue-i18n";
+import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
+import Account from "vue-material-design-icons/Account.vue";
+import { htmlToText } from "@/utils/html";
+import { computed } from "vue";
+import LinkOrRouterLink from "../core/LinkOrRouterLink.vue";
 
-@Component({
-  components: {
-    LazyImageWrapper,
-    InlineAddress,
-  },
-})
-export default class GroupCard extends Vue {
-  @Prop({ required: true }) group!: IGroup;
+const props = withDefaults(
+  defineProps<{
+    group: IGroup;
+    showSummary?: boolean;
+    isRemoteGroup?: boolean;
+    isLoggedIn?: boolean;
+    mode?: "row" | "column";
+  }>(),
+  { showSummary: true, isRemoteGroup: false, isLoggedIn: true, mode: "column" }
+);
 
-  RouteName = RouteName;
+const { t } = useI18n({ useScope: "global" });
 
-  usernameWithDomain = usernameWithDomain;
+const saneSummary = computed(() => htmlToText(props.group.summary ?? ""));
 
-  displayName = displayName;
+const isInternal = computed(() => {
+  return props.isRemoteGroup && props.isLoggedIn === false;
+});
 
-  addressFullName = addressFullName;
-}
-</script>
-<style lang="scss" scoped>
-.card {
-  .card-content {
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    .content {
-      flex: 1;
+const to = computed(() => {
+  if (props.isRemoteGroup) {
+    if (props.isLoggedIn === false) {
+      return props.group.url;
     }
-
-    ::v-deep .content {
-      & > *:first-child {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin-bottom: 0;
-
-        * {
-          font-weight: normal;
-          text-transform: none;
-          font-style: normal;
-          text-decoration: none;
-        }
-      }
-      & > *:not(:first-child) {
-        display: none;
-      }
-    }
-
-    .media-left {
-      margin-right: inherit;
-      margin-inline-end: 0.5rem;
-    }
-
-    .media-content {
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      .group-title {
-        line-height: 1.5rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-weight: bold;
-      }
-      .group-federated-username {
-        font-size: 14px;
-      }
-    }
+    return {
+      name: RouteName.INTERACT,
+      query: { uri: encodeURI(props.group.url) },
+    };
   }
-}
-</style>
+  return {
+    name: RouteName.GROUP,
+    params: { preferredUsername: usernameWithDomain(props.group) },
+  };
+});
+</script>

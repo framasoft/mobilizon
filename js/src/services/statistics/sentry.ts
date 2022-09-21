@@ -1,5 +1,3 @@
-import Vue from "vue";
-
 import * as Sentry from "@sentry/vue";
 import { Integrations } from "@sentry/tracing";
 
@@ -12,14 +10,15 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
   // Don't attach errors to previous events
   window.sessionStorage.removeItem("lastEventId");
   Sentry.init({
-    Vue,
+    app: environment.app,
     dsn: sentryConfiguration.dsn,
+    debug: import.meta.env.DEV,
     integrations: [
       new Integrations.BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(
           environment.router
         ),
-        tracingOrigins: ["localhost", "mobilizon1.com", /^\//],
+        tracingOrigins: [window.origin, /^\//],
       }),
     ],
     beforeSend(event) {
@@ -33,8 +32,9 @@ export const sentry = (environment: any, sentryConfiguration: any) => {
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
     // We recommend adjusting this value in production
-    tracesSampleRate: sentryConfiguration.tracesSampleRate,
+    tracesSampleRate: Number.parseFloat(sentryConfiguration.tracesSampleRate),
     release: environment.version,
+    logErrors: true,
   });
 };
 

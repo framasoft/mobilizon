@@ -1,5 +1,4 @@
-import { Actor } from "@/types/actor";
-import type { IActor } from "@/types/actor";
+import { IPerson, Person } from "@/types/actor";
 import type { IEvent } from "@/types/event.model";
 import { EventModel } from "@/types/event.model";
 
@@ -9,21 +8,22 @@ export interface IComment {
   url?: string;
   text: string;
   local: boolean;
-  actor: IActor | null;
+  actor: IPerson | null;
   inReplyToComment?: IComment;
   originComment?: IComment;
   replies: IComment[];
   event?: IEvent;
-  updatedAt?: Date | string;
-  deletedAt?: Date | string;
+  updatedAt?: string;
+  deletedAt?: string;
   totalReplies: number;
-  insertedAt?: Date | string;
-  publishedAt?: Date | string;
+  insertedAt?: string;
+  publishedAt?: string;
   isAnnouncement: boolean;
+  language?: string;
 }
 
 export class CommentModel implements IComment {
-  actor: IActor = new Actor();
+  actor: IPerson = new Person();
 
   id?: string;
 
@@ -43,11 +43,11 @@ export class CommentModel implements IComment {
 
   event?: IEvent = undefined;
 
-  updatedAt?: Date | string = undefined;
+  updatedAt?: string = undefined;
 
-  deletedAt?: Date | string = undefined;
+  deletedAt?: string = undefined;
 
-  insertedAt?: Date | string = undefined;
+  insertedAt?: string = undefined;
 
   totalReplies = 0;
 
@@ -62,12 +62,12 @@ export class CommentModel implements IComment {
     this.text = hash.text;
     this.inReplyToComment = hash.inReplyToComment;
     this.originComment = hash.originComment;
-    this.actor = hash.actor ? new Actor(hash.actor) : new Actor();
+    this.actor = hash.actor ? new Person(hash.actor) : new Person();
     this.event = new EventModel(hash.event);
     this.replies = hash.replies;
-    this.updatedAt = new Date(hash.updatedAt as string);
+    this.updatedAt = new Date(hash.updatedAt as string).toISOString();
     this.deletedAt = hash.deletedAt;
-    this.insertedAt = new Date(hash.insertedAt as string);
+    this.insertedAt = new Date(hash.insertedAt as string).toISOString();
     this.totalReplies = hash.totalReplies;
     this.isAnnouncement = hash.isAnnouncement;
   }

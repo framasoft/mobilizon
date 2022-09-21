@@ -1,66 +1,39 @@
-/* eslint-disable no-shadow */
-import VueInstance from "vue";
-import { ColorModifiers } from "buefy/types/helpers.d";
-import { Route, RawLocation } from "vue-router";
-
-declare module "vue/types/vue" {
-  interface Vue {
-    $notifier: {
-      success: (message: string) => void;
-      error: (message: string) => void;
-      info: (message: string) => void;
-    };
-    beforeRouteEnter?(
-      to: Route,
-      from: Route,
-      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
-    ): void;
-
-    beforeRouteLeave?(
-      to: Route,
-      from: Route,
-      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
-    ): void;
-
-    beforeRouteUpdate?(
-      to: Route,
-      from: Route,
-      next: (to?: RawLocation | false | ((vm: VueInstance) => void)) => void
-    ): void;
-  }
-}
+import { App } from "vue";
 
 export class Notifier {
-  private readonly vue: typeof VueInstance;
+  private app: App;
 
-  constructor(vue: typeof VueInstance) {
-    this.vue = vue;
+  constructor(app: App) {
+    this.app = app;
   }
 
   success(message: string): void {
-    this.notification(message, "is-success");
+    this.notification(message, "success");
   }
 
   error(message: string): void {
-    this.notification(message, "is-danger");
+    this.notification(message, "danger");
   }
 
   info(message: string): void {
-    this.notification(message, "is-info");
+    this.notification(message, "info");
   }
 
-  private notification(message: string, type: ColorModifiers) {
-    this.vue.prototype.$buefy.notification.open({
+  private notification(message: string, type: string) {
+    this.app.config.globalProperties.$oruga.notification.open({
       message,
       duration: 5000,
-      position: "is-bottom-right",
+      position: "bottom-right",
       type,
       hasIcon: true,
     });
   }
 }
 
-/* eslint-disable */
-export function NotifierPlugin(vue: typeof VueInstance): void {
-  vue.prototype.$notifier = new Notifier(vue);
-}
+export const notifierPlugin = {
+  install(app: App) {
+    const notifier = new Notifier(app);
+    app.config.globalProperties.$notifier = notifier;
+    app.provide("notifier", notifier);
+  },
+};

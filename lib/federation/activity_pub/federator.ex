@@ -19,6 +19,8 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
 
   @max_jobs 20
 
+  @env Application.compile_env(:mobilizon, :env)
+
   @spec init(any()) :: {:ok, any()}
   def init(args) do
     {:ok, args}
@@ -83,7 +85,7 @@ defmodule Mobilizon.Federation.ActivityPub.Federator do
   def enqueue(type, payload, priority \\ 1) do
     Logger.debug("enqueue something with type #{inspect(type)}")
 
-    if Application.fetch_env!(:mobilizon, :env) == :test do
+    if @env == :test do
       handle(type, payload)
     else
       GenServer.cast(__MODULE__, {:enqueue, type, payload, priority})

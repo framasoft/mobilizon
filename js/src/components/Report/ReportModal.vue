@@ -1,146 +1,146 @@
 <template>
-  <div class="modal-card">
-    <header class="modal-card-head" v-if="title">
-      <h2 class="modal-card-title">{{ title }}</h2>
+  <div class="p-2">
+    <header v-if="title" class="mb-3">
+      <h2 class="text-2xl">{{ title }}</h2>
     </header>
 
-    <section
-      class="modal-card-body is-flex"
-      :class="{ 'is-titleless': !title }"
-    >
-      <div class="media">
-        <div class="media-left hidden md:block">
-          <b-icon icon="alert" type="is-warning" size="is-large" />
-        </div>
-        <div class="media-content">
-          <div class="box" v-if="comment">
-            <article class="media">
-              <div class="media-left">
-                <figure class="image is-48x48" v-if="comment.actor.avatar">
-                  <img :src="comment.actor.avatar.url" alt="" />
-                </figure>
-                <b-icon
-                  class="media-left"
-                  v-else
-                  size="is-large"
-                  icon="account-circle"
+    <section>
+      <div class="flex gap-1 flex-row mb-3">
+        <o-icon
+          icon="alert"
+          variant="warning"
+          custom-size="48"
+          class="hidden md:block flex-1"
+        />
+        <p>
+          {{
+            t(
+              "The report will be sent to the moderators of your instance. You can explain why you report this content below."
+            )
+          }}
+        </p>
+      </div>
+      <div class="">
+        <div class="" v-if="comment">
+          <article class="">
+            <div class="">
+              <figure class="h-8 w-8" v-if="comment?.actor?.avatar">
+                <img
+                  :src="comment.actor.avatar.url"
+                  alt=""
+                  width="48"
+                  height="48"
                 />
+              </figure>
+              <AccountCircle v-else :size="48" />
+            </div>
+            <div class="">
+              <div class="prose dark:prose-invert">
+                <strong>{{ comment?.actor?.name }}</strong>
+                <small v-if="comment.actor"
+                  >@{{ usernameWithDomain(comment?.actor) }}</small
+                >
+                <br />
+                <p v-html="comment.text"></p>
               </div>
-              <div class="media-content">
-                <div class="content">
-                  <strong>{{ comment.actor.name }}</strong>
-                  <small>@{{ comment.actor.preferredUsername }}</small>
-                  <br />
-                  <p v-html="comment.text"></p>
-                </div>
-              </div>
-            </article>
-          </div>
+            </div>
+          </article>
+        </div>
+
+        <o-field
+          :label="t('Additional comments')"
+          label-for="additional-comments"
+        >
+          <o-input v-model="content" type="textarea" id="additional-comments" />
+        </o-field>
+
+        <div class="control" v-if="outsideDomain">
           <p>
             {{
-              $t(
-                "The report will be sent to the moderators of your instance. You can explain why you report this content below."
+              t(
+                "The content came from another server. Transfer an anonymous copy of the report?"
               )
             }}
           </p>
-
-          <div class="control">
-            <b-field
-              :label="$t('Additional comments')"
-              label-for="additonal-comments"
-            >
-              <b-input
-                v-model="content"
-                type="textarea"
-                id="additonal-comments"
-              />
-            </b-field>
-          </div>
-
-          <div class="control" v-if="outsideDomain">
-            <p>
-              {{
-                $t(
-                  "The content came from another server. Transfer an anonymous copy of the report?"
-                )
-              }}
-            </p>
-            <b-switch v-model="forward">{{
-              $t("Transfer to {outsideDomain}", { outsideDomain })
-            }}</b-switch>
-          </div>
+          <o-switch v-model="forward">{{
+            t("Transfer to {outsideDomain}", { outsideDomain })
+          }}</o-switch>
         </div>
       </div>
     </section>
 
-    <footer class="modal-card-foot">
-      <button class="button" ref="cancelButton" @click="close">
+    <footer class="flex gap-2 py-3">
+      <o-button ref="cancelButton" outlined @click="close">
         {{ translatedCancelText }}
-      </button>
-      <button
-        class="button is-primary"
+      </o-button>
+      <o-button
+        variant="primary"
         ref="confirmButton"
         @click="confirm"
         @keyup.enter="confirm"
       >
         {{ translatedConfirmText }}
-      </button>
+      </o-button>
     </footer>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { IComment } from "../../types/comment.model";
+import { usernameWithDomain } from "@/types/actor";
 
-@Component({
-  mounted() {
-    this.$data.isActive = true;
-  },
-})
-export default class ReportModal extends Vue {
-  @Prop({ type: Function }) onConfirm!: (
-    content: string,
-    forward: boolean
-  ) => void;
-
-  @Prop({ type: String }) title!: string;
-
-  @Prop({ type: Object }) comment!: IComment;
-
-  @Prop({ type: String, default: "" }) outsideDomain!: string;
-
-  @Prop({ type: String }) cancelText!: string;
-
-  @Prop({ type: String }) confirmText!: string;
-
-  isActive = false;
-
-  content = "";
-
-  forward = false;
-
-  get translatedCancelText(): string {
-    return this.cancelText || (this.$t("Cancel") as string);
+const props = withDefaults(
+  defineProps<{
+    onConfirm: (content: string, forward: boolean) => void;
+    title?: string;
+    comment?: IComment;
+    outsideDomain?: string | null;
+    cancelText?: string;
+    confirmText?: string;
+  }>(),
+  {
+    outsideDomain: null,
   }
+);
 
-  get translatedConfirmText(): string {
-    return this.confirmText || (this.$t("Send the report") as string);
-  }
+const emit = defineEmits(["close"]);
 
-  confirm(): void {
-    this.onConfirm(this.content, this.forward);
-    this.close();
-  }
+// @Component({
+//   mounted() {
+//     this.$data.isActive = true;
+//   },
+// })
 
-  /**
-   * Close the Dialog.
-   */
-  close(): void {
-    this.isActive = false;
-    this.$emit("close");
-  }
-}
+// isActive = false;
+
+const content = ref("");
+
+const forward = ref(false);
+
+const { t } = useI18n({ useScope: "global" });
+
+const translatedCancelText = computed((): string => {
+  return props.cancelText ?? (t("Cancel") as string);
+});
+
+const translatedConfirmText = computed((): string => {
+  return props.confirmText ?? (t("Send the report") as string);
+});
+
+const confirm = (): void => {
+  props.onConfirm(content.value, forward.value);
+  close();
+};
+
+/**
+ * Close the Dialog.
+ */
+const close = (): void => {
+  // isActive = false;
+  emit("close");
+};
 </script>
 <style lang="scss" scoped>
 .modal-card .modal-card-foot {

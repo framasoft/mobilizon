@@ -28,8 +28,6 @@
     clip: auto;
     height: auto;
     width: auto;
-    background-color: $white;
-    border: 2px solid $violet-3;
   }
 
   &,
@@ -41,12 +39,10 @@
   &__link {
     display: block;
     padding: 8px 16px;
-    color: $violet-3;
     font-size: 18px;
   }
 
   &__nav > span {
-    border-bottom: 2px solid $violet-3;
     font-weight: bold;
   }
 
@@ -57,7 +53,6 @@
 
   &__link:focus {
     outline: none;
-    background-color: $violet-3;
     color: #f2f2f2;
   }
 }

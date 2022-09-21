@@ -1,17 +1,23 @@
-import Locale from "date-fns";
-import VueInstance from "vue";
+import type { Locale } from "date-fns";
+import { App } from "vue";
 
-declare module "vue/types/vue" {
-  interface Vue {
-    $dateFnsLocale: Locale;
-  }
-}
+export const dateFnsPlugin = {
+  install(app: App, options: { locale: string }) {
+    function dateFnsfileForLanguage(lang: string) {
+      const matches: Record<string, string> = {
+        en_US: "en-US",
+        en: "en-US",
+      };
+      return matches[lang] ?? lang;
+    }
 
-export function DateFnsPlugin(
-  vue: typeof VueInstance,
-  { locale }: { locale: string }
-): void {
-  import(`date-fns/locale/${locale}/index.js`).then((localeEntity) => {
-    VueInstance.prototype.$dateFnsLocale = localeEntity;
-  });
-}
+    import(
+      `../../node_modules/date-fns/esm/locale/${dateFnsfileForLanguage(
+        options.locale
+      )}/index.js`
+    ).then((localeEntity: { default: Locale }) => {
+      app.provide("dateFnsLocale", localeEntity.default);
+      app.config.globalProperties.$dateFnsLocale = localeEntity.default;
+    });
+  },
+};

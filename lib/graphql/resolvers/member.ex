@@ -254,6 +254,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Member do
          "You must be logged-in to remove a member"
        )}
 
+  def count_members_for_group(%Actor{type: :Group} = group, _args, _resolution) do
+    {:ok, Actors.count_members_for_group(group)}
+  end
+
   # Rejected members can be invited again
   @spec check_member_not_existant_or_rejected(String.t() | integer, String.t() | integer()) ::
           boolean()

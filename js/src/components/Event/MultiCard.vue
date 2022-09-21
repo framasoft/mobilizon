@@ -1,39 +1,21 @@
 <template>
-  <div class="multi-card-event">
+  <div
+    class="grid auto-rows-[1fr] gap-x-2 gap-y-4 md:gap-x-6 grid-cols-[repeat(auto-fill,_minmax(250px,_1fr))] justify-items-center"
+  >
     <event-card
-      class="event-card"
+      class="flex flex-col h-full"
       v-for="event in events"
       :event="event"
       :key="event.uuid"
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IEvent } from "@/types/event.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
+
 import EventCard from "./EventCard.vue";
-@Component({
-  components: {
-    EventCard,
-  },
-})
-export default class MultiCard extends Vue {
-  @Prop({ type: Array as PropType<IEvent[]>, required: true })
-  events!: IEvent[];
-}
+
+defineProps<{
+  events: IEvent[];
+}>();
 </script>
-<style lang="scss" scoped>
-.multi-card-event {
-  display: grid;
-  grid-auto-rows: 1fr;
-  grid-column-gap: 20px;
-  grid-row-gap: 30px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  .event-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-}
-</style>

@@ -1,142 +1,143 @@
 <template>
-  <div class="card card-content">
-    <div class="media">
-      <div class="media-left">
+  <div
+    class="block p-4 bg-white rounded-lg border border-gray-200 shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+  >
+    <div class="flex flex-wrap gap-1 w-full items-center">
+      <div class="">
         <img
           v-if="
-            metadataItem.icon && metadataItem.icon.substring(0, 7) === 'mz:icon'
+            modelValue.icon && modelValue.icon.substring(0, 7) === 'mz:icon'
           "
-          :src="`/img/${metadataItem.icon.substring(8)}_monochrome.svg`"
+          :src="`/img/${modelValue.icon.substring(8)}_monochrome.svg`"
           width="24"
           height="24"
           alt=""
         />
 
-        <b-icon v-else-if="metadataItem.icon" :icon="metadataItem.icon" />
-        <b-icon v-else icon="help-circle" />
+        <o-icon
+          v-else-if="modelValue.icon"
+          :icon="modelValue.icon"
+          customSize="24"
+        />
+        <o-icon v-else icon="help-circle" customSize="24" />
       </div>
-      <div class="media-content">
-        <b>{{ metadataItem.title || metadataItem.label }}</b>
+      <div class="flex-1">
+        <b>{{ modelValue.title || modelValue.label }}</b>
         <br />
         <small>
-          {{ metadataItem.description }}
+          {{ modelValue.description }}
         </small>
         <div
           v-if="
-            metadataItem.type === EventMetadataType.STRING &&
-            metadataItem.keyType === EventMetadataKeyType.CHOICE &&
-            metadataItem.choices
+            modelValue.type === EventMetadataType.STRING &&
+            modelValue.keyType === EventMetadataKeyType.CHOICE &&
+            modelValue.choices
           "
         >
-          <b-field v-for="(value, key) in metadataItem.choices" :key="key">
-            <b-radio v-model="metadataItemValue" :native-value="key">{{
+          <o-field v-for="(value, key) in modelValue.choices" :key="key">
+            <o-radio v-model="metadataItemValue" :native-value="key">{{
               value
-            }}</b-radio>
-          </b-field>
+            }}</o-radio>
+          </o-field>
         </div>
-        <b-field
+        <o-field
           v-else-if="
-            metadataItem.type === EventMetadataType.STRING &&
-            metadataItem.keyType == EventMetadataKeyType.URL
+            modelValue.type === EventMetadataType.STRING &&
+            modelValue.keyType == EventMetadataKeyType.URL
           "
         >
-          <b-input
+          <o-input
             @blur="validatePattern"
             ref="urlInput"
             type="url"
             :pattern="
-              metadataItem.pattern ? metadataItem.pattern.source : undefined
+              modelValue.pattern ? modelValue.pattern.source : undefined
             "
             :validation-message="$t(`This URL doesn't seem to be valid`)"
             required
             v-model="metadataItemValue"
-            :placeholder="metadataItem.placeholder"
+            :placeholder="modelValue.placeholder"
           />
-        </b-field>
-        <b-field v-else-if="metadataItem.type === EventMetadataType.STRING">
-          <b-input
+        </o-field>
+        <o-field v-else-if="modelValue.type === EventMetadataType.STRING">
+          <o-input
             v-model="metadataItemValue"
-            :placeholder="metadataItem.placeholder"
+            :placeholder="modelValue.placeholder"
           />
-        </b-field>
-        <b-field v-else-if="metadataItem.type === EventMetadataType.INTEGER">
-          <b-numberinput v-model="metadataItemValue" />
-        </b-field>
-        <b-field v-else-if="metadataItem.type === EventMetadataType.BOOLEAN">
-          <b-checkbox v-model="metadataItemValue">
+        </o-field>
+        <o-field v-else-if="modelValue.type === EventMetadataType.INTEGER">
+          <o-input type="number" v-model="metadataItemValue" />
+        </o-field>
+        <o-field v-else-if="modelValue.type === EventMetadataType.BOOLEAN">
+          <o-checkbox v-model="metadataItemValue">
             {{
               metadataItemValue === "true"
-                ? metadataItem.choices["true"]
-                : metadataItem.choices["false"]
+                ? modelValue?.choices?.true
+                : modelValue?.choices?.false
             }}
-          </b-checkbox>
-        </b-field>
+          </o-checkbox>
+        </o-field>
       </div>
-      <b-button
+      <o-button
         icon-left="close"
-        @click="$emit('removeItem', metadataItem.key)"
+        @click="$emit('removeItem', modelValue.key)"
       />
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEventMetadataDescription } from "@/types/event-metadata";
-import { PropType } from "vue";
-import { Component, Prop, Ref, Vue } from "vue-property-decorator";
+import { computed, ref } from "vue";
 
-@Component
-export default class EventMetadataItem extends Vue {
-  @Prop({ type: Object as PropType<IEventMetadataDescription>, required: true })
-  value!: IEventMetadataDescription;
+const props = defineProps<{
+  modelValue: IEventMetadataDescription;
+}>();
 
-  EventMetadataType = EventMetadataType;
-  EventMetadataKeyType = EventMetadataKeyType;
+const emit = defineEmits(["update:modelValue", "removeItem"]);
 
-  @Ref("urlInput") readonly urlInput!: any;
+const urlInput = ref<any>(null);
 
-  get metadataItem(): IEventMetadataDescription {
-    return this.value;
-  }
-
-  get metadataItemValue(): string {
-    return this.metadataItem.value;
-  }
-
-  set metadataItemValue(value: string) {
-    if (this.validate(value)) {
-      this.$emit("input", { ...this.metadataItem, value: value.toString() });
+const metadataItemValue = computed({
+  get(): string {
+    return props.modelValue.value;
+  },
+  set(value: string) {
+    if (validate(value)) {
+      emit("update:modelValue", {
+        ...props.modelValue,
+        value: value.toString(),
+      });
     }
-  }
+  },
+});
 
-  validatePattern(): void {
-    this.urlInput.checkHtml5Validity();
-  }
+const validatePattern = (): void => {
+  urlInput.value?.checkHtml5Validity();
+};
 
-  private validate(value: string): boolean {
-    if (this.metadataItem.keyType === EventMetadataKeyType.URL) {
-      try {
-        const url = new URL(value);
-        if (!["http:", "https:", "mailto:"].includes(url.protocol))
-          return false;
-        if (this.metadataItem.pattern) {
-          return value.match(this.metadataItem.pattern) !== null;
-        }
-      } catch {
-        return false;
+const validate = (value: string): boolean => {
+  if (props.modelValue.keyType === EventMetadataKeyType.URL) {
+    try {
+      const url = new URL(value);
+      if (!["http:", "https:", "mailto:"].includes(url.protocol)) return false;
+      if (props.modelValue.pattern) {
+        return value.match(props.modelValue.pattern) !== null;
       }
+    } catch {
+      return false;
     }
-    return true;
   }
-}
+  return true;
+};
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
 .card .media {
   align-items: center;
 
-  & > button {
-    @include margin-left(1rem);
-  }
+  // & > button {
+  //   @include margin-left(1rem);
+  // }
 }
 </style>

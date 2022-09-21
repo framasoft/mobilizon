@@ -1,69 +1,63 @@
 <template>
   <div>
     <form
-      class="new-comment"
+      class=""
       v-if="isAbleToComment"
       @submit.prevent="createCommentForEvent(newComment)"
       @keyup.ctrl.enter="createCommentForEvent(newComment)"
     >
-      <b-notification
+      <o-notification
         v-if="isEventOrganiser && !areCommentsClosed"
         :closable="false"
-        >{{ $t("Comments are closed for everybody else.") }}</b-notification
+        class="my-2"
+        >{{ t("Comments are closed for everybody else.") }}</o-notification
       >
-      <article class="media">
-        <figure class="media-left" v-if="newComment.actor">
+      <article class="flex flex-wrap items-start gap-2">
+        <figure class="" v-if="newComment.actor">
           <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
         </figure>
-        <div class="media-content">
-          <div class="field">
-            <div class="field">
-              <p class="control">
-                <editor
-                  ref="commenteditor"
-                  mode="comment"
-                  v-model="newComment.text"
-                  :aria-label="$t('Comment body')"
-                />
-              </p>
-              <p class="help is-danger" v-if="emptyCommentError">
-                {{ $t("Comment text can't be empty") }}
+        <div class="flex-1">
+          <div class="flex flex-col gap-2">
+            <div class="editor-wrapper">
+              <Editor
+                ref="commenteditor"
+                v-if="currentActor"
+                :currentActor="currentActor"
+                mode="comment"
+                v-model="newComment.text"
+                :aria-label="t('Comment body')"
+              />
+              <p class="" v-if="emptyCommentError">
+                {{ t("Comment text can't be empty") }}
               </p>
             </div>
-            <div class="field notify-participants" v-if="isEventOrganiser">
-              <b-switch
+            <div class="" v-if="isEventOrganiser">
+              <o-switch
                 aria-labelledby="notify-participants-toggle"
                 v-model="newComment.isAnnouncement"
-                >{{ $t("Notify participants") }}</b-switch
+                >{{ t("Notify participants") }}</o-switch
               >
             </div>
           </div>
         </div>
-        <div class="send-comment">
-          <b-button
-            native-type="submit"
-            type="is-primary"
-            class="comment-button-submit"
-            icon-left="send"
-            >{{ $t("Send") }}</b-button
-          >
+        <div class="">
+          <o-button native-type="submit" variant="primary" icon-left="send">{{
+            t("Send")
+          }}</o-button>
         </div>
       </article>
     </form>
-    <b-notification v-else-if="isConnected" :closable="false">{{
-      $t("The organiser has chosen to close comments.")
-    }}</b-notification>
-    <p
-      v-if="$apollo.queries.comments.loading"
-      class="loading has-text-centered"
-    >
-      {{ $t("Loading comments…") }}
+    <o-notification v-else-if="isConnected" :closable="false">{{
+      t("The organiser has chosen to close comments.")
+    }}</o-notification>
+    <p v-if="commentsLoading" class="text-center">
+      {{ t("Loading comments…") }}
     </p>
     <transition-group tag="div" name="comment-empty-list" v-else>
       <transition-group
         key="list"
         name="comment-list"
-        v-if="filteredOrderedComments.length"
+        v-if="filteredOrderedComments.length && currentActor"
         class="comment-list"
         tag="ul"
       >
@@ -71,22 +65,27 @@
           class="root-comment"
           :comment="comment"
           :event="event"
+          :currentActor="currentActor"
           v-for="comment in filteredOrderedComments"
           :key="comment.id"
           @create-comment="createCommentForEvent"
-          @delete-comment="deleteComment"
+          @delete-comment="
+            deleteComment({
+              commentId: comment.id as string,
+              originCommentId: comment.originComment?.id,
+            })
+          "
         />
       </transition-group>
       <empty-content v-else icon="comment" key="no-comments" :inline="true">
-        <span>{{ $t("No comments yet") }}</span>
+        <span>{{ t("No comments yet") }}</span>
       </empty-content>
     </transition-group>
   </div>
 </template>
 
-<script lang="ts">
-import { Prop, Vue, Component, Watch } from "vue-property-decorator";
-import Comment from "@/components/Comment/Comment.vue";
+<script lang="ts" setup>
+import Comment from "@/components/Comment/EventComment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";
@@ -95,328 +94,340 @@ import {
   DELETE_COMMENT,
   COMMENTS_THREADS_WITH_REPLIES,
 } from "../../graphql/comment";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { IPerson } from "../../types/actor";
 import { IEvent } from "../../types/event.model";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import { useCurrentActorClient } from "@/composition/apollo/actor";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
+import { IPerson } from "@/types/actor";
+import { AbsintheGraphQLError } from "@/types/errors.model";
+import { useI18n } from "vue-i18n";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
-    comments: {
+const { currentActor } = useCurrentActorClient();
+
+const { result: commentsResult, loading: commentsLoading } = useQuery<{
+  event: Pick<IEvent, "id" | "uuid" | "comments">;
+}>(
+  COMMENTS_THREADS_WITH_REPLIES,
+  () => ({ eventUUID: props.event?.uuid }),
+  () => ({ enabled: props.event?.uuid !== undefined })
+);
+
+const comments = computed(() => commentsResult.value?.event.comments ?? []);
+
+const props = defineProps<{
+  event: IEvent;
+  newComment?: IComment;
+}>();
+
+const Editor = defineAsyncComponent(
+  () => import("@/components/TextEditor.vue")
+);
+
+const newComment = ref<IComment>(props.newComment ?? new CommentModel());
+
+const emptyCommentError = ref(false);
+
+const { t } = useI18n({ useScope: "global" });
+
+watch(currentActor, () => {
+  newComment.value.actor = currentActor.value as IPerson;
+});
+
+watch(newComment, (newCommentUpdated: IComment) => {
+  if (emptyCommentError.value) {
+    emptyCommentError.value = ["", "<p></p>"].includes(newCommentUpdated.text);
+  }
+});
+
+const {
+  mutate: createCommentForEventMutation,
+  onDone: createCommentForEventMutationDone,
+  onError: createCommentForEventMutationError,
+} = useMutation<
+  { createComment: IComment },
+  {
+    eventId: string;
+    text: string;
+    inReplyToCommentId?: string;
+    isAnnouncement?: boolean;
+    originCommentId?: string | undefined;
+  }
+>(CREATE_COMMENT_FROM_EVENT, () => ({
+  update: (
+    store: ApolloCache<InMemoryCache>,
+    { data }: FetchResult,
+    { variables }
+  ) => {
+    if (data == null) return;
+    // comments are attached to the event, so we can pass it to replies later
+    const newCommentLocal = { ...data.createComment, event: props.event };
+
+    // we load all existing threads
+    const commentThreadsData = store.readQuery<{ event: IEvent }>({
       query: COMMENTS_THREADS_WITH_REPLIES,
-      variables() {
-        return {
-          eventUUID: this.event.uuid,
-        };
+      variables: {
+        eventUUID: props.event?.uuid,
       },
-      update: (data) => data.event.comments,
-      skip() {
-        return !this.event.uuid;
+    });
+    if (!commentThreadsData) return;
+    const { event } = commentThreadsData;
+    const oldComments = [...event.comments];
+
+    // if it's no a root comment, we first need to find
+    // existing replies and add the new reply to it
+    if (variables?.originCommentId !== undefined) {
+      const parentCommentIndex = oldComments.findIndex(
+        (oldComment) => oldComment.id === variables.originCommentId
+      );
+      const parentComment = oldComments[parentCommentIndex];
+
+      // replace the root comment with has the updated list of replies in the thread list
+      oldComments.splice(parentCommentIndex, 1, {
+        ...parentComment,
+        replies: [...parentComment.replies, newCommentLocal],
+      });
+    } else {
+      // otherwise it's simply a new thread and we add it to the list
+      oldComments.push(newCommentLocal);
+    }
+
+    // finally we save the thread list
+    store.writeQuery({
+      query: COMMENTS_THREADS_WITH_REPLIES,
+      data: {
+        event: {
+          ...event,
+          comments: oldComments,
+        },
       },
+      variables: {
+        eventUUID: props.event?.uuid,
+      },
+    });
+  },
+}));
+
+createCommentForEventMutationDone(() => {
+  // and reset the new comment field
+  newComment.value = new CommentModel();
+});
+
+const notifier = inject<Notifier>("notifier");
+
+createCommentForEventMutationError((errors) => {
+  console.error(errors);
+  if (errors.graphQLErrors && errors.graphQLErrors.length > 0) {
+    const error = errors.graphQLErrors[0] as AbsintheGraphQLError;
+    if (error.field !== "text" && error.message[0] !== "can't be blank") {
+      notifier?.error(error.message);
+    }
+  }
+});
+
+const createCommentForEvent = (comment: IComment) => {
+  emptyCommentError.value = ["", "<p></p>"].includes(comment.text);
+
+  if (emptyCommentError.value) return;
+  if (!comment.actor) return;
+  if (!props.event?.id) return;
+
+  createCommentForEventMutation({
+    eventId: props.event?.id,
+    text: comment.text,
+    inReplyToCommentId: comment.inReplyToComment?.id,
+    isAnnouncement: comment.isAnnouncement,
+    originCommentId: comment.originComment?.id,
+  });
+};
+
+const { mutate: deleteComment, onError: deleteCommentMutationError } =
+  useMutation<
+    { deleteComment: { id: string } },
+    { commentId: string; originCommentId?: string }
+  >(DELETE_COMMENT, () => ({
+    update: (
+      store: ApolloCache<InMemoryCache>,
+      { data }: FetchResult,
+      { variables }
+    ) => {
+      if (data == null) return;
+      const deletedCommentId = data.deleteComment.id;
+
+      const commentsData = store.readQuery<{ event: IEvent }>({
+        query: COMMENTS_THREADS_WITH_REPLIES,
+        variables: {
+          eventUUID: props.event?.uuid,
+        },
+      });
+      if (!commentsData) return;
+      const { event } = commentsData;
+      let updatedComments: IComment[] = [...event.comments];
+
+      if (variables?.originCommentId) {
+        // we have deleted a reply to a thread
+        const parentCommentIndex = updatedComments.findIndex(
+          (oldComment) => oldComment.id === variables.originCommentId
+        );
+        const parentComment = updatedComments[parentCommentIndex];
+        const updatedReplies = parentComment.replies.map((reply) => {
+          if (reply.id === deletedCommentId) {
+            return {
+              ...reply,
+              deletedAt: new Date().toString(),
+            };
+          }
+          return reply;
+        });
+        updatedComments.splice(parentCommentIndex, 1, {
+          ...parentComment,
+          replies: updatedReplies,
+          totalReplies: parentComment.totalReplies - 1,
+        });
+        console.debug("updatedComments", updatedComments);
+      } else {
+        // we have deleted a thread itself
+        updatedComments = updatedComments.map((reply) => {
+          if (reply.id === deletedCommentId) {
+            return {
+              ...reply,
+              deletedAt: new Date().toString(),
+            };
+          }
+          return reply;
+        });
+      }
+      store.writeQuery({
+        query: COMMENTS_THREADS_WITH_REPLIES,
+        variables: {
+          eventUUID: props.event?.uuid,
+        },
+        data: {
+          event: {
+            ...event,
+            comments: updatedComments,
+          },
+        },
+      });
     },
-  },
-  components: {
-    Comment,
-    IdentityPickerWrapper,
-    EmptyContent,
-    editor: () =>
-      import(/* webpackChunkName: "editor" */ "@/components/Editor.vue"),
-  },
-})
-export default class CommentTree extends Vue {
-  @Prop({ required: false, type: Object }) event!: IEvent;
+  }));
 
-  newComment: IComment = new CommentModel();
-
-  currentActor!: IPerson;
-
-  comments: IComment[] = [];
-
-  CommentModeration = CommentModeration;
-
-  emptyCommentError = false;
-
-  @Watch("currentActor")
-  watchCurrentActor(currentActor: IPerson): void {
-    this.newComment.actor = currentActor;
+deleteCommentMutationError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
+});
 
-  @Watch("newComment", { deep: true })
-  resetEmptyCommentError(newComment: IComment): void {
-    if (this.emptyCommentError) {
-      this.emptyCommentError = ["", "<p></p>"].includes(newComment.text);
-    }
-  }
-
-  async createCommentForEvent(comment: IComment): Promise<void> {
-    this.emptyCommentError = ["", "<p></p>"].includes(comment.text);
-    if (this.emptyCommentError) return;
-    try {
-      if (!comment.actor) return;
-      await this.$apollo.mutate({
-        mutation: CREATE_COMMENT_FROM_EVENT,
-        variables: {
-          eventId: this.event.id,
-          text: comment.text,
-          inReplyToCommentId: comment.inReplyToComment
-            ? comment.inReplyToComment.id
-            : null,
-          isAnnouncement: comment.isAnnouncement,
-        },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
-          if (data == null) return;
-          // comments are attached to the event, so we can pass it to replies later
-          const newComment = { ...data.createComment, event: this.event };
-
-          // we load all existing threads
-          const commentThreadsData = store.readQuery<{ event: IEvent }>({
-            query: COMMENTS_THREADS_WITH_REPLIES,
-            variables: {
-              eventUUID: this.event.uuid,
-            },
-          });
-          if (!commentThreadsData) return;
-          const { event } = commentThreadsData;
-          const oldComments = [...event.comments];
-
-          // if it's no a root comment, we first need to find
-          // existing replies and add the new reply to it
-          if (comment.originComment !== undefined) {
-            const { originComment } = comment;
-            const parentCommentIndex = oldComments.findIndex(
-              (oldComment) => oldComment.id === originComment.id
-            );
-            const parentComment = oldComments[parentCommentIndex];
-
-            // replace the root comment with has the updated list of replies in the thread list
-            oldComments.splice(parentCommentIndex, 1, {
-              ...parentComment,
-              replies: [...parentComment.replies, newComment],
-            });
-          } else {
-            // otherwise it's simply a new thread and we add it to the list
-            oldComments.push(newComment);
-          }
-
-          // finally we save the thread list
-          store.writeQuery({
-            query: COMMENTS_THREADS_WITH_REPLIES,
-            data: {
-              event: {
-                ...event,
-                comments: oldComments,
-              },
-            },
-            variables: {
-              eventUUID: this.event.uuid,
-            },
-          });
-        },
-      });
-
-      // and reset the new comment field
-      this.newComment = new CommentModel();
-    } catch (errors: any) {
-      console.error(errors);
-      if (errors.graphQLErrors && errors.graphQLErrors.length > 0) {
-        const error = errors.graphQLErrors[0];
-        if (error.field !== "text" && error.message[0] !== "can't be blank") {
-          this.$notifier.error(error.message);
-        }
+const orderedComments = computed((): IComment[] => {
+  return comments.value
+    .filter((comment: IComment) => comment.inReplyToComment == null)
+    .sort((a: IComment, b: IComment) => {
+      if (a.isAnnouncement !== b.isAnnouncement) {
+        return (
+          (b.isAnnouncement === true ? 1 : 0) -
+          (a.isAnnouncement === true ? 1 : 0)
+        );
       }
-    }
-  }
-
-  async deleteComment(comment: IComment): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: DELETE_COMMENT,
-        variables: {
-          commentId: comment.id,
-        },
-        update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
-          if (data == null) return;
-          const deletedCommentId = data.deleteComment.id;
-
-          const commentsData = store.readQuery<{ event: IEvent }>({
-            query: COMMENTS_THREADS_WITH_REPLIES,
-            variables: {
-              eventUUID: this.event.uuid,
-            },
-          });
-          if (!commentsData) return;
-          const { event } = commentsData;
-          let updatedComments: IComment[] = [...event.comments];
-
-          if (comment.originComment) {
-            // we have deleted a reply to a thread
-            const { originComment } = comment;
-
-            const parentCommentIndex = updatedComments.findIndex(
-              (oldComment) => oldComment.id === originComment.id
-            );
-            const parentComment = updatedComments[parentCommentIndex];
-            const updatedReplies = parentComment.replies.map((reply) => {
-              if (reply.id === deletedCommentId) {
-                return {
-                  ...reply,
-                  deletedAt: new Date().toString(),
-                };
-              }
-              return reply;
-            });
-            updatedComments.splice(parentCommentIndex, 1, {
-              ...parentComment,
-              replies: updatedReplies,
-              totalReplies: parentComment.totalReplies - 1,
-            });
-            console.log("updatedComments", updatedComments);
-          } else {
-            // we have deleted a thread itself
-            updatedComments = updatedComments.map((reply) => {
-              if (reply.id === deletedCommentId) {
-                return {
-                  ...reply,
-                  deletedAt: new Date().toString(),
-                };
-              }
-              return reply;
-            });
-          }
-          store.writeQuery({
-            query: COMMENTS_THREADS_WITH_REPLIES,
-            variables: {
-              eventUUID: this.event.uuid,
-            },
-            data: {
-              event: {
-                ...event,
-                comments: updatedComments,
-              },
-            },
-          });
-        },
-      });
-      // this.comments = this.comments.filter(commentItem => commentItem.id !== comment.id);
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
+      if (a.publishedAt && b.publishedAt) {
+        return (
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+        );
+      } else if (a.updatedAt && b.updatedAt) {
+        return (
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
       }
-    }
-  }
+      return 0;
+    });
+});
 
-  get orderedComments(): IComment[] {
-    return this.comments
-      .filter((comment) => comment.inReplyToComment == null)
-      .sort((a, b) => {
-        if (a.isAnnouncement !== b.isAnnouncement) {
-          return (
-            (b.isAnnouncement === true ? 1 : 0) -
-            (a.isAnnouncement === true ? 1 : 0)
-          );
-        }
-        if (a.publishedAt && b.publishedAt) {
-          return (
-            new Date(b.publishedAt).getTime() -
-            new Date(a.publishedAt).getTime()
-          );
-        } else if (a.updatedAt && b.updatedAt) {
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
-        }
-        return 0;
-      });
-  }
+const filteredOrderedComments = computed((): IComment[] => {
+  return orderedComments.value.filter(
+    (comment) => !comment.deletedAt || comment.totalReplies > 0
+  );
+});
 
-  get filteredOrderedComments(): IComment[] {
-    return this.orderedComments.filter(
-      (comment) => !comment.deletedAt || comment.totalReplies > 0
-    );
-  }
+const isEventOrganiser = computed((): boolean => {
+  const organizerId =
+    props.event?.organizerActor?.id || props.event?.attributedTo?.id;
+  return organizerId !== undefined && currentActor.value?.id === organizerId;
+});
 
-  get isEventOrganiser(): boolean {
-    const organizerId =
-      this.event?.organizerActor?.id || this.event?.attributedTo?.id;
-    return organizerId !== undefined && this.currentActor?.id === organizerId;
-  }
+const areCommentsClosed = computed((): boolean => {
+  return (
+    currentActor.value?.id !== undefined &&
+    props.event?.options.commentModeration !== CommentModeration.CLOSED
+  );
+});
 
-  get areCommentsClosed(): boolean {
-    return (
-      this.currentActor.id !== undefined &&
-      this.event.options.commentModeration !== CommentModeration.CLOSED
-    );
+const isAbleToComment = computed((): boolean => {
+  if (isConnected.value) {
+    return areCommentsClosed.value || isEventOrganiser.value;
   }
+  return false;
+});
 
-  get isAbleToComment(): boolean {
-    if (this.isConnected) {
-      return this.areCommentsClosed || this.isEventOrganiser;
-    }
-    return false;
-  }
-
-  get isConnected(): boolean {
-    return this.currentActor?.id != undefined;
-  }
-}
+const isConnected = computed((): boolean => {
+  return currentActor.value?.id != undefined;
+});
 </script>
 
 <style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-@import "~bulma/sass/utilities/mixins.sass";
-form.new-comment {
-  padding-bottom: 1rem;
+// @use "@/styles/_mixins" as *;
+// // @import "node_modules/bulma/sass/utilities/mixins.sass";
+// form.new-comment {
+//   padding-bottom: 1rem;
 
-  .media {
-    flex-wrap: wrap;
-    justify-content: center;
-    .media-left {
-      @include mobile {
-        @include margin-right(0.5rem);
-        @include margin-left(0.5rem);
-      }
-    }
+//   .media {
+//     flex-wrap: wrap;
+//     justify-content: center;
+//     // .media-left {
+//     //   @include >mobile {
+//     //     @include margin-right(0.5rem);
+//     //     @include margin-left(0.5rem);
+//     //   }
+//     // }
 
-    .media-content {
-      display: flex;
-      align-items: center;
-      align-content: center;
-      width: min-content;
+//     .media-content {
+//       display: flex;
+//       align-items: center;
+//       align-content: center;
+//       width: min-content;
 
-      .field {
-        flex: 1;
-        @include padding-right(10px);
-        margin-bottom: 0;
+//       .field {
+//         flex: 1;
+//         // @include padding-right(10px);
+//         margin-bottom: 0;
 
-        &.notify-participants {
-          margin-top: 0.5rem;
-        }
-      }
-    }
-  }
-}
+//         &.notify-participants {
+//           margin-top: 0.5rem;
+//         }
+//       }
+//     }
+//   }
+// }
 
-.no-comments {
-  display: flex;
-  flex-direction: column;
+// .no-comments {
+//   display: flex;
+//   flex-direction: column;
 
-  span {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+//   span {
+//     text-align: center;
+//     margin-bottom: 10px;
+//   }
 
-  img {
-    max-width: 250px;
-    align-self: center;
-  }
-}
+//   img {
+//     max-width: 250px;
+//     align-self: center;
+//   }
+// }
 
-ul.comment-list li {
-  margin-bottom: 16px;
-}
+// ul.comment-list li {
+//   margin-bottom: 16px;
+// }
 
 .comment-list-enter-active,
 .comment-list-leave-active,
@@ -447,11 +458,11 @@ ul.comment-list li {
   transform-origin: center top;
 }
 
-/*.comment-empty-list-enter-active {*/
-/*    transition: opacity .5s;*/
-/*}*/
+// .comment-empty-list-enter-active {
+//     transition: opacity .5s;
+// }
 
-/*.comment-empty-list-enter {*/
-/*    opacity: 0;*/
-/*}*/
+// .comment-empty-list-enter {
+//     opacity: 0;
+// }
 </style>

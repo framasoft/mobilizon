@@ -10,7 +10,7 @@
   "0 Bytes": "0バイト",
   "<b>{contact}</b> will be displayed as contact.": "",
   "@{group}": "",
-  "@{username}": "",
+  "{'@'}{username}": "",
   "@{username} ({role})": "",
   "@{username}'s follow request was accepted": "@{username}のフォローリクエストが受け入れられました",
   "@{username}'s follow request was rejected": "@{username}のフォローリクエストは拒否されました",

@@ -1,14 +1,12 @@
 <template>
   <div>
-    <div
-      class="event-participation has-text-right"
-      v-if="isEventNotAlreadyPassed"
-    >
+    <div class="event-participation" v-if="isEventNotAlreadyPassed">
       <participation-button
         v-if="shouldShowParticipationButton"
         :participation="participation"
         :event="event"
         :current-actor="currentActor"
+        :identities="identities"
         @join-event="(actor) => $emit('join-event', actor)"
         @join-modal="$emit('join-modal')"
         @join-event-with-confirmation="
@@ -16,223 +14,205 @@
         "
         @confirm-leave="$emit('confirm-leave')"
       />
-      <b-button
-        type="is-text"
+      <o-button
+        variant="text"
         v-if="!actorIsParticipant && anonymousParticipation !== null"
         @click="$emit('cancel-anonymous-participation')"
-        >{{ $t("Cancel anonymous participation") }}</b-button
+        >{{ t("Cancel anonymous participation") }}</o-button
       >
       <small v-if="!actorIsParticipant && anonymousParticipation">
-        {{ $t("You are participating in this event anonymously") }}
-        <b-tooltip :label="$t('Click for more information')">
-          <span
-            class="is-clickable"
-            @click="isAnonymousParticipationModalOpen = true"
-          >
-            <b-icon size="is-small" icon="information-outline" />
+        {{ t("You are participating in this event anonymously") }}
+        <VTooltip>
+          <template #popper>
+            {{ t("Click for more information") }}
+          </template>
+          <span @click="isAnonymousParticipationModalOpen = true">
+            <InformationOutline :size="16" />
           </span>
-        </b-tooltip>
+        </VTooltip>
       </small>
       <small
         v-else-if="!actorIsParticipant && anonymousParticipation === false"
       >
         {{
-          $t(
+          t(
             "You are participating in this event anonymously but didn't confirm participation"
           )
         }}
-        <b-tooltip
-          :label="
-            $t(
-              'This information is saved only on your computer. Click for details'
-            )
-          "
-        >
+        <VTooltip>
+          <template #popper>
+            {{
+              t(
+                "This information is saved only on your computer. Click for details"
+              )
+            }}
+          </template>
           <router-link :to="{ name: RouteName.TERMS }">
-            <b-icon size="is-small" icon="help-circle-outline" />
+            <HelpCircleOutline :size="16" />
           </router-link>
-        </b-tooltip>
+        </VTooltip>
       </small>
     </div>
     <div v-else>
-      <button class="button is-primary" type="button" slot="trigger" disabled>
-        <template>
-          <span>{{ $t("Event already passed") }}</span>
-        </template>
-        <b-icon icon="menu-down" />
-      </button>
+      <o-button variant="primary" disabled icon-left="menu-down">
+        {{ t("Event already passed") }}
+      </o-button>
     </div>
-    <b-modal
-      :active.sync="isAnonymousParticipationModalOpen"
+    <o-modal
+      v-model:active="isAnonymousParticipationModalOpen"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       ref="anonymous-participation-modal"
     >
       <div class="modal-card">
         <header class="modal-card-head">
           <p class="modal-card-title">
-            {{ $t("About anonymous participation") }}
+            {{ t("About anonymous participation") }}
           </p>
         </header>
 
         <section class="modal-card-body">
-          <b-notification
-            type="is-primary"
+          <o-notification
+            variant="primary"
             :closable="false"
             v-if="event.joinOptions === EventJoinOptions.RESTRICTED"
           >
             {{
-              $t(
+              t(
                 "As the event organizer has chosen to manually validate participation requests, your participation will be really confirmed only once you receive an email stating it's being accepted."
               )
             }}
-          </b-notification>
+          </o-notification>
           <p>
             {{
-              $t(
+              t(
                 "Your participation status is saved only on this device and will be deleted one month after the event's passed."
               )
             }}
           </p>
-          <p v-if="isSecureContext">
+          <p v-if="isSecureContext()">
             {{
-              $t(
+              t(
                 "You may clear all participation information for this device with the buttons below."
               )
             }}
           </p>
-          <div class="buttons" v-if="isSecureContext">
-            <b-button
-              type="is-danger is-outlined"
+          <div class="buttons" v-if="isSecureContext()">
+            <o-button
+              variant="danger"
+              outlined
               @click="clearEventParticipationData"
             >
-              {{ $t("Clear participation data for this event") }}
-            </b-button>
-            <b-button type="is-danger" @click="clearAllParticipationData">
-              {{ $t("Clear participation data for all events") }}
-            </b-button>
+              {{ t("Clear participation data for this event") }}
+            </o-button>
+            <o-button variant="danger" @click="clearAllParticipationData">
+              {{ t("Clear participation data for all events") }}
+            </o-button>
           </div>
         </section>
       </div>
-    </b-modal>
+    </o-modal>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { EventJoinOptions, EventStatus, ParticipantRole } from "@/types/enums";
 import { IParticipant } from "@/types/participant.model";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import RouteName from "@/router/name";
 import { IEvent } from "@/types/event.model";
-import { CURRENT_ACTOR_CLIENT } from "@/graphql/actor";
-import { IPerson } from "@/types/actor";
-import { IConfig } from "@/types/config.model";
-import { CONFIG } from "@/graphql/config";
 import {
   removeAllAnonymousParticipations,
   removeAnonymousParticipation,
 } from "@/services/AnonymousParticipationStorage";
 import ParticipationButton from "../Event/ParticipationButton.vue";
+import { computed, ref } from "vue";
+import InformationOutline from "vue-material-design-icons/InformationOutline.vue";
+import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+import { useI18n } from "vue-i18n";
+import { IPerson } from "@/types/actor";
+import { IAnonymousParticipationConfig } from "@/types/config.model";
 
-@Component({
-  apollo: {
-    currentActor: CURRENT_ACTOR_CLIENT,
-    config: CONFIG,
-  },
-  components: {
-    ParticipationButton,
-  },
-})
-export default class ParticipationSection extends Vue {
-  @Prop({ required: true }) participation!: IParticipant;
+const { t } = useI18n({ useScope: "global" });
 
-  @Prop({ required: true }) event!: IEvent;
-
-  @Prop({ required: true, default: null }) anonymousParticipation!:
-    | boolean
-    | null;
-
-  currentActor!: IPerson;
-
-  config!: IConfig;
-
-  RouteName = RouteName;
-
-  EventJoinOptions = EventJoinOptions;
-
-  isAnonymousParticipationModalOpen = false;
-
-  get actorIsParticipant(): boolean {
-    if (this.actorIsOrganizer) return true;
-
-    return (
-      this.participation &&
-      this.participation.role === ParticipantRole.PARTICIPANT
-    );
+const props = withDefaults(
+  defineProps<{
+    participation: IParticipant | undefined;
+    event: IEvent;
+    anonymousParticipation?: boolean | null;
+    currentActor: IPerson;
+    identities: IPerson[];
+    anonymousParticipationConfig: IAnonymousParticipationConfig;
+  }>(),
+  {
+    anonymousParticipation: null,
   }
+);
 
-  get actorIsOrganizer(): boolean {
-    return (
-      this.participation && this.participation.role === ParticipantRole.CREATOR
-    );
-  }
+const isAnonymousParticipationModalOpen = ref(false);
 
-  get shouldShowParticipationButton(): boolean {
-    // If we have an anonymous participation, don't show the participation button
-    if (
-      this.config &&
-      this.config.anonymous.participation.allowed &&
-      this.anonymousParticipation
-    ) {
-      return false;
-    }
+const actorIsParticipant = computed((): boolean => {
+  if (actorIsOrganizer.value) return true;
 
-    // So that people can cancel their participation
-    if (this.actorIsParticipant) return true;
+  return props.participation?.role === ParticipantRole.PARTICIPANT;
+});
 
-    // You can participate to draft or cancelled events
-    if (this.event.draft || this.event.status === EventStatus.CANCELLED)
-      return false;
+const actorIsOrganizer = computed((): boolean => {
+  return props.participation?.role === ParticipantRole.CREATOR;
+});
 
-    // If capacity is OK
-    if (this.eventCapacityOK) return true;
-
-    // Else
+const shouldShowParticipationButton = computed((): boolean => {
+  // If we have an anonymous participation, don't show the participation button
+  if (
+    props.anonymousParticipationConfig?.allowed &&
+    props.anonymousParticipation
+  ) {
     return false;
   }
 
-  get eventCapacityOK(): boolean {
-    if (this.event.draft) return true;
-    if (!this.event.options.maximumAttendeeCapacity) return true;
-    return (
-      this.event.options.maximumAttendeeCapacity >
-      this.event.participantStats.participant
-    );
-  }
+  // So that people can cancel their participation
+  if (actorIsParticipant.value) return true;
 
-  get isEventNotAlreadyPassed(): boolean {
-    return new Date(this.endDate) > new Date();
-  }
+  // You can participate to draft or cancelled events
+  if (props.event.draft || props.event.status === EventStatus.CANCELLED)
+    return false;
 
-  get endDate(): Date {
-    return this.event.endsOn !== null && this.event.endsOn > this.event.beginsOn
-      ? this.event.endsOn
-      : this.event.beginsOn;
-  }
+  // If capacity is OK
+  if (eventCapacityOK.value) return true;
 
-  // eslint-disable-next-line class-methods-use-this
-  get isSecureContext(): boolean {
-    return window.isSecureContext;
-  }
+  // Else
+  return false;
+});
 
-  async clearEventParticipationData(): Promise<void> {
-    await removeAnonymousParticipation(this.event.uuid);
-    window.location.reload();
-  }
+const eventCapacityOK = computed((): boolean => {
+  if (props.event.draft) return true;
+  if (!props.event.options.maximumAttendeeCapacity) return true;
+  return (
+    props.event.options.maximumAttendeeCapacity >
+    props.event.participantStats.participant
+  );
+});
 
-  // eslint-disable-next-line class-methods-use-this
-  clearAllParticipationData(): void {
-    removeAllAnonymousParticipations();
-    window.location.reload();
-  }
-}
+const isEventNotAlreadyPassed = computed((): boolean => {
+  return new Date(endDate.value) > new Date();
+});
+
+const endDate = computed((): string => {
+  return props.event.endsOn !== null &&
+    props.event.endsOn > props.event.beginsOn
+    ? props.event.endsOn
+    : props.event.beginsOn;
+});
+
+const isSecureContext = (): boolean => {
+  return window.isSecureContext;
+};
+
+const clearEventParticipationData = async (): Promise<void> => {
+  await removeAnonymousParticipation(props.event.uuid);
+  window.location.reload();
+};
+
+const clearAllParticipationData = (): void => {
+  removeAllAnonymousParticipations();
+  window.location.reload();
+};
 </script>

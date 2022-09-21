@@ -1,4 +1,3 @@
-import { DateTimeFormatOptions } from "vue-i18n";
 import { i18n } from "../utils/i18n";
 
 function parseDateTime(value: string): Date {
@@ -14,7 +13,7 @@ function formatDateString(value: string): string {
   });
 }
 
-function formatTimeString(value: string, timeZone: string): string {
+function formatTimeString(value: string, timeZone?: string): string {
   return parseDateTime(value).toLocaleTimeString(locale(), {
     hour: "numeric",
     minute: "numeric",
@@ -24,7 +23,7 @@ function formatTimeString(value: string, timeZone: string): string {
 
 // TODO: These can be removed in favor of dateStyle/timeStyle when those two have sufficient support
 // https://caniuse.com/mdn-javascript_builtins_intl_datetimeformat_datetimeformat_datestyle
-const LONG_DATE_FORMAT_OPTIONS: DateTimeFormatOptions = {
+const LONG_DATE_FORMAT_OPTIONS: any = {
   weekday: undefined,
   year: "numeric",
   month: "long",
@@ -33,13 +32,13 @@ const LONG_DATE_FORMAT_OPTIONS: DateTimeFormatOptions = {
   minute: undefined,
 };
 
-const LONG_TIME_FORMAT_OPTIONS: DateTimeFormatOptions = {
+const LONG_TIME_FORMAT_OPTIONS: any = {
   weekday: "long",
   hour: "numeric",
   minute: "numeric",
 };
 
-const SHORT_DATE_FORMAT_OPTIONS: DateTimeFormatOptions = {
+const SHORT_DATE_FORMAT_OPTIONS: any = {
   weekday: undefined,
   year: "numeric",
   month: "short",
@@ -48,7 +47,7 @@ const SHORT_DATE_FORMAT_OPTIONS: DateTimeFormatOptions = {
   minute: undefined,
 };
 
-const SHORT_TIME_FORMAT_OPTIONS: DateTimeFormatOptions = {
+const SHORT_TIME_FORMAT_OPTIONS: any = {
   weekday: "short",
   hour: "numeric",
   minute: "numeric",
@@ -75,6 +74,6 @@ function formatDateTimeString(
   return format.format(parseDateTime(value));
 }
 
-const locale = () => i18n.locale.replace("_", "-");
+const locale = () => i18n.global.locale.replace("_", "-");
 
 export { formatDateString, formatTimeString, formatDateTimeString };

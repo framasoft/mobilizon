@@ -20,22 +20,22 @@
         },
       ]"
     />
-    <b-loading :active="$apollo.loading" />
+    <o-loading :active="loading" />
     <section
-      class="container section"
+      class="container mx-auto section"
       v-if="group && isCurrentActorAGroupAdmin && followers"
     >
       <h1>{{ $t("Group Followers") }} ({{ followers.total }})</h1>
-      <b-field :label="$t('Status')" horizontal>
-        <b-switch v-model="pending">{{ $t("Pending") }}</b-switch>
-      </b-field>
-      <b-table
+      <o-field :label="$t('Status')" horizontal>
+        <o-switch v-model="pending">{{ $t("Pending") }}</o-switch>
+      </o-field>
+      <o-table
         :data="followers.elements"
         ref="queueTable"
-        :loading="this.$apollo.loading"
+        :loading="loading"
         paginated
         backend-pagination
-        :current-page.sync="page"
+        v-model:current-page="page"
         :pagination-simple="true"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
@@ -46,204 +46,193 @@
         backend-sorting
         :default-sort-direction="'desc'"
         :default-sort="['insertedAt', 'desc']"
-        @page-change="triggerLoadMoreFollowersPageChange"
+        @page-change="loadMoreFollowers"
         @sort="(field, order) => $emit('sort', field, order)"
       >
-        <b-table-column
+        <o-table-column
           field="actor.preferredUsername"
           :label="$t('Follower')"
           v-slot="props"
         >
-          <article class="media">
-            <figure
-              class="media-left image is-48x48"
-              v-if="props.row.actor.avatar"
-            >
+          <article class="flex gap-1">
+            <figure v-if="props.row.actor.avatar">
               <img
-                class="is-rounded"
+                class="rounded"
                 :src="props.row.actor.avatar.url"
                 alt=""
+                width="48"
+                height="48"
               />
             </figure>
-            <b-icon
-              class="media-left"
-              v-else
-              size="is-large"
-              icon="account-circle"
-            />
-            <div class="media-content">
-              <div class="content">
+            <AccountCircle v-else :size="48" />
+            <div class="">
+              <div class="">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
                 ><br />
-                <span class="is-size-7 has-text-grey-dark"
-                  >@{{ usernameWithDomain(props.row.actor) }}</span
-                >
+                <span class="">@{{ usernameWithDomain(props.row.actor) }}</span>
               </div>
             </div>
           </article>
-        </b-table-column>
-        <b-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+        </o-table-column>
+        <o-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
           <span class="has-text-centered">
-            {{ props.row.insertedAt | formatDateString }}<br />{{
-              props.row.insertedAt | formatTimeString
+            {{ formatDateString(props.row.insertedAt) }}<br />{{
+              formatTimeString(props.row.insertedAt)
             }}
           </span>
-        </b-table-column>
-        <b-table-column field="actions" :label="$t('Actions')" v-slot="props">
+        </o-table-column>
+        <o-table-column field="actions" :label="$t('Actions')" v-slot="props">
           <div class="buttons">
-            <b-button
+            <o-button
               v-if="!props.row.approved"
               @click="updateFollower(props.row, true)"
               icon-left="check"
-              type="is-success"
-              >{{ $t("Accept") }}</b-button
+              variant="success"
+              >{{ $t("Accept") }}</o-button
             >
-            <b-button
+            <o-button
               @click="updateFollower(props.row, false)"
               icon-left="close"
-              type="is-danger"
-              >{{ $t("Reject") }}</b-button
+              variant="danger"
+              >{{ $t("Reject") }}</o-button
             >
           </div>
-        </b-table-column>
-        <template slot="empty">
+        </o-table-column>
+        <template #empty>
           <empty-content icon="account" inline>
             {{ $t("No follower matches the filters") }}
           </empty-content>
         </template>
-      </b-table>
+      </o-table>
     </section>
-    <b-message v-else-if="!$apollo.loading && group">
+    <o-notification v-else-if="!loading && group">
       {{ $t("You are not an administrator for this group.") }}
-    </b-message>
+    </o-notification>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Watch } from "vue-property-decorator";
-import GroupMixin from "@/mixins/group";
-import { mixins } from "vue-class-component";
+<script lang="ts" setup>
 import { GROUP_FOLLOWERS, UPDATE_FOLLOWER } from "@/graphql/followers";
 import RouteName from "../../router/name";
 import { displayName, usernameWithDomain } from "../../types/actor";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { IFollower } from "@/types/actor/follower.model";
-import { Paginate } from "@/types/paginate";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import {
+  booleanTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
+import { computed, inject } from "vue";
+import { useHead } from "@vueuse/head";
+import { useI18n } from "vue-i18n";
+import { usePersonStatusGroup } from "@/composition/apollo/actor";
+import { MemberRole } from "@/types/enums";
+import { formatTimeString, formatDateString } from "@/filters/datetime";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { Notifier } from "@/plugins/notifier";
 
-@Component({
-  apollo: {
-    followers: {
-      query: GROUP_FOLLOWERS,
-      variables() {
-        return {
-          name: this.$route.params.preferredUsername,
-          followersPage: this.page,
-          followersLimit: this.FOLLOWERS_PER_PAGE,
-          approved: this.pending === null ? null : !this.pending,
-        };
-      },
-      update: (data) => data.group.followers,
+const props = defineProps<{ preferredUsername: string }>();
+
+const page = useRouteQuery("page", 1, integerTransformer);
+
+const pending = useRouteQuery("pending", false, booleanTransformer);
+
+const FOLLOWERS_PER_PAGE = 10;
+
+const {
+  result: followersResult,
+  fetchMore,
+  loading,
+} = useQuery(GROUP_FOLLOWERS, () => ({
+  name: props.preferredUsername,
+  followersPage: page.value,
+  followersLimit: FOLLOWERS_PER_PAGE,
+  approved: !pending.value,
+}));
+
+const group = computed(() => followersResult.value?.group);
+
+const followers = computed(
+  () => group.value?.followers ?? { total: 0, elements: [] }
+);
+
+const { t } = useI18n({ useScope: "global" });
+
+useHead({ title: computed(() => t("Group Followers")) });
+
+const loadMoreFollowers = async (): Promise<void> => {
+  await fetchMore({
+    // New variables
+    variables: {
+      name: usernameWithDomain(group.value),
+      followersPage: page.value,
+      followersLimit: FOLLOWERS_PER_PAGE,
+      approved: !pending.value,
     },
-  },
-  components: {
-    EmptyContent,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Group Followers") as string,
-    };
-  },
-})
-export default class GroupFollowers extends mixins(GroupMixin) {
-  loading = true;
+  });
+};
 
-  RouteName = RouteName;
+const notifier = inject<Notifier>("notifier");
 
-  page = parseInt((this.$route.query.page as string) || "1", 10);
-
-  pending: boolean | null =
-    (this.$route.query.pending as string) == "1" || null;
-
-  FOLLOWERS_PER_PAGE = 10;
-
-  usernameWithDomain = usernameWithDomain;
-
-  displayName = displayName;
-
-  followers!: Paginate<IFollower>;
-
-  mounted(): void {
-    this.page = parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  @Watch("page")
-  triggerLoadMoreFollowersPageChange(page: string): void {
-    this.$router.replace({
-      name: RouteName.GROUP_FOLLOWERS_SETTINGS,
-      query: { ...this.$route.query, page },
-    });
-  }
-
-  @Watch("pending")
-  triggerPendingStatusPageChange(pending: boolean): void {
-    this.$router.replace({
-      name: RouteName.GROUP_FOLLOWERS_SETTINGS,
-      query: { ...this.$route.query, ...{ pending: pending ? "1" : "0" } },
-    });
-  }
-
-  async loadMoreFollowers(): Promise<void> {
-    const { FOLLOWERS_PER_PAGE, group, page, pending } = this;
-    await this.$apollo.queries.followers.fetchMore({
-      // New variables
-      variables() {
-        return {
-          name: usernameWithDomain(group),
-          followersPage: page,
-          followersLimit: FOLLOWERS_PER_PAGE,
-          approved: !pending,
-        };
+const { onDone, onError, mutate } = useMutation<{ updateFollower: IFollower }>(
+  UPDATE_FOLLOWER,
+  () => ({
+    refetchQueries: [
+      {
+        query: GROUP_FOLLOWERS,
       },
-    });
-  }
+    ],
+  })
+);
 
-  async updateFollower(follower: IFollower, approved: boolean): Promise<void> {
-    const { FOLLOWERS_PER_PAGE, group, page, pending } = this;
-    try {
-      await this.$apollo.mutate<{ rejectFollower: IFollower }>({
-        mutation: UPDATE_FOLLOWER,
-        variables: {
-          id: follower.id,
-          approved,
-        },
-        refetchQueries: [
-          {
-            query: GROUP_FOLLOWERS,
-            variables: {
-              name: usernameWithDomain(group),
-              followersPage: page,
-              followersLimit: FOLLOWERS_PER_PAGE,
-              approved: !pending,
-            },
-          },
-        ],
-      });
-      const message = approved
-        ? this.$t("@{username}'s follow request was accepted", {
-            username: follower.actor.preferredUsername,
-          })
-        : this.$t("@{username}'s follow request was rejected", {
-            username: follower.actor.preferredUsername,
-          });
-      this.$notifier.success(message as string);
-    } catch (error: any) {
-      console.error(error);
-      if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-        this.$notifier.error(error.graphQLErrors[0].message);
-      }
-    }
+onDone(({ data }) => {
+  const follower = data?.updateFollower;
+  const message =
+    data?.updateFollower.approved === true
+      ? t("@{username}'s follow request was accepted", {
+          username: follower?.actor.preferredUsername,
+        })
+      : t("@{username}'s follow request was rejected", {
+          username: follower?.actor.preferredUsername,
+        });
+  notifier?.success(message);
+});
+
+onError((error) => {
+  console.error(error);
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
   }
-}
+});
+
+const updateFollower = async (
+  follower: IFollower,
+  approved: boolean
+): Promise<void> => {
+  mutate({
+    id: follower.id,
+    approved,
+  });
+};
+
+const isCurrentActorAGroupAdmin = computed((): boolean => {
+  return hasCurrentActorThisRole(MemberRole.ADMINISTRATOR);
+});
+
+const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
+  const roles = Array.isArray(givenRole) ? givenRole : [givenRole];
+  return (
+    personMemberships.value?.total > 0 &&
+    roles.includes(personMemberships.value?.elements[0].role)
+  );
+};
+
+const personMemberships = computed(
+  () => person.value?.memberships ?? { total: 0, elements: [] }
+);
+
+const { person } = usePersonStatusGroup(props.preferredUsername);
 </script>

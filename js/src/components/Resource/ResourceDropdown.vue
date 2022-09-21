@@ -1,24 +1,30 @@
 <template>
-  <b-dropdown aria-role="list" position="is-bottom-left">
-    <b-icon icon="dots-horizontal" slot="trigger" />
+  <o-dropdown aria-role="list" position="bottom-left">
+    <template #trigger>
+      <DotsHorizontal />
+    </template>
 
-    <b-dropdown-item aria-role="listitem" @click="$emit('rename')">
-      <b-icon icon="pencil" />
+    <o-dropdown-item
+      aria-role="listitem"
+      @click="$emit('rename')"
+      class="inline-flex"
+    >
+      <Pencil />
       {{ $t("Rename") }}
-    </b-dropdown-item>
-    <b-dropdown-item aria-role="listitem" @click="$emit('move')">
-      <b-icon icon="folder-move" />
+    </o-dropdown-item>
+    <o-dropdown-item aria-role="listitem" @click="$emit('move')">
+      <FolderMove />
       {{ $t("Move") }}
-    </b-dropdown-item>
-    <b-dropdown-item aria-role="listitem" @click="$emit('delete')">
-      <b-icon icon="delete" />
+    </o-dropdown-item>
+    <o-dropdown-item aria-role="listitem" @click="$emit('delete')">
+      <Delete />
       {{ $t("Delete") }}
-    </b-dropdown-item>
-  </b-dropdown>
+    </o-dropdown-item>
+  </o-dropdown>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-
-@Component
-export default class ResourceDropdown extends Vue {}
+<script lang="ts" setup>
+import Pencil from "vue-material-design-icons/Pencil.vue";
+import FolderMove from "vue-material-design-icons/FolderMove.vue";
+import Delete from "vue-material-design-icons/Delete.vue";
+import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 </script>

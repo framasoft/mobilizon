@@ -130,6 +130,12 @@ export enum SearchTabs {
   GROUPS = 1,
 }
 
+export enum ContentType {
+  ALL = "ALL",
+  EVENTS = "EVENTS",
+  GROUPS = "GROUPS",
+}
+
 export enum ActorType {
   PERSON = "PERSON",
   APPLICATION = "APPLICATION",
@@ -279,4 +285,9 @@ export enum InstanceFollowStatus {
   APPROVED = "APPROVED",
   PENDING = "PENDING",
   NONE = "NONE",
+}
+
+export enum SearchTargets {
+  INTERNAL = "INTERNAL",
+  GLOBAL = "GLOBAL",
 }

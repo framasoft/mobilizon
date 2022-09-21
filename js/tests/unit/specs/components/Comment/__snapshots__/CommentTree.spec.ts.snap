@@ -1,73 +1,67 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
 
-exports[`CommentTree renders a comment tree with comments 1`] = `
-<div>
-  <form class="new-comment">
-    <!---->
-    <article class="media">
-      <figure class="media-left">
-        <identity-picker-wrapper-stub value="[object Object]"></identity-picker-wrapper-stub>
+exports[`CommentTree > renders a comment tree with comments 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <form class=\\"\\" data-v-5d0380ab=\\"\\">
+    <!--v-if-->
+    <article class=\\"flex flex-wrap items-start gap-2\\" data-v-5d0380ab=\\"\\">
+      <figure class=\\"\\" data-v-5d0380ab=\\"\\">
+        <identity-picker-wrapper-stub modelvalue=\\"[object Object]\\" inline=\\"false\\" masked=\\"false\\" data-v-5d0380ab=\\"\\"></identity-picker-wrapper-stub>
       </figure>
-      <div class="media-content">
-        <div class="field">
-          <div class="field">
-            <p class="control">
-              <editor-stub mode="comment" aria-label="Comment body" value=""></editor-stub>
-            </p>
-            <!---->
+      <div class=\\"flex-1\\" data-v-5d0380ab=\\"\\">
+        <div class=\\"flex flex-col gap-2\\" data-v-5d0380ab=\\"\\">
+          <div class=\\"editor-wrapper\\" data-v-5d0380ab=\\"\\">
+            <editor-stub currentactor=\\"[object Object]\\" mode=\\"comment\\" modelvalue=\\"\\" aria-label=\\"Comment body\\" data-v-5d0380ab=\\"\\"></editor-stub>
+            <!--v-if-->
           </div>
-          <!---->
+          <!--v-if-->
         </div>
       </div>
-      <div class="send-comment">
-        <b-button-stub type="is-primary" iconleft="send" nativetype="submit" tag="button" class="comment-button-submit">Send</b-button-stub>
+      <div class=\\"\\" data-v-5d0380ab=\\"\\">
+        <o-button-stub variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\" data-v-5d0380ab=\\"\\"></o-button-stub>
       </div>
     </article>
   </form>
-  <transition-group-stub tag="div" name="comment-empty-list">
-    <transition-group-stub tag="ul" name="comment-list" class="comment-list">
-      <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
-      <comment-stub comment="[object Object]" event="[object Object]" class="root-comment"></comment-stub>
+  <transition-group-stub data-v-5d0380ab=\\"\\">
+    <transition-group-stub data-v-5d0380ab=\\"\\">
+      <comment-stub comment=\\"[object Object]\\" event=\\"[object Object]\\" currentactor=\\"[object Object]\\" rootcomment=\\"true\\" class=\\"root-comment\\" data-v-5d0380ab=\\"\\"></comment-stub>
+      <comment-stub comment=\\"[object Object]\\" event=\\"[object Object]\\" currentactor=\\"[object Object]\\" rootcomment=\\"true\\" class=\\"root-comment\\" data-v-5d0380ab=\\"\\"></comment-stub>
     </transition-group-stub>
   </transition-group-stub>
-</div>
+</div>"
 `;
 
-exports[`CommentTree renders a loading comment tree 1`] = `
-<div>
-  <!---->
-  <p class="loading has-text-centered">
-    Loading comments…
-  </p>
-</div>
+exports[`CommentTree > renders a loading comment tree 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <!--v-if-->
+  <p class=\\"text-center\\" data-v-5d0380ab=\\"\\">Loading comments…</p>
+</div>"
 `;
 
-exports[`CommentTree renders an empty comment tree 1`] = `
-<div>
-  <form class="new-comment">
-    <!---->
-    <article class="media">
-      <figure class="media-left">
-        <identity-picker-wrapper-stub value="[object Object]"></identity-picker-wrapper-stub>
+exports[`CommentTree > renders an empty comment tree 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <form class=\\"\\" data-v-5d0380ab=\\"\\">
+    <!--v-if-->
+    <article class=\\"flex flex-wrap items-start gap-2\\" data-v-5d0380ab=\\"\\">
+      <figure class=\\"\\" data-v-5d0380ab=\\"\\">
+        <identity-picker-wrapper-stub modelvalue=\\"[object Object]\\" inline=\\"false\\" masked=\\"false\\" data-v-5d0380ab=\\"\\"></identity-picker-wrapper-stub>
       </figure>
-      <div class="media-content">
-        <div class="field">
-          <div class="field">
-            <p class="control">
-              <editor-stub mode="comment" aria-label="Comment body" value=""></editor-stub>
-            </p>
-            <!---->
+      <div class=\\"flex-1\\" data-v-5d0380ab=\\"\\">
+        <div class=\\"flex flex-col gap-2\\" data-v-5d0380ab=\\"\\">
+          <div class=\\"editor-wrapper\\" data-v-5d0380ab=\\"\\">
+            <editor-stub currentactor=\\"[object Object]\\" mode=\\"comment\\" modelvalue=\\"\\" aria-label=\\"Comment body\\" data-v-5d0380ab=\\"\\"></editor-stub>
+            <!--v-if-->
           </div>
-          <!---->
+          <!--v-if-->
         </div>
       </div>
-      <div class="send-comment">
-        <b-button-stub type="is-primary" iconleft="send" nativetype="submit" tag="button" class="comment-button-submit">Send</b-button-stub>
+      <div class=\\"\\" data-v-5d0380ab=\\"\\">
+        <o-button-stub variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\" data-v-5d0380ab=\\"\\"></o-button-stub>
       </div>
     </article>
   </form>
-  <transition-group-stub tag="div" name="comment-empty-list">
-    <empty-content-stub icon="comment" descriptionclasses="" inline="true"><span>No comments yet</span></empty-content-stub>
+  <transition-group-stub data-v-5d0380ab=\\"\\">
+    <empty-content-stub icon=\\"comment\\" descriptionclasses=\\"\\" inline=\\"true\\" center=\\"false\\" data-v-5d0380ab=\\"\\"></empty-content-stub>
   </transition-group-stub>
-</div>
+</div>"
 `;

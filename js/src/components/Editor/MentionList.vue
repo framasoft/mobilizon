@@ -12,70 +12,64 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import { displayName, usernameWithDomain } from "@/types/actor/actor.model";
+<script lang="ts" setup>
+import { usernameWithDomain } from "@/types/actor/actor.model";
 import { IPerson } from "@/types/actor";
 import ActorInline from "../../components/Account/ActorInline.vue";
+import { ref, watch } from "vue";
 
-@Component({
-  components: {
-    ActorInline,
-  },
-})
-export default class MentionList extends Vue {
-  @Prop({ type: Array, required: true }) items!: Array<IPerson>;
-  @Prop({ type: Function, required: true }) command!: any;
+const props = defineProps<{
+  items: IPerson[];
+  command: ({ id }: { id: string }) => any;
+}>();
 
-  selectedIndex = 0;
+// @Prop({ type: Function, required: true }) command!: any;
 
-  displayName = displayName;
+const selectedIndex = ref(0);
 
-  @Watch("items")
-  watchItems(): void {
-    this.selectedIndex = 0;
+watch(props.items, () => {
+  selectedIndex.value = 0;
+});
+
+// const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
+//   if (event.key === "ArrowUp") {
+//     upHandler();
+//     return true;
+//   }
+
+//   if (event.key === "ArrowDown") {
+//     downHandler();
+//     return true;
+//   }
+
+//   if (event.key === "Enter") {
+//     enterHandler();
+//     return true;
+//   }
+
+//   return false;
+// };
+
+// const upHandler = (): void => {
+//   selectedIndex.value =
+//     (selectedIndex.value + props.items.length - 1) % props.items.length;
+// };
+
+// const downHandler = (): void => {
+//   selectedIndex.value = (selectedIndex.value + 1) % props.items.length;
+// };
+
+// const enterHandler = (): void => {
+//   selectItem(selectedIndex.value);
+// };
+
+const selectItem = (index: number): void => {
+  const item = props.items[index];
+
+  if (item) {
+    props.command({ id: usernameWithDomain(item) });
   }
-
-  onKeyDown({ event }: { event: KeyboardEvent }): boolean {
-    if (event.key === "ArrowUp") {
-      this.upHandler();
-      return true;
-    }
-
-    if (event.key === "ArrowDown") {
-      this.downHandler();
-      return true;
-    }
-
-    if (event.key === "Enter") {
-      this.enterHandler();
-      return true;
-    }
-
-    return false;
-  }
-
-  upHandler(): void {
-    this.selectedIndex =
-      (this.selectedIndex + this.items.length - 1) % this.items.length;
-  }
-
-  downHandler(): void {
-    this.selectedIndex = (this.selectedIndex + 1) % this.items.length;
-  }
-
-  enterHandler(): void {
-    this.selectItem(this.selectedIndex);
-  }
-
-  selectItem(index: number): void {
-    const item = this.items[index];
-
-    if (item) {
-      this.command({ id: usernameWithDomain(item) });
-    }
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -96,11 +90,5 @@ export default class MentionList extends Vue {
   background: transparent;
   border: none;
   padding: 0.5rem 0.75rem;
-
-  &.is-selected,
-  &:hover {
-    color: $background-color;
-    background: rgba($background-color, 0.1);
-  }
 }
 </style>

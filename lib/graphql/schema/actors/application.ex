@@ -31,8 +31,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.ApplicationType do
     field(:banner, :media, description: "The actor's banner media")
 
     # These one should have a privacy setting
-    field(:followersCount, :integer, description: "Number of followers for this actor")
-    field(:followingCount, :integer, description: "Number of actors following this actor")
+    field(:followers_count, :integer, description: "Number of followers for this actor")
+    field(:following_count, :integer, description: "Number of actors following this actor")
 
     field(:media_size, :integer,
       resolve: &Media.actor_size/3,

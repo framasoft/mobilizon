@@ -15,7 +15,7 @@
         </p>
       </div>
       <div class="field">
-        <b-checkbox
+        <o-checkbox
           v-model="notificationOnDay"
           @input="updateSetting({ notificationOnDay })"
         >
@@ -27,7 +27,7 @@
               )
             }}
           </p>
-        </b-checkbox>
+        </o-checkbox>
       </div>
       <p>
         {{
@@ -39,34 +39,34 @@
     </section>
   </div>
 </template>
-<script lang="ts">
-import { Component } from "vue-property-decorator";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
-import { mixins } from "vue-class-component";
-import Onboarding from "../../mixins/onboarding";
+<script lang="ts" setup>
+// import { SnackbarProgrammatic as Snackbar } from "buefy";
+import { doUpdateSetting, useUserSettings } from "@/composition/apollo/user";
+import { onMounted, ref } from "vue";
 
-@Component
-export default class NotificationsOnboarding extends mixins(Onboarding) {
-  notificationOnDay = true;
+const notificationOnDay = ref(true);
 
-  mounted(): void {
-    this.doUpdateSetting({
-      notificationOnDay: true,
-      notificationEachWeek: false,
-      notificationBeforeEvent: false,
-    });
+const { loggedUser } = useUserSettings();
+
+const updateSetting = async (
+  variables: Record<string, unknown>
+): Promise<void> => {
+  try {
+    doUpdateSetting(variables);
+  } catch (e: any) {
+    // Snackbar.open({
+    //   message: e.message,
+    //   variant: "danger",
+    //   position: "bottom",
+    // });
   }
+};
 
-  async updateSetting(variables: Record<string, unknown>): Promise<void> {
-    try {
-      this.doUpdateSetting(variables);
-    } catch (e: any) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
-    }
-  }
-}
+onMounted(() => {
+  doUpdateSetting({
+    notificationOnDay: true,
+    notificationEachWeek: false,
+    notificationBeforeEvent: false,
+  });
+});
 </script>

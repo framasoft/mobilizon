@@ -1,0 +1,495 @@
+<template>
+  <div class="container mx-auto px-1">
+    <h1>
+      {{ t("My events") }}
+    </h1>
+    <p>
+      {{
+        t(
+          "You will find here all the events you have created or of which you are a participant, as well as events organized by groups you follow or are a member of."
+        )
+      }}
+    </p>
+    <div class="my-2" v-if="!hideCreateEventButton">
+      <o-button
+        tag="router-link"
+        variant="primary"
+        :to="{ name: RouteName.CREATE_EVENT }"
+        >{{ t("Create event") }}</o-button
+      >
+    </div>
+    <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
+    <div class="wrapper flex flex-wrap gap-4 items-start">
+      <div
+        class="event-filter rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
+      >
+        <o-field>
+          <o-switch v-model="showUpcoming">{{
+            showUpcoming ? t("Upcoming events") : t("Past events")
+          }}</o-switch>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showDrafts">{{ t("Drafts") }}</o-checkbox>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showAttending">{{ t("Attending") }}</o-checkbox>
+        </o-field>
+        <o-field v-if="showUpcoming">
+          <o-checkbox v-model="showMyGroups">{{
+            t("From my groups")
+          }}</o-checkbox>
+        </o-field>
+        <p v-if="!showUpcoming">
+          {{
+            t(
+              "You have attended {count} events in the past.",
+              {
+                count: pastParticipations.total,
+              },
+              pastParticipations.total
+            )
+          }}
+        </p>
+        <o-field
+          class="date-filter"
+          expanded
+          :label="
+            showUpcoming
+              ? t('Showing events starting on')
+              : t('Showing events before')
+          "
+          labelFor="events-start-datepicker"
+        >
+          <o-datepicker
+            v-model="dateFilter"
+            :first-day-of-week="firstDayOfWeek"
+            id="events-start-datepicker"
+          />
+          <o-button
+            @click="dateFilter = new Date()"
+            class="reset-area"
+            icon-left="close"
+            :title="t('Clear date filter field')"
+          />
+        </o-field>
+      </div>
+      <div class="my-events flex-1">
+        <section
+          class="py-4"
+          v-if="showUpcoming && showDrafts && drafts.length > 0"
+        >
+          <multi-event-minimalist-card :events="drafts" :showOrganizer="true" />
+        </section>
+        <section
+          class="py-4"
+          v-if="
+            showUpcoming && monthlyFutureEvents && monthlyFutureEvents.size > 0
+          "
+        >
+          <transition-group name="list" tag="p">
+            <div
+              class="mb-5"
+              v-for="month of monthlyFutureEvents"
+              :key="month[0]"
+            >
+              <span class="upcoming-month">{{ month[0] }}</span>
+              <div v-for="element in month[1]" :key="element.id">
+                <event-participation-card
+                  v-if="'role' in element"
+                  :participation="element"
+                  @event-deleted="eventDeleted"
+                  class="participation"
+                />
+                <event-minimalist-card
+                  v-else-if="
+                    element.id &&
+                    !monthParticipationsIds(month[1]).includes(element?.id)
+                  "
+                  :event="element"
+                  class="participation"
+                />
+              </div>
+            </div>
+          </transition-group>
+          <div class="columns is-centered">
+            <o-button
+              class="column is-narrow"
+              v-if="
+                hasMoreFutureParticipations &&
+                futureParticipations &&
+                futureParticipations.length === limit
+              "
+              @click="loadMoreFutureParticipations"
+              size="large"
+              variant="primary"
+              >{{ t("Load more") }}</o-button
+            >
+          </div>
+        </section>
+        <section
+          class="text-center not-found"
+          v-if="
+            showUpcoming &&
+            monthlyFutureEvents &&
+            monthlyFutureEvents.length === 0 &&
+            true // !$apollo.loading
+          "
+        >
+          <div class="img-container h-64" />
+          <div class="text-center prose dark:prose-invert">
+            <p>
+              {{
+                t(
+                  "You don't have any upcoming events. Maybe try another filter?"
+                )
+              }}
+            </p>
+            <i18n-t
+              keypath="Do you wish to {create_event} or {explore_events}?"
+              tag="p"
+            >
+              <template #create_event>
+                <router-link :to="{ name: RouteName.CREATE_EVENT }">{{
+                  t("create an event")
+                }}</router-link>
+              </template>
+              <template #explore_events>
+                <router-link :to="{ name: RouteName.SEARCH }">{{
+                  t("explore the events")
+                }}</router-link>
+              </template>
+            </i18n-t>
+          </div>
+        </section>
+        <section v-if="!showUpcoming && pastParticipations.elements.length > 0">
+          <transition-group name="list" tag="p">
+            <div v-for="month in monthlyPastParticipations" :key="month[0]">
+              <span class="past-month">{{ month[0] }}</span>
+              <event-participation-card
+                v-for="participation in month[1]"
+                :key="participation.id"
+                :participation="(participation as IParticipant)"
+                :options="{ hideDate: false }"
+                @event-deleted="eventDeleted"
+                class="participation"
+              />
+            </div>
+          </transition-group>
+          <div class="columns is-centered">
+            <o-button
+              class="column is-narrow"
+              v-if="
+                hasMorePastParticipations &&
+                pastParticipations.elements.length === limit
+              "
+              @click="loadMorePastParticipations"
+              size="large"
+              variant="primary"
+              >{{ t("Load more") }}</o-button
+            >
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { ParticipantRole } from "@/types/enums";
+import RouteName from "@/router/name";
+import { IParticipant } from "../../types/participant.model";
+import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
+import { IEvent } from "../../types/event.model";
+import EventParticipationCard from "../../components/Event/EventParticipationCard.vue";
+import MultiEventMinimalistCard from "../../components/Event/MultiEventMinimalistCard.vue";
+import EventMinimalistCard from "../../components/Event/EventMinimalistCard.vue";
+import {
+  LOGGED_USER_PARTICIPATIONS,
+  LOGGED_USER_UPCOMING_EVENTS,
+} from "@/graphql/participant";
+import { useQuery } from "@vue/apollo-composable";
+import { computed, inject, ref } from "vue";
+import { IUser } from "@/types/current-user.model";
+import { booleanTransformer, useRouteQuery } from "vue-use-route-query";
+import { Locale } from "date-fns";
+import { useI18n } from "vue-i18n";
+import { useRestrictions } from "@/composition/apollo/config";
+
+type Eventable = IParticipant | IEvent;
+
+const { t } = useI18n({ useScope: "global" });
+
+const futurePage = ref(1);
+const pastPage = ref(1);
+const limit = ref(10);
+
+const showUpcoming = useRouteQuery("showUpcoming", true, booleanTransformer);
+const showDrafts = useRouteQuery("showDrafts", true, booleanTransformer);
+const showAttending = useRouteQuery("showAttending", true, booleanTransformer);
+const showMyGroups = useRouteQuery("showMyGroups", false, booleanTransformer);
+const dateFilter = useRouteQuery("dateFilter", new Date(), {
+  fromQuery(query) {
+    if (query && /(\d{4}-\d{2}-\d{2})/.test(query)) {
+      return new Date(`${query}T00:00:00Z`);
+    }
+    return new Date();
+  },
+  toQuery(value: Date) {
+    const pad = (number: number) => {
+      if (number < 10) {
+        return "0" + number;
+      }
+      return number;
+    };
+    return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(
+      value.getDate()
+    )}`;
+  },
+});
+
+const hasMoreFutureParticipations = ref(true);
+const hasMorePastParticipations = ref(true);
+
+// config: CONFIG
+
+const {
+  result: loggedUserUpcomingEventsResult,
+  fetchMore: fetchMoreUpcomingEvents,
+} = useQuery<{
+  loggedUser: IUser;
+}>(LOGGED_USER_UPCOMING_EVENTS, () => ({
+  page: 1,
+  limit: 10,
+  afterDateTime: dateFilter.value,
+}));
+
+const futureParticipations = computed(
+  () =>
+    loggedUserUpcomingEventsResult.value?.loggedUser.participations.elements ??
+    []
+);
+const groupEvents = computed(
+  () =>
+    loggedUserUpcomingEventsResult.value?.loggedUser.followedGroupEvents
+      .elements ?? []
+);
+
+const { result: draftsResult } = useQuery<{
+  loggedUser: Pick<IUser, "drafts">;
+}>(LOGGED_USER_DRAFTS, () => ({ page: 1, limit: 10 }));
+const drafts = computed(() => draftsResult.value?.loggedUser.drafts ?? []);
+
+const { result: participationsResult, fetchMore: fetchMoreParticipations } =
+  useQuery<{
+    loggedUser: Pick<IUser, "participations">;
+  }>(LOGGED_USER_PARTICIPATIONS, () => ({ page: 1, limit: 10 }));
+const pastParticipations = computed(
+  () =>
+    participationsResult.value?.loggedUser.participations ?? {
+      elements: [],
+      total: 0,
+    }
+);
+
+// metaInfo() {
+//   return {
+//     title: this.t("My events") as string,
+//   };
+// },
+
+const monthlyEvents = (
+  elements: Eventable[],
+  revertSort = false
+): Map<string, Eventable[]> => {
+  const res = elements.filter((element: Eventable) => {
+    if ("role" in element) {
+      return (
+        element.event.beginsOn != null &&
+        element.role !== ParticipantRole.REJECTED
+      );
+    }
+    return element.beginsOn != null;
+  });
+  if (revertSort) {
+    res.sort((a: Eventable, b: Eventable) => {
+      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
+      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
+    });
+  } else {
+    res.sort((a: Eventable, b: Eventable) => {
+      const aTime = "role" in a ? a.event.beginsOn : a.beginsOn;
+      const bTime = "role" in b ? b.event.beginsOn : b.beginsOn;
+      return new Date(aTime).getTime() - new Date(bTime).getTime();
+    });
+  }
+  return res.reduce((acc: Map<string, Eventable[]>, element: Eventable) => {
+    const month = new Date(
+      "role" in element ? element.event.beginsOn : element.beginsOn
+    ).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+    });
+    const filteredElements: Eventable[] = acc.get(month) || [];
+    filteredElements.push(element);
+    acc.set(month, filteredElements);
+    return acc;
+  }, new Map());
+};
+
+const monthlyFutureEvents = computed((): Map<string, Eventable[]> => {
+  let eventable = [] as Eventable[];
+  if (showAttending.value) {
+    eventable = [...eventable, ...futureParticipations.value];
+  }
+  if (showMyGroups.value) {
+    eventable = [...eventable, ...groupEvents.value];
+  }
+  return monthlyEvents(eventable);
+});
+
+const monthlyPastParticipations = computed((): Map<string, Eventable[]> => {
+  return monthlyEvents(pastParticipations.value.elements, true);
+});
+
+const monthParticipationsIds = (elements: Eventable[]): string[] => {
+  const res = elements.filter((element: Eventable) => {
+    return "role" in element;
+  }) as IParticipant[];
+  return res.map(({ event }: { event: IEvent }) => {
+    return event.id as string;
+  });
+};
+
+const loadMoreFutureParticipations = (): void => {
+  futurePage.value += 1;
+  if (fetchMoreUpcomingEvents) {
+    fetchMoreUpcomingEvents({
+      // New variables
+      variables: {
+        page: futurePage.value,
+        limit: limit.value,
+      },
+    });
+  }
+};
+
+const loadMorePastParticipations = (): void => {
+  pastPage.value += 1;
+  if (fetchMoreParticipations) {
+    fetchMoreParticipations({
+      // New variables
+      variables: {
+        page: pastPage.value,
+        limit: limit.value,
+      },
+    });
+  }
+};
+
+const eventDeleted = (eventid: string): void => {
+  futureParticipations.value = futureParticipations.value.filter(
+    (participation) => participation.event.id !== eventid
+  );
+  pastParticipations.value = {
+    elements: pastParticipations.value.elements.filter(
+      (participation) => participation.event.id !== eventid
+    ),
+    total: pastParticipations.value.total - 1,
+  };
+};
+
+const { restrictions } = useRestrictions();
+
+const hideCreateEventButton = computed((): boolean => {
+  return restrictions.value?.onlyGroupsCanCreateEvents === true;
+});
+
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
+
+const firstDayOfWeek = computed((): number => {
+  return dateFnsLocale?.options?.weekStartsOn ?? 0;
+});
+</script>
+
+<style lang="scss" scoped>
+.participation {
+  margin: 1rem auto;
+}
+
+section {
+  .upcoming-month,
+  .past-month {
+    text-transform: capitalize;
+    display: inline-block;
+    position: relative;
+    font-size: 1.3rem;
+
+    &::after {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      content: "";
+      width: calc(100% + 30px);
+      height: 3px;
+      max-width: 150px;
+    }
+  }
+}
+
+.not-found {
+  margin-top: 2rem;
+  .img-container {
+    background-image: url("/img/pics/event_creation-480w.webp");
+    @media (min-resolution: 2dppx) {
+      & {
+        background-image: url("/img/pics/event_creation-1024w.webp");
+      }
+    }
+    max-width: 450px;
+    height: 300px;
+    box-shadow: 0 0 8px 8px white inset;
+    @media (prefers-color-scheme: dark) {
+      box-shadow: 0 0 8px 8px #374151 inset;
+    }
+    background-size: cover;
+    border-radius: 10px;
+    margin: auto auto 1rem;
+  }
+}
+
+.wrapper {
+  // display: grid;
+  // grid-template-areas: "filter" "events";
+  // align-items: start;
+
+  // // @include desktop {
+  // gap: 2rem;
+  // grid-template-columns: 1fr 3fr;
+  // grid-template-areas: "filter events";
+  // // }
+
+  .event-filter {
+    grid-area: filter;
+
+    // @include desktop {
+    //   padding: 2rem 1.25rem;
+    //   :deep(.field.is-grouped) {
+    //     display: block;
+    //   }
+    // }
+
+    :deep(.field > .field) {
+      margin: 0 auto 1.25rem !important;
+    }
+
+    .date-filter :deep(.field-body) {
+      display: block;
+    }
+  }
+  .my-events {
+    grid-area: events;
+  }
+}
+</style>

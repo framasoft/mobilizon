@@ -1,19 +1,18 @@
-import { config, createLocalVue, mount } from "@vue/test-utils";
+import { config, mount } from "@vue/test-utils";
 import ReportModal from "@/components/Report/ReportModal.vue";
-import Buefy from "buefy";
+import { vi, beforeEach, describe, it, expect } from "vitest";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-config.mocks.$t = (key: string): string => key;
+import Oruga from "@oruga-ui/oruga-next";
+
+config.global.plugins.push(Oruga);
 
 const propsData = {
-  onConfirm: jest.fn(),
+  onConfirm: vi.fn(),
 };
 
 const generateWrapper = (customPropsData: Record<string, unknown> = {}) => {
   return mount(ReportModal, {
-    localVue,
-    propsData: {
+    props: {
       ...propsData,
       ...customPropsData,
     },
@@ -21,24 +20,22 @@ const generateWrapper = (customPropsData: Record<string, unknown> = {}) => {
 };
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 describe("ReportModal", () => {
   it("renders report modal with basic informations and submits it", async () => {
     const wrapper = generateWrapper();
 
-    expect(wrapper.find(".modal-card-head").exists()).toBe(false);
+    expect(wrapper.find("header").exists()).toBe(false);
 
-    expect(wrapper.find(".media-content").text()).not.toContain(
+    expect(wrapper.find("section").text()).not.toContain(
       "The content came from another server. Transfer an anonymous copy of the report?"
     );
 
-    expect(
-      wrapper.find("footer.modal-card-foot button:first-child").text()
-    ).toBe("Cancel");
+    expect(wrapper.find("footer button:first-child").text()).toBe("Cancel");
 
-    const submit = wrapper.find("footer.modal-card-foot button.is-primary");
+    const submit = wrapper.find("footer button.o-btn--primary");
 
     expect(submit.text()).toBe("Send the report");
 
@@ -47,7 +44,7 @@ describe("ReportModal", () => {
 
     submit.trigger("click");
 
-    await localVue.nextTick();
+    await wrapper.vm.$nextTick();
     expect(wrapper.emitted().close).toBeTruthy();
 
     expect(wrapper.vm.$props.onConfirm).toHaveBeenCalledTimes(1);
@@ -55,6 +52,7 @@ describe("ReportModal", () => {
       "some comment with my report",
       false
     );
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it("renders report modal and shows an inline comment if it's provided", async () => {
@@ -65,7 +63,7 @@ describe("ReportModal", () => {
       },
     });
 
-    const commentContainer = wrapper.find("article.media");
+    const commentContainer = wrapper.find("article");
     expect(commentContainer.find("strong").text()).toContain(
       "I am the comment author"
     );
@@ -78,13 +76,13 @@ describe("ReportModal", () => {
   it("renders report modal with with a remote content", async () => {
     const wrapper = generateWrapper({ outsideDomain: "somewhere.else" });
 
-    expect(wrapper.find(".media-content").text()).toContain(
+    expect(wrapper.find(".control p").text()).toContain(
       "The content came from another server. Transfer an anonymous copy of the report?"
     );
 
-    const submit = wrapper.find("footer.modal-card-foot button.is-primary");
+    const submit = wrapper.find("footer button.o-btn--primary");
     submit.trigger("click");
-    await localVue.nextTick();
+    await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.$props.onConfirm).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$props.onConfirm).toHaveBeenCalledWith("", false);
@@ -93,16 +91,16 @@ describe("ReportModal", () => {
   it("renders report modal with with a remote content and accept to forward", async () => {
     const wrapper = generateWrapper({ outsideDomain: "somewhere.else" });
 
-    expect(wrapper.find(".media-content").text()).toContain(
+    expect(wrapper.find(".control p").text()).toContain(
       "The content came from another server. Transfer an anonymous copy of the report?"
     );
 
     const switchButton = wrapper.find('input[type="checkbox"]');
-    switchButton.setChecked();
+    switchButton.setValue(true);
 
-    const submit = wrapper.find("footer.modal-card-foot button.is-primary");
+    const submit = wrapper.find("footer button.o-btn--primary");
     submit.trigger("click");
-    await localVue.nextTick();
+    await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.$props.onConfirm).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$props.onConfirm).toHaveBeenCalledWith("", true);
@@ -115,16 +113,10 @@ describe("ReportModal", () => {
       confirmText: "report!",
     });
 
-    expect(wrapper.find(".modal-card-head .modal-card-title").text()).toBe(
-      "want to report something?"
-    );
+    expect(wrapper.find("header h2").text()).toBe("want to report something?");
 
-    expect(
-      wrapper.find("footer.modal-card-foot button:first-child").text()
-    ).toBe("nah");
+    expect(wrapper.find("footer button:first-child").text()).toBe("nah");
 
-    expect(
-      wrapper.find("footer.modal-card-foot button.is-primary").text()
-    ).toBe("report!");
+    expect(wrapper.find("footer button.o-btn--primary").text()).toBe("report!");
   });
 });

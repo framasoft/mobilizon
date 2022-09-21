@@ -15,11 +15,7 @@ export const fetchEventBasicMock = {
         __typename: "ParticipantStats",
         notApproved: 0,
         notConfirmed: 0,
-        rejected: 0,
         participant: 0,
-        creator: 1,
-        moderator: 0,
-        administrator: 0,
         going: 1,
       },
     },
@@ -61,7 +57,7 @@ export const joinEventMock = {
   email: "some@email.tld",
   message: "a message long enough",
   locale: "en_US",
-  timezone: "UTC",
+  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 };
 
 export const eventNoCommentThreadsMock = {
@@ -152,8 +148,9 @@ export const eventCommentThreadsMock = {
 export const newCommentForEventMock = {
   eventId: "1",
   text: "my new comment",
-  inReplyToCommentId: null,
+  inReplyToCommentId: undefined,
   isAnnouncement: false,
+  originCommentId: undefined,
 };
 
 export const newCommentForEventResponse: DataMock = {

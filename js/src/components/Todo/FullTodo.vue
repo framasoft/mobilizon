@@ -1,101 +1,99 @@
 <template>
   <div class="card" v-if="todo">
     <div class="card-content">
-      <b-field :label="$t('Status')">
-        <b-checkbox size="is-large" v-model="status" />
-      </b-field>
-      <b-field :label="$t('Title')">
-        <b-input v-model="title" />
-      </b-field>
-      <b-field :label="$t('Assigned to')"> </b-field>
-      <b-field :label="$t('Due on')">
-        <b-datepicker v-model="dueDate" :first-day-of-week="firstDayOfWeek" />
-      </b-field>
+      <o-field :label="$t('Status')">
+        <o-checkbox size="large" v-model="status" />
+      </o-field>
+      <o-field :label="$t('Title')">
+        <o-input v-model="title" />
+      </o-field>
+      <o-field :label="$t('Assigned to')"> </o-field>
+      <o-field :label="$t('Due on')">
+        <o-datepicker v-model="dueDate" :first-day-of-week="firstDayOfWeek" />
+      </o-field>
     </div>
   </div>
 </template>
-<script lang="ts">
-import { Prop, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import debounce from "lodash/debounce";
-import { DebouncedFunc } from "lodash";
-import { SnackbarProgrammatic as Snackbar } from "buefy";
 import { ITodo } from "../../types/todos";
-import RouteName from "../../router/name";
 import { UPDATE_TODO } from "../../graphql/todos";
-import { IPerson } from "../../types/actor";
+import { Snackbar } from "@/plugins/snackbar";
+import { computed, inject, ref } from "vue";
+import { useMutation } from "@vue/apollo-composable";
+import { Locale } from "date-fns";
 
-export default class Todo extends Vue {
-  @Prop({ required: true, type: Object }) todo!: ITodo;
+const props = defineProps<{
+  todo: ITodo;
+}>();
 
-  RouteName = RouteName;
+const editMode = ref(false);
 
-  editMode = false;
+const title = computed({
+  get(): string {
+    return props.todo.title;
+  },
+  set(newTitle: string) {
+    debounceUpdateTodo({ id: props.todo.id, title: newTitle });
+  },
+});
 
-  debounceUpdateTodo!: DebouncedFunc<
-    (obj: Record<string, unknown>) => Promise<void>
-  >;
+const status = computed({
+  get(): boolean {
+    return props.todo.status;
+  },
+  set(newStatus: boolean) {
+    debounceUpdateTodo({ id: props.todo.id, status: newStatus });
+  },
+});
 
-  // We put this in data because of issues like
-  // https://github.com/vuejs/vue-class-component/issues/263
-  data(): Record<string, unknown> {
-    return {
-      debounceUpdateTodo: debounce(this.updateTodo, 1000),
-    };
-  }
+// const assignedTo = computed({
+//   get(): IPerson | undefined {
+//     return props.todo.assignedTo;
+//   },
+//   set(person: IPerson | undefined) {
+//     debounceUpdateTodo({
+//       id: props.todo.id,
+//       assignedToId: person ? person.id : null,
+//     });
+//   },
+// });
 
-  get title(): string {
-    return this.todo.title;
-  }
+const dueDate = computed({
+  get(): string | undefined {
+    return props.todo.dueDate;
+  },
 
-  set title(title: string) {
-    this.debounceUpdateTodo({ title });
-  }
+  set(newDueDate: string | undefined) {
+    debounceUpdateTodo({ id: props.todo.id, dueDate: newDueDate });
+  },
+});
 
-  get status(): boolean {
-    return this.todo.status;
-  }
+const snackbar = inject<Snackbar>("snackbar");
 
-  set status(status: boolean) {
-    this.debounceUpdateTodo({ status });
-  }
+const {
+  mutate: updateTodo,
+  onDone: updateTodoDone,
+  onError: updateTodoError,
+} = useMutation(UPDATE_TODO);
 
-  get assignedTo(): IPerson | undefined {
-    return this.todo.assignedTo;
-  }
+updateTodoDone(() => {
+  editMode.value = false;
+});
 
-  set assignedTo(person: IPerson | undefined) {
-    this.debounceUpdateTodo({ assignedToId: person ? person.id : null });
-  }
+updateTodoError((e) => {
+  snackbar?.open({
+    message: e.message,
+    variant: "danger",
+    position: "bottom",
+  });
+});
 
-  get dueDate(): Date | undefined {
-    return this.todo.dueDate;
-  }
+const debounceUpdateTodo = debounce(updateTodo, 1000);
 
-  set dueDate(dueDate: Date | undefined) {
-    this.debounceUpdateTodo({ dueDate });
-  }
+const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
-  async updateTodo(params: Record<string, unknown>): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: UPDATE_TODO,
-        variables: {
-          id: this.todo.id,
-          ...params,
-        },
-      });
-      this.editMode = false;
-    } catch (e: any) {
-      Snackbar.open({
-        message: e.message,
-        type: "is-danger",
-        position: "is-bottom",
-      });
-    }
-  }
-
-  get firstDayOfWeek(): number {
-    return this.$dateFnsLocale?.options?.weekStartsOn || 0;
-  }
-}
+const firstDayOfWeek = computed((): number => {
+  return dateFnsLocale?.options?.weekStartsOn ?? 0;
+});
 </script>

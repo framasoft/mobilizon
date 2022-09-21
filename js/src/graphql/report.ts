@@ -49,9 +49,16 @@ const REPORT_FRAGMENT = gql`
       uuid
       title
       description
+      beginsOn
       picture {
         id
         url
+      }
+      organizerActor {
+        ...ActorFragment
+      }
+      attributedTo {
+        ...ActorFragment
       }
     }
     comments {

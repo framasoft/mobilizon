@@ -22,6 +22,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
     field(:id, :id, description: "The address's ID")
     field(:origin_id, :string, description: "The address's original ID from the provider")
     field(:timezone, :string, description: "The (estimated) timezone of the location")
+    field(:picture_info, :picture_info, description: "A picture associated with the address")
   end
 
   @desc """
@@ -38,6 +39,20 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
   object :online_address do
     field(:url, :string)
     field(:info, :string)
+  end
+
+  object :picture_info_element do
+    field(:name, :string)
+    field(:url, :string)
+  end
+
+  @desc """
+  A picture associated with an address
+  """
+  object :picture_info do
+    field(:url, :string)
+    field(:author, :picture_info_element)
+    field(:source, :picture_info_element)
   end
 
   @desc """

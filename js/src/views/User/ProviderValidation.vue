@@ -1,78 +1,79 @@
 <template>
-  <p>{{ $t("Redirecting in progress…") }}</p>
+  <p>{{ t("Redirecting in progress…") }}</p>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script lang="ts" setup>
 import { ICurrentUserRole } from "@/types/enums";
 import { UPDATE_CURRENT_USER_CLIENT, LOGGED_USER } from "../../graphql/user";
 import RouteName from "../../router/name";
-import { saveUserData, changeIdentity } from "../../utils/auth";
-import { IUser } from "../../types/current-user.model";
+import { saveUserData } from "../../utils/auth";
+import { changeIdentity } from "../../utils/identity";
+import { ICurrentUser, IUser } from "../../types/current-user.model";
+import { useRouter } from "vue-router";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
+import { computed } from "vue";
 
-@Component({
-  metaInfo() {
-    return {
-      title: this.$t("Redirecting to Mobilizon") as string,
-    };
-  },
-})
-export default class ProviderValidate extends Vue {
-  async mounted(): Promise<void> {
-    const accessToken = this.getValueFromMeta("auth-access-token");
-    const refreshToken = this.getValueFromMeta("auth-refresh-token");
-    const userId = this.getValueFromMeta("auth-user-id");
-    const userEmail = this.getValueFromMeta("auth-user-email");
-    const userRole = this.getValueFromMeta(
-      "auth-user-role"
-    ) as ICurrentUserRole;
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Redirecting to Mobilizon")),
+});
 
-    if (!(userId && userEmail && userRole && accessToken && refreshToken)) {
-      await this.$router.push("/");
+const getValueFromMeta = (name: string): string | null => {
+  const element = document.querySelector(`meta[name="${name}"]`);
+  if (element && element.getAttribute("content")) {
+    return element.getAttribute("content");
+  }
+  return null;
+};
+
+const accessToken = getValueFromMeta("auth-access-token");
+const refreshToken = getValueFromMeta("auth-refresh-token");
+const userId = getValueFromMeta("auth-user-id");
+const userEmail = getValueFromMeta("auth-user-email");
+const userRole = getValueFromMeta("auth-user-role") as ICurrentUserRole;
+
+const router = useRouter();
+
+const { onDone, mutate } = useMutation<{ updateCurrentUser: ICurrentUser }>(
+  UPDATE_CURRENT_USER_CLIENT
+);
+
+onDone(() => {
+  const { onResult: onLoggedUserResult } = useQuery<{ loggedUser: IUser }>(
+    LOGGED_USER
+  );
+
+  onLoggedUserResult(async ({ data: { loggedUser } }) => {
+    if (loggedUser.defaultActor) {
+      await changeIdentity(loggedUser.defaultActor);
+      await router.push({ name: RouteName.HOME });
     } else {
-      const login = {
-        user: {
-          id: userId,
-          email: userEmail,
-          role: userRole,
-          isLoggedIn: true,
-        },
-        accessToken,
-        refreshToken,
-      };
-      saveUserData(login);
-      await this.$apollo.mutate({
-        mutation: UPDATE_CURRENT_USER_CLIENT,
-        variables: {
-          id: userId,
-          email: userEmail,
-          isLoggedIn: true,
-          role: userRole,
-        },
-      });
-      const { data } = await this.$apollo.query<{ loggedUser: IUser }>({
-        query: LOGGED_USER,
-      });
-      const { loggedUser } = data;
-
-      if (loggedUser.defaultActor) {
-        await changeIdentity(
-          this.$apollo.provider.defaultClient,
-          loggedUser.defaultActor
-        );
-        await this.$router.push({ name: RouteName.HOME });
-      } else {
-        // No need to push to REGISTER_PROFILE, the navbar will do it for us
-      }
+      // No need to push to REGISTER_PROFILE, the navbar will do it for us
     }
-  }
+  });
+});
 
-  // eslint-disable-next-line class-methods-use-this
-  getValueFromMeta(name: string): string | null {
-    const element = document.querySelector(`meta[name="${name}"]`);
-    if (element && element.getAttribute("content")) {
-      return element.getAttribute("content");
-    }
-    return null;
-  }
+if (!(userId && userEmail && userRole && accessToken && refreshToken)) {
+  await router.push("/");
+} else {
+  const login = {
+    user: {
+      id: userId,
+      email: userEmail,
+      role: userRole,
+      isLoggedIn: true,
+    },
+    accessToken,
+    refreshToken,
+  };
+  saveUserData(login);
+
+  mutate({
+    id: userId,
+    email: userEmail,
+    isLoggedIn: true,
+    role: userRole,
+  });
 }
 </script>

@@ -30,6 +30,12 @@
         profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
     }
 ) %>
+<% :member_approved -> %><%= dgettext("activity", "%{profile} approved the member %{member}.",
+    %{
+        member: @activity.subject_params["member_actor_name"],
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
 <% :member_updated -> %><%= dgettext("activity", "%{profile} updated the member %{member}.", 
     %{
         member: @activity.subject_params["member_actor_name"],

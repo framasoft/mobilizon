@@ -23,9 +23,17 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   @spec find_user(any(), map(), Absinthe.Resolution.t()) :: {:ok, User.t()} | {:error, String.t()}
   def find_user(_parent, %{id: id}, %{context: %{current_user: %User{role: role}}})
       when is_moderator(role) do
-    with {:ok, %User{} = user} <- Users.get_user_with_actors(id) do
-      {:ok, user}
+    case Users.get_user_with_actors(id) do
+      {:ok, %User{} = user} ->
+        {:ok, user}
+
+      _ ->
+        {:error, :user_not_found}
     end
+  end
+
+  def find_user(_parent, _args, _resolution) do
+    {:error, :unauthorized}
   end
 
   @doc """

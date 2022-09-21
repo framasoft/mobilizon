@@ -1,17 +1,12 @@
-import { RouteConfig, Route } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
 import { i18n } from "@/utils/i18n";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 
-const participations = (): Promise<ImportedComponent> =>
-  import(
-    /* webpackChunkName: "participations" */ "@/views/Event/Participants.vue"
-  );
-const editEvent = (): Promise<ImportedComponent> =>
-  import(/* webpackChunkName: "edit-event" */ "@/views/Event/Edit.vue");
-const event = (): Promise<ImportedComponent> =>
-  import(/* webpackChunkName: "event" */ "@/views/Event/Event.vue");
-const myEvents = (): Promise<ImportedComponent> =>
-  import(/* webpackChunkName: "my-events" */ "@/views/Event/MyEvents.vue");
+const t = i18n.global.t;
+
+const participations = () => import("@/views/Event/ParticipantsView.vue");
+const editEvent = () => import("@/views/Event/EditView.vue");
+const event = () => import("@/views/Event/EventView.vue");
+const myEvents = () => import("@/views/Event/MyEventsView.vue");
 
 export enum EventRouteName {
   EVENT_LIST = "EventList",
@@ -28,24 +23,14 @@ export enum EventRouteName {
   TAG = "Tag",
 }
 
-export const eventRoutes: RouteConfig[] = [
-  {
-    path: "/events/list/:location?",
-    name: EventRouteName.EVENT_LIST,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "EventList" */ "@/views/Event/EventList.vue"),
-    meta: {
-      requiredAuth: false,
-      announcer: { message: (): string => i18n.t("Event list") as string },
-    },
-  },
+export const eventRoutes: RouteRecordRaw[] = [
   {
     path: "/events/create",
     name: EventRouteName.CREATE_EVENT,
     component: editEvent,
     meta: {
       requiredAuth: true,
-      announcer: { message: (): string => i18n.t("Create event") as string },
+      announcer: { message: (): string => t("Create event") as string },
     },
   },
   {
@@ -55,7 +40,7 @@ export const eventRoutes: RouteConfig[] = [
     props: true,
     meta: {
       requiredAuth: true,
-      announcer: { message: (): string => i18n.t("My events") as string },
+      announcer: { message: (): string => t("My events") as string },
     },
   },
   {
@@ -63,7 +48,7 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.EDIT_EVENT,
     component: editEvent,
     meta: { requiredAuth: true, announcer: { skip: true } },
-    props: (route: Route): Record<string, unknown> => {
+    props: (route: RouteLocationNormalized): Record<string, unknown> => {
       return { ...route.params, ...{ isUpdate: true } };
     },
   },
@@ -72,7 +57,7 @@ export const eventRoutes: RouteConfig[] = [
     name: EventRouteName.DUPLICATE_EVENT,
     component: editEvent,
     meta: { requiredAuth: true, announce: { skip: true } },
-    props: (route: Route): Record<string, unknown> => ({
+    props: (route: RouteLocationNormalized): Record<string, unknown> => ({
       ...route.params,
       ...{ isDuplicate: true },
     }),
@@ -94,23 +79,23 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/:uuid/participate",
     name: EventRouteName.EVENT_PARTICIPATE_LOGGED_OUT,
-    component: (): Promise<ImportedComponent> =>
+    component: () =>
       import("../components/Participation/UnloggedParticipation.vue"),
     props: true,
     meta: {
       announcer: {
-        message: (): string => i18n.t("Unlogged participation") as string,
+        message: (): string => t("Unlogged participation") as string,
       },
     },
   },
   {
     path: "/events/:uuid/participate/with-account",
     name: EventRouteName.EVENT_PARTICIPATE_WITH_ACCOUNT,
-    component: (): Promise<ImportedComponent> =>
+    component: () =>
       import("../components/Participation/ParticipationWithAccount.vue"),
     meta: {
       announcer: {
-        message: (): string => i18n.t("Participation with account") as string,
+        message: (): string => t("Participation with account") as string,
       },
     },
     props: true,
@@ -118,12 +103,11 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/events/:uuid/participate/without-account",
     name: EventRouteName.EVENT_PARTICIPATE_WITHOUT_ACCOUNT,
-    component: (): Promise<ImportedComponent> =>
+    component: () =>
       import("../components/Participation/ParticipationWithoutAccount.vue"),
     meta: {
       announcer: {
-        message: (): string =>
-          i18n.t("Participation without account") as string,
+        message: (): string => t("Participation without account") as string,
       },
     },
     props: true,
@@ -131,11 +115,11 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/participation/email/confirm/:token",
     name: EventRouteName.EVENT_PARTICIPATE_CONFIRM,
-    component: (): Promise<ImportedComponent> =>
+    component: () =>
       import("../components/Participation/ConfirmParticipation.vue"),
     meta: {
       announcer: {
-        message: (): string => i18n.t("Confirm participation") as string,
+        message: (): string => t("Confirm participation") as string,
       },
     },
     props: true,
@@ -143,12 +127,11 @@ export const eventRoutes: RouteConfig[] = [
   {
     path: "/tag/:tag",
     name: EventRouteName.TAG,
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "Search" */ "@/views/Search.vue"),
+    component: () => import("@/views/SearchView.vue"),
     props: true,
     meta: {
       requiredAuth: false,
-      announcer: { message: (): string => i18n.t("Tag search") as string },
+      announcer: { message: (): string => t("Tag search") as string },
     },
   },
 ];

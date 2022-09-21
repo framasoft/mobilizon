@@ -1,147 +1,87 @@
 <template>
-  <div class="container section" v-if="resource">
+  <div class="container mx-auto" v-if="resource">
     <breadcrumbs-nav :links="breadcrumbLinks">
       <li>
-        <b-dropdown aria-role="list">
-          <b-button class="button is-primary" slot="trigger">+</b-button>
+        <o-dropdown aria-role="list">
+          <template #trigger>
+            <o-button variant="primary">+</o-button>
+          </template>
 
-          <b-dropdown-item aria-role="listitem" @click="createFolderModal">
-            <b-icon icon="folder" />
-            {{ $t("New folder") }}
-          </b-dropdown-item>
-          <b-dropdown-item aria-role="listitem" @click="createLinkModal">
-            <b-icon icon="link" />
-            {{ $t("New link") }}
-          </b-dropdown-item>
+          <o-dropdown-item aria-role="listitem" @click="createFolderModal">
+            <Folder />
+            {{ t("New folder") }}
+          </o-dropdown-item>
+          <o-dropdown-item aria-role="listitem" @click="createLinkModal">
+            <Link />
+            {{ t("New link") }}
+          </o-dropdown-item>
           <hr
             role="presentation"
             class="dropdown-divider"
-            v-if="resourceProviders.length"
+            v-if="resourceProviders?.length"
           />
-          <b-dropdown-item
+          <o-dropdown-item
             aria-role="listitem"
             v-for="resourceProvider in resourceProviders"
             :key="resourceProvider.software"
             @click="createResourceFromProvider(resourceProvider)"
           >
-            <b-icon :icon="mapServiceTypeToIcon[resourceProvider.software]" />
+            <o-icon :icon="mapServiceTypeToIcon[resourceProvider.software]" />
             {{ createSentenceForType(resourceProvider.software) }}
-          </b-dropdown-item>
-        </b-dropdown>
+          </o-dropdown-item>
+        </o-dropdown>
       </li>
     </breadcrumbs-nav>
-    <section>
-      <p v-if="resource.path === '/'" class="module-description">
-        {{
-          $t("A place to store links to documents or resources of any type.")
-        }}
-      </p>
-      <div class="list-header">
-        <div class="list-header-right">
-          <b-checkbox v-model="checkedAll" v-if="resource.children.total > 0" />
-          <div class="actions" v-if="validCheckedResources.length > 0">
-            <small>
-              {{
-                $tc("No resources selected", validCheckedResources.length, {
-                  count: validCheckedResources.length,
-                })
-              }}
-            </small>
-            <b-button
-              type="is-danger"
-              icon-right="delete"
-              size="is-small"
-              @click="deleteMultipleResources"
-              >{{ $t("Delete") }}</b-button
-            >
-          </div>
-        </div>
-      </div>
-      <draggable
-        v-model="resource.children.elements"
-        :sort="false"
-        :group="groupObject"
-        v-if="resource.children.total > 0"
-      >
-        <transition-group>
-          <div
-            v-for="localResource in resource.children.elements"
-            :key="localResource.id"
-          >
-            <div class="resource-item">
-              <div
-                class="resource-checkbox"
-                :class="{ checked: checkedResources[localResource.id] }"
-              >
-                <b-checkbox v-model="checkedResources[localResource.id]" />
-              </div>
-              <resource-item
-                :resource="localResource"
-                v-if="localResource.type !== 'folder'"
-                @delete="deleteResource"
-                @rename="handleRename"
-                @move="handleMove"
-              />
-              <folder-item
-                :resource="localResource"
-                :group="resource.actor"
-                @delete="deleteResource"
-                @rename="handleRename"
-                @move="handleMove"
-                v-else
-              />
-            </div>
-          </div>
-        </transition-group>
-      </draggable>
-      <div
-        class="content has-text-centered has-text-grey"
-        v-if="resource.children.total === 0"
-      >
-        <p>{{ $t("No resources in this folder") }}</p>
-      </div>
-    </section>
-    <b-pagination
+    <DraggableList
+      :resources="resource.children.elements"
+      :isRoot="resource.path === '/'"
+      :group="resource.actor"
+      @delete="(resourceID: string) => deleteResource({
+        id: resourceID,
+      })"
+      @update="updateResource"
+      @rename="handleRename"
+      @move="handleMove"
+    />
+    <o-pagination
       v-if="resource.children.total > RESOURCES_PER_PAGE"
       :total="resource.children.total"
       v-model="page"
       :per-page="RESOURCES_PER_PAGE"
-      :aria-next-label="$t('Next page')"
-      :aria-previous-label="$t('Previous page')"
-      :aria-page-label="$t('Page')"
-      :aria-current-label="$t('Current page')"
+      :aria-next-label="t('Next page')"
+      :aria-previous-label="t('Previous page')"
+      :aria-page-label="t('Page')"
+      :aria-current-label="t('Current page')"
     >
-    </b-pagination>
-    <b-modal
-      :active.sync="renameModal"
+    </o-pagination>
+    <o-modal
+      v-model:active="renameModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
-      <div class="modal-card">
-        <section class="modal-card-body">
+      <div class="w-full md:w-[640px]">
+        <section>
           <form @submit.prevent="renameResource">
-            <b-field :label="$t('Title')">
-              <b-input
+            <o-field :label="t('Title')">
+              <o-input
                 ref="resourceRenameInput"
                 aria-required="true"
                 v-model="updatedResource.title"
               />
-            </b-field>
+            </o-field>
 
-            <b-button native-type="submit">{{
-              $t("Rename resource")
-            }}</b-button>
+            <o-button native-type="submit">{{ t("Rename resource") }}</o-button>
           </form>
         </section>
       </div>
-    </b-modal>
-    <b-modal
-      :active.sync="moveModal"
+    </o-modal>
+    <o-modal
+      v-model:active="moveModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
-      <div class="modal-card">
-        <section class="modal-card-body">
+      <div class="w-full md:w-[640px]">
+        <section>
           <resource-selector
             :initialResource="updatedResource"
             :username="usernameWithDomain(resource.actor)"
@@ -150,51 +90,56 @@
           />
         </section>
       </div>
-    </b-modal>
-    <b-modal
-      :active.sync="createResourceModal"
+    </o-modal>
+    <o-modal
+      v-model:active="createResourceModal"
       has-modal-card
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       trap-focus
     >
-      <div class="modal-card">
-        <section class="modal-card-body">
-          <b-message type="is-danger" v-if="modalError">
-            {{ modalError }}
-          </b-message>
-          <form @submit.prevent="createResource">
-            <b-field :label="$t('Title')" label-for="new-resource-title">
-              <b-input
-                ref="modalNewResourceInput"
-                aria-required="true"
-                v-model="newResource.title"
-                id="new-resource-title"
-              />
-            </b-field>
+      <section class="w-full md:w-[640px]">
+        <o-notification variant="danger" v-if="modalError">
+          {{ modalError }}
+        </o-notification>
+        <form @submit.prevent="createResource">
+          <p v-if="newResource.type !== 'folder'">
+            {{
+              t("The pad will be created on {service}", {
+                service: newResourceHost,
+              })
+            }}
+          </p>
+          <o-field :label="t('Title')" label-for="new-resource-title">
+            <o-input
+              ref="modalNewResourceInput"
+              aria-required="true"
+              v-model="newResource.title"
+              id="new-resource-title"
+            />
+          </o-field>
 
-            <b-button native-type="submit">{{
-              createResourceButtonLabel
-            }}</b-button>
-          </form>
-        </section>
-      </div>
-    </b-modal>
-    <b-modal
-      :active.sync="createLinkResourceModal"
+          <o-button class="mt-2" native-type="submit">{{
+            createResourceButtonLabel
+          }}</o-button>
+        </form>
+      </section>
+    </o-modal>
+    <o-modal
+      v-model:active="createLinkResourceModal"
       has-modal-card
-      class="link-resource-modal"
       aria-modal
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       trap-focus
+      :width="640"
     >
-      <div class="modal-card">
-        <section class="modal-card-body">
-          <b-message type="is-danger" v-if="modalError">
+      <div class="w-full md:w-[640px]">
+        <section class="p-10">
+          <o-notification variant="danger" v-if="modalError">
             {{ modalError }}
-          </b-message>
+          </o-notification>
           <form @submit.prevent="createResource">
-            <b-field :label="$t('URL')" label-for="new-resource-url">
-              <b-input
+            <o-field expanded :label="t('URL')" label-for="new-resource-url">
+              <o-input
                 id="new-resource-url"
                 type="url"
                 required
@@ -202,598 +147,506 @@
                 @blur="previewResource"
                 ref="modalNewResourceLinkInput"
               />
-            </b-field>
+            </o-field>
 
             <div class="new-resource-preview" v-if="newResource.title">
               <resource-item :resource="newResource" :preview="true" />
             </div>
 
-            <b-field :label="$t('Title')" label-for="new-resource-link-title">
-              <b-input
+            <o-field :label="t('Title')" label-for="new-resource-link-title">
+              <o-input
                 aria-required="true"
                 v-model="newResource.title"
                 id="new-resource-link-title"
               />
-            </b-field>
+            </o-field>
 
-            <b-field
-              :label="$t('Description')"
-              label-for="new-resource-summary"
-            >
-              <b-input
+            <o-field :label="t('Description')" label-for="new-resource-summary">
+              <o-input
                 type="textarea"
                 v-model="newResource.summary"
                 id="new-resource-summary"
               />
-            </b-field>
+            </o-field>
 
-            <b-button native-type="submit">{{
-              $t("Create resource")
-            }}</b-button>
+            <o-button native-type="submit" class="mt-2">{{
+              t("Create resource")
+            }}</o-button>
           </form>
         </section>
       </div>
-    </b-modal>
+    </o-modal>
   </div>
 </template>
-<script lang="ts">
-import { Component, Mixins, Prop, Watch } from "vue-property-decorator";
+<script lang="ts" setup>
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
-import FolderItem from "@/components/Resource/FolderItem.vue";
-import Draggable from "vuedraggable";
-import { CURRENT_ACTOR_CLIENT } from "../../graphql/actor";
-import { displayName, IActor, usernameWithDomain } from "../../types/actor";
-import RouteName from "../../router/name";
+import { displayName, usernameWithDomain } from "@/types/actor";
+import RouteName from "@/router/name";
 import {
   IResource,
   mapServiceTypeToIcon,
   IProvider,
-} from "../../types/resource";
+  IResourceMetadata,
+} from "@/types/resource";
 import {
   CREATE_RESOURCE,
   DELETE_RESOURCE,
   PREVIEW_RESOURCE_LINK,
   GET_RESOURCE,
   UPDATE_RESOURCE,
-} from "../../graphql/resources";
-import { CONFIG } from "../../graphql/config";
-import { IConfig } from "../../types/config.model";
-import ResourceMixin from "../../mixins/resource";
-import ResourceSelector from "../../components/Resource/ResourceSelector.vue";
+} from "@/graphql/resources";
+import ResourceSelector from "@/components/Resource/ResourceSelector.vue";
 import {
   ApolloCache,
   FetchResult,
   InternalRefetchQueriesInclude,
 } from "@apollo/client/core";
-import VueRouter from "vue-router";
-const { isNavigationFailure, NavigationFailureType } = VueRouter;
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { computed, nextTick, reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import { useRouter } from "vue-router";
+import { useHead } from "@vueuse/head";
+import { useResourceProviders } from "@/composition/apollo/config";
+import Folder from "vue-material-design-icons/Folder.vue";
+import Link from "vue-material-design-icons/Link.vue";
+import DraggableList from "@/components/Resource/DraggableList.vue";
+import { resourcePathArray } from "@/components/Resource/utils";
+import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
-@Component({
-  components: { FolderItem, ResourceItem, Draggable, ResourceSelector },
-  apollo: {
-    resource: {
+const RESOURCES_PER_PAGE = 10;
+const page = useRouteQuery("page", 1, integerTransformer);
+
+const props = defineProps<{
+  path: string | string[];
+  preferredUsername: string;
+}>();
+
+const {
+  result: resourceResult,
+  onError: onGetResourceError,
+  fetchMore,
+} = useQuery<{
+  resource: IResource;
+}>(GET_RESOURCE, () => {
+  let path = Array.isArray(props.path) ? props.path.join("/") : props.path;
+  path = path[0] !== "/" ? `/${path}` : path;
+  return {
+    path,
+    username: props.preferredUsername,
+    page: page.value,
+    limit: RESOURCES_PER_PAGE,
+  };
+});
+
+const resource = computed(() => resourceResult.value?.resource);
+
+onGetResourceError(({ graphQLErrors }) => {
+  handleErrors(graphQLErrors);
+});
+
+const { resourceProviders } = useResourceProviders();
+
+const { t } = useI18n({ useScope: "global" });
+
+// config: CONFIG,
+
+const newResource = reactive<IResource>({
+  title: "",
+  summary: "",
+  resourceUrl: "",
+  children: { elements: [], total: 0 },
+  metadata: {},
+  type: "link",
+});
+
+const updatedResource = ref<IResource>({
+  title: "",
+  resourceUrl: "",
+  metadata: {},
+  children: { elements: [], total: 0 },
+  path: undefined,
+});
+
+const createResourceModal = ref(false);
+const createLinkResourceModal = ref(false);
+const moveModal = ref(false);
+const renameModal = ref(false);
+const modalError = ref("");
+
+const resourceRenameInput = ref<any>();
+const modalNewResourceInput = ref<HTMLElement>();
+const modalNewResourceLinkInput = ref<HTMLElement>();
+
+const actualPath = computed((): string => {
+  const path = Array.isArray(props.path) ? props.path.join("/") : props.path;
+  return path[0] !== "/" ? `/${path}` : path;
+});
+
+const filteredPath = computed((): string[] => {
+  if (resource.value?.path !== "/") {
+    return resourcePathArray(resource.value);
+  }
+  return [];
+});
+
+const isRoot = computed((): boolean => {
+  return actualPath.value === "/";
+});
+
+const lastFragment = computed((): string | undefined => {
+  return filteredPath.value.slice(-1)[0];
+});
+
+const {
+  mutate: createResourceMutation,
+  onDone: createResourceDone,
+  onError: createResourceError,
+} = useMutation(CREATE_RESOURCE, () => ({
+  refetchQueries: () => postRefreshQueries(),
+}));
+
+createResourceDone(() => {
+  createLinkResourceModal.value = false;
+  createResourceModal.value = false;
+  newResource.title = "";
+  newResource.summary = "";
+  newResource.resourceUrl = "";
+});
+
+createResourceError((err) => {
+  console.error(err);
+  modalError.value = err.graphQLErrors[0].message;
+});
+
+const createResource = () => {
+  if (!resource.value?.actor) return;
+  modalError.value = "";
+  createResourceMutation({
+    title: newResource.title,
+    summary: newResource.summary,
+    actorId: resource.value.actor?.id,
+    resourceUrl: newResource.resourceUrl,
+    parentId: resource.value?.id?.startsWith("root_")
+      ? null
+      : resource.value?.id,
+    type: newResource.type,
+  });
+};
+
+const {
+  mutate: previewResourceLinkMutation,
+  onDone: previewDone,
+  onError: previewError,
+} = useMutation<{ previewResourceLink: IResourceMetadata }>(
+  PREVIEW_RESOURCE_LINK
+);
+
+previewDone(({ data }) => {
+  if (!data?.previewResourceLink) return;
+  newResource.title = data?.previewResourceLink.title ?? "";
+  newResource.summary = data?.previewResourceLink?.description;
+  newResource.metadata = data?.previewResourceLink;
+  newResource.type = "link";
+});
+
+previewError((err) => {
+  console.error(err);
+  modalError.value = err.graphQLErrors[0].message;
+});
+
+const previewResource = async (): Promise<void> => {
+  modalError.value = "";
+  if (newResource.resourceUrl === "") return;
+  previewResourceLinkMutation({
+    resourceUrl: newResource.resourceUrl,
+  });
+};
+
+const createSentenceForType = (type: string): string => {
+  switch (type) {
+    case "folder":
+      return t("Create a folder") as string;
+    case "pad":
+      return t("Create a pad") as string;
+    case "calc":
+      return t("Create a calc") as string;
+    case "visio":
+      return t("Create a videoconference") as string;
+    default:
+      return "";
+  }
+};
+
+const createLinkModal = async (): Promise<void> => {
+  createLinkResourceModal.value = true;
+  await nextTick();
+  modalNewResourceLinkInput.value?.focus();
+};
+
+const createFolderModal = async (): Promise<void> => {
+  newResource.type = "folder";
+  createResourceModal.value = true;
+  await nextTick();
+  modalNewResourceInput.value?.focus();
+};
+
+const createResourceFromProvider = async (
+  provider: IProvider
+): Promise<void> => {
+  newResource.resourceUrl = generateFullResourceUrl(provider);
+  newResource.type = provider.software;
+  createResourceModal.value = true;
+  await nextTick();
+  modalNewResourceInput.value?.focus();
+};
+
+const generateFullResourceUrl = (provider: IProvider): string => {
+  const randomString = [...Array(10)]
+    .map(() => Math.random().toString(36)[3])
+    .join("")
+    .replace(/(.|$)/g, (c) =>
+      c[!Math.round(Math.random()) ? "toString" : "toLowerCase"]()
+    );
+  switch (provider.type) {
+    case "ethercalc":
+    case "etherpad":
+    case "jitsi":
+    default:
+      return `${provider.endpoint}${randomString}`;
+  }
+};
+
+const createResourceButtonLabel = computed((): string => {
+  if (!newResource.type) return "";
+  return createSentenceForType(newResource.type);
+});
+
+// eslint-disable-next-line class-methods-use-this
+const postRefreshQueries = (): InternalRefetchQueriesInclude => {
+  return [
+    {
       query: GET_RESOURCE,
-      fetchPolicy: "cache-and-network",
-      variables() {
-        let path = Array.isArray(this.$route.params.path)
-          ? this.$route.params.path.join("/")
-          : this.$route.params.path || this.path;
-        path = path[0] !== "/" ? `/${path}` : path;
-        return {
-          path,
-          username: this.$route.params.preferredUsername,
-          page: this.page,
-          limit: this.RESOURCES_PER_PAGE,
-        };
-      },
-      error({ graphQLErrors }) {
-        this.handleErrors(graphQLErrors);
+      variables: {
+        path: actualPath.value,
+        username: props.preferredUsername,
+        page: page.value,
+        limit: RESOURCES_PER_PAGE,
       },
     },
-    config: CONFIG,
-    currentActor: CURRENT_ACTOR_CLIENT,
-  },
-  metaInfo() {
-    return {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      title: this.isRoot
-        ? (this.$t("Resources") as string)
-        : (this.$t("{folder} - Resources", {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            folder: this.lastFragment,
-          }) as string),
-    };
-  },
-})
-export default class Resources extends Mixins(ResourceMixin) {
-  @Prop({ required: true }) path!: string;
+  ];
+};
 
-  resource!: IResource;
+const { mutate: deleteResource, onError: onDeleteResourceError } = useMutation(
+  DELETE_RESOURCE,
+  () => ({
+    refetchQueries: () => postRefreshQueries(),
+  })
+);
 
-  config!: IConfig;
+onDeleteResourceError((e) => console.error(e));
 
-  currentActor!: IActor;
+const handleRename = async (resourceToRename: IResource): Promise<void> => {
+  renameModal.value = true;
+  updatedResource.value = { ...resourceToRename };
+  await nextTick();
+  resourceRenameInput.value?.$el.focus();
+  resourceRenameInput.value?.$el.querySelector("input")?.select();
+};
 
-  RouteName = RouteName;
+const handleMove = (resourceToMove: IResource): void => {
+  moveModal.value = true;
+  updatedResource.value = { ...resourceToMove };
+};
 
-  ResourceMixin = ResourceMixin;
+const moveResource = async (
+  resourceToMove: IResource,
+  oldParent: IResource | undefined
+): Promise<void> => {
+  const parentPath = oldParent && oldParent.path ? oldParent.path || "/" : "/";
+  await updateResource(resourceToMove, parentPath);
+  moveModal.value = false;
+};
 
-  usernameWithDomain = usernameWithDomain;
+const renameResource = async (): Promise<void> => {
+  await updateResource(updatedResource.value);
+  renameModal.value = false;
+};
 
-  RESOURCES_PER_PAGE = 10;
+const { mutate: updateResourceMutation } = useMutation<{
+  updateResource: IResource;
+}>(UPDATE_RESOURCE, () => ({
+  refetchQueries: () => postRefreshQueries(),
+  update: (
+    store: ApolloCache<{ updateResource: IResource }>,
+    { data }: FetchResult,
+    { context }
+  ) => {
+    const parentPath = context?.parentPath;
+    if (!data || data.updateResource == null || parentPath == null) return;
+    if (!resource.value?.actor) return;
 
-  newResource: IResource = {
-    title: "",
-    summary: "",
-    resourceUrl: "",
-    children: { elements: [], total: 0 },
-    metadata: {},
-    type: "link",
-  };
-
-  updatedResource: IResource = {
-    title: "",
-    resourceUrl: "",
-    metadata: {},
-    children: { elements: [], total: 0 },
-    path: undefined,
-  };
-
-  checkedResources: { [key: string]: boolean } = {};
-
-  validCheckedResources: string[] = [];
-
-  checkedAll = false;
-
-  createResourceModal = false;
-
-  createLinkResourceModal = false;
-
-  moveModal = false;
-
-  renameModal = false;
-
-  modalError = "";
-
-  groupObject: Record<string, unknown> = {
-    name: "resources",
-    pull: "clone",
-    put: true,
-  };
-
-  $refs!: {
-    resourceRenameInput: any;
-    modalNewResourceInput: HTMLElement;
-    modalNewResourceLinkInput: HTMLElement;
-  };
-
-  mapServiceTypeToIcon = mapServiceTypeToIcon;
-
-  get page(): number {
-    return parseInt((this.$route.query.page as string) || "1", 10);
-  }
-
-  set page(page: number) {
-    this.pushRouter({
-      page: page.toString(),
-    });
-  }
-
-  get actualPath(): string {
-    const path = Array.isArray(this.$route.params.path)
-      ? this.$route.params.path.join("/")
-      : this.$route.params.path || this.path;
-    return path[0] !== "/" ? `/${path}` : path;
-  }
-
-  get filteredPath(): string[] {
-    if (this.resource && this.resource.path !== "/") {
-      return ResourceMixin.resourcePathArray(this.resource);
-    }
-    return [];
-  }
-
-  get isRoot(): boolean {
-    return this.actualPath === "/";
-  }
-
-  get lastFragment(): string | undefined {
-    return this.filteredPath.slice(-1)[0];
-  }
-
-  get resourceProviders(): IProvider[] {
-    return this.config?.resourceProviders || [];
-  }
-
-  async createResource(): Promise<void> {
-    if (!this.resource.actor) return;
-    this.modalError = "";
-    try {
-      await this.$apollo.mutate({
-        mutation: CREATE_RESOURCE,
-        variables: {
-          title: this.newResource.title,
-          summary: this.newResource.summary,
-          actorId: this.resource.actor.id,
-          resourceUrl: this.newResource.resourceUrl,
-          parentId:
-            this.resource.id && this.resource.id.startsWith("root_")
-              ? null
-              : this.resource.id,
-          type: this.newResource.type,
-        },
-        refetchQueries: () => this.postRefreshQueries(),
-      });
-      this.createLinkResourceModal = false;
-      this.createResourceModal = false;
-      this.newResource.title = "";
-      this.newResource.summary = "";
-      this.newResource.resourceUrl = "";
-    } catch (err: any) {
-      console.error(err);
-      this.modalError = err.graphQLErrors[0].message;
-    }
-  }
-
-  async previewResource(): Promise<void> {
-    this.modalError = "";
-    try {
-      if (this.newResource.resourceUrl === "") return;
-      const { data } = await this.$apollo.mutate({
-        mutation: PREVIEW_RESOURCE_LINK,
-        variables: {
-          resourceUrl: this.newResource.resourceUrl,
-        },
-      });
-      this.newResource.title = data.previewResourceLink.title;
-      this.newResource.summary = data.previewResourceLink.description;
-      this.newResource.metadata = data.previewResourceLink;
-      this.newResource.type = "link";
-    } catch (err: any) {
-      console.error(err);
-      this.modalError = err.graphQLErrors[0].message;
-    }
-  }
-
-  createSentenceForType(type: string): string {
-    switch (type) {
-      case "folder":
-        return this.$t("Create a folder") as string;
-      case "pad":
-        return this.$t("Create a pad") as string;
-      case "calc":
-        return this.$t("Create a calc") as string;
-      case "visio":
-        return this.$t("Create a videoconference") as string;
-      default:
-        return "";
-    }
-  }
-
-  async createLinkModal(): Promise<void> {
-    this.createLinkResourceModal = true;
-    await this.$nextTick();
-    this.$refs.modalNewResourceLinkInput.focus();
-  }
-
-  async createFolderModal(): Promise<void> {
-    this.newResource.type = "folder";
-    this.createResourceModal = true;
-    await this.$nextTick();
-    this.$refs.modalNewResourceInput.focus();
-  }
-
-  async createResourceFromProvider(provider: IProvider): Promise<void> {
-    this.newResource.resourceUrl = Resources.generateFullResourceUrl(provider);
-    this.newResource.type = provider.software;
-    this.createResourceModal = true;
-    await this.$nextTick();
-    this.$refs.modalNewResourceInput.focus();
-  }
-
-  static generateFullResourceUrl(provider: IProvider): string {
-    const randomString = [...Array(10)]
-      .map(() => Math.random().toString(36)[3])
-      .join("")
-      .replace(/(.|$)/g, (c) =>
-        c[!Math.round(Math.random()) ? "toString" : "toLowerCase"]()
-      );
-    switch (provider.type) {
-      case "ethercalc":
-      case "etherpad":
-      case "jitsi":
-      default:
-        return `${provider.endpoint}${randomString}`;
-    }
-  }
-
-  get createResourceButtonLabel(): string {
-    if (!this.newResource.type) return "";
-    return this.createSentenceForType(this.newResource.type);
-  }
-
-  @Watch("checkedAll")
-  watchCheckedAll(): void {
-    this.resource.children.elements.forEach(({ id }) => {
-      if (!id) return;
-      this.checkedResources[id] = this.checkedAll;
-    });
-  }
-
-  @Watch("checkedResources", { deep: true })
-  watchValidCheckedResources(): string[] {
-    const validCheckedResources: string[] = [];
-    Object.entries(this.checkedResources).forEach(([key, value]) => {
-      if (value) {
-        validCheckedResources.push(key);
-      }
-    });
-    this.validCheckedResources = validCheckedResources;
-    return this.validCheckedResources;
-  }
-
-  async deleteMultipleResources(): Promise<void> {
-    this.validCheckedResources.forEach(async (resourceID) => {
-      await this.deleteResource(resourceID);
-    });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private postRefreshQueries(): InternalRefetchQueriesInclude {
-    return [
-      {
-        query: GET_RESOURCE,
-        variables: {
-          path: this.actualPath,
-          username: this.$route.params.preferredUsername,
-          page: this.page,
-          limit: this.RESOURCES_PER_PAGE,
-        },
-      },
-    ];
-  }
-
-  async deleteResource(resourceID: string): Promise<void> {
-    try {
-      await this.$apollo.mutate({
-        mutation: DELETE_RESOURCE,
-        variables: {
-          id: resourceID,
-        },
-        refetchQueries: () => this.postRefreshQueries(),
-      });
-      this.validCheckedResources = this.validCheckedResources.filter(
-        (id) => id !== resourceID
-      );
-      delete this.checkedResources[resourceID];
-    } catch (e: any) {
-      console.error(e);
-    }
-  }
-
-  async handleRename(resource: IResource): Promise<void> {
-    this.renameModal = true;
-    this.updatedResource = { ...resource };
-    await this.$nextTick();
-    this.$refs.resourceRenameInput.focus();
-    this.$refs.resourceRenameInput.$el.querySelector("input").select();
-  }
-
-  handleMove(resource: IResource): void {
-    this.moveModal = true;
-    this.updatedResource = { ...resource };
-  }
-
-  async moveResource(
-    resource: IResource,
-    oldParent: IResource | undefined
-  ): Promise<void> {
-    const parentPath =
-      oldParent && oldParent.path ? oldParent.path || "/" : "/";
-    await this.updateResource(resource, parentPath);
-    this.moveModal = false;
-  }
-
-  async renameResource(): Promise<void> {
-    await this.updateResource(this.updatedResource);
-    this.renameModal = false;
-  }
-
-  async updateResource(
-    resource: IResource,
-    parentPath: string | null = null
-  ): Promise<void> {
-    try {
-      await this.$apollo.mutate<{ updateResource: IResource }>({
-        mutation: UPDATE_RESOURCE,
-        variables: {
-          id: resource.id,
-          title: resource.title,
-          parentId: resource.parent ? resource.parent.id : null,
-          path: resource.path,
-        },
-        refetchQueries: () => this.postRefreshQueries(),
-        update: (
-          store: ApolloCache<{ updateResource: IResource }>,
-          { data }: FetchResult
-        ) => {
-          if (!data || data.updateResource == null || parentPath == null)
-            return;
-          if (!this.resource.actor) return;
-
-          console.log("Removing ressource from old parent");
-          const oldParentCachedData = store.readQuery<{ resource: IResource }>({
-            query: GET_RESOURCE,
-            variables: {
-              path: parentPath,
-              username: this.resource.actor.preferredUsername,
-            },
-          });
-          if (oldParentCachedData == null) return;
-          const { resource: oldParentCachedResource } = oldParentCachedData;
-          if (oldParentCachedResource == null) {
-            console.error(
-              "Cannot update resource cache, because of null value."
-            );
-            return;
-          }
-          const updatedResource: IResource = data.updateResource;
-
-          const updatedElementList =
-            oldParentCachedResource.children.elements.filter(
-              (cachedResource) => cachedResource.id !== updatedResource.id
-            );
-
-          store.writeQuery({
-            query: GET_RESOURCE,
-            variables: {
-              path: parentPath,
-              username: this.resource.actor.preferredUsername,
-            },
-            data: {
-              resource: {
-                ...oldParentCachedResource,
-                children: {
-                  ...oldParentCachedResource.children,
-                  elements: [...updatedElementList],
-                },
-              },
-            },
-          });
-          console.log("Finished removing ressource from old parent");
-
-          console.log("Adding resource to new parent");
-          if (!updatedResource.parent || !updatedResource.parent.path) {
-            console.log("No cache found for new parent");
-            return;
-          }
-          const newParentCachedData = store.readQuery<{ resource: IResource }>({
-            query: GET_RESOURCE,
-            variables: {
-              path: updatedResource.parent.path,
-              username: this.resource.actor.preferredUsername,
-            },
-          });
-          if (newParentCachedData == null) return;
-          const { resource: newParentCachedResource } = newParentCachedData;
-          if (newParentCachedResource == null) {
-            console.error(
-              "Cannot update resource cache, because of null value."
-            );
-            return;
-          }
-
-          store.writeQuery({
-            query: GET_RESOURCE,
-            variables: {
-              path: updatedResource.parent.path,
-              username: this.resource.actor.preferredUsername,
-            },
-            data: {
-              resource: {
-                ...newParentCachedResource,
-                children: {
-                  ...newParentCachedResource.children,
-                  elements: [
-                    ...newParentCachedResource.children.elements,
-                    resource,
-                  ],
-                },
-              },
-            },
-          });
-          console.log("Finished adding resource to new parent");
-        },
-      });
-    } catch (e: any) {
-      console.error(e);
-    }
-  }
-
-  @Watch("page")
-  loadMoreResources(): void {
-    this.$apollo.queries.resource.fetchMore({
-      // New variables
+    console.debug("Removing ressource from old parent");
+    const oldParentCachedData = store.readQuery<{ resource: IResource }>({
+      query: GET_RESOURCE,
       variables: {
-        page: this.page,
-        limit: this.RESOURCES_PER_PAGE,
+        path: parentPath,
+        username: resource.value.actor.preferredUsername,
       },
     });
-  }
-
-  handleErrors(errors: any[]): void {
-    if (errors.some((error) => error.status_code === 404)) {
-      this.$router.replace({ name: RouteName.PAGE_NOT_FOUND });
+    if (oldParentCachedData == null) return;
+    const { resource: oldParentCachedResource } = oldParentCachedData;
+    if (oldParentCachedResource == null) {
+      console.error("Cannot update resource cache, because of null value.");
+      return;
     }
-  }
+    const postUpdatedResource: IResource = data.updateResource;
 
-  async pushRouter(args: Record<string, string>): Promise<void> {
-    try {
-      const path = this.filteredPath.toString();
-      const routeName =
-        path === ""
-          ? RouteName.RESOURCE_FOLDER_ROOT
-          : RouteName.RESOURCE_FOLDER;
-
-      await this.$router.push({
-        name: routeName,
-        params: { path },
-        query: { ...this.$route.query, ...args },
-      });
-    } catch (e: any) {
-      if (isNavigationFailure(e, NavigationFailureType.redirected)) {
-        throw Error(e.toString());
-      }
-    }
-  }
-
-  get breadcrumbLinks() {
-    if (!this.resource?.actor) return [];
-    const resourceActor = this.resource.actor;
-    const links = [
-      {
-        name: RouteName.GROUP,
-        params: { preferredUsername: usernameWithDomain(this.resource.actor) },
-        text: displayName(this.resource.actor),
-      },
-      {
-        name: RouteName.RESOURCE_FOLDER_ROOT,
-        params: { preferredUsername: usernameWithDomain(this.resource.actor) },
-        text: this.$t("Resources") as string,
-      },
-    ];
-
-    links.push(
-      ...this.filteredPath.map((pathFragment, index) => {
-        return {
-          name: RouteName.RESOURCE_FOLDER,
-          params: {
-            path: ResourceMixin.resourcePathArray(this.resource).slice(
-              0,
-              index + 1
-            ) as unknown as string,
-            preferredUsername: usernameWithDomain(resourceActor),
-          },
-          text: pathFragment,
-        };
-      })
+    const updatedElementList = oldParentCachedResource.children.elements.filter(
+      (cachedResource) => cachedResource.id !== postUpdatedResource.id
     );
-    return links;
+
+    store.writeQuery({
+      query: GET_RESOURCE,
+      variables: {
+        path: parentPath,
+        username: resource.value.actor.preferredUsername,
+      },
+      data: {
+        resource: {
+          ...oldParentCachedResource,
+          children: {
+            ...oldParentCachedResource.children,
+            elements: [...updatedElementList],
+          },
+        },
+      },
+    });
+    console.debug("Finished removing ressource from old parent");
+
+    console.debug("Adding resource to new parent");
+    if (!postUpdatedResource.parent || !postUpdatedResource.parent.path) {
+      console.debug("No cache found for new parent");
+      return;
+    }
+    const newParentCachedData = store.readQuery<{ resource: IResource }>({
+      query: GET_RESOURCE,
+      variables: {
+        path: postUpdatedResource.parent.path,
+        username: resource.value.actor.preferredUsername,
+      },
+    });
+    if (newParentCachedData == null) return;
+    const { resource: newParentCachedResource } = newParentCachedData;
+    if (newParentCachedResource == null) {
+      console.error("Cannot update resource cache, because of null value.");
+      return;
+    }
+
+    store.writeQuery({
+      query: GET_RESOURCE,
+      variables: {
+        path: postUpdatedResource.parent.path,
+        username: resource.value.actor.preferredUsername,
+      },
+      data: {
+        resource: {
+          ...newParentCachedResource,
+          children: {
+            ...newParentCachedResource.children,
+            elements: [...newParentCachedResource.children.elements, resource],
+          },
+        },
+      },
+    });
+    console.debug("Finished adding resource to new parent");
+  },
+}));
+
+const updateResource = async (
+  resourceToUpdate: IResource,
+  parentPath: string | null = null
+): Promise<void> => {
+  updateResourceMutation(
+    {
+      id: resourceToUpdate.id,
+      title: resourceToUpdate.title,
+      parentId: resourceToUpdate.parent ? resourceToUpdate.parent.id : null,
+      path: resourceToUpdate.path,
+    },
+    { context: { parentPath } }
+  );
+};
+
+watch(page, () => {
+  fetchMore({
+    // New variables
+    variables: {
+      page: page.value,
+      limit: RESOURCES_PER_PAGE,
+    },
+  });
+});
+
+const router = useRouter();
+
+const handleErrors = (errors: AbsintheGraphQLErrors): void => {
+  if (errors.some((error) => error.status_code === 404)) {
+    router.replace({ name: RouteName.PAGE_NOT_FOUND });
   }
-}
+};
+
+const breadcrumbLinks = computed(() => {
+  if (!resource.value?.actor) return [];
+  const resourceActor = resource.value.actor;
+  const links = [
+    {
+      name: RouteName.GROUP,
+      params: { preferredUsername: usernameWithDomain(resource.value.actor) },
+      text: displayName(resource.value.actor),
+    },
+    {
+      name: RouteName.RESOURCE_FOLDER_ROOT,
+      params: { preferredUsername: usernameWithDomain(resource.value.actor) },
+      text: t("Resources") as string,
+    },
+  ];
+
+  links.push(
+    ...filteredPath.value.map((pathFragment, index) => {
+      return {
+        name: RouteName.RESOURCE_FOLDER,
+        params: {
+          path: resourcePathArray(resource.value).slice(
+            0,
+            index + 1
+          ) as unknown as string,
+          preferredUsername: usernameWithDomain(resourceActor),
+        },
+        text: pathFragment,
+      };
+    })
+  );
+  return links;
+});
+
+const newResourceHost = computed(() => {
+  if (!newResource.resourceUrl) return;
+  return new URL(newResource.resourceUrl).host;
+});
+
+useHead({
+  title: computed(() =>
+    isRoot.value
+      ? t("Resources")
+      : t("{folder} - Resources", {
+          folder: lastFragment.value,
+        })
+  ),
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-
-.container.section {
-  background: $white;
-
-  & > nav.pagination {
-    margin-top: 1rem;
-  }
-}
 
 nav.breadcrumb ul {
   align-items: center;
@@ -817,7 +670,7 @@ nav.breadcrumb ul {
     display: flex;
     align-items: center;
 
-    ::v-deep .b-checkbox.checkbox {
+    :deep(.b-checkbox.checkbox) {
       @include margin-left(10px);
     }
 
@@ -837,7 +690,7 @@ nav.breadcrumb ul {
   font-size: 14px;
   border: 1px solid #c0cdd9;
   border-radius: 4px;
-  color: #444b5d;
+  // color: #444b5d;
   margin-top: 14px;
   margin-bottom: 14px;
 
@@ -846,7 +699,7 @@ nav.breadcrumb ul {
     @include padding-left(10px);
     opacity: 0.3;
 
-    ::v-deep .b-checkbox.checkbox {
+    :deep(.b-checkbox.checkbox) {
       @include margin-right(0.25rem);
     }
   }

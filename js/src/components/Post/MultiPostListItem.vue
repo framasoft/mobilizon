@@ -8,22 +8,17 @@
     />
   </div>
 </template>
-<script lang="ts">
+<script lang="ts" setup>
 import { IPost } from "@/types/post.model";
-import { PropType } from "vue";
-import { Component, Prop, Vue } from "vue-property-decorator";
 import PostListItem from "./PostListItem.vue";
 
-@Component({
-  components: {
-    PostListItem,
-  },
-})
-export default class MultiPostListItem extends Vue {
-  @Prop({ type: Array as PropType<IPost[]>, required: true }) posts!: IPost[];
-  @Prop({ required: false, type: Boolean, default: false })
-  isCurrentActorMember!: boolean;
-}
+withDefaults(
+  defineProps<{
+    posts: IPost[];
+    isCurrentActorMember?: boolean;
+  }>(),
+  { isCurrentActorMember: false }
+);
 </script>
 <style lang="scss" scoped>
 .posts-wrapper {

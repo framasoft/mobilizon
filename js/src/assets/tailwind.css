@@ -3,3 +3,45 @@
 @tailwind components;
 
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+  h1 {
+    @apply text-4xl lg:text-5xl leading-none font-extrabold tracking-tight mt-5 mb-4 sm:mt-7 sm:mb-5;
+  }
+
+  h2 {
+    @apply text-xl mt-2;
+  }
+
+  h3 {
+    @apply text-lg;
+  }
+}
+
+@layer components {
+  .mbz-card {
+    @apply block bg-mbz-yellow-alt-300 hover:bg-mbz-yellow-alt-200 text-violet-title dark:text-white dark:hover:text-white rounded-lg dark:border-violet-title shadow-md dark:bg-mbz-purple dark:hover:dark:bg-mbz-purple-400 dark:text-white dark:hover:text-white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --oruga-variant-primary: #1e7d97;
+
+    --oruga-field-label-color: white;
+
+    --oruga-table-background-color: #111827;
+    --oruga-table-th-color: white;
+
+    --oruga-modal-content-background-color: #111827;
+
+    --oruga-dropdown-item-color: white;
+    --oruga-dropdown-menu-background: #111827;
+    --oruga-dropdown-item-hover-color: white;
+    --oruga-dropdown-item-hover-background-color: #111827;
+  }
+}

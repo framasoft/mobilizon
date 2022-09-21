@@ -19,7 +19,7 @@ defmodule Mobilizon.Service.ActorSuspension do
   require Logger
   import Ecto.Query
 
-  @actor_preloads [:user, :organized_events, :comments]
+  @actor_preloads [:user, :organized_events, :participations, :comments]
   @delete_actor_default_options [reserve_username: true, suspension: false]
 
   @doc """

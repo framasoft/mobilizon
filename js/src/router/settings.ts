@@ -1,6 +1,7 @@
-import { Route, RouteConfig } from "vue-router";
-import { ImportedComponent } from "vue/types/options";
 import { i18n } from "@/utils/i18n";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
+
+const { t } = i18n.global;
 
 export enum SettingsRouteName {
   SETTINGS = "SETTINGS",
@@ -28,11 +29,10 @@ export enum SettingsRouteName {
   IDENTITIES = "IDENTITIES",
 }
 
-export const settingsRoutes: RouteConfig[] = [
+export const settingsRoutes: RouteRecordRaw[] = [
   {
     path: "/settings",
-    component: (): Promise<ImportedComponent> =>
-      import(/* webpackChunkName: "Settings" */ "@/views/Settings.vue"),
+    component: () => import("@/views/SettingsView.vue"),
     props: true,
     meta: { requiredAuth: true, announcer: { skip: true } },
     redirect: { name: SettingsRouteName.ACCOUNT_SETTINGS },
@@ -50,43 +50,37 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "account/general",
         name: SettingsRouteName.ACCOUNT_SETTINGS_GENERAL,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AccountSettings" */ "@/views/Settings/AccountSettings.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Settings/AccountSettings.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Account settings") as string,
+            message: (): string => t("Account settings") as string,
           },
         },
       },
       {
         path: "preferences",
         name: SettingsRouteName.PREFERENCES,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Preferences" */ "@/views/Settings/Preferences.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Settings/PreferencesView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
-          announcer: { message: (): string => i18n.t("Preferences") as string },
+          announcer: { message: (): string => t("Preferences") as string },
         },
       },
       {
         path: "notifications",
         name: SettingsRouteName.NOTIFICATIONS,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Notifications" */ "@/views/Settings/Notifications.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Settings/NotificationsView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Notifications") as string,
+            message: (): string => t("Notifications") as string,
           },
         },
       },
@@ -99,50 +93,42 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/dashboard",
         name: SettingsRouteName.ADMIN_DASHBOARD,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Dashboard" */ "@/views/Admin/Dashboard.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Admin/DashboardView.vue"),
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Admin dashboard") as string,
+            message: (): string => t("Admin dashboard") as string,
           },
         },
       },
       {
         path: "admin/settings",
         name: SettingsRouteName.ADMIN_SETTINGS,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AdminSettings" */ "@/views/Admin/Settings.vue"
-          ),
+        component: (): Promise<any> => import("@/views/Admin/SettingsView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Admin settings") as string,
+            message: (): string => t("Admin settings") as string,
           },
         },
       },
       {
         path: "admin/users",
         name: SettingsRouteName.USERS,
-        component: (): Promise<ImportedComponent> =>
-          import(/* webpackChunkName: "Users" */ "@/views/Admin/Users.vue"),
+        component: (): Promise<any> => import("@/views/Admin/UsersView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
-          announcer: { message: (): string => i18n.t("Users") as string },
+          announcer: { message: (): string => t("Users") as string },
         },
       },
       {
         path: "admin/users/:id",
         name: SettingsRouteName.ADMIN_USER_PROFILE,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AdminUserProfile" */ "@/views/Admin/AdminUserProfile.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Admin/AdminUserProfile.vue"),
         props: true,
         meta: {
           requiredAuth: true,
@@ -152,62 +138,50 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/profiles",
         name: SettingsRouteName.PROFILES,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AdminProfiles" */ "@/views/Admin/Profiles.vue"
-          ),
+        component: (): Promise<any> => import("@/views/Admin/ProfilesView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
-          announcer: { message: (): string => i18n.t("Profiles") as string },
+          announcer: { message: (): string => t("Profiles") as string },
         },
       },
       {
         path: "admin/profiles/:id",
         name: SettingsRouteName.ADMIN_PROFILE,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AdminProfile" */ "@/views/Admin/AdminProfile.vue"
-          ),
+        component: (): Promise<any> => import("@/views/Admin/AdminProfile.vue"),
         props: true,
         meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "admin/groups",
         name: SettingsRouteName.ADMIN_GROUPS,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "GroupProfiles" */ "@/views/Admin/GroupProfiles.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Admin/GroupProfiles.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Group profiles") as string,
+            message: (): string => t("Group profiles") as string,
           },
         },
       },
       {
         path: "admin/groups/:id",
         name: SettingsRouteName.ADMIN_GROUP_PROFILE,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "AdminGroupProfile" */ "@/views/Admin/AdminGroupProfile.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Admin/AdminGroupProfile.vue"),
         props: true,
         meta: { requiredAuth: true, announcer: { skip: true } },
       },
       {
         path: "admin/instances",
         name: SettingsRouteName.INSTANCES,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Instances" */ "@/views/Admin/Instances.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Admin/InstancesView.vue"),
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Instances") as string,
+            message: (): string => t("Instances") as string,
           },
         },
         props: true,
@@ -215,15 +189,12 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "admin/instances/:domain",
         name: SettingsRouteName.INSTANCE,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Instance" */ "@/views/Admin/Instance.vue"
-          ),
+        component: (): Promise<any> => import("@/views/Admin/InstanceView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Instance") as string,
+            message: (): string => t("Instance") as string,
           },
         },
       },
@@ -236,43 +207,37 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/moderation/reports",
         name: SettingsRouteName.REPORTS,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "ReportList" */ "@/views/Moderation/ReportList.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Moderation/ReportListView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Reports list") as string,
+            message: (): string => t("Reports list") as string,
           },
         },
       },
       {
         path: "/moderation/report/:reportId",
         name: SettingsRouteName.REPORT,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "Report" */ "@/views/Moderation/Report.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Moderation/ReportView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
-          announcer: { message: (): string => i18n.t("Report") as string },
+          announcer: { message: (): string => t("Report") as string },
         },
       },
       {
         path: "/moderation/logs",
         name: SettingsRouteName.REPORT_LOGS,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "ModerationLogs" */ "@/views/Moderation/Logs.vue"
-          ),
+        component: (): Promise<any> =>
+          import("@/views/Moderation/LogsView.vue"),
         props: true,
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Moderation logs") as string,
+            message: (): string => t("Moderation logs") as string,
           },
         },
       },
@@ -285,29 +250,25 @@ export const settingsRoutes: RouteConfig[] = [
       {
         path: "/identity/create",
         name: SettingsRouteName.CREATE_IDENTITY,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
-          ),
-        props: (route: Route): Record<string, unknown> => ({
+        component: (): Promise<any> =>
+          import("@/views/Account/children/EditIdentity.vue"),
+        props: (route: RouteLocationNormalized): Record<string, unknown> => ({
           identityName: route.params.identityName,
           isUpdate: false,
         }),
         meta: {
           requiredAuth: true,
           announcer: {
-            message: (): string => i18n.t("Create identity") as string,
+            message: (): string => t("Create identity") as string,
           },
         },
       },
       {
         path: "/identity/update/:identityName?",
         name: SettingsRouteName.UPDATE_IDENTITY,
-        component: (): Promise<ImportedComponent> =>
-          import(
-            /* webpackChunkName: "EditIdentity" */ "@/views/Account/children/EditIdentity.vue"
-          ),
-        props: (route: Route): Record<string, unknown> => ({
+        component: (): Promise<any> =>
+          import("@/views/Account/children/EditIdentity.vue"),
+        props: (route: RouteLocationNormalized): Record<string, unknown> => ({
           identityName: route.params.identityName,
           isUpdate: true,
         }),

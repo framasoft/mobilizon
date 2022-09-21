@@ -1,26 +1,22 @@
 <template>
-  <section class="section container has-text-centered not-found">
-    <div class="columns is-vertical is-centered">
-      <div class="column is-half">
+  <section class="container mx-auto pt-4 is-max-desktop max-w-2xl">
+    <div class="">
+      <div class="">
         <picture>
           <source
-            srcset="/img/pics/error-480w.webp 1x, /img/pics/error-1024w.webp 2x"
+            :srcset="`/img/pics/error-480w.webp 1x, /img/pics/error-1024w.webp 2x`"
             type="image/webp"
-          />
-          <source
-            srcset="/img/pics/error-480w.jpg 1x, /img/pics/error-1024w.jpg 2x"
-            type="image/jpeg"
           />
 
           <img
-            :src="`/img/pics/error-480w.jpg`"
+            :src="`/img/pics/error-480w.webp`"
             alt=""
             width="2616"
             height="1698"
             loading="lazy"
           />
         </picture>
-        <h1 class="title">
+        <h1 class="text-4xl mb-3">
           {{ $t("The page you're looking for doesn't exist.") }}
         </h1>
         <p>
@@ -38,9 +34,9 @@
           }}
         </p>
         <!--  The following should just be replaced with the SearchField component but it fails for some reason  -->
-        <form @submit.prevent="enter">
-          <b-field class="search">
-            <b-input
+        <form @submit.prevent="enter" class="flex flex-wrap mt-3">
+          <o-field expanded>
+            <o-input
               expanded
               icon="magnify"
               type="search"
@@ -52,53 +48,35 @@
                 {{ $t("Search") }}
               </button>
             </p>
-          </b-field>
+          </o-field>
         </form>
       </div>
     </div>
   </section>
 </template>
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import BField from "buefy/src/components/field/Field.vue";
+<script lang="ts" setup>
+import { useHead } from "@vueuse/head";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import RouteName from "../router/name";
 
-@Component({
-  components: {
-    BField,
-  },
-  metaInfo() {
-    return {
-      title: this.$t("Page not found") as string,
-    };
-  },
-})
-export default class PageNotFound extends Vue {
-  searchText = "";
+const searchText = ref("");
 
-  get searchPlaceHolder(): string {
-    return this.$t("Search events, groups, etc.") as string;
-  }
+const { t } = useI18n({ useScope: "global" });
+useHead({
+  title: computed(() => t("Page not found")),
+});
+const router = useRouter();
 
-  async enter(): Promise<void> {
-    await this.$router.push({
-      name: RouteName.SEARCH,
-      query: { term: this.searchText },
-    });
-  }
-}
+const searchPlaceHolder = computed((): string => {
+  return t("Search events, groups, etc.") as string;
+});
+
+const enter = async (): Promise<void> => {
+  await router.push({
+    name: RouteName.SEARCH,
+    query: { term: searchText.value },
+  });
+};
 </script>
-<style lang="scss">
-.container.not-found {
-  margin: auto;
-  background: $white;
-
-  img {
-    margin-top: 3rem;
-  }
-
-  p {
-    margin-bottom: 1em;
-  }
-}
-</style>

@@ -1,29 +1,34 @@
-import {
-  IAnalyticsConfig,
-  IConfig,
-  IKeyValueConfig,
-} from "@/types/config.model";
+import { IAnalyticsConfig, IKeyValueConfig } from "@/types/config.model";
 
-export const statistics = async (config: IConfig, environement: any) => {
-  console.debug("Loading statistics", config.analytics);
-  const matomoConfig = checkProviderConfig(config, "matomo");
+let app: any = null;
+
+export const setAppForAnalytics = (newApp: any) => {
+  app = newApp;
+};
+
+export const statistics = async (
+  configAnalytics: IAnalyticsConfig[],
+  environement: any
+) => {
+  console.debug("Loading statistics", configAnalytics);
+  const matomoConfig = checkProviderConfig(configAnalytics, "matomo");
   if (matomoConfig?.enabled === true) {
     const { matomo } = (await import("./matomo")) as any;
-    matomo(environement, convertConfig(matomoConfig.configuration));
+    matomo({ ...environement, app }, convertConfig(matomoConfig.configuration));
   }
 
-  const sentryConfig = checkProviderConfig(config, "sentry");
+  const sentryConfig = checkProviderConfig(configAnalytics, "sentry");
   if (sentryConfig?.enabled === true) {
     const { sentry } = (await import("./sentry")) as any;
-    sentry(environement, convertConfig(sentryConfig.configuration));
+    sentry({ ...environement, app }, convertConfig(sentryConfig.configuration));
   }
 };
 
 export const checkProviderConfig = (
-  config: IConfig,
+  configAnalytics: IAnalyticsConfig[],
   providerName: string
 ): IAnalyticsConfig | undefined => {
-  return config?.analytics?.find((provider) => provider.id === providerName);
+  return configAnalytics?.find((provider) => provider.id === providerName);
 };
 
 export const convertConfig = (

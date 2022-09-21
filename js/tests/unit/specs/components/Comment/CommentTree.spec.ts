@@ -1,12 +1,10 @@
-import { config, createLocalVue, shallowMount, Wrapper } from "@vue/test-utils";
+import { config, shallowMount, VueWrapper } from "@vue/test-utils";
 import CommentTree from "@/components/Comment/CommentTree.vue";
-import Buefy from "buefy";
 import {
   createMockClient,
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import VueApollo from "@vue/apollo-option";
 import {
   COMMENTS_THREADS_WITH_REPLIES,
   CREATE_COMMENT_FROM_EVENT,
@@ -21,10 +19,20 @@ import {
 } from "../../mocks/event";
 import flushPromises from "flush-promises";
 import { defaultResolvers } from "../../common";
-const localVue = createLocalVue();
-localVue.use(Buefy);
-localVue.use(VueApollo);
-config.mocks.$t = (key: string): string => key;
+import { afterEach, describe, vi, it, expect, beforeEach } from "vitest";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import Oruga from "@oruga-ui/oruga-next";
+import { notifierPlugin } from "@/plugins/notifier";
+import { InMemoryCache } from "@apollo/client/cache";
+import { createRouter, createWebHistory, Router } from "vue-router";
+import { routes } from "@/router";
+import { dialogPlugin } from "@/plugins/dialog";
+
+config.global.plugins.push(Oruga);
+config.global.plugins.push(notifierPlugin);
+config.global.plugins.push(dialogPlugin);
+
+let router: Router;
 
 const eventData = {
   id: "1",
@@ -34,21 +42,23 @@ const eventData = {
   },
 };
 describe("CommentTree", () => {
-  let wrapper: Wrapper<Vue>;
+  let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
-  let apolloProvider;
   let requestHandlers: Record<string, RequestHandler>;
 
-  const generateWrapper = (handlers = {}, baseData = {}) => {
+  const generateWrapper = (handlers = {}, extraProps = {}) => {
+    const cache = new InMemoryCache({ addTypename: true });
+
     mockClient = createMockClient({
+      cache,
       resolvers: defaultResolvers,
     });
 
     requestHandlers = {
-      eventCommentThreadsQueryHandler: jest
+      eventCommentThreadsQueryHandler: vi
         .fn()
         .mockResolvedValue(eventCommentThreadsMock),
-      createCommentForEventMutationHandler: jest
+      createCommentForEventMutationHandler: vi
         .fn()
         .mockResolvedValue(newCommentForEventResponse),
       ...handlers,
@@ -62,36 +72,39 @@ describe("CommentTree", () => {
       CREATE_COMMENT_FROM_EVENT,
       requestHandlers.createCommentForEventMutationHandler
     );
-    apolloProvider = new VueApollo({
-      defaultClient: mockClient,
-    });
-
     wrapper = shallowMount(CommentTree, {
-      localVue,
-      apolloProvider,
-      propsData: {
+      props: {
         event: { ...eventData },
+        ...extraProps,
       },
-      stubs: ["editor"],
-      data() {
-        return {
-          ...baseData,
-        };
+      global: {
+        provide: {
+          [DefaultApolloClient]: mockClient,
+        },
+        plugins: [router],
       },
     });
   };
 
+  beforeEach(async () => {
+    router = createRouter({
+      history: createWebHistory(),
+      routes: routes,
+    });
+
+    // await router.isReady();
+  });
+
   afterEach(() => {
     mockClient = null;
     requestHandlers = {};
-    apolloProvider = null;
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it("renders a loading comment tree", async () => {
     generateWrapper();
 
-    expect(wrapper.find(".loading").text()).toBe("Loading comments…");
+    expect(wrapper.find("p.text-center").text()).toBe("Loading comments…");
 
     expect(wrapper.html()).toMatchSnapshot();
   });
@@ -99,15 +112,14 @@ describe("CommentTree", () => {
   it("renders a comment tree with comments", async () => {
     generateWrapper();
 
-    await flushPromises();
-
     expect(wrapper.exists()).toBe(true);
     expect(
       requestHandlers.eventCommentThreadsQueryHandler
     ).toHaveBeenCalledWith({ eventUUID: eventData.uuid });
-    expect(wrapper.vm.$apollo.queries.comments).toBeTruthy();
-    expect(wrapper.find(".loading").exists()).toBe(false);
-    expect(wrapper.findAll(".comment-list .root-comment").length).toBe(2);
+    await flushPromises();
+    expect(wrapper.find("p.text-center").exists()).toBe(false);
+
+    expect(wrapper.findAllComponents("comment-stub").length).toBe(2);
     expect(wrapper.html()).toMatchSnapshot();
   });
 
@@ -117,18 +129,20 @@ describe("CommentTree", () => {
       {
         newComment: {
           text: newCommentForEventMock.text,
+          isAnnouncement: false,
         },
       }
     );
 
     await flushPromises();
 
-    expect(wrapper.find("form.new-comment").isVisible()).toBe(true);
-    expect(wrapper.findAll(".comment-list .root-comment").length).toBe(2);
+    expect(wrapper.find("form").isVisible()).toBe(true);
+    expect(wrapper.findAllComponents("comment-stub").length).toBe(2);
+    wrapper.getComponent({ ref: "commenteditor" });
 
-    wrapper.find("form.new-comment").trigger("submit");
+    wrapper.find("form").trigger("submit");
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(
       requestHandlers.createCommentForEventMutationHandler
     ).toHaveBeenCalledWith({
@@ -152,7 +166,7 @@ describe("CommentTree", () => {
 
   it("renders an empty comment tree", async () => {
     generateWrapper({
-      eventCommentThreadsQueryHandler: jest
+      eventCommentThreadsQueryHandler: vi
         .fn()
         .mockResolvedValue(eventNoCommentThreadsMock),
     });
@@ -162,9 +176,7 @@ describe("CommentTree", () => {
       requestHandlers.eventCommentThreadsQueryHandler
     ).toHaveBeenCalledWith({ eventUUID: eventData.uuid });
 
-    expect(wrapper.findComponent({ name: "EmptyContent" }).text()).toBe(
-      "No comments yet"
-    );
+    expect(wrapper.findComponent({ name: "EmptyContent" }).exists());
     expect(wrapper.html()).toMatchSnapshot();
   });
 });

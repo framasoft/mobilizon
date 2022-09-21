@@ -1,61 +1,38 @@
 <template>
-  <li :class="{ active: sectionActive }">
-    <router-link v-if="to" :to="to">{{ title }}</router-link>
+  <li
+    class="bg-mbz-yellow-alt-300 text-violet-2 dark:bg-mbz-purple-500 dark:text-zinc-100 text-xl"
+  >
+    <router-link
+      class="cursor-pointer my-2 mx-0 py-2 px-3 font-medium block no-underline"
+      v-if="to"
+      :to="to"
+      >{{ title }}</router-link
+    >
     <b v-else>{{ title }}</b>
     <ul>
       <slot></slot>
     </ul>
   </li>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import SettingMenuItem from "@/components/Settings/SettingMenuItem.vue";
-import { Route } from "vue-router";
+<script lang="ts" setup>
+defineProps<{
+  title?: string;
+  to: { name: string; params?: Record<string, any> };
+}>();
 
-@Component({
-  components: { SettingMenuItem },
-})
-export default class SettingMenuSection extends Vue {
-  @Prop({ required: false, type: String }) title!: string;
+// const route = useRoute();
+// const slots = useSlots();
 
-  @Prop({ required: true, type: Object }) to!: Route;
-
-  get sectionActive(): boolean {
-    if (this.$slots.default) {
-      return this.$slots.default.some(
-        ({
-          componentOptions: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            propsData: { to },
-          },
-        }) => to && to.name === this.$route.name
-      );
-    }
-    return false;
-  }
-}
+// const sectionActive = computed((): boolean => {
+//   if (slots.default) {
+//     return slots.default.some(
+//       ({
+//         componentOptions: {
+//           propsData: { to },
+//         },
+//       }) => to && to.name === route.name
+//     );
+//   }
+//   return false;
+// });
 </script>
-
-<style lang="scss" scoped>
-li {
-  font-size: 1.3rem;
-  background-color: $secondary;
-  color: $background-color;
-  margin: 2px auto;
-
-  &.active {
-    background-color: #fea72b;
-  }
-
-  a,
-  b {
-    cursor: pointer;
-    margin: 5px 0;
-    display: block;
-    padding: 5px 10px;
-    color: inherit;
-    font-weight: 500;
-  }
-}
-</style>

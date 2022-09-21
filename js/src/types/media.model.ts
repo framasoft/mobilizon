@@ -12,6 +12,10 @@ export interface IMediaUpload {
   alt: string | null;
 }
 
+export interface IMediaUploadWrapper {
+  media: IMediaUpload;
+}
+
 export interface IMediaMetadata {
   width?: number;
   height?: number;

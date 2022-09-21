@@ -6,63 +6,61 @@ import {
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { i18n } from "@/utils/i18n";
 
+const t = i18n.global.t;
+
 export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "wheelchair-accessibility",
     key: "mz:accessibility:wheelchairAccessible",
-    label: i18n.t("Wheelchair accessibility") as string,
-    description: i18n.t(
+    label: t("Wheelchair accessibility") as string,
+    description: t(
       "Whether the event is accessible with a wheelchair"
     ) as string,
     value: "no",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.CHOICE,
     choices: {
-      no: i18n.t("Not accessible with a wheelchair") as string,
-      partially: i18n.t("Partially accessible with a wheelchair") as string,
-      fully: i18n.t("Fully accessible with a wheelchair") as string,
+      no: t("Not accessible with a wheelchair") as string,
+      partially: t("Partially accessible with a wheelchair") as string,
+      fully: t("Fully accessible with a wheelchair") as string,
     },
     category: EventMetadataCategories.ACCESSIBILITY,
   },
   {
     icon: "subtitles",
     key: "mz:accessibility:live:subtitle",
-    label: i18n.t("Subtitles") as string,
-    description: i18n.t("Whether the event live video is subtitled") as string,
+    label: t("Subtitles") as string,
+    description: t("Whether the event live video is subtitled") as string,
     value: "false",
     type: EventMetadataType.BOOLEAN,
     keyType: EventMetadataKeyType.PLAIN,
     choices: {
-      true: i18n.t("The event live video contains subtitles") as string,
-      false: i18n.t(
-        "The event live video does not contain subtitles"
-      ) as string,
+      true: t("The event live video contains subtitles") as string,
+      false: t("The event live video does not contain subtitles") as string,
     },
     category: EventMetadataCategories.ACCESSIBILITY,
   },
   {
     icon: "mz:icon:sign_language",
     key: "mz:accessibility:live:sign_language",
-    label: i18n.t("Sign Language") as string,
-    description: i18n.t(
+    label: t("Sign Language") as string,
+    description: t(
       "Whether the event is interpreted in sign language"
     ) as string,
     value: "false",
     type: EventMetadataType.BOOLEAN,
     keyType: EventMetadataKeyType.PLAIN,
     choices: {
-      true: i18n.t("The event has a sign language interpreter") as string,
-      false: i18n.t(
-        "The event hasn't got a sign language interpreter"
-      ) as string,
+      true: t("The event has a sign language interpreter") as string,
+      false: t("The event hasn't got a sign language interpreter") as string,
     },
     category: EventMetadataCategories.ACCESSIBILITY,
   },
   {
     icon: "youtube",
     key: "mz:replay:youtube:url",
-    label: i18n.t("YouTube replay") as string,
-    description: i18n.t(
+    label: t("YouTube replay") as string,
+    description: t(
       "The URL where the event live can be watched again after it has ended"
     ) as string,
     value: "",
@@ -75,8 +73,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   // {
   //   icon: "twitch",
   //   key: "mz:replay:twitch:url",
-  //   label: i18n.t("Twitch replay") as string,
-  //   description: i18n.t(
+  //   label: t("Twitch replay") as string,
+  //   description: t(
   //     "The URL where the event live can be watched again after it has ended"
   //   ) as string,
   //   value: "",
@@ -85,8 +83,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "mz:icon:peertube",
     key: "mz:replay:peertube:url",
-    label: i18n.t("PeerTube replay") as string,
-    description: i18n.t(
+    label: t("PeerTube replay") as string,
+    description: t(
       "The URL where the event live can be watched again after it has ended"
     ) as string,
     value: "",
@@ -98,10 +96,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "mz:icon:peertube",
     key: "mz:live:peertube:url",
-    label: i18n.t("PeerTube live") as string,
-    description: i18n.t(
-      "The URL where the event can be watched live"
-    ) as string,
+    label: t("PeerTube live") as string,
+    description: t("The URL where the event can be watched live") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -111,10 +107,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "twitch",
     key: "mz:live:twitch:url",
-    label: i18n.t("Twitch live") as string,
-    description: i18n.t(
-      "The URL where the event can be watched live"
-    ) as string,
+    label: t("Twitch live") as string,
+    description: t("The URL where the event can be watched live") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -125,10 +119,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "youtube",
     key: "mz:live:youtube:url",
-    label: i18n.t("YouTube live") as string,
-    description: i18n.t(
-      "The URL where the event can be watched live"
-    ) as string,
+    label: t("YouTube live") as string,
+    description: t("The URL where the event can be watched live") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -139,10 +131,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "mz:icon:owncast",
     key: "mz:live:owncast:url",
-    label: i18n.t("Owncast") as string,
-    description: i18n.t(
-      "The URL where the event can be watched live"
-    ) as string,
+    label: t("Owncast") as string,
+    description: t("The URL where the event can be watched live") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -152,8 +142,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "calendar-check",
     key: "mz:poll:framadate:url",
-    label: i18n.t("Framadate poll") as string,
-    description: i18n.t(
+    label: t("Framadate poll") as string,
+    description: t(
       "The URL of a poll where the choice for the event date is happening"
     ) as string,
     value: "",
@@ -165,12 +155,12 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "file-document-edit",
     key: "mz:notes:etherpad:url",
-    label: i18n.t("Etherpad notes") as string,
-    description: i18n.t(
+    label: t("Etherpad notes") as string,
+    description: t(
       "The URL of a pad where notes are being taken collaboratively"
     ) as string,
     value: "",
-    placeholder: i18n.t(
+    placeholder: t(
       "https://mensuel.framapad.org/p/some-secret-token"
     ) as string,
     type: EventMetadataType.STRING,
@@ -180,8 +170,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "twitter",
     key: "mz:social:twitter:account",
-    label: i18n.t("Twitter account") as string,
-    description: i18n.t(
+    label: t("Twitter account") as string,
+    description: t(
       "A twitter account handle to follow for event updates"
     ) as string,
     value: "",
@@ -193,8 +183,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "mz:icon:fediverse",
     key: "mz:social:fediverse:account_url",
-    label: i18n.t("Fediverse account") as string,
-    description: i18n.t(
+    label: t("Fediverse account") as string,
+    description: t(
       "A fediverse account URL to follow for event updates"
     ) as string,
     value: "",
@@ -206,8 +196,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "ticket-confirmation",
     key: "mz:ticket:external_url",
-    label: i18n.t("Online ticketing") as string,
-    description: i18n.t("An URL to an external ticketing platform") as string,
+    label: t("Online ticketing") as string,
+    description: t("An URL to an external ticketing platform") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -216,10 +206,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "cash",
     key: "mz:ticket:price_url",
-    label: i18n.t("Price sheet") as string,
-    description: i18n.t(
-      "A link to a page presenting the price options"
-    ) as string,
+    label: t("Price sheet") as string,
+    description: t("A link to a page presenting the price options") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -228,10 +216,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "calendar-text",
     key: "mz:schedule_url",
-    label: i18n.t("Schedule") as string,
-    description: i18n.t(
-      "A link to a page presenting the event schedule"
-    ) as string,
+    label: t("Schedule") as string,
+    description: t("A link to a page presenting the event schedule") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -240,8 +226,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "webcam",
     key: "mz:visio:jitsi_meet",
-    label: i18n.t("Jitsi Meet") as string,
-    description: i18n.t("The Jitsi Meet video teleconference URL") as string,
+    label: t("Jitsi Meet") as string,
+    description: t("The Jitsi Meet video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -251,8 +237,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "webcam",
     key: "mz:visio:zoom",
-    label: i18n.t("Zoom") as string,
-    description: i18n.t("The Zoom video teleconference URL") as string,
+    label: t("Zoom") as string,
+    description: t("The Zoom video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -262,10 +248,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "microsoft-teams",
     key: "mz:visio:microsoft_teams",
-    label: i18n.t("Microsoft Teams") as string,
-    description: i18n.t(
-      "The Microsoft Teams video teleconference URL"
-    ) as string,
+    label: t("Microsoft Teams") as string,
+    description: t("The Microsoft Teams video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -275,8 +259,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "google-hangouts",
     key: "mz:visio:google_meet",
-    label: i18n.t("Google Meet") as string,
-    description: i18n.t("The Google Meet video teleconference URL") as string,
+    label: t("Google Meet") as string,
+    description: t("The Google Meet video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,
@@ -286,10 +270,8 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
   {
     icon: "webcam",
     key: "mz:visio:big_blue_button",
-    label: i18n.t("Big Blue Button") as string,
-    description: i18n.t(
-      "The Big Blue Button video teleconference URL"
-    ) as string,
+    label: t("Big Blue Button") as string,
+    description: t("The Big Blue Button video teleconference URL") as string,
     value: "",
     type: EventMetadataType.STRING,
     keyType: EventMetadataKeyType.URL,

@@ -11,6 +11,7 @@ import { ActorType, GroupVisibility, Openness } from "../enums";
 import type { IMember } from "./member.model";
 import type { ITodoList } from "../todolist";
 import { IActivity } from "../activity.model";
+import { IFollower } from "./follower.model";
 
 export interface IGroup extends IActor {
   members: Paginate<IMember>;
@@ -24,10 +25,14 @@ export interface IGroup extends IActor {
   visibility: GroupVisibility;
   manuallyApprovesFollowers: boolean;
   activity: Paginate<IActivity>;
+  followers: Paginate<IFollower>;
+  membersCount?: number;
+  followersCount?: number;
 }
 
 export class Group extends Actor implements IGroup {
   members: Paginate<IMember> = { elements: [], total: 0 };
+  followers: Paginate<IFollower> = { elements: [], total: 0 };
 
   resources: Paginate<IResource> = { elements: [], total: 0 };
 

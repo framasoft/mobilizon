@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
   """
 
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Service.Geospatial
+  alias Mobilizon.Service.{Geospatial, Pictures}
 
   require Logger
 
@@ -44,7 +44,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Address do
         %{longitude: longitude, latitude: latitude, zoom: zoom, locale: locale},
         _context
       ) do
-    addresses = Geospatial.service().geocode(longitude, latitude, lang: locale, zoom: zoom)
+    addresses =
+      longitude
+      |> Geospatial.service().geocode(latitude, lang: locale, zoom: zoom)
+      |> Enum.map(fn address ->
+        picture_info =
+          Pictures.service().search(address.locality || address.region || address.country)
+
+        Map.put(address, :picture_info, picture_info)
+      end)
 
     {:ok, addresses}
   end

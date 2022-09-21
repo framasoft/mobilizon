@@ -1,20 +1,20 @@
-import { config, createLocalVue, mount } from "@vue/test-utils";
+import { config, mount } from "@vue/test-utils";
 import PostListItem from "@/components/Post/PostListItem.vue";
-import Buefy from "buefy";
-import VueRouter from "vue-router";
-import { routes } from "@/router";
+import { vi, beforeEach, describe, it, expect } from "vitest";
 import { enUS } from "date-fns/locale";
-import { formatDateTimeString } from "@/filters/datetime";
-import { i18n } from "@/utils/i18n";
+import { routes } from "@/router";
+import { createRouter, createWebHistory, Router } from "vue-router";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-localVue.use(VueRouter);
-localVue.use((vue) => {
-  vue.prototype.$dateFnsLocale = enUS;
+let router: Router;
+
+beforeEach(async () => {
+  router = createRouter({
+    history: createWebHistory(),
+    routes: routes,
+  });
+
+  // await router.isReady();
 });
-const router = new VueRouter({ routes, mode: "history" });
-config.mocks.$t = (key: string): string => key;
 
 const postData = {
   id: "1",
@@ -31,15 +31,15 @@ const generateWrapper = (
   customProps: Record<string, unknown> = {}
 ) => {
   return mount(PostListItem, {
-    localVue,
-    router,
-    i18n,
-    propsData: {
+    props: {
       post: { ...postData, ...customPostData },
       ...customProps,
     },
-    filters: {
-      formatDateTimeString,
+    global: {
+      provide: {
+        dateFnsLocale: enUS,
+      },
+      plugins: [router],
     },
   });
 };
@@ -50,15 +50,15 @@ describe("PostListItem", () => {
 
     expect(wrapper.html()).toMatchSnapshot();
 
-    expect(
-      wrapper.find("a.post-minimalist-card-wrapper").attributes("href")
-    ).toBe(`/p/${postData.slug}`);
+    expect(wrapper.find("a.block.bg-white").attributes("href")).toBe(
+      `/p/${postData.slug}`
+    );
 
-    expect(wrapper.find(".post-minimalist-title").text()).toBe(postData.title);
+    expect(wrapper.find("h3").text()).toBe(postData.title);
 
-    expect(wrapper.find(".post-publication-date").text()).toBe("Dec 2, 2020");
+    expect(wrapper.find("p.flex.gap-2").text()).toBe("Dec 2, 2020");
 
-    expect(wrapper.find(".post-publisher").exists()).toBeFalsy();
+    expect(wrapper.find("p.flex.gap-1").exists()).toBeFalsy();
   });
 
   it("renders post list item with tags", () => {
@@ -68,9 +68,11 @@ describe("PostListItem", () => {
 
     expect(wrapper.html()).toMatchSnapshot();
 
-    expect(wrapper.find(".tags").text()).toContain("A tag");
+    expect(wrapper.find("div.flex.flex-wrap.gap-y-0.gap-x-2").text()).toContain(
+      "A tag"
+    );
 
-    expect(wrapper.find(".post-publisher").exists()).toBeFalsy();
+    expect(wrapper.find("p.flex.gap-1").exists()).toBeFalsy();
   });
 
   it("renders post list item with publisher name", () => {
@@ -81,7 +83,7 @@ describe("PostListItem", () => {
 
     expect(wrapper.html()).toMatchSnapshot();
 
-    expect(wrapper.find(".post-publisher").exists()).toBeTruthy();
-    expect(wrapper.find(".post-publisher").text()).toContain("An author");
+    expect(wrapper.find("p.flex.gap-1").exists()).toBeTruthy();
+    expect(wrapper.find("p.flex.gap-1").text()).toContain("An author");
   });
 });

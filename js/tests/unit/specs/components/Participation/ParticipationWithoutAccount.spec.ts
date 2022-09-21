@@ -1,7 +1,5 @@
-import { config, createLocalVue, mount, Wrapper } from "@vue/test-utils";
+import { config, mount, VueWrapper } from "@vue/test-utils";
 import ParticipationWithoutAccount from "@/components/Participation/ParticipationWithoutAccount.vue";
-import Buefy from "buefy";
-import VueRouter from "vue-router";
 import { routes } from "@/router";
 import {
   CommentModeration,
@@ -13,26 +11,34 @@ import {
   MockApolloClient,
   RequestHandler,
 } from "mock-apollo-client";
-import { CONFIG } from "@/graphql/config";
-import VueApollo from "@vue/apollo-option";
+import { ANONYMOUS_ACTOR_ID } from "@/graphql/config";
 import { FETCH_EVENT_BASIC, JOIN_EVENT } from "@/graphql/event";
 import { IEvent } from "@/types/event.model";
-import { i18n } from "@/utils/i18n";
-import { configMock } from "../../mocks/config";
+import { anonymousActorIdMock } from "../../mocks/config";
 import {
   fetchEventBasicMock,
   joinEventMock,
   joinEventResponseMock,
 } from "../../mocks/event";
-import { InMemoryCache } from "@apollo/client/cache";
 import { defaultResolvers } from "../../common";
 import flushPromises from "flush-promises";
+import { vi, describe, expect, it, beforeEach, afterEach } from "vitest";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import { Router, createRouter, createWebHistory } from "vue-router";
+import Oruga from "@oruga-ui/oruga-next";
+import { cache } from "@/apollo/memory";
 
-const localVue = createLocalVue();
-localVue.use(Buefy);
-localVue.use(VueRouter);
-const router = new VueRouter({ routes, mode: "history" });
-config.mocks.$t = (key: string): string => key;
+config.global.plugins.push(Oruga);
+let router: Router;
+
+beforeEach(async () => {
+  router = createRouter({
+    history: createWebHistory(),
+    routes: routes,
+  });
+
+  // await router.isReady();
+});
 
 const eventData = {
   id: "1",
@@ -56,31 +62,38 @@ const eventData = {
 };
 
 describe("ParticipationWithoutAccount", () => {
-  let wrapper: Wrapper<Vue>;
-  let mockClient: MockApolloClient;
-  let apolloProvider;
+  let wrapper: VueWrapper;
+  let mockClient: MockApolloClient | null;
   let requestHandlers: Record<string, RequestHandler>;
+
+  afterEach(() => {
+    wrapper?.unmount();
+    cache.reset();
+    mockClient = null;
+  });
 
   const generateWrapper = (
     handlers: Record<string, unknown> = {},
-    customProps: Record<string, unknown> = {},
-    baseData: Record<string, unknown> = {}
+    customProps: Record<string, unknown> = {}
   ) => {
-    const cache = new InMemoryCache({ addTypename: false });
-
     mockClient = createMockClient({
       cache,
       resolvers: defaultResolvers,
     });
     requestHandlers = {
-      configQueryHandler: jest.fn().mockResolvedValue(configMock),
-      fetchEventQueryHandler: jest.fn().mockResolvedValue(fetchEventBasicMock),
-      joinEventMutationHandler: jest
+      anonymousActorIdQueryHandler: vi
+        .fn()
+        .mockResolvedValue(anonymousActorIdMock),
+      fetchEventQueryHandler: vi.fn().mockResolvedValue(fetchEventBasicMock),
+      joinEventMutationHandler: vi
         .fn()
         .mockResolvedValue(joinEventResponseMock),
       ...handlers,
     };
-    mockClient.setRequestHandler(CONFIG, requestHandlers.configQueryHandler);
+    mockClient.setRequestHandler(
+      ANONYMOUS_ACTOR_ID,
+      requestHandlers.anonymousActorIdQueryHandler
+    );
     mockClient.setRequestHandler(
       FETCH_EVENT_BASIC,
       requestHandlers.fetchEventQueryHandler
@@ -90,43 +103,33 @@ describe("ParticipationWithoutAccount", () => {
       requestHandlers.joinEventMutationHandler
     );
 
-    apolloProvider = new VueApollo({
-      defaultClient: mockClient,
-    });
-
     wrapper = mount(ParticipationWithoutAccount, {
-      localVue,
-      router,
-      i18n,
-      apolloProvider,
-      propsData: {
+      props: {
         uuid: eventData.uuid,
         ...customProps,
       },
-      data() {
-        return {
-          ...baseData,
-        };
+      global: {
+        provide: {
+          [DefaultApolloClient]: mockClient,
+        },
+        plugins: [router],
       },
     });
   };
 
   it("renders the participation without account view with minimal data", async () => {
     generateWrapper();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
 
     expect(wrapper.exists()).toBe(true);
-    expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
-    expect(wrapper.vm.$apollo.queries.config).toBeTruthy();
+    expect(requestHandlers.anonymousActorIdQueryHandler).toHaveBeenCalled();
 
     expect(requestHandlers.fetchEventQueryHandler).toHaveBeenCalledWith({
       uuid: eventData.uuid,
     });
-    expect(wrapper.vm.$apollo.queries.event).toBeTruthy();
+    await flushPromises();
 
-    expect(wrapper.find(".hero-body .container").isVisible()).toBeTruthy();
-    expect(wrapper.find("article.message.is-info").text()).toBe(
+    expect(wrapper.find(".container").isVisible()).toBeTruthy();
+    expect(wrapper.find(".o-notification--info").text()).toBe(
       "Your email will only be used to confirm that you're a real person and send you eventual updates for this event. It will NOT be transmitted to other instances or to the event organizer."
     );
 
@@ -134,13 +137,13 @@ describe("ParticipationWithoutAccount", () => {
     wrapper.find("textarea").setValue("a message long enough");
     wrapper.find("form").trigger("submit");
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(requestHandlers.joinEventMutationHandler).toHaveBeenCalledWith({
       ...joinEventMock,
     });
 
-    const cachedData = mockClient.cache.readQuery<{ event: IEvent }>({
+    const cachedData = mockClient?.cache.readQuery<{ event: IEvent }>({
       query: FETCH_EVENT_BASIC,
       variables: {
         uuid: eventData.uuid,
@@ -161,10 +164,10 @@ describe("ParticipationWithoutAccount", () => {
     expect(wrapper.find("h1.title").text()).toBe(
       "Request for participation confirmation sent"
     );
-    // TextEncoder is not in js-dom
-    expect(
-      wrapper.find("article.message.is-warning .media-content").text()
-    ).toBe("Unable to save your participation in this browser.");
+    // TextEncoder ~is~ was not in js-dom?
+    // expect(wrapper.find(".o-notification--error").text()).toBe(
+    //   "Unable to save your participation in this browser."
+    // );
 
     expect(wrapper.find("span.details").text()).toBe(
       "Your participation will be validated once you click the confirmation link into the email."
@@ -174,7 +177,7 @@ describe("ParticipationWithoutAccount", () => {
 
   it("renders the warning if the event participation is restricted", async () => {
     generateWrapper({
-      fetchEventQueryHandler: jest.fn().mockResolvedValue({
+      fetchEventQueryHandler: vi.fn().mockResolvedValue({
         data: {
           event: {
             ...fetchEventBasicMock.data.event,
@@ -182,7 +185,7 @@ describe("ParticipationWithoutAccount", () => {
           },
         },
       }),
-      joinEventMutationHandler: jest.fn().mockResolvedValue({
+      joinEventMutationHandler: vi.fn().mockResolvedValue({
         data: {
           joinEvent: {
             ...joinEventResponseMock.data.joinEvent,
@@ -192,17 +195,18 @@ describe("ParticipationWithoutAccount", () => {
       }),
     });
 
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
-    expect(wrapper.vm.$data.event.joinOptions).toBe(
-      EventJoinOptions.RESTRICTED
-    );
+    // expect(wrapper.vm.$data.event.joinOptions).toBe(
+    //   EventJoinOptions.RESTRICTED
+    // );
 
-    expect(wrapper.find(".hero-body .container").text()).toContain(
+    expect(wrapper.findAll("section.container form > p")[1].text()).toContain(
       "The event organizer manually approves participations. Since you've chosen to participate without an account, please explain why you want to participate to this event."
     );
-    expect(wrapper.find(".hero-body .container").text()).not.toContain(
+    expect(
+      wrapper.findAll("section.container form > p")[1].text()
+    ).not.toContain(
       "If you want, you may send a message to the event organizer here."
     );
 
@@ -210,13 +214,13 @@ describe("ParticipationWithoutAccount", () => {
     wrapper.find("textarea").setValue("a message long enough");
     wrapper.find("form").trigger("submit");
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(requestHandlers.joinEventMutationHandler).toHaveBeenCalledWith({
       ...joinEventMock,
     });
 
-    const cachedData = mockClient.cache.readQuery<{ event: IEvent }>({
+    const cachedData = mockClient?.cache.readQuery<{ event: IEvent }>({
       query: FETCH_EVENT_BASIC,
       variables: {
         uuid: eventData.uuid,
@@ -242,30 +246,28 @@ describe("ParticipationWithoutAccount", () => {
 
   it("handles being already a participant", async () => {
     generateWrapper({
-      joinEventMutationHandler: jest
+      joinEventMutationHandler: vi
         .fn()
         .mockRejectedValue(
           new Error("You are already a participant of this event")
         ),
     });
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     wrapper.find('input[type="email"]').setValue("some@email.tld");
     wrapper.find("textarea").setValue("a message long enough");
     wrapper.find("form").trigger("submit");
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(requestHandlers.joinEventMutationHandler).toHaveBeenCalledWith({
       ...joinEventMock,
     });
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.find("form").exists()).toBeTruthy();
-    expect(
-      wrapper.find("article.message.is-danger .media-content").text()
-    ).toContain("You are already a participant of this event");
+    expect(wrapper.find(".o-notification--danger").text()).toContain(
+      "You are already a participant of this event"
+    );
     expect(wrapper.html()).toMatchSnapshot();
   });
 });

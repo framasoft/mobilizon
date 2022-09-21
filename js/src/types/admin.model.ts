@@ -1,6 +1,6 @@
 import type { IEvent } from "@/types/event.model";
 import type { IGroup } from "./actor";
-import { InstanceTermsType } from "./enums";
+import { InstancePrivacyType, InstanceTermsType } from "./enums";
 
 export interface IDashboard {
   lastPublicEventPublished: IEvent;
@@ -29,7 +29,7 @@ export interface IAdminSettings {
   instanceTermsType: InstanceTermsType;
   instanceTermsUrl: string | null;
   instancePrivacyPolicy: string;
-  instancePrivacyPolicyType: InstanceTermsType;
+  instancePrivacyPolicyType: InstancePrivacyType;
   instancePrivacyPolicyUrl: string | null;
   instanceRules: string;
   registrationsOpen: boolean;

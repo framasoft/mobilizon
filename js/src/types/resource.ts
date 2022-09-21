@@ -19,15 +19,16 @@ export interface IResource {
   id?: string;
   title: string;
   summary?: string;
-  actor?: IActor;
+  actor?: IGroup;
   url?: string;
   resourceUrl: string;
   path?: string;
   children: Paginate<IResource>;
   parent?: IResource;
   metadata: IResourceMetadata;
-  insertedAt?: Date;
-  updatedAt?: Date;
+  insertedAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   creator?: IActor;
   type?: string;
 }

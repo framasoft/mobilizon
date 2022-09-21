@@ -530,8 +530,13 @@ defmodule Mobilizon.Events do
     |> events_for_begins_on(args)
     |> events_for_ends_on(args)
     |> events_for_category(args)
+    |> events_for_categories(args)
+    |> events_for_languages(args)
+    |> events_for_statuses(args)
     |> events_for_tags(args)
+    |> maybe_join_address(args)
     |> events_for_location(args)
+    |> events_for_bounding_box(args)
     |> filter_online(args)
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
@@ -1320,6 +1325,28 @@ defmodule Mobilizon.Events do
 
   defp events_for_category(query, _args), do: query
 
+  @spec events_for_categories(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
+  defp events_for_categories(query, %{category_one_of: category_one_of})
+       when length(category_one_of) > 0 do
+    where(query, [q], q.category in ^category_one_of)
+  end
+
+  defp events_for_categories(query, _args), do: query
+
+  defp events_for_languages(query, %{language_one_of: language_one_of})
+       when length(language_one_of) > 0 do
+    where(query, [q], q.language in ^language_one_of)
+  end
+
+  defp events_for_languages(query, _args), do: query
+
+  defp events_for_statuses(query, %{status_one_of: status_one_of})
+       when length(status_one_of) > 0 do
+    where(query, [q], q.status in ^status_one_of)
+  end
+
+  defp events_for_statuses(query, _args), do: query
+
   @spec events_for_tags(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_tags(query, %{tags: tags}) when is_valid_string(tags) do
     query
@@ -1330,6 +1357,20 @@ defmodule Mobilizon.Events do
 
   defp events_for_tags(query, _args), do: query
 
+  # We add the inner join on address only if we're going to use it in
+  # events_for_location or events_for_bounding_box
+  # So we're sure it's only being added once
+  defp maybe_join_address(query, %{location: location, radius: radius})
+       when is_valid_string(location) and not is_nil(radius) do
+    join(query, :inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+  end
+
+  defp maybe_join_address(query, %{bbox: bbox}) when is_valid_string(bbox) do
+    join(query, :inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+  end
+
+  defp maybe_join_address(query, _), do: query
+
   @spec events_for_location(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
   defp events_for_location(query, %{radius: radius}) when is_nil(radius),
     do: query
@@ -1339,9 +1380,8 @@ defmodule Mobilizon.Events do
     with {lon, lat} <- Geohax.decode(location),
          point <- Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})"),
          {{x_min, y_min}, {x_max, y_max}} <- search_box({lon, lat}, radius) do
-      query
-      |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
-      |> where(
+      where(
+        query,
         [q, ..., a],
         st_x(a.geom) > ^x_min and st_x(a.geom) < ^x_max and
           st_y(a.geom) > ^y_min and st_y(a.geom) < ^y_max and
@@ -1353,6 +1393,36 @@ defmodule Mobilizon.Events do
   end
 
   defp events_for_location(query, _args), do: query
+
+  defp events_for_bounding_box(query, %{bbox: bbox}) when is_valid_string(bbox) do
+    [top_left, bottom_right] = String.split(bbox, ":")
+    [ymax, xmin] = String.split(top_left, ",")
+    [ymin, xmax] = String.split(bottom_right, ",")
+
+    where(
+      query,
+      [q, ..., a],
+      fragment(
+        "? @ ST_MakeEnvelope(?,?,?,?,?)",
+        a.geom,
+        ^sanitize_bounding_box_params(xmin),
+        ^sanitize_bounding_box_params(ymin),
+        ^sanitize_bounding_box_params(xmax),
+        ^sanitize_bounding_box_params(ymax),
+        "4326"
+      )
+    )
+  end
+
+  defp events_for_bounding_box(query, _args), do: query
+
+  @spec sanitize_bounding_box_params(String.t()) :: float()
+  defp sanitize_bounding_box_params(param) do
+    param
+    |> String.trim()
+    |> String.to_float()
+    |> Float.floor(10)
+  end
 
   @spec search_box({float(), float()}, float()) :: {{float, float}, {float, float}}
   defp search_box({lon0, lat0}, radius) do
@@ -1602,6 +1672,18 @@ defmodule Mobilizon.Events do
       [p],
       p.event_id == ^event_id and p.role not in [^:not_approved, ^:not_confirmed, ^:rejected]
     )
+    |> Repo.all()
+  end
+
+  def category_statistics do
+    Event
+    |> filter_future_events(true)
+    |> filter_public_visibility()
+    |> filter_draft()
+    |> filter_cancelled_events()
+    |> filter_local_or_from_followed_instances_events()
+    |> group_by([e], e.category)
+    |> select([e], {e.category, count(e.id)})
     |> Repo.all()
   end
 

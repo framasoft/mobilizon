@@ -1,3 +1,6 @@
+/* eslint-env node */
+require("@rushstack/eslint-patch/modern-module-resolution");
+
 module.exports = {
   root: true,
 
@@ -6,10 +9,11 @@ module.exports = {
   },
 
   extends: [
-    "plugin:vue/essential",
     "eslint:recommended",
-    "@vue/typescript/recommended",
+    "plugin:vue/vue3-essential",
+    "@vue/eslint-config-typescript/recommended",
     "plugin:prettier/recommended",
+    "@vue/eslint-config-prettier",
   ],
 
   plugins: ["prettier"],
@@ -20,12 +24,11 @@ module.exports = {
   },
 
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-underscore-dangle": [
       "error",
       {
-        allow: ["__typename"],
+        allow: ["__typename", "__schema"],
       },
     ],
     "@typescript-eslint/no-explicit-any": "off",
@@ -50,4 +53,7 @@ module.exports = {
   },
 
   ignorePatterns: ["src/typings/*.d.ts", "vue.config.js"],
+  globals: {
+    GeolocationPositionError: true,
+  },
 };

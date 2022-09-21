@@ -94,10 +94,10 @@ export const CURRENT_USER_CLIENT = gql`
 
 export const UPDATE_CURRENT_USER_CLIENT = gql`
   mutation UpdateCurrentUser(
-    $id: String!
-    $email: String!
-    $isLoggedIn: Boolean!
-    $role: UserRole!
+    $id: String
+    $email: String
+    $isLoggedIn: Boolean
+    $role: UserRole
   ) {
     updateCurrentUser(
       id: $id
@@ -184,6 +184,12 @@ export const USER_NOTIFICATIONS = gql`
       settings {
         ...UserSettingFragment
       }
+      feedTokens {
+        token
+        actor {
+          id
+        }
+      }
       activitySettings {
         key
         method
@@ -192,6 +198,15 @@ export const USER_NOTIFICATIONS = gql`
     }
   }
   ${USER_SETTINGS_FRAGMENT}
+`;
+
+export const USER_FRAGMENT_FEED_TOKENS = gql`
+  fragment UserFeedTokensFragment on User {
+    id
+    feedTokens {
+      token
+    }
+  }
 `;
 
 export const UPDATE_ACTIVITY_SETTING = gql`

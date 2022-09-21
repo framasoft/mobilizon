@@ -7,10 +7,10 @@ defmodule Mobilizon.GraphQL.API.Search do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events
   alias Mobilizon.Events.Event
-  alias Mobilizon.Storage.Page
-
   alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
+  alias Mobilizon.Service.GlobalSearch
+  alias Mobilizon.Storage.Page
   import Mobilizon.GraphQL.Resolvers.Event.Utils
 
   require Logger
@@ -40,23 +40,30 @@ defmodule Mobilizon.GraphQL.API.Search do
         {:ok, process_from_username(term)}
 
       true ->
-        page =
-          Actors.search_actors(
-            term,
-            [
-              actor_type: result_type,
-              radius: Map.get(args, :radius),
-              location: Map.get(args, :location),
-              minimum_visibility: Map.get(args, :minimum_visibility, :public),
-              current_actor_id: Map.get(args, :current_actor_id),
-              exclude_my_groups: Map.get(args, :exclude_my_groups, false),
-              exclude_stale_actors: true
-            ],
-            page,
-            limit
-          )
+        if is_global_search(args) do
+          service = GlobalSearch.service()
 
-        {:ok, page}
+          {:ok, service.search_groups(Keyword.new(args, fn {k, v} -> {k, v} end))}
+        else
+          page =
+            Actors.search_actors(
+              term,
+              [
+                actor_type: result_type,
+                radius: Map.get(args, :radius),
+                location: Map.get(args, :location),
+                bbox: Map.get(args, :bbox),
+                minimum_visibility: Map.get(args, :minimum_visibility, :public),
+                current_actor_id: Map.get(args, :current_actor_id),
+                exclude_my_groups: Map.get(args, :exclude_my_groups, false),
+                exclude_stale_actors: true
+              ],
+              page,
+              limit
+            )
+
+          {:ok, page}
+        end
     end
   end
 
@@ -82,7 +89,13 @@ defmodule Mobilizon.GraphQL.API.Search do
           {:ok, %{total: 0, elements: []}}
       end
     else
-      {:ok, Events.build_events_for_search(Map.put(args, :term, term), page, limit)}
+      if is_global_search(args) do
+        service = GlobalSearch.service()
+
+        {:ok, service.search_events(Keyword.new(args, fn {k, v} -> {k, v} end))}
+      else
+        {:ok, Events.build_events_for_search(Map.put(args, :term, term), page, limit)}
+      end
     end
   end
 
@@ -136,4 +149,18 @@ defmodule Mobilizon.GraphQL.API.Search do
 
   @spec is_handle(String.t()) :: boolean
   defp is_handle(search), do: String.match?(search, ~r/@/)
+
+  defp is_global_search(%{search_target: :global}) do
+    global_search_enabled?()
+  end
+
+  defp is_global_search(_), do: global_search_enabled?() && global_search_default?()
+
+  defp global_search_enabled? do
+    Application.get_env(:mobilizon, :search) |> get_in([:global]) |> get_in([:is_enabled])
+  end
+
+  defp global_search_default? do
+    Application.get_env(:mobilizon, :search) |> get_in([:global]) |> get_in([:is_default_search])
+  end
 end

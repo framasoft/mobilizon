@@ -1,267 +1,277 @@
 <template>
   <div id="mobilizon">
-    <VueAnnouncer />
-    <VueSkipTo to="#main" :label="$t('Skip to main content')" />
+    <!-- <VueAnnouncer />
+    <VueSkipTo to="#main" :label="t('Skip to main content')" /> -->
     <NavBar />
-    <div v-if="config && config.demoMode">
-      <b-message
-        class="container"
-        type="is-danger"
-        :title="$t('Warning').toLocaleUpperCase()"
+    <div v-if="isDemoMode">
+      <o-notification
+        class="container mx-auto"
+        variant="danger"
+        :title="t('Warning').toLocaleUpperCase()"
         closable
-        :aria-close-label="$t('Close')"
+        :aria-close-label="t('Close')"
       >
         <p>
-          {{ $t("This is a demonstration site to test Mobilizon.") }}
-          <b>{{ $t("Please do not use it in any real way.") }}</b>
+          {{ t("This is a demonstration site to test Mobilizon.") }}
+          <b>{{ t("Please do not use it in any real way.") }}</b>
           {{
-            $t(
+            t(
               "This website isn't moderated and the data that you enter will be automatically destroyed every day at 00:01 (Paris timezone)."
             )
           }}
         </p>
-      </b-message>
+      </o-notification>
     </div>
-    <error v-if="error" :error="error" />
+    <ErrorComponent v-if="error" :error="error" />
 
-    <main id="main" v-else>
-      <transition name="fade" mode="out-in">
-        <router-view ref="routerView" />
-      </transition>
+    <main id="main" class="pt-4" v-else>
+      <router-view></router-view>
     </main>
     <mobilizon-footer />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Ref, Vue, Watch } from "vue-property-decorator";
-import NavBar from "./components/NavBar.vue";
+<script lang="ts" setup>
+import NavBar from "@/components/NavBar.vue";
 import {
   AUTH_ACCESS_TOKEN,
   AUTH_USER_EMAIL,
   AUTH_USER_ID,
   AUTH_USER_ROLE,
-} from "./constants";
-import {
-  CURRENT_USER_CLIENT,
-  UPDATE_CURRENT_USER_CLIENT,
-} from "./graphql/user";
-import Footer from "./components/Footer.vue";
-import Logo from "./components/Logo.vue";
-import { initializeCurrentActor } from "./utils/auth";
-import { CONFIG } from "./graphql/config";
-import { IConfig } from "./types/config.model";
-import { ICurrentUser } from "./types/current-user.model";
+} from "@/constants";
+import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
+import MobilizonFooter from "@/components/PageFooter.vue";
 import jwt_decode, { JwtPayload } from "jwt-decode";
-import { refreshAccessToken } from "./apollo/utils";
-import { Route } from "vue-router";
+import { refreshAccessToken } from "@/apollo/utils";
+import {
+  reactive,
+  ref,
+  provide,
+  onUnmounted,
+  onMounted,
+  onBeforeMount,
+  inject,
+  defineAsyncComponent,
+  computed,
+  watch,
+} from "vue";
+import { LocationType } from "@/types/user-location.model";
+import { useMutation, useQuery } from "@vue/apollo-composable";
+import { initializeCurrentActor } from "@/utils/identity";
+import { useI18n } from "vue-i18n";
+import { Snackbar } from "@/plugins/snackbar";
+import { Notifier } from "@/plugins/notifier";
+import { CONFIG } from "@/graphql/config";
+import { IConfig } from "@/types/config.model";
+import { useRouter } from "vue-router";
 
-@Component({
-  apollo: {
-    currentUser: CURRENT_USER_CLIENT,
-    config: CONFIG,
-  },
-  components: {
-    Logo,
-    NavBar,
-    error: () =>
-      import(/* webpackChunkName: "editor" */ "./components/Error.vue"),
-    "mobilizon-footer": Footer,
-  },
-  metaInfo() {
-    return {
-      titleTemplate: "%s | Mobilizon",
+const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
+
+const config = computed(() => configResult.value?.config);
+
+const ErrorComponent = defineAsyncComponent(
+  () => import("@/components/ErrorComponent.vue")
+);
+
+const { t } = useI18n({ useScope: "global" });
+
+const location = computed(() => config.value?.location);
+
+const userLocation = reactive<LocationType>({
+  lon: undefined,
+  lat: undefined,
+  name: undefined,
+  picture: undefined,
+  isIPLocation: true,
+  accuracy: 100,
+});
+
+const updateUserLocation = (newLocation: LocationType) => {
+  userLocation.lat = newLocation.lat;
+  userLocation.lon = newLocation.lon;
+  userLocation.name = newLocation.name;
+  userLocation.picture = newLocation.picture;
+  userLocation.isIPLocation = newLocation.isIPLocation;
+  userLocation.accuracy = newLocation.accuracy;
+};
+
+updateUserLocation({
+  lat: location.value?.latitude,
+  lon: location.value?.longitude,
+  name: "", // config.ipLocation.country.name,
+  isIPLocation: true,
+  accuracy: 150, // config.ipLocation.location.accuracy_radius * 1.5 || 150,
+});
+
+provide("userLocation", {
+  userLocation,
+  updateUserLocation,
+});
+
+// const routerView = ref("routerView");
+const error = ref<Error | null>(null);
+const online = ref(true);
+const interval = ref<number>(0);
+
+const notifier = inject<Notifier>("notifier");
+
+interval.value = setInterval(async () => {
+  const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
+  if (accessToken) {
+    const token = jwt_decode<JwtPayload>(accessToken);
+    if (
+      token?.exp !== undefined &&
+      new Date(token.exp * 1000 - 60000) < new Date()
+    ) {
+      refreshAccessToken();
+    }
+  }
+}, 60000) as unknown as number;
+
+onBeforeMount(async () => {
+  if (initializeCurrentUser()) {
+    await initializeCurrentActor();
+  }
+});
+
+const snackbar = inject<Snackbar>("snackbar");
+
+onMounted(() => {
+  online.value = window.navigator.onLine;
+  window.addEventListener("offline", () => {
+    online.value = false;
+    showOfflineNetworkWarning();
+    console.debug("offline");
+  });
+  window.addEventListener("online", () => {
+    online.value = true;
+    console.debug("online");
+  });
+  document.addEventListener("refreshApp", (event: Event) => {
+    snackbar?.open({
+      queue: false,
+      indefinite: true,
+      variant: "dark",
+      actionText: t("Update app"),
+      cancelText: t("Ignore"),
+      message: t("A new version is available."),
+      onAction: async () => {
+        const registration = event.detail as ServiceWorkerRegistration;
+        try {
+          await refreshApp(registration);
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
+          notifier?.error(t("An error has occured while refreshing the page."));
+        }
+      },
+    });
+  });
+});
+
+onUnmounted(() => {
+  clearInterval(interval.value);
+  interval.value = 0;
+});
+
+const { mutate: updateCurrentUser } = useMutation(UPDATE_CURRENT_USER_CLIENT);
+
+const initializeCurrentUser = () => {
+  const userId = localStorage.getItem(AUTH_USER_ID);
+  const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
+  const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
+  const role = localStorage.getItem(AUTH_USER_ROLE);
+
+  if (userId && userEmail && accessToken && role) {
+    updateCurrentUser({
+      id: userId,
+      email: userEmail,
+      isLoggedIn: true,
+      role,
+    });
+    return true;
+  }
+  return false;
+};
+
+const refreshApp = async (
+  registration: ServiceWorkerRegistration
+): Promise<any> => {
+  const worker = registration.waiting;
+  if (!worker) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve, reject) => {
+    const channel = new MessageChannel();
+
+    channel.port1.onmessage = (event) => {
+      if (event.data.error) {
+        reject(event.data);
+      } else {
+        resolve(event.data);
+      }
     };
-  },
-})
-export default class App extends Vue {
-  config!: IConfig;
+    worker?.postMessage({ type: "skip-waiting" }, [channel.port2]);
+  });
+};
 
-  currentUser!: ICurrentUser;
+const showOfflineNetworkWarning = (): void => {
+  notifier?.error(t("You are offline"));
+};
+// const extractPageTitleFromRoute = (routeWatched: RouteLocation): string => {
+//   if (routeWatched.meta?.announcer?.message) {
+//     return routeWatched.meta?.announcer?.message();
+//   }
+//   return document.title;
+// };
 
-  error: Error | null = null;
+// watch(route, (routeWatched) => {
+//   const pageTitle = extractPageTitleFromRoute(routeWatched);
+//   if (pageTitle) {
+//     // this.$announcer.polite(
+//     //   t("Navigated to {pageTitle}", {
+//     //     pageTitle,
+//     //   }) as string
+//     // );
+//   }
+//   // Set the focus to the router view
+//   // https://marcus.io/blog/accessible-routing-vuejs
+//   setTimeout(() => {
+//     const focusTarget = (
+//       routerView.value?.$refs?.componentFocusTarget !== undefined
+//         ? routerView.value?.$refs?.componentFocusTarget
+//         : routerView.value?.$el
+//     ) as HTMLElement;
+//     if (focusTarget && focusTarget instanceof Element) {
+//       // Make focustarget programmatically focussable
+//       focusTarget.setAttribute("tabindex", "-1");
 
-  online = true;
+//       // Focus element
+//       focusTarget.focus();
 
-  interval: number | undefined = undefined;
+//       // Remove tabindex from focustarget.
+//       // Reason: https://axesslab.com/skip-links/#update-3-a-comment-from-gov-uk
+//       focusTarget.removeAttribute("tabindex");
+//     }
+//   }, 0);
+// });
 
-  @Ref("routerView") routerView!: Vue;
+const router = useRouter();
 
-  async created(): Promise<void> {
-    if (await this.initializeCurrentUser()) {
-      await initializeCurrentActor(this.$apollo.provider.defaultClient);
-    }
-  }
-
-  errorCaptured(error: Error): void {
-    this.error = error;
-  }
-
-  private async initializeCurrentUser() {
-    const userId = localStorage.getItem(AUTH_USER_ID);
-    const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
-    const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
-    const role = localStorage.getItem(AUTH_USER_ROLE);
-
-    if (userId && userEmail && accessToken && role) {
-      return this.$apollo.mutate({
-        mutation: UPDATE_CURRENT_USER_CLIENT,
-        variables: {
-          id: userId,
-          email: userEmail,
-          isLoggedIn: true,
-          role,
-        },
-      });
-    }
-    return false;
-  }
-
-  mounted(): void {
-    this.online = window.navigator.onLine;
-    window.addEventListener("offline", () => {
-      this.online = false;
-      this.showOfflineNetworkWarning();
-      console.debug("offline");
-    });
-    window.addEventListener("online", () => {
-      this.online = true;
-      console.debug("online");
-    });
-    document.addEventListener("refreshApp", (event: Event) => {
-      this.$buefy.snackbar.open({
-        queue: false,
-        indefinite: true,
-        type: "is-secondary",
-        actionText: this.$t("Update app") as string,
-        cancelText: this.$t("Ignore") as string,
-        message: this.$t("A new version is available.") as string,
-        onAction: async () => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const detail = event.detail;
-          const registration = detail as ServiceWorkerRegistration;
-          try {
-            await this.refreshApp(registration);
-            window.location.reload();
-          } catch (err) {
-            console.error(err);
-            this.$notifier.error(
-              this.$t(
-                "An error has occured while refreshing the page."
-              ) as string
-            );
-          }
-        },
-      });
-    });
-
-    this.interval = setInterval(async () => {
-      const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
-      if (accessToken) {
-        const token = jwt_decode<JwtPayload>(accessToken);
-        if (
-          token?.exp !== undefined &&
-          new Date(token.exp * 1000 - 60000) < new Date()
-        ) {
-          refreshAccessToken(this.$apollo.getClient());
-        }
-      }
-    }, 60000);
-  }
-
-  private async refreshApp(
-    registration: ServiceWorkerRegistration
-  ): Promise<any> {
-    const worker = registration.waiting;
-    if (!worker) {
-      return Promise.resolve();
-    }
-    console.debug("Doing worker.skipWaiting().");
-    return new Promise((resolve, reject) => {
-      const channel = new MessageChannel();
-
-      channel.port1.onmessage = (event) => {
-        console.debug("Done worker.skipWaiting().");
-        if (event.data.error) {
-          reject(event.data);
-        } else {
-          resolve(event.data);
-        }
-      };
-      console.debug("calling skip waiting");
-      worker?.postMessage({ type: "skip-waiting" }, [channel.port2]);
+watch(config, async (configWatched: IConfig | undefined) => {
+  if (configWatched) {
+    const { statistics } = await import("@/services/statistics");
+    statistics(configWatched?.analytics, {
+      router,
+      version: configWatched.version,
     });
   }
+});
 
-  showOfflineNetworkWarning(): void {
-    this.$notifier.error(this.$t("You are offline") as string);
-  }
-
-  unmounted(): void {
-    clearInterval(this.interval);
-    this.interval = undefined;
-  }
-
-  @Watch("config")
-  async initializeStatistics(config: IConfig) {
-    if (config) {
-      const { statistics } = (await import("./services/statistics")) as {
-        statistics: (config: IConfig, environment: Record<string, any>) => void;
-      };
-      statistics(config, { router: this.$router, version: config.version });
-    }
-  }
-
-  @Watch("$route", { immediate: true })
-  updateAnnouncement(route: Route): void {
-    const pageTitle = this.extractPageTitleFromRoute(route);
-    if (pageTitle) {
-      this.$announcer.polite(
-        this.$t("Navigated to {pageTitle}", {
-          pageTitle,
-        }) as string
-      );
-    }
-    // Set the focus to the router view
-    // https://marcus.io/blog/accessible-routing-vuejs
-    setTimeout(() => {
-      const focusTarget = (
-        this.routerView?.$refs?.componentFocusTarget !== undefined
-          ? this.routerView?.$refs?.componentFocusTarget
-          : this.routerView?.$el
-      ) as HTMLElement;
-      if (focusTarget && focusTarget instanceof Element) {
-        // Make focustarget programmatically focussable
-        focusTarget.setAttribute("tabindex", "-1");
-
-        // Focus element
-        focusTarget.focus();
-
-        // Remove tabindex from focustarget.
-        // Reason: https://axesslab.com/skip-links/#update-3-a-comment-from-gov-uk
-        focusTarget.removeAttribute("tabindex");
-      }
-    }, 0);
-  }
-
-  extractPageTitleFromRoute(route: Route): string {
-    if (route.meta?.announcer?.message) {
-      return route.meta?.announcer?.message();
-    }
-    return document.title;
-  }
-}
+const isDemoMode = computed(() => config.value?.demoMode);
 </script>
 
 <style lang="scss">
-@import "variables";
-
-/* Icons */
-$mdi-font-path: "~@mdi/font/fonts";
-@import "~@mdi/font/scss/materialdesignicons";
-@import "common";
-
 #mobilizon {
   min-height: 100vh;
   display: flex;

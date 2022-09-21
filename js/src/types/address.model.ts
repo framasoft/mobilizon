@@ -1,5 +1,6 @@
 import { poiIcons } from "@/utils/poiIcons";
 import type { IPOIIcon } from "@/utils/poiIcons";
+import { PictureInformation } from "./picture";
 
 export interface IAddress {
   id?: string;
@@ -14,6 +15,8 @@ export interface IAddress {
   url?: string;
   originId?: string;
   timezone?: string;
+  pictureInfo?: PictureInformation;
+  poiInfos?: IPoiInfo;
 }
 
 export interface IPoiInfo {

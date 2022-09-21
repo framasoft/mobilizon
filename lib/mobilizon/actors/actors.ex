@@ -512,7 +512,13 @@ defmodule Mobilizon.Actors do
     query
     |> distinct([q], q.id)
     |> actor_by_username_or_name_query(term)
+    |> maybe_join_address(
+      Keyword.get(options, :location),
+      Keyword.get(options, :radius),
+      Keyword.get(options, :bbox)
+    )
     |> actors_for_location(Keyword.get(options, :location), Keyword.get(options, :radius))
+    |> events_for_bounding_box(Keyword.get(options, :bbox))
     |> filter_by_type(Keyword.get(options, :actor_type, :Group))
     |> filter_by_minimum_visibility(Keyword.get(options, :minimum_visibility, :public))
     |> filter_suspended(false)
@@ -923,10 +929,10 @@ defmodule Mobilizon.Actors do
   Returns the number of members for a group
   """
   @spec count_members_for_group(Actor.t()) :: integer()
-  def count_members_for_group(%Actor{id: actor_id}) do
+  def count_members_for_group(%Actor{id: actor_id}, roles \\ @member_roles) do
     actor_id
     |> members_for_group_query()
-    # |> where([m], m.role in @member_roles)
+    |> where([m], m.role in ^roles)
     |> Repo.aggregate(:count)
   end
 
@@ -1385,21 +1391,63 @@ defmodule Mobilizon.Actors do
     )
   end
 
+  @spec maybe_join_address(
+          Ecto.Queryable.t(),
+          String.t() | nil,
+          integer() | nil,
+          String.t() | nil
+        ) :: Ecto.Query.t()
+  defp maybe_join_address(query, location, radius, bbox)
+       when (is_valid_string(location) and not is_nil(radius)) or is_valid_string(bbox) do
+    join(query, :inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
+  end
+
+  defp maybe_join_address(query, _location, _radius, _bbox), do: query
+
   @spec actors_for_location(Ecto.Queryable.t(), String.t(), integer()) :: Ecto.Query.t()
   defp actors_for_location(query, location, radius)
        when is_valid_string(location) and not is_nil(radius) do
     {lon, lat} = Geohax.decode(location)
     point = Geo.WKT.decode!("SRID=4326;POINT(#{lon} #{lat})")
 
-    query
-    |> join(:inner, [q], a in Address, on: a.id == q.physical_address_id, as: :address)
-    |> where(
+    where(
+      query,
       [q],
       st_dwithin_in_meters(^point, as(:address).geom, ^(radius * 1000))
     )
   end
 
   defp actors_for_location(query, _location, _radius), do: query
+
+  defp events_for_bounding_box(query, bbox) when is_valid_string(bbox) do
+    [top_left, bottom_right] = String.split(bbox, ":")
+    [ymax, xmin] = String.split(top_left, ",")
+    [ymin, xmax] = String.split(bottom_right, ",")
+
+    where(
+      query,
+      [q, ..., a],
+      fragment(
+        "? @ ST_MakeEnvelope(?,?,?,?,?)",
+        a.geom,
+        ^sanitize_bounding_box_params(xmin),
+        ^sanitize_bounding_box_params(ymin),
+        ^sanitize_bounding_box_params(xmax),
+        ^sanitize_bounding_box_params(ymax),
+        "4326"
+      )
+    )
+  end
+
+  defp events_for_bounding_box(query, _args), do: query
+
+  @spec sanitize_bounding_box_params(String.t()) :: float()
+  defp sanitize_bounding_box_params(param) do
+    param
+    |> String.trim()
+    |> String.to_float()
+    |> Float.floor(10)
+  end
 
   @spec person_query :: Ecto.Query.t()
   defp person_query do

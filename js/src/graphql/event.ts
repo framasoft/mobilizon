@@ -116,7 +116,7 @@ export const FETCH_EVENT = gql`
 `;
 
 export const FETCH_EVENT_BASIC = gql`
-  query ($uuid: UUID!) {
+  query FetchEventBasic($uuid: UUID!) {
     event(uuid: $uuid) {
       id
       uuid

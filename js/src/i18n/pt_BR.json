@@ -9,7 +9,7 @@
   "+ Start a discussion": "+ Iniciar uma conversa",
   "<b>{contact}</b> will be displayed as contact.": "<b>{contact}</b> será mostrado como contato.|<b>{contact}</b> será mostrado como contatos.",
   "@{group}": "@{group}",
-  "@{username}": "",
+  "{'@'}{username}": "",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "",
   "@{username}'s follow request was rejected": "",

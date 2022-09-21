@@ -5,6 +5,7 @@ node_modules
 /tests/e2e/videos/
 /tests/e2e/screenshots/
 /coverage
+stats.html
 
 # local env files
 .env.local
@@ -23,3 +24,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+/test-results/
+/playwright-report/
+/playwright/.cache/

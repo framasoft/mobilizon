@@ -3,9 +3,10 @@
     <%= if @activity.subject_params["is_folder"] do %>
       <%= dgettext("activity", "%{profile} created the folder %{resource}.", %{
         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :resource,
-        @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+        resource:
+          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+          :resource,
+          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>"
       })
@@ -13,9 +14,10 @@
     <% else %>
       <%= dgettext("activity", "%{profile} created the resource %{resource}.", %{
         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :resource,
-        @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+        resource:
+          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+          :resource,
+          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>"
       })
@@ -28,9 +30,10 @@
         "%{profile} renamed the folder from %{old_resource_title} to %{resource}.",
         %{
           profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-          resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          resource:
+            "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+            :resource,
+            @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>",
           old_resource_title: "<b>#{@activity.subject_params["old_resource_title"]}</b>"
@@ -43,9 +46,10 @@
         "%{profile} renamed the resource from %{old_resource_title} to %{resource}.",
         %{
           profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-          resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          resource:
+            "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+            :resource,
+            @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>",
           old_resource_title: "<b>#{@activity.subject_params["old_resource_title"]}</b>"
@@ -57,9 +61,10 @@
     <%= if @activity.subject_params["is_folder"] do %>
       <%= dgettext("activity", "%{profile} moved the folder %{resource}.", %{
         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :resource,
-        @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+        resource:
+          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+          :resource,
+          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>"
       })
@@ -67,9 +72,10 @@
     <% else %>
       <%= dgettext("activity", "%{profile} moved the resource %{resource}.", %{
         profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :resource,
-        @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+        resource:
+          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+          :resource,
+          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
                                 #{@activity.subject_params["resource_title"]}
                             </a>"
       })
