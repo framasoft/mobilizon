@@ -134,7 +134,7 @@ vitest:
   before_script:
     - yarn --cwd "js" install --frozen-lockfile
   script:
-    - yarn --cwd "js" run coverage --reporter=default --reporter=junit --outputFile.junit=./js/junit.xml
+    - yarn --cwd "js" run coverage --reporter=default --reporter=junit --outputFile.junit=./junit.xml
   artifacts:
     when: always
     paths:
