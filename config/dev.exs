@@ -96,3 +96,5 @@ config :mobilizon, :anonymous,
   reports: [
     allowed: true
   ]
+
+config :unplug, :init_mode, :runtime

@@ -30,9 +30,12 @@ defmodule Mobilizon.Web.Endpoint do
     longpoll: false
   )
 
-  if Keyword.get(endpoint_config(), :has_reverse_proxy, false) == true do
-    plug(RemoteIp)
-  end
+  plug(Unplug,
+    if:
+      {Mobilizon.Service.UnplugPredicates.AppConfigKeywordEquals,
+       {:mobilizon, Mobilizon.Web.Endpoint, :has_reverse_proxy, false, true}},
+    do: RemoteIp
+  )
 
   plug(Mobilizon.Web.Plugs.UploadedMedia)
 
