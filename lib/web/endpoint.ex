@@ -3,8 +3,7 @@ defmodule Mobilizon.Web.Endpoint do
   Endpoint for Mobilizon app
   """
 
-  if Application.fetch_env!(:mobilizon, :env) !== :test &&
-       Application.get_env(:sentry, :dsn) != nil do
+  if Application.compile_env(:mobilizon, :env) !== :test && sentry_dsn_config() != nil do
     use Sentry.PlugCapture
   end
 
@@ -13,7 +12,7 @@ defmodule Mobilizon.Web.Endpoint do
 
   plug(Mobilizon.Web.Plugs.DetectLocalePlug)
 
-  if Application.fetch_env!(:mobilizon, :env) !== :dev do
+  if Application.compile_env(:mobilizon, :env) !== :dev do
     plug(Mobilizon.Web.Plugs.HTTPSecurityPlug)
   end
 
@@ -31,9 +30,7 @@ defmodule Mobilizon.Web.Endpoint do
     longpoll: false
   )
 
-  endpoint_config = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)
-
-  if Keyword.get(endpoint_config, :has_reverse_proxy, false) == true do
+  if Keyword.get(endpoint_config(), :has_reverse_proxy, false) == true do
     plug(RemoteIp)
   end
 
@@ -64,8 +61,7 @@ defmodule Mobilizon.Web.Endpoint do
   plug(Plug.RequestId)
   plug(Plug.Logger)
 
-  upload_limit =
-    Keyword.get(Application.get_env(:mobilizon, :instance, []), :upload_limit, 10_485_760)
+  upload_limit = Keyword.get(instance_config(), :upload_limit, 10_485_760)
 
   plug(
     Plug.Parsers,
@@ -83,8 +79,19 @@ defmodule Mobilizon.Web.Endpoint do
     String.replace_leading(url(), "http", "ws")
   end
 
-  if Application.fetch_env!(:mobilizon, :env) !== :test &&
-       Application.get_env(:sentry, :dsn) != nil do
+  defp sentry_dsn_config do
+    Application.get_env(:sentry, :dsn)
+  end
+
+  defp endpoint_config do
+    Application.get_env(:mobilizon, Mobilizon.Web.Endpoint)
+  end
+
+  defp instance_config do
+    Application.get_env(:mobilizon, :instance, [])
+  end
+
+  if Application.compile_env(:mobilizon, :env) !== :test && sentry_dsn_config() != nil do
     plug(Sentry.PlugContext)
   end
 end

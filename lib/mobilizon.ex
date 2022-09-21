@@ -21,7 +21,7 @@ defmodule Mobilizon do
 
   @name Mix.Project.config()[:name]
   @version Mix.Project.config()[:version]
-  @env Application.fetch_env!(:mobilizon, :env)
+  @env Application.compile_env(:mobilizon, :env)
 
   @spec named_version :: String.t()
   def named_version, do: "#{@name} #{@version}"

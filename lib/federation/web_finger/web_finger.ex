@@ -205,7 +205,7 @@ defmodule Mobilizon.Federation.WebFinger do
           {:ok, String.t()} | {:error, :link_not_found} | {:error, any()}
   defp find_webfinger_endpoint(domain) when is_binary(domain) do
     Logger.debug("Calling HostMetaClient for #{domain}")
-    prefix = if Application.fetch_env!(:mobilizon, :env) !== :dev, do: "https", else: "http"
+    prefix = if Application.compile_env(:mobilizon, :env) !== :dev, do: "https", else: "http"
 
     with {:ok, %Tesla.Env{status: 200, body: body}} <-
            HostMetaClient.get("#{prefix}://#{domain}/.well-known/host-meta"),
@@ -229,7 +229,10 @@ defmodule Mobilizon.Federation.WebFinger do
 
         _ ->
           Logger.debug("Using default webfinger location")
-          prefix = if Application.fetch_env!(:mobilizon, :env) !== :dev, do: "https", else: "http"
+
+          prefix =
+            if Application.compile_env(:mobilizon, :env) !== :dev, do: "https", else: "http"
+
           "#{prefix}://#{domain}/.well-known/webfinger?resource=acct:#{actor}"
       end
     end

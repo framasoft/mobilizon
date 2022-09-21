@@ -8,12 +8,10 @@ defmodule Mobilizon.Web.AuthController do
   require Logger
   plug(:put_layout, false)
 
-  config = Application.get_env(:mobilizon, Mobilizon.Web.Endpoint, [])
-
   plug(Plug.Session,
     store: :cookie,
     key: "_auth_callback",
-    signing_salt: Keyword.get(config, :secret_key_base)
+    signing_salt: Keyword.get(endpoint_config, :secret_key_base)
   )
 
   plug(Ueberauth)
@@ -141,5 +139,9 @@ defmodule Mobilizon.Web.AuthController do
 
   defp redirect_to_error(conn, :unknown_error, provider_name) do
     redirect(conn, to: "/login?code=Error with Login Provider&provider=#{provider_name}")
+  end
+
+  defp endpoint_config do
+    Application.get_env(:mobilizon, Mobilizon.Web.Endpoint, [])
   end
 end

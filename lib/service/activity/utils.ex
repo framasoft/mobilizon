@@ -30,7 +30,7 @@ defmodule Mobilizon.Service.Activity.Utils do
 
   @spec maybe_inserted_at :: map()
   def maybe_inserted_at do
-    if Application.fetch_env!(:mobilizon, :env) == :test do
+    if Application.compile_env(:mobilizon, :env) == :test do
       %{}
     else
       %{"inserted_at" => DateTime.utc_now()}

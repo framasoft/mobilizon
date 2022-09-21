@@ -212,7 +212,7 @@ defmodule Mobilizon.Web.Router do
     get("/:sig/:url/:filename", MediaProxyController, :remote)
   end
 
-  if Application.fetch_env!(:mobilizon, :env) in [:dev, :e2e] do
+  if Application.compile_env(:mobilizon, :env) in [:dev, :e2e] do
     # If using Phoenix
     forward("/sent_emails", Plug.Swoosh.MailboxPreview)
   end
