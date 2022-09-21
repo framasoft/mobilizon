@@ -127,14 +127,14 @@ exunit:
         - test-junit-report.xml
     expire_in: 30 days
 
-jest:
+vitest:
   stage: test
   needs:
     - lint-front
   before_script:
     - yarn --cwd "js" install --frozen-lockfile
   script:
-    - yarn --cwd "js" run test:unit --no-color --ci --reporters=default --reporters=jest-junit
+    - yarn --cwd "js" run coverage --reporter=junit --outputFile.junit=./junit.xml
   artifacts:
     when: always
     paths:

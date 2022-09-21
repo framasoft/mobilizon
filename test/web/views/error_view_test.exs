@@ -13,7 +13,7 @@ defmodule Mobilizon.Web.ErrorViewTest do
              render_to_string(ErrorView, "404.html", %{conn: conn}),
              " "
            ) =~
-             "We're sorry but mobilizon doesn't work properly without JavaScript enabled. Please enable it to continue."
+             "We're sorry but Mobilizon doesn't work properly without JavaScript enabled. Please enable it to continue."
   end
 
   test "render 500.html" do

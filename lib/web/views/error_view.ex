@@ -3,10 +3,11 @@ defmodule Mobilizon.Web.ErrorView do
   View for errors
   """
   use Mobilizon.Web, :view
+  alias Mobilizon.Web.PageView
 
   @spec render(String.t(), map()) :: map() | String.t() | Plug.Conn.t()
   def render("404.html", _assigns) do
-    render("index.html")
+    PageView.render("index.html")
   end
 
   def render("404.json", _assigns) do

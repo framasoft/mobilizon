@@ -20,7 +20,7 @@ exports[`ReportModal > renders report modal with basic informations and submits 
       <!--v-if-->
     </div>
   </section>
-  <footer class=\\"flex gap-2 py-3\\" data-v-e0cceef3=\\"\\"><button type=\\"button\\" class=\\"o-btn\\" data-v-e0cceef3=\\"\\"><span class=\\"o-btn__wrapper\\"><!--v-if--><span class=\\"o-btn__label\\">Cancel</span>
+  <footer class=\\"flex gap-2 py-3\\" data-v-e0cceef3=\\"\\"><button type=\\"button\\" class=\\"o-btn o-btn--outlined\\" data-v-e0cceef3=\\"\\"><span class=\\"o-btn__wrapper\\"><!--v-if--><span class=\\"o-btn__label\\">Cancel</span>
       <!--v-if--></span>
     </button><button type=\\"button\\" class=\\"o-btn o-btn--primary\\" data-v-e0cceef3=\\"\\"><span class=\\"o-btn__wrapper\\"><!--v-if--><span class=\\"o-btn__label\\">Send the report</span>
       <!--v-if--></span>

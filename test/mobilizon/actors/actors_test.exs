@@ -349,7 +349,7 @@ defmodule Mobilizon.ActorsTest do
         }
       )
 
-      assert %{success: 1, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 1, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :background)
 
       assert %Actor{

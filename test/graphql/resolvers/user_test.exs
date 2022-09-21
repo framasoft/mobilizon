@@ -172,7 +172,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert res["data"]["user"] == nil
-      assert hd(res["errors"])["message"] == "User with ID #{0} not found"
+      assert hd(res["errors"])["message"] == "User not found"
     end
 
     test "get_current_user/3 returns the current logged-in user", %{conn: conn} do
@@ -1478,7 +1478,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert is_nil(Users.get_user(user.id))
 
-      assert %{success: 2, snoozed: 0, failure: 0, discard: 0} ==
+      assert %{success: 2, snoozed: 0, failure: 0, discard: 0, cancelled: 0} ==
                Oban.drain_queue(queue: :background)
 
       assert_raise Ecto.NoResultsError, fn ->

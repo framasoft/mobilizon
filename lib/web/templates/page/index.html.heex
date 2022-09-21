@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang={assigns.locale} dir={language_direction(assigns)}>
+<html lang={Map.get(assigns, :locale, "en")} dir={language_direction(assigns)}>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />

@@ -5,6 +5,7 @@ defmodule Mobilizon.Web.AuthView do
 
   use Mobilizon.Web, :view
   alias Mobilizon.Service.Metadata.Instance
+  alias Mobilizon.Web.PageView
   alias Phoenix.HTML.Tag
 
   @spec render(String.t(), map()) :: String.t() | Plug.Conn.t()
@@ -33,7 +34,7 @@ defmodule Mobilizon.Web.AuthView do
 
     with tags <- Instance.build_tags() ++ info_tags,
          assigns <- Map.put(assigns, :tags, tags) do
-      render("index.html", assigns)
+      PageView.render("index.html", assigns)
     end
   end
 end

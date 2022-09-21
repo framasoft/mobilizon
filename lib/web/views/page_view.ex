@@ -84,6 +84,6 @@ defmodule Mobilizon.Web.PageView do
   end
 
   def language_direction(assigns) do
-    get_language_direction(assigns.locale)
+    assigns |> Map.get(:locale, "en") |> get_language_direction()
   end
 end
