@@ -62,7 +62,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     Map.merge(map, %{actor: actor, id: id, inserted_at: inserted_at})
   end
 
-  @spec transform_action_log(module(), atom(), ActionLog.t()) :: map()
+  @spec transform_action_log(module(), atom(), ActionLog.t()) :: map() | nil
   defp transform_action_log(
          Report,
          :update,
@@ -131,6 +131,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       object: convert_changes_to_struct(User, changes)
     }
   end
+
+  defp transform_action_log(_, _, _), do: nil
 
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
   @spec convert_changes_to_struct(module(), map()) :: struct()
