@@ -183,7 +183,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          stats.participant + stats.moderator + stats.administrator + stats.creator
        )}
     else
-      {:ok, %{participant: stats.participant}}
+      {:ok, %EventParticipantStats{participant: stats.participant}}
     end
   end
 

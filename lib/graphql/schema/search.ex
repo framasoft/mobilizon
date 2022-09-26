@@ -24,6 +24,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:tags, list_of(:tag), description: "The event's tags")
     field(:category, :event_category, description: "The event's category")
     field(:options, :event_options, description: "The event options")
+    field(:participant_stats, :participant_stats, description: "Statistics on the event's participants")
 
     resolve_type(fn
       %Event{}, _ ->
@@ -54,6 +55,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:tags, list_of(:tag), description: "The event's tags")
     field(:category, :event_category, description: "The event's category")
     field(:options, :event_options, description: "The event options")
+    field(:participant_stats, :participant_stats, description: "Statistics on the event's participants")
   end
 
   interface :group_search_result do
@@ -152,6 +154,19 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     value(:global, description: "Search using the global fediverse search")
   end
 
+  enum :search_group_sort_options do
+    value(:match_desc, description: "The pertinence of the result")
+    value(:member_count_desc, description: "The members count of the group")
+  end
+
+  enum :search_event_sort_options do
+    value(:match_desc, description: "The pertinence of the result")
+    value(:start_time_desc, description: "The start date of the result")
+    value(:created_at_desc, description: "When the event was published")
+    value(:created_at_asc, description: "When the event was published")
+    value(:participant_count_desc, description: "With the most participants")
+  end
+
   object :search_queries do
     @desc "Search persons"
     field :search_persons, :persons do
@@ -183,6 +198,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:language_one_of, list_of(:string),
         description: "The list of languages this event can be in"
       )
+      arg(:boost_languages, list_of(:string), description: "The user's languages that can benefit from a boost in search results")
 
       arg(:search_target, :search_target,
         default_value: :internal,
@@ -194,6 +210,11 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
       arg(:page, :integer, default_value: 1, description: "Result page")
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")
+
+      arg(:sort_by, :search_group_sort_options,
+        default_value: :match_desc,
+        description: "How to sort search results"
+      )
 
       resolve(&Search.search_groups/3)
     end
@@ -217,6 +238,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:language_one_of, list_of(:string),
         description: "The list of languages this event can be in"
       )
+      arg(:boost_languages, list_of(:string), description: "The user's languages that can benefit from a boost in search results")
 
       arg(:search_target, :search_target,
         default_value: :internal,
@@ -235,6 +257,11 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")
       arg(:begins_on, :datetime, description: "Filter events by their start date")
       arg(:ends_on, :datetime, description: "Filter events by their end date")
+
+      arg(:sort_by, :search_event_sort_options,
+        default_value: :match_desc,
+        description: "How to sort search results"
+      )
 
       resolve(&Search.search_events/3)
     end

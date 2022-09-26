@@ -541,7 +541,7 @@ defmodule Mobilizon.Events do
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
-    |> event_order_begins_on_asc()
+    |> event_order(args.sort_by)
     |> Page.build_page(page, limit, :begins_on)
   end
 
@@ -1272,15 +1272,14 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @spec events_for_search_query(String.t()) :: Ecto.Query.t()
-  defp events_for_search_query("") do
-    Event
-    |> distinct([e], asc: e.begins_on, asc: e.id)
-  end
+  # @spec events_for_search_query(String.t()) :: Ecto.Query.t()
+  # defp events_for_search_query("") do
+  #   Event
+  #   |> join: rank in fragment("")
+  # end
 
   defp events_for_search_query(search_string) do
     from(event in Event,
-      distinct: [asc: event.begins_on, asc: event.id],
       join: id_and_rank in matching_event_ids_and_ranks(search_string),
       on: id_and_rank.id == event.id
     )
@@ -1819,6 +1818,13 @@ defmodule Mobilizon.Events do
     |> where([e], e.begins_on > ^after_datetime)
     |> event_order_begins_on_asc()
   end
+
+  defp event_order(query, :match_desc), do: order_by(query, [e, f], desc: f.rank, asc: e.begins_on)
+  defp event_order(query, :start_time_desc), do: order_by(query, [e], asc: e.begins_on)
+  defp event_order(query, :created_at_desc), do: order_by(query, [e], desc: e.publish_at)
+  defp event_order(query, :created_at_asc), do: order_by(query, [e], asc: e.publish_at)
+  defp event_order(query, :participant_count_desc), do: order_by(query, [e], fragment("participant_stats->>'participant' DESC"))
+  defp event_order(query, _), do: query
 
   defp event_order_begins_on_asc(query),
     do: order_by(query, [e], asc: e.begins_on)

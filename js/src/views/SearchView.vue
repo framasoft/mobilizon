@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto">
     <SearchFields
       class="md:ml-10 mr-2"
-      v-model:search="searchDebounced"
+      v-model:search="search"
       v-model:location="location"
       :locationDefaultText="locationName"
     />
@@ -736,13 +736,26 @@ enum ViewMode {
   MAP = "map",
 }
 
+enum EventSortValues {
+  MATCH_DESC = "MATCH_DESC",
+  START_TIME_DESC = "START_TIME_DESC",
+  CREATED_AT_DESC = "CREATED_AT_DESC",
+  CREATED_AT_ASC = "CREATED_AT_ASC",
+  PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
+}
+
+enum GroupSortValues {
+  MATCH_DESC = "MATCH_DESC",
+  MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
+}
+
 enum SortValues {
-  MATCH_DESC = "-match",
-  START_TIME_DESC = "-startTime",
-  CREATED_AT_DESC = "-createdAt",
-  CREATED_AT_ASC = "createdAt",
-  PARTICIPANT_COUNT_DESC = "-participantCount",
-  MEMBER_COUNT_DESC = "-memberCount",
+  MATCH_DESC = "MATCH_DESC",
+  START_TIME_DESC = "START_TIME_DESC",
+  CREATED_AT_DESC = "CREATED_AT_DESC",
+  CREATED_AT_ASC = "CREATED_AT_ASC",
+  PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
+  MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
 }
 
 const arrayTransformer: RouteQueryTransformer<string[]> = {
@@ -1121,6 +1134,27 @@ watch(isOnline, (newIsOnline) => {
   }
 });
 
+const sortByForType = (
+  value: SortValues,
+  allowed: typeof EventSortValues | typeof GroupSortValues
+): SortValues | undefined => {
+  return Object.values(allowed).includes(value) ? value : undefined;
+};
+
+const boostLanguagesQuery = computed((): string[] => {
+  const languages = new Set<string>();
+
+  for (const completeLanguage of navigator.languages) {
+    const language = completeLanguage.split("-")[0];
+
+    if (Object.keys(langs).find((langKey) => langKey === language)) {
+      languages.add(language);
+    }
+  }
+
+  return Array.from(languages);
+});
+
 const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchEvents: Paginate<TypeNamed<IEvent>>;
   searchGroups: Paginate<TypeNamed<IGroup>>;
@@ -1139,7 +1173,10 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   statusOneOf: statusOneOf.value,
   languageOneOf: languageOneOf.value,
   searchTarget: searchTarget.value,
-  bbox: bbox.value,
+  bbox: mode.value === ViewMode.MAP ? bbox.value : undefined,
   zoom: zoom.value,
+  sortByEvents: sortByForType(sortBy.value, EventSortValues),
+  sortByGroups: sortByForType(sortBy.value, GroupSortValues),
+  boostLanguages: boostLanguagesQuery.value,
 }));
 </script>

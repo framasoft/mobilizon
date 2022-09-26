@@ -13,7 +13,7 @@ defmodule Mobilizon.Service.GlobalSearch.EventResult do
     :category,
     :tags,
     :organizer_actor,
-    :participants,
+    :participant_stats,
     :physical_address
   ]
 end

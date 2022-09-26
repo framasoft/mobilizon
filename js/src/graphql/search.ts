@@ -38,6 +38,9 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
     $eventPage: Int
     $groupPage: Int
     $limit: Int
+    $sortByEvents: SearchEventSortOptions
+    $sortByGroups: SearchGroupSortOptions
+    $boostLanguages: [String]
   ) {
     searchEvents(
       location: $location
@@ -55,6 +58,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       zoom: $zoom
       page: $eventPage
       limit: $limit
+      sortBy: $sortByEvents
+      boostLanguages: $boostLanguages
     ) {
       total
       elements {
@@ -80,6 +85,9 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
         attributedTo {
           ...ActorFragment
         }
+        participantStats {
+          participant
+        }
         options {
           isOnline
         }
@@ -96,6 +104,8 @@ export const SEARCH_EVENTS_AND_GROUPS = gql`
       zoom: $zoom
       page: $groupPage
       limit: $limit
+      sortBy: $sortByGroups
+      boostLanguages: $boostLanguages
     ) {
       total
       elements {
