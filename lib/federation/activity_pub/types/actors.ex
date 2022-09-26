@@ -1,6 +1,6 @@
 defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   @moduledoc false
-  alias Mobilizon.Actors
+  alias Mobilizon.{Actors, Instances}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Federation.ActivityPub.{Actions, Audience, Permission, Relay}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
@@ -204,7 +204,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
   def follow(%Actor{} = follower_actor, %Actor{type: type} = followed, _local, additional)
       when type != :Person do
     case Mobilizon.Actors.follow(followed, follower_actor, additional["activity_id"], false) do
-      {:ok, %Follower{} = follower} ->
+      {:ok, %Follower{actor: %Actor{type: actor_type}} = follower} ->
+        # We refresh the instance materialized view to make sure the instance page will be available
+        # when the admin clicks on the email link and access it
+        if actor_type == :Application do
+          Instances.refresh()
+        end
         FollowMailer.send_notification_to_admins(follower)
         follower_as_data = Convertible.model_to_as(follower)
         approve_if_manually_approves_followers(follower, follower_as_data)

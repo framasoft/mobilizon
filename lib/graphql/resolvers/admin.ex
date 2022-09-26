@@ -464,6 +464,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  @spec get_instance(any, map(), Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated | :unauthorized | :not_found} | {:ok, Mobilizon.Instances.Instance.t()}
   def get_instance(_parent, %{domain: domain}, %{
         context: %{current_user: %User{role: role}}
       })
@@ -482,7 +484,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       followed_status: follow_status(local_relay, remote_relay)
     }
 
-    {:ok, Map.merge(Instances.instance(domain), result)}
+    case Instances.instance(domain) do
+      nil -> {:error, :not_found}
+      instance -> {:ok, Map.merge(instance, result)}
+    end
   end
 
   def get_instance(_parent, _args, %{context: %{current_user: %User{}}}) do
