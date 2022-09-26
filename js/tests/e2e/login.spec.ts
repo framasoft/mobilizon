@@ -25,17 +25,17 @@ test("Login has everything we need", async ({ page }) => {
 
   await forgotPasswordLink.click();
   await page.waitForURL("/password-reset/send");
-  await expect(page.url()).toContain("/password-reset/send");
+  expect(page.url()).toContain("/password-reset/send");
   await page.goBack();
 
   await reAskInstructionsLink.click();
   await page.waitForURL("/resend-instructions");
-  await expect(page.url()).toContain("/resend-instructions");
+  expect(page.url()).toContain("/resend-instructions");
   await page.goBack();
 
   await registerLink.click();
   await page.waitForURL("/register/user");
-  await expect(page.url()).toContain("/register/user");
+  expect(page.url()).toContain("/register/user");
   await page.goBack();
 });
 
@@ -68,6 +68,6 @@ test("Tries to login with valid credentials", async ({ page, context }) => {
 
   await loginButton.click();
   await page.waitForURL("/");
-  await expect(new URL(page.url()).pathname).toBe("/");
+  expect(new URL(page.url()).pathname).toBe("/");
   expect((await context.storageState()).origins[0].localStorage).toBe("toto");
 });
