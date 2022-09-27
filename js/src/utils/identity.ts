@@ -11,7 +11,7 @@ import { computed, watch } from "vue";
 
 export class NoIdentitiesException extends Error {}
 
-export function saveActorData(obj: IPerson): void {
+function saveActorData(obj: IPerson): void {
   localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
 }
 

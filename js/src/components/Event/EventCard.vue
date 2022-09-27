@@ -26,13 +26,13 @@
             variant="info"
             v-if="event.status === EventStatus.TENTATIVE"
           >
-            {{ $t("Tentative") }}
+            {{ t("Tentative") }}
           </mobilizon-tag>
           <mobilizon-tag
             variant="danger"
             v-if="event.status === EventStatus.CANCELLED"
           >
-            {{ $t("Cancelled") }}
+            {{ t("Cancelled") }}
           </mobilizon-tag>
           <router-link
             :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
@@ -100,24 +100,40 @@
               v-else-if="event.options && event.options.isOnline"
             >
               <Video />
-              <span class="ltr:pl-2 rtl:pr-2">{{ $t("Online") }}</span>
+              <span class="ltr:pl-2 rtl:pr-2">{{ t("Online") }}</span>
             </div>
             <div
               class="mt-1 no-underline gap-1 items-center hidden"
               :class="{ 'sm:flex': mode === 'row' }"
-              v-if="event.tags || event.status !== EventStatus.CONFIRMED"
+              v-if="
+                event.tags ||
+                event.status !== EventStatus.CONFIRMED ||
+                event.participantStats?.participant > 0
+              "
             >
+              <mobilizon-tag
+                variant="info"
+                v-if="event.participantStats?.participant > 0"
+              >
+                {{
+                  t(
+                    "{count} participants",
+                    event.participantStats?.participant,
+                    { count: event.participantStats?.participant }
+                  )
+                }}
+              </mobilizon-tag>
               <mobilizon-tag
                 variant="info"
                 v-if="event.status === EventStatus.TENTATIVE"
               >
-                {{ $t("Tentative") }}
+                {{ t("Tentative") }}
               </mobilizon-tag>
               <mobilizon-tag
                 variant="danger"
                 v-if="event.status === EventStatus.CANCELLED"
               >
-                {{ $t("Cancelled") }}
+                {{ t("Cancelled") }}
               </mobilizon-tag>
               <router-link
                 :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
@@ -156,6 +172,9 @@ import Video from "vue-material-design-icons/Video.vue";
 import { formatDateTimeForEvent } from "@/utils/datetime";
 import type { Locale } from "date-fns";
 import LinkOrRouterLink from "../core/LinkOrRouterLink.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({ useScope: "global" });
 
 const props = withDefaults(
   defineProps<{

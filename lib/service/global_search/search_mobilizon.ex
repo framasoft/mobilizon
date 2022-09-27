@@ -15,6 +15,15 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
   @search_events_api "/api/v1/search/events"
   @search_groups_api "/api/v1/search/groups"
 
+  @sort_by_options %{
+    match_desc: "-match",
+    start_time_desc: "-startTime",
+    created_at_desc: "-createdAt",
+    created_at_asc: "createdAt",
+    participant_count_desc: "-participantCount",
+    member_count_desc: "-memberCount"
+  }
+
   @behaviour Provider
 
   @impl Provider
@@ -39,9 +48,11 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
           end),
         distance: if(options[:radius], do: "#{options[:radius]}_km", else: nil),
         count: options[:limit],
-        start: (options[:page] - 1) * options[:limit],
+        start: (Keyword.get(options, :page, 1) - 1) * Keyword.get(options, :limit, 16),
         latlon: to_lat_lon(options[:location]),
-        bbox: options[:bbox]
+        bbox: options[:bbox],
+        sortBy: Map.get(@sort_by_options, options[:sort_by]),
+        boostLanguages: options[:boost_languages]
       )
       |> Keyword.take([
         :search,
@@ -56,7 +67,8 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :statusOneOf,
         :bbox,
         :start,
-        :count
+        :count,
+        :sortBy
       ])
       |> Keyword.reject(fn {_key, val} -> is_nil(val) end)
 
@@ -85,21 +97,25 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
       |> Keyword.merge(
         term: options[:search],
         languageOneOf: options[:language_one_of],
+        boostLanguages: options[:boost_languages],
         distance: if(options[:radius], do: "#{options[:radius]}_km", else: nil),
         count: options[:limit],
         start: (options[:page] - 1) * options[:limit],
         latlon: to_lat_lon(options[:location]),
-        bbox: options[:bbox]
+        bbox: options[:bbox],
+        sortBy: Map.get(@sort_by_options, options[:sort_by])
       )
       |> Keyword.take([
         :search,
+        :languageOneOf,
         :boostLanguages,
         :latlon,
         :distance,
         :sort,
         :start,
         :count,
-        :bbox
+        :bbox,
+        :sortBy
       ])
       |> Keyword.reject(fn {_key, val} -> is_nil(val) end)
 
@@ -179,6 +195,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         avatar: organizer_actor_avatar
       },
       physical_address: address,
+      participant_stats: %{participant: data["participantCount"]},
       tags:
         Enum.map(data["tags"], fn tag ->
           tag = String.trim_leading(tag, "#")

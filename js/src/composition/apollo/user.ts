@@ -66,15 +66,7 @@ export async function updateLocale(locale: string) {
   }));
 }
 
-export function registerAccount(
-  variables: {
-    preferredUsername: string;
-    name: string;
-    summary: string;
-    email: string;
-  },
-  userAlreadyActivated: boolean
-) {
+export function registerAccount() {
   return useMutation<
     { registerPerson: IPerson },
     {
@@ -84,12 +76,12 @@ export function registerAccount(
       email: string;
     }
   >(REGISTER_PERSON, () => ({
-    variables,
     update: (
       store: ApolloCache<{ registerPerson: IPerson }>,
-      { data: localData }: FetchResult
+      { data: localData }: FetchResult,
+      { context }
     ) => {
-      if (userAlreadyActivated) {
+      if (context?.userAlreadyActivated) {
         const identitiesData = store.readQuery<{ identities: IPerson[] }>({
           query: IDENTITIES,
         });

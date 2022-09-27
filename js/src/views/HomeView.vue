@@ -365,7 +365,12 @@ onMounted(() => {
 const router = useRouter();
 
 watch(loggedUser, (loggedUserValue) => {
-  if (loggedUserValue?.id && loggedUserValue?.settings === null) {
+  if (
+    loggedUserValue?.id &&
+    loggedUserValue?.settings === null &&
+    loggedUserValue.defaultActor?.id
+  ) {
+    console.info("No user settings, going to onboarding", loggedUserValue);
     router.push({
       name: RouteName.WELCOME_SCREEN,
       params: { step: "1" },

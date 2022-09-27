@@ -406,11 +406,11 @@ watch(identities, () => {
   // If we don't have any identities, the user has validated their account,
   // is logging for the first time but didn't create an identity somehow
   if (identities.value && identities.value.length === 0) {
-    console.debug(
+    console.warn(
       "We have no identities listed for current user",
       identities.value
     );
-    console.debug("Pushing route to REGISTER_PROFILE");
+    console.info("Pushing route to REGISTER_PROFILE");
     router.push({
       name: RouteName.REGISTER_PROFILE,
       params: {

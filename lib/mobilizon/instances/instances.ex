@@ -67,7 +67,7 @@ defmodule Mobilizon.Instances do
     }
   end
 
-  @spec instance(String.t()) :: Instance.t()
+  @spec instance(String.t()) :: Instance.t() | nil
   def instance(domain) do
     Instance
     |> where(domain: ^domain)

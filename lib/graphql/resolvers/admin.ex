@@ -62,7 +62,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     Map.merge(map, %{actor: actor, id: id, inserted_at: inserted_at})
   end
 
-  @spec transform_action_log(module(), atom(), ActionLog.t()) :: map()
+  @spec transform_action_log(module(), atom(), ActionLog.t()) :: map() | nil
   defp transform_action_log(
          Report,
          :update,
@@ -131,6 +131,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       object: convert_changes_to_struct(User, changes)
     }
   end
+
+  defp transform_action_log(_, _, _), do: nil
 
   # Changes are stored as %{"key" => "value"} so we need to convert them back as struct
   @spec convert_changes_to_struct(module(), map()) :: struct()
@@ -464,6 +466,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     {:error, :unauthenticated}
   end
 
+  @spec get_instance(any, map(), Absinthe.Resolution.t()) ::
+          {:error, :unauthenticated | :unauthorized | :not_found}
+          | {:ok, Mobilizon.Instances.Instance.t()}
   def get_instance(_parent, %{domain: domain}, %{
         context: %{current_user: %User{role: role}}
       })
@@ -482,7 +487,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
       followed_status: follow_status(local_relay, remote_relay)
     }
 
-    {:ok, Map.merge(Instances.instance(domain), result)}
+    case Instances.instance(domain) do
+      nil -> {:error, :not_found}
+      instance -> {:ok, Map.merge(instance, result)}
+    end
   end
 
   def get_instance(_parent, _args, %{context: %{current_user: %User{}}}) do
