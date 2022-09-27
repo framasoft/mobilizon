@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.0-beta.1 - 2022-09-27
+
+(Work in progress changelog)
+
+### Added
+
+- Add global search support, allowing to use https://search.joinmobilizon.org as a centralized event and group database
+- Add ability to filter search by categories and language
+- Add ability to explore search results on a map view
+- Add dark theme support
+- Add categories view
+- Support for Elixir 1.14 and Erlang OTP 25.
+
+### Changed
+
+- Homepage has been redesigned
+- Search view has been redesigned
+- Internal illustration pictures are now only served using WebP.
+
+### Fixed
+
+- Fixed deleting actor when participations association is not preloaded
+- Fixed rendering JSON-LD for an event with a single address (no online location)
+
+### Internal
+- Build on Elixir 1.14 and Erlang OTP 25.
+- Migrate from Vue 2 and Vue Class Component to Vue 3 and the Composition API
+- Migrate from Bulma and Buefy to TailwindCSS and Oruga
+
+### Tests
+
+#### Unit Tests
+- Rewrote tests using Vitest
+
+#### E2E Tests
+- Renabled E2E tests
+- Rewrote tests from Cypress to Playwright
+
 ## 2.1.0 - 2022-05-16
 
 ### Added
