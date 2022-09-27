@@ -91,7 +91,7 @@
         <form @submit.prevent="submit">
           <o-field
             :label="t('Email')"
-            :type="errorEmailType"
+            :variant="errorEmailType"
             :message="errorEmailMessage"
             label-for="email"
           >

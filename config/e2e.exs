@@ -19,19 +19,39 @@ config :mobilizon, Mobilizon.Web.Endpoint,
     yarn: [cd: Path.expand("../js", __DIR__)]
   ]
 
-require Logger
+config :vite_phx,
+  release_app: :mobilizon,
+  # Hard code :prod as an environment as :e2e will not be recongnized
+  environment: :prod,
+  vite_manifest: "priv/static/manifest.json",
+  phx_manifest: "priv/static/cache_manifest.json",
+  dev_server_address: "http://localhost:5173"
 
-cond do
-  System.get_env("INSTANCE_CONFIG") &&
-      File.exists?("./config/#{System.get_env("INSTANCE_CONFIG")}") ->
-    import_config System.get_env("INSTANCE_CONFIG")
+config :mobilizon, :instance,
+  name: "E2E Testing instance",
+  description: "E2E is safety",
+  hostname: "mobilizon1.com",
+  registrations_open: true,
+  registration_email_denylist: ["gmail.com", "deny@tcit.fr"],
+  demo: false,
+  default_language: "en",
+  allow_relay: true,
+  federating: true,
+  email_from: "mobilizon@mobilizon1.com",
+  email_reply_to: nil,
+  enable_instance_feeds: true,
+  koena_connect_link: true,
+  extra_categories: [
+    %{
+      id: :something_else,
+      label: "Quelque chose d'autre"
+    }
+  ]
 
-  System.get_env("DOCKER", "false") == "false" && File.exists?("./config/e2e.secret.exs") ->
-    import_config "e2e.secret.exs"
-
-  System.get_env("DOCKER", "false") == "true" ->
-    Logger.info("Using environment configuration for Docker")
-
-  true ->
-    Logger.error("No configuration file found")
-end
+config :mobilizon, Mobilizon.Storage.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: System.get_env("MOBILIZON_DATABASE_USERNAME", "mobilizon_e2e"),
+  password: System.get_env("MOBILIZON_DATABASE_PASSWORD", "mobilizon_e2e"),
+  database: System.get_env("MOBILIZON_DATABASE_DBNAME", "mobilizon_e2e"),
+  hostname: System.get_env("MOBILIZON_DATABASE_HOST", "localhost"),
+  port: System.get_env("MOBILIZON_DATABASE_PORT") || "5432"

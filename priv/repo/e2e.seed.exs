@@ -3,7 +3,7 @@ defmodule EndToEndSeed do
 
   def delete_user(email) do
     with {:ok, user} <- Users.get_user_by_email(email) do
-      Users.delete_user(user)
+      Users.delete_user(user, reserve_email: false)
     end
   end
 end

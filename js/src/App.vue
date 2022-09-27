@@ -57,13 +57,17 @@ import {
 } from "vue";
 import { LocationType } from "@/types/user-location.model";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { initializeCurrentActor } from "@/utils/identity";
+import {
+  initializeCurrentActor,
+  NoIdentitiesException,
+} from "@/utils/identity";
 import { useI18n } from "vue-i18n";
 import { Snackbar } from "@/plugins/snackbar";
 import { Notifier } from "@/plugins/notifier";
 import { CONFIG } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useRouter } from "vue-router";
+import RouteName from "@/router/name";
 
 const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
 
@@ -130,7 +134,19 @@ interval.value = setInterval(async () => {
 
 onBeforeMount(async () => {
   if (initializeCurrentUser()) {
-    await initializeCurrentActor();
+    try {
+      await initializeCurrentActor();
+    } catch (err) {
+      if (err instanceof NoIdentitiesException) {
+        await router.push({
+          name: RouteName.REGISTER_PROFILE,
+          params: {
+            email: localStorage.getItem(AUTH_USER_EMAIL),
+            userAlreadyActivated: "true",
+          },
+        });
+      }
+    }
   }
 });
 

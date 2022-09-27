@@ -210,6 +210,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Actors do
         if actor_type == :Application do
           Instances.refresh()
         end
+
         FollowMailer.send_notification_to_admins(follower)
         follower_as_data = Convertible.model_to_as(follower)
         approve_if_manually_approves_followers(follower, follower_as_data)

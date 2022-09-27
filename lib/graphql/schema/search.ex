@@ -24,7 +24,10 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:tags, list_of(:tag), description: "The event's tags")
     field(:category, :event_category, description: "The event's category")
     field(:options, :event_options, description: "The event options")
-    field(:participant_stats, :participant_stats, description: "Statistics on the event's participants")
+
+    field(:participant_stats, :participant_stats,
+      description: "Statistics on the event's participants"
+    )
 
     resolve_type(fn
       %Event{}, _ ->
@@ -55,7 +58,10 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
     field(:tags, list_of(:tag), description: "The event's tags")
     field(:category, :event_category, description: "The event's category")
     field(:options, :event_options, description: "The event options")
-    field(:participant_stats, :participant_stats, description: "Statistics on the event's participants")
+
+    field(:participant_stats, :participant_stats,
+      description: "Statistics on the event's participants"
+    )
   end
 
   interface :group_search_result do
@@ -198,7 +204,10 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:language_one_of, list_of(:string),
         description: "The list of languages this event can be in"
       )
-      arg(:boost_languages, list_of(:string), description: "The user's languages that can benefit from a boost in search results")
+
+      arg(:boost_languages, list_of(:string),
+        description: "The user's languages that can benefit from a boost in search results"
+      )
 
       arg(:search_target, :search_target,
         default_value: :internal,
@@ -238,7 +247,10 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:language_one_of, list_of(:string),
         description: "The list of languages this event can be in"
       )
-      arg(:boost_languages, list_of(:string), description: "The user's languages that can benefit from a boost in search results")
+
+      arg(:boost_languages, list_of(:string),
+        description: "The user's languages that can benefit from a boost in search results"
+      )
 
       arg(:search_target, :search_target,
         default_value: :internal,

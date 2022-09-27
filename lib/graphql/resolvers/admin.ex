@@ -467,7 +467,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   end
 
   @spec get_instance(any, map(), Absinthe.Resolution.t()) ::
-          {:error, :unauthenticated | :unauthorized | :not_found} | {:ok, Mobilizon.Instances.Instance.t()}
+          {:error, :unauthenticated | :unauthorized | :not_found}
+          | {:ok, Mobilizon.Instances.Instance.t()}
   def get_instance(_parent, %{domain: domain}, %{
         context: %{current_user: %User{role: role}}
       })

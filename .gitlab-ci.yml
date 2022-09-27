@@ -144,26 +144,32 @@ vitest:
         - js/junit.xml
     expire_in: 30 days
 
-# cypress:
-#   stage: test
-#   services:
-#     - name: postgis/postgis:13.3
-#       alias: postgres
-#   variables:
-#     MIX_ENV=e2e
-#   script:
-#     - mix ecto.create
-#     - mix ecto.migrate
-#     - mix run priv/repo/e2e.seed.exs
-#     - mix phx.server &
-#     - cd js
-#     - npx wait-on http://localhost:4000
-#     - if [ -z "$CYPRESS_KEY" ]; then npx cypress run; else npx cypress run --record --parallel --key $CYPRESS_KEY; fi
-#   artifacts:
-#     expire_in: 2 day
-#     paths:
-#       - js/tests/e2e/screenshots/**/*.png
-#       - js/tests/e2e/videos/**/*.mp4
+e2e:
+  stage: test
+  services:
+    - name: postgis/postgis:14-3.2
+      alias: postgres
+  variables:
+    MIX_ENV: "e2e"
+  before_script:
+    - mix deps.get
+    - mix ecto.create
+    - mix ecto.migrate
+    - mix run priv/repo/e2e.seed.exs
+    - cd js && yarn run build && npx playwright install && cd ../
+    - mix phx.digest
+  script:
+    - mix phx.server &
+    - cd js
+    - npx wait-on http://localhost:4000
+    - npx playwright test --project $BROWSER
+  parallel:
+    matrix:
+      - BROWSER: ['firefox', 'chromium']
+  artifacts:
+    expire_in: 2 days
+    paths:
+      - js/playwright-report
 
 pages:
   stage: deploy
