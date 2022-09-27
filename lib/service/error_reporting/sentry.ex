@@ -13,7 +13,9 @@ defmodule Mobilizon.Service.ErrorReporting.Sentry do
 
   @impl ErrorReporting
   def configure do
-    Logger.add_backend(Sentry.LoggerBackend)
+    if enabled?() do
+      Logger.add_backend(Sentry.LoggerBackend)
+    end
   end
 
   def capture_message(message, opts \\ []) when is_binary(message) do
@@ -31,12 +33,14 @@ defmodule Mobilizon.Service.ErrorReporting.Sentry do
   @impl ErrorReporting
   @spec attach :: :ok | {:error, :already_exists}
   def attach do
-    :telemetry.attach(
-      "oban-errors",
-      [:oban, :job, :exception],
-      &handle_event/4,
-      []
-    )
+    if enabled?() do
+      :telemetry.attach(
+        "oban-errors",
+        [:oban, :job, :exception],
+        &handle_event/4,
+        []
+      )
+    end
   end
 
   @impl ErrorReporting
