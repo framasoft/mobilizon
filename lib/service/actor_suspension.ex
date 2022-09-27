@@ -11,6 +11,7 @@ defmodule Mobilizon.Service.ActorSuspension do
   alias Mobilizon.Medias.File
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
+  alias Mobilizon.Service.ErrorReporting.Sentry
   alias Mobilizon.Service.Export.Cachable
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Users.User
