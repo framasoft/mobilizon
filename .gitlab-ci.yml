@@ -156,7 +156,7 @@ e2e:
     - mix ecto.create
     - mix ecto.migrate
     - mix run priv/repo/e2e.seed.exs
-    - cd js && yarn run build && npx playwright install && cd ../
+    - cd js && yarn install && yarn run build && npx playwright install && cd ../
     - mix phx.digest
   script:
     - mix phx.server &
