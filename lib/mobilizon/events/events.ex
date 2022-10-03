@@ -1698,6 +1698,7 @@ defmodule Mobilizon.Events do
     event_tags_ids = Enum.map(tags, & &1.id)
 
     Event
+    |> distinct([e], e.id)
     |> join(:left, [e], et in "events_tags", on: e.id == et.event_id)
     |> join(:left, [e], a in Address, on: e.physical_address_id == a.id)
     |> where(
