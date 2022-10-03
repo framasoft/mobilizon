@@ -1693,11 +1693,14 @@ defmodule Mobilizon.Events do
         id: event_id,
         tags: tags,
         physical_address: physical_address,
+        organizer_actor: %Actor{id: organizer_actor_id},
+        attributed_to: attributed_to,
         category: category,
         language: language
       }) do
     event_tags_ids = Enum.map(tags, & &1.id)
     geom = if is_nil(physical_address), do: nil, else: physical_address.geom
+    group_id = if is_nil(attributed_to), do: nil, else: attributed_to.id
 
     Event
     |> distinct([e], e.id)
@@ -1710,13 +1713,18 @@ defmodule Mobilizon.Events do
     |> where(
       [e, et, a],
       fragment(
-        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (?::geography is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 > ?",
+        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (? = ?)::int * 2 + (?::int is null or ? = ?)::int * 2 + (?::geography is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 > ?",
         e.language,
         ^language,
         et.tag_id,
         ^event_tags_ids,
         e.category,
         ^category,
+        e.organizer_actor_id,
+        ^organizer_actor_id,
+        ^group_id,
+        e.attributed_to_id,
+        ^group_id,
         ^geom,
         ^geom,
         a.geom,
@@ -1728,13 +1736,18 @@ defmodule Mobilizon.Events do
     |> order_by(
       [e, et, a],
       fragment(
-        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (?::geography is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 DESC",
+        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (? = ?)::int * 2 + (?::int is null or ? = ?)::int * 2 + (?::geography is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 DESC",
         e.language,
         ^language,
         et.tag_id,
         ^event_tags_ids,
         e.category,
         ^category,
+        e.organizer_actor_id,
+        ^organizer_actor_id,
+        ^group_id,
+        e.attributed_to_id,
+        ^group_id,
         ^geom,
         ^geom,
         a.geom,
