@@ -1688,6 +1688,7 @@ defmodule Mobilizon.Events do
 
   @threshold_related_value 7
 
+  @spec related_events(Event.t()) :: list(Event.t())
   def related_events(%Event{
         id: event_id,
         tags: tags,
@@ -1702,6 +1703,10 @@ defmodule Mobilizon.Events do
     |> distinct([e], e.id)
     |> join(:left, [e], et in "events_tags", on: e.id == et.event_id)
     |> join(:left, [e], a in Address, on: e.physical_address_id == a.id)
+    |> events_for_begins_on(%{})
+    |> filter_draft()
+    |> filter_local_or_from_followed_instances_events()
+    |> filter_public_visibility()
     |> where(
       [e, et, a],
       fragment(
@@ -1719,7 +1724,6 @@ defmodule Mobilizon.Events do
         @threshold_related_value
       )
     )
-    # |> where([e], e.begins_on > ^DateTime.utc_now())
     |> where([e], e.id != ^event_id)
     |> order_by(
       [e, et, a],
