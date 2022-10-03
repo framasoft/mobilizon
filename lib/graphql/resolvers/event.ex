@@ -211,10 +211,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     # We get the organizer's next public event
     events =
       event
-      |> organizer_next_public_event()
-      # We find similar events with the same tags
-      |> similar_events_common_tags(event)
-      # TODO: We should use tag_relations to find more appropriate events
+      |> Events.related_events()
       # We've considered all recommended events, so we fetch the latest events
       |> add_latest_events()
       # We remove the same event from the results

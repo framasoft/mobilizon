@@ -1686,6 +1686,58 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  @threshold_related_value 7
+
+  def related_events(%Event{
+        id: event_id,
+        tags: tags,
+        physical_address: %Address{geom: geom},
+        category: category,
+        language: language
+      }) do
+    event_tags_ids = Enum.map(tags, & &1.id)
+
+    Event
+    |> join(:left, [e], et in "events_tags", on: e.id == et.event_id)
+    |> join(:left, [e], a in Address, on: e.physical_address_id == a.id)
+    |> where(
+      [e, et, a],
+      fragment(
+        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (? is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 > ?",
+        e.language,
+        ^language,
+        et.tag_id,
+        ^event_tags_ids,
+        e.category,
+        ^category,
+        a.geom,
+        ^geom,
+        a.geom,
+        5000,
+        @threshold_related_value
+      )
+    )
+    # |> where([e], e.begins_on > ^DateTime.utc_now())
+    |> where([e], e.id != ^event_id)
+    |> order_by(
+      [e, et, a],
+      fragment(
+        "(? = ?)::int * 5 + (? = ALL(?))::int * 2 + (? = ?)::int + (? is null or ST_DWithin(?::geography, ?::geography, ?::float))::int * 2 DESC",
+        e.language,
+        ^language,
+        et.tag_id,
+        ^event_tags_ids,
+        e.category,
+        ^category,
+        a.geom,
+        ^geom,
+        a.geom,
+        5000
+      )
+    )
+    |> Repo.all()
+  end
+
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
   defp list_participations_for_user_query(user_id) do
     from(
