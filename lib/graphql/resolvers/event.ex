@@ -222,26 +222,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:ok, events}
   end
 
-  @spec organizer_next_public_event(Event.t()) :: list(Event.t())
-  defp organizer_next_public_event(%Event{attributed_to: %Actor{} = group, uuid: uuid}) do
-    [Events.get_upcoming_public_event_for_actor(group, uuid)]
-    |> Enum.filter(&is_map/1)
-  end
-
-  defp organizer_next_public_event(%Event{organizer_actor: %Actor{} = profile, uuid: uuid}) do
-    [Events.get_upcoming_public_event_for_actor(profile, uuid)]
-    |> Enum.filter(&is_map/1)
-  end
-
-  @spec similar_events_common_tags(list(Event.t()), Event.t()) :: list(Event.t())
-  defp similar_events_common_tags(events, %Event{tags: tags, uuid: uuid}) do
-    events
-    |> Enum.concat(Events.list_events_by_tags(tags, @number_of_related_events))
-    |> Enum.filter(fn event -> event.uuid != uuid end)
-    # uniq_by : It's possible event_from_same_actor is inside events_from_tags
-    |> uniq_events()
-  end
-
   @spec add_latest_events(list(Event.t())) :: list(Event.t())
   defp add_latest_events(events) do
     if @number_of_related_events - length(events) > 0 do
