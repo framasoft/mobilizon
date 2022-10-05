@@ -432,7 +432,7 @@ const filteredLanguages = ref<string[]>([]);
 
 const instanceLanguages = computed({
   get() {
-    const languageCodes = [...adminSettings.value.instanceLanguages] || [];
+    const languageCodes = [...(adminSettings.value?.instanceLanguages ?? [])];
     return languageCodes
       .map((code) => languageForCode(code))
       .filter((language) => language) as string[];
@@ -468,7 +468,8 @@ saveAdminSettingsError((e) => {
 });
 
 const updateSettings = async (): Promise<void> => {
-  const variables = { ...settingsToWrite };
+  const variables = { ...settingsToWrite.value };
+  console.debug("updating settings with variables", variables);
   saveAdminSettings(variables);
 };
 

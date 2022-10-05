@@ -114,7 +114,7 @@ body {
 }
 
 .autocomplete-item {
-  @apply py-1.5 px-4;
+  @apply py-1.5 px-4 text-start;
 }
 
 /* Dropdown */

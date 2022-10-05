@@ -1,9 +1,10 @@
 <template>
   <close-content
     class="container mx-auto px-2"
-    v-show="loadingGroups || selectedGroups.length > 0"
+    v-show="loading || selectedGroups.length > 0"
     @do-geo-loc="emit('doGeoLoc')"
     :suggestGeoloc="userLocation.isIPLocation"
+    :doingGeoloc="doingGeoloc"
   >
     <template #title>
       <template v-if="userLocationName">
@@ -22,7 +23,7 @@
         v-for="i in [...Array(6).keys()]"
         class="scroll-ml-6 snap-center shrink-0 w-[18rem] my-4"
         :key="i"
-        v-show="loadingGroups"
+        v-show="loading"
       />
       <group-card
         v-for="group in selectedGroups"
@@ -43,7 +44,7 @@
             lat: userLocation.lat?.toString(),
             lon: userLocation.lon?.toString(),
             contentType: 'GROUPS',
-            distance: '25_km',
+            distance: `${distance}_km`,
           },
         }"
         :picture="userLocation.picture"
@@ -74,22 +75,35 @@ import { coordsToGeoHash } from "@/utils/location";
 import { useI18n } from "vue-i18n";
 import RouteName from "@/router/name";
 
-const props = defineProps<{ userLocation: LocationType }>();
+const props = defineProps<{
+  userLocation: LocationType;
+  doingGeoloc?: boolean;
+}>();
 const emit = defineEmits(["doGeoLoc"]);
 
 const { t } = useI18n({ useScope: "global" });
+
+const userLocation = computed(() => props.userLocation);
+
+const geoHash = computed(() =>
+  coordsToGeoHash(userLocation.value.lat, userLocation.value.lon)
+);
+
+const distance = computed<number>(() =>
+  userLocation.value?.isIPLocation ? 150 : 25
+);
 
 const { result: groupsResult, loading: loadingGroups } = useQuery<{
   searchGroups: Paginate<IGroup>;
 }>(
   SEARCH_GROUPS,
   () => ({
-    location: coordsToGeoHash(props.userLocation.lat, props.userLocation.lon),
-    radius: 25,
+    location: geoHash.value,
+    radius: distance.value,
     page: 1,
     limit: 12,
   }),
-  () => ({ enabled: props.userLocation?.lat !== undefined })
+  () => ({ enabled: geoHash.value !== undefined })
 );
 
 const groups = computed(
@@ -99,4 +113,6 @@ const groups = computed(
 const selectedGroups = computed(() => sampleSize(groups.value?.elements, 5));
 
 const userLocationName = computed(() => props?.userLocation?.name);
+
+const loading = computed(() => props.doingGeoloc || loadingGroups.value);
 </script>

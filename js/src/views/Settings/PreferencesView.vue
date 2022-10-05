@@ -16,7 +16,7 @@
       <o-field :label="t('Language')" label-for="setting-language">
         <o-select
           :loading="loadingTimezones || loadingUserSettings"
-          v-model="locale"
+          v-model="$i18n.locale"
           :placeholder="t('Select a language')"
           id="setting-language"
         >
@@ -64,11 +64,15 @@
         <o-field :label="t('City or region')" expanded label-for="setting-city">
           <full-address-auto-complete
             v-if="loggedUser?.settings"
-            :type="AddressSearchType.ADMINISTRATIVE"
+            :resultType="AddressSearchType.ADMINISTRATIVE"
             :doGeoLocation="false"
             v-model="address"
+            :default-text="address?.description"
             id="setting-city"
             class="grid"
+            :hideMap="true"
+            :hideSelected="true"
+            labelClass="sr-only"
             :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
           />
         </o-field>
@@ -108,7 +112,6 @@
 </template>
 <script lang="ts" setup>
 import ngeohash from "ngeohash";
-import { saveLocaleData } from "@/utils/auth";
 import {
   USER_SETTINGS,
   SET_USER_SETTINGS,
@@ -133,7 +136,7 @@ const { timezones: serverTimezones, loading: loadingTimezones } =
   useTimezones();
 const { loggedUser, loading: loadingUserSettings } = useUserSettings();
 
-const { t, locale: i18nLocale } = useI18n({ useScope: "global" });
+const { t, locale } = useI18n({ useScope: "global" });
 
 useHead({
   title: computed(() => t("Preferences")),
@@ -160,25 +163,6 @@ const selectedTimezone = computed({
 });
 
 const { mutate: updateUserLocale } = useMutation(UPDATE_USER_LOCALE);
-
-const locale = computed({
-  get(): string {
-    if (loggedUser.value?.locale) {
-      return loggedUser.value?.locale;
-    }
-    return i18nLocale.value as string;
-  },
-  set(newLocale: string) {
-    if (newLocale) {
-      updateUserLocale({
-        locale: newLocale,
-      });
-      saveLocaleData(newLocale);
-      console.debug("changing locale", i18nLocale, newLocale);
-      i18nLocale.value = newLocale;
-    }
-  },
-});
 
 const sanitize = (timezone: string): string => {
   return timezone

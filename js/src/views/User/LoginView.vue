@@ -69,7 +69,7 @@
         />
       </o-field>
 
-      <p class="text-center my-2" v-if="!submitted">
+      <p class="text-center my-2">
         <o-button
           variant="primary"
           size="large"
@@ -227,6 +227,7 @@ const loginAction = (e: Event) => {
   }
 
   submitted.value = true;
+  errors.value = [];
 
   loginMutation({
     email: credentials.email,
