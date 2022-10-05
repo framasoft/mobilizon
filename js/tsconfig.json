@@ -14,12 +14,7 @@
     "isolatedModules": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "jest",
-      "vite/client",
-      "@intlify/vite-plugin-vue-i18n/client"
-    ],
+    "types": ["webpack-env", "jest", "vite/client"],
     "typeRoots": ["./@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]

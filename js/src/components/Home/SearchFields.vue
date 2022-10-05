@@ -37,11 +37,14 @@
 <script lang="ts" setup>
 import { IAddress } from "@/types/address.model";
 import { AddressSearchType } from "@/types/enums";
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import { useRouter } from "vue-router";
 import RouteName from "@/router/name";
+
+const FullAddressAutoComplete = defineAsyncComponent(
+  () => import("@/components/Event/FullAddressAutoComplete.vue")
+);
 
 const props = defineProps<{
   location: IAddress | null;

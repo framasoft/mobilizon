@@ -3,7 +3,6 @@ import en from "../i18n/en_US.json";
 import langs from "../i18n/langs.json";
 import { getLocaleData } from "./auth";
 import pluralizationRules from "../i18n/pluralRules";
-// import messages from "@intlify/vite-plugin-vue-i18n/messages";
 
 const DEFAULT_LOCALE = "en_US";
 

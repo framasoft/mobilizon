@@ -64,6 +64,7 @@
                     media="(min-width: 300px)"
                   />
                   <img
+                    loading="lazy"
                     class="w-full h-12 w-12 object-cover"
                     :src="`/img/categories/${key.toLowerCase()}.webp`"
                     :srcset="`/img/categories/${key.toLowerCase()}-small.webp `"

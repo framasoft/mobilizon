@@ -3,9 +3,6 @@ import { defineConfig } from "vite";
 import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
 import { visualizer } from "rollup-plugin-visualizer";
-// import { resolve, dirname } from "node:path";
-// import { fileURLToPath } from "url";
-// import vueI18n from "@intlify/vite-plugin-vue-i18n";
 
 export default defineConfig(({ command }) => {
   const isDev = command !== "build";
@@ -31,21 +28,13 @@ export default defineConfig(({ command }) => {
         //   enabled: true,
         // },
       }),
-      // vueI18n({
-      //   /* options */
-      //   // locale messages resource pre-compile option
-      //   include: resolve(
-      //     dirname(fileURLToPath(import.meta.url)),
-      //     "./src/i18n/**"
-      //   ),
-      // }),
       visualizer(),
     ],
     build: {
       manifest: true,
       outDir: path.resolve(__dirname, "../priv/static"),
       emptyOutDir: true,
-      sourcemap: isDev,
+      sourcemap: true,
       rollupOptions: {
         // overwrite default .html entry
         input: {

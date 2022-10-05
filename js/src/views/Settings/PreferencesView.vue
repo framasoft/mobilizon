@@ -116,15 +116,18 @@ import {
 } from "../../graphql/user";
 import langs from "../../i18n/langs.json";
 import RouteName from "../../router/name";
-import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import { AddressSearchType } from "@/types/enums";
 import { Address, IAddress } from "@/types/address.model";
 import { useTimezones } from "@/composition/apollo/config";
 import { useUserSettings } from "@/composition/apollo/user";
 import { useHead } from "@vueuse/head";
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
+
+const FullAddressAutoComplete = defineAsyncComponent(
+  () => import("@/components/Event/FullAddressAutoComplete.vue")
+);
 
 const { timezones: serverTimezones, loading: loadingTimezones } =
   useTimezones();

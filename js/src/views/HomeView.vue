@@ -175,7 +175,6 @@
 <script lang="ts" setup>
 import { ParticipantRole } from "@/types/enums";
 import { IParticipant } from "../types/participant.model";
-import EventParticipationCard from "../components/Event/EventParticipationCard.vue";
 import MultiCard from "../components/Event/MultiCard.vue";
 import { CURRENT_ACTOR_CLIENT } from "../graphql/actor";
 import { IPerson, displayName } from "../types/actor";
@@ -189,7 +188,14 @@ import CloseEvents from "@/components/Local/CloseEvents.vue";
 import CloseGroups from "@/components/Local/CloseGroups.vue";
 import LastEvents from "@/components/Local/LastEvents.vue";
 import OnlineEvents from "@/components/Local/OnlineEvents.vue";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import {
+  computed,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+  defineAsyncComponent,
+} from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { REVERSE_GEOCODE } from "@/graphql/address";
@@ -208,6 +214,10 @@ import { geoHashToCoords } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
+
+const EventParticipationCard = defineAsyncComponent(
+  () => import("@/components/Event/EventParticipationCard.vue")
+);
 
 const { result: aboutConfigResult } = useQuery<{
   config: Pick<

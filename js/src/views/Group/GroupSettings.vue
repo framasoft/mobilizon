@@ -184,7 +184,6 @@
 </template>
 
 <script lang="ts" setup>
-import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { GroupVisibility, MemberRole, Openness } from "@/types/enums";
 import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
@@ -210,6 +209,10 @@ import { Notifier } from "@/plugins/notifier";
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
+);
+
+const FullAddressAutoComplete = defineAsyncComponent(
+  () => import("@/components/Event/FullAddressAutoComplete.vue")
 );
 
 const props = defineProps<{ preferredUsername: string }>();
@@ -263,7 +266,7 @@ onGroupResult(({ data }) => {
 
 watch(
   group,
-  async (newGroup: IGroup, oldGroup: IGroup) => {
+  async (newGroup: IGroup | undefined, oldGroup: IGroup | undefined) => {
     console.debug("watching group");
     if (!newGroup) return;
     try {

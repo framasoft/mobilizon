@@ -24,6 +24,7 @@
                   :src="currentActor?.avatar.url"
                   width="32"
                   height="32"
+                  loading="lazy"
                 />
               </figure>
               <AccountCircle v-else :size="32" />
