@@ -23,7 +23,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
     location =
       case Map.get(geolix, :city) do
-        %{location: %{} = location} -> location
+        %{location: location} -> location
         _ -> nil
       end
 

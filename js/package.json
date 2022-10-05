@@ -53,7 +53,7 @@
     "@vue/apollo-composable": "^4.0.0-alpha.17",
     "@vue/compiler-sfc": "^3.2.37",
     "@vueuse/core": "^9.1.0",
-    "@vueuse/head": "^0.7.9",
+    "@vueuse/head": "^0.9.6",
     "@vueuse/router": "^9.0.2",
     "apollo-absinthe-upload-link": "^1.5.0",
     "autoprefixer": "^10",
@@ -93,7 +93,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
-    "@histoire/plugin-vue": "^0.10.0",
+    "@histoire/plugin-vue": "^0.11.0",
     "@playwright/test": "^1.25.1",
     "@rushstack/eslint-patch": "^1.1.4",
     "@tailwindcss/forms": "^0.5.2",
@@ -122,7 +122,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^9.3.0",
     "flush-promises": "^1.0.2",
-    "histoire": "^0.10.4",
+    "histoire": "^0.11.0",
     "jsdom": "^20.0.0",
     "mock-apollo-client": "^1.1.0",
     "prettier": "^2.2.1",

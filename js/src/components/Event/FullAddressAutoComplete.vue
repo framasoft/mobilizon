@@ -44,10 +44,11 @@
           class="!mt-0"
         >
           <template #default="{ option }">
-            <o-icon :icon="option.poiInfos.poiIcon.icon" />
-            <b>{{ option.poiInfos.name }}</b
-            ><br />
-            <small>{{ option.poiInfos.alternativeName }}</small>
+            <p class="flex gap-1">
+              <o-icon :icon="addressToPoiInfos(option).poiIcon.icon" />
+              <b>{{ addressToPoiInfos(option).name }}</b>
+            </p>
+            <small>{{ addressToPoiInfos(option).alternativeName }}</small>
           </template>
           <template #empty>
             <span v-if="isFetching">{{ t("Searching…") }}</span>
@@ -91,15 +92,15 @@
         </div>
       </div>
     </div>
-    <div
-      class="map"
-      v-if="!hideMap && selected && selected.geom && selected.poiInfos"
-    >
+    <div class="map" v-if="!hideMap && selected && selected.geom">
       <map-leaflet
         :coords="selected.geom"
         :marker="{
-          text: [selected.poiInfos.name, selected.poiInfos.alternativeName],
-          icon: selected.poiInfos.poiIcon.icon,
+          text: [
+            addressToPoiInfos(selected).name,
+            addressToPoiInfos(selected).alternativeName,
+          ],
+          icon: addressToPoiInfos(selected).poiIcon.icon,
         }"
         :updateDraggableMarkerCallback="reverseGeoCode"
         :options="{ zoom: mapDefaultZoom }"
@@ -110,7 +111,13 @@
 </template>
 <script lang="ts" setup>
 import { LatLng } from "leaflet";
-import { Address, IAddress, addressFullName } from "../../types/address.model";
+import {
+  Address,
+  IAddress,
+  addressFullName,
+  addressToPoiInfos,
+  IPoiInfo,
+} from "../../types/address.model";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
 import { computed, ref, watch, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
@@ -118,6 +125,7 @@ import { useGeocodingAutocomplete } from "@/composition/apollo/config";
 import { ADDRESS } from "@/graphql/address";
 import { useReverseGeocode } from "@/composition/apollo/address";
 import { useLazyQuery } from "@vue/apollo-composable";
+import { AddressSearchType } from "@/types/enums";
 const MapLeaflet = defineAsyncComponent(
   () => import("@/components/LeafletMap.vue")
 );
@@ -133,6 +141,7 @@ const props = withDefaults(
     hideMap?: boolean;
     hideSelected?: boolean;
     placeholder?: string;
+    resultType?: AddressSearchType;
   }>(),
   {
     labelClass: "",
@@ -227,11 +236,12 @@ const { onResult: onAddressSearchResult, load: searchAddress } = useLazyQuery<{
 onAddressSearchResult((result) => {
   if (result.loading) return;
   const { data } = result;
-  addressData.value = data.searchAddress.map(
-    (address: IAddress) => new Address(address)
-  );
+  console.debug("onAddressSearchResult", data.searchAddress);
+  addressData.value = data.searchAddress;
   isFetching.value = false;
 });
+
+const searchQuery = ref("");
 
 const asyncData = async (query: string): Promise<void> => {
   if (!query.length) {
@@ -247,9 +257,12 @@ const asyncData = async (query: string): Promise<void> => {
 
   isFetching.value = true;
 
+  searchQuery.value = query;
+
   searchAddress(undefined, {
-    query,
+    query: searchQuery.value,
     locale: locale.value,
+    type: props.resultType,
   });
 };
 
@@ -295,12 +308,10 @@ const { onResult: onReverseGeocodeResult, load: loadReverseGeocode } =
 onReverseGeocodeResult((result) => {
   if (result.loading !== false) return;
   const { data } = result;
-  addressData.value = data.reverseGeocode.map(
-    (elem: IAddress) => new Address(elem)
-  );
+  addressData.value = data.reverseGeocode;
 
   if (addressData.value.length > 0) {
-    const defaultAddress = new Address(addressData.value[0]);
+    const defaultAddress = addressData.value[0];
     selected.value = defaultAddress;
     emit("update:modelValue", selected.value);
   }

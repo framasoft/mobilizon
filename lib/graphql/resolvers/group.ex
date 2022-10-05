@@ -237,6 +237,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           end
       end
     else
+      Logger.info(
+        "Profile #{updater_actor.id} tried to update group #{group_id}, but they are not admin"
+      )
+
       {:error, dgettext("errors", "Profile is not administrator for the group")}
     end
   end

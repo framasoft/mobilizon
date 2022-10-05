@@ -8,13 +8,14 @@
           <slot name="title" />
         </h2>
 
-        <button
+        <o-button
+          :disabled="doingGeoloc"
           v-if="suggestGeoloc"
           class="inline-flex bg-primary rounded text-white flex-initial px-4 py-2 justify-center w-full md:w-min whitespace-nowrap"
           @click="emit('doGeoLoc')"
         >
           {{ t("Geolocate me") }}
-        </button>
+        </o-button>
       </div>
       <slot name="subtitle" />
     </div>
@@ -53,8 +54,9 @@ import { useI18n } from "vue-i18n";
 withDefaults(
   defineProps<{
     suggestGeoloc?: boolean;
+    doingGeoloc?: boolean;
   }>(),
-  { suggestGeoloc: true }
+  { suggestGeoloc: true, doingGeoloc: false }
 );
 
 const emit = defineEmits(["doGeoLoc"]);

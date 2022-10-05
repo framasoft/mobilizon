@@ -69,7 +69,11 @@ import { IConfig } from "@/types/config.model";
 import { useRouter } from "vue-router";
 import RouteName from "@/router/name";
 
-const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
+const { result: configResult } = useQuery<{ config: IConfig }>(
+  CONFIG,
+  undefined,
+  { fetchPolicy: "cache-only" }
+);
 
 const config = computed(() => configResult.value?.config);
 

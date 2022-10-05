@@ -19,13 +19,14 @@
       maxlength="1024"
     />
     <full-address-auto-complete
-      :type="AddressSearchType.ADMINISTRATIVE"
+      :resultType="AddressSearchType.ADMINISTRATIVE"
       :doGeoLocation="false"
       v-model="location"
       :hide-map="true"
       :hide-selected="true"
       :default-text="locationDefaultText"
       labelClass="sr-only"
+      :placeholder="t('e.g. Nantes, Berlin, Cork, …')"
     />
     <o-button native-type="submit" icon-left="magnify">
       <template v-if="search">{{ t("Go!") }}</template>

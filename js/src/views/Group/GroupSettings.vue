@@ -318,6 +318,7 @@ const buildVariables = computed(() => {
     // @ts-ignore
     delete physicalAddress.__typename;
   }
+  delete physicalAddress?.pictureInfo;
   delete variables.avatar;
   delete variables.banner;
 

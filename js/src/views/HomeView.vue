@@ -131,7 +131,11 @@
     </span>
   </section>
   <!-- Recent events -->
-  <CloseEvents @doGeoLoc="performGeoLocation()" :userLocation="userLocation" />
+  <CloseEvents
+    @doGeoLoc="performGeoLocation()"
+    :userLocation="userLocation"
+    :doingGeoloc="doingGeoloc"
+  />
   <CloseGroups :userLocation="userLocation" @doGeoLoc="performGeoLocation()" />
   <OnlineEvents />
   <LastEvents v-if="instanceName" :instanceName="instanceName" />
@@ -224,7 +228,9 @@ const { result: aboutConfigResult } = useQuery<{
     IConfig,
     "name" | "description" | "slogan" | "registrationsOpen"
   >;
-}>(ABOUT);
+}>(ABOUT, undefined, {
+  fetchPolicy: "cache-only",
+});
 
 const config = computed(() => aboutConfigResult.value?.config);
 
@@ -507,10 +513,19 @@ GeolocationPosition) => {
   reverseGeoCodeInformation.latitude = latitude;
   reverseGeoCodeInformation.longitude = longitude;
   reverseGeoCodeInformation.accuracy = accuracy;
+  doingGeoloc.value = false;
 };
 
+const doingGeoloc = ref(false);
+
 const performGeoLocation = () => {
-  navigator.geolocation.getCurrentPosition(fetchAndSaveCurrentLocationName);
+  doingGeoloc.value = true;
+  navigator.geolocation.getCurrentPosition(
+    fetchAndSaveCurrentLocationName,
+    () => {
+      doingGeoloc.value = false;
+    }
+  );
 };
 
 /**

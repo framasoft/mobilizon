@@ -3,8 +3,14 @@
     class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 dark:bg-zinc-900"
     id="navbar"
   >
-    <div class="container mx-auto flex flex-wrap items-center mx-auto gap-4">
-      <router-link :to="{ name: RouteName.HOME }" class="flex items-center">
+    <div
+      class="container mx-auto flex flex-wrap items-center mx-auto gap-2 sm:gap-4"
+    >
+      <router-link
+        :to="{ name: RouteName.HOME }"
+        class="flex items-center"
+        :class="{ 'flex-1': !currentActor?.id }"
+      >
         <MobilizonLogo class="w-40" />
       </router-link>
       <div class="flex items-center md:order-2 ml-auto" v-if="currentActor?.id">
@@ -12,7 +18,7 @@
           <template #trigger>
             <button
               type="button"
-              class="flex mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+              class="flex sm:mr-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
               id="user-menu-button"
               aria-expanded="false"
             >

@@ -1,10 +1,11 @@
 <template>
   <close-content
     class="container mx-auto px-2"
-    v-show="loadingEvents || (events && events.total > 0)"
+    v-show="loading || (events && events.total > 0)"
     :suggestGeoloc="suggestGeoloc"
     v-on="attrs"
     @doGeoLoc="emit('doGeoLoc')"
+    :doingGeoloc="doingGeoloc"
   >
     <template #title>
       <template v-if="userLocationName">
@@ -19,7 +20,7 @@
         v-for="i in 6"
         class="scroll-ml-6 snap-center shrink-0 w-[18rem] my-4"
         :key="i"
-        v-show="loadingEvents"
+        v-show="loading"
       />
       <event-card
         v-for="event in events.elements"
@@ -35,7 +36,7 @@
             lat: userLocation.lat?.toString(),
             lon: userLocation.lon?.toString(),
             contentType: 'EVENTS',
-            distance: '25_km',
+            distance: `${distance}_km`,
           },
         }"
         :picture="userLocation?.picture"
@@ -54,10 +55,10 @@
 import { LocationType } from "../../types/user-location.model";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
-import { computed, useAttrs } from "vue";
+import { computed, onMounted, ref, useAttrs } from "vue";
 import { SEARCH_EVENTS } from "@/graphql/search";
 import { IEvent } from "@/types/event.model";
-import { useQuery } from "@vue/apollo-composable";
+import { useLazyQuery } from "@vue/apollo-composable";
 import EventCard from "../Event/EventCard.vue";
 import { Paginate } from "@/types/paginate";
 import SkeletonEventResult from "../Event/SkeletonEventResult.vue";
@@ -66,7 +67,10 @@ import { coordsToGeoHash } from "@/utils/location";
 import { roundToNearestMinute } from "@/utils/datetime";
 import RouteName from "@/router/name";
 
-const props = defineProps<{ userLocation: LocationType }>();
+const props = defineProps<{
+  userLocation: LocationType;
+  doingGeoloc?: boolean;
+}>();
 const emit = defineEmits(["doGeoLoc"]);
 
 const EVENT_PAGE_LIMIT = 12;
@@ -74,34 +78,54 @@ const EVENT_PAGE_LIMIT = 12;
 const { t } = useI18n({ useScope: "global" });
 const attrs = useAttrs();
 
+const userLocation = computed(() => props.userLocation);
+
 const userLocationName = computed(() => {
-  return props.userLocation?.name;
+  return userLocation.value?.name;
 });
-const suggestGeoloc = computed(() => props.userLocation?.isIPLocation);
+const suggestGeoloc = computed(() => userLocation.value?.isIPLocation);
 
 const geoHash = computed(() =>
   coordsToGeoHash(props.userLocation.lat, props.userLocation.lon)
 );
 
-const { result: eventsResult, loading: loadingEvents } = useQuery<{
+const distance = computed<number>(() => (suggestGeoloc.value ? 150 : 25));
+
+const now = computed(() => roundToNearestMinute(new Date()));
+
+const searchEnabled = computed(() => geoHash.value != undefined);
+const enabled = ref(false);
+
+const {
+  result: eventsResult,
+  loading: loadingEvents,
+  load: load,
+} = useLazyQuery<{
   searchEvents: Paginate<IEvent>;
 }>(
   SEARCH_EVENTS,
   () => ({
     location: geoHash.value,
-    beginsOn: roundToNearestMinute(new Date()),
+    beginsOn: now.value,
     endsOn: undefined,
-    radius: 25,
+    radius: distance.value,
     eventPage: 1,
     limit: EVENT_PAGE_LIMIT,
     type: "IN_PERSON",
   }),
   () => ({
-    enabled: geoHash.value !== undefined,
+    enabled: searchEnabled.value,
+    fetchPolicy: "cache-first",
   })
 );
 
 const events = computed(
   () => eventsResult.value?.searchEvents ?? { elements: [], total: 0 }
 );
+
+onMounted(() => {
+  load();
+});
+
+const loading = computed(() => props.doingGeoloc || loadingEvents.value);
 </script>

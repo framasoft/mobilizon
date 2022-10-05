@@ -74,7 +74,7 @@ export const typePolicies: TypePolicies = {
     merge: true,
   },
   Address: {
-    keyFields: ["id"],
+    keyFields: ["id", "originId"],
   },
   RootQueryType: {
     fields: {
