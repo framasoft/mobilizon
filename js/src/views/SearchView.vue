@@ -668,7 +668,7 @@ import GroupCard from "@/components/Group/GroupCard.vue";
 import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref, watch } from "vue";
+import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   floatTransformer,
@@ -698,8 +698,11 @@ import { refDebounced } from "@vueuse/core";
 import { IAddress } from "@/types/address.model";
 import { IConfig } from "@/types/config.model";
 import { TypeNamed } from "@/types/apollo";
-import EventMarkerMap from "@/components/Search/EventMarkerMap.vue";
 import { LatLngBounds } from "leaflet";
+
+const EventMarkerMap = defineAsyncComponent(
+  () => import("@/components/Search/EventMarkerMap.vue")
+);
 
 const search = useRouteQuery("search", "");
 const searchDebounced = refDebounced(search, 1000);

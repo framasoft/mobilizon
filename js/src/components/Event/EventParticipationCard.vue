@@ -482,18 +482,10 @@ const lastSeatsLeft = computed<boolean>(() => {
 const actorAvatarURL = computed<string | null>(() =>
   organizerAvatarUrl(props.participation.event)
 );
-
-// export default class EventParticipationCard extends mixins(
-//   ActorMixin,
-//   EventMixin
-// ) {
-
-// }
 </script>
 
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-// @import "node_modules/bulma/sass/utilities/mixins.sass";
 
 article.box {
   // div.tag-container {

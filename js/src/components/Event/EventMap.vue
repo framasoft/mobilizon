@@ -70,7 +70,7 @@
 <script lang="ts" setup>
 import { Address, IAddress } from "@/types/address.model";
 import { RoutingTransportationType, RoutingType } from "@/types/enums";
-import { computed } from "vue";
+import { computed, defineAsyncComponent } from "vue";
 
 const RoutingParamType = {
   [RoutingType.OPENSTREETMAP]: {
@@ -87,7 +87,9 @@ const RoutingParamType = {
   },
 };
 
-const MapLeaflet = import("@/components/LeafletMap.vue");
+const MapLeaflet = defineAsyncComponent(
+  () => import("@/components/LeafletMap.vue")
+);
 
 const props = defineProps<{
   address: IAddress;

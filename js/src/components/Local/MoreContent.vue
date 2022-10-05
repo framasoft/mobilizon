@@ -10,6 +10,7 @@
         :src="picture.url"
         width="350"
         alt=""
+        loading="lazy"
       />
       <div class="absolute top-0 left-0 h-full w-full">
         <div

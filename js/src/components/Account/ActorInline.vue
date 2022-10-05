@@ -10,6 +10,7 @@
           alt=""
           width="36"
           height="36"
+          loading="lazy"
         />
       </figure>
       <AccountCircle :size="36" v-else />

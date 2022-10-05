@@ -543,7 +543,6 @@ import {
 import Tag from "@/components/TagElement.vue";
 import EventMetadataSidebar from "@/components/Event/EventMetadataSidebar.vue";
 import EventBanner from "@/components/Event/EventBanner.vue";
-import EventMap from "@/components/Event/EventMap.vue";
 import PopoverActorCard from "@/components/Account/PopoverActorCard.vue";
 import { IParticipant } from "@/types/participant.model";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
@@ -611,6 +610,9 @@ const IntegrationEtherpad = defineAsyncComponent(
   () => import("@/components/Event/Integrations/EtherpadIntegration.vue")
 );
 /* eslint-enable @typescript-eslint/no-unused-vars */
+const EventMap = defineAsyncComponent(
+  () => import("@/components/Event/EventMap.vue")
+);
 
 const props = defineProps<{
   uuid: string;

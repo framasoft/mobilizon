@@ -594,7 +594,6 @@ import { getTimezoneOffset } from "date-fns-tz";
 import PictureUpload from "@/components/PictureUpload.vue";
 import EditorComponent from "@/components/TextEditor.vue";
 import TagInput from "@/components/Event/TagInput.vue";
-import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
 import EventMetadataList from "@/components/Event/EventMetadataList.vue";
 import {
   NavigationGuardNext,
@@ -656,7 +655,14 @@ import {
   usePersonStatusGroup,
 } from "@/composition/apollo/actor";
 import { useUserSettings } from "@/composition/apollo/user";
-import { computed, inject, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  inject,
+  onMounted,
+  ref,
+  watch,
+  defineAsyncComponent,
+} from "vue";
 import { useFetchEvent } from "@/composition/apollo/event";
 import { useI18n } from "vue-i18n";
 import { useGroup } from "@/composition/apollo/group";
@@ -683,6 +689,10 @@ const { loggedUser } = useUserSettings();
 const { identities } = useCurrentUserIdentities();
 
 const { features } = useFeatures();
+
+const FullAddressAutoComplete = defineAsyncComponent(
+  () => import("@/components/Event/FullAddressAutoComplete.vue")
+);
 
 // apollo: {
 //   config: CONFIG_EDIT_EVENT,

@@ -200,7 +200,6 @@ import RouteName from "@/router/name";
 import { IParticipant } from "../../types/participant.model";
 import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
 import { IEvent } from "../../types/event.model";
-import EventParticipationCard from "../../components/Event/EventParticipationCard.vue";
 import MultiEventMinimalistCard from "../../components/Event/MultiEventMinimalistCard.vue";
 import EventMinimalistCard from "../../components/Event/EventMinimalistCard.vue";
 import {
@@ -208,12 +207,16 @@ import {
   LOGGED_USER_UPCOMING_EVENTS,
 } from "@/graphql/participant";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, defineAsyncComponent } from "vue";
 import { IUser } from "@/types/current-user.model";
 import { booleanTransformer, useRouteQuery } from "vue-use-route-query";
 import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
+
+const EventParticipationCard = defineAsyncComponent(
+  () => import("@/components/Event/EventParticipationCard.vue")
+);
 
 type Eventable = IParticipant | IEvent;
 

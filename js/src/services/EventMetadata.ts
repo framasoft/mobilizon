@@ -60,9 +60,7 @@ export const eventMetaDataList: IEventMetadataDescription[] = [
     icon: "smoking-off",
     key: "mz:accessibility:smokeFree",
     label: t("Smoke free") as string,
-    description: t(
-      "Whether smoking is prohibited during the event"
-    ) as string,
+    description: t("Whether smoking is prohibited during the event") as string,
     value: "false",
     type: EventMetadataType.BOOLEAN,
     keyType: EventMetadataKeyType.PLAIN,

@@ -11,6 +11,7 @@
           alt=""
           width="48"
           height="48"
+          loading="lazy"
         />
       </figure>
       <AccountCircle
