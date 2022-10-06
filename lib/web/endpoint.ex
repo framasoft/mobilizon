@@ -64,14 +64,9 @@ defmodule Mobilizon.Web.Endpoint do
   plug(Plug.RequestId)
   plug(Plug.Logger)
 
-  upload_limit =
-    Keyword.get(Application.compile_env(:mobilizon, :instance, []), :upload_limit, 10_485_760)
-
-  plug(
-    Plug.Parsers,
-    parsers: [:urlencoded, {:multipart, length: upload_limit}, :json, Absinthe.Plug.Parser],
-    pass: ["*/*"],
-    json_decoder: Jason
+  plug(Replug,
+    plug: {Plug.Parsers, pass: ["*/*"], json_decoder: Jason},
+    opts: {Mobilizon.Web.PlugConfigs, :parsers}
   )
 
   plug(Plug.MethodOverride)
