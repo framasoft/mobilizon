@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-09-11 18:18+0000\n"
+"PO-Revision-Date: 2022-10-06 06:03+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1326,7 +1326,7 @@ msgstr "%{name} želi pratiti tvoju instancu"
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
-msgstr ""
+msgstr "Ako prihvatiš, ovaj će profil primati sve tvoje javne događaje."
 
 #: lib/web/email/follow.ex:47
 #, elixir-autogen, elixir-format
@@ -1355,6 +1355,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
+"Bok! Upravo si se registrirao/la za pridruživanje ovom događaju: "
+"„<b>%{title}</b>”. Potvrdi upisanu e-mail adresu:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:47
 #, elixir-autogen, elixir-format
@@ -1805,6 +1807,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from %{instance} just manually confirmed your account."
 msgstr ""
+"Bok! Želimo te samo obavijestiti da je administrator instance %{instance} "
+"upravo ručno potvrdio tvoj račun."
 
 #: lib/web/templates/email/admin_user_email_changed_old.html.heex:47
 #, elixir-autogen, elixir-format
@@ -1820,6 +1824,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just manually confirmed your account."
 msgstr ""
+"Bok! Želimo te samo obavijestiti da je administrator instance "
+"<b>%{instance}</b> upravo ručno potvrdio tvoj račun."
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:96
 #: lib/web/templates/email/admin_user_email_changed_new.html.heex:62
