@@ -74,7 +74,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           medias: medias,
           begins_on: object["startTime"],
           ends_on: object["endTime"],
-          category: get_category(object["category"]),
+          category: Categories.get_category(object["category"]),
           visibility: visibility,
           join_options: Map.get(object, "joinMode", "free"),
           local: is_local?(object["id"]),
@@ -331,15 +331,4 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
          _participant_count
        ),
        do: nil
-
-  @spec get_category(String.t() | nil) :: String.t()
-  defp get_category(nil), do: "MEETING"
-
-  defp get_category(category) when is_binary(category) do
-    if category in Enum.map(Categories.list(), &String.upcase(to_string(&1.id))) do
-      category
-    else
-      get_category(nil)
-    end
-  end
 end
