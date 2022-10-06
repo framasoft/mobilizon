@@ -100,7 +100,17 @@
       :title="extra.title || extra.label"
       :key="extra.key"
     >
-      <template #icon> <o-icon :icon="extra.icon" customSize="36" /> </template>
+      <template #icon>
+        <img
+          v-if="extra.icon && extra.icon.substring(0, 7) === 'mz:icon'"
+          :src="`/img/${extra.icon.substring(8)}_monochrome.svg`"
+          width="36"
+          height="36"
+          alt=""
+        />
+        <o-icon v-else-if="extra.icon" :icon="extra.icon" customSize="36" />
+        <o-icon v-else customSize="36" icon="help-circle" />
+      </template>
       <span
         v-if="
           ((extra.type == EventMetadataType.STRING &&

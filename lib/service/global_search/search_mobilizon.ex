@@ -37,7 +37,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
     options =
       options
       |> Keyword.merge(
-        term: options[:search],
+        search: options[:term],
         startDateMin: to_date(options[:begins_on]),
         startDateMax: to_date(options[:ends_on]),
         categoryOneOf: options[:category_one_of],
@@ -95,7 +95,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
     options =
       options
       |> Keyword.merge(
-        term: options[:search],
+        search: options[:term],
         languageOneOf: options[:language_one_of],
         boostLanguages: options[:boost_languages],
         distance: if(options[:radius], do: "#{options[:radius]}_km", else: nil),
