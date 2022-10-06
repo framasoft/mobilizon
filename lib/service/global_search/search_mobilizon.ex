@@ -5,7 +5,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
 
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Addresses.Address
-  alias Mobilizon.Events.Tag
+  alias Mobilizon.Events.{Categories, Tag}
   alias Mobilizon.Service.GlobalSearch.{EventResult, GroupResult, Provider}
   alias Mobilizon.Service.HTTP.GenericJSONClient
   alias Mobilizon.Storage.Page
@@ -187,7 +187,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
       ends_on: parse_date(data["endTime"]),
       url: data["url"],
       picture: picture,
-      category: String.to_existing_atom(String.downcase(data["category"])),
+      category: String.to_existing_atom(Categories.get_category(data["category"])),
       organizer_actor: %Actor{
         id: data["creator"]["id"],
         name: data["creator"]["displayName"],
