@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-07 12:48+0000\n"
+"PO-Revision-Date: 2022-10-08 10:34+0000\n"
 "Last-Translator: Ricardo Coelho <ricardo@nexy.com.br>\n"
 "Language-Team: Portuguese (Brazil) <https://weblate.framasoft.org/projects/"
 "mobilizon/activity/pt_BR/>\n"
 "Language: pt_BR\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 4.14.1\n"
-"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -254,208 +254,216 @@ msgstr "Atividade em %{instance}"
 #: lib/web/templates/email/email_anonymous_activity.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted an announcement under event %{event}."
-msgstr ""
+msgstr "%{profile} publicou um aviso no evento %{event}."
 
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a comment under event %{event}."
-msgstr ""
+msgstr "%{profile} mencionou você em um comentário no evento %{event}."
 
 #: lib/web/templates/email/email_direct_activity.html.heex:249
 #, elixir-autogen, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
+"Não quer receber notificações de atividades? Você pode alterar sua "
+"frequência ou desativá-las em %{tag_start}suas configurações%{tag_end}."
 
 #: lib/web/templates/email/email_direct_activity.html.heex:51
 #: lib/web/templates/email/email_direct_activity.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Here's your weekly activity recap"
-msgstr ""
+msgstr "Aqui está seu resumo semanal de atividades"
 
 #: lib/web/email/activity.ex:121
 #: lib/web/email/activity.ex:142
 #, elixir-autogen, elixir-format
 msgid "Activity notification for %{instance}"
-msgstr ""
+msgstr "Notificação de atividade para %{instance}"
 
 #: lib/web/email/activity.ex:128
 #, elixir-autogen, elixir-format
 msgid "Daily activity recap for %{instance}"
-msgstr ""
+msgstr "Resumo diário de atividades para %{instance}"
 
 #: lib/web/templates/email/email_direct_activity.html.heex:49
 #: lib/web/templates/email/email_direct_activity.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "Here's your daily activity recap"
-msgstr ""
+msgstr "Aqui está o seu resumo diário de atividades"
 
 #: lib/web/email/activity.ex:135
 #, elixir-autogen, elixir-format
 msgid "Weekly activity recap for %{instance}"
-msgstr ""
+msgstr "Resumo semanal de atividades para %{instance}"
 
 #: lib/service/activity/renderer/comment.ex:66
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:34
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
-msgstr ""
+msgstr "%{profile} comentou no seu evento %{event}."
 
 #: lib/service/activity/renderer/comment.ex:53
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:24
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
-msgstr ""
+msgstr "%{profile} respondeu no evento %{event}."
 
 #: lib/web/email/activity.ex:46
 #, elixir-autogen, elixir-format
 msgid "Announcement for your event %{event}"
-msgstr ""
+msgstr "Anúncio para seu evento %{event}"
 
 #: lib/service/activity/renderer/group.ex:23
 #, elixir-autogen, elixir-format
 msgid "The group %{group} was updated by %{profile}."
-msgstr ""
+msgstr "O grupo %{group} foi atualizado por %{profile}."
 
 #: lib/service/activity/renderer/post.ex:47
 #, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was deleted by %{profile}."
-msgstr ""
+msgstr "A publicação %{post} do grupo %{group} foi excluída por %{profile}."
 
 #: lib/service/activity/renderer/post.ex:31
 #, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was published by %{profile}."
-msgstr ""
+msgstr "A publicação %{post} do grupo %{group} foi adicionada por %{profile}."
 
 #: lib/service/activity/renderer/post.ex:39
 #, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was updated by %{profile}."
-msgstr ""
+msgstr "A publicação %{post} do grupo %{group} foi atualizada por %{profile}."
 
 #: lib/service/activity/renderer/member.ex:39
 #, elixir-autogen, elixir-format
 msgid "%{member} accepted the invitation to join the group %{group}."
-msgstr ""
+msgstr "%{member} aceitou o convite para participar do grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:47
 #, elixir-autogen, elixir-format
 msgid "%{member} joined the group %{group}."
-msgstr ""
+msgstr "%{member} entrou no grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:43
 #, elixir-autogen, elixir-format
 msgid "%{member} rejected the invitation to join the group %{group}."
-msgstr ""
+msgstr "%{member} rejeitou o convite para participar do grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:31
 #, elixir-autogen, elixir-format
 msgid "%{member} requested to join the group %{group}."
-msgstr ""
+msgstr "%{member} pediu para entrar no grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:35
 #, elixir-autogen, elixir-format
 msgid "%{member} was invited by %{profile} to group %{group}."
-msgstr ""
+msgstr "%{member} recebeu um convite de %{profile} para o grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:51
 #, elixir-autogen, elixir-format
 msgid "%{profile} added the member %{member} to group %{group}."
-msgstr ""
+msgstr "%{profile} adicionou %{member} ao grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:55
 #, elixir-autogen, elixir-format
 msgid "%{profile} approved the membership request from %{member} for group %{group}."
 msgstr ""
+"%{profile} aprovou o pedido de participação de %{member} no grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:33
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the folder %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} criou a pasta %{resource} no grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:69
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} excluiu a pasta %{resource} do grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:71
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the resource %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} excluiu o recurso %{resource} do grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:75
 #, elixir-autogen, elixir-format
 msgid "%{profile} excluded member %{member} from the group %{group}."
-msgstr ""
+msgstr "%{profile} removeu %{member} do grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} moveu a pasta %{resource} no grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:63
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the resource %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} moveu o recurso %{resource} no grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:79
 #, elixir-autogen, elixir-format
 msgid "%{profile} quit the group %{group}."
-msgstr ""
+msgstr "%{profile} saiu do grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:63
 #, elixir-autogen, elixir-format
 msgid "%{profile} rejected the membership request from %{member} for group %{group}."
 msgstr ""
+"%{profile} rejeitou o pedido de participação de %{member} no grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:45
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
+"%{profile} renomeou a pasta %{old_resource_title} para %{resource} no grupo "
+"%{group}."
 
 #: lib/service/activity/renderer/resource.ex:51
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
+"%{profile} renomeou o recurso %{old_resource_title} para %{resource} no "
+"grupo %{group}."
 
 #: lib/service/activity/renderer/member.ex:71
 #, elixir-autogen, elixir-format
 msgid "%{profile} updated the member %{member} in group %{group}."
-msgstr ""
+msgstr "%{profile} atualizou o membro %{member} no grupo %{group}."
 
 #: lib/service/activity/renderer/resource.ex:35
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the resource %{resource} in group %{group}."
-msgstr ""
+msgstr "%{profile} criou o recurso %{resource} no grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:86
 #, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} arquivou a discussão %{discussion} no grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:26
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} criou a discussão %{discussion} no grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:101
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} excluiu a discussão %{discussion} do grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:56
 #, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} mencionou você na discussão %{discussion} no grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:71
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} renomeou a discussão %{discussion} no grupo %{group}."
 
 #: lib/service/activity/renderer/discussion.ex:41
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
-msgstr ""
+msgstr "%{profile} respondeu à discussão %{discussion} no grupo %{group}."
