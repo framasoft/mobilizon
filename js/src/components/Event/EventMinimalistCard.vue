@@ -12,13 +12,13 @@
         <lazy-image-wrapper
           :picture="event.picture"
           :rounded="true"
-          class="object-cover flex-none h-32 md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg"
+          class="object-cover flex-none h-40 md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg"
         />
       </div>
     </div>
-    <div class="title-info-wrapper p-2">
+    <div class="p-2">
       <h3
-        class="event-minimalist-title pb-2 text-lg leading-6 line-clamp-3 font-bold text-violet-title dark:text-white"
+        class="pb-2 text-lg leading-6 line-clamp-3 font-bold text-violet-title dark:text-white"
         :lang="event.language"
         dir="auto"
       >
@@ -36,9 +36,13 @@
         >
           {{ $t("Cancelled") }}
         </tag>
-        <tag class="mr-2" variant="warning" size="medium" v-if="event.draft">{{
-          $t("Draft")
-        }}</tag>
+        <tag
+          class="mr-2 font-normal"
+          variant="warning"
+          size="medium"
+          v-if="event.draft"
+          >{{ $t("Draft") }}</tag
+        >
         {{ event.title }}
       </h3>
       <inline-address
@@ -173,24 +177,5 @@ withDefaults(
   // .calendar-icon {
   //   @include margin-right(1rem);
   // }
-
-  .title-info-wrapper {
-    flex: 2;
-
-    // .event-minimalist-title {
-    //   padding-bottom: 5px;
-    //   font-size: 18px;
-    //   line-height: 24px;
-    //   display: -webkit-box;
-    //   -webkit-line-clamp: 3;
-    //   -webkit-box-orient: vertical;
-    //   overflow: hidden;
-    //   font-weight: bold;
-    d    // }
-
-    :deep(.icon) {
-      vertical-align: middle;
-    }
-  }
 }
 </style>
