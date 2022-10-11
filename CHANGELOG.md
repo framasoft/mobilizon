@@ -5,9 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 3.0.0-beta.1 - 2022-09-27
 
-(Work in progress changelog)
+## 3.0.0-beta.2 - 2022-10-11
+
+### Changed
+
+- Improved the pertinence of related events
+- Light front-end performance improvements
+- Various UI and A11Y fixes on the event page
+- Handle categories page being empty
+
+### Fixed
+
+- Address selector
+- Group location edition
+- Reconfigure plug at runtime with env
+- Fix global search term
+- Fix custom icons in metadata list
+- Handle unknown icon
+- Only preload svg pictures on homepage
+
+## 3.0.0-beta.1 - 2022-09-27
 
 ### Added
 
