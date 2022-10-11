@@ -28,7 +28,7 @@ export const VALIDATE_USER = gql`
 `;
 
 export const LOGGED_USER = gql`
-  query {
+  query LoggedUserQuery {
     loggedUser {
       id
       email
@@ -300,7 +300,7 @@ export const UPDATE_USER_LOCALE = gql`
 `;
 
 export const FEED_TOKENS_LOGGED_USER = gql`
-  query {
+  query FeedTokensLoggedUser {
     loggedUser {
       id
       feedTokens {
