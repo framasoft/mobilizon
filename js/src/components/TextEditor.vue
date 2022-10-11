@@ -13,7 +13,7 @@
       >
         <button
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('bold') }"
+          :class="{ 'is-active': editor?.isActive('bold') }"
           @click="editor?.chain().focus().toggleBold().run()"
           type="button"
           :title="t('Bold')"
@@ -23,7 +23,7 @@
 
         <button
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('italic') }"
+          :class="{ 'is-active': editor?.isActive('italic') }"
           @click="editor?.chain().focus().toggleItalic().run()"
           type="button"
           :title="t('Italic')"
@@ -33,7 +33,7 @@
 
         <button
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('underline') }"
+          :class="{ 'is-active': editor?.isActive('underline') }"
           @click="editor?.chain().focus().toggleUnderline().run()"
           type="button"
           :title="t('Underline')"
@@ -44,7 +44,7 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 1 }) }"
           @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"
           type="button"
           :title="t('Heading Level 1')"
@@ -55,7 +55,7 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 2 }) }"
           @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
           type="button"
           :title="t('Heading Level 2')"
@@ -66,7 +66,7 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 3 }) }"
           @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
           type="button"
           :title="t('Heading Level 3')"
@@ -77,7 +77,7 @@
         <button
           class="menubar__button"
           @click="showLinkMenu()"
-          :class="{ 'is-active': editor.isActive('link') }"
+          :class="{ 'is-active': editor?.isActive('link') }"
           type="button"
           :title="t('Add link')"
         >
@@ -85,7 +85,7 @@
         </button>
 
         <button
-          v-if="editor.isActive('link')"
+          v-if="editor?.isActive('link')"
           class="menubar__button"
           @click="editor?.chain().focus().unsetLink().run()"
           type="button"
@@ -107,7 +107,7 @@
         <button
           class="menubar__button"
           v-if="!isBasicMode"
-          :class="{ 'is-active': editor.isActive('bulletList') }"
+          :class="{ 'is-active': editor?.isActive('bulletList') }"
           @click="editor?.chain().focus().toggleBulletList().run()"
           type="button"
           :title="t('Bullet list')"
@@ -118,7 +118,7 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('orderedList') }"
+          :class="{ 'is-active': editor?.isActive('orderedList') }"
           @click="editor?.chain().focus().toggleOrderedList().run()"
           type="button"
           :title="t('Ordered list')"
@@ -129,7 +129,7 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor.isActive('blockquote') }"
+          :class="{ 'is-active': editor?.isActive('blockquote') }"
           @click="editor?.chain().focus().toggleBlockquote().run()"
           type="button"
           :title="t('Quote')"
@@ -193,7 +193,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Editor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
 import Blockquote from "@tiptap/extension-blockquote";
 import BulletList from "@tiptap/extension-bullet-list";
 import Heading from "@tiptap/extension-heading";
@@ -254,8 +254,6 @@ const props = withDefaults(
 
 const emit = defineEmits(["update:modelValue"]);
 
-const editor = ref<Editor | null>(null);
-
 const isDescriptionMode = computed((): boolean => {
   return props.mode === "description" || isBasicMode.value;
 });
@@ -278,47 +276,6 @@ const isBasicMode = computed((): boolean => {
 
 // const observer = ref<MutationObserver | null>(null);
 
-onMounted(() => {
-  editor.value = new Editor({
-    editorProps: {
-      attributes: {
-        "aria-multiline": isShortMode.value.toString(),
-        "aria-label": props.ariaLabel ?? "",
-        role: "textbox",
-      },
-      transformPastedHTML: transformPastedHTML,
-    },
-    extensions: [
-      Blockquote,
-      BulletList,
-      Heading,
-      Document,
-      Paragraph,
-      Text,
-      OrderedList,
-      ListItem,
-      Mention.configure(MentionOptions),
-      CustomImage,
-      AutoDir,
-      Underline,
-      Bold,
-      Italic,
-      Strike,
-      Dropcursor,
-      Gapcursor,
-      History,
-      Link.configure({
-        HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
-      }),
-    ],
-    injectCSS: false,
-    content: props.modelValue,
-    onUpdate: () => {
-      emit("update:modelValue", editor.value?.getHTML());
-    },
-  });
-});
-
 const transformPastedHTML = (html: string): string => {
   // When using comment mode, limit to acceptable tags
   if (isCommentMode.value) {
@@ -332,6 +289,47 @@ const transformPastedHTML = (html: string): string => {
   }
   return html;
 };
+
+const editor = useEditor({
+  editorProps: {
+    attributes: {
+      "aria-multiline": isShortMode.value.toString(),
+      "aria-label": props.ariaLabel ?? "",
+      role: "textbox",
+      class:
+        "prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-xl m-5 focus:outline-none !max-w-full",
+    },
+    transformPastedHTML: transformPastedHTML,
+  },
+  extensions: [
+    Blockquote,
+    BulletList,
+    Heading,
+    Document,
+    Paragraph,
+    Text,
+    OrderedList,
+    ListItem,
+    Mention.configure(MentionOptions),
+    CustomImage,
+    AutoDir,
+    Underline,
+    Bold,
+    Italic,
+    Strike,
+    Dropcursor,
+    Gapcursor,
+    History,
+    Link.configure({
+      HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
+    }),
+  ],
+  injectCSS: false,
+  content: props.modelValue,
+  onUpdate: () => {
+    emit("update:modelValue", editor.value?.getHTML());
+  },
+});
 
 const value = computed(() => props.modelValue);
 
@@ -351,6 +349,7 @@ const { t } = useI18n({ useScope: "global" });
 const showLinkMenu = (): void => {
   dialog?.prompt({
     message: t("Enter the link URL"),
+    hasInput: true,
     inputAttrs: {
       type: "url",
     },
