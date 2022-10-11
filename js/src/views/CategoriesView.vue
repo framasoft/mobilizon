@@ -1,7 +1,8 @@
 <template>
   <div class="container mx-auto py-4 md:py-12 px-2 md:px-60">
     <main>
-      <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+      <h1>{{ t('Category list')}}</h1>
+      <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4" v-if="promotedCategories.length > 0">
         <CategoryCard
           v-for="category in promotedCategories"
           :key="category.key"
@@ -9,41 +10,22 @@
           :with-details="true"
         />
       </div>
+      <div v-else>
+        <EmptyContent icon="image" :inline="true">
+          {{ t('No categories with public upcoming events on this instance were found.') }}
+        </EmptyContent>
+      </div>
 
       <div
         class="mx-auto w-full max-w-lg rounded-2xl dark:bg-gray-800 p-2 mt-10"
       >
-        <div
-          class="card"
-          animation="slide"
-          :open="isLicencePanelOpen"
-          @open="isLicencePanelOpen = !isLicencePanelOpen"
-          :aria-id="'contentIdForA11y5'"
-        >
-          <div>
-            <button
-              class="flex w-full justify-between rounded-lg px-4 py-2 text-left text-sm font-medium dark:text-zinc-300"
-            >
-              {{ t("Category illustrations credits") }}
-              <svg
-                width="24"
-                height="24"
-                :class="isLicencePanelOpen ? 'transform rotate-90' : ''"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="{2}"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-          <div class="flex flex-col dark:text-zinc-300 gap-2 py-4 px-1">
+      <o-collapse v-model:open="isLicencePanelOpen" :aria-id="'contentIdForA11y5'">
+        <template #trigger>
+          <o-button aria-controls="contentIdForA11y1" :icon-right="isLicencePanelOpen ? 'chevron-up' : 'chevron-down'">
+            {{ t("Category illustrations credits") }}
+          </o-button>
+        </template>
+        <div class="flex flex-col dark:text-zinc-300 gap-2 py-4 px-1">
             <p
               v-for="(categoryLicence, key) in categoriesPicturesLicences"
               :key="key"
@@ -88,7 +70,7 @@
               />
             </p>
           </div>
-        </div>
+      </o-collapse>
       </div>
     </main>
   </div>
@@ -107,6 +89,7 @@ import {
 } from "@/components/Categories/constants";
 import { useI18n } from "vue-i18n";
 import { useEventCategories } from "@/composition/apollo/config";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
