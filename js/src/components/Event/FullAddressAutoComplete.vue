@@ -116,7 +116,6 @@ import {
   IAddress,
   addressFullName,
   addressToPoiInfos,
-  IPoiInfo,
 } from "../../types/address.model";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
 import { computed, ref, watch, defineAsyncComponent } from "vue";
