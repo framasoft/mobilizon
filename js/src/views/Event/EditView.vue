@@ -36,12 +36,13 @@
         <o-field
           v-if="eventCategories"
           :label="t('Category')"
-          label-for="category"
+          label-for="categoryField"
           class="w-full md:max-w-fit"
         >
           <o-select
             :placeholder="t('Select a category')"
             v-model="event.category"
+            id="categoryField"
             expanded
           >
             <option
@@ -339,10 +340,15 @@
               )
             }}
           </legend>
-          <o-field class="event__status__field">
+          <o-field class="radio-buttons">
             <o-radio
               v-model="event.status"
               name="status"
+              class="mr-2 p-2 rounded border"
+              :class="{
+                'btn-warning': event.status === EventStatus.TENTATIVE,
+                'btn-outlined-warning': event.status !== EventStatus.TENTATIVE,
+              }"
               variant="warning"
               :native-value="EventStatus.TENTATIVE"
             >
@@ -353,6 +359,11 @@
               v-model="event.status"
               name="status"
               variant="success"
+              class="mr-2 p-2 rounded border"
+              :class="{
+                'btn-success': event.status === EventStatus.CONFIRMED,
+                'btn-outlined-success': event.status !== EventStatus.CONFIRMED,
+              }"
               :native-value="EventStatus.CONFIRMED"
             >
               <o-icon icon="calendar-check" />
@@ -361,6 +372,11 @@
             <o-radio
               v-model="event.status"
               name="status"
+              class="p-2 rounded border"
+              :class="{
+                'btn-danger': event.status === EventStatus.CANCELLED,
+                'btn-outlined-danger': event.status !== EventStatus.CANCELLED,
+              }"
               variant="danger"
               :native-value="EventStatus.CANCELLED"
             >
@@ -489,105 +505,6 @@
     </div>
   </nav>
 </template>
-
-<style lang="scss" scoped>
-// @use "@/styles/_mixins" as *;
-// main section > .container {
-
-//   form {
-//     h2 {
-//       margin: 15px 0 7.5px;
-//     }
-
-//     legend {
-//       margin-bottom: 0.75rem;
-//     }
-//   }
-// }
-
-// .save__navbar {
-//   :deep(.navbar-menu),
-//   .navbar-end {
-//     flex-wrap: wrap;
-//   }
-// }
-
-// @media screen and (max-width: 768px) {
-//   .navbar.is-fixed-bottom {
-//     position: initial;
-//   }
-// }
-
-// h2.subtitle {
-//   margin: 10px 0;
-
-//   span {
-//     padding: 5px 7px;
-//     display: inline;
-//   }
-// }
-
-// .event__status__field {
-//   :deep(.field.has-addons) {
-//     display: flex;
-//     flex-wrap: wrap;
-//     justify-content: flex-start;
-//   }
-// }
-
-// .datepicker {
-//   :deep(.dropdown-menu) {
-//     z-index: 200;
-//   }
-// }
-
-// section {
-//   .begins-on-field {
-//     margin-top: 22px;
-//   }
-
-//   nav.navbar {
-//     min-height: 2rem !important;
-
-//     .container {
-//       min-height: 2rem;
-
-//       .navbar-menu,
-//       .navbar-end {
-//         display: flex !important;
-//       }
-
-//       .navbar-end {
-//         justify-content: flex-end;
-//         @include margin-left(auto);
-//       }
-//     }
-//   }
-// }
-
-// .address {
-//   :deep(.address-autocomplete) {
-//     margin-bottom: 0 !important;
-//   }
-//   .is-online {
-//     margin-bottom: 10px;
-//   }
-// }
-</style>
-<style lang="scss">
-// .dialog .modal-card {
-//   max-width: 500px;
-
-//   .modal-card-foot {
-//     justify-content: center;
-//     flex-wrap: wrap;
-
-//     & > button {
-//       margin-bottom: 5px;
-//     }
-//   }
-// }
-</style>
 
 <script lang="ts" setup>
 import { getTimezoneOffset } from "date-fns-tz";
@@ -1416,3 +1333,15 @@ watch(group, () => {
   }
 });
 </script>
+
+<style lang="scss">
+.radio-buttons input[type="radio"] {
+  & {
+    display: none;
+  }
+
+  & + span.radio-label {
+    padding-left: 3px;
+  }
+}
+</style>

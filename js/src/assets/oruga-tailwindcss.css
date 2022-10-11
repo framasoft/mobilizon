@@ -16,6 +16,15 @@ body {
 .btn-outlined-primary {
   @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
 }
+.btn-outlined-success {
+  @apply border-mbz-success;
+}
+.btn-outlined-danger {
+  @apply border-mbz-danger;
+}
+.btn-outlined-warning {
+  @apply border-mbz-warning;
+}
 .btn-outlined-:hover,
 .btn-outlined-primary:hover {
   @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
@@ -31,6 +40,9 @@ body {
 }
 .btn-success {
   @apply bg-mbz-success;
+}
+.btn-warning {
+  @apply bg-mbz-warning;
 }
 .btn-text {
   @apply bg-transparent border-transparent text-black dark:text-white font-normal underline hover:bg-zinc-200 hover:text-black;
@@ -171,7 +183,7 @@ body {
 
 /* Select */
 .select {
-  @apply dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50 rounded pl-2 pr-6 border-2 border-transparent h-10 shadow-none;
+  @apply dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50 rounded pl-2 pr-6 border-2 border-transparent h-10 shadow-none border rounded;
 }
 
 /* Radio */
@@ -277,4 +289,36 @@ button.menubar__button {
 /** Tiptap editor */
 .menubar__button {
   @apply hover:bg-[rgba(0,0,0,.05)];
+}
+
+/** Datepicker */
+.o-drop__menu--active {
+  @apply z-50;
+}
+.o-dpck__box {
+  @apply px-4 py-1;
+}
+.o-dpck__header {
+  @apply pb-2 mb-2;
+  border-bottom: 1px solid #dbdbdb;
+}
+.o-dpck__header__next,
+.o-dpck__header__previous {
+  @apply justify-center text-center no-underline cursor-pointer items-center shadow-none inline-flex relative select-none leading-6 border rounded h-10 p-2 m-1;
+  min-width: 2.25em;
+}
+.o-dpck__header__list {
+  @apply order-2 items-center flex justify-center text-center list-none flex-wrap my-0 p-0 -mx-0.5;
+}
+
+.o-dpck__header__list > * {
+  @apply mx-0.5;
+}
+.o-dpck__month__cell,
+.o-dpck__table__cell {
+  @apply rounded py-2 px-3;
+}
+.o-dpck__month__head-cell,
+.o-dpck__table__head-cell {
+  @apply font-semibold;
 }
