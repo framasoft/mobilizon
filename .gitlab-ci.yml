@@ -189,7 +189,7 @@ pages:
 
 .docker: &docker
   stage: docker
-  image: docker:20.10.12
+  image: docker:20.10.18
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
     DOCKER_HOST: tcp://docker:2376
@@ -197,13 +197,13 @@ pages:
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
     DOCKER_DRIVER: overlay2
   services:
-    - docker:20.10.12-dind
+    - docker:20.10.18-dind
   cache: {}
   before_script:
     # Install buildx
-    - wget https://github.com/docker/buildx/releases/download/v0.8.1/buildx-v0.8.1.linux-amd64
+    - wget https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64
     - mkdir -p ~/.docker/cli-plugins/
-    - mv buildx-v0.8.1.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+    - mv buildx-v0.9.1.linux-amd64 ~/.docker/cli-plugins/docker-buildx
     - chmod a+x ~/.docker/cli-plugins/docker-buildx
     # Create env
     - docker context create tls-environment
@@ -244,7 +244,7 @@ build-docker-tag:
 
 # Packaging app for amd64
 package-app:
-  image: mobilizon/buildpack:1.13.4-erlang-24.3.3-debian-buster
+  image: mobilizon/buildpack:1.14.1-erlang-25.1.1-debian-buster
   stage: package
   variables: &release-variables
     MIX_ENV: "prod"
@@ -328,6 +328,7 @@ multi-arch-release:
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
     - if: $CI_COMMIT_TAG
   timeout: 3h
+  allow_failure: true
 
 # Release
 release-upload:
@@ -348,6 +349,7 @@ release-upload:
   parallel:
     matrix:
       - ARCH: ["amd64", "arm", "arm64"]
+  allow_failure: true
 
 release-create:
   stage: deploy
