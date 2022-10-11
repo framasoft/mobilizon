@@ -218,7 +218,7 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { AutoDir } from "./Editor/Autodir";
 // import sanitizeHtml from "sanitize-html";
-import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, inject, onBeforeUnmount, watch } from "vue";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";

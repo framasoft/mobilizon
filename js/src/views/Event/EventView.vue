@@ -451,22 +451,6 @@ onFetchEventError(({ graphQLErrors }) =>
   handleErrors(graphQLErrors as AbsintheGraphQLErrors)
 );
 
-// const endDate = computed((): string | undefined => {
-//   return event.value?.endsOn && event.value.endsOn > event.value.beginsOn
-//     ? event.value.endsOn
-//     : event.value?.beginsOn;
-// });
-
-const organizer = computed((): IActor | null => {
-  if (event.value?.attributedTo?.id) {
-    return event.value.attributedTo;
-  }
-  if (event.value?.organizerActor) {
-    return event.value.organizerActor;
-  }
-  return null;
-});
-
 const metadataToComponent: Record<string, string> = {
   "mz:live:twitch:url": "IntegrationTwitch",
   "mz:live:peertube:url": "IntegrationPeertube",
