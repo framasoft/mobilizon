@@ -5,14 +5,12 @@ RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 WORKDIR /build
 COPY js .
 
-ENV CYPRESS_INSTALL_BINARY 0
-
 # Network timeout because it's slow when cross-compiling
 RUN yarn install --network-timeout 100000 \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:1.13-alpine AS builder
+FROM elixir:1.14-alpine AS builder
 
 RUN apk add --no-cache build-base git cmake
 

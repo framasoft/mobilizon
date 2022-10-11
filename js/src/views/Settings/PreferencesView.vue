@@ -112,11 +112,7 @@
 </template>
 <script lang="ts" setup>
 import ngeohash from "ngeohash";
-import {
-  USER_SETTINGS,
-  SET_USER_SETTINGS,
-  UPDATE_USER_LOCALE,
-} from "../../graphql/user";
+import { USER_SETTINGS, SET_USER_SETTINGS } from "../../graphql/user";
 import langs from "../../i18n/langs.json";
 import RouteName from "../../router/name";
 import { AddressSearchType } from "@/types/enums";
@@ -136,7 +132,7 @@ const { timezones: serverTimezones, loading: loadingTimezones } =
   useTimezones();
 const { loggedUser, loading: loadingUserSettings } = useUserSettings();
 
-const { t, locale } = useI18n({ useScope: "global" });
+const { t } = useI18n({ useScope: "global" });
 
 useHead({
   title: computed(() => t("Preferences")),
@@ -161,8 +157,6 @@ const selectedTimezone = computed({
     }
   },
 });
-
-const { mutate: updateUserLocale } = useMutation(UPDATE_USER_LOCALE);
 
 const sanitize = (timezone: string): string => {
   return timezone

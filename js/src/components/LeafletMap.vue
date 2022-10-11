@@ -141,10 +141,6 @@ const mountLocateControl = () => {
         icon.setAttribute("aria-hidden", "true");
         icon.setAttribute("role", "img");
         icon.insertAdjacentHTML("beforeend", locationIconHTML.value);
-        console.log("icon for location", {
-          link,
-          icon,
-        });
         return { link, icon };
       },
       ...props.options,

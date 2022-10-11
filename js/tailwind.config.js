@@ -73,6 +73,7 @@ module.exports = {
         "mbz-info": "#36bcd4",
         "mbz-danger": "#cd2026",
         "mbz-success": "#0d8758",
+        "mbz-warning": "#ffe08a",
         // primary: "#272633",
         // secondary: "#ED8D07",
       },

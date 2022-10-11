@@ -1,5 +1,9 @@
 <template>
-  <component :is="componentInstance" :size="realSize" />
+  <component
+    :is="componentInstance"
+    v-if="componentInstance"
+    :size="realSize"
+  />
 </template>
 <script lang="ts" setup>
 import { computed, defineAsyncComponent } from "vue";
@@ -234,6 +238,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/CheckCircle.vue`),
   ViewList: () =>
     import(`../../../node_modules/vue-material-design-icons/ViewList.vue`),
+  SmokingOff: () =>
+    import(`../../../node_modules/vue-material-design-icons/SmokingOff.vue`),
 };
 
 const props = withDefaults(
@@ -247,9 +253,14 @@ const props = withDefaults(
 
 const name = computed(() => toPascalCase(props.icon[1]));
 
-const componentInstance = computed(() =>
-  defineAsyncComponent(icons[name.value])
-);
+const componentInstance = computed(() => {
+  if (Object.prototype.hasOwnProperty.call(icons, name.value)) {
+    return defineAsyncComponent(icons[name.value]);
+  } else {
+    console.error("Icon is undefined", name.value);
+    return undefined;
+  }
+});
 
 const realSize = computed(() => Number.parseInt(props.size ?? "18"));
 

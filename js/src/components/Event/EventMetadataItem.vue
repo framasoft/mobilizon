@@ -53,7 +53,7 @@
             :pattern="
               modelValue.pattern ? modelValue.pattern.source : undefined
             "
-            :validation-message="$t(`This URL doesn't seem to be valid`)"
+            :validation-message="t(`This URL doesn't seem to be valid`)"
             required
             v-model="metadataItemValue"
             :placeholder="modelValue.placeholder"
@@ -78,10 +78,11 @@
           </o-checkbox>
         </o-field>
       </div>
-      <o-button
-        icon-left="close"
-        @click="$emit('removeItem', modelValue.key)"
-      />
+      <o-button icon-left="close" @click="$emit('removeItem', modelValue.key)">
+        <span class="sr-only">
+          {{ t("Remove") }}
+        </span>
+      </o-button>
     </div>
   </div>
 </template>
@@ -89,12 +90,15 @@
 import { EventMetadataKeyType, EventMetadataType } from "@/types/enums";
 import { IEventMetadataDescription } from "@/types/event-metadata";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   modelValue: IEventMetadataDescription;
 }>();
 
 const emit = defineEmits(["update:modelValue", "removeItem"]);
+
+const { t } = useI18n({ useScope: "global" });
 
 const urlInput = ref<any>(null);
 

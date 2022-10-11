@@ -210,7 +210,7 @@ defmodule Mobilizon.Mixfile do
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
-      {:excoveralls, "~> 0.14.0", only: :test},
+      {:excoveralls, "~> 0.15.0", only: :test},
       {:ex_doc, "~> 0.25", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.0", only: :test},
@@ -221,7 +221,7 @@ defmodule Mobilizon.Mixfile do
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
       {:sobelow, "~> 0.8", only: [:dev, :test]},
-      {:doctor, "~> 0.19.0", only: :dev},
+      {:doctor, "~> 0.20.0", only: :dev},
       {:haversine, "~> 0.1.0"}
     ] ++ oauth_deps()
   end

@@ -837,7 +837,7 @@ const openDeleteEventModal = () => {
       pattern: escapeRegExp(event.value?.title ?? ""),
     },
     onConfirm: (result: string) => {
-      console.log("calling delete event", result);
+      console.debug("calling delete event", result);
       if (result.trim() === event.value?.title) {
         event.value?.id ? deleteEvent({ eventId: event.value?.id }) : null;
       }
@@ -1008,7 +1008,7 @@ const confirmLeave = (): void => {
     hasIcon: true,
     onConfirm: () => {
       if (event.value && currentActor.value?.id) {
-        console.log("calling leave event");
+        console.debug("calling leave event");
         leaveEvent(event.value, currentActor.value.id);
       }
     },

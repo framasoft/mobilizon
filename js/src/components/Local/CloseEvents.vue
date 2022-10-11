@@ -94,7 +94,6 @@ const distance = computed<number>(() => (suggestGeoloc.value ? 150 : 25));
 const now = computed(() => roundToNearestMinute(new Date()));
 
 const searchEnabled = computed(() => geoHash.value != undefined);
-const enabled = ref(false);
 
 const {
   result: eventsResult,
