@@ -42,7 +42,7 @@ body {
   @apply bg-mbz-success;
 }
 .btn-warning {
-  @apply bg-mbz-warning;
+  @apply bg-mbz-warning text-black hover:bg-mbz-warning/90 hover:text-slate-800;
 }
 .btn-text {
   @apply bg-transparent border-transparent text-black dark:text-white font-normal underline hover:bg-zinc-200 hover:text-black;

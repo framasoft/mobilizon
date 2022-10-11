@@ -10,7 +10,6 @@
     <form ref="form">
       <h2>{{ t("General information") }}</h2>
       <picture-upload
-        v-if="pictureFile"
         v-model:modelValue="pictureFile"
         :textFallback="t('Headline picture')"
         :defaultImage="event.picture"

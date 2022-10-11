@@ -112,7 +112,7 @@ const iconByType = computed(() => {
  * Call the onConfirm prop (function) and close the Dialog.
  */
 const confirm = () => {
-  console.log("dialog confirmed", input.value.$el);
+  console.debug("dialog confirmed", input.value?.$el);
   if (input.value !== undefined) {
     const inputElement = input.value.$el.querySelector("input");
     if (!inputElement.checkValidity()) {

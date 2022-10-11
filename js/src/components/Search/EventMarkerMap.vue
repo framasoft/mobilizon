@@ -162,13 +162,6 @@ onMounted(async () => {
       myBottomSheet.value.close();
     }
   });
-  // mapElement.value.on('load', function () {
-  //   console.log('load event')
-  //   setTimeout(() => {
-  //     console.log('invalidate size')
-  //     mapElement.value.invalidateSize()
-  //   }, 1000)
-  // })
   markers.value = new MarkerClusterGroup({ chunkedLoading: true });
 
   mapElement.value.on("zoom", debounce(update, 1000));
