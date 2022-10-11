@@ -26,7 +26,7 @@
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-1.5 md:gap-y-3 gapt-x-3"
       >
         <div class="mr-0 ml-0">
-          <div class="h-36 relative w-full">
+          <div class="h-40 relative w-full">
             <div class="flex absolute bottom-2 left-2 z-10">
               <date-calendar-icon
                 :date="participation.event.beginsOn.toString()"

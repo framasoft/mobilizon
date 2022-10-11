@@ -55,7 +55,7 @@
 import { LocationType } from "../../types/user-location.model";
 import MoreContent from "./MoreContent.vue";
 import CloseContent from "./CloseContent.vue";
-import { computed, onMounted, ref, useAttrs } from "vue";
+import { computed, onMounted, useAttrs } from "vue";
 import { SEARCH_EVENTS } from "@/graphql/search";
 import { IEvent } from "@/types/event.model";
 import { useLazyQuery } from "@vue/apollo-composable";

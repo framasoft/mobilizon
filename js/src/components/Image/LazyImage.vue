@@ -1,6 +1,6 @@
 <template>
-  <div ref="wrapper" class="" v-bind="$attrs">
-    <div class="h-full w-full">
+  <div ref="wrapper" class="flex-1" v-bind="$attrs">
+    <div class="h-full w-full max-w-100 min-h-[10rem]">
       <!-- Show the placeholder as background -->
       <blurhash-img
         v-if="blurhash"
@@ -13,7 +13,7 @@
       <!-- Show the real image on the top and fade in after loading -->
       <img
         ref="image"
-        class="transition-opacity duration-500 rounded-lg object-cover w-full h-full"
+        class="transition-opacity duration-500 rounded-lg object-cover mx-auto h-full"
         :class="imageOpacity"
         alt=""
         src=""

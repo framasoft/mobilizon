@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center h-80">
+  <div class="flex justify-center max-h-80">
     <lazy-image-wrapper :picture="picture" />
   </div>
 </template>
