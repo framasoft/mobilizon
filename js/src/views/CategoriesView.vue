@@ -1,8 +1,11 @@
 <template>
   <div class="container mx-auto py-4 md:py-12 px-2 md:px-60">
     <main>
-      <h1>{{ t('Category list')}}</h1>
-      <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4" v-if="promotedCategories.length > 0">
+      <h1>{{ t("Category list") }}</h1>
+      <div
+        class="flex flex-wrap items-center justify-center gap-3 md:gap-4"
+        v-if="promotedCategories.length > 0"
+      >
         <CategoryCard
           v-for="category in promotedCategories"
           :key="category.key"
@@ -12,20 +15,30 @@
       </div>
       <div v-else>
         <EmptyContent icon="image" :inline="true">
-          {{ t('No categories with public upcoming events on this instance were found.') }}
+          {{
+            t(
+              "No categories with public upcoming events on this instance were found."
+            )
+          }}
         </EmptyContent>
       </div>
 
       <div
         class="mx-auto w-full max-w-lg rounded-2xl dark:bg-gray-800 p-2 mt-10"
       >
-      <o-collapse v-model:open="isLicencePanelOpen" :aria-id="'contentIdForA11y5'">
-        <template #trigger>
-          <o-button aria-controls="contentIdForA11y1" :icon-right="isLicencePanelOpen ? 'chevron-up' : 'chevron-down'">
-            {{ t("Category illustrations credits") }}
-          </o-button>
-        </template>
-        <div class="flex flex-col dark:text-zinc-300 gap-2 py-4 px-1">
+        <o-collapse
+          v-model:open="isLicencePanelOpen"
+          :aria-id="'contentIdForA11y5'"
+        >
+          <template #trigger>
+            <o-button
+              aria-controls="contentIdForA11y1"
+              :icon-right="isLicencePanelOpen ? 'chevron-up' : 'chevron-down'"
+            >
+              {{ t("Category illustrations credits") }}
+            </o-button>
+          </template>
+          <div class="flex flex-col dark:text-zinc-300 gap-2 py-4 px-1">
             <p
               v-for="(categoryLicence, key) in categoriesPicturesLicences"
               :key="key"
@@ -70,7 +83,7 @@
               />
             </p>
           </div>
-      </o-collapse>
+        </o-collapse>
       </div>
     </main>
   </div>
