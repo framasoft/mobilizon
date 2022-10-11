@@ -1674,6 +1674,7 @@ defmodule Mobilizon.Events do
     |> Repo.all()
   end
 
+  @spec category_statistics :: [{String.t(), non_neg_integer()}]
   def category_statistics do
     Event
     |> filter_future_events(true)
