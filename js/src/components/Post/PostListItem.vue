@@ -85,7 +85,6 @@ const isBeforeLastWeek = computed((): boolean => {
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-// @import "node_modules/bulma/sass/utilities/mixins.sass";
 
 // .post-minimalist-card-wrapper {
 //   display: grid;

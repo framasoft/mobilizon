@@ -512,17 +512,6 @@
               :isLoggedIn="currentUser?.isLoggedIn"
               mode="row"
             />
-            <o-pagination
-              v-if="searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT"
-              :total="searchGroups?.total"
-              v-model:current="groupPage"
-              :per-page="GROUP_PAGE_LIMIT"
-              :aria-next-label="t('Next page')"
-              :aria-previous-label="t('Previous page')"
-              :aria-page-label="t('Page')"
-              :aria-current-label="t('Current page')"
-            >
-            </o-pagination>
           </div>
           <o-notification v-else-if="searchLoading === false" variant="danger">
             {{ t("No groups found") }}
@@ -539,18 +528,22 @@
               }"
               class="my-4"
             />
-            <o-pagination
-              v-if="searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT"
-              :total="searchEvents.total"
-              v-model:current="eventPage"
-              :per-page="EVENT_PAGE_LIMIT"
-              :aria-next-label="t('Next page')"
-              :aria-previous-label="t('Previous page')"
-              :aria-page-label="t('Page')"
-              :aria-current-label="t('Current page')"
-            >
-            </o-pagination>
           </div>
+          <o-pagination
+            v-if="
+              (searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT) ||
+              (searchGroups && searchGroups?.total > GROUP_PAGE_LIMIT)
+            "
+            :total="
+              Math.max(searchEvents?.total ?? 0, searchGroups?.total ?? 0)
+            "
+            v-model:current="page"
+            :per-page="EVENT_PAGE_LIMIT"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
+          />
           <o-notification v-else-if="searchLoading === false" variant="info">
             <p>{{ t("No events found") }}</p>
             <p v-if="searchIsUrl && !currentUser?.id">
@@ -770,6 +763,7 @@ const arrayTransformer: RouteQueryTransformer<string[]> = {
   },
 };
 
+const page = useRouteQuery("page", 1, integerTransformer);
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
 const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
 
@@ -783,6 +777,21 @@ const contentType = useRouteQuery(
   ContentType.ALL,
   enumTransformer(ContentType)
 );
+
+watch(contentType, (newContentType: ContentType) => {
+  switch (newContentType) {
+    case ContentType.ALL:
+      page.value = 1;
+      break;
+    case ContentType.EVENTS:
+      eventPage.value = 1;
+      break;
+    case ContentType.GROUPS:
+      groupPage.value = 1;
+      break;
+  }
+});
+
 const isOnline = useRouteQuery("isOnline", false, booleanTransformer);
 const categoryOneOf = useRouteQuery("categoryOneOf", [], arrayTransformer);
 const statusOneOf = useRouteQuery(
@@ -1168,8 +1177,10 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   beginsOn: start.value,
   endsOn: end.value,
   radius: geoHashLocation.value ? radius.value : undefined,
-  eventPage: eventPage.value,
-  groupPage: groupPage.value,
+  eventPage:
+    contentType.value === ContentType.ALL ? page.value : eventPage.value,
+  groupPage:
+    contentType.value === ContentType.ALL ? page.value : groupPage.value,
   limit: EVENT_PAGE_LIMIT,
   type: isOnline.value ? "ONLINE" : undefined,
   categoryOneOf: categoryOneOf.value,
