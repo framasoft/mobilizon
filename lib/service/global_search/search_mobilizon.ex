@@ -187,7 +187,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
       ends_on: parse_date(data["endTime"]),
       url: data["url"],
       picture: picture,
-      category: String.to_existing_atom(Categories.get_category(data["category"])),
+      category: data["category"] |> Categories.get_category() |> String.downcase() |> String.to_existing_atom(),
       organizer_actor: %Actor{
         id: data["creator"]["id"],
         name: data["creator"]["displayName"],
