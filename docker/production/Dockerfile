@@ -50,19 +50,19 @@ LABEL org.opencontainers.image.title="mobilizon" \
 RUN apt update && apt dist-upgrade -y && apt install -y curl openssl ca-certificates libncurses5 file postgresql-client gcc g++ imagemagick python3 python3-pip python3-pillow python3-cffi python3-brotli python3-dev libpango-1.0-0 libxslt-dev fonts-cantarell && rm -rf /var/lib/apt
 RUN pip install weasyprint pyexcel-ods3
 
-RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nobody /var/lib/mobilizon/uploads
-RUN mkdir -p /var/lib/mobilizon/uploads/exports/{csv,pdf,ods} && chown -R nobody:nobody /var/lib/mobilizon/uploads/exports
+RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nogroup /var/lib/mobilizon/uploads
+RUN mkdir -p /var/lib/mobilizon/uploads/exports/{csv,pdf,ods} && chown -R nobody:nogroup /var/lib/mobilizon/uploads/exports
 RUN mkdir -p /var/lib/mobilizon/timezones
 RUN curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
-RUN chown nobody:nobody /var/lib/mobilizon/timezones
-RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
+RUN chown nobody:nogroup /var/lib/mobilizon/timezones
+RUN mkdir -p /etc/mobilizon && chown nobody:nogroup /etc/mobilizon
 
 USER nobody
 EXPOSE 4000
 
 ENV MOBILIZON_DOCKER=true
 
-COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
+COPY --from=builder --chown=nobody:nogroup _build/prod/rel/mobilizon ./
 RUN cp /releases/*/runtime.exs /etc/mobilizon/config.exs
 COPY docker/production/docker-entrypoint.sh ./
 
