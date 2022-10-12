@@ -232,9 +232,8 @@ build-and-push-to-latest-docker-tag:
   rules: &tag-rules
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
-    - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_TAG =~ /alpha|beta|rc/
-      when: never
+    - if: $CI_COMMIT_TAG != null && $CI_COMMIT_TAG !~ /alpha|beta|rc/
+      when: on_success
   timeout: 3 hours
   script:
     - >
@@ -250,9 +249,8 @@ build-and-push-docker-tag:
   rules: &tag-rules
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
-    - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_TAG =~ /alpha|beta|rc/
-      when: always
+      when: on_success
   timeout: 3 hours
   script:
     - >
@@ -343,15 +341,11 @@ multi-arch-release:
     matrix:
       - ARCH: ["arm", "arm64"]
   rules:
-    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
-      when: never
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    - if: $CI_COMMIT_TAG
     # arm64 is allowed to fail
-    - if: '$ARCH == "arm64"'
+    - if: '$CI_PROJECT_NAMESPACE == "framasoft" && $CI_PIPELINE_SOURCE == "schedule" && $ARCH == "arm64"'
       when: on_success
       allow_failure: true
-    - if: '$ARCH'
+    - if: '$CI_PROJECT_NAMESPACE == "framasoft" && $CI_PIPELINE_SOURCE == "schedule" && $ARCH'
       when: on_success
       allow_failure: false
   timeout: 3h
