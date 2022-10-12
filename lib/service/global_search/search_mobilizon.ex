@@ -70,7 +70,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :count,
         :sortBy
       ])
-      |> Keyword.reject(fn {_key, val} -> is_nil(val) end)
+      |> Keyword.reject(fn {_key, val} -> is_nil(val) or val == "" end)
 
     events_url = "#{search_endpoint()}#{@search_events_api}?#{encode(options)}"
     Logger.debug("Calling global search engine url #{events_url}")
@@ -117,7 +117,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :bbox,
         :sortBy
       ])
-      |> Keyword.reject(fn {_key, val} -> is_nil(val) end)
+      |> Keyword.reject(fn {_key, val} -> is_nil(val) or val == "" end)
 
     groups_url = "#{search_endpoint()}#{@search_groups_api}?#{encode(options)}"
     Logger.debug("Calling global search engine url #{groups_url}")
