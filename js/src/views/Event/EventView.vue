@@ -188,12 +188,7 @@ import {
   EVENT_PERSON_PARTICIPATION,
   // EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
 } from "@/graphql/event";
-import {
-  displayName,
-  IActor,
-  IPerson,
-  usernameWithDomain,
-} from "@/types/actor";
+import { displayName, IPerson, usernameWithDomain } from "@/types/actor";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
 import MultiCard from "@/components/Event/MultiCard.vue";
 import RouteName from "@/router/name";

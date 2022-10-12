@@ -503,30 +503,32 @@
           <o-notification v-if="features && !features.groups" variant="danger">
             {{ t("Groups are not enabled on this instance.") }}
           </o-notification>
-          <GroupCard
-            v-else-if="searchGroups && searchGroups?.total > 0"
-            v-for="group in searchGroups?.elements"
-            :group="group"
-            :key="group.id"
-            :isRemoteGroup="group.__typename === 'GroupResult'"
-            :isLoggedIn="currentUser?.isLoggedIn"
-            mode="row"
-          />
+          <div v-else-if="searchGroups && searchGroups?.total > 0">
+            <GroupCard
+              v-for="group in searchGroups?.elements"
+              :group="group"
+              :key="group.id"
+              :isRemoteGroup="group.__typename === 'GroupResult'"
+              :isLoggedIn="currentUser?.isLoggedIn"
+              mode="row"
+            />
+          </div>
           <o-notification v-else-if="searchLoading === false" variant="danger">
             {{ t("No groups found") }}
           </o-notification>
-          <event-card
-            v-if="searchEvents && searchEvents.total > 0"
-            mode="row"
-            v-for="event in searchEvents?.elements"
-            :event="event"
-            :key="event.uuid"
-            :options="{
-              isRemoteEvent: event.__typename === 'EventResult',
-              isLoggedIn: currentUser?.isLoggedIn,
-            }"
-            class="my-4"
-          />
+          <div v-if="searchEvents && searchEvents.total > 0">
+            <event-card
+              mode="row"
+              v-for="event in searchEvents?.elements"
+              :event="event"
+              :key="event.uuid"
+              :options="{
+                isRemoteEvent: event.__typename === 'EventResult',
+                isLoggedIn: currentUser?.isLoggedIn,
+              }"
+              class="my-4"
+            />
+          </div>
           <o-pagination
             v-if="
               (searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT) ||
@@ -780,10 +782,13 @@ watch(contentType, (newContentType: ContentType) => {
   switch (newContentType) {
     case ContentType.ALL:
       page.value = 1;
+      break;
     case ContentType.EVENTS:
       eventPage.value = 1;
+      break;
     case ContentType.GROUPS:
       groupPage.value = 1;
+      break;
   }
 });
 
