@@ -233,7 +233,7 @@ build-and-push-to-latest-docker-tag:
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
     - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_TAG !~ /alpha|beta|rc/
+    - if: $CI_COMMIT_TAG =~ /alpha|beta|rc/
       when: never
   timeout: 3 hours
   script:
@@ -252,7 +252,7 @@ build-and-push-docker-tag:
       when: never
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_TAG =~ /alpha|beta|rc/
-      when: never
+      when: always
   timeout: 3 hours
   script:
     - >
