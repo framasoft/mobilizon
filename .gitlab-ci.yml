@@ -245,7 +245,7 @@ build-docker-tag:
   parallel:
     matrix:
       - ARCH: ["linux/amd64", "linux/arm64", "linux/arm"]
-
+  allow_failure: true
 
 # Packaging app for amd64
 package-app:
