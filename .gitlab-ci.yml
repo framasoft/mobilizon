@@ -238,10 +238,14 @@ build-docker-tag:
     - >
       docker buildx build
       --push
-      --platform linux/amd64,linux/arm64,linux/arm
+      --platform $ARCH
       -t framasoft/mobilizon:$CI_COMMIT_TAG
       -t framasoft/mobilizon:latest
       -f docker/production/Dockerfile .
+  parallel:
+    matrix:
+      - ARCH: ["linux/amd64", "linux/arm64", "linux/arm"]
+
 
 # Packaging app for amd64
 package-app:
