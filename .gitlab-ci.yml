@@ -223,7 +223,7 @@ build-docker-main:
   rules:
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_TRIGGERED == "true"'
   script:
     - docker buildx build --push --platform linux/amd64 -t framasoft/mobilizon:main -f docker/production/Dockerfile .
 
