@@ -377,7 +377,6 @@ const isConnected = computed((): boolean => {
 
 <style lang="scss" scoped>
 // @use "@/styles/_mixins" as *;
-// // @import "node_modules/bulma/sass/utilities/mixins.sass";
 // form.new-comment {
 //   padding-bottom: 1rem;
 
