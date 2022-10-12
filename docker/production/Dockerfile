@@ -1,7 +1,7 @@
 # First build the application assets
-FROM node:16 as assets
+FROM node:16-alpine as assets
 
-RUN apt update && apt dist-upgrade -y && apt install -y python3 build-essential bash imagemagick libncurses5
+RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 WORKDIR /build
 COPY js .
 
@@ -10,9 +10,9 @@ RUN yarn install --network-timeout 100000 \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:1.14 AS builder
+FROM elixir:1.14-alpine AS builder
 
-RUN apt update && apt dist-upgrade -y && apt install -y build-essential git cmake
+RUN apk add --no-cache build-base git cmake
 
 COPY mix.exs mix.lock ./
 ENV MIX_ENV=prod
@@ -32,7 +32,7 @@ RUN mix phx.digest.clean --all \
     && mix release
 
 # Finally setup the app
-FROM debian:bullseye-slim
+FROM alpine
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -47,22 +47,22 @@ LABEL org.opencontainers.image.title="mobilizon" \
     org.opencontainers.image.revision=$VCS_REF \
     org.opencontainers.image.created=$BUILD_DATE
 
-RUN apt update && apt dist-upgrade -y && apt install -y curl openssl ca-certificates libncurses5 file postgresql-client gcc g++ imagemagick python3 python3-pip python3-pillow python3-cffi python3-brotli python3-dev libpango-1.0-0 libxslt-dev fonts-cantarell && rm -rf /var/lib/apt
+RUN apk add --no-cache curl openssl ca-certificates ncurses-libs file postgresql-client libgcc libstdc++ imagemagick python3 py3-pip py3-pillow py3-cffi py3-brotli gcc g++ musl-dev python3-dev pango libxslt-dev ttf-cantarell
 RUN pip install weasyprint pyexcel-ods3
 
-RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nogroup /var/lib/mobilizon/uploads
-RUN mkdir -p /var/lib/mobilizon/uploads/exports/{csv,pdf,ods} && chown -R nobody:nogroup /var/lib/mobilizon/uploads/exports
+RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nobody /var/lib/mobilizon/uploads
+RUN mkdir -p /var/lib/mobilizon/uploads/exports/{csv,pdf,ods} && chown -R nobody:nobody /var/lib/mobilizon/uploads/exports
 RUN mkdir -p /var/lib/mobilizon/timezones
 RUN curl -L 'https://packages.joinmobilizon.org/tz_world/timezones-geodata.dets' -o /var/lib/mobilizon/timezones/timezones-geodata.dets
-RUN chown nobody:nogroup /var/lib/mobilizon/timezones
-RUN mkdir -p /etc/mobilizon && chown nobody:nogroup /etc/mobilizon
+RUN chown nobody:nobody /var/lib/mobilizon/timezones
+RUN mkdir -p /etc/mobilizon && chown nobody:nobody /etc/mobilizon
 
 USER nobody
 EXPOSE 4000
 
 ENV MOBILIZON_DOCKER=true
 
-COPY --from=builder --chown=nobody:nogroup _build/prod/rel/mobilizon ./
+COPY --from=builder --chown=nobody:nobody _build/prod/rel/mobilizon ./
 RUN cp /releases/*/runtime.exs /etc/mobilizon/config.exs
 COPY docker/production/docker-entrypoint.sh ./
 

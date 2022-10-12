@@ -210,7 +210,6 @@ pages:
     - docker buildx create --use tls-environment
     # Install qemu/binfmt
     - docker pull tonistiigi/binfmt:latest
-    - docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
     - docker run --rm --privileged tonistiigi/binfmt:latest --install all
     # Login to DockerHub
     - mkdir -p ~/.docker
@@ -238,14 +237,10 @@ build-docker-tag:
     - >
       docker buildx build
       --push
-      --platform $ARCH
+      --platform linux/amd64,linux/arm64,linux/arm
       -t framasoft/mobilizon:$CI_COMMIT_TAG
       -t framasoft/mobilizon:latest
       -f docker/production/Dockerfile .
-  parallel:
-    matrix:
-      - ARCH: ["linux/amd64", "linux/arm64", "linux/arm"]
-  allow_failure: true
 
 # Packaging app for amd64
 package-app:
