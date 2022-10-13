@@ -26,7 +26,9 @@ defmodule Mix.Tasks.Mobilizon.Ecto.Migrate do
     migrations_path: :string
   ]
 
+  @app :mobilizon
   @repo Mobilizon.Storage.Repo
+  @start_apps [:logger, :ssl, :postgrex, :ecto]
 
   @moduledoc """
   Changes `Logger` level to `:info` before start migration.
@@ -37,12 +39,12 @@ defmodule Mix.Tasks.Mobilizon.Ecto.Migrate do
       mix mobilizon.ecto.migrate [OPTIONS]
 
   Options:
-    - see https://hexdocs.pm/ecto/2.0.0/Mix.Tasks.Ecto.Migrate.html
+    - see https://hexdocs.pm/ecto_sql/Mix.Tasks.Ecto.Migrate.html
   """
 
   @impl true
   def run(args \\ []) do
-    start_mobilizon()
+    load_app()
     {opts, _} = OptionParser.parse!(args, strict: @switches, aliases: @aliases)
 
     if Application.get_env(:mobilizon, @repo)[:ssl] do
@@ -67,5 +69,13 @@ defmodule Mix.Tasks.Mobilizon.Ecto.Migrate do
     {:ok, _, _} = Ecto.Migrator.with_repo(@repo, &Ecto.Migrator.run(&1, path, :up, opts))
 
     Logger.configure(level: level)
+  end
+
+  defp load_app do
+    IO.puts("Loading app..")
+    Application.load(@app)
+    IO.puts("Starting dependencies..")
+    Enum.each(@start_apps, &Application.ensure_all_started/1)
+    if mix_task?(), do: Mix.Task.run("app.config")
   end
 end
