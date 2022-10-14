@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-08-26 16:28+0000\n"
+"PO-Revision-Date: 2022-10-13 18:58+0000\n"
 "Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1007,7 +1007,7 @@ msgstr "Unbekannter Fehler beim Aktualisieren der Ressource"
 #: lib/graphql/resolvers/comment.ex:84
 #, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
-msgstr "Sie sind nicht die Ersteller des Kommentars"
+msgstr "Sie sind nicht der Ersteller des Kommentars"
 
 #: lib/graphql/resolvers/user.ex:424
 #, elixir-autogen, elixir-format
