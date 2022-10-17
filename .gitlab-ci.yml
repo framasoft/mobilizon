@@ -274,7 +274,7 @@ package-app:
     - mix local.rebar --force
     - mix deps.get --only-prod
     - mix compile
-    - mix phx.digest.clean --all && \
+    - mix phx.digest.clean --all && mix phx.digest
     - mix release --path release/mobilizon
     - cd release/mobilizon && ln -s lib/mobilizon-*/priv priv && cd ../../
     - du -sh release/

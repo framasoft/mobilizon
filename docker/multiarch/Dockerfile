@@ -35,6 +35,7 @@ RUN source /root/.bashrc && \
     mix deps.get --only prod && \
     mix compile  && \
     mix phx.digest.clean --all && \
+    mix phx.digest && \
     mix release --path release/mobilizon && \
     cd release/mobilizon && \
     ln -s lib/mobilizon-*/priv priv && \
