@@ -1183,7 +1183,7 @@ msgstr "Voir le signalement"
 msgid "View report:"
 msgstr "Voir le signalement :"
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/email_anonymous_activity.html.heex:83
 #: lib/web/templates/email/event_participation_approved.html.heex:79
 #: lib/web/templates/email/event_participation_confirmed.html.heex:79
 #, elixir-autogen, elixir-format
@@ -1267,12 +1267,6 @@ msgstr ""
 "Si vous pensez qu'il s'agit d'une erreur, vous pouvez contacter les "
 "administrateurs du groupe afin qu'ils vous réintègrent."
 
-#: lib/web/templates/email/group_member_removal.html.heex:18
-#: lib/web/templates/email/group_member_removal.text.eex:1
-#, elixir-autogen, elixir-format
-msgid "So long, and thanks for the fish!"
-msgstr "Au revoir, et encore merci pour le poisson !"
-
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}"
@@ -1328,7 +1322,7 @@ msgstr ""
 "L'équipe de modération de votre instance a décidé de suspendre %{group_name} "
 "(%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
 
-#: lib/web/email/group.ex:90
+#: lib/web/email/group.ex:92
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Le groupe %{group} a été suspendu sur %{instance}"
@@ -1589,28 +1583,23 @@ msgstr "Un texte est requis pour le poste"
 msgid "A title is required for the post"
 msgstr "Un titre est requis pour le poste"
 
-#: lib/web/templates/email/instance_follow.text.eex:5
-#, elixir-autogen, elixir-format
-msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr "%{name} (%{domain}) vient de demander à suivre votre instance."
-
-#: lib/web/email/follow.ex:53
+#: lib/web/email/follow.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{name} requests to follow your instance"
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:61
+#: lib/web/templates/email/instance_follow.html.heex:53
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
 
-#: lib/web/email/follow.ex:47
+#: lib/web/email/follow.ex:54
 #, elixir-autogen, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:93
+#: lib/web/templates/email/instance_follow.html.heex:84
 #: lib/web/templates/email/instance_follow.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
@@ -1620,12 +1609,6 @@ msgstr ""
 #: lib/web/templates/email/instance_follow.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Want to connect?"
-msgstr ""
-
-#: lib/web/templates/email/instance_follow.html.heex:76
-#: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format
-msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:47
@@ -1666,8 +1649,8 @@ msgstr ""
 
 #: lib/service/metadata/actor.ex:91
 #: lib/service/metadata/actor.ex:99
-#: lib/service/metadata/instance.ex:56
-#: lib/service/metadata/instance.ex:62
+#: lib/service/metadata/instance.ex:60
+#: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
 msgstr ""
@@ -1712,12 +1695,12 @@ msgstr ""
 msgid "Public feed for %{instance}"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:316
+#: lib/graphql/resolvers/user.ex:324
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:322
+#: lib/graphql/resolvers/user.ex:330
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
@@ -1744,8 +1727,6 @@ msgstr ""
 msgid "Your participation to %{event} on %{instance} has been cancelled!"
 msgstr ""
 
-#. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
-#. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #: lib/service/export/participants/csv.ex:81
 #: lib/service/export/participants/ods.ex:86
@@ -1947,7 +1928,7 @@ msgstr ""
 msgid "Title: %{title}"
 msgstr ""
 
-#: lib/web/email/group.ex:43
+#: lib/web/email/group.ex:45
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr ""
@@ -2161,180 +2142,175 @@ msgstr ""
 msgid "%{name} just requested to follow your instance."
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:48
-#, elixir-autogen, elixir-format
-msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
-msgstr ""
-
-#: lib/web/templates/email/instance_follow.html.heex:54
+#: lib/web/templates/email/instance_follow.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{name}</b> just requested to follow your instance."
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:63
+#: lib/web/templates/email/instance_follow.html.heex:55
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you accept, this profile will receive all of your public events."
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:97
+#: lib/web/templates/email/instance_follow.html.heex:88
 #: lib/web/templates/email/instance_follow.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr ""
 
-#: lib/web/templates/email/instance_follow.html.heex:119
-#: lib/web/templates/email/instance_follow.html.heex:129
+#: lib/web/templates/email/instance_follow.html.heex:110
+#: lib/web/templates/email/instance_follow.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "View the details"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:16
+#: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
 msgid "Arts"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:52
+#: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:20
+#: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:24
+#: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Business"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:28
+#: lib/mobilizon/events/categories.ex:44
 #, elixir-autogen, elixir-format
 msgid "Causes"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:32
+#: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:56
+#: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
 msgid "Community"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:36
+#: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:60
+#: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Family & Education"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:64
+#: lib/mobilizon/events/categories.ex:80
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:68
+#: lib/mobilizon/events/categories.ex:84
 #, elixir-autogen, elixir-format
 msgid "Film & Media"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:40
+#: lib/mobilizon/events/categories.ex:56
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:72
+#: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Games"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:44
+#: lib/mobilizon/events/categories.ex:60
 #, elixir-autogen, elixir-format
 msgid "Health"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:84
+#: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "LGBTQ"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:76
+#: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:80
+#: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
 msgid "Learning"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:133
+#: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
 msgid "Meeting"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:88
+#: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:48
+#: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:92
+#: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:112
+#: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:96
+#: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Party"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:100
+#: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:104
+#: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
 msgid "Pets"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:108
+#: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Photography"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:120
+#: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:116
+#: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:124
+#: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
 msgstr ""
 
-#: lib/mobilizon/events/categories.ex:128
+#: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
 msgid "Theatre"
 msgstr ""
@@ -2347,4 +2323,21 @@ msgstr ""
 #: lib/web/templates/email/registration_confirmation.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Activate my account:"
+msgstr ""
+
+#: lib/web/email/follow.ex:49
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Instance %{domain} requests to follow your instance"
+msgstr ""
+
+#: lib/web/templates/email/instance_follow.html.heex:68
+#: lib/web/templates/email/instance_follow.text.eex:7
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
+msgstr ""
+
+#: lib/web/templates/email/group_member_removal.html.heex:18
+#: lib/web/templates/email/group_member_removal.text.eex:1
+#, elixir-autogen, elixir-format
+msgid "Until next time!"
 msgstr ""
