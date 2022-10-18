@@ -222,7 +222,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   # Domains should always be lower-case, so let's force that
   @spec lowercase_domain(String.t()) :: {:ok, String.t()} | {:error, :invalid_email}
-  defp lowercase_domain(email) do
+  defp lowercase_domain(email) when is_binary(email) do
     case split_email(email) do
       [user_part, domain_part] ->
         {:ok, "#{user_part}@#{String.downcase(domain_part)}"}
@@ -231,6 +231,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         {:error, :invalid_email}
     end
   end
+
+  defp lowercase_domain(_), do: {:error, :invalid_email}
 
   @spec split_email(String.t()) :: list(String.t())
   defp split_email(email), do: String.split(email, "@", parts: 2, trim: true)
@@ -270,14 +272,18 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   We only do this to accounts not activated
   """
   def resend_confirmation_email(_parent, args, _resolution) do
-    with {:ok, %User{locale: locale} = user} <-
-           Users.get_user_by_email(Map.get(args, :email), activated: false, unconfirmed: false),
+    with {:ok, email} <- lowercase_domain(Map.get(args, :email)),
+         {:ok, %User{locale: locale} = user} <-
+           Users.get_user_by_email(email, activated: false, unconfirmed: false),
          {:ok, email} <-
            Email.User.resend_confirmation_email(user, Map.get(args, :locale, locale)) do
       {:ok, email}
     else
       {:error, :user_not_found} ->
         {:error, dgettext("errors", "No user to validate with this email was found")}
+
+      {:error, :invalid_email} ->
+        {:error, dgettext("errors", "This email doesn't seem to be valid")}
 
       {:error, :email_too_soon} ->
         {:error, dgettext("errors", "You requested again a confirmation email too soon")}
@@ -288,7 +294,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   Send an email to reset the password from an user
   """
   def send_reset_password(_parent, args, _resolution) do
-    with email <- Map.get(args, :email),
+    with {:ok, email} <- lowercase_domain(Map.get(args, :email)),
          {:ok, %User{locale: locale} = user} <-
            Users.get_user_by_email(email, activated: true, unconfirmed: false),
          {:can_reset_password, true} <-
@@ -298,6 +304,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     else
       {:can_reset_password, false} ->
         {:error, dgettext("errors", "This user can't reset their password")}
+
+      {:error, :invalid_email} ->
+        {:error, dgettext("errors", "This email doesn't seem to be valid")}
 
       {:error, :user_not_found} ->
         # TODO : implement rate limits for this endpoint
