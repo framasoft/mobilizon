@@ -713,7 +713,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       mutation = """
           mutation {
             resendConfirmationEmail(
-                  email: "oh no"
+                  email: "oh@no.com"
               )
             }
       """
@@ -741,6 +741,18 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       assert res["data"]["sendResetPassword"] == email
     end
 
+    test "test send_reset_password/3 with an email with no account", %{conn: conn} do
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @send_reset_password_mutation,
+          variables: %{email: "noone@nowhere.com"}
+        )
+
+      assert hd(res["errors"])["message"] ==
+               "No user with this email was found"
+    end
+
     test "test send_reset_password/3 with invalid email", %{conn: conn} do
       res =
         conn
@@ -750,7 +762,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "No user with this email was found"
+               "This email doesn't seem to be valid"
     end
 
     test "test send_reset_password/3 for an LDAP user", %{conn: conn} do
