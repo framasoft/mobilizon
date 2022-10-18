@@ -1,4 +1,4 @@
-<%= gettext "So long, and thanks for the fish!" %>
+<%= gettext "Until next time!" %>
 ==
 <%= gettext "You have been removed from group %{group}. You will not be able to access this group's private content anymore.", group: @group.name %>
 <%= @group.url %>
