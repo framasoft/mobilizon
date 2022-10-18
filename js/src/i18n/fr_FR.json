@@ -12,7 +12,7 @@
   "@{group}": "@{group}",
   "@{username} ({role})": "@{username} ({role})",
   "@{username}'s follow request was accepted": "La demande de suivi de @{username} a été acceptée",
-  "@{username}'s follow request was rejected": "La demande de suivi de @{username} a été rejettée",
+  "@{username}'s follow request was rejected": "La demande de suivi de @{username} a été rejetée",
   "A cookie is a small file containing information that is sent to your computer when you visit a website. When you visit the site again, the cookie allows that site to recognize your browser. Cookies may store user preferences and other information. You can configure your browser to refuse all cookies. However, this may result in some website features or services partially working. Local storage works the same way but allows you to store more data.": "Un cookie est un petit fichier contenant des informations qui est envoyé à votre ordinateur lorsque vous visitez un site web. Lorsque vous visitez le site à nouveau, le cookie permet à ce site de reconnaître votre navigateur. Les cookies peuvent stocker les préférences des utilisateur·rice·s et d'autres informations. Vous pouvez configurer votre navigateur pour qu'il refuse tous les cookies. Toutefois, cela peut entraîner le non-fonctionnement de certaines fonctions ou de certains services du site web. Le stockage local fonctionne de la même manière mais permet de stocker davantage de données.",
   "A discussion has been created or updated": "Une discussion a été créée ou mise à jour",
   "A federated software": "Un logiciel fédéré",
