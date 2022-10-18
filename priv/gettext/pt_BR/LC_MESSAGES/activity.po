@@ -72,7 +72,7 @@ msgstr "%{profile} criou a pasta %{resource}."
 msgid "%{profile} created the group %{group}."
 msgstr "%{profile} criou o grupo %{group}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:14
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:15
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:8
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the resource %{resource}."
@@ -84,38 +84,38 @@ msgstr "%{profile} criou o recurso %{resource}."
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} excluiu a discussão %{discussion}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:80
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
 msgstr "%{profile} excluiu a pasta %{resource}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:92
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} excluiu o recurso %{resource}."
 
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:42
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:48
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
 #, elixir-autogen, elixir-format
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} excluiu o membro %{member}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:58
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:62
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource}."
 msgstr "%{profile} moveu a pasta %{resource}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:68
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:73
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} moveu o recurso %{resource}."
 
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:48
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:54
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:51
 #, elixir-autogen, elixir-format
 msgid "%{profile} quit the group."
 msgstr "%{profile} deixou o grupo."
@@ -126,14 +126,14 @@ msgstr "%{profile} deixou o grupo."
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} renomeou a discussão %{discussion}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:26
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:28
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:14
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr ""
 "%{profile} alterou o nome da pasta %{old_resource_title} para %{resource}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:41
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:44
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:21
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
@@ -146,14 +146,14 @@ msgstr ""
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} respondeu à discussão %{discussion}."
 
-#: lib/web/templates/email/activity/_group_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_group_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} atualizou o grupo %{group}."
 
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:36
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:42
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 #, elixir-autogen, elixir-format
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} atualizou o membro %{member}."
@@ -166,14 +166,14 @@ msgid "The event %{event} was created by %{profile}."
 msgstr "O evento %{event} foi criado por %{profile}."
 
 #: lib/service/activity/renderer/event.ex:43
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:23
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:25
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "The event %{event} was deleted by %{profile}."
 msgstr "O evento %{event} foi excluído por %{profile}."
 
 #: lib/service/activity/renderer/event.ex:33
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "The event %{event} was updated by %{profile}."
@@ -185,13 +185,13 @@ msgstr "O evento %{event} foi atualizado por %{profile}."
 msgid "The post %{post} was created by %{profile}."
 msgstr "A postagem %{post} foi criada por %{profile}."
 
-#: lib/web/templates/email/activity/_post_activity_item.html.heex:23
+#: lib/web/templates/email/activity/_post_activity_item.html.heex:25
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "A postagem %{post} foi excluída por %{profile}."
 
-#: lib/web/templates/email/activity/_post_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_post_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "The post %{post} was updated by %{profile}."
@@ -204,14 +204,14 @@ msgid "%{member} joined the group."
 msgstr "%{member} entrou no grupo."
 
 #: lib/service/activity/renderer/event.ex:63
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:40
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:43
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:25
 #, elixir-autogen, elixir-format
 msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} comentou no evento %{event}."
 
 #: lib/service/activity/renderer/event.ex:54
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:30
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:32
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
@@ -224,7 +224,7 @@ msgstr ""
 "Não quer receber notificações de atividade? Você pode alterar sua frequência "
 "ou desativá-las em suas configurações."
 
-#: lib/web/templates/email/email_direct_activity.html.heex:219
+#: lib/web/templates/email/email_direct_activity.html.heex:218
 #: lib/web/templates/email/email_direct_activity.text.eex:23
 #, elixir-format
 msgid "View one more activity"
@@ -248,7 +248,7 @@ msgid "Activity on %{instance}"
 msgstr "Atividade em %{instance}"
 
 #: lib/service/activity/renderer/comment.ex:38
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:7
 #: lib/web/templates/email/email_anonymous_activity.html.heex:48
 #: lib/web/templates/email/email_anonymous_activity.text.eex:5
@@ -263,7 +263,7 @@ msgstr "%{profile} publicou um aviso no evento %{event}."
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} mencionou você em um comentário no evento %{event}."
 
-#: lib/web/templates/email/email_direct_activity.html.heex:249
+#: lib/web/templates/email/email_direct_activity.html.heex:248
 #, elixir-autogen, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
@@ -299,14 +299,14 @@ msgid "Weekly activity recap for %{instance}"
 msgstr "Resumo semanal de atividades para %{instance}"
 
 #: lib/service/activity/renderer/comment.ex:66
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:34
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:37
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr "%{profile} comentou no seu evento %{event}."
 
 #: lib/service/activity/renderer/comment.ex:53
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:24
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:26
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
@@ -467,3 +467,9 @@ msgstr "%{profile} renomeou a discussão %{discussion} no grupo %{group}."
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
 msgstr "%{profile} respondeu à discussão %{discussion} no grupo %{group}."
+
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:36
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} approved the member %{member}."
+msgstr "%{profile} adicionou o membro %{member}."

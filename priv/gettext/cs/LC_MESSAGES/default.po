@@ -1160,7 +1160,7 @@ msgstr "Zobrazit hlášení"
 msgid "View report:"
 msgstr "Zobrazit hlášení:"
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/email_anonymous_activity.html.heex:83
 #: lib/web/templates/email/event_participation_approved.html.heex:79
 #: lib/web/templates/email/event_participation_confirmed.html.heex:79
 #, elixir-autogen, elixir-format
@@ -1241,12 +1241,6 @@ msgstr ""
 "Pokud se domníváte, že se jedná o chybu, můžete kontaktovat správce skupiny, "
 "aby vás mohli přidat zpět."
 
-#: lib/web/templates/email/group_member_removal.html.heex:18
-#: lib/web/templates/email/group_member_removal.text.eex:1
-#, elixir-autogen, elixir-format
-msgid "So long, and thanks for the fish!"
-msgstr "Sbohem a díky za ryby!"
-
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}"
@@ -1302,7 +1296,7 @@ msgstr ""
 "Moderátorský tým vaší instance se rozhodl pozastavit %{group_name} "
 "(%{group_address}). Již nejste členem této skupiny."
 
-#: lib/web/email/group.ex:90
+#: lib/web/email/group.ex:92
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Skupina %{group} byla pozastavena na %{instance}"
@@ -1549,29 +1543,24 @@ msgstr "U příspěvku je vyžadován text"
 msgid "A title is required for the post"
 msgstr "U příspěvku je vyžadován nadpis"
 
-#: lib/web/templates/email/instance_follow.text.eex:5
-#, elixir-autogen, elixir-format
-msgid "%{name} (%{domain}) just requested to follow your instance."
-msgstr "%{name} (%{domain}) právě požádal o sledování vaší instance."
-
-#: lib/web/email/follow.ex:53
+#: lib/web/email/follow.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{name} requests to follow your instance"
 msgstr "%{name} žádá o sledování vaší instance"
 
-#: lib/web/templates/email/instance_follow.html.heex:61
+#: lib/web/templates/email/instance_follow.html.heex:53
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you accept, this instance will receive all of your public events."
 msgstr ""
 "Pokud souhlasíte, bude tato instance přijímat všechny vaše veřejné události."
 
-#: lib/web/email/follow.ex:47
+#: lib/web/email/follow.ex:54
 #, elixir-autogen, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
 msgstr "Instance %{name} (%{domain}) žádá o sledování vaší instance"
 
-#: lib/web/templates/email/instance_follow.html.heex:93
+#: lib/web/templates/email/instance_follow.html.heex:84
 #: lib/web/templates/email/instance_follow.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the instance's admin settings."
@@ -1583,14 +1572,6 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Want to connect?"
 msgstr "Chcete se připojit?"
-
-#: lib/web/templates/email/instance_follow.html.heex:76
-#: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format
-msgid "Note: %{name} (%{domain}) following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
-msgstr ""
-"Poznámka: Když vás %{name} (%{domain}) sleduje, nemusí to nutně znamenat, že "
-"sledujete tuto instanci, ale můžete také požádat o jejich sledování."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:47
 #, elixir-autogen, elixir-format
@@ -1634,8 +1615,8 @@ msgstr "Jde o demonstrační web pro testování Mobilizon."
 
 #: lib/service/metadata/actor.ex:91
 #: lib/service/metadata/actor.ex:99
-#: lib/service/metadata/instance.ex:56
-#: lib/service/metadata/instance.ex:62
+#: lib/service/metadata/instance.ex:60
+#: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
 msgstr "Kanál %{name}"
@@ -1681,14 +1662,14 @@ msgstr "Zdá se, že server Mobilizon %{instance} je dočasně mimo provoz."
 msgid "Public feed for %{instance}"
 msgstr "Veřejný kanál pro %{instance}"
 
-#: lib/graphql/resolvers/user.ex:316
+#: lib/graphql/resolvers/user.ex:324
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 "Zvolené heslo je příliš krátké. Ujistěte se, že heslo obsahuje alespoň 6 "
 "znaků."
 
-#: lib/graphql/resolvers/user.ex:322
+#: lib/graphql/resolvers/user.ex:330
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
@@ -1722,8 +1703,6 @@ msgstr ""
 msgid "Your participation to %{event} on %{instance} has been cancelled!"
 msgstr "Vaše účast na %{event} na %{instance} byla zrušena!"
 
-#. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
-#. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #: lib/service/export/participants/csv.ex:81
 #: lib/service/export/participants/ods.ex:86
@@ -1925,7 +1904,7 @@ msgstr "Účastněte se:"
 msgid "Title: %{title}"
 msgstr "Název: %{title}"
 
-#: lib/web/email/group.ex:43
+#: lib/web/email/group.ex:45
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Právě naplánováno od %{group}: %{event}"
@@ -2175,181 +2154,176 @@ msgstr ""
 msgid "%{name} just requested to follow your instance."
 msgstr "%{name} žádá o sledování vaší instance."
 
-#: lib/web/templates/email/instance_follow.html.heex:48
-#, elixir-autogen, elixir-format
-msgid "<b>%{name} (%{domain})</b> just requested to follow your instance."
-msgstr "<b>%{name} (%{domain})</b> právě požádal o sledování vaší instance."
-
-#: lib/web/templates/email/instance_follow.html.heex:54
+#: lib/web/templates/email/instance_follow.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{name}</b> just requested to follow your instance."
 msgstr "<b>%{name}</b> právě požádal o sledování vaší instance."
 
-#: lib/web/templates/email/instance_follow.html.heex:63
+#: lib/web/templates/email/instance_follow.html.heex:55
 #: lib/web/templates/email/instance_follow.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you accept, this profile will receive all of your public events."
 msgstr ""
 "Pokud souhlasíte, bude tento profil dostávat všechny vaše veřejné události."
 
-#: lib/web/templates/email/instance_follow.html.heex:97
+#: lib/web/templates/email/instance_follow.html.heex:88
 #: lib/web/templates/email/instance_follow.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr "Chcete-li tuto pozvánku přijmout, přejděte na stránku správce profilu."
 
-#: lib/web/templates/email/instance_follow.html.heex:119
-#: lib/web/templates/email/instance_follow.html.heex:129
+#: lib/web/templates/email/instance_follow.html.heex:110
+#: lib/web/templates/email/instance_follow.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "View the details"
 msgstr "Zobrazit podrobnosti"
 
-#: lib/mobilizon/events/categories.ex:16
+#: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
 msgid "Arts"
 msgstr "Umění"
 
-#: lib/mobilizon/events/categories.ex:52
+#: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
 msgstr "Automobily, lodě a letadla"
 
-#: lib/mobilizon/events/categories.ex:20
+#: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
 msgstr "Knižní kluby"
 
-#: lib/mobilizon/events/categories.ex:24
+#: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Business"
 msgstr "Obchod"
 
-#: lib/mobilizon/events/categories.ex:28
+#: lib/mobilizon/events/categories.ex:44
 #, elixir-autogen, elixir-format
 msgid "Causes"
 msgstr "Případy"
 
-#: lib/mobilizon/events/categories.ex:32
+#: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
 msgstr "Komedie"
 
-#: lib/mobilizon/events/categories.ex:56
+#: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
 msgid "Community"
 msgstr "Komunita"
 
-#: lib/mobilizon/events/categories.ex:36
+#: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
 msgstr "Řemesla"
 
-#: lib/mobilizon/events/categories.ex:60
+#: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Family & Education"
 msgstr "Rodina a vzdělávání"
 
-#: lib/mobilizon/events/categories.ex:64
+#: lib/mobilizon/events/categories.ex:80
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
 msgstr "Móda a krása"
 
-#: lib/mobilizon/events/categories.ex:68
+#: lib/mobilizon/events/categories.ex:84
 #, elixir-autogen, elixir-format
 msgid "Film & Media"
 msgstr "Film a media"
 
-#: lib/mobilizon/events/categories.ex:40
+#: lib/mobilizon/events/categories.ex:56
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
 msgstr "Jídlo a nápoje"
 
-#: lib/mobilizon/events/categories.ex:72
+#: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Games"
 msgstr "Hry"
 
-#: lib/mobilizon/events/categories.ex:44
+#: lib/mobilizon/events/categories.ex:60
 #, elixir-autogen, elixir-format
 msgid "Health"
 msgstr "Zdraví"
 
-#: lib/mobilizon/events/categories.ex:84
+#: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "LGBTQ"
 msgstr "LGBTQ"
 
-#: lib/mobilizon/events/categories.ex:76
+#: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
 msgstr "Jazyk a kultura"
 
-#: lib/mobilizon/events/categories.ex:80
+#: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
 msgid "Learning"
 msgstr "Vzdělávání"
 
-#: lib/mobilizon/events/categories.ex:133
+#: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
 msgid "Meeting"
 msgstr "Schůzky"
 
-#: lib/mobilizon/events/categories.ex:88
+#: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
 msgstr "Hnutí a politika"
 
-#: lib/mobilizon/events/categories.ex:48
+#: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
 msgstr "Hudba"
 
-#: lib/mobilizon/events/categories.ex:92
+#: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
 msgstr "Síťování"
 
-#: lib/mobilizon/events/categories.ex:112
+#: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
 msgstr "Příroda a dobrodružství"
 
-#: lib/mobilizon/events/categories.ex:96
+#: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Party"
 msgstr "Zábava"
 
-#: lib/mobilizon/events/categories.ex:100
+#: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
 msgstr "Divadlo a vizuální umění"
 
-#: lib/mobilizon/events/categories.ex:104
+#: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
 msgid "Pets"
 msgstr "Domácí zvířata"
 
-#: lib/mobilizon/events/categories.ex:108
+#: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Photography"
 msgstr "Fotografování"
 
-#: lib/mobilizon/events/categories.ex:120
+#: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
 msgstr "Věda a technika"
 
-#: lib/mobilizon/events/categories.ex:116
+#: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
 msgstr "Duchovno, náboženství a víra"
 
-#: lib/mobilizon/events/categories.ex:124
+#: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
 msgstr "Sport"
 
-#: lib/mobilizon/events/categories.ex:128
+#: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
 msgid "Theatre"
 msgstr "Divadlo"
@@ -2363,3 +2337,22 @@ msgstr "Více informací : %{url}"
 #, elixir-autogen, elixir-format
 msgid "Activate my account:"
 msgstr "Aktivovat můj účet:"
+
+#: lib/web/email/follow.ex:49
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Instance %{domain} requests to follow your instance"
+msgstr "Instance %{name} (%{domain}) žádá o sledování vaší instance"
+
+#: lib/web/templates/email/instance_follow.html.heex:68
+#: lib/web/templates/email/instance_follow.text.eex:7
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
+msgstr ""
+"Poznámka: Když vás %{name} (%{domain}) sleduje, nemusí to nutně znamenat, že "
+"sledujete tuto instanci, ale můžete také požádat o jejich sledování."
+
+#: lib/web/templates/email/group_member_removal.html.heex:18
+#: lib/web/templates/email/group_member_removal.text.eex:1
+#, elixir-autogen, elixir-format
+msgid "Until next time!"
+msgstr ""

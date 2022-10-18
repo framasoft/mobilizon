@@ -24,8 +24,8 @@ msgstr ""
 ## date. Leave `msgstr`s empty as changing them here as no
 ## effect: edit them in PO (`.po`) files instead.
 ## From Ecto.Changeset.cast/4
-#, elixir-autogen
 #: lib/mobilizon/discussions/discussion.ex:69
+#, elixir-autogen
 msgid "can't be blank"
 msgstr "kan ikkje vera tom"
 
@@ -111,70 +111,69 @@ msgstr "må vera større enn eller lik %{number}"
 msgid "must be equal to %{number}"
 msgstr "må vera lik %{number}"
 
+#: lib/graphql/resolvers/user.ex:115
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:107
 msgid "Cannot refresh the token"
 msgstr "Kan ikkje fornya teiknet"
 
+#: lib/graphql/resolvers/group.ex:276
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:272
 msgid "Current profile is not a member of this group"
 msgstr "Denne brukaren er ikkje medlem av gruppa"
 
+#: lib/graphql/resolvers/group.ex:280
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:276
 msgid "Current profile is not an administrator of the selected group"
 msgstr "Denne brukaren er ikkje styrar av gruppa"
 
+#: lib/graphql/resolvers/user.ex:618
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:610
 msgid "Error while saving user settings"
 msgstr "Greidde ikkje lagra brukarinnstillingane"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:101
-#: lib/graphql/resolvers/group.ex:269
-#: lib/graphql/resolvers/group.ex:301
-#: lib/graphql/resolvers/group.ex:338
-#: lib/graphql/resolvers/group.ex:369
-#: lib/graphql/resolvers/group.ex:418
+#: lib/graphql/resolvers/group.ex:273
+#: lib/graphql/resolvers/group.ex:305
+#: lib/graphql/resolvers/group.ex:342
+#: lib/graphql/resolvers/group.ex:373
+#: lib/graphql/resolvers/group.ex:422
 #: lib/graphql/resolvers/member.ex:81
+#, elixir-autogen, elixir-format
 msgid "Group not found"
 msgstr "Fann ikkje gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:98
 #: lib/graphql/resolvers/group.ex:102
+#, elixir-autogen, elixir-format
 msgid "Group with ID %{id} not found"
 msgstr "Fann ikkje gruppa med ID %{id}"
 
+#: lib/graphql/resolvers/user.ex:93
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:85
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr "Greier ikkje å logga inn. Epostadressa eller passordet ditt er feil."
 
+#: lib/graphql/resolvers/group.ex:339
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:335
 msgid "Member not found"
 msgstr "Fann ikkje medlemen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:94
+#, elixir-autogen, elixir-format
 msgid "No profile found for the moderator user"
 msgstr "Fann ingen profil for moderator-brukaren"
 
+#: lib/graphql/resolvers/user.ex:280
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:272
 msgid "No user to validate with this email was found"
 msgstr "Fann ingen brukar med denne eposten å godkjenna"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:314
-#: lib/graphql/resolvers/user.ex:296
+#: lib/graphql/resolvers/user.ex:304
+#, elixir-autogen, elixir-format
 msgid "No user with this email was found"
 msgstr "Fann ingen brukar med denne eposten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32
 #: lib/graphql/resolvers/participant.ex:210
@@ -184,314 +183,314 @@ msgstr "Fann ingen brukar med denne eposten"
 #: lib/graphql/resolvers/person.ex:396
 #: lib/graphql/resolvers/person.ex:425
 #: lib/graphql/resolvers/person.ex:440
+#, elixir-autogen, elixir-format
 msgid "Profile is not owned by authenticated user"
 msgstr "Ingen godkjent brukar eig denne profilen"
 
+#: lib/graphql/resolvers/user.ex:167
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:159
 msgid "Registrations are not open"
 msgstr "Det er ikkje opna for å registrera seg"
 
+#: lib/graphql/resolvers/user.ex:435
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:427
 msgid "The current password is invalid"
 msgstr "Dette passordet er ugyldig"
 
+#: lib/graphql/resolvers/admin.ex:336
+#: lib/graphql/resolvers/user.ex:478
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:334
-#: lib/graphql/resolvers/user.ex:470
 msgid "The new email doesn't seem to be valid"
 msgstr "Den nye epostadressa ser ut til å vera feil"
 
+#: lib/graphql/resolvers/admin.ex:339
+#: lib/graphql/resolvers/user.ex:481
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:337
-#: lib/graphql/resolvers/user.ex:473
 msgid "The new email must be different"
 msgstr "Den nye epostadressa må vera annleis"
 
+#: lib/graphql/resolvers/user.ex:438
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:430
 msgid "The new password must be different"
 msgstr "Det nye passordet må vera annleis"
 
+#: lib/graphql/resolvers/user.ex:485
+#: lib/graphql/resolvers/user.ex:547
+#: lib/graphql/resolvers/user.ex:550
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:477
-#: lib/graphql/resolvers/user.ex:539
-#: lib/graphql/resolvers/user.ex:542
 msgid "The password provided is invalid"
 msgstr "Dette passordet er ugyldig"
 
+#: lib/graphql/resolvers/user.ex:442
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:434
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr "Dette passordet er for kort. Passord må ha minst 6 teikn."
 
+#: lib/graphql/resolvers/user.ex:300
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:292
 msgid "This user can't reset their password"
 msgstr "Denne brukaren kan ikkje nullstilla passordet sitt"
 
+#: lib/graphql/resolvers/user.ex:89
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:81
 msgid "This user has been disabled"
 msgstr "Denne brukaren er avskrudd"
 
+#: lib/graphql/resolvers/user.ex:259
+#: lib/graphql/resolvers/user.ex:264
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:251
-#: lib/graphql/resolvers/user.ex:256
 msgid "Unable to validate user"
 msgstr "Greier ikkje godkjenna brukaren"
 
+#: lib/graphql/resolvers/user.ex:528
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:520
 msgid "User already disabled"
 msgstr "Brukaren er allereie inaktiv"
 
+#: lib/graphql/resolvers/user.ex:593
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:585
 msgid "User requested is not logged-in"
 msgstr "Den førespurte brukaren er ikkje innlogga"
 
+#: lib/graphql/resolvers/group.ex:311
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:307
 msgid "You are already a member of this group"
 msgstr "Du er allereie medlem av denne gruppa"
 
+#: lib/graphql/resolvers/group.ex:346
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:342
 msgid "You can't leave this group because you are the only administrator"
 msgstr "Du kan ikkje forlata denne gruppa, fordi du er den einaste styraren"
 
+#: lib/graphql/resolvers/group.ex:308
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:304
 msgid "You cannot join this group"
 msgstr "Du kan ikkje bli med i denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:132
+#, elixir-autogen, elixir-format
 msgid "You may not list groups unless moderator."
 msgstr "Du kan ikkje lista opp grupper med mindre du er moderator."
 
+#: lib/graphql/resolvers/user.ex:493
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:485
 msgid "You need to be logged-in to change your email"
 msgstr "Du må vera innlogga for å endra epostadressa di"
 
+#: lib/graphql/resolvers/user.ex:450
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:442
 msgid "You need to be logged-in to change your password"
 msgstr "Du må vera innlogga for å endra passordet ditt"
 
+#: lib/graphql/resolvers/group.ex:285
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:281
 msgid "You need to be logged-in to delete a group"
 msgstr "Du må vera innlogga for å sletta ei gruppe"
 
+#: lib/graphql/resolvers/user.ex:555
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:547
 msgid "You need to be logged-in to delete your account"
 msgstr "Du må vera innlogga for å sletta kontoen din"
 
+#: lib/graphql/resolvers/group.ex:316
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:312
 msgid "You need to be logged-in to join a group"
 msgstr "Du må vera innlogga for å bli med i ei gruppe"
 
+#: lib/graphql/resolvers/group.ex:351
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:347
 msgid "You need to be logged-in to leave a group"
 msgstr "Du må vera innlogga for å forlata ei gruppe"
 
+#: lib/graphql/resolvers/group.ex:249
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:245
 msgid "You need to be logged-in to update a group"
 msgstr "Du må vera innlogga for å oppdatera ei gruppe"
 
+#: lib/graphql/resolvers/user.ex:120
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:112
 msgid "You need to have an existing token to get a refresh token"
 msgstr "Du treng eit eksisterande teikn for å få eit fornyingsteikn"
 
+#: lib/graphql/resolvers/user.ex:283
+#: lib/graphql/resolvers/user.ex:307
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:275
-#: lib/graphql/resolvers/user.ex:299
 msgid "You requested again a confirmation email too soon"
 msgstr "Du ba om ny stadfestingsepost for snøgt"
 
+#: lib/graphql/resolvers/user.ex:170
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:162
 msgid "Your email is not on the allowlist"
 msgstr "Epostadressa di er ikkje på lista over godkjende adresser"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:100
+#, elixir-autogen, elixir-format
 msgid "Error while performing background task"
 msgstr "Greidde ikkje utføra ei bakgrunnsoppgåve"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:32
+#, elixir-autogen, elixir-format
 msgid "No profile found with this ID"
 msgstr "Fann ingen profil med denne ID-en"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:61
 #: lib/graphql/resolvers/actor.ex:97
+#, elixir-autogen, elixir-format
 msgid "No remote profile found with this ID"
 msgstr "Fann ingen fjern profil med denne ID-en"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:72
+#, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can suspend a profile"
 msgstr "Berre moderatorar og styrarar kan sperra ein profil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:105
+#, elixir-autogen, elixir-format
 msgid "Only moderators and administrators can unsuspend a profile"
 msgstr "Berre moderatorar og styrarar kan oppheva sperring av profilar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:29
+#, elixir-autogen, elixir-format
 msgid "Only remote profiles may be refreshed"
 msgstr "Du kan berre lasta fjerne profilar på nytt"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:64
+#, elixir-autogen, elixir-format
 msgid "Profile already suspended"
 msgstr "Profilen er allereie sperra"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:96
+#, elixir-autogen, elixir-format
 msgid "A valid email is required by your instance"
 msgstr "Nettstaden din krev ei gyldig epostadresse"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:90
 #: lib/graphql/resolvers/participant.ex:143
+#, elixir-autogen, elixir-format
 msgid "Anonymous participation is not enabled"
 msgstr "Det er ikkje høve til å vera med anonymt"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:210
+#, elixir-autogen, elixir-format
 msgid "Cannot remove the last administrator of a group"
 msgstr "Kan ikkje fjerna den siste styraren i gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:207
+#, elixir-autogen, elixir-format
 msgid "Cannot remove the last identity of a user"
 msgstr "Kan ikkje fjerna den siste identiteten til ein brukar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:126
+#, elixir-autogen, elixir-format
 msgid "Comment is already deleted"
 msgstr "Kommentaren er allereie sletta"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:103
 #: lib/graphql/resolvers/discussion.ex:69
+#, elixir-autogen, elixir-format
 msgid "Discussion not found"
 msgstr "Fann ikkje ordskiftet"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:71
 #: lib/graphql/resolvers/report.ex:90
+#, elixir-autogen, elixir-format
 msgid "Error while saving report"
 msgstr "Greidde ikkje lagra rapporten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:110
+#, elixir-autogen, elixir-format
 msgid "Error while updating report"
 msgstr "Greidde ikkje oppdatera rapporten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:131
+#, elixir-autogen, elixir-format
 msgid "Event id not found"
 msgstr "Fann ikkje ID-en til hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:100
-#: lib/graphql/resolvers/event.ex:360
-#: lib/graphql/resolvers/event.ex:412
+#: lib/graphql/resolvers/event.ex:337
+#: lib/graphql/resolvers/event.ex:389
+#, elixir-autogen, elixir-format
 msgid "Event not found"
 msgstr "Fann ikkje hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:87
 #: lib/graphql/resolvers/participant.ex:128
 #: lib/graphql/resolvers/participant.ex:155
 #: lib/graphql/resolvers/participant.ex:336
+#, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "Det finst inga hending med ID-en %{id}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:103
+#, elixir-autogen, elixir-format
 msgid "Internal Error"
 msgstr "Intern feil"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:219
+#, elixir-autogen, elixir-format
 msgid "No discussion with ID %{id}"
 msgstr "Ikkje noko ordskifte med ID-en %{id}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:80
 #: lib/graphql/resolvers/todos.ex:107
 #: lib/graphql/resolvers/todos.ex:179
 #: lib/graphql/resolvers/todos.ex:208
 #: lib/graphql/resolvers/todos.ex:237
+#, elixir-autogen, elixir-format
 msgid "No profile found for user"
 msgstr "Fann ingen profil for brukaren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:64
+#, elixir-autogen, elixir-format
 msgid "No such feed token"
 msgstr "Det finst ikkje noko slikt teikn for kjelda"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:259
+#, elixir-autogen, elixir-format
 msgid "Participant already has role %{role}"
 msgstr "Deltakaren har rolla %{role} allereie"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:187
 #: lib/graphql/resolvers/participant.ex:220
 #: lib/graphql/resolvers/participant.ex:263
+#, elixir-autogen, elixir-format
 msgid "Participant not found"
 msgstr "Fann ikkje deltakaren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:32
+#, elixir-autogen, elixir-format
 msgid "Person with ID %{id} not found"
 msgstr "Fann ingen person med ID-en %{id}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:56
+#, elixir-autogen, elixir-format
 msgid "Person with username %{username} not found"
 msgstr "Fann ingen person med brukarnamnet %{username}"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:169
 #: lib/graphql/resolvers/post.ex:203
+#, elixir-autogen, elixir-format
 msgid "Post ID is not a valid ID"
 msgstr "Innleggs-IDen er ugyldig"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:172
 #: lib/graphql/resolvers/post.ex:206
+#, elixir-autogen, elixir-format
 msgid "Post doesn't exist"
 msgstr "Innlegget finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:84
+#, elixir-autogen, elixir-format
 msgid "Profile invited doesn't exist"
 msgstr "Den inviterte profilen finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:93
 #: lib/graphql/resolvers/member.ex:97
+#, elixir-autogen, elixir-format
 msgid "Profile is already a member of this group"
 msgstr "Profilen er allereie medlem i denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:133
 #: lib/graphql/resolvers/post.ex:175
 #: lib/graphql/resolvers/post.ex:209
@@ -505,645 +504,646 @@ msgstr "Profilen er allereie medlem i denne gruppa"
 #: lib/graphql/resolvers/todos.ex:182
 #: lib/graphql/resolvers/todos.ex:214
 #: lib/graphql/resolvers/todos.ex:246
+#, elixir-autogen, elixir-format
 msgid "Profile is not member of group"
 msgstr "Profilen er ikkje medlem i gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/actor.ex:67
 #: lib/graphql/resolvers/person.ex:233
+#, elixir-autogen, elixir-format
 msgid "Profile not found"
 msgstr "Fann ikkje profilen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:48
+#, elixir-autogen, elixir-format
 msgid "Report not found"
 msgstr "Fann ikkje rapporten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:172
 #: lib/graphql/resolvers/resource.ex:199
+#, elixir-autogen, elixir-format
 msgid "Resource doesn't exist"
 msgstr "Ressursen finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:124
+#, elixir-autogen, elixir-format
 msgid "The event has already reached its maximum capacity"
 msgstr "Hendinga er fullteikna"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:282
+#, elixir-autogen, elixir-format
 msgid "This token is invalid"
 msgstr "Teiknet er ugyldig"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:176
 #: lib/graphql/resolvers/todos.ex:243
+#, elixir-autogen, elixir-format
 msgid "Todo doesn't exist"
 msgstr "Gjeremålet finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/todos.ex:77
 #: lib/graphql/resolvers/todos.ex:211
 #: lib/graphql/resolvers/todos.ex:240
+#, elixir-autogen, elixir-format
 msgid "Todo list doesn't exist"
 msgstr "Gjeremålslista finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:73
+#, elixir-autogen, elixir-format
 msgid "Token does not exist"
 msgstr "Teiknet finst ikkje"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:67
 #: lib/graphql/resolvers/feed_token.ex:70
+#, elixir-autogen, elixir-format
 msgid "Token is not a valid UUID"
 msgstr "Teiknet er ikkje ein gyldig UUID"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:98
+#, elixir-autogen, elixir-format
 msgid "User not found"
 msgstr "Fann ikkje brukaren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:310
+#, elixir-autogen, elixir-format
 msgid "You already have a profile for this user"
 msgstr "Du har allereie ein profil for denne brukaren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:134
+#, elixir-autogen, elixir-format
 msgid "You are already a participant of this event"
 msgstr "Du er allereie deltakar på denne hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:87
+#, elixir-autogen, elixir-format
 msgid "You are not a member of this group"
 msgstr "Du er ikkje medlem i denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:157
 #: lib/graphql/resolvers/member.ex:173
 #: lib/graphql/resolvers/member.ex:188
+#, elixir-autogen, elixir-format
 msgid "You are not a moderator or admin for this group"
 msgstr "Du er ikkje styrar eller administrator for denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:59
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Du har ikkje løyve til å skriva kommentarar viss du ikkje er kopla til"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:41
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to create a feed token if not connected"
 msgstr "Du har ikkje løyve til å laga eit straumteikn når du ikkje er kopla til"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:134
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Du har ikkje løyve til å sletta ein kommentar når du ikkje er kopla til"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:82
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Du har ikkje løyve til å sletta straumteikn når du ikkje er kopla til"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:93
+#, elixir-autogen, elixir-format
 msgid "You are not allowed to update a comment if not connected"
 msgstr ""
 "Du har ikkje løyve til å oppdatera kommentarar når du ikkje er kopla til"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:181
 #: lib/graphql/resolvers/participant.ex:214
+#, elixir-autogen, elixir-format
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
 "Du kan ikkje forlata hendinga, fordi du er den einaste deltakaren som har "
 "oppretta hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:192
+#, elixir-autogen, elixir-format
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr ""
 "Du kan ikkje gje deg sjølv ei deltakarrolle i denne gruppa, fordi du er den "
 "einaste administratoren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:122
+#, elixir-autogen, elixir-format
 msgid "You cannot delete this comment"
 msgstr "Du kan ikkje sletta denne kommentaren"
 
+#: lib/graphql/resolvers/event.ex:385
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:408
 msgid "You cannot delete this event"
 msgstr "Du kan ikkje sletta denne hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:90
+#, elixir-autogen, elixir-format
 msgid "You cannot invite to this group"
 msgstr "Du kan ikkje invitera til denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/feed_token.ex:76
+#, elixir-autogen, elixir-format
 msgid "You don't have permission to delete this token"
 msgstr "Du har ikkje løyve til å sletta dette teiknet"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/admin.ex:56
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
 "Du må vera innlogga og ha ei moderatorrolle for å lista opp hendingsloggar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:36
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list reports"
 msgstr "Du må vera innlogga og ha ei moderatorrolle for å lista opp rapportar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:115
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to update a report"
 msgstr "Du må vera innlogga og ha ei moderatorrolle for å oppdatera ein rapport"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:53
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Du må vera innlogga og ha ei moderatorrolle for å lesa rapportar"
 
+#: lib/graphql/resolvers/admin.ex:252
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:250
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr ""
 "Du må vera innlogga og ha ei administratorrolle for å sjå admin-"
 "innstillingane"
 
+#: lib/graphql/resolvers/admin.ex:236
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:234
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr ""
 "Du må vera innlogga og ha ei administratorrolle for å sjå statistikk på "
 "styringspanelet"
 
+#: lib/graphql/resolvers/admin.ex:278
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:276
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr ""
 "Du må vera innlogga og ha ei administratorrolle for å lagra admin-"
 "innstillingar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:84
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to access discussions"
 msgstr "Du må vera innlogga for å sjå ordskifte"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:96
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to access resources"
 msgstr "Du må vera innlogga for å sjå ressursane"
 
+#: lib/graphql/resolvers/event.ex:295
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:318
 msgid "You need to be logged-in to create events"
 msgstr "Du må vera innlogga for å laga hendingar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:141
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create posts"
 msgstr "Du må vera innlogga for å skriva innlegg"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/report.ex:87
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create reports"
 msgstr "Du må vera innlogga for å rapportera"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:140
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create resources"
 msgstr "Du må vera innlogga for å laga ressursar"
 
+#: lib/graphql/resolvers/event.ex:394
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:417
 msgid "You need to be logged-in to delete an event"
 msgstr "Du må vera innlogga for å sletta ei hending"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:214
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete posts"
 msgstr "Du må vera innlogga for å sletta innlegg"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:207
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete resources"
 msgstr "Du må vera innlogga for å sletta ressursar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:108
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to join an event"
 msgstr "Du må vera innlogga for å bli med på ei hending"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:225
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave an event"
 msgstr "Du må vera innlogga for å melda deg av ei hending"
 
+#: lib/graphql/resolvers/event.ex:351
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:374
 msgid "You need to be logged-in to update an event"
 msgstr "Du må vera innlogga for å oppdatera hendingar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/post.ex:180
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update posts"
 msgstr "Du må vera innlogga for å oppdatera innlegg"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:177
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update resources"
 msgstr "Du må vera innlogga for å oppdatera ressursar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:236
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in to view a resource preview"
 msgstr "Du må vera innlogga for å førehandsvisa ressursar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:132
+#, elixir-autogen, elixir-format
 msgid "Parent resource doesn't belong to this group"
 msgstr "Opphavsressursen høyrer ikkje til denne gruppa"
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:114
+#, elixir-autogen, elixir-format
 msgid "The chosen password is too short."
 msgstr "Dette passordet er for kort."
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:142
+#, elixir-autogen, elixir-format
 msgid "The registration token is already in use, this looks like an issue on our side."
 msgstr ""
 "Registreringsteiknet er allereie i bruk, dette ser ut som ein feil frå vår "
 "side."
 
-#, elixir-autogen, elixir-format
 #: lib/mobilizon/users/user.ex:108
+#, elixir-autogen, elixir-format
 msgid "This email is already used."
 msgstr "Denne eposten er allereie i bruk."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:99
+#, elixir-autogen, elixir-format
 msgid "Post not found"
 msgstr "Fann ikkje innlegget"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:86
+#, elixir-autogen, elixir-format
 msgid "Invalid arguments passed"
 msgstr "Ugyldige argument"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:92
+#, elixir-autogen, elixir-format
 msgid "Invalid credentials"
 msgstr "Ugyldig innlogging"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:90
+#, elixir-autogen, elixir-format
 msgid "Reset your password to login"
 msgstr "Nullstill passordet for å logga inn"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:97
 #: lib/graphql/error.ex:102
+#, elixir-autogen, elixir-format
 msgid "Resource not found"
 msgstr "Fann ikkje ressursen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:104
+#, elixir-autogen, elixir-format
 msgid "Something went wrong"
 msgstr "Noko gjekk gale"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:85
+#, elixir-autogen, elixir-format
 msgid "Unknown Resource"
 msgstr "Ukjend ressurs"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:95
+#, elixir-autogen, elixir-format
 msgid "You don't have permission to do this"
 msgstr "Du har ikkje løyve til å gjera detet"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/error.ex:87
+#, elixir-autogen, elixir-format
 msgid "You need to be logged in"
 msgstr "Du må vera innlogga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:118
+#, elixir-autogen, elixir-format
 msgid "You can't accept this invitation with this profile."
 msgstr "Du kan ikkje ta imot invitasjonar med denne profilen."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:139
+#, elixir-autogen, elixir-format
 msgid "You can't reject this invitation with this profile."
 msgstr "Du kan ikkje avslå invitasjonen med denne profilen."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/media.ex:71
+#, elixir-autogen, elixir-format
 msgid "File doesn't have an allowed MIME type."
 msgstr "Fila har ingen tillaten MIME-type."
 
+#: lib/graphql/resolvers/group.ex:244
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:240
 msgid "Profile is not administrator for the group"
 msgstr "Profilen er ikkje administrator for gruppa"
 
+#: lib/graphql/resolvers/event.ex:340
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:363
 msgid "You can't edit this event."
 msgstr "Du kan ikkje endra denne hendinga."
 
+#: lib/graphql/resolvers/event.ex:343
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:366
 msgid "You can't attribute this event to this profile."
 msgstr "Du kan ikkje kopla denne hendinga til denne profilen."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:142
+#, elixir-autogen, elixir-format
 msgid "This invitation doesn't exist."
 msgstr "Invitasjonen finst ikkje."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:217
+#, elixir-autogen, elixir-format
 msgid "This member already has been rejected."
 msgstr "Denne medlemen har allereie fått avslag."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:241
+#, elixir-autogen, elixir-format
 msgid "You don't have the right to remove this member."
 msgstr "Du har ikkje løyve til å fjerna denne medlemen."
 
+#: lib/mobilizon/actors/actor.ex:377
 #, elixir-autogen, elixir-format
-#: lib/mobilizon/actors/actor.ex:351
 msgid "This username is already taken."
 msgstr "Dette brukarnamnet er oppteke."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:81
+#, elixir-autogen, elixir-format
 msgid "You must provide either an ID or a slug to access a discussion"
 msgstr ""
 "Du må gje anten ein ID eller ei stuttadresse for å få tilgang til ordskiftet"
 
+#: lib/graphql/resolvers/event.ex:290
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:313
 msgid "Organizer profile is not owned by the user"
 msgstr "Brukaren eig ikkje arrangørprofilen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:93
+#, elixir-autogen, elixir-format
 msgid "Profile ID provided is not the anonymous profile one"
 msgstr "Denne profil-IDen er ikkje den anonyme profilen"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:181
 #: lib/graphql/resolvers/group.ex:223
 #: lib/graphql/resolvers/person.ex:148
 #: lib/graphql/resolvers/person.ex:182
 #: lib/graphql/resolvers/person.ex:304
+#, elixir-autogen, elixir-format
 msgid "The provided picture is too heavy"
 msgstr "Dette biletet er for stort"
 
-#, elixir-autogen, elixir-format
-#: lib/web/views/utils.ex:34
-msgid "Index file not found. You need to recompile the front-end."
-msgstr "Fann ikkje indeksfila. Du må kompilera framsida på nytt."
-
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:129
+#, elixir-autogen, elixir-format
 msgid "Error while creating resource"
 msgstr "Greidde ikkje laga ressursen"
 
+#: lib/graphql/resolvers/user.ex:511
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:503
 msgid "Invalid activation token"
 msgstr "Ugyldig aktiveringslykjel"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:226
+#, elixir-autogen, elixir-format
 msgid "Unable to fetch resource details from this URL."
 msgstr "Greidde ikkje henta ressursdetaljane frå denne adressa."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/event.ex:164
 #: lib/graphql/resolvers/participant.ex:253
 #: lib/graphql/resolvers/participant.ex:328
+#, elixir-autogen, elixir-format
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "Moderatorprofilen har ikkje tilgang til denne hendinga"
 
+#: lib/graphql/resolvers/event.ex:276
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:299
 msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
 msgstr ""
 "Organisatoren har ikkje løyve til å laga hendingar på vegner av denne gruppa"
 
+#: lib/graphql/resolvers/event.ex:331
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:354
 msgid "This profile doesn't have permission to update an event on behalf of this group"
 msgstr ""
 "Denne profilen har ikkje løyve til å oppdatera hendingar på vegner av denne "
 "gruppa"
 
+#: lib/graphql/resolvers/user.ex:174
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:166
 msgid "Your e-mail has been denied registration or uses a disallowed e-mail provider"
 msgstr ""
 "Eposten din er nekta å registrera seg, eller bruker ein epostvert me ikkje "
 "godtek"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:129
+#, elixir-autogen, elixir-format
 msgid "Comment not found"
 msgstr "Fann ikkje hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/discussion.ex:123
+#, elixir-autogen, elixir-format
 msgid "Error while creating a discussion"
 msgstr "Greidde ikkje laga ressursen"
 
+#: lib/graphql/resolvers/user.ex:632
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:624
 msgid "Error while updating locale"
 msgstr "Greidde ikkje oppdatera rapporten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/person.ex:307
+#, elixir-autogen, elixir-format
 msgid "Error while uploading pictures"
 msgstr "Greidde ikkje oppdatera rapporten"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:190
+#, elixir-autogen, elixir-format
 msgid "Failed to leave the event"
 msgstr "Greidde ikkje forlata hendinga"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:236
+#, elixir-autogen, elixir-format
 msgid "Failed to update the group"
 msgstr "Greidde ikkje oppdatera gruppa"
 
+#: lib/graphql/resolvers/admin.ex:333
+#: lib/graphql/resolvers/user.ex:475
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:331
-#: lib/graphql/resolvers/user.ex:467
 msgid "Failed to update user email"
 msgstr "Greidde ikkje oppdatera epostadressa til brukaren"
 
+#: lib/graphql/resolvers/user.ex:507
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:499
 msgid "Failed to validate user email"
 msgstr "Greier ikkje godkjenna brukaren"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:146
+#, elixir-autogen, elixir-format
 msgid "The anonymous actor ID is invalid"
 msgstr "ID-en til den anonyme brukaren er ugyldig"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/resource.ex:165
+#, elixir-autogen, elixir-format
 msgid "Unknown error while updating resource"
 msgstr "Det var ein ukjend feil då ressursen vart oppdatert"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/comment.ex:84
+#, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
 msgstr "Du har ikkje skrive denne kommentaren"
 
+#: lib/graphql/resolvers/user.ex:432
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:424
 msgid "You cannot change your password."
 msgstr "Du kan ikkje endra passordet ditt."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:321
+#, elixir-autogen, elixir-format
 msgid "Format not supported"
 msgstr "Formatet er ikkje støtta"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:305
+#, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr ""
 "Eit program som trengst for å eksportera til %{format} er ikkje installert"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/participant.ex:313
+#, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
 msgstr "Det var ein feil då eksporten vart lagra"
 
-#, elixir-autogen, elixir-format
 #: lib/web/controllers/export_controller.ex:30
+#, elixir-autogen, elixir-format
 msgid "Export to format %{format} is not enabled on this instance"
 msgstr "Du kan ikkje eksportera til %{format} på denne nettstaden"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/group.ex:187
+#, elixir-autogen, elixir-format
 msgid "Only admins can create groups"
 msgstr "Berre styrarar kan laga grupper"
 
+#: lib/graphql/resolvers/event.ex:283
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:306
 msgid "Only groups can create events"
 msgstr "Berre grupper kan laga hendingar"
 
+#: lib/graphql/resolvers/event.ex:269
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/event.ex:292
 msgid "Unknown error while creating event"
 msgstr "Det var ein ukjend feil då ressursen vart oppdatert"
 
+#: lib/graphql/resolvers/user.ex:488
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:480
 msgid "User cannot change email"
 msgstr "Brukaren kan ikkje endra epostadressa"
 
+#: lib/graphql/resolvers/group.ex:395
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:391
 msgid "Follow does not match your account"
 msgstr ""
 
+#: lib/graphql/resolvers/group.ex:399
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:395
 msgid "Follow not found"
 msgstr ""
 
+#: lib/graphql/resolvers/user.ex:353
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:345
 msgid "Profile with username %{username} not found"
 msgstr "Fann ingen person med brukarnamnet %{username}"
 
+#: lib/graphql/resolvers/user.ex:348
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:340
 msgid "This profile does not belong to you"
 msgstr ""
 
+#: lib/graphql/resolvers/group.ex:369
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:365
 msgid "You are already following this group"
 msgstr ""
 
+#: lib/graphql/resolvers/group.ex:378
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:374
 msgid "You need to be logged-in to follow a group"
 msgstr "Du må vera innlogga for å bli med i ei gruppe"
 
+#: lib/graphql/resolvers/group.ex:427
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:423
 msgid "You need to be logged-in to unfollow a group"
 msgstr "Du må vera innlogga for å bli med i ei gruppe"
 
+#: lib/graphql/resolvers/group.ex:404
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/group.ex:400
 msgid "You need to be logged-in to update a group follow"
 msgstr "Du må vera innlogga for å oppdatera ei gruppe"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:210
+#, elixir-autogen, elixir-format
 msgid "This member does not exist"
 msgstr ""
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:234
+#, elixir-autogen, elixir-format
 msgid "You don't have the role needed to remove this member."
 msgstr "Du har ikkje løyve til å fjerna denne medlemen."
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/resolvers/member.ex:252
+#, elixir-autogen, elixir-format
 msgid "You must be logged-in to remove a member"
 msgstr ""
 
+#: lib/graphql/resolvers/user.ex:164
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/user.ex:156
 msgid "Your email seems to be using an invalid format"
 msgstr ""
 
+#: lib/graphql/resolvers/admin.ex:382
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:380
 msgid "Can't confirm an already confirmed user"
 msgstr ""
 
+#: lib/graphql/resolvers/admin.ex:386
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:384
 msgid "Deconfirming users is not supported"
 msgstr ""
 
+#: lib/graphql/resolvers/admin.ex:358
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/graphql/resolvers/admin.ex:356
 msgid "The new role must be different"
 msgstr "Den nye epostadressa må vera annleis"
 
+#: lib/graphql/resolvers/admin.ex:309
 #, elixir-autogen, elixir-format, fuzzy
-#: lib/graphql/resolvers/admin.ex:307
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
 "Du må vera innlogga og ha ei administratorrolle for å lagra admin-"
 "innstillingar"
 
-#, elixir-autogen, elixir-format
 #: lib/graphql/api/groups.ex:33
+#, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
 msgstr ""
 
+#: lib/graphql/resolvers/admin.ex:519
 #, elixir-autogen, elixir-format
-#: lib/graphql/resolvers/admin.ex:506
 msgid "Unable to find an instance to follow at this address"
+msgstr ""
+
+#: lib/mobilizon/actors/actor.ex:396
+#, elixir-autogen, elixir-format
+msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""

@@ -18,465 +18,471 @@ msgstr ""
 "X-Generator: Weblate 4.11.2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
+#, elixir-autogen, elixir-format
 msgid "%{member} accepted the invitation to join the group."
 msgstr "%{member} ha accettato l'invito ad unirsi al gruppo."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:17
+#, elixir-autogen, elixir-format
 msgid "%{member} rejected the invitation to join the group."
 msgstr "%{member} ha rifiutato l'invito ad unirsi al gruppo."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "%{member} requested to join the group."
 msgstr "%{member} ha richiesto di unirsi al gruppo."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:8
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:6
+#, elixir-autogen, elixir-format
 msgid "%{member} was invited by %{profile}."
 msgstr "%{member} è stato invitato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:30
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:27
+#, elixir-autogen, elixir-format
 msgid "%{profile} added the member %{member}."
 msgstr "%{profile} ha aggiunto il membro %{member}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:27
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
+#, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion}."
 msgstr "%{profile} ha archiviato la discussione %{discussion}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the discussion %{discussion}."
 msgstr "%{profile} ha creato la discussione %{discussion}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:4
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:2
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the folder %{resource}."
 msgstr "%{profile} ha creato la cartella %{resource}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_group_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the group %{group}."
 msgstr "%{profile} ha creato il gruppo %{group}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:14
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:15
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:8
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the resource %{resource}."
 msgstr "%{profile} ha creato la risorsa %{resource}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:35
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:25
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "%{profile} ha eliminato la discussione %{discussion}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:80
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
 msgstr "%{profile} ha eliminato la cartella %{resource}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:92
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
 msgstr "%{profile} ha eliminato la risorsa %{resource}."
 
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:48
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
 #, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:42
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 msgid "%{profile} excluded member %{member}."
 msgstr "%{profile} ha escluso il membro %{member}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:58
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:62
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
+#, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource}."
 msgstr "%{profile} ha spostato la cartella %{resource}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:68
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:73
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
+#, elixir-autogen, elixir-format
 msgid "%{profile} moved the resource %{resource}."
 msgstr "%{profile} ha spostato la risorsa %{resource}."
 
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:54
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:51
 #, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:48
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:45
 msgid "%{profile} quit the group."
 msgstr "%{profile} è uscito/a dal gruppo."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:13
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the discussion %{discussion}."
 msgstr "%{profile} ha rinominato la discussione %{discussion}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:26
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:28
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:14
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr ""
 "%{profile} ha rinominato la cartella da %{old_resource_title} a %{resource}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:41
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:44
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:21
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
 msgstr ""
 "%{profile} ha rinominato la risorsa da %{old_resource_title} a %{resource}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:11
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:7
+#, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion}."
 msgstr "%{profile} ha risposto alla discussione %{discussion}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_group_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_group_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:7
+#, elixir-autogen, elixir-format
 msgid "%{profile} updated the group %{group}."
 msgstr "%{profile} ha aggiornato il gruppo %{group}."
 
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:42
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:39
 #, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_member_activity_item.html.heex:36
-#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
 msgid "%{profile} updated the member %{member}."
 msgstr "%{profile} ha aggiornato il membro %{member}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/event.ex:23
 #: lib/web/templates/email/activity/_event_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "The event %{event} was created by %{profile}."
 msgstr "L'evento %{event} è stato creato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/event.ex:43
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:23
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:25
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:13
+#, elixir-autogen, elixir-format
 msgid "The event %{event} was deleted by %{profile}."
 msgstr "L'evento %{event} è stato cancellato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/event.ex:33
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:7
+#, elixir-autogen, elixir-format
 msgid "The event %{event} was updated by %{profile}."
 msgstr "L'evento %{event} è stato aggiornato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_post_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "The post %{post} was created by %{profile}."
 msgstr "Il messaggio %{post} è stato creato da %{profile}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_post_activity_item.html.heex:23
+#: lib/web/templates/email/activity/_post_activity_item.html.heex:25
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:13
+#, elixir-autogen, elixir-format
 msgid "The post %{post} was deleted by %{profile}."
 msgstr "Il messaggio %{post} è stato cancellato da %{profile}."
 
-#, elixir-autogen, elixir-format
-#: lib/web/templates/email/activity/_post_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_post_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_post_activity_item.text.eex:7
+#, elixir-autogen, elixir-format
 msgid "The post %{post} was updated by %{profile}."
 msgstr "Il messaggio %{post} è stato aggiornato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:24
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:22
+#, elixir-autogen, elixir-format
 msgid "%{member} joined the group."
 msgstr "%{member} si è unito al gruppo."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/event.ex:63
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:40
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:43
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:25
+#, elixir-autogen, elixir-format
 msgid "%{profile} posted a comment on the event %{event}."
 msgstr "%{profile} ha inviato un commento sull'evento %{event}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/event.ex:54
-#: lib/web/templates/email/activity/_event_activity_item.html.heex:30
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:32
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:19
+#, elixir-autogen, elixir-format
 msgid "%{profile} replied to a comment on the event %{event}."
 msgstr "%{profile} ha risposto ad un commento all'evento %{event}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/email_direct_activity.text.eex:27
+#, elixir-autogen, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in your settings."
 msgstr ""
 "Non si desidera ricevere notifiche di attività? È possibile modificare la "
 "frequenza o disabilitarle nelle impostazioni."
 
-#, elixir-format
-#: lib/web/templates/email/email_direct_activity.html.heex:219
+#: lib/web/templates/email/email_direct_activity.html.heex:218
 #: lib/web/templates/email/email_direct_activity.text.eex:23
+#, elixir-format
 msgid "View one more activity"
 msgid_plural "View %{count} more activities"
 msgstr[0] "Visualizza un'altra attività"
 msgstr[1] "Visualizza altre %{count} attività"
 
-#, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.heex:53
 #: lib/web/templates/email/email_direct_activity.html.heex:60
 #: lib/web/templates/email/email_direct_activity.text.eex:6
 #: lib/web/templates/email/email_direct_activity.text.eex:7
+#, elixir-format
 msgid "There has been an activity!"
 msgid_plural "There has been some activity!"
 msgstr[0] "C'è stata un'attività!"
 msgstr[1] "Ci sono state delle attività!"
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/renderer.ex:46
+#, elixir-autogen, elixir-format
 msgid "Activity on %{instance}"
 msgstr "Attività su %{instance}"
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/comment.ex:38
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:13
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:7
 #: lib/web/templates/email/email_anonymous_activity.html.heex:48
 #: lib/web/templates/email/email_anonymous_activity.text.eex:5
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} ha inviato un annuncio sotto l'evento %{event}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/comment.ex:24
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:1
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} ti ha menzionato in un commento sotto l'evento %{event}."
 
+#: lib/web/templates/email/email_direct_activity.html.heex:248
 #, elixir-autogen, elixir-format
-#: lib/web/templates/email/email_direct_activity.html.heex:249
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
 "Non si desidera ricevere notifiche di attività? È possibile modificare la "
 "frequenza o disabilitarle nelle %{tag_start}impostazioni%{tag_end}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.heex:51
 #: lib/web/templates/email/email_direct_activity.text.eex:5
+#, elixir-autogen, elixir-format
 msgid "Here's your weekly activity recap"
 msgstr "Ecco il riepilogo delle tue attività settimanali"
 
-#, elixir-autogen, elixir-format
 #: lib/web/email/activity.ex:121
 #: lib/web/email/activity.ex:142
+#, elixir-autogen, elixir-format
 msgid "Activity notification for %{instance}"
 msgstr "Notifica attività per %{instance}"
 
-#, elixir-autogen, elixir-format
 #: lib/web/email/activity.ex:128
+#, elixir-autogen, elixir-format
 msgid "Daily activity recap for %{instance}"
 msgstr "Riepilogo delle attività giornaliere per %{instance}"
 
-#, elixir-autogen, elixir-format
 #: lib/web/templates/email/email_direct_activity.html.heex:49
 #: lib/web/templates/email/email_direct_activity.text.eex:4
+#, elixir-autogen, elixir-format
 msgid "Here's your daily activity recap"
 msgstr "Ecco il riepilogo delle tue attività quotidiane"
 
-#, elixir-autogen, elixir-format
 #: lib/web/email/activity.ex:135
+#, elixir-autogen, elixir-format
 msgid "Weekly activity recap for %{instance}"
 msgstr "Riepilogo attività settimanale per %{instance}"
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/comment.ex:66
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:34
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:37
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:19
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new comment under your event %{event}."
 msgstr ""
 "%{profile} ha pubblicato un nuovo commento sotto il tuo evento %{event}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/comment.ex:53
-#: lib/web/templates/email/activity/_comment_activity_item.html.heex:24
+#: lib/web/templates/email/activity/_comment_activity_item.html.heex:26
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:13
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr ""
 "%{profile} ha pubblicato una nuova risposta sotto il tuo evento %{event}."
 
-#, elixir-autogen, elixir-format
 #: lib/web/email/activity.ex:46
+#, elixir-autogen, elixir-format
 msgid "Announcement for your event %{event}"
 msgstr "Annuncio per il tuo evento %{event}"
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/group.ex:23
+#, elixir-autogen, elixir-format
 msgid "The group %{group} was updated by %{profile}."
 msgstr "Il gruppo %{group} è stato aggiornato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/post.ex:47
+#, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was deleted by %{profile}."
 msgstr ""
 "Il messaggio %{post} dal gruppo %{group} è stato eliminato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/post.ex:31
+#, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was published by %{profile}."
 msgstr ""
 "Il messaggio %{post} del gruppo %{group} è stato pubblicato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/post.ex:39
+#, elixir-autogen, elixir-format
 msgid "The post %{post} from group %{group} was updated by %{profile}."
 msgstr ""
 "Il messaggio %{post} del gruppo %{group} è stato aggiornato da %{profile}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:39
+#, elixir-autogen, elixir-format
 msgid "%{member} accepted the invitation to join the group %{group}."
 msgstr "%{member} ha accettato l'invito a unirsi al gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:47
+#, elixir-autogen, elixir-format
 msgid "%{member} joined the group %{group}."
 msgstr "%{member} si è unito al gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:43
+#, elixir-autogen, elixir-format
 msgid "%{member} rejected the invitation to join the group %{group}."
 msgstr "%{member} ha rifiutato l'invito a unirsi al gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:31
+#, elixir-autogen, elixir-format
 msgid "%{member} requested to join the group %{group}."
 msgstr "%{member} ha richiesto di unirsi al gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:35
+#, elixir-autogen, elixir-format
 msgid "%{member} was invited by %{profile} to group %{group}."
 msgstr "%{member} è stato invitato da %{profile} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:51
+#, elixir-autogen, elixir-format
 msgid "%{profile} added the member %{member} to group %{group}."
 msgstr "%{profile} ha aggiunto il membro %{member} al gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:55
+#, elixir-autogen, elixir-format
 msgid "%{profile} approved the membership request from %{member} for group %{group}."
 msgstr ""
 "%{profile} ha approvato la richiesta di iscrizione da %{member} per il "
 "gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:33
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the folder %{resource} in group %{group}."
 msgstr "%{profile} ha creato la cartella %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:69
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource} in group %{group}."
 msgstr "%{profile} ha eliminato la cartella %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:71
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the resource %{resource} in group %{group}."
 msgstr "%{profile} ha eliminato la risorsa %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:75
+#, elixir-autogen, elixir-format
 msgid "%{profile} excluded member %{member} from the group %{group}."
 msgstr "%{profile} membro escluso %{member} dal gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:61
+#, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource} in group %{group}."
 msgstr "%{profile} ha spostato la cartella %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:63
+#, elixir-autogen, elixir-format
 msgid "%{profile} moved the resource %{resource} in group %{group}."
 msgstr "%{profile} ha spostato la risorsa %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:79
+#, elixir-autogen, elixir-format
 msgid "%{profile} quit the group %{group}."
 msgstr "%{profile} è uscito dal gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:63
+#, elixir-autogen, elixir-format
 msgid "%{profile} rejected the membership request from %{member} for group %{group}."
 msgstr ""
 "%{profile} ha rifiutato la richiesta di iscrizione da %{member} per il "
 "gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:45
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
 "%{profile} ha rinominato la cartella da %{old_resource_title} a %{resource} "
 "nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:51
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource} in group %{group}."
 msgstr ""
 "%{profile} ha rinominato la risorsa da %{old_resource_title} a %{resource} "
 "nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/member.ex:71
+#, elixir-autogen, elixir-format
 msgid "%{profile} updated the member %{member} in group %{group}."
 msgstr "%{profile} ha aggiornato il membro %{member} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/resource.ex:35
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the resource %{resource} in group %{group}."
 msgstr "%{profile} ha creato la risorsa %{resource} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:86
+#, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} ha archiviato la discussione %{discussion} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:26
+#, elixir-autogen, elixir-format
 msgid "%{profile} created the discussion %{discussion} in group %{group}."
 msgstr "%{profile} ha creato la discussione %{discussion} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:101
+#, elixir-autogen, elixir-format
 msgid "%{profile} deleted the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} ha eliminato la discussione %{discussion} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:56
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} ti ha menzionato nella discussione %{discussion} nel gruppo "
 "%{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:71
+#, elixir-autogen, elixir-format
 msgid "%{profile} renamed the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} ha rinominato la discussione %{discussion} nel gruppo %{group}."
 
-#, elixir-autogen, elixir-format
 #: lib/service/activity/renderer/discussion.ex:41
+#, elixir-autogen, elixir-format
 msgid "%{profile} replied to the discussion %{discussion} in group %{group}."
 msgstr ""
 "%{profile} ha risposto alla discussione %{discussion} nel gruppo %{group}."
+
+#: lib/web/templates/email/activity/_member_activity_item.html.heex:36
+#: lib/web/templates/email/activity/_member_activity_item.text.eex:33
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} approved the member %{member}."
+msgstr "%{profile} ha aggiunto il membro %{member}."
