@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-05-05 17:05+0000\n"
+"PO-Revision-Date: 2022-10-20 06:47+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.12\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2342,20 +2342,20 @@ msgid "Activate my account:"
 msgstr "Activar mi cuenta:"
 
 #: lib/web/email/follow.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Instance %{domain} requests to follow your instance"
 msgstr "La instancia %{name} (%{domain}) solicita seguir tu instancia"
 
 #: lib/web/templates/email/instance_follow.html.heex:68
 #: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
-"Nota: el hecho que %{name} (%{domain} te siga, no implica necesariamente que "
-"sigas esta instancia, pero puedes solicitar seguirla también."
+"Nota: el hecho que %{name} te siga, no implica necesariamente que sigas esta "
+"instancia, pero puedes solicitar seguirla también."
 
 #: lib/web/templates/email/group_member_removal.html.heex:18
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
-msgstr ""
+msgstr "¡Hasta la proxima vez!"

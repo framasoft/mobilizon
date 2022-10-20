@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-11-19 09:22+0000\n"
+"PO-Revision-Date: 2022-10-20 06:47+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/es/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -466,6 +466,6 @@ msgstr "%{profile} respondió a la discusión %{discussion}en el grupo %{group}.
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:36
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:33
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} approved the member %{member}."
 msgstr "%{profile} agregó el miembro %{member}."
