@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-08-24 18:52+0000\n"
+"PO-Revision-Date: 2022-10-24 12:50+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14\n"
+"X-Generator: Weblate 4.14.1\n"
 
 ## This file is a PO Template file.
 ##
@@ -126,12 +126,12 @@ msgstr ""
 #: lib/graphql/resolvers/group.ex:276
 #, elixir-autogen, elixir-format
 msgid "Current profile is not a member of this group"
-msgstr ""
+msgstr "Aktualni profil nije član grupe"
 
 #: lib/graphql/resolvers/group.ex:280
 #, elixir-autogen, elixir-format
 msgid "Current profile is not an administrator of the selected group"
-msgstr ""
+msgstr "Aktualni profil nije administrator odabrane grupe"
 
 #: lib/graphql/resolvers/user.ex:618
 #, elixir-autogen, elixir-format
