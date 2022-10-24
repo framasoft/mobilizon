@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-10-23 23:00+0000\n"
+"PO-Revision-Date: 2022-10-24 12:34+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -154,13 +154,13 @@ msgstr "Potvrdi sudjeljovnje u događaju %{title}"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "An internal ID for your current selected identity"
-msgstr ""
+msgstr "Interni ID za tvoj aktualno odabrani identitet"
 
 #: lib/web/templates/api/privacy.html.heex:105
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "An internal user ID"
-msgstr ""
+msgstr "Interni korisnički ID"
 
 #: lib/web/templates/api/privacy.html.heex:47
 #, elixir-autogen, elixir-format
