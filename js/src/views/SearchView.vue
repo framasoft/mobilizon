@@ -529,6 +529,16 @@
               class="my-4"
             />
           </div>
+          <o-notification v-else-if="searchLoading === false" variant="info">
+            <p>{{ t("No events found") }}</p>
+            <p v-if="searchIsUrl && !currentUser?.id">
+              {{
+                t(
+                  "Only registered users may fetch remote events from their URL."
+                )
+              }}
+            </p>
+          </o-notification>
           <o-pagination
             v-if="
               (searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT) ||
@@ -544,16 +554,6 @@
             :aria-page-label="t('Page')"
             :aria-current-label="t('Current page')"
           />
-          <o-notification v-else-if="searchLoading === false" variant="info">
-            <p>{{ t("No events found") }}</p>
-            <p v-if="searchIsUrl && !currentUser?.id">
-              {{
-                t(
-                  "Only registered users may fetch remote events from their URL."
-                )
-              }}
-            </p>
-          </o-notification>
         </template>
         <template v-else-if="contentType === ContentType.EVENTS">
           <template v-if="searchEvents && searchEvents.total > 0">
