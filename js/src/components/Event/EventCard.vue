@@ -9,7 +9,7 @@
     :isInternal="isInternal"
   >
     <div
-      class="bg-secondary rounded-lg"
+      class="rounded-lg"
       :class="{ 'sm:w-full sm:max-w-[20rem]': mode === 'row' }"
     >
       <figure class="block relative pt-40">
