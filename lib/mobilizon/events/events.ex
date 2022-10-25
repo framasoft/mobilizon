@@ -1272,16 +1272,11 @@ defmodule Mobilizon.Events do
     end
   end
 
-  # @spec events_for_search_query(String.t()) :: Ecto.Query.t()
-  # defp events_for_search_query("") do
-  #   Event
-  #   |> join: rank in fragment("")
-  # end
-
   defp events_for_search_query(search_string) do
-    from(event in Event,
-      join: id_and_rank in matching_event_ids_and_ranks(search_string),
-      on: id_and_rank.id == event.id
+    Event
+    |> distinct(:id)
+    |> join(:inner, [e], id_and_rank in matching_event_ids_and_ranks(search_string),
+      on: id_and_rank.id == e.id
     )
   end
 
