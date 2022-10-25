@@ -52,7 +52,7 @@
   "Close": "Close",
   "Closed": "Closed",
   "Comment deleted": "Comment deleted",
-  "Comment from @{username} reported": "Comment from @{username} reported",
+  "Comment from {'@'}{username} reported": "Comment from {'@'}{username} reported",
   "Comments": "Comments",
   "Confirm my participation": "Confirm my participation",
   "Confirm my particpation": "Confirm my particpation",

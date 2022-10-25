@@ -6,9 +6,9 @@
       'bg-violet-1': commentSelected,
       'shadow-none': !rootComment,
     }"
-    class="mbz-card p-2"
+    class="bg-white dark:bg-zinc-900 rounded p-2"
   >
-    <article :id="commentId" dir="auto">
+    <article :id="commentId" dir="auto" class="mbz-comment">
       <div>
         <div class="flex items-center gap-2">
           <div class="flex items-center gap-1" v-if="actorComment">
@@ -36,9 +36,9 @@
             >
           </div>
 
-          <a v-else :href="commentURL">
+          <p v-else :href="commentURL">
             <span>{{ t("[deleted]") }}</span>
-          </a>
+          </p>
           <a :href="commentURL">
             <small v-if="comment.updatedAt">{{
               formatDistanceToNow(new Date(comment.updatedAt), {
@@ -47,19 +47,6 @@
               })
             }}</small>
           </a>
-          <div v-if="!comment.deletedAt" class="flex">
-            <button
-              v-if="actorComment?.id === currentActor?.id"
-              @click="deleteComment"
-            >
-              <Delete :size="16" />
-              <span class="sr-only">{{ t("Delete") }}</span>
-            </button>
-            <button @click="reportModal">
-              <Alert :size="16" />
-              <span class="sr-only">{{ t("Report") }}</span>
-            </button>
-          </div>
         </div>
         <div
           v-if="!comment.deletedAt"
@@ -68,11 +55,53 @@
           :lang="comment.language"
         />
         <div v-else>{{ t("[This comment has been deleted]") }}</div>
+        <nav class="flex gap-1 mt-1" v-if="!comment.deletedAt">
+          <button
+            class="cursor-pointer flex hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
+            v-if="
+              currentActor?.id &&
+              event.options.commentModeration !== CommentModeration.CLOSED &&
+              !comment.deletedAt
+            "
+            @click="createReplyToComment()"
+          >
+            <Reply />
+            <span>{{ t("Reply") }}</span>
+          </button>
+          <o-dropdown aria-role="list">
+            <template #trigger>
+              <button
+                class="cursor-pointer flex hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
+              >
+                <DotsHorizontal />
+                <span class="sr-only">{{ t("More options") }}</span>
+              </button>
+            </template>
+            <o-dropdown-item
+              aria-role="listitem"
+              v-if="actorComment?.id === currentActor?.id"
+            >
+              <button class="flex items-center gap-1" @click="deleteComment">
+                <Delete :size="16" />
+                <span>{{ t("Delete") }}</span>
+              </button>
+            </o-dropdown-item>
+            <o-dropdown-item aria-role="listitem">
+              <button
+                @click="isReportModalActive = true"
+                class="flex items-center gap-1"
+              >
+                <Alert :size="16" />
+                <span>{{ t("Report") }}</span>
+              </button>
+            </o-dropdown-item>
+          </o-dropdown>
+        </nav>
         <div class="" v-if="comment.totalReplies">
-          <p
+          <button
             v-if="!showReplies"
             @click="showReplies = true"
-            class="flex cursor-pointer"
+            class="flex cursor-pointer hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
           >
             <ChevronDown />
             <span>{{
@@ -84,28 +113,16 @@
                 comment.totalReplies
               )
             }}</span>
-          </p>
-          <p
+          </button>
+          <button
             v-else-if="comment.totalReplies && showReplies"
             @click="showReplies = false"
-            class="flex cursor-pointer"
+            class="flex cursor-pointer hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
           >
             <ChevronUp />
             <span>{{ t("Hide replies") }}</span>
-          </p>
+          </button>
         </div>
-        <nav
-          v-if="
-            currentActor?.id &&
-            event.options.commentModeration !== CommentModeration.CLOSED &&
-            !comment.deletedAt
-          "
-          @click="createReplyToComment()"
-          class="flex gap-1 cursor-pointer"
-        >
-          <Reply />
-          <span>{{ t("Reply") }}</span>
-        </nav>
       </div>
     </article>
     <form
@@ -137,6 +154,7 @@
               :current-actor="currentActor"
               :aria-label="t('Comment body')"
               class="flex-1"
+              @submit="replyToComment"
             />
             <o-button
               :disabled="newComment.text.trim().length === 0"
@@ -149,29 +167,37 @@
         </div>
       </article>
     </form>
-    <div>
-      <div>
-        <div @click="showReplies = false" />
-      </div>
-      <transition-group
-        name="comment-replies"
-        v-if="showReplies"
-        tag="ul"
-        class="flex flex-col gap-2"
-      >
-        <Comment
-          v-for="reply in comment.replies"
-          :key="reply.id"
-          :comment="reply"
-          :event="event"
-          :currentActor="currentActor"
-          :rootComment="false"
-          @create-comment="emit('create-comment', $event)"
-          @delete-comment="emit('delete-comment', $event)"
-          @report-comment="emit('report-comment', $event)"
-        />
-      </transition-group>
-    </div>
+    <transition-group
+      name="comment-replies"
+      v-if="showReplies"
+      tag="ul"
+      class="flex flex-col gap-2"
+    >
+      <EventComment
+        v-for="reply in comment.replies"
+        :key="reply.id"
+        :comment="reply"
+        :event="event"
+        :currentActor="currentActor"
+        :rootComment="false"
+        @create-comment="emit('create-comment', $event)"
+        @delete-comment="emit('delete-comment', $event)"
+        @report-comment="emit('report-comment', $event)"
+        class="ml-2"
+      />
+    </transition-group>
+    <o-modal
+      v-model:active="isReportModalActive"
+      has-modal-card
+      ref="reportModal"
+      :close-button-aria-label="t('Close')"
+    >
+      <ReportModal
+        :on-confirm="reportComment"
+        :title="t('Report this comment')"
+        :outside-domain="comment.actor?.domain"
+      />
+    </o-modal>
   </li>
 </template>
 <script lang="ts" setup>
@@ -197,8 +223,13 @@ import Delete from "vue-material-design-icons/Delete.vue";
 import Alert from "vue-material-design-icons/Alert.vue";
 import ChevronUp from "vue-material-design-icons/ChevronUp.vue";
 import ChevronDown from "vue-material-design-icons/ChevronDown.vue";
+import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import Reply from "vue-material-design-icons/Reply.vue";
 import type { Locale } from "date-fns";
+import ReportModal from "@/components/Report/ReportModal.vue";
+import { useCreateReport } from "@/composition/apollo/report";
+import { Snackbar } from "@/plugins/snackbar";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
@@ -214,26 +245,20 @@ const props = withDefaults(
   { rootComment: true }
 );
 
-const emit = defineEmits([
-  "create-comment",
-  "delete-comment",
-  "report-comment",
-]);
+const emit = defineEmits<{
+  (e: "create-comment", comment: IComment): void;
+  (e: "delete-comment", comment: IComment): void;
+  (e: "report-comment", comment: IComment): void;
+}>();
 
 const commentEditor = ref<typeof EditorComponent | null>(null);
-
-// Hack because Vue only exports it's own interface.
-// See https://github.com/kaorun343/vue-property-decorator/issues/257
-// @Ref() readonly commentEditor!: EditorComponent & {
-//   replyToComment: (comment: IComment) => void;
-//   focus: () => void;
-// };
 
 const newComment = ref<IComment>(new CommentModel());
 const replyTo = ref(false);
 const showReplies = ref(false);
 const route = useRoute();
 const { t } = useI18n({ useScope: "global" });
+const isReportModalActive = ref(false);
 
 onMounted(() => {
   if (route?.hash.includes(`#comment-${props.comment.uuid}`)) {
@@ -310,219 +335,57 @@ const reportModal = (): void => {
   // });
 };
 
-// const reportComment = async (
-//   content: string,
-//   forward: boolean
-// ): Promise<void> => {
-//   try {
-//     if (!props.comment.actor) return;
+const {
+  mutate: createReportMutation,
+  onError: onCreateReportError,
+  onDone: oneCreateReportDone,
+} = useCreateReport();
 
-//     const { onError, onDone } = useMutation(CREATE_REPORT, () => ({
-//       variables: {
-//         eventId: props.event.id,
-//         reportedId: props.comment.actor?.id,
-//         commentsIds: [props.comment.id],
-//         content,
-//         forward,
-//       },
-//     }));
+const reportComment = async (
+  content: string,
+  forward: boolean
+): Promise<void> => {
+  if (!props.comment.actor) return;
+  createReportMutation({
+    eventId: props.event.id,
+    reportedId: props.comment.actor?.id ?? "",
+    commentsIds: [props.comment.id ?? ""],
+    content,
+    forward,
+  });
+};
 
-//     // this.$buefy.notification.open({
-//     //   message: this.t("Comment from @{username} reported", {
-//     //     username: this.comment.actor.preferredUsername,
-//     //   }) as string,
-//     //   type: "is-success",
-//     //   position: "is-bottom-right",
-//     //   duration: 5000,
-//     // });
-//   } catch (e: any) {
-//     if (e.message) {
-//       // Snackbar.open({
-//       //   message: e.message,
-//       //   type: "is-danger",
-//       //   position: "is-bottom",
-//       // });
-//     }
-//   }
-// };
+const snackbar = inject<Snackbar>("snackbar");
+const { oruga } = useProgrammatic();
+
+onCreateReportError((e) => {
+  isReportModalActive.value = false;
+  if (e.message) {
+    snackbar?.open({
+      message: e.message,
+      variant: "danger",
+      position: "bottom",
+    });
+  }
+});
+
+oneCreateReportDone(() => {
+  isReportModalActive.value = false;
+  oruga.notification.open({
+    message: t("Comment from {'@'}{username} reported", {
+      username: props.comment.actor?.preferredUsername,
+    }),
+    variant: "success",
+    position: "bottom-right",
+    duration: 5000,
+  });
+});
+
 const actorComment = computed(() => props.comment.actor);
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-form.reply {
-  padding-bottom: 1rem;
-}
-
-.first-line {
-  margin-bottom: 3px;
-
-  * {
-    padding: 0 5px 0 0;
-  }
-
-  strong.organizer {
-    border-radius: 12px;
-    color: white;
-    padding: 0 6px;
-  }
-
-  // & > small {
-  //   @include margin-left(0.3rem);
-  // }
-}
-
-.editor-line {
-  display: flex;
-  max-width: calc(80rem - 64px);
-
-  .editor {
-    flex: 1;
-    // @include padding-right(10px);
-    margin-bottom: 0;
-  }
-}
-
-a.comment-link {
-  text-decoration: none;
-  // @include margin-left(5px);
-  color: text;
-  &:hover {
-    text-decoration: underline;
-  }
-  small {
-    &:hover {
-      color: hsl(0, 0%, 21%);
-    }
-  }
-}
-
-.comment-element {
-  padding: 0.25rem;
-  border-radius: 5px;
-
-  &.announcement {
-    small {
-      color: hsl(0, 0%, 21%);
-    }
-  }
-
-  &.selected {
-    .reply-btn,
-    small,
-    span,
-    strong,
-    a.comment-link:hover {
-      text-decoration: underline;
-    }
-  }
-
-  // .media-left {
-  //   @include margin-right(5px);
-  // }
-}
-
-.root-comment .replies {
-  display: flex;
-
-  .left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    // @include margin-right(10px);
-
-    .vertical-border {
-      width: 3px;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.05);
-      margin: 10px calc(1rem + 1px);
-      cursor: pointer;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.1);
-      }
-    }
-  }
-}
-
-.media .media-content {
-  overflow-x: initial;
-  .content {
-    text-align: start;
-    .editor-line {
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .icons {
-    display: none;
-  }
-}
-
-.media:hover .media-content .icons {
-  display: inline;
-
-  button {
-    cursor: pointer;
-    border: none;
-    background: none;
-  }
-}
-
-.load-replies {
-  cursor: pointer;
-
-  & > p > span {
-    font-weight: bold;
-  }
-}
-
-.level-item.reply-btn {
-  font-weight: bold;
-}
-
-article {
-  border-radius: 4px;
-  margin-bottom: 5px;
-}
-
-.comment-replies {
-  flex-grow: 1;
-}
-
-.comment-replies-enter-active,
-.comment-replies-leave-active,
-.comment-replies-move {
-  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
-  transition-property: opacity, transform;
-}
-
-.comment-replies-enter {
-  opacity: 0;
-  transform: translateX(50px) scaleY(0.5);
-}
-
-.comment-replies-enter-to {
-  opacity: 1;
-  transform: translateX(0) scaleY(1);
-}
-
-.comment-replies-leave-active {
-  position: absolute;
-}
-
-.comment-replies-leave-to {
-  opacity: 0;
-  transform: scaleY(0);
-  transform-origin: center top;
-}
-
-// .reply-action .icon {
-//   @include padding-right(0.4rem);
-// }
-
-.visually-hidden {
-  display: none;
+<style>
+article.mbz-comment .mention.h-card {
+  @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
 }
 </style>

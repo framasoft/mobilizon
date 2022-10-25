@@ -142,7 +142,7 @@ body {
 }
 
 .dropdown-item-active {
-  @apply bg-white text-black;
+  @apply bg-white dark:bg-zinc-700 dark:text-zinc-100 text-black;
 }
 .dropdown-button {
   @apply inline-flex gap-1;
