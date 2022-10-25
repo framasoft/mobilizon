@@ -90,6 +90,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { IComment } from "../../types/comment.model";
 import { usernameWithDomain } from "@/types/actor";
+import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 
 const props = withDefaults(
   defineProps<{

@@ -14,9 +14,11 @@ export const REPORTS = gql`
         id
         reported {
           ...ActorFragment
+          suspended
         }
         reporter {
           ...ActorFragment
+          suspended
         }
         event {
           id
