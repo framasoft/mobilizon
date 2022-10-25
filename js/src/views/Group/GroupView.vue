@@ -543,7 +543,7 @@
                 :to="{
                   name: RouteName.GROUP_EVENTS,
                   params: { preferredUsername: usernameWithDomain(group) },
-                  query: { future: false },
+                  query: { showPassedEvents: true },
                 }"
                 >{{ t("View past events") }}</o-button
               >
@@ -559,7 +559,9 @@
               :to="{
                 name: RouteName.GROUP_EVENTS,
                 params: { preferredUsername: usernameWithDomain(group) },
-                query: { future: organizedEvents.elements.length > 0 },
+                query: {
+                  showPassedEvents: organizedEvents.elements.length === 0,
+                },
               }"
               >{{ t("View all events") }}</o-button
             >
@@ -696,7 +698,7 @@ const {
   group,
   loading: groupLoading,
   refetch: refetchGroup,
-} = useGroup(props.preferredUsername);
+} = useGroup(props.preferredUsername, { afterDateTime: new Date() });
 const router = useRouter();
 
 const { t } = useI18n({ useScope: "global" });
