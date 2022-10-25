@@ -123,7 +123,7 @@ const { result: membershipsResult } = useQuery<{
   () => ({ enabled: currentActor.value?.id !== undefined })
 );
 const memberships = computed(
-  () => membershipsResult.value?.person.memberships.elements
+  () => membershipsResult.value?.person.memberships?.elements
 );
 
 const route = useRoute();

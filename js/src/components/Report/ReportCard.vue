@@ -1,23 +1,35 @@
 <template>
-  <div class="dark:bg-zinc-700 p-2 rounded" v-if="report">
-    <div class="flex gap-1">
-      <figure class="" v-if="report.reported.avatar">
-        <img
-          alt=""
-          :src="report.reported.avatar.url"
-          class="rounded-full"
-          width="48"
-          height="48"
-        />
-      </figure>
-      <AccountCircle v-else :size="48" />
-      <div class="">
-        <p class="" v-if="report.reported.name">{{ report.reported.name }}</p>
-        <p class="">@{{ usernameWithDomain(report.reported) }}</p>
+  <div
+    class="bg-mbz-yellow-alt-50 hover:bg-mbz-yellow-alt-100 dark:bg-zinc-700 hover:dark:bg-zinc-600 rounded"
+    v-if="report"
+  >
+    <div class="flex justify-between gap-1 border-b p-2">
+      <div class="flex gap-1">
+        <figure class="" v-if="report.reported.avatar">
+          <img
+            alt=""
+            :src="report.reported.avatar.url"
+            class="rounded-full"
+            width="24"
+            height="24"
+          />
+        </figure>
+        <AccountCircle v-else :size="24" />
+        <div class="">
+          <p class="" v-if="report.reported.name">{{ report.reported.name }}</p>
+          <p class="text-zinc-700 dark:text-zinc-100 text-sm">
+            @{{ usernameWithDomain(report.reported) }}
+          </p>
+        </div>
+      </div>
+      <div>
+        <p v-if="report.reported.suspended" class="text-red-700 font-bold">
+          {{ t("Suspended") }}
+        </p>
       </div>
     </div>
 
-    <div class="reported_by">
+    <div class="p-2">
       <div class="">
         <span v-if="report.reporter.type === ActorType.APPLICATION">
           {{
@@ -25,6 +37,14 @@
               domain: report.reporter.domain,
             })
           }}
+        </span>
+        <span
+          v-if="
+            report.reporter.preferredUsername === 'anonymous' &&
+            !report.reporter.domain
+          "
+        >
+          {{ t("Reported by someone anonymously") }}
         </span>
         <span v-else>
           {{

@@ -119,7 +119,10 @@ const { result: reportsResult } = useQuery<{ reports: Paginate<IReport> }>(
     status: status.value,
     limit: REPORT_PAGE_LIMIT,
     domain: filterDomain.value,
-  })
+  }),
+  {
+    fetchPolicy: "cache-and-network",
+  }
 );
 
 const reports = computed(

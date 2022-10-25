@@ -543,7 +543,7 @@
                 :to="{
                   name: RouteName.GROUP_EVENTS,
                   params: { preferredUsername: usernameWithDomain(group) },
-                  query: { future: false },
+                  query: { showPassedEvents: true },
                 }"
                 >{{ t("View past events") }}</o-button
               >
@@ -559,7 +559,9 @@
               :to="{
                 name: RouteName.GROUP_EVENTS,
                 params: { preferredUsername: usernameWithDomain(group) },
-                query: { future: organizedEvents.elements.length > 0 },
+                query: {
+                  showPassedEvents: organizedEvents.elements.length === 0,
+                },
               }"
               >{{ t("View all events") }}</o-button
             >
@@ -696,7 +698,7 @@ const {
   group,
   loading: groupLoading,
   refetch: refetchGroup,
-} = useGroup(props.preferredUsername);
+} = useGroup(props.preferredUsername, { afterDateTime: new Date() });
 const router = useRouter();
 
 const { t } = useI18n({ useScope: "global" });
@@ -913,35 +915,41 @@ const toggleFollowNotify = () => {
   });
 };
 
-const reportGroup = async (content: string, forward: boolean) => {
-  isReportModalActive.value = false;
-  reportModalRef.value.close();
+const {
+  mutate: createReportMutation,
+  onError: onCreateReportError,
+  onDone: onCreateReportDone,
+} = useCreateReport();
 
-  const {
-    mutate: createReportMutation,
-    onError: onCreateReportError,
-    onDone: oneCreateReportDone,
-  } = useCreateReport();
+const reportGroup = (content: string, forward: boolean) => {
+  isReportModalActive.value = false;
+  console.debug("report group", {
+    reportedId: group.value?.id ?? "",
+    content,
+    forward,
+  });
 
   createReportMutation({
     reportedId: group.value?.id ?? "",
     content,
     forward,
   });
-
-  oneCreateReportDone(() => {
-    notifier?.success(t("Group {groupTitle} reported", { groupTitle }));
-  });
-
-  onCreateReportError((error: any) => {
-    console.error(error);
-    notifier?.error(
-      t("Error while reporting group {groupTitle}", {
-        groupTitle,
-      })
-    );
-  });
 };
+
+onCreateReportDone(() => {
+  notifier?.success(
+    t("Group {groupTitle} reported", { groupTitle: groupTitle.value })
+  );
+});
+
+onCreateReportError((error: any) => {
+  console.error(error);
+  notifier?.error(
+    t("Error while reporting group {groupTitle}", {
+      groupTitle: groupTitle.value,
+    })
+  );
+});
 
 const triggerShare = (): void => {
   if (navigator.share) {
@@ -1030,8 +1038,8 @@ const physicalAddress = computed((): Address | null => {
   return new Address(group.value?.physicalAddress);
 });
 
-const ableToReport = computed((): boolean | undefined => {
-  return anonymousReportsConfig.value?.allowed;
+const ableToReport = computed((): boolean => {
+  return anonymousReportsConfig.value?.allowed === true;
 });
 
 const organizedEvents = computed((): Paginate<IEvent> => {

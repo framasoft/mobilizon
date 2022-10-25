@@ -208,6 +208,7 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import History from "@tiptap/extension-history";
 import { IActor, IPerson, usernameWithDomain } from "../types/actor";
 import CustomImage from "./Editor/Image";
+import RichEditorKeyboardSubmit from "./Editor/RichEditorKeyboardSubmit";
 import { UPLOAD_MEDIA } from "../graphql/upload";
 import { listenFileUpload } from "../utils/upload";
 import Mention from "@tiptap/extension-mention";
@@ -252,7 +253,7 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "submit"]);
 
 const isDescriptionMode = computed((): boolean => {
   return props.mode === "description" || isBasicMode.value;
@@ -297,7 +298,7 @@ const editor = useEditor({
       "aria-label": props.ariaLabel ?? "",
       role: "textbox",
       class:
-        "prose dark:prose-invert prose-sm sm:prose lg:prose-lg xl:prose-xl m-5 focus:outline-none !max-w-full",
+        "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-zinc-50 dark:bg-zinc-700 focus:outline-none !max-w-full",
     },
     transformPastedHTML: transformPastedHTML,
   },
@@ -322,6 +323,9 @@ const editor = useEditor({
     History,
     Link.configure({
       HTMLAttributes: { target: "_blank", rel: "noopener noreferrer ugc" },
+    }),
+    RichEditorKeyboardSubmit.configure({
+      submit: () => emit("submit"),
     }),
   ],
   injectCSS: false,
@@ -480,9 +484,7 @@ onBeforeUnmount(() => {
     div.ProseMirror {
       min-height: 2.5rem;
       box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
-      background-color: white;
       border-radius: 4px;
-      color: #363636;
       border: 1px solid #dbdbdb;
       padding: 12px 6px;
 

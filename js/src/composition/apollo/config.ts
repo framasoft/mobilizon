@@ -61,7 +61,7 @@ export function useAnonymousReportsConfig() {
   }>(ANONYMOUS_REPORTS_CONFIG, undefined, { fetchPolicy: "cache-only" });
 
   const anonymousReportsConfig = computed(
-    () => configResult.value?.config?.anonymous?.participation
+    () => configResult.value?.config?.anonymous?.reports
   );
   return { anonymousReportsConfig, error, loading };
 }

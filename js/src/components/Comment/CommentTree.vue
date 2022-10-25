@@ -1,10 +1,9 @@
 <template>
   <div>
     <form
-      class=""
       v-if="isAbleToComment"
       @submit.prevent="createCommentForEvent(newComment)"
-      @keyup.ctrl.enter="createCommentForEvent(newComment)"
+      class="mt-2"
     >
       <o-notification
         v-if="isEventOrganiser && !areCommentsClosed"
@@ -26,6 +25,7 @@
                 mode="comment"
                 v-model="newComment.text"
                 :aria-label="t('Comment body')"
+                @submit="createCommentForEvent(newComment)"
               />
               <p class="" v-if="emptyCommentError">
                 {{ t("Comment text can't be empty") }}
@@ -53,7 +53,7 @@
     <p v-if="commentsLoading" class="text-center">
       {{ t("Loading comments…") }}
     </p>
-    <transition-group tag="div" name="comment-empty-list" v-else>
+    <transition-group tag="div" name="comment-empty-list" v-else class="mt-2">
       <transition-group
         key="list"
         name="comment-list"
@@ -61,18 +61,17 @@
         class="comment-list"
         tag="ul"
       >
-        <comment
-          class="root-comment"
+        <event-comment
+          class="root-comment my-2"
           :comment="comment"
           :event="event"
           :currentActor="currentActor"
           v-for="comment in filteredOrderedComments"
           :key="comment.id"
           @create-comment="createCommentForEvent"
-          @delete-comment="
-            deleteComment({
-              commentId: comment.id as string,
-              originCommentId: comment.originComment?.id,
+          @delete-comment="commentToDelete => deleteComment({
+              commentId: commentToDelete.id as string,
+              originCommentId: commentToDelete.originComment?.id,
             })
           "
         />
@@ -85,7 +84,7 @@
 </template>
 
 <script lang="ts" setup>
-import Comment from "@/components/Comment/EventComment.vue";
+import EventComment from "@/components/Comment/EventComment.vue";
 import IdentityPickerWrapper from "@/views/Account/IdentityPickerWrapper.vue";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";

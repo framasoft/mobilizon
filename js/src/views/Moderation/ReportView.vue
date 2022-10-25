@@ -136,8 +136,9 @@
           </tr>
           <tr v-if="report.event && report.comments.length > 0">
             <td>{{ t("Event") }}</td>
-            <td>
+            <td class="flex gap-2 items-center">
               <router-link
+                class="underline"
                 :to="{
                   name: RouteName.EVENT,
                   params: { uuid: report.event.uuid },
@@ -145,41 +146,32 @@
               >
                 {{ report.event.title }}
               </router-link>
-              <span>
-                <!--                                    <o-button-->
-                <!--                                            tag="router-link"-->
-                <!--                                            variant="primary"-->
-                <!--                                            :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
-                <!--                                            icon-left="pencil"-->
-                <!--                                            size="small">{{ t('Edit') }}</o-button>-->
-                <o-button
-                  variant="danger"
-                  @click="confirmEventDelete()"
-                  icon-left="delete"
-                  size="small"
-                  >{{ t("Delete") }}</o-button
-                >
-              </span>
+              <o-button
+                variant="danger"
+                @click="confirmEventDelete()"
+                icon-left="delete"
+                >{{ t("Delete") }}</o-button
+              >
             </td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <section>
-      <h2>{{ t("Report reason") }}</h2>
-      <div class="dark:bg-zinc-700 p-2 rounded my-2">
+    <section class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3">
+      <h2 class="mb-1">{{ t("Report reason") }}</h2>
+      <div class="">
         <div class="flex gap-1">
           <figure class="" v-if="report.reported.avatar">
             <img
               alt=""
               :src="report.reported.avatar.url"
               class="rounded-full"
-              width="48"
-              height="48"
+              width="36"
+              height="36"
             />
           </figure>
-          <AccountCircle v-else :size="48" />
+          <AccountCircle v-else :size="36" />
           <div class="">
             <p class="" v-if="report.reported.name">
               {{ report.reported.name }}
@@ -196,15 +188,12 @@
       </div>
     </section>
 
-    <section class="" v-if="report.event && report.comments.length === 0">
-      <h2>{{ t("Reported content") }}</h2>
-      <EventCard :event="report.event" mode="row" class="my-2" />
-      <!--                <o-button-->
-      <!--                        tag="router-link"-->
-      <!--                        variant="primary"-->
-      <!--                        :to="{ name: RouteName.EDIT_EVENT, params: {eventId: report.event.uuid } }"-->
-      <!--                        icon-left="pencil"-->
-      <!--                        size="small">{{ t('Edit') }}</o-button>-->
+    <section
+      class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3"
+      v-if="report.event && report.comments.length === 0"
+    >
+      <h2 class="mb-1">{{ t("Reported content") }}</h2>
+      <EventCard :event="report.event" mode="row" class="my-2 max-w-4xl" />
       <o-button
         variant="danger"
         @click="confirmEventDelete()"
@@ -214,50 +203,52 @@
       >
     </section>
 
-    <div v-if="report.comments.length > 0">
+    <section
+      class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3"
+      v-if="report.comments.length > 0"
+    >
+      <h2 class="mb-1">{{ t("Reported content") }}</h2>
       <ul v-for="comment in report.comments" :key="comment.id">
         <li>
           <div class="" v-if="comment">
-            <article class="flex gap-1">
-              <div class="">
-                <figure class="" v-if="comment.actor && comment.actor.avatar">
+            <article>
+              <div class="flex gap-1">
+                <figure class="" v-if="comment.actor?.avatar">
                   <img
-                    :src="comment.actor.avatar.url"
                     alt=""
-                    width="48"
-                    height="48"
+                    :src="comment.actor.avatar?.url"
+                    class="rounded-full"
+                    width="36"
+                    height="36"
                   />
                 </figure>
-                <AccountCircle :size="48" v-else />
-              </div>
-              <div class="">
-                <div class="prose dark:prose-invert">
-                  <span v-if="comment.actor">
-                    <strong>{{ comment.actor.name }}</strong>
-                    <small>@{{ comment.actor.preferredUsername }}</small>
-                  </span>
+                <AccountCircle v-else :size="36" />
+                <div>
+                  <div v-if="comment.actor">
+                    <p>{{ comment.actor.name }}</p>
+                    <p>@{{ comment.actor.preferredUsername }}</p>
+                  </div>
                   <span v-else>{{ t("Unknown actor") }}</span>
-                  <br />
-                  <p v-html="comment.text" />
                 </div>
-                <o-button
-                  variant="danger"
-                  @click="confirmCommentDelete(comment)"
-                  icon-left="delete"
-                  size="small"
-                  >{{ t("Delete") }}</o-button
-                >
               </div>
+              <div class="prose dark:prose-invert" v-html="comment.text" />
+              <o-button
+                variant="danger"
+                @click="confirmCommentDelete(comment)"
+                icon-left="delete"
+                size="small"
+                >{{ t("Delete") }}</o-button
+              >
             </article>
           </div>
         </li>
       </ul>
-    </div>
+    </section>
 
-    <section>
-      <h2>{{ t("Notes") }}</h2>
+    <section class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3">
+      <h2 class="mb-1">{{ t("Notes") }}</h2>
       <div
-        class="box note"
+        class=""
         v-for="note in report.notes"
         :id="`note-${note.id}`"
         :key="note.id"
@@ -535,9 +526,5 @@ tbody td img.image,
 .box a {
   text-decoration: none;
   color: inherit;
-}
-
-td > a {
-  text-decoration: none;
 }
 </style>
