@@ -1,5 +1,5 @@
 <template>
-  <section class="card my-3" v-if="invitations && invitations.length > 0">
+  <section class="my-3" v-if="invitations && invitations.length > 0">
     <InvitationCard
       v-for="member in invitations"
       :key="member.id"
