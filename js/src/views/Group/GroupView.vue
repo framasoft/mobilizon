@@ -806,15 +806,20 @@ const openLeaveGroupModal = async (): Promise<void> => {
       "Are you sure you want to leave the group {groupName}? You'll loose access to this group's private content. This action cannot be undone.",
       { groupName: `<b>${displayName(group.value)}</b>` }
     ),
-    onConfirm: () => leaveGroup(),
+    onConfirm: leaveGroup,
     confirmText: t("Leave group"),
     cancelText: t("Cancel"),
   });
 };
 
+const {
+  mutate: leaveGroupMutation,
+  onError: onLeaveGroupError,
+  onDone: onLeaveGroupDone,
+} = useLeaveGroup();
+
 const leaveGroup = () => {
-  const { mutate: leaveGroupMutation, onError: onLeaveGroupError } =
-    useLeaveGroup();
+  console.debug("called leaveGroup");
 
   const [groupFederatedUsername, currentActorId] = [
     usernameWithDomain(group.value),
@@ -837,13 +842,17 @@ const leaveGroup = () => {
       ],
     }
   );
-
-  onLeaveGroupError((error: any) => {
-    if (error.graphQLErrors && error.graphQLErrors.length > 0) {
-      notifier?.error(error.graphQLErrors[0].message);
-    }
-  });
 };
+
+onLeaveGroupError((error: any) => {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    notifier?.error(error.graphQLErrors[0].message);
+  }
+});
+
+onLeaveGroupDone(() => {
+  console.debug("done");
+});
 
 const { mutate: followGroupMutation, onError: onFollowGroupError } =
   useMutation(FOLLOW_GROUP, () => ({
