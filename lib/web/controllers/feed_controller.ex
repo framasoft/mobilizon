@@ -6,6 +6,7 @@ defmodule Mobilizon.Web.FeedController do
   plug(:put_layout, false)
   action_fallback(Mobilizon.Web.FallbackController)
   alias Mobilizon.Config
+  require Logger
 
   @spec instance(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def instance(conn, %{"format" => format}) do
@@ -45,8 +46,8 @@ defmodule Mobilizon.Web.FeedController do
 
   @spec return_data(Plug.Conn.t(), String.t(), String.t(), String.t()) ::
           Plug.Conn.t() | {:error, :not_found}
-  defp return_data(conn, "atom", type, filename) do
-    case Cachex.fetch(:feed, type) do
+  defp return_data(conn, "atom", key, filename) do
+    case Cachex.fetch(:feed, key) do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("application/atom+xml")
@@ -56,13 +57,21 @@ defmodule Mobilizon.Web.FeedController do
         )
         |> send_resp(200, data)
 
-      _err ->
+      # No need to log these two
+      {:ignore, :actor_not_found} ->
+        {:error, :not_found}
+
+      {:ignore, :actor_not_public} ->
+        {:error, :not_found}
+
+      err ->
+        Logger.warn("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
         {:error, :not_found}
     end
   end
 
-  defp return_data(conn, "ics", type, filename) do
-    case Cachex.fetch(:ics, type) do
+  defp return_data(conn, "ics", key, filename) do
+    case Cachex.fetch(:ics, key) do
       {status, data} when status in [:commit, :ok] ->
         conn
         |> put_resp_content_type("text/calendar")
@@ -72,7 +81,15 @@ defmodule Mobilizon.Web.FeedController do
         )
         |> send_resp(200, data)
 
-      _ ->
+      # No need to log these two
+      {:ignore, :actor_not_found} ->
+        {:error, :not_found}
+
+      {:ignore, :actor_not_public} ->
+        {:error, :not_found}
+
+      err ->
+        Logger.warn("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
         {:error, :not_found}
     end
   end
