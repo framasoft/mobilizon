@@ -10,15 +10,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-05-06 13:08+0200\n"
-"Last-Translator: Vincent Finance <linuxmario@linuxmario.net>\n"
-"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/backend-errors/fr/>\n"
+"PO-Revision-Date: 2022-10-27 14:38+0000\n"
+"Last-Translator: Axel <lordilexa@hotmail.com>\n"
+"Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1111,6 +1112,8 @@ msgid "Unable to find an instance to follow at this address"
 msgstr "Impossible de trouver une instance à suivre à cette adresse"
 
 #: lib/mobilizon/actors/actor.ex:396
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
+"Le nom d'utilisateur ne doit contenir que des caractères alphanumériques "
+"minuscules et des underscores."
