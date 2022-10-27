@@ -192,6 +192,7 @@
   "Closed": "Cerrado",
   "Comment body": "Cuerpo del comentario",
   "Comment deleted": "Comentario borrado",
+  "Comment from {'@'}{username} reported": "Denunciado un comentario de {'@'}{username}",
   "Comment text can't be empty": "El texto del comentario no puede estar vacío",
   "Comments": "Comentarios",
   "Comments are closed for everybody else.": "Los comentarios están cerrados para todos los demás.",
