@@ -341,6 +341,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
       {:group, nil} ->
         {:error, dgettext("errors", "Group not found")}
 
+      # Actions.Leave.leave can also return nil if the member isn't found. Probably something to fix.
+      nil ->
+        {:error, dgettext("errors", "Member not found")}
+
       {:error, :is_not_only_admin} ->
         {:error,
          dgettext("errors", "You can't leave this group because you are the only administrator")}

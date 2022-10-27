@@ -137,7 +137,9 @@ const close = () => {
  */
 const cancel = (source: string) => {
   emit("cancel", source);
-  props.onCancel?.apply(null, [source]);
+  if (props?.onCancel) {
+    props?.onCancel(source);
+  }
   close();
 };
 </script>

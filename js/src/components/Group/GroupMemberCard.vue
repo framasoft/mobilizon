@@ -1,7 +1,7 @@
 <template>
   <div class="rounded shadow-lg bg-white dark:bg-mbz-purple dark:text-white">
     <div
-      class="bg-yellow-2 text-black flex items-center gap-1 p-2 rounded-t-lg"
+      class="bg-mbz-yellow-alt-50 text-black flex items-center gap-1 p-2 rounded-t-lg"
       dir="auto"
     >
       <figure class="" v-if="member.actor.avatar">

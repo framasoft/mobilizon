@@ -10,31 +10,31 @@ defmodule Mobilizon.Service.DateTimeTest do
   describe "render a datetime to string" do
     test "standard datetime" do
       {:ok, datetime, _} = DateTime.from_iso8601(@datetime)
-      assert DateTimeTools.datetime_to_string(datetime) == "Jun 22, 2021, 3:25:29 PM"
+      assert DateTimeTools.datetime_to_string(datetime) == "Jun 22, 2021, 3:25:29 PM"
       assert DateTimeTools.datetime_to_string(datetime, "fr") == "22 juin 2021, 15:25:29"
 
       assert DateTimeTools.datetime_to_string(datetime, "fr", :long) ==
-               "22 juin 2021 à 15:25:29 UTC"
+               "22 juin 2021, 15:25:29 UTC"
     end
 
     test "non existing or loaded locale fallbacks to english" do
       {:ok, datetime, _} = DateTime.from_iso8601(@datetime)
 
-      assert DateTimeTools.datetime_to_string(datetime, "es") == "Jun 22, 2021, 3:25:29 PM"
+      assert DateTimeTools.datetime_to_string(datetime, "es") == "Jun 22, 2021, 3:25:29 PM"
     end
   end
 
   describe "render a time to string" do
     test "standard time" do
       {:ok, datetime, _} = DateTime.from_iso8601(@datetime)
-      assert DateTimeTools.datetime_to_time_string(datetime) == "3:25 PM"
+      assert DateTimeTools.datetime_to_time_string(datetime) == "3:25 PM"
       assert DateTimeTools.datetime_to_time_string(datetime, "fr") == "15:25"
     end
 
     test "non existing or loaded locale fallbacks to english" do
       {:ok, datetime, _} = DateTime.from_iso8601(@datetime)
 
-      assert DateTimeTools.datetime_to_time_string(datetime, "pl") == "3:25 PM"
+      assert DateTimeTools.datetime_to_time_string(datetime, "pl") == "3:25 PM"
     end
   end
 
