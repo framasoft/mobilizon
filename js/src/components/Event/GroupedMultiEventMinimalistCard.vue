@@ -1,7 +1,7 @@
 <template>
-  <div class="events-wrapper">
+  <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4" v-for="key of keys" :key="key">
-      <h2 class="month-name">
+      <h2 class="capitalize inline-block relative">
         {{ monthName(groupEvents(key)[0]) }}
       </h2>
       <event-minimalist-card
@@ -29,7 +29,7 @@ const props = withDefaults(
 const monthlyGroupedEvents = computed((): Map<string, IEvent[]> => {
   return props.events.reduce((acc: Map<string, IEvent[]>, event: IEvent) => {
     const beginsOn = new Date(event.beginsOn);
-    const month = `${beginsOn.getUTCMonth()}-${beginsOn.getUTCFullYear()}`;
+    const month = `${beginsOn.getUTCFullYear()}-${beginsOn.getUTCMonth()}`;
     const monthEvents = acc.get(month) || [];
     acc.set(month, [...monthEvents, event]);
     return acc;
@@ -37,9 +37,19 @@ const monthlyGroupedEvents = computed((): Map<string, IEvent[]> => {
 });
 
 const keys = computed((): string[] => {
-  return Array.from(monthlyGroupedEvents.value.keys()).sort((a, b) =>
-    b.localeCompare(a)
-  );
+  return Array.from(monthlyGroupedEvents.value.keys()).sort((a, b) => {
+    const aParams = a.split("-").map((x) => parseInt(x, 10)) as [
+      number,
+      number
+    ];
+    const aDate = new Date(...aParams);
+    const bParams = b.split("-").map((x) => parseInt(x, 10)) as [
+      number,
+      number
+    ];
+    const bDate = new Date(...bParams);
+    return bDate.getTime() - aDate.getTime();
+  });
 });
 
 const groupEvents = (key: string): IEvent[] => {
@@ -59,25 +69,5 @@ const monthName = (event: IEvent): string => {
   display: grid;
   grid-gap: 20px;
   grid-template: 1fr;
-}
-.month-group {
-  .month-name {
-    text-transform: capitalize;
-    text-transform: capitalize;
-    display: inline-block;
-    position: relative;
-    font-size: 1.3rem;
-
-    &::after {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      content: "";
-      width: calc(100% + 30px);
-      height: 3px;
-      max-width: 150px;
-    }
-  }
 }
 </style>

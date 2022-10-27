@@ -428,7 +428,6 @@ export const FETCH_GROUP_EVENTS = gql`
     $organisedEventsLimit: Int
   ) {
     group(preferredUsername: $name) {
-      ...ActorFragment
       organizedEvents(
         afterDatetime: $afterDateTime
         beforeDatetime: $beforeDateTime
@@ -465,6 +464,7 @@ export const FETCH_GROUP_EVENTS = gql`
         }
         total
       }
+      ...ActorFragment
     }
   }
   ${EVENT_OPTIONS_FRAGMENT}
