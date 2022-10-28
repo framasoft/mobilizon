@@ -24,7 +24,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Address do
     }
 
     res =
-      if is_nil(object["address"]) do
+      if is_nil(object["address"]) or not is_map(object["address"]) do
         res
       else
         Map.merge(res, %{
