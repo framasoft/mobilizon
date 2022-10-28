@@ -24,7 +24,7 @@
         @click="scrollLeft"
         class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -left-5"
       >
-        <div class="">&lt;</div>
+        <span class="">&lt;</span>
       </button>
     </div>
     <div class="overflow-hidden">
@@ -41,7 +41,7 @@
         @click="scrollRight"
         class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -right-5"
       >
-        <div class="">&gt;</div>
+        <span class="">&gt;</span>
       </button>
     </div>
   </div>

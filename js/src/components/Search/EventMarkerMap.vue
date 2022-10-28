@@ -11,8 +11,7 @@
       <event-card
         v-if="instanceOfIEvent(activeElement)"
         :event="(activeElement as IEvent)"
-        :has-border="false"
-        view-mode="column"
+        mode="column"
         :options="{
           isRemoteEvent: activeElement.__typename === 'EventResult',
           isLoggedIn,
@@ -21,8 +20,7 @@
       <group-card
         v-else
         :group="(activeElement as IGroup)"
-        :has-border="false"
-        view-mode="column"
+        mode="column"
         :isRemoteGroup="activeElement.__typename === 'GroupResult'"
         :isLoggedIn="isLoggedIn"
       />
@@ -34,8 +32,7 @@
       <event-card
         v-if="instanceOfIEvent(activeElement)"
         :event="(activeElement as IEvent)"
-        view-mode="column"
-        :has-border="false"
+        mode="column"
         :options="{
           isRemoteEvent: activeElement.__typename === 'EventResult',
           isLoggedIn,
@@ -44,8 +41,7 @@
       <group-card
         v-else
         :group="(activeElement as IGroup)"
-        :has-border="false"
-        view-mode="column"
+        mode="column"
         :isRemoteGroup="activeElement.__typename === 'GroupResult'"
         :isLoggedIn="isLoggedIn"
       />
