@@ -100,12 +100,7 @@
           }"
           >{{ t("Didn't receive the instructions?") }}</o-button
         >
-        <p
-          class="control"
-          v-if="
-            config && config.registrationsOpen && config.registrationsAllowlist
-          "
-        >
+        <p class="control" v-if="canRegister">
           <o-button
             tag="router-link"
             variant="text"
@@ -170,6 +165,13 @@ const { result: configResult } = useQuery<{
 }>(LOGIN_CONFIG);
 
 const config = computed(() => configResult.value?.config);
+
+const canRegister = computed(() => {
+  return (
+    (config.value?.registrationsOpen || config.value?.registrationsAllowlist) &&
+    config.value?.auth.databaseLogin
+  );
+});
 
 const errors = ref<string[]>([]);
 const submitted = ref(false);

@@ -14,7 +14,9 @@ test("Login has everything we need", async ({ page }) => {
     hasText: "Didn't receive the instructions?",
   });
 
-  const registerLink = page.locator("a", { hasText: "Create an account" });
+  const registerLink = page.locator("a > span > span", {
+    hasText: "Create an account",
+  });
 
   await expect(forgotPasswordLink).toBeVisible();
   await expect(reAskInstructionsLink).toBeVisible();
