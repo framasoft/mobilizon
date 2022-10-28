@@ -193,7 +193,7 @@
           <template #options>
             <fieldset class="flex flex-col">
               <legend class="sr-only">{{ t("Categories") }}</legend>
-              <div v-for="category in eventCategories" :key="category.id">
+              <div v-for="category in orderedCategories" :key="category.id">
                 <input
                   :id="category.id"
                   v-model="categoryOneOf"
@@ -692,6 +692,7 @@ import { IAddress } from "@/types/address.model";
 import { IConfig } from "@/types/config.model";
 import { TypeNamed } from "@/types/apollo";
 import { LatLngBounds } from "leaflet";
+import lodashSortBy from "lodash/sortBy";
 
 const EventMarkerMap = defineAsyncComponent(
   () => import("@/components/Search/EventMarkerMap.vue")
@@ -824,6 +825,11 @@ const props = defineProps<{
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();
+
+const orderedCategories = computed(() => {
+  if (!eventCategories.value) return [];
+  return lodashSortBy(eventCategories.value, ["label"]);
+});
 
 const searchEvents = computed(() => searchElementsResult.value?.searchEvents);
 const searchGroups = computed(() => searchElementsResult.value?.searchGroups);
