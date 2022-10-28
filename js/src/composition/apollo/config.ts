@@ -208,7 +208,10 @@ export function useSearchConfig() {
 
 export function useRegistrationConfig() {
   const { result, error, loading, onResult } = useQuery<{
-    config: Pick<IConfig, "registrationsOpen" | "registrationsAllowlist">;
+    config: Pick<
+      IConfig,
+      "registrationsOpen" | "registrationsAllowlist" | "auth"
+    >;
   }>(REGISTRATIONS, undefined, { fetchPolicy: "cache-only" });
 
   const registrationsOpen = computed(
@@ -217,9 +220,11 @@ export function useRegistrationConfig() {
   const registrationsAllowlist = computed(
     () => result.value?.config.registrationsAllowlist
   );
+  const databaseLogin = computed(() => result.value?.config.auth.databaseLogin);
   return {
     registrationsOpen,
     registrationsAllowlist,
+    databaseLogin,
     error,
     loading,
     onResult,

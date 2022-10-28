@@ -185,11 +185,7 @@
               >{{ t("Login") }}</router-link
             >
           </li>
-          <li
-            v-if="
-              !currentActor?.id && (registrationsOpen || registrationsAllowlist)
-            "
-          >
+          <li v-if="!currentActor?.id && canRegister">
             <router-link
               :to="{ name: RouteName.REGISTER }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
@@ -378,7 +374,7 @@ import { ICurrentUserRole } from "@/types/enums";
 import { logout } from "../utils/auth";
 import { displayName } from "../types/actor";
 import RouteName from "../router/name";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
@@ -404,7 +400,15 @@ const router = useRouter();
 // const route = useRoute();
 
 const { identities } = useCurrentUserIdentities();
-const { registrationsOpen, registrationsAllowlist } = useRegistrationConfig();
+const { registrationsOpen, registrationsAllowlist, databaseLogin } =
+  useRegistrationConfig();
+
+const canRegister = computed(() => {
+  return (
+    (registrationsOpen.value || registrationsAllowlist.value) &&
+    databaseLogin.value
+  );
+});
 
 // const mobileNavbarActive = ref(false);
 

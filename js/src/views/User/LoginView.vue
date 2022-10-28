@@ -42,7 +42,7 @@
     >
       {{ error }}
     </o-notification>
-    <form @submit="loginAction">
+    <form @submit="loginAction" v-if="config?.auth.databaseLogin">
       <o-field
         :label="t('Email')"
         label-for="email"
@@ -81,13 +81,6 @@
       </p>
       <!-- <o-loading :is-full-page="false" v-model="submitted" /> -->
 
-      <div
-        class="control"
-        v-if="config && config?.auth.oauthProviders.length > 0"
-      >
-        <auth-providers :oauthProviders="config.auth.oauthProviders" />
-      </div>
-
       <div class="flex flex-wrap gap-2 mt-3">
         <o-button
           tag="router-link"
@@ -107,7 +100,12 @@
           }"
           >{{ t("Didn't receive the instructions?") }}</o-button
         >
-        <p class="control" v-if="config && config.registrationsOpen">
+        <p
+          class="control"
+          v-if="
+            config && config.registrationsOpen && config.registrationsAllowlist
+          "
+        >
           <o-button
             tag="router-link"
             variant="text"
@@ -123,6 +121,9 @@
         </p>
       </div>
     </form>
+    <div v-if="config && config?.auth.oauthProviders.length > 0">
+      <auth-providers :oauthProviders="config.auth.oauthProviders" />
+    </div>
   </section>
 </template>
 
@@ -162,7 +163,10 @@ const route = useRoute();
 const { currentUser } = useCurrentUserClient();
 
 const { result: configResult } = useQuery<{
-  config: Pick<IConfig, "auth" | "registrationsOpen">;
+  config: Pick<
+    IConfig,
+    "auth" | "registrationsOpen" | "registrationsAllowlist"
+  >;
 }>(LOGIN_CONFIG);
 
 const config = computed(() => configResult.value?.config);

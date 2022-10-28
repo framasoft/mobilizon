@@ -305,6 +305,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   """
   object :auth do
     field(:ldap, :boolean, description: "Whether or not LDAP auth is enabled")
+    field(:database_login, :boolean, description: "Whether or not database login is enabled")
     field(:oauth_providers, list_of(:oauth_provider), description: "List of oauth providers")
   end
 
