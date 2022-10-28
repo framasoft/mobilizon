@@ -194,6 +194,10 @@ body {
   @apply pl-2;
 }
 
+.o-field--addons .o-radio:not(:only-child) input {
+  @apply rounded-full;
+}
+
 /* Editor */
 button.menubar__button {
   @apply dark:text-white;
