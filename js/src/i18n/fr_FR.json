@@ -1406,5 +1406,14 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "{title} ({count} todos)": "{title} ({count} todos)",
   "{username} was invited to {group}": "{username} a été invité à {group}",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "More options": "Plus d'options",
+  "Reported by someone anonymously": "Signalé par quelqu'un anonymement",
+  "Back to homepage": "Retour à la page d'accueil",
+  "Category list": "Liste des catégories",
+  "No categories with public upcoming events on this instance were found.": "Aucune catégorie avec des événements publics à venir n'a été trouvée.",
+  "Theme": "Thème",
+  "Adapt to system theme": "S’adapter au thème du système",
+  "Light": "Clair",
+  "Dark": "Sombre"
 }

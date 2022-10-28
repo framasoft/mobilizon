@@ -79,6 +79,7 @@ export const CONFIG = gql`
       }
       auth {
         ldap
+        databaseLogin
         oauthProviders {
           id
           label
@@ -386,6 +387,7 @@ export const LOGIN_CONFIG = gql`
   query LoginConfig {
     config {
       auth {
+        databaseLogin
         oauthProviders {
           id
           label
@@ -440,6 +442,18 @@ export const SEARCH_CONFIG = gql`
           isEnabled
           isDefault
         }
+      }
+    }
+  }
+`;
+
+export const REGISTRATIONS = gql`
+  query Registrations {
+    config {
+      registrationsOpen
+      registrationsAllowlist
+      auth {
+        databaseLogin
       }
     }
   }

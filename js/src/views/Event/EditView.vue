@@ -33,7 +33,7 @@
 
       <div class="flex flex-wrap gap-4">
         <o-field
-          v-if="eventCategories"
+          v-if="orderedCategories"
           :label="t('Category')"
           label-for="categoryField"
           class="w-full md:max-w-fit"
@@ -45,7 +45,7 @@
             expanded
           >
             <option
-              v-for="category in eventCategories"
+              v-for="category in orderedCategories"
               :value="category.id"
               :key="category.id"
             >
@@ -595,6 +595,7 @@ import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@vueuse/head";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 import type { Locale } from "date-fns";
+import sortBy from "lodash/sortBy";
 
 const DEFAULT_LIMIT_NUMBER_OF_PLACES = 10;
 
@@ -1330,6 +1331,11 @@ watch(group, () => {
   if (!props.isUpdate && group.value?.visibility == GroupVisibility.PUBLIC) {
     event.value.visibility = EventVisibility.PUBLIC;
   }
+});
+
+const orderedCategories = computed(() => {
+  if (!eventCategories.value) return undefined;
+  return sortBy(eventCategories.value, ["label"]);
 });
 </script>
 

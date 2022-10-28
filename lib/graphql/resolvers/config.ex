@@ -156,6 +156,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       federating: Config.instance_federating(),
       auth: %{
         ldap: Config.ldap_enabled?(),
+        database_login:
+          Application.get_env(:mobilizon, :instance) |> get_in([:disable_database_login]) == false,
         oauth_providers: Config.oauth_consumer_strategies()
       },
       upload_limits: %{

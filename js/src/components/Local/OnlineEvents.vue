@@ -19,9 +19,7 @@
         v-for="event in events?.elements"
         :key="event.id"
         :event="event"
-        view-mode="column"
-        :has-border="true"
-        :minimal="true"
+        mode="column"
       />
       <more-content
         :to="{

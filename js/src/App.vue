@@ -54,6 +54,7 @@ import {
   defineAsyncComponent,
   computed,
   watch,
+  onBeforeUnmount,
 } from "vue";
 import { LocationType } from "@/types/user-location.model";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -123,7 +124,7 @@ const interval = ref<number>(0);
 
 const notifier = inject<Notifier>("notifier");
 
-interval.value = setInterval(async () => {
+interval.value = window.setInterval(async () => {
   const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
   if (accessToken) {
     const token = jwt_decode<JwtPayload>(accessToken);
@@ -155,6 +156,7 @@ onBeforeMount(async () => {
 });
 
 const snackbar = inject<Snackbar>("snackbar");
+const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 
 onMounted(() => {
   online.value = window.navigator.onLine;
@@ -187,6 +189,7 @@ onMounted(() => {
       },
     });
   });
+  darkModePreference.addEventListener("change", changeTheme);
 });
 
 onUnmounted(() => {
@@ -289,6 +292,23 @@ watch(config, async (configWatched: IConfig | undefined) => {
 });
 
 const isDemoMode = computed(() => config.value?.demoMode);
+
+const changeTheme = () => {
+  console.debug("changing theme");
+  if (
+    localStorage.getItem("theme") === "dark" ||
+    (!("theme" in localStorage) &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
+
+onBeforeUnmount(() => {
+  darkModePreference.removeEventListener("change", changeTheme);
+});
 </script>
 
 <style lang="scss">

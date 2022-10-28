@@ -169,7 +169,8 @@ e2e:
   artifacts:
     expire_in: 2 days
     paths:
-      - js/playwright-report
+      - js/playwright-report/
+      - js/test-results/
 
 pages:
   stage: deploy

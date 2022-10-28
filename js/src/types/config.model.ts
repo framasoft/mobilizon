@@ -106,6 +106,7 @@ export interface IConfig {
   version: string;
   auth: {
     ldap: boolean;
+    databaseLogin: boolean;
     oauthProviders: IOAuthProvider[];
   };
   uploadLimits: {

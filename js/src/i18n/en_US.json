@@ -1408,5 +1408,14 @@
   "Most recently published": "Most recently published",
   "Least recently published": "Least recently published",
   "With the most participants": "With the most participants",
-  "Number of members": "Number of members"
+  "Number of members": "Number of members",
+  "More options": "More options",
+  "Reported by someone anonymously": "Reported by someone anonymously",
+  "Back to homepage": "Back to homepage",
+  "Category list": "Category list",
+  "No categories with public upcoming events on this instance were found.": "No categories with public upcoming events on this instance were found.",
+  "Theme": "Theme",
+  "Adapt to system theme": "Adapt to system theme",
+  "Light": "Light",
+  "Dark": "Dark"
 }

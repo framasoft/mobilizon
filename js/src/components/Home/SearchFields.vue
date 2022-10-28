@@ -20,7 +20,6 @@
     />
     <full-address-auto-complete
       :resultType="AddressSearchType.ADMINISTRATIVE"
-      :doGeoLocation="false"
       v-model="location"
       :hide-map="true"
       :hide-selected="true"

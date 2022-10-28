@@ -29,9 +29,7 @@
         v-for="group in selectedGroups"
         :key="group.id"
         :group="group"
-        :view-mode="'column'"
-        :minimal="true"
-        :has-border="true"
+        :mode="'column'"
         :showSummary="false"
       />
 

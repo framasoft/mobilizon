@@ -3,9 +3,8 @@
     <div class="">
       <o-field
         :label-for="id"
-        expanded
         :message="fieldErrors"
-        :type="{ 'is-danger': fieldErrors }"
+        :variant="{ danger: fieldErrors }"
         class="!-mt-2"
         :labelClass="labelClass"
       >
@@ -32,7 +31,6 @@
           v-model="queryText"
           :placeholder="placeholderWithDefault"
           :customFormatter="(elem: IAddress) => addressFullName(elem)"
-          :loading="isFetching"
           :debounceTyping="debounceDelay"
           @typing="asyncData"
           :icon="canShowLocateMeButton ? null : 'map-marker'"
