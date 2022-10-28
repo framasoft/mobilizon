@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto pt-6">
+  <div class="container mx-auto py-6">
     <section class="">
       <h1>
         {{
@@ -123,7 +123,7 @@
             />
           </o-field>
 
-          <div class="flex items-start mb-6">
+          <div class="flex items-start mb-6 mt-2">
             <div class="flex items-center h-5">
               <input
                 type="checkbox"
@@ -155,7 +155,7 @@
             </label>
           </div>
 
-          <p class="create-account control has-text-centered">
+          <p>
             <o-button
               variant="primary"
               size="large"
@@ -166,19 +166,19 @@
             </o-button>
           </p>
 
-          <p class="control has-text-centered">
-            <router-link
-              class="button is-text"
+          <p class="my-6">
+            <o-button
+              tag="router-link"
+              variant="text"
               :to="{
                 name: RouteName.RESEND_CONFIRMATION,
                 params: { email: credentials.email },
               }"
-              >{{ t("Didn't receive the instructions?") }}</router-link
+              >{{ t("Didn't receive the instructions?") }}</o-button
             >
-          </p>
-          <p class="control has-text-centered">
-            <router-link
-              class="button is-text"
+            <o-button
+              tag="router-link"
+              variant="text"
               :to="{
                 name: RouteName.LOGIN,
                 params: {
@@ -186,7 +186,7 @@
                   password: credentials.password,
                 },
               }"
-              >{{ t("Login") }}</router-link
+              >{{ t("Login") }}</o-button
             >
           </p>
 
@@ -252,13 +252,13 @@ const title = computed((): string => {
   if (config.value) {
     return t("Register an account on {instanceName}!", {
       instanceName: config.value?.name,
-    }) as string;
+    });
   }
   return "";
 });
 
 useHead({
-  title: title.value,
+  title: () => title.value,
 });
 
 const { onDone, onError, mutate } = useMutation(CREATE_USER);

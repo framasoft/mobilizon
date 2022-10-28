@@ -11,6 +11,7 @@ import {
   GEOCODING_AUTOCOMPLETE,
   LOCATION,
   MAPS_TILES,
+  REGISTRATIONS,
   RESOURCE_PROVIDERS,
   RESTRICTIONS,
   ROUTING_TYPE,
@@ -203,4 +204,24 @@ export function useSearchConfig() {
 
   const searchConfig = computed(() => result.value?.config.search);
   return { searchConfig, error, loading, onResult };
+}
+
+export function useRegistrationConfig() {
+  const { result, error, loading, onResult } = useQuery<{
+    config: Pick<IConfig, "registrationsOpen" | "registrationsAllowlist">;
+  }>(REGISTRATIONS, undefined, { fetchPolicy: "cache-only" });
+
+  const registrationsOpen = computed(
+    () => result.value?.config.registrationsOpen
+  );
+  const registrationsAllowlist = computed(
+    () => result.value?.config.registrationsAllowlist
+  );
+  return {
+    registrationsOpen,
+    registrationsAllowlist,
+    error,
+    loading,
+    onResult,
+  };
 }

@@ -2,6 +2,10 @@ body {
   @apply bg-body-background-color dark:bg-zinc-800 dark:text-white;
 }
 
+.out {
+  @apply underline hover:decoration-2 hover:decoration-mbz-yellow-alt-600;
+}
+
 /* Button */
 .btn {
   @apply font-bold py-2 px-4 bg-mbz-bluegreen hover:bg-mbz-bluegreen-600 text-white rounded h-10 outline-none focus:ring ring-offset-1 ring-offset-slate-50 ring-blue-300;

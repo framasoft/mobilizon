@@ -185,7 +185,11 @@
               >{{ t("Login") }}</router-link
             >
           </li>
-          <li v-if="!currentActor?.id">
+          <li
+            v-if="
+              !currentActor?.id && (registrationsOpen || registrationsAllowlist)
+            "
+          >
             <router-link
               :to="{ name: RouteName.REGISTER }"
               class="block py-2 pr-4 pl-3 text-zinc-700 border-b border-gray-100 hover:bg-zinc-50 md:hover:bg-transparent md:border-0 md:hover:text-mbz-purple-700 md:p-0 dark:text-zinc-400 md:dark:hover:text-white dark:hover:bg-zinc-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
@@ -387,6 +391,7 @@ import {
 import { useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
+import { useRegistrationConfig } from "@/composition/apollo/config";
 // import { useRestrictions } from "@/composition/apollo/config";
 
 const { currentUser } = useCurrentUserClient();
@@ -399,6 +404,7 @@ const router = useRouter();
 // const route = useRoute();
 
 const { identities } = useCurrentUserIdentities();
+const { registrationsOpen, registrationsAllowlist } = useRegistrationConfig();
 
 // const mobileNavbarActive = ref(false);
 

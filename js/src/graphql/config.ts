@@ -444,3 +444,12 @@ export const SEARCH_CONFIG = gql`
     }
   }
 `;
+
+export const REGISTRATIONS = gql`
+  query Registrations {
+    config {
+      registrationsOpen
+      registrationsAllowlist
+    }
+  }
+`;
