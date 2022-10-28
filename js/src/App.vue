@@ -123,7 +123,7 @@ const interval = ref<number>(0);
 
 const notifier = inject<Notifier>("notifier");
 
-interval.value = setInterval(async () => {
+interval.value = window.setInterval(async () => {
   const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
   if (accessToken) {
     const token = jwt_decode<JwtPayload>(accessToken);
