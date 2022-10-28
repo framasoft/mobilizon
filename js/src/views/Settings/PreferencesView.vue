@@ -95,7 +95,6 @@
           <full-address-auto-complete
             v-if="loggedUser?.settings"
             :resultType="AddressSearchType.ADMINISTRATIVE"
-            :doGeoLocation="false"
             v-model="address"
             :default-text="address?.description"
             id="setting-city"
