@@ -375,6 +375,7 @@ import { ApolloCache, FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { useCreateReport } from "@/composition/apollo/report";
 import { useDeleteEvent } from "@/composition/apollo/event";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
 
 const ShareEventModal = defineAsyncComponent(
   () => import("@/components/Event/ShareEventModal.vue")
@@ -609,7 +610,17 @@ onJoinEventMutationDone(({ data }) => {
   }
 });
 
+const { oruga } = useProgrammatic();
+
 onJoinEventMutationError((error) => {
+  if (error.message) {
+    oruga.notification.open({
+      message: error.message,
+      variant: "danger",
+      position: "bottom-right",
+      duration: 5000,
+    });
+  }
   console.error(error);
 });
 
