@@ -44,8 +44,8 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 1 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 3 }) }"
+          @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
           type="button"
           :title="t('Heading Level 1')"
         >
@@ -55,8 +55,8 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 2 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 4 }) }"
+          @click="editor?.chain().focus().toggleHeading({ level: 4 }).run()"
           type="button"
           :title="t('Heading Level 2')"
         >
@@ -66,8 +66,8 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 3 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
+          :class="{ 'is-active': editor?.isActive('heading', { level: 5 }) }"
+          @click="editor?.chain().focus().toggleHeading({ level: 5 }).run()"
           type="button"
           :title="t('Heading Level 3')"
         >
@@ -309,7 +309,9 @@ const editor = useEditor({
   extensions: [
     Blockquote,
     BulletList,
-    Heading,
+    Heading.configure({
+      levels: [3, 4, 5],
+    }),
     Document,
     Paragraph,
     Text,
