@@ -64,61 +64,14 @@
           }"
         />
       </div>
-      <div class="tile">
-        <div
-          class="tile is-parent is-vertical is-6"
-          v-if="dashboard?.lastPublicEventPublished"
-        >
-          <article class="tile is-child box">
-            <router-link
-              :to="{
-                name: RouteName.EVENT,
-                params: { uuid: dashboard?.lastPublicEventPublished.uuid },
-              }"
-            >
-              <p>{{ t("Last published event") }}</p>
-              <p>
-                {{ dashboard?.lastPublicEventPublished.title }}
-              </p>
-              <figure
-                class="image is-4by3"
-                v-if="dashboard?.lastPublicEventPublished.picture"
-              >
-                <img :src="dashboard?.lastPublicEventPublished.picture.url" />
-              </figure>
-            </router-link>
-          </article>
+      <div class="flex flex-wrap gap-4">
+        <div>
+          <h2>{{ t('Last published event')}}</h2>
+          <event-card v-if="dashboard?.lastPublicEventPublished" :event="dashboard?.lastPublicEventPublished" />
         </div>
-        <div
-          class="tile is-parent is-vertical"
-          v-if="dashboard?.lastGroupCreated"
-        >
-          <article class="tile is-child box">
-            <router-link
-              :to="{
-                name: RouteName.GROUP,
-                params: {
-                  preferredUsername: usernameWithDomain(
-                    dashboard?.lastGroupCreated
-                  ),
-                },
-              }"
-            >
-              <p>{{ t("Last group created") }}</p>
-              <p>
-                {{
-                  dashboard?.lastGroupCreated.name ||
-                  dashboard?.lastGroupCreated.preferredUsername
-                }}
-              </p>
-              <figure
-                class="image is-4by3"
-                v-if="dashboard?.lastGroupCreated.avatar"
-              >
-                <img :src="dashboard?.lastGroupCreated.avatar.url" />
-              </figure>
-            </router-link>
-          </article>
+        <div>
+          <h2>{{ t('Last group created')}}</h2>
+          <group-card v-if="dashboard?.lastGroupCreated" :group="dashboard?.lastGroupCreated" />
         </div>
       </div>
     </section>
@@ -127,7 +80,6 @@
 <script lang="ts" setup>
 import { DASHBOARD } from "@/graphql/admin";
 import { IDashboard } from "@/types/admin.model";
-import { usernameWithDomain } from "@/types/actor";
 import RouteName from "@/router/name";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
@@ -136,6 +88,8 @@ import { useHead } from "@vueuse/head";
 import NumberDashboardTile from "@/components/Dashboard/NumberDashboardTile.vue";
 import LinkedNumberDashboardTile from "@/components/Dashboard/LinkedNumberDashboardTile.vue";
 import { InstanceFilterFollowStatus } from "@/types/enums";
+import GroupCard from "@/components/Group/GroupCard.vue";
+import EventCard from "@/components/Event/EventCard.vue";
 
 const { result: dashboardResult } = useQuery<{ dashboard: IDashboard }>(
   DASHBOARD
