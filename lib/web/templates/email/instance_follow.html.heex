@@ -45,7 +45,7 @@
         >
           <p style="margin: 0;">
             <%= gettext("<b>%{name}</b> just requested to follow your instance.",
-              name: Mobilizon.Actors.Actor.display_name_and_username(@follower)
+              name: escape_html(display_name_and_username(@follower))
             )
             |> raw %>
             <br />
@@ -67,7 +67,7 @@
             <p style="margin: 0;">
               <%= gettext(
                 "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too.",
-                name: Mobilizon.Actors.Actor.display_name_and_username(@follower)
+                name: escape_html(display_name_and_username(@follower))
               ) %>
             </p>
           </td>

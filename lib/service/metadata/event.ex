@@ -9,15 +9,21 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Mobilizon.Web.Router.Helpers, as: Routes
 
   import Mobilizon.Service.Metadata.Utils,
-    only: [process_description: 2, strip_tags: 1, datetime_to_string: 2, render_address!: 1]
+    only: [
+      process_description: 2,
+      strip_tags: 1,
+      datetime_to_string: 2,
+      render_address!: 1,
+      escape_text: 1
+    ]
 
   def build_tags(%Event{} = event, locale \\ "en") do
     formatted_description = description(event, locale)
 
     tags = [
-      Tag.content_tag(:title, event.title <> " - Mobilizon"),
+      Tag.content_tag(:title, escape_text(event.title) <> " - Mobilizon"),
       Tag.tag(:meta, name: "description", content: process_description(event.description, locale)),
-      Tag.tag(:meta, property: "og:title", content: event.title),
+      Tag.tag(:meta, property: "og:title", content: escape_text(event.title)),
       Tag.tag(:meta, property: "og:url", content: event.url),
       Tag.tag(:meta, property: "og:description", content: formatted_description),
       Tag.tag(:meta, property: "og:type", content: "website"),
@@ -48,7 +54,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
               %{
                 "@type" => "ListItem",
                 "position" => 1,
-                "name" => Actor.display_name(event.attributed_to),
+                "name" => event.attributed_to |> Actor.display_name() |> escape_text(),
                 "item" =>
                   Endpoint
                   |> Routes.page_url(
@@ -85,7 +91,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
               %{
                 "@type" => "ListItem",
                 "position" => 2,
-                "name" => event.title
+                "name" => escape_text(event.title)
               }
             ]
           }

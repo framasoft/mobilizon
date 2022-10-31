@@ -47,12 +47,12 @@
             <%= if @report.reporter.type == :Application and @report.reporter.preferred_username == "relay" do %>
               <%= gettext(
                 "Someone on <b>%{instance}</b> reported the following content for you to analyze:",
-                instance: @report.reporter.domain
+                instance: escape_html(@report.reporter.domain)
               )
               |> raw %>
             <% else %>
               <%= gettext("<b>%{reporter}</b> reported the following content.",
-                reporter: Mobilizon.Actors.Actor.display_name_and_username(@report.reporter)
+                reporter: escape_html(display_name_and_username(@report.reporter))
               )
               |> raw %>
             <% end %>

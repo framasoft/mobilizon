@@ -46,7 +46,7 @@
           <p style="margin: 0;">
             <%= gettext(
               "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:",
-              title: @participant.event.title
+              title: escape_html(@participant.event.title)
             )
             |> raw %>
           </p>

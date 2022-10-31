@@ -7,14 +7,16 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Posts.Post do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.Router.Helpers, as: Routes
-  import Mobilizon.Service.Metadata.Utils, only: [process_description: 2, strip_tags: 1]
+
+  import Mobilizon.Service.Metadata.Utils,
+    only: [process_description: 2, strip_tags: 1, escape_text: 1]
 
   def build_tags(%Post{} = post, locale \\ "en") do
     post = Map.put(post, :body, process_description(post.body, locale))
 
     tags =
       [
-        Tag.tag(:meta, property: "og:title", content: post.title),
+        Tag.tag(:meta, property: "og:title", content: escape_text(post.title)),
         Tag.tag(:meta, property: "og:url", content: post.url),
         Tag.tag(:meta, property: "og:description", content: post.body),
         Tag.tag(:meta, property: "og:type", content: "article"),
@@ -31,7 +33,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Posts.Post do
         %{
           "@type" => "ListItem",
           "position" => 1,
-          "name" => Actor.display_name(post.attributed_to),
+          "name" => post.attributed_to |> Actor.display_name() |> escape_text,
           "item" =>
             Endpoint
             |> Routes.page_url(

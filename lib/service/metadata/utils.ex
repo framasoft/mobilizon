@@ -74,4 +74,11 @@ defmodule Mobilizon.Service.Metadata.Utils do
 
   @spec stringify_tag(String.t(), String.t()) :: String.t()
   defp stringify_tag(tag, acc) when is_binary(tag), do: acc <> tag
+
+  @spec escape_text(String.t()) :: String.t()
+  def escape_text(text) do
+    text
+    |> HTML.html_escape()
+    |> HTML.safe_to_string()
+  end
 end
