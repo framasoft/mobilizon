@@ -822,6 +822,7 @@ msgstr "Adres e-mail Twojego konta na <b>%{host}</b> zostanie zmieniony na:"
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr "Poprosiłeś(-aś) o nowe hasło do swojego konta na %{instance}."
 
+#: lib/web/templates/email/email.html.heex:112
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Please do not use it for real purposes."
@@ -892,7 +893,7 @@ msgstr "Zaktualizowano wydarzenie!"
 msgid "Flagged comments"
 msgstr "Oflagowane komentarze"
 
-#: lib/web/templates/email/event_participation_approved.html.heex:59
+#: lib/web/templates/email/event_participation_approved.html.heex:61
 #: lib/web/templates/email/event_participation_approved.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
@@ -1029,7 +1030,7 @@ msgstr ""
 "Wydarzenie nie zostało jeszcze potwierdzone, organizatorzy poinformują Cię "
 "jeżeli zostanie potwierdzone."
 
-#: lib/web/templates/email/event_participation_rejected.html.heex:59
+#: lib/web/templates/email/event_participation_rejected.html.heex:61
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
@@ -1050,9 +1051,9 @@ msgstr "Zobacz zgłoszenie"
 msgid "View report:"
 msgstr "Zobacz zgłoszenie"
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:83
-#: lib/web/templates/email/event_participation_approved.html.heex:79
-#: lib/web/templates/email/event_participation_confirmed.html.heex:79
+#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/event_participation_approved.html.heex:81
+#: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Visit event page"
 msgstr "Odwiedź stronę wydarzenia"
@@ -1073,9 +1074,9 @@ msgstr "Zobacz zaktualizowane wydarzenie na %{link}"
 msgid "What's up today?"
 msgstr "Co dziś się wydarzy?"
 
-#: lib/web/templates/email/event_participation_approved.html.heex:96
+#: lib/web/templates/email/event_participation_approved.html.heex:98
 #: lib/web/templates/email/event_participation_approved.text.eex:11
-#: lib/web/templates/email/event_participation_confirmed.html.heex:96
+#: lib/web/templates/email/event_participation_confirmed.html.heex:98
 #: lib/web/templates/email/event_participation_confirmed.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
@@ -1111,11 +1112,6 @@ msgstr "Weźmiesz udział!"
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr ""
 
-#: lib/web/templates/email/email.html.heex:112
-#, elixir-autogen, elixir-format
-msgid "<b>Please do not use it for real purposes.</b>"
-msgstr "Nie używaj go do żadnych rzeczywistych celów"
-
 #: lib/web/templates/email/group_member_removal.html.heex:64
 #: lib/web/templates/email/group_member_removal.text.eex:5
 #, elixir-autogen, elixir-format
@@ -1148,7 +1144,7 @@ msgstr ""
 "Zostałeś(-aś) usunięty(-a) z grupy %{link_start}<b>%{group}</b>%{link_end}. "
 "Nie masz już dostępu do prywatnej zawartości tej grupy."
 
-#: lib/web/templates/email/group_suspension.html.heex:85
+#: lib/web/templates/email/group_suspension.html.heex:81
 #: lib/web/templates/email/group_suspension.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
@@ -1156,7 +1152,7 @@ msgstr ""
 "Ponieważ ta grupa znajdowała się na innej instancji, będzie wciąż działać na "
 "instancjach innych niż ta."
 
-#: lib/web/templates/email/group_suspension.html.heex:71
+#: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
@@ -1331,7 +1327,7 @@ msgstr "Profil %{profile} został zgłoszony"
 msgid "Profile reported"
 msgstr "Zgłoszono profil"
 
-#: lib/web/templates/email/event_participation_confirmed.html.heex:59
+#: lib/web/templates/email/event_participation_confirmed.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
@@ -1413,8 +1409,8 @@ msgstr "Przepraszamy, ale coś poszło nie tak po naszej stronie."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "To jest strona demonstracyjna pozwalająca na przetestowanie Mobilizon."
 
-#: lib/service/metadata/actor.ex:91
-#: lib/service/metadata/actor.ex:99
+#: lib/service/metadata/actor.ex:90
+#: lib/service/metadata/actor.ex:97
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -1461,12 +1457,12 @@ msgstr "Serwer Mobilizon wydaje się tymczasowo nie działać."
 msgid "Public feed for %{instance}"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:324
+#: lib/graphql/resolvers/user.ex:333
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:330
+#: lib/graphql/resolvers/user.ex:339
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""

@@ -90,13 +90,13 @@ msgstr "Chruthaich %{profile} an goireas %{resource}."
 msgid "%{profile} deleted the discussion %{discussion}."
 msgstr "Sguab %{profile} às an deasbad %{discussion}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:86
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:88
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
 msgstr "Sguab %{profile} às am pasgan %{resource}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:92
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:94
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the resource %{resource}."
@@ -108,13 +108,13 @@ msgstr "Sguab %{profile} às an goireas %{resource}."
 msgid "%{profile} excluded member %{member}."
 msgstr "Dhùin %{profile} am ball %{member} a-mach."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:62
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:64
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the folder %{resource}."
 msgstr "Ghluais %{profile} am pasgan %{resource}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:73
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:75
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:34
 #, elixir-autogen, elixir-format
 msgid "%{profile} moved the resource %{resource}."
@@ -138,7 +138,7 @@ msgstr "Thug %{profile} ainm ùr air an deasbad %{discussion}."
 msgid "%{profile} renamed the folder from %{old_resource_title} to %{resource}."
 msgstr "Thug %{profile} %{resource} air a’ phasgan %{old_resource_title}."
 
-#: lib/web/templates/email/activity/_resource_activity_item.html.heex:44
+#: lib/web/templates/email/activity/_resource_activity_item.html.heex:45
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:21
 #, elixir-autogen, elixir-format
 msgid "%{profile} renamed the resource from %{old_resource_title} to %{resource}."
