@@ -237,7 +237,7 @@ defmodule Mobilizon.Actors do
         {:ok, person}
 
       {:error, _step, err, _} ->
-        Logger.error("Error while creating a new person")
+        Logger.debug("Error while creating a new person")
         {:error, err}
     end
   end
