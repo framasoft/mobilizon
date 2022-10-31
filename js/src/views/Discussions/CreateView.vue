@@ -44,9 +44,10 @@
       <o-field :label="t('Text')">
         <Editor
           v-model="discussion.text"
-          :aria-label="t('Comment body')"
+          :aria-label="t('Message body')"
           v-if="currentActor"
           :current-actor="currentActor"
+          :placeholder="t('Write a new message')"
         />
       </o-field>
 

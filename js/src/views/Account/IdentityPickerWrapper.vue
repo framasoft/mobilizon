@@ -42,9 +42,9 @@
       class="cursor-pointer"
       @click="activateModal"
     >
-      <figure class="" v-if="currentIdentity.avatar">
+      <figure class="h-12 w-12" v-if="currentIdentity.avatar">
         <img
-          class="rounded"
+          class="rounded-full object-cover h-full"
           :src="currentIdentity.avatar.url"
           alt=""
           width="48"

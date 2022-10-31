@@ -37,6 +37,7 @@
             :aria-label="t('Group description body')"
             v-if="currentActor"
             :currentActor="currentActor"
+            :placeholder="t('A few lines about your group')"
         /></o-field>
         <o-field :label="t('Avatar')">
           <picture-upload

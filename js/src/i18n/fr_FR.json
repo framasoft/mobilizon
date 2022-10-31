@@ -1415,5 +1415,13 @@
   "Theme": "Thème",
   "Adapt to system theme": "S’adapter au thème du système",
   "Light": "Clair",
-  "Dark": "Sombre"
+  "Dark": "Sombre",
+  "Write a new comment": "Écrivez un nouveau commentaire",
+  "Write a new reply": "Écrivez une nouvelle réponse",
+  "Write a new message": "Écrivez un nouveau message",
+  "Write something": "Écrivez quelque chose",
+  "Message body": "Corps du message",
+  "Describe your event": "Décrivez votre événement",
+  "A few lines about your group": "Quelques lignes à propos de votre groupe",
+  "Write your post": "Écrivez votre billet"
 }

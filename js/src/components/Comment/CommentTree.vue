@@ -26,6 +26,7 @@
                 v-model="newComment.text"
                 :aria-label="t('Comment body')"
                 @submit="createCommentForEvent(newComment)"
+                :placeholder="t('Write a new comment')"
               />
               <p class="" v-if="emptyCommentError">
                 {{ t("Comment text can't be empty") }}

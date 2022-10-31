@@ -22,7 +22,7 @@
           <small>@{{ usernameWithDomain(comment.actor) }}</small>
         </div>
         <span v-else class="name comment-link has-text-grey">
-          {{ $t("[deleted]") }}
+          {{ t("[deleted]") }}
         </span>
         <span
           class="icons"
@@ -43,7 +43,7 @@
               aria-role="menuitem"
             >
               <o-icon icon="pencil"></o-icon>
-              {{ $t("Edit") }}
+              {{ t("Edit") }}
             </o-dropdown-item>
             <o-dropdown-item
               v-if="comment.actor?.id === currentActor?.id"
@@ -51,11 +51,11 @@
               aria-role="menuitem"
             >
               <o-icon icon="delete"></o-icon>
-              {{ $t("Delete") }}
+              {{ t("Delete") }}
             </o-dropdown-item>
             <!-- <o-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
               <o-icon icon="flag" />
-              {{ $t("Report") }}
+              {{ t("Report") }}
             </o-dropdown-item> -->
           </o-dropdown>
         </span>
@@ -67,7 +67,7 @@
             {{
               formatDistanceToNow(new Date(comment.updatedAt?.toString()), {
                 locale: dateFnsLocale,
-              }) || $t("Right now")
+              }) || t("Right now")
             }}</span
           >
         </div>
@@ -92,7 +92,7 @@
           :title="formatDateTimeString(comment.updatedAt.toString())"
         >
           {{
-            $t("Edited {ago}", {
+            t("Edited {ago}", {
               ago: formatDistanceToNow(new Date(comment.updatedAt), {
                 locale: dateFnsLocale,
               }),
@@ -101,23 +101,24 @@
         </p>
       </div>
       <div class="comment-deleted" v-else-if="!editMode">
-        {{ $t("[This comment has been deleted by it's author]") }}
+        {{ t("[This comment has been deleted by it's author]") }}
       </div>
       <form v-else class="edition" @submit.prevent="updateComment">
         <Editor
           v-model="updatedComment"
-          :aria-label="$t('Comment body')"
+          :aria-label="t('Comment body')"
           :current-actor="currentActor"
+          :placeholder="t('Write a new message')"
         />
         <div class="flex gap-2 mt-2">
           <o-button
             native-type="submit"
             :disabled="['<p></p>', '', comment.text].includes(updatedComment)"
             variant="primary"
-            >{{ $t("Update") }}</o-button
+            >{{ t("Update") }}</o-button
           >
           <o-button native-type="button" @click="toggleEditMode">{{
-            $t("Cancel")
+            t("Cancel")
           }}</o-button>
         </div>
       </form>
@@ -132,6 +133,7 @@ import { computed, defineAsyncComponent, inject, ref } from "vue";
 import { formatDateTimeString } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import type { Locale } from "date-fns";
+import { useI18n } from "vue-i18n";
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
@@ -143,6 +145,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(["update:modelValue", "deleteComment"]);
+
+const { t } = useI18n({useScope: 'global'});
 
 const comment = computed(() => props.modelValue);
 

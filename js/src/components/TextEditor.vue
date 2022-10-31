@@ -238,6 +238,7 @@ import FormatListNumbered from "vue-material-design-icons/FormatListNumbered.vue
 import FormatQuoteClose from "vue-material-design-icons/FormatQuoteClose.vue";
 import Undo from "vue-material-design-icons/Undo.vue";
 import Redo from "vue-material-design-icons/Redo.vue";
+import Placeholder from '@tiptap/extension-placeholder'
 
 const props = withDefaults(
   defineProps<{
@@ -246,6 +247,7 @@ const props = withDefaults(
     maxSize?: number;
     ariaLabel?: string;
     currentActor: IPerson;
+    placeholder?: string;
   }>(),
   {
     mode: "description",
@@ -291,6 +293,8 @@ const transformPastedHTML = (html: string): string => {
   return html;
 };
 
+const { t } = useI18n({ useScope: "global" });
+
 const editor = useEditor({
   editorProps: {
     attributes: {
@@ -327,6 +331,9 @@ const editor = useEditor({
     RichEditorKeyboardSubmit.configure({
       submit: () => emit("submit"),
     }),
+    Placeholder.configure({
+      placeholder: props.placeholder ?? t('Write something')
+    })
   ],
   injectCSS: false,
   content: props.modelValue,
@@ -345,7 +352,6 @@ watch(value, (val: string) => {
 });
 
 const dialog = inject<Dialog>("dialog");
-const { t } = useI18n({ useScope: "global" });
 
 /**
  * Show a popup to get the link from the URL
@@ -593,5 +599,13 @@ onBeforeUnmount(() => {
 
 .visually-hidden {
   display: none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
 }
 </style>

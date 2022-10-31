@@ -155,6 +155,7 @@
               :aria-label="t('Comment body')"
               class="flex-1"
               @submit="replyToComment"
+              :placeholder="t('Write a new reply')"
             />
             <o-button
               :disabled="newComment.text.trim().length === 0"
@@ -201,7 +202,7 @@
   </li>
 </template>
 <script lang="ts" setup>
-import EditorComponent from "@/components/TextEditor.vue";
+import type EditorComponent from "@/components/TextEditor.vue";
 import { formatDistanceToNow } from "date-fns";
 import { CommentModeration } from "@/types/enums";
 import { CommentModel, IComment } from "../../types/comment.model";

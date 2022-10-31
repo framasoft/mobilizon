@@ -5,7 +5,7 @@
       :links="[
         {
           name: RouteName.MY_GROUPS,
-          text: $t('My groups'),
+          text: t('My groups'),
         },
         {
           name: RouteName.GROUP,
@@ -15,7 +15,7 @@
         {
           name: RouteName.DISCUSSION_LIST,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Discussions'),
+          text: t('Discussions'),
         },
         {
           name: RouteName.DISCUSSION,
@@ -35,7 +35,7 @@
         <o-button
           icon-right="pencil"
           size="small"
-          :title="$t('Update discussion title')"
+          :title="t('Update discussion title')"
           v-if="
             discussion.creator &&
             !editTitleMode &&
@@ -60,7 +60,7 @@
           @submit.prevent="updateDiscussion"
           class="w-full"
         >
-          <o-field :label="$t('Title')" label-for="discussion-title">
+          <o-field :label="t('Title')" label-for="discussion-title">
             <o-input
               :value="discussion.title"
               v-model="newTitle"
@@ -72,7 +72,7 @@
               variant="primary"
               native-type="submit"
               icon-right="check"
-              :title="$t('Update discussion title')"
+              :title="t('Update discussion title')"
             />
             <o-button
               @click="
@@ -82,14 +82,14 @@
                 }
               "
               icon-right="close"
-              :title="$t('Cancel discussion title edition')"
+              :title="t('Cancel discussion title edition')"
             />
             <o-button
               @click="openDeleteDiscussionConfirmation"
               variant="danger"
               native-type="button"
               icon-left="delete"
-              >{{ $t("Delete conversation") }}</o-button
+              >{{ t("Delete conversation") }}</o-button
             >
           </div>
         </form>
@@ -114,15 +114,16 @@
       <o-button
         v-if="discussion.comments.elements.length < discussion.comments.total"
         @click="loadMoreComments"
-        >{{ $t("Fetch more") }}</o-button
+        >{{ t("Fetch more") }}</o-button
       >
       <form @submit.prevent="reply" v-if="!error">
-        <o-field :label="$t('Text')">
+        <o-field :label="t('Text')">
           <Editor
             v-model="newComment"
-            :aria-label="$t('Comment body')"
+            :aria-label="t('Message body')"
             v-if="currentActor"
             :currentActor="currentActor"
+            :placeholder="t('Write a new message')"
           />
         </o-field>
         <o-button
@@ -130,7 +131,7 @@
           native-type="submit"
           :disabled="['<p></p>', ''].includes(newComment)"
           variant="primary"
-          >{{ $t("Reply") }}</o-button
+          >{{ t("Reply") }}</o-button
         >
       </form>
     </section>
