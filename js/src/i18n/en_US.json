@@ -1435,5 +1435,8 @@
   "No results found for {search}": "No results found for {search}",
   "No events found for {search}": "No events found for {search}",
   "No groups found for {search}": "No groups found for {search}",
-  "No event found at this address": "No event found at this address"
+  "No event found at this address": "No event found at this address",
+  "I have an account on {instance}.": "I have an account on {instance}.",
+  "profile{\\'@\\'}instance": "profile{\\'@\\'}instance",
+  "My federated identity ends in {domain}": "My federated identity ends in {domain}"
 }
