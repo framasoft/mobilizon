@@ -16,7 +16,7 @@
         >
           <h1 style="font-size: 48px; font-weight: 400; margin: 0;">
             <%= gettext("The group %{group} has been suspended on %{instance}!",
-              group: @group.name || @group.preferred_username,
+              group: display_name(@group),
               instance: @instance_name
             ) %>
           </h1>
@@ -49,12 +49,8 @@
           <p style="margin: 0;">
             <%= gettext(
               "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group.",
-              group_name: @group.name,
-              group_address:
-                if(@group.domain,
-                  do: "@#{@group.preferred_username}@#{@group.domain}",
-                  else: "@#{@group.preferred_username}"
-                )
+              group_name: escape_html(display_name(@group)),
+              group_address: preferred_username_and_domain(@group)
             )
             |> raw %>
           </p>

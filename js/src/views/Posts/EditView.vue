@@ -4,20 +4,20 @@
       <div class="container mx-auto">
         <breadcrumbs-nav v-if="actualGroup" :links="breadcrumbLinks" />
         <h1 v-if="isUpdate === true">
-          {{ $t("Edit post") }}
+          {{ t("Edit post") }}
         </h1>
         <h1 v-else>
-          {{ $t("Add a new post") }}
+          {{ t("Add a new post") }}
         </h1>
-        <h2>{{ $t("General information") }}</h2>
+        <h2>{{ t("General information") }}</h2>
         <picture-upload
           v-model="pictureFile"
-          :textFallback="$t('Headline picture')"
+          :textFallback="t('Headline picture')"
           :defaultImage="editablePost.picture"
         />
 
         <o-field
-          :label="$t('Title')"
+          :label="t('Title')"
           label-for="post-title"
           :type="errors.title ? 'is-danger' : null"
           :message="errors.title"
@@ -40,15 +40,16 @@
             class="w-full"
             v-if="currentActor"
             v-model="editablePost.body"
-            :aria-label="$t('Post body')"
+            :aria-label="t('Post body')"
             :current-actor="currentActor"
+            :placeholder="t('Write your post')"
           />
         </o-field>
-        <h2 class="mt-2">{{ $t("Who can view this post") }}</h2>
+        <h2 class="mt-2">{{ t("Who can view this post") }}</h2>
         <fieldset>
           <legend>
             {{
-              $t(
+              t(
                 "When the post is private, you'll need to share the link around."
               )
             }}
@@ -58,7 +59,7 @@
               v-model="editablePost.visibility"
               name="postVisibility"
               :native-value="PostVisibility.PUBLIC"
-              >{{ $t("Visible everywhere on the web") }}</o-radio
+              >{{ t("Visible everywhere on the web") }}</o-radio
             >
           </div>
           <div class="field">
@@ -66,7 +67,7 @@
               v-model="editablePost.visibility"
               name="postVisibility"
               :native-value="PostVisibility.UNLISTED"
-              >{{ $t("Only accessible through link") }}</o-radio
+              >{{ t("Only accessible through link") }}</o-radio
             >
           </div>
           <div class="field">
@@ -74,7 +75,7 @@
               v-model="editablePost.visibility"
               name="postVisibility"
               :native-value="PostVisibility.PRIVATE"
-              >{{ $t("Only accessible to members of the group") }}</o-radio
+              >{{ t("Only accessible to members of the group") }}</o-radio
             >
           </div>
         </fieldset>
@@ -84,14 +85,14 @@
           <div class="navbar-menu flex flex-wrap py-2">
             <div class="flex flex-wrap justify-end ml-auto gap-1">
               <o-button variant="text" @click="$router.go(-1)">{{
-                $t("Cancel")
+                t("Cancel")
               }}</o-button>
               <o-button
                 v-if="isUpdate"
                 variant="danger"
                 outlined
                 @click="openDeletePostModal"
-                >{{ $t("Delete post") }}</o-button
+                >{{ t("Delete post") }}</o-button
               >
               <!-- If an post has been published we can't make it draft anymore -->
               <o-button
@@ -99,14 +100,14 @@
                 v-if="post?.draft === true"
                 outlined
                 @click="publish(true)"
-                >{{ $t("Save draft") }}</o-button
+                >{{ t("Save draft") }}</o-button
               >
               <o-button variant="primary" native-type="submit">
                 <span v-if="isUpdate === false || post?.draft === true">{{
-                  $t("Publish")
+                  t("Publish")
                 }}</span>
 
-                <span v-else>{{ $t("Update post") }}</span>
+                <span v-else>{{ t("Update post") }}</span>
               </o-button>
             </div>
           </div>
@@ -121,7 +122,7 @@
     ></o-loading>
     <div class="container mx-auto" v-else>
       <o-notification variant="danger">
-        {{ $t("Only group moderators can create, edit and delete posts.") }}
+        {{ t("Only group moderators can create, edit and delete posts.") }}
       </o-notification>
     </div>
   </div>

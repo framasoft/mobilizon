@@ -8,10 +8,17 @@ export const DASHBOARD = gql`
         id
         uuid
         title
+        beginsOn
         picture {
           id
           alt
           url
+        }
+        attributedTo {
+          ...ActorFragment
+        }
+        organizerActor {
+          ...ActorFragment
         }
       }
       lastGroupCreated {

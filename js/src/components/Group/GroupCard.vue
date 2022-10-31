@@ -2,7 +2,7 @@
   <LinkOrRouterLink
     :to="to"
     :isInternal="isInternal"
-    class="mbz-card shrink-0 dark:bg-mbz-purple dark:text-white rounded-lg shadow-lg my-4 flex items-center flex-col"
+    class="mbz-card shrink-0 dark:bg-mbz-purple dark:text-white rounded-lg shadow-lg flex items-center flex-col"
     :class="{
       'sm:flex-row': mode === 'row',
       'sm:max-w-xs sm:w-[18rem] shrink-0 flex flex-col': mode === 'column',

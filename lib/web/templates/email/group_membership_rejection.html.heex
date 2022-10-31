@@ -46,9 +46,9 @@
           <p style="margin: 0;">
             <%= gettext(
               "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected.",
-              group: Mobilizon.Actors.Actor.display_name(@group),
+              group: escape_html(display_name(@group)),
               link_start:
-                "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(@group)) |> URI.decode()}\">",
+                "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, preferred_username_and_domain(@group)) |> URI.decode()}\">",
               link_end: "</a>"
             )
             |> raw %>

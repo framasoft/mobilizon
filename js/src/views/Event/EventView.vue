@@ -10,7 +10,7 @@
 
         <section class="intro" dir="auto">
           <div class="flex flex-wrap gap-2">
-            <div class="flex-1 min-w-fit">
+            <div class="flex-1">
               <h1
                 class="text-4xl font-bold m-0"
                 dir="auto"
@@ -108,11 +108,9 @@
       </div>
 
       <div
-        class="event-description-wrapper rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse"
+        class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
-        <aside
-          class="event-metadata rounded bg-white dark:bg-gray-600 shadow-md h-min"
-        >
+        <aside class="rounded bg-white dark:bg-gray-600 shadow-md h-min">
           <div class="sticky p-4">
             <event-metadata-sidebar
               v-if="event"
@@ -122,9 +120,11 @@
             />
           </div>
         </aside>
-        <div class="event-description-comments">
-          <section class="event-description">
-            <h2 class="text-xl">{{ t("About this event") }}</h2>
+        <div class="flex-1">
+          <section
+            class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4"
+          >
+            <h2 class="text-2xl">{{ t("About this event") }}</h2>
             <p v-if="!event?.description">
               {{ t("The event organizer didn't add any description.") }}
             </p>
@@ -138,7 +138,7 @@
               />
             </div>
           </section>
-          <section class="integration-wrappers">
+          <section class="my-4">
             <component
               v-for="(metadata, integration) in integrations"
               :is="integration"
@@ -146,7 +146,10 @@
               :metadata="metadata"
             />
           </section>
-          <section class="comments" ref="commentsObserver">
+          <section
+            class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+            ref="commentsObserver"
+          >
             <a href="#comments">
               <h2 class="text-xl" id="comments">{{ t("Comments") }}</h2>
             </a>
@@ -155,8 +158,11 @@
         </div>
       </div>
 
-      <section class="" v-if="(event?.relatedEvents ?? []).length > 0">
-        <h2 class="">
+      <section
+        class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+        v-if="(event?.relatedEvents ?? []).length > 0"
+      >
+        <h2 class="text-2xl mb-2">
           {{ t("These events may interest you") }}
         </h2>
         <multi-card :events="event?.relatedEvents ?? []" />
@@ -492,192 +498,8 @@ useHead({
   meta: [{ name: "description", content: eventDescription.value }],
 });
 </script>
-<style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-.section {
-  padding: 1rem 2rem 4rem;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-div.sidebar {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-
-  position: relative;
-
-  &::before {
-    content: "";
-    background: #b3b3b2;
-    position: absolute;
-    bottom: 30px;
-    top: 30px;
-    left: 0;
-    height: calc(100% - 60px);
-    width: 1px;
-  }
-
-  div.organizer {
-    display: inline-flex;
-    padding-top: 10px;
-
-    a {
-      color: #4a4a4a;
-
-      span {
-        line-height: 2.7rem;
-        @include padding-right(6px);
-      }
-    }
-  }
-}
-
-.intro {
-  // background: white;
-
-  .is-3-tablet {
-    width: initial;
-  }
-
-  p.tags {
-    a {
-      text-decoration: none;
-    }
-
-    span {
-      &.tag {
-        margin: 0 2px;
-      }
-    }
-  }
-}
-
-.event-description-wrapper {
-  padding: 0;
-
-  aside.event-metadata {
-    min-width: 20rem;
-    flex: 1;
-
-    .sticky {
-      // position: sticky;
-      // background: white;
-      top: 50px;
-      padding: 1rem;
-    }
-  }
-
-  div.event-description-comments {
-    min-width: 20rem;
-    padding: 1rem;
-    flex: 2;
-    // background: white;
-  }
-
-  .description-content {
-    :deep(h1) {
-      font-size: 2rem;
-    }
-
-    :deep(h2) {
-      font-size: 1.5rem;
-    }
-
-    :deep(h3) {
-      font-size: 1.25rem;
-    }
-
-    :deep(ul) {
-      list-style-type: disc;
-    }
-
-    :deep(li) {
-      margin: 10px auto 10px 2rem;
-    }
-
-    :deep(blockquote) {
-      border-left: 0.2em solid #333;
-      display: block;
-      @include padding-left(1rem);
-    }
-
-    :deep(p) {
-      margin: 10px auto;
-
-      a {
-        display: inline-block;
-        padding: 0.3rem;
-        color: #111;
-
-        &:empty {
-          display: none;
-        }
-      }
-    }
-  }
-}
-
-.comments {
-  padding-top: 3rem;
-
-  a h3#comments {
-    margin-bottom: 10px;
-  }
-}
-
-.more-events {
-  // background: white;
-  padding: 1rem 1rem 4rem;
-
-  & > .title {
-    font-size: 1.5rem;
-  }
-}
-
-// .dropdown .dropdown-trigger span {
-//   cursor: pointer;
-// }
-
-// a.dropdown-item,
-// .dropdown .dropdown-menu .has-link a,
-// button.dropdown-item {
-//   white-space: nowrap;
-//   width: 100%;
-//   @include padding-right(1rem);
-//   text-align: right;
-// }
-
-a.participations-link {
-  text-decoration: none;
-}
-
-.no-border {
-  border: 0;
-  cursor: auto;
-}
-
-.intro-wrapper {
-  .date-calendar-icon-wrapper {
-    margin-top: 16px;
-    height: 0;
-    display: flex;
-    align-items: flex-end;
-    align-self: flex-start;
-    margin-bottom: 7px;
-    @include margin-left(0);
-  }
-}
-.title {
-  margin: 0;
-  font-size: 2rem;
+<style>
+.event-description a {
+  @apply inline-block p-1 bg-mbz-yellow-alt-200 text-black;
 }
 </style>

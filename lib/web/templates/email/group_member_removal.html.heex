@@ -46,7 +46,7 @@
           <p style="margin: 0;">
             <%= gettext(
               "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore.",
-              group: @group.name,
+              group: escape_html(display_name(@group)),
               link_start: "<a href=\"#{@group.url}\">",
               link_end: "</a>"
             )

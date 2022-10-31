@@ -5,7 +5,10 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
   alias Mobilizon.Web.Router.Helpers, as: Routes
-  import Mobilizon.Service.Metadata.Utils, only: [process_description: 2, default_description: 1]
+
+  import Mobilizon.Service.Metadata.Utils,
+    only: [process_description: 2, default_description: 1, escape_text: 1]
+
   import Mobilizon.Web.Gettext
 
   def build_tags(_actor, _locale \\ "en")
@@ -19,7 +22,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
       end)
 
     [
-      Tag.tag(:meta, property: "og:title", content: Actor.display_name_and_username(group)),
+      Tag.tag(:meta, property: "og:title", content: actor_display_name_escaped(group)),
       Tag.tag(:meta,
         property: "og:url",
         content:
@@ -34,7 +37,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
       Tag.tag(:meta, property: "og:type", content: "profile"),
       Tag.tag(:meta,
         property: "profile:username",
-        content: Actor.preferred_username_and_domain(group)
+        content: group |> Actor.preferred_username_and_domain() |> escape_text()
       ),
       Tag.tag(:meta, property: "twitter:card", content: "summary"),
       Tag.tag(:meta, property: "twitter:site", content: "@joinmobilizon")
@@ -67,7 +70,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
         %{
           "@type" => "ListItem",
           "position" => 1,
-          "name" => Actor.display_name(group)
+          "name" => actor_display_name_escaped(group)
         }
       ]
     }
@@ -87,16 +90,14 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
         Tag.tag(:link,
           rel: "alternate",
           type: "application/atom+xml",
-          title:
-            gettext("%{name}'s feed", name: group.name || group.preferred_username) |> HTML.raw(),
+          title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
           href:
             Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), :atom)
         ),
         Tag.tag(:link,
           rel: "alternate",
           type: "text/calendar",
-          title:
-            gettext("%{name}'s feed", name: group.name || group.preferred_username) |> HTML.raw(),
+          title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
           href:
             Routes.feed_url(
               Endpoint,
@@ -130,5 +131,11 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
     "group.json"
     |> ObjectView.render(%{group: group})
     |> Jason.encode!()
+  end
+
+  defp actor_display_name_escaped(actor) do
+    actor
+    |> Actor.display_name()
+    |> escape_text()
   end
 end

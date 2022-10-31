@@ -913,6 +913,7 @@ msgstr ""
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr "Pyysit uutta salasanaa tilillesi palvelimella <b>%{instance}</b>."
 
+#: lib/web/templates/email/email.html.heex:112
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Please do not use it for real purposes."
@@ -980,7 +981,7 @@ msgstr "Tapahtuma päivitetty!"
 msgid "Flagged comments"
 msgstr "Merkityt kommentit"
 
-#: lib/web/templates/email/event_participation_approved.html.heex:59
+#: lib/web/templates/email/event_participation_approved.html.heex:61
 #: lib/web/templates/email/event_participation_approved.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Good news: one of the event organizers just approved your request. Update your calendar, because you're on the guest list now!"
@@ -1118,7 +1119,7 @@ msgstr ""
 "Tapahtumaa ei ole vielä vahvistettu. Järjestäjät ilmoittavat vahvistamisesta "
 "myöhemmin."
 
-#: lib/web/templates/email/event_participation_rejected.html.heex:59
+#: lib/web/templates/email/event_participation_rejected.html.heex:61
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
@@ -1139,9 +1140,9 @@ msgstr "Näytä raportti"
 msgid "View report:"
 msgstr "Näytä raportti:"
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:83
-#: lib/web/templates/email/event_participation_approved.html.heex:79
-#: lib/web/templates/email/event_participation_confirmed.html.heex:79
+#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/event_participation_approved.html.heex:81
+#: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Visit event page"
 msgstr "Käy tapahtumasivulla"
@@ -1162,9 +1163,9 @@ msgstr "Katso päivitetty tapahtuma: %{linkki}"
 msgid "What's up today?"
 msgstr "Mitä tänään tapahtuu?"
 
-#: lib/web/templates/email/event_participation_approved.html.heex:96
+#: lib/web/templates/email/event_participation_approved.html.heex:98
 #: lib/web/templates/email/event_participation_approved.text.eex:11
-#: lib/web/templates/email/event_participation_confirmed.html.heex:96
+#: lib/web/templates/email/event_participation_confirmed.html.heex:98
 #: lib/web/templates/email/event_participation_confirmed.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
@@ -1206,11 +1207,6 @@ msgstr "Olet mukana!"
 msgid "If you didn't trigger the change yourself, please ignore this message."
 msgstr "Jos et tehnyt vaihtoa itse, voit jättää tämän viestin huomiotta."
 
-#: lib/web/templates/email/email.html.heex:112
-#, elixir-autogen, elixir-format
-msgid "<b>Please do not use it for real purposes.</b>"
-msgstr "<b>Älä käytä todellisiin tarkoituksiin.</b>"
-
 #: lib/web/templates/email/group_member_removal.html.heex:64
 #: lib/web/templates/email/group_member_removal.text.eex:5
 #, elixir-autogen, elixir-format
@@ -1245,7 +1241,7 @@ msgstr ""
 "Sinut on poistettu ryhmästä %{link_start}<b>%{group}</b>%{link_end}. Et voi "
 "enää käyttää ryhmän yksityistä sisältöä."
 
-#: lib/web/templates/email/group_suspension.html.heex:85
+#: lib/web/templates/email/group_suspension.html.heex:81
 #: lib/web/templates/email/group_suspension.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "As this group was located on another instance, it will continue to work for other instances than this one."
@@ -1253,7 +1249,7 @@ msgstr ""
 "Koska tämä ryhmä sijaitsi toisella palvelimella, sen toiminta jatkuu muilla "
 "kuin tällä palvelimella."
 
-#: lib/web/templates/email/group_suspension.html.heex:71
+#: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
@@ -1502,7 +1498,7 @@ msgstr "Profiilista %{profile} tehtiin ilmoitus"
 msgid "Profile reported"
 msgstr "Profiili ilmoitettu"
 
-#: lib/web/templates/email/event_participation_confirmed.html.heex:59
+#: lib/web/templates/email/event_participation_confirmed.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "You have now confirmed your participation. Update your calendar, because you're on the guest list now!"
 msgstr ""
@@ -1587,8 +1583,8 @@ msgstr "Pahoittelemme, tapahtui virhe palvelimen päässä."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Tämä on koekäyttöön tarkoitettu Mobilizonin esittelysivu."
 
-#: lib/service/metadata/actor.ex:91
-#: lib/service/metadata/actor.ex:99
+#: lib/service/metadata/actor.ex:90
+#: lib/service/metadata/actor.ex:97
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -1637,12 +1633,12 @@ msgstr "Mobilizon-palvelin näyttää olevan väliakaisesti alhaalla."
 msgid "Public feed for %{instance}"
 msgstr "Palvelimen %{instance} julkinen syöte"
 
-#: lib/graphql/resolvers/user.ex:324
+#: lib/graphql/resolvers/user.ex:333
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:330
+#: lib/graphql/resolvers/user.ex:339
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""

@@ -2,23 +2,23 @@
   <% :resource_created -> %>
     <%= if @activity.subject_params["is_folder"] do %>
       <%= dgettext("activity", "%{profile} created the folder %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
           "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
           :resource,
           @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
       |> raw %>
     <% else %>
       <%= dgettext("activity", "%{profile} created the resource %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
           "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
           :resource,
           @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
       |> raw %>
@@ -29,14 +29,15 @@
         "activity",
         "%{profile} renamed the folder from %{old_resource_title} to %{resource}.",
         %{
-          profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+          profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
           resource:
             "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
             :resource,
             @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>",
-          old_resource_title: "<b>#{@activity.subject_params["old_resource_title"]}</b>"
+          old_resource_title:
+            "<b>#{escape_html(@activity.subject_params["old_resource_title"])}</b>"
         }
       )
       |> raw %>
@@ -45,14 +46,15 @@
         "activity",
         "%{profile} renamed the resource from %{old_resource_title} to %{resource}.",
         %{
-          profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+          profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
           resource:
             "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
             :resource,
             @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>",
-          old_resource_title: "<b>#{@activity.subject_params["old_resource_title"]}</b>"
+          old_resource_title:
+            "<b>#{escape_html(@activity.subject_params["old_resource_title"])}</b>"
         }
       )
       |> raw %>
@@ -60,23 +62,23 @@
   <% :resource_moved -> %>
     <%= if @activity.subject_params["is_folder"] do %>
       <%= dgettext("activity", "%{profile} moved the folder %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
           "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
           :resource,
           @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
       |> raw %>
     <% else %>
       <%= dgettext("activity", "%{profile} moved the resource %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
           "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
           :resource,
           @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
-                                #{@activity.subject_params["resource_title"]}
+                                #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
       |> raw %>
@@ -84,14 +86,14 @@
   <% :resource_deleted -> %>
     <%= if @activity.subject_params["is_folder"] do %>
       <%= dgettext("activity", "%{profile} deleted the folder %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<b>#{@activity.subject_params["resource_title"]}</b>"
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
+        resource: "<b>#{escape_html(@activity.subject_params["resource_title"])}</b>"
       })
       |> raw %>
     <% else %>
       <%= dgettext("activity", "%{profile} deleted the resource %{resource}.", %{
-        profile: "<b>#{Mobilizon.Actors.Actor.display_name_and_username(@activity.author)}</b>",
-        resource: "<b>#{@activity.subject_params["resource_title"]}</b>"
+        profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
+        resource: "<b>#{escape_html(@activity.subject_params["resource_title"])}</b>"
       })
       |> raw %>
     <% end %>

@@ -77,9 +77,9 @@
             >
               <div class="flex gap-1 items-center">
                 <div class="flex-none">
-                  <figure class="" v-if="identity.avatar">
+                  <figure class="h-8 w-8" v-if="identity.avatar">
                     <img
-                      class="rounded-full h-8 w-8"
+                      class="rounded-full object-cover h-full"
                       loading="lazy"
                       :src="identity.avatar.url"
                       alt=""

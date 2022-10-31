@@ -129,6 +129,7 @@
           :current-actor="(currentActor as IPerson)"
           v-model="event.description"
           :aria-label="t('Event description body')"
+          :placeholder="t('Describe your event')"
         />
       </div>
 

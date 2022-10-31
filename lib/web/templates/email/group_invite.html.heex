@@ -46,8 +46,8 @@
           <p style="margin: 0;">
             <%= gettext(
               "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}",
-              group: @group.name,
-              inviter: @inviter.name,
+              group: escape_html(display_name(@group)),
+              inviter: escape_html(display_name(@inviter)),
               link_start: "<a href=\"#{@group.url}\">",
               link_end: "</a>"
             )

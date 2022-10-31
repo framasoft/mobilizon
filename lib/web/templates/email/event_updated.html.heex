@@ -46,7 +46,7 @@
           <p style="margin: 0;">
             <%= gettext(
               "There have been changes for <b>%{title}</b> so we'd thought we'd let you know.",
-              title: @old_event.title
+              title: escape_html(@old_event.title)
             )
             |> raw %>
           </p>

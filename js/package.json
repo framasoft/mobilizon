@@ -41,6 +41,7 @@
     "@tiptap/extension-mention": "^2.0.0-beta.42",
     "@tiptap/extension-ordered-list": "^2.0.0-beta.24",
     "@tiptap/extension-paragraph": "^2.0.0-beta.22",
+    "@tiptap/extension-placeholder": "^2.0.0-beta.199",
     "@tiptap/extension-strike": "^2.0.0-beta.26",
     "@tiptap/extension-text": "^2.0.0-beta.15",
     "@tiptap/extension-underline": "^2.0.0-beta.7",

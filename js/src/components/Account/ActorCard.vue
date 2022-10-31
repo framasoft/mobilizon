@@ -6,7 +6,7 @@
     <div class="flex pl-2">
       <figure class="w-12 h-12" v-if="actor.avatar">
         <img
-          class="rounded-lg"
+          class="rounded-full object-cover h-full"
           :src="actor.avatar.url"
           alt=""
           width="48"
