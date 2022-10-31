@@ -4,7 +4,7 @@
       <o-field
         :label-for="id"
         :message="fieldErrors"
-        :variant="{ danger: fieldErrors }"
+        :variant="fieldErrors ? 'danger' : ''"
         class="!-mt-2"
         :labelClass="labelClass"
       >
