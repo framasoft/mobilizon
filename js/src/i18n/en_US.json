@@ -1425,5 +1425,15 @@
   "Message body": "Message body",
   "Describe your event": "Describe your event",
   "A few lines about your group": "A few lines about your group",
-  "Write your post": "Write your post"
+  "Write your post": "Write your post",
+  "Suggestions:": "Suggestions:",
+  "Make sure that all words are spelled correctly.": "Make sure that all words are spelled correctly.",
+  "Try different keywords.": "Try different keywords.",
+  "Try more general keywords.": "Try more general keywords.",
+  "Try fewer keywords.": "Try fewer keywords.",
+  "Change the filters.": "Change the filters.",
+  "No results found for {search}": "No results found for {search}",
+  "No events found for {search}": "No events found for {search}",
+  "No groups found for {search}": "No groups found for {search}",
+  "No event found at this address": "No event found at this address"
 }

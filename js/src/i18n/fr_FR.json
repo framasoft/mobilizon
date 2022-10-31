@@ -1423,5 +1423,15 @@
   "Message body": "Corps du message",
   "Describe your event": "Décrivez votre événement",
   "A few lines about your group": "Quelques lignes à propos de votre groupe",
-  "Write your post": "Écrivez votre billet"
+  "Write your post": "Écrivez votre billet",
+  "Suggestions:": "Suggestions :",
+  "Make sure that all words are spelled correctly.": "Vérifiez l’orthographe des termes de recherche.",
+  "Try different keywords.": "Essayez d'autres mots.",
+  "Try more general keywords.": "Utilisez des mots clés plus généraux.",
+  "Try fewer keywords.": "Spécifiez un moins grand nombre de mots-clés.",
+  "Change the filters.": "Changez les filtres.",
+  "No results found for {search}": "Aucun résultat trouvé pour {search}",
+  "No events found for {search}": "Aucun événement trouvé pour {search}",
+  "No groups found for {search}": "Aucun groupe trouvé pour {search}",
+  "No event found at this address": "Aucun événement trouvé à cette addresse"
 }
