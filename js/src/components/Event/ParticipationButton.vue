@@ -165,8 +165,8 @@ import TimerSandEmpty from "vue-material-design-icons/TimerSandEmpty.vue";
 const props = defineProps<{
   participation: IParticipant | undefined;
   event: IEvent;
-  currentActor: IPerson;
-  identities: IPerson[];
+  currentActor: IPerson | undefined;
+  identities: IPerson[] | undefined;
 }>();
 
 const emit = defineEmits([

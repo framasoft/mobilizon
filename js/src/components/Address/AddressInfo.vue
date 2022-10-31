@@ -113,10 +113,6 @@ address {
 
   span.addressDescription {
     text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1 0 auto;
-    min-width: 100%;
-    max-width: 4rem;
     overflow: hidden;
   }
 

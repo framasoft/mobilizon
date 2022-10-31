@@ -1,66 +1,77 @@
 <template>
-  <section class="container mx-auto hero is-fullheight">
-    <div class="hero-body">
-      <div class="container mx-auto">
-        <div class="columns is-vcentered">
-          <div class="column has-text-centered">
-            <o-button
-              variant="primary"
-              size="medium"
-              tag="router-link"
-              :to="{
-                name: RouteName.LOGIN,
-                query: {
-                  code: LoginErrorCode.NEED_TO_LOGIN,
-                  redirect: pathAfterLogin,
-                },
-              }"
-              >{{ $t("Login on {instance}", { instance: host }) }}</o-button
-            >
-          </div>
-          <vertical-divider :content="$t('Or')" />
-          <div class="column">
-            <h2 class="text-2xl">
-              {{ $t("I have an account on another Mobilizon instance.") }}
-            </h2>
-            <p>{{ $t("Other software may also support this.") }}</p>
-            <p>{{ sentence }}</p>
-            <form @submit.prevent="redirectToInstance">
-              <o-field :label="$t('Your federated identity')">
-                <o-field>
-                  <o-input
-                    expanded
-                    autocapitalize="none"
-                    autocorrect="off"
-                    v-model="remoteActorAddress"
-                    :placeholder="$t('profile@instance')"
-                  ></o-input>
-                  <p class="control">
-                    <button class="button is-primary" type="submit">
-                      {{ $t("Go") }}
-                    </button>
-                  </p>
-                </o-field>
-              </o-field>
-            </form>
-          </div>
-        </div>
-        <div class="has-text-centered">
-          <o-button tag="a" variant="text" @click="$router.go(-1)">{{
-            $t("Back to previous page")
-          }}</o-button>
-        </div>
+  <section class="container mx-auto max-w-2xl">
+    <div class="flex flex-wrap gap-4 items-center w-full">
+      <div class="px-2 flex-1">
+        <h2 class="text-2xl">
+          {{
+            t("I have an account on {instance}.", { instance: instanceName })
+          }}
+        </h2>
+        <i18n-t keypath="My federated identity ends in {domain}">
+          <template #domain>
+            <code>@{{ host }}</code>
+          </template>
+        </i18n-t>
+        <o-button
+          variant="primary"
+          size="medium"
+          tag="router-link"
+          class="mt-4"
+          :to="{
+            name: RouteName.LOGIN,
+            query: {
+              code: LoginErrorCode.NEED_TO_LOGIN,
+              redirect: pathAfterLogin,
+            },
+          }"
+          >{{ t("Login on {instance}", { instance: host }) }}</o-button
+        >
       </div>
+      <div class="sm:border-l-4 px-2 sm:px-4 flex-1">
+        <h2 class="text-2xl">
+          {{ t("I have an account on another Mobilizon instance.") }}
+        </h2>
+        <p>{{ t("Other software may also support this.") }}</p>
+        <p>{{ sentence }}</p>
+        <form @submit.prevent="redirectToInstance">
+          <o-field
+            :label="t('Your federated identity')"
+            label-for="remoteProfileInput"
+          >
+            <o-field>
+              <o-input
+                id="remoteProfileInput"
+                expanded
+                autocapitalize="none"
+                autocorrect="off"
+                v-model="remoteActorAddress"
+                :placeholder="t('profile{\'@\'}instance')"
+              ></o-input>
+              <p class="control">
+                <o-button type="submit">
+                  {{ t("Go") }}
+                </o-button>
+              </p>
+            </o-field>
+          </o-field>
+        </form>
+      </div>
+    </div>
+    <div class="text-center">
+      <o-button tag="a" variant="text" @click="$router.go(-1)">{{
+        t("Back to previous page")
+      }}</o-button>
     </div>
   </section>
 </template>
 <script lang="ts" setup>
-import VerticalDivider from "@/components/Utils/VerticalDivider.vue";
 import { LoginErrorCode } from "@/types/enums";
 import RouteName from "../../router/name";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useInstanceName } from "@/composition/apollo/config";
 
-defineProps<{
+const props = defineProps<{
   uri: string;
   pathAfterLogin?: string;
   sentence?: string;
@@ -68,7 +79,10 @@ defineProps<{
 
 const remoteActorAddress = ref("");
 
-// eslint-disable-next-line class-methods-use-this
+const { t } = useI18n({ useScope: "global" });
+
+const { instanceName } = useInstanceName();
+
 const host = computed((): string => {
   return window.location.hostname;
 });
@@ -101,7 +115,7 @@ const webFingerFetch = async (
     );
 
     if (link && link.template.includes("{uri}")) {
-      return link.template.replace("{uri}", encodeURIComponent(this.uri));
+      return link.template.replace("{uri}", encodeURIComponent(props.uri));
     }
   }
   throw new Error("No interaction path found in webfinger data");

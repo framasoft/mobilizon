@@ -500,11 +500,16 @@
       </div>
       <div v-if="mode === ViewMode.LIST">
         <template v-if="contentType === ContentType.ALL">
+          <template v-if="searchLoading">
+            <SkeletonGroupResultList v-for="i in 2" :key="i" />
+            <SkeletonEventResultList v-for="i in 4" :key="i" />
+          </template>
           <o-notification v-if="features && !features.groups" variant="danger">
             {{ t("Groups are not enabled on this instance.") }}
           </o-notification>
           <div v-else-if="searchGroups && searchGroups?.total > 0">
             <GroupCard
+              class="my-2"
               v-for="group in searchGroups?.elements"
               :group="group"
               :key="group.id"
@@ -513,9 +518,6 @@
               mode="row"
             />
           </div>
-          <o-notification v-else-if="searchLoading === false" variant="danger">
-            {{ t("No groups found") }}
-          </o-notification>
           <div v-if="searchEvents && searchEvents.total > 0">
             <event-card
               mode="row"
@@ -529,16 +531,40 @@
               class="my-4"
             />
           </div>
-          <o-notification v-else-if="searchLoading === false" variant="info">
-            <p>{{ t("No events found") }}</p>
-            <p v-if="searchIsUrl && !currentUser?.id">
+          <EmptyContent v-else-if="searchLoading === false" icon="magnify">
+            <span v-if="searchIsUrl">
+              {{ t("No event found at this address") }}
+            </span>
+            <span v-else-if="!search">
+              {{ t("No results found") }}
+            </span>
+            <i18n-t keypath="No results found for {search}" tag="span" v-else>
+              <template #search>
+                <b class="">{{ search }}</b>
+              </template>
+            </i18n-t>
+            <template #desc v-if="searchIsUrl && !currentUser?.id">
               {{
                 t(
                   "Only registered users may fetch remote events from their URL."
                 )
               }}
-            </p>
-          </o-notification>
+            </template>
+            <template #desc v-else>
+              <p class="my-2 text-start">
+                {{ t("Suggestions:") }}
+              </p>
+              <ul class="list-disc list-inside text-start">
+                <li>
+                  {{ t("Make sure that all words are spelled correctly.") }}
+                </li>
+                <li>{{ t("Try different keywords.") }}</li>
+                <li>{{ t("Try more general keywords.") }}</li>
+                <li>{{ t("Try fewer keywords.") }}</li>
+                <li>{{ t("Change the filters.") }}</li>
+              </ul>
+            </template>
+          </EmptyContent>
           <o-pagination
             v-if="
               (searchEvents && searchEvents?.total > EVENT_PAGE_LIMIT) ||
@@ -556,6 +582,9 @@
           />
         </template>
         <template v-else-if="contentType === ContentType.EVENTS">
+          <template v-if="searchLoading">
+            <SkeletonEventResultList v-for="i in 8" :key="i" />
+          </template>
           <template v-if="searchEvents && searchEvents.total > 0">
             <event-card
               mode="row"
@@ -580,24 +609,51 @@
             >
             </o-pagination>
           </template>
-          <o-notification v-else-if="searchLoading === false" variant="info">
-            <p>{{ t("No events found") }}</p>
-            <p v-if="searchIsUrl && !currentUser?.id">
+          <EmptyContent v-else-if="searchLoading === false" icon="calendar">
+            <span v-if="searchIsUrl">
+              {{ t("No event found at this address") }}
+            </span>
+            <span v-else-if="!search">
+              {{ t("No events found") }}
+            </span>
+            <i18n-t keypath="No events found for {search}" tag="span" v-else>
+              <template #search>
+                <b>{{ search }}</b>
+              </template>
+            </i18n-t>
+            <template #desc v-if="searchIsUrl && !currentUser?.id">
               {{
                 t(
                   "Only registered users may fetch remote events from their URL."
                 )
               }}
-            </p>
-          </o-notification>
+            </template>
+            <template #desc v-else>
+              <p class="my-2 text-start">
+                {{ t("Suggestions:") }}
+              </p>
+              <ul class="list-disc list-inside text-start">
+                <li>
+                  {{ t("Make sure that all words are spelled correctly.") }}
+                </li>
+                <li>{{ t("Try different keywords.") }}</li>
+                <li>{{ t("Try more general keywords.") }}</li>
+                <li>{{ t("Try fewer keywords.") }}</li>
+                <li>{{ t("Change the filters.") }}</li>
+              </ul>
+            </template>
+          </EmptyContent>
         </template>
         <template v-else-if="contentType === ContentType.GROUPS">
           <o-notification v-if="features && !features.groups" variant="danger">
             {{ t("Groups are not enabled on this instance.") }}
           </o-notification>
-
+          <template v-else-if="searchLoading">
+            <SkeletonGroupResultList v-for="i in 6" :key="i" />
+          </template>
           <template v-else-if="searchGroups && searchGroups?.total > 0">
             <GroupCard
+              class="my-2"
               v-for="group in searchGroups?.elements"
               :group="group"
               :key="group.id"
@@ -617,9 +673,33 @@
             >
             </o-pagination>
           </template>
-          <o-notification v-else-if="searchLoading === false" variant="danger">
-            {{ t("No groups found") }}
-          </o-notification>
+          <EmptyContent
+            v-else-if="searchLoading === false"
+            icon="account-multiple"
+          >
+            <span v-if="!search">
+              {{ t("No events found") }}
+            </span>
+            <i18n-t keypath="No groups found for {search}" tag="span" v-else>
+              <template #search>
+                <b>{{ search }}</b>
+              </template>
+            </i18n-t>
+            <template #desc>
+              <p class="my-2 text-start">
+                {{ t("Suggestions:") }}
+              </p>
+              <ul class="list-disc list-inside text-start">
+                <li>
+                  {{ t("Make sure that all words are spelled correctly.") }}
+                </li>
+                <li>{{ t("Try different keywords.") }}</li>
+                <li>{{ t("Try more general keywords.") }}</li>
+                <li>{{ t("Try fewer keywords.") }}</li>
+                <li>{{ t("Change the filters.") }}</li>
+              </ul>
+            </template>
+          </EmptyContent>
         </template>
       </div>
       <event-marker-map
@@ -693,6 +773,9 @@ import { IConfig } from "@/types/config.model";
 import { TypeNamed } from "@/types/apollo";
 import { LatLngBounds } from "leaflet";
 import lodashSortBy from "lodash/sortBy";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import SkeletonGroupResultList from "@/components/Group/SkeletonGroupResultList.vue";
+import SkeletonEventResultList from "@/components/Event/SkeletonEventResultList.vue";
 
 const EventMarkerMap = defineAsyncComponent(
   () => import("@/components/Search/EventMarkerMap.vue")
@@ -764,6 +847,10 @@ const arrayTransformer: RouteQueryTransformer<string[]> = {
   },
 };
 
+const props = defineProps<{
+  tag?: string;
+}>();
+
 const page = useRouteQuery("page", 1, integerTransformer);
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
 const groupPage = useRouteQuery("groupPage", 1, integerTransformer);
@@ -775,7 +862,7 @@ const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(
   "contentType",
-  ContentType.ALL,
+  props.tag ? ContentType.EVENTS : ContentType.ALL,
   enumTransformer(ContentType)
 );
 
@@ -818,10 +905,6 @@ const zoom = useRouteQuery("zoom", undefined, integerTransformer);
 const EVENT_PAGE_LIMIT = 16;
 
 const GROUP_PAGE_LIMIT = 16;
-
-const props = defineProps<{
-  tag?: string;
-}>();
 
 const { features } = useFeatures();
 const { eventCategories } = useEventCategories();

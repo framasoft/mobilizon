@@ -166,6 +166,7 @@ defmodule Mobilizon.Events.Event do
     |> put_picture(attrs)
     |> validate_lengths()
     |> validate_end_time()
+    |> unique_constraint(:url)
   end
 
   @spec validate_lengths(Changeset.t()) :: Changeset.t()

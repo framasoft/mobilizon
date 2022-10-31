@@ -138,8 +138,8 @@ const props = withDefaults(
     participation: IParticipant | undefined;
     event: IEvent;
     anonymousParticipation?: boolean | null;
-    currentActor: IPerson;
-    identities: IPerson[];
+    currentActor: IPerson | undefined;
+    identities: IPerson[] | undefined;
     anonymousParticipationConfig: IAnonymousParticipationConfig;
   }>(),
   {
