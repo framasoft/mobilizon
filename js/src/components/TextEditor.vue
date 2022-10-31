@@ -238,7 +238,7 @@ import FormatListNumbered from "vue-material-design-icons/FormatListNumbered.vue
 import FormatQuoteClose from "vue-material-design-icons/FormatQuoteClose.vue";
 import Undo from "vue-material-design-icons/Undo.vue";
 import Redo from "vue-material-design-icons/Redo.vue";
-import Placeholder from '@tiptap/extension-placeholder'
+import Placeholder from "@tiptap/extension-placeholder";
 
 const props = withDefaults(
   defineProps<{
@@ -332,8 +332,8 @@ const editor = useEditor({
       submit: () => emit("submit"),
     }),
     Placeholder.configure({
-      placeholder: props.placeholder ?? t('Write something')
-    })
+      placeholder: props.placeholder ?? t("Write something"),
+    }),
   ],
   injectCSS: false,
   content: props.modelValue,

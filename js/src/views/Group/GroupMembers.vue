@@ -112,9 +112,9 @@
           v-slot="props"
         >
           <article class="flex">
-            <figure v-if="props.row.actor.avatar">
+            <figure v-if="props.row.actor.avatar" class="h-10 w-10">
               <img
-                class="rounded"
+                class="rounded-full object-cover h-full"
                 :src="props.row.actor.avatar.url"
                 :alt="props.row.actor.avatar.alt || ''"
                 height="48"

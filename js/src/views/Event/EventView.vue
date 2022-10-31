@@ -110,9 +110,7 @@
       <div
         class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
-        <aside
-          class="rounded bg-white dark:bg-gray-600 shadow-md h-min"
-        >
+        <aside class="rounded bg-white dark:bg-gray-600 shadow-md h-min">
           <div class="sticky p-4">
             <event-metadata-sidebar
               v-if="event"
@@ -123,7 +121,9 @@
           </div>
         </aside>
         <div class="flex-1">
-          <section class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4">
+          <section
+            class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4"
+          >
             <h2 class="text-2xl">{{ t("About this event") }}</h2>
             <p v-if="!event?.description">
               {{ t("The event organizer didn't add any description.") }}
@@ -146,7 +146,10 @@
               :metadata="metadata"
             />
           </section>
-          <section class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4" ref="commentsObserver">
+          <section
+            class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+            ref="commentsObserver"
+          >
             <a href="#comments">
               <h2 class="text-xl" id="comments">{{ t("Comments") }}</h2>
             </a>
@@ -155,7 +158,10 @@
         </div>
       </div>
 
-      <section class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4" v-if="(event?.relatedEvents ?? []).length > 0">
+      <section
+        class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
+        v-if="(event?.relatedEvents ?? []).length > 0"
+      >
         <h2 class="text-2xl mb-2">
           {{ t("These events may interest you") }}
         </h2>
@@ -493,7 +499,6 @@ useHead({
 });
 </script>
 <style>
-
 .event-description a {
   @apply inline-block p-1 bg-mbz-yellow-alt-200 text-black;
 }

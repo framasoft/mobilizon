@@ -146,7 +146,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:modelValue", "deleteComment"]);
 
-const { t } = useI18n({useScope: 'global'});
+const { t } = useI18n({ useScope: "global" });
 
 const comment = computed(() => props.modelValue);
 

@@ -66,12 +66,18 @@
       </div>
       <div class="flex flex-wrap gap-4">
         <div>
-          <h2>{{ t('Last published event')}}</h2>
-          <event-card v-if="dashboard?.lastPublicEventPublished" :event="dashboard?.lastPublicEventPublished" />
+          <h2>{{ t("Last published event") }}</h2>
+          <event-card
+            v-if="dashboard?.lastPublicEventPublished"
+            :event="dashboard?.lastPublicEventPublished"
+          />
         </div>
         <div>
-          <h2>{{ t('Last group created')}}</h2>
-          <group-card v-if="dashboard?.lastGroupCreated" :group="dashboard?.lastGroupCreated" />
+          <h2>{{ t("Last group created") }}</h2>
+          <group-card
+            v-if="dashboard?.lastGroupCreated"
+            :group="dashboard?.lastGroupCreated"
+          />
         </div>
       </div>
     </section>
