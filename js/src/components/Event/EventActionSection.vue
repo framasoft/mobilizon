@@ -15,27 +15,6 @@
       @cancel-anonymous-participation="cancelAnonymousParticipation"
     />
     <div class="flex flex-col">
-      <template v-if="!event?.draft">
-        <p
-          v-if="event?.visibility === EventVisibility.PUBLIC"
-          class="inline-flex gap-1"
-        >
-          <Earth />
-          {{ t("Public event") }}
-        </p>
-        <p
-          v-if="event?.visibility === EventVisibility.UNLISTED"
-          class="inline-flex gap-1"
-        >
-          <Link />
-          {{ t("Private event") }}
-        </p>
-      </template>
-      <template v-if="!event?.local && organizer?.domain">
-        <a :href="event?.url">
-          <tag>{{ organizer?.domain }}</tag>
-        </a>
-      </template>
       <p class="inline-flex gap-1">
         <TicketConfirmationOutline />
         <router-link
@@ -327,18 +306,10 @@ import { IEvent } from "@/types/event.model";
 import ParticipationSection from "@/components/Participation/ParticipationSection.vue";
 import ReportModal from "@/components/Report/ReportModal.vue";
 import IdentityPicker from "@/views/Account/IdentityPicker.vue";
-import {
-  EventVisibility,
-  EventJoinOptions,
-  ParticipantRole,
-  MemberRole,
-} from "@/types/enums";
+import { EventJoinOptions, ParticipantRole, MemberRole } from "@/types/enums";
 import { GRAPHQL_API_ENDPOINT } from "@/api/_entrypoint";
 import { computed, defineAsyncComponent, inject, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import Tag from "@/components/TagElement.vue";
-import Earth from "vue-material-design-icons/Earth.vue";
-import Link from "vue-material-design-icons/Link.vue";
 import Flag from "vue-material-design-icons/Flag.vue";
 import CalendarPlus from "vue-material-design-icons/CalendarPlus.vue";
 import ContentDuplicate from "vue-material-design-icons/ContentDuplicate.vue";

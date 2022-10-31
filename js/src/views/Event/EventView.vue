@@ -3,14 +3,19 @@
     <o-loading v-model:active="eventLoading" />
     <div class="flex flex-col mb-3">
       <event-banner :picture="event?.picture" />
-      <div class="intro-wrapper flex flex-col relative px-2 pb-2">
-        <div class="date-calendar-icon-wrapper" v-if="event?.beginsOn">
-          <date-calendar-icon :date="event.beginsOn.toString()" />
+      <div
+        class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-2 rounded"
+      >
+        <div class="date-calendar-icon-wrapper relative" v-if="event?.beginsOn">
+          <date-calendar-icon
+            :date="event.beginsOn.toString()"
+            class="absolute left-3 -top-16"
+          />
         </div>
 
-        <section class="intro" dir="auto">
+        <section class="intro px-2 pt-4" dir="auto">
           <div class="flex flex-wrap gap-2">
-            <div class="flex-1">
+            <div class="flex-1 min-w-[300px]">
               <h1
                 class="text-4xl font-bold m-0"
                 dir="auto"
@@ -65,7 +70,7 @@
                   </popover-actor-card>
                 </span>
               </div>
-              <div class="inline-flex items-center gap-1">
+              <div class="flex flex-wrap items-center gap-2 gap-y-4 mt-2 my-3">
                 <p v-if="event?.status !== EventStatus.CONFIRMED">
                   <tag
                     variant="warning"
@@ -78,7 +83,28 @@
                     >{{ t("Event cancelled") }}</tag
                   >
                 </p>
-                <p class="flex gap-1 items-center" dir="auto">
+                <template v-if="!event?.draft">
+                  <p
+                    v-if="event?.visibility === EventVisibility.PUBLIC"
+                    class="inline-flex gap-1"
+                  >
+                    <Earth />
+                    {{ t("Public event") }}
+                  </p>
+                  <p
+                    v-if="event?.visibility === EventVisibility.UNLISTED"
+                    class="inline-flex gap-1"
+                  >
+                    <Link />
+                    {{ t("Private event") }}
+                  </p>
+                </template>
+                <template v-if="!event?.local && organizerDomain">
+                  <a :href="event?.url">
+                    <tag variant="info">{{ organizerDomain }}</tag>
+                  </a>
+                </template>
+                <p class="flex flex-wrap gap-1 items-center" dir="auto">
                   <tag v-if="eventCategory" class="category" capitalize>{{
                     eventCategory
                   }}</tag>
@@ -110,7 +136,9 @@
       <div
         class="rounded-lg dark:border-violet-title flex flex-wrap flex-col md:flex-row-reverse gap-4"
       >
-        <aside class="rounded bg-white dark:bg-gray-600 shadow-md h-min">
+        <aside
+          class="rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
+        >
           <div class="sticky p-4">
             <event-metadata-sidebar
               v-if="event"
@@ -132,7 +160,7 @@
               <div
                 :lang="event?.language"
                 dir="auto"
-                class="description-content"
+                class="mt-4 prose md:prose-lg lg:prose-xl dark:prose-invert prose-h1:text-xl prose-h1:font-semibold prose-h2:text-lg prose-h3:text-base md:prose-h1:text-2xl md:prose-h1:font-semibold md:prose-h2:text-xl md:prose-h3:text-lg lg:prose-h1:text-2xl lg:prose-h1:font-semibold lg:prose-h2:text-xl lg:prose-h3:text-lg"
                 ref="eventDescriptionElement"
                 v-html="event.description"
               />
@@ -151,7 +179,7 @@
             ref="commentsObserver"
           >
             <a href="#comments">
-              <h2 class="text-xl" id="comments">{{ t("Comments") }}</h2>
+              <h2 class="text-2xl" id="comments">{{ t("Comments") }}</h2>
             </a>
             <comment-tree v-if="event && loadComments" :event="event" />
           </section>
@@ -189,13 +217,25 @@
 </template>
 
 <script lang="ts" setup>
-import { EventStatus, ParticipantRole, RoutingType } from "@/types/enums";
+import {
+  EventStatus,
+  ParticipantRole,
+  RoutingType,
+  EventVisibility,
+} from "@/types/enums";
 import {
   EVENT_PERSON_PARTICIPATION,
   // EVENT_PERSON_PARTICIPATION_SUBSCRIPTION_CHANGED,
 } from "@/graphql/event";
-import { displayName, IPerson, usernameWithDomain } from "@/types/actor";
+import {
+  displayName,
+  IActor,
+  IPerson,
+  usernameWithDomain,
+} from "@/types/actor";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import Earth from "vue-material-design-icons/Earth.vue";
+import Link from "vue-material-design-icons/Link.vue";
 import MultiCard from "@/components/Event/MultiCard.vue";
 import RouteName from "@/router/name";
 import CommentTree from "@/components/Comment/CommentTree.vue";
@@ -491,6 +531,20 @@ const eventCategory = computed((): string | undefined => {
   return (eventCategories.value ?? []).find((eventCategoryToFind) => {
     return eventCategoryToFind.id === event.value?.category;
   })?.label as string;
+});
+
+const organizer = computed((): IActor | null => {
+  if (event.value?.attributedTo?.id) {
+    return event.value.attributedTo;
+  }
+  if (event.value?.organizerActor) {
+    return event.value.organizerActor;
+  }
+  return null;
+});
+
+const organizerDomain = computed((): string | undefined => {
+  return organizer.value?.domain ?? undefined;
 });
 
 useHead({
