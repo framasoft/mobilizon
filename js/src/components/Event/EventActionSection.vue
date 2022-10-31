@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <participation-section
-      v-if="event && currentActor && identities && anonymousParticipationConfig"
+      v-if="event && anonymousParticipationConfig"
       :participation="participations[0]"
       :event="event"
       :anonymousParticipation="anonymousParticipation"
