@@ -1,5 +1,21 @@
 <template>
   <article class="container mx-auto post" v-if="post">
+    <breadcrumbs-nav
+      v-if="post.attributedTo"
+      :links="[
+        { name: RouteName.MY_GROUPS, text: t('My groups') },
+        {
+          name: RouteName.GROUP,
+          params: { preferredUsername: usernameWithDomain(post.attributedTo) },
+          text: displayName(post.attributedTo),
+        },
+        {
+          name: RouteName.POST,
+          params: { slug: post.slug },
+          text: post.title,
+        },
+      ]"
+    />
     <header>
       <div class="flex justify-center">
         <lazy-image-wrapper :picture="post.picture" />
@@ -94,12 +110,13 @@
                 isCurrentActorAGroupModerator
               "
             >
-              <router-link class="flex gap-1 whitespace-nowrap"
+              <router-link
+                class="flex gap-1 whitespace-nowrap"
                 :to="{
                   name: RouteName.POST_EDIT,
                   params: { slug: post.slug },
                 }"
-                >
+              >
                 <Pencil />
                 {{ t("Edit") }}
               </router-link>
@@ -112,10 +129,13 @@
               "
               tabIndex="-1"
             >
-            <button @click="openDeletePostModal" class="flex gap-1 whitespace-nowrap">
-              <Delete />
-              {{ t("Delete") }}
-            </button>
+              <button
+                @click="openDeletePostModal"
+                class="flex gap-1 whitespace-nowrap"
+              >
+                <Delete />
+                {{ t("Delete") }}
+              </button>
             </o-dropdown-item>
 
             <hr
@@ -132,7 +152,10 @@
               v-if="!post.draft"
               tabIndex="-1"
             >
-            <button @click="triggerShare()" class="flex gap-1 whitespace-nowrap">
+              <button
+                @click="triggerShare()"
+                class="flex gap-1 whitespace-nowrap"
+              >
                 <Share />
                 {{ t("Share this event") }}
               </button>
@@ -143,7 +166,10 @@
               v-if="ableToReport"
               tabIndex="-1"
             >
-            <button @click="isReportModalActive = true" class="flex gap-1 whitespace-nowrap">
+              <button
+                @click="isReportModalActive = true"
+                class="flex gap-1 whitespace-nowrap"
+              >
                 <Flag />
                 {{ t("Report") }}
               </button>
