@@ -205,31 +205,34 @@ export const LOGGED_USER_DRAFTS = gql`
     loggedUser {
       id
       drafts(page: $page, limit: $limit) {
-        id
-        uuid
-        title
-        draft
-        picture {
+        total
+        elements {
           id
-          url
-          alt
-        }
-        beginsOn
-        status
-        visibility
-        attributedTo {
-          ...ActorFragment
-        }
-        organizerActor {
-          ...ActorFragment
-        }
-        participantStats {
-          going
-          notApproved
-        }
-        options {
-          maximumAttendeeCapacity
-          remainingAttendeeCapacity
+          uuid
+          title
+          draft
+          picture {
+            id
+            url
+            alt
+          }
+          beginsOn
+          status
+          visibility
+          attributedTo {
+            ...ActorFragment
+          }
+          organizerActor {
+            ...ActorFragment
+          }
+          participantStats {
+            going
+            notApproved
+          }
+          options {
+            maximumAttendeeCapacity
+            remainingAttendeeCapacity
+          }
         }
       }
     }

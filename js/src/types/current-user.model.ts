@@ -54,7 +54,7 @@ export interface IUser extends ICurrentUser {
   disabled: boolean;
   participations: Paginate<IParticipant>;
   mediaSize: number;
-  drafts: IEvent[];
+  drafts: Paginate<IEvent>;
   settings: IUserSettings;
   activitySettings: IActivitySetting[];
   followedGroupEvents: Paginate<IFollowedGroupEvent>;

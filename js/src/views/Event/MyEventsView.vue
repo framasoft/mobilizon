@@ -19,9 +19,9 @@
       >
     </div>
     <!-- <o-loading v-model:active="$apollo.loading"></o-loading> -->
-    <div class="wrapper flex flex-wrap gap-4 items-start">
+    <div class="flex flex-wrap gap-4 items-start">
       <div
-        class="event-filter rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
+        class="rounded p-3 flex-auto md:flex-none bg-zinc-300 dark:bg-zinc-700"
       >
         <o-field>
           <o-switch v-model="showUpcoming">{{
@@ -73,15 +73,31 @@
           />
         </o-field>
       </div>
-      <div class="my-events flex-1">
+      <div class="flex-1 min-w-[300px]">
         <section
-          class="py-4"
-          v-if="showUpcoming && showDrafts && drafts.length > 0"
+          class="py-4 first:pt-0"
+          v-if="showUpcoming && showDrafts && drafts && drafts.total > 0"
         >
-          <multi-event-minimalist-card :events="drafts" :showOrganizer="true" />
+          <h2 class="text-2xl mb-2">{{ t("Drafts") }}</h2>
+          <multi-event-minimalist-card
+            :events="drafts.elements"
+            :showOrganizer="true"
+          />
+          <o-pagination
+            class="mt-4"
+            v-show="drafts.total > LOGGED_USER_DRAFTS_LIMIT"
+            :total="drafts.total"
+            v-model:current="draftsPage"
+            :per-page="LOGGED_USER_DRAFTS_LIMIT"
+            :aria-next-label="t('Next page')"
+            :aria-previous-label="t('Previous page')"
+            :aria-page-label="t('Page')"
+            :aria-current-label="t('Current page')"
+          >
+          </o-pagination>
         </section>
         <section
-          class="py-4"
+          class="py-4 first:pt-0"
           v-if="
             showUpcoming && monthlyFutureEvents && monthlyFutureEvents.size > 0
           "
@@ -92,7 +108,7 @@
               v-for="month of monthlyFutureEvents"
               :key="month[0]"
             >
-              <span class="upcoming-month">{{ month[0] }}</span>
+              <h2 class="text-2xl">{{ month[0] }}</h2>
               <div v-for="element in month[1]" :key="element.id">
                 <event-participation-card
                   v-if="'role' in element"
@@ -131,7 +147,7 @@
           v-if="
             showUpcoming &&
             monthlyFutureEvents &&
-            monthlyFutureEvents.length === 0 &&
+            monthlyFutureEvents.size === 0 &&
             true // !$apollo.loading
           "
         >
@@ -209,10 +225,15 @@ import {
 import { useQuery } from "@vue/apollo-composable";
 import { computed, inject, ref, defineAsyncComponent } from "vue";
 import { IUser } from "@/types/current-user.model";
-import { booleanTransformer, useRouteQuery } from "vue-use-route-query";
+import {
+  booleanTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
 import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
+import { useHead } from "@vueuse/head";
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")
@@ -253,8 +274,6 @@ const dateFilter = useRouteQuery("dateFilter", new Date(), {
 const hasMoreFutureParticipations = ref(true);
 const hasMorePastParticipations = ref(true);
 
-// config: CONFIG
-
 const {
   result: loggedUserUpcomingEventsResult,
   fetchMore: fetchMoreUpcomingEvents,
@@ -277,10 +296,17 @@ const groupEvents = computed(
       .elements ?? []
 );
 
+const LOGGED_USER_DRAFTS_LIMIT = 10;
+const draftsPage = useRouteQuery("draftsPage", 1, integerTransformer);
+
 const { result: draftsResult } = useQuery<{
   loggedUser: Pick<IUser, "drafts">;
-}>(LOGGED_USER_DRAFTS, () => ({ page: 1, limit: 10 }));
-const drafts = computed(() => draftsResult.value?.loggedUser.drafts ?? []);
+}>(
+  LOGGED_USER_DRAFTS,
+  () => ({ page: draftsPage.value, limit: LOGGED_USER_DRAFTS_LIMIT }),
+  () => ({ fetchPolicy: "cache-and-network" })
+);
+const drafts = computed(() => draftsResult.value?.loggedUser.drafts);
 
 const { result: participationsResult, fetchMore: fetchMoreParticipations } =
   useQuery<{
@@ -293,12 +319,6 @@ const pastParticipations = computed(
       total: 0,
     }
 );
-
-// metaInfo() {
-//   return {
-//     title: this.t("My events") as string,
-//   };
-// },
 
 const monthlyEvents = (
   elements: Eventable[],
@@ -413,86 +433,8 @@ const dateFnsLocale = inject<Locale>("dateFnsLocale");
 const firstDayOfWeek = computed((): number => {
   return dateFnsLocale?.options?.weekStartsOn ?? 0;
 });
+
+useHead({
+  title: computed(() => t("My events")),
+});
 </script>
-
-<style lang="scss" scoped>
-.participation {
-  margin: 1rem auto;
-}
-
-section {
-  .upcoming-month,
-  .past-month {
-    text-transform: capitalize;
-    display: inline-block;
-    position: relative;
-    font-size: 1.3rem;
-
-    &::after {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      content: "";
-      width: calc(100% + 30px);
-      height: 3px;
-      max-width: 150px;
-    }
-  }
-}
-
-.not-found {
-  margin-top: 2rem;
-  .img-container {
-    background-image: url("/img/pics/event_creation-480w.webp");
-    @media (min-resolution: 2dppx) {
-      & {
-        background-image: url("/img/pics/event_creation-1024w.webp");
-      }
-    }
-    max-width: 450px;
-    height: 300px;
-    box-shadow: 0 0 8px 8px white inset;
-    @media (prefers-color-scheme: dark) {
-      box-shadow: 0 0 8px 8px #374151 inset;
-    }
-    background-size: cover;
-    border-radius: 10px;
-    margin: auto auto 1rem;
-  }
-}
-
-.wrapper {
-  // display: grid;
-  // grid-template-areas: "filter" "events";
-  // align-items: start;
-
-  // // @include desktop {
-  // gap: 2rem;
-  // grid-template-columns: 1fr 3fr;
-  // grid-template-areas: "filter events";
-  // // }
-
-  .event-filter {
-    grid-area: filter;
-
-    // @include desktop {
-    //   padding: 2rem 1.25rem;
-    //   :deep(.field.is-grouped) {
-    //     display: block;
-    //   }
-    // }
-
-    :deep(.field > .field) {
-      margin: 0 auto 1.25rem !important;
-    }
-
-    .date-filter :deep(.field-body) {
-      display: block;
-    }
-  }
-  .my-events {
-    grid-area: events;
-  }
-}
-</style>
