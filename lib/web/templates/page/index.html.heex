@@ -20,7 +20,6 @@
       <link rel="preload" href="/img/shape-3.svg" as="image" />
     <% end %>
     <%= tags(assigns) || assigns.tags %>
-    <%= Vite.inlined_phx_manifest() %>
     <%= Vite.vite_client() %>
     <%= Vite.vite_snippet("src/main.ts") %>
   </head>

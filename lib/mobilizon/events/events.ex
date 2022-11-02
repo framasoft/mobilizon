@@ -465,13 +465,13 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
-  @spec list_drafts_for_user(integer, integer | nil, integer | nil) :: [Event.t()]
+  @spec list_drafts_for_user(integer, integer | nil, integer | nil) :: Page.t(Event.t())
   def list_drafts_for_user(user_id, page \\ nil, limit \\ nil) do
     Event
     |> user_events_query(user_id)
     |> filter_draft(true)
-    |> Page.paginate(page, limit)
-    |> Repo.all()
+    |> order_by(desc: :updated_at)
+    |> Page.build_page(page, limit)
   end
 
   @spec is_user_moderator_for_event?(integer | String.t(), integer | String.t()) :: boolean

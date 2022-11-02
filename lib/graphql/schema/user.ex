@@ -96,7 +96,9 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       resolve(&User.user_memberships/3)
     end
 
-    field(:drafts, list_of(:event), description: "The list of draft events this user has created") do
+    field(:drafts, :paginated_event_list,
+      description: "The list of draft events this user has created"
+    ) do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated drafts events list"
