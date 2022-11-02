@@ -85,7 +85,8 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
       else
         [
           @script_src,
-          "'sha256-4RS22DYeB7U14dra4KcQYxmwt5HkOInieXK1NUMBmQI=' "
+          "'sha256-4RS22DYeB7U14dra4KcQYxmwt5HkOInieXK1NUMBmQI=' ",
+          "'sha256-zJdRXhLWm9NGI6BFr+sNmHBBrjAdJdFr7MpUq0EwK58=' "
         ]
       end
 
