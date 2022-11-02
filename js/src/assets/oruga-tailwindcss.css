@@ -266,7 +266,7 @@ button.menubar__button {
   @apply px-3 dark:text-black;
 }
 .pagination-link-current {
-  @apply bg-primary cursor-not-allowed pointer-events-none border-primary text-white;
+  @apply bg-primary cursor-not-allowed pointer-events-none border-primary text-white dark:text-zinc-900;
 }
 .pagination-ellipsis {
   @apply text-center m-1 text-gray-300;
