@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-20 06:47+0000\n"
+"PO-Revision-Date: 2022-11-01 21:38+0000\n"
 "Last-Translator: Berto Te <ateira@3fpj.com>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/es/>\n"
@@ -1143,6 +1143,6 @@ msgstr ""
 
 #: lib/graphql/resolvers/user.ex:286
 #: lib/graphql/resolvers/user.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
 msgstr "El nuevo correo electrónico no parece ser válido"
