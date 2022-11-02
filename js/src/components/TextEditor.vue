@@ -44,8 +44,18 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 3 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
+          :class="{
+            'is-active': editor?.isActive('heading', {
+              level: props.headingLevel[0],
+            }),
+          }"
+          @click="
+            editor
+              ?.chain()
+              .focus()
+              .toggleHeading({ level: props.headingLevel[0] })
+              .run()
+          "
           type="button"
           :title="t('Heading Level 1')"
         >
@@ -55,8 +65,18 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 4 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 4 }).run()"
+          :class="{
+            'is-active': editor?.isActive('heading', {
+              level: props.headingLevel[1],
+            }),
+          }"
+          @click="
+            editor
+              ?.chain()
+              .focus()
+              .toggleHeading({ level: props.headingLevel[1] })
+              .run()
+          "
           type="button"
           :title="t('Heading Level 2')"
         >
@@ -66,8 +86,18 @@
         <button
           v-if="!isBasicMode"
           class="menubar__button"
-          :class="{ 'is-active': editor?.isActive('heading', { level: 5 }) }"
-          @click="editor?.chain().focus().toggleHeading({ level: 5 }).run()"
+          :class="{
+            'is-active': editor?.isActive('heading', {
+              level: props.headingLevel[2],
+            }),
+          }"
+          @click="
+            editor
+              ?.chain()
+              .focus()
+              .toggleHeading({ level: props.headingLevel[2] })
+              .run()
+          "
           type="button"
           :title="t('Heading Level 3')"
         >
@@ -196,7 +226,7 @@
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/vue-3";
 import Blockquote from "@tiptap/extension-blockquote";
 import BulletList from "@tiptap/extension-bullet-list";
-import Heading from "@tiptap/extension-heading";
+import Heading, { Level } from "@tiptap/extension-heading";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Bold from "@tiptap/extension-bold";
@@ -248,10 +278,12 @@ const props = withDefaults(
     ariaLabel?: string;
     currentActor: IPerson;
     placeholder?: string;
+    headingLevel?: Level[];
   }>(),
   {
     mode: "description",
     maxSize: 100_000_000,
+    headingLevel: () => [3, 4, 5],
   }
 );
 
@@ -310,7 +342,7 @@ const editor = useEditor({
     Blockquote,
     BulletList,
     Heading.configure({
-      levels: [3, 4, 5],
+      levels: props.headingLevel,
     }),
     Document,
     Paragraph,

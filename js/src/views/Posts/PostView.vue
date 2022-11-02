@@ -111,7 +111,7 @@
               "
             >
               <router-link
-                class="flex gap-1 whitespace-nowrap"
+                class="flex gap-1 whitespace-nowrap flex-1"
                 :to="{
                   name: RouteName.POST_EDIT,
                   params: { slug: post.slug },
