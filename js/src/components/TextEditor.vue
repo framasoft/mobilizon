@@ -643,3 +643,12 @@ onBeforeUnmount(() => {
   height: 0;
 }
 </style>
+<style>
+.menubar__button {
+  @apply mx-0.5;
+}
+
+.menubar__button.is-active {
+  @apply bg-zinc-300 dark:bg-zinc-500;
+}
+</style>
