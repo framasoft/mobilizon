@@ -6,17 +6,17 @@
       </div>
       <div class="relative flex flex-col">
         <div
-          class="px-2 py-3 flex flex-wrap justify-center items-center"
+          class="px-2 py-3 flex flex-wrap gap-4 justify-center items-center"
           dir="auto"
         >
-          <div class="flex-1">
+          <div class="flex-auto min-w-[300px] max-w-screen-lg">
             <div class="inline">
               <tag
                 class="mr-2"
                 variant="warning"
                 size="medium"
                 v-if="post.draft"
-                >{{ $t("Draft") }}</tag
+                >{{ t("Draft") }}</tag
               >
               <h1 class="inline" :lang="post.language">
                 {{ post.title }}
@@ -52,7 +52,7 @@
               >
                 <Clock :size="16" />
                 {{
-                  $t("Edited {relative_time} ago", {
+                  t("Edited {relative_time} ago", {
                     relative_time: formatDistanceToNowStrict(
                       new Date(post.updatedAt),
                       {
@@ -64,7 +64,7 @@
               </span>
               <span v-if="post.visibility === PostVisibility.UNLISTED" class="">
                 <o-icon icon="link" size="small" />
-                {{ $t("Accessible only by link") }}
+                {{ t("Accessible only by link") }}
               </span>
               <span
                 v-else-if="post.visibility === PostVisibility.PRIVATE"
@@ -72,7 +72,7 @@
               >
                 <Lock :size="16" />
                 {{
-                  $t("Accessible only to members", {
+                  t("Accessible only to members", {
                     group: post.attributedTo?.name,
                   })
                 }}
@@ -82,24 +82,27 @@
           <o-dropdown position="bottom-left" aria-role="list">
             <template #trigger>
               <o-button role="button" icon-right="dots-horizontal">
-                {{ $t("Actions") }}
+                {{ t("Actions") }}
               </o-button>
             </template>
             <o-dropdown-item
               aria-role="listitem"
               has-link
+              tabIndex="-1"
               v-if="
                 currentActor?.id === post?.author?.id ||
                 isCurrentActorAGroupModerator
               "
             >
-              <router-link
+              <router-link class="flex gap-1 whitespace-nowrap"
                 :to="{
                   name: RouteName.POST_EDIT,
                   params: { slug: post.slug },
                 }"
-                >{{ $t("Edit") }} <o-icon icon="pencil"
-              /></router-link>
+                >
+                <Pencil />
+                {{ t("Edit") }}
+              </router-link>
             </o-dropdown-item>
             <o-dropdown-item
               aria-role="listitem"
@@ -107,11 +110,12 @@
                 currentActor?.id === post?.author?.id ||
                 isCurrentActorAGroupModerator
               "
-              @click="openDeletePostModal"
-              @keyup.enter="openDeletePostModal"
+              tabIndex="-1"
             >
-              {{ $t("Delete") }}
-              <o-icon icon="delete" />
+            <button @click="openDeletePostModal" class="flex gap-1 whitespace-nowrap">
+              <Delete />
+              {{ t("Delete") }}
+            </button>
             </o-dropdown-item>
 
             <hr
@@ -126,32 +130,30 @@
             <o-dropdown-item
               aria-role="listitem"
               v-if="!post.draft"
-              @click="triggerShare()"
-              @keyup.enter="triggerShare()"
+              tabIndex="-1"
             >
-              <span>
-                {{ $t("Share this event") }}
-                <o-icon icon="share" />
-              </span>
+            <button @click="triggerShare()" class="flex gap-1 whitespace-nowrap">
+                <Share />
+                {{ t("Share this event") }}
+              </button>
             </o-dropdown-item>
 
             <o-dropdown-item
               aria-role="listitem"
               v-if="ableToReport"
-              @click="isReportModalActive = true"
-              @keyup.enter="isReportModalActive = true"
+              tabIndex="-1"
             >
-              <span>
-                {{ $t("Report") }}
-                <o-icon icon="flag" />
-              </span>
+            <button @click="isReportModalActive = true" class="flex gap-1 whitespace-nowrap">
+                <Flag />
+                {{ t("Report") }}
+              </button>
             </o-dropdown-item>
           </o-dropdown>
         </div>
       </div>
     </header>
     <o-notification
-      :title="$t('Members-only post')"
+      :title="t('Members-only post')"
       class="mx-4"
       variant="warning"
       :closable="false"
@@ -164,7 +166,7 @@
       "
     >
       {{
-        $t(
+        t(
           "This post is accessible only for members. You have access to it for moderation purposes only because you are an instance moderator."
         )
       }}
@@ -173,10 +175,10 @@
     <section
       v-html="post.body"
       dir="auto"
-      class="px-1 prose lg:prose-xl prose-p:mt-6 dark:prose-invert"
+      class="px-2 md:px-4 py-4 prose lg:prose-xl prose-p:mt-6 dark:prose-invert bg-white dark:bg-zinc-700 mx-auto"
       :lang="post.language"
     />
-    <section class="flex gap-2 my-6" dir="auto">
+    <section class="flex gap-2 my-6 justify-center" dir="auto">
       <router-link
         v-for="tag in post.tags"
         :key="tag.title"
@@ -186,14 +188,14 @@
       </router-link>
     </section>
     <o-modal
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
       v-model:active="isReportModalActive"
       has-modal-card
       ref="reportModal"
     >
       <ReportModal
         :on-confirm="reportPost"
-        :title="$t('Report this post')"
+        :title="t('Report this post')"
         :outside-domain="groupDomain"
         @close="isReportModalActive = false"
       />
@@ -202,7 +204,7 @@
       v-model:active="isShareModalActive"
       has-modal-card
       ref="shareModal"
-      :close-button-aria-label="$t('Close')"
+      :close-button-aria-label="t('Close')"
     >
       <share-post-modal :post="post" />
     </o-modal>
@@ -241,6 +243,10 @@ import { useRouter } from "vue-router";
 import { useCreateReport } from "@/composition/apollo/report";
 import Clock from "vue-material-design-icons/Clock.vue";
 import Lock from "vue-material-design-icons/Lock.vue";
+import Pencil from "vue-material-design-icons/Pencil.vue";
+import Delete from "vue-material-design-icons/Delete.vue";
+import Share from "vue-material-design-icons/Share.vue";
+import Flag from "vue-material-design-icons/Flag.vue";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
