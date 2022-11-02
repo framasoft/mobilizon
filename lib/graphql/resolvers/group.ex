@@ -441,7 +441,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         } = args,
         %{
           context: %{
-            current_user: %User{role: user_role},
+            current_user: %User{},
             current_actor: %Actor{id: actor_id}
           }
         }
