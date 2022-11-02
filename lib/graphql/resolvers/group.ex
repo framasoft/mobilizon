@@ -446,8 +446,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
           }
         }
       ) do
-    if Actors.is_member?(actor_id, group_id) or is_moderator(user_role) do
-      # TODO : Handle public / restricted to group members events
+    if Actors.is_member?(actor_id, group_id) do
       {:ok,
        Events.list_organized_events_for_group(
          group,

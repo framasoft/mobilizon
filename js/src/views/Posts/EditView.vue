@@ -43,6 +43,7 @@
             :aria-label="t('Post body')"
             :current-actor="currentActor"
             :placeholder="t('Write your post')"
+            :headingLevel="[2, 3, 4]"
           />
         </o-field>
         <h2 class="mt-2">{{ t("Who can view this post") }}</h2>

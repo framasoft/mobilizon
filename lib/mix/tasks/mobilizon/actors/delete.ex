@@ -93,7 +93,8 @@ defmodule Mix.Tasks.Mobilizon.Actors.Delete do
     end
   end
 
-  defp check_actor(%Actor{type: :Person, domain: nil} = profile, assume_yes?) do
+  defp check_actor(%Actor{type: :Person, domain: nil, user_id: user_id} = profile, assume_yes?)
+       when not is_nil(user_id) do
     %User{actors: actors, email: email} = Users.get_user_with_actors!(profile.user_id)
 
     if length(actors) == 1 do
