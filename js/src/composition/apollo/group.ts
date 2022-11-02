@@ -55,7 +55,10 @@ export function useGroup(
       name: unref(name),
       ...options,
     }),
-    () => ({ enabled: unref(name) !== undefined && unref(name) !== "" })
+    () => ({
+      enabled: unref(name) !== undefined && unref(name) !== "",
+      fetchPolicy: "cache-and-network",
+    })
   );
   const group = computed(() => result.value?.group);
   return { group, error, loading, onResult, onError, refetch };
