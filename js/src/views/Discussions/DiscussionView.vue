@@ -81,6 +81,7 @@
                   newTitle = '';
                 }
               "
+              outlined
               icon-right="close"
               :title="t('Cancel discussion title edition')"
             />
@@ -237,7 +238,7 @@ subscribeToMore({
 
 const discussion = computed(() => discussionResult.value?.discussion);
 
-const { group } = useGroup(usernameWithDomain(discussion.value?.actor));
+const group = computed(() => discussion.value?.actor);
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
