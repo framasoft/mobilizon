@@ -1,31 +1,32 @@
 <template>
-  <section>
+  <section class="bg-white p-2">
     <p v-if="isRoot">
       {{ $t("A place to store links to documents or resources of any type.") }}
     </p>
-    <div class="list-header">
-      <div class="list-header-right">
-        <o-checkbox v-model="checkedAll" v-if="resources.length > 0" />
-        <div class="actions" v-if="validCheckedResources.length > 0">
-          <small>
-            {{
-              $t(
-                "No resources selected",
-                {
-                  count: validCheckedResources.length,
-                },
-                validCheckedResources.length
-              )
-            }}
-          </small>
-          <o-button
-            variant="danger"
-            icon-right="delete"
-            size="small"
-            @click="deleteMultipleResources"
-            >{{ $t("Delete") }}</o-button
-          >
-        </div>
+    <div class="pl-6 mt-2 flex items-center gap-3">
+      <o-checkbox v-model="checkedAll" v-if="resources.length > 0" />
+      <div
+        class="flex items-center gap-3"
+        v-if="validCheckedResources.length > 0"
+      >
+        <small>
+          {{
+            $t(
+              "No resources selected",
+              {
+                count: validCheckedResources.length,
+              },
+              validCheckedResources.length
+            )
+          }}
+        </small>
+        <o-button
+          variant="danger"
+          icon-right="delete"
+          size="small"
+          @click="deleteMultipleResources"
+          >{{ $t("Delete") }}</o-button
+        >
       </div>
     </div>
     <draggable
@@ -37,7 +38,7 @@
       item-key="id"
     >
       <template #item="{ element }">
-        <div class="resource-item">
+        <div class="flex border m-2 p-2 items-center">
           <div
             class="resource-checkbox px-2"
             :class="{ checked: checkedResources[element.id as string] }"
@@ -73,7 +74,7 @@
 <script lang="ts" setup>
 import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
-import { ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { IResource } from "@/types/resource";
 import Draggable from "zhyswan-vuedraggable";
 import { IGroup } from "@/types/actor";
@@ -95,21 +96,11 @@ const groupObject: Record<string, unknown> = {
   put: true,
 };
 
-const checkedResources = ref<{ [key: string]: boolean }>({});
+const checkedResources = reactive<{ [key: string]: boolean }>({});
 
 const validCheckedResources = ref<string[]>([]);
 
 const checkedAll = ref(false);
-
-watch(checkedResources, () => {
-  const newValidCheckedResources: string[] = [];
-  Object.entries(checkedResources).forEach(([key, value]) => {
-    if (value) {
-      newValidCheckedResources.push(key);
-    }
-  });
-  validCheckedResources.value = newValidCheckedResources;
-});
 
 const deleteMultipleResources = async (): Promise<void> => {
   validCheckedResources.value.forEach((resourceID) => {
@@ -120,8 +111,18 @@ const deleteMultipleResources = async (): Promise<void> => {
 watch(checkedAll, () => {
   props.resources.forEach(({ id }) => {
     if (!id) return;
-    checkedResources.value[id] = checkedAll.value;
+    checkedResources[id] = checkedAll.value;
   });
+});
+
+watch(checkedResources, (newCheckedResources) => {
+  const newValidCheckedResources: string[] = [];
+  Object.entries(newCheckedResources).forEach(([key, value]) => {
+    if (value) {
+      newValidCheckedResources.push(key);
+    }
+  });
+  validCheckedResources.value = newValidCheckedResources;
 });
 
 // const deleteResource = (resourceID: string) => {
