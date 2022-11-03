@@ -125,6 +125,9 @@ defmodule Mobilizon.Service.Workers.Notification do
 
       :ok
     else
+      {:error, :event_not_found} ->
+        {:cancel, :event_participation_not_found}
+
       err ->
         Logger.debug(inspect(err))
         err
