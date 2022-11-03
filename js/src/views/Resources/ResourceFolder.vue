@@ -138,7 +138,13 @@
             {{ modalError }}
           </o-notification>
           <form @submit.prevent="createResource">
-            <o-field expanded :label="t('URL')" label-for="new-resource-url">
+            <o-field
+              expanded
+              :label="t('URL')"
+              label-for="new-resource-url"
+              :variant="modalFieldErrors['resource_url'] ? 'danger' : undefined"
+              :message="modalFieldErrors['resource_url']"
+            >
               <o-input
                 id="new-resource-url"
                 type="url"
@@ -153,7 +159,12 @@
               <resource-item :resource="newResource" :preview="true" />
             </div>
 
-            <o-field :label="t('Title')" label-for="new-resource-link-title">
+            <o-field
+              :label="t('Title')"
+              label-for="new-resource-link-title"
+              :variant="modalFieldErrors['title'] ? 'danger' : undefined"
+              :message="modalFieldErrors['title']"
+            >
               <o-input
                 aria-required="true"
                 v-model="newResource.title"
@@ -161,7 +172,12 @@
               />
             </o-field>
 
-            <o-field :label="t('Description')" label-for="new-resource-summary">
+            <o-field
+              :label="t('Description')"
+              label-for="new-resource-summary"
+              :variant="modalFieldErrors['summary'] ? 'danger' : undefined"
+              :message="modalFieldErrors['summary']"
+            >
               <o-input
                 type="textarea"
                 v-model="newResource.summary"
@@ -212,7 +228,10 @@ import Folder from "vue-material-design-icons/Folder.vue";
 import Link from "vue-material-design-icons/Link.vue";
 import DraggableList from "@/components/Resource/DraggableList.vue";
 import { resourcePathArray } from "@/components/Resource/utils";
-import { AbsintheGraphQLErrors } from "@/types/errors.model";
+import {
+  AbsintheGraphQLError,
+  AbsintheGraphQLErrors,
+} from "@/types/errors.model";
 
 const RESOURCES_PER_PAGE = 10;
 const page = useRouteQuery("page", 1, integerTransformer);
@@ -273,6 +292,7 @@ const createLinkResourceModal = ref(false);
 const moveModal = ref(false);
 const renameModal = ref(false);
 const modalError = ref("");
+const modalFieldErrors: Record<string, string> = reactive({});
 
 const resourceRenameInput = ref<any>();
 const modalNewResourceInput = ref<HTMLElement>();
@@ -316,7 +336,14 @@ createResourceDone(() => {
 
 createResourceError((err) => {
   console.error(err);
-  modalError.value = err.graphQLErrors[0].message;
+  const error = err.graphQLErrors[0] as AbsintheGraphQLError;
+  if (error.field) {
+    modalFieldErrors[error.field] = (error.message as unknown as string[]).join(
+      ","
+    );
+  } else {
+    modalError.value = (error.message as unknown as string[]).join(",");
+  }
 });
 
 const createResource = () => {
@@ -345,14 +372,22 @@ const {
 previewDone(({ data }) => {
   if (!data?.previewResourceLink) return;
   newResource.title = data?.previewResourceLink.title ?? "";
-  newResource.summary = data?.previewResourceLink?.description;
+  newResource.summary = data?.previewResourceLink?.description?.substring(
+    0,
+    390
+  );
   newResource.metadata = data?.previewResourceLink;
   newResource.type = "link";
 });
 
 previewError((err) => {
   console.error(err);
-  modalError.value = err.graphQLErrors[0].message;
+  const error = err.graphQLErrors[0] as AbsintheGraphQLError;
+  if (error.field) {
+    modalFieldErrors[error.field] = error.message;
+  } else {
+    modalError.value = err.graphQLErrors[0].message;
+  }
 });
 
 const previewResource = async (): Promise<void> => {
