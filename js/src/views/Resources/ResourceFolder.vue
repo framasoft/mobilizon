@@ -80,7 +80,7 @@
       has-modal-card
       :close-button-aria-label="t('Close')"
     >
-      <div class="w-full md:w-[640px]">
+      <div class="w-full">
         <section>
           <resource-selector
             :initialResource="updatedResource"
@@ -567,6 +567,9 @@ const updateResource = async (
   resourceToUpdate: IResource,
   parentPath: string | null = null
 ): Promise<void> => {
+  console.debug(
+    `Update resource « ${resourceToUpdate.title} » at path ${resourceToUpdate.path}`
+  );
   updateResourceMutation(
     {
       id: resourceToUpdate.id,

@@ -75,7 +75,7 @@ import ResourceItem from "@/components/Resource/ResourceItem.vue";
 import FolderItem from "@/components/Resource/FolderItem.vue";
 import { ref, watch } from "vue";
 import { IResource } from "@/types/resource";
-import Draggable from "vuedraggable";
+import Draggable from "zhyswan-vuedraggable";
 import { IGroup } from "@/types/actor";
 
 const props = withDefaults(
