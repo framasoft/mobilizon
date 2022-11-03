@@ -83,6 +83,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
               {:ok, %Activity{} = activity, entity} ->
                 {:ok, activity, entity}
 
+              {:error, :entity_tombstoned} ->
+                Logger.debug("Tried to reply to an event that has been tombstoned")
+                :error
+
               {:error, :event_not_allow_commenting} ->
                 Logger.debug("Tried to reply to an event for which comments are closed")
                 :error
