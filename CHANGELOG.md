@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.0-rc.2 - 2022-11-02
+
+## Added
+
+- Add setting to toggle light/dark mode
+- Allow to disable non-SSO login
+
+## Changed
+
+- UI improvements of comments
+- UI improvements of reports
+- Various UI improvement in event and group view
+- Add breadcrumb trail on Post view
+- Always lowercase the emails before trying to reset password
+- Make text editor heading level start at h3, h4, h5
+- Remove obscure reference to Douglas Adams
+- Don't inline phoenix manifest
+- Show a proper error message when failure to register to an event
+- Order categories by translated label
+- Show registration button also if registration allow list is used
+- Add logging for when cached iCalendar feed data can't be found
+- Add an error log when we try to update the relay actor
+- Lower loglevel of error when creating a new person
+- Add unique constraint on event URL
+- Allow to view more than 10 drafts events on my events view
+
+## Fixed
+
+- Fix event card background color behind picture
+- Fix position of the « no events found » message
+- Add distinct clause to search events
+- Fix showing past events on group page
+- Fix display of group invitations
+- Fix leaving a group
+- Fix group events order
+- Prevent loading group membership status before we get person information
+- Prefix setInterval with window
+- Fix fetching events with addresses that's not objects
+- Fix dashboard view
+- Fix anonymous & remote participation pages
+- Fix anonymous/remote participation button
+- Do not list drafts in upcoming / old events event if instance moderator
+- Make sure group is refreshed after action
+- Fix deleting person detached from user
+- Fix pagination number text color in dark theme
+- Fix post sharing URL
+- Fix current format status of text not displayed in text editor
+
+## Security
+
+- Correctly escape user-defined names in emails
+
 ## 3.0.0-rc.1 - 2022-10-18
 
 No changes since beta.3
