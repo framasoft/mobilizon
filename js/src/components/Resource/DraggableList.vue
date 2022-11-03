@@ -1,17 +1,20 @@
 <template>
-  <section class="bg-white p-2">
+  <section class="bg-white dark:bg-zinc-700 p-2 pt-0.5">
+    <h1>{{ t("Resources") }}</h1>
     <p v-if="isRoot">
-      {{ $t("A place to store links to documents or resources of any type.") }}
+      {{ t("A place to store links to documents or resources of any type.") }}
     </p>
     <div class="pl-6 mt-2 flex items-center gap-3">
-      <o-checkbox v-model="checkedAll" v-if="resources.length > 0" />
+      <o-checkbox v-model="checkedAll" v-if="resources.length > 0">
+        <span class="sr-only">{{ t("Select all resources") }}</span>
+      </o-checkbox>
       <div
         class="flex items-center gap-3"
         v-if="validCheckedResources.length > 0"
       >
         <small>
           {{
-            $t(
+            t(
               "No resources selected",
               {
                 count: validCheckedResources.length,
@@ -25,7 +28,7 @@
           icon-right="delete"
           size="small"
           @click="deleteMultipleResources"
-          >{{ $t("Delete") }}</o-button
+          >{{ t("Delete") }}</o-button
         >
       </div>
     </div>
@@ -43,7 +46,9 @@
             class="resource-checkbox px-2"
             :class="{ checked: checkedResources[element.id as string] }"
           >
-            <o-checkbox v-model="checkedResources[element.id as string]" />
+            <o-checkbox v-model="checkedResources[element.id as string]">
+              <span class="sr-only">{{ t("Select this resource") }}</span>
+            </o-checkbox>
           </div>
           <resource-item
             :resource="element"
@@ -63,12 +68,12 @@
         </div>
       </template>
     </draggable>
-    <div
-      class="content has-text-centered has-text-grey"
-      v-if="resources.length === 0"
-    >
-      <p>{{ $t("No resources in this folder") }}</p>
-    </div>
+    <EmptyContent icon="link" :inline="true" v-if="resources.length === 0">
+      {{ t("No resources in this folder") }}
+      <template #desc>
+        {{ t("You can add resources by using the button above.") }}
+      </template>
+    </EmptyContent>
   </section>
 </template>
 <script lang="ts" setup>
@@ -78,6 +83,8 @@ import { reactive, ref, watch } from "vue";
 import { IResource } from "@/types/resource";
 import Draggable from "zhyswan-vuedraggable";
 import { IGroup } from "@/types/actor";
+import { useI18n } from "vue-i18n";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 const props = withDefaults(
   defineProps<{ resources: IResource[]; isRoot: boolean; group: IGroup }>(),
@@ -89,6 +96,8 @@ const emit = defineEmits<{
   (e: "rename", resource: IResource): void;
   (e: "delete", resourceID: string): void;
 }>();
+
+const { t } = useI18n({ useScope: "global" });
 
 const groupObject: Record<string, unknown> = {
   name: "resources",
