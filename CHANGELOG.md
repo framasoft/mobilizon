@@ -7,12 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 3.0.0-rc.2 - 2022-11-02
 
-## Added
+### Added
 
 - Add setting to toggle light/dark mode
 - Allow to disable non-SSO login
 
-## Changed
+### Changed
 
 - UI improvements of comments
 - UI improvements of reports
@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add unique constraint on event URL
 - Allow to view more than 10 drafts events on my events view
 
-## Fixed
+### Fixed
 
 - Fix event card background color behind picture
 - Fix position of the « no events found » message
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix post sharing URL
 - Fix current format status of text not displayed in text editor
 
-## Security
+### Security
 
 - Correctly escape user-defined names in emails
 
