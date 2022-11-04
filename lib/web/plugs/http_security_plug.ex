@@ -119,13 +119,8 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
     font_src = [@font_src] ++ [get_csp_config(:font_src, options)]
 
-    frame_src = if Config.get(:env) == :dev, do: "frame-src 'self' ", else: "frame-src 'none' "
-    frame_src = [frame_src] ++ [get_csp_config(:frame_src, options)]
-
-    frame_ancestors =
-      if Config.get(:env) == :dev, do: "frame-ancestors 'self' ", else: "frame-ancestors 'none' "
-
-    frame_ancestors = [frame_ancestors] ++ [get_csp_config(:frame_ancestors, options)]
+    frame_src = build_csp_field(:frame_src, options)
+    frame_ancestors = build_csp_field(:frame_ancestors, options)
 
     report = if report_uri, do: ["report-uri ", report_uri, " ; report-to csp-endpoint"]
     insecure = if scheme == "https", do: "upgrade-insecure-requests"
@@ -162,9 +157,9 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   @spec get_csp_config(atom(), Keyword.t()) :: iodata()
   defp get_csp_config(type, options) do
     config_policy = Keyword.get(options, type, Config.get([:http_security, :csp_policy, type]))
-    front_end_analytics_policy = [Keyword.get(FrontEndAnalytics.csp(), type, [])]
-    global_search_policy = [Keyword.get(GlobalSearch.service().csp(), type, [])]
-    pictures_policy = [Keyword.get(Pictures.service().csp(), type, [])]
+    front_end_analytics_policy = Keyword.get(FrontEndAnalytics.csp(), type, [])
+    global_search_policy = Keyword.get(GlobalSearch.service().csp(), type, [])
+    pictures_policy = Keyword.get(Pictures.service().csp(), type, [])
 
     resource_providers = Config.get([Mobilizon.Service.ResourceProviders, :csp_policy, type], [])
 
@@ -174,5 +169,22 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
         global_search_policy ++ pictures_policy ++ resource_providers,
       " "
     )
+  end
+
+  defp build_csp_field(type, options) do
+    csp_config = get_csp_config(type, options)
+
+    csp_config =
+      if Config.get(:env) == :dev do
+        [csp_config] ++ ["'self'"]
+      else
+        if csp_config == "" do
+          ["'none'"]
+        else
+          [csp_config]
+        end
+      end
+
+    Enum.join([type |> to_string() |> String.replace("_", "-")] ++ csp_config, " ")
   end
 end

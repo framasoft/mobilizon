@@ -368,7 +368,7 @@ config :mobilizon, Mobilizon.Service.GlobalSearch,
 config :mobilizon, Mobilizon.Service.GlobalSearch.SearchMobilizon,
   endpoint: "https://search.joinmobilizon.org",
   csp_policy: [
-    img_src: "search.joinmobilizon.org"
+    img_src: ["search.joinmobilizon.org"]
   ]
 
 # Import environment specific config. This must remain at the bottom
