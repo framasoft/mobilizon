@@ -1,76 +1,88 @@
 <template>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <button type="button" class="delete" @click="$emit('close')" />
-    </header>
-    <div class="modal-card-body">
-      <section class="map">
-        <map-leaflet
-          v-if="physicalAddress?.geom"
-          :coords="physicalAddress.geom"
-          :marker="{
-            text: physicalAddress.fullName,
-            icon: physicalAddress.poiInfos.poiIcon.icon,
-          }"
-        />
-      </section>
-      <section class="columns is-centered map-footer">
-        <div class="column is-half has-text-centered">
-          <p class="address" v-if="physicalAddress?.fullName">
-            <i class="mdi mdi-map-marker"></i>
-            {{ physicalAddress.fullName }}
-          </p>
-          <p class="getting-there">{{ $t("Getting there") }}</p>
-          <div
-            class="buttons"
-            v-if="
-              addressLinkToRouteByCar ||
-              addressLinkToRouteByBike ||
-              addressLinkToRouteByFeet
-            "
-          >
-            <a
-              class="button"
-              target="_blank"
-              v-if="addressLinkToRouteByFeet"
-              :href="addressLinkToRouteByFeet"
-            >
-              <i class="mdi mdi-walk"></i
-            ></a>
-            <a
-              class="button"
-              target="_blank"
-              v-if="addressLinkToRouteByBike"
-              :href="addressLinkToRouteByBike"
-            >
-              <i class="mdi mdi-bike"></i
-            ></a>
-            <a
-              class="button"
-              target="_blank"
-              v-if="addressLinkToRouteByTransit"
-              :href="addressLinkToRouteByTransit"
-            >
-              <i class="mdi mdi-bus"></i
-            ></a>
-            <a
-              class="button"
-              target="_blank"
-              v-if="addressLinkToRouteByCar"
-              :href="addressLinkToRouteByCar"
-            >
-              <i class="mdi mdi-car"></i>
-            </a>
-          </div>
-        </div>
-      </section>
+  <div class="">
+    <div class="text-end">
+      <button @click="emit('close')">
+        <Close />
+        <span class="sr-only">{{ t("Close map") }}</span>
+      </button>
     </div>
+    <section class="map">
+      <map-leaflet
+        v-if="physicalAddress?.geom"
+        :coords="physicalAddress.geom"
+        :marker="{
+          text: physicalAddress.fullName,
+          icon: physicalAddress.poiInfos.poiIcon.icon,
+        }"
+      />
+    </section>
+    <section class="flex flex-col items-center mt-4">
+      <p v-if="physicalAddress?.fullName" class="flex gap-2 text-xl font-bold">
+        <MapMarker />
+        {{ physicalAddress.fullName }}
+      </p>
+      <p class="mt-4">{{ t("Getting there") }}</p>
+      <div
+        class="flex gap-2"
+        v-if="
+          addressLinkToRouteByCar ||
+          addressLinkToRouteByBike ||
+          addressLinkToRouteByFeet
+        "
+      >
+        <o-button
+          tag="a"
+          target="_blank"
+          v-if="addressLinkToRouteByFeet"
+          :href="addressLinkToRouteByFeet"
+        >
+          <Walk />
+          <span class="sr-only">{{ t("On foot") }}</span>
+        </o-button>
+        <o-button
+          tag="a"
+          target="_blank"
+          v-if="addressLinkToRouteByBike"
+          :href="addressLinkToRouteByBike"
+        >
+          <Bike />
+          <span class="sr-only">{{ t("By bike") }}</span>
+        </o-button>
+        <o-button
+          tag="a"
+          target="_blank"
+          v-if="addressLinkToRouteByTransit"
+          :href="addressLinkToRouteByTransit"
+        >
+          <Bus />
+          <span class="sr-only">{{ t("By transit") }}</span>
+        </o-button>
+        <o-button
+          tag="a"
+          target="_blank"
+          v-if="addressLinkToRouteByCar"
+          :href="addressLinkToRouteByCar"
+        >
+          <Car />
+          <span class="sr-only">{{ t("By car") }}</span>
+        </o-button>
+      </div>
+    </section>
   </div>
 </template>
 <script lang="ts" setup>
 import { Address, IAddress } from "@/types/address.model";
 import { RoutingTransportationType, RoutingType } from "@/types/enums";
 import { computed, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
+import Car from "vue-material-design-icons/Car.vue";
+import Bike from "vue-material-design-icons/Bike.vue";
+import Bus from "vue-material-design-icons/Bus.vue";
+import Walk from "vue-material-design-icons/Walk.vue";
+import MapMarker from "vue-material-design-icons/MapMarker.vue";
+import Close from "vue-material-design-icons/Close.vue";
+
+const { t } = useI18n({ useScope: "global" });
 
 const RoutingParamType = {
   [RoutingType.OPENSTREETMAP]: {
@@ -95,6 +107,8 @@ const props = defineProps<{
   address: IAddress;
   routingType: RoutingType;
 }>();
+
+const emit = defineEmits(["close"]);
 
 const physicalAddress = computed((): Address | null => {
   if (!props.address) return null;
@@ -150,25 +164,8 @@ const addressLinkToRouteByTransit = computed((): undefined | string => {
 });
 </script>
 <style lang="scss" scoped>
-@use "@/styles/_mixins" as *;
-.modal-card-head {
-  justify-content: flex-end;
-  // button.delete {
-  //   @include margin-right(1rem);
-  // }
-}
-
 section.map {
-  height: calc(100% - 8rem);
-  width: calc(100% - 20px);
-}
-
-section.map-footer {
-  p.address {
-    margin: 1rem auto;
-  }
-  div.buttons {
-    justify-content: center;
-  }
+  height: 75vh;
+  width: 100%;
 }
 </style>

@@ -205,11 +205,11 @@
         full-screen
         :can-cancel="['escape', 'outside']"
       >
-        <template #default="props">
+        <template #default>
           <event-map
             :routingType="routingType ?? RoutingType.OPENSTREETMAP"
             :address="event.physicalAddress"
-            @close="props.close"
+            @close="showMap = false"
           />
         </template>
       </o-modal>

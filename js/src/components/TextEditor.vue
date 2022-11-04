@@ -428,7 +428,7 @@ uploadMediaDone(({ data }) => {
       .focus()
       .setImage({
         src: data.uploadMedia.url,
-        alt: '',
+        alt: "",
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         "data-media-id": data.uploadMedia.id,
