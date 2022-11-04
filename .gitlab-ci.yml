@@ -319,7 +319,7 @@ package-app-dev:
 # Packaging app for multi-arch
 multi-arch-release:
   stage: package
-  image: docker:20.10.12
+  image: docker:20.10.21
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
     DOCKER_HOST: tcp://docker:2376
@@ -329,13 +329,13 @@ multi-arch-release:
     APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
     OS: debian-buster
   services:
-    - docker:20.10.12-dind
+    - docker:20.10.21-dind
   cache: {}
   before_script:
     # Install buildx
-    - wget https://github.com/docker/buildx/releases/download/v0.8.1/buildx-v0.8.1.linux-amd64
+    - wget https://github.com/docker/buildx/releases/download/v0.9.1/buildx-v0.9.1.linux-amd64
     - mkdir -p ~/.docker/cli-plugins/
-    - mv buildx-v0.8.1.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+    - mv buildx-v0.9.1.linux-amd64 ~/.docker/cli-plugins/docker-buildx
     - chmod a+x ~/.docker/cli-plugins/docker-buildx
     # Create env
     - docker context create tls-environment
