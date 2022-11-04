@@ -17,6 +17,7 @@
         :class="imageOpacity"
         alt=""
         src=""
+        loading="lazy"
       />
     </div>
   </div>

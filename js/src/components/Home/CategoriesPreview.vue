@@ -7,6 +7,7 @@
       :key="category.key"
       :category="category"
       :with-details="false"
+      :imageLazy="false"
     />
     <router-link
       :to="{ name: RouteName.CATEGORIES }"
