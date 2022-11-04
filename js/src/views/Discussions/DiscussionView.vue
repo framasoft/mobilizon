@@ -166,7 +166,6 @@ import { useHead } from "@vueuse/head";
 import { useRouter } from "vue-router";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { AbsintheGraphQLError } from "@/types/errors.model";
-import { useGroup } from "@/composition/apollo/group";
 import { MemberRole } from "@/types/enums";
 import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import { Dialog } from "@/plugins/dialog";
