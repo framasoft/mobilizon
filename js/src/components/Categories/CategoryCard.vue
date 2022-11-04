@@ -29,7 +29,7 @@
         width="384"
         height="384"
         alt=""
-        loading="lazy"
+        :loading="imageLazy ? 'lazy' : undefined"
       />
     </picture>
     <p
@@ -71,9 +71,11 @@ withDefaults(
   defineProps<{
     category: CategoryStatsModel;
     withDetails?: boolean;
+    imageLazy?: boolean;
   }>(),
   {
     withDetails: false,
+    imageLazy: true,
   }
 );
 
