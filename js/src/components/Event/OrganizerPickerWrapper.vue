@@ -185,6 +185,9 @@ const { result: personMembershipsResult } = useQuery(
     page: 1,
     limit: 10,
     groupId: route.query?.actorId,
+  }),
+  () => ({
+    enabled: currentActor.value?.id !== undefined,
   })
 );
 
