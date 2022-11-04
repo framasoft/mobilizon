@@ -1,5 +1,5 @@
 import type { Paginate } from "@/types/paginate";
-import type { IActor } from "@/types/actor";
+import type { IActor, IGroup } from "@/types/actor";
 
 export interface IResourceMetadata {
   title?: string;

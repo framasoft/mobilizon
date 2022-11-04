@@ -77,16 +77,9 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       object_data when is_map(object_data) ->
         case Discussions.get_comment_from_url_with_preload(object_data.url) do
           {:error, :comment_not_found} ->
-            object_data = transform_object_data_for_discussion(object_data)
-
-            case create_comment_or_discussion(object_data) do
-              {:ok, %Activity{} = activity, entity} ->
-                {:ok, activity, entity}
-
-              {:error, :event_not_allow_commenting} ->
-                Logger.debug("Tried to reply to an event for which comments are closed")
-                :error
-            end
+            object_data
+            |> transform_object_data_for_discussion()
+            |> save_comment_or_discussion()
 
           {:ok, %Comment{} = comment} ->
             # Object already exists
@@ -1225,5 +1218,29 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   defp remote_actor_is_being_deleted(%{"object" => object} = data) do
     object_id = Utils.get_url(object)
     Utils.get_actor(data) == object_id and not Utils.are_same_origin?(object_id, Endpoint.url())
+  end
+
+  @spec save_comment_or_discussion(map()) :: {:ok, Activity.t(), struct()} | :error
+  defp save_comment_or_discussion(object_data) do
+    case create_comment_or_discussion(object_data) do
+      {:ok, %Activity{} = activity, entity} ->
+        {:ok, activity, entity}
+
+      {:error, :entity_tombstoned} ->
+        Logger.debug("Tried to reply to an event that has been tombstoned")
+        :error
+
+      {:error, :event_not_allow_commenting} ->
+        Logger.debug("Tried to reply to an event for which comments are closed")
+        :error
+
+      {:error, %Ecto.Changeset{} = _changeset} ->
+        Logger.debug("Error when saving external comment")
+        :error
+
+      {:error, err} ->
+        Logger.debug("Generic error when saving external comment", err: inspect(err))
+        :error
+    end
   end
 end

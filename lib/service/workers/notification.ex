@@ -69,7 +69,11 @@ defmodule Mobilizon.Service.Workers.Notification do
 
       :ok
     else
-      _ -> :ok
+      %Page{elements: [], total: 0} ->
+        {:cancel, :no_user_participations}
+
+      _ ->
+        :ok
     end
   end
 
@@ -103,6 +107,9 @@ defmodule Mobilizon.Service.Workers.Notification do
 
       :ok
     else
+      %Page{elements: [], total: 0} ->
+        {:cancel, :no_user_participations}
+
       _err ->
         :ok
     end
@@ -125,6 +132,12 @@ defmodule Mobilizon.Service.Workers.Notification do
 
       :ok
     else
+      {:error, :event_not_found} ->
+        {:cancel, :event_participation_not_found}
+
+      %Page{elements: [], total: 0} ->
+        {:cancel, :no_participants_to_approve}
+
       err ->
         Logger.debug(inspect(err))
         err

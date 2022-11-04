@@ -26,7 +26,11 @@
         :sort="false"
         :group="groupObject"
         @change="onChange"
-      />
+      >
+        <template #item="{ element }">
+          <div>{{ element.name }}</div>
+        </template>
+      </draggable>
     </router-link>
     <resource-dropdown
       class="actions"
@@ -39,7 +43,7 @@
 </template>
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-import Draggable, { ChangeEvent } from "vuedraggable";
+import Draggable from "zhyswan-vuedraggable";
 import { IResource } from "@/types/resource";
 import RouteName from "@/router/name";
 import { IGroup, usernameWithDomain } from "@/types/actor";
@@ -75,12 +79,15 @@ const groupObject: Record<string, unknown> = {
   put: ["resources"],
 };
 
-const onChange = async (evt: ChangeEvent<IResource>) => {
+const onChange = async (evt: any) => {
   if (evt.added && evt.added.element) {
-    // const movedResource = evt.added.element as IResource;
+    const movedResource = evt.added.element as IResource;
+    console.debug(
+      `Moving resource « ${movedResource.title} » to path « ${props.resource.path} » (new parent ${props.resource.id})`
+    );
     moveResource({
-      id: props.resource.id,
-      path: `${props.resource.path}/${props.resource.title}`,
+      id: movedResource.id,
+      path: props.resource.path,
       parentId: props.resource.id,
     });
   }

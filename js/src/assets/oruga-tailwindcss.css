@@ -36,6 +36,9 @@ body {
 .btn-size-large {
   @apply text-2xl py-6;
 }
+.btn-size-small {
+  @apply text-sm py-1 px-2;
+}
 .btn-disabled {
   @apply opacity-50 cursor-not-allowed;
 }

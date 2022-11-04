@@ -1,34 +1,30 @@
 <template>
   <div v-if="resource">
-    <article class="panel is-primary">
-      <h2 class="panel-heading truncate">
+    <article class="">
+      <h2 class="mb-2">
         {{
-          $t('Move "{resourceName}"', { resourceName: initialResource.title })
+          t('Move "{resourceName}"', { resourceName: initialResource.title })
         }}
       </h2>
       <a
-        class="panel-block clickable flex gap-1 items-center"
-        @click="resourcePath.path = resource?.parent?.path"
+        class="cursor-pointer flex gap-1 items-center border p-2"
+        @click="goUp()"
         v-if="resource.parent"
       >
-        <span class="panel-icon">
-          <ChevronUp :size="16" />
-        </span>
-        {{ $t("Parent folder") }}
+        <ChevronUp :size="16" />
+        {{ t("Parent folder") }}
       </a>
       <a
-        class="panel-block clickable flex gap-1 items-center"
+        class="cursor-pointer flex gap-1 items-center border p-2"
         @click="resourcePath.path = '/'"
         v-else-if="resourcePath?.path && resourcePath?.path.length > 1"
       >
-        <span class="panel-icon">
-          <ChevronUp :size="16" />
-        </span>
-        {{ $t("Parent folder") }}
+        <ChevronUp :size="16" />
+        {{ t("Parent folder") }}
       </a>
       <template v-if="resource.children">
         <a
-          class="panel-block flex flex-wrap gap-1 px-2"
+          class="cursor-pointer flex flex-wrap gap-1 p-2 border"
           v-for="element in resource.children.elements"
           :class="{
             clickable:
@@ -38,23 +34,18 @@
           @click="goDown(element)"
         >
           <p class="truncate flex gap-1 items-center">
-            <span class="panel-icon">
-              <Folder :size="16" v-if="element.type === 'folder'" />
-              <Link :size="16" v-else />
-            </span>
+            <Folder :size="16" v-if="element.type === 'folder'" />
+            <Link :size="16" v-else />
             <span>{{ element.title }}</span>
           </p>
           <span v-if="element.id === initialResource.id">
-            <em v-if="element.type === 'folder'"> {{ $t("(this folder)") }}</em>
-            <em v-else> {{ $t("(this link)") }}</em>
+            <em v-if="element.type === 'folder'"> {{ t("(this folder)") }}</em>
+            <em v-else> {{ t("(this link)") }}</em>
           </span>
         </a>
       </template>
-      <p
-        class="panel-block content has-text-grey has-text-centered"
-        v-if="resource.children && resource.children.total === 0"
-      >
-        {{ $t("No resources in this folder") }}
+      <p class="" v-if="resource.children && resource.children.total === 0">
+        {{ t("No resources in this folder") }}
       </p>
       <o-pagination
         v-if="resource.children && resource.children.total > RESOURCES_PER_PAGE"
@@ -62,25 +53,25 @@
         v-model="page"
         size="small"
         :per-page="RESOURCES_PER_PAGE"
-        :aria-next-label="$t('Next page')"
-        :aria-previous-label="$t('Previous page')"
-        :aria-page-label="$t('Page')"
-        :aria-current-label="$t('Current page')"
+        :aria-next-label="t('Next page')"
+        :aria-previous-label="t('Previous page')"
+        :aria-page-label="t('Page')"
+        :aria-current-label="t('Current page')"
       />
     </article>
     <div class="flex gap-2 mt-2">
       <o-button variant="text" @click="emit('close-move-modal')">{{
-        $t("Cancel")
+        t("Cancel")
       }}</o-button>
       <o-button
         variant="primary"
         @click="updateResource"
         :disabled="moveDisabled"
         ><template v-if="resource.path === '/'">
-          {{ $t("Move resource to the root folder") }}
+          {{ t("Move resource to the root folder") }}
         </template>
         <template v-else
-          >{{ $t("Move resource to {folder}", { folder: resource.title }) }}
+          >{{ t("Move resource to {folder}", { folder: resource.title }) }}
         </template></o-button
       >
     </div>
@@ -88,18 +79,26 @@
 </template>
 <script lang="ts" setup>
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { GET_RESOURCE } from "../../graphql/resources";
 import { IResource } from "../../types/resource";
 import Folder from "vue-material-design-icons/Folder.vue";
 import Link from "vue-material-design-icons/Link.vue";
 import ChevronUp from "vue-material-design-icons/ChevronUp.vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ initialResource: IResource; username: string }>();
 const emit = defineEmits(["update-resource", "close-move-modal"]);
 
-const resourcePath = ref<{ path: string | undefined; username: string }>({
-  path: props.initialResource.path,
+const { t } = useI18n({ useScope: "global" });
+
+const resourcePath = reactive<{
+  path: string | undefined;
+  username: string;
+  id: string | undefined;
+}>({
+  id: props.initialResource.parent?.id,
+  path: props.initialResource.parent?.path,
   username: props.username,
 });
 
@@ -109,9 +108,9 @@ const page = ref(1);
 const { result: resourceResult, refetch } = useQuery<{ resource: IResource }>(
   GET_RESOURCE,
   () => {
-    if (resourcePath.value?.path) {
+    if (resourcePath?.path) {
       return {
-        path: resourcePath.value?.path,
+        path: resourcePath?.path,
         username: props.username,
         page: page.value,
         limit: RESOURCES_PER_PAGE,
@@ -125,25 +124,30 @@ const resource = computed(() => resourceResult.value?.resource);
 
 const goDown = (element: IResource): void => {
   if (element.type === "folder" && element.id !== props.initialResource.id) {
-    resourcePath.value.path = element.path;
+    resourcePath.id = element.id;
+    resourcePath.path = element.path;
+    console.debug("Gone into folder", resourcePath);
   }
 };
 
 watch(props.initialResource, () => {
   if (props.initialResource) {
-    resourcePath.value.path = props.initialResource?.parent?.path;
+    resourcePath.id = props.initialResource?.parent?.id;
+    resourcePath.path = props.initialResource?.parent?.path;
     refetch();
   }
 });
 
 const updateResource = (): void => {
+  console.debug("Emitting updateResource from folder", resourcePath);
+  const parent = resourcePath?.path === "/" ? null : resourcePath;
   emit(
     "update-resource",
     {
       id: props.initialResource.id,
       title: props.initialResource.title,
-      parent: resourcePath.value?.path === "/" ? null : resourcePath.value,
-      path: props.initialResource.path,
+      parent: parent,
+      path: parent?.path ?? "/",
     },
     props.initialResource.parent
   );
@@ -152,13 +156,18 @@ const updateResource = (): void => {
 const moveDisabled = computed((): boolean | undefined => {
   return (
     (props.initialResource.parent &&
-      resourcePath.value &&
-      props.initialResource.parent.path === resourcePath.value.path) ||
+      resourcePath &&
+      props.initialResource.parent.path === resourcePath.path) ||
     (props.initialResource.parent === undefined &&
-      resourcePath.value &&
-      resourcePath.value.path === "/")
+      resourcePath &&
+      resourcePath.path === "/")
   );
 });
+
+const goUp = () => {
+  resourcePath.id = resource.value?.parent?.id;
+  resourcePath.path = resource.value?.parent?.path;
+};
 </script>
 <style lang="scss" scoped>
 .panel {

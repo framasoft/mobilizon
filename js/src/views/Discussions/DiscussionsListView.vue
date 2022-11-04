@@ -4,7 +4,7 @@
       :links="[
         {
           name: RouteName.MY_GROUPS,
-          text: $t('My groups'),
+          text: t('My groups'),
         },
         {
           name: RouteName.GROUP,
@@ -14,14 +14,15 @@
         {
           name: RouteName.DISCUSSION_LIST,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Discussions'),
+          text: t('Discussions'),
         },
       ]"
     />
     <section v-if="isCurrentActorAGroupMember">
+      <h1>{{ t("Discussions") }}</h1>
       <p>
         {{
-          $t(
+          t(
             "Keep the entire conversation about a specific topic together on a single page."
           )
         }}
@@ -32,7 +33,7 @@
           name: RouteName.CREATE_DISCUSSION,
           params: { preferredUsername },
         }"
-        >{{ $t("New discussion") }}</o-button
+        >{{ t("New discussion") }}</o-button
       >
       <div v-if="group.discussions.elements.length > 0">
         <discussion-list-item
@@ -46,25 +47,25 @@
           :total="group.discussions.total"
           v-model="page"
           :per-page="DISCUSSIONS_PER_PAGE"
-          :aria-next-label="$t('Next page')"
-          :aria-previous-label="$t('Previous page')"
-          :aria-page-label="$t('Page')"
-          :aria-current-label="$t('Current page')"
+          :aria-next-label="t('Next page')"
+          :aria-previous-label="t('Previous page')"
+          :aria-page-label="t('Page')"
+          :aria-current-label="t('Current page')"
         >
         </o-pagination>
       </div>
       <empty-content v-else icon="chat">
-        {{ $t("There's no discussions yet") }}
+        {{ t("There's no discussions yet") }}
       </empty-content>
     </section>
     <section class="section" v-else-if="!groupLoading && !personLoading">
       <empty-content icon="chat">
-        {{ $t("Only group members can access discussions") }}
+        {{ t("Only group members can access discussions") }}
         <template #desc>
           <router-link
             :to="{ name: RouteName.GROUP, params: { preferredUsername } }"
           >
-            {{ $t("Return to the group page") }}
+            {{ t("Return to the group page") }}
           </router-link>
         </template>
       </empty-content>
