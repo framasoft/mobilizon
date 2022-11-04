@@ -196,176 +196,6 @@
       </div>
     </div>
   </nav>
-  <!-- <o-navbar
-    id="navbar"
-    type="is-secondary"
-    wrapper-class="container mx-auto"
-    v-model:active="mobileNavbarActive"
-  >
-    <template #brand>
-      <o-navbar-item
-        tag="router-link"
-        :to="{ name: RouteName.HOME }"
-        :aria-label="$t('Home')"
-      >
-        <logo />
-      </o-navbar-item>
-    </template>
-    <template #start>
-      <o-navbar-item tag="router-link" :to="{ name: RouteName.SEARCH }">{{
-        $t("Explore")
-      }}</o-navbar-item>
-      <o-navbar-item
-        v-if="currentActor.id && currentUser?.isLoggedIn"
-        tag="router-link"
-        :to="{ name: RouteName.MY_EVENTS }"
-        >{{ $t("My events") }}</o-navbar-item
-      >
-      <o-navbar-item
-        tag="router-link"
-        :to="{ name: RouteName.MY_GROUPS }"
-        v-if="
-          config &&
-          config.features.groups &&
-          currentActor.id &&
-          currentUser?.isLoggedIn
-        "
-        >{{ $t("My groups") }}</o-navbar-item
-      >
-      <o-navbar-item
-        tag="span"
-        v-if="
-          config &&
-          config.features.eventCreation &&
-          currentActor.id &&
-          currentUser?.isLoggedIn
-        "
-      >
-        <o-button
-          v-if="!hideCreateEventsButton"
-          tag="router-link"
-          :to="{ name: RouteName.CREATE_EVENT }"
-          variant="primary"
-          >{{ $t("Create") }}</o-button
-        >
-      </o-navbar-item>
-    </template>
-    <template #end>
-      <o-navbar-item tag="div">
-        <search-field @navbar-search="mobileNavbarActive = false" />
-      </o-navbar-item>
-
-      <o-navbar-dropdown
-        v-if="currentActor.id && currentUser?.isLoggedIn"
-        right
-        collapsible
-        ref="user-dropdown"
-        tabindex="0"
-        tag="span"
-        @keyup.enter="toggleMenu"
-      >
-        <template #label v-if="currentActor">
-          <div class="identity-wrapper">
-            <div>
-              <figure class="image is-32x32" v-if="currentActor.avatar">
-                <img
-                  class="is-rounded"
-                  alt="avatarUrl"
-                  :src="currentActor.avatar.url"
-                />
-              </figure>
-              <o-icon v-else icon="account-circle" />
-            </div>
-            <div class="media-content is-hidden-desktop">
-              <span>{{ displayName(currentActor) }}</span>
-              <span class="has-text-grey-dark" v-if="currentActor.name"
-                >@{{ currentActor.preferredUsername }}</span
-              >
-            </div>
-          </div>
-        </template>
-
-        No identities dropdown if no identities
-        <span v-if="identities.length <= 1"></span>
-        <o-navbar-item
-          tag="span"
-          v-for="identity in identities"
-          v-else
-          :active="identity.id === currentActor.id"
-          :key="identity.id"
-          tabindex="0"
-          @click="setIdentity({
-      preferredUsername: identity.preferredUsername,
-    })"
-          @keyup.enter="setIdentity({
-      preferredUsername: identity.preferredUsername,
-    })"
-        >
-          <span>
-            <div class="media-left">
-              <figure class="image is-32x32" v-if="identity.avatar">
-                <img
-                  class="is-rounded"
-                  loading="lazy"
-                  :src="identity.avatar.url"
-                  alt
-                />
-              </figure>
-              <o-icon v-else size="is-medium" icon="account-circle" />
-            </div>
-
-            <div class="media-content">
-              <span>{{ displayName(identity) }}</span>
-              <span class="has-text-grey-dark" v-if="identity.name"
-                >@{{ identity.preferredUsername }}</span
-              >
-            </div>
-          </span>
-
-          <hr class="navbar-divider" role="presentation" />
-        </o-navbar-item>
-
-        <o-navbar-item
-          tag="router-link"
-          :to="{ name: RouteName.UPDATE_IDENTITY }"
-          >{{ $t("My account") }}</o-navbar-item
-        >
-        <o-navbar-item
-          v-if="currentUser.role === ICurrentUserRole.ADMINISTRATOR"
-          tag="router-link"
-          :to="{ name: RouteName.ADMIN_DASHBOARD }"
-          >{{ $t("Administration") }}</o-navbar-item
-        >
-
-        <o-navbar-item
-          tag="span"
-          tabindex="0"
-          @click="logout"
-          @keyup.enter="logout"
-        >
-          <span>{{ $t("Log out") }}</span>
-        </o-navbar-item>
-      </o-navbar-dropdown>
-
-      <o-navbar-item v-else tag="div">
-        <div class="buttons">
-          <router-link
-            class="button is-primary"
-            v-if="config && config.registrationsOpen"
-            :to="{ name: RouteName.REGISTER }"
-          >
-            <strong>{{ $t("Sign up") }}</strong>
-          </router-link>
-
-          <router-link
-            class="button is-light"
-            :to="{ name: RouteName.LOGIN }"
-            >{{ $t("Log in") }}</router-link
-          >
-        </div>
-      </o-navbar-item>
-    </template>
-  </o-navbar> -->
 </template>
 
 <script lang="ts" setup>
@@ -378,7 +208,6 @@ import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-// import { useProgrammatic } from "@oruga-ui/oruga-next";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import {
   useCurrentActorClient,
@@ -388,16 +217,11 @@ import { useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
 import { useRegistrationConfig } from "@/composition/apollo/config";
-// import { useRestrictions } from "@/composition/apollo/config";
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();
-// const { restrictions } = useRestrictions();
-
-// const userDropdown = ref();
 
 const router = useRouter();
-// const route = useRoute();
 
 const { identities } = useCurrentUserIdentities();
 const { registrationsOpen, registrationsAllowlist, databaseLogin } =
@@ -409,13 +233,6 @@ const canRegister = computed(() => {
     databaseLogin.value
   );
 });
-
-// const mobileNavbarActive = ref(false);
-
-// const toggleMenu = (): void => {
-//   console.debug("called toggleMenu");
-//   userDropdown.value.showMenu();
-// };
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -438,38 +255,6 @@ watch(identities, () => {
   }
 });
 
-// watch(loggedUser, () => {
-//   if (loggedUser.value?.locale) {
-//     console.debug("Setting locale from navbar");
-//     loadLanguageAsync(loggedUser.value?.locale);
-//   }
-// });
-
-// const handleErrors = async (errors: GraphQLError[]): Promise<void> => {
-//   if (
-//     errors.length > 0 &&
-//     errors[0].message ===
-//       "You need to be logged-in to view your list of identities"
-//   ) {
-//     await doLogout();
-//   }
-// };
-
-// const { oruga } = useProgrammatic();
-
-// const doLogout = async (): Promise<void> => {
-//   await logout();
-//   oruga.notification.open({
-//     message: t("You have been disconnected"),
-//     variant: "success",
-//     position: "is-bottom-right",
-//     duration: 5000,
-//   });
-
-//   if (route.name === RouteName.HOME) return;
-//   await router.push({ name: RouteName.HOME });
-// };
-
 const { onDone, mutate: setIdentity } = useMutation<{
   changeDefaultActor: { id: string; defaultActor: { id: string } };
 }>(UPDATE_DEFAULT_ACTOR);
@@ -481,64 +266,6 @@ onDone(({ data }) => {
   if (!identity) return;
   changeIdentity(identity);
 });
-
-// const hideCreateEventsButton = computed((): boolean => {
-//   return !!restrictions.value?.onlyGroupsCanCreateEvents;
-// });
-
-// @Component({
-//   apollo: {
-//     currentUser: CURRENT_USER_CLIENT,
-//     currentActor: CURRENT_ACTOR_CLIENT,
-//     // identities: {
-//     //   query: IDENTITIES,
-//     //   update: ({ identities }) =>
-//     //     identities
-//     //       ? identities.map((identity: IPerson) => new Person(identity))
-//     //       : [],
-//     //   skip() {
-//     //     return this.currentUser.isLoggedIn === false;
-//     //   },
-//     //   error({ graphQLErrors }) {
-//     //     this.handleErrors(graphQLErrors);
-//     //   },
-//     // },
-//     config: CONFIG,
-//     loggedUser: {
-//       query: USER_SETTINGS,
-//       skip() {
-//         return !this.currentUser || this.currentUser.isLoggedIn === false;
-//       },
-//     },
-//   },
-// })
-// export default class NavBar extends Vue {
-//   currentActor!: IPerson;
-
-//   config!: IConfig;
-
-//   currentUser!: ICurrentUser;
-
-//   loggedUser!: IUser;
-
-//   ICurrentUserRole = ICurrentUserRole;
-
-//   identities: IPerson[] = [];
-
-//   RouteName = RouteName;
-
-//   mobileNavbarActive = false;
-
-//   displayName = displayName;
-
-//   // @Ref("user-dropdown") userDropDown!: any;
-
-//   // toggleMenu(): void {
-//   //   console.debug("called toggleMenu");
-//   //   this.userDropDown.showMenu();
-//   // }
-
-// }
 
 const showMobileMenu = ref(false);
 </script>
