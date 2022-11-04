@@ -9,8 +9,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
   """
 
   alias Mobilizon.Config
-  alias Mobilizon.Service.FrontEndAnalytics
-  alias Mobilizon.Service.GlobalSearch
+  alias Mobilizon.Service.{FrontEndAnalytics, GlobalSearch, Pictures}
   import Plug.Conn
 
   require Logger
@@ -142,7 +141,11 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     config_policy = Keyword.get(options, type, Config.get([:http_security, :csp_policy, type]))
     front_end_analytics_policy = [Keyword.get(FrontEndAnalytics.csp(), type, [])]
     global_search_policy = [Keyword.get(GlobalSearch.service().csp(), type, [])]
+    pictures_policy = [Keyword.get(Pictures.service().csp(), type, [])]
 
-    Enum.join(config_policy ++ front_end_analytics_policy ++ global_search_policy, " ")
+    Enum.join(
+      config_policy ++ front_end_analytics_policy ++ global_search_policy ++ pictures_policy,
+      " "
+    )
   end
 end
