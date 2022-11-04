@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.0-rc.3 - 2022-11-04
+
+### Added
+
+- Support CSP report_uri, report_to and the Report-To and Reporting-Endpoints headers
+
+### Changed
+
+- Add CSP Policy for pictures
+- Don't treat notification for a deleted event as an error
+- Truncate resource description preview after 350 characters
+- Lower loglevel of resource insertion error
+- Resources and discussions views improvements
+- Add context to error when removing an upload file following actor suspension
+- Allow for resource providers to register a csp policy
+
+### Fixed
+- Fix moving resources
+- Fix multiselect of resources
+- Properly handle un-needed background jobs
+- Properly handle replying to an event that has been deleted
+- Propertly handle other errors when receiving a comment
+- Fix event integrations
+- Prevent loading authorized groups when current actor isn't loading in OrganizerPickerWrapper
+
 ## 3.0.0-rc.2 - 2022-11-02
 
 ### Added
