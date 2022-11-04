@@ -29,8 +29,12 @@ defmodule Mobilizon.Service.Pictures.Provider do
       iex> search("London")
       %Information{url: "https://some_url_to.a/picture.jpeg", author: %{name: "An author", url: "https://url.to/profile"}, source: %{name: "The source name", url: "The source URL" }}
   """
-  @callback search(location :: String.t(), options :: keyword) ::
-              [Information.t()]
+  @callback search(location :: String.t(), options :: keyword) :: Information.t()
+
+  @doc """
+  The CSP configuration to add for the service to work
+  """
+  @callback csp() :: keyword()
 
   @spec endpoint(atom()) :: String.t()
   def endpoint(provider) do

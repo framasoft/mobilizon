@@ -88,6 +88,8 @@ config :mobilizon, Mobilizon.Web.Gettext, allowed_locales: ["fr", "en", "es", "r
 
 config :junit_formatter, report_dir: "."
 
+config :mobilizon, :http_security, report_uri: "https://endpoint.com"
+
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
   import_config "test.secret.exs"
 end

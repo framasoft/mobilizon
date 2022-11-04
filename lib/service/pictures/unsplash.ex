@@ -16,7 +16,7 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
   @doc """
   Unsplash implementation for `c:Mobilizon.Service.Geospatial.Provider.geocode/3`.
   """
-  @spec search(String.t(), keyword()) :: list(Information.t())
+  @spec search(String.t(), keyword()) :: Information.t()
   def search(location, _options \\ []) do
     url = "#{unsplash_endpoint()}#{@unsplash_api}?query=#{location}&orientation=landscape"
 
@@ -40,6 +40,16 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
       _ ->
         nil
     end
+  end
+
+  @impl Provider
+  @doc """
+  Returns the CSP configuration for this search provider to work
+  """
+  def csp do
+    :mobilizon
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(:csp_policy, [])
   end
 
   defp unsplash_app_name do

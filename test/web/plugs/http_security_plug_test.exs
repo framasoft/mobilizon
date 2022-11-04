@@ -49,6 +49,26 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlugTest do
       assert Conn.get_resp_header(resp, "referrer-policy") == ["no-referrer"]
     end
 
+    test "it sends `report-to`, `reporting-endpoints` & `report-uri` CSP response headers", %{
+      conn: conn
+    } do
+      conn = post(conn, "/api")
+
+      [csp] = Conn.get_resp_header(conn, "content-security-policy")
+
+      assert csp =~ ~r|report-uri https://endpoint.com ; report-to csp-endpoint;|
+
+      [report_to] = Conn.get_resp_header(conn, "report-to")
+
+      assert report_to ==
+               "{\"endpoints\":[{\"url\":\"https://endpoint.com\"}],\"group\":\"csp-endpoint\",\"max-age\":10886400}"
+
+      [reporting_endpoints] = Conn.get_resp_header(conn, "reporting-endpoints")
+
+      assert reporting_endpoints ==
+               "csp-endpoint=\"https://endpoint.com\""
+    end
+
     test "default values for content-security-policy are always included", %{conn: conn} do
       conn = post(conn, "/api")
 
@@ -73,7 +93,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlugTest do
       [csp] = Conn.get_resp_header(conn, "content-security-policy")
 
       assert csp =~
-               ~r/script-src 'self' 'unsafe-eval' 'sha256-[\w+\/=]*' 'sha256-[\w+\/=]*' example.com matomo.example.com  ;/
+               ~r/script-src 'self' 'unsafe-eval' 'sha256-[\w+\/=]*' 'sha256-[\w+\/=]*' example.com matomo.example.com\s+;/
     end
   end
 
