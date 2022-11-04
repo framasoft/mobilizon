@@ -169,9 +169,10 @@
           <section class="my-4">
             <component
               v-for="(metadata, integration) in integrations"
-              :is="integration"
+              :is="metadataToComponent[integration]"
               :key="integration"
               :metadata="metadata"
+              class="my-2"
             />
           </section>
           <section
@@ -272,7 +273,6 @@ import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { useHead } from "@vueuse/head";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
 const IntegrationTwitch = defineAsyncComponent(
   () => import("@/components/Event/Integrations/TwitchIntegration.vue")
 );
@@ -288,7 +288,6 @@ const IntegrationJitsiMeet = defineAsyncComponent(
 const IntegrationEtherpad = defineAsyncComponent(
   () => import("@/components/Event/Integrations/EtherpadIntegration.vue")
 );
-/* eslint-enable @typescript-eslint/no-unused-vars */
 const EventMap = defineAsyncComponent(
   () => import("@/components/Event/EventMap.vue")
 );
@@ -492,12 +491,12 @@ onFetchEventError(({ graphQLErrors }) =>
   handleErrors(graphQLErrors as AbsintheGraphQLErrors)
 );
 
-const metadataToComponent: Record<string, string> = {
-  "mz:live:twitch:url": "IntegrationTwitch",
-  "mz:live:peertube:url": "IntegrationPeertube",
-  "mz:live:youtube:url": "IntegrationYoutube",
-  "mz:visio:jitsi_meet": "IntegrationJitsiMeet",
-  "mz:notes:etherpad:url": "IntegrationEtherpad",
+const metadataToComponent: Record<string, any> = {
+  "mz:live:twitch:url": IntegrationTwitch,
+  "mz:live:peertube:url": IntegrationPeertube,
+  "mz:live:youtube:url": IntegrationYoutube,
+  "mz:visio:jitsi_meet": IntegrationJitsiMeet,
+  "mz:notes:etherpad:url": IntegrationEtherpad,
 };
 
 const integrations = computed((): Record<string, IEventMetadataDescription> => {
@@ -514,7 +513,7 @@ const integrations = computed((): Record<string, IEventMetadataDescription> => {
       if (component !== undefined) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        acc[component] = metadata;
+        acc[metadata.key] = metadata;
       }
       return acc;
     }, {});
