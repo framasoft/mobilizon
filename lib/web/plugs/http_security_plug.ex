@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   alias Mobilizon.Config
   alias Mobilizon.Service.{FrontEndAnalytics, GlobalSearch, Pictures}
+  alias Mobilizon.Web.Endpoint
   import Plug.Conn
 
   require Logger
@@ -33,13 +34,32 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     referrer_policy =
       Keyword.get(options, :referrer_policy, Config.get([:http_security, :referrer_policy]))
 
-    [
+    report_uri = Config.get([:http_security, :report_uri])
+
+    headers = [
       {"x-xss-protection", "0"},
       {"x-frame-options", "DENY"},
       {"x-content-type-options", "nosniff"},
       {"referrer-policy", referrer_policy},
       {"content-security-policy", csp_string(options)}
     ]
+
+    if report_uri do
+      report_group = %{
+        "group" => "csp-endpoint",
+        "max-age" => 10_886_400,
+        "endpoints" => [
+          %{"url" => report_uri}
+        ]
+      }
+
+      [
+        {"report-to", Jason.encode!(report_group)},
+        {"reporting-endpoints", "csp-endpoint=\"#{report_uri}\""} | headers
+      ]
+    else
+      headers
+    end
   end
 
   @static_csp_rules [
@@ -61,9 +81,10 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
   @spec csp_string(Keyword.t()) :: String.t()
   defp csp_string(options) do
-    scheme = Keyword.get(options, :scheme, Config.get([Pleroma.Web.Endpoint, :url])[:scheme])
-    static_url = Mobilizon.Web.Endpoint.static_url()
-    websocket_url = Mobilizon.Web.Endpoint.websocket_url()
+    scheme = Keyword.get(options, :scheme, Config.get([Endpoint, :url])[:scheme])
+    static_url = Endpoint.static_url()
+    websocket_url = Endpoint.websocket_url()
+    report_uri = Config.get([:http_security, :report_uri])
 
     img_src = [@img_src] ++ [get_csp_config(:img_src, options)]
 
@@ -106,6 +127,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
 
     frame_ancestors = [frame_ancestors] ++ [get_csp_config(:frame_ancestors, options)]
 
+    report = if report_uri, do: ["report-uri ", report_uri, " ; report-to csp-endpoint"]
     insecure = if scheme == "https", do: "upgrade-insecure-requests"
 
     @csp_start
@@ -118,6 +140,7 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     |> add_csp_param(frame_src)
     |> add_csp_param(frame_ancestors)
     |> add_csp_param(insecure)
+    |> add_csp_param(report)
     |> to_string()
   end
 
