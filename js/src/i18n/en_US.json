@@ -1438,5 +1438,13 @@
   "No event found at this address": "No event found at this address",
   "I have an account on {instance}.": "I have an account on {instance}.",
   "profile{\\'@\\'}instance": "profile{\\'@\\'}instance",
-  "My federated identity ends in {domain}": "My federated identity ends in {domain}"
+  "My federated identity ends in {domain}": "My federated identity ends in {domain}",
+  "Close map": "Close map",
+  "On foot": "On foot",
+  "By bike": "By bike",
+  "By transit": "By transit",
+  "By car": "By car",
+  "Select all resources": "Select all resources",
+  "Select this resource": "Select this resource",
+  "You can add resources by using the button above.": "You can add resources by using the button above."
 }
