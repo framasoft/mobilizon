@@ -166,8 +166,12 @@ defmodule Mobilizon.Web.Plugs.HTTPSecurityPlug do
     global_search_policy = [Keyword.get(GlobalSearch.service().csp(), type, [])]
     pictures_policy = [Keyword.get(Pictures.service().csp(), type, [])]
 
+    resource_providers = Config.get([Mobilizon.Service.ResourceProviders, :csp_policy, type], [])
+
     Enum.join(
-      config_policy ++ front_end_analytics_policy ++ global_search_policy ++ pictures_policy,
+      config_policy ++
+        front_end_analytics_policy ++
+        global_search_policy ++ pictures_policy ++ resource_providers,
       " "
     )
   end
