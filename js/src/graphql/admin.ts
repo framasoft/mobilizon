@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 import { ACTOR_FRAGMENT } from "./actor";
 
 export const DASHBOARD = gql`
-  query {
+  query Dashboard {
     dashboard {
       lastPublicEventPublished {
         id
@@ -167,7 +167,7 @@ export const REJECT_RELAY = gql`
 `;
 
 export const LANGUAGES = gql`
-  query {
+  query Languages {
     languages {
       code
       name
@@ -204,7 +204,7 @@ export const ADMIN_SETTINGS_FRAGMENT = gql`
 `;
 
 export const ADMIN_SETTINGS = gql`
-  query {
+  query AdminSettings {
     adminSettings {
       ...adminSettingsFragment
     }
