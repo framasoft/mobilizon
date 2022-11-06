@@ -222,7 +222,8 @@ defmodule Mobilizon.Mixfile do
       {:junit_formatter, "~> 3.1", only: [:test]},
       {:sobelow, "~> 0.8", only: [:dev, :test]},
       {:doctor, "~> 0.20.0", only: :dev},
-      {:haversine, "~> 0.1.0"}
+      {:haversine, "~> 0.1.0"},
+      {:ecto_dev_logger, "~> 0.7", only: :dev}
     ] ++ oauth_deps()
   end
 

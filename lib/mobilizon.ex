@@ -77,6 +77,10 @@ defmodule Mobilizon do
 
     ErrorReporting.configure()
 
+    if @env == :dev do
+      Ecto.DevLogger.install(Storage.Repo)
+    end
+
     # Only attach the telemetry logger when we aren't in an IEx shell
     unless Code.ensure_loaded?(IEx) && IEx.started?() do
       Oban.Telemetry.attach_default_logger(:info)
