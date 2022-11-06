@@ -354,15 +354,12 @@ multi-arch-release:
     expire_in: 2 days
     paths:
       - ${APP_ASSET}
+      - erl_crash.dump # if there's a memory issue
   parallel:
     matrix:
       - ARCH: ["arm", "arm64"]
   rules:
-    # arm64 is allowed to fail
-    - if: '$CI_PROJECT_NAMESPACE == "framasoft" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG != null) && $ARCH == "arm64"'
-      allow_failure: true
-    - if: '$CI_PROJECT_NAMESPACE == "framasoft" && ($CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_TAG != null) && $ARCH'
-      allow_failure: false
+    - if: '$CI_COMMIT_TAG != null || $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_TRIGGERED == "true"'
   timeout: 3h
   allow_failure: true
 
