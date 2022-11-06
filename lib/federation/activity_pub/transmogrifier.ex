@@ -201,6 +201,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
 
       {:ok, entity} ->
         Actions.Delete.delete(entity, Relay.get_actor(), false)
+
+      {:error, err} ->
+        Logger.warn("Error while fetching object from URL", error: inspect(err))
+        :error
     end
   end
 
