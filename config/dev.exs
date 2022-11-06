@@ -48,7 +48,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   ]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n", level: :debug
+config :logger, :console, format: "$metadata[$level] $message\n", level: :debug
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
 

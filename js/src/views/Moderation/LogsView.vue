@@ -21,11 +21,11 @@
         >
           <div class="flex gap-1">
             <div class="flex gap-1">
-              <figure class="" v-if="log.actor?.avatar">
+              <figure class="h-10 w-10" v-if="log.actor?.avatar">
                 <img
                   alt=""
                   :src="log.actor.avatar?.url"
-                  class="rounded-full"
+                  class="object-cover rounded-full h-full w-full"
                   width="36"
                   height="36"
                 />

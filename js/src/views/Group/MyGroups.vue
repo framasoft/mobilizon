@@ -1,9 +1,9 @@
 <template>
   <section class="container mx-auto">
-    <h1 class="title">{{ $t("My groups") }}</h1>
+    <h1 class="title">{{ t("My groups") }}</h1>
     <p>
       {{
-        $t(
+        t(
           "Groups are spaces for coordination and preparation to better organize events and manage your community."
         )
       }}
@@ -13,7 +13,7 @@
         tag="router-link"
         variant="primary"
         :to="{ name: RouteName.CREATE_GROUP }"
-        >{{ $t("Create group") }}</o-button
+        >{{ t("Create group") }}</o-button
       >
     </div>
     <o-loading v-model:active="loading"></o-loading>
@@ -35,10 +35,10 @@
         v-show="membershipsPages.total > limit"
         v-model="page"
         :per-page="limit"
-        :aria-next-label="$t('Next page')"
-        :aria-previous-label="$t('Previous page')"
-        :aria-page-label="$t('Page')"
-        :aria-current-label="$t('Current page')"
+        :aria-next-label="t('Next page')"
+        :aria-previous-label="t('Previous page')"
+        :aria-page-label="t('Page')"
+        :aria-current-label="t('Current page')"
       >
       </o-pagination>
     </section>
@@ -51,7 +51,7 @@
           <div class="img-container" :class="{ webp: supportsWebPFormat }" />
           <div class="text-center">
             <p>
-              {{ $t("You are not part of any group.") }}
+              {{ t("You are not part of any group.") }}
               <i18n-t
                 keypath="Do you wish to {create_group} or {explore_groups}?"
               >
@@ -59,14 +59,14 @@
                   <o-button
                     tag="router-link"
                     :to="{ name: RouteName.CREATE_GROUP }"
-                    >{{ $t("create a group") }}</o-button
+                    >{{ t("create a group") }}</o-button
                   >
                 </template>
                 <template #explore_groups>
                   <o-button
                     tag="router-link"
                     :to="{ name: RouteName.SEARCH }"
-                    >{{ $t("explore the groups") }}</o-button
+                    >{{ t("explore the groups") }}</o-button
                   >
                 </template>
               </i18n-t>

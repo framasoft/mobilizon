@@ -20,7 +20,7 @@
         paginated
         backend-pagination
         backend-filtering
-        :debounce-search="200"
+        :debounce-search="500"
         v-model:current-page="page"
         :aria-next-label="t('Next page')"
         :aria-previous-label="t('Previous page')"
@@ -102,7 +102,7 @@ import RouteName from "@/router/name";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useHead } from "@vueuse/head";
 import {
   useRouteQuery,
@@ -115,9 +115,10 @@ import Account from "vue-material-design-icons/Account.vue";
 
 const PROFILES_PER_PAGE = 10;
 
-const preferredUsername = useRouteQuery("preferredUsername", "");
-const name = useRouteQuery("name", "");
-const domain = useRouteQuery("domain", "");
+const preferredUsername = ref("");
+const name = ref("");
+const domain = ref("");
+
 const local = useRouteQuery("local", false, booleanTransformer);
 const suspended = useRouteQuery("suspended", false, booleanTransformer);
 const page = useRouteQuery("page", 1, integerTransformer);
