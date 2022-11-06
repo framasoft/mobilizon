@@ -71,7 +71,9 @@ config :mobilizon, Mobilizon.Storage.Repo,
   hostname: System.get_env("MOBILIZON_DATABASE_HOST", "localhost"),
   port: System.get_env("MOBILIZON_DATABASE_PORT", "5432"),
   pool_size: 10,
-  show_sensitive_data_on_connection_error: true
+  show_sensitive_data_on_connection_error: true,
+  # Logging is handled by Ecto.DevLogger
+  log: false
 
 config :mobilizon, :instance,
   name: System.get_env("MOBILIZON_INSTANCE_NAME", "Mobilizon"),
