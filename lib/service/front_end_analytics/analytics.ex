@@ -65,7 +65,7 @@ defmodule Mobilizon.Service.FrontEndAnalytics do
 
   defp merge_csp_config(config, global_config) do
     Keyword.merge(global_config, config, fn _key, global, config ->
-      "#{global} #{config}"
+      global ++ config
     end)
   end
 end
