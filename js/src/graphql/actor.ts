@@ -17,7 +17,7 @@ export const ACTOR_FRAGMENT = gql`
 `;
 
 export const FETCH_PERSON = gql`
-  query ($username: String!) {
+  query FetchPerson($username: String!) {
     fetchPerson(preferredUsername: $username) {
       ...ActorFragment
       suspended

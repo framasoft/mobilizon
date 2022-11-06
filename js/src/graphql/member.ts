@@ -44,7 +44,7 @@ export const REJECT_INVITATION = gql`
 `;
 
 export const GROUP_MEMBERS = gql`
-  query (
+  query GroupMembers(
     $groupName: String!
     $name: String
     $roles: String
