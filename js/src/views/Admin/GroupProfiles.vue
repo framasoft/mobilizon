@@ -27,7 +27,7 @@
         paginated
         backend-pagination
         backend-filtering
-        :debounce-search="200"
+        :debounce-search="500"
         v-model:current-page="page"
         :aria-next-label="t('Next page')"
         :aria-previous-label="t('Previous page')"
@@ -72,9 +72,12 @@
                 <AccountGroup v-else :size="48" />
                 <div class="">
                   <div class="prose dark:prose-invert">
-                    <strong v-if="props.row.name">{{ props.row.name }}</strong
-                    ><br v-if="props.row.name" />
-                    <small>@{{ props.row.preferredUsername }}</small>
+                    <p v-if="props.row.name" class="font-bold mb-0">
+                      {{ props.row.name }}
+                    </p>
+                    <span class="text-sm"
+                      >@{{ props.row.preferredUsername }}</span
+                    >
                   </div>
                 </div>
               </article>
@@ -117,7 +120,7 @@ import {
 } from "vue-use-route-query";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { Paginate } from "@/types/paginate";
 import { IGroup } from "@/types/actor";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
@@ -126,9 +129,10 @@ const PROFILES_PER_PAGE = 10;
 
 const { restrictions } = useRestrictions();
 
-const preferredUsername = useRouteQuery("preferredUsername", "");
-const name = useRouteQuery("name", "");
-const domain = useRouteQuery("domain", "");
+const preferredUsername = ref("");
+const name = ref("");
+const domain = ref("");
+
 const local = useRouteQuery("local", false, booleanTransformer);
 const suspended = useRouteQuery("suspended", false, booleanTransformer);
 const page = useRouteQuery("page", 1, integerTransformer);

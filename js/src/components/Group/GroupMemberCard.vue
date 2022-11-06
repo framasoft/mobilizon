@@ -20,9 +20,9 @@
       <div class="flex-1">
         <div class="p-2 flex gap-2">
           <div class="">
-            <figure class="" v-if="member.parent.avatar">
+            <figure class="h-12 w-12" v-if="member.parent.avatar">
               <img
-                class="rounded-lg"
+                class="rounded-full w-full h-full object-cover"
                 :src="member.parent.avatar.url"
                 alt=""
                 width="48"
