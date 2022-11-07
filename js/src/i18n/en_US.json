@@ -1437,7 +1437,7 @@
   "No groups found for {search}": "No groups found for {search}",
   "No event found at this address": "No event found at this address",
   "I have an account on {instance}.": "I have an account on {instance}.",
-  "profile{\\'@\\'}instance": "profile{\\'@\\'}instance",
+  "profile{'@'}instance": "profile{'@'}instance",
   "My federated identity ends in {domain}": "My federated identity ends in {domain}",
   "Close map": "Close map",
   "On foot": "On foot",
