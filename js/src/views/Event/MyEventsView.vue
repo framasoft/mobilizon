@@ -213,9 +213,9 @@
 <script lang="ts" setup>
 import { ParticipantRole } from "@/types/enums";
 import RouteName from "@/router/name";
-import { IParticipant } from "../../types/participant.model";
+import type { IParticipant } from "../../types/participant.model";
 import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
-import { IEvent } from "../../types/event.model";
+import type { IEvent } from "../../types/event.model";
 import MultiEventMinimalistCard from "../../components/Event/MultiEventMinimalistCard.vue";
 import EventMinimalistCard from "../../components/Event/EventMinimalistCard.vue";
 import {
@@ -366,7 +366,7 @@ const monthlyFutureEvents = computed((): Map<string, Eventable[]> => {
     eventable = [...eventable, ...futureParticipations.value];
   }
   if (showMyGroups.value) {
-    eventable = [...eventable, ...groupEvents.value];
+    eventable = [...eventable, ...groupEvents.value.map(({ event }) => event)];
   }
   return monthlyEvents(eventable);
 });
