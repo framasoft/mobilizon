@@ -5,6 +5,136 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.0 - 2022-11-08
+
+### Added
+
+- Add global search support, allowing to use https://search.joinmobilizon.org as a centralized event and group database
+- Add ability to filter search by categories and language
+- Add ability to explore search results on a map view
+- Add dark theme support and setting to toggle light/dark mode
+- Add categories view
+- Allow to disable non-SSO login
+- Support CSP report_uri, report_to and the Report-To and Reporting-Endpoints headers
+- Support for Elixir 1.14 and Erlang OTP 25.
+
+### Changed
+
+- Homepage has been redesigned
+- Search view has been redesigned
+- Internal illustration pictures are now only served using WebP.
+- Improved the pertinence of related events
+- Light front-end performance improvements
+- Various UI and A11Y fixes on the event page
+- Handle categories page being empty
+- UI improvements of comments
+- UI improvements of reports
+- Various UI improvement in event and group view
+- Add breadcrumb trail on Post view
+- Always lowercase the emails before trying to reset password
+- Make text editor heading level start at h3, h4, h5
+- Remove obscure reference to Douglas Adams
+- Don't inline phoenix manifest
+- Show a proper error message when failure to register to an event
+- Order categories by translated label
+- Show registration button also if registration allow list is used
+- Add logging for when cached iCalendar feed data can't be found
+- Add an error log when we try to update the relay actor
+- Lower loglevel of error when creating a new person
+- Add unique constraint on event URL
+- Allow to view more than 10 drafts events on my events view
+- Add CSP Policy for pictures
+- Don't treat notification for a deleted event as an error
+- Truncate resource description preview after 350 characters
+- Lower loglevel of resource insertion error
+- Resources and discussions views improvements
+- Add context to error when removing an upload file following actor suspension
+- Allow for resource providers to register a csp policy
+- Add loading="lazy" to some images, except categories in viewport
+- Add GraphQL operation name, user ID and actor name in logs
+- Add empty alt attribute to uploaded pictures (for now)
+- Allow release build failures in CI for all non-amd64 architectures
+- Increase timeout needed to build page
+- Handle nothing found by unsplash for location
+
+### Fixed
+
+- Fixed deleting actor when participations association is not preloaded
+- Fixed rendering JSON-LD for an event with a single address (no online location)
+- Address selector
+- Group location edition
+- Reconfigure plug at runtime with env
+- Fix global search term
+- Fix custom icons in metadata list
+- Handle unknown icon
+- Only preload svg pictures on homepage
+- Don't add empty search parameters to global search engine
+- Fix getting categories from global search engine
+- Remove unused deps
+- Only show one pagination bar when searching in both events & groups
+- Run build multiarch release on tags too
+- Don't start mobilizon server when running migrations
+- Run phx.digest before mix release
+- Fix event card background color behind picture
+- Fix position of the « no events found » message
+- Add distinct clause to search events
+- Fix showing past events on group page
+- Fix display of group invitations
+- Fix leaving a group
+- Fix group events order
+- Prevent loading group membership status before we get person information
+- Prefix setInterval with window
+- Fix fetching events with addresses that's not objects
+- Fix dashboard view
+- Fix anonymous & remote participation pages
+- Fix anonymous/remote participation button
+- Do not list drafts in upcoming / old events event if instance moderator
+- Make sure group is refreshed after action
+- Fix deleting person detached from user
+- Fix pagination number text color in dark theme
+- Fix post sharing URL
+- Fix current format status of text not displayed in text editor
+- Fix moving resources
+- Fix multiselect of resources
+- Properly handle un-needed background jobs
+- Properly handle replying to an event that has been deleted
+- Propertly handle other errors when receiving a comment
+- Fix event integrations
+- Prevent loading authorized groups when current actor isn't loading in OrganizerPickerWrapper
+- Fix building CSP policy
+- Fix event map view
+- Various front-end fixes
+- Handle error when fetching object from tombstone
+- Fixed upcoming event groups display on homepage view
+- Fixed Ecto Dev warning on compilation
+- Adapt white parts in Mobilizon logo to current color
+- Register missing BellOutline and BellOffOutline icons
+- Don't load group status when unlogged
+- Fix order of useHead registration on JoinGroupWithAccount view
+- Fix profile@instance translation
+- Handle :http_not_found as an error when deleting an object
+- Handle suspending actors with special type
+- Add fallback handler for can_send_activity?
+- Properly log if we can't notify group follower
+
+### Security
+
+- Correctly escape user-defined names in emails
+
+### Internal
+- Build on Elixir 1.14.1 and Erlang OTP 25.
+- Migrate from Vue 2 and Vue Class Component to Vue 3 and the Composition API
+- Migrate from Bulma and Buefy to TailwindCSS and Oruga
+
+### Tests
+
+#### Unit Tests
+- Rewrote tests using Vitest
+
+#### E2E Tests
+- Renabled E2E tests
+- Rewrote tests from Cypress to Playwright
+
 ## 3.0.0-rc.6 - 2022-11-07
 
 ### Fixed
