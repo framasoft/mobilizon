@@ -716,6 +716,7 @@ const { result, subscribeToMore } = useQuery<{
   () => ({
     enabled:
       currentActor.value?.id !== undefined &&
+      currentActor.value?.id !== null &&
       group.value?.preferredUsername !== undefined &&
       usernameWithDomain(group.value) !== "",
   })
