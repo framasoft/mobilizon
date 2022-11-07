@@ -11,6 +11,7 @@ defmodule Mobilizon.Web.Email.Group do
   alias Mobilizon.Events.Event
   alias Mobilizon.Users.{Setting, User}
   alias Mobilizon.Web.Email
+  require Logger
 
   @spec notify_of_new_event(Event.t()) :: :ok
   def notify_of_new_event(%Event{attributed_to: %Actor{} = group} = event) do
@@ -62,6 +63,20 @@ defmodule Mobilizon.Web.Email.Group do
       :ok
     end
   end
+
+  defp notify_follower(
+         %Event{uuid: event_uuid},
+         %Actor{type: :Group, preferred_username: group_username},
+         user
+       ) do
+    Logger.warn(
+      "Unable to notify group follower user #{user.email} for event #{event_uuid} from group #{group_username}"
+    )
+
+    :ok
+  end
+
+  defp notify_follower(_, _, _), do: :ok
 
   @spec accepts_new_events_notifications(list()) :: boolean()
   defp accepts_new_events_notifications(activity_settings) do
