@@ -240,6 +240,12 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/ViewList.vue`),
   SmokingOff: () =>
     import(`../../../node_modules/vue-material-design-icons/SmokingOff.vue`),
+  BellOutline: () =>
+    import(`../../../node_modules/vue-material-design-icons/BellOutline.vue`),
+  BellOffOutline: () =>
+    import(
+      `../../../node_modules/vue-material-design-icons/BellOffOutline.vue`
+    ),
 };
 
 const props = withDefaults(
