@@ -35,12 +35,12 @@
     v-if="currentActor?.id && (welcomeBack || newRegisteredUser)"
   >
     <o-notification variant="info" v-if="welcomeBack">{{
-      $t("Welcome back {username}!", {
+      t("Welcome back {username}!", {
         username: displayName(currentActor),
       })
     }}</o-notification>
     <o-notification variant="info" v-if="newRegisteredUser">{{
-      $t("Welcome to Mobilizon, {username}!", {
+      t("Welcome to Mobilizon, {username}!", {
         username: displayName(currentActor),
       })
     }}</o-notification>
@@ -48,7 +48,7 @@
   <!-- Your upcoming events -->
   <section v-if="canShowMyUpcomingEvents" class="container mx-auto">
     <h2 class="dark:text-white font-bold">
-      {{ $t("Your upcoming events") }}
+      {{ t("Your upcoming events") }}
     </h2>
     <div
       v-for="row of goingToEvents"
@@ -57,7 +57,7 @@
     >
       <p class="date-component-container" v-if="isInLessThanSevenDays(row[0])">
         <span v-if="isToday(row[0])">{{
-          $t(
+          t(
             "You have one event today.",
             {
               count: row[1].size,
@@ -66,7 +66,7 @@
           )
         }}</span>
         <span v-else-if="isTomorrow(row[0])">{{
-          $t(
+          t(
             "You have one event tomorrow.",
             {
               count: row[1].size,
@@ -76,7 +76,7 @@
         }}</span>
         <span v-else-if="isInLessThanSevenDays(row[0])">
           {{
-            $t(
+            t(
               "You have one event in {days} days.",
               {
                 count: row[1].size,
@@ -101,16 +101,21 @@
       <router-link
         :to="{ name: RouteName.MY_EVENTS }"
         class="hover:text-slate-800 hover:dark:text-slate-400"
-        >{{ $t("View everything") }} >></router-link
+        >{{ t("View everything") }} >></router-link
       >
     </span>
   </section>
   <!-- Events from your followed groups -->
-  <section class="followActivity" v-if="canShowFollowedGroupEvents">
-    <h2 class="title">
-      {{ $t("Upcoming events from your groups") }}
+  <section
+    class="relative pt-10 px-2 container mx-auto px-2"
+    v-if="canShowFollowedGroupEvents"
+  >
+    <h2
+      class="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-0"
+    >
+      {{ t("Upcoming events from your groups") }}
     </h2>
-    <p>{{ $t("That you follow or of which you are a member") }}</p>
+    <p>{{ t("That you follow or of which you are a member") }}</p>
     <multi-card :events="filteredFollowedGroupsEvents" />
     <span
       class="block mt-2 text-right underline text-slate-700 dark:text-slate-300"
@@ -126,7 +131,7 @@
             showMyGroups: 'true',
           },
         }"
-        >{{ $t("View everything") }} >></router-link
+        >{{ t("View everything") }} >></router-link
       >
     </span>
   </section>
@@ -218,6 +223,9 @@ import { geoHashToCoords } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import { ABOUT } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({ useScope: "global" });
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")

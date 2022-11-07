@@ -77,9 +77,7 @@ defmodule Mobilizon do
 
     ErrorReporting.configure()
 
-    if @env == :dev do
-      Ecto.DevLogger.install(Storage.Repo)
-    end
+    setup_ecto_dev_logger(@env)
 
     # Only attach the telemetry logger when we aren't in an IEx shell
     unless Code.ensure_loaded?(IEx) && IEx.started?() do
@@ -156,4 +154,10 @@ defmodule Mobilizon do
       restart: :temporary
     }
   end
+
+  defp setup_ecto_dev_logger(:dev) do
+    Ecto.DevLogger.install(Storage.Repo)
+  end
+
+  defp setup_ecto_dev_logger(_), do: nil
 end
