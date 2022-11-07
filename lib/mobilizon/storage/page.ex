@@ -31,7 +31,7 @@ defmodule Mobilizon.Storage.Page do
         fn -> Repo.all(paginate(query, page, limit)) end
       ]
       |> Enum.map(&Task.async/1)
-      |> Enum.map(&Task.await/1)
+      |> Enum.map(&Task.await(&1, 15_000))
 
     %__MODULE__{total: total, elements: elements}
   end
