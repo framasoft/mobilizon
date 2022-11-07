@@ -24,7 +24,9 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
       GenericJSONClient.client(headers: [{:Authorization, "Client-ID #{unsplash_access_key()}"}])
 
     with {:ok, %{status: 200, body: body}} <- GenericJSONClient.get(client, url),
-         selected_picture <- Enum.random(body["results"]) do
+         results <- body["results"],
+         {:empty, false} <- {:empty, Enum.empty?(results)},
+         selected_picture <- Enum.random(results) do
       %Information{
         url: selected_picture["urls"]["small"],
         author: %{
@@ -37,6 +39,9 @@ defmodule Mobilizon.Service.Pictures.Unsplash do
         }
       }
     else
+      {:empty, false} ->
+        nil
+
       _ ->
         nil
     end

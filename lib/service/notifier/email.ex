@@ -94,6 +94,15 @@ defmodule Mobilizon.Service.Notifier.Email do
       )
   end
 
+  defp can_send_activity?(activity, user, options) do
+    Logger.warn("Can't check if user #{inspect(user)} can be sent an activity",
+      activity: inspect(activity),
+      options: inspect(options)
+    )
+
+    false
+  end
+
   @spec match_group_notifications_setting(
           non_neg_integer(),
           String.t(),

@@ -637,6 +637,10 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             {:error, err} ->
               Logger.debug(inspect(err))
               {:error, err}
+
+            {:error, :http_not_found, err} ->
+              Logger.debug(inspect(err))
+              {:error, err}
           end
         end
     end
