@@ -22,6 +22,7 @@ defmodule Mobilizon.Service.ActorSuspension do
 
   @actor_preloads [:user, :organized_events, :participations, :comments]
   @delete_actor_default_options [reserve_username: true, suspension: false]
+  @valid_actor_types [:Person, :Group]
 
   @doc """
   Deletes an actor.
@@ -119,7 +120,8 @@ defmodule Mobilizon.Service.ActorSuspension do
   end
 
   @spec notify_event_participants_from_suspension(Actor.t()) :: :ok
-  defp notify_event_participants_from_suspension(%Actor{id: actor_id} = actor) do
+  defp notify_event_participants_from_suspension(%Actor{id: actor_id, type: actor_type} = actor)
+       when actor_type in @valid_actor_types do
     actor
     |> get_actor_organizer_events_participations()
     |> preload([:actor, :event])
@@ -133,6 +135,8 @@ defmodule Mobilizon.Service.ActorSuspension do
     end)
     |> Enum.each(&Events.delete_participant/1)
   end
+
+  defp notify_event_participants_from_suspension(_), do: :ok
 
   @spec get_actor_organizer_events_participations(Actor.t()) :: Ecto.Query.t()
   defp get_actor_organizer_events_participations(%Actor{type: :Person, id: actor_id}) do
