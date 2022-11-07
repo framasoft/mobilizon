@@ -26,19 +26,19 @@ const { group } = useGroup(props.preferredUsername);
 
 const { t } = useI18n({ useScope: "global" });
 
-useHead({
-  title: computed(() =>
-    t("Join group {group}", {
-      group: groupTitle.value,
-    })
-  ),
+const groupTitle = computed((): undefined | string => {
+  return group && displayName(group.value);
 });
 
 const uri = computed((): string | undefined => {
   return group.value?.url;
 });
 
-const groupTitle = computed((): undefined | string => {
-  return group && displayName(group.value);
+useHead({
+  title: computed(() =>
+    t("Join group {group}", {
+      group: groupTitle.value,
+    })
+  ),
 });
 </script>
