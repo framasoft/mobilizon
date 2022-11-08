@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:02+0000\n"
-"PO-Revision-Date: 2021-11-01 16:22+0000\n"
+"PO-Revision-Date: 2022-11-08 13:26+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend-errors/nn/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 ## This file is a PO Template file.
 ##
@@ -1055,12 +1055,12 @@ msgstr "Brukaren kan ikkje endra epostadressa"
 #: lib/graphql/resolvers/group.ex:399
 #, elixir-autogen, elixir-format
 msgid "Follow does not match your account"
-msgstr ""
+msgstr "Abonnementet stemmer ikkje med kontoen din"
 
 #: lib/graphql/resolvers/group.ex:403
 #, elixir-autogen, elixir-format
 msgid "Follow not found"
-msgstr ""
+msgstr "Fann ikkje abonnementet"
 
 #: lib/graphql/resolvers/user.ex:362
 #, elixir-autogen, elixir-format
@@ -1070,12 +1070,12 @@ msgstr "Fann ingen person med brukarnamnet %{username}"
 #: lib/graphql/resolvers/user.ex:357
 #, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
-msgstr ""
+msgstr "Denne profilen høyrer ikkje til deg"
 
 #: lib/graphql/resolvers/group.ex:373
 #, elixir-autogen, elixir-format
 msgid "You are already following this group"
-msgstr ""
+msgstr "Du fylgjer allereie denne gruppa"
 
 #: lib/graphql/resolvers/group.ex:382
 #, elixir-autogen, elixir-format
@@ -1095,7 +1095,7 @@ msgstr "Du må vera innlogga for å oppdatera ei gruppe"
 #: lib/graphql/resolvers/member.ex:210
 #, elixir-autogen, elixir-format
 msgid "This member does not exist"
-msgstr ""
+msgstr "Denne medlemen finst ikkje"
 
 #: lib/graphql/resolvers/member.ex:234
 #, elixir-autogen, elixir-format
@@ -1105,52 +1105,50 @@ msgstr "Du har ikkje løyve til å fjerna denne medlemen."
 #: lib/graphql/resolvers/member.ex:252
 #, elixir-autogen, elixir-format
 msgid "You must be logged-in to remove a member"
-msgstr ""
+msgstr "Du må vera innlogga for å fjerna medlemer"
 
 #: lib/graphql/resolvers/user.ex:164
 #, elixir-autogen, elixir-format
 msgid "Your email seems to be using an invalid format"
-msgstr ""
+msgstr "Det ser ut som epostadressa di er ugyldig"
 
 #: lib/graphql/resolvers/admin.ex:382
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
-msgstr ""
+msgstr "Du kan ikkje stadfesta ein brukar som allereie er stadfesta"
 
 #: lib/graphql/resolvers/admin.ex:386
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
-msgstr ""
+msgstr "Du kan ikkje oppheva stadfesting av brukarar"
 
 #: lib/graphql/resolvers/admin.ex:358
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "The new role must be different"
-msgstr "Den nye epostadressa må vera annleis"
+msgstr "Den nye rolla må vera annleis"
 
 #: lib/graphql/resolvers/admin.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
-msgstr ""
-"Du må vera innlogga og ha ei administratorrolle for å lagra admin-"
-"innstillingar"
+msgstr "Du må vera innlogga og ha ei administratorrolle for å redigera brukarar"
 
 #: lib/graphql/api/groups.ex:33
 #, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
-msgstr ""
+msgstr "Det finst allereie ein brukar eller ei gruppe med det namnet"
 
 #: lib/graphql/resolvers/admin.ex:519
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
-msgstr ""
+msgstr "Greidde ikkje finna ein nettstad å fylgja på denne adressa"
 
 #: lib/mobilizon/actors/actor.ex:396
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
-msgstr ""
+msgstr "Brukarnamnet kan berre innehalda små bokstavar, tal og understrek."
 
 #: lib/graphql/resolvers/user.ex:286
 #: lib/graphql/resolvers/user.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
-msgstr "Den nye epostadressa ser ut til å vera feil"
+msgstr "Denne epostadressa ser ikkje gyldig ut"
