@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-10-24 12:50+0000\n"
+"PO-Revision-Date: 2022-11-07 21:27+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -121,7 +121,7 @@ msgstr "mora biti jednako %{number}"
 #: lib/graphql/resolvers/user.ex:115
 #, elixir-autogen, elixir-format
 msgid "Cannot refresh the token"
-msgstr ""
+msgstr "Nije moguće aktualizirati token"
 
 #: lib/graphql/resolvers/group.ex:276
 #, elixir-autogen, elixir-format
@@ -136,7 +136,7 @@ msgstr "Aktualni profil nije administrator odabrane grupe"
 #: lib/graphql/resolvers/user.ex:627
 #, elixir-autogen, elixir-format
 msgid "Error while saving user settings"
-msgstr ""
+msgstr "Greška prilikom spremanja korisničkih postavki"
 
 #: lib/graphql/error.ex:101
 #: lib/graphql/resolvers/group.ex:273
@@ -147,24 +147,25 @@ msgstr ""
 #: lib/graphql/resolvers/member.ex:81
 #, elixir-autogen, elixir-format
 msgid "Group not found"
-msgstr ""
+msgstr "Grupa nije pronađena"
 
 #: lib/graphql/resolvers/group.ex:98
 #: lib/graphql/resolvers/group.ex:102
 #, elixir-autogen, elixir-format
 msgid "Group with ID %{id} not found"
-msgstr ""
+msgstr "Grupa s ID oznakom %{id} nije pronađena"
 
 #: lib/graphql/resolvers/user.ex:93
 #, elixir-autogen, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr ""
+"Autentifikacija nije moguća, vaša e-mail adresa ili lozinka su neispravni."
 
 #: lib/graphql/resolvers/group.ex:339
 #: lib/graphql/resolvers/group.ex:346
 #, elixir-autogen, elixir-format
 msgid "Member not found"
-msgstr ""
+msgstr "Član nije pronađen"
 
 #: lib/graphql/resolvers/actor.ex:94
 #, elixir-autogen, elixir-format
