@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-02 22:03+0000\n"
-"PO-Revision-Date: 2022-03-17 20:28+0000\n"
+"PO-Revision-Date: 2022-11-08 13:26+0000\n"
 "Last-Translator: Eivind Ødegård <eivind.odegard@sogn.no>\n"
 "Language-Team: Norwegian Nynorsk <https://weblate.framasoft.org/projects/"
 "mobilizon/backend/nn/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2147,178 +2147,178 @@ msgstr "Sjå på detaljane"
 #: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
 msgid "Arts"
-msgstr ""
+msgstr "Kunst"
 
 #: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
-msgstr ""
+msgstr "Bil, båt og luftfart"
 
 #: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr ""
+msgstr "Bokklubbar"
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Business"
-msgstr ""
+msgstr "Næringsliv"
 
 #: lib/mobilizon/events/categories.ex:44
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Causes"
-msgstr ""
+msgstr "Grunnar"
 
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
-msgstr ""
+msgstr "Komedie"
 
 #: lib/mobilizon/events/categories.ex:72
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Community"
-msgstr "Kommentarar"
+msgstr "Samfunn"
 
 #: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
-msgstr ""
+msgstr "Handverk"
 
 #: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Family & Education"
-msgstr ""
+msgstr "Familie og utdanning"
 
 #: lib/mobilizon/events/categories.ex:80
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
-msgstr ""
+msgstr "Mote og venleik"
 
 #: lib/mobilizon/events/categories.ex:84
 #, elixir-autogen, elixir-format
 msgid "Film & Media"
-msgstr ""
+msgstr "Film og media"
 
 #: lib/mobilizon/events/categories.ex:56
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
-msgstr ""
+msgstr "Mat og drikke"
 
 #: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Games"
-msgstr ""
+msgstr "Spel"
 
 #: lib/mobilizon/events/categories.ex:60
 #, elixir-autogen, elixir-format
 msgid "Health"
-msgstr ""
+msgstr "Helse"
 
 #: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "LGBTQ"
-msgstr ""
+msgstr "LGBTQ"
 
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
-msgstr ""
+msgstr "Språk og kultur"
 
 #: lib/mobilizon/events/categories.ex:96
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Learning"
-msgstr "Åtvaring"
+msgstr "Læring"
 
 #: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
 msgid "Meeting"
-msgstr ""
+msgstr "Møte"
 
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
-msgstr ""
+msgstr "Rørsler og politikk"
 
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
-msgstr ""
+msgstr "Musikk"
 
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr ""
+msgstr "Nettverk"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
-msgstr ""
+msgstr "Friluftsliv"
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Party"
-msgstr ""
+msgstr "Fest"
 
 #: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
-msgstr ""
+msgstr "Framføring og visuell kunst"
 
 #: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
 msgid "Pets"
-msgstr ""
+msgstr "Kjæledyr"
 
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Photography"
-msgstr ""
+msgstr "Fotografi"
 
 #: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
-msgstr ""
+msgstr "Vitskap og teknologi"
 
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr ""
+msgstr "Spiritualitet, tru og livssyn"
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr ""
+msgstr "Idrett"
 
 #: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
 msgid "Theatre"
-msgstr ""
+msgstr "Teater"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Read more: %{url}"
-msgstr "Les meir"
+msgstr "Les meir: %{url}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Ta i bruk kontoen min"
+msgstr "Ta i bruk kontoen min:"
 
 #: lib/web/email/follow.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Instance %{domain} requests to follow your instance"
-msgstr "Nettstaden %{name} (%{domain}) spør om å fylgja nettstaden din"
+msgstr "Nettstaden %{domain} spør om å fylgja nettstaden din"
 
 #: lib/web/templates/email/instance_follow.html.heex:68
 #: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
-"Merk: At %{name} (%{domain}) fylgjer deg, tyder ikkje plent at du fylgjer "
-"dei, men du kan be om å fylgja dei òg."
+"Merk: At %{name} fylgjer deg, tyder ikkje at du fylgjer dei, men at du kan "
+"be om å fylgja dei òg."
 
 #: lib/web/templates/email/group_member_removal.html.heex:18
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
-msgstr ""
+msgstr "Talast neste gong!"
