@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-13 18:58+0000\n"
-"Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
+"PO-Revision-Date: 2022-11-12 19:02+0000\n"
+"Last-Translator: John H <jonher@riseup.net>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/de/>\n"
 "Language: de\n"
@@ -486,6 +486,6 @@ msgstr "%{profile} hat auf die Diskussion %{discussion} geantwortet."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:36
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:33
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} approved the member %{member}."
-msgstr "%{profile} hat das Mitglied %{member} hinzugefügt."
+msgstr "%{profile} hat das Mitglied %{member} bestätigt."
