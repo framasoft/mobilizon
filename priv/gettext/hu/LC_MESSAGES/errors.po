@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-06 00:33+0000\n"
-"PO-Revision-Date: 2021-11-25 01:22+0000\n"
-"Last-Translator: Balázs Úr <balazs@urbalazs.hu>\n"
+"PO-Revision-Date: 2022-11-14 03:44+0000\n"
+"Last-Translator: Balázs Meskó <mesko.balazs@fsf.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hu/>\n"
 "Language: hu\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 ## This file is a PO Template file.
 ##
@@ -67,8 +67,8 @@ msgstr "még mindig hozzá vannak rendelve ehhez a bejegyzéshez"
 ## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "%{count} karakternek kell lennie"
-msgstr[1] "%{count} karakternek kell lennie"
+msgstr[0] "%{count} karakteresnek kell lennie"
+msgstr[1] "%{count} karakteresnek kell lennie"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
@@ -77,8 +77,8 @@ msgstr[1] "%{count} elemmel kell rendelkeznie"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] "legalább %{count} karakternek kell lennie"
-msgstr[1] "legalább %{count} karakternek kell lennie"
+msgstr[0] "legalább %{count} karakteresnek kell lennie"
+msgstr[1] "legalább %{count} karakteresnek kell lennie"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
@@ -87,8 +87,8 @@ msgstr[1] "legalább %{count} elemmel kell rendelkeznie"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] "legfeljebb %{count} karakternek kell lennie"
-msgstr[1] "legfeljebb %{count} karakternek kell lennie"
+msgstr[0] "legfeljebb %{count} karakteresnek kell lennie"
+msgstr[1] "legfeljebb %{count} karakteresnek kell lennie"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
@@ -1129,42 +1129,44 @@ msgstr "Úgy tűnik, hogy az e-mail-címe érvénytelen formátumot használ"
 #: lib/graphql/resolvers/admin.ex:382
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
-msgstr ""
+msgstr "A már megerősített felhasználó nem erősíthető meg"
 
 #: lib/graphql/resolvers/admin.ex:386
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
-msgstr ""
+msgstr "A felhasználók megerősítésének visszavonása nem támogatott"
 
 #: lib/graphql/resolvers/admin.ex:358
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "The new role must be different"
-msgstr "Az új e-mail-címnek eltérőnek kell lennie"
+msgstr "Az új szerepnek eltérőnek kell lennie"
 
 #: lib/graphql/resolvers/admin.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
-"Bejelentkezve kell lennie és adminisztrátornak kell lennie az "
-"adminisztrátori beállítások mentéséhez"
+"Bejelentkezve kell lennie és adminisztrátornak kell lennie a felhasználó "
+"részleteinek szerkesztéséhez"
 
 #: lib/graphql/api/groups.ex:33
 #, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
-msgstr ""
+msgstr "Már létezik ilyen nevű profil vagy csoport"
 
 #: lib/graphql/resolvers/admin.ex:519
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
-msgstr ""
+msgstr "Nem található követhető példány ezen a címen"
 
 #: lib/mobilizon/actors/actor.ex:396
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
+"A felhasználónév csak kisbetűs alfanumerikus karaktereket és aláhúzásokat "
+"tartalmazhat."
 
 #: lib/graphql/resolvers/user.ex:286
 #: lib/graphql/resolvers/user.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
-msgstr "Az új e-mail-cím nem tűnik érvényesnek"
+msgstr "Ez az e-mail-cím nem tűnik érvényesnek"
