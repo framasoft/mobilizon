@@ -34,7 +34,7 @@ export const i18n = createI18n({
   // messages, // set locale messages
   messages: en, // set locale messages
   fallbackLocale: DEFAULT_LOCALE,
-  formatFallbackMessages: true,
+  fallbackFormat: true,
   pluralizationRules,
   fallbackRootWithEmptyString: true,
   globalInjection: true,

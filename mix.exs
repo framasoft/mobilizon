@@ -189,7 +189,7 @@ defmodule Mobilizon.Mixfile do
       {:tesla, "~> 1.4.0"},
       {:sitemapper, "~> 0.6"},
       {:xml_builder, "~> 2.2"},
-      {:remote_ip, "~> 1.0.0"},
+      {:remote_ip, "~> 1.1"},
       {:ex_cldr_languages, "~> 0.3.0"},
       {:slugger, "~> 0.3"},
       {:sentry, "~> 8.0"},
@@ -201,6 +201,7 @@ defmodule Mobilizon.Mixfile do
       {:paasaa, "~> 0.6.0"},
       {:nimble_csv, "~> 1.1"},
       {:export, "~> 0.1.0"},
+      {:erlport, github: "tcitworld/erlport", branch: "0.10.1-compat", override: true},
       {:tz_world, "~> 1.0"},
       {:tzdata, "~> 1.1"},
       {:codepagex, "~> 0.1.6"},
@@ -221,7 +222,7 @@ defmodule Mobilizon.Mixfile do
       {:mox, "~> 1.0", only: :test},
       {:junit_formatter, "~> 3.1", only: [:test]},
       {:sobelow, "~> 0.8", only: [:dev, :test]},
-      {:doctor, "~> 0.20.0", only: :dev},
+      {:doctor, "~> 0.21", only: :dev},
       {:haversine, "~> 0.1.0"},
       {:ecto_dev_logger, "~> 0.7"}
     ] ++ oauth_deps()

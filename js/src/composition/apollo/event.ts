@@ -10,11 +10,12 @@ export function useFetchEvent(uuid?: string) {
     error,
     onError,
     onResult,
+    refetch,
   } = useQuery<{ event: IEvent }>(
     FETCH_EVENT,
-    {
+    () => ({
       uuid,
-    },
+    }),
     () => ({
       enabled: uuid !== undefined,
     })
@@ -22,7 +23,7 @@ export function useFetchEvent(uuid?: string) {
 
   const event = computed(() => fetchEventResult.value?.event);
 
-  return { event, loading, error, onError, onResult };
+  return { event, loading, error, onError, onResult, refetch };
 }
 
 export function useFetchEventBasic(uuid: string) {
