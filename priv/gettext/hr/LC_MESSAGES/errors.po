@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-11-07 21:27+0000\n"
+"PO-Revision-Date: 2022-11-20 18:41+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -170,7 +170,7 @@ msgstr "Član nije pronađen"
 #: lib/graphql/resolvers/actor.ex:94
 #, elixir-autogen, elixir-format
 msgid "No profile found for the moderator user"
-msgstr ""
+msgstr "Nije pronađen profil za korisnika moderatora"
 
 #: lib/graphql/resolvers/user.ex:283
 #, elixir-autogen, elixir-format
@@ -181,7 +181,7 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:313
 #, elixir-autogen, elixir-format
 msgid "No user with this email was found"
-msgstr ""
+msgstr "Nije pronađen nijedan korisnik s ovom e-mail adresom"
 
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32
@@ -194,7 +194,7 @@ msgstr ""
 #: lib/graphql/resolvers/person.ex:440
 #, elixir-autogen, elixir-format
 msgid "Profile is not owned by authenticated user"
-msgstr ""
+msgstr "Profil nije u vlasništvu autentificiranog korisnika"
 
 #: lib/graphql/resolvers/user.ex:167
 #, elixir-autogen, elixir-format

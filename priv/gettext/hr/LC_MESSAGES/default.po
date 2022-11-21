@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-10-24 12:34+0000\n"
+"PO-Revision-Date: 2022-11-20 18:41+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -167,6 +167,8 @@ msgstr "Interni korisnički ID"
 msgctxt "terms"
 msgid "Any of the information we collect from you may be used in the following ways:"
 msgstr ""
+"Sve informacije koje prikupljamo od tebe mogu se koristiti na sljedeće "
+"načine:"
 
 #: lib/web/templates/api/privacy.html.heex:13
 #, elixir-autogen, elixir-format
@@ -184,7 +186,7 @@ msgstr "Nemoj dijeliti opasne informacije putem Mobilizona."
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Do we disclose any information to outside parties?"
-msgstr ""
+msgstr "Otkrivamo li bilo koje informacije trećim stranama?"
 
 #: lib/web/templates/api/privacy.html.heex:100
 #, elixir-autogen, elixir-format
