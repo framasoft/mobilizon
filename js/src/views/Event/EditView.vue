@@ -1297,9 +1297,11 @@ const maximumAttendeeCapacity = computed({
     return eventOptions.value.maximumAttendeeCapacity.toString();
   },
   set(newMaximumAttendeeCapacity: string) {
-    eventOptions.value.maximumAttendeeCapacity = parseInt(newMaximumAttendeeCapacity);
-  }
-})
+    eventOptions.value.maximumAttendeeCapacity = parseInt(
+      newMaximumAttendeeCapacity
+    );
+  },
+});
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
