@@ -201,6 +201,7 @@ defmodule Mobilizon.Mixfile do
       {:paasaa, "~> 0.6.0"},
       {:nimble_csv, "~> 1.1"},
       {:export, "~> 0.1.0"},
+      {:erlport, github: "tcitworld/erlport", branch: "0.10.1-compat", override: true},
       {:tz_world, "~> 1.0"},
       {:tzdata, "~> 1.1"},
       {:codepagex, "~> 0.1.6"},
