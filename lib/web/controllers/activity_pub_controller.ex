@@ -191,6 +191,7 @@ defmodule Mobilizon.Web.ActivityPubController do
 
   defp actor_collection(conn, collection, %{"name" => name, "page" => page}) do
     with {page, ""} <- Integer.parse(page),
+         page <- max(page, 1),
          %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
       |> put_resp_header("content-type", "application/activity+json")
