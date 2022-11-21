@@ -279,7 +279,7 @@
               :aria-minus-label="t('Decrease')"
               :aria-plus-label="t('Increase')"
               min="1"
-              v-model="eventOptions.maximumAttendeeCapacity"
+              v-model="maximumAttendeeCapacity"
               id="number-of-places"
             />
           </o-field>
@@ -1291,6 +1291,15 @@ watch(isOnline, (newIsOnline) => {
     eventPhysicalAddress.value = null;
   }
 });
+
+const maximumAttendeeCapacity = computed({
+  get(): string {
+    return eventOptions.value.maximumAttendeeCapacity.toString();
+  },
+  set(newMaximumAttendeeCapacity: string) {
+    eventOptions.value.maximumAttendeeCapacity = parseInt(newMaximumAttendeeCapacity);
+  }
+})
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
