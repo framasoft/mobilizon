@@ -1446,5 +1446,7 @@
   "By car": "By car",
   "Select all resources": "Select all resources",
   "Select this resource": "Select this resource",
-  "You can add resources by using the button above.": "You can add resources by using the button above."
+  "You can add resources by using the button above.": "You can add resources by using the button above.",
+  "{user}'s follow request was accepted": "{user}'s follow request was accepted",
+  "{user}'s follow request was rejected": "{user}'s follow request was rejected"
 }
