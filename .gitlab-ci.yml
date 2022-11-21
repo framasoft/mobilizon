@@ -401,6 +401,6 @@ release-create:
     release-cli create  --name "$CI_COMMIT_TAG" \
                         --description "$CHANGELOG" \
                         --tag-name "$CI_COMMIT_TAG" \
-                        --assets-link "{\"name\":\"${APP_ASSET_AMD64}\",\"url\":\"${ENDPOINT}/${APP_ASSET_AMD64}\"}" \
-                        --assets-link "{\"name\":\"${APP_ASSET_ARM}\",\"url\":\"${ENDPOINT}/${APP_ASSET_ARM}\"}" \
-                        --assets-link "{\"name\":\"${APP_ASSET_ARM64}\",\"url\":\"${ENDPOINT}/${APP_ASSET_ARM64}\"}"
+                        --assets-link "{\"name\":\"${APP_ASSET_AMD64}\",\"url\":\"${ENDPOINT}/${CI_COMMIT_REF_NAME}/${APP_ASSET_AMD64}\"}" \
+                        --assets-link "{\"name\":\"${APP_ASSET_ARM}\",\"url\":\"${ENDPOINT}/${CI_COMMIT_REF_NAME}/${APP_ASSET_ARM}\"}" \
+                        --assets-link "{\"name\":\"${APP_ASSET_ARM64}\",\"url\":\"${ENDPOINT}/${CI_COMMIT_REF_NAME}/${APP_ASSET_ARM64}\"}"
