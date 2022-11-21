@@ -298,7 +298,7 @@ const props = defineProps<{
 
 const { t } = useI18n({ useScope: "global" });
 
-const propsUUID = computed(() => props.uuid)
+const propsUUID = computed(() => props.uuid);
 
 const {
   event,
@@ -308,8 +308,8 @@ const {
 } = useFetchEvent(props.uuid);
 
 watch(propsUUID, (newUUid) => {
-  refetchEvent({ uuid: newUUid })
-})
+  refetchEvent({ uuid: newUUid });
+});
 
 const eventId = computed(() => event.value?.id);
 const { currentActor } = useCurrentActorClient();

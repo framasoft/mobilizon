@@ -243,6 +243,34 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       assert length(result["orderedItems"]) == 5
     end
 
+    test "it can't be called for a page < 1", %{conn: conn} do
+      actor = insert(:actor, visibility: :public)
+
+      Enum.each(1..15, fn _ ->
+        insert(:event, organizer_actor: actor)
+      end)
+
+      result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox))
+        |> json_response(200)
+
+      assert length(result["first"]["orderedItems"]) == 10
+      assert result["totalItems"] == 15
+
+      page_0_result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox, page: 0))
+        |> json_response(200)
+
+      page_1_result =
+        conn
+        |> get(Actor.build_url(actor.preferred_username, :outbox, page: 1))
+        |> json_response(200)
+
+      assert page_0_result == page_1_result
+    end
+
     test "it returns an empty collection if the actor has private visibility", %{conn: conn} do
       actor = insert(:actor, visibility: :private)
       insert(:event, organizer_actor: actor)

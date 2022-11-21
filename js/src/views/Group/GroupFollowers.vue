@@ -11,12 +11,12 @@
         {
           name: RouteName.GROUP_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Settings'),
+          text: t('Settings'),
         },
         {
           name: RouteName.GROUP_FOLLOWERS_SETTINGS,
           params: { preferredUsername: usernameWithDomain(group) },
-          text: $t('Followers'),
+          text: t('Followers'),
         },
       ]"
     />
@@ -25,9 +25,9 @@
       class="container mx-auto section"
       v-if="group && isCurrentActorAGroupAdmin && followers"
     >
-      <h1>{{ $t("Group Followers") }} ({{ followers.total }})</h1>
-      <o-field :label="$t('Status')" horizontal>
-        <o-switch v-model="pending">{{ $t("Pending") }}</o-switch>
+      <h1>{{ t("Group Followers") }} ({{ followers.total }})</h1>
+      <o-field :label="t('Status')" horizontal>
+        <o-switch v-model="pending">{{ t("Pending") }}</o-switch>
       </o-field>
       <o-table
         :data="followers.elements"
@@ -37,10 +37,10 @@
         backend-pagination
         v-model:current-page="page"
         :pagination-simple="true"
-        :aria-next-label="$t('Next page')"
-        :aria-previous-label="$t('Previous page')"
-        :aria-page-label="$t('Page')"
-        :aria-current-label="$t('Current page')"
+        :aria-next-label="t('Next page')"
+        :aria-previous-label="t('Previous page')"
+        :aria-page-label="t('Page')"
+        :aria-current-label="t('Current page')"
         :total="followers.total"
         :per-page="FOLLOWERS_PER_PAGE"
         backend-sorting
@@ -51,7 +51,7 @@
       >
         <o-table-column
           field="actor.preferredUsername"
-          :label="$t('Follower')"
+          :label="t('Follower')"
           v-slot="props"
         >
           <article class="flex gap-1">
@@ -76,39 +76,39 @@
             </div>
           </article>
         </o-table-column>
-        <o-table-column field="insertedAt" :label="$t('Date')" v-slot="props">
+        <o-table-column field="insertedAt" :label="t('Date')" v-slot="props">
           <span class="has-text-centered">
             {{ formatDateString(props.row.insertedAt) }}<br />{{
               formatTimeString(props.row.insertedAt)
             }}
           </span>
         </o-table-column>
-        <o-table-column field="actions" :label="$t('Actions')" v-slot="props">
-          <div class="buttons">
+        <o-table-column field="actions" :label="t('Actions')" v-slot="props">
+          <div class="flex gap-2">
             <o-button
               v-if="!props.row.approved"
               @click="updateFollower(props.row, true)"
               icon-left="check"
               variant="success"
-              >{{ $t("Accept") }}</o-button
+              >{{ t("Accept") }}</o-button
             >
             <o-button
               @click="updateFollower(props.row, false)"
               icon-left="close"
               variant="danger"
-              >{{ $t("Reject") }}</o-button
+              >{{ t("Reject") }}</o-button
             >
           </div>
         </o-table-column>
         <template #empty>
           <empty-content icon="account" inline>
-            {{ $t("No follower matches the filters") }}
+            {{ t("No follower matches the filters") }}
           </empty-content>
         </template>
       </o-table>
     </section>
     <o-notification v-else-if="!loading && group">
-      {{ $t("You are not an administrator for this group.") }}
+      {{ t("You are not an administrator for this group.") }}
     </o-notification>
   </div>
 </template>
@@ -164,6 +164,7 @@ const { t } = useI18n({ useScope: "global" });
 useHead({ title: computed(() => t("Group Followers")) });
 
 const loadMoreFollowers = async (): Promise<void> => {
+  console.debug("load more followers");
   await fetchMore({
     // New variables
     variables: {
@@ -183,6 +184,12 @@ const { onDone, onError, mutate } = useMutation<{ updateFollower: IFollower }>(
     refetchQueries: [
       {
         query: GROUP_FOLLOWERS,
+        variables: {
+          name: usernameWithDomain(group.value),
+          followersPage: page.value,
+          followersLimit: FOLLOWERS_PER_PAGE,
+          approved: !pending.value,
+        },
       },
     ],
   })
@@ -192,11 +199,11 @@ onDone(({ data }) => {
   const follower = data?.updateFollower;
   const message =
     data?.updateFollower.approved === true
-      ? t("@{username}'s follow request was accepted", {
-          username: follower?.actor.preferredUsername,
+      ? t("{user}'s follow request was accepted", {
+          user: displayName(follower?.actor),
         })
-      : t("@{username}'s follow request was rejected", {
-          username: follower?.actor.preferredUsername,
+      : t("{user}'s follow request was rejected", {
+          user: displayName(follower?.actor),
         });
   notifier?.success(message);
 });

@@ -1443,5 +1443,7 @@
   "By car": "En voiture",
   "Select all resources": "Sélectionner toutes les ressources",
   "Select this resource": "Sélectionner cette ressource",
-  "You can add resources by using the button above.": "Vous pouvez ajouter des ressources en utilisant le bouton au dessus."
+  "You can add resources by using the button above.": "Vous pouvez ajouter des ressources en utilisant le bouton au dessus.",
+  "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
+  "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée"
 }

@@ -32,7 +32,7 @@ export const GROUP_FOLLOWERS = gql`
 `;
 
 export const UPDATE_FOLLOWER = gql`
-  mutation UpdateFollower($id: ID!, $approved: Boolean) {
+  mutation UpdateFollower($id: ID!, $approved: Boolean!) {
     updateFollower(id: $id, approved: $approved) {
       id
       approved
