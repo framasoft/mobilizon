@@ -246,6 +246,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(
       `../../../node_modules/vue-material-design-icons/BellOffOutline.vue`
     ),
+  ExitToApp: () =>
+    import(`../../../node_modules/vue-material-design-icons/ExitToApp.vue`),
 };
 
 const props = withDefaults(
