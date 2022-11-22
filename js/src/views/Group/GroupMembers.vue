@@ -184,7 +184,7 @@
             <o-button
               variant="success"
               v-if="props.row.role === MemberRole.NOT_APPROVED"
-              @click="approveMember(props.row.id)"
+              @click="approveMember({ memberId: props.row.id })"
               icon-left="check"
               >{{ t("Approve member") }}</o-button
             >
@@ -238,7 +238,6 @@
 </template>
 
 <script lang="ts" setup>
-import { FETCH_GROUP } from "@/graphql/group";
 import { MemberRole } from "@/types/enums";
 import { IMember } from "@/types/actor/member.model";
 import RouteName from "@/router/name";
@@ -312,6 +311,12 @@ const {
   refetchQueries: [
     {
       query: GROUP_MEMBERS,
+      variables: {
+        groupName: props.preferredUsername,
+        page: page.value,
+        limit: MEMBERS_PER_PAGE,
+        roles: roles.value,
+      },
     },
   ],
 }));
@@ -363,6 +368,12 @@ const {
   refetchQueries: [
     {
       query: GROUP_MEMBERS,
+      variables: {
+        groupName: props.preferredUsername,
+        page: page.value,
+        limit: MEMBERS_PER_PAGE,
+        roles: roles.value,
+      },
     },
   ],
 }));
@@ -423,7 +434,20 @@ const {
   onDone: onApproveMemberDone,
   onError: onApproveMemberError,
 } = useMutation<{ approveMember: IMember }, { memberId: string }>(
-  APPROVE_MEMBER
+  APPROVE_MEMBER,
+  {
+    refetchQueries: [
+      {
+        query: GROUP_MEMBERS,
+        variables: {
+          groupName: props.preferredUsername,
+          page: page.value,
+          limit: MEMBERS_PER_PAGE,
+          roles: roles.value,
+        },
+      },
+    ],
+  }
 );
 
 onApproveMemberDone(() => {
@@ -452,8 +476,13 @@ const {
 >(UPDATE_MEMBER, () => ({
   refetchQueries: [
     {
-      query: FETCH_GROUP,
-      variables: { name: props.preferredUsername },
+      query: GROUP_MEMBERS,
+      variables: {
+        groupName: props.preferredUsername,
+        page: page.value,
+        limit: MEMBERS_PER_PAGE,
+        roles: roles.value,
+      },
     },
   ],
 }));
