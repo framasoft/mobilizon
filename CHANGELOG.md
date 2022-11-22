@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.1 - 2022-11-22
+
+### Fixed
+
+- Compatibility with Python 3.11 for exports that reply on Python code.
+- Formatting of fallback locales
+- Allow to specify database port for Docker configuration
+- Assets in production environment
+- Changing event uuid didn't change event data
+- Make sure maximumAttendeeCapacity is a number, not a string
+- Prevent AP collection page number being < 1
+- Fix approving/rejecting group members and followers
+- Fix 3rd-party auth links
+- Test Intl.ListFormat availability and add fallback
+- Set correct Content-Type on all AP endpoints
+- Don't notify group members & followers from new draft event
+- Register missing ExitToApp icon
+- Fix comment display
+
 ## 3.0.0 - 2022-11-08
 
 ### Added
