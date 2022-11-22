@@ -85,8 +85,9 @@ defmodule Mobilizon.Web.ActivityPubController do
         actor = Map.get(conn.assigns, :actor)
 
         if actor_applicant_group_member?(group, actor) do
-          json(
-            conn,
+          conn
+          |> put_resp_content_type("application/activity+json")
+          |> json(
             ActorView.render("member.json", %{
               member: member,
               actor_applicant: actor
@@ -168,7 +169,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   def relay(conn, _params) do
     with {status, %Actor{} = actor} when status in [:commit, :ok] <- Cache.get_relay() do
       conn
-      |> put_resp_header("content-type", "application/activity+json")
+      |> put_resp_content_type("application/activity+json")
       |> json(ActorView.render("actor.json", %{actor: actor}))
     end
   end
@@ -194,7 +195,7 @@ defmodule Mobilizon.Web.ActivityPubController do
          page <- max(page, 1),
          %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
-      |> put_resp_header("content-type", "application/activity+json")
+      |> put_resp_content_type("application/activity+json")
       |> json(
         ActorView.render("#{collection}.json", %{
           actor: actor,
@@ -208,7 +209,7 @@ defmodule Mobilizon.Web.ActivityPubController do
   defp actor_collection(conn, collection, %{"name" => name}) do
     with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
       conn
-      |> put_resp_header("content-type", "application/activity+json")
+      |> put_resp_content_type("application/activity+json")
       |> json(
         ActorView.render("#{collection}.json", %{
           actor: actor,
