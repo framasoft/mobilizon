@@ -141,11 +141,13 @@ defmodule Mobilizon.Web.PageController do
           %Tombstone{} ->
             conn
             |> put_status(:gone)
+            |> maybe_add_content_type_header()
             |> render(object_type, object: object)
 
           _ ->
             conn
             |> maybe_add_noindex_header(object)
+            |> maybe_add_content_type_header()
             |> render(object_type, object: object)
         end
 
@@ -199,4 +201,14 @@ defmodule Mobilizon.Web.PageController do
   @spec is_person?(Actor.t()) :: boolean()
   defp is_person?(%Actor{type: :Person}), do: true
   defp is_person?(_), do: false
+
+  defp maybe_add_content_type_header(conn) do
+    case get_format(conn) do
+      "html" ->
+        conn
+
+      "activity-json" ->
+        put_resp_content_type(conn, "application/activity+json")
+    end
+  end
 end

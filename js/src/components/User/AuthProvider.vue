@@ -1,5 +1,6 @@
 <template>
   <o-button
+    tag="a"
     outlined
     variant="primary"
     :icon-left="oauthProvider.id"
@@ -9,6 +10,7 @@
     <span>{{ SELECTED_PROVIDERS[oauthProvider.id] }}</span></o-button
   >
   <o-button
+    tag="a"
     outlined
     variant="primary"
     :href="`/auth/${oauthProvider.id}`"

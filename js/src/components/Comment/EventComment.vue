@@ -1,12 +1,12 @@
 <template>
   <li
+    class="bg-white dark:bg-zinc-800 rounded p-2"
     :class="{
       reply: comment.inReplyToComment,
-      'bg-purple-2': comment.isAnnouncement,
-      'bg-violet-1': commentSelected,
+      'bg-mbz-purple-50 dark:bg-mbz-purple-500': comment.isAnnouncement,
+      'bg-mbz-bluegreen-50 dark:bg-mbz-bluegreen-600': commentSelected,
       'shadow-none': !rootComment,
     }"
-    class="bg-white dark:bg-zinc-900 rounded p-2"
   >
     <article :id="commentId" dir="auto" class="mbz-comment">
       <div>
@@ -53,6 +53,7 @@
           v-html="comment.text"
           dir="auto"
           :lang="comment.language"
+          class="prose dark:prose-invert xl:prose-lg !max-w-full" :class="{ 'text-black dark:text-white': comment.isAnnouncement}"
         />
         <div v-else>{{ t("[This comment has been deleted]") }}</div>
         <nav class="flex gap-1 mt-1" v-if="!comment.deletedAt">

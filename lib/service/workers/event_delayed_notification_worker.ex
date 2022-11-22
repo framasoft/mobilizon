@@ -14,11 +14,11 @@ defmodule Mobilizon.Service.Workers.EventDelayedNotificationWorker do
   @impl Oban.Worker
   def perform(%Job{args: %{"action" => "notify_of_new_event", "event_uuid" => event_uuid}}) do
     case Events.get_event_by_uuid_with_preload(event_uuid) do
-      %Event{} = event ->
+      %Event{draft: false} = event ->
         Group.notify_of_new_event(event)
 
       nil ->
-        # Event deleted inbetween, no worries, just ignore
+        # Event still a draft or event deleted inbetween, no worries, just ignore
         :ok
     end
   end
@@ -44,7 +44,7 @@ defmodule Mobilizon.Service.Workers.EventDelayedNotificationWorker do
         )
 
       _ ->
-        # Event deleted inbetween, no worries, just ignore
+        # Event still a draft or event deleted inbetween, no worries, just ignore
         :ok
     end
   end

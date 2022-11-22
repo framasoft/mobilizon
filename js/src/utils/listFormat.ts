@@ -8,10 +8,16 @@ const shortDisjunctionFormatter = new Intl.ListFormat(undefined, {
   type: "disjunction",
 });
 
+const listFormatAvailable = typeof Intl?.ListFormat === "function";
+
 export const listShortConjunctionFormatter = (list: Array<string>): string => {
-  return shortConjunctionFormatter.format(list);
+  return listFormatAvailable
+    ? shortConjunctionFormatter.format(list)
+    : list.join(",");
 };
 
 export const listShortDisjunctionFormatter = (list: Array<string>): string => {
-  return shortDisjunctionFormatter.format(list);
+  return listFormatAvailable
+    ? shortDisjunctionFormatter.format(list)
+    : list.join(",");
 };
