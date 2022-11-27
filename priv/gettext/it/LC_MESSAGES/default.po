@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2022-11-27 09:46+0000\n"
+"PO-Revision-Date: 2022-11-27 14:24+0000\n"
 "Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -2211,52 +2211,52 @@ msgstr "Motivi"
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
-msgstr ""
+msgstr "Commedia e buonumore"
 
 #: lib/mobilizon/events/categories.ex:72
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Community"
-msgstr "Commenti"
+msgstr "Comunità"
 
 #: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
-msgstr ""
+msgstr "Arti"
 
 #: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Family & Education"
-msgstr ""
+msgstr "Famiglia e istruzione"
 
 #: lib/mobilizon/events/categories.ex:80
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
-msgstr ""
+msgstr "Moda e bellezza"
 
 #: lib/mobilizon/events/categories.ex:84
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Film & Media"
-msgstr ""
+msgstr "Film & Media"
 
 #: lib/mobilizon/events/categories.ex:56
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
-msgstr ""
+msgstr "Mangiare e bere"
 
 #: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Games"
-msgstr ""
+msgstr "Giochi"
 
 #: lib/mobilizon/events/categories.ex:60
 #, elixir-autogen, elixir-format
 msgid "Health"
-msgstr ""
+msgstr "Salute"
 
 #: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "LGBTQ"
-msgstr ""
+msgstr "LGBTQ"
 
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
@@ -2264,9 +2264,9 @@ msgid "Language & Culture"
 msgstr ""
 
 #: lib/mobilizon/events/categories.ex:96
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Learning"
-msgstr "Avviso"
+msgstr "Apprendimento"
 
 #: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
@@ -2276,17 +2276,17 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
-msgstr ""
+msgstr "Movimenti e politca"
 
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
-msgstr ""
+msgstr "Musica"
 
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr ""
+msgstr "Fare rete"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
@@ -2296,7 +2296,7 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Party"
-msgstr ""
+msgstr "Feste"
 
 #: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
@@ -2306,7 +2306,7 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
 msgid "Pets"
-msgstr ""
+msgstr "Animali"
 
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
@@ -2326,12 +2326,12 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr ""
+msgstr "Sport"
 
 #: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
 msgid "Theatre"
-msgstr ""
+msgstr "Teatro"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
 #, elixir-autogen, elixir-format, fuzzy
