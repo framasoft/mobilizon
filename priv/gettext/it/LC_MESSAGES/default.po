@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2022-11-27 09:08+0000\n"
+"PO-Revision-Date: 2022-11-27 09:46+0000\n"
 "Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -2311,7 +2311,7 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Photography"
-msgstr ""
+msgstr "Fotografia"
 
 #: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
