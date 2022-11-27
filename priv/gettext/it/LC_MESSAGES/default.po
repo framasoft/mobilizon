@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2022-04-02 06:40+0000\n"
-"Last-Translator: Marco Ciampa <ciampix@posteo.net>\n"
+"PO-Revision-Date: 2022-11-27 09:08+0000\n"
+"Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
 "Language: it\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.11.2\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -664,10 +664,11 @@ msgstr ""
 msgctxt "terms"
 msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
 msgstr ""
-"Ecco le cose importanti che devi sapere sull'accesso e sull'utilizzo di <b>% "
-"{instance_name} </b> (<a href=\"https://%{instance_url}\">% {instance_url} "
-"</a>) sito web e servizio (collettivamente, \"Servizio\"). Questi sono i "
-"nostri termini di servizio (\"Termini\"). Si prega di leggerli attentamente."
+"Ecco le cose importanti che devi sapere sull'accesso e sull'utilizzo di "
+"<b>%{instance_name}</b> (<a href=\"https://%{instance_url}\""
+">%{instance_url}</a>) sito web e servizio (collettivamente, \"Servizio\"). "
+"Questi sono i nostri termini di servizio (\"Termini\"). Si prega di leggerli "
+"attentamente."
 
 #: lib/web/templates/api/terms.html.heex:82
 #, elixir-autogen, elixir-format
@@ -715,9 +716,9 @@ msgstr ""
 msgctxt "terms"
 msgid "These Terms constitute the entire agreement between you and <b>%{instance_name}</b> regarding the use of the Service, superseding any prior agreements between you and <b>%{instance_name}</b> relating to your use of the Service."
 msgstr ""
-"I presenti Termini costituiscono l'intero accordo tra te e <b>% "
-"{instance_name} </b> per quanto riguarda l'utilizzo del Servizio, "
-"sostituendo qualsiasi accordo precedente tra te e <b>% {instance_name} </b> "
+"I presenti Termini costituiscono l'intero accordo tra te e "
+"<b>%{instance_name}</b> per quanto riguarda l'utilizzo del Servizio, "
+"sostituendo qualsiasi accordo precedente tra te e <b>%{instance_name}</b> "
 "relativo al tuo utilizzo di il servizio."
 
 #: lib/web/templates/api/terms.html.heex:247
@@ -870,14 +871,14 @@ msgstr ""
 msgctxt "terms"
 msgid "You must respect other people and <b>%{instance_name}</b>'s rules when using the service"
 msgstr ""
-"Devi rispettare le altre persone e le regole di <b>% {instance_name} </b> "
+"Devi rispettare le altre persone e le regole di <b>%{instance_name}</b> "
 "quando utilizzi il servizio"
 
 #: lib/web/templates/api/terms.html.heex:15
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "You must respect the law when using <b>%{instance_name}</b>"
-msgstr "Devi rispettare la legge quando utilizzi <b>% {instance_name} </b>"
+msgstr "Devi rispettare la legge quando utilizzi <b>%{instance_name}</b>"
 
 #: lib/web/templates/api/terms.html.heex:5
 #, elixir-autogen, elixir-format
@@ -961,7 +962,7 @@ msgstr[1] ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
 msgid "%{instance} is powered by Mobilizon."
-msgstr "% {instance} è alimentata da Mobilizon."
+msgstr "%{instance} è alimentata da Mobilizon."
 
 #: lib/web/templates/email/email.html.heex:187
 #, elixir-autogen, elixir-format
@@ -1690,7 +1691,7 @@ msgstr ""
 #: lib/web/email/actor.ex:43
 #, elixir-autogen, elixir-format
 msgid "Your participation to %{event} has been cancelled!"
-msgstr "La tua partecipazione all'evento %{title} è stata confermata"
+msgstr "La tua partecipazione all'evento %{title} è stata confermata !"
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:50
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
@@ -1705,13 +1706,14 @@ msgstr ""
 msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
 msgstr ""
 "Il team di moderazione della tua istanza ha deciso di sospendere "
-"%{group_name} (%{group_address}). Non sei più un membro di questo gruppo."
+"<b>%{group_name}</b> (%{group_address}). Non sei più un membro di questo "
+"gruppo."
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:18
 #: lib/web/templates/email/actor_suspension_participants.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Your participation to %{event} on %{instance} has been cancelled!"
-msgstr "La tua partecipazione all'evento %{title} è stata confermata"
+msgstr "La tua partecipazione all'evento %{title} è stata cancellata !"
 
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #: lib/service/export/participants/csv.ex:81
@@ -1805,9 +1807,9 @@ msgstr "Partecipante anonimo"
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:36
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "🌐 %{timezone} %{offset}"
-msgstr "🌐 %{timezone} %{offset}"
+msgstr "🌐  %{timezone} %{offset}"
 
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
 #, elixir-autogen, elixir-format, fuzzy
@@ -1907,7 +1909,7 @@ msgstr "Partecipazione approvata"
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Participate:"
-msgstr "Partecipazione approvata"
+msgstr "Partecipazione approvata :"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:1
 #, elixir-autogen, elixir-format
@@ -1927,7 +1929,7 @@ msgstr "Nuova data finale:"
 #: lib/web/templates/email/event_updated.text.eex:10
 #, elixir-autogen, elixir-format
 msgid "New location:"
-msgstr "Posizione"
+msgstr "Posizione :"
 
 #: lib/web/templates/email/event_updated.text.eex:8
 #, elixir-autogen, elixir-format
@@ -2145,19 +2147,21 @@ msgid "Hi there! We just wanted to inform you that an administrator from %{insta
 msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:47
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just changed your account role."
 msgstr ""
+"Ciao! Volevamo solo informarti che un amministratore di <b>%{instance}</b> "
+"ha appena confermato manualmente il tuo account."
 
 #: lib/web/templates/email/instance_follow.text.eex:5
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name} richiede di seguire la tua istanza"
+msgstr "%{name} ha appena richiesto di seguire la tua istanza"
 
 #: lib/web/templates/email/instance_follow.html.heex:47
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "<b>%{name}</b> just requested to follow your instance."
-msgstr "%{name} richiede di seguire la tua istanza"
+msgstr "<b>%{name}</b> richiede di seguire la tua istanza"
 
 #: lib/web/templates/email/instance_follow.html.heex:55
 #: lib/web/templates/email/instance_follow.text.eex:6
@@ -2335,9 +2339,9 @@ msgid "Read more: %{url}"
 msgstr "Leggi di più: %{url}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Attiva il mio account"
+msgstr "Attiva il mio account :"
 
 #: lib/web/email/follow.ex:49
 #, elixir-autogen, elixir-format, fuzzy
