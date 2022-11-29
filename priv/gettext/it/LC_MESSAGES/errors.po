@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-05-17 16:22+0000\n"
-"Last-Translator: Leo Durruti <leodurruti@disroot.org>\n"
+"PO-Revision-Date: 2022-11-25 22:37+0000\n"
+"Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -920,16 +920,22 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
 msgstr ""
+"Il profilo dell'organizzatore non ha il permesso di creare un evento per "
+"conto di questo gruppo"
 
 #: lib/graphql/resolvers/event.ex:331
 #, elixir-autogen, elixir-format
 msgid "This profile doesn't have permission to update an event on behalf of this group"
 msgstr ""
+"Questo profilo non ha il permesso di aggiornare un evento per conto di "
+"questo gruppo"
 
 #: lib/graphql/resolvers/user.ex:174
 #, elixir-autogen, elixir-format
 msgid "Your e-mail has been denied registration or uses a disallowed e-mail provider"
 msgstr ""
+"All'email è stata negata la registrazione o viene utilizzato un provider "
+"email non consentito"
 
 #: lib/graphql/resolvers/comment.ex:129
 #, elixir-autogen, elixir-format
@@ -954,18 +960,18 @@ msgstr "Errore durante l'aggiornamento del rapporto"
 #: lib/graphql/resolvers/participant.ex:190
 #, elixir-autogen, elixir-format
 msgid "Failed to leave the event"
-msgstr ""
+msgstr "Non è stato possibile abbandonare l'evento"
 
 #: lib/graphql/resolvers/group.ex:236
 #, elixir-autogen, elixir-format
 msgid "Failed to update the group"
-msgstr ""
+msgstr "Non è stato possibile aggiornare il gruppo"
 
 #: lib/graphql/resolvers/admin.ex:333
 #: lib/graphql/resolvers/user.ex:484
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
-msgstr ""
+msgstr "Non è stato possibile aggiornare l'email dell'utente"
 
 #: lib/graphql/resolvers/user.ex:516
 #, elixir-autogen, elixir-format
@@ -975,72 +981,73 @@ msgstr "Impossibile convalidare l'utente"
 #: lib/graphql/resolvers/participant.ex:146
 #, elixir-autogen, elixir-format
 msgid "The anonymous actor ID is invalid"
-msgstr ""
+msgstr "L'ID dell'attore anonimo non è valido"
 
 #: lib/graphql/resolvers/resource.ex:165
 #, elixir-autogen, elixir-format
 msgid "Unknown error while updating resource"
-msgstr ""
+msgstr "Errore sconosciuto durante l'aggiornamento della risorsa"
 
 #: lib/graphql/resolvers/comment.ex:84
 #, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
-msgstr ""
+msgstr "Non sei il creatore del commento"
 
 #: lib/graphql/resolvers/user.ex:441
 #, elixir-autogen, elixir-format
 msgid "You cannot change your password."
-msgstr ""
+msgstr "Non è possibile cambiare la propria password."
 
 #: lib/graphql/resolvers/participant.ex:321
 #, elixir-autogen, elixir-format
 msgid "Format not supported"
-msgstr ""
+msgstr "Formato non supportato"
 
 #: lib/graphql/resolvers/participant.ex:305
 #, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr ""
+"Una dipendenza necessaria per l'esportazione in %{format} non è installata"
 
 #: lib/graphql/resolvers/participant.ex:313
 #, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
-msgstr ""
+msgstr "Si è verificato un errore durante il salvataggio dell'esportazione"
 
 #: lib/web/controllers/export_controller.ex:30
 #, elixir-autogen, elixir-format
 msgid "Export to format %{format} is not enabled on this instance"
-msgstr ""
+msgstr "L'esportazione nel formato %{format} non è abilitata su questa istanza"
 
 #: lib/graphql/resolvers/group.ex:187
 #, elixir-autogen, elixir-format
 msgid "Only admins can create groups"
-msgstr ""
+msgstr "Solo gli amministratori possono creare gruppi"
 
 #: lib/graphql/resolvers/event.ex:283
 #, elixir-autogen, elixir-format
 msgid "Only groups can create events"
-msgstr ""
+msgstr "Solo i gruppi possono creare eventi"
 
 #: lib/graphql/resolvers/event.ex:269
 #, elixir-autogen, elixir-format
 msgid "Unknown error while creating event"
-msgstr ""
+msgstr "Errore sconosciuto durante la creazione dell'evento"
 
 #: lib/graphql/resolvers/user.ex:497
 #, elixir-autogen, elixir-format
 msgid "User cannot change email"
-msgstr ""
+msgstr "L'utente non può modificare l'email"
 
 #: lib/graphql/resolvers/group.ex:399
 #, elixir-autogen, elixir-format
 msgid "Follow does not match your account"
-msgstr ""
+msgstr "Il follow non corrisponde al tuo account"
 
 #: lib/graphql/resolvers/group.ex:403
 #, elixir-autogen, elixir-format
 msgid "Follow not found"
-msgstr ""
+msgstr "Follow non trovato"
 
 #: lib/graphql/resolvers/user.ex:362
 #, elixir-autogen, elixir-format
@@ -1050,12 +1057,12 @@ msgstr "La persona con il nome utente %{username} non è stata trovata"
 #: lib/graphql/resolvers/user.ex:357
 #, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
-msgstr ""
+msgstr "Questo profilo non ti appartiene"
 
 #: lib/graphql/resolvers/group.ex:373
 #, elixir-autogen, elixir-format
 msgid "You are already following this group"
-msgstr ""
+msgstr "Stai già seguendo questo gruppo"
 
 #: lib/graphql/resolvers/group.ex:382
 #, elixir-autogen, elixir-format
@@ -1075,7 +1082,7 @@ msgstr "È necessario effettuare il login per aggiornare un gruppo"
 #: lib/graphql/resolvers/member.ex:210
 #, elixir-autogen, elixir-format
 msgid "This member does not exist"
-msgstr ""
+msgstr "Questo utente non esiste"
 
 #: lib/graphql/resolvers/member.ex:234
 #, elixir-autogen, elixir-format
@@ -1085,52 +1092,54 @@ msgstr "Non hai il diritto di rimuovere questo membro."
 #: lib/graphql/resolvers/member.ex:252
 #, elixir-autogen, elixir-format
 msgid "You must be logged-in to remove a member"
-msgstr ""
+msgstr "Per rimuovere un membro è necessario aver effettuato il login"
 
 #: lib/graphql/resolvers/user.ex:164
 #, elixir-autogen, elixir-format
 msgid "Your email seems to be using an invalid format"
-msgstr ""
+msgstr "La tua email sembra utilizzare un formato non valido"
 
 #: lib/graphql/resolvers/admin.ex:382
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
-msgstr ""
+msgstr "Non è possibile confermare un utente già confermato"
 
 #: lib/graphql/resolvers/admin.ex:386
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
-msgstr ""
+msgstr "La deconferma degli utenti non è supportata"
 
 #: lib/graphql/resolvers/admin.ex:358
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "The new role must be different"
 msgstr "La nuova email dev'essere diversa"
 
 #: lib/graphql/resolvers/admin.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
-"Devi essere connesso e un moderatore per salvare le impostazioni "
+"Devi essere connesso e amministratore per salvare le impostazioni "
 "dell'amministratore"
 
 #: lib/graphql/api/groups.ex:33
 #, elixir-autogen, elixir-format
 msgid "A profile or group with that name already exists"
-msgstr ""
+msgstr "Esiste già un profilo o un gruppo con quel nome"
 
 #: lib/graphql/resolvers/admin.ex:519
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
-msgstr ""
+msgstr "Non è stato possibile trovare un'istanza da seguire a questo indirizzo"
 
 #: lib/mobilizon/actors/actor.ex:396
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
+"Il nome utente deve contenere solo caratteri alfanumerici minuscoli e "
+"trattini bassi."
 
 #: lib/graphql/resolvers/user.ex:286
 #: lib/graphql/resolvers/user.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
-msgstr "La nuova email sembra non valida"
+msgstr "Questa email non sembra essere valida"
