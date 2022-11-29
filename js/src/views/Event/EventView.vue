@@ -344,9 +344,11 @@ const participations = computed(
   () => participationsResult.value?.person.participations?.elements ?? []
 );
 
-const { person } = usePersonStatusGroup(
+const groupFederatedUsername = computed(() =>
   usernameWithDomain(event.value?.attributedTo)
 );
+
+const { person } = usePersonStatusGroup(groupFederatedUsername);
 
 const { eventCategories } = useEventCategories();
 

@@ -258,7 +258,7 @@ const asyncData = async (query: string): Promise<void> => {
 
   searchAddress(undefined, {
     query: searchQuery.value,
-    locale: locale.value,
+    locale: locale,
     type: props.resultType,
   });
 };
@@ -322,7 +322,7 @@ const reverseGeoCode = (e: LatLng, zoom: number) => {
     latitude: e.lat,
     longitude: e.lng,
     zoom,
-    locale: locale.value as string,
+    locale: locale as unknown as string,
   });
 };
 
