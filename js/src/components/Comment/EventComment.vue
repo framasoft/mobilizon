@@ -53,7 +53,8 @@
           v-html="comment.text"
           dir="auto"
           :lang="comment.language"
-          class="prose dark:prose-invert xl:prose-lg !max-w-full" :class="{ 'text-black dark:text-white': comment.isAnnouncement}"
+          class="prose dark:prose-invert xl:prose-lg !max-w-full"
+          :class="{ 'text-black dark:text-white': comment.isAnnouncement }"
         />
         <div v-else>{{ t("[This comment has been deleted]") }}</div>
         <nav class="flex gap-1 mt-1" v-if="!comment.deletedAt">

@@ -662,7 +662,11 @@ import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { Paginate } from "@/types/paginate";
 import { IEvent } from "@/types/event.model";
 import { IPost } from "@/types/post.model";
-import { FOLLOW_GROUP, UNFOLLOW_GROUP, UPDATE_GROUP_FOLLOW } from "@/graphql/followers";
+import {
+  FOLLOW_GROUP,
+  UNFOLLOW_GROUP,
+  UPDATE_GROUP_FOLLOW,
+} from "@/graphql/followers";
 import { useAnonymousReportsConfig } from "../../composition/apollo/config";
 import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
