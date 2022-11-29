@@ -295,7 +295,7 @@ onError((error) => {
 
 const submit = async (): Promise<void> => {
   sendingForm.value = true;
-  credentials.locale = locale.value as string;
+  credentials.locale = locale as unknown as string;
   try {
     emailErrors.value = [];
     passwordErrors.value = [];

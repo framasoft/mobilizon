@@ -71,7 +71,7 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const { loggedUser } = useUserSettings();
 
 onMounted(() => {
-  updateLocale(locale.value as string);
+  updateLocale(locale as unknown as string);
   doUpdateSetting({ timezone });
 });
 
