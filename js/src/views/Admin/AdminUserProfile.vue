@@ -36,7 +36,9 @@
                       v-if="type === 'ip'"
                       class="py-4 px-2 whitespace-nowrap"
                     >
-                      <code>{{ value }}</code>
+                      <code class="truncate block max-w-[15rem]">{{
+                        value
+                      }}</code>
                     </td>
                     <td
                       v-else-if="type === 'role'"
