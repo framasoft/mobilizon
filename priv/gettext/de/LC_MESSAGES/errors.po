@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-10-13 18:58+0000\n"
-"Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
+"PO-Revision-Date: 2022-12-14 17:06+0000\n"
+"Last-Translator: Andreas Aubele <nekater@gmx.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
 "Language: de\n"
@@ -1148,9 +1148,11 @@ msgstr "Keine Instanz gefunden um dieser Adresse zu folgen"
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
+"Benutzername darf nur alphanumerische Kleinbuchstaben und Unterstriche "
+"enthalten."
 
 #: lib/graphql/resolvers/user.ex:286
 #: lib/graphql/resolvers/user.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
-msgstr "Die neue E-Mail scheint nicht gültig zu sein"
+msgstr "Diese E-Mail scheint nicht gültig zu sein"
