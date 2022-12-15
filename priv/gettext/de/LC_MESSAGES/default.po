@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
 "PO-Revision-Date: 2022-12-15 12:06+0000\n"
-"Last-Translator: Andreas Aubele <nekater@gmx.de>\n"
+"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -2145,7 +2145,7 @@ msgstr ""
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Login on %{instance}"
-msgstr "Anmelden auf %{instance}"
+msgstr "Anmeldung auf %{Instanz}"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:72
 #, elixir-autogen, elixir-format
