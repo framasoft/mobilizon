@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
 "PO-Revision-Date: 2022-12-15 12:06+0000\n"
-"Last-Translator: Thebigal Wisi <alwisi@posteo.de>\n"
+"Last-Translator: Norwin <frama@nroo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -2242,7 +2242,7 @@ msgstr "Autos, Boote, Luftfahrt"
 #: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr "Buchclubs"
+msgstr "Lesekreise"
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
@@ -2367,7 +2367,7 @@ msgstr "Wissenschaft & Technologie"
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr "Glaube, Religion & Spiritualität"
+msgstr "Glauben, Religion & Spiritualität"
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
