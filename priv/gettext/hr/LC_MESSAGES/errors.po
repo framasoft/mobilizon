@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-11-20 18:41+0000\n"
+"PO-Revision-Date: 2022-12-21 14:06+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -175,7 +175,7 @@ msgstr "Nije pronađen profil za korisnika moderatora"
 #: lib/graphql/resolvers/user.ex:283
 #, elixir-autogen, elixir-format
 msgid "No user to validate with this email was found"
-msgstr ""
+msgstr "Nije pronađen nijedan korisnik za potvrđivanje s ovom e-mail adresom"
 
 #: lib/graphql/resolvers/person.ex:314
 #: lib/graphql/resolvers/user.ex:313
@@ -199,7 +199,7 @@ msgstr "Profil nije u vlasništvu autentificiranog korisnika"
 #: lib/graphql/resolvers/user.ex:167
 #, elixir-autogen, elixir-format
 msgid "Registrations are not open"
-msgstr ""
+msgstr "Registracije nisu otvorene"
 
 #: lib/graphql/resolvers/user.ex:444
 #, elixir-autogen, elixir-format
@@ -210,66 +210,66 @@ msgstr "Aktualna lozinka nije ispravna"
 #: lib/graphql/resolvers/user.ex:487
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
-msgstr ""
+msgstr "Čini se da nova e-mail adresa nije ispravna"
 
 #: lib/graphql/resolvers/admin.ex:339
 #: lib/graphql/resolvers/user.ex:490
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
-msgstr ""
+msgstr "Nova e-mail adresa ne smije biti ista kao aktualna"
 
 #: lib/graphql/resolvers/user.ex:447
 #, elixir-autogen, elixir-format
 msgid "The new password must be different"
-msgstr ""
+msgstr "Nova lozinka ne smije biti ista kao aktualna"
 
 #: lib/graphql/resolvers/user.ex:494
 #: lib/graphql/resolvers/user.ex:556
 #: lib/graphql/resolvers/user.ex:559
 #, elixir-autogen, elixir-format
 msgid "The password provided is invalid"
-msgstr ""
+msgstr "Zadana lozinka je neispravna"
 
 #: lib/graphql/resolvers/user.ex:451
 #, elixir-autogen, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
-msgstr ""
+msgstr "Lozinka je prekratka. Lozinka mora sadržati barem 6 znakova."
 
 #: lib/graphql/resolvers/user.ex:306
 #, elixir-autogen, elixir-format
 msgid "This user can't reset their password"
-msgstr ""
+msgstr "Ovaj korisnik ne može obnoviti svoju lozinku"
 
 #: lib/graphql/resolvers/user.ex:89
 #, elixir-autogen, elixir-format
 msgid "This user has been disabled"
-msgstr ""
+msgstr "Ovaj je korisnik deaktiviran"
 
 #: lib/graphql/resolvers/user.ex:261
 #: lib/graphql/resolvers/user.ex:266
 #, elixir-autogen, elixir-format
 msgid "Unable to validate user"
-msgstr ""
+msgstr "Nije moguće potvrditi korisnika"
 
 #: lib/graphql/resolvers/user.ex:537
 #, elixir-autogen, elixir-format
 msgid "User already disabled"
-msgstr ""
+msgstr "Korisnik je već deaktiviran"
 
 #: lib/graphql/resolvers/user.ex:602
 #, elixir-autogen, elixir-format
 msgid "User requested is not logged-in"
-msgstr ""
+msgstr "Zatraženi korisnik nije prijavljen"
 
 #: lib/graphql/resolvers/group.ex:311
 #, elixir-autogen, elixir-format
 msgid "You are already a member of this group"
-msgstr ""
+msgstr "Već jesi član ove grupe"
 
 #: lib/graphql/resolvers/group.ex:350
 #, elixir-autogen, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr ""
+msgstr "Ne možeš napustiti ovu grupu jer si jedini administrator"
 
 #: lib/graphql/resolvers/group.ex:308
 #, elixir-autogen, elixir-format
