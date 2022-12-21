@@ -33,7 +33,7 @@
     {{
       t("On {date} starting at {startTime}", {
         date: formatDate(beginsOn),
-        startTime: formatTime(beginsOn),
+        startTime: formatTime(beginsOn, timezoneToShow),
       })
     }}
   </p>
