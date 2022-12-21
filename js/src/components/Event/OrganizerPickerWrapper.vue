@@ -76,7 +76,7 @@
                 v-model:actorFilter="actorFilter"
               />
             </div>
-            <div class="max-h-[400px] overflow-y-auto">
+            <div class="pl-2 max-h-[400px] overflow-y-auto">
               <div v-if="isSelectedActorAGroup">
                 <p>{{ $t("Add a contact") }}</p>
                 <o-input
@@ -166,6 +166,8 @@ import { useRoute } from "vue-router";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import debounce from "lodash/debounce";
 import { IUser } from "@/types/current-user.model";
+import { IMember } from "@/types/actor/member.model";
+import { Paginate } from "@/types/paginate";
 
 const MEMBER_ROLES = [
   MemberRole.CREATOR,
@@ -233,7 +235,7 @@ const isComponentModalActive = ref(false);
 const contactFilter = ref("");
 const membersPage = ref(1);
 
-const { result: membersResult } = useQuery(
+const { result: membersResult } = useQuery<{ group: Pick<IGroup, 'members'> }>(
   GROUP_MEMBERS,
   () => ({
     groupName: usernameWithDomain(selectedActor.value),
@@ -245,8 +247,8 @@ const { result: membersResult } = useQuery(
   () => ({ enabled: selectedActor.value?.type === ActorType.GROUP })
 );
 
-const members = computed(
-  () => membersResult.value?.members ?? { elements: [], total: 0 }
+const members = computed<Paginate<IMember>>(
+  () => selectedActor.value?.type === ActorType.GROUP ? membersResult.value?.group?.members ?? { elements: [], total: 0 } : { elements: [], total: 0 }
 );
 
 const actualContacts = computed({
