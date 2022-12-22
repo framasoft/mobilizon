@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-10-13 18:58+0000\n"
-"Last-Translator: Kate <zuyhybbjzjbsf0648ty5uqd4@systemli.org>\n"
+"PO-Revision-Date: 2022-12-15 12:06+0000\n"
+"Last-Translator: Norwin <frama@nroo.de>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -1794,7 +1794,7 @@ msgstr "Moderator"
 #: lib/service/export/participants/common.ex:37
 #, elixir-autogen, elixir-format
 msgid "Not approved"
-msgstr "Nicht freigegeben"
+msgstr "Nicht zugelassen"
 
 #: lib/service/export/participants/common.ex:40
 #, elixir-autogen, elixir-format
@@ -1927,7 +1927,7 @@ msgstr "Benachrichtigungseinstellungen anpassen"
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Manage your participation:"
-msgstr "Teilnahme bearbeiten:"
+msgstr "Teilnahmme bearbeiten:"
 
 #: lib/web/templates/email/participation/card/_title.text.eex:3
 #: lib/web/templates/email/participation/card/_title.text.eex:3
@@ -2145,7 +2145,7 @@ msgstr ""
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Login on %{instance}"
-msgstr "Anmelden auf %{instance}"
+msgstr "Anmeldung auf %{Instanz}"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:72
 #, elixir-autogen, elixir-format
@@ -2242,7 +2242,7 @@ msgstr "Autos, Boote, Luftfahrt"
 #: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr "Buchclubs"
+msgstr "Lesekreise"
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
@@ -2327,7 +2327,7 @@ msgstr "Bewegungen und Politik"
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
-msgstr "Musik & Konzerte"
+msgstr "Musik"
 
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
@@ -2367,7 +2367,7 @@ msgstr "Wissenschaft & Technologie"
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr "Glaube, Religion & Spiritualität"
+msgstr "Glauben, Religion & Spiritualität"
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
@@ -2387,10 +2387,10 @@ msgstr "Weiterlesen: %{url}"
 #: lib/web/templates/email/registration_confirmation.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Mein Benutzerkonto aktivieren:"
+msgstr "Mein Konto aktivieren:"
 
 #: lib/web/email/follow.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Instance %{domain} requests to follow your instance"
 msgstr "Instanz %{name} (%{domain}) bittet darum, Ihrer Instanz zu folgen"
 
@@ -2407,4 +2407,4 @@ msgstr ""
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
-msgstr ""
+msgstr "Bis zum nächsten mal!"

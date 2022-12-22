@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2022-11-20 18:41+0000\n"
+"PO-Revision-Date: 2022-12-21 14:06+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -114,6 +114,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You created an account on %{host} with this email address. You are one click away from activating it. If this wasn't you, please ignore this email."
 msgstr ""
+"Stvorio/la si račun na %{host} s ovom e-mail adresom. Od aktivacije te "
+"dijeli jedan klik. Ako to nisi bio/la ti, zanemari ovu e-mail poruku."
 
 #: lib/web/email/participation.ex:114
 #, elixir-autogen, elixir-format
@@ -217,6 +219,8 @@ msgstr "Objavljeni događaji i komentari"
 msgctxt "terms"
 msgid "Retain the IP addresses associated with registered users no more than 12 months."
 msgstr ""
+"Zadrži IP adrese koje su povezane s registriranim korisnicima ne duže od 12 "
+"mjeseci."
 
 #: lib/web/templates/api/privacy.html.heex:107
 #, elixir-autogen, elixir-format
@@ -229,6 +233,8 @@ msgstr "Tokeni za tvoju identifikaciju"
 msgctxt "terms"
 msgid "We also may retain server logs which include the IP address of every request to our server."
 msgstr ""
+"Također možemo zadržati zapisnike poslužitelja koji uključuju IP adresu "
+"svakog poslanog zahtjeva na naš poslužitelj."
 
 #: lib/web/templates/api/privacy.html.heex:102
 #, elixir-autogen, elixir-format
@@ -283,6 +289,8 @@ msgstr ""
 msgctxt "terms"
 msgid "If we decide to change our privacy policy, we will post those changes on this page."
 msgstr ""
+"Ako odlučimo promijeniti našu politiku privatnosti, te promjene ćemo "
+"objaviti na ovoj stranici."
 
 #: lib/web/templates/api/privacy.html.heex:153
 #, elixir-autogen, elixir-format
@@ -294,7 +302,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Site usage by children"
-msgstr ""
+msgstr "Korištenje stranice od djece"
 
 #: lib/web/templates/api/privacy.html.heex:68
 #, elixir-autogen, elixir-format
@@ -318,7 +326,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
-msgstr ""
+msgstr "Koje podatke prikupljamo?"
 
 #: lib/web/email/user.ex:182
 #, elixir-autogen, elixir-format
@@ -661,6 +669,8 @@ msgstr ""
 msgctxt "terms"
 msgid "<b>%{instance_name}</b> will not use or transmit or resell your personal data"
 msgstr ""
+"<b>%{instance_name}</b> neće koristiti, prenositi niti preprodavati tvoje "
+"osobne podatke"
 
 #: lib/web/templates/api/terms.html.heex:113
 #, elixir-autogen, elixir-format
@@ -897,7 +907,7 @@ msgstr ""
 #: lib/web/templates/email/registration_confirmation.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger this email, you may safely ignore it."
-msgstr ""
+msgstr "Ako nisi aktivirao/la ovu e-mail poruku, zanemari je."
 
 #: lib/web/templates/email/before_event_notification.html.heex:84
 #: lib/web/templates/email/before_event_notification.text.eex:6
@@ -950,7 +960,7 @@ msgstr "Razlozi za izvještaj"
 #: lib/web/templates/email/report.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Someone on <b>%{instance}</b> reported the following content for you to analyze:"
-msgstr ""
+msgstr "Netko na <b>%{instance}</b> je prijavio sljedeći sadržaj za analizu:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:18
 #: lib/web/templates/email/event_participation_rejected.text.eex:1
@@ -961,18 +971,19 @@ msgstr ""
 #: lib/web/templates/email/event_updated.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "Start"
-msgstr ""
+msgstr "Početak"
 
 #: lib/web/templates/email/event_updated.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "There have been changes for %{title} so we'd thought we'd let you know."
 msgstr ""
+"Naslov %{title} je promijenjen. Stoga smo odlučili te o tome obavijestiti."
 
 #: lib/web/templates/email/event_updated.html.heex:74
 #: lib/web/templates/email/event_updated.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "This event has been cancelled by its organizers. Sorry!"
-msgstr ""
+msgstr "Organizatori su otkazali ovaj događaj. Oprosti!"
 
 #: lib/web/templates/email/event_updated.html.heex:68
 #: lib/web/templates/email/event_updated.text.eex:4
@@ -985,12 +996,14 @@ msgstr "Ovaj je događaj potvrđen"
 #, elixir-autogen, elixir-format
 msgid "This event has yet to be confirmed: organizers will let you know if they do confirm it."
 msgstr ""
+"Ovaj se događaj tek treba potvrditi: organizatori će te obavijestiti ako ga "
+"potvrde."
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:61
 #: lib/web/templates/email/event_participation_rejected.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Unfortunately, the organizers rejected your request."
-msgstr ""
+msgstr "Organizatori su nažalost odbili tvoj zahtjev."
 
 #: lib/web/templates/email/email_changed_new.html.heex:70
 #, elixir-autogen, elixir-format
@@ -1081,22 +1094,28 @@ msgstr ""
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr ""
+msgstr "Uklonjen/a si iz grupe %{group}"
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Uklonjen/a si iz grupe %{group}. Privatnom sadržaju ove grupe više nećeš "
+"moći pristupiti."
 
 #: lib/web/templates/email/group_invite.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{inviter}</b> just invited you to join their group %{link_start}<b>%{group}</b>%{link_end}"
 msgstr ""
+"<b>%{inviter}</b> te je upravo pozvao/la da se pridružiš grupi "
+"%{link_start}<b>%{group}</b>%{link_end}"
 
 #: lib/web/templates/email/group_member_removal.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{link_start}<b>%{group}</b>%{link_end}. You will not be able to access this group's private content anymore."
 msgstr ""
+"Uklonjen/a si iz grupe %{link_start}<b>%{group}</b>%{link_end}. Privatnom "
+"sadržaju ove grupe više nećeš moći pristupiti."
 
 #: lib/web/templates/email/group_suspension.html.heex:81
 #: lib/web/templates/email/group_suspension.text.eex:7
