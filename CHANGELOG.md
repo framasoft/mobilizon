@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.0.2 - 2022-12-22
+
+### Fixed
+
+- Fix unfollowing group
+- Limit the size of the IP(v6) field in the user admin view
+- Fix terms and privacy view
+- Use the correct value of current locale
+- Fix editing group events as a group moderator
+- Consider timezone for start time also when end date is hidden
+- Fix loading group members in organizer picker
+- Fix changing email & password
+- Add missing icon
+- Fix instances filter
+- Fix logging from 3rd-party auth provider
+
 ## 3.0.1 - 2022-11-22
 
 ### Fixed
