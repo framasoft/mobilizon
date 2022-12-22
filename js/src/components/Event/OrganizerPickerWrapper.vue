@@ -235,7 +235,7 @@ const isComponentModalActive = ref(false);
 const contactFilter = ref("");
 const membersPage = ref(1);
 
-const { result: membersResult } = useQuery<{ group: Pick<IGroup, 'members'> }>(
+const { result: membersResult } = useQuery<{ group: Pick<IGroup, "members"> }>(
   GROUP_MEMBERS,
   () => ({
     groupName: usernameWithDomain(selectedActor.value),
@@ -247,8 +247,10 @@ const { result: membersResult } = useQuery<{ group: Pick<IGroup, 'members'> }>(
   () => ({ enabled: selectedActor.value?.type === ActorType.GROUP })
 );
 
-const members = computed<Paginate<IMember>>(
-  () => selectedActor.value?.type === ActorType.GROUP ? membersResult.value?.group?.members ?? { elements: [], total: 0 } : { elements: [], total: 0 }
+const members = computed<Paginate<IMember>>(() =>
+  selectedActor.value?.type === ActorType.GROUP
+    ? membersResult.value?.group?.members ?? { elements: [], total: 0 }
+    : { elements: [], total: 0 }
 );
 
 const actualContacts = computed({
