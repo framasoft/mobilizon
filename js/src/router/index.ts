@@ -134,9 +134,7 @@ export const routes = [
     path: "/auth/:provider/callback",
     name: "auth-callback",
     component: (): Promise<any> =>
-      import(
-        /* webpackChunkName: "ProviderValidation" */ "@/views/User/ProviderValidation.vue"
-      ),
+      import("@/views/User/ProviderValidation.vue"),
     meta: {
       announcer: {
         message: (): string => t("Redirecting to Mobilizon") as string,
