@@ -221,8 +221,9 @@ const newRelayAddress = ref("");
 
 // relayFollowers: Paginate<IFollower> = { elements: [], total: 0 };
 
-const updateDomainFilter = (domain: string) => {
-  filterDomain.value = domain;
+const updateDomainFilter = (event: InputEvent) => {
+  const newValue = (event.target as HTMLInputElement).value;
+  filterDomain.value = newValue;
 };
 
 const debouncedUpdateDomainFilter = debounce(updateDomainFilter, 500);
