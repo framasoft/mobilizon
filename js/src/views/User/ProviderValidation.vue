@@ -1,6 +1,7 @@
 <template>
   <p>{{ t("Redirecting in progress…") }}</p>
 </template>
+
 <script lang="ts" setup>
 import { ICurrentUserRole } from "@/types/enums";
 import { UPDATE_CURRENT_USER_CLIENT, LOGGED_USER } from "../../graphql/user";
@@ -9,10 +10,10 @@ import { saveUserData } from "../../utils/auth";
 import { changeIdentity } from "../../utils/identity";
 import { ICurrentUser, IUser } from "../../types/current-user.model";
 import { useRouter } from "vue-router";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 
 const { t } = useI18n({ useScope: "global" });
 useHead({
@@ -35,15 +36,17 @@ const userRole = getValueFromMeta("auth-user-role") as ICurrentUserRole;
 
 const router = useRouter();
 
-const { onDone, mutate } = useMutation<{ updateCurrentUser: ICurrentUser }>(
-  UPDATE_CURRENT_USER_CLIENT
-);
+const { onDone, mutate } = useMutation<
+  { updateCurrentUser: ICurrentUser },
+  { id: string; email: string; isLoggedIn: boolean; role: ICurrentUserRole }
+>(UPDATE_CURRENT_USER_CLIENT);
 
-onDone(() => {
-  const { onResult: onLoggedUserResult } = useQuery<{ loggedUser: IUser }>(
-    LOGGED_USER
-  );
+const { onResult: onLoggedUserResult, load: loadUser } = useLazyQuery<{
+  loggedUser: IUser;
+}>(LOGGED_USER);
 
+onDone(async () => {
+  loadUser();
   onLoggedUserResult(async ({ data: { loggedUser } }) => {
     if (loggedUser.defaultActor) {
       await changeIdentity(loggedUser.defaultActor);
@@ -54,26 +57,28 @@ onDone(() => {
   });
 });
 
-if (!(userId && userEmail && userRole && accessToken && refreshToken)) {
-  await router.push("/");
-} else {
-  const login = {
-    user: {
+onMounted(async () => {
+  if (!(userId && userEmail && userRole && accessToken && refreshToken)) {
+    await router.push("/");
+  } else {
+    const login = {
+      user: {
+        id: userId,
+        email: userEmail,
+        role: userRole,
+        isLoggedIn: true,
+      },
+      accessToken,
+      refreshToken,
+    };
+    saveUserData(login);
+
+    mutate({
       id: userId,
       email: userEmail,
-      role: userRole,
       isLoggedIn: true,
-    },
-    accessToken,
-    refreshToken,
-  };
-  saveUserData(login);
-
-  mutate({
-    id: userId,
-    email: userEmail,
-    isLoggedIn: true,
-    role: userRole,
-  });
-}
+      role: userRole,
+    });
+  }
+});
 </script>

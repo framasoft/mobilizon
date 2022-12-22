@@ -49,7 +49,7 @@ app.component("breadcrumbs-nav", Breadcrumbs);
 app.component("material-icon", MaterialIcon);
 app.use(Oruga, orugaConfig);
 
-const instanceName = ref();
+const instanceName = ref<string>();
 
 apolloClient
   .query<{ config: IConfig }>({

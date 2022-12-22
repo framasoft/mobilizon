@@ -118,6 +118,8 @@ const icons: Record<string, () => Promise<any>> = {
   Loading: () =>
     import(`../../../node_modules/vue-material-design-icons/Loading.vue`),
   Eye: () => import(`../../../node_modules/vue-material-design-icons/Eye.vue`),
+  EyeOff: () =>
+    import(`../../../node_modules/vue-material-design-icons/EyeOff.vue`),
   AlertCircle: () =>
     import(`../../../node_modules/vue-material-design-icons/AlertCircle.vue`),
   Rss: () => import(`../../../node_modules/vue-material-design-icons/Rss.vue`),

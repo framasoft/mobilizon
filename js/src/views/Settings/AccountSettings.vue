@@ -74,17 +74,13 @@
             v-model="passwordForEmailChange"
           />
         </o-field>
-        <o-button
-          class="mt-2"
-          variant="primary"
-          :disabled="!(emailForm && emailForm.checkValidity())"
-        >
+        <o-button class="mt-2" variant="primary" nativeType="submit">
           {{ t("Change my email") }}
         </o-button>
       </form>
       <h2 class="mt-2">{{ t("Password") }}</h2>
       <o-notification
-        v-if="!canChangePassword"
+        v-if="!canChangePassword && loggedUser.provider"
         variant="warning"
         :closable="false"
       >
@@ -134,11 +130,7 @@
             v-model="newPassword"
           />
         </o-field>
-        <o-button
-          class="mt-2"
-          variant="primary"
-          :disabled="!(passwordForm && passwordForm.checkValidity())"
-        >
+        <o-button class="mt-2" variant="primary" nativeType="submit">
           {{ t("Change my password") }}
         </o-button>
       </form>
@@ -258,8 +250,8 @@ useHead({
   title: computed(() => t("General settings")),
 });
 
-const passwordForm = ref<HTMLElement>();
-const emailForm = ref<HTMLElement>();
+const passwordForm = ref<HTMLFormElement>();
+const emailForm = ref<HTMLFormElement>();
 
 const passwordForEmailChange = ref("");
 const newEmail = ref("");
@@ -294,12 +286,14 @@ changeEmailMutationError((err) => {
 });
 
 const resetEmailAction = async (): Promise<void> => {
-  changeEmailErrors.value = [];
+  if (emailForm.value?.reportValidity()) {
+    changeEmailErrors.value = [];
 
-  changeEmailMutation({
-    email: newEmail.value,
-    password: passwordForEmailChange.value,
-  });
+    changeEmailMutation({
+      email: newEmail.value,
+      password: passwordForEmailChange.value,
+    });
+  }
 };
 
 const {
@@ -319,12 +313,14 @@ onChangePasswordMutationError((err) => {
 });
 
 const resetPasswordAction = async (): Promise<void> => {
-  changePasswordErrors.value = [];
+  if (passwordForm.value?.reportValidity()) {
+    changePasswordErrors.value = [];
 
-  changePasswordMutation({
-    oldPassword: oldPassword.value,
-    newPassword: newPassword.value,
-  });
+    changePasswordMutation({
+      oldPassword: oldPassword.value,
+      newPassword: newPassword.value,
+    });
+  }
 };
 
 const openDeleteAccountModal = (): void => {

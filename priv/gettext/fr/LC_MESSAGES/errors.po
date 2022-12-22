@@ -155,7 +155,7 @@ msgstr "Les inscriptions ne sont pas ouvertes"
 
 #: lib/graphql/resolvers/user.ex:444
 msgid "The current password is invalid"
-msgstr "Le mot de passe actuel est invalid"
+msgstr "Le mot de passe actuel est invalide"
 
 #: lib/graphql/resolvers/admin.ex:336 lib/graphql/resolvers/user.ex:487
 msgid "The new email doesn't seem to be valid"
