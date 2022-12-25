@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-12-15 12:06+0000\n"
-"Last-Translator: Norwin <frama@nroo.de>\n"
+"PO-Revision-Date: 2022-12-24 08:41+0000\n"
+"Last-Translator: Vri <vrifox@vrifox.cc>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
 "Language: de\n"
@@ -2396,12 +2396,12 @@ msgstr "Instanz %{name} (%{domain}) bittet darum, Ihrer Instanz zu folgen"
 
 #: lib/web/templates/email/instance_follow.html.heex:68
 #: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
-"Hinweis: Wenn %{name} (%{domain}) Ihnen folgt, bedeutet das nicht unbedingt, "
-"dass Sie dieser Instanz folgen, aber Sie können darum bitten, ihnen "
-"ebenfalls zu folgen."
+"Hinweis: Wenn %{name} Ihnen folgt, bedeutet das nicht unbedingt, dass Sie "
+"dieser Instanz folgen, aber Sie können darum bitten, ihnen ebenfalls zu "
+"folgen."
 
 #: lib/web/templates/email/group_member_removal.html.heex:18
 #: lib/web/templates/email/group_member_removal.text.eex:1
