@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2022-11-27 14:24+0000\n"
+"PO-Revision-Date: 2023-01-05 13:38+0000\n"
 "Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -638,8 +638,8 @@ msgstr ""
 "collegano al Servizio. Quando si lascia il Servizio, è necessario essere "
 "consapevoli che i presenti Termini e le nostre politiche non regolano più. "
 "L'inclusione di qualsiasi collegamento non implica l'approvazione da parte "
-"di <b>% {instance_name} </b> del sito. L'utilizzo di tali siti Web collegati "
-"è a rischio dell'utente."
+"di <b>%{instance_name}</b> del sito. L'utilizzo di tali siti Web collegati è "
+"a rischio dell'utente."
 
 #: lib/web/templates/api/terms.html.heex:224
 #, elixir-autogen, elixir-format
@@ -1765,7 +1765,7 @@ msgstr "Non approvato"
 #: lib/service/export/participants/common.ex:40
 #, elixir-autogen, elixir-format
 msgid "Not confirmed"
-msgstr "Non confermato"
+msgstr "Non confermati"
 
 #: lib/service/export/participants/common.ex:46
 #, elixir-autogen, elixir-format
@@ -1812,7 +1812,7 @@ msgid "🌐 %{timezone} %{offset}"
 msgstr "🌐  %{timezone} %{offset}"
 
 #: lib/web/templates/email/date/event_tz_date.text.eex:1
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{date_time} (%{timezone} %{offset})"
 msgstr "%{date_time} (%{timezone} %{offset})"
 
@@ -1847,7 +1847,7 @@ msgstr "Gestisci la tua partecipazione"
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "On %{date} from %{start_time} to %{end_time}"
-msgstr "Il %{date} dalle %{start_time} alle %{end_time}"
+msgstr "Il %{date} dalle %{startTime} alle %{endTime}"
 
 #: lib/web/templates/email/participation/event_card.html.heex:132
 #, elixir-autogen, elixir-format
@@ -1904,7 +1904,7 @@ msgstr "Organizzatore: %{organizer}"
 #: lib/web/templates/email/participation/event_card.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Participate"
-msgstr "Partecipazione approvata"
+msgstr "Partecipa"
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
@@ -2037,13 +2037,13 @@ msgid "An administrator updated your role on %{instance}"
 msgstr "Un amministratore ha aggiornato il tuo ruolo su %{instance}"
 
 #: lib/web/templates/email/email_changed_new.text.eex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on %{instance}. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
 "Ciao! Sembra che tu volessi modificare l'indirizzo email collegato al tuo "
-"account su <b>% {instance} </b>. Se desideri ancora farlo, fai clic sul "
-"pulsante in basso per confermare la modifica. Potrai quindi accedere a% "
-"{instance} con questo nuovo indirizzo email."
+"account su %{instance}. Se desideri ancora farlo, fai clic sul pulsante in "
+"basso per confermare la modifica. Potrai quindi accedere a %{instance} con "
+"questo nuovo indirizzo email."
 
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:3
 #: lib/web/templates/email/admin_user_email_changed_old.text.eex:3
@@ -2091,6 +2091,9 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If something doesn't feel right to you, please contact the instance administrator through the contact methods %{start_link}on the instance's about page%{end_link}."
 msgstr ""
+"Se qualcosa non vi sembra corretto, contattate l'amministratore dell'istanza "
+"attraverso i metodi di contatto %{start_link} sulla pagina "
+"dell'istanza%{end_link}."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:7
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:4
@@ -2099,11 +2102,14 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "If something doesn't feel right to you, please contact the instance administrator through the contact methods on the instance's about page: %{about_page}."
 msgstr ""
+"Se qualcosa non vi sembra corretto, contattate l'amministratore dell'istanza "
+"attraverso i metodi di contatto %{start_link} sulla pagina "
+"dell'istanza%{end_link}."
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Login on %{instance}"
-msgstr "Accedi a {instance}"
+msgstr "Accedi a %{instance}"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:72
 #, elixir-autogen, elixir-format
@@ -2113,38 +2119,44 @@ msgstr "Nuovo ruolo"
 #: lib/web/templates/email/admin_user_role_changed.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "New role:"
-msgstr ""
+msgstr "Nuovo ruolo:"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Old role"
-msgstr ""
+msgstr "Vecchio ruolo"
 
 #: lib/web/templates/email/admin_user_role_changed.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Old role:"
-msgstr ""
+msgstr "Vecchio ruolo:"
 
 #: lib/web/templates/email/admin/_role.html.heex:7
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "You may now login using your credentials on the service."
 msgstr ""
+"A questo punto è possibile effettuare il login utilizzando le proprie "
+"credenziali sul servizio."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You may now login using your credentials on the service:"
 msgstr ""
+"A questo punto è possibile effettuare il login utilizzando le proprie "
+"credenziali sul servizio:"
 
 #: lib/web/templates/email/admin_user_role_changed.text.eex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from %{instance} just changed your account role."
 msgstr ""
+"Salve! Volevamo informarti che un amministratore di %{instance} ha appena "
+"cambiato il ruolo del tuo account."
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:47
 #, elixir-autogen, elixir-format
@@ -2156,22 +2168,22 @@ msgstr ""
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name} ha appena richiesto di seguire la tua istanza"
+msgstr "%{name} ha appena richiesto di seguire la tua istanza."
 
 #: lib/web/templates/email/instance_follow.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{name}</b> just requested to follow your instance."
-msgstr "<b>%{name}</b> richiede di seguire la tua istanza"
+msgstr "<b>%{name}</b> ha appena richiesto di seguire la tua istanza."
 
 #: lib/web/templates/email/instance_follow.html.heex:55
 #: lib/web/templates/email/instance_follow.text.eex:6
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "If you accept, this profile will receive all of your public events."
 msgstr "Se accetti, questa istanza riceverà tutti i tuoi eventi pubblici."
 
 #: lib/web/templates/email/instance_follow.html.heex:88
 #: lib/web/templates/email/instance_follow.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr ""
 "Per accettare questo invito, vai alle impostazioni di amministrazione "
@@ -2181,7 +2193,7 @@ msgstr ""
 #: lib/web/templates/email/instance_follow.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "View the details"
-msgstr ""
+msgstr "Visualizza i dettagli"
 
 #: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
@@ -2191,12 +2203,12 @@ msgstr "Arti"
 #: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
-msgstr ""
+msgstr "Automobili, imbarcazioni, aereonautica"
 
 #: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr ""
+msgstr "Club letterari"
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
@@ -2234,7 +2246,7 @@ msgid "Fashion & Beauty"
 msgstr "Moda e bellezza"
 
 #: lib/mobilizon/events/categories.ex:84
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Film & Media"
 msgstr "Film & Media"
 
@@ -2261,7 +2273,7 @@ msgstr "LGBTQ"
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
-msgstr ""
+msgstr "Lingue e culture"
 
 #: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
@@ -2271,7 +2283,7 @@ msgstr "Apprendimento"
 #: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
 msgid "Meeting"
-msgstr ""
+msgstr "Riunioni"
 
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
@@ -2286,12 +2298,12 @@ msgstr "Musica"
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr "Fare rete"
+msgstr "Networking"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
-msgstr ""
+msgstr "Attività all'aperto e avventure"
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
@@ -2301,7 +2313,7 @@ msgstr "Feste"
 #: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
-msgstr ""
+msgstr "Arti visive e dello spettacolo"
 
 #: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
@@ -2316,12 +2328,12 @@ msgstr "Fotografia"
 #: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
-msgstr ""
+msgstr "Scienza e tecnologia"
 
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr ""
+msgstr "Spiritualità, religione e credenze"
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
@@ -2334,30 +2346,30 @@ msgid "Theatre"
 msgstr "Teatro"
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Read more: %{url}"
 msgstr "Leggi di più: %{url}"
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Activate my account:"
-msgstr "Attiva il mio account :"
+msgstr "Attiva il mio account:"
 
 #: lib/web/email/follow.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Instance %{domain} requests to follow your instance"
-msgstr "L'istanza %{name} (%{domain}) richiede di seguire la tua istanza"
+msgstr "L'istanza %{domain} richiede di seguire la tua istanza"
 
 #: lib/web/templates/email/instance_follow.html.heex:68
 #: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
-"Nota: %{name} (%{domain}) che ti segue non implica necessariamente che segui "
-"questa istanza, ma puoi anche chiedere di seguirli."
+"Nota: %{name} che ti segue non implica necessariamente che segui questa "
+"istanza, ma puoi anche chiedere di seguirli."
 
 #: lib/web/templates/email/group_member_removal.html.heex:18
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
-msgstr ""
+msgstr "Alla prossima!"
