@@ -1444,5 +1444,7 @@
   "{timezoneLongName} ({timezoneShortName})": "{timezoneLongName} ({timezoneShortName})",
   "{title} ({count} todos)": "{title} ({count} tennnivaló)",
   "{username} was invited to {group}": "{username} meg lett hívva ide: {group}",
+  "{user}'s follow request was accepted": "{user} követési kérése elfogadva",
+  "{user}'s follow request was rejected": "{user} követési kérése elutasítva",
   "© The OpenStreetMap Contributors": "© Az OpenStreetMap közreműködői"
 }
