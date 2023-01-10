@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-14 03:44+0000\n"
+"PO-Revision-Date: 2023-01-05 18:22+0000\n"
 "Last-Translator: Balázs Meskó <mesko.balazs@fsf.hu>\n"
 "Language-Team: Hungarian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hu/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1997,12 +1997,12 @@ msgstr "Üzlet"
 #: lib/mobilizon/events/categories.ex:44
 #, elixir-autogen, elixir-format
 msgid "Causes"
-msgstr "Okok"
+msgstr "Társadalmi célok"
 
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
-msgstr "Vígjáték"
+msgstr "Humor"
 
 #: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
@@ -2067,7 +2067,7 @@ msgstr "Találkozó"
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
-msgstr "Mozgás és politika"
+msgstr "Mozgalmak és politika"
 
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
@@ -2077,7 +2077,7 @@ msgstr "Zene"
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr "Hálózatépítés"
+msgstr "Kapcsolatépítés"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
@@ -2117,7 +2117,7 @@ msgstr "Spirutualitás, vallás és hit"
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr "Sportok"
+msgstr "Sport"
 
 #: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
