@@ -132,9 +132,11 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
         ) ::
           String.t() | {:error, :ldap_registration_missing_attributes} | any()
   defp search_user(connection, ldap, base, uid, email, group) do
+    Logger.debug("Searching for user")
     # We may need to bind before performing the search
     res =
       if Keyword.get(ldap, :require_bind_for_search, true) do
+        Logger.debug("Doing binding before search as it's required")
         admin_field = Keyword.get(ldap, :bind_uid)
         admin_password = Keyword.get(ldap, :bind_password)
         bind_user(connection, base, uid, admin_field, admin_password)
@@ -153,7 +155,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
   @spec do_search_user(any(), String.t(), String.t(), String.t(), String.t() | boolean()) ::
           String.t() | {:error, :ldap_registration_missing_attributes} | any()
   defp do_search_user(connection, base, uid, email, group) do
-    with {:ok, {:eldap_search_result, [{:eldap_entry, _, attributes}], _}} <-
+    Logger.debug("Searching user")
+    with {:ok, {:eldap_search_result, [{:eldap_entry, _, attributes}], _, _}} <-
            :eldap.search(connection, [
              {:base, to_charlist(base)},
              {:filter, search_filter(email, group)},
