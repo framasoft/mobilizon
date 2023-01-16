@@ -156,6 +156,7 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
           String.t() | {:error, :ldap_registration_missing_attributes} | any()
   defp do_search_user(connection, base, uid, email, group) do
     Logger.debug("Searching user")
+
     with {:ok, {:eldap_search_result, [{:eldap_entry, _, attributes}], _, _}} <-
            :eldap.search(connection, [
              {:base, to_charlist(base)},
