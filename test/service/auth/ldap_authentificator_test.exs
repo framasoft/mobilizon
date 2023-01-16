@@ -62,7 +62,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
            wholeSubtree: fn -> :ok end,
            search: fn _connection, _options ->
              {:ok,
-              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], []}}
+              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], [],
+               []}}
            end,
            close: fn _connection ->
              send(self(), :close_connection)
@@ -110,7 +111,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
            wholeSubtree: fn -> :ok end,
            search: fn _connection, _options ->
              {:ok,
-              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], []}}
+              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], [],
+               []}}
            end,
            close: fn _connection ->
              send(self(), :close_connection)
