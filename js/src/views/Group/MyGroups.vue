@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto">
+  <section class="container mx-auto px-1 mb-6">
     <h1 class="title">{{ t("My groups") }}</h1>
     <p>
       {{
@@ -48,25 +48,25 @@
     >
       <div class="">
         <div class="">
-          <div class="img-container" :class="{ webp: supportsWebPFormat }" />
-          <div class="text-center">
+          <div class="img-container" />
+          <div class="text-center prose dark:prose-invert max-w-full">
             <p>
               {{ t("You are not part of any group.") }}
               <i18n-t
                 keypath="Do you wish to {create_group} or {explore_groups}?"
               >
                 <template #create_group>
-                  <o-button
-                    tag="router-link"
-                    :to="{ name: RouteName.CREATE_GROUP }"
-                    >{{ t("create a group") }}</o-button
-                  >
+                  <router-link :to="{ name: RouteName.CREATE_GROUP }">{{
+                    t("create a group")
+                  }}</router-link>
                 </template>
                 <template #explore_groups>
-                  <o-button
-                    tag="router-link"
-                    :to="{ name: RouteName.SEARCH }"
-                    >{{ t("explore the groups") }}</o-button
+                  <router-link
+                    :to="{
+                      name: RouteName.SEARCH,
+                      query: { contentType: ContentType.GROUPS },
+                    }"
+                    >{{ t("explore the groups") }}</router-link
                   >
                 </template>
               </i18n-t>
@@ -85,8 +85,7 @@ import GroupMemberCard from "@/components/Group/GroupMemberCard.vue";
 import InvitationsList from "@/components/Group/InvitationsList.vue";
 import { usernameWithDomain } from "@/types/actor";
 import { IMember } from "@/types/actor/member.model";
-import { MemberRole } from "@/types/enums";
-import { supportsWebPFormat } from "@/utils/support";
+import { MemberRole, ContentType } from "@/types/enums";
 import RouteName from "../../router/name";
 import { useRestrictions } from "@/composition/apollo/config";
 import { useMutation, useQuery } from "@vue/apollo-composable";
@@ -205,19 +204,11 @@ section {
 
 .not-found {
   .img-container {
-    background-image: url("../../../public/img/pics/group-480w.webp");
+    background-image: url("../../../img/pics/group-480w.webp");
 
     @media (min-resolution: 2dppx) {
       & {
-        background-image: url("../../../public/img/pics/group-1024w.webp");
-      }
-    }
-    &.webp {
-      background-image: url("../../../public/img/pics/group-480w.webp");
-      @media (min-resolution: 2dppx) {
-        & {
-          background-image: url("../../../public/img/pics/group-1024w.webp");
-        }
+        background-image: url("../../../img/pics/group-1024w.webp");
       }
     }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-1">
+  <div class="container mx-auto px-1 mb-6">
     <h1>
       {{ t("My events") }}
     </h1>
@@ -151,8 +151,8 @@
             true // !$apollo.loading
           "
         >
-          <div class="img-container h-64" />
-          <div class="text-center prose dark:prose-invert">
+          <div class="img-container h-64 prose" />
+          <div class="text-center prose dark:prose-invert max-w-full">
             <p>
               {{
                 t(
@@ -170,9 +170,13 @@
                 }}</router-link>
               </template>
               <template #explore_events>
-                <router-link :to="{ name: RouteName.SEARCH }">{{
-                  t("explore the events")
-                }}</router-link>
+                <router-link
+                  :to="{
+                    name: RouteName.SEARCH,
+                    query: { contentType: ContentType.EVENTS },
+                  }"
+                  >{{ t("explore the events") }}</router-link
+                >
               </template>
             </i18n-t>
           </div>
@@ -211,7 +215,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ParticipantRole } from "@/types/enums";
+import { ParticipantRole, ContentType } from "@/types/enums";
 import RouteName from "@/router/name";
 import type { IParticipant } from "../../types/participant.model";
 import { LOGGED_USER_DRAFTS } from "../../graphql/actor";
@@ -438,3 +442,24 @@ useHead({
   title: computed(() => t("My events")),
 });
 </script>
+
+<style lang="scss">
+.not-found {
+  .img-container {
+    background-image: url("../../../img/pics/event_creation-480w.webp");
+
+    @media (min-resolution: 2dppx) {
+      & {
+        background-image: url("../../../img/pics/event_creation-1024w.webp");
+      }
+    }
+
+    max-width: 450px;
+    height: 300px;
+    box-shadow: 0 0 8px 8px white inset;
+    background-size: cover;
+    border-radius: 10px;
+    margin: auto auto 1rem;
+  }
+}
+</style>
