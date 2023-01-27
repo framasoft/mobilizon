@@ -29,6 +29,9 @@ defmodule Mobilizon.Web.Plugs.SetLocalePlug do
       |> Enum.filter(&supported_locale?/1)
       |> hd()
 
+    require Logger
+    Logger.debug("Locale detected is #{locale}")
+
     Gettext.put_locale(locale)
     assign(conn, :locale, locale)
   end
