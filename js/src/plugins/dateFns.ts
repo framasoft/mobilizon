@@ -5,10 +5,9 @@ export const dateFnsPlugin = {
   install(app: App, options: { locale: string }) {
     function dateFnsfileForLanguage(lang: string) {
       const matches: Record<string, string> = {
-        en_US: "en-US",
         en: "en-US",
       };
-      return matches[lang] ?? lang;
+      return matches[lang] ?? lang.replace("_", "-");
     }
 
     import(

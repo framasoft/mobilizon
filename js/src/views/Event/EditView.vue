@@ -70,7 +70,7 @@
           class="datepicker starts-on"
           :placeholder="t('Type or select a date…')"
           icon="calendar-today"
-          :locale="$i18n.locale"
+          :locale="$i18n.locale.replace('_', '-')"
           v-model="beginsOn"
           horizontal-time-picker
           editable
@@ -90,7 +90,7 @@
           class="datepicker ends-on"
           :placeholder="t('Type or select a date…')"
           icon="calendar-today"
-          :locale="$i18n.locale"
+          :locale="$i18n.locale.replace('_', '-')"
           v-model="endsOn"
           horizontal-time-picker
           :min-datetime="beginsOn"
