@@ -32,6 +32,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     case EventsManager.create_event(args) do
       {:ok, %Event{uuid: event_uuid, begins_on: begins_on} = event} ->
         EventActivity.insert_activity(event, subject: "event_created")
+        clear_caches(event)
 
         %{action: :notify_of_new_event, event_uuid: event_uuid}
         |> EventDelayedNotificationWorker.new(
@@ -61,7 +62,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     case EventsManager.update_event(old_event, args) do
       {:ok, %Event{} = new_event} ->
         EventActivity.insert_activity(new_event, subject: "event_updated")
-        Cachex.del(:activity_pub, "event_#{new_event.uuid}")
+        clear_caches(new_event)
         event_as_data = Convertible.model_to_as(new_event)
         audience = Audience.get_audience(new_event)
         update_data = make_update_data(event_as_data, Map.merge(audience, additional))
@@ -99,7 +100,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
         case Tombstone.create_tombstone(%{uri: event.url, actor_id: actor.id}) do
           {:ok, %Tombstone{} = _tombstone} ->
             EventActivity.insert_activity(event, subject: "event_deleted")
-            Cachex.del(:activity_pub, "event_#{event.uuid}")
+            clear_caches(event)
             Share.delete_all_by_uri(event.url)
             {:ok, Map.merge(activity_data, audience), actor, event}
 
@@ -314,4 +315,28 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
   @spec tag_to_string(%{title: String.t()} | String.t()) :: String.t()
   defp tag_to_string(%{title: tag}), do: tag
   defp tag_to_string(tag), do: tag
+
+  defp clear_caches(event) do
+    clear_ap_cache(event)
+    clear_category_statistics_cache()
+  end
+
+  defp clear_ap_cache(event), do: Cachex.del(:activity_pub, "event_#{event.uuid}")
+
+  defp clear_category_statistics_cache, do: Cachex.del(:statistics, :categories)
+
+  defp clear_feeds_cache(event) do
+    if event.attributed_to do
+      clear_actor_feeds_cache(event.attributed_to)
+    end
+
+    clear_event_ics_cache(event)
+  end
+
+  defp clear_actor_feeds_cache(actor) do
+    Cachex.del(:ics, "actor_#{actor.preferred_username}")
+    Cachex.del(:feed, "actor_#{actor.preferred_username}")
+  end
+
+  defp clear_event_ics_cache(event), do: Cachex.del(:ics, "event_#{event.uuid}")
 end

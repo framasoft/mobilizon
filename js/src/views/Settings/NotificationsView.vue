@@ -53,7 +53,7 @@
           )
         }}
       </p>
-      <table class="table">
+      <table class="table table-auto">
         <tbody>
           <template
             v-for="notificationType in notificationTypes"
@@ -74,7 +74,7 @@
               <td v-for="(method, key) in notificationMethods" :key="key">
                 <o-checkbox
                   :value="notificationValues[subType.id][key].enabled"
-                  @input="
+                  @update:modelValue="
                     (e: boolean) =>
                       updateNotificationValue({
                         key: subType.id,
