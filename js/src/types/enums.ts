@@ -291,3 +291,8 @@ export enum SearchTargets {
   INTERNAL = "INTERNAL",
   GLOBAL = "GLOBAL",
 }
+
+export enum AntiSpamFeedback {
+  HAM = "HAM",
+  SPAM = "SPAM",
+}

@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   alias Mobilizon.{Actors, Admin, Config, Events, FollowedGroupActivity, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
+  alias Mobilizon.Service.Akismet
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.{Setting, User}
@@ -160,6 +161,8 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
     with {:ok, email} <- lowercase_domain(email),
          :registration_ok <- check_registration_config(email),
          :not_deny_listed <- check_registration_denylist(email),
+         {:akismet, :ham} <-
+           {:akismet, Akismet.check_user(email, current_ip, user_agent)},
          {:ok, %User{} = user} <-
            args
            |> Map.merge(%{email: email, current_sign_in_ip: current_ip, current_sign_in_at: now})
@@ -181,6 +184,13 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
          dgettext(
            "errors",
            "Your e-mail has been denied registration or uses a disallowed e-mail provider"
+         )}
+
+      {:akismet, _} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Your registration has been detected as spam and cannot be processed."
          )}
 
       {:error, error} ->

@@ -166,7 +166,8 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
 
       %Actor{} = manager_actor = insert(:actor)
 
-      {:error, "Unsupported state"} = Reports.update_report_status(manager_actor, report, :test)
+      {:error, "Unsupported status for a report"} =
+        Reports.update_report_status(manager_actor, report, :test)
     end
   end
 

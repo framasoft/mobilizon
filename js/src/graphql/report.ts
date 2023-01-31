@@ -116,8 +116,16 @@ export const CREATE_REPORT = gql`
 `;
 
 export const UPDATE_REPORT = gql`
-  mutation UpdateReport($reportId: ID!, $status: ReportStatus!) {
-    updateReportStatus(reportId: $reportId, status: $status) {
+  mutation UpdateReport(
+    $reportId: ID!
+    $status: ReportStatus!
+    $antispamFeedback: AntiSpamFeedback
+  ) {
+    updateReportStatus(
+      reportId: $reportId
+      status: $status
+      antispamFeedback: $antispamFeedback
+    ) {
       ...ReportFragment
     }
   }

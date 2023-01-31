@@ -366,6 +366,7 @@ export const FEATURES = gql`
       features {
         groups
         eventCreation
+        antispam
       }
     }
   }

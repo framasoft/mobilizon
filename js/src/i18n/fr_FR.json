@@ -1445,5 +1445,10 @@
   "Select this resource": "Sélectionner cette ressource",
   "You can add resources by using the button above.": "Vous pouvez ajouter des ressources en utilisant le bouton au dessus.",
   "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
-  "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée"
+  "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée",
+  "Report as spam": "Signaler comme spam",
+  "Report as ham": "Signaler comme faux positif",
+  "Report as undetected spam": "Signaler comme spam non détecté",
+  "The report contents (eventual comments and event) and the reported profile details will be transmitted to Akismet.": "Les contenus du signalement (les éventuels commentaires et événement) et les détails du profil signalé seront transmis à Akismet.",
+  "Submit to Akismet": "Envoyer à Akismet"
 }

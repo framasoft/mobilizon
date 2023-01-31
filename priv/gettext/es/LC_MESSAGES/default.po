@@ -1288,7 +1288,7 @@ msgstr ""
 "El equipo de moderación de su instancia ha decidido suspender a "
 "%{group_name} (%{group_address}). Ya no eres miembro de este grupo."
 
-#: lib/web/email/group.ex:92
+#: lib/web/email/group.ex:107
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "El grupo %{group} ha sido suspendido en %{instance}"
@@ -1608,8 +1608,8 @@ msgstr "Lo sentimos, pero algo salió mal por nuestra parte."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Este es un sitio de demostración para probar Mobilizon."
 
-#: lib/service/metadata/actor.ex:90
-#: lib/service/metadata/actor.ex:97
+#: lib/service/metadata/actor.ex:93
+#: lib/service/metadata/actor.ex:100
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -1661,14 +1661,14 @@ msgstr ""
 msgid "Public feed for %{instance}"
 msgstr "Flujo público para %{instance}"
 
-#: lib/graphql/resolvers/user.ex:333
+#: lib/graphql/resolvers/user.ex:350
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 "La contraseña que ha elegido es demasiado corta. Asegúrese de que su "
 "contraseña contenga al menos 6 caracteres."
 
-#: lib/graphql/resolvers/user.ex:339
+#: lib/graphql/resolvers/user.ex:356
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
@@ -1903,7 +1903,7 @@ msgstr "Participar:"
 msgid "Title: %{title}"
 msgstr "Título: %{title}"
 
-#: lib/web/email/group.ex:45
+#: lib/web/email/group.ex:46
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Recién programado por %{group}: %{event}"

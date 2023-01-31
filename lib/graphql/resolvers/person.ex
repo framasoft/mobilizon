@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.Participant
+  alias Mobilizon.Service.Akismet
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -137,6 +138,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
     args = Map.put(args, :user_id, user.id)
 
     with args <- Map.update(args, :preferred_username, "", &String.downcase/1),
+         {:akismet, :ham} <-
+           {:akismet,
+            Akismet.check_profile(
+              args.preferred_username,
+              args.summary,
+              user.email,
+              user.current_sign_in_ip
+            )},
          {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
       {:ok, new_person}
@@ -290,21 +299,35 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   """
   @spec register_person(any(), map(), Absinthe.Resolution.t()) ::
           {:ok, Actor.t()} | {:error, String.t()}
-  def register_person(_parent, args, _resolution) do
+  def register_person(_parent, args, %{context: context}) do
+    current_ip = Map.get(context, :ip)
+    user_agent = Map.get(context, :user_agent, "")
+
     # When registering, email is assumed confirmed (unlike changing email)
     case Users.get_user_by_email(args.email, unconfirmed: false) do
       {:ok, %User{} = user} ->
         if is_nil(Users.get_actor_for_user(user)) do
           # No profile yet, we can create one
-          case prepare_args(args, user) do
-            args when is_map(args) ->
-              Actors.new_person(args, true)
-
+          with {:akismet, :ham} <-
+                 {:akismet,
+                  Akismet.check_profile(
+                    args.preferred_username,
+                    args.summary,
+                    args.email,
+                    current_ip,
+                    user_agent
+                  )},
+               args when is_map(args) <- prepare_args(args, user) do
+            Actors.new_person(args, true)
+          else
             {:error, :file_too_large} ->
               {:error, dgettext("errors", "The provided picture is too heavy")}
 
             {:error, _err} ->
               {:error, dgettext("errors", "Error while uploading pictures")}
+
+            {:akismet, _} ->
+              {:error, dgettext("errors", "Your profile was detected as spam.")}
           end
         else
           {:error, dgettext("errors", "You already have a profile for this user")}

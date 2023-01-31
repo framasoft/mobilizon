@@ -120,7 +120,6 @@ const confirm = () => {
       return;
     }
   }
-  emit("confirm", prompt.value);
   props.onConfirm(prompt.value);
   close();
 };
