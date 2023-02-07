@@ -318,6 +318,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
 
   defp clear_caches(event) do
     clear_ap_cache(event)
+    clear_feeds_cache(event)
     clear_category_statistics_cache()
   end
 

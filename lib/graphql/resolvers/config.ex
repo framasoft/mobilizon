@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
   alias Mobilizon.Config
   alias Mobilizon.Events.Categories
-  alias Mobilizon.Service.FrontEndAnalytics
+  alias Mobilizon.Service.{Akismet, FrontEndAnalytics}
 
   @doc """
   Gets config.
@@ -145,7 +145,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       timezones: Tzdata.zone_list(),
       features: %{
         groups: Config.instance_group_feature_enabled?(),
-        event_creation: Config.instance_event_creation_enabled?()
+        event_creation: Config.instance_event_creation_enabled?(),
+        antispam: Akismet.ready?()
       },
       restrictions: %{
         only_admin_can_create_groups: Config.only_admin_can_create_groups?(),

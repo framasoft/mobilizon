@@ -8,8 +8,8 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: be\n"
-"Plural-Forms: nplurals=3\n"
+"Language: zh_Hant\n"
+"Plural-Forms: nplurals=1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -46,38 +46,26 @@ msgstr ""
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 msgid "must be less than %{number}"
 msgstr ""
@@ -1085,12 +1073,12 @@ msgid "Deconfirming users is not supported"
 msgstr ""
 
 #: lib/graphql/resolvers/admin.ex:358
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "The new role must be different"
 msgstr ""
 
 #: lib/graphql/resolvers/admin.ex:309
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr ""
 
@@ -1111,7 +1099,7 @@ msgstr ""
 
 #: lib/graphql/resolvers/user.ex:303
 #: lib/graphql/resolvers/user.ex:326
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
 msgstr ""
 

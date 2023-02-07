@@ -48,4 +48,34 @@ defmodule Mobilizon.Storage.Page do
   def paginate(query, page, size) do
     from(query, limit: ^size, offset: ^((page - 1) * size))
   end
+
+  @doc """
+  Stream chunks of results from the given queryable.
+
+  Unlike Repo.stream, this function does not keep a long running transaction open.
+  Hence, consistency is not guarenteed in the presence of rows being deleted or sort criteria changing.
+
+  ## Example
+
+    Ecto.Query.from(u in Users, order_by: [asc: :created_at])
+    |> Repo.chunk(100)
+    |> Stream.map(&process_batch_of_users)
+    |> Stream.run()
+
+  ## Source
+  https://elixirforum.com/t/what-is-the-best-approach-for-fetching-large-amount-of-records-from-postgresql-with-ecto/3766/8
+  """
+  @spec chunk(Ecto.Queryable.t(), integer) :: Stream.t()
+  def chunk(queryable, chunk_size) do
+    chunk_stream =
+      Stream.unfold(1, fn page_number ->
+        page = queryable |> paginate(page_number, chunk_size) |> Repo.all()
+        {page, page_number + 1}
+      end)
+
+    Stream.take_while(chunk_stream, fn
+      [] -> false
+      _ -> true
+    end)
+  end
 end

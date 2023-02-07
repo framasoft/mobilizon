@@ -57,6 +57,11 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     value(:resolved, description: "The report has been marked as resolved")
   end
 
+  enum :anti_spam_feedback do
+    value(:ham, description: "The report is ham")
+    value(:spam, description: "The report is spam")
+  end
+
   object :report_queries do
     @desc "Get all reports"
     field :reports, :paginated_report_list do
@@ -103,6 +108,11 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     field :update_report_status, type: :report do
       arg(:report_id, non_null(:id), description: "The report's ID")
       arg(:status, non_null(:report_status), description: "The report's new status")
+
+      arg(:antispam_feedback, :anti_spam_feedback,
+        description: "The feedback to send to the anti-spam system"
+      )
+
       resolve(&Report.update_report/3)
     end
 

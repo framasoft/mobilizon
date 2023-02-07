@@ -111,7 +111,7 @@ msgstr "nagyobbnak vagy egyenlőnek kell lennie mint %{number}"
 msgid "must be equal to %{number}"
 msgstr "egyenlőnek kell lennie ezzel: %{number}"
 
-#: lib/graphql/resolvers/user.ex:115
+#: lib/graphql/resolvers/user.ex:116
 #, elixir-autogen, elixir-format
 msgid "Cannot refresh the token"
 msgstr "Nem lehet frissíteni a tokent"
@@ -126,7 +126,7 @@ msgstr "A jelenlegi profil nem tagja ennek a csoportnak"
 msgid "Current profile is not an administrator of the selected group"
 msgstr "A jelenlegi profil nem adminisztrátora a kijelölt csoportnak"
 
-#: lib/graphql/resolvers/user.ex:627
+#: lib/graphql/resolvers/user.ex:644
 #, elixir-autogen, elixir-format
 msgid "Error while saving user settings"
 msgstr "Hiba a felhasználói beállítások mentésekor"
@@ -148,7 +148,7 @@ msgstr "Nem található a csoport"
 msgid "Group with ID %{id} not found"
 msgstr "Nem található %{id} azonosítóval rendelkező csoport"
 
-#: lib/graphql/resolvers/user.ex:93
+#: lib/graphql/resolvers/user.ex:94
 #, elixir-autogen, elixir-format
 msgid "Impossible to authenticate, either your email or password are invalid."
 msgstr "Lehetetlen hitelesíteni, vagy az e-mail, vagy a jelszó érvénytelen."
@@ -164,13 +164,13 @@ msgstr "Nem található a tag"
 msgid "No profile found for the moderator user"
 msgstr "Nem található profil a moderátor felhasználóhoz"
 
-#: lib/graphql/resolvers/user.ex:283
+#: lib/graphql/resolvers/user.ex:300
 #, elixir-autogen, elixir-format
 msgid "No user to validate with this email was found"
 msgstr "Nem található ezzel az e-mail-címmel ellenőrzendő felhasználó"
 
-#: lib/graphql/resolvers/person.ex:314
-#: lib/graphql/resolvers/user.ex:313
+#: lib/graphql/resolvers/person.ex:337
+#: lib/graphql/resolvers/user.ex:330
 #, elixir-autogen, elixir-format
 msgid "No user with this email was found"
 msgstr "Nem található ezzel az e-mail-címmel rendelkező felhasználó"
@@ -178,79 +178,79 @@ msgstr "Nem található ezzel az e-mail-címmel rendelkező felhasználó"
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32
 #: lib/graphql/resolvers/participant.ex:210
-#: lib/graphql/resolvers/person.ex:236
-#: lib/graphql/resolvers/person.ex:353
-#: lib/graphql/resolvers/person.ex:389
-#: lib/graphql/resolvers/person.ex:396
-#: lib/graphql/resolvers/person.ex:425
-#: lib/graphql/resolvers/person.ex:440
+#: lib/graphql/resolvers/person.ex:245
+#: lib/graphql/resolvers/person.ex:376
+#: lib/graphql/resolvers/person.ex:412
+#: lib/graphql/resolvers/person.ex:419
+#: lib/graphql/resolvers/person.ex:448
+#: lib/graphql/resolvers/person.ex:463
 #, elixir-autogen, elixir-format
 msgid "Profile is not owned by authenticated user"
 msgstr "A profilt nem hitelesített felhasználó birtokolja"
 
-#: lib/graphql/resolvers/user.ex:167
+#: lib/graphql/resolvers/user.ex:177
 #, elixir-autogen, elixir-format
 msgid "Registrations are not open"
 msgstr "A regisztrációk nincsenek nyitva"
 
-#: lib/graphql/resolvers/user.ex:444
+#: lib/graphql/resolvers/user.ex:461
 #, elixir-autogen, elixir-format
 msgid "The current password is invalid"
 msgstr "A jelenlegi jelszó érvénytelen"
 
 #: lib/graphql/resolvers/admin.ex:336
-#: lib/graphql/resolvers/user.ex:487
+#: lib/graphql/resolvers/user.ex:504
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr "Az új e-mail-cím nem tűnik érvényesnek"
 
 #: lib/graphql/resolvers/admin.ex:339
-#: lib/graphql/resolvers/user.ex:490
+#: lib/graphql/resolvers/user.ex:507
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
 msgstr "Az új e-mail-címnek eltérőnek kell lennie"
 
-#: lib/graphql/resolvers/user.ex:447
+#: lib/graphql/resolvers/user.ex:464
 #, elixir-autogen, elixir-format
 msgid "The new password must be different"
 msgstr "Az új jelszónak eltérőnek kell lennie"
 
-#: lib/graphql/resolvers/user.ex:494
-#: lib/graphql/resolvers/user.ex:556
-#: lib/graphql/resolvers/user.ex:559
+#: lib/graphql/resolvers/user.ex:511
+#: lib/graphql/resolvers/user.ex:573
+#: lib/graphql/resolvers/user.ex:576
 #, elixir-autogen, elixir-format
 msgid "The password provided is invalid"
 msgstr "A megadott jelszó érvénytelen"
 
-#: lib/graphql/resolvers/user.ex:451
+#: lib/graphql/resolvers/user.ex:468
 #, elixir-autogen, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
 "A választott jelszó túl rövid. Győződjön meg arról, hogy a jelszava "
 "tartalmazzon legalább 6 karaktert."
 
-#: lib/graphql/resolvers/user.ex:306
+#: lib/graphql/resolvers/user.ex:323
 #, elixir-autogen, elixir-format
 msgid "This user can't reset their password"
 msgstr "Ez a felhasználó nem tudja visszaállítani a jelszavát"
 
-#: lib/graphql/resolvers/user.ex:89
+#: lib/graphql/resolvers/user.ex:90
 #, elixir-autogen, elixir-format
 msgid "This user has been disabled"
 msgstr "Ez a felhasználó le lett tiltva"
 
-#: lib/graphql/resolvers/user.ex:261
-#: lib/graphql/resolvers/user.ex:266
+#: lib/graphql/resolvers/user.ex:278
+#: lib/graphql/resolvers/user.ex:283
 #, elixir-autogen, elixir-format
 msgid "Unable to validate user"
 msgstr "Nem lehet ellenőrizni a felhasználót"
 
-#: lib/graphql/resolvers/user.ex:537
+#: lib/graphql/resolvers/user.ex:554
 #, elixir-autogen, elixir-format
 msgid "User already disabled"
 msgstr "A felhasználó már le van tiltva"
 
-#: lib/graphql/resolvers/user.ex:602
+#: lib/graphql/resolvers/user.ex:619
 #, elixir-autogen, elixir-format
 msgid "User requested is not logged-in"
 msgstr "A kért felhasználó nincs bejelentkezve"
@@ -275,12 +275,12 @@ msgstr "Nem csatlakozhat ehhez a csoporthoz"
 msgid "You may not list groups unless moderator."
 msgstr "Lehet, hogy nem sorolhatja fel a csoportokat, hacsak nem moderátor."
 
-#: lib/graphql/resolvers/user.ex:502
+#: lib/graphql/resolvers/user.ex:519
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your email"
 msgstr "Bejelentkezve kell lennie az e-mail-címe megváltoztatásához"
 
-#: lib/graphql/resolvers/user.ex:459
+#: lib/graphql/resolvers/user.ex:476
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your password"
 msgstr "Bejelentkezve kell lennie a jelszava megváltoztatásához"
@@ -290,7 +290,7 @@ msgstr "Bejelentkezve kell lennie a jelszava megváltoztatásához"
 msgid "You need to be logged-in to delete a group"
 msgstr "Bejelentkezve kell lennie egy csoport törléséhez"
 
-#: lib/graphql/resolvers/user.ex:564
+#: lib/graphql/resolvers/user.ex:581
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete your account"
 msgstr "Bejelentkezve kell lennie a fiókja törléséhez"
@@ -310,18 +310,18 @@ msgstr "Bejelentkezve kell lennie egy csoportból való kilépéshez"
 msgid "You need to be logged-in to update a group"
 msgstr "Bejelentkezve kell lennie egy csoport frissítéséhez"
 
-#: lib/graphql/resolvers/user.ex:120
+#: lib/graphql/resolvers/user.ex:121
 #, elixir-autogen, elixir-format
 msgid "You need to have an existing token to get a refresh token"
 msgstr "Szüksége van egy meglévő tokenre egy frissítési token beszerzéséhez"
 
-#: lib/graphql/resolvers/user.ex:289
-#: lib/graphql/resolvers/user.ex:316
+#: lib/graphql/resolvers/user.ex:306
+#: lib/graphql/resolvers/user.ex:333
 #, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon"
 msgstr "Túl hamar kért újra egy megerősítő e-mailt"
 
-#: lib/graphql/resolvers/user.ex:170
+#: lib/graphql/resolvers/user.ex:180
 #, elixir-autogen, elixir-format
 msgid "Your email is not on the allowlist"
 msgstr "Az e-mail-címe nincs rajta az engedélyezési listán"
@@ -375,17 +375,17 @@ msgstr "Érvényes e-mail-címet követelt meg az Ön példánya"
 msgid "Anonymous participation is not enabled"
 msgstr "A névtelen részvétel nincs engedélyezve"
 
-#: lib/graphql/resolvers/person.ex:210
+#: lib/graphql/resolvers/person.ex:219
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last administrator of a group"
 msgstr "Nem lehet eltávolítani egy csoport utolsó adminisztrátorát"
 
-#: lib/graphql/resolvers/person.ex:207
+#: lib/graphql/resolvers/person.ex:216
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last identity of a user"
 msgstr "Nem lehet eltávolítani egy felhasználó utolsó személyazonosságát"
 
-#: lib/graphql/resolvers/comment.ex:126
+#: lib/graphql/resolvers/comment.ex:147
 #, elixir-autogen, elixir-format
 msgid "Comment is already deleted"
 msgstr "A hozzászólást már törölték"
@@ -402,7 +402,7 @@ msgstr "Nem található a megbeszélés"
 msgid "Error while saving report"
 msgstr "Hiba a jelentés mentésekor"
 
-#: lib/graphql/resolvers/report.ex:110
+#: lib/graphql/resolvers/report.ex:116
 #, elixir-autogen, elixir-format
 msgid "Error while updating report"
 msgstr "Hiba a jelentés frissítésekor"
@@ -413,8 +413,8 @@ msgid "Event id not found"
 msgstr "Nem található az eseményazonosító"
 
 #: lib/graphql/error.ex:100
-#: lib/graphql/resolvers/event.ex:337
-#: lib/graphql/resolvers/event.ex:389
+#: lib/graphql/resolvers/event.ex:355
+#: lib/graphql/resolvers/event.ex:407
 #, elixir-autogen, elixir-format
 msgid "Event not found"
 msgstr "Nem található az esemény"
@@ -463,12 +463,12 @@ msgstr "A résztvevő már rendelkezik %{role} szereppel"
 msgid "Participant not found"
 msgstr "Nem található a résztvevő"
 
-#: lib/graphql/resolvers/person.ex:32
+#: lib/graphql/resolvers/person.ex:33
 #, elixir-autogen, elixir-format
 msgid "Person with ID %{id} not found"
 msgstr "Nem található %{id} azonosítóval rendelkező személy"
 
-#: lib/graphql/resolvers/person.ex:56
+#: lib/graphql/resolvers/person.ex:57
 #, elixir-autogen, elixir-format
 msgid "Person with username %{username} not found"
 msgstr "Nem található %{username} felhasználónévvel rendelkező személy"
@@ -514,7 +514,7 @@ msgid "Profile is not member of group"
 msgstr "A profil nem tagja a csoportnak"
 
 #: lib/graphql/resolvers/actor.ex:67
-#: lib/graphql/resolvers/person.ex:233
+#: lib/graphql/resolvers/person.ex:242
 #, elixir-autogen, elixir-format
 msgid "Profile not found"
 msgstr "Nem található a profil"
@@ -569,7 +569,7 @@ msgstr "A token nem érvényes UUID"
 msgid "User not found"
 msgstr "Nem található a felhasználó"
 
-#: lib/graphql/resolvers/person.ex:310
+#: lib/graphql/resolvers/person.ex:333
 #, elixir-autogen, elixir-format
 msgid "You already have a profile for this user"
 msgstr "Már rendelkezik profillal ehhez a felhasználóhoz"
@@ -591,7 +591,7 @@ msgstr "Nem tagja ennek a csoportnak"
 msgid "You are not a moderator or admin for this group"
 msgstr "Nem moderátor vagy adminisztrátor ennél a csoportnál"
 
-#: lib/graphql/resolvers/comment.ex:59
+#: lib/graphql/resolvers/comment.ex:80
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Nem hozhat létre hozzászólást, ha nincs kapcsolódva"
@@ -601,7 +601,7 @@ msgstr "Nem hozhat létre hozzászólást, ha nincs kapcsolódva"
 msgid "You are not allowed to create a feed token if not connected"
 msgstr "Nem hozhat létre hírforrástokent, ha nincs kapcsolódva"
 
-#: lib/graphql/resolvers/comment.ex:134
+#: lib/graphql/resolvers/comment.ex:155
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Nem törölhet hozzászólást, ha nincs kapcsolódva"
@@ -611,7 +611,7 @@ msgstr "Nem törölhet hozzászólást, ha nincs kapcsolódva"
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Nem törölhet hírforrástokent, ha nincs kapcsolódva"
 
-#: lib/graphql/resolvers/comment.ex:93
+#: lib/graphql/resolvers/comment.ex:114
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Nem frissíthet hozzászólást, ha nincs kapcsolódva"
@@ -630,12 +630,12 @@ msgstr ""
 "Nem állíthatja magát alacsonyabb tagszerepre ennél a csoportnál, mert Ön az "
 "egyedüli adminisztrátor"
 
-#: lib/graphql/resolvers/comment.ex:122
+#: lib/graphql/resolvers/comment.ex:143
 #, elixir-autogen, elixir-format
 msgid "You cannot delete this comment"
 msgstr "Nem tudja törölni ezt a hozzászólást"
 
-#: lib/graphql/resolvers/event.ex:385
+#: lib/graphql/resolvers/event.ex:403
 #, elixir-autogen, elixir-format
 msgid "You cannot delete this event"
 msgstr "Nem tudja törölni ezt az eseményt"
@@ -664,7 +664,7 @@ msgstr ""
 "Bejelentkezve kell lennie és moderátornak kell lennie a jelentések "
 "felsorolásához"
 
-#: lib/graphql/resolvers/report.ex:115
+#: lib/graphql/resolvers/report.ex:121
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to update a report"
 msgstr ""
@@ -709,7 +709,7 @@ msgstr "Bejelentkezve kell lennie a megbeszélésekhez való hozzáféréshez"
 msgid "You need to be logged-in to access resources"
 msgstr "Bejelentkezve kell lennie az erőforrásokhoz való hozzáféréshez"
 
-#: lib/graphql/resolvers/event.ex:295
+#: lib/graphql/resolvers/event.ex:313
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create events"
 msgstr "Bejelentkezve kell lennie az események létrehozásához"
@@ -729,7 +729,7 @@ msgstr "Bejelentkezve kell lennie a jelentések létrehozásához"
 msgid "You need to be logged-in to create resources"
 msgstr "Bejelentkezve kell lennie az erőforrások létrehozásához"
 
-#: lib/graphql/resolvers/event.ex:394
+#: lib/graphql/resolvers/event.ex:412
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete an event"
 msgstr "Bejelentkezve kell lennie egy esemény törléséhez"
@@ -754,7 +754,7 @@ msgstr "Bejelentkezve kell lennie egy eseményhez való csatlakozáshoz"
 msgid "You need to be logged-in to leave an event"
 msgstr "Bejelentkezve kell lennie egy esemény elhagyásához"
 
-#: lib/graphql/resolvers/event.ex:351
+#: lib/graphql/resolvers/event.ex:369
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update an event"
 msgstr "Bejelentkezve kell lennie egy esemény frissítéséhez"
@@ -861,12 +861,12 @@ msgstr "A fájl nem rendelkezik engedélyezett MIME-típussal."
 msgid "Profile is not administrator for the group"
 msgstr "A profil nem adminisztrátor ennél a csoportnál"
 
-#: lib/graphql/resolvers/event.ex:340
+#: lib/graphql/resolvers/event.ex:358
 #, elixir-autogen, elixir-format
 msgid "You can't edit this event."
 msgstr "Nem tudja szerkeszteni ezt az eseményt."
 
-#: lib/graphql/resolvers/event.ex:343
+#: lib/graphql/resolvers/event.ex:361
 #, elixir-autogen, elixir-format
 msgid "You can't attribute this event to this profile."
 msgstr "Nem tudja ezt az eseményt ennek a profilnak tulajdonítani."
@@ -898,7 +898,7 @@ msgstr ""
 "Meg kell adnia vagy egy azonosítót, vagy egy keresőbarát URL-t egy "
 "megbeszéléshez való hozzáféréshez"
 
-#: lib/graphql/resolvers/event.ex:290
+#: lib/graphql/resolvers/event.ex:275
 #, elixir-autogen, elixir-format
 msgid "Organizer profile is not owned by the user"
 msgstr "A szervező profilját nem a felhasználó birtokolja"
@@ -910,9 +910,9 @@ msgstr "A megadott profilazonosító nem a névtelen profil"
 
 #: lib/graphql/resolvers/group.ex:181
 #: lib/graphql/resolvers/group.ex:223
-#: lib/graphql/resolvers/person.ex:148
-#: lib/graphql/resolvers/person.ex:182
-#: lib/graphql/resolvers/person.ex:304
+#: lib/graphql/resolvers/person.ex:157
+#: lib/graphql/resolvers/person.ex:191
+#: lib/graphql/resolvers/person.ex:324
 #, elixir-autogen, elixir-format
 msgid "The provided picture is too heavy"
 msgstr "A megadott fénykép túl nehéz"
@@ -922,7 +922,7 @@ msgstr "A megadott fénykép túl nehéz"
 msgid "Error while creating resource"
 msgstr "Hiba az erőforrás létrehozáskor"
 
-#: lib/graphql/resolvers/user.ex:520
+#: lib/graphql/resolvers/user.ex:537
 #, elixir-autogen, elixir-format
 msgid "Invalid activation token"
 msgstr "Érvénytelen aktiválási token"
@@ -932,7 +932,7 @@ msgstr "Érvénytelen aktiválási token"
 msgid "Unable to fetch resource details from this URL."
 msgstr "Nem lehet lekérni az erőforrás részleteit erről az URL-ről."
 
-#: lib/graphql/resolvers/event.ex:164
+#: lib/graphql/resolvers/event.ex:165
 #: lib/graphql/resolvers/participant.ex:253
 #: lib/graphql/resolvers/participant.ex:328
 #, elixir-autogen, elixir-format
@@ -940,28 +940,28 @@ msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr ""
 "A megadott profilnak nincsenek moderátor jogosultságai ezen az eseményen"
 
-#: lib/graphql/resolvers/event.ex:276
+#: lib/graphql/resolvers/event.ex:286
 #, elixir-autogen, elixir-format
 msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
 msgstr ""
 "A szervező profiljának nincs jogosultsága eseményt létrehozni ennek a "
 "csoportnak a nevében"
 
-#: lib/graphql/resolvers/event.ex:331
+#: lib/graphql/resolvers/event.ex:349
 #, elixir-autogen, elixir-format
 msgid "This profile doesn't have permission to update an event on behalf of this group"
 msgstr ""
 "Ennek a profilnak nincs jogosultsága eseményt frissíteni ennek a csoportnak "
 "a nevében"
 
-#: lib/graphql/resolvers/user.ex:174
+#: lib/graphql/resolvers/user.ex:184
 #, elixir-autogen, elixir-format
 msgid "Your e-mail has been denied registration or uses a disallowed e-mail provider"
 msgstr ""
 "Az e-mail-címe meg lett tagadva a regisztrációhoz vagy nem engedélyezett e"
 "-mail-szolgáltatót használ"
 
-#: lib/graphql/resolvers/comment.ex:129
+#: lib/graphql/resolvers/comment.ex:150
 #, elixir-autogen, elixir-format
 msgid "Comment not found"
 msgstr "A hozzászólás nem található"
@@ -971,12 +971,12 @@ msgstr "A hozzászólás nem található"
 msgid "Error while creating a discussion"
 msgstr "Hiba egy megbeszélés létrehozásakor"
 
-#: lib/graphql/resolvers/user.ex:641
+#: lib/graphql/resolvers/user.ex:658
 #, elixir-autogen, elixir-format
 msgid "Error while updating locale"
 msgstr "Hiba a területi beállítások frissítésekor"
 
-#: lib/graphql/resolvers/person.ex:307
+#: lib/graphql/resolvers/person.ex:327
 #, elixir-autogen, elixir-format
 msgid "Error while uploading pictures"
 msgstr "Hiba a képek feltöltésekor"
@@ -992,12 +992,12 @@ msgid "Failed to update the group"
 msgstr "Nem sikerült frissíteni a csoportot"
 
 #: lib/graphql/resolvers/admin.ex:333
-#: lib/graphql/resolvers/user.ex:484
+#: lib/graphql/resolvers/user.ex:501
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
 msgstr "Nem sikerült frissíteni a felhasználó e-mail-címét"
 
-#: lib/graphql/resolvers/user.ex:516
+#: lib/graphql/resolvers/user.ex:533
 #, elixir-autogen, elixir-format
 msgid "Failed to validate user email"
 msgstr "Nem sikerült ellenőrizni a felhasználó e-mail-címét"
@@ -1012,12 +1012,12 @@ msgstr "A névtelen szereplő azonosítója érvénytelen"
 msgid "Unknown error while updating resource"
 msgstr "Ismeretlen hiba az erőforrás frissítésekor"
 
-#: lib/graphql/resolvers/comment.ex:84
+#: lib/graphql/resolvers/comment.ex:105
 #, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
 msgstr "Ön nem a hozzászólás létrehozója"
 
-#: lib/graphql/resolvers/user.ex:441
+#: lib/graphql/resolvers/user.ex:458
 #, elixir-autogen, elixir-format
 msgid "You cannot change your password."
 msgstr "Nem tudja megváltoztatni a jelszavát."
@@ -1051,17 +1051,17 @@ msgstr ""
 msgid "Only admins can create groups"
 msgstr "Csak adminisztrátorok hozhatnak létre csoportokat"
 
-#: lib/graphql/resolvers/event.ex:283
+#: lib/graphql/resolvers/event.ex:279
 #, elixir-autogen, elixir-format
 msgid "Only groups can create events"
 msgstr "Csak csoportok hozhatnak létre eseményeket"
 
-#: lib/graphql/resolvers/event.ex:269
+#: lib/graphql/resolvers/event.ex:305
 #, elixir-autogen, elixir-format
 msgid "Unknown error while creating event"
 msgstr "Ismeretlen hiba az esemény létrehozásakor"
 
-#: lib/graphql/resolvers/user.ex:497
+#: lib/graphql/resolvers/user.ex:514
 #, elixir-autogen, elixir-format
 msgid "User cannot change email"
 msgstr "A felhasználó nem tudja megváltoztatni az e-mail-címét"
@@ -1076,12 +1076,12 @@ msgstr "A követés nem egyezik az Ön fiókjával"
 msgid "Follow not found"
 msgstr "A követés nem található"
 
-#: lib/graphql/resolvers/user.ex:362
+#: lib/graphql/resolvers/user.ex:379
 #, elixir-autogen, elixir-format
 msgid "Profile with username %{username} not found"
 msgstr "Nem található %{username} felhasználónévvel rendelkező profil"
 
-#: lib/graphql/resolvers/user.ex:357
+#: lib/graphql/resolvers/user.ex:374
 #, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
 msgstr "Ez a profil nem Önhöz tartozik"
@@ -1121,7 +1121,7 @@ msgstr "Nincs meg a tag eltávolításához szükséges szerepe."
 msgid "You must be logged-in to remove a member"
 msgstr "Bejelentkezve kell lennie egy tag eltávolításához"
 
-#: lib/graphql/resolvers/user.ex:164
+#: lib/graphql/resolvers/user.ex:174
 #, elixir-autogen, elixir-format
 msgid "Your email seems to be using an invalid format"
 msgstr "Úgy tűnik, hogy az e-mail-címe érvénytelen formátumot használ"
@@ -1165,8 +1165,44 @@ msgstr ""
 "A felhasználónév csak kisbetűs alfanumerikus karaktereket és aláhúzásokat "
 "tartalmazhat."
 
-#: lib/graphql/resolvers/user.ex:286
-#: lib/graphql/resolvers/user.ex:309
+#: lib/graphql/resolvers/user.ex:303
+#: lib/graphql/resolvers/user.ex:326
 #, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
 msgstr "Ez az e-mail-cím nem tűnik érvényesnek"
+
+#: lib/graphql/resolvers/comment.ex:65
+#, elixir-autogen, elixir-format
+msgid "This comment was detected as spam."
+msgstr ""
+
+#: lib/graphql/resolvers/event.ex:293
+#, elixir-autogen, elixir-format
+msgid "This event was detected as spam."
+msgstr ""
+
+#: lib/graphql/api/reports.ex:66
+#, elixir-autogen, elixir-format
+msgid "Unsupported status for a report"
+msgstr ""
+
+#: lib/graphql/api/reports.ex:127
+#, elixir-autogen, elixir-format
+msgid "You can only remove your own notes"
+msgstr ""
+
+#: lib/graphql/api/reports.ex:94
+#: lib/graphql/api/reports.ex:121
+#, elixir-autogen, elixir-format
+msgid "You need to be a moderator or an administrator to create a note on a report"
+msgstr ""
+
+#: lib/graphql/resolvers/person.ex:330
+#, elixir-autogen, elixir-format
+msgid "Your profile was detected as spam."
+msgstr ""
+
+#: lib/graphql/resolvers/user.ex:191
+#, elixir-autogen, elixir-format
+msgid "Your registration has been detected as spam and cannot be processed."
+msgstr ""

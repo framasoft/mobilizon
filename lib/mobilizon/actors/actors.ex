@@ -320,8 +320,8 @@ defmodule Mobilizon.Actors do
           String.t(),
           String.t(),
           String.t(),
-          boolean,
-          boolean,
+          boolean | nil,
+          boolean | nil,
           integer | nil,
           integer | nil
         ) :: Page.t(Actor.t())
@@ -380,8 +380,8 @@ defmodule Mobilizon.Actors do
           String.t(),
           String.t(),
           String.t(),
-          boolean(),
-          boolean()
+          boolean() | nil,
+          boolean() | nil
         ) ::
           Ecto.Query.t()
   defp filter_actors(
@@ -417,10 +417,12 @@ defmodule Mobilizon.Actors do
 
   defp filter_remote(query, true), do: filter_local(query)
   defp filter_remote(query, false), do: filter_external(query)
+  defp filter_remote(query, nil), do: query
 
-  @spec filter_suspended(Ecto.Queryable.t(), boolean()) :: Ecto.Query.t()
+  @spec filter_suspended(Ecto.Queryable.t(), boolean() | nil) :: Ecto.Query.t()
   defp filter_suspended(query, true), do: where(query, [a], a.suspended)
   defp filter_suspended(query, false), do: where(query, [a], not a.suspended)
+  defp filter_suspended(query, nil), do: query
 
   @spec filter_out_anonymous_actor_id(Ecto.Queryable.t(), integer() | String.t()) ::
           Ecto.Query.t()
@@ -1765,5 +1767,27 @@ defmodule Mobilizon.Actors do
       is_nil(a.domain) and m.parent_id == ^actor_id and m.role in ^@member_roles
     )
     |> Repo.all()
+  end
+
+  @spec stream_persons(
+          String.t(),
+          String.t(),
+          String.t(),
+          boolean | nil,
+          boolean | nil,
+          integer()
+        ) :: Enum.t()
+  def stream_persons(
+        preferred_username \\ "",
+        name \\ "",
+        domain \\ "",
+        local \\ true,
+        suspended \\ false,
+        chunk_size \\ 500
+      ) do
+    person_query()
+    |> filter_actors(preferred_username, name, domain, local, suspended)
+    |> preload([:user])
+    |> Page.chunk(chunk_size)
   end
 end

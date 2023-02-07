@@ -45,6 +45,20 @@
         variant="danger"
         >{{ t("Close") }}</o-button
       >
+      <o-button
+        outlined
+        @click="reportToAntispam(true)"
+        variant="text"
+        class="!text-mbz-danger"
+        >{{ t("Report as spam") }}</o-button
+      >
+      <o-button
+        outlined
+        @click="reportToAntispam(false)"
+        variant="text"
+        class="!text-mbz-success"
+        >{{ t("Report as ham") }}</o-button
+      >
     </div>
     <section class="w-full">
       <table class="table w-full">
@@ -305,7 +319,7 @@ import uniq from "lodash/uniq";
 import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
-import { ActorType, ReportStatusEnum } from "@/types/enums";
+import { ActorType, AntiSpamFeedback, ReportStatusEnum } from "@/types/enums";
 import RouteName from "@/router/name";
 import { GraphQLError } from "graphql";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
@@ -320,12 +334,17 @@ import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import EventCard from "@/components/Event/EventCard.vue";
+import { useFeatures } from "@/composition/apollo/config";
 
 const router = useRouter();
 
 const props = defineProps<{ reportId: string }>();
 
 const { currentActor } = useCurrentActorClient();
+
+const { features } = useFeatures();
+
+const antispamEnabled = computed(() => features.value?.antispam);
 
 const { result: reportResult, onError: onReportQueryError } = useQuery<{
   report: IReport;
@@ -467,7 +486,14 @@ const {
   mutate: updateReportMutation,
   onDone: onUpdateReportMutation,
   onError: onUpdateReportError,
-} = useMutation(UPDATE_REPORT, () => ({
+} = useMutation<
+  Record<string, any>,
+  {
+    reportId: string;
+    status: ReportStatusEnum;
+    antispamFeedback?: AntiSpamFeedback;
+  }
+>(UPDATE_REPORT, () => ({
   update: (
     store: ApolloCache<{ updateReportStatus: IReport }>,
     { data }: FetchResult
@@ -505,9 +531,32 @@ onUpdateReportError((error) => {
 });
 
 const updateReport = async (status: ReportStatusEnum): Promise<void> => {
-  updateReportMutation({
-    reportId: report.value?.id,
-    status,
+  if (report.value) {
+    updateReportMutation({
+      reportId: report.value?.id,
+      status,
+    });
+  }
+};
+
+const reportToAntispam = (spam: boolean) => {
+  dialog?.confirm({
+    title: spam ? t("Report as undetected spam") : t("Report as ham"),
+    message: t(
+      "The report contents (eventual comments and event) and the reported profile details will be transmitted to Akismet."
+    ),
+    confirmText: t("Submit to Akismet"),
+    variant: "warning",
+    hasIcon: true,
+    onConfirm: () => {
+      if (report.value) {
+        updateReportMutation({
+          reportId: report.value.id,
+          status: report.value.status,
+          antispamFeedback: spam ? AntiSpamFeedback.SPAM : AntiSpamFeedback.HAM,
+        });
+      }
+    },
   });
 };
 </script>

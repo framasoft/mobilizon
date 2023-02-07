@@ -1292,7 +1292,7 @@ msgstr ""
 "Moderátorský tým vaší instance se rozhodl pozastavit %{group_name} "
 "(%{group_address}). Již nejste členem této skupiny."
 
-#: lib/web/email/group.ex:92
+#: lib/web/email/group.ex:107
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Skupina %{group} byla pozastavena na %{instance}"
@@ -1609,8 +1609,8 @@ msgstr "Je nám líto, ale na naší straně se něco pokazilo."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Jde o demonstrační web pro testování Mobilizon."
 
-#: lib/service/metadata/actor.ex:90
-#: lib/service/metadata/actor.ex:97
+#: lib/service/metadata/actor.ex:93
+#: lib/service/metadata/actor.ex:100
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -1658,14 +1658,14 @@ msgstr "Zdá se, že server Mobilizon %{instance} je dočasně mimo provoz."
 msgid "Public feed for %{instance}"
 msgstr "Veřejný kanál pro %{instance}"
 
-#: lib/graphql/resolvers/user.ex:333
+#: lib/graphql/resolvers/user.ex:350
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 "Zvolené heslo je příliš krátké. Ujistěte se, že heslo obsahuje alespoň 6 "
 "znaků."
 
-#: lib/graphql/resolvers/user.ex:339
+#: lib/graphql/resolvers/user.ex:356
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
@@ -1900,7 +1900,7 @@ msgstr "Účastněte se:"
 msgid "Title: %{title}"
 msgstr "Název: %{title}"
 
-#: lib/web/email/group.ex:45
+#: lib/web/email/group.ex:46
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Právě naplánováno od %{group}: %{event}"

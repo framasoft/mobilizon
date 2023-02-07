@@ -98,12 +98,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
           {:ok, Report.t()} | {:error, String.t()}
   def update_report(
         _parent,
-        %{report_id: report_id, status: status},
+        %{report_id: report_id, status: status} = args,
         %{context: %{current_user: %User{role: role}, current_actor: %Actor{} = actor}}
       )
       when is_moderator(role) do
     with %Report{} = report <- Mobilizon.Reports.get_report(report_id),
-         {:ok, %Report{} = report} <- API.Reports.update_report_status(actor, report, status) do
+         {:ok, %Report{} = report} <-
+           API.Reports.update_report_status(
+             actor,
+             report,
+             status,
+             Map.get(args, :antispam_feedback)
+           ) do
       {:ok, report}
     else
       _error ->

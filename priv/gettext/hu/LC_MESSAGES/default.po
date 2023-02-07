@@ -1157,7 +1157,7 @@ msgstr ""
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
 
-#: lib/web/email/group.ex:92
+#: lib/web/email/group.ex:107
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr ""
@@ -1403,8 +1403,8 @@ msgstr "Sajnáljuk, de valami hiba történt nálunk."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Ez egy bemutató oldal a Mobilizon kipróbálásához."
 
-#: lib/service/metadata/actor.ex:90
-#: lib/service/metadata/actor.ex:97
+#: lib/service/metadata/actor.ex:93
+#: lib/service/metadata/actor.ex:100
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
@@ -1457,14 +1457,14 @@ msgstr ""
 msgid "Public feed for %{instance}"
 msgstr "A(z) %{instance} nyilvános hírfolyama"
 
-#: lib/graphql/resolvers/user.ex:333
+#: lib/graphql/resolvers/user.ex:350
 #, elixir-autogen, elixir-format
 msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
 msgstr ""
 "A választott jelszó túl rövid. Győződjön meg arról, hogy a jelszava legalább "
 "6 karakteres legyen."
 
-#: lib/graphql/resolvers/user.ex:339
+#: lib/graphql/resolvers/user.ex:356
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
@@ -1700,7 +1700,7 @@ msgstr "Részvétel:"
 msgid "Title: %{title}"
 msgstr "Cím: %{title}"
 
-#: lib/web/email/group.ex:45
+#: lib/web/email/group.ex:46
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 %{group} – esemény beütemezve: %{event}"

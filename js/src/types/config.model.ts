@@ -97,6 +97,7 @@ export interface IConfig {
   features: {
     eventCreation: boolean;
     groups: boolean;
+    antispam: boolean;
   };
   restrictions: {
     onlyAdminCanCreateGroups: boolean;

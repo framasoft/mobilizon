@@ -16,23 +16,6 @@ body {
 .btn-rounded {
   @apply rounded-full;
 }
-.btn-outlined-,
-.btn-outlined-primary {
-  @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
-}
-.btn-outlined-success {
-  @apply border-mbz-success;
-}
-.btn-outlined-danger {
-  @apply border-mbz-danger;
-}
-.btn-outlined-warning {
-  @apply border-mbz-warning;
-}
-.btn-outlined-:hover,
-.btn-outlined-primary:hover {
-  @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
-}
 .btn-size-large {
   @apply text-2xl py-6;
 }
@@ -53,6 +36,26 @@ body {
 }
 .btn-text {
   @apply bg-transparent border-transparent text-black dark:text-white font-normal underline hover:bg-zinc-200 hover:text-black;
+}
+.btn-outlined-,
+.btn-outlined-primary {
+  @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
+}
+.btn-outlined-success {
+  @apply border-mbz-success;
+}
+.btn-outlined-warning {
+  @apply bg-transparent border dark:text-white hover:dark:text-slate-900 hover:bg-mbz-warning border-mbz-warning;
+}
+.btn-outlined-danger {
+  @apply border-mbz-danger;
+}
+.btn-outlined-text {
+  @apply bg-transparent hover:text-slate-900;
+}
+.btn-outlined-:hover,
+.btn-outlined-primary:hover {
+  @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
 }
 
 /* Field */

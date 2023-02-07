@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Events.{Event, EventOptions}
+  alias Mobilizon.Service.Akismet
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
@@ -25,11 +26,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         _parent,
         %{event_id: event_id} = args,
         %{
-          context: %{
-            current_actor: %Actor{id: actor_id}
-          }
+          context:
+            %{
+              current_actor: %Actor{id: actor_id, preferred_username: preferred_username},
+              current_user: %User{email: email}
+            } = context
         }
       ) do
+    current_ip = Map.get(context, :ip)
+    user_agent = Map.get(context, :user_agent, "")
+
     case Events.get_event(event_id) do
       {:ok,
        %Event{
@@ -39,12 +45,27 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         if comment_moderation != :closed || actor_id == organizer_actor_id do
           args = Map.put(args, :actor_id, actor_id)
 
-          case Comments.create_comment(args) do
-            {:ok, _, %CommentModel{} = comment} ->
-              {:ok, comment}
+          if Akismet.check_comment(
+               args.text,
+               preferred_username,
+               !is_nil(Map.get(args, :in_reply_to_comment_id)),
+               email,
+               current_ip,
+               user_agent
+             ) do
+            case Comments.create_comment(args) do
+              {:ok, _, %CommentModel{} = comment} ->
+                {:ok, comment}
 
-            {:error, err} ->
-              {:error, err}
+              {:error, err} ->
+                {:error, err}
+            end
+          else
+            {:error,
+             dgettext(
+               "errors",
+               "This comment was detected as spam."
+             )}
           end
         else
           {:error, :unauthorized}

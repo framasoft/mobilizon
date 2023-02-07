@@ -1819,7 +1819,14 @@ defmodule Mobilizon.Events do
 
   @spec filter_local(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp filter_local(query) do
-    where(query, [q], q.local == true)
+    filter_local(query, true)
+  end
+
+  @spec filter_local(Ecto.Queryable.t(), boolean() | nil) :: Ecto.Query.t()
+  defp filter_local(query, nil), do: query
+
+  defp filter_local(query, value) when is_boolean(value) do
+    where(query, [q], q.local == ^value)
   end
 
   @spec filter_local_or_from_followed_instances_events(Ecto.Queryable.t()) ::
@@ -1938,4 +1945,13 @@ defmodule Mobilizon.Events do
 
   @spec preload_for_event(Ecto.Queryable.t()) :: Ecto.Query.t()
   defp preload_for_event(query), do: preload(query, ^@event_preloads)
+
+  @spec stream_events(boolean() | nil, integer()) :: Enum.t()
+  def stream_events(local \\ true, chunk_size \\ 500) do
+    Event
+    |> filter_draft()
+    |> filter_local(local)
+    |> preload_for_event()
+    |> Page.chunk(chunk_size)
+  end
 end

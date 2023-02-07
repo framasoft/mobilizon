@@ -13,6 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.Federation.ActivityPub.Activity
   alias Mobilizon.Federation.ActivityPub.Permission
+  alias Mobilizon.Service.Akismet
   alias Mobilizon.Service.TimezoneDetector
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
@@ -246,48 +247,65 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
   def create_event(
         _parent,
         %{organizer_actor_id: organizer_actor_id} = args,
-        %{context: %{current_user: %User{} = user}} = _resolution
+        %{context: %{current_user: %User{email: email} = user} = context} = _resolution
       ) do
-    case User.owns_actor(user, organizer_actor_id) do
-      {:is_owned, %Actor{} = organizer_actor} ->
-        if can_create_event?(args) do
-          if is_organizer_group_member?(args) do
-            args_with_organizer =
-              args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id)
+    current_ip = Map.get(context, :ip)
+    user_agent = Map.get(context, :user_agent, "")
 
-            case API.Events.create_event(args_with_organizer) do
-              {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} ->
-                {:ok, event}
-
-              {:error, %Ecto.Changeset{} = error} ->
-                {:error, error}
-
-              {:error, err} ->
-                Logger.warning("Unknown error while creating event: #{inspect(err)}")
-
-                {:error,
-                 dgettext(
-                   "errors",
-                   "Unknown error while creating event"
-                 )}
-            end
-          else
-            {:error,
-             dgettext(
-               "errors",
-               "Organizer profile doesn't have permission to create an event on behalf of this group"
-             )}
-          end
-        else
-          {:error,
-           dgettext(
-             "errors",
-             "Only groups can create events"
-           )}
-        end
-
+    with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
+         {:can_create_event, true} <- can_create_event(args),
+         {:organizer_group_member, true} <-
+           {:organizer_group_member, is_organizer_group_member?(args)},
+         args_with_organizer <-
+           args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id),
+         {:askismet, :ham} <-
+           {:askismet,
+            Akismet.check_event(
+              args.description,
+              organizer_actor.preferred_username,
+              email,
+              current_ip,
+              user_agent
+            )},
+         {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
+           API.Events.create_event(args_with_organizer) do
+      {:ok, event}
+    else
       {:is_owned, nil} ->
         {:error, dgettext("errors", "Organizer profile is not owned by the user")}
+
+      {:can_create_event, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Only groups can create events"
+         )}
+
+      {:organizer_group_member, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Organizer profile doesn't have permission to create an event on behalf of this group"
+         )}
+
+      {:askismet, _} ->
+        {:error,
+         dgettext(
+           "errors",
+           "This event was detected as spam."
+         )}
+
+      {:error, %Ecto.Changeset{} = error} ->
+        {:error, error}
+
+      {:error, err} ->
+        Logger.warning("Unknown error while creating event: #{inspect(err)}")
+
+        {:error,
+         dgettext(
+           "errors",
+           "Unknown error while creating event"
+         )}
     end
   end
 
@@ -295,12 +313,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     {:error, dgettext("errors", "You need to be logged-in to create events")}
   end
 
-  @spec can_create_event?(map()) :: boolean()
-  defp can_create_event?(args) do
+  @spec can_create_event(map()) :: {:can_create_event, boolean()}
+  defp can_create_event(args) do
     if Config.only_groups_can_create_events?() do
-      Map.get(args, :attributed_to_id) != nil
+      {:can_create_event, Map.get(args, :attributed_to_id) != nil}
     else
-      true
+      {:can_create_event, true}
     end
   end
 

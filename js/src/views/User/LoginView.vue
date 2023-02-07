@@ -42,7 +42,7 @@
     >
       {{ error }}
     </o-notification>
-    <form @submit="loginAction" v-if="config?.auth.databaseLogin">
+    <form @submit="loginAction" v-if="config?.auth?.databaseLogin">
       <o-field
         :label="t('Email')"
         label-for="email"
@@ -116,7 +116,7 @@
         </p>
       </div>
     </form>
-    <div v-if="config && config?.auth.oauthProviders.length > 0">
+    <div v-if="config && config?.auth?.oauthProviders?.length > 0">
       <auth-providers :oauthProviders="config.auth.oauthProviders" />
     </div>
   </section>
@@ -169,7 +169,7 @@ const config = computed(() => configResult.value?.config);
 const canRegister = computed(() => {
   return (
     (config.value?.registrationsOpen || config.value?.registrationsAllowlist) &&
-    config.value?.auth.databaseLogin
+    config.value?.auth?.databaseLogin
   );
 });
 
