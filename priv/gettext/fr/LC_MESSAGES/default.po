@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2022-10-18 12:04+0000\n"
+"PO-Revision-Date: 2023-02-08 02:24+0000\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/fr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2411,7 +2411,9 @@ msgstr "L'instance %{domain} demande à suivre votre instance"
 #: lib/web/templates/email/instance_follow.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
-msgstr "Note : le fait que %{name} vous suive n'implique pas nécessairement que vous suivez cette instance, mais vous pouvez demander à les suivre également."
+msgstr ""
+"Note : le fait que %{name} vous suive n'implique pas nécessairement que vous "
+"suivez cette instance, mais vous pouvez demander à les suivre également."
 
 #: lib/web/templates/email/group_member_removal.html.heex:18
 #: lib/web/templates/email/group_member_removal.text.eex:1
