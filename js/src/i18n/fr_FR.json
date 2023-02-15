@@ -1451,5 +1451,9 @@
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
   "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée",
-  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
+  "Autorize this application to access your account?": "Autoriser cette application à accéder à votre compte ?",
+  "This application will be able to access all of your informations and post content on your behalf. Make sure you only approve applications you trust.": "Cette application sera capable d'accéder à toutes vos informations et poster du contenu en votre nom. Assurez-vous d'approuver uniquement des applications en lesquelles vous avez confiance.",
+  "Authorize application": "Autoriser l'application",
+  "Authorize": "Autoriser"
 }

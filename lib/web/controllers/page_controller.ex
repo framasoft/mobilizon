@@ -121,6 +121,9 @@ defmodule Mobilizon.Web.PageController do
     end
   end
 
+  @spec authorize(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def authorize(conn, _params), do: render(conn, :index)
+
   @spec handle_collection_route(Plug.Conn.t(), collections()) :: Plug.Conn.t()
   defp handle_collection_route(conn, collection) do
     case get_format(conn) do

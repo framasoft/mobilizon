@@ -13,6 +13,7 @@ export enum UserRouteName {
   EMAIL_VALIDATE = "EMAIL_VALIDATE",
   VALIDATE = "Validate",
   LOGIN = "Login",
+  OAUTH_AUTORIZE = "OAUTH_AUTORIZE",
 }
 
 export const userRoutes: RouteRecordRaw[] = [
@@ -106,6 +107,17 @@ export const userRoutes: RouteRecordRaw[] = [
     meta: {
       requiredAuth: false,
       announcer: { message: (): string => t("Login") as string },
+    },
+  },
+  {
+    path: "/oauth/autorize_approve",
+    name: UserRouteName.OAUTH_AUTORIZE,
+    component: (): Promise<any> => import("@/views/OAuth/AuthorizeView.vue"),
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => t("Authorize application") as string,
+      },
     },
   },
 ];

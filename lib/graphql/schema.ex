@@ -53,6 +53,7 @@ defmodule Mobilizon.GraphQL.Schema do
   import_types(Schema.Users.PushSubscription)
   import_types(Schema.Users.ActivitySetting)
   import_types(Schema.FollowedGroupActivityType)
+  import_types(Schema.AuthApplicationType)
 
   @desc "A struct containing the id of the deleted object"
   object :deleted_object do
@@ -161,6 +162,7 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:resource_queries)
     import_fields(:post_queries)
     import_fields(:statistics_queries)
+    import_fields(:auth_application_queries)
   end
 
   @desc """
@@ -187,6 +189,7 @@ defmodule Mobilizon.GraphQL.Schema do
     import_fields(:follower_mutations)
     import_fields(:push_mutations)
     import_fields(:activity_setting_mutations)
+    import_fields(:auth_application_mutations)
   end
 
   @desc """

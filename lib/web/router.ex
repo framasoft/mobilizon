@@ -205,6 +205,11 @@ defmodule Mobilizon.Web.Router do
     # Also possible CSRF issue
     get("/auth/:provider/callback", AuthController, :callback)
     post("/auth/:provider/callback", AuthController, :callback)
+
+    post("/apps", ApplicationController, :create_application)
+    get("/oauth/authorize", ApplicationController, :authorize)
+    post("/oauth/token", ApplicationController, :generate_access_token)
+    get("/oauth/autorize_approve", PageController, :authorize)
   end
 
   scope "/proxy/", Mobilizon.Web do

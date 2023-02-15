@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Media, User}
+  alias Mobilizon.GraphQL.Resolvers.{Application, Media, User}
   alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
   alias Mobilizon.GraphQL.Schema
 
@@ -160,6 +160,11 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
     field(:activity_settings, list_of(:activity_setting),
       resolve: &ActivitySettings.user_activity_settings/3,
       description: "The user's activity settings"
+    )
+
+    field(:auth_authorized_applications, list_of(:auth_application_token),
+      resolve: &Application.get_user_applications/3,
+      description: "The user's authorized authentication apps"
     )
   end
 

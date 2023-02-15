@@ -10,14 +10,19 @@ defmodule Mobilizon.Web.Auth.Guardian do
       user: [:base]
     }
 
-  alias Mobilizon.Users
+  alias Mobilizon.{Applications, Users}
+  alias Mobilizon.Applications.ApplicationToken
   alias Mobilizon.Users.User
 
   require Logger
 
   @spec subject_for_token(any(), any()) :: {:ok, String.t()} | {:error, :unknown_resource}
-  def subject_for_token(%User{} = user, _claims) do
-    {:ok, "User:" <> to_string(user.id)}
+  def subject_for_token(%User{id: user_id}, _claims) do
+    {:ok, "User:" <> to_string(user_id)}
+  end
+
+  def subject_for_token(%ApplicationToken{id: app_token_id}, _claims) do
+    {:ok, "AppToken:" <> to_string(app_token_id)}
   end
 
   def subject_for_token(_, _) do
@@ -33,6 +38,25 @@ defmodule Mobilizon.Web.Auth.Guardian do
       case Integer.parse(uid_str) do
         {uid, ""} ->
           {:ok, Users.get_user_with_actors!(uid)}
+
+        _ ->
+          {:error, :invalid_id}
+      end
+    rescue
+      Ecto.NoResultsError -> {:error, :no_result}
+    end
+  end
+
+  def resource_from_claims(%{"sub" => "AppToken:" <> id_str}) do
+    Logger.debug(fn -> "Receiving claim for app token #{id_str}" end)
+
+    try do
+      case Integer.parse(id_str) do
+        {id, ""} ->
+          application_token = Applications.get_application_token!(id)
+          user = Users.get_user_with_actors!(application_token.user_id)
+          application = Applications.get_application!(application_token.application_id)
+          {:ok, application_token |> Map.put(:user, user) |> Map.put(:application, application)}
 
         _ ->
           {:error, :invalid_id}

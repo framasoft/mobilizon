@@ -1453,5 +1453,9 @@
   "Report as ham": "Report as ham",
   "Report as undetected spam": "Report as undetected spam",
   "The report contents (eventual comments and event) and the reported profile details will be transmitted to Akismet.": "The report contents (eventual comments and event) and the reported profile details will be transmitted to Akismet.",
-  "Submit to Akismet": "Submit to Akismet"
+  "Submit to Akismet": "Submit to Akismet",
+  "Autorize this application to access your account?": "Autorize this application to access your account?",
+  "This application will be able to access all of your informations and post content on your behalf. Make sure you only approve applications you trust.": "This application will be able to access all of your informations and post content on your behalf. Make sure you only approve applications you trust.",
+  "Authorize application": "Authorize application",
+  "Authorize": "Authorize"
 }

@@ -17,6 +17,10 @@
           :title="t('Notifications')"
           :to="{ name: RouteName.NOTIFICATIONS }"
         />
+        <SettingMenuItem
+          :title="t('Apps')"
+          :to="{ name: RouteName.AUTHORIZED_APPS }"
+        />
       </SettingMenuSection>
       <SettingMenuSection
         :title="t('Profiles')"
