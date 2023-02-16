@@ -46,6 +46,7 @@
         >{{ t("Close") }}</o-button
       >
       <o-button
+        v-if="antispamEnabled"
         outlined
         @click="reportToAntispam(true)"
         variant="text"
@@ -53,6 +54,7 @@
         >{{ t("Report as spam") }}</o-button
       >
       <o-button
+        v-if="antispamEnabled"
         outlined
         @click="reportToAntispam(false)"
         variant="text"
