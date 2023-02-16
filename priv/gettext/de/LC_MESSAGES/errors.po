@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-12-14 17:06+0000\n"
-"Last-Translator: Andreas Aubele <nekater@gmx.de>\n"
+"PO-Revision-Date: 2023-02-16 15:32+0000\n"
+"Last-Translator: Vri <vrifox@vrifox.cc>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/de/>\n"
 "Language: de\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1160,35 +1160,38 @@ msgstr "Diese E-Mail scheint nicht gültig zu sein"
 #: lib/graphql/resolvers/comment.ex:65
 #, elixir-autogen, elixir-format
 msgid "This comment was detected as spam."
-msgstr ""
+msgstr "Dieser Kommentar wurde als Spam erkannt."
 
 #: lib/graphql/resolvers/event.ex:293
 #, elixir-autogen, elixir-format
 msgid "This event was detected as spam."
-msgstr ""
+msgstr "Diese Veranstaltung wurde als Spam erkannt."
 
 #: lib/graphql/api/reports.ex:66
 #, elixir-autogen, elixir-format
 msgid "Unsupported status for a report"
-msgstr ""
+msgstr "Nicht unterstützter Status einer Meldung"
 
 #: lib/graphql/api/reports.ex:127
 #, elixir-autogen, elixir-format
 msgid "You can only remove your own notes"
-msgstr ""
+msgstr "Sie können nur eigene Notizen entfernen"
 
 #: lib/graphql/api/reports.ex:94
 #: lib/graphql/api/reports.ex:121
 #, elixir-autogen, elixir-format
 msgid "You need to be a moderator or an administrator to create a note on a report"
 msgstr ""
+"Sie müssen Moderator oder Administrator zum Erstellen von Meldungsnotizen "
+"sein"
 
 #: lib/graphql/resolvers/person.ex:330
 #, elixir-autogen, elixir-format
 msgid "Your profile was detected as spam."
-msgstr ""
+msgstr "Ihr Profil wurde als Spam erkannt."
 
 #: lib/graphql/resolvers/user.ex:191
 #, elixir-autogen, elixir-format
 msgid "Your registration has been detected as spam and cannot be processed."
 msgstr ""
+"Ihre Registrierung wurde als Spam erkannt und kann nicht verarbeitet werden."
