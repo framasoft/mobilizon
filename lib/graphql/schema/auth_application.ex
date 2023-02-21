@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.AuthApplicationType do
 
   @desc "An application"
   object :auth_application do
+    field(:id, :id)
     field(:name, :string)
     field(:client_id, :string)
     field(:scopes, :string)
@@ -25,6 +26,12 @@ defmodule Mobilizon.GraphQL.Schema.AuthApplicationType do
   object :application_code_and_state do
     field(:code, :string)
     field(:state, :string)
+  end
+
+  object :application_device_activation do
+    field(:id, :id)
+    field(:application, :auth_application)
+    field(:scope, :string)
   end
 
   object :auth_application_queries do
@@ -53,9 +60,27 @@ defmodule Mobilizon.GraphQL.Schema.AuthApplicationType do
       resolve(&Application.authorize/3)
     end
 
+    @desc "Revoke an authorized application"
     field :revoke_application_token, :deleted_object do
       arg(:app_token_id, non_null(:string), description: "The application token's ID")
       resolve(&Application.revoke_application_token/3)
+    end
+
+    @desc "Activate an user device"
+    field :device_activation, :application_device_activation do
+      arg(:user_code, non_null(:string),
+        description: "The code provided by the application entered by the user"
+      )
+
+      resolve(&Application.activate_device/3)
+    end
+
+    @desc "Activate an user device"
+    field :authorize_device_application, :auth_application do
+      arg(:client_id, non_null(:string), description: "The application's client_id")
+      arg(:scope, :string, description: "The scope for the authorization")
+
+      resolve(&Application.authorize_device_application/3)
     end
   end
 end

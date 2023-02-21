@@ -210,6 +210,17 @@ defmodule Mobilizon.Web.Router do
     get("/oauth/authorize", ApplicationController, :authorize)
     post("/oauth/token", ApplicationController, :generate_access_token)
     get("/oauth/autorize_approve", PageController, :authorize)
+    get("/login/device", PageController, :auth_device)
+  end
+
+  pipeline :login do
+    plug(:accepts, ["html", "json"])
+  end
+
+  scope "/login", Mobilizon.Web do
+    pipe_through(:login)
+
+    post("/device/code", ApplicationController, :device_code)
   end
 
   scope "/proxy/", Mobilizon.Web do

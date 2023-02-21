@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 export const AUTH_APPLICATION = gql`
   query AuthApplication($clientId: String!) {
     authApplication(clientId: $clientId) {
+      id
       clientId
       name
       website
@@ -13,7 +14,7 @@ export const AUTH_APPLICATION = gql`
 export const AUTORIZE_APPLICATION = gql`
   mutation AuthorizeApplication(
     $applicationClientId: String!
-    $redirectURI: String!
+    $redirectURI: String
     $state: String
     $scope: String
   ) {
@@ -50,6 +51,21 @@ export const REVOKED_AUTHORIZED_APPLICATION = gql`
   mutation RevokeApplicationToken($appTokenId: String!) {
     revokeApplicationToken(appTokenId: $appTokenId) {
       id
+    }
+  }
+`;
+
+export const DEVICE_ACTIVATION = gql`
+  mutation DeviceActivation($userCode: String!) {
+    deviceActivation(userCode: $userCode) {
+      id
+      application {
+        id
+        clientId
+        name
+        website
+      }
+      scope
     }
   }
 `;

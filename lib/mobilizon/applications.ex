@@ -4,9 +4,23 @@ defmodule Mobilizon.Applications do
   """
 
   import Ecto.Query, warn: false
+  import EctoEnum
   alias Ecto.Multi
   alias Mobilizon.Applications.Application
   alias Mobilizon.Storage.Repo
+
+  defenum(ApplicationDeviceActivationStatus, [
+    "success",
+    "pending",
+    "incorrect_device_code",
+    "access_denied"
+  ])
+
+  defenum(ApplicationTokenStatus, [
+    "success",
+    "pending",
+    "access_denied"
+  ])
 
   @doc """
   Returns the list of applications.
@@ -254,5 +268,130 @@ defmodule Mobilizon.Applications do
   """
   def change_application_token(%ApplicationToken{} = application_token, attrs \\ %{}) do
     ApplicationToken.changeset(application_token, attrs)
+  end
+
+  alias Mobilizon.Applications.ApplicationDeviceActivation
+
+  @doc """
+  Returns the list of application_device_activation.
+
+  ## Examples
+
+      iex> list_application_device_activation()
+      [%ApplicationDeviceActivation{}, ...]
+
+  """
+  def list_application_device_activation do
+    Repo.all(ApplicationDeviceActivation)
+  end
+
+  @doc """
+  Gets a single application_device_activation.
+
+  Raises `Ecto.NoResultsError` if the Application device activation does not exist.
+
+  ## Examples
+
+      iex> get_application_device_activation!(123)
+      %ApplicationDeviceActivation{}
+
+      iex> get_application_device_activation!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_application_device_activation!(id), do: Repo.get!(ApplicationDeviceActivation, id)
+
+  def get_application_device_activation(id), do: Repo.get(ApplicationDeviceActivation, id)
+
+  def get_application_device_activation_by_user_code(user_code),
+    do: Repo.get_by(ApplicationDeviceActivation, user_code: user_code)
+
+  def get_application_device_activation(client_id, device_code) do
+    ApplicationDeviceActivation
+    |> join(:left, [ada], a in assoc(ada, :application))
+    |> where([_, a], a.client_id == ^client_id)
+    |> where([ada], ada.device_code == ^device_code)
+    |> select([ada], ada)
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates a application_device_activation.
+
+  ## Examples
+
+      iex> create_application_device_activation(%{field: value})
+      {:ok, %ApplicationDeviceActivation{}}
+
+      iex> create_application_device_activation(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_application_device_activation(attrs \\ %{}) do
+    %ApplicationDeviceActivation{}
+    |> ApplicationDeviceActivation.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a application_device_activation.
+
+  ## Examples
+
+      iex> update_application_device_activation(application_device_activation, %{field: new_value})
+      {:ok, %ApplicationDeviceActivation{}}
+
+      iex> update_application_device_activation(application_device_activation, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_application_device_activation(
+        %ApplicationDeviceActivation{} = application_device_activation,
+        attrs
+      ) do
+    application_device_activation
+    |> ApplicationDeviceActivation.changeset(attrs)
+    |> Repo.update()
+    |> case do
+      {:ok, application_device_activation} ->
+        {:ok, Repo.preload(application_device_activation, :application)}
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
+  Deletes a application_device_activation.
+
+  ## Examples
+
+      iex> delete_application_device_activation(application_device_activation)
+      {:ok, %ApplicationDeviceActivation{}}
+
+      iex> delete_application_device_activation(application_device_activation)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_application_device_activation(
+        %ApplicationDeviceActivation{} = application_device_activation
+      ) do
+    Repo.delete(application_device_activation)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking application_device_activation changes.
+
+  ## Examples
+
+      iex> change_application_device_activation(application_device_activation)
+      %Ecto.Changeset{data: %ApplicationDeviceActivation{}}
+
+  """
+  def change_application_device_activation(
+        %ApplicationDeviceActivation{} = application_device_activation,
+        attrs \\ %{}
+      ) do
+    ApplicationDeviceActivation.changeset(application_device_activation, attrs)
   end
 end

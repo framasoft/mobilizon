@@ -14,6 +14,7 @@ export enum UserRouteName {
   VALIDATE = "Validate",
   LOGIN = "Login",
   OAUTH_AUTORIZE = "OAUTH_AUTORIZE",
+  OAUTH_LOGIN_DEVICE = "OAUTH_LOGIN_DEVICE",
 }
 
 export const userRoutes: RouteRecordRaw[] = [
@@ -117,6 +118,18 @@ export const userRoutes: RouteRecordRaw[] = [
       requiredAuth: true,
       announcer: {
         message: (): string => t("Authorize application") as string,
+      },
+    },
+  },
+  {
+    path: "/login/device",
+    name: UserRouteName.OAUTH_LOGIN_DEVICE,
+    component: (): Promise<any> =>
+      import("@/views/OAuth/DeviceActivationView.vue"),
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => t("Device activation") as string,
       },
     },
   },

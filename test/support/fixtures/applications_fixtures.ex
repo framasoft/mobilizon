@@ -40,4 +40,16 @@ defmodule Mobilizon.ApplicationsFixtures do
 
     application_token
   end
+
+  @doc """
+  Generate a application_device_activation.
+  """
+  def application_device_activation_fixture(attrs \\ %{}) do
+    {:ok, application_device_activation} =
+      attrs
+      |> Enum.into(%{})
+      |> Mobilizon.Applications.create_application_device_activation()
+
+    application_device_activation
+  end
 end

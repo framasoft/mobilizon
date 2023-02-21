@@ -4,7 +4,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   """
 
   alias Mobilizon.Applications, as: ApplicationManager
-  alias Mobilizon.Applications.{Application, ApplicationToken}
+  alias Mobilizon.Applications.{Application, ApplicationDeviceActivation, ApplicationToken}
   alias Mobilizon.Service.Auth.Applications
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
@@ -88,5 +88,34 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
 
   def revoke_application_token(_parent, _args, _resolution) do
     {:error, :unauthenticated}
+  end
+
+  def activate_device(_parent, %{user_code: user_code}, %{
+        context: %{current_user: %User{} = user}
+      }) do
+    with {:ok, %ApplicationDeviceActivation{} = app_device_activation} <-
+           Applications.activate_device(user_code, user) do
+      {:ok, app_device_activation |> Map.from_struct() |> Map.take([:application, :id, :scope])}
+    end
+  end
+
+  @spec authorize_device_application(any(), map(), Absinthe.Resolution.t()) ::
+          {:ok, map()} | {:error, String.t()}
+  def authorize_device_application(
+        _parent,
+        %{client_id: client_id, user_code: user_code},
+        %{context: %{current_user: %User{id: user_id}}}
+      ) do
+    case Applications.autorize_device_application(client_id, user_code, user_id) do
+      {:ok, %Application{} = app} ->
+        {:ok, app}
+
+      {:error, :application_not_found} ->
+        {:error,
+         dgettext(
+           "errors",
+           "No application with this client_id was found"
+         )}
+    end
   end
 end

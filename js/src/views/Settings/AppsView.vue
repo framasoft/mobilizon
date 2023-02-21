@@ -76,11 +76,12 @@ import {
 } from "@/graphql/application";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useHead } from "@vueuse/head";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import RouteName from "../../router/name";
 import { IUser } from "@/types/current-user.model";
 import { formatDateString } from "@/filters/datetime";
+import { Notifier } from "@/plugins/notifier";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -131,6 +132,14 @@ const { mutate: revoke, onDone: onRevokedApplication } = useMutation<
     });
   },
 });
+
+const notifier = inject<Notifier>("notifier");
+
+onRevokedApplication(() => {
+  notifier?.success(
+    t("Application was revoked")
+  );
+})
 
 useHead({
   title: computed(() => t("Apps")),

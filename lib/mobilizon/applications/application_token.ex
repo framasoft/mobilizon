@@ -4,16 +4,20 @@ defmodule Mobilizon.Applications.ApplicationToken do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias Mobilizon.Applications.{Application, ApplicationTokenStatus}
+  alias Mobilizon.Users.User
 
   schema "application_tokens" do
-    belongs_to(:user, Mobilizon.Users.User)
-    belongs_to(:application, Mobilizon.Applications.Application)
+    belongs_to(:user, User)
+    belongs_to(:application, Application)
     field(:authorization_code, :string)
+    field(:status, ApplicationTokenStatus)
+    field(:scope, :string)
 
     timestamps()
   end
 
-  @required_attrs [:user_id, :application_id]
+  @required_attrs [:user_id, :application_id, :scope]
   @optional_attrs [:authorization_code]
   @attrs @required_attrs ++ @optional_attrs
 

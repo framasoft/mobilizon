@@ -1,12 +1,11 @@
 defmodule Mobilizon.Web.ApplicationController do
   use Mobilizon.Web, :controller
 
-  alias Mobilizon.Applications.Application
+  alias Mobilizon.Applications.{Application, ApplicationDeviceActivation}
   alias Mobilizon.Service.Auth.Applications
   plug(:put_layout, false)
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
-
-  @out_of_band_redirect_uri "urn:ietf:wg:oauth:2.0:oob"
+  require Logger
 
   @doc """
   Create an application
@@ -84,6 +83,27 @@ defmodule Mobilizon.Web.ApplicationController do
     end
   end
 
+  def device_code(conn, %{"client_id" => client_id} = args) do
+    case Applications.register_device_code(client_id, Map.get(args, "scope")) do
+      {:ok, res} when is_map(res) ->
+        case get_format(conn) do
+          "json" ->
+            json(conn, res)
+
+          _ ->
+            send_resp(conn, 200, URI.encode_query(res))
+        end
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.error(inspect(err))
+        send_resp(conn, 500, "Unable to produce device code")
+    end
+  end
+
+  def device_code(conn, _args) do
+    send_resp(conn, 400, "You need to send to send at least client_id to obtain a device code")
+  end
+
   @spec generate_access_token(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def generate_access_token(conn, %{
         "client_id" => client_id,
@@ -93,11 +113,7 @@ defmodule Mobilizon.Web.ApplicationController do
       }) do
     case Applications.generate_access_token(client_id, client_secret, code, redirect_uri) do
       {:ok, token} ->
-        if redirect_uri != @out_of_band_redirect_uri do
-          redirect(conn, external: generate_redirect_with_query_params(redirect_uri, token))
-        else
-          json(conn, token)
-        end
+        redirect(conn, external: generate_redirect_with_query_params(redirect_uri, token))
 
       {:error, :application_not_found} ->
         send_resp(conn, 400, dgettext("errors", "No application was found with this client_id"))
@@ -121,6 +137,27 @@ defmodule Mobilizon.Web.ApplicationController do
       {:error, :user_not_found} ->
         send_resp(conn, 400, dgettext("errors", "The user for this code was not found"))
     end
+  end
+
+  def generate_access_token(conn, %{
+        "client_id" => client_id,
+        "device_code" => device_code,
+        "grant_type" => "urn:ietf:params:oauth:grant-type:device_code",
+        "_format" => "json"
+      }) do
+    json(conn, Applications.generate_access_token(client_id, device_code))
+  end
+
+  def generate_access_token(conn, %{
+        "client_id" => client_id,
+        "device_code" => device_code,
+        "grant_type" => "urn:ietf:params:oauth:grant-type:device_code"
+      }) do
+    send_resp(
+      conn,
+      200,
+      URI.encode_query(Applications.generate_access_token(client_id, device_code))
+    )
   end
 
   @spec generate_redirect_with_query_params(String.t(), map()) :: String.t()

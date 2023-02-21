@@ -26,39 +26,14 @@
         </div>
       </div>
     </div>
-    <div
+    <AuthorizeApplication
+      v-if="authApplication"
       v-show="!authApplicationLoading && !authApplicationError && !resultCode"
-    >
-      <h1 class="text-3xl">
-        {{ t("Autorize this application to access your account?") }}
-      </h1>
-
-      <div
-        class="rounded-lg bg-mbz-warning shadow-xl my-6 p-4 flex items-center gap-2"
-      >
-        <AlertCircle :size="42" />
-        <p>
-          {{
-            t(
-              "This application will be able to access all of your informations and post content on your behalf. Make sure you only approve applications you trust."
-            )
-          }}
-        </p>
-      </div>
-
-      <div class="rounded-lg bg-white shadow-xl my-6">
-        <div class="p-4 pb-0">
-          <p class="text-3xl font-bold">{{ authApplication?.name }}</p>
-          <p>{{ authApplication?.website }}</p>
-        </div>
-        <div class="flex gap-3 p-4">
-          <o-button @click="() => authorize()">{{ t("Authorize") }}</o-button>
-          <o-button outlined tag="router-link" :to="{ name: RouteName.HOME }">{{
-            t("Decline")
-          }}</o-button>
-        </div>
-      </div>
-    </div>
+      :auth-application="authApplication"
+      :redirectURI="redirectURI"
+      :state="state"
+      :scope="scope"
+    />
     <div v-show="authApplicationError">
       <div
         class="rounded-lg bg-mbz-danger shadow-xl my-6 p-4 flex items-center gap-2"
@@ -114,6 +89,7 @@ import { IApplication } from "@/types/application.model";
 import AlertCircle from "vue-material-design-icons/AlertCircle.vue";
 import type { AbsintheGraphQLError } from "@/types/errors.model";
 import RouteName from "@/router/name";
+import AuthorizeApplication from "@/components/OAuth/AuthorizeApplication.vue";
 
 const { t } = useI18n({ useScope: "global" });
 

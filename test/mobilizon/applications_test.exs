@@ -143,4 +143,78 @@ defmodule Mobilizon.ApplicationsTest do
       assert %Ecto.Changeset{} = Applications.change_application_token(application_token)
     end
   end
+
+  describe "application_device_activation" do
+    alias Mobilizon.Applications.ApplicationDeviceActivation
+
+    import Mobilizon.ApplicationsFixtures
+
+    @invalid_attrs %{}
+
+    test "list_application_device_activation/0 returns all application_device_activation" do
+      application_device_activation = application_device_activation_fixture()
+      assert Applications.list_application_device_activation() == [application_device_activation]
+    end
+
+    test "get_application_device_activation!/1 returns the application_device_activation with given id" do
+      application_device_activation = application_device_activation_fixture()
+
+      assert Applications.get_application_device_activation!(application_device_activation.id) ==
+               application_device_activation
+    end
+
+    test "create_application_device_activation/1 with valid data creates a application_device_activation" do
+      valid_attrs = %{}
+
+      assert {:ok, %ApplicationDeviceActivation{} = application_device_activation} =
+               Applications.create_application_device_activation(valid_attrs)
+    end
+
+    test "create_application_device_activation/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} =
+               Applications.create_application_device_activation(@invalid_attrs)
+    end
+
+    test "update_application_device_activation/2 with valid data updates the application_device_activation" do
+      application_device_activation = application_device_activation_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %ApplicationDeviceActivation{} = application_device_activation} =
+               Applications.update_application_device_activation(
+                 application_device_activation,
+                 update_attrs
+               )
+    end
+
+    test "update_application_device_activation/2 with invalid data returns error changeset" do
+      application_device_activation = application_device_activation_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Applications.update_application_device_activation(
+                 application_device_activation,
+                 @invalid_attrs
+               )
+
+      assert application_device_activation ==
+               Applications.get_application_device_activation!(application_device_activation.id)
+    end
+
+    test "delete_application_device_activation/1 deletes the application_device_activation" do
+      application_device_activation = application_device_activation_fixture()
+
+      assert {:ok, %ApplicationDeviceActivation{}} =
+               Applications.delete_application_device_activation(application_device_activation)
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Applications.get_application_device_activation!(application_device_activation.id)
+      end
+    end
+
+    test "change_application_device_activation/1 returns a application_device_activation changeset" do
+      application_device_activation = application_device_activation_fixture()
+
+      assert %Ecto.Changeset{} =
+               Applications.change_application_device_activation(application_device_activation)
+    end
+  end
 end
