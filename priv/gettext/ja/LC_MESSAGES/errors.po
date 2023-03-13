@@ -8,25 +8,32 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-03-13 20:29+0000\n"
+"Last-Translator: Dannek Rose <dannekrose@dannekrose.com>\n"
+"Language-Team: Japanese <https://weblate.framasoft.org/projects/mobilizon/"
+"backend-errors/ja/>\n"
 "Language: ja\n"
-"Plural-Forms: nplurals=1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.16.2\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
 msgid "can't be blank"
-msgstr ""
+msgstr "必要"
 
 msgid "has already been taken"
-msgstr ""
+msgstr "すでに利用されている"
 
 msgid "is invalid"
-msgstr ""
+msgstr "不適切な"
 
 msgid "must be accepted"
-msgstr ""
+msgstr "承知必要"
 
 msgid "has invalid format"
-msgstr ""
+msgstr "フォーマット不適切"
 
 msgid "has an invalid entry"
 msgstr ""
