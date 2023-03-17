@@ -49,3 +49,4 @@ test-junit-report.xml
 js/junit.xml
 .env
 demo/
+codeclimate.json

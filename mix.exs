@@ -227,7 +227,8 @@ defmodule Mobilizon.Mixfile do
       {:sobelow, "~> 0.8", only: [:dev, :test]},
       {:doctor, "~> 0.21", only: :dev},
       {:haversine, "~> 0.1.0"},
-      {:ecto_dev_logger, "~> 0.7"}
+      {:ecto_dev_logger, "~> 0.7"},
+      {:credo_code_climate, "~> 0.1.0", only: [:dev, :test]}
     ] ++ oauth_deps()
   end
 

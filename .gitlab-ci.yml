@@ -67,6 +67,10 @@ lint-elixir:
     - mix credo diff --from-git-merge-base $TARGET_SHA1 --strict -a || export EXITVALUE=1
     - mix sobelow --config || export EXITVALUE=1
     - exit $EXITVALUE
+  artifacts:
+    reports:
+      codequality: codeclimate.json
+
 
 lint-front:
   image: node:16
