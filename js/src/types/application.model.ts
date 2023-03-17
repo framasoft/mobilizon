@@ -3,7 +3,7 @@ export interface IApplication {
   clientId: string;
   clientSecret?: string;
   redirectUris?: string;
-  scopes: string | null;
+  scope: string | null;
   website: string | null;
 }
 

@@ -29,6 +29,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   Represents a group of actors
   """
   object :group do
+    meta(:authorize, :all)
+    meta(:scope_field?, true)
+
     interfaces([:actor, :interactable, :activity_object, :action_log_object, :group_search_result])
 
     field(:id, :id, description: "Internal ID for this group")
@@ -77,7 +80,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     # This one should have a privacy setting
-    field :organized_events, :paginated_event_list do
+    field :organized_events, :paginated_event_list,
+      meta: [private: true, rule: :"read:group:events"] do
       arg(:after_datetime, :datetime,
         default_value: nil,
         description: "Filter events that begin after this datetime"
@@ -94,7 +98,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A list of the events this actor has organized")
     end
 
-    field :discussions, :paginated_discussion_list do
+    field :discussions, :paginated_discussion_list,
+      meta: [private: true, rule: :"read:group:discussions"] do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated discussion list"
@@ -111,7 +116,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description: "Whether the group is opened to all or has restricted access"
     )
 
-    field :members, :paginated_member_list do
+    field :members, :paginated_member_list, meta: [private: true, rule: :"read:group:members"] do
       arg(:name, :string, description: "A name to filter members by")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated member list")
       arg(:limit, :integer, default_value: 10, description: "The limit of members per page")
@@ -120,7 +125,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A paginated list of group members")
     end
 
-    field :resources, :paginated_resource_list do
+    field :resources, :paginated_resource_list,
+      meta: [private: true, rule: :"read:group:resources"] do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated resource list"
@@ -138,7 +144,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A paginated list of the posts this group has")
     end
 
-    field :todo_lists, :paginated_todo_list_list do
+    field :todo_lists, :paginated_todo_list_list,
+      meta: [private: true, rule: :"read:group:todo_lists"] do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated todo-lists list"
@@ -149,7 +156,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A paginated list of the todo lists this group has")
     end
 
-    field :followers, :paginated_follower_list do
+    field :followers, :paginated_follower_list,
+      meta: [private: true, rule: :"read:group:followers"] do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated followers list"
@@ -166,7 +174,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description("A paginated list of the followers this group has")
     end
 
-    field :activity, :paginated_activity_list do
+    field :activity, :paginated_activity_list,
+      meta: [private: true, rule: :"read:group:activities"] do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated activity items list"
@@ -204,6 +213,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   A paginated list of groups
   """
   object :paginated_group_list do
+    meta(:authorize, :all)
     field(:elements, list_of(:group), description: "A list of groups")
     field(:total, :integer, description: "The total number of groups in the list")
   end
@@ -213,12 +223,6 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     value(:public, description: "Publicly listed and federated")
     value(:unlisted, description: "Visible only to people with the link - or invited")
     value(:private, description: "Visible only to people with the link - or invited")
-  end
-
-  object :group_follow do
-    field(:group, :group, description: "The group followed")
-    field(:profile, :group, description: "The group followed")
-    field(:notify, :boolean, description: "Whether to notify profile from group activity")
   end
 
   object :group_queries do
@@ -236,12 +240,25 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       arg(:suspended, :boolean, default_value: false, description: "Filter by suspended status")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated group list")
       arg(:limit, :integer, default_value: 10, description: "The limit of groups per page")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: [:administrator, :moderator],
+        scope: Mobilizon.Actors.Actor,
+        args: %{}
+      )
+
       resolve(&Group.list_groups/3)
     end
 
     @desc "Get a group by its ID"
     field :get_group, :group do
       arg(:id, non_null(:id), description: "The group ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: [:administrator, :moderator],
+        scope: Mobilizon.Actors.Actor
+      )
+
       resolve(&Group.get_group/3)
     end
 
@@ -251,14 +268,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description: "The group preferred_username, eventually containing their domain if remote"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Group.find_group/3)
-    end
-
-    @desc "Get a group by its preferred username"
-    field :group_by_id, :group do
-      arg(:id, non_null(:id), description: "The group local ID")
-
-      resolve(&Group.find_group_by_id/3)
     end
   end
 
@@ -291,7 +302,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       )
 
       arg(:physical_address, :address_input, description: "The physical address for the group")
-
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.create_group/3)
     end
 
@@ -323,14 +334,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       )
 
       arg(:physical_address, :address_input, description: "The physical address for the group")
-
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.update_group/3)
     end
 
     @desc "Delete a group"
     field :delete_group, :deleted_object do
       arg(:group_id, non_null(:id), description: "The group ID")
-
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.delete_group/3)
     end
 
@@ -343,6 +354,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         default_value: true
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.follow_group/3)
     end
 
@@ -355,13 +367,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         default_value: true
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.update_group_follow/3)
     end
 
     @desc "Unfollow a group"
     field :unfollow_group, :follower do
       arg(:group_id, non_null(:id), description: "The group ID")
-
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Group.unfollow_group/3)
     end
   end

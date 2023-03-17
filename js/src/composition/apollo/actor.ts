@@ -5,6 +5,7 @@ import {
   PERSON_STATUS_GROUP,
 } from "@/graphql/actor";
 import { IPerson } from "@/types/actor";
+import { ICurrentUser } from "@/types/current-user.model";
 import { useQuery } from "@vue/apollo-composable";
 import { computed, Ref, unref } from "vue";
 import { useCurrentUserClient } from "./user";
@@ -24,7 +25,7 @@ export function useCurrentActorClient() {
 export function useCurrentUserIdentities() {
   const { currentUser } = useCurrentUserClient();
 
-  const { result, error, loading } = useQuery<{ identities: IPerson[] }>(
+  const { result, error, loading } = useQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>(
     IDENTITIES,
     {},
     () => ({
@@ -35,7 +36,7 @@ export function useCurrentUserIdentities() {
     })
   );
 
-  const identities = computed(() => result.value?.identities);
+  const identities = computed(() => result.value?.loggedUser?.actors);
   return { identities, error, loading };
 }
 

@@ -14,9 +14,9 @@ export const AUTH_APPLICATION = gql`
 export const AUTORIZE_APPLICATION = gql`
   mutation AuthorizeApplication(
     $applicationClientId: String!
-    $redirectURI: String
+    $redirectURI: String!
     $state: String
-    $scope: String
+    $scope: String!
   ) {
     authorizeApplication(
       clientId: $applicationClientId
@@ -26,6 +26,23 @@ export const AUTORIZE_APPLICATION = gql`
     ) {
       code
       state
+      clientId
+      scope
+    }
+  }
+`;
+
+export const AUTORIZE_DEVICE_APPLICATION = gql`
+  mutation AuthorizeDeviceApplication(
+    $applicationClientId: String!
+    $userCode: String
+  ) {
+    authorizeDeviceApplication(
+      clientId: $applicationClientId
+      userCode: $userCode
+    ) {
+      clientId
+      scope
     }
   }
 `;

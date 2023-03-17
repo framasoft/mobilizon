@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   alias Mobilizon.Service.GlobalSearch.{EventResult, GroupResult}
 
   interface :event_search_result do
+    meta(:authorize, :all)
     field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
     field(:url, :string, description: "The ActivityPub Event URL")
@@ -43,6 +44,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
   @desc "Search event result"
   object :event_result do
+    meta(:authorize, :all)
     interfaces([:event_search_result])
     field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
@@ -65,6 +67,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
   end
 
   interface :group_search_result do
+    meta(:authorize, :all)
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
@@ -92,6 +95,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
   @desc "Search group result"
   object :group_result do
+    meta(:authorize, :all)
     interfaces([:group_search_result])
     field(:id, :id, description: "Internal ID for this group")
     field(:url, :string, description: "The ActivityPub actor's URL")
@@ -109,18 +113,21 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
   @desc "Search persons result"
   object :persons do
+    meta(:authorize, [:administrator, :moderator])
     field(:total, non_null(:integer), description: "Total elements")
     field(:elements, non_null(list_of(:person)), description: "Person elements")
   end
 
   @desc "Search groups result"
   object :groups do
+    meta(:authorize, :all)
     field(:total, non_null(:integer), description: "Total elements")
     field(:elements, non_null(list_of(:group_search_result)), description: "Group elements")
   end
 
   @desc "Search events result"
   object :events do
+    meta(:authorize, :all)
     field(:total, non_null(:integer), description: "Total elements")
     field(:elements, non_null(list_of(:event_search_result)), description: "Event elements")
   end
@@ -179,7 +186,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
       arg(:term, :string, default_value: "", description: "Search term")
       arg(:page, :integer, default_value: 1, description: "Result page")
       arg(:limit, :integer, default_value: 10, description: "Results limit per page")
-
+      middleware(Rajska.QueryAuthorization, permit: [:administrator, :moderator], scope: false)
       resolve(&Search.search_persons/3)
     end
 
@@ -225,6 +232,7 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         description: "How to sort search results"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Search.search_groups/3)
     end
 
@@ -275,13 +283,14 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
         description: "How to sort search results"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Search.search_events/3)
     end
 
     @desc "Interact with an URI"
     field :interact, :interactable do
       arg(:uri, non_null(:string), description: "The URI for to interact with")
-
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Search.interact/3)
     end
   end

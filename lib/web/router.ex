@@ -208,7 +208,6 @@ defmodule Mobilizon.Web.Router do
 
     post("/apps", ApplicationController, :create_application)
     get("/oauth/authorize", ApplicationController, :authorize)
-    post("/oauth/token", ApplicationController, :generate_access_token)
     get("/oauth/autorize_approve", PageController, :authorize)
     get("/login/device", PageController, :auth_device)
   end
@@ -217,10 +216,11 @@ defmodule Mobilizon.Web.Router do
     plug(:accepts, ["html", "json"])
   end
 
-  scope "/login", Mobilizon.Web do
+  scope "/", Mobilizon.Web do
     pipe_through(:login)
 
-    post("/device/code", ApplicationController, :device_code)
+    post("/login/device/code", ApplicationController, :device_code)
+    post("/oauth/token", ApplicationController, :generate_access_token)
   end
 
   scope "/proxy/", Mobilizon.Web do

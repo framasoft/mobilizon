@@ -99,7 +99,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You are not allowed to create a comment if not connected"
+               "You need to be logged in"
     end
 
     test "create_comment/3 creates a reply to a comment", %{
@@ -166,7 +166,7 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You are not allowed to delete a comment if not connected"
+               "You need to be logged in"
 
       # Change the current actor for user
       actor2 = insert(:actor, user: user)
@@ -218,10 +218,11 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
           variables: %{commentId: comment.id}
         )
 
+      assert res["errors"] == nil
       assert res["data"]["deleteComment"]["id"] == to_string(comment.id)
 
       query = """
-      {
+      query ActionLogs {
         actionLogs {
           total
           elements {
@@ -254,11 +255,11 @@ defmodule Mobilizon.GraphQL.Resolvers.CommentTest do
       res =
         conn
         |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+        |> AbsintheHelpers.graphql_query(query: query)
 
-      refute json_response(res, 200)["errors"]
+      refute res["errors"]
 
-      assert hd(json_response(res, 200)["data"]["actionLogs"]["elements"]) == %{
+      assert hd(res["data"]["actionLogs"]["elements"]) == %{
                "action" => "COMMENT_DELETION",
                "actor" => %{"preferredUsername" => actor_moderator.preferred_username},
                "object" => %{"text" => comment.text, "id" => to_string(comment.id)}

@@ -16,6 +16,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   Represents a person identity
   """
   object :person do
+    meta(:authorize, :all)
+    meta(:scope_field?, true)
     interfaces([:actor, :action_log_object])
     field(:id, :id, description: "Internal ID for this person")
 
@@ -72,7 +74,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
     # This one should have a privacy setting
     field(:organized_events, :paginated_event_list,
-      description: "A list of the events this actor has organized"
+      description: "A list of the events this actor has organized",
+      meta: [private: true, rule: :"read:profile:organized_events"]
     ) do
       arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
       arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
@@ -81,7 +84,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
     @desc "The list of events this person goes to"
     field(:participations, :paginated_participant_list,
-      description: "The list of events this person goes to"
+      description: "The list of events this person goes to",
+      meta: [private: true, rule: :"read:profile:participations"]
     ) do
       arg(:event_id, :id, description: "Filter by event ID")
 
@@ -97,7 +101,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
     @desc "The list of groups this person is member of"
     field(:memberships, :paginated_member_list,
-      description: "The list of group this person is member of"
+      description: "The list of group this person is member of",
+      meta: [private: true, rule: :"read:profile:memberships"]
     ) do
       arg(:group, :string, description: "Filter by group federated username")
       arg(:group_id, :id, description: "Filter by group ID")
@@ -113,7 +118,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
     @desc "The list of groups this person follows"
     field(:follows, :paginated_follower_list,
-      description: "The list of groups this person follows"
+      description: "The list of groups this person follows",
+      meta: [private: true, rule: :"read:profile:follows"]
     ) do
       arg(:group, :string, description: "Filter by group federated username")
 
@@ -131,6 +137,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   A paginated list of persons
   """
   object :paginated_person_list do
+    meta(:authorize, :all)
     field(:elements, list_of(:person), description: "A list of persons")
     field(:total, :integer, description: "The total number of persons in the list")
   end
@@ -138,23 +145,46 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   object :person_queries do
     @desc "Get the current actor for the logged-in user"
     field :logged_person, :person do
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        args: %{}
+      )
+
       resolve(&Person.get_current_person/3)
     end
 
     @desc "Get a person by its (federated) username"
     field :fetch_person, :person do
       arg(:preferred_username, non_null(:string), description: "The person's federated username")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        args: %{preferred_username: :preferred_username}
+      )
+
       resolve(&Person.fetch_person/3)
     end
 
     @desc "Get a person by its ID"
     field :person, :person do
       arg(:id, non_null(:id), description: "The person ID")
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Person.get_person/3)
     end
 
     @desc "Get the persons for an user"
     field :identities, list_of(:person) do
+      deprecate("Use the loggedUser query instead")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: [:user, :moderator, :administrator],
+        scope: Mobilizon.Actors.Actor,
+        args: %{},
+        rule: :user_self_identities
+      )
+
       resolve(&Person.identities/3)
     end
 
@@ -172,6 +202,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       arg(:suspended, :boolean, default_value: false, description: "Filter by suspended status")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated person list")
       arg(:limit, :integer, default_value: 10, description: "The limit of persons per page")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: [:administrator, :moderator],
+        scope: Mobilizon.Actors.Actor,
+        args: %{}
+      )
+
       resolve(&Person.list_persons/3)
     end
   end
@@ -195,6 +232,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        args: %{},
+        rule: :"write:profile:create"
+      )
+
       resolve(&Person.create_person/3)
     end
 
@@ -216,12 +260,24 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        rule: :"write:profile:update"
+      )
+
       resolve(&Person.update_person/3)
     end
 
     @desc "Delete an identity"
     field :delete_person, :person do
       arg(:id, non_null(:id), description: "The person's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        rule: :"write:profile:delete"
+      )
 
       resolve(&Person.delete_person/3)
     end
@@ -245,6 +301,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all, scope: Mobilizon.Actors.Actor, args: %{})
+
       resolve(&Person.register_person/3)
     end
   end
@@ -253,6 +311,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     @desc "Notify when a person's participation's status changed for an event"
     field :event_person_participation_changed, :person do
       arg(:person_id, non_null(:id), description: "The person's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        args: %{id: :person_id}
+      )
 
       config(fn args, _ ->
         {:ok, topic: args.person_id}
@@ -263,6 +327,12 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field :group_membership_changed, :person do
       arg(:person_id, non_null(:id), description: "The person's ID")
       arg(:group, non_null(:string), description: "The group's federated username")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Actor,
+        args: %{id: :person_id}
+      )
 
       config(fn args, _ ->
         {:ok, topic: [args.group, args.person_id]}

@@ -25,14 +25,15 @@ defmodule Mobilizon.ApplicationsTest do
         name: "some name",
         client_id: "hello",
         client_secret: "secret",
-        redirect_uris: "somewhere\nelse"
+        redirect_uris: ["somewhere", "else"],
+        scope: "read"
       }
 
       assert {:ok, %Application{} = application} = Applications.create_application(valid_attrs)
       assert application.name == "some name"
       assert application.client_id == "hello"
       assert application.client_secret == "secret"
-      assert application.redirect_uris == "somewhere\nelse"
+      assert application.redirect_uris == ["somewhere", "else"]
     end
 
     test "create_application/1 with invalid data returns error changeset" do
@@ -95,7 +96,8 @@ defmodule Mobilizon.ApplicationsTest do
       valid_attrs = %{
         user_id: user.id,
         application_id: application.id,
-        authorization_code: "hey hello"
+        authorization_code: "hey hello",
+        scope: "read"
       }
 
       assert {:ok, %ApplicationToken{} = application_token} =
@@ -149,7 +151,11 @@ defmodule Mobilizon.ApplicationsTest do
 
     import Mobilizon.ApplicationsFixtures
 
-    @invalid_attrs %{}
+    @invalid_attrs %{
+      application_id: nil,
+      scope: nil,
+      expires_in: nil
+    }
 
     test "list_application_device_activation/0 returns all application_device_activation" do
       application_device_activation = application_device_activation_fixture()
@@ -164,10 +170,20 @@ defmodule Mobilizon.ApplicationsTest do
     end
 
     test "create_application_device_activation/1 with valid data creates a application_device_activation" do
-      valid_attrs = %{}
+      application = application_fixture()
+
+      valid_attrs = %{
+        user_code: "hello",
+        device_code: "some code",
+        expires_in: 900,
+        application_id: application.id,
+        scope: "read"
+      }
 
       assert {:ok, %ApplicationDeviceActivation{} = application_device_activation} =
                Applications.create_application_device_activation(valid_attrs)
+
+      assert application_device_activation == "read"
     end
 
     test "create_application_device_activation/1 with invalid data returns error changeset" do
@@ -177,13 +193,18 @@ defmodule Mobilizon.ApplicationsTest do
 
     test "update_application_device_activation/2 with valid data updates the application_device_activation" do
       application_device_activation = application_device_activation_fixture()
-      update_attrs = %{}
+
+      update_attrs = %{
+        status: "success"
+      }
 
       assert {:ok, %ApplicationDeviceActivation{} = application_device_activation} =
                Applications.update_application_device_activation(
                  application_device_activation,
                  update_attrs
                )
+
+      assert application_device_activation == "success"
     end
 
     test "update_application_device_activation/2 with invalid data returns error changeset" do

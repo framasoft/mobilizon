@@ -26,11 +26,25 @@ defmodule Mobilizon.GraphQL.Schema.Users.PushSubscription do
       arg(:endpoint, non_null(:string))
       arg(:auth, non_null(:string))
       arg(:p256dh, non_null(:string))
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: false,
+        rule: :"write:user:setting:push"
+      )
+
       resolve(&PushSubscription.register_push_subscription/3)
     end
 
     field :unregister_push, :string do
       arg(:endpoint, non_null(:string))
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: false,
+        rule: :"write:user:setting:push"
+      )
+
       resolve(&PushSubscription.unregister_push_subscription/3)
     end
   end

@@ -70,9 +70,8 @@ defmodule Mobilizon.Web.Resolvers.FollowerTest do
           variables: %{name: preferred_username}
         )
 
-      assert res["errors"] == nil
-      assert res["data"]["group"]["followers"]["total"] == 1
-      assert res["data"]["group"]["followers"]["elements"] == []
+      assert hd(res["errors"])["message"] ==
+               "Not authorized to access object paginated_follower_list"
     end
 
     test "without being a member", %{

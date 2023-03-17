@@ -20,8 +20,8 @@ defmodule Mobilizon.GraphQL.Schema do
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.GraphQL.{Authorization, Schema}
   alias Mobilizon.GraphQL.Middleware.{CurrentActorProvider, ErrorHandler, OperationNameLogger}
-  alias Mobilizon.GraphQL.Schema
   alias Mobilizon.GraphQL.Schema.Custom
   alias Mobilizon.Storage.Repo
 
@@ -57,11 +57,13 @@ defmodule Mobilizon.GraphQL.Schema do
 
   @desc "A struct containing the id of the deleted object"
   object :deleted_object do
+    meta(:authorize, :all)
     field(:id, :id)
   end
 
   @desc "A JWT and the associated user ID"
   object :login do
+    meta(:authorize, :all)
     field(:access_token, non_null(:string), description: "A JWT Token for this session")
 
     field(:refresh_token, non_null(:string),
@@ -75,6 +77,7 @@ defmodule Mobilizon.GraphQL.Schema do
   Represents a notification for an user
   """
   object :notification do
+    meta(:authorize, :user)
     field(:id, :id, description: "The notification ID")
     field(:user, :user, description: "The user to transmit the notification to")
     field(:actor, :actor, description: "The notification target profile")
@@ -133,7 +136,9 @@ defmodule Mobilizon.GraphQL.Schema do
       |> Dataloader.add_source(Resources, default_source)
       |> Dataloader.add_source(Todos, default_source)
 
-    Map.put(ctx, :loader, loader)
+    ctx
+    |> Map.put(:loader, loader)
+    |> Map.put(:authorization, Authorization)
   end
 
   def plugins do
@@ -201,11 +206,19 @@ defmodule Mobilizon.GraphQL.Schema do
   end
 
   @spec middleware(list(module()), any(), map()) :: list(module())
-  def middleware(middleware, _field, %{identifier: type}) when type in [:query, :mutation] do
-    [CurrentActorProvider] ++ middleware ++ [ErrorHandler, OperationNameLogger]
+  def middleware(middleware, field, %{identifier: type}) when type in [:query, :mutation] do
+    [CurrentActorProvider | middleware]
+    |> Enum.map(&fix_middleware_format_for_rajska/1)
+    |> Rajska.add_query_authorization(field, Authorization)
+    |> Rajska.add_object_authorization()
+    |> List.insert_at(-1, ErrorHandler)
+    |> List.insert_at(-1, OperationNameLogger)
   end
 
-  def middleware(middleware, _field, _object) do
-    middleware
+  def middleware(middleware, field, object) do
+    Rajska.add_field_authorization(middleware, field, object)
   end
+
+  defp fix_middleware_format_for_rajska({mod, config}), do: {mod, config}
+  defp fix_middleware_format_for_rajska(mod), do: {mod, nil}
 end

@@ -11,7 +11,7 @@ defmodule Mobilizon.Applications.ApplicationToken do
     belongs_to(:user, User)
     belongs_to(:application, Application)
     field(:authorization_code, :string)
-    field(:status, ApplicationTokenStatus)
+    field(:status, ApplicationTokenStatus, default: :pending)
     field(:scope, :string)
 
     timestamps()

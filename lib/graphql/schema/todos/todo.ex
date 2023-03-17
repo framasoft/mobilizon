@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoType do
 
   @desc "A todo"
   object :todo do
+    meta(:authorize, :user)
     field(:id, :id, description: "The todo's ID")
     field(:title, :string, description: "The todo's title")
     field(:status, :boolean, description: "The todo's status")
@@ -30,6 +31,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoType do
   A paginated list of todos
   """
   object :paginated_todo_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:todo), description: "A list of todos")
     field(:total, :integer, description: "The total number of todos in the list")
   end
@@ -38,6 +40,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoType do
     @desc "Get a todo"
     field :todo, :todo do
       arg(:id, non_null(:id), description: "The todo ID")
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&TodoResolver.get_todo/3)
     end
   end
@@ -50,6 +53,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoType do
       arg(:status, :boolean, description: "The todo status")
       arg(:due_date, :datetime, description: "The todo due date")
       arg(:assigned_to_id, :id, description: "The actor this todo is assigned to")
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
 
       resolve(&TodoResolver.create_todo/3)
     end
@@ -62,7 +66,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoType do
       arg(:status, :boolean, description: "The new todo status")
       arg(:due_date, :datetime, description: "The new todo due date")
       arg(:assigned_to_id, :id, description: "The new id of the actor this todo is assigned to")
-
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&TodoResolver.update_todo/3)
     end
 

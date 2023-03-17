@@ -18,27 +18,47 @@
 
     <section class="timeline">
       <o-field>
-        <o-radio v-model="activityType" :native-value="undefined">
+        <o-radio class="pr-4" v-model="activityType" :native-value="undefined">
           <TimelineText />
           {{ t("All activities") }}</o-radio
         >
-        <o-radio v-model="activityType" :native-value="ActivityType.MEMBER">
+        <o-radio
+          class="pr-4"
+          v-model="activityType"
+          :native-value="ActivityType.MEMBER"
+        >
           <o-icon icon="account-multiple-plus"></o-icon>
           {{ t("Members") }}</o-radio
         >
-        <o-radio v-model="activityType" :native-value="ActivityType.GROUP">
+        <o-radio
+          class="pr-4"
+          v-model="activityType"
+          :native-value="ActivityType.GROUP"
+        >
           <o-icon icon="cog"></o-icon>
           {{ t("Settings") }}</o-radio
         >
-        <o-radio v-model="activityType" :native-value="ActivityType.EVENT">
+        <o-radio
+          class="pr-4"
+          v-model="activityType"
+          :native-value="ActivityType.EVENT"
+        >
           <o-icon icon="calendar"></o-icon>
           {{ t("Events") }}</o-radio
         >
-        <o-radio v-model="activityType" :native-value="ActivityType.POST">
+        <o-radio
+          class="pr-4"
+          v-model="activityType"
+          :native-value="ActivityType.POST"
+        >
           <o-icon icon="bullhorn"></o-icon>
           {{ t("Posts") }}</o-radio
         >
-        <o-radio v-model="activityType" :native-value="ActivityType.DISCUSSION">
+        <o-radio
+          class="pr-4"
+          v-model="activityType"
+          :native-value="ActivityType.DISCUSSION"
+        >
           <o-icon icon="chat"></o-icon>
           {{ t("Discussions") }}</o-radio
         >
@@ -48,11 +68,16 @@
         >
       </o-field>
       <o-field>
-        <o-radio v-model="activityAuthor" :native-value="undefined">
+        <o-radio
+          class="pr-4"
+          v-model="activityAuthor"
+          :native-value="undefined"
+        >
           <TimelineText />
           {{ t("All activities") }}</o-radio
         >
         <o-radio
+          class="pr-4"
           v-model="activityAuthor"
           :native-value="ActivityAuthorFilter.SELF"
         >
@@ -60,6 +85,7 @@
           {{ t("From yourself") }}</o-radio
         >
         <o-radio
+          class="pr-4"
           v-model="activityAuthor"
           :native-value="ActivityAuthorFilter.BY"
         >
@@ -89,7 +115,7 @@
           <h2 v-else>
             {{ formatDateString(date) }}
           </h2>
-          <ul>
+          <ul class="before:opacity-10">
             <li v-for="activityItem in activityItems" :key="activityItem.id">
               <skeleton-activity-item v-if="activityItem.type === 'skeleton'" />
               <component
@@ -202,6 +228,7 @@ const page = ref(1);
 const {
   result: groupTimelineResult,
   fetchMore: fetchMoreActivities,
+  onError: onGroupTLError,
   loading,
 } = useQuery<{ group: IGroup }>(GROUP_TIMELINE, () => ({
   preferredUsername: props.preferredUsername,
@@ -210,6 +237,8 @@ const {
   type: activityType.value,
   author: activityAuthor.value,
 }));
+
+onGroupTLError((err) => console.error(err));
 
 const group = computed(() => groupTimelineResult.value?.group);
 

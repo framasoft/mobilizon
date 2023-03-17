@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
   @desc "A comment"
   object :comment do
+    meta(:authorize, :all)
     interfaces([:action_log_object, :activity_object])
     field(:id, :id, description: "Internal ID for this comment")
     field(:uuid, :uuid, description: "An UUID for this comment")
@@ -73,6 +74,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
   @desc "A paginated list of comments"
   object :paginated_comment_list do
+    meta(:authorize, :all)
     field(:elements, list_of(:comment), description: "A list of comments")
     field(:total, :integer, description: "The total number of comments in the list")
   end
@@ -81,6 +83,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
     @desc "Get replies for thread"
     field :thread, type: list_of(:comment) do
       arg(:id, non_null(:id), description: "The comment ID")
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Comment.get_thread/3)
     end
   end
@@ -95,6 +98,13 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
       arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Comment,
+        rule: :"write:comment:create",
+        args: %{event_id: :event_id}
+      )
+
       resolve(&Comment.create_comment/3)
     end
 
@@ -106,12 +116,26 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
 
       arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Comment,
+        rule: :"write:comment:update",
+        args: %{id: :comment_id}
+      )
+
       resolve(&Comment.update_comment/3)
     end
 
     @desc "Delete a single comment"
     field :delete_comment, type: :comment do
       arg(:comment_id, non_null(:id), description: "The comment ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: [:user, :moderator],
+        scope: Mobilizon.Discussions.Comment,
+        rule: :"write:comment:delete",
+        args: %{id: :comment_id}
+      )
 
       resolve(&Comment.delete_comment/3)
     end

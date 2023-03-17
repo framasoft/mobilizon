@@ -15,6 +15,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
   @desc "An action log"
   object :action_log do
+    meta(:authorize, :moderator)
     field(:id, :id, description: "Internal ID for this comment")
     field(:actor, :actor, description: "The actor that acted")
     field(:object, :action_log_object, description: "The object that was acted upon")
@@ -26,6 +27,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   A paginated list of action logs
   """
   object :paginated_action_log_list do
+    meta(:authorize, :moderator)
     field(:elements, list_of(:action_log), description: "A list of action logs")
     field(:total, :integer, description: "The total number of action logs in the list")
   end
@@ -49,6 +51,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
 
   @desc "The objects that can be in an action log"
   interface :action_log_object do
+    meta(:authorize, [:moderator, :administrator])
     field(:id, :id, description: "Internal ID for this object")
 
     resolve_type(fn
@@ -82,6 +85,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   Language information
   """
   object :language do
+    meta(:authorize, :administrator)
     field(:code, :string, description: "The iso-639-3 language code")
     field(:name, :string, description: "The language name")
   end
@@ -90,6 +94,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   Dashboard information
   """
   object :dashboard do
+    meta(:authorize, :administrator)
     field(:last_public_event_published, :event, description: "Last public event published")
     field(:last_group_created, :group, description: "Last public group created")
     field(:number_of_users, :integer, description: "The number of local users")
@@ -109,6 +114,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   Admin settings
   """
   object :admin_settings do
+    meta(:authorize, :administrator)
     field(:instance_name, :string, description: "The instance's name")
     field(:instance_description, :string, description: "The instance's description")
     field(:instance_long_description, :string, description: "The instance's long description")
@@ -184,6 +190,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   An instance representation
   """
   object :instance do
+    meta(:authorize, :administrator)
     field(:domain, :id, description: "The domain name of the instance")
     field(:follower_status, :instance_follow_status, description: "Do we follow this instance")
     field(:followed_status, :instance_follow_status, description: "Does this instance follow us?")
@@ -226,6 +233,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   A paginated list of instances
   """
   object :paginated_instance_list do
+    meta(:authorize, :administrator)
     field(:elements, list_of(:instance), description: "A list of instances")
     field(:total, :integer, description: "The total number of instances in the list")
   end
@@ -235,6 +243,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     field :action_logs, type: :paginated_action_log_list do
       arg(:page, :integer, default_value: 1)
       arg(:limit, :integer, default_value: 10)
+      middleware(Rajska.QueryAuthorization, permit: :moderator, scope: false)
       resolve(&Admin.list_action_logs/3)
     end
 
@@ -247,6 +256,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
           "The user's locale. The list of languages will be translated with this locale"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Admin.get_list_of_languages/3)
     end
 
@@ -254,6 +264,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     Get dashboard information
     """
     field :dashboard, type: :dashboard do
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.get_dashboard/3)
     end
 
@@ -261,6 +272,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     Get admin settings
     """
     field :admin_settings, type: :admin_settings do
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.get_settings/3)
     end
 
@@ -278,6 +290,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
         description: "The limit of relay followers per page"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.list_relay_followers/3)
     end
 
@@ -301,6 +314,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       )
 
       arg(:direction, :string, default_value: :desc, description: "The sorting direction")
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.list_relay_followings/3)
     end
 
@@ -336,6 +350,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       )
 
       arg(:direction, :string, default_value: :desc, description: "The sorting direction")
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.get_instances/3)
     end
 
@@ -344,6 +359,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     """
     field :instance, :instance do
       arg(:domain, non_null(:id), description: "The instance domain")
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.get_instance/3)
     end
   end
@@ -352,28 +368,28 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
     @desc "Add an instance subscription"
     field :add_instance, type: :instance do
       arg(:domain, non_null(:string), description: "The instance domain to add")
-
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.create_instance/3)
     end
 
     @desc "Delete a relay subscription"
     field :remove_relay, type: :follower do
       arg(:address, non_null(:string), description: "The relay hostname to delete")
-
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.remove_relay/3)
     end
 
     @desc "Accept a relay subscription"
     field :accept_relay, type: :follower do
       arg(:address, non_null(:string), description: "The accepted relay hostname")
-
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.accept_subscription/3)
     end
 
     @desc "Reject a relay subscription"
     field :reject_relay, type: :follower do
       arg(:address, non_null(:string), description: "The rejected relay hostname")
-
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.reject_subscription/3)
     end
 
@@ -402,7 +418,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
       arg(:instance_rules, :string, description: "The instance's rules")
       arg(:registrations_open, :boolean, description: "Whether the registrations are opened")
       arg(:instance_languages, list_of(:string), description: "The instance's languages")
-
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.save_settings/3)
     end
 
@@ -420,6 +436,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
         description: "Whether or not to notify the user of the change"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :administrator)
       resolve(&Admin.update_user/3)
     end
   end

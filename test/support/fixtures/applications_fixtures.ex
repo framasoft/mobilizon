@@ -16,7 +16,8 @@ defmodule Mobilizon.ApplicationsFixtures do
         name: "some name",
         client_id: "hello",
         client_secret: "secret",
-        redirect_uris: "somewhere\nelse"
+        redirect_uris: ["somewhere", "else"],
+        scope: "read"
       })
       |> Mobilizon.Applications.create_application()
 
@@ -34,7 +35,9 @@ defmodule Mobilizon.ApplicationsFixtures do
       |> Enum.into(%{
         application_id: application_fixture().id,
         user_id: user.id,
-        authorization_code: "some code"
+        authorization_code: "some code",
+        scope: "read",
+        status: :pending
       })
       |> Mobilizon.Applications.create_application_token()
 
@@ -47,7 +50,13 @@ defmodule Mobilizon.ApplicationsFixtures do
   def application_device_activation_fixture(attrs \\ %{}) do
     {:ok, application_device_activation} =
       attrs
-      |> Enum.into(%{})
+      |> Enum.into(%{
+        user_code: "hello",
+        device_code: "computers",
+        expires_in: 600,
+        application_id: application_fixture().id,
+        scope: "read"
+      })
       |> Mobilizon.Applications.create_application_device_activation()
 
     application_device_activation

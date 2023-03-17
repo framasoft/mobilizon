@@ -6,16 +6,16 @@ defmodule Mobilizon.Applications.Application do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @required_attrs [:name, :client_id, :client_secret, :redirect_uris]
-  @optional_attrs [:scopes, :website, :owner_type, :owner_id]
+  @required_attrs [:name, :client_id, :client_secret, :redirect_uris, :scope]
+  @optional_attrs [:website, :owner_type, :owner_id]
   @attrs @required_attrs ++ @optional_attrs
 
   schema "applications" do
     field(:name, :string)
     field(:client_id, :string)
     field(:client_secret, :string)
-    field(:redirect_uris, :string)
-    field(:scopes, :string)
+    field(:redirect_uris, {:array, :string})
+    field(:scope, :string)
     field(:website, :string)
     field(:owner_type, :string)
     field(:owner_id, :integer)

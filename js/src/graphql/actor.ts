@@ -282,12 +282,16 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
 
 export const IDENTITIES = gql`
   query Identities {
-    identities {
-      ...ActorFragment
+    loggedUser {
+      actors {
+        ...ActorFragment
+      }
     }
   }
   ${ACTOR_FRAGMENT}
 `;
+
+
 
 export const PERSON_MEMBERSHIPS = gql`
   query PersonMemberships($id: ID!) {

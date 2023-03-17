@@ -136,10 +136,8 @@ const { mutate: revoke, onDone: onRevokedApplication } = useMutation<
 const notifier = inject<Notifier>("notifier");
 
 onRevokedApplication(() => {
-  notifier?.success(
-    t("Application was revoked")
-  );
-})
+  notifier?.success(t("Application was revoked"));
+});
 
 useHead({
   title: computed(() => t("Apps")),

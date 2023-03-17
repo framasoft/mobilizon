@@ -6,6 +6,8 @@ defmodule Mobilizon.Repo.Migrations.CreateApplicationTokens do
       add(:user_id, references(:users, on_delete: :delete_all), null: false)
       add(:application_id, references(:applications, on_delete: :delete_all), null: false)
       add(:authorization_code, :string, null: true)
+      add(:status, :string, default: "pending", null: false)
+      add(:scope, :string)
       timestamps()
     end
 

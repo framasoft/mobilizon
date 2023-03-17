@@ -7,6 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
 
   @desc "A post"
   object :post do
+    meta(:authorize, :all)
     interfaces([:activity_object])
     field(:id, :id, description: "The post's ID")
     field(:title, :string, description: "The post's title")
@@ -22,21 +23,20 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     field(:updated_at, :datetime, description: "The post's last update date")
     field(:language, :string, description: "The post language")
 
-    field(:tags, list_of(:tag),
-      resolve: &Tag.list_tags_for_post/3,
-      description: "The post's tags"
-    )
+    field(:tags, list_of(:tag), description: "The post's tags") do
+      resolve(&Tag.list_tags_for_post/3)
+    end
 
-    field(:picture, :media,
-      description: "The posts's media",
-      resolve: &Media.media/3
-    )
+    field(:picture, :media, description: "The posts's media") do
+      resolve(&Media.media/3)
+    end
   end
 
   @desc """
   A paginated list of posts
   """
   object :paginated_post_list do
+    meta(:authorize, :all)
     field(:elements, list_of(:post), description: "A list of posts")
     field(:total, :integer, description: "The total number of posts in the list")
   end
@@ -56,6 +56,7 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
     @desc "Get a post"
     field :post, :post do
       arg(:slug, non_null(:string), description: "The post's slug")
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Post.get_post/3)
     end
   end
@@ -84,6 +85,13 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
           "The banner for the post, either as an object or directly the ID of an existing media"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Posts.Post,
+        rule: :"write:group:post:create",
+        args: %{}
+      )
+
       resolve(&Post.create_post/3)
     end
 
@@ -108,12 +116,25 @@ defmodule Mobilizon.GraphQL.Schema.PostType do
           "The banner for the post, either as an object or directly the ID of an existing media"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Posts.Post,
+        rule: :"write:group:post:update"
+      )
+
       resolve(&Post.update_post/3)
     end
 
     @desc "Delete a post"
     field :delete_post, :deleted_object do
       arg(:id, non_null(:id), description: "The post's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Posts.Post,
+        rule: :"write:group:post:delete"
+      )
+
       resolve(&Post.delete_post/3)
     end
   end

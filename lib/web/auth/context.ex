@@ -38,7 +38,7 @@ defmodule Mobilizon.Web.Auth.Context do
           |> set_app_token_context(context, app_token)
           |> set_user_context(user)
 
-        nil ->
+        _ ->
           {conn, context}
       end
 

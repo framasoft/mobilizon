@@ -82,11 +82,11 @@ export function registerAccount() {
       { context }
     ) => {
       if (context?.userAlreadyActivated) {
-        const identitiesData = store.readQuery<{ identities: IPerson[] }>({
+        const currentUserData = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
           query: IDENTITIES,
         });
 
-        if (identitiesData && localData) {
+        if (currentUserData && localData) {
           const newPersonData = {
             ...localData.registerPerson,
             type: ActorType.PERSON,
@@ -95,8 +95,10 @@ export function registerAccount() {
           store.writeQuery({
             query: IDENTITIES,
             data: {
-              ...identitiesData,
-              identities: [...identitiesData.identities, newPersonData],
+              ...currentUserData.loggedUser,
+              actors: [
+                [...currentUserData.loggedUser.actors, newPersonData]
+              ]
             },
           });
         }

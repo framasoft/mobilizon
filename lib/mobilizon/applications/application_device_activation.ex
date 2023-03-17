@@ -19,7 +19,7 @@ defmodule Mobilizon.Applications.ApplicationDeviceActivation do
     timestamps()
   end
 
-  @required_attrs [:user_code, :device_code, :expires_in, :application_id]
+  @required_attrs [:user_code, :device_code, :expires_in, :application_id, :scope]
   @optional_attrs [:status, :user_id]
   @attrs @required_attrs ++ @optional_attrs
 

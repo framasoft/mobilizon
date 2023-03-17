@@ -226,15 +226,6 @@ export const FETCH_GROUP = gql`
   ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
 
-export const FETCH_GROUP_BY_ID = gql`
-  query FetchGroupById($id: ID!) {
-    groupById(id: $name) {
-      ...GroupFullFields
-    }
-  }
-  ${GROUP_FIELDS_FRAGMENTS}
-`;
-
 export const GET_GROUP = gql`
   query GetGroup(
     $id: ID!
@@ -407,6 +398,7 @@ export const GROUP_TIMELINE = gql`
               openness
               physicalAddress {
                 id
+                originId
               }
               banner {
                 id

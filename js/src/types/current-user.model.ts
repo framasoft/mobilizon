@@ -15,6 +15,7 @@ export interface ICurrentUser {
   isLoggedIn: boolean;
   role: ICurrentUserRole;
   defaultActor?: IPerson;
+  actors: IPerson[];
 }
 
 export interface IUserPreferredLocation {

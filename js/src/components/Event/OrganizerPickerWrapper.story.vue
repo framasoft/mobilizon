@@ -70,7 +70,7 @@ function setupApp({ app }) {
       new Promise((resolve) =>
         resolve({
           data: {
-            identities: [{ id: "9", preferredUsername: "sam", name: "Samuel" }],
+            loggedUser: { actors: [{ id: "9", preferredUsername: "sam", name: "Samuel" }] },
           },
         })
       )

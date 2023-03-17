@@ -234,6 +234,7 @@ import { convertToUsername } from "@/utils/username";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
+import { ICurrentUser } from "@/types/current-user.model";
 
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();
@@ -348,7 +349,7 @@ const {
   onError: deletePersonError,
 } = useMutation(DELETE_PERSON, () => ({
   update: (store: ApolloCache<InMemoryCache>) => {
-    const data = store.readQuery<{ identities: IPerson[] }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
       query: IDENTITIES,
     });
 
@@ -356,7 +357,10 @@ const {
       store.writeQuery({
         query: IDENTITIES,
         data: {
-          identities: data.identities.filter((i) => i.id !== identity.value.id),
+          loggedUser: {
+            ...data.loggedUser,
+            actors: data.loggedUser.actors.filter((i) => i.id !== identity.value.id)
+          }
         },
       });
     }
@@ -379,10 +383,10 @@ deletePersonDone(async () => {
    */
   const client = resolveClient();
   const data = client.readQuery<{
-    identities: IPerson[];
+    loggedUser: Pick<ICurrentUser, 'actors'>
   }>({ query: IDENTITIES });
   if (data) {
-    await maybeUpdateCurrentActorCache(data.identities[0]);
+    await maybeUpdateCurrentActorCache(data.loggedUser.actors[0]);
   }
 
   await redirectIfNoIdentitySelected();
@@ -408,7 +412,7 @@ const {
     store: ApolloCache<InMemoryCache>,
     { data: updateData }: FetchResult
   ) => {
-    const data = store.readQuery<{ identities: IPerson[] }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
       query: IDENTITIES,
     });
 
@@ -452,7 +456,7 @@ const {
     store: ApolloCache<InMemoryCache>,
     { data: updateData }: FetchResult
   ) => {
-    const data = store.readQuery<{ identities: IPerson[] }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
       query: IDENTITIES,
     });
 
@@ -460,10 +464,13 @@ const {
       store.writeQuery({
         query: IDENTITIES,
         data: {
-          identities: [
-            ...data.identities,
+          loggedUser: {
+            ...data.loggedUser,
+            actors: [
+            ...data.loggedUser.actors,
             { ...updateData?.createPerson, type: ActorType.PERSON },
-          ],
+            ]
+          }
         },
       });
     }

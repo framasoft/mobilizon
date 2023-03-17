@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.ApplicationType do
   Represents an application
   """
   object :application do
+    meta(:authorize, :all)
     interfaces([:actor])
 
     field(:id, :id, description: "Internal ID for this application")

@@ -25,11 +25,13 @@ defmodule Mobilizon.GraphQL.Schema.ActivityType do
   end
 
   object :activity_param_item do
+    meta(:authorize, :user)
     field(:key, :string)
     field(:value, :string)
   end
 
   interface :activity_object do
+    meta(:authorize, :user)
     field(:id, :id)
 
     resolve_type(fn
@@ -66,11 +68,13 @@ defmodule Mobilizon.GraphQL.Schema.ActivityType do
   A paginated list of activity items
   """
   object :paginated_activity_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:activity), description: "A list of activities")
     field(:total, :integer, description: "The total number of elements in the list")
   end
 
   object :activity do
+    meta(:authorize, :user)
     field(:id, :id, description: "The activity item ID")
     field(:inserted_at, :datetime, description: "When was the activity inserted")
     field(:priority, :integer)

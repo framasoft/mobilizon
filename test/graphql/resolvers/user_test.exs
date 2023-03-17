@@ -949,63 +949,57 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
   end
 
   describe "Resolver: Refresh a token" do
-    test "test refresh_token/3 with a bad token", context do
-      mutation = """
-          mutation {
-            refreshToken(
-              refreshToken: "bad_token"
-            ) {
-              accessToken
-            }
-          }
-      """
+    @refresh_token_mutation """
+    mutation RefreshToken($refreshToken: String!) {
+      refreshToken(
+        refreshToken: $refreshToken
+      ) {
+        accessToken
+      }
+    }
+    """
 
+    @logged_person_query """
+    query LoggedPerson {
+      loggedPerson {
+        preferredUsername,
+      }
+    }
+    """
+
+    test "test refresh_token/3 with a bad token", %{conn: conn} do
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @refresh_token_mutation,
+          variables: [refreshToken: "bad_token"]
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "Cannot refresh the token"
     end
 
-    test "test refresh_token/3 with an appropriate token", context do
+    test "test refresh_token/3 with an appropriate token", %{conn: conn} do
       user = insert(:user)
       insert(:actor, user: user)
       {:ok, refresh_token} = Authenticator.generate_refresh_token(user)
 
-      mutation = """
-          mutation {
-            refreshToken(
-              refreshToken: "#{refresh_token}"
-            ) {
-              accessToken
-            }
-          }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @refresh_token_mutation,
+          variables: [refreshToken: refresh_token]
+        )
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
 
-      access_token = json_response(res, 200)["data"]["refreshToken"]["accessToken"]
+      access_token = res["data"]["refreshToken"]["accessToken"]
       assert String.length(access_token) > 10
 
-      query = """
-      {
-          loggedPerson {
-            preferredUsername,
-          }
-        }
-      """
-
       res =
-        context.conn
+        conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{access_token}")
-        |> post("/api", AbsintheHelpers.query_skeleton(query, "logged_person"))
+        |> AbsintheHelpers.graphql_query(query: @logged_person_query)
 
-      assert json_response(res, 200)["errors"] == nil
+      assert res["errors"] == nil
     end
   end
 
@@ -1246,7 +1240,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You need to be logged-in to change your password"
+               "You need to be logged in"
     end
   end
 
@@ -1443,7 +1437,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in to change your email"
+               "You need to be logged in"
     end
   end
 
@@ -1566,7 +1560,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in to delete your account"
+               "You need to be logged in"
     end
   end
 end

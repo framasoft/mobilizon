@@ -72,6 +72,7 @@ export const CONFIG = gql`
       features {
         groups
         eventCreation
+        antispam
       }
       restrictions {
         onlyAdminCanCreateGroups

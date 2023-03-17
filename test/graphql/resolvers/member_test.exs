@@ -152,7 +152,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           variables: %{groupId: group.id}
         )
 
-      assert hd(res["errors"])["message"] =~ "logged-in"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "leave_group/3 should check the group exists", %{
@@ -432,7 +432,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "You must be logged-in to update a member"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "update_member/3 fails when not a member of the group", %{
@@ -575,7 +575,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MemberTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "You must be logged-in to remove a member"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "remove_member/3 fails when not a member of the group", %{

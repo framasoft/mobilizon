@@ -165,7 +165,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
         )
 
       assert res["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in and a moderator to update a report"
+               "You need to be logged in"
     end
 
     test "update_report/3 without being a moderator doesn't update any report", %{conn: conn} do
@@ -181,7 +181,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
         )
 
       assert res["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in and a moderator to update a report"
+               "You don't have permission to do this"
     end
   end
 
@@ -209,7 +209,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
       res = AbsintheHelpers.graphql_query(conn, query: @reports_query)
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in and a moderator to list reports"
+               "You need to be logged in"
 
       res =
         conn
@@ -296,7 +296,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
         |> get("/api", AbsintheHelpers.query_skeleton(query, "report"))
 
       assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in and a moderator to view a report"
+               "You need to be logged in"
 
       res =
         conn

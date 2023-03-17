@@ -1,6 +1,7 @@
 import { AUTH_USER_ACTOR_ID } from "@/constants";
 import { UPDATE_CURRENT_ACTOR_CLIENT, IDENTITIES } from "@/graphql/actor";
 import { IPerson } from "@/types/actor";
+import { ICurrentUser } from "@/types/current-user.model";
 import { apolloClient } from "@/vue-apollo";
 import {
   provideApolloClient,
@@ -36,10 +37,10 @@ export async function initializeCurrentActor(): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
 
   const { result: identitiesResult } = provideApolloClient(apolloClient)(() =>
-    useQuery<{ identities: IPerson[] }>(IDENTITIES)
+    useQuery<{ currentUser: Pick<ICurrentUser, 'actors'> }>(IDENTITIES)
   );
 
-  const identities = computed(() => identitiesResult.value?.identities);
+  const identities = computed(() => identitiesResult.value?.currentUser.actors);
 
   watch(identities, async () => {
     if (identities.value && identities.value.length < 1) {

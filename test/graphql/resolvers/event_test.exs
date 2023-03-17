@@ -1510,53 +1510,51 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
   end
 
   describe "delete_event/3" do
+    @delete_event_mutation """
+    mutation DeleteEvent($eventId: ID!) {
+      deleteEvent(
+        eventId: $eventId
+      ) {
+          id
+        }
+      }
+    """
+
     test "delete_event/3 deletes an event", %{conn: conn, user: user, actor: actor} do
       event = insert(:event, organizer_actor: actor)
 
-      mutation = """
-          mutation {
-            deleteEvent(
-              event_id: #{event.id}
-            ) {
-                id
-              }
-            }
-      """
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_event_mutation,
+          variables: [eventId: event.id]
+        )
+
+      assert res["errors"] == nil
+      assert res["data"]["deleteEvent"]["id"] == to_string(event.id)
 
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_event_mutation,
+          variables: [eventId: event.id]
+        )
 
-      assert json_response(res, 200)["errors"] == nil
-      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == to_string(event.id)
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not found"
+      assert hd(res["errors"])["message"] =~ "not found"
     end
 
     test "delete_event/3 should check the user is authenticated", %{conn: conn, actor: actor} do
       event = insert(:event, organizer_actor: actor)
 
-      mutation = """
-          mutation {
-            deleteEvent(
-              event_id: #{event.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
-        conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @delete_event_mutation,
+          variables: [eventId: event.id]
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "logged-in"
+      assert hd(res["errors"])["message"] =~ "logged in"
     end
 
     test "delete_event/3 should check the event can be deleted by the user", %{
@@ -1567,22 +1565,15 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       actor2 = insert(:actor)
       event = insert(:event, organizer_actor: actor2)
 
-      mutation = """
-          mutation {
-            deleteEvent(
-              event_id: #{event.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_event_mutation,
+          variables: [eventId: event.id]
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "cannot delete"
+      assert hd(res["errors"])["message"] =~ "cannot delete"
     end
 
     test "delete_event/3 allows a event being deleted by a moderator and creates a entry in actionLogs",
@@ -1597,22 +1588,16 @@ defmodule Mobilizon.Web.Resolvers.EventTest do
       actor2 = insert(:actor)
       event = insert(:event, organizer_actor: actor2)
 
-      mutation = """
-          mutation {
-            deleteEvent(
-              event_id: #{event.id}
-            ) {
-                id
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user_moderator)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @delete_event_mutation,
+          variables: [eventId: event.id]
+        )
 
-      assert json_response(res, 200)["data"]["deleteEvent"]["id"] == to_string(event.id)
+      assert res["errors"] == nil
+      assert res["data"]["deleteEvent"]["id"] == to_string(event.id)
 
       query = """
       {

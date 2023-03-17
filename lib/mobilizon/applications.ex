@@ -12,6 +12,7 @@ defmodule Mobilizon.Applications do
   defenum(ApplicationDeviceActivationStatus, [
     "success",
     "pending",
+    "confirmed",
     "incorrect_device_code",
     "access_denied"
   ])
@@ -144,12 +145,15 @@ defmodule Mobilizon.Applications do
 
   """
   def list_application_tokens do
-    Repo.all(ApplicationToken)
+    ApplicationToken
+    |> Repo.all()
+    |> Repo.preload(:application)
   end
 
   @doc """
   Returns the list of application tokens for a given user_id
   """
+  @spec list_application_tokens_for_user_id(number() | String.t()) :: list(ApplicationToken.t())
   def list_application_tokens_for_user_id(user_id) do
     ApplicationToken
     |> where(user_id: ^user_id)
@@ -172,7 +176,11 @@ defmodule Mobilizon.Applications do
       ** (Ecto.NoResultsError)
 
   """
-  def get_application_token!(id), do: Repo.get!(ApplicationToken, id)
+  def get_application_token!(id) do
+    ApplicationToken
+    |> Repo.get!(id)
+    |> Repo.preload([:application])
+  end
 
   @doc """
   Gets a single application_token.
@@ -211,6 +219,13 @@ defmodule Mobilizon.Applications do
     %ApplicationToken{}
     |> ApplicationToken.changeset(attrs)
     |> Repo.insert(on_conflict: :replace_all, conflict_target: [:user_id, :application_id])
+    |> case do
+      {:ok, application_token} ->
+        {:ok, Repo.preload(application_token, :application)}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -303,10 +318,14 @@ defmodule Mobilizon.Applications do
 
   def get_application_device_activation(id), do: Repo.get(ApplicationDeviceActivation, id)
 
-  def get_application_device_activation_by_user_code(user_code),
-    do: Repo.get_by(ApplicationDeviceActivation, user_code: user_code)
+  def get_application_device_activation_by_user_code(user_code) do
+    ApplicationDeviceActivation
+    |> where([ada], ada.user_code == ^user_code)
+    |> preload(:application)
+    |> Repo.one()
+  end
 
-  def get_application_device_activation(client_id, device_code) do
+  def get_application_device_activation_by_device_code(client_id, device_code) do
     ApplicationDeviceActivation
     |> join(:left, [ada], a in assoc(ada, :application))
     |> where([_, a], a.client_id == ^client_id)

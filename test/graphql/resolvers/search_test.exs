@@ -239,20 +239,43 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
     }
     """
 
-    test "finds persons with basic search", %{
-      conn: conn,
-      user: user
+    test "without being logged-in", %{
+      conn: conn
     } do
-      actor = insert(:actor, user: user, preferred_username: "test_person")
-      insert(:actor, type: :Group, preferred_username: "test_group")
-      event = insert(:event, title: "test_event")
-      Workers.BuildSearch.insert_search_event(event)
-
       res =
         AbsintheHelpers.graphql_query(conn,
           query: @search_persons_query,
           variables: %{term: "test"}
         )
+
+      assert hd(res["errors"])["message"] == "You need to be logged in"
+    end
+
+    test "without being a moderator", %{
+      conn: conn,
+      user: user
+    } do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @search_persons_query, variables: %{term: "test"})
+
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
+    end
+
+    test "finds persons with basic search", %{
+      conn: conn
+    } do
+      user = insert(:user, role: :moderator)
+      actor = insert(:actor, preferred_username: "test_person")
+      insert(:actor, type: :Group, preferred_username: "test_group")
+      event = insert(:event, title: "test_event")
+      Workers.BuildSearch.insert_search_event(event)
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @search_persons_query, variables: %{term: "test"})
 
       assert res["errors"] == nil
       assert res["data"]["searchPersons"]["total"] == 1
@@ -263,10 +286,10 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
     end
 
     test "finds persons with word search", %{
-      conn: conn,
-      user: user
+      conn: conn
     } do
-      actor = insert(:actor, user: user, preferred_username: "person", name: "I like pineapples")
+      user = insert(:user, role: :moderator)
+      actor = insert(:actor, preferred_username: "person", name: "I like pineapples")
       insert(:actor, preferred_username: "group", type: :Group, name: "pineapple group")
       event1 = insert(:event, title: "Pineapple fashion week")
       event2 = insert(:event, title: "I love pineAPPLE")
@@ -276,7 +299,9 @@ defmodule Mobilizon.GraphQL.Resolvers.SearchTest do
       Workers.BuildSearch.insert_search_event(event3)
 
       res =
-        AbsintheHelpers.graphql_query(conn,
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
           query: @search_persons_query,
           variables: %{term: "pineapple"}
         )

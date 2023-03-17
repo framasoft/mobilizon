@@ -12,7 +12,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   require Logger
 
   @doc """
-  Create an application
+  Authorize an application
   """
   @spec authorize(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()} | {:error, String.t()}
   def authorize(
@@ -21,8 +21,16 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
         %{context: %{current_user: %User{id: user_id}}}
       ) do
     case Applications.autorize(client_id, redirect_uri, scope, user_id) do
-      {:ok, code} ->
-        {:ok, %{code: code, state: state}}
+      {:ok,
+       %ApplicationToken{
+         application: %Application{client_id: client_id},
+         scope: scope,
+         authorization_code: code
+       }} ->
+        {:ok, %{code: code, state: state, client_id: client_id, scope: scope}}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
 
       {:error, :application_not_found} ->
         {:error,
@@ -41,18 +49,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   end
 
   def authorize(_parent, _args, _context) do
-    {:error, dgettext("errors", "You need to be logged-in to autorize applications")}
+    {:error, :unauthenticated}
   end
 
   @spec get_application(any(), map(), Absinthe.Resolution.t()) ::
-          {:ok, Application.t()} | {:error, :not_found | :unauthenticated}
+          {:ok, Application.t()} | {:error, :application_not_found | :unauthenticated}
   def get_application(_parent, %{client_id: client_id}, %{context: %{current_user: %User{}}}) do
     case ApplicationManager.get_application_by_client_id(client_id) do
       %Application{} = application ->
         {:ok, application}
 
       nil ->
-        {:error, :not_found}
+        {:error, :application_not_found}
     end
   end
 
@@ -82,7 +90,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
         end
 
       _ ->
-        {:error, :not_found}
+        {:error, :application_token_not_found}
     end
   end
 
@@ -93,10 +101,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   def activate_device(_parent, %{user_code: user_code}, %{
         context: %{current_user: %User{} = user}
       }) do
-    with {:ok, %ApplicationDeviceActivation{} = app_device_activation} <-
-           Applications.activate_device(user_code, user) do
-      {:ok, app_device_activation |> Map.from_struct() |> Map.take([:application, :id, :scope])}
+    case Applications.activate_device(user_code, user) do
+      {:ok, %ApplicationDeviceActivation{} = app_device_activation} ->
+        {:ok, app_device_activation |> Map.from_struct() |> Map.take([:application, :id, :scope])}
+
+      {:error, :expired} ->
+        {:error, dgettext("errors", "The given user code has expired")}
+
+      {:error, :not_found} ->
+        {:error, dgettext("errors", "The given user code is invalid")}
     end
+  end
+
+  def activate_device(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
   end
 
   @spec authorize_device_application(any(), map(), Absinthe.Resolution.t()) ::
@@ -104,18 +122,32 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   def authorize_device_application(
         _parent,
         %{client_id: client_id, user_code: user_code},
-        %{context: %{current_user: %User{id: user_id}}}
+        %{context: %{current_user: %User{}}}
       ) do
-    case Applications.autorize_device_application(client_id, user_code, user_id) do
-      {:ok, %Application{} = app} ->
+    case Applications.autorize_device_application(client_id, user_code) do
+      {:ok, %ApplicationDeviceActivation{application: app}} ->
         {:ok, app}
 
-      {:error, :application_not_found} ->
+      {:error, :not_confirmed} ->
         {:error,
          dgettext(
            "errors",
-           "No application with this client_id was found"
+           "The device user code was not provided before approving the application"
          )}
+
+      {:error, :not_found} ->
+        {:error,
+         dgettext(
+           "errors",
+           "The given user code is invalid"
+         )}
+
+      {:error, :expired} ->
+        {:error, dgettext("errors", "The given user code has expired")}
     end
+  end
+
+  def authorize_device_application(_parent, _args, _resolution) do
+    {:error, :unauthenticated}
   end
 end

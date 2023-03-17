@@ -209,6 +209,7 @@ defmodule Mobilizon.Mixfile do
       {:unplug, "~> 1.0.0"},
       {:replug, "~> 0.1.0"},
       {:exkismet, github: "tcitworld/exkismet"},
+      {:rajska, github: "churcho/rajska", branch: "fix/update-absinthe"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},

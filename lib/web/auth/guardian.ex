@@ -43,7 +43,9 @@ defmodule Mobilizon.Web.Auth.Guardian do
           {:error, :invalid_id}
       end
     rescue
-      Ecto.NoResultsError -> {:error, :no_result}
+      e in Ecto.NoResultsError ->
+        Logger.warn("Received token claim for non existing user: #{inspect(e)}")
+        {:error, :no_result}
     end
   end
 
@@ -62,7 +64,9 @@ defmodule Mobilizon.Web.Auth.Guardian do
           {:error, :invalid_id}
       end
     rescue
-      Ecto.NoResultsError -> {:error, :no_result}
+      e in Ecto.NoResultsError ->
+        Logger.info("Received token claim for non existing app token: #{inspect(e.message)}")
+        {:error, :no_result}
     end
   end
 
@@ -79,6 +83,8 @@ defmodule Mobilizon.Web.Auth.Guardian do
 
   @spec on_verify(any(), any(), any()) :: {:ok, map()} | {:error, :token_not_found}
   def on_verify(claims, token, _options) do
+    Logger.debug("[Guardian] Called on_verify")
+
     with {:ok, _} <- Guardian.DB.on_verify(claims, token) do
       {:ok, claims}
     end
@@ -86,6 +92,8 @@ defmodule Mobilizon.Web.Auth.Guardian do
 
   @spec on_revoke(any(), any(), any()) :: {:ok, map()} | {:error, :could_not_revoke_token}
   def on_revoke(claims, token, _options) do
+    Logger.debug("[Guardian] Called on_revoke")
+
     with {:ok, _} <- Guardian.DB.on_revoke(claims, token) do
       {:ok, claims}
     end
@@ -94,6 +102,8 @@ defmodule Mobilizon.Web.Auth.Guardian do
   @spec on_refresh({any(), any()}, {any(), any()}, any()) ::
           {:ok, {String.t(), map()}, {String.t(), map()}} | {:error, any()}
   def on_refresh({old_token, old_claims}, {new_token, new_claims}, _options) do
+    Logger.debug("[Guardian] Called on_refresh")
+
     with {:ok, _, _} <- Guardian.DB.on_refresh({old_token, old_claims}, {new_token, new_claims}) do
       {:ok, {old_token, old_claims}, {new_token, new_claims}}
     end
@@ -101,7 +111,10 @@ defmodule Mobilizon.Web.Auth.Guardian do
 
   @spec on_exchange(any(), any(), any()) ::
           {:ok, {String.t(), map()}, {String.t(), map()}} | {:error, any()}
-  def on_exchange(old_stuff, new_stuff, options), do: on_refresh(old_stuff, new_stuff, options)
+  def on_exchange(old_stuff, new_stuff, options) do
+    Logger.debug("[Guardian] Called on_exchange")
+    on_refresh(old_stuff, new_stuff, options)
+  end
 
   #  def build_claims(claims, _resource, opts) do
   #    claims = claims

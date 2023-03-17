@@ -12,6 +12,29 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
   alias Mobilizon.GraphQL.{AbsintheHelpers, API}
 
   describe "Resolver: List the action logs" do
+    @action_logs_query """
+    query ActionLogs {
+      actionLogs {
+        total
+        elements {
+          action,
+          actor {
+            preferredUsername
+          },
+          object {
+            ... on Report {
+              id,
+              status
+            },
+            ... on ReportNote {
+              content
+            }
+          }
+        }
+      }
+    }
+    """
+
     @note_content "This a note on a report"
     test "list_action_logs/3 list action logs", %{conn: conn} do
       %User{} = user_moderator = insert(:user, role: :moderator)
@@ -26,48 +49,22 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
       {:ok, %Note{} = note} = API.Reports.create_report_note(report, moderator_2, @note_content)
 
       API.Reports.delete_report_note(note, moderator_2)
+      res = AbsintheHelpers.graphql_query(conn, query: @action_logs_query)
 
-      query = """
-      {
-        actionLogs {
-          total
-          elements {
-            action,
-            actor {
-              preferredUsername
-            },
-            object {
-              ... on Report {
-                id,
-                status
-              },
-              ... on ReportNote {
-                content
-              }
-            }
-          }
-        }
-      }
-      """
-
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
-
-      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in and a moderator to list action logs"
+      assert res["errors"] |> hd |> Map.get("message") ==
+               "You need to be logged in"
 
       res =
         conn
         |> auth_conn(user_moderator)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+        |> AbsintheHelpers.graphql_query(query: @action_logs_query)
 
-      assert json_response(res, 200)["errors"] == nil
+      assert is_nil(res["errors"])
 
-      assert json_response(res, 200)["data"]["actionLogs"]["total"] == 3
-      assert json_response(res, 200)["data"]["actionLogs"]["elements"] |> length == 3
+      assert res["data"]["actionLogs"]["total"] == 3
+      assert res["data"]["actionLogs"]["elements"] |> length == 3
 
-      assert json_response(res, 200)["data"]["actionLogs"]["elements"] == [
+      assert res["data"]["actionLogs"]["elements"] == [
                %{
                  "action" => "NOTE_DELETION",
                  "actor" => %{"preferredUsername" => moderator_2.preferred_username},
@@ -88,13 +85,8 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
   end
 
   describe "Resolver: Get the dashboard statistics" do
-    test "get_dashboard/3 gets dashboard information", %{conn: conn} do
-      %Event{title: title} = insert(:event)
-
-      %User{} = user_admin = insert(:user, role: :administrator)
-
-      query = """
-      {
+    @dashbord_information_query """
+      query Dashboard {
         dashboard {
           lastPublicEventPublished {
             title
@@ -105,24 +97,25 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
           numberOfReports
         }
       }
-      """
+    """
 
-      res =
-        conn
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+    test "get_dashboard/3 gets dashboard information", %{conn: conn} do
+      %Event{title: title} = insert(:event)
 
-      assert json_response(res, 200)["errors"] |> hd |> Map.get("message") ==
-               "You need to be logged-in and an administrator to access dashboard statistics"
+      %User{} = user_admin = insert(:user, role: :administrator)
+
+      res = AbsintheHelpers.graphql_query(conn, query: @dashbord_information_query)
+
+      assert res["errors"] |> hd |> Map.get("message") == "You need to be logged in"
 
       res =
         conn
         |> auth_conn(user_admin)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "actionLogs"))
+        |> AbsintheHelpers.graphql_query(query: @dashbord_information_query)
 
-      assert json_response(res, 200)["errors"] == nil
+      assert is_nil(res["errors"])
 
-      assert json_response(res, 200)["data"]["dashboard"]["lastPublicEventPublished"]["title"] ==
-               title
+      assert title == res["data"]["dashboard"]["lastPublicEventPublished"]["title"]
     end
   end
 
@@ -175,7 +168,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
 
       assert hd(res["errors"])["message"] == "You need to be logged in"
-      assert hd(res["errors"])["status_code"] == 401
     end
 
     test "test list_relay_followers/3 returns nothing when not an admin", %{conn: conn} do
@@ -200,7 +192,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
 
       assert hd(res["errors"])["message"] == "You don't have permission to do this"
-      assert hd(res["errors"])["status_code"] == 403
 
       res =
         conn
@@ -208,7 +199,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followers_query)
 
       assert hd(res["errors"])["message"] == "You don't have permission to do this"
-      assert hd(res["errors"])["status_code"] == 403
     end
 
     test "test list_relay_followers/3 returns relay followers", %{conn: conn} do
@@ -258,7 +248,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
 
       assert hd(res["errors"])["message"] == "You need to be logged in"
-      assert hd(res["errors"])["status_code"] == 401
     end
 
     test "test list_relay_followings/3 returns nothing when not an admin", %{conn: conn} do
@@ -284,7 +273,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
 
       assert hd(res["errors"])["message"] == "You don't have permission to do this"
-      assert hd(res["errors"])["status_code"] == 403
 
       res =
         conn
@@ -292,7 +280,6 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @relay_followings_query)
 
       assert hd(res["errors"])["message"] == "You don't have permission to do this"
-      assert hd(res["errors"])["status_code"] == 403
     end
 
     test "test list_relay_followings/3 returns relay followings", %{conn: conn} do
@@ -403,7 +390,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         |> AbsintheHelpers.graphql_query(query: @admin_settings_query)
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in and an administrator to access admin settings"
+               "You don't have permission to do this"
     end
   end
 
@@ -490,7 +477,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in and an administrator to save admin settings"
+               "You don't have permission to do this"
     end
   end
 
@@ -524,7 +511,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "You need to be logged-in and an administrator to edit an user's details"
+               "You don't have permission to do this"
     end
 
     test "when putting same email", %{conn: conn, user: user, admin: admin} do

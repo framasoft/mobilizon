@@ -125,7 +125,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ActivityTest do
           variables: %{preferredUsername: preferred_username}
         )
 
-      assert hd(res["errors"])["message"] == "unauthenticated"
+      assert "Not authorized to access object paginated_activity_list" ==
+               hd(res["errors"])["message"]
     end
 
     test "without being a member", %{

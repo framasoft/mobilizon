@@ -36,8 +36,8 @@
     />
     <div v-show="authApplicationError">
       <div
-        class="rounded-lg bg-mbz-danger shadow-xl my-6 p-4 flex items-center gap-2"
-        v-if="authApplicationGraphError?.status_code === 404"
+        class="rounded-lg text-white bg-mbz-danger shadow-xl my-6 p-4 flex items-center gap-2"
+        v-if="authApplicationGraphError?.message === 'not_found'"
       >
         <AlertCircle :size="42" />
         <div>
@@ -72,9 +72,6 @@
         <p class="text-4xl">{{ resultCode }}</p>
       </div>
     </div>
-    <o-button variant="text" tag="router-link" :to="{ name: RouteName.HOME }">{{
-      t("Back to homepage")
-    }}</o-button>
   </div>
 </template>
 
@@ -83,8 +80,8 @@ import { useRouteQuery } from "vue-use-route-query";
 import { useHead } from "@vueuse/head";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useMutation, useQuery } from "@vue/apollo-composable";
-import { AUTH_APPLICATION, AUTORIZE_APPLICATION } from "@/graphql/application";
+import { useQuery } from "@vue/apollo-composable";
+import { AUTH_APPLICATION } from "@/graphql/application";
 import { IApplication } from "@/types/application.model";
 import AlertCircle from "vue-material-design-icons/AlertCircle.vue";
 import type { AbsintheGraphQLError } from "@/types/errors.model";
@@ -98,7 +95,6 @@ const redirectURI = useRouteQuery("redirect_uri", null);
 const state = useRouteQuery("state", null);
 const scope = useRouteQuery("scope", null);
 
-const OUT_OF_BAND_REDIRECT_URI = "urn:ietf:wg:oauth:2.0:oob";
 const resultCode = ref<string | null>(null);
 
 const {
@@ -122,44 +118,6 @@ const authApplication = computed(
 const authApplicationGraphError = computed(
   () => authApplicationError.value?.graphQLErrors[0] as AbsintheGraphQLError
 );
-
-const { mutate: authorizeMutation, onDone: onAuthorizeMutationDone } =
-  useMutation<
-    { authorizeApplication: { code: string; state: string } },
-    {
-      applicationClientId: string;
-      redirectURI: string;
-      state?: string | null;
-      scope?: string | null;
-    }
-  >(AUTORIZE_APPLICATION);
-
-const authorize = () => {
-  authorizeMutation({
-    applicationClientId: clientId.value as string,
-    redirectURI: redirectURI.value as string,
-    state: state.value,
-    scope: scope.value,
-  });
-};
-
-onAuthorizeMutationDone(({ data }) => {
-  const code = data?.authorizeApplication?.code;
-  const returnedState = data?.authorizeApplication?.state ?? "";
-
-  if (!code) return;
-
-  if (redirectURI.value !== OUT_OF_BAND_REDIRECT_URI) {
-    const params = new URLSearchParams(
-      Object.entries({ code, state: returnedState })
-    );
-    window.location.assign(
-      new URL(`${redirectURI.value}?${params.toString()}`)
-    );
-    return;
-  }
-  resultCode.value = code;
-});
 
 useHead({
   title: computed(() => t("Authorize application")),

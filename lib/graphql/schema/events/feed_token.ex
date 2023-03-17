@@ -17,6 +17,8 @@ defmodule Mobilizon.GraphQL.Schema.Events.FeedTokenType do
   or an Atom feed for just a profile.
   """
   object :feed_token do
+    meta(:authorize, :user)
+
     field(
       :actor,
       :actor,
@@ -36,6 +38,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.FeedTokenType do
 
   @desc "Represents a deleted feed_token"
   object :deleted_feed_token do
+    meta(:authorize, :user)
     field(:user, :deleted_object, description: "The user that owned the deleted feed token")
     field(:actor, :deleted_object, description: "The actor that owned the deleted feed token")
   end
@@ -45,12 +48,26 @@ defmodule Mobilizon.GraphQL.Schema.Events.FeedTokenType do
     field :create_feed_token, :feed_token do
       arg(:actor_id, :id, description: "The actor ID for the feed token")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.FeedToken,
+        rule: :"write:profile:feed_token:create",
+        args: %{}
+      )
+
       resolve(&FeedToken.create_feed_token/3)
     end
 
     @desc "Delete a feed token"
     field :delete_feed_token, :deleted_feed_token do
       arg(:token, non_null(:string), description: "The token to delete")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.FeedToken,
+        rule: :"write:feed_token:delete",
+        args: %{token: :token}
+      )
 
       resolve(&FeedToken.delete_feed_token/3)
     end

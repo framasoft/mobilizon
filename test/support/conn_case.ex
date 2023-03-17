@@ -18,7 +18,6 @@ defmodule Mobilizon.Web.ConnCase do
   alias Ecto.Adapters.SQL.Sandbox, as: Adapter
 
   alias Mobilizon.Storage.Repo
-  alias Mobilizon.Users.User
 
   alias Mobilizon.Web.Auth
 
@@ -33,9 +32,16 @@ defmodule Mobilizon.Web.ConnCase do
       # The default endpoint for testing
       @endpoint Mobilizon.Web.Endpoint
 
-      def auth_conn(%Plug.Conn{} = conn, %User{} = user) do
+      def auth_conn(%Plug.Conn{} = conn, user) do
         {:ok, token, _claims} = Auth.Guardian.encode_and_sign(user)
 
+        conn
+        |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
+        |> Plug.Conn.put_req_header("accept", "application/json")
+      end
+
+      @spec set_token(Plug.Conn.t(), String.t()) :: Plug.Conn.t()
+      def set_token(%Plug.Conn{} = conn, token) do
         conn
         |> Plug.Conn.put_req_header("authorization", "Bearer #{token}")
         |> Plug.Conn.put_req_header("accept", "application/json")
