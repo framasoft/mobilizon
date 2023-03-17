@@ -82,7 +82,9 @@ export function registerAccount() {
       { context }
     ) => {
       if (context?.userAlreadyActivated) {
-        const currentUserData = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
+        const currentUserData = store.readQuery<{
+          loggedUser: Pick<ICurrentUser, "actors">;
+        }>({
           query: IDENTITIES,
         });
 
@@ -96,9 +98,7 @@ export function registerAccount() {
             query: IDENTITIES,
             data: {
               ...currentUserData.loggedUser,
-              actors: [
-                [...currentUserData.loggedUser.actors, newPersonData]
-              ]
+              actors: [[...currentUserData.loggedUser.actors, newPersonData]],
             },
           });
         }

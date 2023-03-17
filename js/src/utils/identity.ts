@@ -5,10 +5,10 @@ import { ICurrentUser } from "@/types/current-user.model";
 import { apolloClient } from "@/vue-apollo";
 import {
   provideApolloClient,
+  useLazyQuery,
   useMutation,
-  useQuery,
 } from "@vue/apollo-composable";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 
 export class NoIdentitiesException extends Error {}
 
@@ -28,6 +28,10 @@ export async function changeIdentity(identity: IPerson): Promise<void> {
   }
 }
 
+const { onResult: setIdentities, load: loadIdentities } = provideApolloClient(
+  apolloClient
+)(() => useLazyQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>(IDENTITIES));
+
 /**
  * We fetch from localStorage the latest actor ID used,
  * then fetch the current identities to set in cache
@@ -36,13 +40,15 @@ export async function changeIdentity(identity: IPerson): Promise<void> {
 export async function initializeCurrentActor(): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
 
-  const { result: identitiesResult } = provideApolloClient(apolloClient)(() =>
-    useQuery<{ currentUser: Pick<ICurrentUser, 'actors'> }>(IDENTITIES)
-  );
+  loadIdentities();
 
-  const identities = computed(() => identitiesResult.value?.currentUser.actors);
+  setIdentities(async ({ data }) => {
+    const identities = computed(() => data?.loggedUser?.actors);
+    console.debug(
+      "initializing current actor based on identities",
+      identities.value
+    );
 
-  watch(identities, async () => {
     if (identities.value && identities.value.length < 1) {
       console.warn("Logged user has no identities!");
       throw new NoIdentitiesException();

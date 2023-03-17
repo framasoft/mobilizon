@@ -283,6 +283,7 @@ export const LOGGED_USER_MEMBERSHIPS = gql`
 export const IDENTITIES = gql`
   query Identities {
     loggedUser {
+      id
       actors {
         ...ActorFragment
       }
@@ -290,8 +291,6 @@ export const IDENTITIES = gql`
   }
   ${ACTOR_FRAGMENT}
 `;
-
-
 
 export const PERSON_MEMBERSHIPS = gql`
   query PersonMemberships($id: ID!) {

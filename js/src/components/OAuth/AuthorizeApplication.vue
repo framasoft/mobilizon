@@ -31,7 +31,7 @@
           </p>
         </div>
         <p v-else class="px-4 font-bold">
-          {{ t('This application asks for the following permissions:') }}
+          {{ t("This application asks for the following permissions:") }}
         </p>
         <o-collapse
           class="mt-3 border-b pb-2 border-zinc-700 text-black dark:text-white"
@@ -87,7 +87,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { AUTORIZE_APPLICATION } from "@/graphql/application";
 import RouteName from "@/router/name";
 import { IApplication } from "@/types/application.model";
-import { scope } from "./scope";
+import { scope } from "./scopes";
 import AlertCircle from "vue-material-design-icons/AlertCircle.vue";
 
 const { t } = useI18n({ useScope: "global" });
@@ -104,8 +104,8 @@ const isOpen = ref<number>(-1);
 const collapses = computed(() =>
   (props.scope ?? "")
     .split(" ")
-    .map((scope) => scope[scope])
-    .filter((scope) => scope)
+    .map((localScope) => scope[localScope])
+    .filter((localScope) => localScope)
 );
 
 const { mutate: authorizeMutation, onDone: onAuthorizeMutationDone } =

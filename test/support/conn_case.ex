@@ -29,6 +29,8 @@ defmodule Mobilizon.Web.ConnCase do
 
       import Mobilizon.Web.Router.Helpers
 
+      use Mobilizon.Web, :verified_routes
+
       # The default endpoint for testing
       @endpoint Mobilizon.Web.Endpoint
 

@@ -70,8 +70,14 @@
     >
       <div class="">
         <header class="">
-          <h2>{{ t('Create a new metadata element') }}</h2>
-          <p>{{  t('You can put any arbitrary content in this element. URLs will be clickable.') }}</p>
+          <h2>{{ t("Create a new metadata element") }}</h2>
+          <p>
+            {{
+              t(
+                "You can put any arbitrary content in this element. URLs will be clickable."
+              )
+            }}
+          </p>
         </header>
         <div class="">
           <form @submit="addNewElement">

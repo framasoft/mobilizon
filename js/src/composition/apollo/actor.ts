@@ -25,16 +25,14 @@ export function useCurrentActorClient() {
 export function useCurrentUserIdentities() {
   const { currentUser } = useCurrentUserClient();
 
-  const { result, error, loading } = useQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>(
-    IDENTITIES,
-    {},
-    () => ({
-      enabled:
-        currentUser.value?.id !== undefined &&
-        currentUser.value?.id !== null &&
-        currentUser.value?.isLoggedIn === true,
-    })
-  );
+  const { result, error, loading } = useQuery<{
+    loggedUser: Pick<ICurrentUser, "actors">;
+  }>(IDENTITIES, {}, () => ({
+    enabled:
+      currentUser.value?.id !== undefined &&
+      currentUser.value?.id !== null &&
+      currentUser.value?.isLoggedIn === true,
+  }));
 
   const identities = computed(() => result.value?.loggedUser?.actors);
   return { identities, error, loading };

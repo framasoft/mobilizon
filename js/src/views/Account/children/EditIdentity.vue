@@ -349,7 +349,7 @@ const {
   onError: deletePersonError,
 } = useMutation(DELETE_PERSON, () => ({
   update: (store: ApolloCache<InMemoryCache>) => {
-    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>({
       query: IDENTITIES,
     });
 
@@ -359,8 +359,10 @@ const {
         data: {
           loggedUser: {
             ...data.loggedUser,
-            actors: data.loggedUser.actors.filter((i) => i.id !== identity.value.id)
-          }
+            actors: data.loggedUser.actors.filter(
+              (i) => i.id !== identity.value.id
+            ),
+          },
         },
       });
     }
@@ -383,7 +385,7 @@ deletePersonDone(async () => {
    */
   const client = resolveClient();
   const data = client.readQuery<{
-    loggedUser: Pick<ICurrentUser, 'actors'>
+    loggedUser: Pick<ICurrentUser, "actors">;
   }>({ query: IDENTITIES });
   if (data) {
     await maybeUpdateCurrentActorCache(data.loggedUser.actors[0]);
@@ -412,7 +414,7 @@ const {
     store: ApolloCache<InMemoryCache>,
     { data: updateData }: FetchResult
   ) => {
-    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>({
       query: IDENTITIES,
     });
 
@@ -456,7 +458,7 @@ const {
     store: ApolloCache<InMemoryCache>,
     { data: updateData }: FetchResult
   ) => {
-    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, 'actors'> }>({
+    const data = store.readQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>({
       query: IDENTITIES,
     });
 
@@ -467,10 +469,10 @@ const {
           loggedUser: {
             ...data.loggedUser,
             actors: [
-            ...data.loggedUser.actors,
-            { ...updateData?.createPerson, type: ActorType.PERSON },
-            ]
-          }
+              ...data.loggedUser.actors,
+              { ...updateData?.createPerson, type: ActorType.PERSON },
+            ],
+          },
         },
       });
     }
