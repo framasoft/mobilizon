@@ -113,6 +113,9 @@ export const CONFIG = gql`
           isDefault
         }
       }
+      exportFormats {
+        eventParticipants
+      }
     }
   }
 `;
