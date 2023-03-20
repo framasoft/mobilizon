@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-02-21 21:38+0000\n"
+"PO-Revision-Date: 2023-03-20 20:50+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.4\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1337,7 +1337,7 @@ msgstr "Ako prihvatiš, ovaj će profil primati sve tvoje javne događaje."
 #: lib/web/email/follow.ex:54
 #, elixir-autogen, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
-msgstr ""
+msgstr "Instanca %{name} %{domain} je zatražila praćenje tvoje instance"
 
 #: lib/web/templates/email/instance_follow.html.heex:84
 #: lib/web/templates/email/instance_follow.text.eex:9
