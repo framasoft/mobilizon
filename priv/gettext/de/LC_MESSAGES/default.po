@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-12-24 08:41+0000\n"
+"PO-Revision-Date: 2023-02-16 15:32+0000\n"
 "Last-Translator: Vri <vrifox@vrifox.cc>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/de/>\n"
@@ -12,15 +12,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15.2\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "If you didn't request this, please ignore this email. Your password won't change until you access the link below and create a new one."
 msgstr ""
-"Wenn Sie diese E-Mail nicht angefordert baben, ignoriere Sie sie bitte. Ihr "
-"Passwort wird sich nicht ändern, solange Sie den Link unten nicht besuchen "
-"und ein neues erstellen."
+"Wenn Sie diese E-Mail nicht angefordert haben, ignorieren Sie sie bitte. Ihr "
+"Passwort wird sich nicht ändern, solange Sie den Link unten nicht öffnen und "
+"ein neues erstellen."
 
 #: lib/web/templates/email/report.html.heex:120
 #, elixir-autogen, elixir-format
@@ -36,7 +36,7 @@ msgstr "Mein Konto aktivieren"
 #: lib/web/templates/email/email.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Ask the community on Framacolibri"
-msgstr "Richten SIe Ihre Fragen an die Framacolibri Community"
+msgstr "Richten Sie Ihre Fragen an die Framacolibri-Gemeinschaft"
 
 #: lib/web/templates/email/report.text.eex:15
 #, elixir-autogen, elixir-format
@@ -165,7 +165,7 @@ msgstr "Eine interne ID für Ihre aktuell ausgewählte Identität"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "An internal user ID"
-msgstr "Eine interne Benutzer ID"
+msgstr "Eine interne Benutzer-ID"
 
 #: lib/web/templates/api/privacy.html.heex:47
 #, elixir-autogen, elixir-format
@@ -244,8 +244,8 @@ msgstr ""
 msgctxt "terms"
 msgid "We store the following information on your device when you connect:"
 msgstr ""
-"Wir speichern auf Ihrem Gerät die folgenden Informationen wenn Sie sich "
-"einloggen:"
+"Wir speichern auf Ihrem Gerät die folgenden Informationen, wenn Sie sich "
+"anmelden:"
 
 #: lib/web/templates/api/privacy.html.heex:84
 #, elixir-autogen, elixir-format
@@ -257,7 +257,7 @@ msgstr "Wir werden uns nach besten Wissen und Gewissen dazu bemühen:"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What do we use your information for?"
-msgstr "Für was nutzen wir Ihre Informationen?"
+msgstr "Wofür nutzen wir Ihre Informationen?"
 
 #: lib/web/templates/api/privacy.html.heex:83
 #, elixir-autogen, elixir-format
@@ -285,9 +285,9 @@ msgstr ""
 "Wenn sich dieser Server in der EU oder dem EWR befindet: Unsere Website, "
 "Produkte und Dienstleistungen sind an Personen gerichtet, die mindestens 16 "
 "Jahre alt sind. Wenn Sie unter 16 Jahre alt sind, dürfen Sie gemäß den "
-"Anforderungen der GDPR (<a href=\"https://en.wikipedia.org/wiki/"
-"General_Data_Protection_Regulation\">General Data Protection Regulation</a>) "
-"diese Website nicht nutzen."
+"Anforderungen der DSGVO (<a href=\"https://de.wikipedia.org/wiki/Datenschutz-"
+"Grundverordnung\">Datenschutz-Grundverordnung</a>) diese Website nicht "
+"nutzen."
 
 #: lib/web/templates/api/privacy.html.heex:146
 #, elixir-autogen, elixir-format
@@ -297,8 +297,8 @@ msgstr ""
 "Wenn sich dieser Server in den USA befindet: Unsere Website, Produkte und "
 "Dienstleistungen sind an Personen gerichtet, die mindestens 13 Jahre alt "
 "sind. Wenn Sie unter 13 Jahre alt sind, dürfen Sie diese Website gemäß den "
-"Anforderungen des COPPA (<a href=\"https://en.wikipedia.org/wiki/Children"
-"%27s_Online_Privacy_Protection_Act\">Children's Online Privacy Protection "
+"Anforderungen des COPPA (<a href=\"https://en.wikipedia.org/wiki/Children%"
+"27s_Online_Privacy_Protection_Act\">Children’s Online Privacy Protection "
 "Act</a>) nicht nutzen."
 
 #: lib/web/templates/api/privacy.html.heex:160
@@ -306,8 +306,8 @@ msgstr ""
 msgctxt "terms"
 msgid "If we decide to change our privacy policy, we will post those changes on this page."
 msgstr ""
-"Wenn wir beschließen unsere Datenschutzerklärung zu ändern, werden wir diese "
-"Änderungen auf dieser Seite veröffentlichen."
+"Wenn wir beschließen, unsere Datenschutzerklärung zu ändern, werden wir "
+"diese Änderungen auf dieser Seite veröffentlichen."
 
 #: lib/web/templates/api/privacy.html.heex:153
 #, elixir-autogen, elixir-format
@@ -329,20 +329,20 @@ msgctxt "terms"
 msgid "The email address you provide may be used to send you information, updates and notifications about other people\n    interacting with your content or sending you messages and to respond to inquiries, and/or other requests or\n    questions."
 msgstr ""
 "Die von Ihnen angegebene E-Mail-Adresse kann verwendet werden, um Ihnen "
-"Informationen, Updates und Benachrichtigungen über andere Personen zu "
-"senden \n"
-"die mit Ihren Inhalten interagieren oder Ihnen Nachrichten senden, sowie zur "
-"Beantwortung von Anfragen, und/oder anderen Bitten oder \n"
-"Fragen."
+"Informationen, Updates und\n"
+"    Benachrichtigungen über andere Personen zu senden, die mit Ihren "
+"Inhalten interagieren oder Ihnen Nachrichten\n"
+"    senden, sowie zur Beantwortung von Anfragen, und/oder anderen Bitten "
+"oder Fragen."
 
 #: lib/web/templates/api/privacy.html.heex:61
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "To aid moderation of the community, for example comparing your IP address with other known ones to determine ban\n    evasion or other violations."
 msgstr ""
-"Um die Moderation der Community zu unterstützen, z. B. durch den Vergleich "
-"Ihrer IP-Adresse mit anderen bekannten IP-Adressen, um eine Ban\n"
-"    Umgehung oder andere Verstöße zu ermitteln."
+"Um die Moderation der Gemeinschaft zu unterstützen, z. B. durch den "
+"Vergleich Ihrer IP-Adresse mit anderen bekannten\n"
+"    IP-Adressen, um eine Bannumgehung oder andere Verstöße zu ermitteln."
 
 #: lib/web/templates/api/privacy.html.heex:54
 #, elixir-autogen, elixir-format
@@ -358,7 +358,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "What information do we collect?"
-msgstr "Welche Informationen sammeln wir ?"
+msgstr "Welche Informationen sammeln wir?"
 
 #: lib/web/email/user.ex:182
 #, elixir-autogen, elixir-format
@@ -464,7 +464,7 @@ msgid "We implement a variety of security measures to maintain the safety of you
 msgstr ""
 "Wir implementieren eine Vielzahl von Sicherheitsmaßnahmen, um die Sicherheit "
 "Ihrer persönlichen Daten zu gewährleisten, wenn Sie diese eingeben, "
-"übermitteln oder darauf zugreifen. Unter anderem werden Ihre Browsersitzung "
+"übermitteln oder darauf zugreifen. Unter anderem werden Ihre Browser-Sitzung "
 "sowie der Datenverkehr zwischen Ihren Anwendungen und der API mit SSL/TLS "
 "gesichert, und Ihr Passwort wird mit einem starken Einweg-Algorithmus "
 "gehasht."
@@ -488,7 +488,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Accepting these Terms"
-msgstr "Akzeptiere die AGB/Bedigungen"
+msgstr "Akzeptieren dieser Bedingungen"
 
 #: lib/web/templates/api/terms.html.heex:73
 #, elixir-autogen, elixir-format
@@ -593,18 +593,19 @@ msgctxt "terms"
 msgid "Impersonate or post on behalf of any person or entity or otherwise misrepresent your affiliation with a person or entity;"
 msgstr ""
 "sich als eine natürliche oder juristische Person auszugeben oder im Namen "
-"einer solchen zu posten oder anderweitig Ihre Zugehörigkeit zu einer "
-"natürlichen oder juristischen Person falsch darzustellen;"
+"einer solchen zu veröffentlichen oder anderweitig Ihre Zugehörigkeit zu "
+"einer natürlichen oder juristischen Person falsch darzustellen;"
 
 #: lib/web/templates/api/terms.html.heex:128
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Our Service allows you and other users to post, link and otherwise make available content. You are responsible for the content that you make available to the Service, including its legality, reliability, and appropriateness."
 msgstr ""
-"Unser Dienst ermöglicht es Ihnen und anderen Benutzern, Inhalte zu posten, "
-"zu verlinken und anderweitig zur Verfügung zu stellen. Sie sind für die "
-"Inhalte verantwortlich, die Sie dem Dienst zur Verfügung stellen, "
-"einschließlich ihrer Rechtmäßigkeit, Zuverlässigkeit und Angemessenheit."
+"Unser Dienst ermöglicht es Ihnen und anderen Benutzern, Inhalte zu "
+"veröffentlichen, zu verlinken und anderweitig zur Verfügung zu stellen. Sie "
+"sind für die Inhalte verantwortlich, die Sie dem Dienst zur Verfügung "
+"stellen, einschließlich ihrer Rechtmäßigkeit, Zuverlässigkeit und "
+"Angemessenheit."
 
 #: lib/web/templates/api/terms.html.heex:94
 #, elixir-autogen, elixir-format
@@ -622,17 +623,17 @@ msgstr "Fragen & Kontaktinformationen"
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Termination"
-msgstr "Dauer"
+msgstr "Sperrung"
 
 #: lib/web/templates/api/terms.html.heex:199
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Use the Service in any manner that could interfere with, disrupt, negatively affect or inhibit other users from fully enjoying the Service or that could damage, disable, overburden or impair the functioning of the Service;"
 msgstr ""
-"Benutze unseren Dienst in einer Weise, die andere Nutzer nicht stören, "
-"unterbrechen, negativ beeinflussen oder daran hindern könnte, den Dienst in "
-"vollem Umfang zu genießen. Oder die Funktion des Dienstes beschädigen, "
-"deaktivieren, überlasten oder beeinträchtigen könnte;"
+"Unseren Dienst in einer Weise, die andere Nutzer stört, unterbricht, negativ "
+"beeinflusst oder daran hindern könnte, den Dienst in vollem Umfang zu "
+"genießen oder die Funktion des Dienstes beschädigt, deaktiviert, überlastet "
+"oder beeinträchtigt, benutzen;"
 
 #: lib/web/templates/api/terms.html.heex:126
 #, elixir-autogen, elixir-format
@@ -669,8 +670,8 @@ msgstr ""
 msgctxt "terms"
 msgid "For full details about the Mobilizon software <a href=\"https://joinmobilizon.org\">see here</a>."
 msgstr ""
-"Für vollständige Informationen zur Mobilizion Software <a href=\"https://"
-"joinmobilizon.org\">hier klicken</a>."
+"Vollumfängliche Informationen zur Mobilizon-Software <a href=\"https"
+"://joinmobilizon.org\">können Sie hier erhalten</a>."
 
 #: lib/web/templates/api/terms.html.heex:47
 #, elixir-autogen, elixir-format
@@ -678,9 +679,9 @@ msgctxt "terms"
 msgid "Here are the important things you need to know about accessing and using the <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">%{instance_url}</a>) website and service (collectively, \"Service\"). These are our terms of service (\"Terms\"). Please read them carefully."
 msgstr ""
 "Hier sind die wichtigen Dinge, die Sie über den Zugriff auf und die Nutzung "
-"der <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\">"
-"%{instance_url}</a>) Website und des Dienstes (zusammen der \"Dienst\") "
-"wissen müssen. Dies sind unsere Servicebedingungen (\"Bedingungen\"). Bitte "
+"der <b>%{instance_name}</b> (<a href=\"https://%{instance_url}\""
+">%{instance_url}</a>) Website und des Dienstes (zusammen der „Dienst“) "
+"wissen müssen. Dies sind unsere Nutzungsbedingungen („Bedingungen“). Bitte "
 "lesen Sie sie sorgfältig durch."
 
 #: lib/web/templates/api/terms.html.heex:82
@@ -700,8 +701,8 @@ msgctxt "terms"
 msgid "In order to make <b>%{instance_name}</b> a great place for all of us, please do not post, link and otherwise make available on or through the Service any of the following:"
 msgstr ""
 "Um <b>%{instance_name}</b> zu einem großartigen Ort für uns alle zu machen, "
-"bitten wir Sie, Folgendes nicht zu posten, zu verlinken oder anderweitig auf "
-"oder durch den Dienst verfügbar zu machen:"
+"bitten wir Sie, Folgendes nicht zu veröffentlichen, zu verlinken oder "
+"anderweitig auf oder durch den Dienst verfügbar zu machen:"
 
 #: lib/web/templates/api/terms.html.heex:179
 #, elixir-autogen, elixir-format
@@ -784,20 +785,20 @@ msgstr "Quellcode"
 msgctxt "terms"
 msgid "We love feedback. Please let us know what you think of the Service, these Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
-"Wir lieben Feedback. Bitte lass uns wissen, was du von unserem Dienst und "
-"den Bedigungen hälst <b>%{instance_name}</b>."
+"Wir lieben Rückmeldungen. Bitte teilen Sie uns mit, was Sie von unserem "
+"Dienst, den Bedingungen und generell <b>%{instance_name}</b> halten."
 
 #: lib/web/templates/api/terms.html.heex:234
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Instance administrators (and community moderators, given the relevant access) are responsible for monitoring and acting on flagged content and other user reports, and have the right and responsibility to remove or edit content that is not aligned to this Instance set of rules, or to suspend, block or ban (temporarily or permanently) any account, community, or instance for breaking these terms, or for other behaviours that they deem inappropriate, threatening, offensive, or harmful."
 msgstr ""
-"Instanz-Administratoren (und Community-Moderatoren, wenn sie den "
+"Instanz-Administratoren (und Gemeinschafts-Moderatoren, wenn sie den "
 "entsprechenden Zugriff haben) sind für die Überwachung und das Handeln bei "
 "gekennzeichneten Inhalten und anderen Nutzerberichten verantwortlich und "
 "haben das Recht und die Verantwortung, Inhalte zu entfernen oder zu "
 "bearbeiten, die nicht mit diesem Instanz-Regelwerk übereinstimmen, oder ein "
-"Konto, eine Community oder eine Instanz (vorübergehend oder dauerhaft) zu "
+"Konto, eine Gemeinschaft oder eine Instanz (vorübergehend oder dauerhaft) zu "
 "sperren, zu blockieren oder zu verbieten, wenn sie gegen diese Bedingungen "
 "verstoßen oder ein anderes Verhalten zeigen, das sie für unangemessen, "
 "bedrohlich, beleidigend oder schädlich halten."
@@ -815,9 +816,9 @@ msgstr ""
 msgctxt "terms"
 msgid "If you discover or suspect any Service security breaches, please let us know as soon as possible. For security holes in the Mobilizon software itself, please contact <a href=\"https://framagit.org/framasoft/mobilizon/\">its contributors</a> directly."
 msgstr ""
-"Wenn Sie Sicherheitslücken im Service entdecken oder vermuten, informieren "
+"Wenn Sie Sicherheitslücken im Dienst entdecken oder vermuten, informieren "
 "Sie uns bitte so schnell wie möglich. Bei Sicherheitslücken in der Mobilizon-"
-"Software selbst, wenden Sie sich bitte direkt an <a href=\"https://framagit."
+"Software selbst wenden Sie sich bitte direkt an <a href=\"https://framagit."
 "org/framasoft/mobilizon/\">die Mitwirkenden</a>."
 
 #: lib/web/templates/api/terms.html.heex:240
@@ -825,8 +826,8 @@ msgstr ""
 msgctxt "terms"
 msgid "Instance administrators should ensure that every community hosted on the instance is properly moderated according to the defined rules."
 msgstr ""
-"Instanzadministratoren sollten sicherstellen, dass jede Community, die auf "
-"der Instanz gehostet wird, ordnungsgemäß nach den definierten Regeln "
+"Instanz-Administratoren sollten sicherstellen, dass jede Gemeinschaft, die "
+"auf der Instanz gehostet wird, ordnungsgemäß nach den definierten Regeln "
 "moderiert wird."
 
 #: lib/web/templates/api/terms.html.heex:321
@@ -834,10 +835,11 @@ msgstr ""
 msgctxt "terms"
 msgid "Originally adapted from the <a href=\"https://joindiaspora.com/terms\">Diaspora*</a> and <a href=\"https://github.com/appdotnet/terms-of-service\">App.net</a> privacy policies, also licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
-"Ursprünglich angepasst aus den <a href=\"https://joindiaspora.com/terms"
-"\">Diaspora*</a> und <a href=\"https://github.com/appdotnet/terms-of-service"
-"\">App.net</a> Datenschutzrichtlinien, ebenfalls lizenziert unter <a href="
-"\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
+"Ursprünglich aus den Datenschutzrichtlinien von <a href=\"https"
+"://joindiaspora.com/terms\">Diaspora*</a> und <a href=\"https://github.com/"
+"appdotnet/terms-of-service\">App.net</a> adaptiert, die ebenfalls unter <a "
+"href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a> "
+"lizenziert sind."
 
 #: lib/web/templates/api/privacy.html.heex:173
 #, elixir-autogen, elixir-format
@@ -919,8 +921,8 @@ msgstr "Bestätigen Sie Ihre E-Mail Adresse"
 msgid "Hi there! You just registered to join this event: « %{title} ». Please confirm the e-mail address you provided:"
 msgstr ""
 "Hallo zusammen! Sie haben sich soeben für die Teilnahme an dieser "
-"Veranstaltung registriert: \" %{title} ». Bitte bestätigen Sie die von Ihnen "
-"angegebene E-Mail Adresse:"
+"Veranstaltung registriert: „%{title}“. Bitte bestätigen Sie die von Ihnen "
+"angegebene E-Mail-Adresse:"
 
 #: lib/web/templates/email/email.html.heex:142
 #: lib/web/templates/email/email.text.eex:8
@@ -1207,7 +1209,7 @@ msgstr "Zeige die aktualisierte Veranstaltung unter: %{link}"
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "What's up today?"
-msgstr "Was gibt's heute?"
+msgstr "Was gibt’s heute?"
 
 #: lib/web/templates/email/event_participation_approved.html.heex:98
 #: lib/web/templates/email/event_participation_approved.text.eex:11
@@ -1376,7 +1378,7 @@ msgstr ""
 msgctxt "terms"
 msgid "Note: This information is stored in your localStorage and not your cookies."
 msgstr ""
-"Hinweis: Diese Informationen werden in Ihrem lokalem Speicher und nicht in "
+"Hinweis: Diese Informationen werden in Ihrem lokalen Speicher und nicht in "
 "Ihren Cookies gespeichert."
 
 #: lib/web/templates/api/terms.html.heex:231
@@ -1409,8 +1411,8 @@ msgstr ""
 msgctxt "terms"
 msgid "We are not liable for any loss you may incur as a result of someone else using your email or password, either with or without your knowledge."
 msgstr ""
-"Wir haften nicht für Verluste, die Ihnen dadurch entstehen, dass jemand "
-"anderes Ihre E-Mail oder Ihr Passwort mit oder ohne Ihr Wissen verwendet."
+"Wir haften nicht für Verluste, die Ihnen dadurch entstehen, dass andere Ihre "
+"E-Mail-Adresse oder Ihr Passwort mit oder ohne Ihr Wissen verwendet."
 
 #: lib/web/templates/api/terms.html.heex:140
 #, elixir-autogen, elixir-format
@@ -1431,16 +1433,16 @@ msgstr ""
 "Wir erheben Informationen von Ihnen, wenn Sie sich auf dieser Instanz "
 "registrieren und sammeln Daten, wenn Sie an der Plattform teilnehmen, indem "
 "Sie hier geteilte Inhalte lesen, schreiben und mit ihnen interagieren. Wenn "
-"Sie sich auf dieser Instanz registrieren, werden Sie aufgefordert, <b>eine E-"
-"Mail-Adresse, ein Passwort</b> (gehasht) und mindestens <b>einen "
+"Sie sich auf dieser Instanz registrieren, werden Sie aufgefordert, <b>eine E"
+"-Mail-Adresse, ein Passwort</b> (gehasht) und mindestens <b>einen "
 "Benutzernamen</b> einzugeben. Ihre E-Mail-Adresse wird durch eine E-Mail "
 "verifiziert, die einen eindeutigen Link enthält. Sobald der Link aktiviert "
 "ist, wissen wir, dass Sie diese E-Mail-Adresse kontrollieren. Sie können "
 "auch zusätzliche Profilinformationen wie <b>einen Anzeigenamen und eine "
 "Biografie eingeben und ein Profilbild und ein Header-Bild hochladen</b>. Der "
-"Benutzername, der Anzeigename, die Biografie, das Profilbild und das "
-"Headerbild <b>werden immer öffentlich</b> aufgelistet. <b>Sie können diese "
-"Instanz jedoch auch ohne Registrierung besuchen</b>."
+"Benutzername, der Anzeigename, die Biografie, das Profilbild und das Header-"
+"Bild <b>werden immer öffentlich</b> aufgelistet. <b>Sie können diese Instanz "
+"jedoch auch ohne Registrierung besuchen</b>."
 
 #: lib/web/templates/api/terms.html.heex:76
 #, elixir-autogen, elixir-format
@@ -1456,15 +1458,15 @@ msgstr ""
 msgctxt "terms"
 msgid "When we say “we”, “our”, or “us” in this document, we are referring to the owners, operators and administrators of this Mobilizon instance. The Mobilizon software is provided by the team of Mobilizon contributors, supported by <a href=\"https://framasoft.org\">Framasoft</a>, a French not-for-profit organization advocating for Free/Libre Software. Unless explicitly stated, this Mobilizon instance is an independent service using Mobilizon's source code. You may find more information about this instance on the <a href=\"/about/instance\">\"About this instance\"</a> page."
 msgstr ""
-"Wenn wir in diesem Dokument \"wir\", \"unser\" oder \"uns\" sagen, beziehen "
-"wir uns auf die Eigentümer, Betreiber und Administratoren dieser Mobilizon-"
+"Wenn wir in diesem Dokument „wir“, „unser“ oder „uns“ sagen, beziehen wir "
+"uns auf die Eigentümer, Betreiber und Administratoren dieser Mobilizon-"
 "Instanz. Die Mobilizon-Software wird vom Team der Mobilizon-Mitwirkenden "
 "bereitgestellt, unterstützt von <a href=\"https://framasoft.org\">Framasoft</"
-"a>, einer französischen Non-Profit-Organisation, die sich für Freie/Libre "
+"a>, einer französischen Non-Profit-Organisation, die sich für freie/libre "
 "Software einsetzt. Sofern nicht ausdrücklich angegeben, ist diese Mobilizon-"
 "Instanz ein unabhängiger Dienst, der den Quellcode von Mobilizon verwendet. "
 "Weitere Informationen über diese Instanz finden Sie auf der Seite <a href=\"/"
-"about/instance\">\"Über diese Instanz\"</a>."
+"about/instance\">„Über diese Instanz“</a>."
 
 #: lib/web/templates/api/terms.html.heex:105
 #, elixir-autogen, elixir-format
@@ -1486,7 +1488,7 @@ msgstr ""
 "Verfügung stellen, gewähren Sie uns das Recht und die Lizenz, Ihre Inhalte "
 "in oder über den Dienst (einschließlich über Anwendungen) anzuzeigen und zu "
 "verbreiten. Wir können Ihre Inhalte für die Anzeige im Dienst formatieren, "
-"aber wir werden den Inhalt Ihrer Inhalte selbst nicht bearbeiten oder "
+"aber wir werden die Substanz Ihrer Inhalte nicht bearbeiten oder "
 "überarbeiten. Die Anzeige und Verbreitung Ihrer Inhalte erfolgt nur gemäß "
 "den Sichtbarkeitsregeln, die Sie für die Inhalte festgelegt haben. Wir "
 "werden die Sichtbarkeit der Inhalte, die Sie eingestellt haben, nicht "
@@ -1498,12 +1500,12 @@ msgctxt "terms"
 msgid "Your <b>events</b> and <b>comments</b> are delivered to other instances that follow your own, meaning they are delivered to different instances and copies are stored there. When you delete events or comments, this is likewise delivered to these other instances. All interactions related to event features - such as joining an event - or group features - such as managing resources - are federated as well. Please keep in mind that the operators of the instance and any receiving instances may view such messages and information, and that recipients may screenshot, copy or otherwise re-share them."
 msgstr ""
 "Ihre <b>Veranstaltungen</b> und <b>Kommentare</b> werden an andere Instanzen "
-"geliefert, die Ihrer eigenen folgen, d. h. sie werden an verschiedene "
+"geliefert, die Ihrer eigenen folgen, d. h. sie werden an verschiedene "
 "Instanzen geliefert und dort als Kopie gespeichert. Wenn Sie Veranstaltungen "
 "oder Kommentare löschen, wird dies ebenfalls an diese anderen Instanzen "
-"ausgeliefert. Alle Interaktionen, die sich auf Ereignisfunktionen - wie das "
-"Beitreten zu einer Veranstaltung - oder Gruppenfunktionen - wie die "
-"Verwaltung von Ressourcen - beziehen, werden ebenfalls föderiert. Bitte "
+"ausgeliefert. Alle Interaktionen, die sich auf Ereignisfunktionen – wie das "
+"Beitreten zu einer Veranstaltung – oder Gruppenfunktionen – wie die "
+"Verwaltung von Ressourcen – beziehen, werden ebenfalls föderiert. Bitte "
 "bedenken Sie, dass die Betreiber der Instanz und alle empfangenden Instanzen "
 "solche Nachrichten und Informationen sehen können und dass die Empfänger "
 "Screenshots machen, sie kopieren oder anderweitig weitergeben können."
@@ -1616,8 +1618,8 @@ msgstr "Sie wollen sich verbinden?"
 msgid "Hi there! You just registered to join this event: « <b>%{title}</b> ». Please confirm the e-mail address you provided:"
 msgstr ""
 "Hallo zusammen! Sie haben sich soeben für die Teilnahme an dieser "
-"Veranstaltung registriert: \" <b>%{title}</b> \". Bitte bestätigen Sie die "
-"von Ihnen angegebene E-Mail Adresse:"
+"Veranstaltung registriert: „<b>%{title}</b>“. Bitte bestätigen Sie die von "
+"Ihnen angegebene E-Mail-Adresse:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:47
 #, elixir-autogen, elixir-format
