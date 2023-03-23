@@ -22,44 +22,51 @@ defmodule Mobilizon.Web.ApplicationController do
            Map.get(args, "website")
          ) do
       {:ok, %Application{} = app} ->
-        json(
-          conn,
+        conn
+        |> Plug.Conn.put_resp_header("cache-control", "no-store")
+        |> json(
           Map.take(app, [:name, :website, :redirect_uris, :client_id, :client_secret, :scope])
         )
 
       {:error, :invalid_scope} ->
-        send_resp(
-          conn,
-          400,
-          dgettext(
-            "errors",
-            "The scope parameter is not a space separated list of valid scopes"
-          )
-        )
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_scope",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "The scope parameter is not a space separated list of valid scopes"
+            )
+        })
 
       {:error, error} ->
         Logger.error(inspect(error))
 
-        send_resp(
-          conn,
-          500,
-          dgettext(
-            "errors",
-            "Impossible to create application."
-          )
-        )
+        conn
+        |> Plug.Conn.put_status(500)
+        |> json(%{
+          "error" => "server_error",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "Impossible to create application."
+            )
+        })
     end
   end
 
   def create_application(conn, _args) do
-    send_resp(
-      conn,
-      400,
-      dgettext(
-        "errors",
-        "All of name, scope and redirect_uri parameters are required to create an application"
-      )
-    )
+    conn
+    |> Plug.Conn.put_status(400)
+    |> json(%{
+      "error" => "invalid_request",
+      "error_description" =>
+        dgettext(
+          "errors",
+          "All of name, scope and redirect_uri parameters are required to create an application"
+        )
+    })
   end
 
   @doc """
@@ -77,7 +84,8 @@ defmodule Mobilizon.Web.ApplicationController do
     state = conn.query_params["state"]
     scope = conn.query_params["scope"]
 
-    if is_binary(client_id) and is_binary(redirect_uri) and is_binary(state) and is_binary(scope) do
+    if is_binary(client_id) and is_binary(redirect_uri) and valid_uri?(redirect_uri) and
+         is_binary(state) and is_binary(scope) do
       redirect(conn,
         to:
           Routes.page_path(conn, :authorize,
@@ -88,46 +96,89 @@ defmodule Mobilizon.Web.ApplicationController do
           )
       )
     else
-      send_resp(
-        conn,
-        400,
-        dgettext(
-          "errors",
-          "You need to specify client_id, redirect_uri, scope and state to autorize an application"
+      if is_binary(redirect_uri) and valid_uri?(redirect_uri) do
+        redirect(conn,
+          external:
+            append_parameters(redirect_uri,
+              error: "invalid_request",
+              error_description:
+                dgettext(
+                  "errors",
+                  "You need to specify client_id, redirect_uri, scope and state to autorize an application"
+                )
+            )
         )
-      )
+      else
+        send_resp(
+          conn,
+          400,
+          dgettext(
+            "errors",
+            "You need to provide a valid redirect_uri to autorize an application"
+          )
+        )
+      end
     end
   end
 
   def device_code(conn, %{"client_id" => client_id, "scope" => scope}) do
     case Applications.register_device_code(client_id, scope) do
       {:ok, res} when is_map(res) ->
-        case get_format(conn) do
-          "json" ->
-            json(conn, res)
-
-          _ ->
-            send_resp(conn, 200, URI.encode_query(res))
-        end
+        conn
+        |> Plug.Conn.put_resp_header("cache-control", "no-store")
+        |> json(res)
 
       {:error, :scope_not_included} ->
-        send_resp(conn, 400, "The given scope is not in the list of the app declared scopes")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_scope",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "The given scope is not in the list of the app declared scopes"
+            )
+        })
 
       {:error, :application_not_found} ->
-        send_resp(conn, 400, "No application with this client_id was found")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_client",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "No application with this client_id was found"
+            )
+        })
 
       {:error, %Ecto.Changeset{} = err} ->
         Logger.error(inspect(err))
-        send_resp(conn, 500, "Unable to produce device code")
+
+        conn
+        |> Plug.Conn.put_status(500)
+        |> json(%{
+          "error" => "server_error",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "Unable to produce device code"
+            )
+        })
     end
   end
 
   def device_code(conn, _args) do
-    send_resp(
-      conn,
-      400,
-      "You need to pass both client_id and scope as parameters to obtain a device code"
-    )
+    conn
+    |> Plug.Conn.put_status(400)
+    |> json(%{
+      "error" => "invalid_request",
+      "error_description" =>
+        dgettext(
+          "errors",
+          "You need to pass both client_id and scope as parameters to obtain a device code"
+        )
+    })
   end
 
   @spec generate_access_token(Plug.Conn.t(), map()) :: Plug.Conn.t()
@@ -141,11 +192,19 @@ defmodule Mobilizon.Web.ApplicationController do
       }) do
     case do_generate_access_token(client_id, client_secret, code, redirect_uri, scope) do
       {:ok, token} ->
-        json(conn, token)
+        conn
+        |> Plug.Conn.put_resp_header("cache-control", "no-store")
+        |> json(token)
 
-      {:error, msg} ->
+      {:error, code, msg} ->
         Logger.debug(msg)
-        json(conn, %{error: true, details: msg})
+
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => to_string(code),
+          "error_description" => msg
+        })
     end
   end
 
@@ -156,26 +215,45 @@ defmodule Mobilizon.Web.ApplicationController do
       }) do
     case Applications.generate_access_token_for_device_flow(client_id, device_code) do
       {:ok, res} ->
-        case get_format(conn) do
-          "json" ->
-            json(conn, res)
-
-          _ ->
-            send_resp(
-              conn,
-              200,
-              URI.encode_query(res)
-            )
-        end
+        conn
+        |> Plug.Conn.put_resp_header("cache-control", "no-store")
+        |> json(res)
 
       {:error, :incorrect_device_code} ->
-        send_resp(conn, 400, "The client_id provided or the device_code associated is invalid")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_grant",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "The client_id provided or the device_code associated is invalid"
+            )
+        })
 
       {:error, :access_denied} ->
-        send_resp(conn, 401, "The user rejected the requested authorization")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "access_denied",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "The user rejected the requested authorization"
+            )
+        })
 
       {:error, :expired} ->
-        send_resp(conn, 400, "The given device_code has expired")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_grant",
+          "error_description" =>
+            dgettext(
+              "errors",
+              "The given device_code has expired"
+            )
+        })
     end
   end
 
@@ -187,29 +265,74 @@ defmodule Mobilizon.Web.ApplicationController do
       }) do
     case Applications.refresh_tokens(refresh_token, client_id, client_secret) do
       {:ok, res} ->
-        json(conn, res)
+        conn
+        |> Plug.Conn.put_resp_header("cache-control", "no-store")
+        |> json(res)
 
       {:error, :invalid_client_credentials} ->
-        send_resp(conn, 400, "Invalid client credentials provided")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_client",
+          "error_description" => dgettext("errors", "Invalid client credentials provided")
+        })
 
       {:error, :invalid_refresh_token} ->
-        send_resp(conn, 400, "Invalid refresh token provided")
+        conn
+        |> Plug.Conn.put_status(400)
+        |> json(%{
+          "error" => "invalid_grant",
+          "error_description" => dgettext("errors", "Invalid refresh token provided")
+        })
 
       {:error, err} when is_atom(err) ->
-        send_resp(conn, 500, to_string(err))
+        conn
+        |> Plug.Conn.put_status(500)
+        |> json(%{
+          "error" => "server_error",
+          "error_description" => to_string(err)
+        })
     end
   end
 
   def generate_access_token(conn, _args) do
-    send_resp(
-      conn,
-      400,
-      "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
-    )
+    conn
+    |> Plug.Conn.put_status(400)
+    |> json(%{
+      "error" => "invalid_request",
+      "error_description" =>
+        dgettext(
+          "errors",
+          "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
+        )
+    })
+  end
+
+  def revoke_token(conn, %{"token" => token} = _args) do
+    case Applications.revoke_token(token) do
+      {:ok, _res} ->
+        send_resp(conn, 200, "")
+
+      {:error, _, _, _} ->
+        conn
+        |> Plug.Conn.put_status(500)
+        |> json(%{
+          "error" => "server_error",
+          "error_description" => dgettext("errors", "Unable to revoke token")
+        })
+
+      {:error, :token_not_found} ->
+        conn
+        |> Plug.Conn.put_status(:not_found)
+        |> json(%{
+          "error" => "invalid_request",
+          "error_description" => dgettext("errors", "Token not found")
+        })
+    end
   end
 
   @spec do_generate_access_token(String.t(), String.t(), String.t(), String.t(), String.t()) ::
-          {:ok, Applications.access_token_details()} | {:error, String.t()}
+          {:ok, Applications.access_token_details()} | {:error, atom(), String.t()}
   defp do_generate_access_token(client_id, client_secret, code, redirect_uri, scope) do
     case Applications.generate_access_token(
            client_id,
@@ -222,19 +345,48 @@ defmodule Mobilizon.Web.ApplicationController do
         {:ok, token}
 
       {:error, :application_not_found} ->
-        {:error, dgettext("errors", "No application was found with this client_id")}
+        {:error, :invalid_request,
+         dgettext("errors", "No application was found with this client_id")}
 
       {:error, :redirect_uri_not_in_allowed} ->
-        {:error, dgettext("errors", "This redirect URI is not allowed")}
+        {:error, :invalid_request, dgettext("errors", "This redirect URI is not allowed")}
 
       {:error, :invalid_or_expired} ->
-        {:error, dgettext("errors", "The provided code is invalid or expired")}
+        {:error, :invalid_grant, dgettext("errors", "The provided code is invalid or expired")}
 
       {:error, :provided_code_does_not_match} ->
-        {:error, dgettext("errors", "The provided client_id does not match the provided code")}
+        {:error, :invalid_grant,
+         dgettext("errors", "The provided client_id does not match the provided code")}
 
       {:error, :invalid_client_secret} ->
-        {:error, dgettext("errors", "The provided client_secret is invalid")}
+        {:error, :invalid_client, dgettext("errors", "The provided client_secret is invalid")}
+
+      {:error, :scope_not_included} ->
+        {:error, :invalid_scope,
+         dgettext(
+           "errors",
+           "The provided scope is invalid or not included in the app declared scopes"
+         )}
+    end
+  end
+
+  defp valid_uri?(url) do
+    uri = URI.parse(url)
+    uri.scheme != nil and uri.host =~ "."
+  end
+
+  @spec append_parameters(String.t(), Enum.t()) :: String.t()
+  defp append_parameters(uri_str, parameters) do
+    query_parameters = URI.encode_query(parameters)
+
+    case URI.parse(uri_str) do
+      %URI{query: nil} = uri ->
+        uri
+        |> URI.merge(%URI{query: query_parameters})
+        |> URI.to_string()
+
+      uri ->
+        "#{URI.to_string(uri)}&#{query_parameters}"
     end
   end
 end

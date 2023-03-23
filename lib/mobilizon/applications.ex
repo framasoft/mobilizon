@@ -285,6 +285,16 @@ defmodule Mobilizon.Applications do
     ApplicationToken.changeset(application_token, attrs)
   end
 
+  @spec prune_old_application_tokens(pos_integer()) :: {non_neg_integer(), nil}
+  def prune_old_application_tokens(lifetime) do
+    exp = DateTime.add(NaiveDateTime.utc_now(), -lifetime)
+
+    ApplicationToken
+    |> where([at], at.status != :success)
+    |> where([at], at.inserted_at < ^exp)
+    |> Repo.delete_all()
+  end
+
   alias Mobilizon.Applications.ApplicationDeviceActivation
 
   @doc """
@@ -412,5 +422,14 @@ defmodule Mobilizon.Applications do
         attrs \\ %{}
       ) do
     ApplicationDeviceActivation.changeset(application_device_activation, attrs)
+  end
+
+  @spec prune_old_application_device_activations(pos_integer()) :: {non_neg_integer(), nil}
+  def prune_old_application_device_activations(lifetime) do
+    exp = DateTime.add(NaiveDateTime.utc_now(), -lifetime)
+
+    ApplicationDeviceActivation
+    |> where([at], at.expires_in < ^exp)
+    |> Repo.delete_all()
   end
 end

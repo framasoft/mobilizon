@@ -183,7 +183,7 @@ defmodule Mobilizon.ApplicationsTest do
       assert {:ok, %ApplicationDeviceActivation{} = application_device_activation} =
                Applications.create_application_device_activation(valid_attrs)
 
-      assert application_device_activation == "read"
+      assert application_device_activation.scope == "read"
     end
 
     test "create_application_device_activation/1 with invalid data returns error changeset" do
@@ -204,7 +204,7 @@ defmodule Mobilizon.ApplicationsTest do
                  update_attrs
                )
 
-      assert application_device_activation == "success"
+      assert application_device_activation.status == :success
     end
 
     test "update_application_device_activation/2 with invalid data returns error changeset" do

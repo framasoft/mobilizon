@@ -221,6 +221,7 @@ defmodule Mobilizon.Web.Router do
 
     post("/login/device/code", ApplicationController, :device_code)
     post("/oauth/token", ApplicationController, :generate_access_token)
+    post("/oauth/revoke", ApplicationController, :revoke_token)
   end
 
   scope "/proxy/", Mobilizon.Web do

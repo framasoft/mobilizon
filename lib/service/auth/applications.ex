@@ -14,6 +14,12 @@ defmodule Mobilizon.Service.Auth.Applications do
   @app_access_tokens_ttl {8, :hour}
   @app_refresh_tokens_ttl {26, :week}
 
+  @device_code_expires_in 900
+  @device_code_interval 5
+
+  @authorization_code_lifetime 60
+  @application_device_activation_lifetime @device_code_expires_in * 2
+
   @type access_token_details :: %{
           required(:access_token) => String.t(),
           required(:expires_in) => pos_integer(),
@@ -58,7 +64,8 @@ defmodule Mobilizon.Service.Auth.Applications do
         user_id: user_id,
         application_id: app_id,
         authorization_code: code,
-        scope: scope
+        scope: scope,
+        status: :pending
       })
     else
       nil ->
@@ -113,22 +120,28 @@ defmodule Mobilizon.Service.Auth.Applications do
              | :provided_code_does_not_match
              | :invalid_client_secret
              | :invalid_or_expired
+             | :scope_not_included
              | any()}
   def generate_access_token(client_id, client_secret, code, redirect_uri, scope) do
     with {:application,
           %Application{
             id: application_id,
             client_secret: app_client_secret,
-            redirect_uris: redirect_uris
+            redirect_uris: redirect_uris,
+            scope: app_scope
           }} <-
            {:application, Applications.get_application_by_client_id(client_id)},
-         # TODO: check that app token scope still are acceptable
+         {:scope_included, true} <- {:scope_included, request_scope_valid?(app_scope, scope)},
          {:redirect_uri, true} <-
            {:redirect_uri, redirect_uri in redirect_uris},
          {:app_token, %ApplicationToken{} = app_token} <-
            {:app_token, Applications.get_application_token_by_authorization_code(code)},
+         {:expired, false} <- {:expired, authorization_code_expired?(app_token)},
          {:ok, %ApplicationToken{application_id: application_id_from_token} = app_token} <-
-           Applications.update_application_token(app_token, %{authorization_code: nil}),
+           Applications.update_application_token(app_token, %{
+             authorization_code: nil,
+             status: :success
+           }),
          {:same_app, true} <- {:same_app, application_id === application_id_from_token},
          {:same_client_secret, true} <- {:same_client_secret, app_client_secret == client_secret},
          {:ok, access_token} <-
@@ -160,6 +173,12 @@ defmodule Mobilizon.Service.Auth.Applications do
       {:app_token, _} ->
         {:error, :invalid_or_expired}
 
+      {:expired, true} ->
+        {:error, :invalid_or_expired}
+
+      {:scope_included, false} ->
+        {:error, :scope_not_included}
+
       {:error, err} ->
         {:error, err}
     end
@@ -184,7 +203,8 @@ defmodule Mobilizon.Service.Auth.Applications do
               user_id: user_id,
               application_id: app_id,
               authorization_code: nil,
-              scope: scope
+              scope: scope,
+              status: :success
             })
 
           {:ok, access_token} =
@@ -205,14 +225,12 @@ defmodule Mobilizon.Service.Auth.Applications do
         end
 
       %ApplicationDeviceActivation{status: :incorrect_device_code} ->
-        Logger.error("Incorrect device code set")
         {:error, :incorrect_device_code}
 
       %ApplicationDeviceActivation{status: :access_denied} ->
         {:error, :access_denied}
 
       nil ->
-        Logger.error("nil returned")
         {:error, :incorrect_device_code}
 
       err ->
@@ -231,9 +249,6 @@ defmodule Mobilizon.Service.Auth.Applications do
     |> Enum.join("")
   end
 
-  @expires_in 900
-  @interval 5
-
   @spec register_device_code(String.t(), String.t() | nil) ::
           {:ok, ApplicationDeviceActivation.t()}
           | {:error, :application_not_found}
@@ -250,7 +265,7 @@ defmodule Mobilizon.Service.Auth.Applications do
            Applications.create_application_device_activation(%{
              device_code: device_code,
              user_code: user_code,
-             expires_in: @expires_in,
+             expires_in: @device_code_expires_in,
              application_id: application.id,
              scope: scope
            }) do
@@ -260,7 +275,7 @@ defmodule Mobilizon.Service.Auth.Applications do
        |> Map.take([:device_code, :user_code, :expires_in])
        |> Map.update!(:user_code, &user_code_displayed/1)
        |> Map.merge(%{
-         interval: @interval,
+         interval: @device_code_interval,
          verification_uri: verification_uri
        })}
     else
@@ -359,9 +374,37 @@ defmodule Mobilizon.Service.Auth.Applications do
       :lt
   end
 
+  def prune_old_tokens do
+    Applications.prune_old_application_tokens(@authorization_code_lifetime)
+  end
+
+  def prune_old_application_device_activations do
+    Applications.prune_old_application_device_activations(@application_device_activation_lifetime)
+  end
+
+  @spec revoke_token(String.t()) ::
+          {:ok, map()}
+          | {:error, any(), any(), any()}
+          | {:error, :token_not_found}
+  def revoke_token(token) do
+    case Guardian.resource_from_token(token) do
+      {:ok, %ApplicationToken{} = app_token, _claims} ->
+        Guardian.revoke(token)
+        revoke_application_token(app_token)
+
+      {:error, _err} ->
+        {:error, :token_not_found}
+    end
+  end
+
+  defp authorization_code_expired?(%ApplicationToken{inserted_at: inserted_at}) do
+    NaiveDateTime.compare(NaiveDateTime.add(inserted_at, 60), NaiveDateTime.utc_now()) ==
+      :lt
+  end
+
   defp request_scope_valid?(app_scope, request_scope) do
     app_scopes = app_scope |> String.split(" ") |> MapSet.new()
     request_scopes = request_scope |> String.split(" ") |> MapSet.new()
-    MapSet.subset?(request_scopes, app_scopes)
+    MapSet.subset?(request_scopes, app_scopes) and AppScope.scopes_valid?(request_scope)
   end
 end
