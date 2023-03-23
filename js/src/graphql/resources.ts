@@ -161,3 +161,34 @@ export const PREVIEW_RESOURCE_LINK = gql`
   }
   ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
+
+export const GROUP_RESOURCES_LIST = gql`
+  query GroupResourcesList(
+    $name: String!
+    $resourcesPage: Int
+    $resourcesLimit: Int
+  ) {
+    group(preferredUsername: $name) {
+      id
+      preferredUsername
+      name
+      domain
+      resources(page: $resourcesPage, limit: $resourcesLimit) {
+        elements {
+          id
+          title
+          resourceUrl
+          summary
+          updatedAt
+          type
+          path
+          metadata {
+            ...ResourceMetadataBasicFields
+          }
+        }
+        total
+      }
+    }
+  }
+  ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
+`;

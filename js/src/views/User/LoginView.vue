@@ -106,7 +106,7 @@
             variant="text"
             :to="{
               name: RouteName.REGISTER,
-              params: {
+              query: {
                 default_email: credentials.email,
                 default_password: credentials.password,
               },
@@ -143,14 +143,6 @@ import { LoginError, LoginErrorCode } from "@/types/enums";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import { useHead } from "@vueuse/head";
 
-const props = withDefaults(
-  defineProps<{
-    email?: string;
-    password?: string;
-  }>(),
-  { email: "", password: "" }
-);
-
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();
 const route = useRoute();
@@ -177,8 +169,9 @@ const errors = ref<string[]>([]);
 const submitted = ref(false);
 
 const credentials = reactive({
-  email: "",
-  password: "",
+  email: typeof route.query.email === "string" ? route.query.email : "",
+  password:
+    typeof route.query.password === "string" ? route.query.password : "",
 });
 
 const redirect = ref<string | undefined>("");
@@ -298,9 +291,6 @@ const currentProvider = computed(() => {
 });
 
 onMounted(() => {
-  credentials.email = props.email;
-  credentials.password = props.password;
-
   const query = route?.query;
   errorCode.value = query?.code as LoginErrorCode;
   redirect.value = query?.redirect as string | undefined;

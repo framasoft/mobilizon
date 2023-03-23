@@ -54,8 +54,8 @@ export const LIST_GROUPS = gql`
   ${ACTOR_FRAGMENT}
 `;
 
-export const GROUP_FIELDS_FRAGMENTS = gql`
-  fragment GroupFullFields on Group {
+export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
+  fragment GroupBasicFields on Group {
     ...ActorFragment
     suspended
     visibility
@@ -137,18 +137,23 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       }
       total
     }
-    discussions(page: $discussionsPage, limit: $discussionsLimit) {
-      total
-      elements {
-        ...DiscussionBasicFields
-      }
-    }
     posts(page: $postsPage, limit: $postsLimit) {
       total
       elements {
         ...PostBasicFields
       }
     }
+  }
+  ${ACTOR_FRAGMENT}
+  ${ADDRESS_FRAGMENT}
+  ${EVENT_OPTIONS_FRAGMENT}
+  ${TAG_FRAGMENT}
+  ${POST_BASIC_FIELDS}
+`;
+
+export const GROUP_FIELDS_FRAGMENTS = gql`
+  fragment GroupFullFields on Group {
+    ...GroupBasicFields
     members(page: $membersPage, limit: $membersLimit) {
       elements {
         id
@@ -196,14 +201,13 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
       total
     }
   }
-  ${ACTOR_FRAGMENT}
-  ${ADDRESS_FRAGMENT}
-  ${EVENT_OPTIONS_FRAGMENT}
-  ${TAG_FRAGMENT}
+  ${GROUP_BASIC_FIELDS_FRAGMENTS}
+  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
+  ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
 
-export const FETCH_GROUP = gql`
-  query FetchGroup(
+export const FETCH_GROUP_PUBLIC = gql`
+  query FetchGroupPublic(
     $name: String!
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
@@ -211,19 +215,12 @@ export const FETCH_GROUP = gql`
     $organisedEventsLimit: Int
     $postsPage: Int
     $postsLimit: Int
-    $membersPage: Int
-    $membersLimit: Int
-    $discussionsPage: Int
-    $discussionsLimit: Int
   ) {
     group(preferredUsername: $name) {
-      ...GroupFullFields
+      ...GroupBasicFields
     }
   }
-  ${GROUP_FIELDS_FRAGMENTS}
-  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
-  ${POST_BASIC_FIELDS}
-  ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
+  ${GROUP_BASIC_FIELDS_FRAGMENTS}
 `;
 
 export const GET_GROUP = gql`

@@ -85,7 +85,7 @@ defmodule Mobilizon.GraphQL.Schema.AdminType do
   Language information
   """
   object :language do
-    meta(:authorize, :administrator)
+    meta(:authorize, :all)
     field(:code, :string, description: "The iso-639-3 language code")
     field(:name, :string, description: "The language name")
   end

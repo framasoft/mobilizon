@@ -44,7 +44,7 @@ export const userRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/resend-instructions",
+    path: "/resend-instructions/:email?",
     name: UserRouteName.RESEND_CONFIRMATION,
     component: (): Promise<any> =>
       import("@/views/User/ResendConfirmation.vue"),
@@ -57,7 +57,7 @@ export const userRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/password-reset/send",
+    path: "/password-reset/send/:email?",
     name: UserRouteName.SEND_PASSWORD_RESET,
     component: (): Promise<any> => import("@/views/User/SendPasswordReset.vue"),
     props: true,

@@ -80,8 +80,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
     )
 
     # This one should have a privacy setting
-    field :organized_events, :paginated_event_list,
-      meta: [private: true, rule: :"read:group:events"] do
+    field :organized_events, :paginated_event_list do
       arg(:after_datetime, :datetime,
         default_value: nil,
         description: "Filter events that begin after this datetime"

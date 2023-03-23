@@ -649,7 +649,7 @@ const FullAddressAutoComplete = defineAsyncComponent(
 //     },
 //   },
 //   group: {
-//     query: FETCH_GROUP,
+//     query: FETCH_GROUP_PUBLIC,
 //     fetchPolicy: "cache-and-network",
 //     variables() {
 //       return {

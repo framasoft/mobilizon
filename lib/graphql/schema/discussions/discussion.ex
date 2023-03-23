@@ -51,7 +51,8 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
       middleware(Rajska.QueryAuthorization,
         permit: :user,
         scope: Mobilizon.Discussions.Discussion,
-        rule: :"read:group:discussions"
+        rule: :"read:group:discussions",
+        args: %{slug: :slug}
       )
 
       resolve(&Discussion.get_discussion/3)

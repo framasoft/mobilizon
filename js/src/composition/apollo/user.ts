@@ -18,12 +18,13 @@ export function useCurrentUserClient() {
     result: currentUserResult,
     error,
     loading,
+    onResult,
   } = useQuery<{
     currentUser: ICurrentUser;
   }>(CURRENT_USER_CLIENT);
 
   const currentUser = computed(() => currentUserResult.value?.currentUser);
-  return { currentUser, error, loading };
+  return { currentUser, error, loading, onResult };
 }
 
 export function useLoggedUser() {

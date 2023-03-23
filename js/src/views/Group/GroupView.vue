@@ -73,9 +73,9 @@
                   t(
                     "{count} members",
                     {
-                      count: group.members.total,
+                      count: group.members?.total,
                     },
-                    group.members.total
+                    group.members?.total
                   )
                 }}
                 <router-link
@@ -388,9 +388,9 @@
       <!-- Private things -->
       <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
         <!-- Group discussions -->
-        <Discussions :group="group" class="flex-1" />
+        <Discussions :group="discussionGroup ?? group" class="flex-1" />
         <!-- Resources -->
-        <Resources :group="group" class="flex-1" />
+        <Resources :group="resourcesGroup ?? group" class="flex-1" />
       </div>
       <!-- Public things -->
       <div class="flex-1 m-0 flex flex-col flex-wrap gap-2">
@@ -452,9 +452,9 @@
               t(
                 "{count} members",
                 {
-                  count: group.members.total,
+                  count: group.members?.total,
                 },
-                group.members.total
+                group.members?.total
               )
             }}
           </event-metadata-block>
@@ -671,6 +671,7 @@ import { useAnonymousReportsConfig } from "../../composition/apollo/config";
 import { computed, defineAsyncComponent, inject, ref, watch } from "vue";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { useGroup, useLeaveGroup } from "@/composition/apollo/group";
+import { useGroupDiscussionsList } from "@/composition/apollo/discussions";
 import { useRouter } from "vue-router";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
@@ -691,6 +692,7 @@ import Posts from "@/components/Group/Sections/PostsSection.vue";
 import Events from "@/components/Group/Sections/EventsSection.vue";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
+import { useGroupResourcesList } from "@/composition/apollo/resources";
 
 const props = defineProps<{
   preferredUsername: string;
@@ -704,6 +706,14 @@ const {
   refetch: refetchGroup,
 } = useGroup(props.preferredUsername, { afterDateTime: new Date() });
 const router = useRouter();
+
+const { group: discussionGroup } = useGroupDiscussionsList(
+  props.preferredUsername
+);
+const { group: resourcesGroup } = useGroupResourcesList(
+  props.preferredUsername,
+  { resourcesPage: 1, resourcesLimit: 3 }
+);
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -1037,7 +1047,7 @@ const isCurrentActorOnADifferentDomainThanGroup = computed((): boolean => {
 
 const members = computed((): IMember[] => {
   return (
-    group.value?.members.elements.filter(
+    (group.value?.members?.elements ?? []).filter(
       (member: IMember) =>
         ![
           MemberRole.INVITED,
