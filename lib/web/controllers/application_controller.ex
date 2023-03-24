@@ -15,42 +15,63 @@ defmodule Mobilizon.Web.ApplicationController do
         conn,
         %{"name" => name, "redirect_uris" => redirect_uris, "scope" => scope} = args
       ) do
-    case Applications.create(
-           name,
-           String.split(redirect_uris, "\n"),
-           scope,
-           Map.get(args, "website")
+    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
+
+    case Hammer.check_rate(
+           "create_application:#{ip}",
+           60_000,
+           10
          ) do
-      {:ok, %Application{} = app} ->
-        conn
-        |> Plug.Conn.put_resp_header("cache-control", "no-store")
-        |> json(
-          Map.take(app, [:name, :website, :redirect_uris, :client_id, :client_secret, :scope])
-        )
-
-      {:error, :invalid_scope} ->
-        conn
-        |> Plug.Conn.put_status(400)
-        |> json(%{
-          "error" => "invalid_scope",
-          "error_description" =>
-            dgettext(
-              "errors",
-              "The scope parameter is not a space separated list of valid scopes"
+      {:allow, _} ->
+        case Applications.create(
+               name,
+               String.split(redirect_uris, "\n"),
+               scope,
+               Map.get(args, "website")
+             ) do
+          {:ok, %Application{} = app} ->
+            conn
+            |> Plug.Conn.put_resp_header("cache-control", "no-store")
+            |> json(
+              Map.take(app, [:name, :website, :redirect_uris, :client_id, :client_secret, :scope])
             )
-        })
 
-      {:error, error} ->
-        Logger.error(inspect(error))
+          {:error, :invalid_scope} ->
+            conn
+            |> Plug.Conn.put_status(400)
+            |> json(%{
+              "error" => "invalid_scope",
+              "error_description" =>
+                dgettext(
+                  "errors",
+                  "The scope parameter is not a space separated list of valid scopes"
+                )
+            })
 
+          {:error, error} ->
+            Logger.error(inspect(error))
+
+            conn
+            |> Plug.Conn.put_status(500)
+            |> json(%{
+              "error" => "server_error",
+              "error_description" =>
+                dgettext(
+                  "errors",
+                  "Impossible to create application."
+                )
+            })
+        end
+
+      {:deny, _} ->
         conn
-        |> Plug.Conn.put_status(500)
+        |> Plug.Conn.put_status(429)
         |> json(%{
-          "error" => "server_error",
+          "error" => "slow_down",
           "error_description" =>
             dgettext(
               "errors",
-              "Impossible to create application."
+              "Too many requests"
             )
         })
     end
@@ -148,7 +169,7 @@ defmodule Mobilizon.Web.ApplicationController do
           "error_description" =>
             dgettext(
               "errors",
-              "No application with this client_id was found"
+              "No application was found with this client_id"
             )
         })
 
@@ -231,6 +252,37 @@ defmodule Mobilizon.Web.ApplicationController do
             )
         })
 
+      {:error, :pending, interval} ->
+        case Hammer.check_rate(
+               "generate_device_access_token:#{client_id}:#{device_code}",
+               interval * 1_000,
+               1
+             ) do
+          {:allow, _} ->
+            conn
+            |> Plug.Conn.put_status(400)
+            |> json(%{
+              "error" => "authorization_pending",
+              "error_description" =>
+                dgettext(
+                  "errors",
+                  "The authorization request is still pending"
+                )
+            })
+
+          {:deny, _} ->
+            conn
+            |> Plug.Conn.put_status(400)
+            |> json(%{
+              "error" => "slow_down",
+              "error_description" =>
+                dgettext(
+                  "errors",
+                  "Please slow down the rate of your requests"
+                )
+            })
+        end
+
       {:error, :access_denied} ->
         conn
         |> Plug.Conn.put_status(400)
@@ -247,7 +299,7 @@ defmodule Mobilizon.Web.ApplicationController do
         conn
         |> Plug.Conn.put_status(400)
         |> json(%{
-          "error" => "invalid_grant",
+          "error" => "expired_token",
           "error_description" =>
             dgettext(
               "errors",

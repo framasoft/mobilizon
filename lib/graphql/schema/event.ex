@@ -15,6 +15,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import_types(Schema.Events.ParticipantType)
   import_types(Schema.TagType)
 
+  @env Application.compile_env(:mobilizon, :env)
+  @event_rate_limiting 60
+
   @desc "An event"
   object :event do
     meta(:authorize, :all)
@@ -437,6 +440,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         args: %{organizer_actor_id: :organizer_actor_id}
       )
 
+      middleware(Rajska.RateLimiter, limit: event_rate_limiting(@env))
+
       resolve(&Event.create_event/3)
     end
 
@@ -505,4 +510,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       resolve(&Event.delete_event/3)
     end
   end
+
+  defp event_rate_limiting(:test), do: @event_rate_limiting * 1000
+  defp event_rate_limiting(_), do: @event_rate_limiting
 end

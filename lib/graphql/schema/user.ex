@@ -7,11 +7,16 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Application, Media, User}
+  alias Mobilizon.GraphQL.Resolvers.Application, as: ApplicationResolver
+  alias Mobilizon.GraphQL.Resolvers.{Media, User}
   alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.SortType)
+
+  @env Application.compile_env(:mobilizon, :env)
+  @user_ip_limit 10
+  @user_email_limit 5
 
   @desc "A local user of Mobilizon"
   object :user do
@@ -180,7 +185,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       description: "The user's authorized authentication apps",
       meta: [private: true, rule: :forbid_app_access]
     ) do
-      resolve(&Application.get_user_applications/3)
+      resolve(&ApplicationResolver.get_user_applications/3)
     end
   end
 
@@ -331,6 +336,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:password, non_null(:string), description: "The new user's password")
       arg(:locale, :string, description: "The new user's locale")
       middleware(Rajska.QueryAuthorization, permit: :all)
+      middleware(Rajska.RateLimiter, limit: user_ip_limiter(@env))
+      middleware(Rajska.RateLimiter, keys: :email, limit: user_email_limiter(@env))
       resolve(&User.create_user/3)
     end
 
@@ -349,6 +356,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:email, non_null(:string), description: "The email used to register")
       arg(:locale, :string, description: "The user's locale")
       middleware(Rajska.QueryAuthorization, permit: :all)
+      middleware(Rajska.RateLimiter, limit: user_ip_limiter(@env))
+      middleware(Rajska.RateLimiter, keys: :email, limit: user_email_limiter(@env))
       resolve(&User.resend_confirmation_email/3)
     end
 
@@ -357,6 +366,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:email, non_null(:string), description: "The user's email")
       arg(:locale, :string, description: "The user's locale")
       middleware(Rajska.QueryAuthorization, permit: :all)
+      middleware(Rajska.RateLimiter, limit: user_ip_limiter(@env))
+      middleware(Rajska.RateLimiter, keys: :email, limit: user_email_limiter(@env))
       resolve(&User.send_reset_password/3)
     end
 
@@ -377,6 +388,8 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       arg(:email, non_null(:string), description: "The user's email")
       arg(:password, non_null(:string), description: "The user's password")
       middleware(Rajska.QueryAuthorization, permit: :all)
+      middleware(Rajska.RateLimiter, limit: user_ip_limiter(@env))
+      middleware(Rajska.RateLimiter, keys: :email, limit: user_email_limiter(@env))
       resolve(&User.login_user/3)
     end
 
@@ -480,4 +493,10 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       resolve(&User.update_locale/3)
     end
   end
+
+  defp user_ip_limiter(:test), do: @user_ip_limit * 1000
+  defp user_ip_limiter(_), do: @user_ip_limit
+
+  defp user_email_limiter(:test), do: @user_email_limit * 1000
+  defp user_email_limiter(_), do: @user_email_limit
 end

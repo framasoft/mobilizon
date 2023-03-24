@@ -6,6 +6,9 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
 
   alias Mobilizon.GraphQL.Resolvers.Media
 
+  @env Application.compile_env(:mobilizon, :env)
+  @media_rate_limiting 60
+
   @desc "A media"
   object :media do
     meta(:authorize, :all)
@@ -77,6 +80,8 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
         args: %{}
       )
 
+      middleware(Rajska.RateLimiter, limit: media_rate_limiting(@env))
+
       resolve(&Media.upload_media/3)
     end
 
@@ -95,4 +100,7 @@ defmodule Mobilizon.GraphQL.Schema.MediaType do
       resolve(&Media.remove_media/3)
     end
   end
+
+  defp media_rate_limiting(:test), do: @media_rate_limiting * 1000
+  defp media_rate_limiting(_), do: @media_rate_limiting
 end

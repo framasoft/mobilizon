@@ -108,7 +108,7 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
 
       assert error = json_response(conn, 400)
       assert error["error"] == "invalid_client"
-      assert error["error_description"] == "No application with this client_id was found"
+      assert error["error_description"] == "No application was found with this client_id"
     end
 
     test "with a scope not matching app registered scopes", %{conn: conn} do
@@ -277,10 +277,56 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
         )
 
       assert error = json_response(conn, 400)
-      assert error["error"] == "invalid_grant"
+      assert error["error"] == "expired_token"
 
       assert error["error_description"] ==
                "The given device_code has expired"
+    end
+
+    test "with a pending authorization", %{conn: conn} do
+      user = insert(:user)
+
+      {:ok, app} =
+        Applications.create("My app", ["hello"], "write:event:create write:event:update")
+
+      assert {:ok, _res} =
+               Mobilizon.Applications.create_application_device_activation(%{
+                 device_code: "hello",
+                 user_code: "world",
+                 expires_in: 600,
+                 application_id: app.id,
+                 scope: "write:event:create write:event:update",
+                 status: "pending",
+                 user_id: user.id
+               })
+
+      conn =
+        conn
+        |> Plug.Conn.put_req_header("accept", "application/json")
+        |> post("/oauth/token",
+          grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+          client_id: app.client_id,
+          device_code: "hello"
+        )
+
+      error = json_response(conn, 400)
+
+      assert error["error"] == "authorization_pending"
+      assert error["error_description"] == "The authorization request is still pending"
+
+      conn =
+        Phoenix.ConnTest.build_conn()
+        |> Plug.Conn.put_req_header("accept", "application/json")
+        |> post("/oauth/token",
+          grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+          client_id: app.client_id,
+          device_code: "hello"
+        )
+
+      error = json_response(conn, 400)
+
+      assert error["error"] == "slow_down"
+      assert error["error_description"] == "Please slow down the rate of your requests"
     end
 
     test "with valid params as JSON", %{conn: conn} do

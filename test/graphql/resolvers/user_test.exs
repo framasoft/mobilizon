@@ -384,6 +384,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
           variables: @user_creation
         )
 
+      assert res["errors"] == nil
       assert res["data"]["createUser"]["email"] == @user_creation.email
 
       res =

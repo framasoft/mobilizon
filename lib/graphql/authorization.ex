@@ -45,6 +45,9 @@ defmodule Mobilizon.GraphQL.Authorization do
   def get_user_role(nil), do: nil
 
   @impl true
+  def get_ip(%{ip: ip}), do: ip
+
+  @impl true
   def unauthorized_message(resolution) do
     case Map.get(resolution.context, :current_user) do
       nil ->

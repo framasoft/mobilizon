@@ -230,6 +230,9 @@ defmodule Mobilizon.Service.Auth.Applications do
       %ApplicationDeviceActivation{status: :access_denied} ->
         {:error, :access_denied}
 
+      %ApplicationDeviceActivation{status: :pending} ->
+        {:error, :pending, @device_code_interval}
+
       nil ->
         {:error, :incorrect_device_code}
 
