@@ -434,7 +434,7 @@ defmodule Mobilizon.GraphQL.Resolvers.MediaTest do
           variables: %{email: user.email}
         )
 
-      assert is_nil(res["errors"])
+      assert res["errors"] == nil
       assert hd(res["data"]["users"]["elements"])["mediaSize"] == 0
 
       res = upload_media(conn, user)

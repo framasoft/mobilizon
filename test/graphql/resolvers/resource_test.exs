@@ -260,10 +260,8 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert is_nil(res["errors"])
-
-      assert res["data"]["group"]["resources"]["total"] == 0
-      assert res["data"]["group"]["resources"]["elements"] == []
+      assert hd(res["errors"])["message"] ==
+               "Not authorized to access object paginated_resource_list"
     end
   end
 
@@ -380,7 +378,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ResourceTest do
           }
         )
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to access resources"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
   end
 

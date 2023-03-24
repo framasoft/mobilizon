@@ -39,6 +39,9 @@
       # to `false` below:
       #
       color: true,
+      plugins: [
+        {CredoCodeClimate, []}
+      ],
       #
       # You can customize the parameters of any check by adding a second element
       # to the tuple.

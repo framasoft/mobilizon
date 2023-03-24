@@ -11,11 +11,12 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
 
   @desc "A report object"
   object :report do
+    meta(:authorize, :all)
     interfaces([:action_log_object])
     field(:id, :id, description: "The internal ID of the report")
     field(:content, :string, description: "The comment the reporter added about this report")
     field(:status, :report_status, description: "Whether the report is still active")
-    field(:uri, :string, description: "The URI of the report")
+    field(:uri, :string, description: "The URI of the report", meta: [private: true])
     field(:reported, :actor, description: "The actor that is being reported")
     field(:reporter, :actor, description: "The actor that created the report")
     field(:event, :event, description: "The event that is being reported")
@@ -23,6 +24,7 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
 
     field(:notes, list_of(:report_note),
       description: "The notes made on the event",
+      meta: [private: true],
       resolve: dataloader(Reports)
     )
 
@@ -31,12 +33,14 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
   end
 
   object :paginated_report_list do
+    meta(:authorize, :moderator)
     field(:elements, list_of(:report), description: "A list of reports")
     field(:total, :integer, description: "The total number of reports in the list")
   end
 
   @desc "A report note object"
   object :report_note do
+    meta(:authorize, :moderator)
     interfaces([:action_log_object])
     field(:id, :id, description: "The internal ID of the report note")
     field(:content, :string, description: "The content of the note")
@@ -73,12 +77,20 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
       arg(:limit, :integer, default_value: 10, description: "The limit of reports per page")
       arg(:status, :report_status, default_value: :open, description: "Filter reports by status")
       arg(:domain, :string, default_value: nil, description: "Filter reports by domain name")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :moderator,
+        scope: Mobilizon.Reports.Report,
+        args: %{}
+      )
+
       resolve(&Report.list_reports/3)
     end
 
     @desc "Get a report by id"
     field :report, :report do
       arg(:id, non_null(:id), description: "The report ID")
+      middleware(Rajska.QueryAuthorization, permit: :moderator, scope: Mobilizon.Reports.Report)
       resolve(&Report.get_report/3)
     end
   end
@@ -101,6 +113,8 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
           "Whether to forward the report to the original instance if the content is remote"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
+
       resolve(&Report.create_report/3)
     end
 
@@ -113,6 +127,12 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
         description: "The feedback to send to the anti-spam system"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :moderator,
+        scope: Mobilizon.Reports.Report,
+        args: %{id: :report_id}
+      )
+
       resolve(&Report.update_report/3)
     end
 
@@ -120,12 +140,26 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     field :create_report_note, type: :report_note do
       arg(:content, :string, description: "The note's content")
       arg(:report_id, non_null(:id), description: "The report's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :moderator,
+        scope: Mobilizon.Reports.Report,
+        args: %{id: :report_id}
+      )
+
       resolve(&Report.create_report_note/3)
     end
 
     @desc "Delete a note on a report"
     field :delete_report_note, type: :deleted_object do
       arg(:note_id, non_null(:id), description: "The note's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :moderator,
+        scope: Mobilizon.Reports.Note,
+        args: %{id: :note_id}
+      )
+
       resolve(&Report.delete_report_note/3)
     end
   end

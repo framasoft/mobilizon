@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
   @desc "A config object"
   object :config do
+    meta(:authorize, :all)
     # Instance name
     field(:name, :string, description: "The instance's name")
     field(:description, :string, description: "The instance's short description")
@@ -87,6 +88,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   The instance's terms configuration
   """
   object :terms do
+    meta(:authorize, :all)
     field(:url, :string, description: "The instance's terms URL.")
     field(:type, :instance_terms_type, description: "The instance's terms type")
     field(:body_html, :string, description: "The instance's terms body text")
@@ -96,6 +98,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   The instance's privacy policy configuration
   """
   object :privacy do
+    meta(:authorize, :all)
     field(:url, :string, description: "The instance's privacy policy URL")
     field(:type, :instance_privacy_type, description: "The instance's privacy policy type")
     field(:body_html, :string, description: "The instance's privacy policy body text")
@@ -105,6 +108,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Geographic coordinates
   """
   object :lonlat do
+    meta(:authorize, :all)
     field(:longitude, :float, description: "The coordinates longitude")
     field(:latitude, :float, description: "The coordinates latitude")
     # field(:accuracy_radius, :integer)
@@ -114,6 +118,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance geocoding configuration
   """
   object :geocoding do
+    meta(:authorize, :all)
+
     field(:autocomplete, :boolean,
       description: "Whether autocomplete in address fields can be enabled"
     )
@@ -125,6 +131,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance maps configuration
   """
   object :maps do
+    meta(:authorize, :all)
     field(:tiles, :tiles, description: "The instance's maps tiles configuration")
     field(:routing, :routing, description: "The instance's maps routing configuration")
   end
@@ -133,6 +140,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance map tiles configuration
   """
   object :tiles do
+    meta(:authorize, :all)
     field(:endpoint, :string, description: "The instance's tiles endpoint")
     field(:attribution, :string, description: "The instance's tiles attribution text")
   end
@@ -141,6 +149,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance map routing configuration
   """
   object :routing do
+    meta(:authorize, :all)
     field(:type, :routing_type, description: "The instance's routing type")
   end
 
@@ -153,6 +162,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous configuration
   """
   object :anonymous do
+    meta(:authorize, :all)
+
     field(:participation, :anonymous_participation,
       description: "The instance's anonymous participation settings"
     )
@@ -172,6 +183,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous participation configuration
   """
   object :anonymous_participation do
+    meta(:authorize, :all)
     field(:allowed, :boolean, description: "Whether anonymous participations are allowed")
 
     field(:validation, :anonymous_participation_validation,
@@ -183,6 +195,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous participation validation configuration
   """
   object :anonymous_participation_validation do
+    meta(:authorize, :all)
+
     field(:email, :anonymous_participation_validation_email,
       description: "The policy to validate anonymous participations by email"
     )
@@ -196,6 +210,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous participation with validation by email configuration
   """
   object :anonymous_participation_validation_email do
+    meta(:authorize, :all)
+
     field(:enabled, :boolean,
       description: "Whether anonymous participation validation by email is enabled"
     )
@@ -209,6 +225,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous participation with validation by captcha configuration
   """
   object :anonymous_participation_validation_captcha do
+    meta(:authorize, :all)
+
     field(:enabled, :boolean,
       description: "Whether anonymous participation validation by captcha is enabled"
     )
@@ -218,6 +236,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous event creation configuration
   """
   object :anonymous_event_creation do
+    meta(:authorize, :all)
     field(:allowed, :boolean, description: "Whether anonymous event creation is enabled")
 
     field(:validation, :anonymous_event_creation_validation,
@@ -229,6 +248,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous event creation validation configuration
   """
   object :anonymous_event_creation_validation do
+    meta(:authorize, :all)
+
     field(:email, :anonymous_event_creation_validation_email,
       description: "The policy to validate anonymous event creations by email"
     )
@@ -242,6 +263,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous event creation email validation configuration
   """
   object :anonymous_event_creation_validation_email do
+    meta(:authorize, :all)
+
     field(:enabled, :boolean,
       description: "Whether anonymous event creation with email validation is enabled"
     )
@@ -255,6 +278,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous event creation captcha validation configuration
   """
   object :anonymous_event_creation_validation_captcha do
+    meta(:authorize, :all)
+
     field(:enabled, :boolean,
       description: "Whether anonymous event creation with validation by captcha is enabled"
     )
@@ -264,6 +289,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Instance anonymous reports
   """
   object :anonymous_reports do
+    meta(:authorize, :all)
     field(:allowed, :boolean, description: "Whether anonymous reports are allowed")
   end
 
@@ -271,6 +297,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   A resource provider details
   """
   object :resource_provider do
+    meta(:authorize, :all)
     field(:type, :string, description: "The resource provider's type")
     field(:endpoint, :string, description: "The resource provider's endpoint")
     field(:software, :string, description: "The resource provider's software")
@@ -280,17 +307,22 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   The instance's features
   """
   object :features do
+    meta(:authorize, :all)
     field(:groups, :boolean, description: "Whether groups are activated on this instance")
 
     field(:event_creation, :boolean,
       description: "Whether event creation is allowed on this instance"
     )
+
+    field(:antispam, :boolean, description: "Whether anti-spam is activated on this instance")
   end
 
   @desc """
   The instance's restrictions
   """
   object :restrictions do
+    meta(:authorize, :all)
+
     field(:only_admin_can_create_groups, :boolean,
       description: "Whether groups creation is allowed only for admin, not for all users"
     )
@@ -304,6 +336,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   The instance's auth configuration
   """
   object :auth do
+    meta(:authorize, :all)
     field(:ldap, :boolean, description: "Whether or not LDAP auth is enabled")
     field(:database_login, :boolean, description: "Whether or not database login is enabled")
     field(:oauth_providers, list_of(:oauth_provider), description: "List of oauth providers")
@@ -313,6 +346,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   An oAuth Provider
   """
   object :oauth_provider do
+    meta(:authorize, :all)
     field(:id, :string, description: "The provider ID")
     field(:label, :string, description: "The label for the auth provider")
   end
@@ -321,21 +355,25 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   An upload limits configuration
   """
   object :upload_limits do
+    meta(:authorize, :all)
     field(:default, :integer, description: "The default limitation, in bytes")
     field(:avatar, :integer, description: "The avatar limitation, in bytes")
     field(:banner, :integer, description: "The banner limitation, in bytes")
   end
 
   object :instance_feeds do
+    meta(:authorize, :all)
     field(:enabled, :boolean, description: "Whether the instance-wide feeds are enabled")
   end
 
   object :web_push do
+    meta(:authorize, :all)
     field(:enabled, :boolean, description: "Whether the WebPush feature is enabled")
     field(:public_key, :string, description: "The server's public WebPush VAPID key")
   end
 
   object :analytics do
+    meta(:authorize, :all)
     field(:id, :string, description: "ID of the analytics service")
     field(:enabled, :boolean, description: "Whether the service is activated or not")
 
@@ -352,16 +390,19 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   end
 
   object :analytics_configuration do
+    meta(:authorize, :all)
     field(:key, :string, description: "The key for the analytics configuration element")
     field(:value, :string, description: "The value for the analytics configuration element")
     field(:type, :analytics_configuration_type, description: "The analytics configuration type")
   end
 
   object :search_settings do
+    meta(:authorize, :all)
     field(:global, :global_search_settings, description: "The instance's global search settings")
   end
 
   object :global_search_settings do
+    meta(:authorize, :all)
     field(:is_enabled, :boolean, description: "Whether global search is enabled")
     field(:is_default, :boolean, description: "Whether global search is the default")
   end
@@ -370,6 +411,8 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Export formats configuration
   """
   object :export_formats do
+    meta(:authorize, :all)
+
     field(:event_participants, list_of(:string),
       description: "The list of formats the event participants can be exported to"
     )
@@ -379,6 +422,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   Event categories list configuration
   """
   object :event_category_option do
+    meta(:authorize, :all)
     field(:id, :string, description: "The ID of the event category")
     field(:label, :string, description: "The translated name of the event category")
   end
@@ -386,6 +430,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
   object :config_queries do
     @desc "Get the instance config"
     field :config, :config do
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Config.get_config/3)
     end
   end

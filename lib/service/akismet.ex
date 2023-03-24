@@ -192,7 +192,7 @@ defmodule Mobilizon.Service.Akismet do
       {email, ip} ->
         {preferred_username, email, ip}
 
-      err ->
+      _ ->
         {:error, :invalid_actor}
     end
   end
@@ -205,7 +205,7 @@ defmodule Mobilizon.Service.Akismet do
     {nil, preferred_username, "127.0.0.1"}
   end
 
-  defp actor_details(err) do
+  defp actor_details(_) do
     {:error, :invalid_actor}
   end
 

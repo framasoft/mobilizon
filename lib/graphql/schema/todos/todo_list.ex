@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
 
   @desc "A todo list"
   object :todo_list do
+    meta(:authorize, :user)
     field(:id, :id, description: "The todo list's ID")
     field(:title, :string, description: "The todo list's title")
 
@@ -37,6 +38,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
   A paginated list of todo-lists
   """
   object :paginated_todo_list_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:todo_list), description: "A list of todo lists")
     field(:total, :integer, description: "The total number of todo lists in the list")
   end
@@ -45,6 +47,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
     @desc "Get a todo list"
     field :todo_list, :todo_list do
       arg(:id, non_null(:id), description: "The todo-list ID")
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Todos.get_todo_list/3)
     end
   end
@@ -54,6 +57,7 @@ defmodule Mobilizon.GraphQL.Schema.Todos.TodoListType do
     field :create_todo_list, :todo_list do
       arg(:title, non_null(:string), description: "The todo list title")
       arg(:group_id, non_null(:id), description: "The group ID")
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Todos.create_todo_list/3)
     end
   end

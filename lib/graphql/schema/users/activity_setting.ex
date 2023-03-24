@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Schema.Users.ActivitySetting do
   alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
 
   object :activity_setting do
+    meta(:authorize, :user)
     field(:key, :string)
     field(:method, :string)
     field(:enabled, :boolean)
@@ -17,6 +18,13 @@ defmodule Mobilizon.GraphQL.Schema.Users.ActivitySetting do
       arg(:key, non_null(:string))
       arg(:method, non_null(:string))
       arg(:enabled, non_null(:boolean))
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: false,
+        rule: :"write:user:setting:activity"
+      )
+
       resolve(&ActivitySettings.upsert_user_activity_setting/3)
     end
   end

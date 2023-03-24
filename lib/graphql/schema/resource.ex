@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
 
   @desc "A resource"
   object :resource do
+    meta(:authorize, :user)
     interfaces([:activity_object])
     field(:id, :id, description: "The resource's ID")
     field(:title, :string, description: "The resource's title")
@@ -44,6 +45,7 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
   A paginated list of resources
   """
   object :paginated_resource_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:resource), description: "A list of resources")
     field(:total, :integer, description: "The total number of resources in the list")
   end
@@ -52,6 +54,7 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
   The metadata associated to the resource
   """
   object :resource_metadata do
+    meta(:authorize, :user)
     field(:type, :string, description: "The type of the resource")
     field(:title, :string, description: "The resource's metadata title")
     field(:description, :string, description: "The resource's metadata description")
@@ -84,6 +87,13 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
         description: "The federated username for the group resource"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Resources.Resource,
+        rule: :"read:group:resources",
+        args: %{path: :path}
+      )
+
       resolve(&Resource.get_resource/3)
     end
   end
@@ -101,6 +111,13 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
       arg(:resource_url, :string, description: "This resource's own original URL")
       arg(:type, :string, default_value: "link", description: "The type for this resource")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Resources.Resource,
+        rule: :"write:group:resources:create",
+        args: %{actor_id: :actor_id}
+      )
+
       resolve(&Resource.create_resource/3)
     end
 
@@ -112,18 +129,39 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
       arg(:parent_id, :id, description: "The new resource parent ID (if the resource is moved)")
       arg(:resource_url, :string, description: "The new resource URL")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Resources.Resource,
+        rule: :"write:group:resources:update"
+      )
+
       resolve(&Resource.update_resource/3)
     end
 
     @desc "Delete a resource"
     field :delete_resource, :deleted_object do
       arg(:id, non_null(:id), description: "The resource ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Resources.Resource,
+        rule: :"write:group:resources:delete"
+      )
+
       resolve(&Resource.delete_resource/3)
     end
 
     @desc "Get a preview for a resource link"
     field :preview_resource_link, :resource_metadata do
       arg(:resource_url, non_null(:string), description: "The link to crawl to get of preview of")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Resources.Resource,
+        rule: :"read:group:resources",
+        args: %{}
+      )
+
       resolve(&Resource.preview_resource_link/3)
     end
   end

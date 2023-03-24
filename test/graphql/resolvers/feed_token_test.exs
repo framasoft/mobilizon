@@ -13,124 +13,115 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
     {:ok, conn: conn, actor: actor, user: user}
   end
 
+  @user_feed_tokens_query """
+  query LoggedUserFeedTokens {
+    loggedUser {
+      feedTokens {
+        token
+      }
+    }
+  }
+  """
+
+  @logged_person_feed_tokens_query """
+  query LoggedPersonFeedTokens {
+    loggedPerson {
+      feedTokens {
+        token
+      }
+    }
+  }
+  """
+
   describe "Feed Token Resolver" do
-    test "create_feed_token/3 should create a feed token", %{conn: conn, user: user} do
-      actor2 = insert(:actor, user: user)
-
-      mutation = """
-          mutation {
-            createFeedToken(
-              actor_id: #{actor2.id},
-            ) {
-                token,
-                actor {
-                  id
-                },
-                user {
-                  id
-                }
-              }
-            }
-      """
-
-      res =
-        conn
-        |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
-
-      assert json_response(res, 200)["errors"] == nil
-      token = json_response(res, 200)["data"]["createFeedToken"]["token"]
-      assert is_binary(token)
-      # TODO: Investigate why user id is a string when actor id is a number
-      assert json_response(res, 200)["data"]["createFeedToken"]["user"]["id"] ==
-               to_string(user.id)
-
-      assert json_response(res, 200)["data"]["createFeedToken"]["actor"]["id"] ==
-               to_string(actor2.id)
-
-      # The token is present for the user
-      query = """
-      {
-        loggedUser {
-          feedTokens {
-            token
+    @create_feed_token_for_actor_mutation """
+    mutation CreatePersonFeedToken($actorId: ID!) {
+      createFeedToken(actorId: $actorId) {
+          token
+          actor {
+            id
+          }
+          user {
+            id
           }
         }
       }
-      """
+    """
+
+    @create_feed_token_for_user_mutation """
+    mutation CreateFeedToken {
+      createFeedToken {
+          token
+          user {
+            id
+          }
+        }
+      }
+    """
+
+    test "create_feed_token/3 should create a feed token", %{conn: conn, user: user} do
+      actor2 = insert(:actor, user: user)
 
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "loggedUser"))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_feed_token_for_actor_mutation,
+          variables: [actorId: actor2.id]
+        )
 
-      assert json_response(res, 200)["data"]["loggedUser"] ==
+      assert res["errors"] == nil
+      token = res["data"]["createFeedToken"]["token"]
+      assert is_binary(token)
+
+      assert res["data"]["createFeedToken"]["user"]["id"] ==
+               to_string(user.id)
+
+      assert res["data"]["createFeedToken"]["actor"]["id"] ==
+               to_string(actor2.id)
+
+      # The token is present for the user
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @user_feed_tokens_query)
+
+      assert res["data"]["loggedUser"] ==
                %{
                  "feedTokens" => [%{"token" => token}]
                }
 
       # But not for this identity
-      query = """
-      {
-        loggedPerson {
-          feedTokens {
-            token
-          }
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "loggedPerson"))
+        |> AbsintheHelpers.graphql_query(query: @logged_person_feed_tokens_query)
 
-      assert json_response(res, 200)["data"]["loggedPerson"] ==
+      assert res["data"]["loggedPerson"] ==
                %{
                  "feedTokens" => []
                }
 
-      mutation = """
-         mutation {
-            createFeedToken {
-                token,
-                user {
-                  id
-                }
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(query: @create_feed_token_for_user_mutation)
 
-      assert json_response(res, 200)["errors"] == nil
-      token2 = json_response(res, 200)["data"]["createFeedToken"]["token"]
+      assert res["errors"] == nil
+      token2 = res["data"]["createFeedToken"]["token"]
       assert is_binary(token2)
-      assert is_nil(json_response(res, 200)["data"]["createFeedToken"]["actor"])
+      assert is_nil(res["data"]["createFeedToken"]["actor"])
 
-      assert json_response(res, 200)["data"]["createFeedToken"]["user"]["id"] ==
+      assert res["data"]["createFeedToken"]["user"]["id"] ==
                to_string(user.id)
 
       # The token is present for the user
-      query = """
-      {
-        loggedUser {
-          feedTokens {
-            token
-          }
-        }
-      }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> get("/api", AbsintheHelpers.query_skeleton(query, "loggedUser"))
+        |> AbsintheHelpers.graphql_query(query: @user_feed_tokens_query)
 
-      assert json_response(res, 200)["data"]["loggedUser"] ==
+      assert res["data"]["loggedUser"] ==
                %{
                  "feedTokens" => [%{"token" => token}, %{"token" => token2}]
                }
@@ -142,22 +133,15 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
     } do
       actor = insert(:actor)
 
-      mutation = """
-          mutation {
-            createFeedToken(
-              actor_id: #{actor.id}
-            ) {
-                token
-              }
-            }
-      """
-
       res =
         conn
         |> auth_conn(user)
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        |> AbsintheHelpers.graphql_query(
+          query: @create_feed_token_for_actor_mutation,
+          variables: [actorId: actor.id]
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "not owned"
+      assert hd(res["errors"])["message"] =~ "not owned"
     end
 
     test "delete_feed_token/3 should delete a feed token", %{
@@ -257,7 +241,7 @@ defmodule Mobilizon.GraphQL.Resolvers.FeedTokenTest do
         conn
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
-      assert hd(json_response(res, 200)["errors"])["message"] =~ "if not connected"
+      assert "You need to be logged in" == hd(json_response(res, 200)["errors"])["message"]
     end
 
     test "delete_feed_token/3 should check the correct user is logged in", %{

@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
   Represents a member of a group
   """
   object :member do
+    meta(:authorize, :user)
     interfaces([:activity_object])
     field(:id, :id, description: "The member's ID")
     field(:parent, :group, description: "Of which the profile is member")
@@ -37,6 +38,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
   A paginated list of members
   """
   object :paginated_member_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:member), description: "A list of members")
     field(:total, :integer, description: "The total number of elements in the list")
   end
@@ -46,6 +48,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     field :join_group, :member do
       arg(:group_id, non_null(:id), description: "The group ID")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group_membership",
+        args: %{parent_id: :group_id}
+      )
+
       resolve(&Group.join_group/3)
     end
 
@@ -53,7 +62,40 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     field :leave_group, :deleted_object do
       arg(:group_id, non_null(:id), description: "The group ID")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group_membership",
+        args: %{parent_id: :group_id}
+      )
+
       resolve(&Group.leave_group/3)
+    end
+
+    @desc "Accept an invitation to a group"
+    field :accept_invitation, :member do
+      arg(:id, non_null(:id), description: "The member ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group_membership"
+      )
+
+      resolve(&Member.accept_invitation/3)
+    end
+
+    @desc "Reject an invitation to a group"
+    field :reject_invitation, :member do
+      arg(:id, non_null(:id), description: "The member ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group_membership"
+      )
+
+      resolve(&Member.reject_invitation/3)
     end
 
     @desc "Invite an actor to join the group"
@@ -64,21 +106,14 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
         description: "The targeted person's federated username"
       )
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group:members",
+        args: %{parent_id: :group_id}
+      )
+
       resolve(&Member.invite_member/3)
-    end
-
-    @desc "Accept an invitation to a group"
-    field :accept_invitation, :member do
-      arg(:id, non_null(:id), description: "The member ID")
-
-      resolve(&Member.accept_invitation/3)
-    end
-
-    @desc "Reject an invitation to a group"
-    field :reject_invitation, :member do
-      arg(:id, non_null(:id), description: "The member ID")
-
-      resolve(&Member.reject_invitation/3)
     end
 
     @desc """
@@ -86,6 +121,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     """
     field :approve_member, :member do
       arg(:member_id, non_null(:id), description: "The member ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group:members",
+        args: %{parent_id: :member_id}
+      )
 
       resolve(&Member.approve_member/3)
     end
@@ -95,6 +137,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
     """
     field :reject_member, :member do
       arg(:member_id, non_null(:id), description: "The member ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group:members",
+        args: %{parent_id: :member_id}
+      )
 
       resolve(&Member.reject_member/3)
     end
@@ -106,6 +155,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
       arg(:member_id, non_null(:id), description: "The member ID")
       arg(:role, non_null(:member_role_enum), description: "The new member role")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group:members",
+        args: %{parent_id: :member_id}
+      )
+
       resolve(&Member.update_member/3)
     end
 
@@ -116,6 +172,13 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
       arg(:exclude, :boolean,
         default_value: false,
         description: "Whether the member should be excluded from the group"
+      )
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Actors.Member,
+        rule: :"write:group:members",
+        args: %{parent_id: :member_id}
       )
 
       resolve(&Member.remove_member/3)

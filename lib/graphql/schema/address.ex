@@ -10,6 +10,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
   An address object
   """
   object :address do
+    meta(:authorize, :all)
     field(:geom, :point, description: "The geocoordinates for the point where this address is")
     field(:street, :string, description: "The address's street name (with number)")
     field(:locality, :string, description: "The address's locality")
@@ -29,6 +30,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
   A phone address
   """
   object :phone_address do
+    meta(:authorize, :all)
     field(:phone, :string, description: "The phone number")
     field(:info, :string, description: "Additional information about the phone number")
   end
@@ -37,11 +39,13 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
   An online address
   """
   object :online_address do
+    meta(:authorize, :all)
     field(:url, :string)
     field(:info, :string)
   end
 
   object :picture_info_element do
+    meta(:authorize, :all)
     field(:name, :string)
     field(:url, :string)
   end
@@ -50,6 +54,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
   A picture associated with an address
   """
   object :picture_info do
+    meta(:authorize, :all)
     field(:url, :string)
     field(:author, :picture_info_element)
     field(:source, :picture_info_element)
@@ -100,7 +105,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
       arg(:limit, :integer, default_value: 10, description: "The limit of search results per page")
 
       arg(:type, :address_search_type, description: "Filter by type of results")
-
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Address.search/3)
     end
 
@@ -115,6 +120,7 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
         description: "The user's locale. Geocoding backends will make use of this value."
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Address.reverse_geocode/3)
     end
   end

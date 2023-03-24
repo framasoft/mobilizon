@@ -15,8 +15,13 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import_types(Schema.Events.ParticipantType)
   import_types(Schema.TagType)
 
+  @env Application.compile_env(:mobilizon, :env)
+  @event_rate_limiting 60
+
   @desc "An event"
   object :event do
+    meta(:authorize, :all)
+    meta(:scope_field?, true)
     interfaces([:action_log_object, :interactable, :activity_object, :event_search_result])
     field(:id, :id, description: "Internal ID for this event")
     field(:uuid, :uuid, description: "The Event UUID")
@@ -61,10 +66,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "The event's organizer (as a person)"
     )
 
-    field(:tags, list_of(:tag),
-      resolve: &Tag.list_tags_for_event/3,
-      description: "The event's tags"
-    )
+    field(:tags, list_of(:tag), description: "The event's tags") do
+      resolve(&Tag.list_tags_for_event/3)
+    end
 
     field(:category, :event_category, description: "The event's category")
 
@@ -75,7 +79,10 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       resolve: &Event.stats_participants/3
     )
 
-    field(:participants, :paginated_participant_list, description: "The event's participants") do
+    field(:participants, :paginated_participant_list,
+      description: "The event's participants",
+      meta: [private: true, rule: :"read:event:participants"]
+    ) do
       arg(:page, :integer,
         default_value: 1,
         description: "The page in the paginated participants list"
@@ -134,12 +141,14 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
 
   @desc "A paginated list of events"
   object :paginated_event_list do
+    meta(:authorize, :all)
     field(:elements, list_of(:event), description: "A list of events")
     field(:total, :integer, description: "The total number of events in the list")
   end
 
   @desc "Participation statistics"
   object :participant_stats do
+    meta(:authorize, :all)
     field(:going, :integer, description: "The number of approved participants")
     field(:not_approved, :integer, description: "The number of not approved participants")
     field(:not_confirmed, :integer, description: "The number of not confirmed participants")
@@ -158,6 +167,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   An event offer
   """
   object :event_offer do
+    meta(:authorize, :all)
     field(:price, :float, description: "The price amount for this offer")
     field(:price_currency, :string, description: "The currency for this price offer")
     field(:url, :string, description: "The URL to access to this offer")
@@ -167,6 +177,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   An event participation condition
   """
   object :event_participation_condition do
+    meta(:authorize, :all)
     field(:title, :string, description: "The title for this condition")
     field(:content, :string, description: "The content for this condition")
     field(:url, :string, description: "The URL to access this condition")
@@ -201,6 +212,8 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   Event options
   """
   object :event_options do
+    meta(:authorize, :all)
+
     field(:maximum_attendee_capacity, :integer,
       description: "The maximum attendee capacity for this event"
     )
@@ -307,6 +320,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   end
 
   object :event_metadata do
+    meta(:authorize, :all)
     field(:key, :string, description: "The key for the metadata")
     field(:title, :string, description: "The title for the metadata")
     field(:value, :string, description: "The value for the metadata")
@@ -350,12 +364,15 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         description: "Direction for the sort"
       )
 
+      middleware(Rajska.QueryAuthorization, permit: :all)
+
       resolve(&Event.list_events/3)
     end
 
     @desc "Get an event by uuid"
     field :event, :event do
       arg(:uuid, non_null(:uuid), description: "The event's UUID")
+      middleware(Rajska.QueryAuthorization, permit: :all)
       resolve(&Event.find_event/3)
     end
   end
@@ -416,6 +433,15 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
       arg(:language, :string, description: "The event language", default_value: "und")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.Event,
+        rule: :"write:event:create",
+        args: %{organizer_actor_id: :organizer_actor_id}
+      )
+
+      middleware(Rajska.RateLimiter, limit: event_rate_limiting(@env))
+
       resolve(&Event.create_event/3)
     end
 
@@ -460,6 +486,13 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:contacts, list_of(:contact), default_value: [], description: "The events contacts")
       arg(:language, :string, description: "The event language", default_value: "und")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.Event,
+        args: %{id: :event_id},
+        rule: :"write:event:update"
+      )
+
       resolve(&Event.update_event/3)
     end
 
@@ -467,7 +500,17 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field :delete_event, :deleted_object do
       arg(:event_id, non_null(:id), description: "The event ID to delete")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: [:user, :moderator, :administrator],
+        scope: Mobilizon.Events.Event,
+        rule: :"write:event:delete",
+        args: %{id: :event_id}
+      )
+
       resolve(&Event.delete_event/3)
     end
   end
+
+  defp event_rate_limiting(:test), do: @event_rate_limiting * 1000
+  defp event_rate_limiting(_), do: @event_rate_limiting
 end

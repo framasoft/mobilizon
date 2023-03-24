@@ -44,7 +44,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
   def upload_media(
         _parent,
         %{file: %Plug.Upload{} = file} = args,
-        %{context: %{current_actor: %Actor{id: actor_id}}}
+        %{context: %{current_actor: %Actor{id: default_actor_id}}}
       ) do
     with {:ok,
           %{
@@ -62,7 +62,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Media do
          {:ok, media = %Media{}} <-
            Medias.create_media(%{
              file: args,
-             actor_id: actor_id,
+             actor_id: Map.get(args, :actor_id, default_actor_id),
              metadata: Map.take(uploaded, [:width, :height, :blurhash])
            }) do
       {:ok, transform_media(media)}

@@ -128,12 +128,13 @@ defmodule Mobilizon.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.0"},
+      {:phoenix, "~> 1.7.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.15.3"},
       {:phoenix_html, "~> 3.0"},
-      {:phoenix_live_view, "~> 0.18.0"},
+      {:phoenix_live_view, "~> 0.18.3"},
+      {:phoenix_view, "~> 2.0"},
       {:gettext, "~> 0.20.0"},
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
@@ -176,7 +177,7 @@ defmodule Mobilizon.Mixfile do
       {:floki, "~> 0.31"},
       {:ip_reserved, "~> 0.1.0"},
       {:fast_sanitize, "~> 0.1"},
-      {:ueberauth, "~> 0.9", override: true},
+      {:ueberauth, "~> 0.10", override: true},
       {:ueberauth_twitter, "~> 0.4"},
       {:ueberauth_discord, "~> 0.7"},
       {:ueberauth_github, "~> 0.8.1"},
@@ -209,10 +210,12 @@ defmodule Mobilizon.Mixfile do
       {:unplug, "~> 1.0.0"},
       {:replug, "~> 0.1.0"},
       {:exkismet, github: "tcitworld/exkismet"},
+      {:rajska, github: "tcitworld/rajska", branch: "mobilizon"},
+      {:hammer, "~> 6.1"},
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
-      {:excoveralls, "~> 0.15.0", only: :test},
+      {:excoveralls, "~> 0.16.0", only: :test},
       {:ex_doc, "~> 0.25", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.0", only: :test},
@@ -225,7 +228,8 @@ defmodule Mobilizon.Mixfile do
       {:sobelow, "~> 0.8", only: [:dev, :test]},
       {:doctor, "~> 0.21", only: :dev},
       {:haversine, "~> 0.1.0"},
-      {:ecto_dev_logger, "~> 0.7"}
+      {:ecto_dev_logger, "~> 0.7"},
+      {:credo_code_climate, "~> 0.1.0", only: [:dev, :test]}
     ] ++ oauth_deps()
   end
 

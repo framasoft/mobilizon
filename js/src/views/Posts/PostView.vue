@@ -290,7 +290,10 @@ const { result: membershipsResult, loading: membershipsLoading } = useQuery<{
 }>(
   PERSON_MEMBERSHIPS,
   () => ({ id: currentActor.value?.id }),
-  () => ({ enabled: currentActor.value?.id !== undefined })
+  () => ({
+    enabled:
+      currentActor.value?.id !== undefined && currentActor.value?.id !== null,
+  })
 );
 const memberships = computed(() => membershipsResult.value?.person.memberships);
 

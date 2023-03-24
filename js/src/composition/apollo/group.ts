@@ -2,7 +2,7 @@ import { PERSON_MEMBERSHIPS } from "@/graphql/actor";
 import {
   CREATE_GROUP,
   DELETE_GROUP,
-  FETCH_GROUP,
+  FETCH_GROUP_PUBLIC,
   LEAVE_GROUP,
   UPDATE_GROUP,
 } from "@/graphql/group";
@@ -50,7 +50,7 @@ export function useGroup(
       discussionsLimit?: number;
     }
   >(
-    FETCH_GROUP,
+    FETCH_GROUP_PUBLIC,
     () => ({
       name: unref(name),
       ...options,

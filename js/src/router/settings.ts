@@ -27,6 +27,7 @@ export enum SettingsRouteName {
   CREATE_IDENTITY = "CreateIdentity",
   UPDATE_IDENTITY = "UpdateIdentity",
   IDENTITIES = "IDENTITIES",
+  AUTHORIZED_APPS = "AUTHORIZED_APPS",
 }
 
 export const settingsRoutes: RouteRecordRaw[] = [
@@ -81,6 +82,18 @@ export const settingsRoutes: RouteRecordRaw[] = [
           requiredAuth: true,
           announcer: {
             message: (): string => t("Notifications") as string,
+          },
+        },
+      },
+      {
+        path: "authorized-apps",
+        name: SettingsRouteName.AUTHORIZED_APPS,
+        component: (): Promise<any> => import("@/views/Settings/AppsView.vue"),
+        props: true,
+        meta: {
+          requiredAuth: true,
+          announcer: {
+            message: (): string => t("Apps") as string,
           },
         },
       },

@@ -30,6 +30,17 @@ defmodule Mobilizon.GraphQL.Error do
     handle(reason)
   end
 
+  # It's unclear why returned errors are now binaries instead of atoms
+  # but we can still convert them back
+  def normalize(string) when is_binary(string) do
+    string
+    |> String.to_existing_atom()
+    |> handle()
+  rescue
+    ArgumentError ->
+      handle(string)
+  end
+
   # Unhandled errors
   def normalize(other) do
     handle(other)
@@ -65,6 +76,9 @@ defmodule Mobilizon.GraphQL.Error do
   end
 
   defp handle(reason) when is_binary(reason) do
+    Logger.debug("Unknown error")
+    Logger.debug(reason)
+
     %Error{
       code: :unknown_error,
       message: reason,
@@ -101,6 +115,11 @@ defmodule Mobilizon.GraphQL.Error do
   defp metadata(:group_not_found), do: {404, dgettext("errors", "Group not found")}
   defp metadata(:resource_not_found), do: {404, dgettext("errors", "Resource not found")}
   defp metadata(:discussion_not_found), do: {404, dgettext("errors", "Discussion not found")}
+  defp metadata(:application_not_found), do: {404, dgettext("errors", "Application not found")}
+
+  defp metadata(:application_token_not_found),
+    do: {404, dgettext("errors", "Application token not found")}
+
   defp metadata(:unknown), do: {500, dgettext("errors", "Something went wrong")}
 
   defp metadata(code) do

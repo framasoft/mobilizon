@@ -65,18 +65,21 @@
     </o-field>
     <o-modal
       has-modal-card
-      v-model="showNewElementModal"
+      v-model:active="showNewElementModal"
       :close-button-aria-label="$t('Close')"
     >
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <button
-            type="button"
-            class="delete"
-            @click="showNewElementModal = false"
-          />
+      <div class="">
+        <header class="">
+          <h2>{{ t("Create a new metadata element") }}</h2>
+          <p>
+            {{
+              t(
+                "You can put any arbitrary content in this element. URLs will be clickable."
+              )
+            }}
+          </p>
         </header>
-        <div class="modal-card-body">
+        <div class="">
           <form @submit="addNewElement">
             <o-field :label="$t('Element title')">
               <o-input v-model="newElement.title" />
@@ -84,7 +87,7 @@
             <o-field :label="$t('Element value')">
               <o-input v-model="newElement.value" />
             </o-field>
-            <o-button variant="primary" native-type="submit">{{
+            <o-button class="mt-2" variant="primary" native-type="submit">{{
               $t("Add")
             }}</o-button>
           </form>

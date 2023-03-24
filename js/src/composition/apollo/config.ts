@@ -215,12 +215,14 @@ export function useRegistrationConfig() {
   }>(REGISTRATIONS, undefined, { fetchPolicy: "cache-only" });
 
   const registrationsOpen = computed(
-    () => result.value?.config.registrationsOpen
+    () => result.value?.config?.registrationsOpen
   );
   const registrationsAllowlist = computed(
-    () => result.value?.config.registrationsAllowlist
+    () => result.value?.config?.registrationsAllowlist
   );
-  const databaseLogin = computed(() => result.value?.config.auth.databaseLogin);
+  const databaseLogin = computed(
+    () => result.value?.config?.auth?.databaseLogin
+  );
   return {
     registrationsOpen,
     registrationsAllowlist,

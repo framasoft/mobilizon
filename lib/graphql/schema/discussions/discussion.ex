@@ -11,6 +11,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
 
   @desc "A discussion"
   object :discussion do
+    meta(:authorize, :user)
     interfaces([:activity_object])
     field(:id, :id, description: "Internal ID for this discussion")
     field(:title, :string, description: "The title for this discussion")
@@ -36,6 +37,7 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
 
   @desc "A paginated list of discussions"
   object :paginated_discussion_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:discussion), description: "A list of discussion")
     field(:total, :integer, description: "The total number of discussions in the list")
   end
@@ -45,6 +47,14 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
     field :discussion, type: :discussion do
       arg(:id, :id, description: "The discussion's ID")
       arg(:slug, :string, description: "The discussion's slug")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Discussion,
+        rule: :"read:group:discussions",
+        args: %{slug: :slug}
+      )
+
       resolve(&Discussion.get_discussion/3)
     end
   end
@@ -56,6 +66,13 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
       arg(:text, non_null(:string), description: "The discussion's first comment body")
       arg(:actor_id, non_null(:id), description: "The discussion's group ID")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Discussion,
+        rule: :"write:group:discussion:create",
+        args: %{actor_id: :actor_id}
+      )
+
       resolve(&Discussion.create_discussion/3)
     end
 
@@ -63,6 +80,14 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
     field :reply_to_discussion, type: :discussion do
       arg(:discussion_id, non_null(:id), description: "The discussion's ID")
       arg(:text, non_null(:string), description: "The discussion's reply body")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Discussion,
+        rule: :"write:group:discussion:update",
+        args: %{id: :discussion_id}
+      )
+
       resolve(&Discussion.reply_to_discussion/3)
     end
 
@@ -70,12 +95,27 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.DiscussionType do
     field :update_discussion, type: :discussion do
       arg(:title, non_null(:string), description: "The updated discussion's title")
       arg(:discussion_id, non_null(:id), description: "The discussion's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Discussion,
+        rule: :"write:group:discussion:update",
+        args: %{id: :discussion_id}
+      )
+
       resolve(&Discussion.update_discussion/3)
     end
 
     @desc "Delete a discussion"
     field :delete_discussion, type: :discussion do
       arg(:discussion_id, non_null(:id), description: "The discussion's ID")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Discussions.Discussion,
+        rule: :"write:group:discussion:delete",
+        args: %{id: :discussion_id}
+      )
 
       resolve(&Discussion.delete_discussion/3)
     end

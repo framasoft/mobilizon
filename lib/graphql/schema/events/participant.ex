@@ -12,6 +12,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
 
   @desc "Represents a participant to an event"
   object :participant do
+    meta(:authorize, :all)
     field(:id, :id, description: "The participation ID")
 
     field(
@@ -41,6 +42,8 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
   Metadata about a participant
   """
   object :participant_metadata do
+    meta(:authorize, :all)
+
     field(:cancellation_token, :string,
       description: "The eventual token to leave an event when user is anonymous"
     )
@@ -53,6 +56,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
   A paginated list of participants
   """
   object :paginated_participant_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:participant), description: "A list of participants")
     field(:total, :integer, description: "The total number of participants in the list")
   end
@@ -78,6 +82,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
 
   @desc "Represents a deleted participant"
   object :deleted_participant do
+    meta(:authorize, :all)
     field(:id, :id, description: "The participant ID")
     field(:event, :deleted_object, description: "The participant's event")
     field(:actor, :deleted_object, description: "The participant's actor")
@@ -92,7 +97,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:message, :string, description: "The anonymous participant's message")
       arg(:locale, :string, description: "The anonymous participant's locale")
       arg(:timezone, :string, description: "The anonymous participant's timezone")
-
+      middleware(Rajska.QueryAuthorization, permit: :all, rule: :"write:participation")
       resolve(&Participant.actor_join_event/3)
     end
 
@@ -101,7 +106,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:event_id, non_null(:id), description: "The event ID the participant left")
       arg(:actor_id, non_null(:id), description: "The actor ID for the participant")
       arg(:token, :string, description: "The anonymous participant participation token")
-
+      middleware(Rajska.QueryAuthorization, permit: :all, rule: :"write:participation")
       resolve(&Participant.actor_leave_event/3)
     end
 
@@ -110,12 +115,19 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       arg(:id, non_null(:id), description: "The participant ID")
       arg(:role, non_null(:participant_role_enum), description: "The participant new role")
 
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.Participant,
+        rule: :"write:participation"
+      )
+
       resolve(&Participant.update_participation/3)
     end
 
     @desc "Confirm a participation"
     field :confirm_participation, :participant do
       arg(:confirmation_token, non_null(:string), description: "The participation token")
+      middleware(Rajska.QueryAuthorization, permit: :all, rule: :"write:participation")
       resolve(&Participant.confirm_participation_from_token/3)
     end
 
@@ -131,6 +143,14 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
       )
 
       arg(:format, :export_format_enum, description: "The format in which to return the file")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.Event,
+        rule: :"read:event:participants:export",
+        args: %{id: :event_id}
+      )
+
       resolve(&Participant.export_event_participants/3)
     end
   end

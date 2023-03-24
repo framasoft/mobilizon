@@ -8,6 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.TagType do
 
   @desc "A tag"
   object :tag do
+    meta(:authorize, :all)
     field(:id, :id, description: "The tag's ID")
     field(:slug, :string, description: "The tags's slug")
     field(:title, :string, description: "The tag's title")
@@ -26,6 +27,7 @@ defmodule Mobilizon.GraphQL.Schema.TagType do
       arg(:filter, :string, description: "The filter to apply to the search")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated tags list")
       arg(:limit, :integer, default_value: 10, description: "The limit of tags per page")
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
       resolve(&Tag.list_tags/3)
     end
   end

@@ -15,6 +15,8 @@ export interface IActor {
   type: ActorType;
 }
 
+export type IMinimalActor = Pick<IActor, "preferredUsername" | "domain">;
+
 export class Actor implements IActor {
   id?: string;
 
@@ -57,7 +59,7 @@ export class Actor implements IActor {
 }
 
 export function usernameWithDomain(
-  actor: IActor | undefined,
+  actor: IMinimalActor | undefined,
   force = false
 ): string {
   if (!actor) return "";

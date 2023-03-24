@@ -45,6 +45,13 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        unfetch: path.resolve(
+          __dirname,
+          "node_modules",
+          "unfetch",
+          "dist",
+          "unfetch.mjs"
+        ),
       },
     },
     css: {

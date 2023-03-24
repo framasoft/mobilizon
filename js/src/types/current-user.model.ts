@@ -7,6 +7,7 @@ import { IFollowedGroupEvent } from "./followedGroupEvent.model";
 import { PictureInformation } from "./picture";
 import { IMember } from "./actor/member.model";
 import { IFeedToken } from "./feedtoken.model";
+import { IApplicationToken } from "./application.model";
 
 export interface ICurrentUser {
   id: string;
@@ -14,6 +15,7 @@ export interface ICurrentUser {
   isLoggedIn: boolean;
   role: ICurrentUserRole;
   defaultActor?: IPerson;
+  actors: IPerson[];
 }
 
 export interface IUserPreferredLocation {
@@ -66,4 +68,5 @@ export interface IUser extends ICurrentUser {
   currentSignInAt: string;
   memberships: Paginate<IMember>;
   feedTokens: IFeedToken[];
+  authAuthorizedApplications: IApplicationToken[];
 }

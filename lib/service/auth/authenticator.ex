@@ -17,6 +17,11 @@ defmodule Mobilizon.Service.Auth.Authenticator do
           required(:user) => User.t()
         }
 
+  @type ttl :: {
+          pos_integer(),
+          :second | :minute | :hour | :week
+        }
+
   def implementation do
     Mobilizon.Config.get(
       Mobilizon.Service.Auth.Authenticator,
@@ -55,7 +60,7 @@ defmodule Mobilizon.Service.Auth.Authenticator do
   @doc """
   Generates access token and refresh token for an user.
   """
-  @spec generate_tokens(User.t()) :: {:ok, tokens}
+  @spec generate_tokens(User.t() | ApplicationToken.t()) :: {:ok, tokens} | {:error, any()}
   def generate_tokens(user) do
     with {:ok, access_token} <- generate_access_token(user),
          {:ok, refresh_token} <- generate_refresh_token(user) do
@@ -66,10 +71,11 @@ defmodule Mobilizon.Service.Auth.Authenticator do
   @doc """
   Generates access token for an user.
   """
-  @spec generate_access_token(User.t()) :: {:ok, String.t()}
-  def generate_access_token(user) do
+  @spec generate_access_token(User.t() | ApplicationToken.t(), ttl() | nil) ::
+          {:ok, String.t()} | {:error, any()}
+  def generate_access_token(user, ttl \\ nil) do
     with {:ok, access_token, _claims} <-
-           Guardian.encode_and_sign(user, %{}, token_type: "access") do
+           Guardian.encode_and_sign(user, %{}, token_type: "access", ttl: ttl) do
       {:ok, access_token}
     end
   end
@@ -77,10 +83,11 @@ defmodule Mobilizon.Service.Auth.Authenticator do
   @doc """
   Generates refresh token for an user.
   """
-  @spec generate_refresh_token(User.t()) :: {:ok, String.t()}
-  def generate_refresh_token(user) do
+  @spec generate_refresh_token(User.t() | ApplicationToken.t(), ttl() | nil) ::
+          {:ok, String.t()} | {:error, any()}
+  def generate_refresh_token(user, ttl \\ nil) do
     with {:ok, refresh_token, _claims} <-
-           Guardian.encode_and_sign(user, %{}, token_type: "refresh") do
+           Guardian.encode_and_sign(user, %{}, token_type: "refresh", ttl: ttl) do
       {:ok, refresh_token}
     end
   end

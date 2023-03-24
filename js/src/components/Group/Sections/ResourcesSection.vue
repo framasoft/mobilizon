@@ -56,5 +56,7 @@ import GroupSection from "@/components/Group/GroupSection.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
-defineProps<{ group: IGroup }>();
+defineProps<{
+  group: Pick<IGroup, "preferredUsername" | "domain" | "resources">;
+}>();
 </script>

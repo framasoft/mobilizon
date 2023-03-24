@@ -77,10 +77,9 @@ import { displayName, usernameWithDomain } from "@/types/actor";
 import DiscussionListItem from "@/components/Discussion/DiscussionListItem.vue";
 import RouteName from "../../router/name";
 import { MemberRole } from "@/types/enums";
-
+import { useGroupDiscussionsList } from "@/composition/apollo/discussions";
 import { IMember } from "@/types/actor/member.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import { useGroup } from "@/composition/apollo/group";
 import { usePersonStatusGroup } from "@/composition/apollo/actor";
 import { useI18n } from "vue-i18n";
 import { useRouteQuery, integerTransformer } from "vue-use-route-query";
@@ -92,10 +91,13 @@ const DISCUSSIONS_PER_PAGE = 10;
 
 const props = defineProps<{ preferredUsername: string }>();
 
-const { group, loading: groupLoading } = useGroup(props.preferredUsername, {
-  discussionsPage: page.value,
-  discussionsLimit: DISCUSSIONS_PER_PAGE,
-});
+const { group, loading: groupLoading } = useGroupDiscussionsList(
+  props.preferredUsername,
+  {
+    discussionsPage: page.value,
+    discussionsLimit: DISCUSSIONS_PER_PAGE,
+  }
+);
 
 const { person, loading: personLoading } = usePersonStatusGroup(
   props.preferredUsername
@@ -109,7 +111,7 @@ useHead({
 
 const groupMemberships = computed((): (string | undefined)[] => {
   if (!person.value || !person.value.id) return [];
-  return person.value.memberships.elements
+  return (person.value.memberships?.elements ?? [])
     .filter(
       (membership: IMember) =>
         ![

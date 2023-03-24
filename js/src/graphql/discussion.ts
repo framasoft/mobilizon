@@ -148,3 +148,25 @@ export const DISCUSSION_COMMENT_CHANGED = gql`
   }
   ${ACTOR_FRAGMENT}
 `;
+
+export const GROUP_DISCUSSIONS_LIST = gql`
+  query GroupDiscussionsList(
+    $name: String!
+    $discussionsPage: Int
+    $discussionsLimit: Int
+  ) {
+    group(preferredUsername: $name) {
+      id
+      preferredUsername
+      name
+      domain
+      discussions(page: $discussionsPage, limit: $discussionsLimit) {
+        total
+        elements {
+          ...DiscussionBasicFields
+        }
+      }
+    }
+  }
+  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
+`;

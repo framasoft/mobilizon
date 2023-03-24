@@ -5,7 +5,12 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
 
   alias Mobilizon.GraphQL.AbsintheHelpers
 
-  describe "Tag Resolver" do
+  setup do
+    user = insert(:user)
+    {:ok, user: user}
+  end
+
+  describe "list_tags/3" do
     @tags_query """
     query Tags($filter: String) {
       tags(filter: $filter) {
@@ -21,7 +26,16 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
     }
     """
 
-    test "list_tags/3 returns the list of tags", %{conn: conn} do
+    test "requires being logged-in", %{conn: conn, user: user} do
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(query: @tags_query)
+
+      assert res["errors"] == nil
+    end
+
+    test "returns the list of tags", %{conn: conn, user: user} do
       tag1 = insert(:tag)
       tag2 = insert(:tag)
       tag3 = insert(:tag)
@@ -30,8 +44,10 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
 
       res =
         conn
+        |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(query: @tags_query)
 
+      assert res["errors"] == nil
       tags = res["data"]["tags"]
       assert tags |> length == 3
 
@@ -46,15 +62,17 @@ defmodule Mobilizon.GraphQL.Resolvers.TagTest do
                |> MapSet.new()
     end
 
-    test "list_tags/3 returns tags for a filter", %{conn: conn} do
+    test "returns tags for a filter", %{conn: conn, user: user} do
       tag1 = insert(:tag, title: "PineApple", slug: "pineapple")
       tag2 = insert(:tag, title: "sexy pineapple", slug: "sexy-pineapple")
       _tag3 = insert(:tag)
 
       res =
         conn
+        |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(query: @tags_query, variables: %{filter: "apple"})
 
+      assert res["errors"] == nil
       tags = res["data"]["tags"]
       assert tags |> length == 2
       assert [tag1.id, tag2.id] == tags |> Enum.map(&String.to_integer(&1["id"]))

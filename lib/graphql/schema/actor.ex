@@ -13,6 +13,7 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
 
   @desc "An ActivityPub actor"
   interface :actor do
+    meta(:authorize, :all)
     field(:id, :id, description: "Internal ID for this actor")
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
@@ -65,18 +66,21 @@ defmodule Mobilizon.GraphQL.Schema.ActorInterface do
     @desc "Suspend an actor"
     field :suspend_profile, :deleted_object do
       arg(:id, non_null(:id), description: "The remote profile ID to suspend")
+      middleware(Rajska.QueryAuthorization, permit: :moderator, scope: false)
       resolve(&ActorResolver.suspend_profile/3)
     end
 
     @desc "Unsuspend an actor"
     field :unsuspend_profile, :actor do
       arg(:id, non_null(:id), description: "The remote profile ID to unsuspend")
+      middleware(Rajska.QueryAuthorization, permit: :moderator, scope: false)
       resolve(&ActorResolver.unsuspend_profile/3)
     end
 
     @desc "Refresh a profile"
     field :refresh_profile, :actor do
       arg(:id, non_null(:id), description: "The remote profile ID to refresh")
+      middleware(Rajska.QueryAuthorization, permit: :moderator, scope: false)
       resolve(&ActorResolver.refresh_profile/3)
     end
   end

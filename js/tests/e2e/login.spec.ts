@@ -36,7 +36,7 @@ test("Login has everything we need", async ({ page }) => {
   await page.goBack();
 
   await registerLink.click();
-  await page.waitForURL("/register/user");
+  await page.waitForURL("/register/user?default_email=&default_password=");
   expect(page.url()).toContain("/register/user");
   await page.goBack();
 });

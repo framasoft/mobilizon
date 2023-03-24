@@ -107,7 +107,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
 
       res = AbsintheHelpers.graphql_query(conn, query: @list_groups_query)
 
-      assert hd(res["errors"])["message"] == "You may not list groups unless moderator."
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "list_groups/3 doesn't return all groups if not a moderator", %{conn: conn} do
@@ -121,7 +121,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(query: @list_groups_query)
 
-      assert hd(res["errors"])["message"] == "You may not list groups unless moderator."
+      assert hd(res["errors"])["message"] == "You don't have permission to do this"
     end
 
     test "list_groups/3 returns all groups if a moderator", %{conn: conn} do
@@ -146,6 +146,14 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
 
   describe "find a group" do
     @group_query """
+      query Group($preferredUsername: String!) {
+        group(preferredUsername: $preferredUsername) {
+          preferredUsername
+        }
+      }
+    """
+
+    @group_with_member_query """
       query Group($preferredUsername: String!) {
         group(preferredUsername: $preferredUsername) {
             preferredUsername,
@@ -173,19 +181,14 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: @group_query,
+          query: @group_with_member_query,
           variables: %{
             preferredUsername: group.preferred_username
           }
         )
 
-      assert res["errors"] == nil
-
-      assert res["data"]["group"]["preferredUsername"] ==
-               group.preferred_username
-
-      assert res["data"]["group"]["members"]["total"] == 2
-      assert res["data"]["group"]["members"]["elements"] == []
+      assert hd(res["errors"])["message"] ==
+               "Not authorized to access object paginated_member_list"
 
       # Login with non-member
       res =
@@ -203,15 +206,12 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       assert res["data"]["group"]["preferredUsername"] ==
                group.preferred_username
 
-      assert res["data"]["group"]["members"]["total"] == 2
-      assert res["data"]["group"]["members"]["elements"] == []
-
       # Login with member
       res =
         conn
         |> auth_conn(user)
         |> AbsintheHelpers.graphql_query(
-          query: @group_query,
+          query: @group_with_member_query,
           variables: %{
             preferredUsername: group.preferred_username,
             actorId: actor.id
@@ -252,18 +252,14 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
       res =
         conn
         |> AbsintheHelpers.graphql_query(
-          query: @group_query,
+          query: @group_with_member_query,
           variables: %{
             preferredUsername: group.preferred_username
           }
         )
 
-      assert res["errors"] == nil
-
-      assert res["data"]["group"]["preferredUsername"] ==
-               group.preferred_username
-
-      assert res["data"]["group"]["members"] == %{"elements" => [], "total" => 1}
+      assert hd(res["errors"])["message"] ==
+               "Not authorized to access object paginated_member_list"
     end
   end
 
@@ -334,7 +330,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
           variables: %{id: group.id, name: @new_group_name}
         )
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to update a group"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "update_group/3 requires to be an admin of the group to update a group", %{
@@ -436,7 +432,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
           variables: %{groupId: group.id}
         )
 
-      assert hd(res["errors"])["message"] =~ "logged-in"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "delete_group/3 should check the actor is owned by the user", %{
@@ -515,7 +511,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
           variables: %{groupId: group.id}
         )
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to follow a group"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "when group doesn't exist", %{conn: conn, user: user} do
@@ -564,7 +560,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
           variables: %{groupId: group.id}
         )
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to unfollow a group"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "when group doesn't exist", %{conn: conn, user: user} do
@@ -631,7 +627,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
           variables: %{followId: follow.id}
         )
 
-      assert hd(res["errors"])["message"] == "You need to be logged-in to update a group follow"
+      assert hd(res["errors"])["message"] == "You need to be logged in"
     end
 
     test "when follow doesn't exist", %{conn: conn, user: user} do

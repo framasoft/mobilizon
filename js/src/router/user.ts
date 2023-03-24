@@ -13,6 +13,8 @@ export enum UserRouteName {
   EMAIL_VALIDATE = "EMAIL_VALIDATE",
   VALIDATE = "Validate",
   LOGIN = "Login",
+  OAUTH_AUTORIZE = "OAUTH_AUTORIZE",
+  OAUTH_LOGIN_DEVICE = "OAUTH_LOGIN_DEVICE",
 }
 
 export const userRoutes: RouteRecordRaw[] = [
@@ -42,7 +44,7 @@ export const userRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/resend-instructions",
+    path: "/resend-instructions/:email?",
     name: UserRouteName.RESEND_CONFIRMATION,
     component: (): Promise<any> =>
       import("@/views/User/ResendConfirmation.vue"),
@@ -55,7 +57,7 @@ export const userRoutes: RouteRecordRaw[] = [
     },
   },
   {
-    path: "/password-reset/send",
+    path: "/password-reset/send/:email?",
     name: UserRouteName.SEND_PASSWORD_RESET,
     component: (): Promise<any> => import("@/views/User/SendPasswordReset.vue"),
     props: true,
@@ -106,6 +108,29 @@ export const userRoutes: RouteRecordRaw[] = [
     meta: {
       requiredAuth: false,
       announcer: { message: (): string => t("Login") as string },
+    },
+  },
+  {
+    path: "/oauth/autorize_approve",
+    name: UserRouteName.OAUTH_AUTORIZE,
+    component: (): Promise<any> => import("@/views/OAuth/AuthorizeView.vue"),
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => t("Authorize application") as string,
+      },
+    },
+  },
+  {
+    path: "/login/device",
+    name: UserRouteName.OAUTH_LOGIN_DEVICE,
+    component: (): Promise<any> =>
+      import("@/views/OAuth/DeviceActivationView.vue"),
+    meta: {
+      requiredAuth: true,
+      announcer: {
+        message: (): string => t("Device activation") as string,
+      },
     },
   },
 ];

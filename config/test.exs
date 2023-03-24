@@ -78,7 +78,7 @@ config :tesla, Mobilizon.Service.HTTP.HostMetaClient,
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Mock
 
-config :mobilizon, Oban, queues: false, plugins: false
+config :mobilizon, Oban, testing: :manual
 
 config :mobilizon, Mobilizon.Web.Auth.Guardian, secret_key: "some secret"
 

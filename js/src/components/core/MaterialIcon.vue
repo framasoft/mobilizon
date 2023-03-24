@@ -250,6 +250,14 @@ const icons: Record<string, () => Promise<any>> = {
     ),
   ExitToApp: () =>
     import(`../../../node_modules/vue-material-design-icons/ExitToApp.vue`),
+  CheckboxMarked: () =>
+    import(
+      `../../../node_modules/vue-material-design-icons/CheckboxMarked.vue`
+    ),
+  EyeOutline: () =>
+    import(`../../../node_modules/vue-material-design-icons/EyeOutline.vue`),
+  PencilOutline: () =>
+    import(`../../../node_modules/vue-material-design-icons/PencilOutline.vue`),
 };
 
 const props = withDefaults(

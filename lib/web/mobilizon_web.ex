@@ -17,12 +17,17 @@ defmodule Mobilizon.Web do
   and import those modules here.
   """
 
+  def static_paths,
+    do:
+      ~w(index.html manifest.json service-worker.js css fonts img js favicon.ico robots.txt assets)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: Mobilizon.Web
       import Plug.Conn
       import Mobilizon.Web.Gettext
       alias Mobilizon.Web.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
@@ -40,6 +45,7 @@ defmodule Mobilizon.Web do
       import Mobilizon.Web.ErrorHelpers
       import Mobilizon.Web.Gettext
       alias Mobilizon.Web.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
@@ -63,5 +69,14 @@ defmodule Mobilizon.Web do
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: Mobilizon.Web.Endpoint,
+        router: Mobilizon.Web.Router,
+        statics: Mobilizon.Web.static_paths()
+    end
   end
 end

@@ -181,7 +181,7 @@
               variant="text"
               :to="{
                 name: RouteName.LOGIN,
-                params: {
+                query: {
                   email: credentials.email,
                   password: credentials.password,
                 },
@@ -212,7 +212,7 @@ import AuthProviders from "../../components/User/AuthProviders.vue";
 import { computed, reactive, ref, watch } from "vue";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useHead } from "@vueuse/head";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
@@ -221,6 +221,7 @@ type errorMessage = { type: errorType; message: string };
 type credentialsType = { email: string; password: string; locale: string };
 
 const { t, locale } = useI18n({ useScope: "global" });
+const route = useRoute();
 const router = useRouter();
 
 const { result: configResult } = useQuery<{ config: IConfig }>(CONFIG);
@@ -229,17 +230,10 @@ const config = computed(() => configResult.value?.config);
 
 const showGravatar = ref(false);
 
-const props = withDefaults(
-  defineProps<{
-    email?: string;
-    password?: string;
-  }>(),
-  { email: "", password: "" }
-);
-
 const credentials = reactive<credentialsType>({
-  email: props.email,
-  password: props.password,
+  email: typeof route.query.email === "string" ? route.query.email : "",
+  password:
+    typeof route.query.password === "string" ? route.query.password : "",
   locale: "en",
 });
 

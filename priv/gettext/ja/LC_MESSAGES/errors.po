@@ -109,7 +109,7 @@ msgstr ""
 msgid "Error while saving user settings"
 msgstr ""
 
-#: lib/graphql/error.ex:101
+#: lib/graphql/error.ex:115
 #: lib/graphql/resolvers/group.ex:273
 #: lib/graphql/resolvers/group.ex:305
 #: lib/graphql/resolvers/group.ex:342
@@ -364,7 +364,7 @@ msgstr ""
 msgid "Comment is already deleted"
 msgstr ""
 
-#: lib/graphql/error.ex:103
+#: lib/graphql/error.ex:117
 #: lib/graphql/resolvers/discussion.ex:69
 #, elixir-autogen, elixir-format
 msgid "Discussion not found"
@@ -386,7 +386,7 @@ msgstr ""
 msgid "Event id not found"
 msgstr ""
 
-#: lib/graphql/error.ex:100
+#: lib/graphql/error.ex:114
 #: lib/graphql/resolvers/event.ex:355
 #: lib/graphql/resolvers/event.ex:407
 #, elixir-autogen, elixir-format
@@ -538,7 +538,7 @@ msgstr ""
 msgid "Token is not a valid UUID"
 msgstr ""
 
-#: lib/graphql/error.ex:98
+#: lib/graphql/error.ex:112
 #, elixir-autogen, elixir-format
 msgid "User not found"
 msgstr ""
@@ -751,48 +751,48 @@ msgstr ""
 msgid "This email is already used."
 msgstr ""
 
-#: lib/graphql/error.ex:99
+#: lib/graphql/error.ex:113
 #, elixir-autogen, elixir-format
 msgid "Post not found"
 msgstr ""
 
-#: lib/graphql/error.ex:86
+#: lib/graphql/error.ex:100
 #, elixir-autogen, elixir-format
 msgid "Invalid arguments passed"
 msgstr ""
 
-#: lib/graphql/error.ex:92
+#: lib/graphql/error.ex:106
 #, elixir-autogen, elixir-format
 msgid "Invalid credentials"
 msgstr ""
 
-#: lib/graphql/error.ex:90
+#: lib/graphql/error.ex:104
 #, elixir-autogen, elixir-format
 msgid "Reset your password to login"
 msgstr ""
 
-#: lib/graphql/error.ex:97
-#: lib/graphql/error.ex:102
+#: lib/graphql/error.ex:111
+#: lib/graphql/error.ex:116
 #, elixir-autogen, elixir-format
 msgid "Resource not found"
 msgstr ""
 
-#: lib/graphql/error.ex:104
+#: lib/graphql/error.ex:123
 #, elixir-autogen, elixir-format
 msgid "Something went wrong"
 msgstr ""
 
-#: lib/graphql/error.ex:85
+#: lib/graphql/error.ex:99
 #, elixir-autogen, elixir-format
 msgid "Unknown Resource"
 msgstr ""
 
-#: lib/graphql/error.ex:95
+#: lib/graphql/error.ex:109
 #, elixir-autogen, elixir-format
 msgid "You don't have permission to do this"
 msgstr ""
 
-#: lib/graphql/error.ex:87
+#: lib/graphql/error.ex:101
 #, elixir-autogen, elixir-format
 msgid "You need to be logged in"
 msgstr ""
@@ -1144,4 +1144,188 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:191
 #, elixir-autogen, elixir-format
 msgid "Your registration has been detected as spam and cannot be processed."
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:86
+#, elixir-autogen, elixir-format
+msgid "All of name, scope and redirect_uri parameters are required to create an application"
+msgstr ""
+
+#: lib/graphql/error.ex:118
+#, elixir-autogen, elixir-format
+msgid "Application not found"
+msgstr ""
+
+#: lib/graphql/error.ex:121
+#, elixir-autogen, elixir-format
+msgid "Application token not found"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:89
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error while revoking token"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:59
+#, elixir-autogen, elixir-format
+msgid "Impossible to create application."
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:356
+#, elixir-autogen, elixir-format
+msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:329
+#, elixir-autogen, elixir-format
+msgid "Invalid client credentials provided"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:337
+#, elixir-autogen, elixir-format
+msgid "Invalid refresh token provided"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:170
+#: lib/web/controllers/application_controller.ex:401
+#, elixir-autogen, elixir-format
+msgid "No application was found with this client_id"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:37
+#, elixir-autogen, elixir-format
+msgid "No application with this client_id was found"
+msgstr ""
+
+#: lib/graphql/authorization.ex:80
+#, elixir-autogen, elixir-format
+msgid "Not authorized to access field %{field}"
+msgstr ""
+
+#: lib/graphql/authorization.ex:70
+#: lib/graphql/authorization.ex:75
+#, elixir-autogen, elixir-format
+msgid "Not authorized to access object %{object}"
+msgstr ""
+
+#: lib/graphql/authorization.ex:63
+#, elixir-autogen, elixir-format
+msgid "Not authorized to access this %{object_type}"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:279
+#, elixir-autogen, elixir-format
+msgid "Please slow down the rate of your requests"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:267
+#, elixir-autogen, elixir-format
+msgid "The authorization request is still pending"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:249
+#, elixir-autogen, elixir-format
+msgid "The client_id provided or the device_code associated is invalid"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:133
+#, elixir-autogen, elixir-format
+msgid "The device user code was not provided before approving the application"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:304
+#, elixir-autogen, elixir-format
+msgid "The given device_code has expired"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:44
+#, elixir-autogen, elixir-format
+msgid "The given redirect_uri is not in the list of allowed redirect URIs"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:158
+#, elixir-autogen, elixir-format
+msgid "The given scope is not in the list of the app declared scopes"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:109
+#: lib/graphql/resolvers/application.ex:146
+#, elixir-autogen, elixir-format
+msgid "The given user code has expired"
+msgstr ""
+
+#: lib/graphql/resolvers/application.ex:112
+#: lib/graphql/resolvers/application.ex:140
+#, elixir-autogen, elixir-format
+msgid "The given user code is invalid"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:411
+#, elixir-autogen, elixir-format
+msgid "The provided client_id does not match the provided code"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:414
+#, elixir-autogen, elixir-format
+msgid "The provided client_secret is invalid"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:407
+#, elixir-autogen, elixir-format
+msgid "The provided code is invalid or expired"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:418
+#, elixir-autogen, elixir-format
+msgid "The provided scope is invalid or not included in the app declared scopes"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:45
+#, elixir-autogen, elixir-format
+msgid "The scope parameter is not a space separated list of valid scopes"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:292
+#, elixir-autogen, elixir-format
+msgid "The user rejected the requested authorization"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:404
+#, elixir-autogen, elixir-format
+msgid "This redirect URI is not allowed"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:381
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Token not found"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:72
+#, elixir-autogen, elixir-format
+msgid "Too many requests"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:184
+#, elixir-autogen, elixir-format
+msgid "Unable to produce device code"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:373
+#, elixir-autogen, elixir-format
+msgid "Unable to revoke token"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:198
+#, elixir-autogen, elixir-format
+msgid "You need to pass both client_id and scope as parameters to obtain a device code"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:136
+#, elixir-autogen, elixir-format
+msgid "You need to provide a valid redirect_uri to autorize an application"
+msgstr ""
+
+#: lib/web/controllers/application_controller.ex:126
+#, elixir-autogen, elixir-format
+msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr ""

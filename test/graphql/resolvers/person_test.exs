@@ -29,6 +29,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
     }
   """
 
+  # TODO: Remove this
   @fetch_identities_query """
   {
     identities {
@@ -824,7 +825,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PersonTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "Only moderators and administrators can suspend a profile"
+               "You don't have permission to do this"
     end
   end
 end

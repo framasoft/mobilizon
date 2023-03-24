@@ -46,7 +46,7 @@ import { useRouter } from "vue-router";
 import Draggable from "zhyswan-vuedraggable";
 import { IResource } from "@/types/resource";
 import RouteName from "@/router/name";
-import { IGroup, usernameWithDomain } from "@/types/actor";
+import { IMinimalActor, usernameWithDomain } from "@/types/actor";
 import ResourceDropdown from "./ResourceDropdown.vue";
 import { UPDATE_RESOURCE } from "@/graphql/resources";
 import { inject, ref } from "vue";
@@ -59,7 +59,7 @@ import { Snackbar } from "@/plugins/snackbar";
 const props = withDefaults(
   defineProps<{
     resource: IResource;
-    group: IGroup;
+    group: IMinimalActor;
     inline?: boolean;
   }>(),
   { inline: false }

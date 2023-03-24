@@ -9,6 +9,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.FollowerType do
   Represents an actor's follower
   """
   object :follower do
+    meta(:authorize, :user)
     field(:id, :id, description: "The follow ID")
     field(:target_actor, :actor, description: "What or who the profile follows")
     field(:actor, :actor, description: "Which profile follows")
@@ -30,6 +31,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.FollowerType do
   A paginated list of follower objects
   """
   object :paginated_follower_list do
+    meta(:authorize, :user)
     field(:elements, list_of(:follower), description: "A list of followers")
     field(:total, :integer, description: "The total number of elements in the list")
   end
@@ -42,6 +44,8 @@ defmodule Mobilizon.GraphQL.Schema.Actors.FollowerType do
       arg(:approved, non_null(:boolean),
         description: "Whether the follower has been approved by the target actor or not"
       )
+
+      middleware(Rajska.QueryAuthorization, permit: :user, scope: false)
 
       resolve(&Followers.update_follower/3)
     end

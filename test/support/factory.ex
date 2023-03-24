@@ -503,4 +503,37 @@ defmodule Mobilizon.Factory do
       type: :string
     }
   end
+
+  def auth_application_factory do
+    %Mobilizon.Applications.Application{
+      name: sequence("My app"),
+      client_id: :crypto.strong_rand_bytes(42) |> Base.encode64() |> binary_part(0, 42),
+      client_secret: :crypto.strong_rand_bytes(42) |> Base.encode64() |> binary_part(0, 42),
+      redirect_uris: [sequence("https://someredir.uri")],
+      scope: "read write",
+      website: "https://somewebsite.com"
+    }
+  end
+
+  def auth_application_token_factory do
+    %Mobilizon.Applications.ApplicationToken{
+      authorization_code: sequence("some code"),
+      status: "pending",
+      scope: "read write",
+      user: build(:user),
+      application: build(:auth_application)
+    }
+  end
+
+  def auth_application_device_activation_factory do
+    %Mobilizon.Applications.ApplicationDeviceActivation{
+      user_code: :crypto.strong_rand_bytes(8) |> Base.encode64() |> binary_part(0, 8),
+      device_code: :crypto.strong_rand_bytes(8) |> Base.encode64() |> binary_part(0, 8),
+      status: "pending",
+      scope: "read write",
+      expires_in: 600,
+      user: build(:user),
+      application: build(:auth_application)
+    }
+  end
 end

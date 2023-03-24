@@ -312,10 +312,17 @@ config :mobilizon, Oban,
        {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.ExportCleanerWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.SendActivityRecapWorker, queue: :notifications},
-       {"@daily", Mobilizon.Service.Workers.CleanOldActivityWorker, queue: :background}
+       {"@daily", Mobilizon.Service.Workers.CleanOldActivityWorker, queue: :background},
+       {"@hourly", Mobilizon.Service.Workers.CleanApplicationData,
+        queue: :background, args: %{type: :application_token}},
+       {"@hourly", Mobilizon.Service.Workers.CleanApplicationData,
+        queue: :background, args: %{type: :application_device_activation}}
      ]},
     {Oban.Plugins.Pruner, max_age: 300}
   ]
+
+config :hammer,
+  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
 
 config :mobilizon, :rich_media,
   parsers: [
