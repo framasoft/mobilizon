@@ -318,7 +318,7 @@ button.menubar__button {
 }
 .o-dpck__header__next,
 .o-dpck__header__previous {
-  @apply justify-center text-center no-underline cursor-pointer items-center shadow-none inline-flex relative select-none leading-6 border rounded h-10 p-2 m-1;
+  @apply justify-center text-center no-underline cursor-pointer items-center shadow-none inline-flex relative select-none leading-6 border rounded h-10 p-2 m-1 dark:text-white;
   min-width: 2.25em;
 }
 .o-dpck__header__list {
@@ -332,7 +332,15 @@ button.menubar__button {
 .o-dpck__table__cell {
   @apply rounded py-2 px-3;
 }
+.o-dpck__table__cell--selectable {
+  @apply dark:text-zinc-50;
+}
 .o-dpck__month__head-cell,
 .o-dpck__table__head-cell {
   @apply font-semibold;
+}
+
+/** Timepicker */
+.o-tpck__select {
+  @apply dark:bg-zinc-700 dark:placeholder:text-zinc-400 dark:text-zinc-50;
 }
