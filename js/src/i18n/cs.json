@@ -860,6 +860,7 @@
   "Report": "Nahlášení",
   "Report #{reportNumber}": "Hlášení číslo {reportNumber}",
   "Report as ham": "Nahlásit jako spam",
+  "Report as spam": "Nahlásit jako spam",
   "Report as undetected spam": "Nahlásit jako nerozeznaný spam",
   "Report reason": "Důvod pro nahlášení",
   "Report status": "Zpráva o stavu",
