@@ -258,6 +258,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(`../../../node_modules/vue-material-design-icons/EyeOutline.vue`),
   PencilOutline: () =>
     import(`../../../node_modules/vue-material-design-icons/PencilOutline.vue`),
+  Apps: () =>
+    import(`../../../node_modules/vue-material-design-icons/Apps.vue`),
 };
 
 const props = withDefaults(
