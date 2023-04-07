@@ -369,7 +369,10 @@ const currentAddress = computed({
   },
   set(address: IAddress) {
     if (editableGroup.value) {
-      editableGroup.value.physicalAddress = address;
+      editableGroup.value = {
+        ...editableGroup.value,
+        physicalAddress: address,
+      };
     }
   },
 });

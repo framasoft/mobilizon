@@ -93,7 +93,10 @@ export function addressToPoiInfos(address: IAddress): IPoiInfo {
   switch (addressType) {
     case "house":
       name = address.description;
-      alternativeName = [address.postalCode, address.locality, address.country]
+      alternativeName = (
+        address.description !== address.street ? [address.street] : []
+      )
+        .concat([address.postalCode, address.locality, address.country])
         .filter((zone) => zone)
         .join(", ");
       poiIcon = poiIcons.defaultAddress;
@@ -123,8 +126,11 @@ export function addressToPoiInfos(address: IAddress): IPoiInfo {
       alternativeName = "";
       if (address.street && address.street.trim()) {
         alternativeName = `${address.street}`;
+        if (address.postalCode) {
+          alternativeName += `, ${address.postalCode}`;
+        }
         if (address.locality) {
-          alternativeName += ` (${address.locality})`;
+          alternativeName += `, ${address.locality}`;
         }
       } else if (address.locality && address.locality.trim()) {
         alternativeName = `${address.locality}, ${address.region}, ${address.country}`;
@@ -157,4 +163,20 @@ export function addressFullName(address: IAddress): string {
     return name;
   }
   return "";
+}
+
+export function resetAddress(address: IAddress): void {
+  address.id = undefined;
+  address.description = "";
+  address.street = "";
+  address.locality = "";
+  address.postalCode = "";
+  address.region = "";
+  address.country = "";
+  address.type = "";
+  address.geom = undefined;
+  address.url = undefined;
+  address.originId = undefined;
+  address.timezone = undefined;
+  address.pictureInfo = undefined;
 }

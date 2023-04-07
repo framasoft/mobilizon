@@ -612,59 +612,6 @@ const FullAddressAutoComplete = defineAsyncComponent(
   () => import("@/components/Event/FullAddressAutoComplete.vue")
 );
 
-// apollo: {
-//   config: CONFIG_EDIT_EVENT,
-//   event: {
-//     query: FETCH_EVENT,
-//     variables() {
-//       return {
-//         uuid: this.eventId,
-//       };
-//     },
-//     update(data) {
-//       let event = data.event;
-//       if (this.isDuplicate) {
-//         event = { ...event, organizerActor: this.currentActor };
-//       }
-//       return new EventModel(event);
-//     },
-//     skip() {
-//       return !this.eventId;
-//     },
-//   },
-//   person: {
-//     query: PERSON_STATUS_GROUP,
-//     fetchPolicy: "cache-and-network",
-//     variables() {
-//       return {
-//         id: this.currentActor.id,
-//         group: usernameWithDomain(this.event?.attributedTo),
-//       };
-//     },
-//     skip() {
-//       return (
-//         !this.event?.attributedTo ||
-//         !this.event?.attributedTo?.preferredUsername
-//       );
-//     },
-//   },
-//   group: {
-//     query: FETCH_GROUP_PUBLIC,
-//     fetchPolicy: "cache-and-network",
-//     variables() {
-//       return {
-//         name: this.event?.attributedTo?.preferredUsername,
-//       };
-//     },
-//     skip() {
-//       return (
-//         !this.event?.attributedTo ||
-//         !this.event?.attributedTo?.preferredUsername
-//       );
-//     },
-//   },
-// },
-
 const { t } = useI18n({ useScope: "global" });
 
 useHead({
@@ -689,7 +636,6 @@ const unmodifiedEvent = ref<IEditableEvent>(new EventModel());
 
 const pictureFile = ref<File | null>(null);
 
-// const canPromote = ref(true);
 const limitedPlaces = ref(false);
 const showFixedNavbar = ref(true);
 
@@ -1051,6 +997,7 @@ const buildVariables = async () => {
         res.picture = { mediaId: event.value?.picture.id };
       }
     }
+    console.debug("builded variables", res);
   } catch (e) {
     console.error(e);
   }
