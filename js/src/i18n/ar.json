@@ -93,7 +93,6 @@
   "An event from one of my groups has been published": "",
   "An event from one of my groups has been updated or deleted": "",
   "An instance is an installed version of the Mobilizon software running on a server. An instance can be run by anyone using the {mobilizon_software} or other federated apps, aka the “fediverse”. This instance's name is {instance_name}. Mobilizon is a federated network of multiple instances (just like email servers), users registered on different instances may communicate even though they didn't register on the same instance.": "",
-  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "",
   "And {number} comments": "",
   "Announcements and mentions notifications are always sent straight away.": "",
   "Anonymous participant": "مشارِك مجهول",
