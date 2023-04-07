@@ -24,7 +24,7 @@
           required
           v-model="identity.name"
           id="identityName"
-          @input="autoUpdateUsername"
+          @input="(event) => updateUsername(event.target.value)"
         />
       </o-field>
 
@@ -176,8 +176,8 @@ onBeforeMount(() => {
   }
 });
 
-const autoUpdateUsername = () => {
-  identity.value.preferredUsername = convertToUsername(identity.value.name);
+const updateUsername = (value: string) => {
+  identity.value.preferredUsername = convertToUsername(value);
 };
 
 const { onDone, onError, mutate } = registerAccount();
