@@ -229,8 +229,9 @@ const { registrationsOpen, registrationsAllowlist, databaseLogin } =
 
 const canRegister = computed(() => {
   return (
-    (registrationsOpen.value || registrationsAllowlist.value) &&
-    databaseLogin.value
+    ((registrationsOpen.value || registrationsAllowlist.value) &&
+      databaseLogin.value) ??
+    false
   );
 });
 

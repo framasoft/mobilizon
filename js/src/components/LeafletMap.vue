@@ -21,10 +21,15 @@
       <l-marker
         :lat-lng="[lat, lon]"
         @add="openPopup"
-        @update:latLng="updateDraggableMarkerPosition"
+        @update:latLng="updateDraggableMarkerPositionDebounced"
         :draggable="!readOnly"
       >
-        <l-icon>
+        <l-icon
+          :icon-size="[48, 48]"
+          :shadow-size="[30, 30]"
+          :icon-anchor="[24, 48]"
+          :popup-anchor="[-24, -40]"
+        >
           <MapMarker :size="48" class="text-mbz-purple" />
         </l-icon>
         <l-popup v-if="popupMultiLine" :options="{ offset: new Point(22, 8) }">
@@ -63,6 +68,7 @@ import { useI18n } from "vue-i18n";
 import Locatecontrol from "leaflet.locatecontrol";
 import CrosshairsGps from "vue-material-design-icons/CrosshairsGps.vue";
 import MapMarker from "vue-material-design-icons/MapMarker.vue";
+import { useDebounceFn } from "@vueuse/core";
 
 const props = withDefaults(
   defineProps<{
@@ -159,22 +165,25 @@ const mergedOptions = computed((): Record<string, unknown> => {
 });
 
 const lat = computed((): number => {
-  return Number.parseFloat(props.coords?.split(";")[1]);
+  return Number.parseFloat(props.coords?.split(";")[1] || "0");
 });
 
 const lon = computed((): number => {
-  return Number.parseFloat(props.coords.split(";")[0]);
+  return Number.parseFloat(props.coords?.split(";")[0] || "0");
 });
 
-const popupMultiLine = computed((): Array<string | undefined> => {
+const popupMultiLine = computed((): Array<string> | undefined => {
   if (Array.isArray(props.marker?.text)) {
     return props.marker?.text as string[];
   }
-  return [props.marker?.text];
+  if (props.marker?.text) {
+    return [props.marker?.text];
+  }
+  return undefined;
 });
 
 const clickMap = (event: LeafletMouseEvent): void => {
-  updateDraggableMarkerPosition(event.latlng);
+  updateDraggableMarkerPositionDebounced(event.latlng);
 };
 
 const updateDraggableMarkerPosition = (e: LatLng): void => {
@@ -182,6 +191,10 @@ const updateDraggableMarkerPosition = (e: LatLng): void => {
     props.updateDraggableMarkerCallback(e, zoom.value);
   }
 };
+
+const updateDraggableMarkerPositionDebounced = useDebounceFn((e: LatLng) => {
+  updateDraggableMarkerPosition(e);
+}, 1000);
 
 const updateZoom = (newZoom: number): void => {
   zoom.value = newZoom;
@@ -211,4 +224,9 @@ div.map-container {
 </style>
 <style>
 @import "leaflet.locatecontrol/dist/L.Control.Locate.css";
+
+.leaflet-div-icon {
+  background: unset;
+  border: unset;
+}
 </style>

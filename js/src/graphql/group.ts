@@ -54,6 +54,50 @@ export const LIST_GROUPS = gql`
   ${ACTOR_FRAGMENT}
 `;
 
+export const GROUP_VERY_BASIC_FIELDS_FRAGMENTS = gql`
+  fragment GroupVeryBasicFields on Group {
+    ...ActorFragment
+    suspended
+    visibility
+    openness
+    manuallyApprovesFollowers
+    physicalAddress {
+      description
+      street
+      locality
+      postalCode
+      region
+      country
+      geom
+      type
+      id
+      originId
+      url
+    }
+    avatar {
+      id
+      url
+      name
+      metadata {
+        width
+        height
+        blurhash
+      }
+    }
+    banner {
+      id
+      url
+      name
+      metadata {
+        width
+        height
+        blurhash
+      }
+    }
+  }
+  ${ACTOR_FRAGMENT}
+`;
+
 export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
   fragment GroupBasicFields on Group {
     ...ActorFragment
@@ -296,17 +340,10 @@ export const UPDATE_GROUP = gql`
       physicalAddress: $physicalAddress
       manuallyApprovesFollowers: $manuallyApprovesFollowers
     ) {
-      ...ActorFragment
-      visibility
-      openness
-      manuallyApprovesFollowers
-      banner {
-        id
-        url
-      }
+      ...GroupVeryBasicFields
     }
   }
-  ${ACTOR_FRAGMENT}
+  ${GROUP_VERY_BASIC_FIELDS_FRAGMENTS}
 `;
 
 export const DELETE_GROUP = gql`

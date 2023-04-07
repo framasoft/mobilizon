@@ -21,49 +21,56 @@
           )
         }}
       </p>
-      <div
-        class="flex justify-between items-center rounded-lg bg-white shadow-xl my-6"
-        v-for="authAuthorizedApplication in authAuthorizedApplications"
-        :key="authAuthorizedApplication.id"
-      >
-        <div class="p-4">
-          <p class="text-3xl font-bold">
-            {{ authAuthorizedApplication.application.name }}
-          </p>
-          <a
-            v-if="authAuthorizedApplication.application.website"
-            target="_blank"
-            :href="authAuthorizedApplication.application.website"
-            >{{
-              urlToHostname(authAuthorizedApplication.application.website)
-            }}</a
-          >
-          <p>
-            <span v-if="authAuthorizedApplication.lastUsedAt">{{
-              t("Last used on {last_used_date}", {
-                last_used_date: formatDateString(
-                  authAuthorizedApplication.lastUsedAt
-                ),
-              })
-            }}</span>
-            <span v-else>{{ t("Never used") }}</span> ⋅
-            {{
-              t("Authorized on {authorization_date}", {
-                authorization_date: formatDateString(
-                  authAuthorizedApplication.insertedAt
-                ),
-              })
-            }}
-          </p>
-        </div>
-        <div class="p-4">
-          <o-button
-            @click="() => revoke({ appTokenId: authAuthorizedApplication.id })"
-            variant="danger"
-            >{{ t("Revoke") }}</o-button
-          >
+      <div v-if="authAuthorizedApplications.length > 0">
+        <div
+          class="flex justify-between items-center rounded-lg bg-white shadow-xl my-6"
+          v-for="authAuthorizedApplication in authAuthorizedApplications"
+          :key="authAuthorizedApplication.id"
+        >
+          <div class="p-4">
+            <p class="text-3xl font-bold">
+              {{ authAuthorizedApplication.application.name }}
+            </p>
+            <a
+              v-if="authAuthorizedApplication.application.website"
+              target="_blank"
+              :href="authAuthorizedApplication.application.website"
+              >{{
+                urlToHostname(authAuthorizedApplication.application.website)
+              }}</a
+            >
+            <p>
+              <span v-if="authAuthorizedApplication.lastUsedAt">{{
+                t("Last used on {last_used_date}", {
+                  last_used_date: formatDateString(
+                    authAuthorizedApplication.lastUsedAt
+                  ),
+                })
+              }}</span>
+              <span v-else>{{ t("Never used") }}</span> ⋅
+              {{
+                t("Authorized on {authorization_date}", {
+                  authorization_date: formatDateString(
+                    authAuthorizedApplication.insertedAt
+                  ),
+                })
+              }}
+            </p>
+          </div>
+          <div class="p-4">
+            <o-button
+              @click="
+                () => revoke({ appTokenId: authAuthorizedApplication.id })
+              "
+              variant="danger"
+              >{{ t("Revoke") }}</o-button
+            >
+          </div>
         </div>
       </div>
+      <EmptyContent v-else icon="apps" inline>
+        {{ t("No apps authorized yet") }}
+      </EmptyContent>
     </section>
   </div>
 </template>
@@ -82,6 +89,7 @@ import RouteName from "../../router/name";
 import { IUser } from "@/types/current-user.model";
 import { formatDateString } from "@/filters/datetime";
 import { Notifier } from "@/plugins/notifier";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -94,7 +102,7 @@ const { result: authAuthorizedApplicationsResult } = useQuery<{
 const authAuthorizedApplications = computed(
   () =>
     authAuthorizedApplicationsResult.value?.loggedUser
-      ?.authAuthorizedApplications
+      ?.authAuthorizedApplications ?? []
 );
 
 const urlToHostname = (url: string | undefined): string | null => {

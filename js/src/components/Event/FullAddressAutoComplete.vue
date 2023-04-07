@@ -10,32 +10,24 @@
       >
         <template #label>
           {{ actualLabel }}
-          <span v-if="gettingLocation">{{ t("Getting location") }}</span>
         </template>
-        <p class="control" v-if="canShowLocateMeButton">
-          <o-loading
-            :full-page="false"
-            v-model:active="gettingLocation"
-            :can-cancel="false"
-            :container="mapMarker?.$el"
-          />
-          <o-button
-            ref="mapMarker"
-            icon-right="map-marker"
-            @click="locateMe"
-            :title="t('Use my location')"
-          />
-        </p>
+        <o-button
+          v-if="canShowLocateMeButton"
+          ref="mapMarker"
+          icon-right="map-marker"
+          @click="locateMe"
+          :title="t('Use my location')"
+        />
         <o-autocomplete
           :data="addressData"
-          v-model="queryText"
+          v-model="queryTextWithDefault"
           :placeholder="placeholderWithDefault"
           :customFormatter="(elem: IAddress) => addressFullName(elem)"
           :debounceTyping="debounceDelay"
           @typing="asyncData"
           :icon="canShowLocateMeButton ? null : 'map-marker'"
           expanded
-          @select="updateSelected"
+          @select="setSelected"
           :id="id"
           :disabled="disabled"
           dir="auto"
@@ -49,35 +41,39 @@
             <small>{{ addressToPoiInfos(option).alternativeName }}</small>
           </template>
           <template #empty>
-            <span v-if="isFetching">{{ t("Searching…") }}</span>
-            <div v-else-if="queryText.length >= 3" class="enabled">
-              <span>{{
-                t('No results for "{queryText}"', { queryText })
-              }}</span>
-              <span>{{
-                t(
-                  "You can try another search term or drag and drop the marker on the map",
-                  {
-                    queryText,
-                  }
-                )
-              }}</span>
-              <!--                        <p class="control" @click="openNewAddressModal">-->
-              <!--                            <button type="button" class="button is-primary">{{ t('Add') }}</button>-->
-              <!--                        </p>-->
-            </div>
+            <template v-if="isFetching">{{ t("Searching…") }}</template>
+            <template v-else-if="queryTextWithDefault.length >= 3">
+              <p>
+                {{
+                  t('No results for "{queryText}"', {
+                    queryText: queryTextWithDefault,
+                  })
+                }}
+              </p>
+              <p>
+                {{
+                  t(
+                    "You can try another search term or add the address details manually below."
+                  )
+                }}
+              </p>
+            </template>
           </template>
         </o-autocomplete>
         <o-button
-          :disabled="!queryText"
+          :disabled="!queryTextWithDefault"
           @click="resetAddress"
           class="reset-area"
           icon-left="close"
           :title="t('Clear address field')"
         />
       </o-field>
+      <p v-if="gettingLocation" class="flex gap-2">
+        <Loading class="animate-spin" />
+        {{ t("Getting location") }}
+      </p>
       <div
-        class="mt-2 p-2 rounded-lg shadow-md dark:bg-violet-3"
+        class="mt-2 p-2 rounded-lg shadow-md bg-white dark:bg-violet-3"
         v-if="!hideSelected && (selected?.originId || selected?.url)"
       >
         <div class="">
@@ -90,16 +86,80 @@
         </div>
       </div>
     </div>
-    <div class="map" v-if="!hideMap && selected && selected.geom">
+    <o-collapse
+      v-model:open="detailsAddress"
+      :aria-id="`${id}-address-details`"
+      class="my-3"
+    >
+      <template #trigger>
+        <o-button
+          variant="primary"
+          outlined
+          :aria-controls="`${id}-address-details`"
+          :icon-right="detailsAddress ? 'chevron-up' : 'chevron-down'"
+        >
+          {{ t("Details") }}
+        </o-button>
+      </template>
+      <form @submit.prevent="saveManualAddress">
+        <header>
+          <h2>{{ t("Manually enter address") }}</h2>
+        </header>
+        <section>
+          <o-field :label="t('Name')" labelFor="addressNameInput">
+            <o-input
+              aria-required="true"
+              required
+              v-model="selected.description"
+              id="addressNameInput"
+            />
+          </o-field>
+
+          <o-field :label="t('Street')" labelFor="streetInput">
+            <o-input v-model="selected.street" id="streetInput" />
+          </o-field>
+
+          <o-field grouped>
+            <o-field :label="t('Postal Code')" labelFor="postalCodeInput">
+              <o-input v-model="selected.postalCode" id="postalCodeInput" />
+            </o-field>
+
+            <o-field :label="t('Locality')" labelFor="localityInput">
+              <o-input v-model="selected.locality" id="localityInput" />
+            </o-field>
+          </o-field>
+
+          <o-field grouped>
+            <o-field :label="t('Region')" labelFor="regionInput">
+              <o-input v-model="selected.region" id="regionInput" />
+            </o-field>
+
+            <o-field :label="t('Country')" labelFor="countryInput">
+              <o-input v-model="selected.country" id="countryInput" />
+            </o-field>
+          </o-field>
+        </section>
+        <footer class="mt-3 flex gap-2 items-center">
+          <o-button native-type="submit">
+            {{ t("Save") }}
+          </o-button>
+          <o-button outlined type="button" @click="resetAddress">
+            {{ t("Clear") }}
+          </o-button>
+          <p>
+            {{
+              t(
+                "You can drag and drop the marker below to the desired location"
+              )
+            }}
+          </p>
+        </footer>
+      </form>
+    </o-collapse>
+    <div class="map" v-if="!hideMap">
       <map-leaflet
-        :coords="selected.geom"
-        :marker="{
-          text: [
-            addressToPoiInfos(selected).name,
-            addressToPoiInfos(selected).alternativeName,
-          ],
-          icon: addressToPoiInfos(selected).poiIcon.icon,
-        }"
+        :coords="selected.geom ?? defaultCoords"
+        :marker="mapMarkerValue"
         :updateDraggableMarkerCallback="reverseGeoCode"
         :options="{ zoom: mapDefaultZoom }"
         :readOnly="false"
@@ -114,15 +174,25 @@ import {
   IAddress,
   addressFullName,
   addressToPoiInfos,
+  resetAddress as resetAddressAction,
 } from "../../types/address.model";
 import AddressInfo from "../../components/Address/AddressInfo.vue";
-import { computed, ref, watch, defineAsyncComponent } from "vue";
+import {
+  computed,
+  ref,
+  watch,
+  defineAsyncComponent,
+  onMounted,
+  reactive,
+  onBeforeMount,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useGeocodingAutocomplete } from "@/composition/apollo/config";
 import { ADDRESS } from "@/graphql/address";
 import { useReverseGeocode } from "@/composition/apollo/address";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { AddressSearchType } from "@/types/enums";
+import Loading from "vue-material-design-icons/Loading.vue";
 const MapLeaflet = defineAsyncComponent(
   () => import("@/components/LeafletMap.vue")
 );
@@ -139,29 +209,38 @@ const props = withDefaults(
     hideSelected?: boolean;
     placeholder?: string;
     resultType?: AddressSearchType;
+    defaultCoords?: string;
   }>(),
   {
+    defaultCoords: "0;0",
     labelClass: "",
-    defaultText: "",
     disabled: false,
     hideMap: false,
     hideSelected: false,
   }
 );
 
-// const addressModalActive = ref(false);
-
-const componentId = 0;
+const componentId = ref(0);
 
 const emit = defineEmits(["update:modelValue"]);
 
 const gettingLocationError = ref<string | null>(null);
 const gettingLocation = ref(false);
-const mapDefaultZoom = ref(15);
+const mapDefaultZoom = computed(() => {
+  if (selected.description) {
+    return 15;
+  }
+  return 5;
+});
 
 const addressData = ref<IAddress[]>([]);
 
-const selected = ref<IAddress | null>(null);
+const defaultAddress = new Address();
+defaultAddress.geom = undefined;
+defaultAddress.id = undefined;
+const selected = reactive<IAddress>(defaultAddress);
+
+const detailsAddress = ref(false);
 
 const isFetching = ref(false);
 
@@ -171,40 +250,45 @@ const placeholderWithDefault = computed(
   () => props.placeholder ?? t("e.g. 10 Rue Jangot")
 );
 
-// created(): void {
-//   componentId += 1;
-// }
+onBeforeMount(() => {
+  componentId.value += 1;
+});
 
 const id = computed((): string => {
-  return `full-address-autocomplete-${componentId}`;
+  return `full-address-autocomplete-${componentId.value}`;
 });
 
 const modelValue = computed(() => props.modelValue);
 
 watch(modelValue, () => {
-  if (!modelValue.value) return;
-  selected.value = modelValue.value;
+  console.debug("modelValue changed");
+  setSelected(modelValue.value);
 });
 
-const updateSelected = (option: IAddress): void => {
-  if (option == null) return;
-  selected.value = option;
-  emit("update:modelValue", selected.value);
+onMounted(() => {
+  setSelected(modelValue.value);
+});
+
+const setSelected = (newValue: IAddress | null) => {
+  if (!newValue) return;
+  console.debug("setting selected to model value");
+  Object.assign(selected, newValue);
 };
 
-// const resetPopup = (): void => {
-//   selected.value = new Address();
-// };
-
-// const openNewAddressModal = (): void => {
-//   resetPopup();
-//   addressModalActive.value = true;
-// };
+const saveManualAddress = (): void => {
+  console.debug("saving address");
+  selected.id = undefined;
+  selected.originId = undefined;
+  selected.url = undefined;
+  emit("update:modelValue", selected);
+  detailsAddress.value = false;
+};
 
 const checkCurrentPosition = (e: LatLng): boolean => {
-  if (!selected.value?.geom) return false;
-  const lat = parseFloat(selected.value?.geom.split(";")[1]);
-  const lon = parseFloat(selected.value?.geom.split(";")[0]);
+  console.debug("checkCurrentPosition");
+  if (!selected?.geom || !e) return false;
+  const lat = parseFloat(selected?.geom.split(";")[1]);
+  const lon = parseFloat(selected?.geom.split(";")[0]);
 
   return e.lat === lat && e.lng === lon;
 };
@@ -238,12 +322,11 @@ onAddressSearchResult((result) => {
   isFetching.value = false;
 });
 
-const searchQuery = ref("");
-
 const asyncData = async (query: string): Promise<void> => {
+  console.debug("Finding addresses");
   if (!query.length) {
     addressData.value = [];
-    selected.value = new Address();
+    Object.assign(selected, defaultAddress);
     return;
   }
 
@@ -254,33 +337,39 @@ const asyncData = async (query: string): Promise<void> => {
 
   isFetching.value = true;
 
-  searchQuery.value = query;
-
   searchAddress(undefined, {
-    query: searchQuery.value,
+    query,
     locale: locale,
     type: props.resultType,
   });
 };
 
-const queryText = computed({
+const selectedAddressText = computed(() => {
+  if (!selected) return undefined;
+  return addressFullName(selected);
+});
+
+const queryText = ref();
+
+const queryTextWithDefault = computed({
   get() {
+    console.log("queryTextWithDefault 1", queryText.value);
+    console.log("queryTextWithDefault 2", selectedAddressText.value);
+    console.log("queryTextWithDefault 3", props.defaultText);
     return (
-      (selected.value ? addressFullName(selected.value) : props.defaultText) ??
-      ""
+      queryText.value ?? selectedAddressText.value ?? props.defaultText ?? ""
     );
   },
-  set(text) {
-    if (text === "" && selected.value?.id) {
-      console.debug("doing reset");
-      resetAddress();
-    }
+  set(newValue: string) {
+    queryText.value = newValue;
   },
 });
 
 const resetAddress = (): void => {
+  console.debug("resetting address");
   emit("update:modelValue", null);
-  selected.value = new Address();
+  resetAddressAction(selected);
+  queryTextWithDefault.value = "";
 };
 
 const locateMe = async (): Promise<void> => {
@@ -288,7 +377,7 @@ const locateMe = async (): Promise<void> => {
   gettingLocationError.value = null;
   try {
     const location = await getLocation();
-    mapDefaultZoom.value = 12;
+    // mapDefaultZoom.value = 12;
     reverseGeoCode(
       new LatLng(location.coords.latitude, location.coords.longitude),
       12
@@ -308,15 +397,26 @@ onReverseGeocodeResult((result) => {
   addressData.value = data.reverseGeocode;
 
   if (addressData.value.length > 0) {
-    const defaultAddress = addressData.value[0];
-    selected.value = defaultAddress;
-    emit("update:modelValue", selected.value);
+    const foundAddress = addressData.value[0];
+    Object.assign(selected, foundAddress);
+    console.debug("reverse geocode succeded, setting new address");
+    queryTextWithDefault.value = addressFullName(foundAddress);
+    emit("update:modelValue", selected);
   }
 });
 
 const reverseGeoCode = (e: LatLng, zoom: number) => {
+  console.debug("reverse geocode");
+
+  // If the details is opened, just update coords, don't reverse geocode
+  if (e && detailsAddress.value) {
+    selected.geom = `${e.lng};${e.lat}`;
+    console.debug("no reverse geocode, just setting new coords");
+    return;
+  }
+
   // If the position has been updated through autocomplete selection, no need to geocode it!
-  if (checkCurrentPosition(e)) return;
+  if (!e || checkCurrentPosition(e)) return;
 
   loadReverseGeocode(undefined, {
     latitude: e.lat,
@@ -357,6 +457,17 @@ const getLocation = async (): Promise<GeolocationPosition> => {
     );
   });
 };
+
+const mapMarkerValue = computed(() => {
+  if (!selected.description) return undefined;
+  return {
+    text: [
+      addressToPoiInfos(selected).name,
+      addressToPoiInfos(selected).alternativeName,
+    ],
+    icon: addressToPoiInfos(selected).poiIcon.icon,
+  };
+});
 
 const fieldErrors = computed(() => {
   return gettingLocationError.value;
