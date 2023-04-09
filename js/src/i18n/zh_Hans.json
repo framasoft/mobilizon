@@ -99,7 +99,6 @@
   "An event from one of my groups has been published": "我的一个群组的一个活动已经发布了",
   "An event from one of my groups has been updated or deleted": "我的一个群组的一个活动已被更新或删除",
   "An instance is an installed version of the Mobilizon software running on a server. An instance can be run by anyone using the {mobilizon_software} or other federated apps, aka the “fediverse”. This instance's name is {instance_name}. Mobilizon is a federated network of multiple instances (just like email servers), users registered on different instances may communicate even though they didn't register on the same instance.": "一个实例是一个在服务器上运行的Mobilizon软件的安装版本。任何人都可以使用{mobilizon_software}或其他联合应用程序（又称 \"fediverse\"）来运行一个实例。这个实例的名字是{instance_name}。Mobilizon是一个由多个实例组成的分布式网络（就像电子邮件服务器），在不同实例上注册的用户可以进行交流，即使他们没有在同一个实例上注册。",
-  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "应用程序编程接口 \"或 \"API \"是一种通信协议，允许软件组件相互通信。例如，Mobilizon API可以允许第三方软件工具与Mobilizon实例进行通信，以自动和远程执行某些操作，如代表您发布活动。",
   "And {number} comments": "和{number}个评论",
   "Announcements and mentions notifications are always sent straight away.": "公告和提及的通知总是直接发送。",
   "Anonymous participant": "匿名参与者",
