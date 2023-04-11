@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-03-20 20:50+0000\n"
+"PO-Revision-Date: 2023-04-11 18:20+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -150,7 +150,7 @@ msgstr "Upozorenje"
 #: lib/web/email/participation.ex:140
 #, elixir-autogen, elixir-format
 msgid "Confirm your participation to event %{title}"
-msgstr "Potvrdi sudjeljovnje u događaju %{title}"
+msgstr "Potvrdi sudjeljovnje događaju %{title}"
 
 #: lib/web/templates/api/privacy.html.heex:106
 #, elixir-autogen, elixir-format
@@ -410,13 +410,13 @@ msgstr[2] "Ovaj tjedan je planirano %{nb_events} događaja"
 #, elixir-format
 msgid "One participation request for event %{title} to process"
 msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
-msgstr[0] "Jedan zahtjev za sudjelovanje za događaj %{title} koji se mara obraditi"
+msgstr[0] "Jedan zahtjev za sudjelovanje događaju %{title} koji se mora obraditi"
 msgstr[1] ""
-"%{number_participation_requests} zahtjeva za sudjelovanje za događaj %{title}"
-" koji se maraju obraditi"
+"%{number_participation_requests} zahtjeva za sudjelovanje događaju %{title} "
+"koji se moraju obraditi"
 msgstr[2] ""
-"%{number_participation_requests} zahtjeva za sudjelovanje za događaj %{title}"
-" koji se maraju obraditi"
+"%{number_participation_requests} zahtjeva za sudjelovanje događaju %{title} "
+"koji se maroju obraditi"
 
 #: lib/web/templates/email/notification_each_week.html.heex:47
 #: lib/web/templates/email/notification_each_week.text.eex:3
@@ -1133,12 +1133,14 @@ msgstr ""
 #: lib/web/templates/email/group_suspension.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}!"
-msgstr ""
+msgstr "Grupa %{group} je suspendirana na instanci %{instance}!"
 
 #: lib/web/templates/email/group_suspension.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group."
 msgstr ""
+"Tim za moderiranje tvoje instance je odlučio suspendirati %{group_name} "
+"(%{group_address}). Više nisi član ove grupe."
 
 #: lib/web/email/group.ex:107
 #, elixir-autogen, elixir-format
