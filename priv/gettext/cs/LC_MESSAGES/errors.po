@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-25 00:54+0000\n"
+"PO-Revision-Date: 2023-04-12 22:45+0000\n"
 "Last-Translator: Jiri Podhorecky <j.podhorecky@gmail.com>\n"
 "Language-Team: Czech <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/cs/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.16.4\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1143,48 +1143,51 @@ msgstr "Tento e-mail se nezdá být platný"
 #: lib/graphql/resolvers/comment.ex:65
 #, elixir-autogen, elixir-format
 msgid "This comment was detected as spam."
-msgstr ""
+msgstr "Tento komentář byl detekován jako spam."
 
 #: lib/graphql/resolvers/event.ex:293
 #, elixir-autogen, elixir-format
 msgid "This event was detected as spam."
-msgstr ""
+msgstr "Tato událost byla detekována jako spam."
 
 #: lib/graphql/api/reports.ex:66
 #, elixir-autogen, elixir-format
 msgid "Unsupported status for a report"
-msgstr ""
+msgstr "Nepodporovaný stav sestavy"
 
 #: lib/graphql/api/reports.ex:127
 #, elixir-autogen, elixir-format
 msgid "You can only remove your own notes"
-msgstr ""
+msgstr "Odstranit můžete pouze své vlastní poznámky"
 
 #: lib/graphql/api/reports.ex:94
 #: lib/graphql/api/reports.ex:121
 #, elixir-autogen, elixir-format
 msgid "You need to be a moderator or an administrator to create a note on a report"
 msgstr ""
+"Chcete-li vytvořit poznámku k hlášení, musíte být moderátorem nebo správcem"
 
 #: lib/graphql/resolvers/person.ex:330
 #, elixir-autogen, elixir-format
 msgid "Your profile was detected as spam."
-msgstr ""
+msgstr "Váš profil byl detekován jako spam."
 
 #: lib/graphql/resolvers/user.ex:191
 #, elixir-autogen, elixir-format
 msgid "Your registration has been detected as spam and cannot be processed."
-msgstr ""
+msgstr "Vaše registrace byla detekována jako spam a nemůže být zpracována."
 
 #: lib/web/controllers/application_controller.ex:86
 #, elixir-autogen, elixir-format
 msgid "All of name, scope and redirect_uri parameters are required to create an application"
 msgstr ""
+"Pro vytvoření aplikace jsou vyžadovány všechny parametry name, scope a "
+"redirect_uri"
 
 #: lib/graphql/error.ex:118
 #, elixir-autogen, elixir-format
 msgid "Application not found"
-msgstr ""
+msgstr "Aplikace nebyla nalezena"
 
 #: lib/graphql/error.ex:121
 #, elixir-autogen, elixir-format
