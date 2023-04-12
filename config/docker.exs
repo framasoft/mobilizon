@@ -40,7 +40,7 @@ config :mobilizon, Mobilizon.Storage.Repo,
   database: System.get_env("MOBILIZON_DATABASE_DBNAME", "mobilizon"),
   hostname: System.get_env("MOBILIZON_DATABASE_HOST", "postgres"),
   port: System.get_env("MOBILIZON_DATABASE_PORT", "5432"),
-  ssl: System.get_env("MOBILIZON_DATABASE_SSL", false),
+  ssl: System.get_env("MOBILIZON_DATABASE_SSL", "false") == "true",
   pool_size: 10
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,
