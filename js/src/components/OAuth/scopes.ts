@@ -24,9 +24,7 @@ export const scope: Record<
   },
   "write:event:create": {
     title: t("Publish events"),
-    text: t(
-      "This application will be allowed to publish events"
-    ),
+    text: t("This application will be allowed to publish events"),
     icon: "calendar",
   },
   "write:event:update": {
@@ -46,30 +44,22 @@ export const scope: Record<
   },
   "write:media:remove": {
     title: t("Remove uploaded media"),
-    text: t(
-      "This application will be allowed to remove uploaded media"
-    ),
+    text: t("This application will be allowed to remove uploaded media"),
     icon: "image",
   },
   "write:group:post:create": {
     title: t("Publish group posts"),
-    text: t(
-      "This application will be allowed to publish group posts"
-    ),
+    text: t("This application will be allowed to publish group posts"),
     icon: "bullhorn",
   },
   "write:group:post:update": {
     title: t("Update group posts"),
-    text: t(
-      "This application will be allowed to update group posts"
-    ),
+    text: t("This application will be allowed to update group posts"),
     icon: "bullhorn",
   },
   "write:group:post:delete": {
     title: t("Delete group posts"),
-    text: t(
-      "This application will be allowed to delete group posts"
-    ),
+    text: t("This application will be allowed to delete group posts"),
     icon: "bullhorn",
   },
   "read:group:resources": {
@@ -144,9 +134,7 @@ export const scope: Record<
   },
   "write:group:group_membership": {
     title: t("Manage group memberships"),
-    text: t(
-      "This application will be allowed to join and leave groups"
-    ),
+    text: t("This application will be allowed to join and leave groups"),
     icon: "account-circle",
   },
   "write:group:members": {
@@ -193,16 +181,12 @@ export const scope: Record<
   },
   "write:profile:update": {
     title: t("Update profiles"),
-    text: t(
-      "This application will be allowed to update your profiles"
-    ),
+    text: t("This application will be allowed to update your profiles"),
     icon: "account-circle",
   },
   "write:profile:delete": {
     title: t("Delete profiles"),
-    text: t(
-      "This application will be allowed to delete your profiles"
-    ),
+    text: t("This application will be allowed to delete your profiles"),
     icon: "account-circle",
   },
   "write:comment:create": {
@@ -212,58 +196,42 @@ export const scope: Record<
   },
   "write:comment:update": {
     title: t("Update comments"),
-    text: t(
-      "This application will be allowed to update comments"
-    ),
+    text: t("This application will be allowed to update comments"),
     icon: "comment",
   },
   "write:comment:delete": {
     title: t("Delete comments"),
-    text: t(
-      "This application will be allowed to delete comments"
-    ),
+    text: t("This application will be allowed to delete comments"),
     icon: "comment",
   },
   "write:group:discussion:create": {
     title: t("Create group discussions"),
-    text: t(
-      "This application will be allowed to create group discussions"
-    ),
+    text: t("This application will be allowed to create group discussions"),
     icon: "comment",
   },
   "write:group:discussion:update": {
     title: t("Update group discussions"),
-    text: t(
-      "This application will be allowed to update group discussions"
-    ),
+    text: t("This application will be allowed to update group discussions"),
     icon: "comment",
   },
   "write:group:discussion:delete": {
     title: t("Delete group discussions"),
-    text: t(
-      "This application will be allowed to delete group discussions"
-    ),
+    text: t("This application will be allowed to delete group discussions"),
     icon: "comment",
   },
   "write:profile:feed_token:create": {
     title: t("Create feed tokens"),
-    text: t(
-      "This application will be allowed to create feed tokens"
-    ),
+    text: t("This application will be allowed to create feed tokens"),
     icon: "rss",
   },
   "write:feed_token:delete": {
     title: t("Delete feed tokens"),
-    text: t(
-      "This application will be allowed to delete feed tokens"
-    ),
+    text: t("This application will be allowed to delete feed tokens"),
     icon: "rss",
   },
   "write:participation": {
     title: t("Manage event participations"),
-    text: t(
-      "This application will be allowed to manage events participations"
-    ),
+    text: t("This application will be allowed to manage events participations"),
     icon: "rss",
   },
   "write:user:setting:activity": {
