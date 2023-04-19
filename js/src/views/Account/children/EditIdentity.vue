@@ -23,7 +23,7 @@
           aria-required="true"
           required
           v-model="identity.name"
-          @input="autoUpdateUsername()"
+          @input="(event) => updateUsername(event.target.value)"
           id="identity-display-name"
           dir="auto"
         />
@@ -759,7 +759,7 @@ const breadcrumbsLinks = computed(
   }
 );
 
-const autoUpdateUsername = () => {
-  identity.value.preferredUsername = convertToUsername(identity.value.name);
+const updateUsername = (value: string) => {
+  identity.value.preferredUsername = convertToUsername(value);
 };
 </script>
