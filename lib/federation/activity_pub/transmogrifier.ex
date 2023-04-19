@@ -203,7 +203,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Actions.Delete.delete(entity, Relay.get_actor(), false)
 
       {:error, err} ->
-        Logger.warn("Error while fetching object from URL", error: inspect(err))
+        Logger.warn("Error while fetching object from URL: #{inspect(err)}")
         :error
     end
   end
@@ -405,8 +405,8 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_actor}
     else
       {:error, :update_not_allowed} ->
-        Logger.warn("Activity tried to update an actor that's local or not a group",
-          activity: params
+        Logger.warn(
+          "Activity tried to update an actor that's local or not a group: #{inspect(params)}"
         )
 
         :error
@@ -623,25 +623,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         if remote_actor_is_being_deleted(data) do
           Actions.Delete.delete(actor, actor, false)
         else
-          case is_group_object_gone(object_id) do
-            # The group object is no longer there, we can remove the element
-            {:ok, entity} ->
-              if Utils.origin_check_from_id?(actor_url, object_id) ||
-                   Permission.can_delete_group_object?(actor, entity) do
-                Actions.Delete.delete(entity, actor, false)
-              else
-                Logger.warn("Object origin check failed")
-                :error
-              end
-
-            {:error, err} ->
-              Logger.debug(inspect(err))
-              {:error, err}
-
-            {:error, :http_not_found, err} ->
-              Logger.debug(inspect(err))
-              {:error, err}
-          end
+          handle_group_being_gone(actor, actor_url, object_id)
         end
     end
   end
@@ -1247,8 +1229,30 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         :error
 
       {:error, err} ->
-        Logger.debug("Generic error when saving external comment", err: inspect(err))
+        Logger.debug("Generic error when saving external comment: #{inspect(err)}")
         :error
+    end
+  end
+
+  defp handle_group_being_gone(actor, actor_url, object_id) do
+    case is_group_object_gone(object_id) do
+      # The group object is no longer there, we can remove the element
+      {:ok, entity} ->
+        if Utils.origin_check_from_id?(actor_url, object_id) ||
+             Permission.can_delete_group_object?(actor, entity) do
+          Actions.Delete.delete(entity, actor, false)
+        else
+          Logger.warn("Object origin check failed")
+          :error
+        end
+
+      {:error, err} ->
+        Logger.debug(inspect(err))
+        {:error, err}
+
+      {:error, :http_not_found, err} ->
+        Logger.debug(inspect(err))
+        {:error, err}
     end
   end
 end

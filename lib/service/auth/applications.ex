@@ -185,9 +185,8 @@ defmodule Mobilizon.Service.Auth.Applications do
   end
 
   def generate_access_token_for_device_flow(client_id, device_code) do
-    Logger.debug("Generating access token for application device with",
-      client_id: client_id,
-      device_code: device_code
+    Logger.debug(
+      "Generating access token for application device with client_id=#{client_id}, device_code=#{device_code}"
     )
 
     case Applications.get_application_device_activation_by_device_code(client_id, device_code) do

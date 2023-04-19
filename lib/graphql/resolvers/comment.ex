@@ -53,13 +53,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
                current_ip,
                user_agent
              ) do
-            case Comments.create_comment(args) do
-              {:ok, _, %CommentModel{} = comment} ->
-                {:ok, comment}
-
-              {:error, err} ->
-                {:error, err}
-            end
+            do_create_comment(args)
           else
             {:error,
              dgettext(
@@ -78,6 +72,18 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
 
   def create_comment(_parent, _args, _context) do
     {:error, dgettext("errors", "You are not allowed to create a comment if not connected")}
+  end
+
+  @spec do_create_comment(map()) ::
+          {:ok, CommentModel.t()} | {:error, :entity_tombstoned | atom() | Ecto.Changeset.t()}
+  defp do_create_comment(args) do
+    case Comments.create_comment(args) do
+      {:ok, _, %CommentModel{} = comment} ->
+        {:ok, comment}
+
+      {:error, err} ->
+        {:error, err}
+    end
   end
 
   @spec update_comment(any(), map(), Absinthe.Resolution.t()) ::

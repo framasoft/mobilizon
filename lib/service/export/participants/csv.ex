@@ -27,7 +27,7 @@ defmodule Mobilizon.Service.Export.Participants.CSV do
 
   @spec export(Event.t(), Keyword.t()) ::
           {:ok, String.t()} | {:error, :failed_to_save_upload | :export_dependency_not_installed}
-  def export(%Event{id: event_id} = event, options \\ []) do
+  def export(%Event{} = event, options \\ []) do
     if ready?() do
       filename = "#{ShortUUID.encode!(Ecto.UUID.generate())}.csv"
       full_path = Path.join([export_path(@extension), filename])
@@ -36,18 +36,7 @@ defmodule Mobilizon.Service.Export.Participants.CSV do
 
       case Repo.transaction(
              fn ->
-               event_id
-               |> Events.participant_for_event_export_query(Keyword.get(options, :roles, []))
-               |> Repo.stream()
-               |> Stream.map(&to_list/1)
-               |> NimbleCSV.RFC4180.dump_to_iodata()
-               |> add_header_column()
-               |> Stream.each(fn line -> IO.write(file, line) end)
-               |> Stream.run()
-
-               with {:error, err} <- save_csv_upload(full_path, filename, event) do
-                 Repo.rollback(err)
-               end
+               produce_file(event, filename, full_path, file, options)
              end,
              timeout: :infinity
            ) do
@@ -60,6 +49,23 @@ defmodule Mobilizon.Service.Export.Participants.CSV do
       end
     else
       {:error, :export_dependency_not_installed}
+    end
+  end
+
+  @spec produce_file(Event.t(), String.t(), String.t(), File.io_device(), Keyword.t()) ::
+          no_return()
+  defp produce_file(%Event{id: event_id} = event, filename, full_path, file, options) do
+    event_id
+    |> Events.participant_for_event_export_query(Keyword.get(options, :roles, []))
+    |> Repo.stream()
+    |> Stream.map(&to_list/1)
+    |> NimbleCSV.RFC4180.dump_to_iodata()
+    |> add_header_column()
+    |> Stream.each(fn line -> IO.write(file, line) end)
+    |> Stream.run()
+
+    with {:error, err} <- save_csv_upload(full_path, filename, event) do
+      Repo.rollback(err)
     end
   end
 

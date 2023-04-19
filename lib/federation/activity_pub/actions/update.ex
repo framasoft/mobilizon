@@ -36,7 +36,7 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Update do
         {:ok, activity, entity}
 
       {:error, err} ->
-        Logger.error("Something went wrong while creating an activity", err: inspect(err))
+        Logger.error("Something went wrong while creating an activity: #{inspect(err)}")
         {:error, err}
     end
   end

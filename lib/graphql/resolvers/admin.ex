@@ -313,31 +313,43 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
   defp change_email(%User{email: old_email} = user, new_email, notify) do
     if Authenticator.can_change_email?(user) do
       if new_email != old_email do
-        if Email.Checker.valid?(new_email) do
-          case Users.update_user(user, %{email: new_email}) do
-            {:ok, %User{} = updated_user} ->
-              if notify do
-                updated_user
-                |> Email.Admin.user_email_change_old(old_email)
-                |> Email.Mailer.send_email()
-
-                updated_user
-                |> Email.Admin.user_email_change_new(old_email)
-                |> Email.Mailer.send_email()
-              end
-
-              {:ok, updated_user}
-
-            {:error, %Ecto.Changeset{} = err} ->
-              Logger.debug(inspect(err))
-              {:error, dgettext("errors", "Failed to update user email")}
-          end
-        else
-          {:error, dgettext("errors", "The new email doesn't seem to be valid")}
-        end
+        do_change_email_different(user, old_email, new_email, notify)
       else
         {:error, dgettext("errors", "The new email must be different")}
       end
+    end
+  end
+
+  @spec do_change_email_different(User.t(), String.t(), String.t(), boolean()) ::
+          {:ok, User.t()} | {:error, String.t()}
+  defp do_change_email_different(user, old_email, new_email, notify) do
+    if Email.Checker.valid?(new_email) do
+      do_change_email(user, old_email, new_email, notify)
+    else
+      {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+    end
+  end
+
+  @spec do_change_email(User.t(), String.t(), String.t(), boolean()) ::
+          {:ok, User.t()} | {:error, String.t()}
+  defp do_change_email(user, old_email, new_email, notify) do
+    case Users.update_user(user, %{email: new_email}) do
+      {:ok, %User{} = updated_user} ->
+        if notify do
+          updated_user
+          |> Email.Admin.user_email_change_old(old_email)
+          |> Email.Mailer.send_email()
+
+          updated_user
+          |> Email.Admin.user_email_change_new(old_email)
+          |> Email.Mailer.send_email()
+        end
+
+        {:ok, updated_user}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.debug(inspect(err))
+        {:error, dgettext("errors", "Failed to update user email")}
     end
   end
 
