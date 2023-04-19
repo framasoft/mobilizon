@@ -158,6 +158,7 @@
         <full-address-auto-complete
           :label="t('Group address')"
           v-model="currentAddress"
+          :allowManualDetails="true"
           :hideMap="true"
         />
 

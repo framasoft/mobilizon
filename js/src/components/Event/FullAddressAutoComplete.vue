@@ -90,6 +90,7 @@
       v-model:open="detailsAddress"
       :aria-id="`${id}-address-details`"
       class="my-3"
+      v-if="allowManualDetails"
     >
       <template #trigger>
         <o-button
@@ -210,6 +211,7 @@ const props = withDefaults(
     placeholder?: string;
     resultType?: AddressSearchType;
     defaultCoords?: string;
+    allowManualDetails?: boolean;
   }>(),
   {
     defaultCoords: "0;0",
@@ -217,6 +219,7 @@ const props = withDefaults(
     disabled: false,
     hideMap: false,
     hideSelected: false,
+    allowManualDetails: false,
   }
 );
 
