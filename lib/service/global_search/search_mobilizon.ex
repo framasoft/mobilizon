@@ -32,7 +32,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
   """
   @spec search_events(keyword()) :: Page.t(EventResult.t())
   def search_events(options \\ []) do
-    Logger.debug("Search events options, #{inspect(Keyword.keys(options))}")
+    Logger.debug("Search events options, #{inspect(Keyword.delete(options, :current_user))}")
 
     options =
       options
