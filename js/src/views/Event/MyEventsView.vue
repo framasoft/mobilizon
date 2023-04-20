@@ -184,7 +184,7 @@
         <section v-if="!showUpcoming && pastParticipations.elements.length > 0">
           <transition-group name="list" tag="p">
             <div v-for="month in monthlyPastParticipations" :key="month[0]">
-              <span class="past-month">{{ month[0] }}</span>
+              <h2 class="capitalize inline-block relative">{{ month[0] }}</h2>
               <event-participation-card
                 v-for="participation in month[1]"
                 :key="participation.id"
