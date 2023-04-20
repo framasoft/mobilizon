@@ -123,6 +123,7 @@ import { IStatistics } from "../../types/statistics.model";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useHead } from "@vueuse/head";
 
 const { result: configResult } = useQuery<{ config: IConfig }>(ABOUT);
 
@@ -156,15 +157,9 @@ const formattedLanguageList = computed((): string => {
 
 const { t } = useI18n({ useScope: "global" });
 
-// metaInfo() {
-//   return {
-//     title: this.t("About {instance}", {
-//       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//       // @ts-ignore
-//       instance: this?.config?.name,
-//     }) as string,
-//   };
-// }
+useHead({
+  title: t("About {instance}", { instance: config.value?.name }),
+});
 </script>
 
 <style lang="scss" scoped>

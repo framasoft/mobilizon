@@ -14,6 +14,7 @@ import { PRIVACY } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { InstancePrivacyType } from "@/types/enums";
 import { useQuery } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
 import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -33,11 +34,9 @@ const config = computed(() => configResult.value?.config);
 
 const { t } = useI18n({ useScope: "global" });
 
-// metaInfo() {
-//   return {
-//     title: this.t("Privacy Policy") as string,
-//   };
-// },
+useHead({
+  title: t("Privacy Policy"),
+});
 
 watch(config, () => {
   if (config.value?.privacy?.type === InstancePrivacyType.URL) {
