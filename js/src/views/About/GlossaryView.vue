@@ -71,6 +71,7 @@
 
 <script lang="ts" setup>
 import { useQuery } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ABOUT } from "../../graphql/config";
@@ -82,11 +83,9 @@ const config = computed(() => configResult.value?.config);
 
 const { t } = useI18n({ useScope: "global" });
 
-// metaInfo() {
-//   return {
-//     title: this.t("Glossary") as string,
-//   };
-// },
+useHead({
+  title: t("Glossary"),
+});
 </script>
 
 <style lang="scss" scoped>

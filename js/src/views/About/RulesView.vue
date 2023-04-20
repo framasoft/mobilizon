@@ -14,6 +14,7 @@
 import { RULES } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useQuery } from "@vue/apollo-composable";
+import { useHead } from "@vueuse/head";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -23,9 +24,7 @@ const config = computed(() => configResult.value?.config);
 
 const { t } = useI18n({ useScope: "global" });
 
-// metaInfo() {
-//     return {
-//       title: this.t("Rules") as string,
-//     };
-//   },
+useHead({
+  title: t("Rules"),
+});
 </script>
