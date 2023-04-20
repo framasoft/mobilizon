@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.Export.Common do
     case Actors.get_actor_by_name(name) do
       %Actor{} = actor ->
         if Actor.is_public_visibility?(actor) do
-          %Page{elements: events} = Events.list_public_events_for_actor(actor, 1, limit)
+          %Page{elements: events} = Events.list_public_upcoming_events_for_actor(actor, 1, limit)
           %Page{elements: posts} = Posts.get_public_posts_for_group(actor, 1, limit)
           {:ok, actor, events, posts}
         else
@@ -108,7 +108,7 @@ defmodule Mobilizon.Service.Export.Common do
 
   @spec fetch_identity_participations(Actor.t(), integer()) :: Page.t(Participant.t())
   defp fetch_identity_participations(%Actor{} = actor, limit) do
-    with %Page{} = page <- Events.list_event_participations_for_actor(actor, 1, limit) do
+    with %Page{} = page <- Events.list_upcoming_event_participations_for_actor(actor, 1, limit) do
       page
     end
   end

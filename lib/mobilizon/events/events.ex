@@ -419,11 +419,34 @@ defmodule Mobilizon.Events do
 
   def list_public_events_for_actor(%Actor{id: actor_id}, page, limit) do
     actor_id
+    |> do_list_public_events_for_actor()
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Lists public upcoming events for the actor, with all associations loaded.
+  """
+  @spec list_public_upcoming_events_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Event.t())
+  def list_public_upcoming_events_for_actor(actor, page \\ nil, limit \\ nil)
+
+  def list_public_upcoming_events_for_actor(%Actor{type: :Group} = group, page, limit),
+    do: list_organized_events_for_group(group, :public, DateTime.utc_now(), nil, page, limit)
+
+  def list_public_upcoming_events_for_actor(%Actor{id: actor_id}, page, limit) do
+    actor_id
+    |> do_list_public_events_for_actor()
+    |> event_filter_begins_on(DateTime.utc_now(), nil)
+    |> Page.build_page(page, limit)
+  end
+
+  @spec do_list_public_events_for_actor(integer()) :: Ecto.Query.t()
+  defp do_list_public_events_for_actor(actor_id) do
+    actor_id
     |> event_for_actor_query()
     |> filter_public_visibility()
     |> filter_draft()
     |> preload_for_event()
-    |> Page.build_page(page, limit)
   end
 
   @spec list_organized_events_for_actor(Actor.t(), integer | nil, integer | nil) ::
@@ -902,6 +925,21 @@ defmodule Mobilizon.Events do
   def list_event_participations_for_actor(%Actor{id: actor_id}, page \\ nil, limit \\ nil) do
     actor_id
     |> event_participations_for_actor_query()
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Returns the list of upcoming participations for an actor.
+  """
+  @spec list_upcoming_event_participations_for_actor(Actor.t(), integer | nil, integer | nil) ::
+          Page.t(Participant.t())
+  def list_upcoming_event_participations_for_actor(
+        %Actor{id: actor_id},
+        page \\ nil,
+        limit \\ nil
+      ) do
+    actor_id
+    |> event_participations_for_actor_query(DateTime.utc_now())
     |> Page.build_page(page, limit)
   end
 
@@ -1572,16 +1610,24 @@ defmodule Mobilizon.Events do
     from(p in Participant, where: p.event_id == ^event_id)
   end
 
-  @spec event_participations_for_actor_query(integer) :: Ecto.Query.t()
-  def event_participations_for_actor_query(actor_id) do
-    from(
-      p in Participant,
-      join: e in Event,
-      on: p.event_id == e.id,
-      where: p.actor_id == ^actor_id and p.role != ^:not_approved,
-      preload: [:event],
-      order_by: [desc: e.begins_on]
-    )
+  @spec event_participations_for_actor_query(integer, DateTime.t() | nil) :: Ecto.Query.t()
+  defp event_participations_for_actor_query(actor_id, after_date \\ nil)
+
+  defp event_participations_for_actor_query(actor_id, nil) do
+    do_event_participations_for_actor_query(actor_id)
+  end
+
+  defp event_participations_for_actor_query(actor_id, %DateTime{} = after_date) do
+    actor_id
+    |> do_event_participations_for_actor_query()
+    |> where([_p, e], e.begins_on > ^after_date)
+  end
+
+  defp do_event_participations_for_actor_query(actor_id) do
+    Participant
+    |> join(:inner, [p], e in Event, on: p.event_id == e.id)
+    |> where([p], p.actor_id == ^actor_id and p.role != ^:not_approved)
+    |> order_by([_p, e], desc: e.begins_on)
   end
 
   @spec sessions_for_event_query(integer) :: Ecto.Query.t()

@@ -16,6 +16,12 @@ defmodule Mobilizon.Web.FeedControllerTest do
       event1 = insert(:event, organizer_actor: actor, tags: [tag1])
       event2 = insert(:event, organizer_actor: actor, tags: [tag1, tag2])
 
+      event3 =
+        insert(:event,
+          organizer_actor: actor,
+          begins_on: DateTime.add(DateTime.utc_now(), -2, :day)
+        )
+
       conn =
         conn
         |> get(
@@ -36,6 +42,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       Enum.each(entries, fn entry ->
         assert entry.title in [event1.title, event2.title]
+        refute entry.title == event3.title
       end)
 
       # It seems categories takes term instead of Label
@@ -112,7 +119,15 @@ defmodule Mobilizon.Web.FeedControllerTest do
           attributed_to: group,
           tags: [tag1, tag2],
           title: "Event Two",
-          begins_on: DateTime.add(DateTime.utc_now(), 3_600 * 12 * 4)
+          begins_on: DateTime.add(DateTime.utc_now(), 4, :day)
+        )
+
+      event3 =
+        insert(:event,
+          organizer_actor: actor,
+          attributed_to: group,
+          title: "Event Three",
+          begins_on: DateTime.add(DateTime.utc_now(), -2, :day)
         )
 
       conn =
@@ -131,6 +146,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       Enum.each(entries, fn entry ->
         assert entry.summary in [event1.title, event2.title]
+        refute entry.summary == event3.title
       end)
 
       assert entry1.categories == [tag1.title]
@@ -217,8 +233,10 @@ defmodule Mobilizon.Web.FeedControllerTest do
       actor2 = insert(:actor, user: user)
       event1 = insert(:event)
       event2 = insert(:event)
+      event3 = insert(:event, begins_on: DateTime.add(DateTime.utc_now(), -5, :day))
       insert(:participant, event: event1, actor: actor1)
       insert(:participant, event: event2, actor: actor2)
+      insert(:participant, event: event3, actor: actor2)
       feed_token = insert(:feed_token, user: user, actor: nil)
 
       conn =
@@ -240,6 +258,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       Enum.each(entries, fn entry ->
         assert entry.title in [event1.title, event2.title]
+        refute entry.title == event3.title
       end)
     end
 
@@ -251,8 +270,10 @@ defmodule Mobilizon.Web.FeedControllerTest do
       actor2 = insert(:actor, user: user)
       event1 = insert(:event)
       event2 = insert(:event)
+      event3 = insert(:event, begins_on: DateTime.add(DateTime.utc_now(), -5, :day))
       insert(:participant, event: event1, actor: actor1)
       insert(:participant, event: event2, actor: actor2)
+      insert(:participant, event: event3, actor: actor1)
       feed_token = insert(:feed_token, user: user, actor: actor1)
 
       conn =
@@ -274,6 +295,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       [entry] = feed.entries
       assert entry.title == event1.title
+      refute entry.title == event3.title
     end
 
     test "it returns 404 for an not existing feed", %{conn: conn} do
@@ -298,8 +320,10 @@ defmodule Mobilizon.Web.FeedControllerTest do
       actor2 = insert(:actor, user: user)
       event1 = insert(:event)
       event2 = insert(:event)
+      event3 = insert(:event, begins_on: DateTime.add(DateTime.utc_now(), -5, :day))
       insert(:participant, event: event1, actor: actor1)
       insert(:participant, event: event2, actor: actor2)
+      insert(:participant, event: event3, actor: actor1)
       feed_token = insert(:feed_token, user: user, actor: nil)
 
       conn =
@@ -318,6 +342,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       Enum.each(entries, fn entry ->
         assert entry.summary in [event1.title, event2.title]
+        refute entry.summary == event3.title
       end)
     end
 
@@ -329,8 +354,10 @@ defmodule Mobilizon.Web.FeedControllerTest do
       actor2 = insert(:actor, user: user)
       event1 = insert(:event)
       event2 = insert(:event)
+      event3 = insert(:event, begins_on: DateTime.add(DateTime.utc_now(), -5, :day))
       insert(:participant, event: event1, actor: actor1)
       insert(:participant, event: event2, actor: actor2)
+      insert(:participant, event: event3, actor: actor1)
       feed_token = insert(:feed_token, user: user, actor: actor1)
 
       conn =
@@ -348,6 +375,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       [entry1] = ExIcal.parse(conn.resp_body)
       assert entry1.summary == event1.title
       assert entry1.categories == event1.tags |> Enum.map(& &1.title)
+      refute entry1.summary == event3.title
     end
 
     test "it returns 404 for an not existing feed", %{conn: conn} do
