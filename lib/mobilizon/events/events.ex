@@ -1755,15 +1755,11 @@ defmodule Mobilizon.Events do
 
   @spec list_participations_for_user_query(integer()) :: Ecto.Query.t()
   defp list_participations_for_user_query(user_id) do
-    from(
-      p in Participant,
-      join: e in Event,
-      join: a in Actor,
-      on: p.actor_id == a.id,
-      on: p.event_id == e.id,
-      where: a.user_id == ^user_id and p.role != ^:not_approved,
-      preload: [:event, :actor]
-    )
+    Participant
+    |> join(:inner, [p], e in Event, on: p.event_id == e.id)
+    |> join(:inner, [p], a in Actor, on: p.actor_id == a.id)
+    |> where([p, _e, a], a.user_id == ^user_id and p.role != ^:not_approved)
+    |> preload([:event, :actor])
   end
 
   @spec feed_token_query(String.t()) :: Ecto.Query.t()

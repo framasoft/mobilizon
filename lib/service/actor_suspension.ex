@@ -283,13 +283,9 @@ defmodule Mobilizon.Service.ActorSuspension do
         {:ok, actor}
 
       {:error, error} ->
-        Logger.error("Error while removing an upload file",
-          error: inspect(error),
-          actor: Actor.preferred_username_and_domain(actor),
-          file_url: url
+        Logger.error(
+          "Error while removing an upload file: #{inspect(error)}, actor: #{Actor.preferred_username_and_domain(actor)}, file_url: #{url}"
         )
-
-        Logger.debug(inspect(error))
 
         {:ok, actor}
     end

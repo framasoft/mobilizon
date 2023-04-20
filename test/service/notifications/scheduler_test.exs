@@ -71,7 +71,9 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       assert_enqueued(
         worker: Notification,
         args: %{user_id: user_id, op: :on_day_notification},
-        scheduled_at: %{DateTime.shift_zone!(begins_on, settings.timezone) | hour: 8}
+        scheduled_at:
+          %{DateTime.shift_zone!(begins_on, settings.timezone) | hour: 8}
+          |> DateTime.shift_zone!("Etc/UTC")
       )
     end
 
@@ -131,7 +133,9 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       assert_enqueued(
         worker: Notification,
         args: %{user_id: user_id, op: :on_day_notification},
-        scheduled_at: %{DateTime.shift_zone!(begins_on, settings.timezone) | hour: 8}
+        scheduled_at:
+          %{DateTime.shift_zone!(begins_on, settings.timezone) | hour: 8}
+          |> DateTime.shift_zone!("Etc/UTC")
       )
 
       %DateTime{} = tomorrow = DateTime.utc_now() |> DateTime.add(3600 * 24)
@@ -177,7 +181,7 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       assert_enqueued(
         worker: Notification,
         args: %{user_id: user_id, op: :weekly_notification},
-        scheduled_at: scheduled_at
+        scheduled_at: DateTime.shift_zone!(scheduled_at, "Etc/UTC")
       )
     end
 
@@ -360,7 +364,7 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       assert_enqueued(
         worker: Notification,
         args: %{user_id: user_id, event_id: event.id, op: :pending_participation_notification},
-        scheduled_at: scheduled_at
+        scheduled_at: DateTime.shift_zone!(scheduled_at, "Etc/UTC")
       )
     end
   end

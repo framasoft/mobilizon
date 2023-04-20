@@ -480,36 +480,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         context: %{current_user: %User{email: old_email} = user}
       }) do
     if Authenticator.can_change_email?(user) do
-      case Authenticator.login(old_email, password) do
-        {:ok, %User{}} ->
-          if new_email != old_email do
-            if Email.Checker.valid?(new_email) do
-              case Users.update_user_email(user, new_email) do
-                {:ok, %User{} = user} ->
-                  user
-                  |> Email.User.send_email_reset_old_email()
-                  |> Email.Mailer.send_email()
-
-                  user
-                  |> Email.User.send_email_reset_new_email()
-                  |> Email.Mailer.send_email()
-
-                  {:ok, user}
-
-                {:error, %Ecto.Changeset{} = err} ->
-                  Logger.debug(inspect(err))
-                  {:error, dgettext("errors", "Failed to update user email")}
-              end
-            else
-              {:error, dgettext("errors", "The new email doesn't seem to be valid")}
-            end
-          else
-            {:error, dgettext("errors", "The new email must be different")}
-          end
-
-        {:error, _} ->
-          {:error, dgettext("errors", "The password provided is invalid")}
-      end
+      do_change_mail_can_change_mail(user, old_email, new_email, password)
     else
       {:error, dgettext("errors", "User cannot change email")}
     end
@@ -517,6 +488,51 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   def change_email(_parent, _args, _resolution) do
     {:error, dgettext("errors", "You need to be logged-in to change your email")}
+  end
+
+  @spec do_change_mail_can_change_mail(User.t(), String.t(), String.t(), String.t()) ::
+          {:ok, User.t()} | {:error, String.t()}
+  defp do_change_mail_can_change_mail(user, old_email, new_email, password) do
+    case Authenticator.login(old_email, password) do
+      {:ok, %User{}} ->
+        if new_email != old_email do
+          do_change_mail_new_email(user, new_email)
+        else
+          {:error, dgettext("errors", "The new email must be different")}
+        end
+
+      {:error, _} ->
+        {:error, dgettext("errors", "The password provided is invalid")}
+    end
+  end
+
+  @spec do_change_mail_new_email(User.t(), String.t()) :: {:ok, User.t()} | {:error, String.t()}
+  defp do_change_mail_new_email(user, new_email) do
+    if Email.Checker.valid?(new_email) do
+      do_change_mail(user, new_email)
+    else
+      {:error, dgettext("errors", "The new email doesn't seem to be valid")}
+    end
+  end
+
+  @spec do_change_mail(User.t(), String.t()) :: {:ok, User.t()} | {:error, String.t()}
+  defp do_change_mail(user, new_email) do
+    case Users.update_user_email(user, new_email) do
+      {:ok, %User{} = user} ->
+        user
+        |> Email.User.send_email_reset_old_email()
+        |> Email.Mailer.send_email()
+
+        user
+        |> Email.User.send_email_reset_new_email()
+        |> Email.Mailer.send_email()
+
+        {:ok, user}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        Logger.debug(inspect(err))
+        {:error, dgettext("errors", "Failed to update user email")}
+    end
   end
 
   @spec validate_email(map(), %{token: String.t()}, map()) ::

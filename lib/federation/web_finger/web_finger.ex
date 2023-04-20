@@ -259,24 +259,7 @@ defmodule Mobilizon.Federation.WebFinger do
     subject = Map.get(doc, "subject")
 
     if !is_nil(links) && !is_nil(subject) do
-      data =
-        Enum.reduce(links, %{"subject" => subject}, fn link, data ->
-          case {link["type"], link["rel"]} do
-            {"application/activity+json", "self"} ->
-              Map.put(data, "url", link["href"])
-
-            {nil, _rel} ->
-              Logger.debug("No type declared for the following link #{inspect(link)}")
-              data
-
-            _ ->
-              Logger.debug(fn ->
-                "Unhandled type to finger: #{inspect(link)}"
-              end)
-
-              data
-          end
-        end)
+      data = Enum.reduce(links, %{"subject" => subject}, &handle_link/2)
 
       {:ok, data}
     else
@@ -285,6 +268,25 @@ defmodule Mobilizon.Federation.WebFinger do
   end
 
   defp webfinger_from_json(_doc), do: {:error, :webfinger_information_not_json}
+
+  @spec handle_link(map(), map()) :: map()
+  defp handle_link(link, data) do
+    case {link["type"], link["rel"]} do
+      {"application/activity+json", "self"} ->
+        Map.put(data, "url", link["href"])
+
+      {nil, _rel} ->
+        Logger.debug("No type declared for the following link #{inspect(link)}")
+        data
+
+      _ ->
+        Logger.debug(fn ->
+          "Unhandled type to finger: #{inspect(link)}"
+        end)
+
+        data
+    end
+  end
 
   @spec find_link_from_template(String.t()) :: String.t() | {:error, :link_not_found}
   defp find_link_from_template(doc) do

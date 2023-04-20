@@ -48,9 +48,7 @@ defmodule Mobilizon.Service.Workers.Helper do
         queue_atom = String.to_existing_atom(unquote(queue))
         worker_args = worker_args ++ Helper.worker_args(queue_atom)
 
-        unquote(caller_module)
-        |> apply(:new, [params, worker_args])
-        |> Oban.insert()
+        Oban.insert(unquote(caller_module).new(params, worker_args))
       end
     end
   end

@@ -248,8 +248,7 @@ defmodule Mobilizon.Actors do
   @spec update_actor(Actor.t(), map) :: {:ok, Actor.t()} | {:error, Ecto.Changeset.t()}
   def update_actor(%Actor{preferred_username: preferred_username, domain: domain} = actor, attrs) do
     if is_nil(domain) and preferred_username == "relay" do
-      Logger.error("Trying to update local relay actor",
-        attrs: attrs,
+      Logger.error("Trying to update local relay actor (#{inspect(attrs)})",
         trace: Process.info(self(), :current_stacktrace)
       )
     end

@@ -115,6 +115,7 @@
           v-model="eventPhysicalAddress"
           :user-timezone="userActualTimezone"
           :disabled="event.options.isOnline"
+          :allowManualDetails="true"
           :hideSelected="true"
         />
         <o-switch class="my-4" v-model="isOnline">{{
