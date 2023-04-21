@@ -102,7 +102,8 @@ defmodule Mobilizon.Federation.ActivityPub.Actor do
   end
 
   @spec find_or_make_group_from_nickname(nick :: String.t()) ::
-          {:error, make_actor_errors | WebFinger.finger_errors()}
+          {:ok, Mobilizon.Actors.Actor.t()}
+          | {:error, make_actor_errors | WebFinger.finger_errors()}
   def find_or_make_group_from_nickname(nick), do: find_or_make_actor_from_nickname(nick, :Group)
 
   @doc """
