@@ -415,7 +415,7 @@ defmodule Mobilizon.Events do
   def list_public_events_for_actor(actor, page \\ nil, limit \\ nil)
 
   def list_public_events_for_actor(%Actor{type: :Group} = group, page, limit),
-    do: list_organized_events_for_group(group, :public, nil, nil, page, limit)
+    do: list_organized_events_for_group(group, :public, nil, nil, nil, nil, page, limit)
 
   def list_public_events_for_actor(%Actor{id: actor_id}, page, limit) do
     actor_id
@@ -431,7 +431,17 @@ defmodule Mobilizon.Events do
   def list_public_upcoming_events_for_actor(actor, page \\ nil, limit \\ nil)
 
   def list_public_upcoming_events_for_actor(%Actor{type: :Group} = group, page, limit),
-    do: list_organized_events_for_group(group, :public, DateTime.utc_now(), nil, page, limit)
+    do:
+      list_organized_events_for_group(
+        group,
+        :public,
+        DateTime.utc_now(),
+        nil,
+        nil,
+        nil,
+        page,
+        limit
+      )
 
   def list_public_upcoming_events_for_actor(%Actor{id: actor_id}, page, limit) do
     actor_id
@@ -461,14 +471,16 @@ defmodule Mobilizon.Events do
   @spec list_simple_organized_events_for_group(Actor.t(), integer | nil, integer | nil) ::
           Page.t(Event.t())
   def list_simple_organized_events_for_group(%Actor{} = actor, page \\ nil, limit \\ nil) do
-    list_organized_events_for_group(actor, :all, nil, nil, page, limit)
+    list_organized_events_for_group(actor, :all, nil, nil, nil, nil, page, limit)
   end
 
   @spec list_organized_events_for_group(
           Actor.t(),
-          atom(),
+          :public | :all,
           DateTime.t() | nil,
           DateTime.t() | nil,
+          atom() | nil,
+          atom() | nil,
           integer | nil,
           integer | nil
         ) :: Page.t(Event.t())
@@ -477,6 +489,8 @@ defmodule Mobilizon.Events do
         visibility \\ :public,
         after_datetime \\ nil,
         before_datetime \\ nil,
+        order_by \\ nil,
+        order_direction \\ nil,
         page \\ nil,
         limit \\ nil
       ) do
@@ -484,6 +498,7 @@ defmodule Mobilizon.Events do
     |> event_for_group_query()
     |> event_filter_visibility(visibility)
     |> event_filter_begins_on(after_datetime, before_datetime)
+    |> event_order_by(order_by, order_direction)
     |> preload_for_event()
     |> Page.build_page(page, limit)
   end
@@ -1245,11 +1260,7 @@ defmodule Mobilizon.Events do
 
   @spec event_for_group_query(integer | String.t()) :: Ecto.Query.t()
   defp event_for_group_query(group_id) do
-    from(
-      e in Event,
-      where: e.attributed_to_id == ^group_id,
-      order_by: [asc: :begins_on]
-    )
+    where(Event, [e], e.attributed_to_id == ^group_id)
   end
 
   @spec upcoming_public_event_for_actor_query(integer | String.t()) :: Ecto.Query.t()
@@ -1909,19 +1920,14 @@ defmodule Mobilizon.Events do
     where(query, visibility: ^:public, draft: false)
   end
 
-  defp event_filter_begins_on(query, nil, nil),
-    do: event_order_begins_on_desc(query)
+  defp event_filter_begins_on(query, nil, nil), do: query
 
   defp event_filter_begins_on(query, %DateTime{} = after_datetime, nil) do
-    query
-    |> where([e], e.begins_on > ^after_datetime)
-    |> event_order_begins_on_asc()
+    where(query, [e], e.begins_on > ^after_datetime)
   end
 
   defp event_filter_begins_on(query, nil, %DateTime{} = before_datetime) do
-    query
-    |> where([e], e.begins_on < ^before_datetime)
-    |> event_order_begins_on_desc()
+    where(query, [e], e.begins_on < ^before_datetime)
   end
 
   defp event_filter_begins_on(
@@ -1932,8 +1938,15 @@ defmodule Mobilizon.Events do
     query
     |> where([e], e.begins_on < ^before_datetime)
     |> where([e], e.begins_on > ^after_datetime)
-    |> event_order_begins_on_asc()
   end
+
+  defp event_order_by(query, order_by, direction)
+       when order_by in [:begins_on, :inserted_at, :updated_at] and direction in [:asc, :desc] do
+    order_by_instruction = Keyword.new([{direction, order_by}])
+    order_by(query, [e], ^order_by_instruction)
+  end
+
+  defp event_order_by(query, _order_by, _direction), do: event_order_by(query, :begins_on, :asc)
 
   defp event_order(query, :match_desc),
     do: order_by(query, [e, f], desc: f.rank, asc: e.begins_on)
@@ -1946,12 +1959,6 @@ defmodule Mobilizon.Events do
     do: order_by(query, [e], fragment("participant_stats->>'participant' DESC"))
 
   defp event_order(query, _), do: query
-
-  defp event_order_begins_on_asc(query),
-    do: order_by(query, [e], asc: e.begins_on)
-
-  defp event_order_begins_on_desc(query),
-    do: order_by(query, [e], desc: e.begins_on)
 
   defp participation_filter_begins_on(query, nil, nil),
     do: participation_order_begins_on_desc(query)

@@ -91,6 +91,16 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description: "Filter events that begin before this datetime"
       )
 
+      arg(:order, :event_order_by,
+        default_value: :begins_on,
+        description: "Order events by start date"
+      )
+
+      arg(:order_direction, :sort_direction,
+        default_value: :asc,
+        description: "Order events direction"
+      )
+
       arg(:page, :integer, default_value: 1, description: "The page in the paginated event list")
       arg(:limit, :integer, default_value: 10, description: "The limit of events per page")
       resolve(&Group.find_events_for_group/3)

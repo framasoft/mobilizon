@@ -184,7 +184,7 @@
         <section v-if="!showUpcoming && pastParticipations.elements.length > 0">
           <transition-group name="list" tag="p">
             <div v-for="month in monthlyPastParticipations" :key="month[0]">
-              <span class="past-month">{{ month[0] }}</span>
+              <h2 class="capitalize inline-block relative">{{ month[0] }}</h2>
               <event-participation-card
                 v-for="participation in month[1]"
                 :key="participation.id"
@@ -226,7 +226,7 @@ import {
   LOGGED_USER_PARTICIPATIONS,
   LOGGED_USER_UPCOMING_EVENTS,
 } from "@/graphql/participant";
-import { useQuery } from "@vue/apollo-composable";
+import { useApolloClient, useQuery } from "@vue/apollo-composable";
 import { computed, inject, ref, defineAsyncComponent } from "vue";
 import { IUser } from "@/types/current-user.model";
 import {
@@ -414,16 +414,74 @@ const loadMorePastParticipations = (): void => {
   }
 };
 
+const apollo = useApolloClient();
+
 const eventDeleted = (eventid: string): void => {
-  futureParticipations.value = futureParticipations.value.filter(
-    (participation) => participation.event.id !== eventid
-  );
-  pastParticipations.value = {
-    elements: pastParticipations.value.elements.filter(
-      (participation) => participation.event.id !== eventid
-    ),
-    total: pastParticipations.value.total - 1,
-  };
+  /**
+   * Remove event from upcoming event participations
+   */
+  const upcomingEventsData = apollo.client.cache.readQuery<{
+    loggedUser: IUser;
+  }>({
+    query: LOGGED_USER_UPCOMING_EVENTS,
+    variables: () => ({
+      page: 1,
+      limit: 10,
+      afterDateTime: dateFilter.value,
+    }),
+  });
+  if (!upcomingEventsData) return;
+  const loggedUser = upcomingEventsData?.loggedUser;
+  const participations = loggedUser?.participations;
+  apollo.client.cache.writeQuery<{ loggedUser: IUser }>({
+    query: LOGGED_USER_UPCOMING_EVENTS,
+    variables: () => ({
+      page: 1,
+      limit: 10,
+      afterDateTime: dateFilter.value,
+    }),
+    data: {
+      loggedUser: {
+        ...loggedUser,
+        participations: {
+          total: participations.total - 1,
+          elements: participations.elements.filter(
+            (participation) => participation.event.id !== eventid
+          ),
+        },
+      },
+    },
+  });
+
+  /**
+   * Remove event from past event participations
+   */
+  const participationData = apollo.client.cache.readQuery<{
+    loggedUser: Pick<IUser, "participations">;
+  }>({
+    query: LOGGED_USER_PARTICIPATIONS,
+    variables: () => ({ page: 1, limit: 10 }),
+  });
+  if (!participationData) return;
+  const loggedUser2 = participationData?.loggedUser;
+  const participations2 = loggedUser?.participations;
+  apollo.client.cache.writeQuery<{
+    loggedUser: Pick<IUser, "participations">;
+  }>({
+    query: LOGGED_USER_PARTICIPATIONS,
+    variables: () => ({ page: 1, limit: 10 }),
+    data: {
+      loggedUser: {
+        ...loggedUser2,
+        participations: {
+          total: participations2.total - 1,
+          elements: participations2.elements.filter(
+            (participation) => participation.event.id !== eventid
+          ),
+        },
+      },
+    },
+  });
 };
 
 const { restrictions } = useRestrictions();
