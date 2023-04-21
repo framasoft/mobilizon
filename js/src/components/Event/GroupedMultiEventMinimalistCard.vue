@@ -22,8 +22,9 @@ const props = withDefaults(
   defineProps<{
     events: IEvent[];
     isCurrentActorMember?: boolean;
+    order: "ASC" | "DESC";
   }>(),
-  { isCurrentActorMember: false }
+  { isCurrentActorMember: false, order: "ASC" }
 );
 
 const monthlyGroupedEvents = computed((): Map<string, IEvent[]> => {
@@ -48,7 +49,9 @@ const keys = computed((): string[] => {
       number
     ];
     const bDate = new Date(...bParams);
-    return bDate.getTime() - aDate.getTime();
+    return props.order === "DESC"
+      ? bDate.getTime() - aDate.getTime()
+      : aDate.getTime() - bDate.getTime();
   });
 });
 

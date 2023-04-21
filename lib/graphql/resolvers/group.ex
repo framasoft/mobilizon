@@ -431,13 +431,15 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
     {:error, dgettext("errors", "You need to be logged-in to unfollow a group")}
   end
 
-  @spec find_events_for_group(Actor.t(), map(), Absinthe.Resolution.t()) ::
+  @spec find_events_for_group(Actor.t(), map(), Absinthe.Resolution.t() | nil) ::
           {:ok, Page.t(Event.t())}
   def find_events_for_group(
         %Actor{id: group_id} = group,
         %{
           page: page,
-          limit: limit
+          limit: limit,
+          order: order,
+          order_direction: order_direction
         } = args,
         %{
           context: %{
@@ -453,6 +455,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
          :all,
          Map.get(args, :after_datetime),
          Map.get(args, :before_datetime),
+         order,
+         order_direction,
          page,
          limit
        )}
@@ -465,7 +469,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
         %Actor{} = group,
         %{
           page: page,
-          limit: limit
+          limit: limit,
+          order: order,
+          order_direction: order_direction
         } = args,
         _resolution
       ) do
@@ -475,6 +481,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Group do
        :public,
        Map.get(args, :after_datetime),
        Map.get(args, :before_datetime),
+       order,
+       order_direction,
        page,
        limit
      )}

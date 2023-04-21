@@ -424,6 +424,8 @@ export const FETCH_GROUP_EVENTS = gql`
     $name: String!
     $afterDateTime: DateTime
     $beforeDateTime: DateTime
+    $order: EventOrderBy
+    $orderDirection: SortDirection
     $organisedEventsPage: Int
     $organisedEventsLimit: Int
   ) {
@@ -431,6 +433,8 @@ export const FETCH_GROUP_EVENTS = gql`
       organizedEvents(
         afterDatetime: $afterDateTime
         beforeDatetime: $beforeDateTime
+        order: $order
+        orderDirection: $orderDirection
         page: $organisedEventsPage
         limit: $organisedEventsLimit
       ) {

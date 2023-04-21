@@ -431,8 +431,8 @@ const eventDeleted = (eventid: string): void => {
     }),
   });
   if (!upcomingEventsData) return;
-  let loggedUser = upcomingEventsData?.loggedUser;
-  let participations = loggedUser?.participations;
+  const loggedUser = upcomingEventsData?.loggedUser;
+  const participations = loggedUser?.participations;
   apollo.client.cache.writeQuery<{ loggedUser: IUser }>({
     query: LOGGED_USER_UPCOMING_EVENTS,
     variables: () => ({

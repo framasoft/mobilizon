@@ -48,8 +48,10 @@
           t("Past events")
         }}</o-switch>
         <grouped-multi-event-minimalist-card
+          class="mb-6"
           :events="group.organizedEvents.elements"
           :isCurrentActorMember="isCurrentActorMember"
+          :order="showPassedEvents ? 'DESC' : 'ASC'"
         />
         <empty-content
           v-if="
@@ -77,6 +79,7 @@
           </template>
         </empty-content>
         <o-pagination
+          v-if="group.organizedEvents.total > EVENTS_PAGE_LIMIT"
           class="mt-4"
           :total="group.organizedEvents.total"
           v-model:current="page"
@@ -150,6 +153,8 @@ const variables = computed(() => ({
   name: route.params.preferredUsername as string,
   beforeDateTime: showPassedEvents.value ? new Date() : null,
   afterDateTime: showPassedEvents.value ? null : new Date(),
+  order: "BEGINS_ON",
+  orderDirection: showPassedEvents.value ? "DESC" : "ASC",
   organisedEventsPage: page.value,
   organisedEventsLimit: EVENTS_PAGE_LIMIT,
 }));
