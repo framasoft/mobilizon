@@ -617,7 +617,12 @@
         </div>
       </o-modal>
     </div>
-    <o-modal v-if="group" v-model:active="isReportModalActive">
+    <o-modal
+      v-if="group"
+      v-model:active="isReportModalActive"
+      :autoFocus="false"
+      :trapFocus="false"
+    >
       <report-modal
         ref="reportModalRef"
         :on-confirm="reportGroup"

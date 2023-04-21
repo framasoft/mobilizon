@@ -218,6 +218,8 @@
       v-model:active="isReportModalActive"
       has-modal-card
       ref="reportModal"
+      :autoFocus="false"
+      :trapFocus="false"
     >
       <ReportModal
         :on-confirm="reportPost"
