@@ -818,6 +818,7 @@ enum ViewMode {
 
 enum EventSortValues {
   MATCH_DESC = "MATCH_DESC",
+  START_TIME_ASC = "START_TIME_ASC",
   START_TIME_DESC = "START_TIME_DESC",
   CREATED_AT_DESC = "CREATED_AT_DESC",
   CREATED_AT_ASC = "CREATED_AT_ASC",
@@ -831,6 +832,7 @@ enum GroupSortValues {
 
 enum SortValues {
   MATCH_DESC = "MATCH_DESC",
+  START_TIME_ASC = "START_TIME_ASC",
   START_TIME_DESC = "START_TIME_DESC",
   CREATED_AT_DESC = "CREATED_AT_DESC",
   CREATED_AT_ASC = "CREATED_AT_ASC",
@@ -1157,7 +1159,7 @@ const sortOptions = computed(() => {
   if (contentType.value == ContentType.EVENTS) {
     options.push(
       {
-        key: SortValues.START_TIME_DESC,
+        key: SortValues.START_TIME_ASC,
         label: t("Event date"),
       },
       {
@@ -1239,6 +1241,9 @@ const sortByForType = (
   value: SortValues,
   allowed: typeof EventSortValues | typeof GroupSortValues
 ): SortValues | undefined => {
+  if (value === SortValues.START_TIME_ASC && when.value === "past") {
+    value = SortValues.START_TIME_DESC;
+  }
   return Object.values(allowed).includes(value) ? value : undefined;
 };
 

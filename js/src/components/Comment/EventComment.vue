@@ -194,6 +194,8 @@
       has-modal-card
       ref="reportModal"
       :close-button-aria-label="t('Close')"
+      :autoFocus="false"
+      :trapFocus="false"
     >
       <ReportModal
         :on-confirm="reportComment"

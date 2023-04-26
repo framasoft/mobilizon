@@ -562,11 +562,12 @@ defmodule Mobilizon.Events do
   """
   @spec build_events_for_search(map(), integer | nil, integer | nil) :: Page.t(Event.t())
   def build_events_for_search(%{term: term} = args, page \\ nil, limit \\ nil) do
-    term
-    |> normalize_search_string()
+    search_string = normalize_search_string(term)
+
+    search_string
     |> events_for_search_query()
-    |> events_for_begins_on(args)
-    |> events_for_ends_on(args)
+    |> events_for_begins_on(Map.get(args, :begins_on, DateTime.utc_now()))
+    |> events_for_ends_on(Map.get(args, :ends_on))
     |> events_for_category(args)
     |> events_for_categories(args)
     |> events_for_languages(args)
@@ -579,7 +580,7 @@ defmodule Mobilizon.Events do
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
-    |> event_order(Map.get(args, :sort_by, :match_desc))
+    |> event_order(Map.get(args, :sort_by, :match_desc), search_string)
     |> Page.build_page(page, limit, :begins_on)
   end
 
@@ -1321,18 +1322,16 @@ defmodule Mobilizon.Events do
     end
   end
 
+  defp events_for_search_query(""), do: Event
+
   defp events_for_search_query(search_string) do
-    Event
-    |> distinct(:id)
-    |> join(:inner, [e], id_and_rank in matching_event_ids_and_ranks(search_string),
+    join(Event, :inner, [e], id_and_rank in matching_event_ids_and_ranks(search_string),
       on: id_and_rank.id == e.id
     )
   end
 
-  @spec events_for_begins_on(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
-  defp events_for_begins_on(query, args) do
-    begins_on = Map.get(args, :begins_on, DateTime.utc_now())
-
+  @spec events_for_begins_on(Ecto.Queryable.t(), DateTime.t() | nil) :: Ecto.Query.t()
+  defp events_for_begins_on(query, begins_on) do
     if is_nil(begins_on) do
       query
     else
@@ -1345,10 +1344,8 @@ defmodule Mobilizon.Events do
     end
   end
 
-  @spec events_for_ends_on(Ecto.Queryable.t(), map()) :: Ecto.Query.t()
-  defp events_for_ends_on(query, args) do
-    ends_on = Map.get(args, :ends_on)
-
+  @spec events_for_ends_on(Ecto.Queryable.t(), DateTime.t() | nil) :: Ecto.Query.t()
+  defp events_for_ends_on(query, ends_on) do
     if is_nil(ends_on) do
       query
     else
@@ -1759,7 +1756,6 @@ defmodule Mobilizon.Events do
     |> distinct([e], e.id)
     |> join(:left, [e], et in "events_tags", on: e.id == et.event_id)
     |> join(:left, [e], a in Address, on: e.physical_address_id == a.id)
-    |> events_for_begins_on(%{})
     |> filter_draft()
     |> filter_local_or_from_followed_instances_events()
     |> filter_public_visibility()
@@ -1948,17 +1944,49 @@ defmodule Mobilizon.Events do
 
   defp event_order_by(query, _order_by, _direction), do: event_order_by(query, :begins_on, :asc)
 
-  defp event_order(query, :match_desc),
-    do: order_by(query, [e, f], desc: f.rank, asc: e.begins_on)
+  defp event_order(query, :match_desc, "") do
+    query
+    |> distinct([e], desc: e.begins_on, asc: e.id)
+    |> order_by([e], desc: e.begins_on)
+  end
 
-  defp event_order(query, :start_time_desc), do: order_by(query, [e], asc: e.begins_on)
-  defp event_order(query, :created_at_desc), do: order_by(query, [e], desc: e.publish_at)
-  defp event_order(query, :created_at_asc), do: order_by(query, [e], asc: e.publish_at)
+  defp event_order(query, :match_desc, _) do
+    query
+    |> distinct([e, f], desc: f.rank, asc: e.begins_on, asc: e.id)
+    |> order_by([e, f], desc: f.rank, asc: e.begins_on)
+  end
 
-  defp event_order(query, :participant_count_desc),
-    do: order_by(query, [e], fragment("participant_stats->>'participant' DESC"))
+  defp event_order(query, :start_time_desc, _) do
+    query
+    |> distinct([e], desc: e.begins_on, asc: e.id)
+    |> order_by([e], desc: e.begins_on)
+  end
 
-  defp event_order(query, _), do: query
+  defp event_order(query, :start_time_asc, _) do
+    query
+    |> distinct([e], asc: e.begins_on, asc: e.id)
+    |> order_by([e], asc: e.begins_on)
+  end
+
+  defp event_order(query, :created_at_desc, _) do
+    query
+    |> distinct([e], desc: e.publish_at, asc: e.id)
+    |> order_by([e], desc: e.publish_at)
+  end
+
+  defp event_order(query, :created_at_asc, _) do
+    query
+    |> distinct([e], asc: e.publish_at, asc: e.id)
+    |> order_by([e], asc: e.publish_at)
+  end
+
+  defp event_order(query, :participant_count_desc, _) do
+    query
+    |> distinct(:id)
+    |> order_by([e], fragment("participant_stats->>'participant' DESC"))
+  end
+
+  defp event_order(query, _, _), do: query
 
   defp participation_filter_begins_on(query, nil, nil),
     do: participation_order_begins_on_desc(query)

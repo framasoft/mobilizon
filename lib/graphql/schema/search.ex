@@ -174,7 +174,8 @@ defmodule Mobilizon.GraphQL.Schema.SearchType do
 
   enum :search_event_sort_options do
     value(:match_desc, description: "The pertinence of the result")
-    value(:start_time_desc, description: "The start date of the result")
+    value(:start_time_asc, description: "The start date of the result, ordered ascending")
+    value(:start_time_desc, description: "The start date of the result, ordered descending")
     value(:created_at_desc, description: "When the event was published")
     value(:created_at_asc, description: "When the event was published")
     value(:participant_count_desc, description: "With the most participants")

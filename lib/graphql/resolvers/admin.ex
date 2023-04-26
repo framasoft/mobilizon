@@ -527,6 +527,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
         Instances.refresh()
         get_instance(parent, args, resolution)
 
+      {:error, :follow_pending} ->
+        {:error, dgettext("errors", "This instance is pending follow approval")}
+
+      {:error, :already_following} ->
+        {:error, dgettext("errors", "You are already following this instance")}
+
       {:error, :http_error} ->
         {:error, dgettext("errors", "Unable to find an instance to follow at this address")}
 

@@ -31,6 +31,7 @@
             ref="input"
             v-bind="inputAttrs"
             @keydown.enter="confirm"
+            autofocus
           />
         </o-field>
       </div>
@@ -48,6 +49,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useFocus } from "@vueuse/core";
 import { computed, nextTick, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -86,6 +88,12 @@ const { t } = useI18n({ useScope: "global" });
 
 const prompt = ref<string>(props.hasInput ? props.inputAttrs?.value ?? "" : "");
 const input = ref();
+
+// https://github.com/oruga-ui/oruga/issues/339
+const promptInputComp = computed(() => input.value?.$refs.input);
+if (props.hasInput) {
+  useFocus(promptInputComp, { initialValue: true });
+}
 
 // const dialogClass = computed(() => {
 //   return [props.size];

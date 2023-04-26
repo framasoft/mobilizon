@@ -48,6 +48,7 @@ export class Dialog {
         inputAttrs,
         hasInput,
       },
+      autoFocus: false,
     });
   }
 

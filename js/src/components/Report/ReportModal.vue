@@ -20,38 +20,40 @@
           }}
         </p>
       </div>
-      <div class="">
-        <div class="" v-if="comment">
-          <article class="">
-            <div class="">
-              <figure class="h-8 w-8" v-if="comment?.actor?.avatar">
-                <img
-                  :src="comment.actor.avatar.url"
-                  alt=""
-                  width="48"
-                  height="48"
-                />
-              </figure>
-              <AccountCircle v-else :size="48" />
-            </div>
-            <div class="">
-              <div class="prose dark:prose-invert">
-                <strong>{{ comment?.actor?.name }}</strong>
-                <small v-if="comment.actor"
-                  >@{{ usernameWithDomain(comment?.actor) }}</small
-                >
-                <br />
-                <p v-html="comment.text"></p>
-              </div>
-            </div>
-          </article>
-        </div>
+      <div>
+        <article v-if="comment">
+          <div>
+            <figure class="h-8 w-8" v-if="comment?.actor?.avatar">
+              <img
+                :src="comment.actor.avatar.url"
+                alt=""
+                width="48"
+                height="48"
+              />
+            </figure>
+            <AccountCircle v-else :size="48" />
+          </div>
+          <div class="prose dark:prose-invert">
+            <strong>{{ comment?.actor?.name }}</strong>
+            <small v-if="comment.actor"
+              >@{{ usernameWithDomain(comment?.actor) }}</small
+            >
+            <br />
+            <p v-html="comment.text"></p>
+          </div>
+        </article>
 
         <o-field
           :label="t('Additional comments')"
           label-for="additional-comments"
         >
-          <o-input v-model="content" type="textarea" id="additional-comments" />
+          <o-input
+            v-model="content"
+            type="textarea"
+            id="additional-comments"
+            autofocus
+            ref="reportAdditionalCommentsInput"
+          />
         </o-field>
 
         <div class="control" v-if="outsideDomain">
@@ -91,6 +93,7 @@ import { useI18n } from "vue-i18n";
 import { IComment } from "../../types/comment.model";
 import { usernameWithDomain } from "@/types/actor";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import { useFocus } from "@vueuse/core";
 
 const props = withDefaults(
   defineProps<{
@@ -108,17 +111,16 @@ const props = withDefaults(
 
 const emit = defineEmits(["close"]);
 
-// @Component({
-//   mounted() {
-//     this.$data.isActive = true;
-//   },
-// })
-
-// isActive = false;
-
 const content = ref("");
 
 const forward = ref(false);
+
+const reportAdditionalCommentsInput = ref();
+// https://github.com/oruga-ui/oruga/issues/339
+const reportAdditionalCommentsInputComp = computed(
+  () => reportAdditionalCommentsInput.value?.$refs.textarea
+);
+useFocus(reportAdditionalCommentsInputComp, { initialValue: true });
 
 const { t } = useI18n({ useScope: "global" });
 
