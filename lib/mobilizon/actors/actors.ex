@@ -1226,12 +1226,16 @@ defmodule Mobilizon.Actors do
           approved :: boolean | nil
         ) ::
           {:ok, Follower.t()}
-          | {:error, :already_following | :followed_suspended | Ecto.Changeset.t()}
+          | {:error,
+             :already_following | :follow_pending | :followed_suspended | Ecto.Changeset.t()}
   def follow(%Actor{} = followed, %Actor{} = follower, url \\ nil, approved \\ true) do
     if followed.suspended do
       {:error, :followed_suspended}
     else
       case check_follow(follower, followed) do
+        %Follower{approved: false} ->
+          {:error, :follow_pending}
+
         %Follower{} ->
           {:error, :already_following}
 
