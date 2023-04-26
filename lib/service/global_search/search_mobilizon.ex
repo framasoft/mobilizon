@@ -17,6 +17,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
 
   @sort_by_options %{
     match_desc: "-match",
+    start_time_asc: "startTime",
     start_time_desc: "-startTime",
     created_at_desc: "-createdAt",
     created_at_asc: "createdAt",

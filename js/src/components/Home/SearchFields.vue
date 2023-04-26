@@ -39,7 +39,7 @@ import { IAddress } from "@/types/address.model";
 import { AddressSearchType } from "@/types/enums";
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import RouteName from "@/router/name";
 
 const FullAddressAutoComplete = defineAsyncComponent(
@@ -53,6 +53,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const route = useRoute();
 
 const emit = defineEmits<{
   (event: "update:location", location: IAddress | null): void;
@@ -89,6 +90,7 @@ const submit = () => {
   router.push({
     name: RouteName.SEARCH,
     query: {
+      ...route.query,
       locationName: location.value?.locality ?? location.value?.region,
       lat,
       lon,
