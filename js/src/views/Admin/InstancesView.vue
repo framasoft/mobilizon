@@ -66,7 +66,7 @@
           />
         </o-field>
       </div>
-      <div v-if="instances && instances.elements.length > 0" class="mt-3">
+      <div v-if="instances && instances.elements.length > 0" class="my-3">
         <router-link
           :to="{
             name: RouteName.INSTANCE,
@@ -133,7 +133,7 @@
         <o-pagination
           v-show="instances.total > INSTANCES_PAGE_LIMIT"
           :total="instances.total"
-          v-model="instancePage"
+          v-model:current="instancePage"
           :per-page="INSTANCES_PAGE_LIMIT"
           :aria-next-label="t('Next page')"
           :aria-previous-label="t('Previous page')"
