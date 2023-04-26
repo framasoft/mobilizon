@@ -230,6 +230,8 @@ const icons: Record<string, () => Promise<any>> = {
     import(
       `../../../node_modules/vue-material-design-icons/InboxArrowDown.vue`
     ),
+  InboxArrowUp: () =>
+    import(`../../../node_modules/vue-material-design-icons/InboxArrowUp.vue`),
   LanDisconnect: () =>
     import(`../../../node_modules/vue-material-design-icons/LanDisconnect.vue`),
   CloudQuestion: () =>
