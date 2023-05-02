@@ -13,8 +13,6 @@ defmodule Mobilizon.Service.Auth.MobilizonAuthenticator do
 
   @impl Authenticator
   def login(email, password) do
-    require Logger
-
     with {:user, %User{password_hash: password_hash, provider: nil} = user}
          when not is_nil(password_hash) <-
            {:user, fetch_user(email)},
@@ -23,6 +21,10 @@ defmodule Mobilizon.Service.Auth.MobilizonAuthenticator do
          {:checkpw, true} <- {:checkpw, Argon2.verify_pass(password, password_hash)} do
       {:ok, user}
     else
+      {:user, %User{}} ->
+        # User from a 3rd-party provider, doesn't have a password
+        {:error, :user_not_found}
+
       {:user, {:error, :user_not_found}} ->
         {:error, :user_not_found}
 
