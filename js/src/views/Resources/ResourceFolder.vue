@@ -46,7 +46,7 @@
     <o-pagination
       v-if="resource.children.total > RESOURCES_PER_PAGE"
       :total="resource.children.total"
-      v-model="page"
+      v-model:current="page"
       :per-page="RESOURCES_PER_PAGE"
       :aria-next-label="t('Next page')"
       :aria-previous-label="t('Previous page')"

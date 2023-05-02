@@ -417,7 +417,7 @@
       </ul>
       <o-pagination
         :total="actionLogs.total"
-        v-model="page"
+        v-model:current="page"
         :per-page="LOGS_PER_PAGE"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"

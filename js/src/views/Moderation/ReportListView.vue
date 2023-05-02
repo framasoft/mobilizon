@@ -72,7 +72,7 @@
       </div>
       <o-pagination
         :total="reports.total"
-        v-model="page"
+        v-model:current="page"
         :simple="true"
         :per-page="REPORT_PAGE_LIMIT"
         :aria-next-label="t('Next page')"

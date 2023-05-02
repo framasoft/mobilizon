@@ -57,7 +57,7 @@
       </o-notification>
       <o-pagination
         :total="group.posts.total"
-        v-model="postsPage"
+        v-model:current="postsPage"
         :per-page="POSTS_PAGE_LIMIT"
         :aria-next-label="$t('Next page')"
         :aria-previous-label="$t('Previous page')"
