@@ -33,7 +33,7 @@
       <o-pagination
         :total="membershipsPages.total"
         v-show="membershipsPages.total > limit"
-        v-model="page"
+        v-model:current="page"
         :per-page="limit"
         :aria-next-label="t('Next page')"
         :aria-previous-label="t('Previous page')"

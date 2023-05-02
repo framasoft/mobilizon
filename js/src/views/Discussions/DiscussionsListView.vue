@@ -45,7 +45,7 @@
           v-show="group.discussions.total > DISCUSSIONS_PER_PAGE"
           class="discussion-pagination"
           :total="group.discussions.total"
-          v-model="page"
+          v-model:current="page"
           :per-page="DISCUSSIONS_PER_PAGE"
           :aria-next-label="t('Next page')"
           :aria-previous-label="t('Previous page')"
