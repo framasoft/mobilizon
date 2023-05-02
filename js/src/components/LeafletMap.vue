@@ -226,7 +226,7 @@ div.map-container {
 @import "leaflet.locatecontrol/dist/L.Control.Locate.css";
 
 .leaflet-div-icon {
-  background: unset;
-  border: unset;
+  background: unset !important;
+  border: unset !important;
 }
 </style>
