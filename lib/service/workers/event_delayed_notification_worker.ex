@@ -17,7 +17,7 @@ defmodule Mobilizon.Service.Workers.EventDelayedNotificationWorker do
       %Event{draft: false} = event ->
         Group.notify_of_new_event(event)
 
-      nil ->
+      _ ->
         # Event still a draft or event deleted inbetween, no worries, just ignore
         :ok
     end

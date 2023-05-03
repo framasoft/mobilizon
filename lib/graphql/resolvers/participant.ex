@@ -278,6 +278,10 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
            Participations.update(participant, actor, Events.get_default_participant_role(event)) do
       {:ok, participant}
     else
+      {:has_participant, %Participant{role: :not_approved}} ->
+        {:error,
+         dgettext("errors", "Participation is confirmed but not approved yet by an organizer")}
+
       {:has_participant, nil} ->
         {:error, dgettext("errors", "This token is invalid")}
 
