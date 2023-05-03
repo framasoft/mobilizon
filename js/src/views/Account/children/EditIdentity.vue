@@ -1,9 +1,11 @@
 <template>
   <div>
     <breadcrumbs-nav :links="breadcrumbsLinks" />
-    <div class="root" v-if="identity">
-      <h1 class="title">
-        <span v-if="isUpdate">{{ displayName(identity) }}</span>
+    <div v-if="identity">
+      <h1>
+        <span v-if="isUpdate" class="line-clamp-2">{{
+          displayName(identity)
+        }}</span>
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
 
