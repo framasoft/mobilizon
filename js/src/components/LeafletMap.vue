@@ -19,6 +19,7 @@
         :zoomOutTitle="$t('Zoom out')"
       ></l-control-zoom>
       <l-marker
+        v-if="lat && lon"
         :lat-lng="[lat, lon]"
         @add="openPopup"
         @update:latLng="updateDraggableMarkerPositionDebounced"
