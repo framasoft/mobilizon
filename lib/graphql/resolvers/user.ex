@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
   alias Mobilizon.{Actors, Admin, Config, Events, FollowedGroupActivity, Users}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Federation.ActivityPub.{Actions, Relay}
+  alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Service.Akismet
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Storage.{Page, Repo}
@@ -563,7 +563,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       when is_moderator(role) do
     with %User{disabled: false} = user <- Users.get_user(user_id),
          {:ok, %User{}} <-
-           do_delete_account(%User{} = user, actor_performing: Relay.get_actor()) do
+           do_delete_account(%User{} = user) do
       Admin.log_action(moderator_actor, "delete", user)
     else
       %User{disabled: true} ->
@@ -598,7 +598,7 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
   end
 
   @spec do_delete_account(User.t(), Keyword.t()) :: {:ok, User.t()}
-  defp do_delete_account(%User{} = user, options) do
+  defp do_delete_account(%User{} = user, options \\ []) do
     with actors <- Users.get_actors_for_user(user),
          activated <- not is_nil(user.confirmed_at),
          # Detach actors from user
