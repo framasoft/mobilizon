@@ -77,7 +77,7 @@
           <o-inputitems
             v-model="instanceLanguages"
             :data="filteredLanguages"
-            autocomplete
+            allow-autocomplete
             :open-on-focus="true"
             field="name"
             icon="label"
