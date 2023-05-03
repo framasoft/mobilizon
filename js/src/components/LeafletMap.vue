@@ -62,7 +62,7 @@ import {
   LIcon,
   LControlZoom,
 } from "@vue-leaflet/vue-leaflet";
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useMapTiles } from "@/composition/apollo/config";
 import { useI18n } from "vue-i18n";
 import Locatecontrol from "leaflet.locatecontrol";
@@ -101,19 +101,6 @@ const locateControl = ref<Control.Locate>();
 const locationIcon = ref();
 
 const locationIconHTML = computed(() => locationIcon.value?.$el.innerHTML);
-
-onMounted(async () => {
-  // this part resolve an issue where the markers would not appear
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  // eslint-disable-next-line no-underscore-dangle
-  // delete Icon.Default.prototype._getIconUrl;
-  // Icon.Default.mergeOptions({
-  //   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  //   iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  //   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-  // });
-});
 
 const onMapReady = async () => {
   mapObject.value = mapComponent.value.leafletObject;
