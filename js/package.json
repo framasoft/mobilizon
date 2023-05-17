@@ -50,7 +50,7 @@
     "@vue-a11y/announcer": "^2.1.0",
     "@vue-a11y/skip-to": "^2.1.2",
     "@vue-leaflet/vue-leaflet": "^0.9.0",
-    "@vue/apollo-composable": "^4.0.0-beta.1",
+    "@vue/apollo-composable": "^4.0.0-beta.5",
     "@vue/compiler-sfc": "^3.2.37",
     "@vueuse/core": "^10.0.2",
     "@vueuse/head": "^1.0",
@@ -104,8 +104,8 @@
     "@types/phoenix": "^1.5.2",
     "@types/sanitize-html": "^2.5.0",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vitest/coverage-c8": "^0.30.1",
-    "@vitest/ui": "^0.30.1",
+    "@vitest/coverage-c8": "^0.31.0",
+    "@vitest/ui": "^0.31.0",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^2.0.2",
@@ -125,7 +125,7 @@
     "typescript": "~5.0.0",
     "vite": "^4.0.4",
     "vite-plugin-pwa": "^0.14.1",
-    "vitest": "^0.30.1",
+    "vitest": "^0.31.0",
     "vue-i18n-extract": "^2.0.4"
   }
 }
