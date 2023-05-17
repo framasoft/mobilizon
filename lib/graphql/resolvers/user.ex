@@ -303,7 +303,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         {:error, dgettext("errors", "This email doesn't seem to be valid")}
 
       {:error, :email_too_soon} ->
-        {:error, dgettext("errors", "You requested again a confirmation email too soon")}
+        {:error,
+         dgettext(
+           "errors",
+           "You requested again a confirmation email too soon. Please try again in a few minutes"
+         )}
     end
   end
 
@@ -330,7 +334,11 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
         {:error, dgettext("errors", "No user with this email was found")}
 
       {:error, :email_too_soon} ->
-        {:error, dgettext("errors", "You requested again a confirmation email too soon")}
+        {:error,
+         dgettext(
+           "errors",
+           "You requested again a password reset email too soon. Please try again in a few minutes"
+         )}
     end
   end
 

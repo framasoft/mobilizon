@@ -694,7 +694,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "You requested again a confirmation email too soon"
+               "You requested again a confirmation email too soon. Please try again in a few minutes"
 
       # Hammer time !
       Users.update_user(user, %{
