@@ -75,7 +75,7 @@
                 })
               "
             >
-              <div class="flex gap-1 items-center">
+              <div class="flex gap-1 items-center w-full">
                 <div class="flex-none">
                   <figure class="h-8 w-8" v-if="identity.avatar">
                     <img
@@ -91,10 +91,10 @@
                 </div>
 
                 <div
-                  class="text-base text-zinc-700 dark:text-zinc-100 flex flex-col flex-auto overflow-hidden items-start"
+                  class="text-base text-zinc-700 dark:text-zinc-100 flex flex-col flex-auto overflow-hidden items-start w-full"
                 >
-                  <p class="truncate">{{ displayName(identity) }}</p>
-                  <p class="truncate text-sm" v-if="identity.name">
+                  <p class="truncate w-full">{{ displayName(identity) }}</p>
+                  <p class="truncate text-sm w-full" v-if="identity.name">
                     @{{ identity.preferredUsername }}
                   </p>
                 </div>
