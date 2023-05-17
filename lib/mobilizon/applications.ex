@@ -287,7 +287,7 @@ defmodule Mobilizon.Applications do
 
   @spec prune_old_application_tokens(pos_integer()) :: {non_neg_integer(), nil}
   def prune_old_application_tokens(lifetime) do
-    exp = DateTime.add(NaiveDateTime.utc_now(), -lifetime)
+    exp = DateTime.add(DateTime.utc_now(), -lifetime)
 
     ApplicationToken
     |> where([at], at.status != :success)
@@ -426,7 +426,7 @@ defmodule Mobilizon.Applications do
 
   @spec prune_old_application_device_activations(pos_integer()) :: {non_neg_integer(), nil}
   def prune_old_application_device_activations(lifetime) do
-    exp = DateTime.add(NaiveDateTime.utc_now(), -lifetime)
+    exp = DateTime.add(DateTime.utc_now(), -lifetime)
 
     ApplicationDeviceActivation
     |> where([at], at.expires_in < ^exp)
