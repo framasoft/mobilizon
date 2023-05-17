@@ -31,7 +31,7 @@
           :id="`availableActor-${availableActor?.id}`"
         />
         <label
-          class="flex flex-wrap gap-2 p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
+          class="flex items-center gap-2 p-3 bg-white hover:bg-gray-50 dark:bg-violet-3 dark:hover:bg-violet-3/60 border border-gray-300 rounded-lg cursor-pointer peer-checked:ring-primary peer-checked:ring-2 peer-checked:border-transparent"
           :for="`availableActor-${availableActor?.id}`"
         >
           <figure class="h-12 w-12" v-if="availableActor?.avatar">
@@ -44,9 +44,11 @@
             />
           </figure>
           <AccountCircle v-else :size="48" />
-          <div class="flex-1">
-            <h3>{{ availableActor?.name }}</h3>
-            <small>{{ `@${availableActor?.preferredUsername}` }}</small>
+          <div class="flex-1 w-px">
+            <h3 class="line-clamp-2">{{ availableActor?.name }}</h3>
+            <small class="flex truncate">{{
+              `@${availableActor?.preferredUsername}`
+            }}</small>
           </div>
         </label>
       </li>

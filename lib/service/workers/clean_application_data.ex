@@ -8,14 +8,14 @@ defmodule Mobilizon.Service.Workers.CleanApplicationData do
   require Logger
 
   @impl Oban.Worker
-  def perform(%Job{args: %{type: :application}}) do
+  def perform(%Job{args: %{"type" => "application"}}) do
     Logger.info("Cleaning expired applications data")
 
     # TODO: Clear unused applications after a while
   end
 
   @impl Oban.Worker
-  def perform(%Job{args: %{type: :application_token}}) do
+  def perform(%Job{args: %{"type" => "application_token"}}) do
     Logger.info("Cleaning expired application tokens data")
 
     Applications.prune_old_tokens()
@@ -23,7 +23,7 @@ defmodule Mobilizon.Service.Workers.CleanApplicationData do
   end
 
   @impl Oban.Worker
-  def perform(%Job{args: %{type: :application_device_activation}}) do
+  def perform(%Job{args: %{"type" => "application_device_activation"}}) do
     Logger.info("Cleaning expired application device activation data")
 
     Applications.prune_old_application_device_activations()

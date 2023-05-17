@@ -183,7 +183,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
     case Language.known_languages(String.to_existing_atom(locale)) do
       data when is_map(data) ->
         data
-        |> Enum.map(fn {code, elem} -> %{code: code, name: elem.standard} end)
+        |> Enum.map(fn {code, elem} ->
+          %{code: code, name: Map.get(elem, :standard, "Unknown")}
+        end)
         |> Enum.filter(fn %{code: code, name: _name} -> code in codes end)
         |> (&{:ok, &1}).()
 
@@ -197,7 +199,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
 
     case Language.known_languages(String.to_existing_atom(locale)) do
       data when is_map(data) ->
-        data = Enum.map(data, fn {code, elem} -> %{code: code, name: elem.standard} end)
+        data =
+          Enum.map(data, fn {code, elem} ->
+            %{code: code, name: Map.get(elem, :standard, "Unknown")}
+          end)
+
         {:ok, data}
 
       {:error, err} ->

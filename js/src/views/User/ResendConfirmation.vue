@@ -3,16 +3,20 @@
     <h1>
       {{ $t("Resend confirmation email") }}
     </h1>
+    <o-notification v-if="error" variant="danger">
+      {{  errorMessage  }}
+    </o-notification>
     <form v-if="!validationSent" @submit="resendConfirmationAction">
-      <o-field :label="$t('Email address')">
+      <o-field :label="$t('Email address')" labelFor="emailAddress">
         <o-input
           aria-required="true"
           required
           type="email"
+          id="emailAddress"
           v-model="credentials.email"
         />
       </o-field>
-      <p class="flex flex-wrap gap-1">
+      <p class="flex flex-wrap gap-1 mt-2">
         <o-button variant="primary" native-type="submit">
           {{ $t("Send the confirmation email again") }}
         </o-button>
@@ -34,7 +38,7 @@
           )
         }}
       </o-notification>
-      <o-notification variant="info">
+      <o-notification variant="info" class="mt-2">
         {{
           $t("Please check your spam folder if you didn't receive the email.")
         }}
@@ -65,6 +69,7 @@ const credentials = reactive({
 
 const validationSent = ref(false);
 const error = ref(false);
+const errorMessage = ref<string>();
 
 const {
   mutate: resendConfirmationEmail,
@@ -79,6 +84,7 @@ resentConfirmationEmail(() => {
 resentConfirmationEmailError((err) => {
   console.error(err);
   error.value = true;
+  errorMessage.value = err.graphQLErrors[0].message;
 });
 
 const resendConfirmationAction = async (e: Event): Promise<void> => {

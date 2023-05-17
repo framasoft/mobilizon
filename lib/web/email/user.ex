@@ -202,7 +202,7 @@ defmodule Mobilizon.Web.Email.User do
 
       _ ->
         case DateTime.compare(
-               DateTime.add(Map.get(user, key), 3600),
+               DateTime.add(Map.get(user, key), 100),
                DateTime.utc_now() |> DateTime.truncate(:second)
              ) do
           :lt ->

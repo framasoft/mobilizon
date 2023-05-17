@@ -8,7 +8,7 @@
     }"
   >
     <router-link v-if="to" :to="to">
-      <span>{{ title }}</span>
+      <span class="truncate">{{ title }}</span>
     </router-link>
     <span v-else>{{ title }}</span>
   </li>

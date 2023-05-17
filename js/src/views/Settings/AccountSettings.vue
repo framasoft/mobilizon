@@ -187,7 +187,7 @@
                         :placeholder="t('Password')"
                       />
                       <template #message>
-                        <o-notification
+                        <o-notification class="mt-2 not-italic text-base"
                           variant="danger"
                           v-for="message in deletePasswordErrors"
                           :key="message"
@@ -196,16 +196,18 @@
                         </o-notification>
                       </template>
                     </o-field>
-                    <o-button
-                      class="mt-2"
-                      native-type="submit"
-                      variant="danger"
-                      size="large"
-                    >
-                      {{ t("Delete everything") }}
-                    </o-button>
+                    <div class="flex items-center justify-center">
+                      <o-button
+                        class="mt-2"
+                        native-type="submit"
+                        variant="danger"
+                        size="large"
+                      >
+                        {{ t("Delete everything") }}
+                      </o-button>
+                    </div>
                   </form>
-                  <div class="mt-4">
+                  <div class="mt-4 text-center">
                     <o-button
                       variant="light"
                       @click="isDeleteAccountModalActive = false"

@@ -43,7 +43,7 @@ export function useAnonymousParticipationConfig() {
     loading,
   } = useQuery<{
     config: Pick<IConfig, "anonymous">;
-  }>(ANONYMOUS_PARTICIPATION_CONFIG, undefined, { fetchPolicy: "cache-only" });
+  }>(ANONYMOUS_PARTICIPATION_CONFIG);
 
   const anonymousParticipationConfig = computed(
     () => configResult.value?.config?.anonymous?.participation
@@ -59,7 +59,7 @@ export function useAnonymousReportsConfig() {
     loading,
   } = useQuery<{
     config: Pick<IConfig, "anonymous">;
-  }>(ANONYMOUS_REPORTS_CONFIG, undefined, { fetchPolicy: "cache-only" });
+  }>(ANONYMOUS_REPORTS_CONFIG);
 
   const anonymousReportsConfig = computed(
     () => configResult.value?.config?.anonymous?.reports
@@ -70,7 +70,7 @@ export function useAnonymousReportsConfig() {
 export function useInstanceName() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "name">;
-  }>(ABOUT, undefined, { fetchPolicy: "cache-only" });
+  }>(ABOUT);
 
   const instanceName = computed(() => result.value?.config?.name);
   return { instanceName, error, loading };
@@ -79,7 +79,7 @@ export function useInstanceName() {
 export function useAnonymousActorId() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "anonymous">;
-  }>(ANONYMOUS_ACTOR_ID, undefined, { fetchPolicy: "cache-only" });
+  }>(ANONYMOUS_ACTOR_ID);
 
   const anonymousActorId = computed(
     () => result.value?.config?.anonymous?.actorId
@@ -90,7 +90,7 @@ export function useAnonymousActorId() {
 export function useUploadLimits() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "uploadLimits">;
-  }>(UPLOAD_LIMITS, undefined, { fetchPolicy: "cache-only" });
+  }>(UPLOAD_LIMITS);
 
   const uploadLimits = computed(() => result.value?.config?.uploadLimits);
   return { uploadLimits, error, loading };
@@ -99,7 +99,7 @@ export function useUploadLimits() {
 export function useEventCategories() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "eventCategories">;
-  }>(EVENT_CATEGORIES, undefined, { fetchPolicy: "cache-only" });
+  }>(EVENT_CATEGORIES);
 
   const eventCategories = computed(() => result.value?.config.eventCategories);
   return { eventCategories, error, loading };
@@ -108,7 +108,7 @@ export function useEventCategories() {
 export function useRestrictions() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "restrictions">;
-  }>(RESTRICTIONS, undefined, { fetchPolicy: "cache-only" });
+  }>(RESTRICTIONS);
 
   const restrictions = computed(() => result.value?.config.restrictions);
   return { restrictions, error, loading };
@@ -117,7 +117,7 @@ export function useRestrictions() {
 export function useExportFormats() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "exportFormats">;
-  }>(EVENT_PARTICIPANTS, undefined, { fetchPolicy: "cache-only" });
+  }>(EVENT_PARTICIPANTS);
   const exportFormats = computed(() => result.value?.config?.exportFormats);
   return { exportFormats, error, loading };
 }
@@ -125,7 +125,7 @@ export function useExportFormats() {
 export function useGeocodingAutocomplete() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "geocoding">;
-  }>(GEOCODING_AUTOCOMPLETE, undefined, { fetchPolicy: "cache-only" });
+  }>(GEOCODING_AUTOCOMPLETE);
   const geocodingAutocomplete = computed(
     () => result.value?.config?.geocoding?.autocomplete
   );
@@ -135,7 +135,7 @@ export function useGeocodingAutocomplete() {
 export function useMapTiles() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "maps">;
-  }>(MAPS_TILES, undefined, { fetchPolicy: "cache-only" });
+  }>(MAPS_TILES);
 
   const tiles = computed(() => result.value?.config.maps.tiles);
   return { tiles, error, loading };
@@ -144,7 +144,7 @@ export function useMapTiles() {
 export function useRoutingType() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "maps">;
-  }>(ROUTING_TYPE, undefined, { fetchPolicy: "cache-only" });
+  }>(ROUTING_TYPE);
 
   const routingType = computed(() => result.value?.config.maps.routing.type);
   return { routingType, error, loading };
@@ -153,7 +153,7 @@ export function useRoutingType() {
 export function useFeatures() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "features">;
-  }>(FEATURES, undefined, { fetchPolicy: "cache-only" });
+  }>(FEATURES);
 
   const features = computed(() => result.value?.config.features);
   return { features, error, loading };
@@ -162,7 +162,7 @@ export function useFeatures() {
 export function useResourceProviders() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "resourceProviders">;
-  }>(RESOURCE_PROVIDERS, undefined, { fetchPolicy: "cache-only" });
+  }>(RESOURCE_PROVIDERS);
 
   const resourceProviders = computed(
     () => result.value?.config.resourceProviders
@@ -173,7 +173,7 @@ export function useResourceProviders() {
 export function useServerProvidedLocation() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "location">;
-  }>(LOCATION, undefined, { fetchPolicy: "cache-only" });
+  }>(LOCATION);
 
   const location = computed(() => result.value?.config.location);
   return { location, error, loading };
@@ -182,7 +182,7 @@ export function useServerProvidedLocation() {
 export function useIsDemoMode() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "demoMode">;
-  }>(DEMO_MODE, undefined, { fetchPolicy: "cache-only" });
+  }>(DEMO_MODE);
 
   const isDemoMode = computed(() => result.value?.config.demoMode);
   return { isDemoMode, error, loading };
@@ -191,7 +191,7 @@ export function useIsDemoMode() {
 export function useAnalytics() {
   const { result, error, loading } = useQuery<{
     config: Pick<IConfig, "analytics">;
-  }>(ANALYTICS, undefined, { fetchPolicy: "cache-only" });
+  }>(ANALYTICS);
 
   const analytics = computed(() => result.value?.config.analytics);
   return { analytics, error, loading };
@@ -200,7 +200,7 @@ export function useAnalytics() {
 export function useSearchConfig() {
   const { result, error, loading, onResult } = useQuery<{
     config: Pick<IConfig, "search">;
-  }>(SEARCH_CONFIG, undefined, { fetchPolicy: "cache-only" });
+  }>(SEARCH_CONFIG);
 
   const searchConfig = computed(() => result.value?.config.search);
   return { searchConfig, error, loading, onResult };
@@ -212,7 +212,7 @@ export function useRegistrationConfig() {
       IConfig,
       "registrationsOpen" | "registrationsAllowlist" | "auth"
     >;
-  }>(REGISTRATIONS, undefined, { fetchPolicy: "cache-only" });
+  }>(REGISTRATIONS);
 
   const registrationsOpen = computed(
     () => result.value?.config?.registrationsOpen

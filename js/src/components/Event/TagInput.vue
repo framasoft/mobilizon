@@ -14,7 +14,7 @@
     <o-inputitems
       v-model="tagsStrings"
       :data="filteredTags"
-      :autocomplete="true"
+      :allow-autocomplete="true"
       :allow-new="true"
       :field="'title'"
       icon="label"

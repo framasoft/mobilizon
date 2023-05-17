@@ -228,7 +228,8 @@ defmodule Mobilizon.Service.ActorSuspension do
     Enum.each(participations, &Events.delete_participant/1)
   end
 
-  defp delete_participations(%Actor{type: :Group}), do: :ok
+  # Ignore for all other types of actors
+  defp delete_participations(%Actor{}), do: :ok
 
   @spec delete_members(Multi.t(), Actor.t()) :: Multi.t()
   defp delete_members(%Multi{} = multi, %Actor{type: :Person, id: actor_id}) do

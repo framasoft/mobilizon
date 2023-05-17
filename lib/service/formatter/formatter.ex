@@ -62,6 +62,10 @@ defmodule Mobilizon.Service.Formatter do
 
         {link, %{acc | mentions: MapSet.put(acc.mentions, {"@" <> nickname, actor})}}
 
+      # Ignore groups mentions for now
+      {:ok, %Actor{type: :Group}} ->
+        {buffer, acc}
+
       {:error, _} ->
         {buffer, acc}
     end

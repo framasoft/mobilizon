@@ -1,7 +1,7 @@
 defmodule Mobilizon.Mixfile do
   use Mix.Project
 
-  @version "3.0.3"
+  @version "3.1.0-dev"
 
   def project do
     [
@@ -183,11 +183,11 @@ defmodule Mobilizon.Mixfile do
       {:ueberauth_github, "~> 0.8.1"},
       {:ueberauth_facebook, "~> 0.9"},
       {:ueberauth_google, "~> 0.10.1"},
-      {:ueberauth_keycloak_strategy, "~> 0.3.0"},
+      {:ueberauth_keycloak_strategy, "~> 0.4.0"},
       {:ueberauth_gitlab_strategy, "~> 0.4.0"},
       {:ueberauth_cas, "~> 2.0"},
       {:ecto_shortuuid, "~> 0.1"},
-      {:tesla, "~> 1.6.0"},
+      {:tesla, "~> 1.7.0"},
       {:sitemapper, "~> 0.6"},
       {:xml_builder, "~> 2.2"},
       {:remote_ip, "~> 1.1"},

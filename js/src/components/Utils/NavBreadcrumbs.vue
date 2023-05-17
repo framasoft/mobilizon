@@ -28,7 +28,7 @@
             ></path>
           </svg>
           <span
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-600 dark:text-gray-300 md:ltr:ml-2 md:rtl:mr-2"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-600 dark:text-gray-300 md:ltr:ml-2 md:rtl:mr-2 line-clamp-1"
             >{{ element.text }}</span
           >
         </div>
@@ -47,7 +47,7 @@
           </svg>
           <router-link
             :to="element"
-            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100 md:ltr:ml-2 md:rtl:mr-2"
+            class="ltr:ml-1 rtl:mr-1 font-medium text-gray-800 hover:text-gray-900 dark:text-gray-200 dark:hover:text-gray-100 md:ltr:ml-2 md:rtl:mr-2 line-clamp-1"
             >{{ element.text }}</router-link
           >
         </div>
