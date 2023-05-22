@@ -200,6 +200,34 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
       assert res["data"]["loggedUser"]["id"] == to_string(user.id)
     end
+
+    test "get_current_user/3 returns the current logged-in user with moderator role", %{
+      conn: conn
+    } do
+      user = insert(:user, role: :moderator)
+
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @logged_user_query,
+          variables: %{}
+        )
+
+      assert res["data"]["loggedUser"] == nil
+
+      assert hd(res["errors"])["message"] ==
+               "You need to be logged in"
+
+      res =
+        conn
+        |> auth_conn(user)
+        |> AbsintheHelpers.graphql_query(
+          query: @logged_user_query,
+          variables: %{}
+        )
+
+      assert res["data"]["loggedUser"]["id"] == to_string(user.id)
+    end
   end
 
   describe "Resolver: List users" do
