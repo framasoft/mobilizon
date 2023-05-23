@@ -31,13 +31,14 @@ defmodule Mobilizon.GraphQL.Authorization do
   @impl true
   def role_authorized?(_user_role, :all), do: true
   def role_authorized?(role, _allowed_role) when is_super_role(role), do: true
+  def role_authorized?(:moderator, :user), do: true
 
   def role_authorized?(user_role, allowed_role) when is_atom(user_role) and is_atom(allowed_role),
     do: user_role === allowed_role
 
   def role_authorized?(user_role, allowed_roles)
       when is_atom(user_role) and is_list(allowed_roles),
-      do: user_role in allowed_roles
+      do: user_role in allowed_roles or (user_role === :moderator and :user in allowed_roles)
 
   @impl true
   def get_user_role(%ApplicationToken{user: %{role: role}}), do: role
