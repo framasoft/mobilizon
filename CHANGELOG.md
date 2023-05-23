@@ -6,19 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## 3.1.0  (2023-05-17)
+## 3.1.0-beta.1  (2023-05-17)
 
 ### Features
 
 * **API:** Allow to create apps, with permissions and both Authorization Code Flow and Device Flow
 * **addresses:** Allow to enter manual addresses ([85d643d](https://framagit.org/framasoft/mobilizon/commits/85d643d0ecd5e7504f32953b9ed1509697b915e2))
 * **docker:** Specify the folder where tzdata downloads data so that it can be used in a volume ([4bb0625](https://framagit.org/framasoft/mobilizon/commits/4bb062528f12be530a3754ca23c1bc6dbc862e5a)), closes [#1280](https://framagit.org/framasoft/mobilizon/issues/1280)
-* **global-search:** Add option values in debug log before calling global search service ([8141bb0](https://framagit.org/framasoft/mobilizon/commits/8141bb0acbc4eb02a917c5bc18712d0d954c4ee5))
 * **spam:** Introduce checking new accounts, events & comments for spam with the help of Akismet ([317a343](https://framagit.org/framasoft/mobilizon/commits/317a3434b221a1a91b66d8443984269404863a8e))
 * **rate-limiting:** Introduce rate-limiting on some endpoints ([c07ba3a5](https://framagit.org/framasoft/mobilizon/-/commit/c07ba3a5d19c419ef8aaf3ea9ca6e7f48e4f4487))
 
 ### Bug Fixes
 
+* **global-search:** Add option values in debug log before calling global search service ([8141bb0](https://framagit.org/framasoft/mobilizon/commits/8141bb0acbc4eb02a917c5bc18712d0d954c4ee5))
 * **apps:** Fix cleaning application data background job ([aa20f69](https://framagit.org/framasoft/mobilizon/commits/aa20f6991127ddee546fc0b867298c1342dbcb4d))
 * **apps:** Show message when the user doesn't have approved apps yet ([e0ee9c1](https://framagit.org/framasoft/mobilizon/commits/e0ee9c143b0335753db5dfae19e324781d55bd4e))
 * **auth:** Handle logging-in with disabled auth provider ([a22a5e3](https://framagit.org/framasoft/mobilizon/commits/a22a5e3cb924869e32cb9ed71dab3e03d91c018f))
