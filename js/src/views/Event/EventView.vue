@@ -7,7 +7,12 @@
         class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-2 rounded"
       >
         <div class="date-calendar-icon-wrapper relative" v-if="event?.beginsOn">
+          <skeleton-date-calendar-icon
+            v-if="eventLoading"
+            class="absolute left-3 -top-16"
+          />
           <date-calendar-icon
+            v-else
             :date="event.beginsOn.toString()"
             class="absolute left-3 -top-16"
           />
@@ -16,7 +21,12 @@
         <section class="intro px-2 pt-4" dir="auto">
           <div class="flex flex-wrap gap-2">
             <div class="flex-1 min-w-[300px]">
+              <div
+                v-if="eventLoading"
+                class="animate-pulse mb-2 h-12 bg-slate-200 w-3/4"
+              />
               <h1
+                v-else
                 class="text-4xl font-bold m-0"
                 dir="auto"
                 :lang="event?.language"
@@ -24,7 +34,11 @@
                 {{ event?.title }}
               </h1>
               <div class="organizer">
-                <div v-if="event?.organizerActor && !event?.attributedTo">
+                <div
+                  v-if="eventLoading"
+                  class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
+                />
+                <div v-else-if="event?.organizerActor && !event?.attributedTo">
                   <popover-actor-card
                     :actor="event.organizerActor"
                     :inline="true"
@@ -71,7 +85,11 @@
                 </span>
               </div>
               <div class="flex flex-wrap items-center gap-2 gap-y-4 mt-2 my-3">
-                <p v-if="event?.status !== EventStatus.CONFIRMED">
+                <div
+                  v-if="eventLoading"
+                  class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
+                />
+                <p v-else-if="event?.status !== EventStatus.CONFIRMED">
                   <tag
                     variant="warning"
                     v-if="event?.status === EventStatus.TENTATIVE"
@@ -83,7 +101,7 @@
                     >{{ t("Event cancelled") }}</tag
                   >
                 </p>
-                <template v-if="!event?.draft">
+                <template v-if="!eventLoading && !event?.draft">
                   <p
                     v-if="event?.visibility === EventVisibility.PUBLIC"
                     class="inline-flex gap-1"
@@ -104,11 +122,16 @@
                     <tag variant="info">{{ organizerDomain }}</tag>
                   </a>
                 </template>
-                <p class="flex flex-wrap gap-1 items-center" dir="auto">
+                <div
+                  v-if="eventLoading"
+                  class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-64"
+                />
+                <p v-else class="flex flex-wrap gap-1 items-center" dir="auto">
                   <tag v-if="eventCategory" class="category" capitalize>{{
                     eventCategory
                   }}</tag>
-                  <router-link class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
+                  <router-link
+                    class="rounded-md truncate text-sm text-violet-title py-1 bg-purple-3 dark:text-violet-3 category"
                     v-for="tag in event?.tags ?? []"
                     :key="tag.title"
                     :to="{ name: RouteName.TAG, params: { tag: tag.title } }"
@@ -122,8 +145,12 @@
               </div>
             </div>
 
+            <div v-if="eventLoading">
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+              <div class="animate-pulse mb-2 h-6 bg-slate-200 w-64" />
+            </div>
             <EventActionSection
-              v-if="event"
+              v-else-if="event"
               :event="event"
               :currentActor="currentActor"
               :participations="participations"
@@ -140,8 +167,23 @@
           class="rounded bg-white dark:bg-zinc-700 shadow-md h-min max-w-screen-sm"
         >
           <div class="sticky p-4">
+            <aside
+              v-if="eventLoading"
+              class="animate-pulse rounded bg-white dark:bg-zinc-700 h-min max-w-screen-sm"
+            >
+              <div class="mb-6 p-2" v-for="i in 3" :key="i">
+                <div class="mb-2 h-6 bg-slate-200 w-64" />
+                <div class="flex space-x-4 flex-row">
+                  <div class="rounded-full bg-slate-200 h-10 w-10"></div>
+                  <div class="flex flex-col flex-1 space-y-2">
+                    <div class="h-3 bg-slate-200"></div>
+                    <div class="h-3 bg-slate-200"></div>
+                  </div>
+                </div>
+              </div>
+            </aside>
             <event-metadata-sidebar
-              v-if="event"
+              v-else-if="event"
               :event="event"
               :user="loggedUser"
               @showMapModal="showMap = true"
@@ -153,7 +195,19 @@
             class="event-description bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded mb-4"
           >
             <h2 class="text-2xl">{{ t("About this event") }}</h2>
-            <p v-if="!event?.description">
+            <div
+              v-if="eventLoading"
+              class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-3/4"
+            />
+            <div
+              v-if="eventLoading"
+              class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-3/4"
+            />
+            <div
+              v-if="eventLoading"
+              class="animate-pulse mb-2 h-6 space-y-6 bg-slate-200 w-1/4"
+            />
+            <p v-else-if="!event?.description">
               {{ t("The event organizer didn't add any description.") }}
             </p>
             <div v-else>
@@ -235,6 +289,7 @@ import {
   usernameWithDomain,
 } from "@/types/actor";
 import DateCalendarIcon from "@/components/Event/DateCalendarIcon.vue";
+import SkeletonDateCalendarIcon from "@/components/Event/SkeletonDateCalendarIcon.vue";
 import Earth from "vue-material-design-icons/Earth.vue";
 import Link from "vue-material-design-icons/Link.vue";
 import MultiCard from "@/components/Event/MultiCard.vue";
