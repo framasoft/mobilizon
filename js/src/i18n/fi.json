@@ -1070,7 +1070,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "",
   "You excluded member {member}.": "Jätit pois käyttäjän {member}.",
   "You have attended {count} events in the past.": "",
-  "You have been disconnected": "Yhteytesi on katkaistu",
   "You have been invited by {invitedBy} to the following group:": "{invitedBy} on kutsunut sinut seuraaviin ryhmiin:",
   "You have been removed from this group's members.": "Sinut on poistettu ryhmän jäsenistä.",
   "You have cancelled your participation": "Olet perunut osallistumisesi",

@@ -1234,7 +1234,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "Nincsenek közelgő eseményei. Esetleg megpróbál egy másik szűrőt?",
   "You excluded member {member}.": "Ön kizárta {member} tagot.",
   "You have attended {count} events in the past.": "Ön nem vett részt semmilyen eseményen a múltban.|Ön egy eseményen vett részt a múltban.|Ön {count} eseményen vett részt a múltban.",
-  "You have been disconnected": "A kapcsolata bontva lett",
   "You have been invited by {invitedBy} to the following group:": "{invitedBy} meghívta Önt a következő csoportba:",
   "You have been removed from this group's members.": "El lett távolítva a csoport tagjai közül.",
   "You have cancelled your participation": "Törölte a részvételét",

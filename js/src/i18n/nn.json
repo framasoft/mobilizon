@@ -1234,7 +1234,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "Du har ingen komande hendingar. Kanskje du kan prøva eit anna søk?",
   "You excluded member {member}.": "Du kasta ut medlemen {member}.",
   "You have attended {count} events in the past.": "Du har ikkje vore med på hendingar tidlegare.|Du har vore med på ei hending tidlegare.|Du har vore med på {count} hendingar tidlegare.",
-  "You have been disconnected": "Du er fråkopla",
   "You have been invited by {invitedBy} to the following group:": "{invitedBy} har invitert deg til denne gruppa:",
   "You have been removed from this group's members.": "Du er ikkje lenger medlem i denne gruppa.",
   "You have cancelled your participation": "Du har avlyst deltakinga di",

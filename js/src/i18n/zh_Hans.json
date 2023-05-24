@@ -1239,7 +1239,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "你没有任何即将发生的活动。也许可以尝试另一个过滤条件？",
   "You excluded member {member}.": "你排除了会员{member}。",
   "You have attended {count} events in the past.": "你在过去没有参加过任何活动。|你在过去参加过一次活动。|你在过去参加过{count}次活动。",
-  "You have been disconnected": "你已经离线",
   "You have been invited by {invitedBy} to the following group:": "您已被{invitedBy}邀请加入以下群组：",
   "You have been removed from this group's members.": "你已被从这个群组的成员中删除。",
   "You have cancelled your participation": "你已经取消了你的参与",

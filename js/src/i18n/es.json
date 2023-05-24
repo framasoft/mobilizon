@@ -1226,7 +1226,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "No tienes ningún evento próximo. ¿Quizás probar con otro filtro?",
   "You excluded member {member}.": "Ha excluido al miembro {member}.",
   "You have attended {count} events in the past.": "No ha asistido a ningún evento en el pasado. |Ha asistido a un evento en el pasado. |Ha asistido a {count} eventos en el pasado.",
-  "You have been disconnected": "Has sido desconectado",
   "You have been invited by {invitedBy} to the following group:": "Usted ha sido invitado por {invitedBy} al siguiente grupo:",
   "You have been removed from this group's members.": "Ha sido eliminado de los miembros de este grupo.",
   "You have cancelled your participation": "Has cancelado tu participación",

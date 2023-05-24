@@ -1070,7 +1070,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "",
   "You excluded member {member}.": "Вы исключили участника {member}.",
   "You have attended {count} events in the past.": "",
-  "You have been disconnected": "Вы были отключены",
   "You have been invited by {invitedBy} to the following group:": "Вы были приглашены пользователем {invitedBy} в следующую группу:",
   "You have been removed from this group's members.": "Вы были удалены из участников этой группы.",
   "You have cancelled your participation": "Вы отказались от участия",

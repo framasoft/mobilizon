@@ -1080,7 +1080,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "",
   "You excluded member {member}.": "U sloot lid {member} uit.",
   "You have attended {count} events in the past.": "",
-  "You have been disconnected": "De verbinding is verbroken",
   "You have been invited by {invitedBy} to the following group:": "U bent uitgenodigd door {invitedBy} voor deelname aan de volgende groep:",
   "You have been removed from this group's members.": "Je bent uitgeschreven als lid van deze groep.",
   "You have cancelled your participation": "U hebt uw deelname geannuleerd",

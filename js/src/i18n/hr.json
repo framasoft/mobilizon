@@ -1186,7 +1186,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "",
   "You excluded member {member}.": "Isključili ste člana {member}.",
   "You have attended {count} events in the past.": "",
-  "You have been disconnected": "Isključeni ste",
   "You have been invited by {invitedBy} to the following group:": "{invitedBy} su vas pozvali u grupu:",
   "You have been removed from this group's members.": "Izbačeni ste iz ove grupe.",
   "You have cancelled your participation": "Otkazali ste svoje sudjelovanje",
