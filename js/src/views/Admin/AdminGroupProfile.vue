@@ -114,26 +114,52 @@
         >
           <article class="flex gap-1">
             <div class="flex-none">
-              <figure v-if="props.row.actor.avatar">
-                <img
-                  class="rounded"
-                  :src="props.row.actor.avatar.url"
-                  alt=""
-                  width="48"
-                  height="48"
-                />
-              </figure>
-              <AccountCircle :size="48" v-else />
+              <router-link
+                class="no-underline"
+                :to="{
+                  name: RouteName.ADMIN_PROFILE,
+                  params: { id: props.row.actor.id },
+                }"
+              >
+                <figure v-if="props.row.actor.avatar">
+                  <img
+                    class="rounded"
+                    :src="props.row.actor.avatar.url"
+                    alt=""
+                    width="48"
+                    height="48"
+                  />
+                </figure>
+                <AccountCircle :size="48" v-else />
+              </router-link>
             </div>
             <div>
               <div class="prose dark:prose-invert">
-                <span v-if="props.row.actor.name">{{
-                  props.row.actor.name
-                }}</span
-                ><span v-else>@{{ usernameWithDomain(props.row.actor) }}</span
+                <router-link
+                  class="no-underline"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: props.row.actor.id },
+                  }"
+                  v-if="props.row.actor.name"
+                  >{{ props.row.actor.name }}</router-link
+                ><router-link
+                  class="no-underline"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: props.row.actor.id },
+                  }"
+                  v-else
+                  >@{{ usernameWithDomain(props.row.actor) }}</router-link
                 ><br />
-                <span v-if="props.row.actor.name"
-                  >@{{ usernameWithDomain(props.row.actor) }}</span
+                <router-link
+                  class="no-underline"
+                  :to="{
+                    name: RouteName.ADMIN_PROFILE,
+                    params: { id: props.row.actor.id },
+                  }"
+                  v-if="props.row.actor.name"
+                  >@{{ usernameWithDomain(props.row.actor) }}</router-link
                 >
               </div>
             </div>

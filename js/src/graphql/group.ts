@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import { DISCUSSION_BASIC_FIELDS_FRAGMENT } from "./discussion";
 import { RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT } from "./resources";
 import { POST_BASIC_FIELDS } from "./post";
 import { ACTOR_FRAGMENT } from "./actor";
@@ -246,7 +245,6 @@ export const GROUP_FIELDS_FRAGMENTS = gql`
     }
   }
   ${GROUP_BASIC_FIELDS_FRAGMENTS}
-  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
   ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
 
@@ -278,8 +276,6 @@ export const GET_GROUP = gql`
     $postsLimit: Int
     $membersPage: Int
     $membersLimit: Int
-    $discussionsPage: Int
-    $discussionsLimit: Int
   ) {
     getGroup(id: $id) {
       mediaSize
@@ -287,9 +283,6 @@ export const GET_GROUP = gql`
     }
   }
   ${GROUP_FIELDS_FRAGMENTS}
-  ${DISCUSSION_BASIC_FIELDS_FRAGMENT}
-  ${POST_BASIC_FIELDS}
-  ${RESOURCE_METADATA_BASIC_FIELDS_FRAGMENT}
 `;
 
 export const CREATE_GROUP = gql`
