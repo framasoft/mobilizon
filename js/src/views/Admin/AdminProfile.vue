@@ -199,23 +199,43 @@
           v-slot="props"
         >
           <article class="flex gap-2">
-            <figure class="" v-if="props.row.parent.avatar">
-              <img
-                class="rounded-full"
-                :src="props.row.parent.avatar.url"
-                alt=""
-                width="48"
-                height="48"
-              />
-            </figure>
-            <AccountCircle v-else :size="48" />
+            <router-link
+              class="no-underline"
+              :to="{
+                name: RouteName.ADMIN_GROUP_PROFILE,
+                params: { id: props.row.parent.id },
+              }"
+            >
+              <figure class="" v-if="props.row.parent.avatar">
+                <img
+                  class="rounded-full"
+                  :src="props.row.parent.avatar.url"
+                  alt=""
+                  width="48"
+                  height="48"
+                />
+              </figure>
+              <AccountCircle v-else :size="48" />
+            </router-link>
             <div class="">
               <div class="prose dark:prose-invert">
-                <span v-if="props.row.parent.name">{{
-                  props.row.parent.name
-                }}</span
+                <router-link
+                  class="no-underline"
+                  :to="{
+                    name: RouteName.ADMIN_GROUP_PROFILE,
+                    params: { id: props.row.parent.id },
+                  }"
+                  v-if="props.row.parent.name"
+                  >{{ props.row.parent.name }}</router-link
                 ><br />
-                <span>@{{ usernameWithDomain(props.row.parent) }}</span>
+                <router-link
+                  class="no-underline"
+                  :to="{
+                    name: RouteName.ADMIN_GROUP_PROFILE,
+                    params: { id: props.row.parent.id },
+                  }"
+                  >@{{ usernameWithDomain(props.row.parent) }}</router-link
+                >
               </div>
             </div>
           </article>
