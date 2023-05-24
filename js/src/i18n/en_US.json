@@ -371,7 +371,6 @@
   "You can add tags by hitting the Enter key or by adding a comma": "You can add tags by hitting the Enter key or by adding a comma",
   "You can try another search term or drag and drop the marker on the map": "You can try another search term or drag and drop the marker on the map",
   "You don't follow any instances yet.": "You don't follow any instances yet.",
-  "You have been disconnected": "You have been disconnected",
   "You have cancelled your participation": "You have cancelled your participation",
   "You have one event in {days} days.": "You have no events in {days} days | You have one event in {days} days. | You have {count} events in {days} days",
   "You have one event today.": "You have no events today | You have one event today. | You have {count} events today",
@@ -1563,5 +1562,7 @@
   "This application asks for the following permissions:": "This application asks for the following permissions:",
   "This application will be allowed to see all of your events organized, the events you participate to, as well as every data from your groups.": "This application will be allowed to see all of your events organized, the events you participate to, as well as every data from your groups.",
   "This application will be allowed to publish and manage events, post and manage comments, participate to events, manage all of your groups, including group events, resources, posts and discussions. It will also be allowed to manage your account and profile settings.": "This application will be allowed to publish and manage events, post and manage comments, participate to events, manage all of your groups, including group events, resources, posts and discussions. It will also be allowed to manage your account and profile settings.",
-  "No apps authorized yet": "No apps authorized yet"
+  "No apps authorized yet": "No apps authorized yet",
+  "You have been logged-out": "You have been logged-out",
+  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely."
 }
