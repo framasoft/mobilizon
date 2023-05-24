@@ -1183,7 +1183,7 @@
   "your notification settings": "",
   "{'@'}{username}": "",
   "{approved} / {total} seats": "{approved} / {total} platser",
-  "{available}/{capacity} available places": "Inga platser kvar|{tillgängliga}/{kapacitet} tillgängliga platser",
+  "{available}/{capacity} available places": "Inga platser kvar|{available}/{capacity} tillgängliga platser",
   "{count} km": "",
   "{count} members": "",
   "{count} members or followers": "",

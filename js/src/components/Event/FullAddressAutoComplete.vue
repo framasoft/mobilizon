@@ -356,9 +356,6 @@ const queryText = ref();
 
 const queryTextWithDefault = computed({
   get() {
-    console.log("queryTextWithDefault 1", queryText.value);
-    console.log("queryTextWithDefault 2", selectedAddressText.value);
-    console.log("queryTextWithDefault 3", props.defaultText);
     return (
       queryText.value ?? selectedAddressText.value ?? props.defaultText ?? ""
     );

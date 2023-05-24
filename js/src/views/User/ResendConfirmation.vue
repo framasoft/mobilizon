@@ -4,7 +4,7 @@
       {{ $t("Resend confirmation email") }}
     </h1>
     <o-notification v-if="error" variant="danger">
-      {{  errorMessage  }}
+      {{ errorMessage }}
     </o-notification>
     <form v-if="!validationSent" @submit="resendConfirmationAction">
       <o-field :label="$t('Email address')" labelFor="emailAddress">

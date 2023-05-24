@@ -123,8 +123,8 @@
             </o-dropdown-item>
             <o-dropdown-item
               aria-role="listitem"
-              @click="logout"
-              @keyup.enter="logout"
+              @click="performLogout"
+              @keyup.enter="performLogout"
             >
               <span
                 class="block py-2 px-4 text-sm text-zinc-700 dark:text-zinc-200 dark:hover:text-white"
@@ -205,7 +205,7 @@ import { logout } from "../utils/auth";
 import { displayName } from "../types/actor";
 import RouteName from "../router/name";
 import { computed, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { useCurrentUserClient } from "@/composition/apollo/user";
@@ -217,11 +217,13 @@ import { useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
 import { useRegistrationConfig } from "@/composition/apollo/config";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();
 
 const router = useRouter();
+const route = useRoute();
 
 const { identities } = useCurrentUserIdentities();
 const { registrationsOpen, registrationsAllowlist, databaseLogin } =
@@ -269,4 +271,21 @@ onDone(({ data }) => {
 });
 
 const showMobileMenu = ref(false);
+
+const { oruga } = useProgrammatic();
+
+const performLogout = async () => {
+  console.debug("Logging out client...");
+  await logout();
+  oruga.notification.open({
+    message: t("You have been logged-out"),
+    variant: "success",
+    position: "bottom-right",
+    duration: 5000,
+  });
+
+  if (route.meta["requiredAuth"] === true) {
+    return router.push({ name: RouteName.HOME });
+  }
+};
 </script>

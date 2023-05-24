@@ -1240,7 +1240,6 @@
   "You don't have any upcoming events. Maybe try another filter?": "Vous n'avez pas d'événements à venir. Essayez peut-être un autre filtre ?",
   "You excluded member {member}.": "Vous avez exclu le ou la membre {member}.",
   "You have attended {count} events in the past.": "Vous n'avez participé à aucun événement par le passé.|Vous avez participé à un événement par le passé.|Vous avez participé à {count} événements par le passé.",
-  "You have been disconnected": "Vous avez été déconnecté⋅e",
   "You have been invited by {invitedBy} to the following group:": "Vous avez été invité par {invitedBy} à rejoindre le groupe suivant :",
   "You have been removed from this group's members.": "Vous avez été exclu⋅e des membres de ce groupe.",
   "You have cancelled your participation": "Vous avez annulé votre participation",
@@ -1559,5 +1558,7 @@
   "This application asks for the following permissions:": "Cette application demande les autorisations suivantes :",
   "This application will be allowed to see all of your events organized, the events you participate to, as well as every data from your groups.": "Cette application vous permettra de voir tous les événements que vous avez organisés, les événements auxquels vous participez, ainsi que toutes les données de vos groupes.",
   "This application will be allowed to publish and manage events, post and manage comments, participate to events, manage all of your groups, including group events, resources, posts and discussions. It will also be allowed to manage your account and profile settings.": "Cette application sera autorisée à publier et à gérer des événements, à publier et à gérer des commentaires, à participer à des événements, à gérer tous vos groupes, y compris les événements de groupe, les ressources, les messages et les discussions. Elle pourra également gérer les paramètres de votre compte et de votre profil.",
-  "No apps authorized yet": "Aucune application autorisée pour le moment"
+  "No apps authorized yet": "Aucune application autorisée pour le moment",
+  "You have been logged-out": "Vous avez été déconnecté·e",
+  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "Une « interface de programmation d’application » ou « API » est un protocole de communication qui permet aux composants logiciels de communiquer entre eux. L'API Mobilizon, par exemple, peut permettre à des outils logiciels tiers de communiquer avec les instances Mobilizon pour effectuer certaines actions, telles que la publication d'événements en votre nom, automatiquement et à distance."
 }

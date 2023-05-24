@@ -868,20 +868,6 @@ const contentType = useRouteQuery(
   enumTransformer(ContentType)
 );
 
-watch(contentType, (newContentType: ContentType) => {
-  switch (newContentType) {
-    case ContentType.ALL:
-      page.value = 1;
-      break;
-    case ContentType.EVENTS:
-      eventPage.value = 1;
-      break;
-    case ContentType.GROUPS:
-      groupPage.value = 1;
-      break;
-  }
-});
-
 const isOnline = useRouteQuery("isOnline", false, booleanTransformer);
 const categoryOneOf = useRouteQuery("categoryOneOf", [], arrayTransformer);
 const statusOneOf = useRouteQuery(
@@ -1260,6 +1246,40 @@ const boostLanguagesQuery = computed((): string[] => {
 
   return Array.from(languages);
 });
+
+// When search criteria changes, reset page number to 1
+watch(
+  [
+    contentType,
+    searchDebounced,
+    geoHashLocation,
+    start,
+    end,
+    radius,
+    isOnline,
+    categoryOneOf,
+    statusOneOf,
+    languageOneOf,
+    searchTarget,
+    bbox,
+    zoom,
+    sortBy,
+    boostLanguagesQuery,
+  ],
+  ([newContentType]) => {
+    switch (newContentType) {
+      case ContentType.ALL:
+        page.value = 1;
+        break;
+      case ContentType.EVENTS:
+        eventPage.value = 1;
+        break;
+      case ContentType.GROUPS:
+        groupPage.value = 1;
+        break;
+    }
+  }
+);
 
 const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchEvents: Paginate<TypeNamed<IEvent>>;

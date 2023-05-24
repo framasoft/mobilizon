@@ -236,9 +236,7 @@ const { result: aboutConfigResult } = useQuery<{
     IConfig,
     "name" | "description" | "slogan" | "registrationsOpen"
   >;
-}>(ABOUT, undefined, {
-  fetchPolicy: "cache-only",
-});
+}>(ABOUT);
 
 const config = computed(() => aboutConfigResult.value?.config);
 
