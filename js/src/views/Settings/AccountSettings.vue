@@ -187,7 +187,8 @@
                         :placeholder="t('Password')"
                       />
                       <template #message>
-                        <o-notification class="mt-2 not-italic text-base"
+                        <o-notification
+                          class="mt-2 not-italic text-base"
                           variant="danger"
                           v-for="message in deletePasswordErrors"
                           :key="message"
