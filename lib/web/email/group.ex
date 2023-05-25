@@ -26,6 +26,7 @@ defmodule Mobilizon.Web.Email.Group do
         users ++ [Users.get_user_with_activity_settings!(actor.user_id)]
       end
     end)
+    |> Enum.uniq_by(& &1.email)
     |> Enum.each(&notify_follower(event, group, &1))
   end
 

@@ -115,9 +115,9 @@ import Account from "vue-material-design-icons/Account.vue";
 
 const PROFILES_PER_PAGE = 10;
 
-const preferredUsername = ref("");
-const name = ref("");
-const domain = ref("");
+const preferredUsername = useRouteQuery("preferredUsername", "");
+const name = useRouteQuery("name", "");
+const domain = useRouteQuery("domain", "");
 
 const local = useRouteQuery("local", true, booleanTransformer);
 const suspended = useRouteQuery("suspended", false, booleanTransformer);
