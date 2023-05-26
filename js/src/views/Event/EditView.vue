@@ -483,6 +483,7 @@
           <span class="" v-if="event.draft === true">
             <o-button
               variant="primary"
+              class="!text-black hover:!text-white"
               outlined
               @click="createOrUpdateDraft"
               :disabled="saving"

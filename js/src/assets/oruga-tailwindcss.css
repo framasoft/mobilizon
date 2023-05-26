@@ -42,13 +42,13 @@ body {
   @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
 }
 .btn-outlined-success {
-  @apply border-mbz-success;
+  @apply border-mbz-success hover:bg-mbz-success;
 }
 .btn-outlined-warning {
   @apply bg-transparent border dark:text-white hover:dark:text-slate-900 hover:bg-mbz-warning border-mbz-warning;
 }
 .btn-outlined-danger {
-  @apply border-mbz-danger;
+  @apply border-mbz-danger hover:bg-mbz-danger;
 }
 .btn-outlined-text {
   @apply bg-transparent hover:text-slate-900;
