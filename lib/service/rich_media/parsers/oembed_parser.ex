@@ -67,8 +67,8 @@ defmodule Mobilizon.Service.RichMedia.Parsers.OEmbed do
          {:ok, data} <- Jason.decode(json),
          data <-
            data
-           |> Map.new(fn {k, v} -> {String.to_existing_atom(k), String.trim(v)} end)
-           |> Map.take(@oembed_allowed_attributes) do
+           |> Map.new(fn {k, v} -> {k, if(is_binary(v), do: String.trim(v), else: v)} end)
+           |> Map.take(Enum.map(@oembed_allowed_attributes, &to_string/1)) do
       {:ok, data}
     end
   end

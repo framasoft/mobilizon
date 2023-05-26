@@ -80,6 +80,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
           }
         } = _resolution
       ) do
+    Logger.debug("Getting resource for group with username #{username}")
+
     with {:group, %Actor{id: group_id}} <- {:group, Actors.get_actor_by_name(username, :Group)},
          {:member, true} <- {:member, Actors.is_member?(actor_id, group_id)},
          {:resource, %Resource{} = resource} <-
@@ -222,13 +224,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Resource do
       {:ok, data} when is_map(data) ->
         {:ok, struct(Metadata, data)}
 
-      {:error, :invalid_parsed_data} ->
+      {:error, _error_type, _} ->
         {:error, dgettext("errors", "Unable to fetch resource details from this URL.")}
-
-      {:error, err} ->
-        Logger.warn("Error while fetching preview from #{inspect(resource_url)}")
-        Logger.debug(inspect(err))
-        {:error, :unknown_resource}
     end
   end
 
