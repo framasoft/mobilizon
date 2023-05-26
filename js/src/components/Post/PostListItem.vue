@@ -18,7 +18,7 @@
       </h3>
       <p class="flex gap-2">
         <Clock />
-        <span dir="auto" class="" v-if="isBeforeLastWeek">{{
+        <span dir="auto" class="" v-if="publishedAt && isBeforeLastWeek">{{
           formatDateTimeString(
             publishedAt.toString(),
             undefined,
@@ -26,7 +26,7 @@
             "short"
           )
         }}</span>
-        <span v-else>{{
+        <span v-else-if="publishedAt">{{
           formatDistanceToNow(publishedAt, {
             locale: dateFnsLocale,
             addSuffix: true,
@@ -75,29 +75,21 @@ const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
 const postTags = computed(() => (props.post.tags ?? []).slice(0, 3));
 
-const publishedAt = computed((): Date => {
-  return new Date((props.post.publishAt ?? props.post.insertedAt) as Date);
+const publishedAt = computed((): Date | undefined => {
+  const date = props.post.publishAt ?? props.post.insertedAt;
+  if (!date) return undefined;
+  return new Date(date);
 });
 
 const isBeforeLastWeek = computed((): boolean => {
-  return isBefore(publishedAt.value, subWeeks(new Date(), 1));
+  return (
+    publishedAt.value !== undefined &&
+    isBefore(publishedAt.value, subWeeks(new Date(), 1))
+  );
 });
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;
-
-// .post-minimalist-card-wrapper {
-//   display: grid;
-//   grid-gap: 5px 10px;
-//   grid-template-areas: "preview" "body";
-//   text-decoration: none;
-//   // width: 100%;
-//   // color: initial;
-
-//   // @include desktop {
-//   grid-template-columns: 200px 3fr;
-//   grid-template-areas: "preview body";
-//   // }
 
 .title-info-wrapper {
   .post-minimalist-title {
