@@ -1,8 +1,14 @@
 const useRouterMock = vi.fn(() => ({
-  push: () => {},
-  replace: () => {},
+  push: function () {
+    // do nothing
+  },
+  replace: function () {
+    // do nothing
+  },
 }));
-const useRouteMock = vi.fn(() => {});
+const useRouteMock = vi.fn(function () {
+  // do nothing
+});
 
 import { config, mount, VueWrapper } from "@vue/test-utils";
 import Login from "@/views/User/LoginView.vue";

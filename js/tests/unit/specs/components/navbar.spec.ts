@@ -1,5 +1,7 @@
 const useRouterMock = vi.fn(() => ({
-  push: () => {},
+  push: function () {
+    // do nothing
+  },
 }));
 
 import { shallowMount, VueWrapper } from "@vue/test-utils";
@@ -21,7 +23,6 @@ vi.mock("vue-router/dist/vue-router.mjs", () => ({
 describe("App component", () => {
   let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
-  let requestHandlers: Record<string, RequestHandler>;
 
   const createComponent = (handlers = {}) => {
     const cache = new InMemoryCache({ addTypename: false });
@@ -30,8 +31,6 @@ describe("App component", () => {
       cache,
       resolvers: buildCurrentUserResolver(cache),
     });
-
-    requestHandlers = { ...handlers };
 
     wrapper = shallowMount(NavBar, {
       // stubs: ["router-link", "router-view", "o-dropdown", "o-dropdown-item"],

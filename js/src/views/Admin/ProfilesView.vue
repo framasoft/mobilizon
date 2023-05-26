@@ -102,7 +102,7 @@ import RouteName from "@/router/name";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useHead } from "@vueuse/head";
 import {
   useRouteQuery,
