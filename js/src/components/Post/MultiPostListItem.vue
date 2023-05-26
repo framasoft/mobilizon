@@ -1,5 +1,5 @@
 <template>
-  <div class="posts-wrapper">
+  <div class="posts-wrapper grid gap-4">
     <post-list-item
       v-for="post in posts"
       :key="post.id"
@@ -22,8 +22,6 @@ withDefaults(
 </script>
 <style lang="scss" scoped>
 .posts-wrapper {
-  display: grid;
-  grid-gap: 20px;
   grid-template: 1fr;
 }
 </style>

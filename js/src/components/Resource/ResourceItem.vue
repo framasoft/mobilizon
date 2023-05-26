@@ -1,7 +1,12 @@
 <template>
-  <div class="flex flex-1 items-center w-full" dir="auto">
+  <div
+    class="flex flex-1 items-center w-full bg-white dark:bg-transparent"
+    dir="auto"
+  >
     <a :href="resource.resourceUrl" target="_blank">
-      <div class="preview text-mbz-purple dark:text-mbz-purple-300">
+      <div
+        class="min-w-fit relative flex items-center justify-center text-mbz-purple dark:text-mbz-purple-300"
+      >
         <div
           v-if="
             resource.type &&
@@ -14,10 +19,12 @@
             customSize="48"
           />
         </div>
-        <div
-          class="preview-image"
+        <img
           v-else-if="resource.metadata && resource.metadata.imageRemoteUrl"
-          :style="`background-image: url(${resource.metadata.imageRemoteUrl})`"
+          :src="resource.metadata.imageRemoteUrl"
+          alt=""
+          height="48"
+          width="48"
         />
         <div class="preview-type" v-else>
           <Link :size="48" />
@@ -98,25 +105,6 @@ a {
   text-decoration: none;
   overflow: hidden;
   flex: 1;
-
-  .preview {
-    flex: 0 0 50px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .preview-image {
-      border-radius: 4px 0 0 4px;
-      display: block;
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      background-size: cover;
-      background-position: 50%;
-    }
-  }
 
   .body {
     img.favicon {
