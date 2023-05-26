@@ -4,7 +4,7 @@
     dir="auto"
     :to="{
       name: RouteName.DISCUSSION,
-      params: { slug: discussion.slug, id: discussion.id },
+      params: { slug: discussion.slug },
     }"
   >
     <div class="">
