@@ -430,7 +430,6 @@
   "Text": "Text",
   "Upcoming events": "Upcoming events",
   "Resources": "Resources",
-  "Public page": "Public page",
   "Discussions": "Discussions",
   "No public upcoming events": "No public upcoming events",
   "Latest posts": "Latest posts",
@@ -1564,5 +1563,6 @@
   "This application will be allowed to publish and manage events, post and manage comments, participate to events, manage all of your groups, including group events, resources, posts and discussions. It will also be allowed to manage your account and profile settings.": "This application will be allowed to publish and manage events, post and manage comments, participate to events, manage all of your groups, including group events, resources, posts and discussions. It will also be allowed to manage your account and profile settings.",
   "No apps authorized yet": "No apps authorized yet",
   "You have been logged-out": "You have been logged-out",
-  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely."
+  "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.",
+  "Announcements": "Announcements"
 }

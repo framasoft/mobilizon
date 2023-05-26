@@ -1,6 +1,6 @@
 <template>
   <group-section
-    :title="t('Public page')"
+    :title="t('Announcements')"
     icon="bullhorn"
     :privateSection="false"
     :route="{
