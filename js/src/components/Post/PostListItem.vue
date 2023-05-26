@@ -47,6 +47,24 @@
           </template>
         </i18n-t>
       </p>
+      <p
+        v-if="post.visibility === PostVisibility.UNLISTED"
+        class="flex gap-2 items-center"
+      >
+        <Link :size="16" />
+        {{ t("Accessible only by link") }}
+      </p>
+      <p
+        v-else-if="post.visibility === PostVisibility.PRIVATE"
+        class="flex gap-2 items-center"
+      >
+        <Lock :size="16" />
+        {{
+          t("Accessible only to members", {
+            group: post.attributedTo?.name,
+          })
+        }}
+      </p>
     </div>
   </router-link>
 </template>
@@ -61,7 +79,11 @@ import { formatDateTimeString } from "@/filters/datetime";
 import Tag from "vue-material-design-icons/Tag.vue";
 import AccountEdit from "vue-material-design-icons/AccountEdit.vue";
 import Clock from "vue-material-design-icons/Clock.vue";
+import Lock from "vue-material-design-icons/Lock.vue";
+import Link from "vue-material-design-icons/Link.vue";
 import MbzTag from "@/components/TagElement.vue";
+import { PostVisibility } from "@/types/enums";
+import { useI18n } from "vue-i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -71,6 +93,7 @@ const props = withDefaults(
   { isCurrentActorMember: false }
 );
 
+const { t } = useI18n({ useScope: "global" });
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
 const postTags = computed(() => (props.post.tags ?? []).slice(0, 3));

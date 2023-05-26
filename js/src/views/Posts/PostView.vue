@@ -78,13 +78,16 @@
                   })
                 }}
               </span>
-              <span v-if="post.visibility === PostVisibility.UNLISTED" class="">
-                <o-icon icon="link" size="small" />
+              <span
+                v-if="post.visibility === PostVisibility.UNLISTED"
+                class="flex gap-2 items-center"
+              >
+                <Link :size="16" />
                 {{ t("Accessible only by link") }}
               </span>
               <span
                 v-else-if="post.visibility === PostVisibility.PRIVATE"
-                class=""
+                class="flex gap-2 items-center"
               >
                 <Lock :size="16" />
                 {{
@@ -275,6 +278,7 @@ import Pencil from "vue-material-design-icons/Pencil.vue";
 import Delete from "vue-material-design-icons/Delete.vue";
 import Share from "vue-material-design-icons/Share.vue";
 import Flag from "vue-material-design-icons/Flag.vue";
+import Link from "vue-material-design-icons/Link.vue";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
