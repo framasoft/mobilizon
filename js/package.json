@@ -14,7 +14,14 @@
     "story:build": "histoire build",
     "story:preview": "histoire preview",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prepare": "cd ../ && husky install"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@absinthe/socket": "^0.2.1",
@@ -116,7 +123,9 @@
     "eslint-plugin-vue": "^9.3.0",
     "flush-promises": "^1.0.2",
     "histoire": "^0.16.1",
+    "husky": "^8.0.3",
     "jsdom": "^22.0.0",
+    "lint-staged": "^13.2.2",
     "mock-apollo-client": "^1.1.0",
     "prettier": "^2.2.1",
     "prettier-eslint": "^15.0.1",
