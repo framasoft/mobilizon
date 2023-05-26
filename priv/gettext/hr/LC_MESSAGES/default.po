@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-04-11 18:20+0000\n"
+"PO-Revision-Date: 2023-05-27 13:05+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.16.4\n"
+"X-Generator: Weblate 4.17\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -644,7 +644,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Questions or comments about the Service may be directed to us at %{contact}"
-msgstr ""
+msgstr "Pitanja ili komentare o usluzi možeš uputiti na %{contact}"
 
 #: lib/web/templates/api/terms.html.heex:245
 #, elixir-autogen, elixir-format
@@ -944,7 +944,7 @@ msgstr "Upravljaj zahtjevima na čekanju"
 #: lib/web/templates/email/registration_confirmation.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Nearly there!"
-msgstr ""
+msgstr "Skoro gotovo!"
 
 #: lib/web/templates/email/email_changed_old.html.heex:18
 #: lib/web/templates/email/email_changed_old.text.eex:1
@@ -1145,7 +1145,7 @@ msgstr ""
 #: lib/web/email/group.ex:107
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
-msgstr ""
+msgstr "Grupa %{group} je suspendirana na instanci %{instance}"
 
 #: lib/web/templates/api/terms.html.heex:64
 #, elixir-autogen, elixir-format
@@ -1286,27 +1286,27 @@ msgstr "Tvoje sudjelovanje događaju %{title} je potvrđeno"
 #: lib/web/templates/email/report.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr ""
+msgstr "<b>%{reporter}</b> je prijavio/la sljedeći sadržaj."
 
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Group %{group} was reported"
-msgstr ""
+msgstr "Grupa %{group} je prijavljena"
 
 #: lib/web/templates/email/report.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Group reported"
-msgstr ""
+msgstr "Prijavljena grupa"
 
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr ""
+msgstr "Profil %{profile} je prijavljen"
 
 #: lib/web/templates/email/report.html.heex:81
 #, elixir-autogen, elixir-format
 msgid "Profile reported"
-msgstr ""
+msgstr "Prijavljen profil"
 
 #: lib/web/templates/email/event_participation_confirmed.html.heex:61
 #, elixir-autogen, elixir-format
@@ -1318,12 +1318,12 @@ msgstr ""
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
-msgstr ""
+msgstr "Za objavu je potreban tekst"
 
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
-msgstr ""
+msgstr "Za objavu je potreban naslov"
 
 #: lib/web/email/follow.ex:61
 #, elixir-autogen, elixir-format
@@ -1385,7 +1385,7 @@ msgstr "Ova stranica nije ispravna"
 #: lib/web/templates/error/500_page.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "We're sorry, but something went wrong on our end."
-msgstr ""
+msgstr "Žao nam je, ali se kod nas dogodila greška."
 
 #: lib/web/templates/email/email.html.heex:109
 #: lib/web/templates/email/email.text.eex:4
@@ -1420,11 +1420,15 @@ msgstr "Feed za %{email} na %{instance}"
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may contact the server administrator at %{contact}."
 msgstr ""
+"Ako se problem nastavi pojavljivati, možeš se obratiti administratoru "
+"poslužitelja na %{contact}."
 
 #: lib/web/templates/error/500_page.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "If the issue persists, you may try to contact the server administrator."
 msgstr ""
+"Ako se problem nastavi pojavljivati, možeš se pokušati obratiti "
+"administratoru poslužitelja."
 
 #: lib/web/templates/error/500_page.html.heex:82
 #, elixir-autogen, elixir-format
@@ -1434,12 +1438,12 @@ msgstr "Tehnički detalji"
 #: lib/web/templates/error/500_page.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
-msgstr ""
+msgstr "Čini se da Mobilizon poslužitej %{instance} privremeno nije dostupan."
 
 #: lib/service/export/feed.ex:72
 #, elixir-autogen, elixir-format
 msgid "Public feed for %{instance}"
-msgstr ""
+msgstr "Javni feed za %{instance}"
 
 #: lib/graphql/resolvers/user.ex:350
 #, elixir-autogen, elixir-format
@@ -1469,6 +1473,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
 msgstr ""
+"Tim za moderiranje tvoje instance je odlučio suspendirati grupu "
+"<b>%{group_name}</b> (%{group_address}). Više nisi član ove grupe."
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:18
 #: lib/web/templates/email/actor_suspension_participants.text.eex:1
@@ -1734,6 +1740,8 @@ msgstr "Tvoj zahtjev za članstvo u grupi %{group} je odbijen."
 #, elixir-autogen, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected."
 msgstr ""
+"Tvoj zahtjev za članstvo u grupi %{link_start}<b>%{group}</b>%{link_end} je "
+"odbijen."
 
 #: lib/web/templates/email/group_membership_approval.text.eex:3
 #, elixir-autogen, elixir-format
@@ -1744,6 +1752,8 @@ msgstr "Tvoj zahtjev za članstvo u grupi %{group} je odobren."
 #, elixir-autogen, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
+"Tvoj zahtjev za članstvo u grupi %{link_start}<b>%{group}</b>%{link_end} je "
+"odobren."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:47
 #: lib/web/templates/email/pending_participation_notification.text.eex:4
@@ -1758,12 +1768,12 @@ msgstr[2] ""
 #: lib/web/templates/email/admin_user_role_changed.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator changed your role"
-msgstr ""
+msgstr "Jedan administrator je promijenio tvoju ulogu"
 
 #: lib/web/email/admin.ex:122
 #, elixir-autogen, elixir-format
 msgid "An administrator confirmed your account on %{instance}"
-msgstr ""
+msgstr "Jedan administrator je potvrdio tvoj račun na instanci %{instance}"
 
 #: lib/web/templates/email/admin_user_email_changed_new.html.heex:18
 #: lib/web/templates/email/admin_user_email_changed_new.text.eex:1
@@ -1772,23 +1782,26 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account"
 msgstr ""
+"Jedan administrator je ručno promijenio priloženu e-mail adresu za tvoj račun"
 
 #: lib/web/email/admin.ex:43
 #: lib/web/email/admin.ex:70
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account on %{instance}"
 msgstr ""
+"Jedan administrator je ručno promijenio priloženu e-mail adresu za tvoj "
+"račun na instanci %{instance}"
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:18
 #: lib/web/templates/email/admin_user_confirmation.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator manually confirmed your account"
-msgstr ""
+msgstr "Jedan administrator je ručno potvrdio tvoj račun"
 
 #: lib/web/email/admin.ex:98
 #, elixir-autogen, elixir-format
 msgid "An administrator updated your role on %{instance}"
-msgstr ""
+msgstr "Jedan administrator je aktualizirao tvoju ulogu na instanci %{instance}"
 
 #: lib/web/templates/email/email_changed_new.text.eex:3
 #, elixir-autogen, elixir-format
@@ -2105,4 +2118,4 @@ msgstr ""
 #: lib/web/templates/email/group_member_removal.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
-msgstr ""
+msgstr "Vidimo se!"
