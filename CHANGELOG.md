@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.0-rc.2  (2023-05-30)
+
+### Bug Fixes
+
+* **apps:** fix device flow authorization process ([9a457fb](https://framagit.org/framasoft/mobilizon/commits/9a457fb011b77b27dc465f1bc7327a08f554ccfb))
+* **apps:** fix typo in redirect_uri parameter ([5664625](https://framagit.org/framasoft/mobilizon/commits/5664625c1c57ccba947400475414c1301d4bf955))
+* **apps:** show scope from device activation in authorize device view ([c9d2074](https://framagit.org/framasoft/mobilizon/commits/c9d20748a4dd3e0687515f4776335d0ec9bdfcdc))
+* **front:** fix homepage event and groups cards snapping ([8809db5](https://framagit.org/framasoft/mobilizon/commits/8809db582ccf45fcd477f46dcf70e106720626a8))
+* **front:** fix selecting addresses in autocomplete ([e0488dd](https://framagit.org/framasoft/mobilizon/commits/e0488dd87ffc0184162a2ff67a13717e6263d56d))
+
+
 ## 3.1.0-rc.1  (2023-05-30)
 
 ### Bug Fixes
