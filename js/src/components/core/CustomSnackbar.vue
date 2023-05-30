@@ -34,7 +34,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-type position =
+type positionValues =
   | "top-right"
   | "top"
   | "top-left"
@@ -49,7 +49,7 @@ const props = withDefaults(
     onAction?: () => any;
     cancelText?: string | null;
     variant?: string;
-    position?: position;
+    position?: positionValues;
     pauseOnHover?: boolean;
     indefinite?: boolean;
   }>(),

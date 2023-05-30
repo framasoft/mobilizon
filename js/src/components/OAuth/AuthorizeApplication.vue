@@ -87,7 +87,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { AUTORIZE_APPLICATION } from "@/graphql/application";
 import RouteName from "@/router/name";
 import { IApplication } from "@/types/application.model";
-import { scope } from "./scopes";
+import { scope as oAuthScopes } from "./scopes";
 import AlertCircle from "vue-material-design-icons/AlertCircle.vue";
 
 const { t } = useI18n({ useScope: "global" });
@@ -104,7 +104,7 @@ const isOpen = ref<number>(-1);
 const collapses = computed(() =>
   (props.scope ?? "")
     .split(" ")
-    .map((localScope) => scope[localScope])
+    .map((localScope) => oAuthScopes[localScope])
     .filter((localScope) => localScope)
 );
 

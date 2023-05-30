@@ -196,7 +196,7 @@ import RouteName from "@/router/name";
 import { buildFileFromIMedia } from "@/utils/image";
 import { useAvatarMaxSize, useBannerMaxSize } from "@/composition/config";
 import { useI18n } from "vue-i18n";
-import { computed, ref, watch, defineAsyncComponent, inject } from "vue";
+import { computed, ref, defineAsyncComponent, inject } from "vue";
 import { useGroup, useUpdateGroup } from "@/composition/apollo/group";
 import {
   useCurrentActorClient,
