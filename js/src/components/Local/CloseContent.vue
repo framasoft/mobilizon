@@ -19,10 +19,10 @@
       </div>
       <slot name="subtitle" />
     </div>
-    <div class="hidden sm:block" v-show="showScrollLeftButton">
+    <div class="" v-show="showScrollLeftButton">
       <button
         @click="scrollLeft"
-        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -left-5"
+        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -left-5 ml-2"
       >
         <span class="">&lt;</span>
       </button>
@@ -36,10 +36,10 @@
         <slot name="content" />
       </div>
     </div>
-    <div class="hidden sm:block" v-show="showScrollRightButton">
+    <div class="" v-show="showScrollRightButton">
       <button
         @click="scrollRight"
-        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -right-5"
+        class="absolute inset-y-0 my-auto z-10 rounded-full bg-white dark:bg-transparent w-10 h-10 border border-shadowColor -right-5 mr-2"
       >
         <span class="">&gt;</span>
       </button>
@@ -63,7 +63,7 @@ const emit = defineEmits(["doGeoLoc"]);
 
 const { t } = useI18n({ useScope: "global" });
 
-const showScrollRightButton = ref(true);
+const showScrollRightButton = ref(false);
 const showScrollLeftButton = ref(false);
 
 const scrollContainer = ref<any>();
@@ -100,6 +100,10 @@ const scrollHorizontalToVertical = (evt: WheelEvent) => {
 };
 
 onMounted(async () => {
+  // Make sure everything is mounted properly
+  setTimeout(() => {
+    scrollHandler();
+  }, 1500);
   scrollContainer.value.addEventListener("wheel", scrollHorizontalToVertical);
 });
 

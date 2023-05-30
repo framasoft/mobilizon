@@ -279,6 +279,7 @@ const setSelected = (newValue: IAddress | null) => {
   if (!newValue) return;
   console.debug("setting selected to model value");
   Object.assign(selected, newValue);
+  emit("update:modelValue", selected);
 };
 
 const saveManualAddress = (): void => {
