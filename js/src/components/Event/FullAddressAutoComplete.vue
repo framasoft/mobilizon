@@ -157,7 +157,10 @@
         </footer>
       </form>
     </o-collapse>
-    <div class="map" v-if="!hideMap">
+    <div
+      class="map"
+      v-if="!hideMap && !disabled && (selected.geom || detailsAddress)"
+    >
       <map-leaflet
         :coords="selected.geom ?? defaultCoords"
         :marker="mapMarkerValue"

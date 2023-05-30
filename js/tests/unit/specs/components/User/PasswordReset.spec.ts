@@ -1,5 +1,7 @@
 const useRouterMock = vi.fn(() => ({
-  push: () => {},
+  push: function () {
+    // do nothing
+  },
 }));
 
 import { config, mount } from "@vue/test-utils";

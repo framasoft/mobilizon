@@ -1,6 +1,6 @@
-import { config, mount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import PostListItem from "@/components/Post/PostListItem.vue";
-import { vi, beforeEach, describe, it, expect } from "vitest";
+import { beforeEach, describe, it, expect } from "vitest";
 import { enUS } from "date-fns/locale";
 import { routes } from "@/router";
 import { createRouter, createWebHistory, Router } from "vue-router";

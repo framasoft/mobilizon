@@ -7,7 +7,7 @@
   >
     <o-notification
       variant="warning"
-      v-if="post.visibility !== PostVisibility.PUBLIC"
+      v-if="post.visibility === PostVisibility.UNLISTED"
       :closable="false"
     >
       {{

@@ -1,9 +1,7 @@
-import { config, mount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import ReportCard from "@/components/Report/ReportCard.vue";
 import { ActorType } from "@/types/enums";
 import { describe, expect, it } from "vitest";
-import { createI18n } from "vue-i18n";
-import en from "@/i18n/en_US.json";
 
 const reportData = {
   id: "1",

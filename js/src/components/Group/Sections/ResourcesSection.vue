@@ -8,7 +8,10 @@
     }"
   >
     <template #default>
-      <div v-if="group?.resources?.elements?.length ?? 0 > 0" class="p-1">
+      <div
+        v-if="group?.resources?.elements?.length ?? 0 > 0"
+        class="p-1 bg-white dark:bg-transparent"
+      >
         <div
           v-for="resource in group?.resources?.elements ?? []"
           :key="resource.id"

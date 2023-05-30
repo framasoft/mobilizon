@@ -4,7 +4,7 @@ import { createRouter, createWebHistory, Router } from "vue-router";
 import { routes } from "@/router";
 import { CommentModeration, EventJoinOptions } from "@/types/enums";
 import { InMemoryCache } from "@apollo/client/cache";
-import { beforeEach, describe, expect, vi, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import Oruga from "@oruga-ui/oruga-next";
 import FloatingVue from "floating-vue";
 
@@ -34,12 +34,7 @@ const eventData = {
 describe("ParticipationSection", () => {
   let wrapper: VueWrapper;
 
-  const generateWrapper = (
-    customProps: Record<string, unknown> = {},
-    baseData: Record<string, unknown> = {}
-  ) => {
-    const cache = new InMemoryCache({ addTypename: false });
-
+  const generateWrapper = (customProps: Record<string, unknown> = {}) => {
     wrapper = mount(ParticipationSection, {
       stubs: {
         ParticipationButton: true,

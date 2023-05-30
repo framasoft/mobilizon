@@ -215,7 +215,7 @@ import { IPerson, displayName } from "@/types/actor";
 import PictureUpload from "@/components/PictureUpload.vue";
 import { MOBILIZON_INSTANCE_HOST } from "@/api/_entrypoint";
 import RouteName from "@/router/name";
-import { buildFileVariable } from "@/utils/image";
+import { buildFileFromIMedia, buildFileVariable } from "@/utils/image";
 import { changeIdentity } from "@/utils/identity";
 import {
   CREATE_FEED_TOKEN_ACTOR,
@@ -237,6 +237,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { ICurrentUser } from "@/types/current-user.model";
+import { useHead } from "@vueuse/head";
 
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();
@@ -245,7 +246,11 @@ const props = defineProps<{ isUpdate: boolean; identityName?: string }>();
 
 const { currentActor } = useCurrentActorClient();
 
-const { result: personResult, onError: onPersonError } = useQuery<{
+const {
+  result: personResult,
+  onError: onPersonError,
+  onResult: onPersonResult,
+} = useQuery<{
   fetchPerson: IPerson;
 }>(
   FETCH_PERSON,
@@ -256,6 +261,10 @@ const { result: personResult, onError: onPersonError } = useQuery<{
     enabled: props.identityName !== undefined,
   })
 );
+
+onPersonResult(async ({ data }) => {
+  avatarFile.value = await buildFileFromIMedia(data?.fetchPerson?.avatar);
+});
 
 onPersonError((err) => handleErrors(err as unknown as AbsintheGraphQLErrors));
 
@@ -284,24 +293,6 @@ watch(person, () => {
 });
 
 const avatarMaxSize = useAvatarMaxSize();
-
-// error({ graphQLErrors }) {
-//   this.handleErrors(graphQLErrors);
-// },
-// metaInfo() {
-//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//   // @ts-ignore
-//   const { isUpdate, identityName } = this;
-//   let title = t("Create a new profile") as string;
-//   if (isUpdate) {
-//     title = t("Edit profile {profile}", {
-//       profile: identityName,
-//     }) as string;
-//   }
-//   return {
-//     title,
-//   };
-// },
 
 const errors = ref<string[]>([]);
 const avatarFile = ref<File | null>(null);
@@ -764,4 +755,16 @@ const breadcrumbsLinks = computed(
 const updateUsername = (value: string) => {
   identity.value.preferredUsername = convertToUsername(value);
 };
+
+useHead({
+  title: computed(() => {
+    let title = t("Create a new profile") as string;
+    if (isUpdate.value) {
+      title = t("Edit profile {profile}", {
+        profile: identityName.value,
+      }) as string;
+    }
+    return title;
+  }),
+});
 </script>

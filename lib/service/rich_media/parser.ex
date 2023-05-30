@@ -29,19 +29,19 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
   def parse(nil), do: {:error, "No URL provided"}
 
-  @spec parse(String.t()) :: {:ok, map()} | {:error, any()}
+  @spec parse(String.t()) :: {:ok, map()} | {:error, :http | :parsing | :unknown, any()}
   def parse(url) do
     case Cachex.fetch(:rich_media_cache, url, fn _ ->
            case parse_url(url) do
              {:ok, data} -> {:commit, data}
-             {:error, err} -> {:ignore, err}
+             {:error, error_type, error} -> {:ignore, {error_type, error}}
            end
          end) do
       {status, value} when status in [:ok, :commit] ->
         {:ok, value}
 
-      {_, err} ->
-        {:error, err}
+      {_, {error_type, err}} ->
+        {:error, error_type, err}
     end
   rescue
     e ->
@@ -56,7 +56,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     get_filename_from_headers(response_headers) || get_filename_from_url(url)
   end
 
-  @spec parse_url(String.t(), Enum.t()) :: {:ok, map()} | {:error, any()}
+  @spec parse_url(String.t(), Enum.t()) ::
+          {:ok, map()} | {:error, :http | :parsing | :unknown, any()}
   defp parse_url(url, options \\ []) do
     user_agent = Keyword.get(options, :user_agent, default_user_agent(url))
     headers = [{"User-Agent", user_agent}]
@@ -64,13 +65,14 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
     try do
       with {:ok, _} <- prevent_local_address(url),
-           {:ok, %{body: body, status: code, headers: response_headers}}
+           {:fetch, {:ok, %{body: body, status: code, headers: response_headers}}}
            when code in 200..299 <-
-             RichMediaPreviewClient.get(
-               url,
-               headers: headers,
-               opts: @options
-             ),
+             {:fetch,
+              RichMediaPreviewClient.get(
+                url,
+                headers: headers,
+                opts: @options
+              )},
            {:is_html, _response_headers, true} <-
              {:is_html, response_headers, is_html(response_headers)} do
         body
@@ -87,17 +89,17 @@ defmodule Mobilizon.Service.RichMedia.Parser do
 
           {:ok, data}
 
-        {:ok, err} ->
+        {:fetch, {_, err}} ->
           Logger.debug("HTTP error: #{inspect(err)}")
-          {:error, "HTTP error: #{inspect(err)}"}
+          {:error, :http, err}
 
         {:error, err} ->
-          Logger.debug("HTTP error: #{inspect(err)}")
-          {:error, "HTTP error: #{inspect(err)}"}
+          Logger.debug("Parsing error: #{inspect(err)}")
+          {:error, :parsing, err}
       end
     rescue
       e ->
-        {:error, "Parsing error: #{inspect(e)} #{inspect(__STACKTRACE__)}"}
+        {:error, :unknown, "Parsing error: #{inspect(e)} #{inspect(__STACKTRACE__)}"}
     end
   end
 
@@ -228,7 +230,7 @@ defmodule Mobilizon.Service.RichMedia.Parser do
       check_parsed_data(data, html, false)
     else
       Logger.debug("Found metadata was invalid or incomplete: #{inspect(data)}")
-      {:error, :invalid_parsed_data}
+      {:error, :parsing, :invalid_parsed_data}
     end
   end
 
@@ -252,11 +254,11 @@ defmodule Mobilizon.Service.RichMedia.Parser do
              validate_ip(host) do
           {:ok, url}
         else
-          {:error, "Host violates local access rules"}
+          {:error, :local_address, "Host violates local access rules"}
         end
 
       _ ->
-        {:error, "Could not detect any host"}
+        {:error, :no_host, "Could not detect any host"}
     end
   end
 
@@ -301,6 +303,8 @@ defmodule Mobilizon.Service.RichMedia.Parser do
     data = Map.put(data, :image_remote_url, format_url(url, image_remote_url))
     {:ok, data}
   end
+
+  defp check_remote_picture_path({:error, _, _} = err), do: err
 
   defp check_remote_picture_path(data), do: {:ok, data}
 
