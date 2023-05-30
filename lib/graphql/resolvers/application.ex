@@ -5,6 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
 
   alias Mobilizon.Applications, as: ApplicationManager
   alias Mobilizon.Applications.{Application, ApplicationDeviceActivation, ApplicationToken}
+  alias Mobilizon.GraphQL.Error
   alias Mobilizon.Service.Auth.Applications
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
@@ -17,7 +18,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
   @spec authorize(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()} | {:error, String.t()}
   def authorize(
         _parent,
-        %{client_id: client_id, redirect_uri: redirect_uri, scope: scope, state: state},
+        %{client_id: client_id, redirect_uri: redirect_uri, scope: scope} = args,
         %{context: %{current_user: %User{id: user_id}}}
       ) do
     case Applications.autorize(client_id, redirect_uri, scope, user_id) do
@@ -27,7 +28,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
          scope: scope,
          authorization_code: code
        }} ->
-        {:ok, %{code: code, state: state, client_id: client_id, scope: scope}}
+        {:ok, %{code: code, state: Map.get(args, :state), client_id: client_id, scope: scope}}
 
       {:error, %Ecto.Changeset{} = err} ->
         {:error, err}
@@ -106,7 +107,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
         {:ok, app_device_activation |> Map.from_struct() |> Map.take([:application, :id, :scope])}
 
       {:error, :expired} ->
-        {:error, dgettext("errors", "The given user code has expired")}
+        {:error,
+         %Error{
+           message: dgettext("errors", "The given user code has expired"),
+           status_code: 400,
+           code: :device_application_code_expired
+         }}
 
       {:error, :not_found} ->
         {:error, dgettext("errors", "The given user code is invalid")}
@@ -143,7 +149,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Application do
          )}
 
       {:error, :expired} ->
-        {:error, dgettext("errors", "The given user code has expired")}
+        {:error,
+         %Error{
+           message: dgettext("errors", "The given user code has expired"),
+           status_code: 400,
+           code: :device_application_code_expired
+         }}
     end
   end
 

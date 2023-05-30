@@ -57,7 +57,12 @@
         <o-button native-type="submit">{{ t("Continue") }}</o-button>
       </div>
     </form>
-    <AuthorizeApplication v-if="application" :auth-application="application" />
+    <AuthorizeApplication
+      v-if="application"
+      :auth-application="application"
+      :user-code="code"
+      :scope="scope"
+    />
   </div>
 </template>
 
@@ -85,14 +90,14 @@ const {
 const inputs = reactive<string[]>([]);
 
 const application = ref<IApplication | null>(null);
+const scope = ref<string | null>(null);
 
 onDeviceActivationDone(({ data }) => {
+  console.debug("onDeviceActivationDone", data);
   const foundApplication = data?.deviceActivation?.application;
   if (foundApplication) {
-    application.value = {
-      ...foundApplication,
-      scope: data?.deviceActivation?.scope,
-    };
+    application.value = foundApplication;
+    scope.value = data?.deviceActivation?.scope;
   }
 });
 
@@ -117,7 +122,11 @@ const error = ref<string | null>(null);
 
 onDeviceActivationError(
   ({ graphQLErrors }: { graphQLErrors: AbsintheGraphQLErrors }) => {
-    if (graphQLErrors[0].status_code === 404) {
+    const err = graphQLErrors[0];
+    if (
+      err.status_code === 400 &&
+      err.code === "device_application_code_expired"
+    ) {
       error.value = t("The device code is incorrect or no longer valid.");
     }
     resetInputs();

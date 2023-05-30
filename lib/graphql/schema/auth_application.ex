@@ -111,7 +111,7 @@ defmodule Mobilizon.GraphQL.Schema.AuthApplicationType do
       resolve(&Application.activate_device/3)
     end
 
-    @desc "Activate an user device"
+    @desc "Authorize an user device"
     field :authorize_device_application, :auth_application do
       arg(:client_id, non_null(:string), description: "The application's client_id")
 

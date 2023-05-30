@@ -35,7 +35,7 @@ export const AUTORIZE_APPLICATION = gql`
 export const AUTORIZE_DEVICE_APPLICATION = gql`
   mutation AuthorizeDeviceApplication(
     $applicationClientId: String!
-    $userCode: String
+    $userCode: String!
   ) {
     authorizeDeviceApplication(
       clientId: $applicationClientId
