@@ -1,5 +1,15 @@
 <template>
-  <div>
+  <div v-if="checkDevice">
+    <div class="rounded-lg bg-white dark:bg-zinc-900 shadow-xl my-6 p-4 pt-1">
+      <h1 class="text-3xl">
+        {{ t("Application authorized") }}
+      </h1>
+      <p>
+        {{ t("Check your device to continue. You may now close this window.") }}
+      </p>
+    </div>
+  </div>
+  <div v-else>
     <h1 class="text-3xl">
       {{ t("Autorize this application to access your account?") }}
     </h1>
@@ -68,7 +78,7 @@
       <div class="flex gap-3 p-4">
         <o-button
           :disabled="collapses.length === 0"
-          @click="() => authorize()"
+          @click="() => (userCode ? authorizeDevice() : authorize())"
           >{{ t("Authorize") }}</o-button
         >
         <o-button outlined tag="router-link" :to="{ name: RouteName.HOME }">{{
@@ -84,7 +94,10 @@ import { useHead } from "@vueuse/head";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
-import { AUTORIZE_APPLICATION } from "@/graphql/application";
+import {
+  AUTORIZE_APPLICATION,
+  AUTORIZE_DEVICE_APPLICATION,
+} from "@/graphql/application";
 import RouteName from "@/router/name";
 import { IApplication } from "@/types/application.model";
 import { scope as oAuthScopes } from "./scopes";
@@ -97,9 +110,11 @@ const props = defineProps<{
   redirectURI?: string | null;
   state?: string | null;
   scope?: string | null;
+  userCode?: string;
 }>();
 
 const isOpen = ref<number>(-1);
+const checkDevice = ref(false);
 
 const collapses = computed(() =>
   (props.scope ?? "")
@@ -135,6 +150,37 @@ const authorize = () => {
   });
 };
 
+const {
+  mutate: authorizeDeviceMutation,
+  onDone: onAuthorizeDeviceMutationDone,
+} = useMutation<
+  {
+    authorizeDeviceApplication: {
+      clientId: string;
+      scope: string;
+    };
+  },
+  {
+    applicationClientId: string;
+    userCode: string;
+  }
+>(AUTORIZE_DEVICE_APPLICATION);
+
+const authorizeDevice = () => {
+  authorizeDeviceMutation({
+    applicationClientId: props.authApplication.clientId,
+    userCode: props.userCode ?? "",
+  });
+};
+
+onAuthorizeDeviceMutationDone(({ data }) => {
+  const localClientId = data?.authorizeDeviceApplication?.clientId;
+  const localScope = data?.authorizeDeviceApplication?.scope;
+
+  if (!localClientId || !localScope) return;
+  checkDevice.value = true;
+});
+
 onAuthorizeMutationDone(({ data }) => {
   const code = data?.authorizeApplication?.code;
   const localClientId = data?.authorizeApplication?.clientId;
@@ -142,6 +188,11 @@ onAuthorizeMutationDone(({ data }) => {
   const returnedState = data?.authorizeApplication?.state ?? "";
 
   if (!code || !localClientId || !localScope) return;
+
+  if (props.redirectURI === "urn:ietf:wg:oauth:2.0:oob") {
+    checkDevice.value = true;
+    return;
+  }
 
   if (props.redirectURI) {
     const params = new URLSearchParams(
