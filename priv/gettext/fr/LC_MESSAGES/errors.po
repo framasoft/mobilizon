@@ -504,7 +504,7 @@ msgstr "Profile non trouvé"
 #: lib/graphql/resolvers/report.ex:48
 #, elixir-autogen, elixir-format
 msgid "Report not found"
-msgstr "Groupe non trouvé"
+msgstr "Signalement non trouvé"
 
 #: lib/graphql/resolvers/resource.ex:172
 #: lib/graphql/resolvers/resource.ex:199
