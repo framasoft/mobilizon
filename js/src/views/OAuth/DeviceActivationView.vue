@@ -89,7 +89,10 @@ const application = ref<IApplication | null>(null);
 onDeviceActivationDone(({ data }) => {
   const foundApplication = data?.deviceActivation?.application;
   if (foundApplication) {
-    application.value = foundApplication;
+    application.value = {
+      ...foundApplication,
+      scope: data?.deviceActivation?.scope,
+    };
   }
 });
 
