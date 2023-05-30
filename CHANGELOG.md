@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.0-rc.1  (2023-05-30)
+
+### Bug Fixes
+
+* **discussionlistitem:** remove unecessary parameter in vue router target ([779812c](https://framagit.org/framasoft/mobilizon/-/commit779812c746cf722dd86bcc0ad3bc58e558c13223))
+* **emails:** make sure group notification emails are only sent once per email ([927e95f](https://framagit.org/framasoft/mobilizon/-/commit927e95f387653c7d620e9051c30843ba49c2d65c))
+* **frontend:** event edition UI improvements ([0e14a36](https://framagit.org/framasoft/mobilizon/-/commit0e14a36c6d30ebe386b2136d29539f3b3e914efc))
+* **frontend:** only show map on event edition when we have an address or we want to put in details ([02867e6](https://framagit.org/framasoft/mobilizon/-/commit02867e6e1482ac8770f94fd2bd00174bb31fbdc7))
+* **front:** fix showing current group avatar & banners ([20b4aaa](https://framagit.org/framasoft/mobilizon/-/commit20b4aaabc97080e85cb68fd03393379c7ef82d95))
+* **front:** fix showing current identity avatar & banners ([d0f4721](https://framagit.org/framasoft/mobilizon/-/commitd0f4721925d0c50340d6db8a4e9f4d3e4ca01457))
+* **front:** improve UI of the glossary page ([d47b69d](https://framagit.org/framasoft/mobilizon/-/commitd47b69d6caa7c4405ab2e573ba407f9b2450c3bb))
+* **front:** increase padding next to arrow down in `<select>` elements ([94f186c](https://framagit.org/framasoft/mobilizon/-/commit94f186ce5080316cd633e0344651b0050c2f14d4))
+* **front:** remove cache-only for ABOUT GraphQL details on homepage ([6858bcb](https://framagit.org/framasoft/mobilizon/-/commit6858bcbbda6d8527bd15b9138e7bb30c5ead72d7))
+* **front:** remove leftover console.logs ([6da0dba](https://framagit.org/framasoft/mobilizon/-/commit6da0dba0fd6d071ce5978802104538d0c2ef7dae))
+* **front:** reset page number to 1 when search criteria changes ([d73bafe](https://framagit.org/framasoft/mobilizon/-/commitd73bafec97cd7d8eda887d21870427262befab0f)), closes [#1272](https://framagit.org/framasoft/mobilizon/-/issues/1272)
+* **front:** various UI improvements for group page ([b097567](https://framagit.org/framasoft/mobilizon/-/commitb0975672c1c06ace364cf47bfcfa39db9c3b712b))
+* **graphql:** fix calling GET_GROUP ([2933ee0](https://framagit.org/framasoft/mobilizon/-/commit2933ee06791a24dbf8c8b2a2eabc67f71e56f361))
+* **group:** rephrase "Public Page" to "Announcements", as all posts are not necessary public ([b0a564f](https://framagit.org/framasoft/mobilizon/-/commitb0a564f64f72f40b6bb9560f9bc0fbea5d099fd7)), closes [#900](https://framagit.org/framasoft/mobilizon/-/issues/900)
+* **i18n:** fix Swedish translations error that prevented Participate button from showing up ([643a5b5](https://framagit.org/framasoft/mobilizon/-/commit643a5b5921f91fed6a9f674c0ab3a36bf2d05835)), closes [#1281](https://framagit.org/framasoft/mobilizon/-/issues/1281)
+* **rich media:** fix error handling when resource preview URL leads to empty parsed data ([850b4e2](https://framagit.org/framasoft/mobilizon/-/commit850b4e2a735e335c4737caa8b60e190613e778ef)), closes [#1279](https://framagit.org/framasoft/mobilizon/-/issues/1279)
+* **sharepostmodal:** only show the share warning message if the post is accessible by link ([8e626dc](https://framagit.org/framasoft/mobilizon/-/commit8e626dce7807640a89770e50ca2621d34d6a5d97))
+
+
+### Features
+
+* **front:** improve padding on event tags ([7fa452d](https://framagit.org/framasoft/mobilizon/-/commit7fa452d9e3f9bb2443e571c9a32eaed51e32480a))
+* **front:** make admin profile view linkable directly with parameters ([08ce7e2](https://framagit.org/framasoft/mobilizon/-/commit08ce7e26b73045279261ab87a14cb4f3dab5df1e))
+* **front:** make profile members link to profile on group admin view and the reverse ([96129d2](https://framagit.org/framasoft/mobilizon/-/commit96129d2339133027220d3b5fcb1c52f84bcc5cbb))
+* **front:** make profiles and group admin views default to local ([3e0324d](https://framagit.org/framasoft/mobilizon/-/commit3e0324d36ec5a8aa388e6b5d598a6f9a0c596797))
+* **front:** redirect user to homepage on disconnect when currently on private page ([d5a6df9](https://framagit.org/framasoft/mobilizon/-/commitd5a6df9940fb458c5dbaee149015c02ebc370c6b)), closes [#1278](https://framagit.org/framasoft/mobilizon/-/issues/1278)
+* **front:** show skeleton content on event view until the event is loaded ([dc3b93f](https://framagit.org/framasoft/mobilizon/-/commitdc3b93ffb5a4b072aec792533fd6e4b58ed7a893))
+* **i18n:** activate croatian language ([94182ae](https://framagit.org/framasoft/mobilizon/-/commit94182aed2d8a22d00534f6376dfda2658bc8ba7e))
+* **i18n:** activate japanese language ([6bd8034](https://framagit.org/framasoft/mobilizon/-/commit6bd8034fe816a432c3547de6d1ad8a18e73dc314)), closes [#1293](https://framagit.org/framasoft/mobilizon/-/issues/1293)
+* **post:** show post visibily in PostListItem component ([ec7ca4d](https://framagit.org/framasoft/mobilizon/-/commitec7ca4ddf18a38cf6f51d38b540eecc9858f3c98))
+
+
 ## 3.1.0-beta.2  (2023-05-23)
 
 ### Bug Fixes
@@ -18,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * **API:** Allow to create apps, with permissions and both Authorization Code Flow and Device Flow
 * **addresses:** Allow to enter manual addresses ([85d643d](https://framagit.org/framasoft/mobilizon/-/commit/85d643d0ecd5e7504f32953b9ed1509697b915e2))
-* **docker:** Specify the folder where tzdata downloads data so that it can be used in a volume ([4bb0625](https://framagit.org/framasoft/mobilizon/-/commit/4bb062528f12be530a3754ca23c1bc6dbc862e5a)), closes [#1280](https://framagit.org/framasoft/mobilizon/issues/1280)
+* **docker:** Specify the folder where tzdata downloads data so that it can be used in a volume ([4bb0625](https://framagit.org/framasoft/mobilizon/-/commit/4bb062528f12be530a3754ca23c1bc6dbc862e5a)), closes [#1280](https://framagit.org/framasoft/mobilizon/-/issues/1280)
 * **spam:** Introduce checking new accounts, events & comments for spam with the help of Akismet ([317a343](https://framagit.org/framasoft/mobilizon/-/commit/317a3434b221a1a91b66d8443984269404863a8e))
 * **rate-limiting:** Introduce rate-limiting on some endpoints ([c07ba3a5](https://framagit.org/framasoft/mobilizon/-/commit/c07ba3a5d19c419ef8aaf3ea9ca6e7f48e4f4487))
 
@@ -36,17 +72,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **back:** Various small fixes in backend ([2a57340](https://framagit.org/framasoft/mobilizon/-/commit/2a57340a82e414e69924ad89e8db9fc326742cc7))
 * bind pagination current prop ([4bcf572](https://framagit.org/framasoft/mobilizon/-/commit/4bcf572c54d904587d0409e2eb68b4ca6cf48fec))
 * **federation:** Account suspension should use actor in question as author and not relay actor ([79b48da](https://framagit.org/framasoft/mobilizon/-/commit/79b48da22209a8b2f1b234b8b8e121543a39b22b))
-* **feeds:** Only provide future events in ICS/Atom feeds ([f3a4431](https://framagit.org/framasoft/mobilizon/-/commit/f3a443138a0e1e6cf34fc593f5c174d56c21e904)), closes [#1246](https://framagit.org/framasoft/mobilizon/issues/1246)
+* **feeds:** Only provide future events in ICS/Atom feeds ([f3a4431](https://framagit.org/framasoft/mobilizon/-/commit/f3a443138a0e1e6cf34fc593f5c174d56c21e904)), closes [#1246](https://framagit.org/framasoft/mobilizon/-/issues/1246)
 * Fix type of variable in navbar ([50ab531](https://framagit.org/framasoft/mobilizon/-/commit/50ab531156214f883cb03f785ccf65e3f19ef50e))
 * **follow-instances:** Show correct error message when trying to follow already following actor ([d969c66](https://framagit.org/framasoft/mobilizon/-/commit/d969c6648f15e1ed280169a4c55d612bb002f03f))
 * **front:** Fix about sections titles ([487f406](https://framagit.org/framasoft/mobilizon/-/commit/487f4069b14fde6304c9a42cec5b1c1af79814c5))
 * **front:** Fix autocomplete attribute in o-inputitems after Oruga new version BC ([d2ba732](https://framagit.org/framasoft/mobilizon/-/commit/d2ba732b8b51986b739f6fbe3d74fa68e4b74ba0))
 * **front:** Fix behaviour when deleting an event from event list ([cfd10ea](https://framagit.org/framasoft/mobilizon/-/commit/cfd10ea96078f03ad3b4f5682e37078ffae16ee4))
-* **front:** Fix event list month order ([63c9ed6](https://framagit.org/framasoft/mobilizon/-/commit/63c9ed62de94d6d150798c949bad3d8a2dd4db23)), closes [#1244](https://framagit.org/framasoft/mobilizon/issues/1244)
-* **front:** Fix instances list pagination ([8543204](https://framagit.org/framasoft/mobilizon/-/commit/8543204bd95de886d8d35bd491f23ecbc0a6ef8d)), closes [#1277](https://framagit.org/framasoft/mobilizon/issues/1277)
+* **front:** Fix event list month order ([63c9ed6](https://framagit.org/framasoft/mobilizon/-/commit/63c9ed62de94d6d150798c949bad3d8a2dd4db23)), closes [#1244](https://framagit.org/framasoft/mobilizon/-/issues/1244)
+* **front:** Fix instances list pagination ([8543204](https://framagit.org/framasoft/mobilizon/-/commit/8543204bd95de886d8d35bd491f23ecbc0a6ef8d)), closes [#1277](https://framagit.org/framasoft/mobilizon/-/issues/1277)
 * **front:** Fix pagination display on dark mode ([4375438](https://framagit.org/framasoft/mobilizon/-/commit/4375438dc9fd2f1c5c9d7ed6670dde04f2da520f))
 * **front:** Fix style of My Events participations ([35b07dc](https://framagit.org/framasoft/mobilizon/-/commit/35b07dceaa41c74c28ea49655b755e341f56df32))
-* **front:** Focus report comment input in report modal ([2c28312](https://framagit.org/framasoft/mobilizon/-/commit/2c28312fc957901b86c2f3d1db8fc3376f505d37)), closes [#1236](https://framagit.org/framasoft/mobilizon/issues/1236)
+* **front:** Focus report comment input in report modal ([2c28312](https://framagit.org/framasoft/mobilizon/-/commit/2c28312fc957901b86c2f3d1db8fc3376f505d37)), closes [#1236](https://framagit.org/framasoft/mobilizon/-/issues/1236)
 * **front:** Handle "Failed to fetch dynamically imported module" errors by refreshing the page ([3d21a06](https://framagit.org/framasoft/mobilizon/-/commit/3d21a067897e4aa24f6404686ca6896044584796))
 * **front:** Improve Delete account modal UI ([c420bbc](https://framagit.org/framasoft/mobilizon/-/commit/c420bbccc9bd1c348e41904e826dc49c71d7eeb4))
 * **front:** Improve resend inscription instructions view and show error when appropriate ([5563052](https://framagit.org/framasoft/mobilizon/-/commit/55630527957d4f6a2e1e6845e64a92bc4794efc8))

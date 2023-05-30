@@ -1,7 +1,7 @@
 defmodule Mobilizon.Mixfile do
   use Mix.Project
 
-  @version "3.1.0-beta.2"
+  @version "3.1.0-rc.1"
 
   def project do
     [
