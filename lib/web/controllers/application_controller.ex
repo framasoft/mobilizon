@@ -13,7 +13,7 @@ defmodule Mobilizon.Web.ApplicationController do
   @spec create_application(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create_application(
         conn,
-        %{"name" => name, "redirect_uris" => redirect_uris, "scope" => scope} = args
+        %{"name" => name, "redirect_uri" => redirect_uris, "scope" => scope} = args
       ) do
     ip = conn.remote_ip |> :inet.ntoa() |> to_string()
 
@@ -33,7 +33,9 @@ defmodule Mobilizon.Web.ApplicationController do
             conn
             |> Plug.Conn.put_resp_header("cache-control", "no-store")
             |> json(
-              Map.take(app, [:name, :website, :redirect_uris, :client_id, :client_secret, :scope])
+              app
+              |> Map.take([:name, :website, :client_id, :client_secret, :scope])
+              |> Map.put(:redirect_uri, app.redirect_uris)
             )
 
           {:error, :invalid_scope} ->

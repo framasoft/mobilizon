@@ -24,7 +24,7 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
         conn
         |> post("/apps", %{
           "name" => "hello",
-          "redirect_uris" => "hello",
+          "redirect_uri" => "hello",
           "scope" => "write nothing"
         })
 
@@ -46,14 +46,14 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
         conn
         |> post("/apps", %{
           "name" => name,
-          "redirect_uris" => Enum.join(redirect_uris, "\n"),
+          "redirect_uri" => Enum.join(redirect_uris, "\n"),
           "scope" => scope,
           "website" => website
         })
 
       assert %{
                "name" => ^name,
-               "redirect_uris" => ^redirect_uris,
+               "redirect_uri" => ^redirect_uris,
                "scope" => ^scope,
                "website" => ^website,
                "client_id" => _client_id,
