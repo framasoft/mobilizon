@@ -3,7 +3,7 @@
     class="mbz-card snap-center dark:bg-mbz-purple"
     :class="{
       'sm:flex sm:items-start': mode === 'row',
-      'sm:max-w-xs sm:w-[18rem] shrink-0 flex flex-col': mode === 'column',
+      'sm:max-w-xs w-[18rem] shrink-0 flex flex-col': mode === 'column',
     }"
     :to="to"
     :isInternal="isInternal"
@@ -119,8 +119,8 @@
                 {{
                   t(
                     "{count} participants",
-                    event.participantStats?.participant,
-                    { count: event.participantStats?.participant }
+                    { count: event.participantStats?.participant },
+                    event.participantStats?.participant
                   )
                 }}
               </mobilizon-tag>
