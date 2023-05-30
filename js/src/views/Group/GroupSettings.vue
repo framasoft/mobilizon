@@ -262,38 +262,17 @@ const copyURL = async (): Promise<void> => {
   }, 2000);
 };
 
-onGroupResult(({ data }) => {
+onGroupResult(async ({ data }) => {
+  if (!data) return;
   editableGroup.value = data.group;
-});
-
-watch(
-  group,
-  async (newGroup: IGroup | undefined, oldGroup: IGroup | undefined) => {
-    console.debug("watching group");
-    if (!newGroup) return;
-    try {
-      if (
-        oldGroup?.avatar !== undefined &&
-        oldGroup?.avatar !== newGroup?.avatar
-      ) {
-        avatarFile.value = await buildFileFromIMedia(newGroup?.avatar);
-      }
-      if (
-        oldGroup?.banner !== undefined &&
-        oldGroup?.banner !== newGroup?.banner
-      ) {
-        bannerFile.value = await buildFileFromIMedia(newGroup?.banner);
-      }
-    } catch (e) {
-      // Catch errors while building media
-      console.error(e);
-    }
-    editableGroup.value = { ...newGroup };
-  },
-  {
-    immediate: true,
+  try {
+    avatarFile.value = await buildFileFromIMedia(editableGroup.value?.avatar);
+    bannerFile.value = await buildFileFromIMedia(editableGroup.value?.banner);
+  } catch (e) {
+    // Catch errors while building media
+    console.error(e);
   }
-);
+});
 
 const buildVariables = computed(() => {
   let avatarObj = {};
