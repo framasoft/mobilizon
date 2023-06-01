@@ -23,13 +23,17 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
           dry_run: :boolean,
           verbose: :boolean,
           forward_reports: :boolean,
-          local_only: :boolean
+          local_only: :boolean,
+          only_profiles: :boolean,
+          only_events: :boolean
         ],
         aliases: [
           d: :dry_run,
           v: :verbose,
           f: :forward_reports,
-          l: :local_only
+          l: :local_only,
+          p: :only_profiles,
+          e: :only_events
         ]
       )
 
@@ -41,23 +45,27 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
 
     anonymous_actor_id = Config.anonymous_actor_id()
 
-    options
-    |> Keyword.get(:local_only, false)
-    |> profiles()
-    |> Stream.flat_map(& &1)
-    |> Stream.each(fn profile ->
-      process_profile(profile, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
-    end)
-    |> Stream.run()
+    unless only_events?(options) do
+      options
+      |> Keyword.get(:local_only, false)
+      |> profiles()
+      |> Stream.flat_map(& &1)
+      |> Stream.each(fn profile ->
+        process_profile(profile, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
+      end)
+      |> Stream.run()
+    end
 
-    options
-    |> Keyword.get(:local_only, false)
-    |> events()
-    |> Stream.flat_map(& &1)
-    |> Stream.each(fn event ->
-      process_event(event, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
-    end)
-    |> Stream.run()
+    unless only_profiles?(options) do
+      options
+      |> Keyword.get(:local_only, false)
+      |> events()
+      |> Stream.flat_map(& &1)
+      |> Stream.each(fn event ->
+        process_event(event, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
+      end)
+      |> Stream.run()
+    end
   end
 
   defp profiles(local_only) do
@@ -180,6 +188,8 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
 
   defp verbose?(options), do: Keyword.get(options, :verbose, false)
   defp dry_run?(options), do: Keyword.get(options, :dry_run, false)
+  defp only_profiles?(options), do: Keyword.get(options, :only_profiles, false)
+  defp only_events?(options), do: Keyword.get(options, :only_events, false)
 
   defp anti_spam, do: AntiSpam.service()
 end
