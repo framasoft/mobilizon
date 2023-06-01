@@ -52,7 +52,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         start: (Keyword.get(options, :page, 1) - 1) * Keyword.get(options, :limit, 16),
         latlon: to_lat_lon(options[:location]),
         bbox: options[:bbox],
-        sortBy: Map.get(@sort_by_options, options[:sort_by]),
+        sort: Map.get(@sort_by_options, options[:sort_by]),
         boostLanguages: options[:boost_languages]
       )
       |> Keyword.take([
@@ -68,8 +68,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :statusOneOf,
         :bbox,
         :start,
-        :count,
-        :sortBy
+        :count
       ])
       |> Keyword.reject(fn {_key, val} -> is_nil(val) or val == "" end)
 
@@ -104,7 +103,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         start: (options[:page] - 1) * options[:limit],
         latlon: to_lat_lon(options[:location]),
         bbox: options[:bbox],
-        sortBy: Map.get(@sort_by_options, options[:sort_by])
+        sort: Map.get(@sort_by_options, options[:sort_by])
       )
       |> Keyword.take([
         :search,
@@ -115,8 +114,7 @@ defmodule Mobilizon.Service.GlobalSearch.SearchMobilizon do
         :sort,
         :start,
         :count,
-        :bbox,
-        :sortBy
+        :bbox
       ])
       |> Keyword.reject(fn {_key, val} -> is_nil(val) or val == "" end)
 
