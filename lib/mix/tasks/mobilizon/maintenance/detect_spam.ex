@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
   alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam
   import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Web.Endpoint
@@ -35,7 +35,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
 
     start_mobilizon()
 
-    unless Akismet.ready?() do
+    unless anti_spam().ready?() do
       shell_error("Akismet is missing an API key in the configuration")
     end
 
@@ -79,7 +79,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
     email = if(is_nil(user), do: nil, else: user.email)
     ip = if(is_nil(user), do: nil, else: user.current_sign_in_ip || user.last_sign_in_ip)
 
-    case Akismet.check_profile(preferred_username, summary, email, ip) do
+    case anti_spam().check_profile(preferred_username, summary, email, ip, nil) do
       res when res in [:spam, :discard] ->
         handle_spam_profile(preferred_username, id, options)
 
@@ -113,7 +113,13 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
         {nil, nil}
       end
 
-    case Akismet.check_event(event_description, organizer_actor.preferred_username, email, ip) do
+    case anti_spam().check_event(
+           event_description,
+           organizer_actor.preferred_username,
+           email,
+           ip,
+           nil
+         ) do
       res when res in [:spam, :discard] ->
         handle_spam_event(event_id, title, uuid, organizer_actor.id, options)
 
@@ -174,4 +180,6 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
 
   defp verbose?(options), do: Keyword.get(options, :verbose, false)
   defp dry_run?(options), do: Keyword.get(options, :dry_run, false)
+
+  defp anti_spam, do: AntiSpam.service()
 end

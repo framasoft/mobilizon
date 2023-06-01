@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   alias Mobilizon.{Actors, Events, Users}
   alias Mobilizon.Actors.{Actor, Follower, Member}
   alias Mobilizon.Events.Participant
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam
   alias Mobilizon.Storage.{Page, Repo}
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
@@ -133,18 +133,20 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
   def create_person(
         _parent,
         %{preferred_username: _preferred_username} = args,
-        %{context: %{current_user: user}} = _resolution
+        %{context: %{current_user: user} = context} = _resolution
       ) do
     args = Map.put(args, :user_id, user.id)
+    user_agent = Map.get(context, :user_agent, "")
 
     with args <- Map.update(args, :preferred_username, "", &String.downcase/1),
-         {:akismet, :ham} <-
-           {:akismet,
-            Akismet.check_profile(
+         {:spam, :ham} <-
+           {:spam,
+            AntiSpam.service().check_profile(
               args.preferred_username,
               args.summary,
               user.email,
-              user.current_sign_in_ip
+              user.current_sign_in_ip,
+              user_agent
             )},
          {:picture, args} when is_map(args) <- {:picture, save_attached_pictures(args)},
          {:ok, %Actor{} = new_person} <- Actors.new_person(args) do
@@ -308,9 +310,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
       {:ok, %User{} = user} ->
         if is_nil(Users.get_actor_for_user(user)) do
           # No profile yet, we can create one
-          with {:akismet, :ham} <-
-                 {:akismet,
-                  Akismet.check_profile(
+          with {:spam, :ham} <-
+                 {:spam,
+                  AntiSpam.service().check_profile(
                     args.preferred_username,
                     args.summary,
                     args.email,
@@ -326,7 +328,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Person do
             {:error, _err} ->
               {:error, dgettext("errors", "Error while uploading pictures")}
 
-            {:akismet, _} ->
+            {:spam, _} ->
               {:error, dgettext("errors", "Your profile was detected as spam.")}
           end
         else

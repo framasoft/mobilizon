@@ -90,6 +90,8 @@ config :junit_formatter, report_dir: "."
 
 config :mobilizon, :http_security, report_uri: "https://endpoint.com"
 
+config :mobilizon, Mobilizon.Service.AntiSpam, service: Mobilizon.Service.AntiSpam.Mock
+
 if System.get_env("DOCKER", "false") == "false" && File.exists?("./config/test.secret.exs") do
   import_config "test.secret.exs"
 end

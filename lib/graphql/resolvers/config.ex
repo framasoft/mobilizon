@@ -5,7 +5,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
 
   alias Mobilizon.Config
   alias Mobilizon.Events.Categories
-  alias Mobilizon.Service.{Akismet, FrontEndAnalytics}
+  alias Mobilizon.Service.{AntiSpam, FrontEndAnalytics}
 
   @doc """
   Gets config.
@@ -146,7 +146,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       features: %{
         groups: Config.instance_group_feature_enabled?(),
         event_creation: Config.instance_event_creation_enabled?(),
-        antispam: Akismet.ready?()
+        antispam: AntiSpam.service().ready?()
       },
       restrictions: %{
         only_admin_can_create_groups: Config.only_admin_can_create_groups?(),

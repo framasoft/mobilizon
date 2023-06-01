@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.API.Reports do
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
   alias Mobilizon.Reports, as: ReportsAction
   alias Mobilizon.Reports.{Note, Report, ReportStatus}
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam.Akismet
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
   require Logger

@@ -1,4 +1,4 @@
-defmodule Mobilizon.Service.Akismet do
+defmodule Mobilizon.Service.AntiSpam.Akismet do
   @moduledoc """
   Validate user data
   """
@@ -9,12 +9,16 @@ defmodule Mobilizon.Service.Akismet do
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
+  alias Mobilizon.Service.AntiSpam.Provider
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Endpoint
   require Logger
 
+  @behaviour Provider
+
   @env Application.compile_env(:mobilizon, :env)
 
+  @impl Provider
   @spec check_user(String.t(), String.t(), String.t()) ::
           :ham | :spam | :discard | {:error, HTTPoison.Response.t()}
   def check_user(email, ip, user_agent) do
@@ -27,6 +31,7 @@ defmodule Mobilizon.Service.Akismet do
     })
   end
 
+  @impl Provider
   @spec check_profile(String.t(), String.t(), String.t() | nil, String.t(), String.t()) ::
           :ham | :spam | :discard | {:error, HTTPoison.Response.t()}
   def check_profile(username, summary, email \\ nil, ip \\ "127.0.0.1", user_agent \\ nil) do
@@ -41,6 +46,7 @@ defmodule Mobilizon.Service.Akismet do
     })
   end
 
+  @impl Provider
   @spec check_event(String.t(), String.t(), String.t() | nil, String.t(), String.t()) ::
           :ham | :spam | :discard | {:error, HTTPoison.Response.t()}
   def check_event(event_body, username, email \\ nil, ip \\ "127.0.0.1", user_agent \\ nil) do
@@ -55,6 +61,7 @@ defmodule Mobilizon.Service.Akismet do
     })
   end
 
+  @impl Provider
   @spec check_comment(String.t(), String.t(), boolean(), String.t() | nil, String.t(), String.t()) ::
           :ham | :spam | :discard | {:error, HTTPoison.Response.t()}
   def check_comment(
@@ -108,6 +115,7 @@ defmodule Mobilizon.Service.Akismet do
     Application.get_env(:mobilizon, __MODULE__) |> get_in([:key])
   end
 
+  @impl Provider
   def ready?, do: !is_nil(api_key())
 
   @spec report_to_akismet_comment(Report.t()) :: AkismetComment.t() | {:error, atom()}
