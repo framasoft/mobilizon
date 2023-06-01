@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment, as: CommentModel
   alias Mobilizon.Events.{Event, EventOptions}
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam
   alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext
 
@@ -45,14 +45,14 @@ defmodule Mobilizon.GraphQL.Resolvers.Comment do
         if comment_moderation != :closed || actor_id == organizer_actor_id do
           args = Map.put(args, :actor_id, actor_id)
 
-          if Akismet.check_comment(
+          if AntiSpam.service().check_comment(
                args.text,
                preferred_username,
                !is_nil(Map.get(args, :in_reply_to_comment_id)),
                email,
                current_ip,
                user_agent
-             ) do
+             ) == :ham do
             do_create_comment(args)
           else
             {:error,

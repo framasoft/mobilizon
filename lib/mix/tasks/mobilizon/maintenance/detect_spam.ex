@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
   alias Mobilizon.{Actors, Config, Events, Users}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.Event
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam
   import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Federation.ActivityPub.Actions
   alias Mobilizon.Web.Endpoint
@@ -23,41 +23,49 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
           dry_run: :boolean,
           verbose: :boolean,
           forward_reports: :boolean,
-          local_only: :boolean
+          local_only: :boolean,
+          only_profiles: :boolean,
+          only_events: :boolean
         ],
         aliases: [
           d: :dry_run,
           v: :verbose,
           f: :forward_reports,
-          l: :local_only
+          l: :local_only,
+          p: :only_profiles,
+          e: :only_events
         ]
       )
 
     start_mobilizon()
 
-    unless Akismet.ready?() do
+    unless anti_spam().ready?() do
       shell_error("Akismet is missing an API key in the configuration")
     end
 
     anonymous_actor_id = Config.anonymous_actor_id()
 
-    options
-    |> Keyword.get(:local_only, false)
-    |> profiles()
-    |> Stream.flat_map(& &1)
-    |> Stream.each(fn profile ->
-      process_profile(profile, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
-    end)
-    |> Stream.run()
+    unless only_events?(options) do
+      options
+      |> Keyword.get(:local_only, false)
+      |> profiles()
+      |> Stream.flat_map(& &1)
+      |> Stream.each(fn profile ->
+        process_profile(profile, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
+      end)
+      |> Stream.run()
+    end
 
-    options
-    |> Keyword.get(:local_only, false)
-    |> events()
-    |> Stream.flat_map(& &1)
-    |> Stream.each(fn event ->
-      process_event(event, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
-    end)
-    |> Stream.run()
+    unless only_profiles?(options) do
+      options
+      |> Keyword.get(:local_only, false)
+      |> events()
+      |> Stream.flat_map(& &1)
+      |> Stream.each(fn event ->
+        process_event(event, Keyword.put(options, :anonymous_actor_id, anonymous_actor_id))
+      end)
+      |> Stream.run()
+    end
   end
 
   defp profiles(local_only) do
@@ -79,7 +87,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
     email = if(is_nil(user), do: nil, else: user.email)
     ip = if(is_nil(user), do: nil, else: user.current_sign_in_ip || user.last_sign_in_ip)
 
-    case Akismet.check_profile(preferred_username, summary, email, ip) do
+    case anti_spam().check_profile(preferred_username, summary, email, ip, nil) do
       res when res in [:spam, :discard] ->
         handle_spam_profile(preferred_username, id, options)
 
@@ -113,7 +121,13 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
         {nil, nil}
       end
 
-    case Akismet.check_event(event_description, organizer_actor.preferred_username, email, ip) do
+    case anti_spam().check_event(
+           event_description,
+           organizer_actor.preferred_username,
+           email,
+           ip,
+           nil
+         ) do
       res when res in [:spam, :discard] ->
         handle_spam_event(event_id, title, uuid, organizer_actor.id, options)
 
@@ -174,4 +188,8 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
 
   defp verbose?(options), do: Keyword.get(options, :verbose, false)
   defp dry_run?(options), do: Keyword.get(options, :dry_run, false)
+  defp only_profiles?(options), do: Keyword.get(options, :only_profiles, false)
+  defp only_events?(options), do: Keyword.get(options, :only_events, false)
+
+  defp anti_spam, do: AntiSpam.service()
 end

@@ -13,7 +13,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
   alias Mobilizon.Federation.ActivityPub.Activity
   alias Mobilizon.Federation.ActivityPub.Permission
-  alias Mobilizon.Service.Akismet
+  alias Mobilizon.Service.AntiSpam
   alias Mobilizon.Service.TimezoneDetector
   import Mobilizon.Users.Guards, only: [is_moderator: 1]
   import Mobilizon.Web.Gettext
@@ -260,7 +260,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
            args |> Map.put(:organizer_actor, organizer_actor) |> extract_timezone(user.id),
          {:askismet, :ham} <-
            {:askismet,
-            Akismet.check_event(
+            AntiSpam.service().check_event(
               args.description,
               organizer_actor.preferred_username,
               email,
