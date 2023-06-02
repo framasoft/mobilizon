@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.1 (2023-06-02)
+
+### Features
+
+* **anti-spam:** allow to only scan for spam in profiles or events ([c971287](https://framagit.org/framasoft/mobilizon/-/commit/c971287624913c8555fe288af0df1175701e6209))
+
+### Bug Fixes
+
+* **front:** fix group settings getting unresponsive because of reactive bug ([f1e119c](https://framagit.org/framasoft/mobilizon/-/commit/f1e119cb7ad580dfab73de3083f20a7303822888)), closes [#1298](https://framagit.org/framasoft/mobilizon/-/issues/1298)
+* **search:** fix global search sorting ([39e24c3](https://framagit.org/framasoft/mobilizon/-/commit/39e24c328a21f7058e4d2526e13eae85e39bae86)), closes [#1297](https://framagit.org/framasoft/mobilizon/-/issues/1297)
+
 ## 3.1.0 (2023-05-31)
 
 ### Features
@@ -84,11 +95,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **i18n:** fix Swedish translations error that prevented Participate button from showing up ([643a5b5](https://framagit.org/framasoft/mobilizon/-/commit/643a5b5921f91fed6a9f674c0ab3a36bf2d05835)), closes [#1281](https://framagit.org/framasoft/mobilizon/-/issues/1281)
 * **rich media:** fix error handling when resource preview URL leads to empty parsed data ([850b4e2](https://framagit.org/framasoft/mobilizon/-/commit/850b4e2a735e335c4737caa8b60e190613e778ef)), closes [#1279](https://framagit.org/framasoft/mobilizon/-/issues/1279)
 * **sharepostmodal:** only show the share warning message if the post is accessible by link ([8e626dc](https://framagit.org/framasoft/mobilizon/-/commit/8e626dce7807640a89770e50ca2621d34d6a5d97))
-* **apps:** fix device flow authorization process ([9a457fb](https://framagit.org/framasoft/mobilizon/commits/9a457fb011b77b27dc465f1bc7327a08f554ccfb))
-* **apps:** fix typo in redirect_uri parameter ([5664625](https://framagit.org/framasoft/mobilizon/commits/5664625c1c57ccba947400475414c1301d4bf955))
-* **apps:** show scope from device activation in authorize device view ([c9d2074](https://framagit.org/framasoft/mobilizon/commits/c9d20748a4dd3e0687515f4776335d0ec9bdfcdc))
-* **front:** fix homepage event and groups cards snapping ([8809db5](https://framagit.org/framasoft/mobilizon/commits/8809db582ccf45fcd477f46dcf70e106720626a8))
-* **front:** fix selecting addresses in autocomplete ([e0488dd](https://framagit.org/framasoft/mobilizon/commits/e0488dd87ffc0184162a2ff67a13717e6263d56d))
+* **apps:** fix device flow authorization process ([9a457fb](https://framagit.org/framasoft/mobilizon/-/commit/9a457fb011b77b27dc465f1bc7327a08f554ccfb))
+* **apps:** fix typo in redirect_uri parameter ([5664625](https://framagit.org/framasoft/mobilizon/-/commit/5664625c1c57ccba947400475414c1301d4bf955))
+* **apps:** show scope from device activation in authorize device view ([c9d2074](https://framagit.org/framasoft/mobilizon/-/commit/c9d20748a4dd3e0687515f4776335d0ec9bdfcdc))
+* **front:** fix homepage event and groups cards snapping ([8809db5](https://framagit.org/framasoft/mobilizon/-/commit/8809db582ccf45fcd477f46dcf70e106720626a8))
+* **front:** fix selecting addresses in autocomplete ([e0488dd](https://framagit.org/framasoft/mobilizon/-/commit/e0488dd87ffc0184162a2ff67a13717e6263d56d))
 * include user role in moderator role ([c4d6019](https://framagit.org/framasoft/mobilizon/-/commit/c4d60194a6900a3f9430355c5fbb346d910e4df6))
 
 
@@ -96,11 +107,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Bug Fixes
 
-* **apps:** fix device flow authorization process ([9a457fb](https://framagit.org/framasoft/mobilizon/commits/9a457fb011b77b27dc465f1bc7327a08f554ccfb))
-* **apps:** fix typo in redirect_uri parameter ([5664625](https://framagit.org/framasoft/mobilizon/commits/5664625c1c57ccba947400475414c1301d4bf955))
-* **apps:** show scope from device activation in authorize device view ([c9d2074](https://framagit.org/framasoft/mobilizon/commits/c9d20748a4dd3e0687515f4776335d0ec9bdfcdc))
-* **front:** fix homepage event and groups cards snapping ([8809db5](https://framagit.org/framasoft/mobilizon/commits/8809db582ccf45fcd477f46dcf70e106720626a8))
-* **front:** fix selecting addresses in autocomplete ([e0488dd](https://framagit.org/framasoft/mobilizon/commits/e0488dd87ffc0184162a2ff67a13717e6263d56d))
+* **apps:** fix device flow authorization process ([9a457fb](https://framagit.org/framasoft/mobilizon/-/commit/9a457fb011b77b27dc465f1bc7327a08f554ccfb))
+* **apps:** fix typo in redirect_uri parameter ([5664625](https://framagit.org/framasoft/mobilizon/-/commit/5664625c1c57ccba947400475414c1301d4bf955))
+* **apps:** show scope from device activation in authorize device view ([c9d2074](https://framagit.org/framasoft/mobilizon/-/commit/c9d20748a4dd3e0687515f4776335d0ec9bdfcdc))
+* **front:** fix homepage event and groups cards snapping ([8809db5](https://framagit.org/framasoft/mobilizon/-/commit/8809db582ccf45fcd477f46dcf70e106720626a8))
+* **front:** fix selecting addresses in autocomplete ([e0488dd](https://framagit.org/framasoft/mobilizon/-/commit/e0488dd87ffc0184162a2ff67a13717e6263d56d))
 
 
 ## 3.1.0-rc.1  (2023-05-30)
