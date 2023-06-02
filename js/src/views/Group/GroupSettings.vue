@@ -344,11 +344,11 @@ const canShowCopyButton = computed((): boolean => {
 });
 
 const currentAddress = computed({
-  get(): IAddress {
-    return new Address(editableGroup.value?.physicalAddress);
+  get(): IAddress | null {
+    return editableGroup.value?.physicalAddress ?? null;
   },
-  set(address: IAddress) {
-    if (editableGroup.value) {
+  set(address: IAddress | null) {
+    if (editableGroup.value && address) {
       editableGroup.value = {
         ...editableGroup.value,
         physicalAddress: address,
