@@ -645,7 +645,7 @@ const dialog = inject<Dialog>("dialog");
 
 const openRegenerateFeedTokensConfirmation = () => {
   dialog?.confirm({
-    type: "warning",
+    variant: "warning",
     title: t("Regenerate new links") as string,
     message: t(
       "You'll need to change the URLs where there were previously entered."
