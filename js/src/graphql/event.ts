@@ -295,7 +295,7 @@ export const JOIN_EVENT = gql`
     $email: String
     $message: String
     $locale: String
-    $timezone: String
+    $timezone: Timezone
   ) {
     joinEvent(
       eventId: $eventId
