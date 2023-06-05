@@ -9,11 +9,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Discussions
-  alias Mobilizon.Events
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
   alias Mobilizon.Reports.Report
 
+  alias Mobilizon.Federation.ActivityPub
   alias Mobilizon.Federation.ActivityPub.Actor, as: ActivityPubActor
   alias Mobilizon.Federation.ActivityPub.Relay
   alias Mobilizon.Federation.ActivityStream.{Converter, Convertible}
@@ -38,7 +38,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
         "uri" => params["uri"],
         "content" => params["content"],
         "reported_id" => params["reported"].id,
-        "event_id" => (!is_nil(params["event"]) && params["event"].id) || nil,
+        "events" => params["events"],
         "comments" => params["comments"]
       }
     end
@@ -50,9 +50,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
   @impl Converter
   @spec model_to_as(Report.t()) :: map
   def model_to_as(%Report{} = report) do
-    object = [report.reported.url] ++ Enum.map(report.comments, fn comment -> comment.url end)
-
-    object = if report.event, do: object ++ [report.event.url], else: object
+    object =
+      [report.reported.url] ++
+        Enum.map(report.comments, fn comment -> comment.url end) ++
+        Enum.map(report.events, & &1.url)
 
     %{
       "type" => "Flag",
@@ -68,14 +69,13 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
     with {:ok, %Actor{} = reporter} <-
            ActivityPubActor.get_or_fetch_actor_by_url(object["actor"]),
          %Actor{} = reported <- find_reported(objects),
-         event <- find_event(objects),
-         comments <- find_comments(objects, reported, event) do
+         %{events: events, comments: comments} <- find_events_and_comments(objects) do
       %{
         "reporter" => reporter,
         "uri" => object["id"],
         "content" => object["content"],
         "reported" => reported,
-        "event" => event,
+        "events" => events,
         "comments" => comments
       }
     end
@@ -94,26 +94,19 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Flag do
     end)
   end
 
-  # Remove the reported actor and the event from the object list.
-  @spec find_comments(list(String.t()), Actor.t() | nil, Event.t() | nil) :: list(Comment.t())
-  defp find_comments(objects, reported, event) do
+  defp find_events_and_comments(objects) do
     objects
-    |> Enum.filter(fn url ->
-      !((!is_nil(reported) && url == reported.url) || (!is_nil(event) && event.url == url))
-    end)
-    |> Enum.map(&Discussions.get_comment_from_url/1)
-    |> Enum.filter(& &1)
-  end
+    |> Enum.map(&ActivityPub.fetch_object_from_url/1)
+    |> Enum.reduce(%{comments: [], events: []}, fn res, acc ->
+      case res do
+        {:ok, %Event{} = event} ->
+          Map.put(acc, :events, [event | acc.events])
 
-  @spec find_event(list(String.t())) :: Event.t() | nil
-  defp find_event(objects) do
-    Enum.reduce_while(objects, nil, fn url, _ ->
-      case Events.get_event_by_url(url) do
-        %Event{} = event ->
-          {:halt, event}
+        {:ok, %Comment{} = comment} ->
+          Map.put(acc, :comments, [comment | acc.comments])
 
         _ ->
-          {:cont, nil}
+          acc
       end
     end)
   end

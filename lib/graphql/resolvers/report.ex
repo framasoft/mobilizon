@@ -67,7 +67,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Report do
       {:ok, _, %Report{} = report} ->
         {:ok, report}
 
-      _error ->
+      error ->
         {:error, dgettext("errors", "Error while saving report")}
     end
   end

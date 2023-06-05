@@ -150,14 +150,14 @@
               <span v-else>{{ t("Unknown") }}</span>
             </td>
           </tr>
-          <tr v-if="report.event && report.comments.length > 0">
-            <td>{{ t("Event") }}</td>
+          <!-- <tr v-if="report.events && report.comments.length > 0">
+            <td>{{ t("Events") }}</td>
             <td class="flex gap-2 items-center">
               <router-link
                 class="underline"
                 :to="{
                   name: RouteName.EVENT,
-                  params: { uuid: report.event.uuid },
+                  params: { uuid: report.events.uuid },
                 }"
               >
                 {{ report.event.title }}
@@ -169,7 +169,7 @@
                 >{{ t("Delete") }}</o-button
               >
             </td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </section>
@@ -206,17 +206,23 @@
 
     <section
       class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3"
-      v-if="report.event && report.comments.length === 0"
+      v-if="
+        report.events &&
+        report.events?.length > 0 &&
+        report.comments.length === 0
+      "
     >
       <h2 class="mb-1">{{ t("Reported content") }}</h2>
-      <EventCard :event="report.event" mode="row" class="my-2 max-w-4xl" />
-      <o-button
-        variant="danger"
-        @click="confirmEventDelete()"
-        icon-left="delete"
-        size="small"
-        >{{ t("Delete") }}</o-button
-      >
+      <div v-for="event in report.events" :key="event.id">
+        <EventCard :event="event" mode="row" class="my-2 max-w-4xl" />
+        <o-button
+          variant="danger"
+          @click="confirmEventDelete(event)"
+          icon-left="delete"
+          size="small"
+          >{{ t("Delete") }}</o-button
+        >
+      </div>
     </section>
 
     <section
@@ -337,6 +343,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import EventCard from "@/components/Event/EventCard.vue";
 import { useFeatures } from "@/composition/apollo/config";
+import { IEvent } from "@/types/event.model";
 
 const router = useRouter();
 
@@ -419,7 +426,7 @@ createReportNoteMutationError((error) => {
 
 const dialog = inject<Dialog>("dialog");
 
-const confirmEventDelete = (): void => {
+const confirmEventDelete = (event: IEvent): void => {
   dialog?.confirm({
     title: t("Deleting event"),
     message: t(
@@ -428,7 +435,7 @@ const confirmEventDelete = (): void => {
     confirmText: t("Delete Event"),
     variant: "danger",
     hasIcon: true,
-    onConfirm: () => deleteEvent(),
+    onConfirm: () => deleteEvent(event),
   });
 };
 
@@ -451,8 +458,8 @@ const {
   onError: deleteEventMutationError,
 } = useMutation<{ deleteEvent: { id: string } }>(DELETE_EVENT);
 
-deleteEventMutationDone(() => {
-  const eventTitle = report.value?.event?.title;
+deleteEventMutationDone((result) => {
+  const eventTitle = result?.context?.eventTitle;
   notifier?.success(
     t("Event {eventTitle} deleted", {
       eventTitle,
@@ -464,10 +471,13 @@ deleteEventMutationError((error) => {
   console.error(error);
 });
 
-const deleteEvent = async (): Promise<void> => {
-  if (!report.value?.event?.id) return;
+const deleteEvent = async (event: IEvent): Promise<void> => {
+  if (!event?.id) return;
 
-  deleteEventMutation({ eventId: report.value.event.id });
+  deleteEventMutation(
+    { eventId: event.id },
+    { context: { eventTitle: event.title } }
+  );
 };
 
 const {

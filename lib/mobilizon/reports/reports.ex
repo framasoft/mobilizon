@@ -21,7 +21,7 @@ defmodule Mobilizon.Reports do
   def get_report(id) do
     Report
     |> Repo.get(id)
-    |> Repo.preload([:reported, :reporter, :manager, :event, :comments, :notes])
+    |> Repo.preload([:reported, :reporter, :manager, :events, :comments, :notes])
   end
 
   @doc """
@@ -33,7 +33,7 @@ defmodule Mobilizon.Reports do
            %Report{}
            |> Report.changeset(attrs)
            |> Repo.insert() do
-      {:ok, Repo.preload(report, [:event, :reported, :reporter, :comments])}
+      {:ok, Repo.preload(report, [:events, :reported, :reporter, :comments])}
     end
   end
 
@@ -102,7 +102,7 @@ defmodule Mobilizon.Reports do
   @spec list_reports_query(atom()) :: Ecto.Query.t()
   defp list_reports_query(status) do
     Report
-    |> preload([:reported, :reporter, :manager, :event, :comments, :notes])
+    |> preload([:reported, :reporter, :manager, :events, :comments, :notes])
     |> where([r], r.status == ^status)
   end
 

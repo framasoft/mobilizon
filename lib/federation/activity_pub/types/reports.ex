@@ -2,7 +2,6 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
   @moduledoc false
   alias Mobilizon.{Actors, Discussions, Events, Reports}
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityStream
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Reports.Report
@@ -26,15 +25,16 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
     %Actor{} = reported_actor = Actors.get_actor!(args.reported_id)
     content = HTML.strip_tags(args.content)
 
-    event_id = Map.get(args, :event_id)
-
-    event =
-      if is_nil(event_id) do
-        nil
-      else
-        {:ok, %Event{} = event} = Events.get_event(event_id)
-        event
-      end
+    events =
+      args
+      |> Map.get(:events_ids, [])
+      |> Enum.map(fn event_id ->
+        case Events.get_event(event_id) do
+          {:ok, event} -> event
+          {:error, :event_not_found} -> nil
+        end
+      end)
+      |> Enum.filter(& &1)
 
     comments =
       Discussions.list_comments_by_actor_and_ids(
@@ -46,7 +46,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
       reporter: reporter_actor,
       reported: reported_actor,
       content: content,
-      event: event,
+      events: events,
       comments: comments
     })
   end

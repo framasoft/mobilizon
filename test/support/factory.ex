@@ -322,7 +322,7 @@ defmodule Mobilizon.Factory do
       url: "http://mobilizon.test/report/deae1020-54b8-47df-9eea-d8c0e943e57f/activity",
       reported: build(:actor),
       reporter: build(:actor),
-      event: build(:event),
+      events: build_list(1, :event),
       comments: build_list(1, :comment)
     }
   end

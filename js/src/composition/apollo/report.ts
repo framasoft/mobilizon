@@ -5,7 +5,7 @@ export function useCreateReport() {
   return useMutation<
     { createReport: { id: string } },
     {
-      eventId?: string;
+      eventsIds?: string[];
       reportedId: string;
       content?: string;
       commentsIds?: string[];

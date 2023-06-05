@@ -352,7 +352,7 @@ const reportComment = async (
 ): Promise<void> => {
   if (!props.comment.actor) return;
   createReportMutation({
-    eventId: props.event.id,
+    eventsIds: [props.event.id ?? ""],
     reportedId: props.comment.actor?.id ?? "",
     commentsIds: [props.comment.id ?? ""],
     content,

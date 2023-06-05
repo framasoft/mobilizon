@@ -30,7 +30,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
                  reporter_id: reporter_id,
                  reported_id: reported_id,
                  content: comment,
-                 event_id: event_id,
+                 events_ids: [event_id],
                  comments_ids: [],
                  forward: false
                })
@@ -64,7 +64,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
                  reporter_id: reporter_id,
                  reported_id: reported_id,
                  content: comment,
-                 event_id: nil,
+                 events_ids: [],
                  comments_ids: [comment_1_id, comment_2_id]
                })
 
@@ -100,7 +100,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
                  reporter_id: reporter_id,
                  reported_id: reported_id,
                  content: comment,
-                 event_id: nil,
+                 events_ids: [],
                  comments_ids: [comment_1_id, comment_2_id],
                  forward: true
                })
@@ -131,7 +131,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
                  reporter_id: reporter_id,
                  reported_id: reported_id,
                  content: "This is not a nice thing",
-                 event_id: nil,
+                 events_ids: [],
                  comments_ids: [comment_1_id],
                  forward: true
                })
@@ -157,7 +157,7 @@ defmodule Mobilizon.GraphQL.API.ReportTest do
                  reporter_id: reporter_id,
                  reported_id: reported_id,
                  content: "This is not a nice thing",
-                 event_id: nil,
+                 events_ids: [],
                  comments_ids: [comment_1_id],
                  forward: true
                })
