@@ -73,7 +73,7 @@
             <tr v-for="subType in notificationType.subtypes" :key="subType.id">
               <td v-for="(method, key) in notificationMethods" :key="key">
                 <o-checkbox
-                  :value="notificationValues[subType.id][key].enabled"
+                  :modelValue="notificationValues[subType.id][key].enabled"
                   @update:modelValue="
                     (e: boolean) =>
                       updateNotificationValue({
@@ -645,7 +645,7 @@ const dialog = inject<Dialog>("dialog");
 
 const openRegenerateFeedTokensConfirmation = () => {
   dialog?.confirm({
-    type: "warning",
+    variant: "warning",
     title: t("Regenerate new links") as string,
     message: t(
       "You'll need to change the URLs where there were previously entered."

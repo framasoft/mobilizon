@@ -426,7 +426,9 @@
             >
               <option
                 v-for="timezone in groupTimezones"
-                :value="`${group}/${timezone}`"
+                :value="
+                  group === t('Other') ? timezone : `${group}/${timezone}`
+                "
                 :key="timezone"
               >
                 {{ sanitizeTimezone(timezone) }}

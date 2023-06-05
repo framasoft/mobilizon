@@ -43,7 +43,7 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
 
     field(:upload_limits, :upload_limits, description: "The configuration for upload limits")
 
-    field(:timezones, list_of(:string), description: "The instance's available timezones")
+    field(:timezones, list_of(:timezone), description: "The instance's available timezones")
     field(:features, :features, description: "The instance's features")
     field(:restrictions, :restrictions, description: "The instance's restrictions")
     field(:version, :string, description: "The instance's version")

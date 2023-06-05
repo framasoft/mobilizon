@@ -151,7 +151,7 @@ export const LOGGED_USER_TIMEZONE = gql`
 
 export const SET_USER_SETTINGS = gql`
   mutation SetUserSettings(
-    $timezone: String
+    $timezone: Timezone
     $notificationOnDay: Boolean
     $notificationEachWeek: Boolean
     $notificationBeforeEvent: Boolean

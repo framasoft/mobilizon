@@ -250,7 +250,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
 
-    field(:timezone, :string, description: "The event's timezone")
+    field(:timezone, :timezone, description: "The event's timezone")
 
     field(:hide_organizer_when_group_event, :boolean,
       description:
@@ -303,7 +303,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:show_start_time, :boolean, description: "Show event start time")
     field(:show_end_time, :boolean, description: "Show event end time")
 
-    field(:timezone, :string, description: "The event's timezone")
+    field(:timezone, :timezone, description: "The event's timezone")
 
     field(:hide_organizer_when_group_event, :boolean,
       description:

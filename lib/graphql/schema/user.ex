@@ -220,7 +220,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
   """
   object :user_settings do
     meta(:authorize, :user)
-    field(:timezone, :string, description: "The timezone for this user")
+    field(:timezone, :timezone, description: "The timezone for this user")
 
     field(:notification_on_day, :boolean,
       description: "Whether this user will receive an email at the start of the day of an event."
@@ -450,7 +450,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     @desc "Set user settings"
     field :set_user_settings, :user_settings do
-      arg(:timezone, :string, description: "The timezone for this user")
+      arg(:timezone, :timezone, description: "The timezone for this user")
 
       arg(:notification_on_day, :boolean,
         description:

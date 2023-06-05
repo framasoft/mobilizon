@@ -4,6 +4,7 @@ defmodule Mobilizon.GraphQL.Schema.Users.ActivitySetting do
   """
   use Absinthe.Schema.Notation
   alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
+  alias Mobilizon.Users.ActivitySetting
 
   object :activity_setting do
     meta(:authorize, :user)
@@ -21,8 +22,9 @@ defmodule Mobilizon.GraphQL.Schema.Users.ActivitySetting do
 
       middleware(Rajska.QueryAuthorization,
         permit: :user,
-        scope: false,
-        rule: :"write:user:setting:activity"
+        scope: ActivitySetting,
+        rule: :"write:user:setting:activity",
+        args: %{key: :key}
       )
 
       resolve(&ActivitySettings.upsert_user_activity_setting/3)
