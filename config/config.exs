@@ -307,7 +307,7 @@ config :mobilizon, Oban,
      crontab: [
        {"@hourly", Mobilizon.Service.Workers.BuildSiteMap, queue: :background},
        {"17 4 * * *", Mobilizon.Service.Workers.RefreshGroups, queue: :background},
-       {"36 * * * *", Mobilizon.Service.Workers.RefreshInstances, queue: :background},
+       {"36 3 * * *", Mobilizon.Service.Workers.RefreshInstances, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanOrphanMediaWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.CleanUnconfirmedUsersWorker, queue: :background},
        {"@hourly", Mobilizon.Service.Workers.ExportCleanerWorker, queue: :background},
