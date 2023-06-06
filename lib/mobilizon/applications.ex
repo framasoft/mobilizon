@@ -426,7 +426,7 @@ defmodule Mobilizon.Applications do
 
   @spec prune_old_application_device_activations(pos_integer()) :: {non_neg_integer(), nil}
   def prune_old_application_device_activations(lifetime) do
-    exp = DateTime.add(DateTime.utc_now(), -lifetime)
+    exp = DateTime.utc_now() |> DateTime.add(-lifetime) |> DateTime.to_unix()
 
     ApplicationDeviceActivation
     |> where([at], at.expires_in < ^exp)
