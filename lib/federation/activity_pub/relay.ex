@@ -23,7 +23,13 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
   def init do
     # Wait for everything to settle.
     Process.sleep(1000 * 5)
-    get_actor()
+    relay = get_actor()
+
+    unless Regex.match?(~r/BEGIN RSA PRIVATE KEY/, relay.keys) do
+      {:ok, relay} = Actors.actor_key_rotation(relay)
+    end
+
+    relay
   end
 
   @spec get_actor() :: Actor.t() | no_return
