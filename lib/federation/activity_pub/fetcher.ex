@@ -22,7 +22,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
           | {:error,
              :invalid_url | :http_gone | :http_error | :http_not_found | :content_not_json}
   def fetch(url, options \\ []) do
-    on_behalf_of = Keyword.get(options, :on_behalf_of, Relay.get_actor())
+    Logger.debug("Fetching #{url} with AP Fetcher")
+    on_behalf_of = Keyword.get(options, :on_behalf_of, actor_relay())
+    Logger.debug("Fetching on behalf of #{inspect(on_behalf_of.url)}")
     date = Signature.generate_date_header()
 
     headers =
@@ -32,29 +34,8 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
     client = ActivityPubClient.client(headers: headers)
 
-    if address_valid?(url) do
-      case ActivityPubClient.get(client, url) do
-        {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 and is_map(data) ->
-          {:ok, data}
-
-        {:ok, %Tesla.Env{status: 410}} ->
-          Logger.debug("Resource at #{url} is 410 Gone")
-          {:error, :http_gone}
-
-        {:ok, %Tesla.Env{status: 404}} ->
-          Logger.debug("Resource at #{url} is 404 Gone")
-          {:error, :http_not_found}
-
-        {:ok, %Tesla.Env{body: data}} when is_binary(data) ->
-          {:error, :content_not_json}
-
-        {:ok, %Tesla.Env{} = res} ->
-          Logger.debug("Resource returned bad HTTP code #{inspect(res)}")
-          {:error, :http_error}
-
-        {:error, err} ->
-          {:error, err}
-      end
+    if address_valid?(url) and url != on_behalf_of.url do
+      do_fetch(url, client)
     else
       {:error, :invalid_url}
     end
@@ -168,5 +149,39 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   defp address_valid?(address) do
     %URI{host: host, scheme: scheme} = URI.parse(address)
     is_valid_string(host) and is_valid_string(scheme)
+  end
+
+  defp actor_relay do
+    Relay.get_actor()
+  end
+
+  @spec do_fetch(String.t(), Tesla.Client.t()) ::
+          {:ok, map()}
+          | {:error,
+             :invalid_url | :http_gone | :http_error | :http_not_found | :content_not_json}
+  defp do_fetch(url, client) do
+    case ActivityPubClient.get(client, url) do
+      {:ok, %Tesla.Env{body: data, status: code}} when code in 200..299 and is_map(data) ->
+        Logger.debug("Found the following from ActivityPubClient fetch: #{inspect(data)}")
+        {:ok, data}
+
+      {:ok, %Tesla.Env{status: 410}} ->
+        Logger.debug("Resource at #{url} is 410 Gone")
+        {:error, :http_gone}
+
+      {:ok, %Tesla.Env{status: 404}} ->
+        Logger.debug("Resource at #{url} is 404 Gone")
+        {:error, :http_not_found}
+
+      {:ok, %Tesla.Env{body: data}} when is_binary(data) ->
+        {:error, :content_not_json}
+
+      {:ok, %Tesla.Env{} = res} ->
+        Logger.debug("Resource returned bad HTTP code #{inspect(res)}")
+        {:error, :http_error}
+
+      {:error, err} ->
+        {:error, err}
+    end
   end
 end
