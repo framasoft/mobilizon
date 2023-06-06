@@ -55,7 +55,7 @@ defmodule Mobilizon.Federation.ActivityPub.Refresher do
   @type fetch_actor_errors :: ActivityPubActor.make_actor_errors() | fetch_collection_errors()
 
   @spec fetch_group(String.t(), Actor.t()) :: :ok | {:error, fetch_actor_errors}
-  def fetch_group(group_url, %Actor{} = on_behalf_of) do
+  def fetch_group(group_url, %Actor{} = on_behalf_of) when is_binary(group_url) do
     Logger.debug("Fetching group #{group_url}")
 
     case ActivityPubActor.make_actor_from_url(group_url, on_behalf_of: on_behalf_of) do
