@@ -282,6 +282,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         {:error,
          dgettext("errors", "Participation is confirmed but not approved yet by an organizer")}
 
+      {:has_participant, %Participant{role: :participant}} ->
+        {:error, dgettext("errors", "Participation is already confirmed")}
+
       {:has_participant, nil} ->
         {:error, dgettext("errors", "This token is invalid")}
 
