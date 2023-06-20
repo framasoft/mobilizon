@@ -26,10 +26,13 @@ defmodule Mobilizon.Web.ExportController do
           {:error, :not_found}
       end
     else
-      {:error,
-       dgettext("errors", "Export to format %{format} is not enabled on this instance",
-         format: format
-       )}
+      send_resp(
+        conn,
+        404,
+        dgettext("errors", "Export to format %{format} is not enabled on this instance",
+          format: format
+        )
+      )
     end
   end
 end
