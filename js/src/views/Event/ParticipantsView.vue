@@ -284,6 +284,7 @@ import Incognito from "vue-material-design-icons/Incognito.vue";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { Notifier } from "@/plugins/notifier";
 import Tag from "@/components/TagElement.vue";
+import { useHead } from "@vueuse/head";
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
@@ -458,6 +459,12 @@ const toggleQueueDetails = (row: IParticipant): void => {
 };
 
 const openDetailedRows = ref<Record<string, boolean>>({});
+
+useHead({
+  title: computed(() =>
+    t("Participants to {eventTitle}", { eventTitle: event.value?.title })
+  ),
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
