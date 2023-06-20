@@ -26,7 +26,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     relay = get_actor()
 
     unless Regex.match?(~r/BEGIN RSA PRIVATE KEY/, relay.keys) do
-      {:ok, relay} = Actors.actor_key_rotation(relay)
+      {:ok, _relay} = Actors.actor_key_rotation(relay)
     end
 
     relay
