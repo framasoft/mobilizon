@@ -65,6 +65,10 @@ config :mime, :types, %{
   "application/xrd+xml" => ["xrd-xml"]
 }
 
+config :mime, :extensions, %{
+  "activity-json" => "application/activity+json"
+}
+
 # Upload configuration
 config :mobilizon, Mobilizon.Web.Upload,
   uploader: Mobilizon.Web.Upload.Uploader.Local,
