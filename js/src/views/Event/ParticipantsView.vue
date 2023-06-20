@@ -55,22 +55,16 @@
               :key="format"
               aria-role="listitem"
               @click="
-                exportParticipants(
-                  {
-                    eventId: event?.id,
-                    format,
-                  },
-                  { context: { type: format } }
-                )
+                exportParticipants({
+                  eventId: event.id ?? '',
+                  format,
+                })
               "
               @keyup.enter="
-                exportParticipants(
-                  {
-                    eventId: event?.id,
-                    format,
-                  },
-                  { context: { type: format } }
-                )
+                exportParticipants({
+                  eventId: event.id ?? '',
+                  format,
+                })
               "
             >
               <button class="dropdown-button">
@@ -284,6 +278,7 @@ import Incognito from "vue-material-design-icons/Incognito.vue";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { Notifier } from "@/plugins/notifier";
 import Tag from "@/components/TagElement.vue";
+import { useHead } from "@vueuse/head";
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;
@@ -379,15 +374,15 @@ const {
   mutate: exportParticipants,
   onDone: onExportParticipantsMutationDone,
   onError: onExportParticipantsMutationError,
-} = useMutation(EXPORT_EVENT_PARTICIPATIONS);
+} = useMutation<
+  { exportEventParticipants: { path: string; format: string } },
+  { eventId: string; format?: exportFormat; roles?: string[] }
+>(EXPORT_EVENT_PARTICIPATIONS);
 
-onExportParticipantsMutationDone(({ data, context }) => {
-  const link =
-    window.origin +
-    "/exports/" +
-    context?.type.toLowerCase() +
-    "/" +
-    data?.exportEventParticipants;
+onExportParticipantsMutationDone(({ data }) => {
+  const path = data?.exportEventParticipants?.path;
+  const format = data?.exportEventParticipants?.format;
+  const link = window.origin + "/exports/" + format?.toLowerCase() + "/" + path;
   console.debug(link);
   const a = document.createElement("a");
   a.style.display = "none";
@@ -458,6 +453,12 @@ const toggleQueueDetails = (row: IParticipant): void => {
 };
 
 const openDetailedRows = ref<Record<string, boolean>>({});
+
+useHead({
+  title: computed(() =>
+    t("Participants to {eventTitle}", { eventTitle: event.value?.title })
+  ),
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

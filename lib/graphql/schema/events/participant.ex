@@ -61,6 +61,12 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     field(:total, :integer, description: "The total number of participants in the list")
   end
 
+  object :participant_export do
+    meta(:authorize, :user)
+    field(:path, :string, description: "The path to the exported file")
+    field(:format, :export_format_enum, description: "The path to the exported file")
+  end
+
   @desc """
   The possible values for a participant role
   """
@@ -132,7 +138,7 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
     end
 
     @desc "Export the event participants as a file"
-    field :export_event_participants, :string do
+    field :export_event_participants, :participant_export do
       arg(:event_id, non_null(:id),
         description: "The ID from the event for which to export participants"
       )

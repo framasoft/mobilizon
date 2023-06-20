@@ -482,6 +482,9 @@ export const EXPORT_EVENT_PARTICIPATIONS = gql`
     $format: ExportFormatEnum
     $roles: [ParticipantRoleEnum]
   ) {
-    exportEventParticipants(eventId: $eventId, format: $format, roles: $roles)
+    exportEventParticipants(eventId: $eventId, format: $format, roles: $roles) {
+      path
+      format
+    }
   }
 `;

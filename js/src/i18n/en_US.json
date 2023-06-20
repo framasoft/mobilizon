@@ -1564,5 +1564,8 @@
   "No apps authorized yet": "No apps authorized yet",
   "You have been logged-out": "You have been logged-out",
   "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.": "An “application programming interface” or “API” is a communication protocol that allows software components to communicate with each other. The Mobilizon API, for example, can allow third-party software tools to communicate with Mobilizon instances to carry out certain actions, such as posting events on your behalf, automatically and remotely.",
-  "Announcements": "Announcements"
+  "Announcements": "Announcements",
+  "Application authorized": "Application authorized",
+  "Check your device to continue. You may now close this window.": "Check your device to continue. You may now close this window.",
+  "Participants to {eventTitle}": "Participants to {eventTitle}"
 }
