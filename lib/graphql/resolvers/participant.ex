@@ -302,7 +302,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
         if can_event_be_updated_by?(event, moderator_actor) do
           case export_format(format, event, roles, locale) do
             {:ok, path} ->
-              {:ok, path}
+              {:ok, %{path: path, format: format}}
 
             {:error, :export_dependency_not_installed} ->
               {:error,
