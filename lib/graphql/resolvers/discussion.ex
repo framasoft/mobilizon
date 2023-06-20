@@ -195,6 +195,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Discussion do
     else
       {:member, false} ->
         {:error, :unauthorized}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
     end
   end
 
