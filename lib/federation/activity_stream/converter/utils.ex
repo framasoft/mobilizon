@@ -26,7 +26,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     Logger.debug("fetching tags")
     Logger.debug(inspect(tags))
 
-    tags |> Enum.flat_map(&fetch_tag/1) |> Enum.uniq() |> Enum.map(&existing_tag_or_data/1)
+    tags
+    |> Enum.flat_map(&fetch_tag/1)
+    |> Enum.uniq()
+    |> Enum.filter(& &1)
+    |> Enum.map(&existing_tag_or_data/1)
   end
 
   def fetch_tags(_), do: []
