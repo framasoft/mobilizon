@@ -122,6 +122,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     create_mention(mention, acc)
   end
 
+  defp create_mention(_, acc), do: acc
+
   @spec maybe_fetch_actor_and_attributed_to_id(map()) ::
           {:ok, Actor.t(), Actor.t() | nil} | {:error, atom()}
   def maybe_fetch_actor_and_attributed_to_id(%{
