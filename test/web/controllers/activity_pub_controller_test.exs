@@ -262,11 +262,16 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn
         |> get(Actor.build_url(actor.preferred_username, :outbox, page: 0))
         |> json_response(200)
+        |> Map.get("orderedItems")
+        # Published time can be different while we reach the second page
+        |> Enum.map(&Map.drop(&1, ["published"]))
 
       page_1_result =
         conn
         |> get(Actor.build_url(actor.preferred_username, :outbox, page: 1))
         |> json_response(200)
+        |> Map.get("orderedItems")
+        |> Enum.map(&Map.drop(&1, ["published"]))
 
       assert page_0_result == page_1_result
     end

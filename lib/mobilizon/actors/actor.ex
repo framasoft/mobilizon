@@ -341,7 +341,7 @@ defmodule Mobilizon.Actors.Actor do
     |> put_address(attrs)
     |> unique_constraint(:url, name: :actors_url_index)
     |> unique_constraint(:preferred_username, name: :actors_preferred_username_domain_type_index)
-    |> validate_format(:preferred_username, ~r/[a-z0-9_]+/)
+    |> validate_format(:preferred_username, ~r/[A-z0-9_]+/)
     |> put_change(:last_refreshed_at, DateTime.utc_now() |> DateTime.truncate(:second))
   end
 

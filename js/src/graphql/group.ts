@@ -186,6 +186,9 @@ export const GROUP_BASIC_FIELDS_FRAGMENTS = gql`
         ...PostBasicFields
       }
     }
+    members {
+      total
+    }
   }
   ${ACTOR_FRAGMENT}
   ${ADDRESS_FRAGMENT}

@@ -26,7 +26,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     Logger.debug("fetching tags")
     Logger.debug(inspect(tags))
 
-    tags |> Enum.flat_map(&fetch_tag/1) |> Enum.uniq() |> Enum.map(&existing_tag_or_data/1)
+    tags
+    |> Enum.flat_map(&fetch_tag/1)
+    |> Enum.uniq()
+    |> Enum.filter(& &1)
+    |> Enum.map(&existing_tag_or_data/1)
   end
 
   def fetch_tags(_), do: []
@@ -122,6 +126,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
     create_mention(mention, acc)
   end
 
+  defp create_mention(_, acc), do: acc
+
   @spec maybe_fetch_actor_and_attributed_to_id(map()) ::
           {:ok, Actor.t(), Actor.t() | nil} | {:error, atom()}
   def maybe_fetch_actor_and_attributed_to_id(%{
@@ -179,8 +185,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
 
   def maybe_fetch_actor_and_attributed_to_id(_), do: {:error, :no_actor_found}
 
-  @spec fetch_actor(String.t()) :: {:ok, Actor.t()} | {:error, atom()}
-  def fetch_actor(actor_url) do
+  @spec fetch_actor(String.t() | map()) :: {:ok, Actor.t()} | {:error, atom()}
+  def fetch_actor(%{"id" => actor_url}) when is_binary(actor_url), do: fetch_actor(actor_url)
+
+  def fetch_actor(actor_url) when is_binary(actor_url) do
     case ActivityPubActor.get_or_fetch_actor_by_url(actor_url) do
       {:ok, %Actor{suspended: false} = actor} ->
         {:ok, actor}
@@ -192,6 +200,8 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Utils do
         {:error, err}
     end
   end
+
+  def fetch_actor(_), do: {:error, :no_actor_found}
 
   @spec process_pictures(map(), integer()) :: Keyword.t()
   def process_pictures(object, actor_id) do

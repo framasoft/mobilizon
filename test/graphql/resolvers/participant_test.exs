@@ -1136,6 +1136,15 @@ defmodule Mobilizon.GraphQL.Resolvers.ParticipantTest do
       assert %Participant{role: :participant} =
                event.id |> Events.list_participants_for_event() |> Map.get(:elements) |> hd()
 
+      res =
+        conn
+        |> AbsintheHelpers.graphql_query(
+          query: @confirmation_mutation,
+          variables: %{confirmationToken: confirmation_token}
+        )
+
+      assert hd(res["errors"])["message"] == "Participation is already confirmed"
+
       assert_email_sent(to: @email)
     end
 
