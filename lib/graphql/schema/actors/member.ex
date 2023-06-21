@@ -38,7 +38,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.MemberType do
   A paginated list of members
   """
   object :paginated_member_list do
-    meta(:authorize, :user)
+    meta(:authorize, :all)
     field(:elements, list_of(:member), description: "A list of members")
     field(:total, :integer, description: "The total number of elements in the list")
   end

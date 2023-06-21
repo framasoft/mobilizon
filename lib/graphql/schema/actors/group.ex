@@ -125,7 +125,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
       description: "Whether the group is opened to all or has restricted access"
     )
 
-    field :members, :paginated_member_list, meta: [private: true, rule: :"read:group:members"] do
+    field :members, :paginated_member_list do
       arg(:name, :string, description: "A name to filter members by")
       arg(:page, :integer, default_value: 1, description: "The page in the paginated member list")
       arg(:limit, :integer, default_value: 10, description: "The limit of members per page")
