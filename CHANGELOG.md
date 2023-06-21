@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.2  (2023-06-21)
+
+### Bug Fixes
+
+* **activity settings:** fix saving activity settings ([6c1e1e9](https://framagit.org/framasoft/mobilizon/commits/6c1e1e98d81c7469f41beed17cfa1d4b718b5d13)), closes [#1251](https://framagit.org/framasoft/mobilizon/issues/1251)
+* **apps:** fix pruning old application device activations ([dd00620](https://framagit.org/framasoft/mobilizon/commits/dd00620b9a54b2b1356855d280e03c82befe15e4))
+* **backend:** filter out nil tags before starting looking for existing ones ([f04d2b9](https://framagit.org/framasoft/mobilizon/commits/f04d2b9225b80333f03a3cc9366df4a05af88a73))
+* **deps:** fix compatibility with elixir-plug/mime 2.0.5 ([d63999c](https://framagit.org/framasoft/mobilizon/commits/d63999c081bcbb5923af17b71edbfd13a3720d7d))
+* **discussions:** handle changeset errors when updating discussion ([ca06ec3](https://framagit.org/framasoft/mobilizon/commits/ca06ec397fbd6848e340dfae12c635736069a9f3))
+* **exports:** properly handle export format not being handled ([a76b1ca](https://framagit.org/framasoft/mobilizon/commits/a76b1ca66d776fbe4566d7f23b38b087ae32530b))
+* **federation:** allow federated usernames with capitals ([d502164](https://framagit.org/framasoft/mobilizon/commits/d5021647d753e6457e459b1f992da60876292428))
+* **federation:** handle fetch_actor with a map ([552ab4c](https://framagit.org/framasoft/mobilizon/commits/552ab4c80b2f99095028ab3685c71ff9efdb94eb))
+* **federation:** handle string values for tags when constructing mentions ([2729d5e](https://framagit.org/framasoft/mobilizon/commits/2729d5ed7acef7c20a4388f019152e80a9db163c))
+* **federation:** ignore mentions from everything that's not a AP Person ([56f341e](https://framagit.org/framasoft/mobilizon/commits/56f341e960b7ae0a5fe78d7174f0e05d14add3f2))
+* **federation:** only refresh instances once a day ([6745590](https://framagit.org/framasoft/mobilizon/commits/6745590e54dce236dc7a2319f9c49c4aa6858306))
+* **federation:** prevent fetching own relay actor ([b981f91](https://framagit.org/framasoft/mobilizon/commits/b981f91cf748079847ae7a71b68f98b6914c951f))
+* **federation:** restrict fetch_group first arg to binaries ([e8d34b4](https://framagit.org/framasoft/mobilizon/commits/e8d34b4ea9f06d16a5982da8e5ff5140852c985d))
+* **federation:** rotate relay keys on startup if missing private keys ([5381eaa](https://framagit.org/framasoft/mobilizon/commits/5381eaae22248cdc6585d19c10be7fe2b7f5709f))
+* **front:** add missing title to Participants View page ([a5a86a5](https://framagit.org/framasoft/mobilizon/commits/a5a86a5e1be08cf9123ee7ad0979974bc2be1cb4))
+* **front:** fix displaying user activity settings checkboxes ([8e21c30](https://framagit.org/framasoft/mobilizon/commits/8e21c30f92f47dcb742d8f7df2aed59191158d80)), closes [#1251](https://framagit.org/framasoft/mobilizon/issues/1251)
+* **front:** fix wrong key name for dialog.confirm() option ([c8f49e1](https://framagit.org/framasoft/mobilizon/commits/c8f49e1837d719cd737c3e1ae976f14b20345e2b))
+* **front:** fix wrong value for timezone when it has no prefix ([2dd0e13](https://framagit.org/framasoft/mobilizon/commits/2dd0e13eba8bb5c04af45bae0de059deb93c2efa)), closes [#1275](https://framagit.org/framasoft/mobilizon/issues/1275)
+* **group:** fix getting group members count ([f749518](https://framagit.org/framasoft/mobilizon/commits/f749518bf7a29a86da559bfe6aba6d7485e7cfeb)), closes [#1303](https://framagit.org/framasoft/mobilizon/issues/1303)
+* **participant exports:** fix participants by returning the export type as well as the file path ([49b04c9](https://framagit.org/framasoft/mobilizon/commits/49b04c9b19517daa0a07656779d53001b39ab803))
+* **participant:** handle re-confirming participation ([5cc5c99](https://framagit.org/framasoft/mobilizon/commits/5cc5c9943cbc9a53246dda98958e99d004f0dfa9))
+
+### Features
+
+* **graphql:** validate timezone id as a GraphQL Scalar ([845bb6a](https://framagit.org/framasoft/mobilizon/commits/845bb6ac90081ef8cb4cff8d6ec3d11bfc19857c)), closes [#1299](https://framagit.org/framasoft/mobilizon/issues/1299)
+
+
 ## 3.1.1 (2023-06-02)
 
 ### Features
