@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.1.3 (2023-06-21)
+
+### Bug Fixes
+
+* **groups:** fix unauthenticated access to groups because of missing read:group:members permission ([3714925](https://framagit.org/framasoft/mobilizon/commits/3714925896ad0415496352b9901ebec199afa0f2)), closes [#1311](https://framagit.org/framasoft/mobilizon/issues/1311)
+
+
 ## 3.1.2  (2023-06-21)
 
 ### Bug Fixes
