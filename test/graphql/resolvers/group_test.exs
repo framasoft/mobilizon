@@ -188,7 +188,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "Not authorized to access object paginated_member_list"
+               "Not authorized to access object member"
 
       # Login with non-member
       res =
@@ -259,7 +259,7 @@ defmodule Mobilizon.Web.Resolvers.GroupTest do
         )
 
       assert hd(res["errors"])["message"] ==
-               "Not authorized to access object paginated_member_list"
+               "Not authorized to access object member"
     end
   end
 

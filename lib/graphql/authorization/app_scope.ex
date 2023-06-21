@@ -67,7 +67,6 @@ defmodule Mobilizon.GraphQL.Authorization.AppScope do
       :"read:group:events",
       :"read:group:discussions",
       :"read:group:resources",
-      :"read:group:members",
       :"read:group:followers",
       :"read:group:todo_lists",
       :"read:group:activities"

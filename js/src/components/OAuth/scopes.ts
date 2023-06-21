@@ -104,13 +104,6 @@ export const scope: Record<
     ),
     icon: "chat",
   },
-  "read:group:members": {
-    title: t("Access group members"),
-    text: t(
-      "This application will be allowed to list group members in all of the groups you're a member of"
-    ),
-    icon: "account-circle",
-  },
   "read:group:followers": {
     title: t("Access group followers"),
     text: t(
