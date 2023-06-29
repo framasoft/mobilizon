@@ -36,10 +36,18 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   @spec as_to_model_data(map()) :: map() | {:error, :actor_not_allowed_type}
   def as_to_model_data(%{"type" => type} = data) when type in @allowed_types do
     avatar =
-      download_picture(get_in(data, ["icon", "url"]), get_in(data, ["icon", "name"]), "avatar")
+      download_picture(
+        get_picture(data, ["icon", "url"]),
+        get_picture(data, ["icon", "name"]),
+        "avatar"
+      )
 
     banner =
-      download_picture(get_in(data, ["image", "url"]), get_in(data, ["image", "name"]), "banner")
+      download_picture(
+        get_picture(data, ["image", "url"]),
+        get_picture(data, ["image", "name"]),
+        "banner"
+      )
 
     address = get_address(data["location"])
 
@@ -193,4 +201,10 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Actor do
   end
 
   defp maybe_add_physical_address(res, _), do: res
+
+  defp get_picture(nil, _keys), do: nil
+  defp get_picture(url, _keys) when is_binary(url), do: url
+
+  defp get_picture(data, [key | rest] = keys) when is_map(data) and is_list(keys),
+    do: get_picture(data[key], rest)
 end
