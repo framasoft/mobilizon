@@ -282,6 +282,7 @@ import Link from "vue-material-design-icons/Link.vue";
 import { Dialog } from "@/plugins/dialog";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
+import { AbsintheGraphQLErrors } from "@/types/errors.model";
 
 const props = defineProps<{
   slug: string;
@@ -303,9 +304,26 @@ const { result: membershipsResult, loading: membershipsLoading } = useQuery<{
 );
 const memberships = computed(() => membershipsResult.value?.person.memberships);
 
-const { result: postResult, loading: postLoading } = useQuery<{
+const {
+  result: postResult,
+  loading: postLoading,
+  onError: onFetchPostError,
+} = useQuery<{
   post: IPost;
 }>(FETCH_POST, () => ({ slug: props.slug }));
+
+const handleErrors = (errors: AbsintheGraphQLErrors): void => {
+  if (
+    errors.some((error) => error.status_code === 404) ||
+    errors.some(({ message }) => message.includes("has invalid value $uuid"))
+  ) {
+    router.replace({ name: RouteName.PAGE_NOT_FOUND });
+  }
+};
+
+onFetchPostError(({ graphQLErrors }) =>
+  handleErrors(graphQLErrors as AbsintheGraphQLErrors)
+);
 
 const post = computed(() => postResult.value?.post);
 
