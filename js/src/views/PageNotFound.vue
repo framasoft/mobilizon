@@ -1,5 +1,5 @@
 <template>
-  <section class="container mx-auto pt-4 is-max-desktop max-w-2xl">
+  <section class="container mx-auto py-4 is-max-desktop max-w-2xl">
     <div class="">
       <div class="">
         <picture>
