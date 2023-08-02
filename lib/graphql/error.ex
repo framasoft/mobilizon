@@ -123,7 +123,7 @@ defmodule Mobilizon.GraphQL.Error do
   defp metadata(:unknown), do: {500, dgettext("errors", "Something went wrong")}
 
   defp metadata(code) do
-    Logger.warn("Unhandled error code: #{inspect(code)}")
+    Logger.warning("Unhandled error code: #{inspect(code)}")
     {422, to_string(code)}
   end
 

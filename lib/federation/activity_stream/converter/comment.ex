@@ -202,7 +202,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
 
         # Anything else is kind of a MP
         {:error, parent} ->
-          Logger.warn("Parent object is something we don't handle")
+          Logger.warning("Parent object is something we don't handle")
           Logger.debug(inspect(parent))
           data
       end

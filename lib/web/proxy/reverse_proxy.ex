@@ -126,7 +126,7 @@ defmodule Mobilizon.Web.ReverseProxy do
         |> halt()
 
       {:is_url, false} ->
-        Logger.warn("Tried to reverse proxy URL #{inspect(url)}")
+        Logger.warning("Tried to reverse proxy URL #{inspect(url)}")
 
         conn
         |> error_or_redirect(url, 400, "Request failed", opts)
@@ -202,7 +202,7 @@ defmodule Mobilizon.Web.ReverseProxy do
         halt(conn)
 
       {:error, error, conn} ->
-        Logger.warn(
+        Logger.warning(
           "#{__MODULE__} request to #{url} failed while reading/chunking: #{inspect(error)}"
         )
 

@@ -70,7 +70,7 @@ defmodule Mobilizon.Web.ErrorView do
   # template is found, let's render it as 500
   def template_not_found(template, assigns) do
     require Logger
-    Logger.warn("Template #{inspect(template)} not found")
+    Logger.warning("Template #{inspect(template)} not found")
     render("500.html", assigns)
   end
 end

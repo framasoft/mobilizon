@@ -87,7 +87,7 @@ defmodule Mix.Tasks.Mobilizon.Actors.Refresh do
   rescue
     _ ->
       if verbose do
-        Logger.warn("Failed to refresh #{username}")
+        Logger.warning("Failed to refresh #{username}")
       end
 
       nil

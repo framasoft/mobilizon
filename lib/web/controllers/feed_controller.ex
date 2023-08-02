@@ -65,7 +65,7 @@ defmodule Mobilizon.Web.FeedController do
         {:error, :not_found}
 
       err ->
-        Logger.warn("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
+        Logger.warning("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
         {:error, :not_found}
     end
   end
@@ -89,7 +89,7 @@ defmodule Mobilizon.Web.FeedController do
         {:error, :not_found}
 
       err ->
-        Logger.warn("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
+        Logger.warning("Unable to find feed data cached for key #{key}, returned #{inspect(err)}")
         {:error, :not_found}
     end
   end
