@@ -57,6 +57,7 @@
         />
         <form
           v-else-if="!discussionLoading && !error"
+          v-show="editTitleMode"
           @submit.prevent="updateDiscussion"
           class="w-full"
         >
