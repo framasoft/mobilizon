@@ -22,7 +22,7 @@ const props = defineProps<{
   preferredUsername: string;
 }>();
 
-const { group } = useGroup(props.preferredUsername);
+const { group } = useGroup(computed(() => props.preferredUsername));
 
 const { t } = useI18n({ useScope: "global" });
 

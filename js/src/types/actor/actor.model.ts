@@ -16,6 +16,10 @@ export interface IActor {
 }
 
 export type IMinimalActor = Pick<IActor, "preferredUsername" | "domain">;
+export type IMinimalActorWithName = Pick<
+  IActor,
+  "preferredUsername" | "domain" | "name"
+>;
 
 export class Actor implements IActor {
   id?: string;
@@ -72,13 +76,13 @@ export function usernameWithDomain(
   return actor.preferredUsername;
 }
 
-export function displayName(actor: IActor | undefined): string {
+export function displayName(actor: IMinimalActorWithName | undefined): string {
   return actor && actor.name != null && actor.name !== ""
     ? actor.name
     : usernameWithDomain(actor);
 }
 
-export function displayNameAndUsername(actor: IActor): string {
+export function displayNameAndUsername(actor: IMinimalActorWithName): string {
   if (actor.name) {
     return `${actor.name} (@${usernameWithDomain(actor)})`;
   }

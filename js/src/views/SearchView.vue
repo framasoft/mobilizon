@@ -852,6 +852,7 @@ const arrayTransformer: RouteQueryTransformer<string[]> = {
 const props = defineProps<{
   tag?: string;
 }>();
+const tag = computed(() => props.tag);
 
 const page = useRouteQuery("page", 1, integerTransformer);
 const eventPage = useRouteQuery("eventPage", 1, integerTransformer);
@@ -864,7 +865,7 @@ const distance = useRouteQuery("distance", "10_km");
 const when = useRouteQuery("when", "any");
 const contentType = useRouteQuery(
   "contentType",
-  props.tag ? ContentType.EVENTS : ContentType.ALL,
+  tag.value ? ContentType.EVENTS : ContentType.ALL,
   enumTransformer(ContentType)
 );
 
@@ -1286,7 +1287,7 @@ const { result: searchElementsResult, loading: searchLoading } = useQuery<{
   searchGroups: Paginate<TypeNamed<IGroup>>;
 }>(SEARCH_EVENTS_AND_GROUPS, () => ({
   term: searchDebounced.value,
-  tags: props.tag,
+  tags: tag.value,
   location: geoHashLocation.value,
   beginsOn: start.value,
   endsOn: end.value,

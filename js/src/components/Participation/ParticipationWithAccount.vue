@@ -17,7 +17,7 @@ const props = defineProps<{
   uuid: string;
 }>();
 
-const { event } = useFetchEvent(props.uuid);
+const { event } = useFetchEvent(computed(() => props.uuid));
 
 const { t } = useI18n({ useScope: "global" });
 

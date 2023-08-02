@@ -83,7 +83,9 @@
       detail-key="id"
       v-model:checked-rows="checkedRows"
       checkable
-      :is-row-checkable="(row: IParticipant) => row.role !== ParticipantRole.CREATOR"
+      :is-row-checkable="
+        (row: IParticipant) => row.role !== ParticipantRole.CREATOR
+      "
       checkbox-position="left"
       :show-detail-icon="false"
       :loading="participantsLoading"

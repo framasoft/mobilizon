@@ -41,12 +41,12 @@ const keys = computed((): string[] => {
   return Array.from(monthlyGroupedEvents.value.keys()).sort((a, b) => {
     const aParams = a.split("-").map((x) => parseInt(x, 10)) as [
       number,
-      number
+      number,
     ];
     const aDate = new Date(...aParams);
     const bParams = b.split("-").map((x) => parseInt(x, 10)) as [
       number,
-      number
+      number,
     ];
     const bDate = new Date(...bParams);
     return props.order === "DESC"

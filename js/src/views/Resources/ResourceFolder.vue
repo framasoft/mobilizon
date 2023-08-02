@@ -36,9 +36,12 @@
       :resources="resource.children.elements"
       :isRoot="resource.path === '/'"
       :group="resource.actor"
-      @delete="(resourceID: string) => deleteResource({
-        id: resourceID,
-      })"
+      @delete="
+        (resourceID: string) =>
+          deleteResource({
+            id: resourceID,
+          })
+      "
       @update="updateResource"
       @rename="handleRename"
       @move="handleMove"

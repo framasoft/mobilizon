@@ -44,9 +44,13 @@
           <router-link
             v-if="activity.object"
             :to="{
-            name: RouteName.GROUP,
-            params: { preferredUsername: usernameWithDomain(activity.object as IActor) },
-          }"
+              name: RouteName.GROUP,
+              params: {
+                preferredUsername: usernameWithDomain(
+                  activity.object as IActor
+                ),
+              },
+            }"
             >{{ subjectParams.group_name }}</router-link
           >
           <b v-else>{{ subjectParams.group_name }}</b>
@@ -78,19 +82,25 @@ const props = defineProps<{
   activity: IActivity;
 }>();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+const useIsActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const useActivitySubjectParamsFct = useActivitySubjectParams();
 
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  useIsActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() =>
+  useActivitySubjectParamsFct(props.activity)
+);
 
 const translation = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityGroupSubject.GROUP_CREATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You created the group {group}.";
       }
       return "{profile} created the group {group}.";
     case ActivityGroupSubject.GROUP_UPDATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You updated the group {group}.";
       }
       return "{profile} updated the group {group}.";
@@ -114,8 +124,8 @@ const group = computed(() => props.activity.object as IGroup);
 
 const details = computed((): string[] => {
   const localDetails = [];
-  const changes = subjectParams.group_changes.split(",");
-  if (changes.includes("name") && subjectParams.old_group_name) {
+  const changes = subjectParams.value.group_changes.split(",");
+  if (changes.includes("name") && subjectParams.value.old_group_name) {
     localDetails.push("{old_group_name} was renamed to {group}.");
   }
   if (changes.includes("visibility") && group.value.visibility) {

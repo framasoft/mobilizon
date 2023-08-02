@@ -10,7 +10,7 @@
     >
       <event-card
         v-if="instanceOfIEvent(activeElement)"
-        :event="(activeElement as IEvent)"
+        :event="activeElement as IEvent"
         mode="column"
         :options="{
           isRemoteEvent: activeElement.__typename === 'EventResult',
@@ -19,7 +19,7 @@
       />
       <group-card
         v-else
-        :group="(activeElement as IGroup)"
+        :group="activeElement as IGroup"
         mode="column"
         :isRemoteGroup="activeElement.__typename === 'GroupResult'"
         :isLoggedIn="isLoggedIn"
@@ -31,7 +31,7 @@
     >
       <event-card
         v-if="instanceOfIEvent(activeElement)"
-        :event="(activeElement as IEvent)"
+        :event="activeElement as IEvent"
         mode="column"
         :options="{
           isRemoteEvent: activeElement.__typename === 'EventResult',
@@ -40,7 +40,7 @@
       />
       <group-card
         v-else
-        :group="(activeElement as IGroup)"
+        :group="activeElement as IGroup"
         mode="column"
         :isRemoteGroup="activeElement.__typename === 'GroupResult'"
         :isLoggedIn="isLoggedIn"
@@ -330,7 +330,11 @@ watch([markers, eventMarkers, groupMarkers], () => {
 
   text-align: center;
   border-radius: 15px;
-  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font:
+    12px "Helvetica Neue",
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 .marker-cluster span {

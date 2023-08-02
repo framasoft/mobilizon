@@ -24,12 +24,15 @@ type schemaType = {
 
 // eslint-disable-next-line no-underscore-dangle
 const types = introspectionQueryResultData.__schema.types as schemaType[];
-export const possibleTypes = types.reduce((acc, type) => {
-  if (type.kind === "INTERFACE") {
-    acc[type.name] = type.possibleTypes.map(({ name }) => name);
-  }
-  return acc;
-}, {} as Record<string, string[]>);
+export const possibleTypes = types.reduce(
+  (acc, type) => {
+    if (type.kind === "INTERFACE") {
+      acc[type.name] = type.possibleTypes.map(({ name }) => name);
+    }
+    return acc;
+  },
+  {} as Record<string, string[]>
+);
 
 const replaceMergePolicy = <TExisting = any, TIncoming = any>(
   _existing: TExisting,

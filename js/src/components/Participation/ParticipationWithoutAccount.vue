@@ -156,7 +156,7 @@ const { anonymousActorId } = useAnonymousActorId();
 const props = defineProps<{
   uuid: string;
 }>();
-const { event, loading } = useFetchEventBasic(props.uuid);
+const { event, loading } = useFetchEventBasic(computed(() => props.uuid));
 
 const { t, locale } = useI18n({ useScope: "global" });
 

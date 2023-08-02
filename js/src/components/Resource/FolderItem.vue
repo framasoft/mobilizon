@@ -49,7 +49,7 @@ import RouteName from "@/router/name";
 import { IMinimalActor, usernameWithDomain } from "@/types/actor";
 import ResourceDropdown from "./ResourceDropdown.vue";
 import { UPDATE_RESOURCE } from "@/graphql/resources";
-import { inject, ref } from "vue";
+import { ComputedRef, computed, inject, ref } from "vue";
 import { formatDateTimeString } from "@/filters/datetime";
 import { useMutation } from "@vue/apollo-composable";
 import { resourcePathArray } from "@/components/Resource/utils";
@@ -73,11 +73,11 @@ const emit = defineEmits<{
 
 const list = ref([]);
 
-const groupObject: Record<string, unknown> = {
+const groupObject: ComputedRef<Record<string, unknown>> = computed(() => ({
   name: `folder-${props.resource?.title}`,
   pull: false,
   put: ["resources"],
-};
+}));
 
 const onChange = async (evt: any) => {
   if (evt.added && evt.added.element) {

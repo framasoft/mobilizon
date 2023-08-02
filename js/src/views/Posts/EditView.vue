@@ -169,9 +169,10 @@ const props = withDefaults(
   }>(),
   { isUpdate: false }
 );
+const preferredUsername = computed(() => props.preferredUsername);
 
 const { currentActor } = useCurrentActorClient();
-const { group } = useGroup(props.preferredUsername);
+const { group } = useGroup(preferredUsername);
 
 const { result: postResult, loading: postLoading } = useQuery<{
   post: IPost;

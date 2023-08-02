@@ -75,8 +75,9 @@ import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
 
 const props = defineProps<{ preferredUsername: string }>();
+const preferredUsername = computed(() => props.preferredUsername);
 
-const { group } = useGroup(props.preferredUsername);
+const { group } = useGroup(preferredUsername);
 
 const { t } = useI18n({ useScope: "global" });
 

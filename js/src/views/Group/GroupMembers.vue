@@ -275,6 +275,7 @@ useHead({
 });
 
 const props = defineProps<{ preferredUsername: string }>();
+const preferredUsername = computed(() => props.preferredUsername);
 
 const emit = defineEmits(["sort"]);
 
@@ -440,7 +441,7 @@ const {
       {
         query: GROUP_MEMBERS,
         variables: {
-          groupName: props.preferredUsername,
+          groupName: preferredUsername.value,
           page: page.value,
           limit: MEMBERS_PER_PAGE,
           roles: roles.value,
@@ -547,5 +548,5 @@ const personMemberships = computed(
   () => person.value?.memberships ?? { total: 0, elements: [] }
 );
 
-const { person } = usePersonStatusGroup(props.preferredUsername);
+const { person } = usePersonStatusGroup(preferredUsername.value);
 </script>

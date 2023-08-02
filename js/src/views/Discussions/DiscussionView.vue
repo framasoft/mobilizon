@@ -108,9 +108,12 @@
               text: comment.text,
             })
         "
-        @delete-comment="(comment: IComment) => deleteComment({
-      commentId: comment.id as string,
-    })"
+        @delete-comment="
+          (comment: IComment) =>
+            deleteComment({
+              commentId: comment.id as string,
+            })
+        "
       />
       <o-button
         v-if="discussion.comments.elements.length < discussion.comments.total"
@@ -198,11 +201,11 @@ const {
 
 subscribeToMore({
   document: DISCUSSION_COMMENT_CHANGED,
-  variables: {
+  variables: () => ({
     slug: props.slug,
     page: page.value,
     limit: COMMENTS_PER_PAGE,
-  },
+  }),
   updateQuery(
     previousResult: any,
     { subscriptionData }: { subscriptionData: any }

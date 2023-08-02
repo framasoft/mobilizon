@@ -360,7 +360,7 @@ const {
   onError: onFetchEventError,
   loading: eventLoading,
   refetch: refetchEvent,
-} = useFetchEvent(props.uuid);
+} = useFetchEvent(propsUUID);
 
 watch(propsUUID, (newUUid) => {
   refetchEvent({ uuid: newUUid });
