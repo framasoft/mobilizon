@@ -37,7 +37,7 @@
     <div v-show="authApplicationError">
       <div
         class="rounded-lg text-white bg-mbz-danger shadow-xl my-6 p-4 flex items-center gap-2"
-        v-if="authApplicationGraphError?.message === 'not_found'"
+        v-if="authApplicationGraphError?.code === 'application_not_found'"
       >
         <AlertCircle :size="42" />
         <div>
