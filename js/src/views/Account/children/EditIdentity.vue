@@ -25,7 +25,7 @@
           aria-required="true"
           required
           v-model="identity.name"
-          @input="(event) => updateUsername(event.target.value)"
+          @input="(event: any) => updateUsername(event.target.value)"
           id="identity-display-name"
           dir="auto"
         />
