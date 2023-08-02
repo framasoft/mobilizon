@@ -110,10 +110,10 @@
         :label="t('Participant')"
         v-slot="props"
       >
-        <article>
+        <article class="flex gap-2">
           <figure v-if="props.row.actor.avatar">
             <img
-              class="rounded"
+              class="rounded-full w-12 h-12 object-cover"
               :src="props.row.actor.avatar.url"
               alt=""
               height="48"
@@ -127,13 +127,15 @@
           <AccountCircle v-else :size="48" />
           <div>
             <div class="prose dark:prose-invert">
-              <span v-if="props.row.actor.preferredUsername !== 'anonymous'">
+              <p v-if="props.row.actor.preferredUsername !== 'anonymous'">
                 <span v-if="props.row.actor.name">{{
                   props.row.actor.name
                 }}</span
                 ><br />
-                >@{{ usernameWithDomain(props.row.actor) }}</span
-              >
+                <span class="text-sm"
+                  >@{{ usernameWithDomain(props.row.actor) }}</span
+                >
+              </p>
               <span v-else>
                 {{ t("Anonymous participant") }}
               </span>
