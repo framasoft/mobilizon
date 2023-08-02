@@ -156,7 +156,12 @@ import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { DELETE_COMMENT, UPDATE_COMMENT } from "@/graphql/comment";
 import RouteName from "../../router/name";
 import { IComment } from "../../types/comment.model";
-import { ApolloCache, FetchResult, gql } from "@apollo/client/core";
+import {
+  ApolloCache,
+  FetchResult,
+  InMemoryCache,
+  gql,
+} from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import {
   defineAsyncComponent,
@@ -257,7 +262,41 @@ const editTitleMode = ref(false);
 const hasMoreComments = ref(true);
 const error = ref<string | null>(null);
 
-const { mutate: replyToDiscussionMutation } = useMutation(REPLY_TO_DISCUSSION);
+const { mutate: replyToDiscussionMutation } = useMutation<{
+  replyToDiscussion: IDiscussion;
+}>(REPLY_TO_DISCUSSION, () => ({
+  update: (store: ApolloCache<InMemoryCache>, { data }: FetchResult) => {
+    const discussionData = store.readQuery<{
+      discussion: IDiscussion;
+    }>({
+      query: GET_DISCUSSION,
+      variables: {
+        slug: props.slug,
+        page: page.value,
+      },
+    });
+    if (!discussionData) return;
+    const { discussion: discussionCached } = discussionData;
+
+    store.writeQuery({
+      query: GET_DISCUSSION,
+      variables: { slug: props.slug, page: page.value },
+      data: {
+        discussion: {
+          ...discussionCached,
+          lastComment: data?.replyToDiscussion.lastComment,
+          comments: {
+            elements: [
+              ...discussionCached.comments.elements,
+              data?.replyToDiscussion.lastComment,
+            ],
+            total: discussionCached.comments.total + 1,
+          },
+        },
+      },
+    });
+  },
+}));
 
 const reply = () => {
   if (newComment.value === "") return;
