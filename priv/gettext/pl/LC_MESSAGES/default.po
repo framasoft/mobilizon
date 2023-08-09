@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2023-08-08 17:29+0000\n"
+"PO-Revision-Date: 2023-08-10 02:28+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/pl/>\n"
@@ -922,13 +922,13 @@ msgstr "Potrzebujesz pomocy? Coś nie działa prawidłowo?"
 #, elixir-autogen, elixir-format
 msgid "You created an account on <b>%{host}</b> with this email address. You are one click away from activating it."
 msgstr ""
-"Utworzyłeś(-aś) konto na %{host} używając tego adresu e-mail. Zostało jedno "
-"kliknięcie, aby zaktywować je."
+"Utworzyłeś(-aś) konto na <b>%{host}</b> używając tego adresu e-mail. Jesteś "
+"jedno kliknięcie od aktywacji."
 
 #: lib/web/templates/email/report.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "New report on <b>%{instance}</b>"
-msgstr "Nowe zgłoszenie na %{instance}"
+msgstr "Nowe zgłoszenie na <b>%{instance}</b>"
 
 #: lib/web/templates/email/email_changed_old.html.heex:47
 #, elixir-autogen, elixir-format
@@ -938,13 +938,13 @@ msgstr "Adres e-mail Twojego konta na <b>%{host}</b> zostanie zmieniony na:"
 #: lib/web/templates/email/password_reset.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on <b>%{instance}</b>."
-msgstr "Poprosiłeś(-aś) o nowe hasło do swojego konta na %{instance}."
+msgstr "Poprosiłeś(-aś) o nowe hasło do swojego konta na <b>%{instance}</b>."
 
 #: lib/web/templates/email/email.html.heex:112
 #: lib/web/templates/email/email.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Please do not use it for real purposes."
-msgstr "Nie używaj go do żadnych rzeczywistych celów."
+msgstr "Nie używaj go do żadnych rzeczywistych zastosowań."
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:88
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6
@@ -958,14 +958,16 @@ msgstr "Nie używaj go do żadnych rzeczywistych celów."
 msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
 msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
 msgstr[0] ""
-"Jeżeli musisz anulować swoje uczestnictwo, przejdź na stronę wydarzenia "
-"używając powyższego przycisku i naciśnij przycisk zgłaszania udziału."
+"Jeżeli chcesz anulować swoje uczestnictwo, przejdź na stronę wydarzenia "
+"używając powyższego linku i kliknij przycisk zgłaszania udziału."
 msgstr[1] ""
-"Jeżeli musisz anulować swoje uczestnictwo, przejdź na stronę wydarzenia "
-"używając powyższego przycisku i naciśnij przycisk zgłaszania udziału."
+"Jeśli chcesz anulować swój udział w jednym lub kilku wydarzeniach, po prostu "
+"wejdź na strony wydarzeń za pomocą linków powyżej i kliknij przycisk "
+"zgłaszania udziału."
 msgstr[2] ""
-"Jeżeli musisz anulować swoje uczestnictwo, przejdź na stronę wydarzenia "
-"używając powyższego przycisku i naciśnij przycisk zgłaszania udziału."
+"Jeśli chcesz anulować swój udział w jednym lub kilku wydarzeniach, po prostu "
+"wejdź na strony wydarzeń za pomocą powyższych linków i kliknij przycisk "
+"zgłaszania udziału."
 
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
@@ -975,7 +977,7 @@ msgstr "%{instance} jest serwerem Mobilizon."
 #: lib/web/templates/email/email.html.heex:187
 #, elixir-autogen, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
-msgstr "%{instance} jest serwerem Mobilizon."
+msgstr "<b>%{instance}</b> jest serwerem Mobilizon."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:18
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
@@ -1518,8 +1520,7 @@ msgstr "Twój udział w wydarzeniu %{title} został zatwierdzony"
 #: lib/web/templates/email/report.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr ""
-"%{reporter_name} (%{reporter_username}) zgłosił(a) następującą zawartość."
+msgstr "<b>%{reporter}</b> zgłosił(a) następującą zawartość."
 
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-autogen, elixir-format
@@ -1750,7 +1751,7 @@ msgstr "Status uczestnika"
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Administrator"
-msgstr "Administrator(ka)"
+msgstr "Administrator (ka)"
 
 #: lib/service/export/participants/common.ex:55
 #, elixir-autogen, elixir-format
@@ -1767,7 +1768,7 @@ msgstr "Moderator(ka)"
 #: lib/service/export/participants/common.ex:37
 #, elixir-autogen, elixir-format
 msgid "Not approved"
-msgstr "Niezatwierdzony(-a)"
+msgstr "Nie zatwierdzony(-a)"
 
 #: lib/service/export/participants/common.ex:40
 #, elixir-autogen, elixir-format
@@ -1807,7 +1808,7 @@ msgstr "Osoby uczestniczące w %{event}"
 #: lib/service/export/participants/common.ex:88
 #, elixir-autogen, elixir-format
 msgid "Anonymous participant"
-msgstr "Osoby uczestniczące anonimowo"
+msgstr "Osoba uczestnicząca anonimowo"
 
 #: lib/web/templates/email/date/event_tz_date.html.heex:12
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:20
@@ -1837,7 +1838,7 @@ msgstr "W prpogramie w tym tygodniu"
 #: lib/web/templates/email/participation/event_card.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Details"
-msgstr "Szczegóły"
+msgstr "szczegóły"
 
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:28
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
@@ -1859,7 +1860,7 @@ msgstr "Dnia %{date} od %{start_time} do %{end_time}"
 #: lib/web/templates/email/participation/event_card.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Read more"
-msgstr "Dowiedz się więcej"
+msgstr "Dowiedz się więcej"
 
 #: lib/web/templates/email/participation/card/_metadata.html.heex:121
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
@@ -2054,7 +2055,7 @@ msgstr ""
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on %{instance}. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
 "Cześć! Wygląda na to, że próbowałeś(-aś) zmienić adres e-mail powiązany z "
-"Twoim kontem na <b>%{instance}</b>. Jeżeli nadal chcesz to zrobić, naciśnij "
+"Twoim kontem na <b>%{instance}</b>. Jeżeli nadal chcesz to zrobić, kliknij "
 "poniższy przycisk, aby potwierdzić zmianę. Będziesz mógł/mogła logować się "
 "na %{instance} używając tego nowego adresu e-mail."
 
@@ -2200,8 +2201,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr ""
-"Aby zatwierdzić to zaproszenie, przejdź do ustawień administracyjnych "
-"profilu."
+"Aby zaakceptować to zaproszenie, przejdź do strony profilu w panelu "
+"administracyjnym."
 
 #: lib/web/templates/email/instance_follow.html.heex:110
 #: lib/web/templates/email/instance_follow.html.heex:120
@@ -2237,7 +2238,7 @@ msgstr "Szlachetne cele"
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
-msgstr "Humor"
+msgstr "Komedia / humor"
 
 #: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
@@ -2287,7 +2288,7 @@ msgstr "LGBT+"
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
-msgstr "Język i kultura"
+msgstr "Język & Kultura"
 
 #: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
@@ -2312,12 +2313,12 @@ msgstr "Muzyka"
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
 msgid "Networking"
-msgstr "Networking"
+msgstr "<i>Networking</i>"
 
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
-msgstr "Turystyka, sporty, gry i zabawy w terenie"
+msgstr "Turystyka & Sporty, gry i zabawy w terenie"
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
@@ -2342,12 +2343,12 @@ msgstr "Fotografia"
 #: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
-msgstr "Nauka i technika"
+msgstr "Nauka & Technika"
 
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr "Duchowość, religia i przekonania"
+msgstr "Duchowość, Religia & Przekonania"
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
