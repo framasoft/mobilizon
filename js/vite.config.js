@@ -23,10 +23,40 @@ export default defineConfig(({ command }) => {
         strategies: "injectManifest",
         srcDir: "src",
         filename: "service-worker.ts",
+        theme_color: "#ffd599",
         // injectRegister: "auto",
         // devOptions: {
         //   enabled: true,
         // },
+        manifest: {
+          name: "Mobilizon",
+          short_name: "Mobilizon",
+          orientation: "portrait-primary",
+          icons: [
+            {
+              src: "./img/icons/android-chrome-192x192.png",
+              sizes: "192x192",
+              type: "image/png",
+            },
+            {
+              src: "./img/icons/android-chrome-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+            },
+            {
+              src: "./img/icons/android-chrome-maskable-192x192.png",
+              sizes: "192x192",
+              type: "image/png",
+              purpose: "maskable",
+            },
+            {
+              src: "./img/icons/android-chrome-maskable-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable",
+            },
+          ],
+        },
       }),
       visualizer(),
     ],
