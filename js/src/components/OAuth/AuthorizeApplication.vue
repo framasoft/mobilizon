@@ -91,7 +91,7 @@
 
 <script lang="ts" setup>
 import { useHead } from "@vueuse/head";
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
 import {
@@ -102,6 +102,7 @@ import RouteName from "@/router/name";
 import { IApplication } from "@/types/application.model";
 import { scope as oAuthScopes } from "./scopes";
 import AlertCircle from "vue-material-design-icons/AlertCircle.vue";
+import { Notifier } from "@/plugins/notifier";
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -123,23 +124,26 @@ const collapses = computed(() =>
     .filter((localScope) => localScope)
 );
 
-const { mutate: authorizeMutation, onDone: onAuthorizeMutationDone } =
-  useMutation<
-    {
-      authorizeApplication: {
-        code: string;
-        state: string;
-        clientId: string;
-        scope: string;
-      };
-    },
-    {
-      applicationClientId: string;
-      redirectURI: string;
-      state?: string | null;
-      scope?: string | null;
-    }
-  >(AUTORIZE_APPLICATION);
+const {
+  mutate: authorizeMutation,
+  onDone: onAuthorizeMutationDone,
+  onError: onAuthorizeMutationError,
+} = useMutation<
+  {
+    authorizeApplication: {
+      code: string;
+      state: string;
+      clientId: string;
+      scope: string;
+    };
+  },
+  {
+    applicationClientId: string;
+    redirectURI: string;
+    state?: string | null;
+    scope?: string | null;
+  }
+>(AUTORIZE_APPLICATION);
 
 const authorize = () => {
   authorizeMutation({
@@ -207,6 +211,14 @@ onAuthorizeMutationDone(({ data }) => {
       new URL(`${props.redirectURI}?${params.toString()}`)
     );
   }
+});
+
+const notifier = inject<Notifier>("notifier");
+
+onAuthorizeMutationError(({ graphQLErrors }) => {
+  graphQLErrors.forEach(({ message }) => {
+    notifier?.error(message);
+  });
 });
 
 useHead({
