@@ -189,7 +189,7 @@
 import PictureUpload from "@/components/PictureUpload.vue";
 import { GroupVisibility, MemberRole, Openness } from "@/types/enums";
 import { IGroup, usernameWithDomain, displayName } from "@/types/actor";
-import { Address, IAddress } from "@/types/address.model";
+import { IAddress } from "@/types/address.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { ErrorResponse } from "@apollo/client/link/error";
 import RouteName from "@/router/name";
@@ -218,14 +218,11 @@ const FullAddressAutoComplete = defineAsyncComponent(
 );
 
 const props = defineProps<{ preferredUsername: string }>();
+const preferredUsername = computed(() => props.preferredUsername);
 
 const { currentActor } = useCurrentActorClient();
 
-const {
-  group,
-  loading,
-  onResult: onGroupResult,
-} = useGroup(props.preferredUsername);
+const { group, loading, onResult: onGroupResult } = useGroup(preferredUsername);
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -395,7 +392,7 @@ const personMemberships = computed(
   () => person.value?.memberships ?? { total: 0, elements: [] }
 );
 
-const { person } = usePersonStatusGroup(props.preferredUsername);
+const { person } = usePersonStatusGroup(preferredUsername);
 
 const dialog = inject<Dialog>("dialog");
 

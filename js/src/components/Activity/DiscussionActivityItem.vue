@@ -62,34 +62,40 @@ const props = defineProps<{
   activity: IActivity;
 }>();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+const useIsActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const useActivitySubjectParamsFct = useActivitySubjectParams();
 
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  useIsActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() =>
+  useActivitySubjectParamsFct(props.activity)
+);
 
 const translation = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityDiscussionSubject.DISCUSSION_CREATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You created the discussion {discussion}.";
       }
       return "{profile} created the discussion {discussion}.";
     case ActivityDiscussionSubject.DISCUSSION_REPLIED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You replied to the discussion {discussion}.";
       }
       return "{profile} replied to the discussion {discussion}.";
     case ActivityDiscussionSubject.DISCUSSION_RENAMED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You renamed the discussion from {old_discussion} to {discussion}.";
       }
       return "{profile} renamed the discussion from {old_discussion} to {discussion}.";
     case ActivityDiscussionSubject.DISCUSSION_ARCHIVED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You archived the discussion {discussion}.";
       }
       return "{profile} archived the discussion {discussion}.";
     case ActivityDiscussionSubject.DISCUSSION_DELETED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You deleted the discussion {discussion}.";
       }
       return "{profile} deleted the discussion {discussion}.";

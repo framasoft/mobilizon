@@ -15,7 +15,7 @@ defmodule Mobilizon.Web.Upload.Filter.BlurHash do
     {:ok, :filtered, %Upload{upload | blurhash: generate_blurhash(file)}}
   rescue
     e in ErlangError ->
-      Logger.warn("#{__MODULE__}: #{inspect(e)}")
+      Logger.warning("#{__MODULE__}: #{inspect(e)}")
       {:ok, :noop}
   end
 

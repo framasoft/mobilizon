@@ -2,7 +2,7 @@
   <div class="map-container">
     <l-map
       :zoom="mergedOptions.zoom"
-      :style="`height: ${mergedOptions.height}; width: ${mergedOptions.width}`"
+      :style="{ height: mergedOptions.height, width: mergedOptions.width }"
       class="leaflet-map"
       :center="[lat, lon]"
       @click="clickMap"

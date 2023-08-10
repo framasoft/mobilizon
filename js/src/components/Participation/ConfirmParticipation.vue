@@ -90,9 +90,9 @@ const { onDone, onError, mutate } = useMutation<{
   confirmParticipation: IParticipant;
 }>(CONFIRM_PARTICIPATION);
 
-mutate({
+mutate(() => ({
   token: props.token,
-});
+}));
 
 onDone(async ({ data }) => {
   participation.value = data?.confirmParticipation;

@@ -28,11 +28,11 @@ defmodule Mobilizon.Web.Upload.Filter.Optimize do
         {:ok, :filtered}
 
       {:error, :file_not_found} ->
-        Logger.warn("Unable to optimize file #{file}. File was not found")
+        Logger.warning("Unable to optimize file #{file}. File was not found")
         {:error, :file_not_found}
 
       {:error, err} ->
-        Logger.warn(
+        Logger.warning(
           "Unable to optimize file #{file}. The return from the process was #{inspect(err)}"
         )
 

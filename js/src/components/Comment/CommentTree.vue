@@ -2,7 +2,7 @@
   <div>
     <form
       v-if="isAbleToComment"
-      @submit.prevent="createCommentForEvent(newComment)"
+      @submit.prevent="createCommentForEvent(newCommentValue)"
       class="mt-2"
     >
       <o-notification
@@ -12,8 +12,11 @@
         >{{ t("Comments are closed for everybody else.") }}</o-notification
       >
       <article class="flex flex-wrap items-start gap-2">
-        <figure class="" v-if="newComment.actor">
-          <identity-picker-wrapper :inline="false" v-model="newComment.actor" />
+        <figure class="" v-if="newCommentValue.actor">
+          <identity-picker-wrapper
+            :inline="false"
+            v-model="newCommentValue.actor"
+          />
         </figure>
         <div class="flex-1">
           <div class="flex flex-col gap-2">
@@ -23,9 +26,9 @@
                 v-if="currentActor"
                 :currentActor="currentActor"
                 mode="comment"
-                v-model="newComment.text"
+                v-model="newCommentValue.text"
                 :aria-label="t('Comment body')"
-                @submit="createCommentForEvent(newComment)"
+                @submit="createCommentForEvent(newCommentValue)"
                 :placeholder="t('Write a new comment')"
               />
               <p class="" v-if="emptyCommentError">
@@ -35,7 +38,7 @@
             <div class="" v-if="isEventOrganiser">
               <o-switch
                 aria-labelledby="notify-participants-toggle"
-                v-model="newComment.isAnnouncement"
+                v-model="newCommentValue.isAnnouncement"
                 >{{ t("Notify participants") }}</o-switch
               >
             </div>
@@ -70,10 +73,12 @@
           v-for="comment in filteredOrderedComments"
           :key="comment.id"
           @create-comment="createCommentForEvent"
-          @delete-comment="commentToDelete => deleteComment({
-              commentId: commentToDelete.id as string,
-              originCommentId: commentToDelete.originComment?.id,
-            })
+          @delete-comment="
+            (commentToDelete) =>
+              deleteComment({
+                commentId: commentToDelete.id as string,
+                originCommentId: commentToDelete.originComment?.id,
+              })
           "
         />
       </transition-group>
@@ -126,17 +131,19 @@ const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
 );
 
-const newComment = ref<IComment>(props.newComment ?? new CommentModel());
+const newCommentProps = computed(() => props.newComment);
+
+const newCommentValue = ref<IComment>(new CommentModel(newCommentProps.value));
 
 const emptyCommentError = ref(false);
 
 const { t } = useI18n({ useScope: "global" });
 
 watch(currentActor, () => {
-  newComment.value.actor = currentActor.value as IPerson;
+  newCommentValue.value.actor = currentActor.value as IPerson;
 });
 
-watch(newComment, (newCommentUpdated: IComment) => {
+watch(newCommentValue, (newCommentUpdated: IComment) => {
   if (emptyCommentError.value) {
     emptyCommentError.value = ["", "<p></p>"].includes(newCommentUpdated.text);
   }
@@ -212,7 +219,7 @@ const {
 
 createCommentForEventMutationDone(() => {
   // and reset the new comment field
-  newComment.value = new CommentModel();
+  newCommentValue.value = new CommentModel();
 });
 
 const notifier = inject<Notifier>("notifier");

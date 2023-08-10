@@ -325,13 +325,18 @@ const transformPastedHTML = (html: string): string => {
   return html;
 };
 
+const ariaLabel = computed(() => props.ariaLabel);
+const headingLevel = computed(() => props.headingLevel);
+const placeholder = computed(() => props.placeholder);
+const value = computed(() => props.modelValue);
+
 const { t } = useI18n({ useScope: "global" });
 
 const editor = useEditor({
   editorProps: {
     attributes: {
       "aria-multiline": isShortMode.value.toString(),
-      "aria-label": props.ariaLabel ?? "",
+      "aria-label": ariaLabel.value ?? "",
       role: "textbox",
       class:
         "prose dark:prose-invert prose-sm lg:prose-lg xl:prose-xl bg-zinc-50 dark:bg-zinc-700 focus:outline-none !max-w-full",
@@ -342,7 +347,7 @@ const editor = useEditor({
     Blockquote,
     BulletList,
     Heading.configure({
-      levels: props.headingLevel,
+      levels: headingLevel.value,
     }),
     Document,
     Paragraph,
@@ -366,17 +371,15 @@ const editor = useEditor({
       submit: () => emit("submit"),
     }),
     Placeholder.configure({
-      placeholder: props.placeholder ?? t("Write something"),
+      placeholder: placeholder.value ?? t("Write something"),
     }),
   ],
   injectCSS: false,
-  content: props.modelValue,
+  content: value.value,
   onUpdate: () => {
     emit("update:modelValue", editor.value?.getHTML());
   },
 });
-
-const value = computed(() => props.modelValue);
 
 watch(value, (val: string) => {
   if (!editor.value) return;
@@ -479,7 +482,9 @@ onBeforeUnmount(() => {
 @import "./Editor/style.scss";
 
 .menubar {
-  transition: visibility 0.2s 0.4s, opacity 0.2s 0.4s;
+  transition:
+    visibility 0.2s 0.4s,
+    opacity 0.2s 0.4s;
 
   &__button {
     font-weight: bold;

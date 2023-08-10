@@ -49,24 +49,30 @@ const props = defineProps<{
   activity: IActivity;
 }>();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+const useIsActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const useActivitySubjectParamsFct = useActivitySubjectParams();
 
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  useIsActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() =>
+  useActivitySubjectParamsFct(props.activity)
+);
 
 const translation = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityPostSubject.POST_CREATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You created the post {post}.";
       }
       return "The post {post} was created by {profile}.";
     case ActivityPostSubject.POST_UPDATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You updated the post {post}.";
       }
       return "The post {post} was updated by {profile}.";
     case ActivityPostSubject.POST_DELETED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You deleted the post {post}.";
       }
       return "The post {post} was deleted by {profile}.";

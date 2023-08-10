@@ -34,10 +34,13 @@ export const checkProviderConfig = (
 export const convertConfig = (
   configs: IKeyValueConfig[]
 ): Record<string, any> => {
-  return configs.reduce((acc, config) => {
-    acc[config.key] = toType(config.value, config.type);
-    return acc;
-  }, {} as Record<string, any>);
+  return configs.reduce(
+    (acc, config) => {
+      acc[config.key] = toType(config.value, config.type);
+      return acc;
+    },
+    {} as Record<string, any>
+  );
 };
 
 const toType = (value: string, type: string): string | number | boolean => {

@@ -89,13 +89,13 @@ defmodule Mobilizon.Federation.ActivityPub.Permission do
         _ ->
           case permission do
             :access ->
-              Logger.warn("Actor #{actor_url} can't access #{object.url}")
+              Logger.warning("Actor #{actor_url} can't access #{object.url}")
 
             :update ->
-              Logger.warn("Actor #{actor_url} can't update #{object.url}")
+              Logger.warning("Actor #{actor_url} can't update #{object.url}")
 
             :delete ->
-              Logger.warn("Actor #{actor_url} can't delete #{object.url}")
+              Logger.warning("Actor #{actor_url} can't delete #{object.url}")
           end
 
           false

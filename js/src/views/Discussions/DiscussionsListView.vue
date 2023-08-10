@@ -90,9 +90,10 @@ const page = useRouteQuery("page", 1, integerTransformer);
 const DISCUSSIONS_PER_PAGE = 10;
 
 const props = defineProps<{ preferredUsername: string }>();
+const preferredUsername = computed(() => props.preferredUsername);
 
 const { group, loading: groupLoading } = useGroupDiscussionsList(
-  props.preferredUsername,
+  preferredUsername.value,
   {
     discussionsPage: page.value,
     discussionsLimit: DISCUSSIONS_PER_PAGE,
@@ -100,7 +101,7 @@ const { group, loading: groupLoading } = useGroupDiscussionsList(
 );
 
 const { person, loading: personLoading } = usePersonStatusGroup(
-  props.preferredUsername
+  preferredUsername.value
 );
 
 const { t } = useI18n({ useScope: "global" });

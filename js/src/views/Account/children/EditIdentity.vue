@@ -25,7 +25,7 @@
           aria-required="true"
           required
           v-model="identity.name"
-          @input="(event) => updateUsername(event.target.value)"
+          @input="(event: any) => updateUsername(event.target.value)"
           id="identity-display-name"
           dir="auto"
         />
@@ -125,7 +125,8 @@
                 tag="a"
                 icon-left="rss"
                 @click="
-                  (e: Event) => copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
+                  (e: Event) =>
+                    copyURL(e, tokenToURL(feedToken.token, 'atom'), 'atom')
                 "
                 :href="tokenToURL(feedToken.token, 'atom')"
                 target="_blank"
@@ -142,7 +143,8 @@
               <o-button
                 tag="a"
                 @click="
-                  (e: Event) => copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
+                  (e: Event) =>
+                    copyURL(e, tokenToURL(feedToken.token, 'ics'), 'ics')
                 "
                 icon-left="calendar-sync"
                 :href="tokenToURL(feedToken.token, 'ics')"

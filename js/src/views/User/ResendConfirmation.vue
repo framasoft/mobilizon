@@ -13,7 +13,7 @@
           required
           type="email"
           id="emailAddress"
-          v-model="credentials.email"
+          v-model="emailValue"
         />
       </o-field>
       <p class="flex flex-wrap gap-1 mt-2">
@@ -34,7 +34,7 @@
         {{
           $t(
             "If an account with this email exists, we just sent another confirmation email to {email}",
-            { email: credentials.email }
+            { email: emailValue }
           )
         }}
       </o-notification>
@@ -50,7 +50,7 @@
 <script lang="ts" setup>
 import { RESEND_CONFIRMATION_EMAIL } from "@/graphql/auth";
 import RouteName from "@/router/name";
-import { reactive, ref, computed } from "vue";
+import { ref, computed } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
@@ -62,10 +62,9 @@ useHead({
 });
 
 const props = withDefaults(defineProps<{ email: string }>(), { email: "" });
+const defaultEmail = computed(() => props.email);
 
-const credentials = reactive({
-  email: props.email,
-});
+const emailValue = ref<string>(defaultEmail.value);
 
 const validationSent = ref(false);
 const error = ref(false);
@@ -92,7 +91,7 @@ const resendConfirmationAction = async (e: Event): Promise<void> => {
   error.value = false;
 
   resendConfirmationEmail({
-    email: credentials.email,
+    email: emailValue.value,
   });
 };
 </script>

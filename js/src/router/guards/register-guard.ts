@@ -12,6 +12,7 @@ export const beforeRegisterGuard: NavigationGuard = async (to, from, next) => {
   );
 
   onResult(({ data }) => {
+    if (!data) return next();
     const { config } = data;
 
     if (!config.registrationsOpen && !config.registrationsAllowlist) {

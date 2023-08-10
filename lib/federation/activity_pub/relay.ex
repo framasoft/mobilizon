@@ -56,11 +56,11 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       {:ok, activity, follow}
     else
       {:error, :person_no_follow} ->
-        Logger.warn("Only group and instances can be followed")
+        Logger.warning("Only group and instances can be followed")
         {:error, :person_no_follow}
 
       {:error, e} ->
-        Logger.warn("Error while following remote instance: #{inspect(e)}")
+        Logger.warning("Error while following remote instance: #{inspect(e)}")
         {:error, e}
     end
   end
@@ -78,7 +78,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       {:ok, activity, follow}
     else
       {:error, e} ->
-        Logger.warn("Error while unfollowing remote instance: #{inspect(e)}")
+        Logger.warning("Error while unfollowing remote instance: #{inspect(e)}")
         {:error, e}
     end
   end
@@ -96,7 +96,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       {:ok, activity, follow}
     else
       {:error, e} ->
-        Logger.warn("Error while accepting remote instance follow: #{inspect(e)}")
+        Logger.warning("Error while accepting remote instance follow: #{inspect(e)}")
         {:error, e}
     end
   end
@@ -114,7 +114,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       {:ok, activity, follow}
     else
       {:error, e} ->
-        Logger.warn("Error while rejecting remote instance follow: #{inspect(e)}")
+        Logger.warning("Error while rejecting remote instance follow: #{inspect(e)}")
         {:error, e}
     end
   end
@@ -137,7 +137,7 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
       })
     else
       {:error, e} ->
-        Logger.warn("Error while refreshing remote instance: #{inspect(e)}")
+        Logger.warning("Error while refreshing remote instance: #{inspect(e)}")
         {:error, e}
     end
   end

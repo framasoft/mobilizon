@@ -92,14 +92,17 @@ const emit = defineEmits(["update-resource", "close-move-modal"]);
 
 const { t } = useI18n({ useScope: "global" });
 
+const initialResourceProp = computed(() => props.initialResource);
+const usernameProp = computed(() => props.username);
+
 const resourcePath = reactive<{
   path: string | undefined;
   username: string;
   id: string | undefined;
 }>({
-  id: props.initialResource.parent?.id,
-  path: props.initialResource.parent?.path,
-  username: props.username,
+  id: initialResourceProp.value.parent?.id,
+  path: initialResourceProp.value.parent?.path,
+  username: usernameProp.value,
 });
 
 const RESOURCES_PER_PAGE = 10;
@@ -111,27 +114,30 @@ const { result: resourceResult, refetch } = useQuery<{ resource: IResource }>(
     if (resourcePath?.path) {
       return {
         path: resourcePath?.path,
-        username: props.username,
+        username: usernameProp.value,
         page: page.value,
         limit: RESOURCES_PER_PAGE,
       };
     }
-    return { path: "/", username: props.username };
+    return { path: "/", username: usernameProp.value };
   }
 );
 
 const resource = computed(() => resourceResult.value?.resource);
 
 const goDown = (element: IResource): void => {
-  if (element.type === "folder" && element.id !== props.initialResource.id) {
+  if (
+    element.type === "folder" &&
+    element.id !== initialResourceProp.value.id
+  ) {
     resourcePath.id = element.id;
     resourcePath.path = element.path;
     console.debug("Gone into folder", resourcePath);
   }
 };
 
-watch(props.initialResource, () => {
-  if (props.initialResource) {
+watch(initialResourceProp, () => {
+  if (initialResourceProp.value) {
     resourcePath.id = props.initialResource?.parent?.id;
     resourcePath.path = props.initialResource?.parent?.path;
     refetch();
@@ -144,21 +150,21 @@ const updateResource = (): void => {
   emit(
     "update-resource",
     {
-      id: props.initialResource.id,
-      title: props.initialResource.title,
+      id: initialResourceProp.value.id,
+      title: initialResourceProp.value.title,
       parent: parent,
       path: parent?.path ?? "/",
     },
-    props.initialResource.parent
+    initialResourceProp.value.parent
   );
 };
 
 const moveDisabled = computed((): boolean | undefined => {
   return (
-    (props.initialResource.parent &&
+    (initialResourceProp.value.parent &&
       resourcePath &&
-      props.initialResource.parent.path === resourcePath.path) ||
-    (props.initialResource.parent === undefined &&
+      initialResourceProp.value.parent.path === resourcePath.path) ||
+    (initialResourceProp.value.parent === undefined &&
       resourcePath &&
       resourcePath.path === "/")
   );

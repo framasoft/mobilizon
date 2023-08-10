@@ -70,7 +70,7 @@ defmodule Mobilizon.Web.Email.Group do
          %Actor{type: :Group, preferred_username: group_username},
          user
        ) do
-    Logger.warn(
+    Logger.warning(
       "Unable to notify group follower user #{user.email} for event #{event_uuid} from group #{group_username}"
     )
 

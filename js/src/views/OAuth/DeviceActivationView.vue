@@ -27,10 +27,12 @@
           >
           <o-input
             autocapitalize="characters"
-            @update:modelValue="(val: string) => inputs[i] = val.toUpperCase()"
+            @update:modelValue="
+              (val: string) => (inputs[i] = val.toUpperCase())
+            "
             :useHtml5Validation="true"
             :id="`user-code-${i}`"
-            :ref="(el: Element) => userCodeInputs[i] = el"
+            :ref="(el: Element) => (userCodeInputs[i] = el)"
             :modelValue="inputs[i]"
             v-else
             size="large"

@@ -61,10 +61,15 @@ import { IResource } from "@/types/resource";
 const props = defineProps<{
   activity: IActivity;
 }>();
+const useIsActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const useActivitySubjectParamsFct = useActivitySubjectParams();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
-
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  useIsActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() =>
+  useActivitySubjectParamsFct(props.activity)
+);
 
 const resource = computed(() => props.activity.object as IResource);
 
@@ -74,12 +79,12 @@ const translation = computed((): string | undefined => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (props.activity?.object?.type === "folder") {
-        if (isAuthorCurrentActor) {
+        if (isAuthorCurrentActor.value) {
           return "You created the folder {resource}.";
         }
         return "{profile} created the folder {resource}.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You created the resource {resource}.";
       }
       return "{profile} created the resource {resource}.";
@@ -88,23 +93,23 @@ const translation = computed((): string | undefined => {
       // @ts-ignore
       if (props.activity?.object?.type === "folder") {
         if (parentDirectory.value === null) {
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You moved the folder {resource} to the root folder.";
           }
           return "{profile} moved the folder {resource} to the root folder.";
         }
-        if (isAuthorCurrentActor) {
+        if (isAuthorCurrentActor.value) {
           return "You moved the folder {resource} into {new_path}.";
         }
         return "{profile} moved the folder {resource} into {new_path}.";
       }
       if (parentDirectory.value === null) {
-        if (isAuthorCurrentActor) {
+        if (isAuthorCurrentActor.value) {
           return "You moved the resource {resource} to the root folder.";
         }
         return "{profile} moved the resource {resource} to the root folder.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You moved the resource {resource} into {new_path}.";
       }
       return "{profile} moved the resource {resource} into {new_path}.";
@@ -112,12 +117,12 @@ const translation = computed((): string | undefined => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (props.activity?.object?.type === "folder") {
-        if (isAuthorCurrentActor) {
+        if (isAuthorCurrentActor.value) {
           return "You renamed the folder from {old_resource_title} to {resource}.";
         }
         return "{profile} renamed the folder from {old_resource_title} to {resource}.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You renamed the resource from {old_resource_title} to {resource}.";
       }
       return "{profile} renamed the resource from {old_resource_title} to {resource}.";
@@ -125,12 +130,12 @@ const translation = computed((): string | undefined => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (props.activity?.object?.type === "folder") {
-        if (isAuthorCurrentActor) {
+        if (isAuthorCurrentActor.value) {
           return "You deleted the folder {resource}.";
         }
         return "{profile} deleted the folder {resource}.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You deleted the resource {resource}.";
       }
       return "{profile} deleted the resource {resource}.";
@@ -180,8 +185,8 @@ const parentPath = (parent: string | undefined): string | undefined => {
 };
 
 const parentDirectory = computed((): string | undefined | null => {
-  if (subjectParams.resource_path) {
-    const parentPathResult = parentPath(subjectParams.resource_path);
+  if (subjectParams.value.resource_path) {
+    const parentPathResult = parentPath(subjectParams.value.resource_path);
     const directory = parentPathResult?.split("/");
     const res = directory?.pop();
     res === "" ? null : res;

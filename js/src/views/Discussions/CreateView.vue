@@ -80,8 +80,9 @@ const Editor = defineAsyncComponent(
 const props = defineProps<{ preferredUsername: string }>();
 
 const { currentActor } = useCurrentActorClient();
+const preferredUsername = computed(() => props.preferredUsername);
 
-const { group } = useGroup(props.preferredUsername);
+const { group } = useGroup(preferredUsername);
 
 const { t } = useI18n({ useScope: "global" });
 

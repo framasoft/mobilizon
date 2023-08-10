@@ -44,7 +44,7 @@ defmodule Mobilizon.Web.Auth.Guardian do
       end
     rescue
       e in Ecto.NoResultsError ->
-        Logger.warn("Received token claim for non existing user: #{inspect(e)}")
+        Logger.warning("Received token claim for non existing user: #{inspect(e)}")
         {:error, :no_result}
     end
   end

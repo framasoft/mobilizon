@@ -18,7 +18,7 @@ defmodule Mobilizon.Applications.ApplicationToken do
   end
 
   @required_attrs [:user_id, :application_id, :scope]
-  @optional_attrs [:authorization_code]
+  @optional_attrs [:authorization_code, :status]
   @attrs @required_attrs ++ @optional_attrs
 
   @doc false

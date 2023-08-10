@@ -188,7 +188,7 @@
               <event-participation-card
                 v-for="participation in month[1]"
                 :key="participation.id"
-                :participation="(participation as IParticipant)"
+                :participation="participation as IParticipant"
                 :options="{ hideDate: false }"
                 @event-deleted="eventDeleted"
                 class="participation"

@@ -27,9 +27,12 @@ const props = defineProps<{
 
 const selectedIndex = ref(0);
 
-watch(props.items, () => {
-  selectedIndex.value = 0;
-});
+watch(
+  () => props.items,
+  () => {
+    selectedIndex.value = 0;
+  }
+);
 
 // const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
 //   if (event.key === "ArrowUp") {
@@ -80,7 +83,9 @@ const selectItem = (index: number): void => {
   color: rgba(black, 0.8);
   overflow: hidden;
   font-size: 0.9rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0px 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0px 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .item {

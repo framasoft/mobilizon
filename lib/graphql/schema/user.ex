@@ -71,7 +71,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:participations, :paginated_participant_list,
       description: "The list of participations this user has",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:participations"]
     ) do
       arg(:after_datetime, :datetime, description: "Filter participations by event start datetime")
 
@@ -92,7 +92,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:memberships, :paginated_member_list,
       description: "The list of memberships for this user",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:memberships"]
     ) do
       arg(:name, :string, description: "A name to filter members by")
 
@@ -107,7 +107,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:drafts, :paginated_event_list,
       description: "The list of draft events this user has created",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:draft_events"]
     ) do
       arg(:page, :integer,
         default_value: 1,
@@ -120,7 +120,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:followed_group_events, :paginated_followed_group_events,
       description: "The suggested events from the groups this user follows",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:group_suggested_events"]
     ) do
       arg(:page, :integer,
         default_value: 1,
@@ -141,7 +141,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:settings, :user_settings,
       description: "The list of settings for this user",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:settings"]
     ) do
       resolve(&User.user_settings/3)
     end
@@ -158,7 +158,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:media, :paginated_media_list,
       description: "The user's media objects",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:media"]
     ) do
       arg(:page, :integer,
         default_value: 1,
@@ -176,7 +176,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:activity_settings, list_of(:activity_setting),
       description: "The user's activity settings",
-      meta: [private: true]
+      meta: [private: true, rule: :"read:user:activity_settings"]
     ) do
       resolve(&ActivitySettings.user_activity_settings/3)
     end

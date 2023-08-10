@@ -52,35 +52,41 @@ const props = defineProps<{
   activity: IActivity;
 }>();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+const useIsActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const useActivitySubjectParamsFct = useActivitySubjectParams();
 
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  useIsActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() =>
+  useActivitySubjectParamsFct(props.activity)
+);
 
 const translation = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityEventSubject.EVENT_CREATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You created the event {event}.";
       }
       return "The event {event} was created by {profile}.";
     case ActivityEventSubject.EVENT_UPDATED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You updated the event {event}.";
       }
       return "The event {event} was updated by {profile}.";
     case ActivityEventSubject.EVENT_DELETED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You deleted the event {event}.";
       }
       return "The event {event} was deleted by {profile}.";
     case ActivityEventCommentSubject.COMMENT_POSTED:
-      if (subjectParams.comment_reply_to) {
-        if (isAuthorCurrentActor) {
+      if (subjectParams.value.comment_reply_to) {
+        if (isAuthorCurrentActor.value) {
           return "You replied to a comment on the event {event}.";
         }
         return "{profile} replied to a comment on the event {event}.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You posted a comment on the event {event}.";
       }
       return "{profile} posted a comment on the event {event}.";

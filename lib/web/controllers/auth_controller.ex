@@ -33,7 +33,7 @@ defmodule Mobilizon.Web.AuthController do
         %{assigns: %{ueberauth_failure: fails}} = conn,
         %{"provider" => provider} = _params
       ) do
-    Logger.warn("Unable to login user with #{provider} #{inspect(fails)}")
+    Logger.warning("Unable to login user with #{provider} #{inspect(fails)}")
 
     redirect_to_error(conn, :unknown_error, provider)
   end
@@ -75,7 +75,7 @@ defmodule Mobilizon.Web.AuthController do
       })
     else
       err ->
-        Logger.warn("Unable to login user \"#{email}\" #{inspect(err)}")
+        Logger.warning("Unable to login user \"#{email}\" #{inspect(err)}")
         redirect_to_error(conn, :unknown_error, strategy)
     end
   end

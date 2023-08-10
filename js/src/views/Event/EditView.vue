@@ -127,7 +127,7 @@
         <label class="o-field__label field-label">{{ t("Description") }}</label>
         <editor-component
           v-if="currentActor"
-          :current-actor="(currentActor as IPerson)"
+          :current-actor="currentActor as IPerson"
           v-model="event.description"
           :aria-label="t('Event description body')"
           :placeholder="t('Describe your event')"

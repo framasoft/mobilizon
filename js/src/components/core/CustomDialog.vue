@@ -84,14 +84,19 @@ const emit = defineEmits(["confirm", "cancel", "close"]);
 
 const { t } = useI18n({ useScope: "global" });
 
+const hasInput = computed(() => props.hasInput);
+const onConfirm = computed(() => props.onConfirm);
+const onCancel = computed(() => props.onCancel);
+const inputAttrs = computed(() => props.inputAttrs);
+
 // const modalOpened = ref(false);
 
-const prompt = ref<string>(props.hasInput ? props.inputAttrs?.value ?? "" : "");
+const prompt = ref<string>(hasInput.value ? inputAttrs.value.value ?? "" : "");
 const input = ref();
 
 // https://github.com/oruga-ui/oruga/issues/339
 const promptInputComp = computed(() => input.value?.$refs.input);
-if (props.hasInput) {
+if (hasInput.value) {
   useFocus(promptInputComp, { initialValue: true });
 }
 
@@ -128,7 +133,7 @@ const confirm = () => {
       return;
     }
   }
-  props.onConfirm(prompt.value);
+  onConfirm.value(prompt.value);
   close();
 };
 
@@ -144,8 +149,8 @@ const close = () => {
  */
 const cancel = (source: string) => {
   emit("cancel", source);
-  if (props?.onCancel) {
-    props?.onCancel(source);
+  if (onCancel.value) {
+    onCancel.value(source);
   }
   close();
 };

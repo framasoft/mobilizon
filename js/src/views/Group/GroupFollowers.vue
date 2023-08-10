@@ -47,7 +47,7 @@
         :default-sort-direction="'desc'"
         :default-sort="['insertedAt', 'desc']"
         @page-change="loadMoreFollowers"
-        @sort="(field, order) => $emit('sort', field, order)"
+        @sort="(field: any, order: any) => $emit('sort', field, order)"
       >
         <o-table-column
           field="actor.preferredUsername"
@@ -135,6 +135,8 @@ import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { Notifier } from "@/plugins/notifier";
 
 const props = defineProps<{ preferredUsername: string }>();
+
+const preferredUsername = computed(() => props.preferredUsername);
 
 const page = useRouteQuery("page", 1, integerTransformer);
 
@@ -241,5 +243,5 @@ const personMemberships = computed(
   () => person.value?.memberships ?? { total: 0, elements: [] }
 );
 
-const { person } = usePersonStatusGroup(props.preferredUsername);
+const { person } = usePersonStatusGroup(preferredUsername.value);
 </script>

@@ -1563,5 +1563,17 @@
   "© The OpenStreetMap Contributors": "© Les Contributeur⋅ices OpenStreetMap",
   "Application authorized": "Application autorisée",
   "Check your device to continue. You may now close this window.": "Vérifiez votre appareil pour continuer. Vous pouvez maintenant fermer cette fenêtre.",
-  "Participants to {eventTitle}": "Participant·es à {eventTitle}"
+  "Participants to {eventTitle}": "Participant·es à {eventTitle}",
+  "Read user media": "Lire les médias utilisateur·ice",
+  "This application will be allowed to list the media you've uploaded": "Cette application sera autorisée a lister les médias que vous avez téléversé",
+  "Read user settings": "Lire les paramètres utilisateur·ice",
+  "This application will be allowed to access your user settings": "Cette application sera autorisée a accéder à vos paramètres utilisateur·ice",
+  "Read user activity settings": "Lire les paramètres d'activité utilisateur·ice",
+  "This application will be allowed to access your user activity settings": "Cette application sera autorisée a accéder à vos paramètres utilisateur·ice d'activité",
+  "Read user participations": "Accéder aux participations de l'utilisateur·ice",
+  "Read user memberships": "Accéder aux adhésions de l'utilisateur·ice",
+  "Access drafts events": "Accéder aux événements brouillons",
+  "This application will be allowed to list and view your draft events": "Cetta application sera autorisée à lister et accéder à vos événements brouillons",
+  "Access group suggested events": "Accéder aux événements des groupes suggérés",
+  "This application will be allowed to list your suggested group events": "Cetta application sera autorisée à lister les événements de vos groupes qui vous sont suggérés"
 }

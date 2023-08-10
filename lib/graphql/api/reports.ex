@@ -57,7 +57,7 @@ defmodule Mobilizon.GraphQL.API.Reports do
           end
 
         if antispam_response != :ok do
-          Logger.warn("Antispam response has been #{inspect(antispam_response)}")
+          Logger.warning("Antispam response has been #{inspect(antispam_response)}")
         end
 
         {:ok, report}

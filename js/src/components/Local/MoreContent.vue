@@ -86,6 +86,8 @@ const imageSource = computed(
     rgba(2, 0, 36, 0.75) 90%,
     rgba(2, 0, 36, 0.85) 100%
   );
-  transition: opacity 0.1s ease-in-out, visibility 0.1s ease-in-out;
+  transition:
+    opacity 0.1s ease-in-out,
+    visibility 0.1s ease-in-out;
 }
 </style>

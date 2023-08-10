@@ -203,7 +203,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         Actions.Delete.delete(entity, Relay.get_actor(), false)
 
       {:error, err} ->
-        Logger.warn("Error while fetching object from URL: #{inspect(err)}")
+        Logger.warning("Error while fetching object from URL: #{inspect(err)}")
         :error
     end
   end
@@ -219,11 +219,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, object}
     else
       {:error, :person_no_follow} ->
-        Logger.warn("Only group and instances can be followed")
+        Logger.warning("Only group and instances can be followed")
         :error
 
       {:error, e} ->
-        Logger.warn("Unable to handle Follow activity #{inspect(e)}")
+        Logger.warning("Unable to handle Follow activity #{inspect(e)}")
         :error
     end
   end
@@ -325,14 +325,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         :error
 
       {:object_not_found, nil} ->
-        Logger.warn(
+        Logger.warning(
           "Unable to process Accept activity #{inspect(id)}. Object #{inspect(accepted_object)} wasn't found."
         )
 
         :error
 
       e ->
-        Logger.warn(
+        Logger.warning(
           "Unable to process Accept activity #{inspect(id)} for object #{inspect(accepted_object)} only returned #{inspect(e)}"
         )
 
@@ -353,14 +353,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, object}
     else
       {:object_not_found, nil} ->
-        Logger.warn(
+        Logger.warning(
           "Unable to process Reject activity #{inspect(id)}. Object #{inspect(rejected_object)} wasn't found."
         )
 
         :error
 
       e ->
-        Logger.warn(
+        Logger.warning(
           "Unable to process Reject activity #{inspect(id)} for object #{inspect(rejected_object)} only returned #{inspect(e)}"
         )
 
@@ -405,7 +405,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_actor}
     else
       {:error, :update_not_allowed} ->
-        Logger.warn(
+        Logger.warning(
           "Activity tried to update an actor that's local or not a group: #{inspect(params)}"
         )
 
@@ -485,7 +485,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, new_post}
     else
       {:origin_check, _} ->
-        Logger.warn("Actor tried to update a post but doesn't has the required role")
+        Logger.warning("Actor tried to update a post but doesn't has the required role")
         :error
 
       _e ->
@@ -692,7 +692,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, object}
     else
       {:only_organizer, true} ->
-        Logger.warn(
+        Logger.warning(
           "Actor #{inspect(actor)} tried to leave event #{inspect(object)} but it was the only organizer so we didn't detach it"
         )
 
@@ -742,14 +742,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       Actions.Remove.remove(member, group, moderator, false)
     else
       {:is_admin, {:ok, %Member{}}} ->
-        Logger.warn(
+        Logger.warning(
           "Person #{inspect(actor)} is not an admin from #{inspect(origin)} and can't remove member #{inspect(object)}"
         )
 
         {:error, "Member already removed"}
 
       {:is_member, {:ok, %Member{role: :rejected}}} ->
-        Logger.warn("Member #{inspect(object)} already removed from #{inspect(origin)}")
+        Logger.warning("Member #{inspect(object)} already removed from #{inspect(origin)}")
         {:error, "Member already removed"}
     end
   end
@@ -949,7 +949,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
       {:ok, activity, participant}
     else
       {:join_event, {:ok, _activity, %Participant{role: :rejected}}} ->
-        Logger.warn(
+        Logger.warning(
           "Tried to handle an Reject activity on a Join activity with a event object but the participant is already rejected"
         )
 
@@ -1100,7 +1100,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
         {:ok, object}
 
       err ->
-        Logger.warn("Error while fetching #{inspect(object)}")
+        Logger.warning("Error while fetching #{inspect(object)}")
         {:error, err}
     end
   end
@@ -1242,7 +1242,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
              Permission.can_delete_group_object?(actor, entity) do
           Actions.Delete.delete(entity, actor, false)
         else
-          Logger.warn("Object origin check failed")
+          Logger.warning("Object origin check failed")
           :error
         end
 

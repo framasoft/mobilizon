@@ -51,58 +51,63 @@ const props = defineProps<{
   activity: IActivity;
 }>();
 
-const isAuthorCurrentActor = useIsActivityAuthorCurrentActor()(props.activity);
+const isActivityAuthorCurrentActorFct = useIsActivityAuthorCurrentActor();
+const activitySubjectParamsFct = useActivitySubjectParams();
+const isActivityObjectCurrentActor = useIsActivityObjectCurrentActor();
 
-const subjectParams = useActivitySubjectParams()(props.activity);
+const isAuthorCurrentActor = computed(() =>
+  isActivityAuthorCurrentActorFct(props.activity)
+);
+const subjectParams = computed(() => activitySubjectParamsFct(props.activity));
 const member = computed(() => props.activity.object as IMember);
 
-const isObjectMemberCurrentActor = useIsActivityObjectCurrentActor()(
-  props.activity
+const isObjectMemberCurrentActor = computed(() =>
+  isActivityObjectCurrentActor(props.activity)
 );
 
 const translation = computed((): string | undefined => {
   switch (props.activity.subject) {
     case ActivityMemberSubject.MEMBER_REQUEST:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You requested to join the group.";
       }
       return "{member} requested to join the group.";
     case ActivityMemberSubject.MEMBER_INVITED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You invited {member}.";
       }
       return "{member} was invited by {profile}.";
     case ActivityMemberSubject.MEMBER_ADDED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You added the member {member}.";
       }
       return "{profile} added the member {member}.";
     case ActivityMemberSubject.MEMBER_APPROVED:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You approved {member}'s membership.";
       }
-      if (isObjectMemberCurrentActor) {
+      if (isObjectMemberCurrentActor.value) {
         return "Your membership was approved by {profile}.";
       }
       return "{profile} approved {member}'s membership.";
     case ActivityMemberSubject.MEMBER_JOINED:
       return "{member} joined the group.";
     case ActivityMemberSubject.MEMBER_UPDATED:
-      if (subjectParams.member_role && subjectParams.old_role) {
+      if (subjectParams.value.member_role && subjectParams.value.old_role) {
         return roleUpdate.value;
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You updated the member {member}.";
       }
       return "{profile} updated the member {member}.";
     case ActivityMemberSubject.MEMBER_REMOVED:
-      if (subjectParams.member_role === MemberRole.NOT_APPROVED) {
-        if (isAuthorCurrentActor) {
+      if (subjectParams.value.member_role === MemberRole.NOT_APPROVED) {
+        if (isAuthorCurrentActor.value) {
           return "You rejected {member}'s membership request.";
         }
         return "{profile} rejected {member}'s membership request.";
       }
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You excluded member {member}.";
       }
       return "{profile} excluded member {member}.";
@@ -111,7 +116,7 @@ const translation = computed((): string | undefined => {
     case ActivityMemberSubject.MEMBER_REJECTED_INVITATION:
       return "{member} rejected the invitation to join the group.";
     case ActivityMemberSubject.MEMBER_ACCEPTED_INVITATION:
-      if (isAuthorCurrentActor) {
+      if (isAuthorCurrentActor.value) {
         return "You accepted the invitation to join the group.";
       }
       return "{member} accepted the invitation to join the group.";
@@ -159,69 +164,69 @@ const iconColor = computed((): string | undefined => {
 
 const roleUpdate = computed((): string | undefined => {
   if (
-    Object.keys(MEMBER_ROLE_VALUE).includes(subjectParams.member_role) &&
-    Object.keys(MEMBER_ROLE_VALUE).includes(subjectParams.old_role)
+    Object.keys(MEMBER_ROLE_VALUE).includes(subjectParams.value.member_role) &&
+    Object.keys(MEMBER_ROLE_VALUE).includes(subjectParams.value.old_role)
   ) {
     if (
-      MEMBER_ROLE_VALUE[subjectParams.member_role] >
-      MEMBER_ROLE_VALUE[subjectParams.old_role]
+      MEMBER_ROLE_VALUE[subjectParams.value.member_role] >
+      MEMBER_ROLE_VALUE[subjectParams.value.old_role]
     ) {
-      switch (subjectParams.member_role) {
+      switch (subjectParams.value.member_role) {
         case MemberRole.MODERATOR:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You promoted {member} to moderator.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were promoted to moderator by {profile}.";
           }
           return "{profile} promoted {member} to moderator.";
         case MemberRole.ADMINISTRATOR:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You promoted {member} to administrator.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were promoted to administrator by {profile}.";
           }
           return "{profile} promoted {member} to administrator.";
         default:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You promoted the member {member} to an unknown role.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were promoted to an unknown role by {profile}.";
           }
           return "{profile} promoted {member} to an unknown role.";
       }
     } else {
-      switch (subjectParams.member_role) {
+      switch (subjectParams.value.member_role) {
         case MemberRole.MODERATOR:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You demoted {member} to moderator.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were demoted to moderator by {profile}.";
           }
           return "{profile} demoted {member} to moderator.";
         case MemberRole.MEMBER:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You demoted {member} to simple member.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were demoted to simple member by {profile}.";
           }
           return "{profile} demoted {member} to simple member.";
         default:
-          if (isAuthorCurrentActor) {
+          if (isAuthorCurrentActor.value) {
             return "You demoted the member {member} to an unknown role.";
           }
-          if (isObjectMemberCurrentActor) {
+          if (isObjectMemberCurrentActor.value) {
             return "You were demoted to an unknown role by {profile}.";
           }
           return "{profile} demoted {member} to an unknown role.";
       }
     }
   } else {
-    if (isAuthorCurrentActor) {
+    if (isAuthorCurrentActor.value) {
       return "You updated the member {member}.";
     }
     return "{profile} updated the member {member}";

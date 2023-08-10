@@ -25,7 +25,7 @@
           aria-required="true"
           required
           type="email"
-          v-model="credentials.email"
+          v-model="emailValue"
         />
       </o-field>
       <p class="control">
@@ -41,7 +41,7 @@
       <o-notification variant="success" :closable="false" title="Success">
         {{
           t("We just sent an email to {email}", {
-            email: credentials.email,
+            email: emailValue,
           })
         }}
       </o-notification>
@@ -57,7 +57,7 @@
 <script lang="ts" setup>
 import { SEND_RESET_PASSWORD } from "../../graphql/auth";
 import RouteName from "../../router/name";
-import { computed, reactive, ref } from "vue";
+import { computed, ref } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useHead } from "@vueuse/head";
 import { useI18n } from "vue-i18n";
@@ -74,9 +74,8 @@ const props = withDefaults(
   { email: "" }
 );
 
-const credentials = reactive<{ email: string }>({
-  email: props.email,
-});
+const defaultEmail = computed(() => props.email);
+const emailValue = ref<string>(defaultEmail.value);
 
 const validationSent = ref(false);
 
@@ -110,7 +109,7 @@ const sendResetPasswordTokenAction = async (e: Event): Promise<void> => {
   e.preventDefault();
 
   sendResetPasswordMutation({
-    email: credentials.email,
+    email: emailValue.value,
   });
 };
 </script>

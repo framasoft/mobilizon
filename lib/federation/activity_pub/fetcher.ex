@@ -65,7 +65,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
               {:error, :transmogrifier_error}
           end
         else
-          Logger.warn("Object origin check failed")
+          Logger.warning("Object origin check failed")
           {:error, :object_origin_check_failed}
         end
 
@@ -89,7 +89,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
             "object" => data
           })
         else
-          Logger.warn("Object origin check failed")
+          Logger.warning("Object origin check failed")
           {:error, :object_origin_check_failed}
         end
 

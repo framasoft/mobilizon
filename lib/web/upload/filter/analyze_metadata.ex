@@ -25,7 +25,7 @@ defmodule Mobilizon.Web.Upload.Filter.AnalyzeMetadata do
   rescue
     e in ErlangError ->
       require Logger
-      Logger.warn("#{__MODULE__}: #{inspect(e)}")
+      Logger.warning("#{__MODULE__}: #{inspect(e)}")
       {:ok, :noop}
   end
 

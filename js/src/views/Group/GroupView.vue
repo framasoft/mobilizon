@@ -703,22 +703,22 @@ const props = defineProps<{
   preferredUsername: string;
 }>();
 
+const preferredUsername = computed(() => props.preferredUsername);
+
 const { anonymousReportsConfig } = useAnonymousReportsConfig();
 const { currentActor } = useCurrentActorClient();
 const {
   group,
   loading: groupLoading,
   refetch: refetchGroup,
-} = useGroup(props.preferredUsername, { afterDateTime: new Date() });
+} = useGroup(preferredUsername, { afterDateTime: new Date() });
 const router = useRouter();
 
-const { group: discussionGroup } = useGroupDiscussionsList(
-  props.preferredUsername
-);
-const { group: resourcesGroup } = useGroupResourcesList(
-  props.preferredUsername,
-  { resourcesPage: 1, resourcesLimit: 3 }
-);
+const { group: discussionGroup } = useGroupDiscussionsList(preferredUsername);
+const { group: resourcesGroup } = useGroupResourcesList(preferredUsername, {
+  resourcesPage: 1,
+  resourcesLimit: 3,
+});
 
 const { t } = useI18n({ useScope: "global" });
 
