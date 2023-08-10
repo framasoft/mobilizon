@@ -55,7 +55,14 @@ defmodule Mobilizon.GraphQL.Authorization.AppScope do
       :"read:event",
       :"read:event:participants",
       :"read:event:participants:export",
+      # User permissions
+      :"read:user:media",
       :"read:user:settings",
+      :"read:user:activity_settings",
+      :"read:user:participations",
+      :"read:user:memberships",
+      :"read:user:draft_events",
+      :"read:user:group_suggested_events",
       # Profile permissions
       :"read:profile",
       :"read:profile:organized_events",

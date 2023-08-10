@@ -1567,5 +1567,17 @@
   "Announcements": "Announcements",
   "Application authorized": "Application authorized",
   "Check your device to continue. You may now close this window.": "Check your device to continue. You may now close this window.",
-  "Participants to {eventTitle}": "Participants to {eventTitle}"
+  "Participants to {eventTitle}": "Participants to {eventTitle}",
+  "Read user media": "Read user media",
+  "This application will be allowed to list the media you've uploaded": "This application will be allowed to list the media you've uploaded",
+  "Read user settings": "Read user settings",
+  "This application will be allowed to access your user settings": "This application will be allowed to access your user settings",
+  "Read user activity settings": "Read user activity settings",
+  "This application will be allowed to access your user activity settings": "This application will be allowed to access your user activity settings",
+  "Read user participations": "Read user participations",
+  "Read user memberships": "Read user memberships",
+  "Access drafts events": "Access drafts events",
+  "This application will be allowed to list and view your draft events": "This application will be allowed to list and view your draft events",
+  "Access group suggested events": "Access group suggested events",
+  "This application will be allowed to list your suggested group events": "This application will be allowed to list your suggested group events"
 }

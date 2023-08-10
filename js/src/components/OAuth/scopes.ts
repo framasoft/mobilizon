@@ -133,9 +133,56 @@ export const scope: Record<
   "write:group:members": {
     title: t("Manage group members"),
     text: t(
-      "This application will be allowed to manage group members in all of the groups you're a member of"
+      "This application will be allowed to list group members in all of the groups you're a member of"
     ),
     icon: "account-circle",
+  },
+  "read:user:media": {
+    title: t("Read user media"),
+    text: t(
+      "This application will be allowed to list the media you've uploaded"
+    ),
+    icon: "image",
+  },
+  "read:user:settings": {
+    title: t("Read user settings"),
+    text: t("This application will be allowed to access your user settings"),
+    icon: "cog",
+  },
+  "read:user:activity_settings": {
+    title: t("Read user activity settings"),
+    text: t(
+      "This application will be allowed to access your user activity settings"
+    ),
+    icon: "cog",
+  },
+  "read:user:participations": {
+    title: t("Read user participations"),
+    text: t(
+      "This application will be allowed to list and view the events you're participating to"
+    ),
+    icon: "account-circle",
+  },
+  "read:user:memberships": {
+    title: t("Read user memberships"),
+    text: t(
+      "This application will be allowed to list and view the groups you're a member of"
+    ),
+    icon: "account-circle",
+  },
+  "read:user:draft_events": {
+    title: t("Access drafts events"),
+    text: t(
+      "This application will be allowed to list and view your draft events"
+    ),
+    icon: "calendar",
+  },
+  "read:user:group_suggested_events": {
+    title: t("Access group suggested events"),
+    text: t(
+      "This application will be allowed to list your suggested group events"
+    ),
+    icon: "calendar",
   },
   "read:profile:organized_events": {
     title: t("Access organized events"),
