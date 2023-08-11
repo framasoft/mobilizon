@@ -178,7 +178,9 @@ onMounted(() => {
       cancelText: t("Ignore"),
       message: t("A new version is available."),
       onAction: async () => {
-        const registration = event.detail as ServiceWorkerRegistration;
+        const registration = (
+          event as unknown as { detail: ServiceWorkerRegistration }
+        ).detail;
         try {
           await refreshApp(registration);
           window.location.reload();
