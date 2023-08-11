@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "jest", "vite/client"],
+    "types": ["webpack-env", "jest", "vite/client", "vite-plugin-pwa/vue"],
     "typeRoots": ["./@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["src/*"]
