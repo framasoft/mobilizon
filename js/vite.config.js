@@ -19,11 +19,10 @@ export default defineConfig(({ command }) => {
     plugins: [
       vue(),
       VitePWA({
-        // registerType: "autoUpdate",
+        registerType: "autoUpdate",
         strategies: "injectManifest",
         srcDir: "src",
         filename: "service-worker.ts",
-        theme_color: "#ffd599",
         // injectRegister: "auto",
         // devOptions: {
         //   enabled: true,
@@ -32,6 +31,7 @@ export default defineConfig(({ command }) => {
           name: "Mobilizon",
           short_name: "Mobilizon",
           orientation: "portrait-primary",
+          theme_color: "#ffd599",
           icons: [
             {
               src: "./img/icons/android-chrome-192x192.png",
