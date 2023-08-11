@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto" v-if="hasCurrentActorPermissionsToEdit">
+  <div class="container mx-auto px-1" v-if="hasCurrentActorPermissionsToEdit">
     <h1 class="" v-if="isUpdate === true">
       {{ t("Update event {name}", { name: event.title }) }}
     </h1>
@@ -63,7 +63,7 @@
       <o-field
         horizontal
         :label="t('Starts on…')"
-        class="begins-on-field"
+        class="items-center"
         label-for="begins-on-field"
       >
         <o-datetimepicker
@@ -85,7 +85,12 @@
         </o-datetimepicker>
       </o-field>
 
-      <o-field horizontal :label="t('Ends on…')" label-for="ends-on-field">
+      <o-field
+        horizontal
+        :label="t('Ends on…')"
+        label-for="ends-on-field"
+        class="items-center"
+      >
         <o-datetimepicker
           class="datepicker ends-on"
           :placeholder="t('Type or select a date…')"

@@ -65,6 +65,9 @@ body {
 .field-label {
   @apply block text-gray-700 dark:text-gray-100 text-base font-bold mb-2;
 }
+.o-field__horizontal-label .field-label {
+  @apply mb-0;
+}
 .field-danger {
   @apply text-red-500;
 }
@@ -193,7 +196,7 @@ body {
 
 /* Select */
 .select {
-  @apply dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50 rounded pl-2 pr-8 border-2 border-transparent h-10 shadow-none border rounded;
+  @apply dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50 rounded pl-2 pr-8 border-2 border-transparent h-10 shadow-none border rounded w-full;
 }
 
 /* Radio */
