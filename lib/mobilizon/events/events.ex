@@ -1860,7 +1860,7 @@ defmodule Mobilizon.Events do
   @spec filter_future_events(Ecto.Queryable.t(), boolean) :: Ecto.Query.t()
   defp filter_future_events(query, true) do
     from(q in query,
-      where: q.begins_on > ^DateTime.utc_now()
+      where: coalesce(q.ends_on, q.begins_on) > ^DateTime.utc_now()
     )
   end
 
