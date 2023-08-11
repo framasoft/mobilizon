@@ -86,7 +86,7 @@ body {
 
 /* Input */
 .input {
-  @apply appearance-none border w-full py-2 px-3 text-black leading-tight dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50;
+  @apply appearance-none box-border border w-full py-2 px-3 text-black leading-tight dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50;
 }
 .input-danger {
   @apply border-red-500;
