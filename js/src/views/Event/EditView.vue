@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-1" v-if="hasCurrentActorPermissionsToEdit">
+  <div class="container mx-auto px-3" v-if="hasCurrentActorPermissionsToEdit">
     <h1 class="" v-if="isUpdate === true">
       {{ t("Update event {name}", { name: event.title }) }}
     </h1>
@@ -473,7 +473,7 @@
   <nav
     role="navigation"
     aria-label="main navigation"
-    class="bg-mbz-yellow-alt-200 py-3"
+    class="bg-mbz-yellow-alt-200 p-3 m-3 rounded"
     :class="{ 'is-fixed-bottom': showFixedNavbar }"
     v-if="hasCurrentActorPermissionsToEdit"
   >
@@ -486,7 +486,7 @@
           <o-button
             variant="text"
             @click="confirmGoBack"
-            class="dark:!text-black"
+            class="dark:!text-black ml-auto"
             >{{ t("Cancel") }}</o-button
           >
           <!-- If an event has been published we can't make it draft anymore -->
@@ -500,7 +500,7 @@
               >{{ t("Save draft") }}</o-button
             >
           </span>
-          <span class="">
+          <span class="ml-auto">
             <o-button
               variant="primary"
               :disabled="saving"
