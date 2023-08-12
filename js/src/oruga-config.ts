@@ -25,6 +25,7 @@ export const orugaConfig = {
   },
   inputitems: {
     itemClass: "inputitems-item",
+    containerClass: "rounded",
   },
   autocomplete: {
     menuClass: "autocomplete-menu",
