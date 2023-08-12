@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-3" v-if="hasCurrentActorPermissionsToEdit">
+  <div class="container mx-auto" v-if="hasCurrentActorPermissionsToEdit">
     <h1 class="" v-if="isUpdate === true">
       {{ t("Update event {name}", { name: event.title }) }}
     </h1>
@@ -473,7 +473,7 @@
   <nav
     role="navigation"
     aria-label="main navigation"
-    class="bg-mbz-yellow-alt-200 p-3 m-3 rounded"
+    class="bg-mbz-yellow-alt-200 p-3 mt-3 rounded"
     :class="{ 'is-fixed-bottom': showFixedNavbar }"
     v-if="hasCurrentActorPermissionsToEdit"
   >

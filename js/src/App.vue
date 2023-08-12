@@ -24,7 +24,7 @@
     </div>
     <ErrorComponent v-if="error" :error="error" />
 
-    <main id="main" class="pt-4" v-else>
+    <main id="main" class="p-4" v-else>
       <router-view></router-view>
     </main>
     <mobilizon-footer />

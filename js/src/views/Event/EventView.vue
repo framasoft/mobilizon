@@ -4,7 +4,7 @@
     <div class="flex flex-col mb-3">
       <event-banner :picture="event?.picture" />
       <div
-        class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-2 rounded"
+        class="flex flex-col relative pb-2 bg-white dark:bg-zinc-700 my-4 rounded"
       >
         <div class="date-calendar-icon-wrapper relative" v-if="event?.beginsOn">
           <skeleton-date-calendar-icon
