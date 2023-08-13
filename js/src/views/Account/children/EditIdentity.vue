@@ -53,7 +53,7 @@
           />
 
           <p class="control">
-            <span class="button is-static">@{{ getInstanceHost }}</span>
+            <span class="button is-static !h-auto">@{{ getInstanceHost }}</span>
           </p>
         </o-field>
       </o-field>

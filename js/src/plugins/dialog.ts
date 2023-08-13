@@ -49,6 +49,7 @@ export class Dialog {
         hasInput,
       },
       autoFocus: false,
+      contentClass: "!w-11/12",
     });
   }
 
@@ -87,6 +88,7 @@ export class Dialog {
         onConfirm,
         onCancel,
       },
+      contentClass: "!w-11/12",
     });
   }
 }
