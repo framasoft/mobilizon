@@ -8,7 +8,7 @@
         }}</span>
         <span v-else>{{ $t("I create an identity") }}</span>
       </h1>
-      <o-field :label="t('Avatar')">
+      <o-field horizontal :label="t('Avatar')">
         <picture-upload
           v-model="avatarFile"
           :defaultImage="identity.avatar"
