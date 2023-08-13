@@ -13,6 +13,7 @@
         </template>
         <o-button
           v-if="canShowLocateMeButton"
+          class="!h-auto"
           ref="mapMarker"
           icon-right="map-marker"
           @click="locateMe"
@@ -63,7 +64,7 @@
         <o-button
           :disabled="!queryTextWithDefault"
           @click="resetAddress"
-          class="reset-area"
+          class="reset-area !h-auto"
           icon-left="close"
           :title="t('Clear address field')"
         />
