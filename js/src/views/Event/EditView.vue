@@ -9,11 +9,14 @@
 
     <form ref="form">
       <h2>{{ t("General information") }}</h2>
-      <picture-upload
-        v-model:modelValue="pictureFile"
-        :textFallback="t('Headline picture')"
-        :defaultImage="event.picture"
-      />
+
+      <o-field :label="t('Headline picture')">
+        <picture-upload
+          v-model:modelValue="pictureFile"
+          :textFallback="t('Headline picture')"
+          :defaultImage="event.picture"
+        />
+      </o-field>
 
       <o-field
         :label="t('Title')"

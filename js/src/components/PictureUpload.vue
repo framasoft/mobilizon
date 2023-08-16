@@ -1,85 +1,67 @@
 <template>
-  <div class="flex items-center">
-    <figure class="image" v-if="imageSrc && !imagePreviewLoadingError">
-      <img :src="imageSrc" @error="showImageLoadingError" />
-    </figure>
-    <figure class="image is-128x128" v-else>
+  <div>
+    <o-upload
+      rootClass="!flex"
+      v-if="!imageSrc || imagePreviewLoadingError || pictureTooBig"
+      @update:modelValue="onFileChanged"
+      :accept="accept"
+      drag-drop
+    >
       <div
-        class="image-placeholder"
-        :class="{ error: imagePreviewLoadingError }"
+        class="w-100 rounded text-center p-4 rounded-xl border-dashed border-2 border-gray-600"
       >
-        <span class="has-text-centered" v-if="imagePreviewLoadingError">{{
-          $t("Error while loading the preview")
-        }}</span>
-        <span class="has-text-centered" v-else>{{
-          textFallbackWithDefault
-        }}</span>
+        <span class="mx-auto flex w-fit">
+          <Upload />
+          <span class="capitalize"
+            >{{ $t("Click to upload") }} {{ textFallbackWithDefault }}</span
+          >
+        </span>
+        <p v-if="pictureTooBig" class="text-mbz-danger">
+          {{
+            $t(
+              "The selected picture is too heavy. You need to select a file smaller than {size}.",
+              { size: formatBytes(maxSize) }
+            )
+          }}
+        </p>
+        <span
+          class="has-text-centered text-mbz-danger"
+          v-if="imagePreviewLoadingError"
+          >{{ $t("Error while loading the preview") }}</span
+        >
       </div>
-    </figure>
+    </o-upload>
+  </div>
 
-    <div class="flex flex-col">
-      <p v-if="modelValue" class="inline-flex">
-        <span class="block truncate max-w-[200px]" :title="modelValue.name">{{
-          modelValue.name
-        }}</span>
-        <span>({{ formatBytes(modelValue.size) }})</span>
-      </p>
-      <p v-if="pictureTooBig" class="text-mbz-danger">
-        {{
-          $t(
-            "The selected picture is too heavy. You need to select a file smaller than {size}.",
-            { size: formatBytes(maxSize) }
-          )
-        }}
-      </p>
-      <o-field class="justify-center" variant="primary">
-        <o-upload @update:modelValue="onFileChanged" :accept="accept" drag-drop>
-          <span>
-            <Upload />
-            <span>{{ $t("Click to upload") }}</span>
-          </span>
-        </o-upload>
-      </o-field>
+  <div
+    v-if="
+      imageSrc &&
+      !imagePreviewLoadingError &&
+      !pictureTooBig &&
+      !imagePreviewLoadingError
+    "
+  >
+    <figure
+      class="w-fit relative image mx-auto my-4"
+      v-if="imageSrc && !imagePreviewLoadingError"
+    >
+      <img
+        class="max-h-52 rounded-xl"
+        :src="imageSrc"
+        @error="showImageLoadingError"
+      />
       <o-button
-        variant="text"
+        class="!absolute right-1 bottom-1"
+        variant="danger"
         v-if="imageSrc"
         @click="removeOrClearPicture"
         @keyup.enter="removeOrClearPicture"
       >
         {{ $t("Clear") }}
       </o-button>
-    </div>
+    </figure>
   </div>
 </template>
-
-<style scoped lang="scss">
-@use "@/styles/_mixins" as *;
-figure.image {
-  // @include margin-right(30px);
-  max-height: 200px;
-  max-width: 200px;
-  overflow: hidden;
-}
-
-.image-placeholder {
-  background-color: grey;
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &.error {
-    border: 2px solid red;
-  }
-
-  span {
-    flex: 1;
-    color: #eee;
-  }
-}
-</style>
 
 <script lang="ts" setup>
 import { IMedia } from "@/types/media.model";
