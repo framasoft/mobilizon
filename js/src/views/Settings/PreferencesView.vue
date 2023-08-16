@@ -23,8 +23,8 @@
           <fieldset>
             <legend class="sr-only">{{ t("Theme") }}</legend>
             <o-radio
-              :class="{ 'border-mbz-bluegreen border-2': theme === 'light' }"
-              class="p-4 bg-white text-zinc-800 rounded-md mt-2 mr-2"
+              :class="{ 'border-mbz-bluegreen': theme === 'light' }"
+              class="p-4 bg-white text-zinc-800 rounded-md mt-2 mr-2 border-2"
               :disabled="systemTheme"
               v-model="theme"
               name="theme"
@@ -32,8 +32,8 @@
               >{{ t("Light") }}</o-radio
             >
             <o-radio
-              :class="{ 'border-mbz-bluegreen border-2': theme === 'dark' }"
-              class="p-4 bg-zinc-800 rounded-md text-white mt-2 ml-2"
+              :class="{ 'border-mbz-bluegreen': theme === 'dark' }"
+              class="p-4 bg-zinc-800 rounded-md text-white mt-2 ml-2 border-2"
               :disabled="systemTheme"
               v-model="theme"
               name="theme"
