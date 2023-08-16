@@ -63,35 +63,6 @@
   </div>
 </template>
 
-<style scoped lang="scss">
-@use "@/styles/_mixins" as *;
-figure.image {
-  // @include margin-right(30px);
-  //max-height: 200px;
-  //max-width: 200px;
-  //overflow: hidden;
-}
-
-.image-placeholder {
-  background-color: grey;
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  &.error {
-    border: 2px solid red;
-  }
-
-  span {
-    flex: 1;
-    color: #eee;
-  }
-}
-</style>
-
 <script lang="ts" setup>
 import { IMedia } from "@/types/media.model";
 import { computed, ref, watch } from "vue";
