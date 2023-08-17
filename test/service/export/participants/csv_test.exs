@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.Export.Participants.CSVTest do
 
       assert CSV.ready?()
       assert {:ok, path} = CSV.export(event)
-      assert content = File.read!("uploads/exports/csv/" <> path)
+      assert content = File.read!("test/uploads/exports/csv/" <> path)
       assert content =~ "Participant name,Participant status,Participant message"
     end
   end

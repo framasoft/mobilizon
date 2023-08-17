@@ -8,6 +8,7 @@ defmodule Mobilizon.Service.Export.Participants.CSV do
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Web.Gettext
   import Mobilizon.Web.Gettext, only: [gettext: 2]
+  require Logger
 
   import Mobilizon.Service.Export.Participants.Common,
     only: [
@@ -30,9 +31,18 @@ defmodule Mobilizon.Service.Export.Participants.CSV do
   def export(%Event{} = event, options \\ []) do
     if ready?() do
       filename = "#{ShortUUID.encode!(Ecto.UUID.generate())}.csv"
-      full_path = Path.join([export_path(@extension), filename])
+      folder = export_path(@extension)
+      folder_creation_result = File.mkdir_p(folder)
 
-      file = File.open!(full_path, [:write, :utf8])
+      if folder_creation_result != :ok do
+        Logger.warning(
+          "Unable to create folder at #{folder}, error result #{inspect(folder_creation_result)}"
+        )
+      end
+
+      full_path = Path.join([folder, filename])
+
+      file = File.open!(full_path, [:write, :exclusive, :utf8])
 
       case Repo.transaction(
              fn ->
