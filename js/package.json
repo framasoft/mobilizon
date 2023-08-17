@@ -117,7 +117,7 @@
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^2.0.2",
     "eslint": "^8.21.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-vue": "^9.3.0",

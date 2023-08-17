@@ -215,7 +215,7 @@ defmodule Mobilizon.Mixfile do
       # Dev and test dependencies
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :e2e]},
       {:ex_machina, "~> 2.3", only: [:dev, :test]},
-      {:excoveralls, "~> 0.16.0", only: :test},
+      {:excoveralls, "~> 0.17.0", only: :test},
       {:ex_doc, "~> 0.25", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:ex_unit_notifier, "~> 1.0", only: :test},
