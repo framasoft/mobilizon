@@ -154,7 +154,11 @@ defmodule Mobilizon.Service.Notifications.SchedulerTest do
       %User{id: user_id} = user = insert(:user, locale: "fr")
 
       settings =
-        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+        insert(:settings,
+          user_id: user_id,
+          notification_each_week: true,
+          timezone: "Europe/Paris"
+        )
 
       user = Map.put(user, :settings, settings)
       actor = insert(:actor, user: user)

@@ -190,7 +190,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description: "The page in the paginated activity items list"
       )
 
-      arg(:limit, :integer, default_value: 10, description: "The limit of activity items per page")
+      arg(:limit, :integer,
+        default_value: 10,
+        description: "The limit of activity items per page"
+      )
 
       arg(:type, :activity_type, description: "Filter by type of activity")
       arg(:author, :activity_author, description: "Filter by activity author")
@@ -213,7 +216,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
   enum :openness do
     value(:invite_only, description: "The actor can only be followed by invitation")
 
-    value(:moderated, description: "The actor needs to accept the following before it's effective")
+    value(:moderated,
+      description: "The actor needs to accept the following before it's effective"
+    )
 
     value(:open, description: "The actor is open to followings")
   end

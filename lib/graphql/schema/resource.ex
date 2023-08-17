@@ -25,7 +25,10 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:type, :string, description: "The resource's type (if it's a folder)")
     field(:path, :string, description: "The resource's path")
 
-    field(:parent, :resource, description: "The resource's parent", resolve: dataloader(Resources))
+    field(:parent, :resource,
+      description: "The resource's parent",
+      resolve: dataloader(Resources)
+    )
 
     field :children, :paginated_resource_list do
       description("Children resources in folder")

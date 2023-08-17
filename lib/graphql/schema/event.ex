@@ -230,7 +230,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       description: "Whether or not to allow anonymous participation (if the server allows it)"
     )
 
-    field(:offers, list_of(:event_offer), description: "The list of offers to show for this event")
+    field(:offers, list_of(:event_offer),
+      description: "The list of offers to show for this event"
+    )
 
     field(:participation_conditions, list_of(:event_participation_condition),
       description: "The list of participation conditions to accept to join this event"
@@ -414,7 +416,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
         description: "The event's organizer ID (as a person)"
       )
 
-      arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
+      arg(:attributed_to_id, :id,
+        description: "Who the event is attributed to ID (often a group)"
+      )
 
       arg(:category, :event_category,
         default_value: "MEETING",
@@ -476,7 +480,9 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
       arg(:phone_address, :string, description: "Phone address for the event")
       arg(:organizer_actor_id, :id, description: "The event's organizer ID (as a person)")
 
-      arg(:attributed_to_id, :id, description: "Who the event is attributed to ID (often a group)")
+      arg(:attributed_to_id, :id,
+        description: "Who the event is attributed to ID (often a group)"
+      )
 
       arg(:category, :event_category, description: "The event's category")
       arg(:physical_address, :address_input, description: "The event's physical address")

@@ -7,7 +7,10 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Discussions.Comment do
   @spec build_tags(Comment.t(), String.t()) :: list(Phoenix.HTML.safe())
   def build_tags(%Comment{deleted_at: nil} = comment, _locale) do
     [
-      Tag.tag(:meta, property: "og:title", content: escape_text(Actor.display_name(comment.actor))),
+      Tag.tag(:meta,
+        property: "og:title",
+        content: escape_text(Actor.display_name(comment.actor))
+      ),
       Tag.tag(:meta, property: "og:url", content: comment.url),
       Tag.tag(:meta, property: "og:description", content: comment.text),
       Tag.tag(:meta, property: "og:type", content: "website"),

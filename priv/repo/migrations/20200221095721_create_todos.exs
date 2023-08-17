@@ -20,7 +20,9 @@ defmodule Mobilizon.Repo.Migrations.CreateTodos do
       add(:creator_id, references(:actors, on_delete: :delete_all), null: false)
       add(:assigned_to_id, references(:actors, on_delete: :nilify_all))
 
-      add(:todo_list_id, references(:todo_lists, on_delete: :delete_all, type: :uuid), null: false)
+      add(:todo_list_id, references(:todo_lists, on_delete: :delete_all, type: :uuid),
+        null: false
+      )
 
       timestamps()
     end

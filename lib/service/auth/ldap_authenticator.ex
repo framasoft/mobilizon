@@ -183,15 +183,15 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticator do
 
   @spec search_filter(String.t(), boolean()) :: any()
   defp search_filter(email, false) do
-    :eldap.equalityMatch('mail', to_charlist(email))
+    :eldap.equalityMatch(~c"mail", to_charlist(email))
   end
 
   # If we need to filter for group memberships as well
   @spec search_filter(String.t(), String.t()) :: any()
   defp search_filter(email, group) when is_binary(group) do
     :eldap.and([
-      :eldap.equalityMatch('mail', to_charlist(email)),
-      :eldap.equalityMatch('memberOf', to_charlist(group))
+      :eldap.equalityMatch(~c"mail", to_charlist(email)),
+      :eldap.equalityMatch(~c"memberOf", to_charlist(group))
     ])
   end
 

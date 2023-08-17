@@ -73,7 +73,9 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       description: "The list of participations this user has",
       meta: [private: true, rule: :"read:user:participations"]
     ) do
-      arg(:after_datetime, :datetime, description: "Filter participations by event start datetime")
+      arg(:after_datetime, :datetime,
+        description: "Filter participations by event start datetime"
+      )
 
       arg(:before_datetime, :datetime, description: "Filter participations by event end datetime")
 
@@ -148,7 +150,9 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
     field(:last_sign_in_at, :datetime, description: "When the user previously signed-in")
 
-    field(:last_sign_in_ip, :string, description: "The IP adress the user previously sign-in with")
+    field(:last_sign_in_ip, :string,
+      description: "The IP adress the user previously sign-in with"
+    )
 
     field(:current_sign_in_at, :datetime, description: "When the user currenlty signed-in")
 

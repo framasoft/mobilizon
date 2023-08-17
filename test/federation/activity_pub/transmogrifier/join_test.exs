@@ -84,7 +84,11 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
       insert(:member, actor: actor_member_2, parent: group, role: :moderator)
 
       %Event{url: event_url} =
-        insert(:event, organizer_actor: organizer, join_options: :restricted, attributed_to: group)
+        insert(:event,
+          organizer_actor: organizer,
+          join_options: :restricted,
+          attributed_to: group
+        )
 
       join_data =
         File.read!("test/fixtures/mobilizon-join-activity.json")

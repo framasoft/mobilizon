@@ -96,7 +96,9 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       arg(:in_reply_to_comment_id, :id, description: "The comment ID this one replies to")
       arg(:language, :string, description: "The comment language", default_value: "und")
 
-      arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
+      arg(:is_announcement, :boolean,
+        description: "Should this comment be announced to everyone?"
+      )
 
       middleware(Rajska.QueryAuthorization,
         permit: :user,
@@ -114,7 +116,9 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       arg(:comment_id, non_null(:id), description: "The comment ID")
       arg(:language, :string, description: "The comment language", default_value: "und")
 
-      arg(:is_announcement, :boolean, description: "Should this comment be announced to everyone?")
+      arg(:is_announcement, :boolean,
+        description: "Should this comment be announced to everyone?"
+      )
 
       middleware(Rajska.QueryAuthorization,
         permit: :user,
