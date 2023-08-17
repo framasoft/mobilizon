@@ -302,6 +302,9 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
       {:error, :invalid_email} ->
         {:error, dgettext("errors", "This email doesn't seem to be valid")}
 
+      {:error, :failed_sending_mail} ->
+        {:error, dgettext("errors", "Couldn't send an email. Internal error.")}
+
       {:error, :email_too_soon} ->
         {:error,
          dgettext(

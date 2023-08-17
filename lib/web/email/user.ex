@@ -91,13 +91,19 @@ defmodule Mobilizon.Web.Email.User do
            Users.update_user(user, %{
              "confirmation_sent_at" => DateTime.utc_now() |> DateTime.truncate(:second)
            }) do
-      send_confirmation_email(user, locale)
-      Logger.info("Sent confirmation email again to #{user.email}")
-      {:ok, user.email}
+      case send_confirmation_email(user, locale) do
+        {:ok, _} ->
+          Logger.info("Sent confirmation email again to #{user.email}")
+          {:ok, user.email}
+
+        {:error, err} ->
+          Logger.error("Failed sending email to #{user.email}. #{inspect(err)}")
+          {:error, :failed_sending_mail}
+      end
     end
   end
 
-  @spec send_confirmation_email(User.t(), String.t()) :: Swoosh.Email.t()
+  @spec send_confirmation_email(User.t(), String.t()) :: {:ok, term} | {:error, term}
   def send_confirmation_email(%User{} = user, locale \\ "en") do
     user
     |> Email.User.confirmation_email(locale)
