@@ -132,7 +132,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.JoinTest do
       assert reject_activity.data["id"] =~ "/reject/join/"
 
       # We don't accept already rejected Reject activities
-      assert capture_log([level: :warn], fn ->
+      assert capture_log([level: :warning], fn ->
                assert :error == Transmogrifier.handle_incoming(reject_data)
              end) =~
                "Tried to handle an Reject activity on a Join activity with a event object but the participant is already rejected"
