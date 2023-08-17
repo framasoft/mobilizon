@@ -273,7 +273,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Admin do
            |> Enum.into(%{}),
          :ok <- eventually_update_instance_actor(res) do
       Config.clear_config_cache()
-      Cachex.put(:config, :admin_config, res)
 
       {:ok, res}
     end
