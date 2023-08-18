@@ -32,13 +32,10 @@ variables:
   EXPORT_FORMATS: "csv,ods,pdf"
   APP_VERSION: "${CI_COMMIT_REF_NAME}"
   APP_ASSET: "${CI_PROJECT_NAME}_${CI_COMMIT_REF_NAME}_${ARCH}.tar.gz"
-  CYPRESS_INSTALL_BINARY: 0
 
 cache:
   key: "${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
   paths:
-    - ~/.cache/Cypress
-    - cache/Cypress
     - deps/
     - _build/
     - js/node_modules
