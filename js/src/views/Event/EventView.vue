@@ -19,7 +19,7 @@
         </div>
 
         <section class="intro px-2 pt-4" dir="auto">
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2 justify-end">
             <div class="flex-1 min-w-[300px]">
               <div
                 v-if="eventLoading"

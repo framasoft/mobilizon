@@ -482,7 +482,7 @@
         <span class="dark:text-gray-900" v-if="isEventModified">
           {{ t("Unsaved changes") }}
         </span>
-        <div class="flex flex-wrap gap-3 items-center">
+        <div class="flex flex-wrap gap-3 items-center justify-end">
           <o-button
             variant="text"
             @click="confirmGoBack"
