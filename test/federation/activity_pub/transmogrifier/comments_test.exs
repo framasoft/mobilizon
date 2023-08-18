@@ -213,7 +213,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
           {:ok, %Tesla.Env{status: 404, body: "Not found"}}
       end)
 
-      assert capture_log([level: :warn], fn ->
+      assert capture_log([level: :warning], fn ->
                {:ok, _returned_activity, _entity} = Transmogrifier.handle_incoming(data)
              end) =~ "[warning] Parent object is something we don't handle"
     end

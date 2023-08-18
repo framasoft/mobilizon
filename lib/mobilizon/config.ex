@@ -4,6 +4,7 @@ defmodule Mobilizon.Config do
   """
 
   alias Mobilizon.Actors
+  alias Mobilizon.Admin.Setting
   alias Mobilizon.Service.GitStatus
   require Logger
   import Mobilizon.Service.Export.Participants.Common, only: [enabled_formats: 0]
@@ -28,10 +29,67 @@ defmodule Mobilizon.Config do
   @spec instance_config :: mobilizon_config
   def instance_config, do: Application.get_env(:mobilizon, :instance)
 
+  @spec db_instance_config :: list(Setting.t())
+  def db_instance_config, do: Mobilizon.Admin.get_all_admin_settings()
+
+  @spec config_cache :: map()
+  def config_cache do
+    case Cachex.fetch(:config, :all_db_config, fn _key ->
+           value =
+             Enum.reduce(
+               Mobilizon.Admin.get_all_admin_settings(),
+               %{},
+               &arrange_values/2
+             )
+
+           {:commit, value}
+         end) do
+      {status, value} when status in [:ok, :commit] -> value
+      _err -> %{}
+    end
+  end
+
+  @spec arrange_values(Setting.t(), map()) :: map()
+  defp arrange_values(setting, acc) do
+    {_, new_data} =
+      Map.get_and_update(acc, setting.group, fn current_value ->
+        new_value = current_value || %{}
+
+        {current_value, Map.put(new_value, setting.name, process_value(setting.value))}
+      end)
+
+    new_data
+  end
+
+  @spec process_value(String.t() | nil) :: any()
+  defp process_value(nil), do: nil
+  defp process_value(""), do: nil
+
+  defp process_value(value) do
+    case Jason.decode(value) do
+      {:ok, val} ->
+        val
+
+      {:error, _} ->
+        case value do
+          "true" -> true
+          "false" -> false
+          value -> value
+        end
+    end
+  end
+
+  @spec config_cached_value(String.t(), String.t(), String.t()) :: any()
+  def config_cached_value(group, name, fallback \\ nil) do
+    config_cache()
+    |> Map.get(group, %{})
+    |> Map.get(name, fallback)
+  end
+
   @spec instance_name :: String.t()
   def instance_name,
     do:
-      Mobilizon.Admin.get_admin_setting_value(
+      config_cached_value(
         "instance",
         "instance_name",
         instance_config()[:name]
@@ -40,7 +98,7 @@ defmodule Mobilizon.Config do
   @spec instance_description :: String.t()
   def instance_description,
     do:
-      Mobilizon.Admin.get_admin_setting_value(
+      config_cached_value(
         "instance",
         "instance_description",
         instance_config()[:description]
@@ -49,37 +107,37 @@ defmodule Mobilizon.Config do
   @spec instance_long_description :: String.t()
   def instance_long_description,
     do:
-      Mobilizon.Admin.get_admin_setting_value(
+      config_cached_value(
         "instance",
         "instance_long_description"
       )
 
   @spec instance_slogan :: String.t() | nil
-  def instance_slogan, do: Mobilizon.Admin.get_admin_setting_value("instance", "instance_slogan")
+  def instance_slogan, do: config_cached_value("instance", "instance_slogan")
 
   @spec contact :: String.t() | nil
   def contact do
-    Mobilizon.Admin.get_admin_setting_value("instance", "contact")
+    config_cached_value("instance", "contact")
   end
 
   @spec instance_terms(String.t()) :: String.t()
   def instance_terms(locale \\ "en") do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms", generate_terms(locale))
+    config_cached_value("instance", "instance_terms", generate_terms(locale))
   end
 
   @spec instance_terms_type :: String.t()
   def instance_terms_type do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_type", "DEFAULT")
+    config_cached_value("instance", "instance_terms_type", "DEFAULT")
   end
 
   @spec instance_terms_url :: String.t() | nil
   def instance_terms_url do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_terms_url")
+    config_cached_value("instance", "instance_terms_url")
   end
 
   @spec instance_privacy(String.t()) :: String.t()
   def instance_privacy(locale \\ "en") do
-    Mobilizon.Admin.get_admin_setting_value(
+    config_cached_value(
       "instance",
       "instance_privacy_policy",
       generate_privacy(locale)
@@ -88,17 +146,17 @@ defmodule Mobilizon.Config do
 
   @spec instance_privacy_type :: String.t()
   def instance_privacy_type do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_privacy_policy_type", "DEFAULT")
+    config_cached_value("instance", "instance_privacy_policy_type", "DEFAULT")
   end
 
   @spec instance_privacy_url :: String.t()
   def instance_privacy_url do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_privacy_policy_url")
+    config_cached_value("instance", "instance_privacy_policy_url")
   end
 
   @spec instance_rules :: String.t()
   def instance_rules do
-    Mobilizon.Admin.get_admin_setting_value("instance", "instance_rules")
+    config_cached_value("instance", "instance_rules")
   end
 
   @spec instance_version :: String.t()
@@ -113,7 +171,7 @@ defmodule Mobilizon.Config do
   def instance_registrations_open?,
     do:
       to_boolean(
-        Mobilizon.Admin.get_admin_setting_value(
+        config_cached_value(
           "instance",
           "registrations_open",
           instance_config()[:registrations_open]
@@ -123,7 +181,7 @@ defmodule Mobilizon.Config do
   @spec instance_languages :: list(String.t())
   def instance_languages,
     do:
-      Mobilizon.Admin.get_admin_setting_value(
+      config_cached_value(
         "instance",
         "instance_languages",
         instance_config()[:languages]
@@ -322,8 +380,6 @@ defmodule Mobilizon.Config do
 
   @spec anonymous_actor_id :: integer
   def anonymous_actor_id, do: get_cached_value(:anonymous_actor_id)
-  @spec admin_settings :: map
-  def admin_settings, do: get_cached_value(:admin_config)
 
   @spec get(keys :: module | atom | [module | atom]) :: any
   def get(key), do: get(key, nil)
@@ -399,8 +455,11 @@ defmodule Mobilizon.Config do
     end
   end
 
-  defp create_cache(:admin_config) do
-    data = %{
+  defp create_cache(_), do: {:error, :cache_key_not_handled}
+
+  @spec admin_settings :: map()
+  def admin_settings do
+    %{
       instance_description: instance_description(),
       instance_long_description: instance_long_description(),
       instance_name: instance_name(),
@@ -416,8 +475,6 @@ defmodule Mobilizon.Config do
       instance_rules: instance_rules(),
       instance_languages: instance_languages()
     }
-
-    {:ok, data}
   end
 
   @spec clear_config_cache :: {:ok | :error, integer}

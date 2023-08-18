@@ -34,7 +34,7 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           date: Signature.generate_date_header()
         })
 
-      assert signature =~ "headers=\"(request-target) content-length date digest host\""
+      assert signature =~ "headers=\"date host digest content-length (request-target)\""
     end
   end
 

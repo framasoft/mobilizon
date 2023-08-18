@@ -26,7 +26,9 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
       resolve: &Person.user_for_person/3
     )
 
-    field(:member_of, list_of(:member), description: "The list of groups this person is member of")
+    field(:member_of, list_of(:member),
+      description: "The list of groups this person is member of"
+    )
 
     field(:url, :string, description: "The ActivityPub actor's URL")
     field(:type, :actor_type, description: "The type of Actor (Person, Group,…)")
@@ -94,7 +96,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
         description: "The page in the paginated participation list"
       )
 
-      arg(:limit, :integer, default_value: 10, description: "The limit of participations per page")
+      arg(:limit, :integer,
+        default_value: 10,
+        description: "The limit of participations per page"
+      )
 
       resolve(&Person.person_participations/3)
     end
@@ -218,7 +223,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field :create_person, :person do
       arg(:preferred_username, non_null(:string), description: "The username for the profile")
 
-      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
+      arg(:name, :string,
+        description: "The displayed name for the new profile",
+        default_value: ""
+      )
 
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
 
@@ -286,7 +294,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
     field :register_person, :person do
       arg(:preferred_username, non_null(:string), description: "The username for the profile")
 
-      arg(:name, :string, description: "The displayed name for the new profile", default_value: "")
+      arg(:name, :string,
+        description: "The displayed name for the new profile",
+        default_value: ""
+      )
 
       arg(:summary, :string, description: "The summary for the new profile", default_value: "")
       arg(:email, non_null(:string), description: "The email from the user previously created")
@@ -301,7 +312,11 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
           "The banner for the profile, either as an object or directly the ID of an existing media"
       )
 
-      middleware(Rajska.QueryAuthorization, permit: :all, scope: Mobilizon.Actors.Actor, args: %{})
+      middleware(Rajska.QueryAuthorization,
+        permit: :all,
+        scope: Mobilizon.Actors.Actor,
+        args: %{}
+      )
 
       resolve(&Person.register_person/3)
     end

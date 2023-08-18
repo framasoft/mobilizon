@@ -62,8 +62,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
            wholeSubtree: fn -> :ok end,
            search: fn _connection, _options ->
              {:ok,
-              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], [],
-               []}}
+              {:eldap_search_result, [{:eldap_entry, ~c"", [{~c"cn", [to_charlist("MyUser")]}]}],
+               [], []}}
            end,
            close: fn _connection ->
              send(self(), :close_connection)
@@ -111,8 +111,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
            wholeSubtree: fn -> :ok end,
            search: fn _connection, _options ->
              {:ok,
-              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], [],
-               []}}
+              {:eldap_search_result, [{:eldap_entry, ~c"", [{~c"cn", [to_charlist("MyUser")]}]}],
+               [], []}}
            end,
            close: fn _connection ->
              send(self(), :close_connection)
@@ -149,7 +149,9 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
       with_mocks [
         {:eldap, [],
          [
-           open: fn [^host], [{:port, ^port}, {:ssl, false} | _] -> {:error, 'connect failed'} end,
+           open: fn [^host], [{:port, ^port}, {:ssl, false} | _] ->
+             {:error, ~c"connect failed"}
+           end,
            simple_bind: fn _connection, _dn, password ->
              case password do
                ^admin_password -> :ok
@@ -160,7 +162,8 @@ defmodule Mobilizon.Service.Auth.LDAPAuthenticatorTest do
            wholeSubtree: fn -> :ok end,
            search: fn _connection, _options ->
              {:ok,
-              {:eldap_search_result, [{:eldap_entry, '', [{'cn', [to_charlist("MyUser")]}]}], []}}
+              {:eldap_search_result, [{:eldap_entry, ~c"", [{~c"cn", [to_charlist("MyUser")]}]}],
+               []}}
            end,
            close: fn _connection ->
              send(self(), :close_connection)

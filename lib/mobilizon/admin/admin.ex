@@ -78,6 +78,11 @@ defmodule Mobilizon.Admin do
 
   defp stringify_struct(struct), do: struct
 
+  @spec get_all_admin_settings :: list(Setting.t())
+  def get_all_admin_settings do
+    Repo.all(Setting)
+  end
+
   @spec get_admin_setting_value(String.t(), String.t(), String.t() | nil) ::
           String.t() | boolean() | nil | map() | list()
   def get_admin_setting_value(group, name, fallback \\ nil)

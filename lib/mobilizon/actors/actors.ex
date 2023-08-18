@@ -1310,7 +1310,9 @@ defmodule Mobilizon.Actors do
   def schedule_key_rotation(%Actor{id: actor_id} = actor, delay) do
     Cachex.put(:actor_key_rotation, actor_id, true)
 
-    Workers.Background.enqueue("actor_key_rotation", %{"actor_id" => actor.id}, schedule_in: delay)
+    Workers.Background.enqueue("actor_key_rotation", %{"actor_id" => actor.id},
+      schedule_in: delay
+    )
 
     :ok
   end

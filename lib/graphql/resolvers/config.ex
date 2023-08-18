@@ -12,7 +12,6 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
   """
   @spec get_config(any(), map(), Absinthe.Resolution.t()) :: {:ok, map()}
   def get_config(_parent, _params, %{context: %{ip: ip}}) do
-    # ip = "2a01:e0a:184:2000:1112:e19d:9779:88c8"
     geolix = Geolix.lookup(ip)
 
     country_code =

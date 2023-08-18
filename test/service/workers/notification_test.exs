@@ -166,7 +166,11 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %User{id: user_id} = user = insert(:user)
 
       settings =
-        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+        insert(:settings,
+          user_id: user_id,
+          notification_each_week: true,
+          timezone: "Europe/Paris"
+        )
 
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
@@ -186,7 +190,11 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %User{id: user_id} = user = insert(:user)
 
       settings =
-        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+        insert(:settings,
+          user_id: user_id,
+          notification_each_week: true,
+          timezone: "Europe/Paris"
+        )
 
       user = %User{user | settings: settings}
       %Actor{} = actor = insert(:actor, user: user)
@@ -210,7 +218,11 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %User{id: user_id} = user = insert(:user)
 
       settings =
-        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+        insert(:settings,
+          user_id: user_id,
+          notification_each_week: true,
+          timezone: "Europe/Paris"
+        )
 
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)
@@ -229,7 +241,11 @@ defmodule Mobilizon.Service.Workers.NotificationTest do
       %User{id: user_id} = user = insert(:user, email: @email)
 
       settings =
-        insert(:settings, user_id: user_id, notification_each_week: true, timezone: "Europe/Paris")
+        insert(:settings,
+          user_id: user_id,
+          notification_each_week: true,
+          timezone: "Europe/Paris"
+        )
 
       user = Map.put(user, :settings, settings)
       %Actor{} = actor = insert(:actor, user: user)

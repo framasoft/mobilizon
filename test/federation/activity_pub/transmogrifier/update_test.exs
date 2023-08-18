@@ -66,7 +66,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.UpdateTest do
         |> Map.put("actor", relay_actor_url)
         |> Map.put("object", object)
 
-      assert capture_log([level: :warn], fn ->
+      assert capture_log([level: :warning], fn ->
                :error = Transmogrifier.handle_incoming(update_data)
              end) =~ "[warning] Activity tried to update an actor that's local or not a group"
 

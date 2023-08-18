@@ -102,7 +102,10 @@ defmodule Mobilizon.GraphQL.Schema.AddressType do
         description: "The page in the paginated search results list"
       )
 
-      arg(:limit, :integer, default_value: 10, description: "The limit of search results per page")
+      arg(:limit, :integer,
+        default_value: 10,
+        description: "The limit of search results per page"
+      )
 
       arg(:type, :address_search_type, description: "Filter by type of results")
       middleware(Rajska.QueryAuthorization, permit: :all)

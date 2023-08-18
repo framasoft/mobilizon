@@ -108,7 +108,7 @@ defmodule Mobilizon.Events.Participant do
   end
 
   # No lookalike symbols
-  @symbols '6789BCDFGHJKLMNPQRTW'
+  @symbols ~c"6789BCDFGHJKLMNPQRTW"
   @symbol_count Enum.count(@symbols) - 1
   @code_length 6
 
