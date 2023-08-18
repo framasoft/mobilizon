@@ -80,8 +80,16 @@ defmodule Mobilizon.Mixfile do
   def application do
     [
       mod: {Mobilizon, []},
-      extra_applications: [:logger, :runtime_tools, :guardian, :geolix, :crypto, :cachex]
+      extra_applications: extra_applications(Mix.env())
     ]
+  end
+
+  defp extra_applications(:test) do
+    extra_applications(:prod) ++ [:inets, :ssl]
+  end
+
+  defp extra_applications(_env) do
+    [:logger, :runtime_tools, :guardian, :geolix, :crypto, :cachex]
   end
 
   def copy_files(%{path: target_path} = release) do
