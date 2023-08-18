@@ -4,6 +4,11 @@ ENV MIX_ENV prod
 # ENV LANG en_US.UTF-8
 ARG APP_ASSET
 
+# Fix qemu segfault on arm64
+# See https://github.com/plausible/analytics/pull/2879 and https://github.com/erlang/otp/pull/6340
+ARG ERL_FLAGS=""
+ENV ERL_FLAGS=$ERL_FLAGS
+
 # Set the right versions
 ENV ELIXIR_VERSION latest
 ENV ERLANG_VERSION latest
