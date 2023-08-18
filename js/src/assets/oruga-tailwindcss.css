@@ -55,7 +55,7 @@ body {
 }
 .btn-outlined-:hover,
 .btn-outlined-primary:hover {
-  @apply font-bold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
+  @apply font-semibold py-2 px-4 bg-mbz-bluegreen dark:bg-violet-3 text-white rounded;
 }
 
 /* Field */
@@ -89,7 +89,7 @@ body {
 
 /* Input */
 .input {
-  @apply appearance-none box-border border w-full py-2 px-3 text-black leading-tight dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50;
+  @apply appearance-none box-border rounded border w-full py-2 px-3 text-black leading-tight dark:bg-zinc-600 dark:placeholder:text-zinc-400 dark:text-zinc-50;
 }
 .input-danger {
   @apply border-red-500;

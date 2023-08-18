@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ml-auto w-min">
     <o-dropdown
       v-if="participation && participation.role === ParticipantRole.PARTICIPANT"
     >

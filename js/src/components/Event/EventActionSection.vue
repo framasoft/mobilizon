@@ -14,8 +14,8 @@
       @confirm-leave="confirmLeave"
       @cancel-anonymous-participation="cancelAnonymousParticipation"
     />
-    <div class="flex flex-col">
-      <p class="inline-flex gap-1">
+    <div class="flex flex-col gap-1 mt-1">
+      <p class="inline-flex gap-2 ml-auto">
         <TicketConfirmationOutline />
         <router-link
           class="participations-link"
@@ -92,7 +92,7 @@
           </template>
         </VTooltip>
       </p>
-      <o-dropdown>
+      <o-dropdown class="ml-auto">
         <template #trigger>
           <o-button icon-right="dots-horizontal">
             {{ t("Actions") }}

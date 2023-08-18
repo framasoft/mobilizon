@@ -67,7 +67,7 @@
           />
           <o-button
             @click="dateFilter = new Date()"
-            class="reset-area"
+            class="reset-area !h-auto"
             icon-left="close"
             :title="t('Clear date filter field')"
           />
