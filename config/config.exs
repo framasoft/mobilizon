@@ -113,17 +113,22 @@ config :mobilizon, :media_proxy,
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: "localhost",
-  # usually 25, 465 or 587
-  port: 25,
   username: "",
   password: "",
   # can be `:always` or `:never`
   auth: :if_available,
   # can be `true`
-  ssl: false,
+  # ssl: false,
   # can be `:always` or `:never`
   tls: :if_available,
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
+  tls_options: [
+    verify: :verify_peer,
+    versions: [:"tlsv1.2", :"tlsv1.3"],
+    cacerts: :public_key.cacerts_get(),
+    server_name_indication: "localhost",
+    depth: 99
+  ],
   retries: 1,
   # can be `true`
   no_mx_lookups: false

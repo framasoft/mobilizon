@@ -211,7 +211,7 @@ defmodule Mobilizon.Mixfile do
       {:nimble_csv, "~> 1.1"},
       {:export, "~> 0.1.0"},
       {:erlport, "~> 0.11.0"},
-      {:tz_world, "~> 1.0"},
+      {:tz_world, "1.3.0"},
       {:tzdata, "~> 1.1"},
       {:codepagex, "~> 0.1.6"},
       {:vite_phx, "~> 0.2"},

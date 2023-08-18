@@ -121,6 +121,12 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         }
   """
 
+  @resend_registration_email_mutation """
+    mutation ResendConfirmationEmail($email: String!) {
+      resendConfirmationEmail(email: $email)
+    }
+  """
+
   @send_reset_password_mutation """
     mutation SendResetPassword($email: String!) {
       sendResetPassword(email: $email)
@@ -706,22 +712,16 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
 
   describe "Resolver: Resend confirmation emails" do
     test "test resend_confirmation_email/3 with valid email resends an validation email",
-         context do
+         %{conn: conn} do
       {:ok, %User{} = user} = Users.register(%{email: "toto@tata.tld", password: "p4ssw0rd"})
 
-      mutation = """
-          mutation {
-            resendConfirmationEmail(
-                  email: "#{user.email}"
-              )
-            }
-      """
-
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @resend_registration_email_mutation,
+          variables: %{email: user.email}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "You requested again a confirmation email too soon. Please try again in a few minutes"
 
       # Hammer time !
@@ -730,28 +730,24 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
       })
 
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @resend_registration_email_mutation,
+          variables: %{email: user.email}
+        )
 
-      assert json_response(res, 200)["data"]["resendConfirmationEmail"] == user.email
+      assert res["data"]["resendConfirmationEmail"] == user.email
       assert_email_sent(to: user.email)
     end
 
-    test "test resend_confirmation_email/3 with invalid email resends an validation email",
-         context do
-      mutation = """
-          mutation {
-            resendConfirmationEmail(
-                  email: "oh@no.com"
-              )
-            }
-      """
-
+    test "test resend_confirmation_email/3 with invalid email does not resend an validation email",
+         %{conn: conn} do
       res =
-        context.conn
-        |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
+        AbsintheHelpers.graphql_query(conn,
+          query: @resend_registration_email_mutation,
+          variables: %{email: "oh@no.com"}
+        )
 
-      assert hd(json_response(res, 200)["errors"])["message"] ==
+      assert hd(res["errors"])["message"] ==
                "No user to validate with this email was found"
     end
   end
