@@ -75,6 +75,10 @@ defmodule Mix.Tasks.Mobilizon.Common do
       IO.puts(:stderr, message)
     end
 
+    shutdown(options)
+  end
+
+  def shutdown(options \\ []) do
     if @env != :test do
       exit({:shutdown, Keyword.get(options, :error_code, 1)})
     end
