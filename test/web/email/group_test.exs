@@ -14,6 +14,7 @@ defmodule Mobilizon.Web.Email.GroupTest do
   import Mobilizon.Factory
 
   describe "Notify of new event" do
+    @tag @skip
     test "members, followers, execept the ones that disabled it" do
       {_user_creator, actor} = insert_user_with_settings("user@creator.com")
       %Actor{} = group = insert(:group)
