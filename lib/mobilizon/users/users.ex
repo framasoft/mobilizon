@@ -97,6 +97,21 @@ defmodule Mobilizon.Users do
     end
   end
 
+  @spec get_users_by_email_domain(String.t()) :: list(User.t())
+  def get_users_by_email_domain(email_domain) do
+    User
+    |> where([u], like(u.email, ^"%#{email_domain}%"))
+    |> Repo.all()
+  end
+
+  @spec get_users_by_ip_address(String.t()) :: list(User.t())
+  def get_users_by_ip_address(ip_address) do
+    User
+    |> where([u], u.current_sign_in_ip == ^ip_address)
+    |> or_where([u], u.last_sign_in_ip == ^ip_address)
+    |> Repo.all()
+  end
+
   @doc """
   Get an user by its activation token.
   """
