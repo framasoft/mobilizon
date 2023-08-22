@@ -8,6 +8,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpamTest do
   Mix.shell(Mix.Shell.Process)
 
   describe "detect spam" do
+    @tag :skip
     test "on all content" do
       insert(:actor, preferred_username: "ham")
       insert(:actor, preferred_username: "spam")

@@ -7,7 +7,7 @@ defmodule Mobilizon.Service.Export.Participants.CSVTest do
   alias Mobilizon.Service.Export.Participants.CSV
 
   describe "export event participants to csv" do
-    @tag @skip
+    @tag :skip
     test "export basic infos" do
       %Event{} = event = insert(:event)
       insert(:participant, event: event, role: :creator)

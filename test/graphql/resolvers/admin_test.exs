@@ -347,6 +347,7 @@ defmodule Mobilizon.GraphQL.Resolvers.AdminTest do
 
     setup %{conn: conn} do
       Cachex.clear(:config)
+      on_exit(fn -> Cachex.clear(:config) end)
       [conn: conn]
     end
 
