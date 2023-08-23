@@ -3,6 +3,8 @@ defmodule Mobilizon.Service.DateTime do
   Module to represent a datetime in a given locale
   """
   alias Cldr.DateTime.Relative
+  alias Mobilizon.Cldr, as: MobilizonCldr
+  import Mobilizon.Cldr, only: [locale_or_default: 1]
 
   @typep to_string_format :: :short | :medium | :long | :full
 
@@ -10,25 +12,25 @@ defmodule Mobilizon.Service.DateTime do
 
   @spec datetime_to_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_string(%DateTime{} = datetime, locale \\ "en", format \\ :medium) do
-    Mobilizon.Cldr.DateTime.to_string!(datetime,
+    MobilizonCldr.DateTime.to_string!(datetime,
       format: format,
-      locale: Mobilizon.Cldr.locale_or_default(locale)
+      locale: locale_or_default(locale)
     )
   end
 
   @spec datetime_to_time_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_time_string(%DateTime{} = datetime, locale \\ "en", format \\ :short) do
-    Mobilizon.Cldr.Time.to_string!(datetime,
+    MobilizonCldr.Time.to_string!(datetime,
       format: format,
-      locale: Mobilizon.Cldr.locale_or_default(locale)
+      locale: locale_or_default(locale)
     )
   end
 
   @spec datetime_to_date_string(DateTime.t(), String.t(), to_string_format()) :: String.t()
   def datetime_to_date_string(%DateTime{} = datetime, locale \\ "en", format \\ :short) do
-    Mobilizon.Cldr.Date.to_string!(datetime,
+    MobilizonCldr.Date.to_string!(datetime,
       format: format,
-      locale: Mobilizon.Cldr.locale_or_default(locale)
+      locale: locale_or_default(locale)
     )
   end
 
@@ -47,9 +49,9 @@ defmodule Mobilizon.Service.DateTime do
 
   @spec datetime_relative(DateTime.t(), String.t()) :: String.t()
   def datetime_relative(%DateTime{} = datetime, locale \\ "en") do
-    Relative.to_string!(datetime, Mobilizon.Cldr,
+    Relative.to_string!(datetime, MobilizonCldr,
       relative_to: DateTime.utc_now(),
-      locale: Mobilizon.Cldr.locale_or_default(locale)
+      locale: locale_or_default(locale)
     )
   end
 
