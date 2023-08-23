@@ -4,6 +4,7 @@ defmodule Mobilizon.GraphQL.Schema.Users.PushSubscription do
   """
   use Absinthe.Schema.Notation
   alias Mobilizon.GraphQL.Resolvers.PushSubscription
+  alias Mobilizon.Users.User
 
   # object :push_subscription do
   #   field(:id, :id)
@@ -29,8 +30,9 @@ defmodule Mobilizon.GraphQL.Schema.Users.PushSubscription do
 
       middleware(Rajska.QueryAuthorization,
         permit: :user,
-        scope: false,
-        rule: :"write:user:setting:push"
+        scope: User,
+        rule: :"write:user:setting:push",
+        args: %{}
       )
 
       resolve(&PushSubscription.register_push_subscription/3)
@@ -41,8 +43,9 @@ defmodule Mobilizon.GraphQL.Schema.Users.PushSubscription do
 
       middleware(Rajska.QueryAuthorization,
         permit: :user,
-        scope: false,
-        rule: :"write:user:setting:push"
+        scope: User,
+        rule: :"write:user:setting:push",
+        args: %{}
       )
 
       resolve(&PushSubscription.unregister_push_subscription/3)

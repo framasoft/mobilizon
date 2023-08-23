@@ -32,9 +32,8 @@ export async function subscribeUserToPush(): Promise<PushSubscription | null> {
         };
         const registration = await navigator.serviceWorker.ready;
         try {
-          const pushSubscription = await registration.pushManager.subscribe(
-            subscribeOptions
-          );
+          const pushSubscription =
+            await registration.pushManager.subscribe(subscribeOptions);
           console.debug("Received PushSubscription: ", pushSubscription);
           resolve(pushSubscription);
         } catch (e) {
