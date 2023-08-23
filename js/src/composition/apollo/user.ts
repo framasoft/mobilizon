@@ -59,12 +59,8 @@ export async function doUpdateSetting(
   }));
 }
 
-export async function updateLocale(locale: string) {
-  useMutation<{ id: string; locale: string }>(UPDATE_USER_LOCALE, () => ({
-    variables: {
-      locale,
-    },
-  }));
+export function updateLocale() {
+  return useMutation<{ id: string; locale: string }>(UPDATE_USER_LOCALE);
 }
 
 export function registerAccount() {
