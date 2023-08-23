@@ -21,11 +21,13 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
           all_matching_email_domain: :boolean,
           all_matching_ip: :boolean,
           include_groups_where_admin: :boolean,
+          keep_email: :boolean,
           help: :boolean
         ],
         aliases: [
-          y: :assume_yes,
-          h: :help
+          h: :help,
+          k: :keep_email,
+          y: :assume_yes
         ]
       )
 
@@ -156,7 +158,7 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
              Delete.delete(actor, actor, true)
            end) do
       # Delete user
-      Users.delete_user(user, reserve_email: false)
+      Users.delete_user(user, reserve_email: Keyword.get(options, :keep_email, false))
     end
   end
 
@@ -190,6 +192,9 @@ defmodule Mix.Tasks.Mobilizon.Users.Delete do
 
       --all-matching-ip
               Delete all users matching the given input as email domain
+
+      -k/--keep-email
+              Keep a record of the email in the users table so that the email can't be used to register again
 
       -h/--help
               Show the help

@@ -204,7 +204,7 @@ defmodule Mix.Tasks.Mobilizon.UsersTest do
     test "delete non-existing user" do
       Delete.run([@email, "-y"])
       assert_received {:mix_shell, :error, [message]}
-      assert message =~ "Error: No such user"
+      assert message == "No user with the email \"#{@email}\" was found"
     end
   end
 
