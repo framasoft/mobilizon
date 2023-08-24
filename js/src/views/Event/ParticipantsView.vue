@@ -21,7 +21,7 @@
         <div class="">
           <o-field :label="t('Status')" horizontal label-for="role-select">
             <o-select v-model="role" id="role-select">
-              <option :value="null">
+              <option value="EVERYTHING">
                 {{ t("Everything") }}
               </option>
               <option :value="ParticipantRole.CREATOR">
@@ -303,17 +303,15 @@ const participantsExportFormats = useParticipantsExportFormats();
 const ellipsize = (text?: string) =>
   text && text.substring(0, MESSAGE_ELLIPSIS_LENGTH).concat("…");
 
-// metaInfo() {
-//   return {
-//     title: this.t("Participants") as string,
-//   };
-// },
+const eventId = computed(() => props.eventId);
+
+const ParticipantAllRoles = { ...ParticipantRole, EVERYTHING: "EVERYTHING" };
 
 const page = useRouteQuery("page", 1, integerTransformer);
 const role = useRouteQuery(
   "role",
-  ParticipantRole.PARTICIPANT,
-  enumTransformer(ParticipantRole)
+  "EVERYTHING",
+  enumTransformer(ParticipantAllRoles)
 );
 
 const checkedRows = ref<IParticipant[]>([]);
@@ -325,10 +323,10 @@ const { result: participantsResult, loading: participantsLoading } = useQuery<{
 }>(
   PARTICIPANTS,
   () => ({
-    uuid: props.eventId,
+    uuid: eventId.value,
     page: page.value,
     limit: PARTICIPANTS_PER_PAGE,
-    roles: role.value,
+    roles: role.value === "EVERYTHING" ? undefined : role.value,
   }),
   () => ({
     enabled:
