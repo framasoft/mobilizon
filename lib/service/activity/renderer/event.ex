@@ -1,6 +1,6 @@
 defmodule Mobilizon.Service.Activity.Renderer.Event do
   @moduledoc """
-  Insert a comment activity
+  Insert an event activity
   """
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
@@ -67,6 +67,16 @@ defmodule Mobilizon.Service.Activity.Renderer.Event do
             url: event_url(activity)
           }
         end
+
+      :event_new_participation ->
+        %{
+          body:
+            dgettext("activity", "%{profile} joined your event %{event}.", %{
+              profile: profile(activity),
+              event: title(activity)
+            }),
+          url: event_url(activity)
+        }
     end
   end
 

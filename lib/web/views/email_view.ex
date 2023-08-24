@@ -25,7 +25,6 @@ defmodule Mobilizon.Web.EmailView do
   defdelegate datetime_relative(datetime, locale \\ "en"), to: DateTimeRenderer
   defdelegate render_address(address), to: Address
   defdelegate is_same_day?(one, two), to: DateTimeRenderer
-  defdelegate display_name_and_username(actor), to: Actor
   defdelegate display_name(actor), to: Actor
   defdelegate preferred_username_and_domain(actor), to: Actor
 
@@ -38,7 +37,13 @@ defmodule Mobilizon.Web.EmailView do
 
   def escaped_display_name_and_username(actor) do
     actor
-    |> Actor.display_name_and_username()
+    |> display_name_and_username()
     |> escape_html()
   end
+
+  def display_name_and_username(%Actor{preferred_username: "anonymous"}) do
+    dgettext("activity", "An anonymous profile")
+  end
+
+  def display_name_and_username(actor), do: Actor.display_name_and_username(actor)
 end

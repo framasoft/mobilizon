@@ -82,6 +82,11 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Accept do
       )
 
       Scheduler.trigger_notifications_for_participant(participant)
+
+      Mobilizon.Service.Activity.Participant.insert_activity(participant,
+        subject: "event_new_participation"
+      )
+
       participant_as_data = Convertible.model_to_as(participant)
       audience = Audience.get_audience(participant)
 

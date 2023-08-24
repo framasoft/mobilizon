@@ -1579,5 +1579,8 @@
   "Access drafts events": "Access drafts events",
   "This application will be allowed to list and view your draft events": "This application will be allowed to list and view your draft events",
   "Access group suggested events": "Access group suggested events",
-  "This application will be allowed to list your suggested group events": "This application will be allowed to list your suggested group events"
+  "This application will be allowed to list your suggested group events": "This application will be allowed to list your suggested group events",
+  "{profile} joined the the event {event}.": "{profile} joined the the event {event}.",
+  "You joined the event {event}.": "You joined the event {event}.",
+  "An anonymous profile joined the event {event}.": "An anonymous profile joined the event {event}."
 }

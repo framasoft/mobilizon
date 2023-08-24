@@ -1575,5 +1575,8 @@
   "Access drafts events": "Accéder aux événements brouillons",
   "This application will be allowed to list and view your draft events": "Cetta application sera autorisée à lister et accéder à vos événements brouillons",
   "Access group suggested events": "Accéder aux événements des groupes suggérés",
-  "This application will be allowed to list your suggested group events": "Cetta application sera autorisée à lister les événements de vos groupes qui vous sont suggérés"
+  "This application will be allowed to list your suggested group events": "Cetta application sera autorisée à lister les événements de vos groupes qui vous sont suggérés",
+  "{profile} joined the the event {event}.": "{profile} a rejoint l'événement {event}.",
+  "You joined the event {event}.": "Vous avez rejoint l'événement {event}.",
+  "An anonymous profile joined the event {event}.": "Un profil anonyme a rejoint l'événement {event}."
 }
