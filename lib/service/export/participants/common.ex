@@ -9,6 +9,7 @@ defmodule Mobilizon.Service.Export.Participants.Common do
   alias Mobilizon.Events.Participant.Metadata
   alias Mobilizon.Storage.Repo
   import Mobilizon.Web.Gettext, only: [gettext: 1]
+  import Mobilizon.Service.DateTime, only: [datetime_to_string: 2]
 
   @spec save_upload(String.t(), String.t(), String.t(), String.t(), String.t()) ::
           {:ok, Export.t()} | {:error, atom() | Ecto.Changeset.t()}
@@ -58,7 +59,12 @@ defmodule Mobilizon.Service.Export.Participants.Common do
 
   @spec columns :: list(String.t())
   def columns do
-    [gettext("Participant name"), gettext("Participant status"), gettext("Participant message")]
+    [
+      gettext("Participant name"),
+      gettext("Participant status"),
+      gettext("Participant registration date"),
+      gettext("Participant message")
+    ]
   end
 
   # One hour
@@ -82,14 +88,26 @@ defmodule Mobilizon.Service.Export.Participants.Common do
 
   @spec to_list({Participant.t(), Actor.t()}) :: list(String.t())
   def to_list(
-        {%Participant{role: role, metadata: metadata},
+        {%Participant{role: role, metadata: metadata, inserted_at: inserted_at},
          %Actor{domain: nil, preferred_username: "anonymous"}}
       ) do
-    [gettext("Anonymous participant"), translate_role(role), convert_metadata(metadata)]
+    [
+      gettext("Anonymous participant"),
+      translate_role(role),
+      datetime_to_string(inserted_at, Gettext.get_locale()),
+      convert_metadata(metadata)
+    ]
   end
 
-  def to_list({%Participant{role: role, metadata: metadata}, %Actor{} = actor}) do
-    [Actor.display_name_and_username(actor), translate_role(role), convert_metadata(metadata)]
+  def to_list(
+        {%Participant{role: role, metadata: metadata, inserted_at: inserted_at}, %Actor{} = actor}
+      ) do
+    [
+      Actor.display_name_and_username(actor),
+      translate_role(role),
+      datetime_to_string(inserted_at, Gettext.get_locale()),
+      convert_metadata(metadata)
+    ]
   end
 
   @spec convert_metadata(Metadata.t() | nil) :: String.t()

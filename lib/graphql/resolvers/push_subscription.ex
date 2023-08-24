@@ -6,6 +6,7 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users
   alias Mobilizon.Users.{PushSubscription, User}
+  import Mobilizon.Web.Gettext
 
   @doc """
   List all of an user's registered push subscriptions
@@ -32,6 +33,19 @@ defmodule Mobilizon.GraphQL.Resolvers.PushSubscription do
     case Users.create_push_subscription(Map.put(args, :user_id, user_id)) do
       {:ok, %PushSubscription{}} ->
         {:ok, "OK"}
+
+      {:error,
+       %Ecto.Changeset{
+         errors: [
+           digest:
+             {"has already been taken",
+              [
+                constraint: :unique,
+                constraint_name: "user_push_subscriptions_user_id_digest_index"
+              ]}
+         ]
+       }} ->
+        {:error, dgettext("errors", "The same push subscription has already been registered")}
 
       {:error, err} ->
         require Logger

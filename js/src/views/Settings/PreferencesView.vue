@@ -47,6 +47,7 @@
         <o-select
           :loading="loadingTimezones || loadingUserSettings"
           v-model="$i18n.locale"
+          @update:modelValue="updateLanguage"
           :placeholder="t('Select a language')"
           id="setting-language"
         >
@@ -147,7 +148,7 @@ import RouteName from "../../router/name";
 import { AddressSearchType } from "@/types/enums";
 import { Address, IAddress } from "@/types/address.model";
 import { useTimezones } from "@/composition/apollo/config";
-import { useUserSettings } from "@/composition/apollo/user";
+import { useUserSettings, updateLocale } from "@/composition/apollo/user";
 import { useHead } from "@vueuse/head";
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -171,6 +172,12 @@ useHead({
 
 const theme = ref(localStorage.getItem("theme"));
 const systemTheme = ref(!("theme" in localStorage));
+
+const { mutate: doUpdateLocale } = updateLocale();
+
+const updateLanguage = (newLocale: string) => {
+  doUpdateLocale({ locale: newLocale });
+};
 
 watch(systemTheme, (newSystemTheme) => {
   console.debug("changing system theme", newSystemTheme);

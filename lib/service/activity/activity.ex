@@ -4,7 +4,17 @@ defmodule Mobilizon.Service.Activity do
   """
 
   alias Mobilizon.Activities.Activity
-  alias Mobilizon.Service.Activity.{Comment, Discussion, Event, Group, Member, Post, Resource}
+
+  alias Mobilizon.Service.Activity.{
+    Comment,
+    Discussion,
+    Event,
+    Group,
+    Member,
+    Participant,
+    Post,
+    Resource
+  }
 
   @callback insert_activity(entity :: struct(), options :: Keyword.t()) ::
               {:ok, Oban.Job.t()} | {:ok, any()} | {:error, Ecto.Changeset.t()}
@@ -44,5 +54,9 @@ defmodule Mobilizon.Service.Activity do
 
   defp do_get_object(:comment, comment_id) do
     Comment.get_object(comment_id)
+  end
+
+  defp do_get_object(:participant, participant_id) do
+    Participant.get_object(participant_id)
   end
 end

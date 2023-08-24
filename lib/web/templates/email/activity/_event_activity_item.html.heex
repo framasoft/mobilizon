@@ -51,4 +51,13 @@
       })
       |> raw %>
     <% end %>
+  <% :event_new_participation -> %>
+    <%= dgettext("activity", "%{profile} joined your event %{event}.", %{
+      profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
+      event:
+        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
+        :event,
+        @activity.subject_params["event_uuid"]) |> URI.decode()}\">#{escape_html(@activity.subject_params["event_title"])}</a>"
+    })
+    |> raw %>
 <% end %>

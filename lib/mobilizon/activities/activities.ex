@@ -19,6 +19,7 @@ defmodule Mobilizon.Activities do
 
   @activity_types ["event", "post", "discussion", "resource", "group", "member", "comment"]
   @event_activity_subjects ["event_created", "event_updated", "event_deleted", "comment_posted"]
+  @participant_activity_subjects ["event_new_participation"]
   @post_activity_subjects ["post_created", "post_updated", "post_deleted"]
   @discussion_activity_subjects [
     "discussion_created",
@@ -48,12 +49,23 @@ defmodule Mobilizon.Activities do
   @settings_activity_subjects ["group_created", "group_updated"]
 
   @subjects @event_activity_subjects ++
+              @participant_activity_subjects ++
               @post_activity_subjects ++
               @discussion_activity_subjects ++
               @resource_activity_subjects ++
               @member_activity_subjects ++ @settings_activity_subjects
 
-  @object_type ["event", "actor", "post", "discussion", "resource", "member", "group", "comment"]
+  @object_type [
+    "event",
+    "participant",
+    "actor",
+    "post",
+    "discussion",
+    "resource",
+    "member",
+    "group",
+    "comment"
+  ]
 
   defenum(Type, @activity_types)
   defenum(Subject, @subjects)

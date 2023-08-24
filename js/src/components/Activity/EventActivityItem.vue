@@ -42,6 +42,7 @@ import { usernameWithDomain } from "@/types/actor";
 import { formatTimeString } from "@/filters/datetime";
 import {
   ActivityEventCommentSubject,
+  ActivityEventParticipantSubject,
   ActivityEventSubject,
 } from "@/types/enums";
 import { computed } from "vue";
@@ -90,6 +91,14 @@ const translation = computed((): string | undefined => {
         return "You posted a comment on the event {event}.";
       }
       return "{profile} posted a comment on the event {event}.";
+    case ActivityEventParticipantSubject.EVENT_NEW_PARTICIPATION:
+      if (isAuthorCurrentActor.value) {
+        return "You joined the event {event}.";
+      }
+      if (props.activity.author.preferredUsername === "anonymous") {
+        return "An anonymous profile joined the event {event}.";
+      }
+      return "{profile} joined the the event {event}.";
     default:
       return undefined;
   }

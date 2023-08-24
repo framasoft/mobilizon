@@ -3,6 +3,7 @@ import { IMember } from "./actor/member.model";
 import {
   ActivityDiscussionSubject,
   ActivityEventCommentSubject,
+  ActivityEventParticipantSubject,
   ActivityEventSubject,
   ActivityGroupSubject,
   ActivityMemberSubject,
@@ -21,7 +22,8 @@ export type ActivitySubject =
   | ActivityResourceSubject
   | ActivityDiscussionSubject
   | ActivityGroupSubject
-  | ActivityEventCommentSubject;
+  | ActivityEventCommentSubject
+  | ActivityEventParticipantSubject;
 
 export interface IActivity {
   id: string;

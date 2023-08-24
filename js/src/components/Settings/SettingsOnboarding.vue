@@ -70,14 +70,16 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const { loggedUser } = useUserSettings();
 
+const { mutate: doUpdateLocale } = updateLocale();
+
 onMounted(() => {
-  updateLocale(locale as unknown as string);
+  doUpdateLocale({ locale: locale as unknown as string });
   doUpdateSetting({ timezone });
 });
 
 watch(locale, () => {
   if (locale.value) {
-    updateLocale(locale.value as string);
+    doUpdateLocale({ locale: locale as unknown as string });
     saveLocaleData(locale.value as string);
   }
 });

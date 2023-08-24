@@ -96,7 +96,7 @@ defmodule Mobilizon.Service.Notifier.Email do
 
   defp can_send_activity?(activity, user, options) do
     Logger.warning(
-      "Can't check if user #{inspect(user)} can be sent an activity (#{inspect(activity)}) (#{inspect(options)})"
+      "Can't check if user #{inspect(user.email)} can be sent an activity (#{inspect(activity)}) (#{inspect(options)})"
     )
 
     false

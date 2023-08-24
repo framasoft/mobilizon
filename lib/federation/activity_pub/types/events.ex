@@ -224,6 +224,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Events do
     cond do
       Mobilizon.Events.get_default_participant_role(event) == :participant &&
           role == :participant ->
+        Mobilizon.Service.Activity.Participant.insert_activity(participant,
+          subject: "event_new_participation"
+        )
+
         {:accept,
          Actions.Accept.accept(
            :join,

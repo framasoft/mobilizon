@@ -200,6 +200,10 @@ export enum ActivityEventCommentSubject {
   COMMENT_POSTED = "comment_posted",
 }
 
+export enum ActivityEventParticipantSubject {
+  EVENT_NEW_PARTICIPATION = "event_new_participation",
+}
+
 export enum ActivityPostSubject {
   POST_CREATED = "post_created",
   POST_UPDATED = "post_updated",
