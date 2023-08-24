@@ -67,7 +67,7 @@ import { EventJoinOptions } from "@/types/enums";
 import { IParticipant } from "../../types/participant.model";
 import RouteName from "../../router/name";
 import { CONFIRM_PARTICIPATION } from "../../graphql/event";
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
@@ -90,9 +90,15 @@ const { onDone, onError, mutate } = useMutation<{
   confirmParticipation: IParticipant;
 }>(CONFIRM_PARTICIPATION);
 
-mutate(() => ({
-  token: props.token,
-}));
+const participationToken = computed(() => props.token);
+
+watchEffect(() => {
+  if (participationToken.value) {
+    mutate({
+      token: participationToken.value,
+    });
+  }
+});
 
 onDone(async ({ data }) => {
   participation.value = data?.confirmParticipation;
