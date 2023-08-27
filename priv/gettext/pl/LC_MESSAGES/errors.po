@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-08-08 17:29+0000\n"
+"PO-Revision-Date: 2023-08-28 17:06+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -996,7 +996,7 @@ msgstr "Nie udało się zwalidować użytkownika(-czki)"
 #: lib/graphql/resolvers/participant.ex:146
 #, elixir-autogen, elixir-format
 msgid "The anonymous actor ID is invalid"
-msgstr "Identyfikator anonimowego aktora jest nieprawidłowy"
+msgstr "Identyfikator anonimowego podmiotu jest nieprawidłowy"
 
 #: lib/graphql/resolvers/resource.ex:165
 #, elixir-autogen, elixir-format
