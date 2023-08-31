@@ -1601,5 +1601,6 @@
   "Do you really want to suspend the account « {emailAccount} » ?": "Do you really want to suspend the account « {emailAccount} » ?",
   "There will be no way to restore the user's data!": "There will be no way to restore the user's data!",
   "User suspended and report resolved": "User suspended and report resolved",
-  "Profile suspended and report resolved": "Profile suspended and report resolved"
+  "Profile suspended and report resolved": "Profile suspended and report resolved",
+  "{profileName} (suspended)": "{profileName} (suspended)"
 }

@@ -42,14 +42,17 @@ const REPORT_FRAGMENT = gql`
     id
     reported {
       ...ActorFragment
+      suspended
       ... on Person {
         user {
           id
+          disabled
         }
       }
     }
     reporter {
       ...ActorFragment
+      suspended
     }
     events {
       id

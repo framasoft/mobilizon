@@ -1599,5 +1599,6 @@
   "Do you really want to suspend the account « {emailAccount} » ?": "Voulez-vous vraiment suspendre le compte « {emailAccount} » ?",
   "There will be no way to restore the user's data!": "Il n'y aura aucun moyen de restorer les données de l'utilisateur·ice !",
   "User suspended and report resolved": "Utilisateur suspendu et signalement résolu",
-  "Profile suspended and report resolved": "Profil suspendu et signalement résolu"
+  "Profile suspended and report resolved": "Profil suspendu et signalement résolu",
+  "{profileName} (suspended)": "{profileName} (suspendu·e)"
 }

@@ -94,27 +94,42 @@
                   name: RouteName.ADMIN_PROFILE,
                   params: { id: report.reported.id },
                 }"
+                class="inline-flex gap-1"
               >
                 <img
                   v-if="report.reported.avatar"
-                  class="image"
+                  class="image rounded-full"
                   :src="report.reported.avatar.url"
                   alt=""
                 />
-                {{ displayNameAndUsername(report.reported) }}
+                <template v-if="report.reported.suspended">
+                  <i18n-t keypath="{profileName} (suspended)">
+                    <template #profileName>
+                      {{ displayNameAndUsername(report.reported) }}
+                    </template>
+                  </i18n-t>
+                </template>
+                <template v-else>{{
+                  displayNameAndUsername(report.reported)
+                }}</template>
               </router-link>
               <o-button
-                v-if="report.reported.domain"
+                v-if="report.reported.domain && !report.reported.suspended"
                 variant="danger"
                 @click="suspendProfile(report.reported.id as string)"
                 icon-left="delete"
+                size="small"
                 >{{ t("Suspend the profile") }}</o-button
               >
               <o-button
-                v-else-if="(report.reported as IPerson).user"
+                v-else-if="
+                  (report.reported as IPerson).user &&
+                  !((report.reported as IPerson).user as IUser).disabled
+                "
                 variant="danger"
                 @click="suspendUser((report.reported as IPerson).user as IUser)"
                 icon-left="delete"
+                size="small"
                 >{{ t("Suspend the account") }}</o-button
               >
             </td>
@@ -133,7 +148,7 @@
               >
                 <img
                   v-if="report.reporter.avatar"
-                  class="image"
+                  class="image rounded-full"
                   :src="report.reporter.avatar.url"
                   alt=""
                 />
