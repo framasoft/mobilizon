@@ -65,7 +65,7 @@
     <section class="w-full">
       <table class="table w-full">
         <tbody>
-          <tr v-if="report.reported.type === ActorType.GROUP">
+          <tr v-if="report.reported?.type === ActorType.GROUP">
             <td>{{ t("Reported group") }}</td>
             <td>
               <router-link
@@ -84,7 +84,7 @@
               </router-link>
             </td>
           </tr>
-          <tr v-else>
+          <tr v-else-if="report.reported?.type === ActorType.PERSON">
             <td>
               {{ t("Reported identity") }}
             </td>
@@ -134,12 +134,20 @@
               >
             </td>
           </tr>
+          <tr v-else>
+            <td>
+              {{ t("Reported identity") }}
+            </td>
+            <td>
+              {{ t("Unknown actor") }}
+            </td>
+          </tr>
           <tr>
             <td>{{ t("Reported by") }}</td>
-            <td v-if="report.reporter.type === ActorType.APPLICATION">
+            <td v-if="report.reporter?.type === ActorType.APPLICATION">
               {{ report.reporter.domain }}
             </td>
-            <td v-else>
+            <td v-else-if="report.reporter?.type === ActorType.PERSON">
               <router-link
                 :to="{
                   name: RouteName.ADMIN_PROFILE,
@@ -155,13 +163,16 @@
                 {{ displayNameAndUsername(report.reporter) }}
               </router-link>
             </td>
+            <td v-else>
+              {{ t("Unknown actor") }}
+            </td>
           </tr>
           <tr>
-            <td>{{ t("Reported") }}</td>
+            <td>{{ t("Reported at") }}</td>
             <td>{{ formatDateTimeString(report.insertedAt) }}</td>
           </tr>
           <tr v-if="report.updatedAt !== report.insertedAt">
-            <td>{{ t("Updated") }}</td>
+            <td>{{ t("Updated at") }}</td>
             <td>{{ formatDateTimeString(report.updatedAt) }}</td>
           </tr>
           <tr>
@@ -187,7 +198,7 @@
       <h2 class="mb-1">{{ t("Report reason") }}</h2>
       <div class="">
         <div class="flex gap-1">
-          <figure class="" v-if="report.reported.avatar">
+          <figure class="" v-if="report.reported?.avatar">
             <img
               alt=""
               :src="report.reported.avatar.url"
@@ -197,12 +208,13 @@
             />
           </figure>
           <AccountCircle v-else :size="36" />
-          <div class="">
-            <p class="" v-if="report.reported.name">
+          <div class="" v-if="report.reported">
+            <p class="" v-if="report.reported?.name">
               {{ report.reported.name }}
             </p>
             <p class="">@{{ usernameWithDomain(report.reported) }}</p>
           </div>
+          <p v-else>{{ t("Unknown actor") }}</p>
         </div>
         <div
           class="prose dark:prose-invert"
