@@ -42,6 +42,11 @@ const REPORT_FRAGMENT = gql`
     id
     reported {
       ...ActorFragment
+      ... on Person {
+        user {
+          id
+        }
+      }
     }
     reporter {
       ...ActorFragment

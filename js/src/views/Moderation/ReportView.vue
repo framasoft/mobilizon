@@ -88,7 +88,7 @@
             <td>
               {{ t("Reported identity") }}
             </td>
-            <td>
+            <td class="flex items-center justify-between pr-6">
               <router-link
                 :to="{
                   name: RouteName.ADMIN_PROFILE,
@@ -103,6 +103,20 @@
                 />
                 {{ displayNameAndUsername(report.reported) }}
               </router-link>
+              <o-button
+                v-if="report.reported.domain"
+                variant="danger"
+                @click="suspendProfile(report.reported.id as string)"
+                icon-left="delete"
+                >{{ t("Suspend the profile") }}</o-button
+              >
+              <o-button
+                v-else-if="(report.reported as IPerson).user"
+                variant="danger"
+                @click="suspendUser((report.reported as IPerson).user as IUser)"
+                icon-left="delete"
+                >{{ t("Suspend the account") }}</o-button
+              >
             </td>
           </tr>
           <tr>
@@ -333,7 +347,7 @@ import { ActorType, AntiSpamFeedback, ReportStatusEnum } from "@/types/enums";
 import RouteName from "@/router/name";
 import { GraphQLError } from "graphql";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { useHead } from "@vueuse/head";
 import { useI18n } from "vue-i18n";
@@ -348,6 +362,10 @@ import { useFeatures } from "@/composition/apollo/config";
 import { IEvent } from "@/types/event.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import EventComment from "@/components/Comment/EventComment.vue";
+import { SUSPEND_PROFILE } from "@/graphql/actor";
+import { GET_USER, SUSPEND_USER } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
+import { waitApolloQuery } from "@/vue-apollo";
 
 const router = useRouter();
 
@@ -663,6 +681,105 @@ const reportToAntispam = (spam: boolean) => {
     },
   });
 };
+
+const { mutate: doSuspendProfile, onDone: onSuspendProfileDone } = useMutation<
+  {
+    suspendProfile: { id: string };
+  },
+  { id: string }
+>(SUSPEND_PROFILE);
+
+const { mutate: doSuspendUser, onDone: onSuspendUserDone } = useMutation<
+  { suspendProfile: { id: string } },
+  { userId: string }
+>(SUSPEND_USER);
+
+const userLazyQuery = useLazyQuery<{ user: IUser }, { id: string }>(GET_USER);
+
+const suspendProfile = async (actorId: string): Promise<void> => {
+  dialog?.confirm({
+    title: t("Suspend the profile?"),
+    message:
+      t(
+        "Do you really want to suspend this profile? All of the profiles content will be deleted."
+      ) +
+      `<p><b>` +
+      t("There will be no way to restore the profile's data!") +
+      `</b></p>`,
+    confirmText: t("Suspend the profile"),
+    cancelText: t("Cancel"),
+    variant: "danger",
+    onConfirm: async () => {
+      doSuspendProfile({
+        id: actorId,
+      });
+      return router.push({ name: RouteName.USERS });
+    },
+  });
+};
+
+const userSuspendedProfilesMessages = (user: IUser) => {
+  return (
+    t("The following user's profiles will be deleted, with all their data:") +
+    `<ul class="list-disc pl-3">` +
+    user.actors
+      .map((person) => `<li>${displayNameAndUsername(person)}</li>`)
+      .join("") +
+    `</ul><b>`
+  );
+};
+
+const cachedReportedUser = ref<IUser | undefined>();
+
+const suspendUser = async (user: IUser): Promise<void> => {
+  try {
+    if (!cachedReportedUser.value) {
+      userLazyQuery.load(GET_USER, { id: user.id });
+
+      const userLazyQueryResult = await waitApolloQuery<
+        { user: IUser },
+        { id: string }
+      >(userLazyQuery);
+      console.debug("data", userLazyQueryResult);
+
+      cachedReportedUser.value = userLazyQueryResult.data.user;
+    }
+
+    dialog?.confirm({
+      title: t("Suspend the account?"),
+      message:
+        t("Do you really want to suspend the account « {emailAccount} » ?", {
+          emailAccount: cachedReportedUser.value.email,
+        }) +
+        " " +
+        userSuspendedProfilesMessages(cachedReportedUser.value) +
+        "<b>" +
+        t("There will be no way to restore the user's data!") +
+        `</b>`,
+      confirmText: t("Suspend the account"),
+      cancelText: t("Cancel"),
+      variant: "danger",
+      onConfirm: async () => {
+        doSuspendUser({
+          userId: user.id,
+        });
+        return router.push({ name: RouteName.USERS });
+      },
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+onSuspendUserDone(async () => {
+  await router.push({ name: RouteName.REPORTS });
+  notifier?.success(t("User suspended and report resolved"));
+});
+
+onSuspendProfileDone(async () => {
+  await router.push({ name: RouteName.REPORTS });
+  notifier?.success(t("Profile suspended and report resolved"));
+});
 </script>
 <style lang="scss" scoped>
 tbody td img.image,

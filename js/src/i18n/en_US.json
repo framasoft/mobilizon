@@ -1592,5 +1592,14 @@
   "Event deleted and report resolved": "Event deleted and report resolved",
   "Event deleted": "Event deleted",
   "Comment deleted and report resolved": "Comment deleted and report resolved",
-  "Comment under event {eventTitle}": "Comment under event {eventTitle}"
+  "Comment under event {eventTitle}": "Comment under event {eventTitle}",
+  "Suspend profile": "Suspend profile",
+  "Do you really want to suspend this profile? All of the profiles content will be deleted.": "Do you really want to suspend this profile? All of the profiles content will be deleted.",
+  "There will be no way to restore the profile's data!": "There will be no way to restore the profile's data!",
+  "Suspend the profile": "Suspend the profile",
+  "The following user's profiles will be deleted, with all their data:": "The following user's profiles will be deleted, with all their data:",
+  "Do you really want to suspend the account « {emailAccount} » ?": "Do you really want to suspend the account « {emailAccount} » ?",
+  "There will be no way to restore the user's data!": "There will be no way to restore the user's data!",
+  "User suspended and report resolved": "User suspended and report resolved",
+  "Profile suspended and report resolved": "Profile suspended and report resolved"
 }
