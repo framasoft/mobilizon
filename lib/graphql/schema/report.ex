@@ -19,7 +19,7 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     field(:uri, :string, description: "The URI of the report", meta: [private: true])
     field(:reported, :actor, description: "The actor that is being reported")
     field(:reporter, :actor, description: "The actor that created the report")
-    field(:event, :event, description: "The event that is being reported")
+    field(:events, list_of(:event), description: "The event that is being reported")
     field(:comments, list_of(:comment), description: "The comments that are reported")
 
     field(:notes, list_of(:report_note),
@@ -100,11 +100,15 @@ defmodule Mobilizon.GraphQL.Schema.ReportType do
     field :create_report, type: :report do
       arg(:content, :string, description: "The message sent with the report")
       arg(:reported_id, non_null(:id), description: "The actor's ID that is being reported")
-      arg(:event_id, :id, default_value: nil, description: "The event ID that is being reported")
+
+      arg(:events_ids, list_of(:id),
+        default_value: [],
+        description: "The list of event IDs that are being reported"
+      )
 
       arg(:comments_ids, list_of(:id),
         default_value: [],
-        description: "The comment ID that is being reported"
+        description: "The comment IDs that are being reported"
       )
 
       arg(:forward, :boolean,

@@ -4,7 +4,7 @@
     :class="{
       reply: comment.inReplyToComment,
       'bg-mbz-purple-50 dark:bg-mbz-purple-500': comment.isAnnouncement,
-      'bg-mbz-bluegreen-50 dark:bg-mbz-bluegreen-600': commentSelected,
+      '!bg-mbz-bluegreen-50 dark:!bg-mbz-bluegreen-600': commentSelected,
       'shadow-none': !rootComment,
     }"
   >
@@ -62,6 +62,7 @@
             class="cursor-pointer flex hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
             v-if="
               currentActor?.id &&
+              !readOnly &&
               event.options.commentModeration !== CommentModeration.CLOSED &&
               !comment.deletedAt
             "
@@ -70,7 +71,7 @@
             <Reply />
             <span>{{ t("Reply") }}</span>
           </button>
-          <o-dropdown aria-role="list">
+          <o-dropdown aria-role="list" v-show="!readOnly">
             <template #trigger>
               <button
                 class="cursor-pointer flex hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded p-1"
@@ -221,7 +222,7 @@ import {
   ref,
   nextTick,
 } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Delete from "vue-material-design-icons/Delete.vue";
@@ -235,6 +236,9 @@ import ReportModal from "@/components/Report/ReportModal.vue";
 import { useCreateReport } from "@/composition/apollo/report";
 import { Snackbar } from "@/plugins/snackbar";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
+import RouteName from "@/router/name";
+
+const router = useRouter();
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
@@ -246,9 +250,12 @@ const props = withDefaults(
     event: IEvent;
     currentActor: IPerson;
     rootComment?: boolean;
+    readOnly: boolean;
   }>(),
-  { rootComment: true }
+  { rootComment: true, readOnly: false }
 );
+
+const event = computed(() => props.event);
 
 const emit = defineEmits<{
   (e: "create-comment", comment: IComment): void;
@@ -319,7 +326,12 @@ const commentId = computed((): string => {
 
 const commentURL = computed((): string => {
   if (!props.comment.local && props.comment.url) return props.comment.url;
-  return `#${commentId.value}`;
+  return (
+    router.resolve({
+      name: RouteName.EVENT,
+      params: { uuid: event.value.uuid },
+    }).href + `#${commentId.value}`
+  );
 });
 
 const reportModal = (): void => {
@@ -352,7 +364,6 @@ const reportComment = async (
 ): Promise<void> => {
   if (!props.comment.actor) return;
   createReportMutation({
-    eventId: props.event.id,
     reportedId: props.comment.actor?.id ?? "",
     commentsIds: [props.comment.id ?? ""],
     content,

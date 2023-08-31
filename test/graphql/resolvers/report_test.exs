@@ -15,17 +15,17 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
 
   describe "Resolver: Report a content" do
     @create_report_mutation """
-    mutation CreateReport($reportedId: ID!, $eventId: ID, $content: String) {
+    mutation CreateReport($reportedId: ID!, $eventsIds: [ID], $content: String) {
       createReport(
         reportedId: $reportedId,
-        eventId: $eventId,
+        eventsIds: $eventsIds,
         content: $content
       ) {
           content,
           reporter {
             id
           },
-          event {
+          events {
             id
           },
           status
@@ -55,7 +55,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
           query: @create_report_mutation,
           variables: %{
             reportedId: reported.id,
-            eventId: event.id,
+            eventsIds: [event.id],
             content: "This is an issue"
           }
         )
@@ -63,7 +63,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
       assert res["errors"] == nil
       assert res["data"]["createReport"]["content"] == "This is an issue"
       assert res["data"]["createReport"]["status"] == "OPEN"
-      assert res["data"]["createReport"]["event"]["id"] == to_string(event.id)
+      assert res["data"]["createReport"]["events"] |> hd |> Map.get("id") == to_string(event.id)
 
       assert res["data"]["createReport"]["reporter"]["id"] ==
                to_string(reporter.id)
@@ -122,7 +122,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
         reporter {
           id
         },
-        event {
+        events {
           id
         },
         status
@@ -280,7 +280,7 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
           reporter {
             preferredUsername
           },
-          event {
+          events {
             title
           },
           comments {
@@ -312,7 +312,9 @@ defmodule Mobilizon.GraphQL.Resolvers.ReportTest do
                reporter.preferred_username
 
       assert json_response(res, 200)["data"]["report"]["content"] == report.content
-      assert json_response(res, 200)["data"]["report"]["event"]["title"] == report.event.title
+
+      assert json_response(res, 200)["data"]["report"]["events"] |> hd |> Map.get("title") ==
+               report.events |> hd |> Map.get(:title)
 
       assert json_response(res, 200)["data"]["report"]["comments"] |> hd |> Map.get("text") ==
                report.comments |> hd |> Map.get(:text)

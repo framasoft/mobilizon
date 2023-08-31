@@ -7,9 +7,11 @@
     <%= gettext "Profile %{profile} was reported", profile: Mobilizon.Actors.Actor.display_name_and_username(@report.reported) %>
   <% end %>
 <% end %>
-<%= if Map.has_key?(@report, :event) and @report.event do %>
-  <%= gettext "Event" %>
-  <%= @report.event.title %>
+<%= if Map.has_key?(@report, :event) && length(@report.events) > 0 do %>
+  <%= gettext "Events" %>
+  <%= for event <- @report.events do %>
+    <%= event.title %>
+  <% end %>
 <% end %>
 <%= if Map.has_key?(@report, :comments) && length(@report.comments) > 0 do %>
   <%= gettext "Comments" %>

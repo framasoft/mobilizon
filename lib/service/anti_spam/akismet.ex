@@ -139,7 +139,7 @@ defmodule Mobilizon.Service.AntiSpam.Akismet do
     end
   end
 
-  defp report_to_akismet_comment(%Report{event: %Event{id: event_id}}) do
+  defp report_to_akismet_comment(%Report{events: [%Event{id: event_id} | _]}) do
     with %Event{description: body, organizer_actor: %Actor{} = actor} <-
            Events.get_event_with_preload!(event_id),
          {email, preferred_username, ip} <- actor_details(actor) do

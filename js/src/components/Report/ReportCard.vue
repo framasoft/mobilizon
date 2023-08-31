@@ -5,7 +5,7 @@
   >
     <div class="flex justify-between gap-1 border-b p-2">
       <div class="flex gap-1">
-        <figure class="" v-if="report.reported.avatar">
+        <figure class="" v-if="report.reported?.avatar">
           <img
             alt=""
             :src="report.reported.avatar.url"
@@ -16,14 +16,20 @@
         </figure>
         <AccountCircle v-else :size="24" />
         <div class="">
-          <p class="" v-if="report.reported.name">{{ report.reported.name }}</p>
-          <p class="text-zinc-700 dark:text-zinc-100 text-sm">
+          <p class="" v-if="report.reported?.name">
+            {{ report.reported.name }}
+          </p>
+          <p
+            class="text-zinc-700 dark:text-zinc-100 text-sm"
+            v-else-if="report.reported?.preferredUsername"
+          >
             @{{ usernameWithDomain(report.reported) }}
           </p>
+          <p v-else>{{ t("Unknown actor") }}</p>
         </div>
       </div>
       <div>
-        <p v-if="report.reported.suspended" class="text-red-700 font-bold">
+        <p v-if="report.reported?.suspended" class="text-red-700 font-bold">
           {{ t("Suspended") }}
         </p>
       </div>
@@ -31,7 +37,7 @@
 
     <div class="p-2">
       <div class="">
-        <span v-if="report.reporter.type === ActorType.APPLICATION">
+        <span v-if="report.reporter?.type === ActorType.APPLICATION">
           {{
             t("Reported by someone on {domain}", {
               domain: report.reporter.domain,
@@ -40,18 +46,21 @@
         </span>
         <span
           v-if="
-            report.reporter.preferredUsername === 'anonymous' &&
-            !report.reporter.domain
+            report.reporter?.preferredUsername === 'anonymous' &&
+            !report.reporter?.domain
           "
         >
           {{ t("Reported by someone anonymously") }}
         </span>
-        <span v-else>
+        <span v-else-if="report.reporter?.preferredUsername">
           {{
             t("Reported by {reporter}", {
               reporter: usernameWithDomain(report.reporter),
             })
           }}
+        </span>
+        <span v-else>
+          {{ t("Reported by an unknown actor") }}
         </span>
       </div>
       <div class="" v-if="report.content" v-html="report.content" />

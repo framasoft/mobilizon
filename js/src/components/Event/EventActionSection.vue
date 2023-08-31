@@ -648,7 +648,7 @@ const reportEvent = async (
   if (!organizer.value) return;
 
   createReportMutation({
-    eventId: event.value?.id ?? "",
+    eventsIds: [event.value?.id ?? ""],
     reportedId: organizer.value?.id ?? "",
     content,
     forward,

@@ -14,9 +14,9 @@ export interface IReportNote extends IActionLogObject {
 }
 export interface IReport extends IActionLogObject {
   id: string;
-  reported: IActor;
+  reported: IActor | undefined;
   reporter: IPerson;
-  event?: IEvent;
+  events?: IEvent[];
   comments: IComment[];
   content: string;
   notes: IReportNote[];

@@ -22,13 +22,13 @@ defmodule Mobilizon.Reports.Report do
           reported: Actor.t(),
           reporter: Actor.t(),
           manager: Actor.t(),
-          event: Event.t(),
+          events: [Event.t()],
           comments: [Comment.t()],
           notes: [Note.t()]
         }
 
   @required_attrs [:url, :reported_id, :reporter_id]
-  @optional_attrs [:content, :status, :manager_id, :event_id, :local]
+  @optional_attrs [:content, :status, :manager_id, :local]
   @attrs @required_attrs ++ @optional_attrs
 
   @timestamps_opts [type: :utc_datetime]
@@ -46,8 +46,8 @@ defmodule Mobilizon.Reports.Report do
     belongs_to(:reporter, Actor)
     # The actor who last acted on this report
     belongs_to(:manager, Actor)
-    # The eventual Event inside the report
-    belongs_to(:event, Event)
+    # The eventual Events inside the report
+    many_to_many(:events, Event, join_through: "reports_events", on_replace: :delete)
     # The eventual Comments inside the report
     many_to_many(:comments, Comment, join_through: "reports_comments", on_replace: :delete)
     # The notes associated to the report
@@ -62,6 +62,7 @@ defmodule Mobilizon.Reports.Report do
     report
     |> cast(attrs, @attrs)
     |> maybe_generate_url()
+    |> maybe_put_events(attrs)
     |> maybe_put_comments(attrs)
     |> validate_required(@required_attrs)
   end
@@ -71,6 +72,12 @@ defmodule Mobilizon.Reports.Report do
   end
 
   defp maybe_put_comments(%Ecto.Changeset{} = changeset, _), do: changeset
+
+  defp maybe_put_events(%Ecto.Changeset{} = changeset, %{events: events}) do
+    put_assoc(changeset, :events, events)
+  end
+
+  defp maybe_put_events(%Ecto.Changeset{} = changeset, _), do: changeset
 
   @spec maybe_generate_url(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   defp maybe_generate_url(%Ecto.Changeset{} = changeset) do

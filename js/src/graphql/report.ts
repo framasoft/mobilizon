@@ -20,7 +20,7 @@ export const REPORTS = gql`
           ...ActorFragment
           suspended
         }
-        event {
+        events {
           id
           uuid
           title
@@ -42,11 +42,19 @@ const REPORT_FRAGMENT = gql`
     id
     reported {
       ...ActorFragment
+      suspended
+      ... on Person {
+        user {
+          id
+          disabled
+        }
+      }
     }
     reporter {
       ...ActorFragment
+      suspended
     }
-    event {
+    events {
       id
       uuid
       title
@@ -68,6 +76,14 @@ const REPORT_FRAGMENT = gql`
       text
       actor {
         ...ActorFragment
+      }
+      updatedAt
+      deletedAt
+      uuid
+      event {
+        id
+        uuid
+        title
       }
     }
     notes {
@@ -97,14 +113,14 @@ export const REPORT = gql`
 
 export const CREATE_REPORT = gql`
   mutation CreateReport(
-    $eventId: ID
+    $eventsIds: [ID]
     $reportedId: ID!
     $content: String
     $commentsIds: [ID]
     $forward: Boolean
   ) {
     createReport(
-      eventId: $eventId
+      eventsIds: $eventsIds
       reportedId: $reportedId
       content: $content
       commentsIds: $commentsIds

@@ -65,7 +65,7 @@
     <section class="w-full">
       <table class="table w-full">
         <tbody>
-          <tr v-if="report.reported.type === ActorType.GROUP">
+          <tr v-if="report.reported?.type === ActorType.GROUP">
             <td>{{ t("Reported group") }}</td>
             <td>
               <router-link
@@ -84,33 +84,70 @@
               </router-link>
             </td>
           </tr>
-          <tr v-else>
+          <tr v-else-if="report.reported?.type === ActorType.PERSON">
             <td>
               {{ t("Reported identity") }}
             </td>
-            <td>
+            <td class="flex items-center justify-between pr-6">
               <router-link
                 :to="{
                   name: RouteName.ADMIN_PROFILE,
                   params: { id: report.reported.id },
                 }"
+                class="inline-flex gap-1"
               >
                 <img
                   v-if="report.reported.avatar"
-                  class="image"
+                  class="image rounded-full"
                   :src="report.reported.avatar.url"
                   alt=""
                 />
-                {{ displayNameAndUsername(report.reported) }}
+                <template v-if="report.reported.suspended">
+                  <i18n-t keypath="{profileName} (suspended)">
+                    <template #profileName>
+                      {{ displayNameAndUsername(report.reported) }}
+                    </template>
+                  </i18n-t>
+                </template>
+                <template v-else>{{
+                  displayNameAndUsername(report.reported)
+                }}</template>
               </router-link>
+              <o-button
+                v-if="report.reported.domain && !report.reported.suspended"
+                variant="danger"
+                @click="suspendProfile(report.reported.id as string)"
+                icon-left="delete"
+                size="small"
+                >{{ t("Suspend the profile") }}</o-button
+              >
+              <o-button
+                v-else-if="
+                  (report.reported as IPerson).user &&
+                  !((report.reported as IPerson).user as IUser).disabled
+                "
+                variant="danger"
+                @click="suspendUser((report.reported as IPerson).user as IUser)"
+                icon-left="delete"
+                size="small"
+                >{{ t("Suspend the account") }}</o-button
+              >
+            </td>
+          </tr>
+          <tr v-else>
+            <td>
+              {{ t("Reported identity") }}
+            </td>
+            <td>
+              {{ t("Unknown actor") }}
             </td>
           </tr>
           <tr>
             <td>{{ t("Reported by") }}</td>
-            <td v-if="report.reporter.type === ActorType.APPLICATION">
+            <td v-if="report.reporter?.type === ActorType.APPLICATION">
               {{ report.reporter.domain }}
             </td>
-            <td v-else>
+            <td v-else-if="report.reporter?.type === ActorType.PERSON">
               <router-link
                 :to="{
                   name: RouteName.ADMIN_PROFILE,
@@ -119,20 +156,23 @@
               >
                 <img
                   v-if="report.reporter.avatar"
-                  class="image"
+                  class="image rounded-full"
                   :src="report.reporter.avatar.url"
                   alt=""
                 />
                 {{ displayNameAndUsername(report.reporter) }}
               </router-link>
             </td>
+            <td v-else>
+              {{ t("Unknown actor") }}
+            </td>
           </tr>
           <tr>
-            <td>{{ t("Reported") }}</td>
+            <td>{{ t("Reported at") }}</td>
             <td>{{ formatDateTimeString(report.insertedAt) }}</td>
           </tr>
           <tr v-if="report.updatedAt !== report.insertedAt">
-            <td>{{ t("Updated") }}</td>
+            <td>{{ t("Updated at") }}</td>
             <td>{{ formatDateTimeString(report.updatedAt) }}</td>
           </tr>
           <tr>
@@ -150,26 +190,6 @@
               <span v-else>{{ t("Unknown") }}</span>
             </td>
           </tr>
-          <tr v-if="report.event && report.comments.length > 0">
-            <td>{{ t("Event") }}</td>
-            <td class="flex gap-2 items-center">
-              <router-link
-                class="underline"
-                :to="{
-                  name: RouteName.EVENT,
-                  params: { uuid: report.event.uuid },
-                }"
-              >
-                {{ report.event.title }}
-              </router-link>
-              <o-button
-                variant="danger"
-                @click="confirmEventDelete()"
-                icon-left="delete"
-                >{{ t("Delete") }}</o-button
-              >
-            </td>
-          </tr>
         </tbody>
       </table>
     </section>
@@ -178,7 +198,7 @@
       <h2 class="mb-1">{{ t("Report reason") }}</h2>
       <div class="">
         <div class="flex gap-1">
-          <figure class="" v-if="report.reported.avatar">
+          <figure class="" v-if="report.reported?.avatar">
             <img
               alt=""
               :src="report.reported.avatar.url"
@@ -188,12 +208,13 @@
             />
           </figure>
           <AccountCircle v-else :size="36" />
-          <div class="">
-            <p class="" v-if="report.reported.name">
+          <div class="" v-if="report.reported">
+            <p class="" v-if="report.reported?.name">
               {{ report.reported.name }}
             </p>
             <p class="">@{{ usernameWithDomain(report.reported) }}</p>
           </div>
+          <p v-else>{{ t("Unknown actor") }}</p>
         </div>
         <div
           class="prose dark:prose-invert"
@@ -206,17 +227,27 @@
 
     <section
       class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3"
-      v-if="report.event && report.comments.length === 0"
+      v-if="
+        report.events &&
+        report.events?.length > 0 &&
+        report.comments.length === 0
+      "
     >
       <h2 class="mb-1">{{ t("Reported content") }}</h2>
-      <EventCard :event="report.event" mode="row" class="my-2 max-w-4xl" />
-      <o-button
-        variant="danger"
-        @click="confirmEventDelete()"
-        icon-left="delete"
-        size="small"
-        >{{ t("Delete") }}</o-button
-      >
+      <ul>
+        <li v-for="event in report.events" :key="event.id">
+          <EventCard :event="event" mode="row" class="my-2 max-w-4xl" />
+          <o-button
+            variant="danger"
+            @click="confirmEventDelete(event)"
+            icon-left="delete"
+            ><template v-if="isOnlyReportedContent">{{
+              t("Delete event and resolve report")
+            }}</template
+            ><template v-else>{{ t("Delete event") }}</template></o-button
+          >
+        </li>
+      </ul>
     </section>
 
     <section
@@ -226,39 +257,53 @@
       <h2 class="mb-1">{{ t("Reported content") }}</h2>
       <ul v-for="comment in report.comments" :key="comment.id">
         <li>
-          <div class="" v-if="comment">
-            <article>
-              <div class="flex gap-1">
-                <figure class="" v-if="comment.actor?.avatar">
-                  <img
-                    alt=""
-                    :src="comment.actor.avatar?.url"
-                    class="rounded-full"
-                    width="36"
-                    height="36"
-                  />
-                </figure>
-                <AccountCircle v-else :size="36" />
-                <div>
-                  <div v-if="comment.actor">
-                    <p>{{ comment.actor.name }}</p>
-                    <p>@{{ comment.actor.preferredUsername }}</p>
-                  </div>
-                  <span v-else>{{ t("Unknown actor") }}</span>
-                </div>
-              </div>
-              <div class="prose dark:prose-invert" v-html="comment.text" />
-              <o-button
-                variant="danger"
-                @click="confirmCommentDelete(comment)"
-                icon-left="delete"
-                size="small"
-                >{{ t("Delete") }}</o-button
+          <i18n-t keypath="Comment under event {eventTitle}" tag="p">
+            <template #eventTitle>
+              <router-link
+                :to="{
+                  name: RouteName.EVENT,
+                  params: { uuid: comment.event?.uuid },
+                }"
               >
-            </article>
-          </div>
+                <b>{{ comment.event?.title }}</b>
+              </router-link>
+            </template>
+          </i18n-t>
+          <EventComment
+            :root-comment="true"
+            :comment="comment"
+            :event="comment.event as IEvent"
+            :current-actor="currentActor as IPerson"
+            :readOnly="true"
+          />
+          <o-button
+            v-if="!comment.deletedAt"
+            variant="danger"
+            @click="confirmCommentDelete(comment)"
+            icon-left="delete"
+            ><template v-if="isOnlyReportedContent">{{
+              t("Delete comment and resolve report")
+            }}</template
+            ><template v-else>{{ t("Delete comment") }}</template></o-button
+          >
         </li>
       </ul>
+    </section>
+
+    <section
+      class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3"
+      v-if="
+        report.events &&
+        report.events?.length === 0 &&
+        report.comments.length === 0
+      "
+    >
+      <EmptyContent inline center icon="alert-circle">
+        {{ t("No content found") }}
+        <template #desc>
+          {{ t("Maybe the content was removed by the author or a moderator") }}
+        </template>
+      </EmptyContent>
     </section>
 
     <section class="bg-white dark:bg-zinc-700 rounded px-2 pt-1 pb-2 my-3">
@@ -315,7 +360,11 @@
 <script lang="ts" setup>
 import { CREATE_REPORT_NOTE, REPORT, UPDATE_REPORT } from "@/graphql/report";
 import { IReport, IReportNote } from "@/types/report.model";
-import { displayNameAndUsername, usernameWithDomain } from "@/types/actor";
+import {
+  IPerson,
+  displayNameAndUsername,
+  usernameWithDomain,
+} from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import uniq from "lodash/uniq";
 import { nl2br } from "@/utils/html";
@@ -325,7 +374,7 @@ import { ActorType, AntiSpamFeedback, ReportStatusEnum } from "@/types/enums";
 import RouteName from "@/router/name";
 import { GraphQLError } from "graphql";
 import { ApolloCache, FetchResult } from "@apollo/client/core";
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { useHead } from "@vueuse/head";
 import { useI18n } from "vue-i18n";
@@ -337,6 +386,13 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import EventCard from "@/components/Event/EventCard.vue";
 import { useFeatures } from "@/composition/apollo/config";
+import { IEvent } from "@/types/event.model";
+import EmptyContent from "@/components/Utils/EmptyContent.vue";
+import EventComment from "@/components/Comment/EventComment.vue";
+import { SUSPEND_PROFILE } from "@/graphql/actor";
+import { GET_USER, SUSPEND_USER } from "@/graphql/user";
+import { IUser } from "@/types/current-user.model";
+import { waitApolloQuery } from "@/vue-apollo";
 
 const router = useRouter();
 
@@ -373,6 +429,14 @@ const notifier = inject<Notifier>("notifier");
 const errors = ref<string[]>([]);
 
 const noteContent = ref("");
+
+const reportedContent = computed(() => {
+  return [...(report.value?.events ?? []), ...(report.value?.comments ?? [])];
+});
+
+const isOnlyReportedContent = computed(
+  () => reportedContent.value.length === 1
+);
 
 const {
   mutate: createReportNoteMutation,
@@ -419,26 +483,39 @@ createReportNoteMutationError((error) => {
 
 const dialog = inject<Dialog>("dialog");
 
-const confirmEventDelete = (): void => {
+const addResolveReportPart = computed(() => {
+  if (isOnlyReportedContent.value) {
+    return "<p>" + t("This will also resolve the report.") + "</p>";
+  }
+  return "";
+});
+
+const confirmEventDelete = (event: IEvent): void => {
   dialog?.confirm({
     title: t("Deleting event"),
-    message: t(
-      "Are you sure you want to <b>delete</b> this event? This action cannot be undone. You may want to engage the discussion with the event creator or edit its event instead."
-    ),
-    confirmText: t("Delete Event"),
+    message:
+      t(
+        "Are you sure you want to <b>delete</b> this event? <b>This action cannot be undone</b>. You may want to engage the discussion with the event creator and ask them to edit their event instead."
+      ) + addResolveReportPart.value,
+    confirmText: isOnlyReportedContent.value
+      ? t("Delete event and resolve report")
+      : t("Delete event"),
     variant: "danger",
     hasIcon: true,
-    onConfirm: () => deleteEvent(),
+    onConfirm: () => deleteEvent(event),
   });
 };
 
 const confirmCommentDelete = (comment: IComment): void => {
   dialog?.confirm({
     title: t("Deleting comment"),
-    message: t(
-      "Are you sure you want to <b>delete</b> this comment? This action cannot be undone."
-    ),
-    confirmText: t("Delete Comment"),
+    message:
+      t(
+        "Are you sure you want to <b>delete</b> this comment? <b>This action cannot be undone</b>."
+      ) + addResolveReportPart.value,
+    confirmText: isOnlyReportedContent.value
+      ? t("Delete comment and resolve report")
+      : t("Delete comment"),
     variant: "danger",
     hasIcon: true,
     onConfirm: () => deleteCommentMutation({ commentId: comment.id }),
@@ -449,35 +526,105 @@ const {
   mutate: deleteEventMutation,
   onDone: deleteEventMutationDone,
   onError: deleteEventMutationError,
-} = useMutation<{ deleteEvent: { id: string } }>(DELETE_EVENT);
+} = useMutation<{ deleteEvent: { id: string } }>(DELETE_EVENT, () => ({
+  update: (
+    store: ApolloCache<{ deleteEvent: { id: string } }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+    const reportCachedData = store.readQuery<{ report: IReport }>({
+      query: REPORT,
+      variables: { id: report.value?.id },
+    });
+    if (reportCachedData == null) return;
+    const { report: cachedReport } = reportCachedData;
+    if (cachedReport === null) {
+      console.error(
+        "Cannot update report events cache, because of null value."
+      );
+      return;
+    }
+    const updatedReport = {
+      ...cachedReport,
+      events: cachedReport.events?.filter(
+        (cachedEvent) => cachedEvent.id !== data.deleteEvent.id
+      ),
+    };
 
-deleteEventMutationDone(() => {
-  const eventTitle = report.value?.event?.title;
-  notifier?.success(
-    t("Event {eventTitle} deleted", {
-      eventTitle,
-    })
-  );
+    store.writeQuery({
+      query: REPORT,
+      variables: { id: report.value?.id },
+      data: { report: updatedReport },
+    });
+  },
+}));
+
+deleteEventMutationDone(async () => {
+  if (reportedContent.value.length === 0) {
+    await updateReport(ReportStatusEnum.RESOLVED);
+    notifier?.success(t("Event deleted and report resolved"));
+  } else {
+    notifier?.success(t("Event deleted"));
+  }
 });
 
 deleteEventMutationError((error) => {
   console.error(error);
 });
 
-const deleteEvent = async (): Promise<void> => {
-  if (!report.value?.event?.id) return;
+const deleteEvent = async (event: IEvent): Promise<void> => {
+  if (!event?.id) return;
 
-  deleteEventMutation({ eventId: report.value.event.id });
+  deleteEventMutation(
+    { eventId: event.id },
+    { context: { eventTitle: event.title } }
+  );
 };
 
 const {
   mutate: deleteCommentMutation,
   onDone: deleteCommentMutationDone,
   onError: deleteCommentMutationError,
-} = useMutation<{ deleteComment: { id: string } }>(DELETE_COMMENT);
+} = useMutation<{ deleteComment: { id: string } }>(DELETE_COMMENT, () => ({
+  update: (
+    store: ApolloCache<{ deleteComment: { id: string } }>,
+    { data }: FetchResult
+  ) => {
+    if (data == null) return;
+    const reportCachedData = store.readQuery<{ report: IReport }>({
+      query: REPORT,
+      variables: { id: report.value?.id },
+    });
+    if (reportCachedData == null) return;
+    const { report: cachedReport } = reportCachedData;
+    if (cachedReport === null) {
+      console.error(
+        "Cannot update report comments cache, because of null value."
+      );
+      return;
+    }
+    const updatedReport = {
+      ...cachedReport,
+      comments: cachedReport.comments.filter(
+        (cachedComment) => cachedComment.id !== data.deleteComment.id
+      ),
+    };
 
-deleteCommentMutationDone(() => {
-  notifier?.success(t("Comment deleted") as string);
+    store.writeQuery({
+      query: REPORT,
+      variables: { id: report.value?.id },
+      data: { report: updatedReport },
+    });
+  },
+}));
+
+deleteCommentMutationDone(async () => {
+  if (reportedContent.value.length === 0) {
+    await updateReport(ReportStatusEnum.RESOLVED);
+    notifier?.success(t("Comment deleted and report resolved"));
+  } else {
+    notifier?.success(t("Comment deleted"));
+  }
 });
 
 deleteCommentMutationError((error) => {
@@ -524,8 +671,8 @@ const {
   },
 }));
 
-onUpdateReportMutation(() => {
-  router.push({ name: RouteName.REPORTS });
+onUpdateReportMutation(async () => {
+  await router.push({ name: RouteName.REPORTS });
 });
 
 onUpdateReportError((error) => {
@@ -561,6 +708,105 @@ const reportToAntispam = (spam: boolean) => {
     },
   });
 };
+
+const { mutate: doSuspendProfile, onDone: onSuspendProfileDone } = useMutation<
+  {
+    suspendProfile: { id: string };
+  },
+  { id: string }
+>(SUSPEND_PROFILE);
+
+const { mutate: doSuspendUser, onDone: onSuspendUserDone } = useMutation<
+  { suspendProfile: { id: string } },
+  { userId: string }
+>(SUSPEND_USER);
+
+const userLazyQuery = useLazyQuery<{ user: IUser }, { id: string }>(GET_USER);
+
+const suspendProfile = async (actorId: string): Promise<void> => {
+  dialog?.confirm({
+    title: t("Suspend the profile?"),
+    message:
+      t(
+        "Do you really want to suspend this profile? All of the profiles content will be deleted."
+      ) +
+      `<p><b>` +
+      t("There will be no way to restore the profile's data!") +
+      `</b></p>`,
+    confirmText: t("Suspend the profile"),
+    cancelText: t("Cancel"),
+    variant: "danger",
+    onConfirm: async () => {
+      doSuspendProfile({
+        id: actorId,
+      });
+      return router.push({ name: RouteName.USERS });
+    },
+  });
+};
+
+const userSuspendedProfilesMessages = (user: IUser) => {
+  return (
+    t("The following user's profiles will be deleted, with all their data:") +
+    `<ul class="list-disc pl-3">` +
+    user.actors
+      .map((person) => `<li>${displayNameAndUsername(person)}</li>`)
+      .join("") +
+    `</ul><b>`
+  );
+};
+
+const cachedReportedUser = ref<IUser | undefined>();
+
+const suspendUser = async (user: IUser): Promise<void> => {
+  try {
+    if (!cachedReportedUser.value) {
+      userLazyQuery.load(GET_USER, { id: user.id });
+
+      const userLazyQueryResult = await waitApolloQuery<
+        { user: IUser },
+        { id: string }
+      >(userLazyQuery);
+      console.debug("data", userLazyQueryResult);
+
+      cachedReportedUser.value = userLazyQueryResult.data.user;
+    }
+
+    dialog?.confirm({
+      title: t("Suspend the account?"),
+      message:
+        t("Do you really want to suspend the account « {emailAccount} » ?", {
+          emailAccount: cachedReportedUser.value.email,
+        }) +
+        " " +
+        userSuspendedProfilesMessages(cachedReportedUser.value) +
+        "<b>" +
+        t("There will be no way to restore the user's data!") +
+        `</b>`,
+      confirmText: t("Suspend the account"),
+      cancelText: t("Cancel"),
+      variant: "danger",
+      onConfirm: async () => {
+        doSuspendUser({
+          userId: user.id,
+        });
+        return router.push({ name: RouteName.USERS });
+      },
+    });
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+onSuspendUserDone(async () => {
+  await router.push({ name: RouteName.REPORTS });
+  notifier?.success(t("User suspended and report resolved"));
+});
+
+onSuspendProfileDone(async () => {
+  await router.push({ name: RouteName.REPORTS });
+  notifier?.success(t("Profile suspended and report resolved"));
+});
 </script>
 <style lang="scss" scoped>
 tbody td img.image,
