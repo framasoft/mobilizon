@@ -1578,5 +1578,17 @@
   "This application will be allowed to list your suggested group events": "Cetta application sera autorisée à lister les événements de vos groupes qui vous sont suggérés",
   "{profile} joined the the event {event}.": "{profile} a rejoint l'événement {event}.",
   "You joined the event {event}.": "Vous avez rejoint l'événement {event}.",
-  "An anonymous profile joined the event {event}.": "Un profil anonyme a rejoint l'événement {event}."
+  "An anonymous profile joined the event {event}.": "Un profil anonyme a rejoint l'événement {event}.",
+  "Delete event and resolve report": "Supprimer l'événement et résoudre le signalement",
+  "No content found": "Aucun contenu trouvé",
+  "Maybe the content was removed by the author or a moderator": "Peut-être que le contenu a été supprimé par l'auteur·ice ou un·e modérateur·ice",
+  "This will also resolve the report.": "Cela résoudra également le signalement.",
+  "Are you sure you want to <b>delete</b> this event? <b>This action cannot be undone</b>. You may want to engage the discussion with the event creator and ask them to edit their event instead.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> cet événement ? Cette action n'est pas réversible. Vous voulez peut-être engager la discussion avec le créateur de l'événement et lui demander de modifier son événement à la place.",
+  "Are you sure you want to <b>delete</b> this comment? <b>This action cannot be undone</b>.": "Êtes-vous certain⋅e de vouloir <b>supprimer</b> ce commentaire ? <b>Cette action ne peut pas être annulée.</b>",
+  "Delete comment and resolve report": "Supprimer le commentaire et résoudre le signalement",
+  "Delete comment": "Supprimer le commentaire",
+  "Event deleted and report resolved": "Événement supprimé et signalement résolu",
+  "Event deleted": "Événement supprimé",
+  "Comment deleted and report resolved": "Commentaire supprimé et signalement résolu",
+  "Comment under event {eventTitle}": "Commentaire sous l'événement {eventTitle}"
 }

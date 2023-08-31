@@ -78,8 +78,6 @@
   "Date parameters": "Date parameters",
   "Date": "Date",
   "Default": "Default",
-  "Delete Comment": "Delete Comment",
-  "Delete Event": "Delete Event",
   "Delete account": "Delete account",
   "Delete event": "Delete event",
   "Delete everything": "Delete everything",
@@ -1582,5 +1580,17 @@
   "This application will be allowed to list your suggested group events": "This application will be allowed to list your suggested group events",
   "{profile} joined the the event {event}.": "{profile} joined the the event {event}.",
   "You joined the event {event}.": "You joined the event {event}.",
-  "An anonymous profile joined the event {event}.": "An anonymous profile joined the event {event}."
+  "An anonymous profile joined the event {event}.": "An anonymous profile joined the event {event}.",
+  "Delete event and resolve report": "Delete event and resolve report",
+  "No content found": "No content found",
+  "Maybe the content was removed by the author or a moderator": "Maybe the content was removed by the author or a moderator",
+  "This will also resolve the report.": "This will also resolve the report.",
+  "Are you sure you want to <b>delete</b> this event? <b>This action cannot be undone</b>. You may want to engage the discussion with the event creator and ask them to edit their event instead.": "Are you sure you want to <b>delete</b> this event? <b>This action cannot be undone</b>. You may want to engage the discussion with the event creator and ask them to edit their event instead.",
+  "Are you sure you want to <b>delete</b> this comment? <b>This action cannot be undone</b>.": "Are you sure you want to <b>delete</b> this comment? <b>This action cannot be undone</b>.",
+  "Delete comment and resolve report": "Delete comment and resolve report",
+  "Delete comment": "Delete comment",
+  "Event deleted and report resolved": "Event deleted and report resolved",
+  "Event deleted": "Event deleted",
+  "Comment deleted and report resolved": "Comment deleted and report resolved",
+  "Comment under event {eventTitle}": "Comment under event {eventTitle}"
 }

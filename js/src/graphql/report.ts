@@ -69,6 +69,14 @@ const REPORT_FRAGMENT = gql`
       actor {
         ...ActorFragment
       }
+      updatedAt
+      deletedAt
+      uuid
+      event {
+        id
+        uuid
+        title
+      }
     }
     notes {
       id

@@ -34,7 +34,10 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Reports do
           {:error, :event_not_found} -> nil
         end
       end)
-      |> Enum.filter(& &1)
+      |> Enum.filter(fn event ->
+        is_struct(event) and
+          Enum.member?([event.organizer_actor_id, event.attributed_to_id], reported_actor.id)
+      end)
 
     comments =
       Discussions.list_comments_by_actor_and_ids(
