@@ -1605,5 +1605,6 @@
   "Go to booking": "Aller à la réservation",
   "External registration": "Inscription externe",
   "I want to manage the registration with an external provider": "Je souhaite gérer l'enregistrement auprès d'un fournisseur externe",
-  "External provider URL": "URL du fournisseur externe"
+  "External provider URL": "URL du fournisseur externe",
+  "Members will also access private sections like discussions, resources and restricted posts.": "Les membres auront également accès aux section privées comme les discussions, les ressources et les billets restreints."
 }
