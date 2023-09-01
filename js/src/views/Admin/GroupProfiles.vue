@@ -120,7 +120,7 @@ import {
 } from "vue-use-route-query";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { Paginate } from "@/types/paginate";
 import { IGroup } from "@/types/actor";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";

@@ -146,7 +146,8 @@ defmodule Mobilizon.Actors.Actor do
     :domain,
     :summary,
     :visibility,
-    :openness
+    :openness,
+    :manually_approves_followers
   ]
   @group_creation_attrs @group_creation_required_attrs ++ @group_creation_optional_attrs
 

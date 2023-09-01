@@ -5,8 +5,7 @@ import type { IResource } from "../resource";
 import type { IEvent } from "../event.model";
 import type { IDiscussion } from "../discussions";
 import type { IPost } from "../post.model";
-import type { IAddress } from "../address.model";
-import { Address } from "../address.model";
+import { Address, type IAddress } from "../address.model";
 import { ActorType, GroupVisibility, Openness } from "../enums";
 import type { IMember } from "./member.model";
 import type { ITodoList } from "../todolist";
@@ -53,11 +52,11 @@ export class Group extends Actor implements IGroup {
   visibility: GroupVisibility = GroupVisibility.PUBLIC;
   activity: Paginate<IActivity> = { elements: [], total: 0 };
 
-  openness: Openness = Openness.INVITE_ONLY;
+  openness: Openness = Openness.MODERATED;
 
   physicalAddress: IAddress = new Address();
 
-  manuallyApprovesFollowers = true;
+  manuallyApprovesFollowers = false;
 
   patch(hash: IGroup | Record<string, unknown>): void {
     Object.assign(this, hash);

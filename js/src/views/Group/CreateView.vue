@@ -69,11 +69,25 @@
         :message="summaryErrors[0]"
         :type="summaryErrors[1]"
       >
-        <o-input v-model="group.summary" type="textarea" id="group-summary" />
+        <editor
+          v-if="currentActor"
+          id="group-summary"
+          mode="basic"
+          class="mb-3"
+          v-model="group.summary"
+          :maxSize="500"
+          :aria-label="$t('Group description body')"
+          :current-actor="currentActor"
+        />
       </o-field>
 
-      <div>
-        <b>{{ t("Avatar") }}</b>
+      <full-address-auto-complete
+        :label="$t('Group address')"
+        v-model="group.physicalAddress"
+      />
+
+      <div class="field">
+        <b class="field-label">{{ t("Avatar") }}</b>
         <picture-upload
           :textFallback="t('Avatar')"
           v-model="avatarFile"
@@ -81,8 +95,8 @@
         />
       </div>
 
-      <div>
-        <b>{{ t("Banner") }}</b>
+      <div class="field">
+        <b class="field-label">{{ t("Banner") }}</b>
         <picture-upload
           :textFallback="t('Banner')"
           v-model="bannerFile"
@@ -90,7 +104,101 @@
         />
       </div>
 
-      <o-button variant="primary" native-type="submit">
+      <fieldset>
+        <legend class="field-label !mb-0 mt-2">
+          {{ t("Group visibility") }}
+        </legend>
+        <o-radio
+          v-model="group.visibility"
+          name="groupVisibility"
+          :native-value="GroupVisibility.PUBLIC"
+        >
+          {{ $t("Visible everywhere on the web") }}<br />
+          <small>{{
+            $t(
+              "The group will be publicly listed in search results and may be suggested in the explore section. Only public informations will be shown on it's page."
+            )
+          }}</small>
+        </o-radio>
+        <o-radio
+          v-model="group.visibility"
+          name="groupVisibility"
+          :native-value="GroupVisibility.UNLISTED"
+          >{{ $t("Only accessible through link") }}<br />
+          <small>{{
+            $t(
+              "You'll need to transmit the group URL so people may access the group's profile. The group won't be findable in Mobilizon's search or regular search engines."
+            )
+          }}</small>
+        </o-radio>
+      </fieldset>
+      <fieldset>
+        <legend class="mt-2">
+          <span class="field-label !mb-0">{{ t("New members") }} </span>
+          <span>
+            {{
+              t(
+                "Members will also access private sections like discussions, resources and restricted posts."
+              )
+            }}
+          </span>
+        </legend>
+        <o-field>
+          <o-radio
+            v-model="group.openness"
+            name="groupOpenness"
+            :native-value="Openness.OPEN"
+          >
+            {{ $t("Anyone can join freely") }}<br />
+            <small>{{
+              $t(
+                "Anyone wanting to be a member from your group will be able to from your group page."
+              )
+            }}</small>
+          </o-radio>
+        </o-field>
+        <o-field>
+          <o-radio
+            v-model="group.openness"
+            name="groupOpenness"
+            :native-value="Openness.MODERATED"
+            >{{ $t("Moderate new members") }}<br />
+            <small>{{
+              $t(
+                "Anyone can request being a member, but an administrator needs to approve the membership."
+              )
+            }}</small>
+          </o-radio>
+        </o-field>
+        <o-field>
+          <o-radio
+            v-model="group.openness"
+            name="groupOpenness"
+            :native-value="Openness.INVITE_ONLY"
+            >{{ $t("Manually invite new members") }}<br />
+            <small>{{
+              $t(
+                "The only way for your group to get new members is if an admininistrator invites them."
+              )
+            }}</small>
+          </o-radio>
+        </o-field>
+      </fieldset>
+      <fieldset>
+        <legend class="mt-2">
+          <span class="field-label !mb-0">
+            {{ t("Followers") }}
+          </span>
+          <span>
+            {{ t("Followers will receive new public events and posts.") }}
+          </span>
+        </legend>
+        <o-checkbox v-model="group.manuallyApprovesFollowers">
+          {{ t("Manually approve new followers") }}
+        </o-checkbox>
+      </fieldset>
+
+      <o-button variant="primary" native-type="submit" class="mt-3">
         {{ t("Create my group") }}
       </o-button>
     </form>
@@ -105,7 +213,14 @@ import PictureUpload from "../../components/PictureUpload.vue";
 import { ErrorResponse } from "@/types/errors.model";
 import { ServerParseError } from "@apollo/client/link/http";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
-import { computed, inject, reactive, ref, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  inject,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useCreateGroup } from "@/composition/apollo/group";
@@ -116,6 +231,12 @@ import {
 } from "@/composition/config";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@vueuse/head";
+import { Openness, GroupVisibility } from "@/types/enums";
+import FullAddressAutoComplete from "@/components/Event/FullAddressAutoComplete.vue";
+
+const Editor = defineAsyncComponent(
+  () => import("@/components/TextEditor.vue")
+);
 
 const { currentActor } = useCurrentActorClient();
 
@@ -156,10 +277,20 @@ const buildVariables = computed(() => {
   let avatarObj = {};
   let bannerObj = {};
 
+  const cloneGroup = group.value;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  delete cloneGroup.physicalAddress.__typename;
+  delete cloneGroup.physicalAddress.pictureInfo;
+
   const groupBasic = {
     preferredUsername: group.value.preferredUsername,
     name: group.value.name,
     summary: group.value.summary,
+    physicalAddress: cloneGroup.physicalAddress,
+    visibility: group.value.visibility,
+    openness: group.value.openness,
+    manuallyApprovesFollowers: group.value.manuallyApprovesFollowers,
   };
 
   if (avatarFile.value) {
