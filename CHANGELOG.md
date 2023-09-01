@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.2.0-beta.2  (2023-09-01)
+
+Fixes a CI issue that prevented 3.2.0-beta.2 being released.
+
+### Bug Fixes
+
+* **front:** fix behavior of local toggle for profiles & groups view depending on domain value ([84f62cd](https://framagit.org/framasoft/mobilizon/commit/84f62cd043d5cf5d186fea6f24a1a9dff5fc64ce))
+
+
+
 ## 3.2.0-beta.1  (2023-09-01)
 
 ### Features
