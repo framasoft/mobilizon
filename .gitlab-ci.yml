@@ -132,7 +132,9 @@ exunit:
   variables:
     MIX_ENV: test
   before_script:
-    - mix deps.get && mix tz_world.update
+    - mix deps.get
+    - mix compile
+    - mix tz_world.update
     - mix ecto.create
     - mix ecto.migrate
   script:
