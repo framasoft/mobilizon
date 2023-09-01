@@ -247,7 +247,28 @@
         </div>-->
 
         <o-field
-          v-if="anonymousParticipationConfig?.allowed"
+          :label="t('External registration')"
+          v-if="features?.eventExternal"
+        >
+          <o-switch v-model="externalParticipation">
+            {{
+              t("I want to manage the registration with an external provider")
+            }}
+          </o-switch>
+        </o-field>
+
+        <o-field v-if="externalParticipation" :label="t('URL')">
+          <o-input
+            icon="link"
+            type="url"
+            v-model="event.externalParticipationUrl"
+            :placeholder="t('External provider URL')"
+            required
+          />
+        </o-field>
+
+        <o-field
+          v-if="anonymousParticipationConfig?.allowed && !externalParticipation"
           :label="t('Anonymous participations')"
         >
           <o-switch v-model="eventOptions.anonymousParticipation">
@@ -268,19 +289,22 @@
           </o-switch>
         </o-field>
 
-        <o-field :label="t('Participation approval')">
+        <o-field
+          :label="t('Participation approval')"
+          v-show="!externalParticipation"
+        >
           <o-switch v-model="needsApproval">{{
             t("I want to approve every participation request")
           }}</o-switch>
         </o-field>
 
-        <o-field :label="t('Number of places')">
+        <o-field :label="t('Number of places')" v-show="!externalParticipation">
           <o-switch v-model="limitedPlaces">{{
             t("Limited number of places")
           }}</o-switch>
         </o-field>
 
-        <div class="" v-if="limitedPlaces">
+        <div class="" v-if="limitedPlaces && !externalParticipation">
           <o-field :label="t('Number of places')" label-for="number-of-places">
             <o-input
               type="number"
@@ -1307,6 +1331,19 @@ watch(group, () => {
 const orderedCategories = computed(() => {
   if (!eventCategories.value) return undefined;
   return sortBy(eventCategories.value, ["label"]);
+});
+
+const externalParticipation = computed({
+  get() {
+    return event.value?.joinOptions === EventJoinOptions.EXTERNAL;
+  },
+  set(newValue) {
+    if (newValue === true) {
+      event.value.joinOptions = EventJoinOptions.EXTERNAL;
+    } else {
+      event.value.joinOptions = EventJoinOptions.FREE;
+    }
+  },
 });
 </script>
 

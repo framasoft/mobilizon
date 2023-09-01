@@ -96,6 +96,7 @@ export interface IConfig {
   timezones: string[];
   features: {
     eventCreation: boolean;
+    eventExternal: boolean;
     groups: boolean;
     antispam: boolean;
   };

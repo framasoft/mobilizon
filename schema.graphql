@@ -1551,6 +1551,9 @@ type RootMutationType {
     "The event's options to join"
     joinOptions: EventJoinOptions
 
+    "External URL for participation"
+    externalParticipationUrl: String
+
     "The list of tags associated to the event"
     tags: [String]
 
@@ -1619,6 +1622,9 @@ type RootMutationType {
 
     "The event's options to join"
     joinOptions: EventJoinOptions
+
+    "External URL for participation"
+    externalParticipationUrl: String
 
     "The list of tags associated to the event"
     tags: [String]
@@ -2956,6 +2962,9 @@ type Event implements ActivityObject & Interactable & ActionLogObject {
   "The event's visibility"
   joinOptions: EventJoinOptions
 
+  "External URL for participation"
+  externalParticipationUrl: String
+
   "The event's picture"
   picture: Media
 
@@ -3144,6 +3153,9 @@ enum EventJoinOptions {
 
   "Participants must be invited"
   INVITE
+
+  "External registration"
+  EXTERNAL
 }
 
 type InstanceFeeds {

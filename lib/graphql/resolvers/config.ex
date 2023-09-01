@@ -145,6 +145,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Config do
       features: %{
         groups: Config.instance_group_feature_enabled?(),
         event_creation: Config.instance_event_creation_enabled?(),
+        event_external: Config.instance_event_external_enabled?(),
         antispam: AntiSpam.service().ready?()
       },
       restrictions: %{
