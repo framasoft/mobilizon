@@ -295,6 +295,10 @@ export const CREATE_GROUP = gql`
     $summary: String
     $avatar: MediaInput
     $banner: MediaInput
+    $physicalAddress: AddressInput
+    $visibility: GroupVisibility
+    $openness: Openness
+    $manuallyApprovesFollowers: Boolean
   ) {
     createGroup(
       preferredUsername: $preferredUsername
@@ -302,6 +306,10 @@ export const CREATE_GROUP = gql`
       summary: $summary
       banner: $banner
       avatar: $avatar
+      physicalAddress: $physicalAddress
+      visibility: $visibility
+      openness: $openness
+      manuallyApprovesFollowers: $manuallyApprovesFollowers
     ) {
       ...ActorFragment
       banner {

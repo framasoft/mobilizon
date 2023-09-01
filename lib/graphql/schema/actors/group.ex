@@ -305,6 +305,10 @@ defmodule Mobilizon.GraphQL.Schema.Actors.GroupType do
         description: "Whether the group can be join freely, with approval or is invite-only."
       )
 
+      arg(:manually_approves_followers, :boolean,
+        description: "Whether this group approves new followers manually"
+      )
+
       arg(:avatar, :media_input,
         description:
           "The avatar for the group, either as an object or directly the ID of an existing media"
