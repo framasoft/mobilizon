@@ -72,6 +72,7 @@ export const CONFIG = gql`
       features {
         groups
         eventCreation
+        eventExternal
         antispam
       }
       restrictions {
@@ -370,6 +371,7 @@ export const FEATURES = gql`
       features {
         groups
         eventCreation
+        eventExternal
         antispam
       }
     }

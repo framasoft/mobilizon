@@ -357,6 +357,10 @@ defmodule Mobilizon.Config do
   def instance_event_creation_enabled?,
     do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:creation)
 
+  @spec instance_event_external_enabled? :: boolean
+  def instance_event_external_enabled?,
+    do: :mobilizon |> Application.get_env(:events) |> Keyword.get(:external)
+
   @spec instance_export_formats :: %{event_participants: list(String.t())}
   def instance_export_formats do
     %{

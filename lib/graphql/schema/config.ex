@@ -314,6 +314,10 @@ defmodule Mobilizon.GraphQL.Schema.ConfigType do
       description: "Whether event creation is allowed on this instance"
     )
 
+    field(:event_external, :boolean,
+      description: "Whether redirecting to external providers is authorized in event edition"
+    )
+
     field(:antispam, :boolean, description: "Whether anti-spam is activated on this instance")
   end
 

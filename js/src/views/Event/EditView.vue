@@ -246,7 +246,10 @@
           </o-radio>
         </div>-->
 
-        <o-field :label="t('External registration')">
+        <o-field
+          :label="t('External registration')"
+          v-if="features?.eventExternal"
+        >
           <o-switch v-model="externalParticipation">
             {{
               t("I want to manage the registration with an external provider")
@@ -260,6 +263,7 @@
             type="url"
             v-model="event.externalParticipationUrl"
             :placeholder="t('External provider URL')"
+            required
           />
         </o-field>
 

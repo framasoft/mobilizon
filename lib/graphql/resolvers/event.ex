@@ -254,6 +254,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
 
     with {:is_owned, %Actor{} = organizer_actor} <- User.owns_actor(user, organizer_actor_id),
          {:can_create_event, true} <- can_create_event(args),
+         {:event_external, true} <- edit_event_external_checker(args),
          {:organizer_group_member, true} <-
            {:organizer_group_member, is_organizer_group_member?(args)},
          args_with_organizer <-
@@ -279,6 +280,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          dgettext(
            "errors",
            "Only groups can create events"
+         )}
+
+      {:event_external, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Providing external registration is not allowed"
          )}
 
       {:organizer_group_member, false} ->
@@ -322,6 +330,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
     end
   end
 
+  @spec edit_event_external_checker(map()) :: {:event_external, boolean()}
+  defp edit_event_external_checker(args) do
+    if Config.instance_event_external_enabled?() do
+      {:event_external, true}
+    else
+      {:event_external,
+       Map.get(args, :join_options) != :external and
+         is_nil(Map.get(args, :external_participation_url))}
+    end
+  end
+
   @doc """
   Update an event
   """
@@ -340,6 +359,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          args <- extract_timezone(args, user.id),
          {:event_can_be_managed, true} <-
            {:event_can_be_managed, can_event_be_updated_by?(event, actor)},
+         {:event_external, true} <- edit_event_external_checker(args),
          {:ok, %Activity{data: %{"object" => %{"type" => "Event"}}}, %Event{} = event} <-
            API.Events.update_event(args, event) do
       {:ok, event}
@@ -349,6 +369,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Event do
          dgettext(
            "errors",
            "This profile doesn't have permission to update an event on behalf of this group"
+         )}
+
+      {:event_external, false} ->
+        {:error,
+         dgettext(
+           "errors",
+           "Providing external registration is not allowed"
          )}
 
       {:error, :event_not_found} ->
