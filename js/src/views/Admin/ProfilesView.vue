@@ -119,7 +119,7 @@ const preferredUsername = useRouteQuery("preferredUsername", "");
 const name = useRouteQuery("name", "");
 const domain = useRouteQuery("domain", "");
 
-const local = useRouteQuery("local", true, booleanTransformer);
+const local = useRouteQuery("local", domain.value === "", booleanTransformer);
 const suspended = useRouteQuery("suspended", false, booleanTransformer);
 const page = useRouteQuery("page", 1, integerTransformer);
 

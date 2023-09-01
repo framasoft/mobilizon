@@ -129,11 +129,11 @@ const PROFILES_PER_PAGE = 10;
 
 const { restrictions } = useRestrictions();
 
-const preferredUsername = ref("");
-const name = ref("");
-const domain = ref("");
+const preferredUsername = useRouteQuery("preferredUsername", "");
+const name = useRouteQuery("name", "");
+const domain = useRouteQuery("domain", "");
 
-const local = useRouteQuery("local", true, booleanTransformer);
+const local = useRouteQuery("local", domain.value === "", booleanTransformer);
 const suspended = useRouteQuery("suspended", false, booleanTransformer);
 const page = useRouteQuery("page", 1, integerTransformer);
 
