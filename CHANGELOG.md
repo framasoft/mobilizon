@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 3.2.0-beta.3  (2023-09-04)
+
+
+### Bug Fixes
+
+* **i18n:** add missing translations ([af670f3](https://framagit.org/framasoft/mobilizon/commit/af670f39478b11465205fbea9b9268bab401bbb6))
+
+
+### Features
+
+* Add option to link an external registration provider for events ([2de6937](https://framagit.org/framasoft/mobilizon/commit/2de6937407743100daba1d397db4da32d4cb606b))
+* **back:** add admin setting to disable external event feature ([f6611e8](https://framagit.org/framasoft/mobilizon/commit/f6611e8eb5a7e12dc0dc0c216b598e04144e07c6))
+* improve group creation view [3f601748](https://framagit.org/framasoft/mobilizon/-/commit/3f60174877bbe05773b1d1b2ceb91749adec7ed7)
+
+
 ## 3.2.0-beta.2  (2023-09-01)
 
 Fixes a CI issue that prevented 3.2.0-beta.2 being released.
