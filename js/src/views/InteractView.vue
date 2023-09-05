@@ -68,7 +68,13 @@ const { onResult, onError, loading } = useQuery<{
   })
 );
 
-onResult(async ({ data: { interact } }) => {
+onResult(async (result) => {
+  if (result.loading) return;
+  if (!result.data) {
+    errors.push(t("This URL is not supported"));
+    return;
+  }
+  const interact = result.data.interact;
   switch (interact.__typename) {
     case "Group":
       await router.replace({
