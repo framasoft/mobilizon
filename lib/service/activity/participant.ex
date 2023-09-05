@@ -22,20 +22,25 @@ defmodule Mobilizon.Service.Activity.Participant do
     event = Events.get_event!(event_id)
     subject = Keyword.fetch!(options, :subject)
 
-    ActivityBuilder.enqueue(:build_activity, %{
-      "type" => "event",
-      "subject" => subject,
-      "subject_params" => %{
-        actor_name: Actor.display_name(actor),
-        event_title: event.title,
-        event_uuid: event.uuid
-      },
-      "group_id" => event.attributed_to_id,
-      "author_id" => actor.id,
-      "object_type" => "participant",
-      "object_id" => participant_id,
-      "inserted_at" => DateTime.utc_now()
-    })
+    if is_nil(event.attributed_to_id) do
+      # No activity for non-group events
+      {:ok, nil}
+    else
+      ActivityBuilder.enqueue(:build_activity, %{
+        "type" => "event",
+        "subject" => subject,
+        "subject_params" => %{
+          actor_name: Actor.display_name(actor),
+          event_title: event.title,
+          event_uuid: event.uuid
+        },
+        "group_id" => event.attributed_to_id,
+        "author_id" => actor.id,
+        "object_type" => "participant",
+        "object_id" => participant_id,
+        "inserted_at" => DateTime.utc_now()
+      })
+    end
   end
 
   @impl Activity
