@@ -290,7 +290,7 @@ build-and-push-docker-tag:
 
 # Packaging app for amd64
 package-app:
-  image: mobilizon/buildpack:1.14.1-erlang-25.1.1-debian-buster
+  image: mobilizon/buildpack:1.15.5-erlang-26.0.2-debian-buster
   stage: package
   variables: &release-variables
     MIX_ENV: "prod"
