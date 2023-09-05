@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+# 3.2.0-beta.4  (2023-09-05)
+
+
+### Bug Fixes
+
+* **back:** allow any other type of actor to be suspended ([92b222b](https://framagit.org/framasoft/mobilizon/commit/92b222b091cf6248969b0206e7c052b725a1286b))
+* **back:** only try to insert activities for groups ([cfc9843](https://framagit.org/framasoft/mobilizon/commit/cfc984345e90b2960077956858606395f37ef9b9))
+* **front:** don't return promise if result is not finished loading for tags ([8c14ba4](https://framagit.org/framasoft/mobilizon/commit/8c14ba441c6f0fadb3c59f80ff4e3abb2e625752))
+* **front:** fix getting result from interactable object in InteractView ([31b2d06](https://framagit.org/framasoft/mobilizon/commit/31b2d065a904453580731133cd3dfd545a5816fa))
+
+
 ## 3.2.0-beta.3  (2023-09-04)
 
 
