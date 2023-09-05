@@ -11,7 +11,12 @@ export function fetchTags(text: string): Promise<ITag[]> {
       })
     );
 
-    onResult(({ data }) => resolve(data.tags));
+    onResult((result) => {
+      if (result.loading) {
+        return;
+      }
+      return resolve(result.data.tags);
+    });
 
     onError((error) => reject(error));
   });

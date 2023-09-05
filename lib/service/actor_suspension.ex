@@ -103,7 +103,7 @@ defmodule Mobilizon.Service.ActorSuspension do
     end)
   end
 
-  defp maybe_reset_actor_id(%Multi{} = multi, %Actor{type: :Group} = _actor) do
+  defp maybe_reset_actor_id(%Multi{} = multi, %Actor{type: _} = _actor) do
     multi
   end
 
