@@ -620,4 +620,8 @@ useHead({
 .event-description a {
   @apply inline-block p-1 bg-mbz-yellow-alt-200 text-black;
 }
+
+.event-description .mention.h-card {
+  @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
+}
 </style>

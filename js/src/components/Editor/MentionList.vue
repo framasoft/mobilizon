@@ -1,8 +1,8 @@
 <template>
-  <div class="items">
+  <div class="relative border overflow-hidden dark:border-transparent">
     <button
-      class="item"
-      :class="{ 'is-selected': index === selectedIndex }"
+      class="block w-full text-start bg-white dark:bg-violet-1 border py-1 px-2 rounded dark:border-transparent"
+      :class="{ 'border-black dark:!border-white': index === selectedIndex }"
       v-for="(item, index) in items"
       :key="index"
       @click="selectItem(index)"
@@ -34,37 +34,37 @@ watch(
   }
 );
 
-// const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
-//   if (event.key === "ArrowUp") {
-//     upHandler();
-//     return true;
-//   }
+const onKeyDown = ({ event }: { event: KeyboardEvent }): boolean => {
+  if (event.key === "ArrowUp") {
+    upHandler();
+    return true;
+  }
 
-//   if (event.key === "ArrowDown") {
-//     downHandler();
-//     return true;
-//   }
+  if (event.key === "ArrowDown") {
+    downHandler();
+    return true;
+  }
 
-//   if (event.key === "Enter") {
-//     enterHandler();
-//     return true;
-//   }
+  if (event.key === "Enter") {
+    enterHandler();
+    return true;
+  }
 
-//   return false;
-// };
+  return false;
+};
 
-// const upHandler = (): void => {
-//   selectedIndex.value =
-//     (selectedIndex.value + props.items.length - 1) % props.items.length;
-// };
+const upHandler = (): void => {
+  selectedIndex.value =
+    (selectedIndex.value + props.items.length - 1) % props.items.length;
+};
 
-// const downHandler = (): void => {
-//   selectedIndex.value = (selectedIndex.value + 1) % props.items.length;
-// };
+const downHandler = (): void => {
+  selectedIndex.value = (selectedIndex.value + 1) % props.items.length;
+};
 
-// const enterHandler = (): void => {
-//   selectItem(selectedIndex.value);
-// };
+const enterHandler = (): void => {
+  selectItem(selectedIndex.value);
+};
 
 const selectItem = (index: number): void => {
   const item = props.items[index];
@@ -73,27 +73,8 @@ const selectItem = (index: number): void => {
     props.command({ id: usernameWithDomain(item) });
   }
 };
+
+defineExpose({
+  onKeyDown,
+});
 </script>
-
-<style lang="scss" scoped>
-.items {
-  position: relative;
-  border-radius: 0.25rem;
-  background: white;
-  color: rgba(black, 0.8);
-  overflow: hidden;
-  font-size: 0.9rem;
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.1),
-    0px 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.item {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: transparent;
-  border: none;
-  padding: 0.5rem 0.75rem;
-}
-</style>
