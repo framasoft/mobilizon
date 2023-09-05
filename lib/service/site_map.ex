@@ -24,7 +24,7 @@ defmodule Mobilizon.Service.SiteMap do
 
     config = [
       store: Sitemapper.FileStore,
-      store_config: [path: Application.app_dir(:mobilizon, "priv/static")],
+      store_config: [path: Application.get_env(:mobilizon, __MODULE__) |> get_in([:path])],
       sitemap_url: Endpoint.url(),
       gzip: false
     ]

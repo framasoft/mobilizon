@@ -62,6 +62,9 @@ config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "test/uploads"
 
 config :mobilizon, :exports, path: "test/uploads/exports"
 
+config :mobilizon, Mobilizon.Service.SiteMap,
+  path: System.get_env("MOBILIZON_SITEMAP_PATH", "test/sitemap")
+
 config :tz_world, data_dir: "_build/test/lib/tz_world/priv"
 
 config :tesla, Mobilizon.Service.HTTP.ActivityPub,
