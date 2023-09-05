@@ -3,7 +3,7 @@
 set -e
 
 echo "-- Waiting for database..."
-while ! pg_isready -U ${MOBILIZON_DATABASE_USERNAME} -d postgres://${MOBILIZON_DATABASE_HOST}:5432/${MOBILIZON_DATABASE_DBNAME} -t 1; do
+while ! pg_isready -U ${MOBILIZON_DATABASE_USERNAME} -d postgres://${MOBILIZON_DATABASE_HOST}:${MOBILIZON_DATABASE_PORT:-5432}/${MOBILIZON_DATABASE_DBNAME} -t 1; do
    sleep 1s
 done
 
