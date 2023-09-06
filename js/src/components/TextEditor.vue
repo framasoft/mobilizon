@@ -657,4 +657,8 @@ onBeforeUnmount(() => {
 .menubar__button.is-active {
   @apply bg-zinc-300 dark:bg-zinc-500;
 }
+
+.mention[data-id] {
+  @apply inline-block border border-zinc-600 dark:border-zinc-300 rounded py-0.5 px-1;
+}
 </style>

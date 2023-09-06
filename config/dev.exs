@@ -92,6 +92,9 @@ config :mobilizon, Mobilizon.Web.Upload.Uploader.Local, uploads: "uploads"
 
 config :mobilizon, :exports, path: "uploads/exports"
 
+config :mobilizon, Mobilizon.Service.SiteMap,
+  path: System.get_env("MOBILIZON_SITEMAP_PATH", "priv/static")
+
 config :tz_world, data_dir: "_build/dev/lib/tz_world/priv"
 
 config :mobilizon, :anonymous,

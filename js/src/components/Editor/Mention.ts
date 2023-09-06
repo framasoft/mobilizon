@@ -2,37 +2,32 @@ import { SEARCH_PERSONS } from "@/graphql/search";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 import MentionList from "./MentionList.vue";
-import { apolloClient } from "@/vue-apollo";
+import { apolloClient, waitApolloQuery } from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
 import { MentionOptions } from "@tiptap/extension-mention";
 import { Editor } from "@tiptap/core";
 import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { Paginate } from "@/types/paginate";
-import { onError } from "@apollo/client/link/error";
 
-const fetchItems = (query: string): Promise<IPerson[]> => {
-  return new Promise((resolve, reject) => {
-    const { onResult } = provideApolloClient(apolloClient)(() => {
-      return useQuery<{ searchPersons: Paginate<IPerson> }>(
-        SEARCH_PERSONS,
-        () => ({
-          variables: {
-            searchText: query,
-          },
-        })
-      );
-    });
-
-    onResult(({ data }) => {
-      resolve(data.searchPersons.elements);
-    });
-
-    onError(reject);
-  });
-
-  // // TipTap doesn't handle async for onFilter, hence the following line.
-  // return result.data.searchPersons.elements;
+const fetchItems = async (query: string): Promise<IPerson[]> => {
+  try {
+    if (query === "") return [];
+    const res = await waitApolloQuery(
+      provideApolloClient(apolloClient)(() => {
+        return useQuery<
+          { searchPersons: Paginate<IPerson> },
+          { searchText: string }
+        >(SEARCH_PERSONS, () => ({
+          searchText: query,
+        }));
+      })
+    );
+    return res.data.searchPersons.elements;
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 };
 
 const debouncedFetchItems = pDebounce(fetchItems, 200);
@@ -68,6 +63,10 @@ const mentionOptions: MentionOptions = {
             editor: props.editor,
           });
 
+          if (!props.clientRect) {
+            return;
+          }
+
           popup = tippy("body", {
             getReferenceClientRect: props.clientRect,
             appendTo: () => document.body,
@@ -86,6 +85,12 @@ const mentionOptions: MentionOptions = {
           });
         },
         onKeyDown(props: any) {
+          if (props.event.key === "Escape") {
+            popup[0].hide();
+
+            return true;
+          }
+
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           return component.ref?.onKeyDown(props);

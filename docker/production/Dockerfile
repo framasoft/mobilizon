@@ -10,7 +10,7 @@ RUN yarn install --network-timeout 100000 \
     && yarn run build
 
 # Then, build the application binary
-FROM elixir:1.14-alpine AS builder
+FROM elixir:1.15-alpine AS builder
 
 # Fix qemu segfault on arm64
 # See https://github.com/plausible/analytics/pull/2879 and https://github.com/erlang/otp/pull/6340
