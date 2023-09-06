@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## 3.2.0-beta.4  (2023-09-05)
+## 3.2.0-beta.5 (2023-09-06)
 
+### Bug Fixes
+
+* **docker:** make Docker entrypoint port configurable via $MOBILIZON_DATABASE_PORT ([13099e0](https://framagit.org/framasoft/mobilizon/commits/13099e0f118b727a1472282c6419ef9b1842c191))
+* **front:** fix fetching and rendering profile mentions and fetching tags ([895378a](https://framagit.org/framasoft/mobilizon/commits/895378a96bf8a6c7662ed02509c37b8d8a95db0b))
+* **sitemap:** save generated sitemaps in configurable directory ([f28109a](https://framagit.org/framasoft/mobilizon/commits/f28109ad50d85143e38c8e9f5d09c28f80566462)), closes [#1321](https://framagit.org/framasoft/mobilizon/issues/1321)
+
+
+## 3.2.0-beta.4  (2023-09-05)
 
 ### Bug Fixes
 
@@ -18,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## 3.2.0-beta.3  (2023-09-04)
-
 
 ### Bug Fixes
 
@@ -39,7 +46,6 @@ Fixes a CI issue that prevented 3.2.0-beta.2 being released.
 ### Bug Fixes
 
 * **front:** fix behavior of local toggle for profiles & groups view depending on domain value ([84f62cd](https://framagit.org/framasoft/mobilizon/commit/84f62cd043d5cf5d186fea6f24a1a9dff5fc64ce))
-
 
 
 ## 3.2.0-beta.1  (2023-09-01)
