@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2022-10-20 06:47+0000\n"
-"Last-Translator: Berto Te <ateira@3fpj.com>\n"
+"PO-Revision-Date: 2023-09-06 12:15+0000\n"
+"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
 "Language: es\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.0\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -140,7 +140,7 @@ msgstr "Nuevo título: %{title}"
 #: lib/web/templates/email/password_reset.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You requested a new password for your account on %{instance}."
-msgstr "Solicitó una nueva contraseña para su cuenta en %{instancia}."
+msgstr "Solicitó una nueva contraseña para su cuenta en %{instance}."
 
 #: lib/web/templates/email/email.html.heex:105
 #, elixir-autogen, elixir-format
