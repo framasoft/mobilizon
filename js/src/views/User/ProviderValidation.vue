@@ -14,19 +14,12 @@ import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
 import { computed, onMounted } from "vue";
+import { getValueFromMeta } from "@/utils/html";
 
 const { t } = useI18n({ useScope: "global" });
 useHead({
   title: computed(() => t("Redirecting to Mobilizon")),
 });
-
-const getValueFromMeta = (name: string): string | null => {
-  const element = document.querySelector(`meta[name="${name}"]`);
-  if (element && element.getAttribute("content")) {
-    return element.getAttribute("content");
-  }
-  return null;
-};
 
 const accessToken = getValueFromMeta("auth-access-token");
 const refreshToken = getValueFromMeta("auth-refresh-token");

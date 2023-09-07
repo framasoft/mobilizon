@@ -20,7 +20,9 @@ defmodule Mobilizon.Web.AuthView do
             email: user_email,
             role: user_role,
             default_actor_id: user_actor_id
-          }
+          },
+          username: username,
+          name: name
         } = assigns
       ) do
     info_tags = [
@@ -29,7 +31,9 @@ defmodule Mobilizon.Web.AuthView do
       Tag.tag(:meta, name: "auth-user-id", content: user_id),
       Tag.tag(:meta, name: "auth-user-email", content: user_email),
       Tag.tag(:meta, name: "auth-user-role", content: String.upcase(to_string(user_role))),
-      Tag.tag(:meta, name: "auth-user-actor-id", content: user_actor_id)
+      Tag.tag(:meta, name: "auth-user-actor-id", content: user_actor_id),
+      Tag.tag(:meta, name: "auth-user-suggested-actor-username", content: username),
+      Tag.tag(:meta, name: "auth-user-suggested-actor-name", content: name)
     ]
 
     with tags <- Instance.build_tags() ++ info_tags,
