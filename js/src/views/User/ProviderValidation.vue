@@ -36,7 +36,10 @@ const userRole = getValueFromMeta("auth-user-role") as ICurrentUserRole;
 
 const router = useRouter();
 
-const { onDone, mutate } = useMutation<
+const {
+  onDone: onUpdateCurrentUserClientDone,
+  mutate: updateCurrentUserClient,
+} = useMutation<
   { updateCurrentUser: ICurrentUser },
   { id: string; email: string; isLoggedIn: boolean; role: ICurrentUserRole }
 >(UPDATE_CURRENT_USER_CLIENT);
@@ -45,16 +48,19 @@ const { onResult: onLoggedUserResult, load: loadUser } = useLazyQuery<{
   loggedUser: IUser;
 }>(LOGGED_USER);
 
-onDone(async () => {
+onUpdateCurrentUserClientDone(async () => {
   loadUser();
-  onLoggedUserResult(async ({ data: { loggedUser } }) => {
-    if (loggedUser.defaultActor) {
-      await changeIdentity(loggedUser.defaultActor);
-      await router.push({ name: RouteName.HOME });
-    } else {
-      // No need to push to REGISTER_PROFILE, the navbar will do it for us
-    }
-  });
+});
+
+onLoggedUserResult(async (result) => {
+  if (result.loading) return;
+  const loggedUser = result.data.loggedUser;
+  if (loggedUser.defaultActor) {
+    await changeIdentity(loggedUser.defaultActor);
+    await router.push({ name: RouteName.HOME });
+  } else {
+    // No need to push to REGISTER_PROFILE, the navbar will do it for us
+  }
 });
 
 onMounted(async () => {
@@ -67,13 +73,15 @@ onMounted(async () => {
         email: userEmail,
         role: userRole,
         isLoggedIn: true,
+        defaultActor: undefined,
+        actors: [],
       },
       accessToken,
       refreshToken,
     };
     saveUserData(login);
 
-    mutate({
+    updateCurrentUserClient({
       id: userId,
       email: userEmail,
       isLoggedIn: true,
