@@ -2,24 +2,23 @@
   <div>
     <breadcrumbs-nav :links="breadcrumbsLinks" />
     <div v-if="identity">
-      <h1>
+      <h1 class="flex justify-center">
         <span v-if="isUpdate" class="line-clamp-2">{{
           displayName(identity)
         }}</span>
-        <span v-else>{{ $t("I create an identity") }}</span>
+        <span v-else>{{ t("I create an identity") }}</span>
       </h1>
       <o-field horizontal :label="t('Avatar')">
         <picture-upload
           v-model="avatarFile"
           :defaultImage="identity.avatar"
           :maxSize="avatarMaxSize"
-          class="picture-upload"
         />
       </o-field>
 
       <o-field
         horizontal
-        :label="$t('Display name')"
+        :label="t('Display name')"
         label-for="identity-display-name"
       >
         <o-input
@@ -34,14 +33,15 @@
 
       <o-field
         horizontal
-        custom-class="username-field"
-        expanded
-        :label="$t('Username')"
+        class="username-field"
+        :label="t('Username')"
         label-for="identity-username"
         :message="message"
       >
-        <o-field expanded>
+        <o-field class="!mt-0">
           <o-input
+            expanded
+            class="!mt-0"
             aria-required="true"
             required
             v-model="identity.preferredUsername"
@@ -60,7 +60,7 @@
 
       <o-field
         horizontal
-        :label="$t('Description')"
+        :label="t('Description')"
         label-for="identity-summary"
       >
         <o-input
@@ -82,29 +82,29 @@
         >{{ error }}</o-notification
       >
 
-      <o-field class="submit">
+      <o-field class="flex justify-center !my-6">
         <div class="control">
           <o-button type="button" variant="primary" @click="submit()">
-            {{ $t("Save") }}
+            {{ t("Save") }}
           </o-button>
         </div>
       </o-field>
 
-      <o-field class="delete-identity">
+      <o-field class="flex justify-center">
         <o-button
           v-if="isUpdate"
           @click="openDeleteIdentityConfirmation()"
           variant="text"
         >
-          {{ $t("Delete this identity") }}
+          {{ t("Delete this identity") }}
         </o-button>
       </o-field>
 
       <section v-if="isUpdate">
-        <h2>{{ $t("Profile feeds") }}</h2>
+        <h2>{{ t("Profile feeds") }}</h2>
         <p>
           {{
-            $t(
+            t(
               "These feeds contain event data for the events for which this specific profile is a participant or creator. You should keep these private. You can find feeds for all of your profiles into your notification settings."
             )
           }}
@@ -116,7 +116,7 @@
             :key="feedToken.token"
           >
             <o-tooltip
-              :label="$t('URL copied to clipboard')"
+              :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip.atom"
               always
               variant="success"
@@ -131,11 +131,11 @@
                 "
                 :href="tokenToURL(feedToken.token, 'atom')"
                 target="_blank"
-                >{{ $t("RSS/Atom Feed") }}</o-button
+                >{{ t("RSS/Atom Feed") }}</o-button
               >
             </o-tooltip>
             <o-tooltip
-              :label="$t('URL copied to clipboard')"
+              :label="t('URL copied to clipboard')"
               :active="showCopiedTooltip.ics"
               always
               variant="success"
@@ -150,14 +150,14 @@
                 icon-left="calendar-sync"
                 :href="tokenToURL(feedToken.token, 'ics')"
                 target="_blank"
-                >{{ $t("ICS/WebCal Feed") }}</o-button
+                >{{ t("ICS/WebCal Feed") }}</o-button
               >
             </o-tooltip>
             <o-button
               icon-left="refresh"
               variant="text"
               @click="openRegenerateFeedTokensConfirmation"
-              >{{ $t("Regenerate new links") }}</o-button
+              >{{ t("Regenerate new links") }}</o-button
             >
           </div>
         </div>
@@ -166,7 +166,7 @@
             icon-left="refresh"
             variant="text"
             @click="generateFeedTokens"
-            >{{ $t("Create new links") }}</o-button
+            >{{ t("Create new links") }}</o-button
           >
         </div>
       </section>
@@ -176,28 +176,14 @@
 
 <style scoped lang="scss">
 @use "@/styles/_mixins" as *;
-h1 {
-  display: flex;
-  justify-content: center;
-}
+// h1 {
+//   display: flex;
+//   justify-content: center;
+// }
 
-.picture-upload {
-  margin: 30px 0;
-}
-
-.submit,
-.delete-identity {
-  display: flex;
-  justify-content: center;
-}
-
-.submit {
-  margin: 30px 0;
-}
-
-.username-field + .field {
-  margin-bottom: 0;
-}
+// .username-field + .field {
+//   margin-bottom: 0;
+// }
 
 :deep(.buttons > *:not(:last-child) .button) {
   @include margin-right(0.5rem);
@@ -286,12 +272,12 @@ const baseIdentity: IPerson = {
   suspended: false,
 };
 
-const identity = ref(baseIdentity);
+const identity = ref<IPerson>(baseIdentity);
 
 watch(person, () => {
   console.debug("person changed", person.value);
   if (person.value) {
-    identity.value = person.value;
+    identity.value = { ...person.value };
   }
 });
 

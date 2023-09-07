@@ -123,7 +123,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   # can be `true`
   # ssl: false,
   # can be `:always` or `:never`
-  tls: :if_available,
+  tls: :never,
   allowed_tls_versions: [:tlsv1, :"tlsv1.1", :"tlsv1.2"],
   tls_options: [
     verify: :verify_peer,

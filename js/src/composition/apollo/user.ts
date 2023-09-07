@@ -80,7 +80,7 @@ export function registerAccount() {
     ) => {
       if (context?.userAlreadyActivated) {
         const currentUserData = store.readQuery<{
-          loggedUser: Pick<ICurrentUser, "actors">;
+          loggedUser: Pick<ICurrentUser, "actors" | "id">;
         }>({
           query: IDENTITIES,
         });

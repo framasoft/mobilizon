@@ -24,7 +24,7 @@
           required
           v-model="identity.name"
           id="identityName"
-          @input="(event) => updateUsername(event.target.value)"
+          @input="(event: any) => updateUsername(event.target.value)"
         />
       </o-field>
 
@@ -138,6 +138,7 @@ import { registerAccount } from "@/composition/apollo/user";
 import { convertToUsername } from "@/utils/username";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
+import { getValueFromMeta } from "@/utils/html";
 
 const props = withDefaults(
   defineProps<{
@@ -173,6 +174,14 @@ onBeforeMount(() => {
   // Make sure no one goes to this page if we don't want to
   if (!props.email) {
     router.replace({ name: RouteName.PAGE_NOT_FOUND });
+  }
+  const username = getValueFromMeta("auth-user-suggested-actor-username");
+  const name = getValueFromMeta("auth-user-suggested-actor-name");
+  if (username) {
+    identity.value.preferredUsername = username;
+  }
+  if (name) {
+    identity.value.name = name;
   }
 });
 

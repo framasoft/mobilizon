@@ -65,8 +65,14 @@ body {
 .field-label {
   @apply block text-gray-700 dark:text-gray-100 text-base font-bold mb-2;
 }
+.o-field--horizontal.field {
+  @apply items-center;
+}
 .o-field__horizontal-label .field-label {
   @apply mb-0;
+}
+.o-field__horizontal-body > .field {
+  @apply mt-0;
 }
 .field-danger {
   @apply text-red-500;

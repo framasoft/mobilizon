@@ -14,19 +14,12 @@ import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { useHead } from "@vueuse/head";
 import { computed, onMounted } from "vue";
+import { getValueFromMeta } from "@/utils/html";
 
 const { t } = useI18n({ useScope: "global" });
 useHead({
   title: computed(() => t("Redirecting to Mobilizon")),
 });
-
-const getValueFromMeta = (name: string): string | null => {
-  const element = document.querySelector(`meta[name="${name}"]`);
-  if (element && element.getAttribute("content")) {
-    return element.getAttribute("content");
-  }
-  return null;
-};
 
 const accessToken = getValueFromMeta("auth-access-token");
 const refreshToken = getValueFromMeta("auth-refresh-token");
@@ -36,7 +29,10 @@ const userRole = getValueFromMeta("auth-user-role") as ICurrentUserRole;
 
 const router = useRouter();
 
-const { onDone, mutate } = useMutation<
+const {
+  onDone: onUpdateCurrentUserClientDone,
+  mutate: updateCurrentUserClient,
+} = useMutation<
   { updateCurrentUser: ICurrentUser },
   { id: string; email: string; isLoggedIn: boolean; role: ICurrentUserRole }
 >(UPDATE_CURRENT_USER_CLIENT);
@@ -45,16 +41,19 @@ const { onResult: onLoggedUserResult, load: loadUser } = useLazyQuery<{
   loggedUser: IUser;
 }>(LOGGED_USER);
 
-onDone(async () => {
+onUpdateCurrentUserClientDone(async () => {
   loadUser();
-  onLoggedUserResult(async ({ data: { loggedUser } }) => {
-    if (loggedUser.defaultActor) {
-      await changeIdentity(loggedUser.defaultActor);
-      await router.push({ name: RouteName.HOME });
-    } else {
-      // No need to push to REGISTER_PROFILE, the navbar will do it for us
-    }
-  });
+});
+
+onLoggedUserResult(async (result) => {
+  if (result.loading) return;
+  const loggedUser = result.data.loggedUser;
+  if (loggedUser.defaultActor) {
+    await changeIdentity(loggedUser.defaultActor);
+    await router.push({ name: RouteName.HOME });
+  } else {
+    // No need to push to REGISTER_PROFILE, the navbar will do it for us
+  }
 });
 
 onMounted(async () => {
@@ -67,13 +66,15 @@ onMounted(async () => {
         email: userEmail,
         role: userRole,
         isLoggedIn: true,
+        defaultActor: undefined,
+        actors: [],
       },
       accessToken,
       refreshToken,
     };
     saveUserData(login);
 
-    mutate({
+    updateCurrentUserClient({
       id: userId,
       email: userEmail,
       isLoggedIn: true,

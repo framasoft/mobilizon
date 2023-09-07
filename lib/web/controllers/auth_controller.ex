@@ -71,7 +71,9 @@ defmodule Mobilizon.Web.AuthController do
       render(conn, "callback.html", %{
         access_token: access_token,
         refresh_token: refresh_token,
-        user: user
+        user: user,
+        username: username_from_ueberauth(auth),
+        name: display_name_from_ueberauth(auth)
       })
     else
       err ->
@@ -113,6 +115,18 @@ defmodule Mobilizon.Web.AuthController do
        do: email
 
   defp email_from_ueberauth(_), do: nil
+
+  defp username_from_ueberauth(%Ueberauth.Auth{info: %Ueberauth.Auth.Info{nickname: nickname}})
+       when is_valid_string(nickname),
+       do: nickname
+
+  defp username_from_ueberauth(_), do: nil
+
+  defp display_name_from_ueberauth(%Ueberauth.Auth{info: %Ueberauth.Auth.Info{name: name}})
+       when is_valid_string(name),
+       do: name
+
+  defp display_name_from_ueberauth(_), do: nil
 
   @spec provider_config(String.t()) :: {:ok, any()} | {:error, :not_supported | :unknown_error}
   defp provider_config(provider_name) do
