@@ -6,13 +6,78 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## 3.2.0 (2023-09-07)
+
+### Features
+
+* **cli:** allow the mobilizon.users.delete command to delete multiple users by email domain or ip ([bc50ab6](https://framagit.org/framasoft/mobilizon/commit/bc50ab66f3a44df220a7daa3cb1d917bd02487ba))
+* **export:** add date of participant creation in participant exports ([fef60ed](https://framagit.org/framasoft/mobilizon/commit/fef60ed0f92fc4e09ee261ff03f1139aff2449c3)), closes [#1343](https://framagit.org/framasoft/mobilizon/issues/1343)
+* **notifications:** add missing notifications when an user registers to an event ([da532c7](https://framagit.org/framasoft/mobilizon/commit/da532c7059bea5fcd47e2f42210e8ba842a11d63)), closes [#1344](https://framagit.org/framasoft/mobilizon/issues/1344)
+* **reports:** allow reports to hold multiple events ([f2ac3e2](https://framagit.org/framasoft/mobilizon/commit/f2ac3e2e5d28f4257a5e2d4870d339fecf3a5f1b))
+* **reports:** allow to suspend a profile or a user account directly from the report view ([69588db](https://framagit.org/framasoft/mobilizon/commit/69588dbf4ce2f80cc5829a841135042fa73eb4fe))
+* **reports:** improve reportview and allow removing content + resolve report automatically ([b105c50](https://framagit.org/framasoft/mobilizon/commit/b105c508c03ce3cb96dd8342f96d3291aa197e22))
+* **reports:** show suspended status next to reported profile ([b9a165a](https://framagit.org/framasoft/mobilizon/commit/b9a165a7fc565dc583cca81dd9c54570f73b4ca3))
+* Add option to link an external registration provider for events ([2de6937](https://framagit.org/framasoft/mobilizon/commit/2de6937407743100daba1d397db4da32d4cb606b))
+* **back:** add admin setting to disable external event feature ([f6611e8](https://framagit.org/framasoft/mobilizon/commit/f6611e8eb5a7e12dc0dc0c216b598e04144e07c6))
+* improve group creation view [3f601748](https://framagit.org/framasoft/mobilizon/-/commit/3f60174877bbe05773b1d1b2ceb91749adec7ed7)
+* **auth:** pre-initialize registration fields with information from 3rd-party provider ([7e49345](https://framagit.org/framasoft/mobilizon/commit/7e4934513a0ca4a5f95e8c8e4a600459911899d5)), closes [#1105](https://framagit.org/framasoft/mobilizon/issues/1105)
+
+
+### Bug Fixes
+
+* add inets and ssl to extra_applications in test env ([af46bea](https://framagit.org/framasoft/mobilizon/commit/af46bea7f730f4479bb31518a9fa53de7302049a))
+* **apps:** add missing app scopes ([7e98097](https://framagit.org/framasoft/mobilizon/commit/7e98097c710663609274200564fca9eff1ea4d20))
+* **apps:** make sure we can set status for an application token ([1a6095d](https://framagit.org/framasoft/mobilizon/commit/1a6095d27aeb440379d27c3894c302f831214822))
+* **backend:** fix config cache not being used everytime ([ed3cd58](https://framagit.org/framasoft/mobilizon/commit/ed3cd5858cd27a90d4724a95ee660bbc08e92e80))
+* **backend:** handle email not being sent when resending registration instructions ([b2492a3](https://framagit.org/framasoft/mobilizon/commit/b2492a387086528598da36f11e53569c5bdb164c))
+* create event time/date allignment ([3de90a3](https://framagit.org/framasoft/mobilizon/commit/3de90a3c73414105becdcb24899016178b1c6f02))
+* **docker:** fix Qemu segfaulting on arm64 ([8e3f90f](https://framagit.org/framasoft/mobilizon/commit/8e3f90f7135e2a8a8ac46464420c9d57b2e02534)), closes [#1241](https://framagit.org/framasoft/mobilizon/issues/1241) [#1249](https://framagit.org/framasoft/mobilizon/issues/1249)
+* **federation:** fix getting pictures from Gruppe actors ([7c5f8b2](https://framagit.org/framasoft/mobilizon/commit/7c5f8b24311253ef89c7e47cd7ce22ebe6cf2ec9))
+* fix Elixir 1.15 depreciations ([da70427](https://framagit.org/framasoft/mobilizon/commit/da70427e3292be8943167bbad73d5a782a98c6b5))
+* fix some typescript issues with pwa ([e351d3c](https://framagit.org/framasoft/mobilizon/commit/e351d3cb2f8183bb4335b3b21e154f46d9237a76))
+* **front:** avoid crashing if we don't have configuration data in time when in guard ([7916261](https://framagit.org/framasoft/mobilizon/commit/7916261c5c8c680d064fba106619d733575bc39c))
+* **front:** fix alignment of some input elements on event edition form ([50695fc](https://framagit.org/framasoft/mobilizon/commit/50695fcfd5e0dc6fd55185f4399d45ed1852f880))
+* **front:** fix changing language not being saved to the user's settings ([010a5e4](https://framagit.org/framasoft/mobilizon/commit/010a5e426def0a0b7f2658234f3c9d6eec46a68e))
+* **front:** fix comment not showing up when replying in a discussion ([cc8f02d](https://framagit.org/framasoft/mobilizon/commit/cc8f02d0a6354c49437e7ff1780912a71bed03f4))
+* **front:** fix confirm anonymous participation ([f99267c](https://framagit.org/framasoft/mobilizon/commit/f99267c6115601fce6eadd6ee54893fde0d6fd84))
+* **front:** fix discussion edition panel always showing up ([fee0e38](https://framagit.org/framasoft/mobilizon/commit/fee0e388af798f14d4da8cbd9f037137f6be9f85))
+* **front:** fix display of participants list ([c6b83c4](https://framagit.org/framasoft/mobilizon/commit/c6b83c42d6fbb2e6a93175479ef1620913c6532f))
+* **front:** fix map ([8f84ba1](https://framagit.org/framasoft/mobilizon/commit/8f84ba1d08ce8d2d266010ee3166106eed66116d)), closes [#1314](https://framagit.org/framasoft/mobilizon/issues/1314)
+* **front:** fix missing type causing eslint error ([c76dba3](https://framagit.org/framasoft/mobilizon/commit/c76dba3dbfe4fb0ab9ed24f71a6f64681c643fca))
+* **front:** fix selecting all participants in participant view ([beef3ff](https://framagit.org/framasoft/mobilizon/commit/beef3ff16d12f5d5710e302b739dd724ad4b0cb5))
+* **front:** fix showing error message when app to approve doesn't exist ([12cbff1](https://framagit.org/framasoft/mobilizon/commit/12cbff154ae5cdd72a1a7e882cb99e943010222b))
+* **front:** fix some alignment of some UI elements in mobile event view ([8c313b5](https://framagit.org/framasoft/mobilizon/commit/8c313b53977493792c113b5191443515f8aeae78))
+* **front:** properly handle error when approving app ([086d208](https://framagit.org/framasoft/mobilizon/commit/086d208ee50ae1f9ecb30196e758fdc7687714ae))
+* **front:** properly handle post not found ([8db31c9](https://framagit.org/framasoft/mobilizon/commit/8db31c99df668389db4c6651fa71a8c1420484cf))
+* **front:** reduce horizontal padding on main element ([f3c218f](https://framagit.org/framasoft/mobilizon/commit/f3c218f841292a28ec6d1284a205e2c7fd7d8f6e))
+* **lint:** fix lint after upgrades ([60aceb4](https://framagit.org/framasoft/mobilizon/commit/60aceb442ae49458e31a1f38d277eca7af248a36))
+* **mail:** fix sending mail on OTP26 ([f54fff5](https://framagit.org/framasoft/mobilizon/commit/f54fff56fc5c94408b1fd16b1eb9dd0f91bc2dfd)), closes [#1341](https://framagit.org/framasoft/mobilizon/issues/1341)
+* **push:** fix push subscriptions registration ([fdf87ea](https://framagit.org/framasoft/mobilizon/commit/fdf87ea991b1d406b28dbd0c8807908939070c8b))
+* **pwa:** improvements to the PWA configuration ([04c5ac1](https://framagit.org/framasoft/mobilizon/commit/04c5ac11636a4ffb5d3ac0c510b028edfb7fc057))
+* **reports:** make front-end handle nullified reported_id and reported_id ([afd2ffe](https://framagit.org/framasoft/mobilizon/commit/afd2ffe72294baedc9dd15dc89d57301831545cc))
+* **reports:** remove on delete cascade for reports ([4f530ca](https://framagit.org/framasoft/mobilizon/commit/4f530cabcf1bcadc09399a728975d329f3c9fdbf))
+* **front:** fix behavior of local toggle for profiles & groups view depending on domain value ([84f62cd](https://framagit.org/framasoft/mobilizon/commit/84f62cd043d5cf5d186fea6f24a1a9dff5fc64ce))
+* **i18n:** add missing translations ([af670f3](https://framagit.org/framasoft/mobilizon/commit/af670f39478b11465205fbea9b9268bab401bbb6))
+* **back:** allow any other type of actor to be suspended ([92b222b](https://framagit.org/framasoft/mobilizon/commit/92b222b091cf6248969b0206e7c052b725a1286b))
+* **back:** only try to insert activities for groups ([cfc9843](https://framagit.org/framasoft/mobilizon/commit/cfc984345e90b2960077956858606395f37ef9b9))
+* **front:** don't return promise if result is not finished loading for tags ([8c14ba4](https://framagit.org/framasoft/mobilizon/commit/8c14ba441c6f0fadb3c59f80ff4e3abb2e625752))
+* **front:** fix getting result from interactable object in InteractView ([31b2d06](https://framagit.org/framasoft/mobilizon/commit/31b2d065a904453580731133cd3dfd545a5816fa))
+* **docker:** make Docker entrypoint port configurable via $MOBILIZON_DATABASE_PORT ([13099e0](https://framagit.org/framasoft/mobilizon/commit/13099e0f118b727a1472282c6419ef9b1842c191))
+* **front:** fix fetching and rendering profile mentions and fetching tags ([895378a](https://framagit.org/framasoft/mobilizon/commit/895378a96bf8a6c7662ed02509c37b8d8a95db0b))
+* **sitemap:** save generated sitemaps in configurable directory ([f28109a](https://framagit.org/framasoft/mobilizon/commit/f28109ad50d85143e38c8e9f5d09c28f80566462)), closes [#1321](https://framagit.org/framasoft/mobilizon/issues/1321)
+* **auth:** small front fixes in 3rd-party auth provider callback ([bde7206](https://framagit.org/framasoft/mobilizon/commit/bde7206a1ca44fdf96d817921bb1efc497dcae40))
+* **config:** rollback Mailer tls setting to :never by default ([3d63c12](https://framagit.org/framasoft/mobilizon/commit/3d63c12e88ca31f582489f126d1ef5677af79721))
+* **docker:** fix entrypoint PostgreSQL extensions creations not using MOBILIZON_DATABASE_PORT ([9b49918](https://framagit.org/framasoft/mobilizon/commit/9b4991844ecaf7c1f1287ae62d1dfd463c2ea26b)), closes [#1321](https://framagit.org/framasoft/mobilizon/issues/1321) [#1321](https://framagit.org/framasoft/mobilizon/issues/1321)
+* **front:** fixes in EditIdentity view ([7e13e2b](https://framagit.org/framasoft/mobilizon/commit/7e13e2baa7690d5dfc4a8b12097a4ed85ea825d7))
+
+
 ## 3.2.0-beta.5 (2023-09-06)
 
 ### Bug Fixes
 
-* **docker:** make Docker entrypoint port configurable via $MOBILIZON_DATABASE_PORT ([13099e0](https://framagit.org/framasoft/mobilizon/commits/13099e0f118b727a1472282c6419ef9b1842c191))
-* **front:** fix fetching and rendering profile mentions and fetching tags ([895378a](https://framagit.org/framasoft/mobilizon/commits/895378a96bf8a6c7662ed02509c37b8d8a95db0b))
-* **sitemap:** save generated sitemaps in configurable directory ([f28109a](https://framagit.org/framasoft/mobilizon/commits/f28109ad50d85143e38c8e9f5d09c28f80566462)), closes [#1321](https://framagit.org/framasoft/mobilizon/issues/1321)
+* **docker:** make Docker entrypoint port configurable via $MOBILIZON_DATABASE_PORT ([13099e0](https://framagit.org/framasoft/mobilizon/commit/13099e0f118b727a1472282c6419ef9b1842c191))
+* **front:** fix fetching and rendering profile mentions and fetching tags ([895378a](https://framagit.org/framasoft/mobilizon/commit/895378a96bf8a6c7662ed02509c37b8d8a95db0b))
+* **sitemap:** save generated sitemaps in configurable directory ([f28109a](https://framagit.org/framasoft/mobilizon/commit/f28109ad50d85143e38c8e9f5d09c28f80566462)), closes [#1321](https://framagit.org/framasoft/mobilizon/issues/1321)
 
 
 ## 3.2.0-beta.4  (2023-09-05)
