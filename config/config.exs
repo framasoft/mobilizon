@@ -129,7 +129,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
     verify: :verify_peer,
     versions: [:"tlsv1.2", :"tlsv1.3"],
     cacerts: :public_key.cacerts_get(),
-    server_name_indication: "localhost",
+    server_name_indication: ~c"localhost",
     depth: 99
   ],
   retries: 1,
