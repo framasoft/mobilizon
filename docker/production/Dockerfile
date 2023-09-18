@@ -58,6 +58,7 @@ RUN pip install weasyprint pyexcel-ods3
 RUN mkdir -p /var/lib/mobilizon/uploads && chown nobody:nobody /var/lib/mobilizon/uploads
 RUN mkdir -p /var/lib/mobilizon/timezones && chown nobody:nobody /var/lib/mobilizon/timezones
 RUN mkdir -p /var/lib/mobilizon/tzdata && chown nobody:nobody /var/lib/mobilizon/tzdata
+RUN mkdir -p /var/lib/mobilizon/sitemap && chown nobody:nobody /var/lib/mobilizon/sitemap
 RUN mkdir -p /var/lib/mobilizon/uploads/exports/{csv,pdf,ods} && chown -R nobody:nobody /var/lib/mobilizon/uploads/exports
 
 # Get timezone geodata
