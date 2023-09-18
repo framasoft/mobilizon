@@ -178,7 +178,7 @@ onBeforeMount(() => {
   const username = getValueFromMeta("auth-user-suggested-actor-username");
   const name = getValueFromMeta("auth-user-suggested-actor-name");
   if (username) {
-    identity.value.preferredUsername = username;
+    identity.value.preferredUsername = convertToUsername(username);
   }
   if (name) {
     identity.value.name = name;
