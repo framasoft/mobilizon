@@ -55,7 +55,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
     verify: :verify_peer,
     versions: [:"tlsv1.2", :"tlsv1.3"],
     cacerts: :public_key.cacerts_get(),
-    server_name_indication: System.get_env("MOBILIZON_SMTP_SERVER", "localhost"),
+    server_name_indication: ~c"#{System.get_env("MOBILIZON_SMTP_SERVER", "localhost")}",
     depth: 99
   ],
   ssl: System.get_env("MOBILIZON_SMTP_SSL", "false"),
