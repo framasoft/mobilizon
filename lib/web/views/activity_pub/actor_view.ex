@@ -6,7 +6,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   alias Mobilizon.Discussions.Discussion
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub
-  alias Mobilizon.Federation.ActivityPub.{Activity, Utils}
+  alias Mobilizon.Federation.ActivityPub.{Activity, Relay, Utils}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
@@ -124,7 +124,21 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   end
 
   defp fetch_collection(:outbox, actor, page) do
-    ActivityPub.fetch_public_activities_for_actor(actor, page)
+    # In the specific case of the relay outbox collection we need to expose public activities as "Announce"
+    if Relay.get_actor().id == actor.id do
+      %{total: total, elements: elements} =
+        ActivityPub.fetch_public_activities_for_actor(actor, page)
+
+      %{
+        total: total,
+        elements:
+          Enum.map(elements, fn object ->
+            Utils.make_announce_data(actor, item(object), nil, true)
+          end)
+      }
+    else
+      ActivityPub.fetch_public_activities_for_actor(actor, page)
+    end
   end
 
   defp fetch_collection(_, _, _), do: @private_visibility_empty_collection
@@ -202,6 +216,7 @@ defmodule Mobilizon.Web.ActivityPub.ActorView do
   def item(%Post{} = post), do: Convertible.model_to_as(post)
   def item(%Event{} = event), do: Convertible.model_to_as(event)
   def item(%TodoList{} = todo_list), do: Convertible.model_to_as(todo_list)
+  def item(item), do: item
 
   @spec actor_applicant_group_member?(Actor.t(), Actor.t()) :: boolean()
   defp actor_applicant_group_member?(%Actor{id: group_id}, %Actor{id: actor_applicant_id}),

@@ -49,10 +49,17 @@ defmodule Mobilizon.Federation.ActivityPub.Relay do
     %Actor{} = local_actor = get_actor()
 
     with {:ok, target_instance} <- fetch_actor(address),
-         {:ok, %Actor{} = target_actor} <-
+         {:ok, %Actor{id: target_actor_id} = target_actor} <-
            ActivityPubActor.get_or_fetch_actor_by_url(target_instance),
          {:ok, activity, follow} <- Follows.follow(local_actor, target_actor) do
       Logger.info("Relay: followed instance #{target_instance}; id=#{activity.data["id"]}")
+
+      Background.enqueue("refresh_profile", %{
+        "actor_id" => target_actor_id
+      })
+
+      Logger.info("Relay: schedule refreshing instance #{target_instance} after follow")
+
       {:ok, activity, follow}
     else
       {:error, :person_no_follow} ->
