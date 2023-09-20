@@ -175,25 +175,25 @@ defmodule Mobilizon.Web.ActivityPubController do
   end
 
   def errors(conn, {:error, :not_found}) do
-    conn
-    |> put_status(404)
-    |> json("Not found")
+    send_resp(conn, 404, "Not found")
+  end
+
+  def errors(conn, {:error, :bad_request}) do
+    send_resp(conn, 400, "Bad request")
   end
 
   def errors(conn, e) do
     Logger.debug(inspect(e))
 
-    conn
-    |> put_status(500)
-    |> json("Unknown Error")
+    send_resp(conn, 500, "Unknown Error")
   end
 
   @spec actor_collection(Conn.t(), String.t(), map()) :: Conn.t()
 
   defp actor_collection(conn, collection, %{"name" => name, "page" => page}) do
-    with {page, ""} <- Integer.parse(page),
+    with {:page, {page, ""}} <- {:page, Integer.parse(page)},
          page <- max(page, 1),
-         %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
+         {:actor, %Actor{} = actor} <- {:actor, Actors.get_local_actor_by_name_with_preload(name)} do
       conn
       |> put_resp_content_type("application/activity+json")
       |> json(
@@ -203,19 +203,29 @@ defmodule Mobilizon.Web.ActivityPubController do
           actor_applicant: Map.get(conn.assigns, :actor)
         })
       )
+    else
+      {:page, _} ->
+        {:error, :bad_request}
+
+      {:actor, _} ->
+        {:error, :not_found}
     end
   end
 
   defp actor_collection(conn, collection, %{"name" => name}) do
-    with %Actor{} = actor <- Actors.get_local_actor_by_name_with_preload(name) do
-      conn
-      |> put_resp_content_type("application/activity+json")
-      |> json(
-        ActorView.render("#{collection}.json", %{
-          actor: actor,
-          actor_applicant: Map.get(conn.assigns, :actor)
-        })
-      )
+    case Actors.get_local_actor_by_name_with_preload(name) do
+      %Actor{} = actor ->
+        conn
+        |> put_resp_content_type("application/activity+json")
+        |> json(
+          ActorView.render("#{collection}.json", %{
+            actor: actor,
+            actor_applicant: Map.get(conn.assigns, :actor)
+          })
+        )
+
+      _ ->
+        {:error, :not_found}
     end
   end
 
