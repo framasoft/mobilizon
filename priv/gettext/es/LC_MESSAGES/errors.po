@@ -21,7 +21,7 @@ msgstr ""
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
 msgid "can't be blank"
-msgstr "no pueden estar vacíos"
+msgstr "no puede estar vacíos"
 
 msgid "has already been taken"
 msgstr "ya se ha tomado"
@@ -36,13 +36,13 @@ msgid "has invalid format"
 msgstr "tiene formato no válido"
 
 msgid "has an invalid entry"
-msgstr "tiene una entrada inválida"
+msgstr "tiene una entrada no válida"
 
 msgid "is reserved"
-msgstr "Está reservado"
+msgstr "está reservado"
 
 msgid "does not match confirmation"
-msgstr "la confirmación no coincide"
+msgstr "no coincide con la confirmación"
 
 msgid "is still associated with this entry"
 msgstr "todavía está asociado con esta entrada"
@@ -53,47 +53,47 @@ msgstr "todavía están asociados con esta entrada"
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
 msgstr[0] "debe tener un carácter"
-msgstr[1] "debe tener% {count} caracteres"
+msgstr[1] "debe tener %{count} caracteres"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] "debería tener un artículo"
-msgstr[1] "debería tener% {count} artículos"
+msgstr[0] "debe tener un artículo"
+msgstr[1] "debe tener %{count} artículos"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
 msgstr[0] "debe tener al menos un carácter"
-msgstr[1] "debe tener al menos% {count} caracteres"
+msgstr[1] "debe tener al menos %{count} caracteres"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
 msgstr[0] "debe tener al menos un elemento"
-msgstr[1] "debe tener al menos% {count} elementos"
+msgstr[1] "debe tener al menos %{count} elementos"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
 msgstr[0] "debe tener como máximo un carácter"
-msgstr[1] "debe tener como máximo% {count} caracteres"
+msgstr[1] "debe tener como máximo %{count} caracteres"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "should have at most %{count} item(s)"
 msgstr[0] "debe tener como máximo un artículo"
-msgstr[1] "debe tener como máximo% {count} artículos"
+msgstr[1] "debe tener como máximo %{count} artículos"
 
 msgid "must be less than %{number}"
-msgstr "debe ser inferior a% {number}"
+msgstr "debe ser inferior a %{number}"
 
 msgid "must be greater than %{number}"
-msgstr "debe ser mayor que% {number}"
+msgstr "debe ser mayor que %{number}"
 
 msgid "must be less than or equal to %{number}"
-msgstr "debe ser menor o igual que% {number}"
+msgstr "debe ser menor o igual que%{number}"
 
 msgid "must be greater than or equal to %{number}"
-msgstr "debe ser mayor o igual que% {number}"
+msgstr "debe ser mayor o igual que %{number}"
 
 msgid "must be equal to %{number}"
-msgstr "debe ser igual a% {number}"
+msgstr "debe ser igual a %{number}"
 
 #: lib/graphql/resolvers/user.ex:116
 #, elixir-autogen, elixir-format
@@ -130,7 +130,7 @@ msgstr "Grupo no encontrado"
 #: lib/graphql/resolvers/group.ex:102
 #, elixir-autogen, elixir-format
 msgid "Group with ID %{id} not found"
-msgstr "No se encontró el grupo con ID% {id}"
+msgstr "No se encontró el grupo con ID%{id}"
 
 #: lib/graphql/resolvers/user.ex:94
 #, elixir-autogen, elixir-format
@@ -228,7 +228,7 @@ msgstr "Este usuario ha sido inhabilitado"
 #: lib/graphql/resolvers/user.ex:283
 #, elixir-autogen, elixir-format
 msgid "Unable to validate user"
-msgstr "No se puede validar al usuario"
+msgstr "No se puede validar el usuario"
 
 #: lib/graphql/resolvers/user.ex:554
 #, elixir-autogen, elixir-format
@@ -258,7 +258,7 @@ msgstr "No puedes unirte a este grupo"
 #: lib/graphql/resolvers/group.ex:132
 #, elixir-autogen, elixir-format
 msgid "You may not list groups unless moderator."
-msgstr "No puedes enumerar grupos a menos que seas moderador."
+msgstr "No puedes listar grupos a menos que seas moderador."
 
 #: lib/graphql/resolvers/user.ex:519
 #, elixir-autogen, elixir-format
@@ -283,7 +283,7 @@ msgstr "Debes iniciar sesión para eliminar su cuenta"
 #: lib/graphql/resolvers/group.ex:316
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to join a group"
-msgstr "Debes iniciar sesión para eliminar su cuenta"
+msgstr "Debes iniciar sesión para unirte a un grupo"
 
 #: lib/graphql/resolvers/group.ex:355
 #, elixir-autogen, elixir-format
@@ -411,7 +411,7 @@ msgstr "Evento no encontrado"
 #: lib/graphql/resolvers/participant.ex:336
 #, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
-msgstr "El evento con este ID%{id} no existe"
+msgstr "El evento con el ID %{id} no existe"
 
 #: lib/graphql/resolvers/participant.ex:103
 #, elixir-autogen, elixir-format
@@ -421,7 +421,7 @@ msgstr "Error interno"
 #: lib/graphql/resolvers/discussion.ex:219
 #, elixir-autogen, elixir-format
 msgid "No discussion with ID %{id}"
-msgstr "Sin discusión con ID%{id}"
+msgstr "Sin discusión con ID %{id}"
 
 #: lib/graphql/resolvers/todos.ex:80
 #: lib/graphql/resolvers/todos.ex:107
@@ -440,7 +440,7 @@ msgstr "No existe tal token de alimentación"
 #: lib/graphql/resolvers/participant.ex:259
 #, elixir-autogen, elixir-format
 msgid "Participant already has role %{role}"
-msgstr "El participante ya tiene el rol%{role}"
+msgstr "El participante ya tiene el rol %{role}"
 
 #: lib/graphql/resolvers/participant.ex:187
 #: lib/graphql/resolvers/participant.ex:220
@@ -452,7 +452,7 @@ msgstr "Participante no encontrado"
 #: lib/graphql/resolvers/person.ex:33
 #, elixir-autogen, elixir-format
 msgid "Person with ID %{id} not found"
-msgstr "Persona con ID%{id} no encontrada"
+msgstr "Persona con ID %{id} no encontrada"
 
 #: lib/graphql/resolvers/person.ex:57
 #, elixir-autogen, elixir-format
@@ -530,7 +530,7 @@ msgstr "Este token no es válido"
 #: lib/graphql/resolvers/todos.ex:243
 #, elixir-autogen, elixir-format
 msgid "Todo doesn't exist"
-msgstr "Todo no existe"
+msgstr "La tarea pendiente no existe"
 
 #: lib/graphql/resolvers/todos.ex:77
 #: lib/graphql/resolvers/todos.ex:211
@@ -568,7 +568,7 @@ msgstr "Ya eres participante de este evento"
 #: lib/graphql/resolvers/member.ex:87
 #, elixir-autogen, elixir-format
 msgid "You are not a member of this group"
-msgstr "no eres un miembro de este grupo"
+msgstr "No eres un miembro de este grupo"
 
 #: lib/graphql/resolvers/member.ex:157
 #: lib/graphql/resolvers/member.ex:173
@@ -641,7 +641,7 @@ msgstr "No tienes permiso para eliminar este token"
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and a moderator to list action logs"
 msgstr ""
-"Debe iniciar sesión y un moderador para enumerar los registros de acción"
+"Debe iniciar sesión y un moderador para listar los registros de acción"
 
 #: lib/graphql/resolvers/report.ex:36
 #, elixir-autogen, elixir-format
@@ -1150,53 +1150,53 @@ msgstr "El nuevo correo electrónico no parece ser válido"
 #: lib/graphql/resolvers/comment.ex:65
 #, elixir-autogen, elixir-format
 msgid "This comment was detected as spam."
-msgstr ""
+msgstr "Este comentario fue detectado como spam."
 
 #: lib/graphql/resolvers/event.ex:293
 #, elixir-autogen, elixir-format
 msgid "This event was detected as spam."
-msgstr ""
+msgstr "Este evento fue detectado como spam."
 
 #: lib/graphql/api/reports.ex:66
 #, elixir-autogen, elixir-format
 msgid "Unsupported status for a report"
-msgstr ""
+msgstr "Estado incompatible para el informe"
 
 #: lib/graphql/api/reports.ex:127
 #, elixir-autogen, elixir-format
 msgid "You can only remove your own notes"
-msgstr ""
+msgstr "Solo puedes eliminar tus propias notas"
 
 #: lib/graphql/api/reports.ex:94
 #: lib/graphql/api/reports.ex:121
 #, elixir-autogen, elixir-format
 msgid "You need to be a moderator or an administrator to create a note on a report"
-msgstr ""
+msgstr "Debes ser un moderador o administrador para crear una nota en un informe"
 
 #: lib/graphql/resolvers/person.ex:330
 #, elixir-autogen, elixir-format
 msgid "Your profile was detected as spam."
-msgstr ""
+msgstr "Tu perfil fue detectado como spam."
 
 #: lib/graphql/resolvers/user.ex:191
 #, elixir-autogen, elixir-format
 msgid "Your registration has been detected as spam and cannot be processed."
-msgstr ""
+msgstr "Tu registro fue detectado como spam y no puede ser procesado."
 
 #: lib/web/controllers/application_controller.ex:86
 #, elixir-autogen, elixir-format
 msgid "All of name, scope and redirect_uri parameters are required to create an application"
-msgstr ""
+msgstr "Los parámetros name, scope y redirect_uri son requeridos para crear una aplicación"
 
 #: lib/graphql/error.ex:118
 #, elixir-autogen, elixir-format
 msgid "Application not found"
-msgstr ""
+msgstr "Aplicación no encontrada"
 
 #: lib/graphql/error.ex:121
 #, elixir-autogen, elixir-format
 msgid "Application token not found"
-msgstr ""
+msgstr "Token de aplicación no encontrado"
 
 #: lib/graphql/resolvers/application.ex:89
 #, elixir-autogen, elixir-format, fuzzy
@@ -1206,64 +1206,64 @@ msgstr "Error al guardar el informe"
 #: lib/web/controllers/application_controller.ex:59
 #, elixir-autogen, elixir-format
 msgid "Impossible to create application."
-msgstr ""
+msgstr "Imposible crear una aplicación"
 
 #: lib/web/controllers/application_controller.ex:356
 #, elixir-autogen, elixir-format
 msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
-msgstr ""
+msgstr "Se enviaron parámetros incorrectos. Debes proporcionar al menos los parámetros grant_type y client_id, dependiendo del grant_type que se esté usando."
 
 #: lib/web/controllers/application_controller.ex:329
 #, elixir-autogen, elixir-format
 msgid "Invalid client credentials provided"
-msgstr ""
+msgstr "Se han provisto credenciales de cliente no válidas"
 
 #: lib/web/controllers/application_controller.ex:337
 #, elixir-autogen, elixir-format
 msgid "Invalid refresh token provided"
-msgstr ""
+msgstr "Se ha provisto un token de refrescado inválido"
 
 #: lib/web/controllers/application_controller.ex:170
 #: lib/web/controllers/application_controller.ex:401
 #, elixir-autogen, elixir-format
 msgid "No application was found with this client_id"
-msgstr ""
+msgstr "No se ha encontrado una aplicación con este client_id"
 
 #: lib/graphql/resolvers/application.ex:37
 #, elixir-autogen, elixir-format
 msgid "No application with this client_id was found"
-msgstr ""
+msgstr "No se ha encontrado una aplicación con este client_id"
 
 #: lib/graphql/authorization.ex:80
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access field %{field}"
-msgstr ""
+msgstr "No está autorizado a acceder al campo %{field}"
 
 #: lib/graphql/authorization.ex:70
 #: lib/graphql/authorization.ex:75
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access object %{object}"
-msgstr ""
+msgstr "No está autorizado a acceder al objeto %{object}"
 
 #: lib/graphql/authorization.ex:63
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access this %{object_type}"
-msgstr ""
+msgstr "No está autorizado a acceder a este %{object_type}"
 
 #: lib/web/controllers/application_controller.ex:279
 #, elixir-autogen, elixir-format
 msgid "Please slow down the rate of your requests"
-msgstr ""
+msgstr "Por favor reduce la frecuencia de tus peticiones"
 
 #: lib/web/controllers/application_controller.ex:267
 #, elixir-autogen, elixir-format
 msgid "The authorization request is still pending"
-msgstr ""
+msgstr "La solicitud de autorización todavía está pendiente"
 
 #: lib/web/controllers/application_controller.ex:249
 #, elixir-autogen, elixir-format
 msgid "The client_id provided or the device_code associated is invalid"
-msgstr ""
+msgstr "El client_id provisto o el device_code asociado es inválido"
 
 #: lib/graphql/resolvers/application.ex:133
 #, elixir-autogen, elixir-format
@@ -1335,12 +1335,12 @@ msgstr ""
 #: lib/web/controllers/application_controller.ex:381
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Token not found"
-msgstr "Evento no encontrado"
+msgstr "Token no encontrado"
 
 #: lib/web/controllers/application_controller.ex:72
 #, elixir-autogen, elixir-format
 msgid "Too many requests"
-msgstr ""
+msgstr "Demasiadas peticiones"
 
 #: lib/web/controllers/application_controller.ex:184
 #, elixir-autogen, elixir-format
