@@ -979,19 +979,19 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   end
 
   # If the object has been announced by a group let's use one of our members to fetch it
-  @spec fetch_object_optionnally_authenticated(String.t(), Actor.t() | any()) ::
+  @spec fetch_object_optionally_authenticated(String.t(), Actor.t() | any()) ::
           {:ok, struct()} | {:error, any()}
-  defp fetch_object_optionnally_authenticated(url, %Actor{type: :Group, id: group_id}) do
+  defp fetch_object_optionally_authenticated(url, %Actor{type: :Group, id: group_id}) do
     case Actors.get_single_group_member_actor(group_id) do
       %Actor{} = actor ->
         ActivityPub.fetch_object_from_url(url, on_behalf_of: actor, force: true)
 
       _err ->
-        fetch_object_optionnally_authenticated(url, nil)
+        fetch_object_optionally_authenticated(url, nil)
     end
   end
 
-  defp fetch_object_optionnally_authenticated(url, _),
+  defp fetch_object_optionally_authenticated(url, _),
     do: ActivityPub.fetch_object_from_url(url, force: true)
 
   defp eventually_create_share(object, entity, actor_id) do
@@ -1121,7 +1121,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
     if Utils.are_same_origin?(url, Endpoint.url()) do
       ActivityPub.fetch_object_from_url(url, force: false)
     else
-      fetch_object_optionnally_authenticated(url, actor)
+      fetch_object_optionally_authenticated(url, actor)
     end
   end
 
