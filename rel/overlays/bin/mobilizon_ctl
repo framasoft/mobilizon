@@ -15,8 +15,8 @@ if [ -z "$1" ] || [ "$1" = "help" ]; then
         rollback [VERSION]
 	  Rollback database migrations (needs to be done before downgrading)
 
-    and any mix tasks under Mobilizon namespace, for example \`mix mobilizon.user.show COMMAND\` is
-    equivalent to \`$(basename "$0") user.show COMMAND\`
+    and any mix tasks under Mobilizon namespace, for example \`mix mobilizon.users.show COMMAND\` is
+    equivalent to \`$(basename "$0") users.show COMMAND\`
 
     By default mobilizon_ctl will try calling into a running instance to execute non migration-related commands,
     if for some reason this is undesired, set MOBILIZON_CTL_RPC_DISABLED environment variable.
