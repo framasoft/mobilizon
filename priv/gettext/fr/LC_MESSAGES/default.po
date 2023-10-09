@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-08 02:24+0000\n"
+"PO-Revision-Date: 2023-10-09 13:35+0000\n"
 "Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
 "Language-Team: French <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/fr/>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1730,7 +1730,7 @@ msgstr ""
 #: lib/web/email/actor.ex:43
 #, elixir-autogen, elixir-format
 msgid "Your participation to %{event} has been cancelled!"
-msgstr "Votre participation à l'événement %{title} a été annulée !"
+msgstr "Votre participation à l'événement %{event} a été annulée !"
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:50
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
