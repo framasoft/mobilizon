@@ -68,7 +68,7 @@ msgstr "Istruzioni per confermare il tuo account Mobilizon su %{instance}"
 
 #: lib/web/email/admin.ex:22
 msgid "New report on Mobilizon instance %{instance}"
-msgstr "Nuovo rapporto sull'istanza di Mobilizion %{instance}"
+msgstr "Nuova segnalazione sull'istanza di Mobilizon %{instance}"
 
 #: lib/web/templates/email/before_event_notification.html.heex:67
 #: lib/web/templates/email/before_event_notification.text.eex:4
@@ -77,7 +77,7 @@ msgstr "Vai alla pagina dell'evento"
 
 #: lib/web/templates/email/report.text.eex:1
 msgid "New report from %{reporter} on %{instance}"
-msgstr "Nuovo rapporto da %{reporter} su %{instance}"
+msgstr "Nuova segnalazione da %{reporter} su %{instance}"
 
 #: lib/web/templates/email/event_participation_approved.text.eex:1
 msgid "Participation approved"
@@ -389,7 +389,7 @@ msgstr "Visualizza l'evento su: %{link}"
 
 #: lib/web/email/member.ex:30
 msgid "You have been invited by %{inviter} to join group %{group}"
-msgstr "Sei stato invitato da %{inviter} per partecipare al gruppo %{group}"
+msgstr "Sei stato invitato da %{inviter} a unirti al gruppo %{group}"
 
 #: lib/web/email/notification.ex:81
 msgid "One event planned this week"
@@ -989,12 +989,12 @@ msgid_plural ""
 "Would you wish to cancel your attendance to one or several events, visit the "
 "event pages through the links above and click the « Attending » button."
 msgstr[0] ""
-"Se desideri cancellare la tua partecipazione, visita la pagina dell'evento "
-"attraverso il link sotto e seleziona il pulsante 'Partecipo'."
+"Se desideri annullare la tua partecipazione, visita la pagina dell'evento "
+"attraverso il link sopra e fai clic sul pulsante «Partecipanti»."
 msgstr[1] ""
-"Se desideri cancellare la tua partecipazione a uno o più eventi, visita le "
-"pagine dell'evento attraverso il links sotto e seleziona il pulsante "
-"'Partecipo'."
+"Se desideri annullare la tua partecipazione a uno o più eventi, visita le "
+"pagine degli eventi attraverso i link sopra e fai clic sul pulsante "
+"«Partecipanti»."
 
 #: lib/web/templates/email/email.text.eex:11
 msgid "%{instance} is powered by Mobilizon."
@@ -1725,7 +1725,7 @@ msgstr "Feed pubblico per %{instance}"
 
 #: lib/web/email/actor.ex:43
 msgid "Your participation to %{event} has been cancelled!"
-msgstr "La tua partecipazione all'evento %{title} è stata confermata !"
+msgstr "La tua partecipazione all'evento %{event} è stata annullata!"
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:50
 #: lib/web/templates/email/actor_suspension_participants.text.eex:3
@@ -1735,7 +1735,8 @@ msgid ""
 "participation to event %{event} cancelled."
 msgstr ""
 "Il team di moderazione della tua istanza ha deciso di sospendere "
-"%{group_name} (%{group_address}). Non sei più un membro di questo gruppo."
+"%{actor_name} (%{actor_address}). Tutti i suoi eventi sono stati rimossi e "
+"la tua partecipazione all'evento %{event} è stata annullata."
 
 #: lib/web/templates/email/group_suspension.html.heex:50
 msgid ""
@@ -1748,7 +1749,7 @@ msgstr ""
 #: lib/web/templates/email/actor_suspension_participants.html.heex:18
 #: lib/web/templates/email/actor_suspension_participants.text.eex:1
 msgid "Your participation to %{event} on %{instance} has been cancelled!"
-msgstr "La tua partecipazione all'evento %{title} è stata cancellata !"
+msgstr "La tua partecipazione a %{event} su %{instance} è stata annullata!"
 
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
 #: lib/service/export/participants/csv.ex:97
