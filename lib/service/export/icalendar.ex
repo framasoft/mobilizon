@@ -127,6 +127,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
       description: HTML.strip_tags(event.description),
       uid: event.uuid,
       url: event.url,
+      status: event.status,
       organizer: organizer(event)
     }
 
