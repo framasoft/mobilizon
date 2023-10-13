@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-11-12 19:02+0000\n"
-"Last-Translator: John H <jonher@riseup.net>\n"
+"PO-Revision-Date: 2023-10-14 00:00+0000\n"
+"Last-Translator: Vri <vrifox@vrifox.cc>\n"
 "Language-Team: German <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/de/>\n"
 "Language: de\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -64,7 +64,7 @@ msgstr "%{profile} hat die Diskussion %{discussion} erstellt."
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:2
 #, elixir-autogen, elixir-format
 msgid "%{profile} created the folder %{resource}."
-msgstr "%{profile} hat den Folder %{resource} erstellt."
+msgstr "%{profile} hat den Ordner %{resource} erstellt."
 
 #: lib/web/templates/email/activity/_group_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_group_activity_item.text.eex:1
@@ -88,7 +88,7 @@ msgstr "%{profile} hat die Diskussion %{discussion} gelöscht."
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:40
 #, elixir-autogen, elixir-format
 msgid "%{profile} deleted the folder %{resource}."
-msgstr "%{profile} hat den Folder %{resource} gelöscht."
+msgstr "%{profile} hat den Ordner %{resource} gelöscht."
 
 #: lib/web/templates/email/activity/_resource_activity_item.html.heex:94
 #: lib/web/templates/email/activity/_resource_activity_item.text.eex:45
@@ -495,9 +495,9 @@ msgstr "%{profile} hat das Mitglied %{member} bestätigt."
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:31
 #, elixir-autogen, elixir-format
 msgid "%{profile} joined your event %{event}."
-msgstr ""
+msgstr "%{profile} nimmt an deiner Veranstaltung %{event} teil."
 
 #: lib/web/views/email_view.ex:45
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
-msgstr ""
+msgstr "Ein anonymes Profil"
