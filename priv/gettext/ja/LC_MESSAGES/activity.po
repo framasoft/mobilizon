@@ -475,3 +475,15 @@ msgstr "%{profile}さんが「%{group}」の題の「%{discussion}」の談論�
 #, elixir-autogen, elixir-format
 msgid "%{profile} approved the member %{member}."
 msgstr "%{profile}さんが%{member}さんの依頼を承知しました。"
+
+#: lib/service/activity/renderer/event.ex:74
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:55
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:31
+#, elixir-autogen, elixir-format
+msgid "%{profile} joined your event %{event}."
+msgstr ""
+
+#: lib/web/views/email_view.ex:45
+#, elixir-autogen, elixir-format
+msgid "An anonymous profile"
+msgstr ""

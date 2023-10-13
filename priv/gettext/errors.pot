@@ -110,7 +110,7 @@ msgstr ""
 msgid "Current profile is not an administrator of the selected group"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:671
+#: lib/graphql/resolvers/user.ex:673
 #, elixir-autogen, elixir-format
 msgid "Error while saving user settings"
 msgstr ""
@@ -177,36 +177,37 @@ msgstr ""
 msgid "Registrations are not open"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:472
+#: lib/graphql/resolvers/user.ex:474
 #, elixir-autogen, elixir-format
 msgid "The current password is invalid"
 msgstr ""
 
 #: lib/graphql/resolvers/admin.ex:334
-#: lib/graphql/resolvers/user.ex:525
+#: lib/graphql/resolvers/user.ex:527
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr ""
 
 #: lib/graphql/resolvers/admin.ex:323
-#: lib/graphql/resolvers/user.ex:512
+#: lib/graphql/resolvers/user.ex:514
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:475
+#: lib/graphql/resolvers/user.ex:477
 #, elixir-autogen, elixir-format
 msgid "The new password must be different"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:516
-#: lib/graphql/resolvers/user.ex:600
-#: lib/graphql/resolvers/user.ex:603
+#: lib/graphql/resolvers/user.ex:518
+#: lib/graphql/resolvers/user.ex:602
+#: lib/graphql/resolvers/user.ex:605
 #, elixir-autogen, elixir-format
 msgid "The password provided is invalid"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:479
+#: lib/graphql/resolvers/user.ex:361
+#: lib/graphql/resolvers/user.ex:481
 #, elixir-autogen, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr ""
@@ -227,12 +228,12 @@ msgstr ""
 msgid "Unable to validate user"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:581
+#: lib/graphql/resolvers/user.ex:583
 #, elixir-autogen, elixir-format
 msgid "User already disabled"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:646
+#: lib/graphql/resolvers/user.ex:648
 #, elixir-autogen, elixir-format
 msgid "User requested is not logged-in"
 msgstr ""
@@ -257,12 +258,12 @@ msgstr ""
 msgid "You may not list groups unless moderator."
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:501
+#: lib/graphql/resolvers/user.ex:503
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your email"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:487
+#: lib/graphql/resolvers/user.ex:489
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your password"
 msgstr ""
@@ -272,7 +273,7 @@ msgstr ""
 msgid "You need to be logged-in to delete a group"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:608
+#: lib/graphql/resolvers/user.ex:610
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete your account"
 msgstr ""
@@ -876,7 +877,7 @@ msgstr ""
 msgid "Error while creating resource"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:564
+#: lib/graphql/resolvers/user.ex:566
 #, elixir-autogen, elixir-format
 msgid "Invalid activation token"
 msgstr ""
@@ -918,7 +919,7 @@ msgstr ""
 msgid "Error while creating a discussion"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:685
+#: lib/graphql/resolvers/user.ex:687
 #, elixir-autogen, elixir-format
 msgid "Error while updating locale"
 msgstr ""
@@ -939,12 +940,12 @@ msgid "Failed to update the group"
 msgstr ""
 
 #: lib/graphql/resolvers/admin.ex:357
-#: lib/graphql/resolvers/user.ex:545
+#: lib/graphql/resolvers/user.ex:547
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:560
+#: lib/graphql/resolvers/user.ex:562
 #, elixir-autogen, elixir-format
 msgid "Failed to validate user email"
 msgstr ""
@@ -964,7 +965,7 @@ msgstr ""
 msgid "You are not the comment creator"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:469
+#: lib/graphql/resolvers/user.ex:471
 #, elixir-autogen, elixir-format
 msgid "You cannot change your password."
 msgstr ""
@@ -1004,7 +1005,7 @@ msgstr ""
 msgid "Unknown error while creating event"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:496
+#: lib/graphql/resolvers/user.ex:498
 #, elixir-autogen, elixir-format
 msgid "User cannot change email"
 msgstr ""
@@ -1019,12 +1020,12 @@ msgstr ""
 msgid "Follow not found"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:390
+#: lib/graphql/resolvers/user.ex:392
 #, elixir-autogen, elixir-format
 msgid "Profile with username %{username} not found"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:385
+#: lib/graphql/resolvers/user.ex:387
 #, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
 msgstr ""
@@ -1379,4 +1380,9 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:341
 #, elixir-autogen, elixir-format
 msgid "You requested again a password reset email too soon. Please try again in a few minutes"
+msgstr ""
+
+#: lib/graphql/resolvers/user.ex:368
+#, elixir-autogen, elixir-format
+msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""

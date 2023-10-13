@@ -112,7 +112,7 @@ msgstr "Le profil actuel n'est pas un membre de ce groupe"
 msgid "Current profile is not an administrator of the selected group"
 msgstr "Le profil actuel n'est pas un·e administrateur·ice du groupe sélectionné"
 
-#: lib/graphql/resolvers/user.ex:644
+#: lib/graphql/resolvers/user.ex:673
 #, elixir-autogen, elixir-format
 msgid "Error while saving user settings"
 msgstr "Erreur lors de la sauvegarde des paramètres utilisateur"
@@ -155,8 +155,8 @@ msgstr "Aucun profil trouvé pour l'utilisateur modérateur"
 msgid "No user to validate with this email was found"
 msgstr "Aucun·e utilisateur·ice à valider avec cet email n'a été trouvé·e"
 
-#: lib/graphql/resolvers/person.ex:337
-#: lib/graphql/resolvers/user.ex:330
+#: lib/graphql/resolvers/person.ex:339
+#: lib/graphql/resolvers/user.ex:337
 #, elixir-autogen, elixir-format
 msgid "No user with this email was found"
 msgstr "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e"
@@ -164,12 +164,12 @@ msgstr "Aucun·e utilisateur·ice avec cette adresse e-mail n'a été trouvé·e
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:32
 #: lib/graphql/resolvers/participant.ex:210
-#: lib/graphql/resolvers/person.ex:245
-#: lib/graphql/resolvers/person.ex:376
-#: lib/graphql/resolvers/person.ex:412
-#: lib/graphql/resolvers/person.ex:419
-#: lib/graphql/resolvers/person.ex:448
-#: lib/graphql/resolvers/person.ex:463
+#: lib/graphql/resolvers/person.ex:247
+#: lib/graphql/resolvers/person.ex:378
+#: lib/graphql/resolvers/person.ex:414
+#: lib/graphql/resolvers/person.ex:421
+#: lib/graphql/resolvers/person.ex:450
+#: lib/graphql/resolvers/person.ex:465
 #, elixir-autogen, elixir-format
 msgid "Profile is not owned by authenticated user"
 msgstr "Le profil n'est pas possédé par l'utilisateur connecté"
@@ -179,41 +179,42 @@ msgstr "Le profil n'est pas possédé par l'utilisateur connecté"
 msgid "Registrations are not open"
 msgstr "Les inscriptions ne sont pas ouvertes"
 
-#: lib/graphql/resolvers/user.ex:461
+#: lib/graphql/resolvers/user.ex:474
 #, elixir-autogen, elixir-format
 msgid "The current password is invalid"
 msgstr "Le mot de passe actuel est invalide"
 
-#: lib/graphql/resolvers/admin.ex:336
-#: lib/graphql/resolvers/user.ex:504
+#: lib/graphql/resolvers/admin.ex:334
+#: lib/graphql/resolvers/user.ex:527
 #, elixir-autogen, elixir-format
 msgid "The new email doesn't seem to be valid"
 msgstr "La nouvelle adresse e-mail ne semble pas être valide"
 
-#: lib/graphql/resolvers/admin.ex:339
-#: lib/graphql/resolvers/user.ex:507
+#: lib/graphql/resolvers/admin.ex:323
+#: lib/graphql/resolvers/user.ex:514
 #, elixir-autogen, elixir-format
 msgid "The new email must be different"
 msgstr "La nouvelle adresse e-mail doit être différente"
 
-#: lib/graphql/resolvers/user.ex:464
+#: lib/graphql/resolvers/user.ex:477
 #, elixir-autogen, elixir-format
 msgid "The new password must be different"
 msgstr "Le nouveau mot de passe doit être différent"
 
-#: lib/graphql/resolvers/user.ex:511
-#: lib/graphql/resolvers/user.ex:573
-#: lib/graphql/resolvers/user.ex:576
+#: lib/graphql/resolvers/user.ex:518
+#: lib/graphql/resolvers/user.ex:602
+#: lib/graphql/resolvers/user.ex:605
 #, elixir-autogen, elixir-format
 msgid "The password provided is invalid"
 msgstr "Le mot de passe fourni est invalide"
 
-#: lib/graphql/resolvers/user.ex:468
+#: lib/graphql/resolvers/user.ex:361
+#: lib/graphql/resolvers/user.ex:481
 #, elixir-autogen, elixir-format
 msgid "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
 msgstr "Le mot de passe que vous avez choisi est trop court. Merci de vous assurer que votre mot de passe contienne au moins 6 caractères."
 
-#: lib/graphql/resolvers/user.ex:323
+#: lib/graphql/resolvers/user.ex:330
 #, elixir-autogen, elixir-format
 msgid "This user can't reset their password"
 msgstr "Cet·te utilisateur·ice ne peut pas réinitialiser son mot de passe"
@@ -229,12 +230,12 @@ msgstr "Cet·te utilisateur·ice a été désactivé·e"
 msgid "Unable to validate user"
 msgstr "Impossible de valider l'utilisateur·ice"
 
-#: lib/graphql/resolvers/user.ex:554
+#: lib/graphql/resolvers/user.ex:583
 #, elixir-autogen, elixir-format
 msgid "User already disabled"
 msgstr "L'utilisateur·ice est déjà désactivé·e"
 
-#: lib/graphql/resolvers/user.ex:619
+#: lib/graphql/resolvers/user.ex:648
 #, elixir-autogen, elixir-format
 msgid "User requested is not logged-in"
 msgstr "L'utilisateur·ice demandé·e n'est pas connecté·e"
@@ -259,12 +260,12 @@ msgstr "Vous ne pouvez pas rejoindre ce groupe"
 msgid "You may not list groups unless moderator."
 msgstr "Vous ne pouvez pas lister les groupes sauf à être modérateur·ice."
 
-#: lib/graphql/resolvers/user.ex:519
+#: lib/graphql/resolvers/user.ex:503
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your email"
 msgstr "Vous devez être connecté·e pour changer votre adresse e-mail"
 
-#: lib/graphql/resolvers/user.ex:476
+#: lib/graphql/resolvers/user.ex:489
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to change your password"
 msgstr "Vous devez être connecté·e pour changer votre mot de passe"
@@ -274,7 +275,7 @@ msgstr "Vous devez être connecté·e pour changer votre mot de passe"
 msgid "You need to be logged-in to delete a group"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/user.ex:581
+#: lib/graphql/resolvers/user.ex:610
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete your account"
 msgstr "Vous devez être connecté·e pour supprimer votre compte"
@@ -298,12 +299,6 @@ msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 #, elixir-autogen, elixir-format
 msgid "You need to have an existing token to get a refresh token"
 msgstr "Vous devez avoir un jeton existant pour obtenir un jeton de rafraîchissement"
-
-#: lib/graphql/resolvers/user.ex:306
-#: lib/graphql/resolvers/user.ex:333
-#, elixir-autogen, elixir-format
-msgid "You requested again a confirmation email too soon"
-msgstr "Vous avez à nouveau demandé un email de confirmation trop vite"
 
 #: lib/graphql/resolvers/user.ex:180
 #, elixir-autogen, elixir-format
@@ -357,17 +352,17 @@ msgstr "Une adresse e-mail valide est requise par votre instance"
 msgid "Anonymous participation is not enabled"
 msgstr "La participation anonyme n'est pas activée"
 
-#: lib/graphql/resolvers/person.ex:219
+#: lib/graphql/resolvers/person.ex:221
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last administrator of a group"
 msgstr "Impossible de supprimer le ou la dernier·ère administrateur·ice d'un groupe"
 
-#: lib/graphql/resolvers/person.ex:216
+#: lib/graphql/resolvers/person.ex:218
 #, elixir-autogen, elixir-format
 msgid "Cannot remove the last identity of a user"
 msgstr "Impossible de supprimer le dernier profil d'un·e utilisateur·ice"
 
-#: lib/graphql/resolvers/comment.ex:147
+#: lib/graphql/resolvers/comment.ex:153
 #, elixir-autogen, elixir-format
 msgid "Comment is already deleted"
 msgstr "Le commentaire est déjà supprimé"
@@ -395,8 +390,8 @@ msgid "Event id not found"
 msgstr "ID de l'événement non trouvé"
 
 #: lib/graphql/error.ex:114
-#: lib/graphql/resolvers/event.ex:355
-#: lib/graphql/resolvers/event.ex:407
+#: lib/graphql/resolvers/event.ex:382
+#: lib/graphql/resolvers/event.ex:434
 #, elixir-autogen, elixir-format
 msgid "Event not found"
 msgstr "Événement non trouvé"
@@ -404,7 +399,7 @@ msgstr "Événement non trouvé"
 #: lib/graphql/resolvers/participant.ex:87
 #: lib/graphql/resolvers/participant.ex:128
 #: lib/graphql/resolvers/participant.ex:155
-#: lib/graphql/resolvers/participant.ex:336
+#: lib/graphql/resolvers/participant.ex:343
 #, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "L'événement avec cet ID %{id} n'existe pas"
@@ -414,7 +409,7 @@ msgstr "L'événement avec cet ID %{id} n'existe pas"
 msgid "Internal Error"
 msgstr "Erreur interne"
 
-#: lib/graphql/resolvers/discussion.ex:219
+#: lib/graphql/resolvers/discussion.ex:222
 #, elixir-autogen, elixir-format
 msgid "No discussion with ID %{id}"
 msgstr "Aucune discussion avec l'ID %{id}"
@@ -481,10 +476,10 @@ msgstr "Ce profil est déjà membre de ce groupe"
 #: lib/graphql/resolvers/post.ex:133
 #: lib/graphql/resolvers/post.ex:175
 #: lib/graphql/resolvers/post.ex:209
-#: lib/graphql/resolvers/resource.ex:90
-#: lib/graphql/resolvers/resource.ex:135
-#: lib/graphql/resolvers/resource.ex:168
-#: lib/graphql/resolvers/resource.ex:202
+#: lib/graphql/resolvers/resource.ex:92
+#: lib/graphql/resolvers/resource.ex:137
+#: lib/graphql/resolvers/resource.ex:170
+#: lib/graphql/resolvers/resource.ex:204
 #: lib/graphql/resolvers/todos.ex:58
 #: lib/graphql/resolvers/todos.ex:83
 #: lib/graphql/resolvers/todos.ex:110
@@ -496,7 +491,7 @@ msgid "Profile is not member of group"
 msgstr "Le profil n'est pas un·e membre du groupe"
 
 #: lib/graphql/resolvers/actor.ex:67
-#: lib/graphql/resolvers/person.ex:242
+#: lib/graphql/resolvers/person.ex:244
 #, elixir-autogen, elixir-format
 msgid "Profile not found"
 msgstr "Profile non trouvé"
@@ -506,8 +501,8 @@ msgstr "Profile non trouvé"
 msgid "Report not found"
 msgstr "Signalement non trouvé"
 
-#: lib/graphql/resolvers/resource.ex:172
-#: lib/graphql/resolvers/resource.ex:199
+#: lib/graphql/resolvers/resource.ex:174
+#: lib/graphql/resolvers/resource.ex:201
 #, elixir-autogen, elixir-format
 msgid "Resource doesn't exist"
 msgstr "La ressource n'existe pas"
@@ -517,7 +512,7 @@ msgstr "La ressource n'existe pas"
 msgid "The event has already reached its maximum capacity"
 msgstr "L'événement a déjà atteint sa capacité maximale"
 
-#: lib/graphql/resolvers/participant.ex:282
+#: lib/graphql/resolvers/participant.ex:289
 #, elixir-autogen, elixir-format
 msgid "This token is invalid"
 msgstr "Ce jeton est invalide"
@@ -551,7 +546,7 @@ msgstr "Ce jeton n'est pas un UUID valide"
 msgid "User not found"
 msgstr "Utilisateur·ice non trouvé·e"
 
-#: lib/graphql/resolvers/person.ex:333
+#: lib/graphql/resolvers/person.ex:335
 #, elixir-autogen, elixir-format
 msgid "You already have a profile for this user"
 msgstr "Vous avez déjà un profil pour cet utilisateur"
@@ -573,7 +568,7 @@ msgstr "Vous n'êtes pas membre de ce groupe"
 msgid "You are not a moderator or admin for this group"
 msgstr "Vous n'êtes pas administrateur·ice ou modérateur·ice de ce groupe"
 
-#: lib/graphql/resolvers/comment.ex:80
+#: lib/graphql/resolvers/comment.ex:74
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to create a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un commentaire si non connecté·e"
@@ -583,7 +578,7 @@ msgstr "Vous n'êtes pas autorisé·e à créer un commentaire si non connecté�
 msgid "You are not allowed to create a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à créer un jeton de flux si non connecté·e"
 
-#: lib/graphql/resolvers/comment.ex:155
+#: lib/graphql/resolvers/comment.ex:161
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to delete a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un commentaire si non connecté·e"
@@ -593,7 +588,7 @@ msgstr "Vous n'êtes pas autorisé·e à supprimer un commentaire si non connect
 msgid "You are not allowed to delete a feed token if not connected"
 msgstr "Vous n'êtes pas autorisé·e à supprimer un jeton de flux si non connecté·e"
 
-#: lib/graphql/resolvers/comment.ex:114
+#: lib/graphql/resolvers/comment.ex:120
 #, elixir-autogen, elixir-format
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Vous n'êtes pas autorisé·e à mettre à jour un commentaire si non connecté·e"
@@ -609,12 +604,12 @@ msgstr "Vous ne pouvez pas quitter cet événement car vous en êtes le ou la se
 msgid "You can't set yourself to a lower member role for this group because you are the only administrator"
 msgstr "Vous ne pouvez pas vous définir avec un rôle de membre inférieur pour ce groupe car vous en êtes le ou la seul·e administrateur·ice"
 
-#: lib/graphql/resolvers/comment.ex:143
+#: lib/graphql/resolvers/comment.ex:149
 #, elixir-autogen, elixir-format
 msgid "You cannot delete this comment"
 msgstr "Vous ne pouvez pas supprimer ce commentaire"
 
-#: lib/graphql/resolvers/event.ex:403
+#: lib/graphql/resolvers/event.ex:430
 #, elixir-autogen, elixir-format
 msgid "You cannot delete this event"
 msgstr "Vous ne pouvez pas supprimer cet événement"
@@ -649,17 +644,17 @@ msgstr "Vous devez être connecté·e et une modérateur·ice pour modifier un s
 msgid "You need to be logged-in and a moderator to view a report"
 msgstr "Vous devez être connecté·e pour et une modérateur·ice pour visionner un signalement"
 
-#: lib/graphql/resolvers/admin.ex:252
+#: lib/graphql/resolvers/admin.ex:258
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux paramètres administrateur"
 
-#: lib/graphql/resolvers/admin.ex:236
+#: lib/graphql/resolvers/admin.ex:242
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to access dashboard statistics"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour accéder aux panneau de statistiques"
 
-#: lib/graphql/resolvers/admin.ex:278
+#: lib/graphql/resolvers/admin.ex:283
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to save admin settings"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegarder les paramètres administrateur"
@@ -669,12 +664,12 @@ msgstr "Vous devez être connecté·e et un·e administrateur·ice pour sauvegar
 msgid "You need to be logged-in to access discussions"
 msgstr "Vous devez être connecté·e pour accéder aux discussions"
 
-#: lib/graphql/resolvers/resource.ex:96
+#: lib/graphql/resolvers/resource.ex:98
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to access resources"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/event.ex:313
+#: lib/graphql/resolvers/event.ex:321
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create events"
 msgstr "Vous devez être connecté·e pour créer des événements"
@@ -689,12 +684,12 @@ msgstr "Vous devez être connecté·e pour quitter un groupe"
 msgid "You need to be logged-in to create reports"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
-#: lib/graphql/resolvers/resource.ex:140
+#: lib/graphql/resolvers/resource.ex:142
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to create resources"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
-#: lib/graphql/resolvers/event.ex:412
+#: lib/graphql/resolvers/event.ex:439
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete an event"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
@@ -704,7 +699,7 @@ msgstr "Vous devez être connecté·e pour supprimer un groupe"
 msgid "You need to be logged-in to delete posts"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/resource.ex:207
+#: lib/graphql/resolvers/resource.ex:209
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to delete resources"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
@@ -719,7 +714,7 @@ msgstr "Vous devez être connecté·e pour rejoindre un événement"
 msgid "You need to be logged-in to leave an event"
 msgstr "Vous devez être connecté·e pour quitter un groupe"
 
-#: lib/graphql/resolvers/event.ex:369
+#: lib/graphql/resolvers/event.ex:396
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update an event"
 msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
@@ -729,17 +724,17 @@ msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 msgid "You need to be logged-in to update posts"
 msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 
-#: lib/graphql/resolvers/resource.ex:177
+#: lib/graphql/resolvers/resource.ex:179
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to update resources"
 msgstr "Vous devez être connecté·e pour mettre à jour un groupe"
 
-#: lib/graphql/resolvers/resource.ex:236
+#: lib/graphql/resolvers/resource.ex:233
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to view a resource preview"
 msgstr "Vous devez être connecté·e pour supprimer un groupe"
 
-#: lib/graphql/resolvers/resource.ex:132
+#: lib/graphql/resolvers/resource.ex:134
 #, elixir-autogen, elixir-format
 msgid "Parent resource doesn't belong to this group"
 msgstr "La ressource parente n'appartient pas à ce groupe"
@@ -825,12 +820,12 @@ msgstr "Le fichier n'a pas un type MIME autorisé."
 msgid "Profile is not administrator for the group"
 msgstr "Le profil n'est pas administrateur·ice pour le groupe"
 
-#: lib/graphql/resolvers/event.ex:358
+#: lib/graphql/resolvers/event.ex:385
 #, elixir-autogen, elixir-format
 msgid "You can't edit this event."
 msgstr "Vous ne pouvez pas éditer cet événement."
 
-#: lib/graphql/resolvers/event.ex:361
+#: lib/graphql/resolvers/event.ex:388
 #, elixir-autogen, elixir-format
 msgid "You can't attribute this event to this profile."
 msgstr "Vous ne pouvez pas attribuer cet événement à ce profil."
@@ -850,7 +845,7 @@ msgstr "Ce·tte membre a déjà été rejetté·e."
 msgid "You don't have the right to remove this member."
 msgstr "Vous n'avez pas les droits pour supprimer ce·tte membre."
 
-#: lib/mobilizon/actors/actor.ex:377
+#: lib/mobilizon/actors/actor.ex:378
 #, elixir-autogen, elixir-format
 msgid "This username is already taken."
 msgstr "Cet identifiant est déjà pris."
@@ -860,7 +855,7 @@ msgstr "Cet identifiant est déjà pris."
 msgid "You must provide either an ID or a slug to access a discussion"
 msgstr "Vous devez fournir un ID ou bien un slug pour accéder à une discussion"
 
-#: lib/graphql/resolvers/event.ex:275
+#: lib/graphql/resolvers/event.ex:276
 #, elixir-autogen, elixir-format
 msgid "Organizer profile is not owned by the user"
 msgstr "Le profil de l'organisateur·ice n'appartient pas à l'utilisateur·ice"
@@ -872,41 +867,41 @@ msgstr "L'ID du profil fourni n'est pas celui du profil anonyme"
 
 #: lib/graphql/resolvers/group.ex:181
 #: lib/graphql/resolvers/group.ex:223
-#: lib/graphql/resolvers/person.ex:157
-#: lib/graphql/resolvers/person.ex:191
-#: lib/graphql/resolvers/person.ex:324
+#: lib/graphql/resolvers/person.ex:159
+#: lib/graphql/resolvers/person.ex:193
+#: lib/graphql/resolvers/person.ex:326
 #, elixir-autogen, elixir-format
 msgid "The provided picture is too heavy"
 msgstr "L'image fournie est trop lourde"
 
-#: lib/graphql/resolvers/resource.ex:129
+#: lib/graphql/resolvers/resource.ex:131
 #, elixir-autogen, elixir-format
 msgid "Error while creating resource"
 msgstr "Erreur lors de la création de la resource"
 
-#: lib/graphql/resolvers/user.ex:537
+#: lib/graphql/resolvers/user.ex:566
 #, elixir-autogen, elixir-format
 msgid "Invalid activation token"
 msgstr "Jeton d'activation invalide"
 
-#: lib/graphql/resolvers/resource.ex:226
+#: lib/graphql/resolvers/resource.ex:228
 #, elixir-autogen, elixir-format
 msgid "Unable to fetch resource details from this URL."
 msgstr "Impossible de récupérer les détails de la ressource depuis cette URL."
 
 #: lib/graphql/resolvers/event.ex:165
 #: lib/graphql/resolvers/participant.ex:253
-#: lib/graphql/resolvers/participant.ex:328
+#: lib/graphql/resolvers/participant.ex:335
 #, elixir-autogen, elixir-format
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "Le profil modérateur fourni n'a pas de permissions sur cet événement"
 
-#: lib/graphql/resolvers/event.ex:286
+#: lib/graphql/resolvers/event.ex:294
 #, elixir-autogen, elixir-format
 msgid "Organizer profile doesn't have permission to create an event on behalf of this group"
 msgstr "Le profil de l'organisateur⋅ice n'a pas la permission de créer un événement au nom de ce groupe"
 
-#: lib/graphql/resolvers/event.ex:349
+#: lib/graphql/resolvers/event.ex:369
 #, elixir-autogen, elixir-format
 msgid "This profile doesn't have permission to update an event on behalf of this group"
 msgstr "Ce profil n'a pas la permission de mettre à jour un événement au nom du groupe"
@@ -916,7 +911,7 @@ msgstr "Ce profil n'a pas la permission de mettre à jour un événement au nom 
 msgid "Your e-mail has been denied registration or uses a disallowed e-mail provider"
 msgstr "Votre adresse e-mail a été refusée à l'inscription ou bien utilise un fournisseur d'e-mail interdit"
 
-#: lib/graphql/resolvers/comment.ex:150
+#: lib/graphql/resolvers/comment.ex:156
 #, elixir-autogen, elixir-format
 msgid "Comment not found"
 msgstr "Commentaire non trouvé"
@@ -926,12 +921,12 @@ msgstr "Commentaire non trouvé"
 msgid "Error while creating a discussion"
 msgstr "Erreur lors de la création de la discussion"
 
-#: lib/graphql/resolvers/user.ex:658
+#: lib/graphql/resolvers/user.ex:687
 #, elixir-autogen, elixir-format
 msgid "Error while updating locale"
 msgstr "Erreur lors de la mise à jour des options linguistiques"
 
-#: lib/graphql/resolvers/person.ex:327
+#: lib/graphql/resolvers/person.ex:329
 #, elixir-autogen, elixir-format
 msgid "Error while uploading pictures"
 msgstr "Erreur lors du téléversement des images"
@@ -946,13 +941,13 @@ msgstr "Impossible de quitter l'événement"
 msgid "Failed to update the group"
 msgstr "Impossible de mettre à jour le groupe"
 
-#: lib/graphql/resolvers/admin.ex:333
-#: lib/graphql/resolvers/user.ex:501
+#: lib/graphql/resolvers/admin.ex:357
+#: lib/graphql/resolvers/user.ex:547
 #, elixir-autogen, elixir-format
 msgid "Failed to update user email"
 msgstr "Impossible de mettre à jour l'adresse e-mail de utilisateur"
 
-#: lib/graphql/resolvers/user.ex:533
+#: lib/graphql/resolvers/user.ex:562
 #, elixir-autogen, elixir-format
 msgid "Failed to validate user email"
 msgstr "Impossible de valider l'adresse e-mail de l'utilisateur·ice"
@@ -962,37 +957,37 @@ msgstr "Impossible de valider l'adresse e-mail de l'utilisateur·ice"
 msgid "The anonymous actor ID is invalid"
 msgstr "L'ID de l'acteur anonyme est invalide"
 
-#: lib/graphql/resolvers/resource.ex:165
+#: lib/graphql/resolvers/resource.ex:167
 #, elixir-autogen, elixir-format
 msgid "Unknown error while updating resource"
 msgstr "Erreur inconnue lors de la mise à jour de la resource"
 
-#: lib/graphql/resolvers/comment.ex:105
+#: lib/graphql/resolvers/comment.ex:111
 #, elixir-autogen, elixir-format
 msgid "You are not the comment creator"
 msgstr "Vous n'êtes pas le ou la createur⋅ice du commentaire"
 
-#: lib/graphql/resolvers/user.ex:458
+#: lib/graphql/resolvers/user.ex:471
 #, elixir-autogen, elixir-format
 msgid "You cannot change your password."
 msgstr "Vous ne pouvez pas changer votre mot de passe."
 
-#: lib/graphql/resolvers/participant.ex:321
+#: lib/graphql/resolvers/participant.ex:328
 #, elixir-autogen, elixir-format
 msgid "Format not supported"
 msgstr "Format non supporté"
 
-#: lib/graphql/resolvers/participant.ex:305
+#: lib/graphql/resolvers/participant.ex:312
 #, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr "Une dépendance nécessaire pour exporter en %{format} n'est pas installée"
 
-#: lib/graphql/resolvers/participant.ex:313
+#: lib/graphql/resolvers/participant.ex:320
 #, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
 msgstr "Une erreur est survenue lors de l'enregistrement de l'export"
 
-#: lib/web/controllers/export_controller.ex:30
+#: lib/web/controllers/export_controller.ex:32
 #, elixir-autogen, elixir-format
 msgid "Export to format %{format} is not enabled on this instance"
 msgstr "L'export au format %{format} n'est pas activé sur cette instance"
@@ -1002,17 +997,17 @@ msgstr "L'export au format %{format} n'est pas activé sur cette instance"
 msgid "Only admins can create groups"
 msgstr "Seul⋅es les administrateur⋅ices peuvent créer des groupes"
 
-#: lib/graphql/resolvers/event.ex:279
+#: lib/graphql/resolvers/event.ex:280
 #, elixir-autogen, elixir-format
 msgid "Only groups can create events"
 msgstr "Seuls les groupes peuvent créer des événements"
 
-#: lib/graphql/resolvers/event.ex:305
+#: lib/graphql/resolvers/event.ex:313
 #, elixir-autogen, elixir-format
 msgid "Unknown error while creating event"
 msgstr "Erreur inconnue lors de la création de l'événement"
 
-#: lib/graphql/resolvers/user.ex:514
+#: lib/graphql/resolvers/user.ex:498
 #, elixir-autogen, elixir-format
 msgid "User cannot change email"
 msgstr "L'utilisateur ne peut changer son adresse e-mail"
@@ -1027,12 +1022,12 @@ msgstr "L'abonnement ne correspond pas à votre compte"
 msgid "Follow not found"
 msgstr "Abonnement non trouvé"
 
-#: lib/graphql/resolvers/user.ex:379
+#: lib/graphql/resolvers/user.ex:392
 #, elixir-autogen, elixir-format
 msgid "Profile with username %{username} not found"
 msgstr "Personne avec le nom %{name} non trouvé"
 
-#: lib/graphql/resolvers/user.ex:374
+#: lib/graphql/resolvers/user.ex:387
 #, elixir-autogen, elixir-format
 msgid "This profile does not belong to you"
 msgstr "Ce profil ne vous appartient pas"
@@ -1077,22 +1072,22 @@ msgstr "Vous devez être connecté⋅e pour supprimer un⋅e membre"
 msgid "Your email seems to be using an invalid format"
 msgstr "Votre email semble utiliser un format invalide"
 
-#: lib/graphql/resolvers/admin.ex:382
+#: lib/graphql/resolvers/admin.ex:399
 #, elixir-autogen, elixir-format
 msgid "Can't confirm an already confirmed user"
 msgstr "Impossible de confirmer un⋅e utilisateur⋅ice déjà confirmé⋅e"
 
-#: lib/graphql/resolvers/admin.ex:386
+#: lib/graphql/resolvers/admin.ex:403
 #, elixir-autogen, elixir-format
 msgid "Deconfirming users is not supported"
 msgstr "Dé-confirmer des utilisateur⋅ices n'est pas supporté"
 
-#: lib/graphql/resolvers/admin.ex:358
+#: lib/graphql/resolvers/admin.ex:375
 #, elixir-autogen, elixir-format
 msgid "The new role must be different"
 msgstr "Le nouveau rôle doit être différent"
 
-#: lib/graphql/resolvers/admin.ex:309
+#: lib/graphql/resolvers/admin.ex:314
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in and an administrator to edit an user's details"
 msgstr "Vous devez être connecté·e et un·e administrateur·ice pour éditer les détails d'un⋅e utilisateur⋅ice"
@@ -1102,28 +1097,28 @@ msgstr "Vous devez être connecté·e et un·e administrateur·ice pour éditer 
 msgid "A profile or group with that name already exists"
 msgstr "Un profil ou un groupe avec ce nom existe déjà"
 
-#: lib/graphql/resolvers/admin.ex:519
+#: lib/graphql/resolvers/admin.ex:542
 #, elixir-autogen, elixir-format
 msgid "Unable to find an instance to follow at this address"
 msgstr "Impossible de trouver une instance à suivre à cette adresse"
 
-#: lib/mobilizon/actors/actor.ex:396
+#: lib/mobilizon/actors/actor.ex:397
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr "Le nom d'utilisateur ne doit contenir que des caractères alphanumériques minuscules et des underscores."
 
 #: lib/graphql/resolvers/user.ex:303
-#: lib/graphql/resolvers/user.ex:326
+#: lib/graphql/resolvers/user.ex:333
 #, elixir-autogen, elixir-format
 msgid "This email doesn't seem to be valid"
 msgstr "Cette adresse e-mail ne semble pas être valide"
 
-#: lib/graphql/resolvers/comment.ex:65
+#: lib/graphql/resolvers/comment.ex:59
 #, elixir-autogen, elixir-format
 msgid "This comment was detected as spam."
 msgstr "Ce commentaire a été détecté comme spam."
 
-#: lib/graphql/resolvers/event.ex:293
+#: lib/graphql/resolvers/event.ex:301
 #, elixir-autogen, elixir-format
 msgid "This event was detected as spam."
 msgstr "Cet événement a été détecté comme spam."
@@ -1144,7 +1139,7 @@ msgstr "Vous pouvez uniquement supprimer vos propres notes"
 msgid "You need to be a moderator or an administrator to create a note on a report"
 msgstr "Vous devez être un·e modérateur·ice ou un·e administrateur·ice pour créer une note sur un signalement"
 
-#: lib/graphql/resolvers/person.ex:330
+#: lib/graphql/resolvers/person.ex:332
 #, elixir-autogen, elixir-format
 msgid "Your profile was detected as spam."
 msgstr "Votre profil a été détecté comme un spam."
@@ -1154,7 +1149,7 @@ msgstr "Votre profil a été détecté comme un spam."
 msgid "Your registration has been detected as spam and cannot be processed."
 msgstr "Votre inscription a été détectée comme du spam et ne peut être poursuivie."
 
-#: lib/web/controllers/application_controller.ex:86
+#: lib/web/controllers/application_controller.ex:88
 #, elixir-autogen, elixir-format
 msgid "All of name, scope and redirect_uri parameters are required to create an application"
 msgstr "Les paramètres name, scope et redirect_uri sont requis pour créer une application"
@@ -1169,173 +1164,229 @@ msgstr "Application non trouvée"
 msgid "Application token not found"
 msgstr "Jeton d'application non trouvé"
 
-#: lib/graphql/resolvers/application.ex:89
+#: lib/graphql/resolvers/application.ex:90
 #, elixir-autogen, elixir-format
 msgid "Error while revoking token"
 msgstr "Erreur lors de la révocation du jeton"
 
-#: lib/web/controllers/application_controller.ex:59
+#: lib/web/controllers/application_controller.ex:61
 #, elixir-autogen, elixir-format
 msgid "Impossible to create application."
 msgstr "Impossible de créer l'application."
 
-#: lib/web/controllers/application_controller.ex:356
+#: lib/web/controllers/application_controller.ex:358
 #, elixir-autogen, elixir-format
 msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
 msgstr ""
 "Paramètres envoyés incorrects. Vous devez au moins fournir les paramètres grant_type et client_id, en fonction du type d’autorisation "
 "utilisée."
 
-#: lib/web/controllers/application_controller.ex:329
+#: lib/web/controllers/application_controller.ex:331
 #, elixir-autogen, elixir-format
 msgid "Invalid client credentials provided"
 msgstr "Les identifiants clients fournis sont invalides"
 
-#: lib/web/controllers/application_controller.ex:337
+#: lib/web/controllers/application_controller.ex:339
 #, elixir-autogen, elixir-format
 msgid "Invalid refresh token provided"
 msgstr "Le jeton de rafraîchissement fourni est invalide"
 
-#: lib/web/controllers/application_controller.ex:170
-#: lib/web/controllers/application_controller.ex:401
+#: lib/web/controllers/application_controller.ex:172
+#: lib/web/controllers/application_controller.ex:403
 #, elixir-autogen, elixir-format
 msgid "No application was found with this client_id"
 msgstr "Aucune application n'a été trouvée avec ce client_id"
 
-#: lib/graphql/resolvers/application.ex:37
+#: lib/graphql/resolvers/application.ex:38
 #, elixir-autogen, elixir-format
 msgid "No application with this client_id was found"
 msgstr ""
 
-#: lib/graphql/authorization.ex:80
+#: lib/graphql/authorization.ex:81
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access field %{field}"
 msgstr "Non autorisé à accéder au champ %{field}"
 
-#: lib/graphql/authorization.ex:70
-#: lib/graphql/authorization.ex:75
+#: lib/graphql/authorization.ex:71
+#: lib/graphql/authorization.ex:76
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access object %{object}"
 msgstr "Non autorisé à accéder à l'objet %{object}"
 
-#: lib/graphql/authorization.ex:63
+#: lib/graphql/authorization.ex:64
 #, elixir-autogen, elixir-format
 msgid "Not authorized to access this %{object_type}"
 msgstr "Non autorisé à accéder à ce %{object_type}"
 
-#: lib/web/controllers/application_controller.ex:279
+#: lib/web/controllers/application_controller.ex:281
 #, elixir-autogen, elixir-format
 msgid "Please slow down the rate of your requests"
 msgstr "Merci de réduire le rythme de vos requêtes"
 
-#: lib/web/controllers/application_controller.ex:267
+#: lib/web/controllers/application_controller.ex:269
 #, elixir-autogen, elixir-format
 msgid "The authorization request is still pending"
 msgstr "La requête d'autorisation est toujours en attente"
 
-#: lib/web/controllers/application_controller.ex:249
+#: lib/web/controllers/application_controller.ex:251
 #, elixir-autogen, elixir-format
 msgid "The client_id provided or the device_code associated is invalid"
 msgstr "Le client_id fourni ou device_code associé n'est pas valide"
 
-#: lib/graphql/resolvers/application.ex:133
+#: lib/graphql/resolvers/application.ex:139
 #, elixir-autogen, elixir-format
 msgid "The device user code was not provided before approving the application"
 msgstr "Le code utilisateur de l'appareil n'a pas été fourni avant l'approbation de la demande"
 
-#: lib/web/controllers/application_controller.ex:304
+#: lib/web/controllers/application_controller.ex:306
 #, elixir-autogen, elixir-format
 msgid "The given device_code has expired"
 msgstr "Le device_code donné a expiré"
 
-#: lib/graphql/resolvers/application.ex:44
+#: lib/graphql/resolvers/application.ex:45
 #, elixir-autogen, elixir-format
 msgid "The given redirect_uri is not in the list of allowed redirect URIs"
 msgstr "Le redirect_uri donné ne figure pas dans la liste des URI de redirection autorisées."
 
-#: lib/web/controllers/application_controller.ex:158
+#: lib/web/controllers/application_controller.ex:160
 #, elixir-autogen, elixir-format
 msgid "The given scope is not in the list of the app declared scopes"
 msgstr "Le champ d'application donné n'est pas dans la liste des champs d'application déclarés par l'application."
 
-#: lib/graphql/resolvers/application.ex:109
-#: lib/graphql/resolvers/application.ex:146
+#: lib/graphql/resolvers/application.ex:112
+#: lib/graphql/resolvers/application.ex:154
 #, elixir-autogen, elixir-format
 msgid "The given user code has expired"
 msgstr "Le code utilisateur donné a expiré"
 
-#: lib/graphql/resolvers/application.ex:112
-#: lib/graphql/resolvers/application.ex:140
+#: lib/graphql/resolvers/application.ex:118
+#: lib/graphql/resolvers/application.ex:146
 #, elixir-autogen, elixir-format
 msgid "The given user code is invalid"
 msgstr "Le code utilisateur donné n'est pas valide"
 
-#: lib/web/controllers/application_controller.ex:411
+#: lib/web/controllers/application_controller.ex:413
 #, elixir-autogen, elixir-format
 msgid "The provided client_id does not match the provided code"
 msgstr "Le client_id fourni ne correspond pas au code fourni"
 
-#: lib/web/controllers/application_controller.ex:414
+#: lib/web/controllers/application_controller.ex:416
 #, elixir-autogen, elixir-format
 msgid "The provided client_secret is invalid"
 msgstr "Le client_secret fourni n'est pas valide"
 
-#: lib/web/controllers/application_controller.ex:407
+#: lib/web/controllers/application_controller.ex:409
 #, elixir-autogen, elixir-format
 msgid "The provided code is invalid or expired"
 msgstr "Le code fourni n'est pas valide ou a expiré"
 
-#: lib/web/controllers/application_controller.ex:418
+#: lib/web/controllers/application_controller.ex:420
 #, elixir-autogen, elixir-format
 msgid "The provided scope is invalid or not included in the app declared scopes"
 msgstr "Le champ d'application fourni n'est pas valide ou n'est pas inclus dans les champs d'application déclarés de l'application."
 
-#: lib/web/controllers/application_controller.ex:45
+#: lib/web/controllers/application_controller.ex:47
 #, elixir-autogen, elixir-format
 msgid "The scope parameter is not a space separated list of valid scopes"
 msgstr "Le paramètre scope n'est pas une liste de champs d'application valides séparés par des espaces"
 
-#: lib/web/controllers/application_controller.ex:292
+#: lib/web/controllers/application_controller.ex:294
 #, elixir-autogen, elixir-format
 msgid "The user rejected the requested authorization"
 msgstr "L'utilisateur a refusé l'autorisation demandée"
 
-#: lib/web/controllers/application_controller.ex:404
+#: lib/web/controllers/application_controller.ex:406
 #, elixir-autogen, elixir-format
 msgid "This redirect URI is not allowed"
 msgstr "Cette URI de redirection n'est pas autorisée"
 
-#: lib/web/controllers/application_controller.ex:381
+#: lib/web/controllers/application_controller.ex:383
 #, elixir-autogen, elixir-format
 msgid "Token not found"
 msgstr "Jeton non trouvé"
 
-#: lib/web/controllers/application_controller.ex:72
+#: lib/web/controllers/application_controller.ex:74
 #, elixir-autogen, elixir-format
 msgid "Too many requests"
 msgstr "Trop de requêtes"
 
-#: lib/web/controllers/application_controller.ex:184
+#: lib/web/controllers/application_controller.ex:186
 #, elixir-autogen, elixir-format
 msgid "Unable to produce device code"
 msgstr "Impossible de produire un device code"
 
-#: lib/web/controllers/application_controller.ex:373
+#: lib/web/controllers/application_controller.ex:375
 #, elixir-autogen, elixir-format
 msgid "Unable to revoke token"
 msgstr "Impossible de révoquer le jeton"
 
-#: lib/web/controllers/application_controller.ex:198
+#: lib/web/controllers/application_controller.ex:200
 #, elixir-autogen, elixir-format
 msgid "You need to pass both client_id and scope as parameters to obtain a device code"
 msgstr "Pour obtenir un code d'appareil, vous devez passer en paramètre le client_id et le scope"
 
-#: lib/web/controllers/application_controller.ex:136
+#: lib/web/controllers/application_controller.ex:138
 #, elixir-autogen, elixir-format
 msgid "You need to provide a valid redirect_uri to autorize an application"
 msgstr "Vous devez fournir un redirect_uri valide pour autoriser une application"
 
-#: lib/web/controllers/application_controller.ex:126
+#: lib/web/controllers/application_controller.ex:128
 #, elixir-autogen, elixir-format
 msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr "Vous devez spécifier client_id, redirect_uri, scope et state pour autoriser une application"
+
+#: lib/graphql/resolvers/user.ex:306
+#, elixir-autogen, elixir-format
+msgid "Couldn't send an email. Internal error."
+msgstr ""
+
+#: lib/graphql/resolvers/participant.ex:286
+#, elixir-autogen, elixir-format
+msgid "Participation is already confirmed"
+msgstr ""
+
+#: lib/graphql/resolvers/participant.ex:283
+#, elixir-autogen, elixir-format
+msgid "Participation is confirmed but not approved yet by an organizer"
+msgstr ""
+
+#: lib/graphql/resolvers/event.ex:287
+#: lib/graphql/resolvers/event.ex:376
+#, elixir-autogen, elixir-format
+msgid "Providing external registration is not allowed"
+msgstr ""
+
+#: lib/graphql/resolvers/push_subscription.ex:48
+#, elixir-autogen, elixir-format
+msgid "The same push subscription has already been registered"
+msgstr ""
+
+#: lib/graphql/resolvers/admin.ex:536
+#, elixir-autogen, elixir-format
+msgid "This instance is pending follow approval"
+msgstr ""
+
+#: lib/graphql/schema/custom/timezone.ex:23
+#, elixir-autogen, elixir-format
+msgid "Timezone ID %{timezone} is invalid"
+msgstr ""
+
+#: lib/graphql/resolvers/admin.ex:539
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You are already following this instance"
+msgstr "Vous êtes déjà membre de ce groupe"
+
+#: lib/graphql/resolvers/user.ex:310
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You requested again a confirmation email too soon. Please try again in a few minutes"
+msgstr "Vous avez à nouveau demandé un email de confirmation trop vite"
+
+#: lib/graphql/resolvers/user.ex:341
+#, elixir-autogen, elixir-format
+msgid "You requested again a password reset email too soon. Please try again in a few minutes"
+msgstr ""
+
+#: lib/graphql/resolvers/user.ex:368
+#, elixir-autogen, elixir-format
+msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
+msgstr ""

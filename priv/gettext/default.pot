@@ -1317,16 +1317,6 @@ msgstr ""
 msgid "Public feed for %{instance}"
 msgstr ""
 
-#: lib/graphql/resolvers/user.ex:361
-#, elixir-autogen, elixir-format
-msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
-msgstr ""
-
-#: lib/graphql/resolvers/user.ex:367
-#, elixir-autogen, elixir-format
-msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
-msgstr ""
-
 #: lib/web/email/actor.ex:43
 #, elixir-autogen, elixir-format
 msgid "Your participation to %{event} has been cancelled!"

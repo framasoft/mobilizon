@@ -29,7 +29,7 @@ msgstr ""
 "passe ne changera pas tant que vous n'en créerez pas un nouveau en cliquant "
 "sur le lien ci-dessous."
 
-#: lib/web/templates/email/report.html.heex:120
+#: lib/web/templates/email/report.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "%{title} by %{creator}"
 msgstr "%{title} par %{creator}"
@@ -45,23 +45,17 @@ msgstr "Activer mon compte"
 msgid "Ask the community on Framacolibri"
 msgstr "Demander à la communauté sur Framacolibri"
 
-#: lib/web/templates/email/report.text.eex:15
+#: lib/web/templates/email/report.text.eex:17
 #, elixir-autogen, elixir-format
 msgid "Comments"
 msgstr "Commentaires"
-
-#: lib/web/templates/email/report.html.heex:115
-#: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format
-msgid "Event"
-msgstr "Événement"
 
 #: lib/web/email/user.ex:49
 #, elixir-autogen, elixir-format
 msgid "Instructions to reset your password on %{instance}"
 msgstr "Instructions pour réinitialiser votre mot de passe sur %{instance}"
 
-#: lib/web/templates/email/report.text.eex:21
+#: lib/web/templates/email/report.text.eex:23
 #, elixir-autogen, elixir-format
 msgid "Reason"
 msgstr "Raison"
@@ -367,12 +361,12 @@ msgctxt "terms"
 msgid "What information do we collect?"
 msgstr "Quelles informations collectons-nous ?"
 
-#: lib/web/email/user.ex:182
+#: lib/web/email/user.ex:188
 #, elixir-autogen, elixir-format
 msgid "Mobilizon on %{instance}: confirm your email address"
 msgstr "Mobilizon sur %{instance} : confirmez votre adresse email"
 
-#: lib/web/email/user.ex:159
+#: lib/web/email/user.ex:165
 #, elixir-autogen, elixir-format
 msgid "Mobilizon on %{instance}: email changed"
 msgstr "Mobilizon sur %{instance} : adresse email modifiée"
@@ -1020,7 +1014,7 @@ msgstr "Fin"
 msgid "Event update!"
 msgstr "Événement mis à jour !"
 
-#: lib/web/templates/email/report.html.heex:155
+#: lib/web/templates/email/report.html.heex:158
 #, elixir-autogen, elixir-format
 msgid "Flagged comments"
 msgstr "Commentaires signalés"
@@ -1123,7 +1117,7 @@ msgstr "Vous y êtes presque !"
 msgid "New email confirmation"
 msgstr "Confirmation de nouvel e-mail"
 
-#: lib/web/templates/email/report.html.heex:191
+#: lib/web/templates/email/report.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Reasons for report"
 msgstr "Raisons du signalement"
@@ -1184,12 +1178,12 @@ msgstr ""
 msgid "Verify your email address"
 msgstr "Vérifier l'adresse email"
 
-#: lib/web/templates/email/report.html.heex:232
+#: lib/web/templates/email/report.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "View report"
 msgstr "Voir le signalement"
 
-#: lib/web/templates/email/report.text.eex:24
+#: lib/web/templates/email/report.text.eex:26
 #, elixir-autogen, elixir-format
 msgid "View report:"
 msgstr "Voir le signalement :"
@@ -1305,14 +1299,6 @@ msgstr ""
 "Comme ce groupe était originaire d'une autre instance, il continuera à "
 "fonctionner pour d'autres instances que celle-ci."
 
-#: lib/web/templates/email/group_suspension.html.heex:67
-#: lib/web/templates/email/group_suspension.text.eex:5
-#, elixir-autogen, elixir-format
-msgid "As this group was located on this instance, all of it's data has been irretrievably deleted."
-msgstr ""
-"Comme ce groupe était originaire de cette instance, toutes ses données ont "
-"été irrémédiablement détruites."
-
 #: lib/web/templates/email/group_suspension.html.heex:18
 #: lib/web/templates/email/group_suspension.text.eex:1
 #, elixir-autogen, elixir-format
@@ -1326,7 +1312,7 @@ msgstr ""
 "L'équipe de modération de votre instance a décidé de suspendre %{group_name} "
 "(%{group_address}). Vous n'êtes désormais plus membre de ce groupe."
 
-#: lib/web/email/group.ex:107
+#: lib/web/email/group.ex:108
 #, elixir-autogen, elixir-format
 msgid "The group %{group} has been suspended on %{instance}"
 msgstr "Le groupe %{group} a été suspendu sur %{instance}"
@@ -1713,20 +1699,6 @@ msgstr ""
 msgid "Public feed for %{instance}"
 msgstr "Flux public pour %{instance}"
 
-#: lib/graphql/resolvers/user.ex:350
-#, elixir-autogen, elixir-format
-msgid "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
-msgstr ""
-"Le mot de passe que vous avez choisi est trop court. Assurez-vous que votre "
-"mot de passe contienne au moins 6 caractères."
-
-#: lib/graphql/resolvers/user.ex:356
-#, elixir-autogen, elixir-format
-msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
-msgstr ""
-"Le jeton que vous avez fourni est invalide. Assurez-vous que l'URL est "
-"exactement la même que celle contenue dans le message que vous avez reçu."
-
 #: lib/web/email/actor.ex:43
 #, elixir-autogen, elixir-format
 msgid "Your participation to %{event} has been cancelled!"
@@ -1757,63 +1729,63 @@ msgstr ""
 "Votre participation à l'événement %{event} sur %{instance} a été annulée !"
 
 #. File name template for exported list of participants. Should NOT contain spaces. Make sure the output is going to be something standardized that is acceptable as a file name on most systems.
-#: lib/service/export/participants/csv.ex:81
+#: lib/service/export/participants/csv.ex:97
 #: lib/service/export/participants/ods.ex:86
 #: lib/service/export/participants/pdf.ex:96
 #, elixir-autogen, elixir-format
 msgid "%{event}_participants"
 msgstr "%{event}_participants"
 
-#: lib/service/export/participants/common.ex:61
+#: lib/service/export/participants/common.ex:66
 #, elixir-autogen, elixir-format
 msgid "Participant message"
 msgstr "Message du participant"
 
-#: lib/service/export/participants/common.ex:61
+#: lib/service/export/participants/common.ex:63
 #, elixir-autogen, elixir-format
 msgid "Participant name"
 msgstr "Nom du participant"
 
-#: lib/service/export/participants/common.ex:61
+#: lib/service/export/participants/common.ex:64
 #, elixir-autogen, elixir-format
 msgid "Participant status"
 msgstr "Statut du participant"
 
-#: lib/service/export/participants/common.ex:52
+#: lib/service/export/participants/common.ex:53
 #: lib/web/templates/email/admin/_role.html.heex:3
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Administrator"
 msgstr "Administrateur⋅ice"
 
-#: lib/service/export/participants/common.ex:55
+#: lib/service/export/participants/common.ex:56
 #, elixir-autogen, elixir-format
 msgid "Creator"
 msgstr "Créateur⋅ice"
 
-#: lib/service/export/participants/common.ex:49
+#: lib/service/export/participants/common.ex:50
 #: lib/web/templates/email/admin/_role.html.heex:5
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Moderator"
 msgstr "Modérateur⋅ice"
 
-#: lib/service/export/participants/common.ex:37
+#: lib/service/export/participants/common.ex:38
 #, elixir-autogen, elixir-format
 msgid "Not approved"
 msgstr "Non approuvé⋅e"
 
-#: lib/service/export/participants/common.ex:40
+#: lib/service/export/participants/common.ex:41
 #, elixir-autogen, elixir-format
 msgid "Not confirmed"
 msgstr "Non confirmé⋅e"
 
-#: lib/service/export/participants/common.ex:46
+#: lib/service/export/participants/common.ex:47
 #, elixir-autogen, elixir-format
 msgid "Participant"
 msgstr "Participant⋅e"
 
-#: lib/service/export/participants/common.ex:43
+#: lib/service/export/participants/common.ex:44
 #, elixir-autogen, elixir-format
 msgid "Rejected"
 msgstr "Rejeté⋅e"
@@ -1838,7 +1810,7 @@ msgstr "Nombre de participant⋅es"
 msgid "Participants for %{event}"
 msgstr "Participant⋅es pour %{event}"
 
-#: lib/service/export/participants/common.ex:88
+#: lib/service/export/participants/common.ex:95
 #, elixir-autogen, elixir-format
 msgid "Anonymous participant"
 msgstr "Participant⋅e anonyme"
@@ -1957,7 +1929,7 @@ msgstr "Participer :"
 msgid "Title: %{title}"
 msgstr "Titre : %{title}"
 
-#: lib/web/email/group.ex:46
+#: lib/web/email/group.ex:47
 #, elixir-autogen, elixir-format
 msgid "📅 Just scheduled by %{group}: %{event}"
 msgstr "📅 Programmé à l'instant par %{group} : %{event}"
@@ -2420,3 +2392,26 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Until next time!"
 msgstr "À la prochaine fois !"
+
+#: lib/web/templates/email/group_suspension.html.heex:67
+#: lib/web/templates/email/group_suspension.text.eex:5
+#, elixir-autogen, elixir-format, fuzzy
+msgid "As this group was located on this instance, all of its data has been irretrievably deleted."
+msgstr ""
+"Comme ce groupe était originaire de cette instance, toutes ses données ont "
+"été irrémédiablement détruites."
+
+#: lib/web/templates/email/report.text.eex:11
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Events"
+msgstr "Événement"
+
+#: lib/web/templates/email/report.html.heex:115
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Flagged events"
+msgstr "Commentaires signalés"
+
+#: lib/service/export/participants/common.ex:65
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Participant registration date"
+msgstr "Statut du participant"
