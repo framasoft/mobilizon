@@ -358,13 +358,15 @@ defmodule Mobilizon.GraphQL.Resolvers.User do
 
       {:error, %Ecto.Changeset{errors: [password: {"registration.error.password_too_short", _}]}} ->
         {:error,
-         gettext(
-           "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+         dgettext(
+           "errors",
+           "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
          )}
 
       {:error, _err} ->
         {:error,
-         gettext(
+         dgettext(
+           "errors",
            "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
          )}
     end

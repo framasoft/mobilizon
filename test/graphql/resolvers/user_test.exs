@@ -874,7 +874,7 @@ defmodule Mobilizon.GraphQL.Resolvers.UserTest do
         |> post("/api", AbsintheHelpers.mutation_skeleton(mutation))
 
       assert hd(json_response(res, 200)["errors"])["message"] ==
-               "The password you have choosen is too short. Please make sure your password contains at least 6 charaters."
+               "The password you have chosen is too short. Please make sure your password contains at least 6 characters."
     end
 
     test "test reset_password/3 with an invalid token", context do

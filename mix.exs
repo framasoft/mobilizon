@@ -143,7 +143,7 @@ defmodule Mobilizon.Mixfile do
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_view, "~> 0.19.0"},
       {:phoenix_view, "~> 2.0"},
-      {:gettext, "~> 0.20.0"},
+      {:gettext, "~> 0.23.1"},
       {:cowboy, "~> 2.6"},
       {:guardian, "~> 2.0"},
       {:guardian_db, "~> 2.1.0"},

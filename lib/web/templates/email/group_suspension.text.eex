@@ -2,7 +2,7 @@
 ==
 <%= gettext "Your instance's moderation team has decided to suspend %{group_name} (%{group_address}). You are no longer a member of this group.", group_name: @group.name, group_address: preferred_username_and_domain(@group) %>
 <%= if is_nil(@group.domain) do %>
-  <%= gettext "As this group was located on this instance, all of it's data has been irretrievably deleted." %>
+  <%= gettext "As this group was located on this instance, all of its data has been irretrievably deleted." %>
 <% else %>
   <%= gettext "As this group was located on another instance, it will continue to work for other instances than this one." %>
 <% end %>

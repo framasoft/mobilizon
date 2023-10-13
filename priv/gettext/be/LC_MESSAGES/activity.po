@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Language: be\n"
-"Plural-Forms: nplurals=3\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100 != 11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10||n%100>=20) ? 1 : 2);\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -455,4 +455,16 @@ msgstr ""
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:33
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{profile} approved the member %{member}."
+msgstr ""
+
+#: lib/service/activity/renderer/event.ex:74
+#: lib/web/templates/email/activity/_event_activity_item.html.heex:55
+#: lib/web/templates/email/activity/_event_activity_item.text.eex:31
+#, elixir-autogen, elixir-format
+msgid "%{profile} joined your event %{event}."
+msgstr ""
+
+#: lib/web/views/email_view.ex:45
+#, elixir-autogen, elixir-format
+msgid "An anonymous profile"
 msgstr ""
