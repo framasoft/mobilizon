@@ -50,6 +50,7 @@ We appreciate any contribution to Mobilizon. Check [our contributing page](https
   * 🔢 Pick an instance [https://mobilizon.org](https://mobilizon.org)
   * 💻 Source: [https://framagit.org/framasoft/mobilizon](https://framagit.org/framasoft/mobilizon)
   * 📜 Documentation [https://docs.joinmobilizon.org](https://docs.joinmobilizon.org)
+    * A summarized description of structure of sources is done in [`docs/dev.md`](./docs/dev.md)
   
 ### Discuss
   * 💬 Element/Matrix: [https://matrix.to/#/#Mobilizon:matrix.org](https://matrix.to/#/#Mobilizon:matrix.org)
