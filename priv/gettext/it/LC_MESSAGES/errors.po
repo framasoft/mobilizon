@@ -8,15 +8,15 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-03-09 11:38+0000\n"
-"Last-Translator: lost_geographer <david@chionne.eu>\n"
+"PO-Revision-Date: 2023-10-15 09:22+0000\n"
+"Last-Translator: coronabond <coronabond@airmail.cc>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/it/>\n"
 "Language: it\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -246,7 +246,7 @@ msgstr "Sei già un membro di questo gruppo"
 #: lib/graphql/resolvers/group.ex:350
 #, elixir-autogen, elixir-format
 msgid "You can't leave this group because you are the only administrator"
-msgstr "Non puoi lasciare questo gruppo perchè sei l'unico amministratore"
+msgstr "Non puoi lasciare questo gruppo perché sei l'unico amministratore"
 
 #: lib/graphql/resolvers/group.ex:308
 #, elixir-autogen, elixir-format

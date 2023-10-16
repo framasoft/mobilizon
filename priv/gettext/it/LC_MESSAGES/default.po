@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2023-01-05 13:38+0000\n"
-"Last-Translator: Tommaso Gardumi <toba@nugol.net>\n"
+"PO-Revision-Date: 2023-10-15 14:56+0000\n"
+"Last-Translator: coronabond <coronabond@airmail.cc>\n"
 "Language-Team: Italian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/it/>\n"
 "Language: it\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 msgid ""
@@ -147,7 +147,7 @@ msgctxt "terms"
 msgid ""
 "Any of the information we collect from you may be used in the following ways:"
 msgstr ""
-"Qualsiasi informazione che raccogliamo da te può essere utilizzata nel "
+"Qualsiasi informazione che raccogliamo da te può essere utilizzata nei "
 "seguenti modi:"
 
 #: lib/web/templates/api/privacy.html.heex:13
@@ -191,8 +191,8 @@ msgid ""
 "Retain the IP addresses associated with registered users no more than 12 "
 "months."
 msgstr ""
-"Conserva gli indirizzi IP associati agli utenti registrati per non più di 12 "
-"mesi."
+"Conservare gli indirizzi IP associati agli utenti registrati per non più di "
+"12 mesi."
 
 #: lib/web/templates/api/privacy.html.heex:107
 msgctxt "terms"
@@ -227,7 +227,7 @@ msgstr "Per cosa usiamo le tue informazioni?"
 #: lib/web/templates/api/privacy.html.heex:83
 msgctxt "terms"
 msgid "What is our data retention policy?"
-msgstr "Qual'è la nostra politica di conservazione dei dati?"
+msgstr "Qual è la nostra politica di conservazione dei dati?"
 
 #: lib/web/templates/api/privacy.html.heex:99
 msgctxt "terms"
@@ -653,8 +653,8 @@ msgid ""
 "For full details about the Mobilizon software <a href=\"https://"
 "joinmobilizon.org\">see here</a>."
 msgstr ""
-"Per i dettagli completi sul software Mobilizon <a href=\"https://"
-"joinmobilizon.org\"> vedi qui </a>."
+"Per i dettagli completi sul software Mobilizon <a href=\"https"
+"://joinmobilizon.org\">vedi qui</a>."
 
 #: lib/web/templates/api/terms.html.heex:47
 msgctxt "terms"
@@ -746,7 +746,7 @@ msgid ""
 msgstr ""
 "Questo servizio viene eseguito su un'istanza Mobilizon. Questo codice "
 "sorgente è concesso in licenza <a href=\"https://tldrlegal.com/license/gnu-"
-"affero-general-public-license-v3-(agpl-3.0)\"> licenza AGPLv3 </a>, il che "
+"affero-general-public-license-v3-(agpl-3.0)\">licenza AGPLv3</a>, il che "
 "significa che sei autorizzato e persino incoraggiato a prendere il codice "
 "sorgente, modificarlo e usarlo."
 
@@ -793,7 +793,7 @@ msgid ""
 "Terms and, in general, <b>%{instance_name}</b>."
 msgstr ""
 "Adoriamo i feedback. Fateci sapere cosa ne pensate del Servizio, dei "
-"presenti Termini e, in generale,<b>%{instance_name}</b>."
+"presenti Termini e, in generale, di <b>%{instance_name}</b>."
 
 #: lib/web/templates/api/terms.html.heex:234
 msgctxt "terms"
@@ -833,8 +833,8 @@ msgid ""
 msgstr ""
 "Se scopri o sospetti violazioni della sicurezza del Servizio, faccelo sapere "
 "il prima possibile. Per falle di sicurezza nel software Mobilizon stesso, "
-"contatta direttamente <a href=\"https://framagit.org/framasoft/mobilizon/\"> "
-"i suoi contributori </a>."
+"contatta direttamente <a href=\"https://framagit.org/framasoft/mobilizon/\""
+">i suoi contributori</a>."
 
 #: lib/web/templates/api/terms.html.heex:240
 msgctxt "terms"
@@ -854,10 +854,10 @@ msgid ""
 "\">App.net</a> privacy policies, also licensed under <a href=\"https://"
 "creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
-"Adattato originariamente dalle politiche sulla privacy di <a href=\"https://"
-"joindiaspora.com/terms\"> Diaspora * </a> e <a href=\"https://github.com/"
-"appdotnet/terms-of-service\"> App .net </a>, anch'esse concesse in licenza "
-"<a href=\"https://creativecommons.org/licenses/by-sa/4.0/\"> CC BY-SA </a>."
+"Adattato originariamente dalle politiche sulla privacy di <a href=\"https"
+"://joindiaspora.com/terms\">Diaspora*</a> e <a href=\"https://github.com/"
+"appdotnet/terms-of-service\">App.net</a>, anch'esse concesse in licenza <a "
+"href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 
 #: lib/web/templates/api/privacy.html.heex:173
 msgctxt "terms"
@@ -867,10 +867,10 @@ msgid ""
 "\">Discourse</a> privacy policies, also licensed under <a href=\"https://"
 "creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 msgstr ""
-"Originariamente adattato dalle politiche sulla privacy di <a href=\"https://"
-"mastodon.social/terms\"> Mastodon </a> e <a href=\"https://github.com/"
-"discourse/discourse\"> Discourse </a>, anch'esse concesse in licenza <a href="
-"\"https://creativecommons.org/licenses/by-sa/4.0/\"> CC BY-SA </a>."
+"Originariamente adattato dalle politiche sulla privacy di <a href=\"https"
+"://mastodon.social/terms\">Mastodon</a> e <a href=\"https://github.com/"
+"discourse/discourse\">Discourse</a>, anch'esse concesse in licenza <a href="
+"\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA</a>."
 
 #: lib/web/templates/api/terms.html.heex:3
 msgctxt "terms"
@@ -903,8 +903,8 @@ msgid ""
 "licenses/by-sa/4.0/\">CC BY-SA</a>. It was last updated June 22, 2020."
 msgstr ""
 "Questo documento è concesso in licenza <a href=\"https://creativecommons.org/"
-"licenses/by-sa/4.0/\"> CC BY-SA </a>. È stato aggiornato l'ultima volta il "
-"22 giugno 2020."
+"licenses/by-sa/4.0/\">CC BY-SA</a>. È stato aggiornato l'ultima volta il 22 "
+"giugno 2020."
 
 #: lib/web/templates/api/terms.html.heex:21
 msgctxt "terms"
@@ -939,7 +939,7 @@ msgid ""
 "Hi there! You just registered to join this event: « %{title} ». Please "
 "confirm the e-mail address you provided:"
 msgstr ""
-"Ciao! Ti sei appena registrato per partecipare a questo evento: «% {title}». "
+"Ciao! Ti sei appena registrato per partecipare a questo evento: «%{title}». "
 "Conferma l'indirizzo e-mail che hai fornito:"
 
 #: lib/web/templates/email/email.html.heex:142
@@ -952,8 +952,8 @@ msgid ""
 "You created an account on <b>%{host}</b> with this email address. You are "
 "one click away from activating it."
 msgstr ""
-"Hai creato un account su <b>% {host} </b> con questo indirizzo email. Sei a "
-"un clic di distanza dall'attivarlo."
+"Hai creato un account su <b>%{host}</b> con questo indirizzo email. Sei a un "
+"clic di distanza dall'attivarlo."
 
 #: lib/web/templates/email/report.html.heex:18
 msgid "New report on <b>%{instance}</b>"
@@ -963,12 +963,12 @@ msgstr "Nuova segnalazione sull'istanza <b>%{instance}</b>"
 msgid ""
 "The email address for your account on <b>%{host}</b> is being changed to:"
 msgstr ""
-"L'indirizzo email del tuo account su <b>% {host} </b> verrà modificato in:"
+"L'indirizzo email del tuo account su <b>%{host}</b> verrà modificato in:"
 
 #: lib/web/templates/email/password_reset.html.heex:47
 msgid "You requested a new password for your account on <b>%{instance}</b>."
 msgstr ""
-"Hai richiesto una nuova password per il tuo account su <b>% {instance} </b>."
+"Hai richiesto una nuova password per il tuo account su <b>%{instance}</b>."
 
 #: lib/web/templates/email/email.html.heex:112
 #: lib/web/templates/email/email.text.eex:5
@@ -1139,7 +1139,7 @@ msgid ""
 "Someone on <b>%{instance}</b> reported the following content for you to "
 "analyze:"
 msgstr ""
-"Qualcuno su <b>% {instance} </b> ha segnalato i seguenti contenuti da "
+"Qualcuno su <b>%{instance}</b> ha segnalato i seguenti contenuti da "
 "analizzare:"
 
 #: lib/web/templates/email/event_participation_rejected.html.heex:18
@@ -1208,7 +1208,7 @@ msgstr "Visita la pagina dell'evento aggiornata"
 
 #: lib/web/templates/email/event_updated.text.eex:12
 msgid "Visit the updated event page: %{link}"
-msgstr "Visita la pagina dell'evento aggiornata:% {link}"
+msgstr "Visita la pagina dell'evento aggiornata: %{link}"
 
 #: lib/web/templates/email/on_day_notification.html.heex:18
 #: lib/web/templates/email/on_day_notification.text.eex:1
@@ -2270,7 +2270,7 @@ msgstr "Riunioni"
 
 #: lib/mobilizon/events/categories.ex:104
 msgid "Movements and politics"
-msgstr "Movimenti e politca"
+msgstr "Movimenti e politica"
 
 #: lib/mobilizon/events/categories.ex:64
 msgid "Music"
@@ -2344,7 +2344,6 @@ msgstr "Alla prossima!"
 
 #: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
-#, fuzzy
 msgid ""
 "As this group was located on this instance, all of its data has been "
 "irretrievably deleted."
@@ -2353,9 +2352,8 @@ msgstr ""
 "stati irrimediabilmente cancellati."
 
 #: lib/web/templates/email/report.text.eex:11
-#, fuzzy
 msgid "Events"
-msgstr "Evento"
+msgstr "Eventi"
 
 #: lib/web/templates/email/report.html.heex:115
 #, fuzzy
