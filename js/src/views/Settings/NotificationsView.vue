@@ -73,7 +73,7 @@
             <tr v-for="subType in notificationType.subtypes" :key="subType.id">
               <td v-for="(method, key) in notificationMethods" :key="key">
                 <o-checkbox
-                  :modelValue="notificationValues[subType.id][key].enabled"
+                  :modelValue="notificationValues?.[subType.id]?.[key]?.enabled"
                   @update:modelValue="
                     (e: boolean) =>
                       updateNotificationValue({
@@ -82,7 +82,7 @@
                         enabled: e,
                       })
                   "
-                  :disabled="notificationValues[subType.id][key].disabled"
+                  :disabled="notificationValues?.[subType.id]?.[key]?.disabled"
                 />
               </td>
               <td>
@@ -104,7 +104,7 @@
       >
         <o-select
           v-model="groupNotifications"
-          @input="updateSetting({ groupNotifications })"
+          @update:modelValue="updateSetting({ groupNotifications })"
           id="groupNotifications"
         >
           <option
@@ -450,6 +450,10 @@ const defaultNotificationValues = {
     email: { enabled: true, disabled: false },
     push: { enabled: true, disabled: false },
   },
+  conversation_mention: {
+    email: { enabled: true, disabled: false },
+    push: { enabled: true, disabled: false },
+  },
   discussion_mention: {
     email: { enabled: true, disabled: false },
     push: { enabled: false, disabled: false },
@@ -464,6 +468,10 @@ const notificationTypes: NotificationType[] = [
   {
     label: t("Mentions") as string,
     subtypes: [
+      {
+        id: "conversation_mention",
+        label: t("I've been mentionned in a conversation") as string,
+      },
       {
         id: "event_comment_mention",
         label: t("I've been mentionned in a comment under an event") as string,

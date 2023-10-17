@@ -49,17 +49,17 @@ export function deleteUserData(): void {
   });
 }
 
-export async function logout(performServerLogout = true): Promise<void> {
-  const { mutate: logoutMutation } = provideApolloClient(apolloClient)(() =>
-    useMutation(LOGOUT)
-  );
-  const { mutate: cleanUserClient } = provideApolloClient(apolloClient)(() =>
-    useMutation(UPDATE_CURRENT_USER_CLIENT)
-  );
-  const { mutate: cleanActorClient } = provideApolloClient(apolloClient)(() =>
-    useMutation(UPDATE_CURRENT_ACTOR_CLIENT)
-  );
+const { mutate: logoutMutation } = provideApolloClient(apolloClient)(() =>
+  useMutation(LOGOUT)
+);
+const { mutate: cleanUserClient } = provideApolloClient(apolloClient)(() =>
+  useMutation(UPDATE_CURRENT_USER_CLIENT)
+);
+const { mutate: cleanActorClient } = provideApolloClient(apolloClient)(() =>
+  useMutation(UPDATE_CURRENT_ACTOR_CLIENT)
+);
 
+export async function logout(performServerLogout = true): Promise<void> {
   if (performServerLogout) {
     logoutMutation({
       refreshToken: localStorage.getItem(AUTH_REFRESH_TOKEN),

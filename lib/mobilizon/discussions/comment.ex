@@ -9,6 +9,7 @@ defmodule Mobilizon.Discussions.Comment do
   import Mobilizon.Storage.Ecto, only: [maybe_add_published_at: 1]
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.{Comment, CommentVisibility, Discussion}
   alias Mobilizon.Events.{Event, Tag}
   alias Mobilizon.Medias.Media
@@ -49,7 +50,9 @@ defmodule Mobilizon.Discussions.Comment do
     :local,
     :is_announcement,
     :discussion_id,
-    :language
+    :conversation_id,
+    :language,
+    :visibility
   ]
   @attrs @required_attrs ++ @optional_attrs
 
@@ -71,6 +74,7 @@ defmodule Mobilizon.Discussions.Comment do
     belongs_to(:in_reply_to_comment, Comment, foreign_key: :in_reply_to_comment_id)
     belongs_to(:origin_comment, Comment, foreign_key: :origin_comment_id)
     belongs_to(:discussion, Discussion, type: :binary_id)
+    belongs_to(:conversation, Conversation)
     has_many(:replies, Comment, foreign_key: :origin_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
     has_many(:mentions, Mention)
@@ -80,7 +84,7 @@ defmodule Mobilizon.Discussions.Comment do
   end
 
   @doc """
-  Returns the id of the first comment in the discussion.
+  Returns the id of the first comment in the discussion or conversation.
   """
   @spec get_thread_id(t) :: integer
   def get_thread_id(%__MODULE__{id: id, origin_comment_id: origin_comment_id}) do
@@ -181,7 +185,7 @@ defmodule Mobilizon.Discussions.Comment do
     Tag.changeset(%Tag{}, tag)
   end
 
-  defp process_mention(tag) do
-    Mention.changeset(%Mention{}, tag)
+  defp process_mention(mention) do
+    Mention.changeset(%Mention{}, mention)
   end
 end

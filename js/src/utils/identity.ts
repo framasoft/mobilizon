@@ -16,21 +16,31 @@ function saveActorData(obj: IPerson): void {
   localStorage.setItem(AUTH_USER_ACTOR_ID, `${obj.id}`);
 }
 
+const {
+  mutate: updateCurrentActorClient,
+  onDone: onUpdateCurrentActorClientDone,
+} = provideApolloClient(apolloClient)(() =>
+  useMutation(UPDATE_CURRENT_ACTOR_CLIENT)
+);
+
 export async function changeIdentity(identity: IPerson): Promise<void> {
   if (!identity.id) return;
-  const { mutate: updateCurrentActorClient } = provideApolloClient(
-    apolloClient
-  )(() => useMutation(UPDATE_CURRENT_ACTOR_CLIENT));
+  console.debug("Changing identity", identity);
 
   updateCurrentActorClient(identity);
   if (identity.id) {
+    console.debug("Saving actor data");
     saveActorData(identity);
   }
+
+  onUpdateCurrentActorClientDone(() => {
+    console.debug("Updating current actor client");
+  });
 }
 
-const { onResult: setIdentities, load: loadIdentities } = provideApolloClient(
-  apolloClient
-)(() => useLazyQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>(IDENTITIES));
+const { load: loadIdentities } = provideApolloClient(apolloClient)(() =>
+  useLazyQuery<{ loggedUser: Pick<ICurrentUser, "actors"> }>(IDENTITIES)
+);
 
 /**
  * We fetch from localStorage the latest actor ID used,
@@ -39,11 +49,14 @@ const { onResult: setIdentities, load: loadIdentities } = provideApolloClient(
  */
 export async function initializeCurrentActor(): Promise<void> {
   const actorId = localStorage.getItem(AUTH_USER_ACTOR_ID);
+  console.debug("Initializing current actor", actorId);
 
-  loadIdentities();
+  try {
+    const result = await loadIdentities();
+    if (!result) return;
 
-  setIdentities(async ({ data }) => {
-    const identities = computed(() => data?.loggedUser?.actors);
+    console.debug("got identities", result);
+    const identities = computed(() => result.loggedUser?.actors);
     console.debug(
       "initializing current actor based on identities",
       identities.value
@@ -61,5 +74,7 @@ export async function initializeCurrentActor(): Promise<void> {
     if (activeIdentity) {
       await changeIdentity(activeIdentity);
     }
-  });
+  } catch (e) {
+    console.error("Failed to initialize current Actor", e);
+  }
 }

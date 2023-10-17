@@ -45,6 +45,11 @@ export const typePolicies: TypePolicies = {
       comments: paginatedLimitPagination<IComment>(),
     },
   },
+  Conversation: {
+    fields: {
+      comments: paginatedLimitPagination<IComment>(),
+    },
+  },
   Group: {
     fields: {
       organizedEvents: paginatedLimitPagination([

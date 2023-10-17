@@ -312,3 +312,21 @@ export const FEED_TOKENS_LOGGED_USER = gql`
     }
   }
 `;
+
+export const UNREAD_ACTOR_CONVERSATIONS = gql`
+  query LoggedUserUnreadConversations {
+    loggedUser {
+      id
+      defaultActor {
+        id
+        unreadConversationsCount
+      }
+    }
+  }
+`;
+
+export const UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION = gql`
+  subscription OnUreadActorConversationsChanged($personId: ID!) {
+    personUnreadConversationsCount(personId: $personId)
+  }
+`;

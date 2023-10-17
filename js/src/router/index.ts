@@ -8,6 +8,7 @@ import { authGuardIfNeeded } from "./guards/auth-guard";
 import { settingsRoutes } from "./settings";
 import { groupsRoutes } from "./groups";
 import { discussionRoutes } from "./discussion";
+import { conversationRoutes } from "./conversation";
 import { userRoutes } from "./user";
 import RouteName from "./name";
 import { AVAILABLE_LANGUAGES, i18n } from "@/utils/i18n";
@@ -36,6 +37,7 @@ export const routes = [
   ...actorRoutes,
   ...groupsRoutes,
   ...discussionRoutes,
+  ...conversationRoutes,
   ...errorRoutes,
   {
     path: "/search",

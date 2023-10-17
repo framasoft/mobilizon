@@ -39,6 +39,9 @@
         v-html="actor.summary"
       />
     </div>
+    <div class="flex pr-2">
+      <Email />
+    </div>
   </div>
   <!-- <div
     class="p-4 bg-white rounded-lg shadow-md sm:p-8 flex items-center space-x-4"
@@ -81,6 +84,7 @@
 <script lang="ts" setup>
 import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Email from "vue-material-design-icons/Email.vue";
 
 withDefaults(
   defineProps<{

@@ -249,6 +249,8 @@ onCurrentUserMutationDone(async () => {
           userAlreadyActivated: "true",
         },
       });
+    } else {
+      throw err;
     }
   }
 });

@@ -42,9 +42,9 @@ defmodule Mobilizon.Discussions do
     :origin_comment,
     :replies,
     :tags,
-    :mentions,
     :discussion,
-    :media
+    :media,
+    mentions: [:actor]
   ]
 
   @discussion_preloads [
@@ -76,6 +76,7 @@ defmodule Mobilizon.Discussions do
     Comment
     |> join(:left, [c], r in Comment, on: r.origin_comment_id == c.id)
     |> where([c, _], is_nil(c.in_reply_to_comment_id))
+    |> where([c], c.visibility in ^@public_visibility)
     # TODO: This was added because we don't want to count deleted comments in total_replies.
     # However, it also excludes all top-level comments with deleted replies from being selected
     # |> where([_, r], is_nil(r.deleted_at))
@@ -197,9 +198,13 @@ defmodule Mobilizon.Discussions do
   """
   @spec update_comment(Comment.t(), map) :: {:ok, Comment.t()} | {:error, Changeset.t()}
   def update_comment(%Comment{} = comment, attrs) do
-    comment
-    |> Comment.update_changeset(attrs)
-    |> Repo.update()
+    with {:ok, %Comment{} = comment} <-
+           comment
+           |> Comment.update_changeset(attrs)
+           |> Repo.update(),
+         %Comment{} = comment <- Repo.preload(comment, @comment_preloads) do
+      {:ok, comment}
+    end
   end
 
   @doc """
@@ -268,6 +273,19 @@ defmodule Mobilizon.Discussions do
   def get_comments_for_discussion(discussion_id, page \\ nil, limit \\ nil) do
     Comment
     |> where([c], c.discussion_id == ^discussion_id)
+    |> order_by(asc: :inserted_at)
+    |> Page.build_page(page, limit)
+  end
+
+  @doc """
+  Get all the comments contained into a discussion
+  """
+  @spec get_comments_in_reply_to_comment_id(integer, integer | nil, integer | nil) ::
+          Page.t(Comment.t())
+  def get_comments_in_reply_to_comment_id(origin_comment_id, page \\ nil, limit \\ nil) do
+    Comment
+    |> where([c], c.id == ^origin_comment_id)
+    |> or_where([c], c.origin_comment_id == ^origin_comment_id)
     |> order_by(asc: :inserted_at)
     |> Page.build_page(page, limit)
   end

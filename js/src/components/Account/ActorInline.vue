@@ -1,8 +1,8 @@
 <template>
   <div
-    class="inline-flex items-start bg-white dark:bg-violet-1 dark:text-white p-2 rounded-md"
+    class="inline-flex items-start gap-2 bg-white dark:bg-violet-1 dark:text-white p-2 rounded-md"
   >
-    <div class="flex-none mr-2">
+    <div class="flex-none">
       <figure v-if="actor.avatar">
         <img
           class="rounded-xl"
@@ -24,11 +24,15 @@
         @{{ usernameWithDomain(actor) }}
       </p>
     </div>
+    <div class="flex pr-2 self-center">
+      <Email />
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Email from "vue-material-design-icons/Email.vue";
 
 defineProps<{
   actor: IActor;

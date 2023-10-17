@@ -871,6 +871,21 @@ defmodule Mobilizon.Events do
     |> Page.build_page(page, limit)
   end
 
+  @doc """
+  Returns the whole list of participants for an event.
+  Default behaviour is to not return :not_approved or :not_confirmed participants
+  """
+  @spec list_all_participants_for_event(String.t(), list(atom())) :: list(Participant.t())
+  def list_all_participants_for_event(
+        id,
+        roles \\ []
+      ) do
+    id
+    |> participants_for_event_query(roles)
+    |> preload([:actor, :event])
+    |> Repo.all()
+  end
+
   @spec list_actors_participants_for_event(String.t()) :: [Actor.t()]
   def list_actors_participants_for_event(id) do
     id

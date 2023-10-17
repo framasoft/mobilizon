@@ -1,0 +1,11 @@
+<%= case @activity.subject do %><% :conversation_created -> %><%= dgettext("activity", "%{profile} mentionned you in a conversation.",
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :conversation, @activity.subject_params["conversation_participant_id"]) |> URI.decode() %><% :conversation_replied -> %><%= dgettext("activity", "%{profile} replied you in a conversation.",
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+    }
+) %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :conversation, @activity.subject_params["conversation_participant_id"]) |> URI.decode() %><% end %>

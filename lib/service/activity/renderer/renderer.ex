@@ -51,17 +51,25 @@ defmodule Mobilizon.Service.Activity.Renderer do
     res
   end
 
+  @types_map %{
+    discussion: Discussion,
+    conversation: Conversation,
+    event: Event,
+    group: Group,
+    member: Member,
+    post: Post,
+    resource: Resource,
+    comment: Comment
+  }
+
   @spec do_render(Activity.t(), Keyword.t()) :: common_render()
   defp do_render(%Activity{type: type} = activity, options) do
-    case type do
-      :discussion -> Discussion.render(activity, options)
-      :event -> Event.render(activity, options)
-      :group -> Group.render(activity, options)
-      :member -> Member.render(activity, options)
-      :post -> Post.render(activity, options)
-      :resource -> Resource.render(activity, options)
-      :comment -> Comment.render(activity, options)
-      _ -> nil
+    case Map.get(@types_map, type) do
+      nil ->
+        nil
+
+      mod ->
+        mod.render(activity, options)
     end
   end
 end

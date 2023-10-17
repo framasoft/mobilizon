@@ -7,6 +7,7 @@ import {
   PARTICIPANT_QUERY_FRAGMENT,
 } from "./participant";
 import { TAG_FRAGMENT } from "./tags";
+import { CONVERSATIONS_QUERY_FRAGMENT } from "./conversations";
 
 const FULL_EVENT_FRAGMENT = gql`
   fragment FullEvent on Event {
@@ -375,9 +376,16 @@ export const PARTICIPANTS = gql`
         rejected
         participant
       }
+      organizerActor {
+        ...ActorFragment
+      }
+      attributedTo {
+        ...ActorFragment
+      }
     }
   }
   ${PARTICIPANTS_QUERY_FRAGMENT}
+  ${ACTOR_FRAGMENT}
 `;
 
 export const EVENT_PERSON_PARTICIPATION = gql`
@@ -493,4 +501,42 @@ export const EXPORT_EVENT_PARTICIPATIONS = gql`
       format
     }
   }
+`;
+
+export const EVENT_CONVERSATIONS = gql`
+  query EventConversations($uuid: UUID!, $page: Int, $limit: Int) {
+    event(uuid: $uuid) {
+      id
+      uuid
+      title
+      conversations(page: $page, limit: $limit) {
+        ...ConversationsQuery
+      }
+    }
+  }
+  ${CONVERSATIONS_QUERY_FRAGMENT}
+`;
+
+export const USER_CONVERSATIONS = gql`
+  query UserConversations($page: Int, $limit: Int) {
+    loggedUser {
+      id
+      conversations(page: $page, limit: $limit) {
+        ...ConversationsQuery
+      }
+    }
+  }
+  ${CONVERSATIONS_QUERY_FRAGMENT}
+`;
+
+export const PROFILE_CONVERSATIONS = gql`
+  query ProfileConversations($page: Int, $limit: Int) {
+    loggedPerson {
+      id
+      conversations(page: $page, limit: $limit) {
+        ...ConversationsQuery
+      }
+    }
+  }
+  ${CONVERSATIONS_QUERY_FRAGMENT}
 `;

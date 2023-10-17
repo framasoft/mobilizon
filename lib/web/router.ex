@@ -132,6 +132,7 @@ defmodule Mobilizon.Web.Router do
     get("/@:name/discussions", PageController, :discussions)
     get("/@:name/events", PageController, :events)
     get("/p/:slug", PageController, :post)
+    get("/conversations/:id", PageController, :conversation)
     get("/@:name/c/:slug", PageController, :discussion)
   end
 
@@ -176,6 +177,7 @@ defmodule Mobilizon.Web.Router do
 
     forward("/", Absinthe.Plug.GraphiQL,
       schema: Mobilizon.GraphQL.Schema,
+      socket: Mobilizon.Web.GraphQLSocket,
       interface: :playground
     )
   end

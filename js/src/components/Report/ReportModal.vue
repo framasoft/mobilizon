@@ -5,7 +5,9 @@
     </header>
 
     <section>
-      <div class="flex gap-1 flex-row mb-3">
+      <div
+        class="flex gap-1 flex-row mb-3 bg-mbz-yellow p-3 rounded items-center"
+      >
         <o-icon
           icon="alert"
           variant="warning"

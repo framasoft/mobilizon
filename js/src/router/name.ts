@@ -4,6 +4,7 @@ import { ErrorRouteName } from "./error";
 import { SettingsRouteName } from "./settings";
 import { GroupsRouteName } from "./groups";
 import { DiscussionRouteName } from "./discussion";
+import { ConversationRouteName } from "./conversation";
 import { UserRouteName } from "./user";
 
 enum GlobalRouteName {
@@ -31,5 +32,6 @@ export default {
   ...SettingsRouteName,
   ...GroupsRouteName,
   ...DiscussionRouteName,
+  ...ConversationRouteName,
   ...ErrorRouteName,
 };

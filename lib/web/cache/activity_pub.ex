@@ -3,9 +3,10 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   ActivityPub related cache.
   """
 
-  alias Mobilizon.{Actors, Discussions, Events, Posts, Resources, Todos, Tombstone}
+  alias Mobilizon.{Actors, Conversations, Discussions, Events, Posts, Resources, Todos, Tombstone}
   alias Mobilizon.Actors.Actor, as: ActorModel
   alias Mobilizon.Actors.Member
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Federation.ActivityPub.{Actor, Relay}
@@ -177,6 +178,23 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
       case Todos.get_todo(uuid) do
         %Todo{} = todo ->
           {:commit, todo}
+
+        nil ->
+          {:ignore, nil}
+      end
+    end)
+  end
+
+  @doc """
+  Gets a conversation participant by it's ID, with all associations loaded.
+  """
+  @spec get_conversation_by_id_with_preload(String.t()) ::
+          {:commit, Todo.t()} | {:ignore, nil}
+  def get_conversation_by_id_with_preload(id) do
+    Cachex.fetch(@cache, "conversation_participant_" <> id, fn "conversation_participant_" <> id ->
+      case Conversations.get_conversation_participant(id) do
+        %Conversation{} = conversation ->
+          {:commit, conversation}
 
         nil ->
           {:ignore, nil}

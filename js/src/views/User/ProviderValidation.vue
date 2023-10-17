@@ -37,22 +37,23 @@ const {
   { id: string; email: string; isLoggedIn: boolean; role: ICurrentUserRole }
 >(UPDATE_CURRENT_USER_CLIENT);
 
-const { onResult: onLoggedUserResult, load: loadUser } = useLazyQuery<{
+const { load: loadUser } = useLazyQuery<{
   loggedUser: IUser;
 }>(LOGGED_USER);
 
 onUpdateCurrentUserClientDone(async () => {
-  loadUser();
-});
-
-onLoggedUserResult(async (result) => {
-  if (result.loading) return;
-  const loggedUser = result.data.loggedUser;
-  if (loggedUser.defaultActor) {
-    await changeIdentity(loggedUser.defaultActor);
-    await router.push({ name: RouteName.HOME });
-  } else {
-    // No need to push to REGISTER_PROFILE, the navbar will do it for us
+  try {
+    const result = await loadUser();
+    if (!result) return;
+    const loggedUser = result.loggedUser;
+    if (loggedUser.defaultActor) {
+      await changeIdentity(loggedUser.defaultActor);
+      await router.push({ name: RouteName.HOME });
+    } else {
+      // No need to push to REGISTER_PROFILE, the navbar will do it for us
+    }
+  } catch (e) {
+    console.error(e);
   }
 });
 

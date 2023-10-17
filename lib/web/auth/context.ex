@@ -44,7 +44,7 @@ defmodule Mobilizon.Web.Auth.Context do
 
     context = if is_nil(user_agent), do: context, else: Map.put(context, :user_agent, user_agent)
 
-    put_private(conn, :absinthe, %{context: context})
+    Absinthe.Plug.put_options(conn, context: context)
   end
 
   defp set_user_context({conn, context}, %User{id: user_id, email: user_email} = user) do

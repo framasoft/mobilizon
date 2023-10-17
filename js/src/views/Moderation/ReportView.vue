@@ -257,25 +257,65 @@
       <h2 class="mb-1">{{ t("Reported content") }}</h2>
       <ul v-for="comment in report.comments" :key="comment.id">
         <li>
-          <i18n-t keypath="Comment under event {eventTitle}" tag="p">
-            <template #eventTitle>
-              <router-link
-                :to="{
-                  name: RouteName.EVENT,
-                  params: { uuid: comment.event?.uuid },
-                }"
-              >
-                <b>{{ comment.event?.title }}</b>
-              </router-link>
-            </template>
-          </i18n-t>
-          <EventComment
-            :root-comment="true"
-            :comment="comment"
-            :event="comment.event as IEvent"
-            :current-actor="currentActor as IPerson"
-            :readOnly="true"
-          />
+          <template v-if="comment.conversation && comment.event">
+            <i18n-t keypath="Comment from an event announcement" tag="p">
+              <template #eventTitle>
+                <router-link
+                  :to="{
+                    name: RouteName.EVENT,
+                    params: { uuid: comment.event?.uuid },
+                  }"
+                >
+                  <b>{{ comment.event?.title }}</b>
+                </router-link>
+              </template>
+            </i18n-t>
+            <DiscussionComment
+              :modelValue="comment"
+              :current-actor="currentActor as IPerson"
+              :readOnly="true"
+            />
+          </template>
+          <template v-else-if="comment.conversation">
+            <i18n-t keypath="Comment from a private conversation" tag="p">
+              <template #eventTitle>
+                <router-link
+                  :to="{
+                    name: RouteName.EVENT,
+                    params: { uuid: comment.event?.uuid },
+                  }"
+                >
+                  <b>{{ comment.event?.title }}</b>
+                </router-link>
+              </template>
+            </i18n-t>
+            <DiscussionComment
+              :modelValue="comment"
+              :current-actor="currentActor as IPerson"
+              :readOnly="true"
+            />
+          </template>
+          <template v-else>
+            <i18n-t keypath="Comment under event {eventTitle}" tag="p">
+              <template #eventTitle>
+                <router-link
+                  :to="{
+                    name: RouteName.EVENT,
+                    params: { uuid: comment.event?.uuid },
+                  }"
+                >
+                  <b>{{ comment.event?.title }}</b>
+                </router-link>
+              </template>
+            </i18n-t>
+            <EventComment
+              :root-comment="true"
+              :comment="comment"
+              :event="comment.event as IEvent"
+              :current-actor="currentActor as IPerson"
+              :readOnly="true"
+            />
+          </template>
           <o-button
             v-if="!comment.deletedAt"
             variant="danger"
@@ -389,10 +429,10 @@ import { useFeatures } from "@/composition/apollo/config";
 import { IEvent } from "@/types/event.model";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import EventComment from "@/components/Comment/EventComment.vue";
+import DiscussionComment from "@/components/Discussion/DiscussionComment.vue";
 import { SUSPEND_PROFILE } from "@/graphql/actor";
 import { GET_USER, SUSPEND_USER } from "@/graphql/user";
 import { IUser } from "@/types/current-user.model";
-import { waitApolloQuery } from "@/vue-apollo";
 
 const router = useRouter();
 
@@ -721,7 +761,10 @@ const { mutate: doSuspendUser, onDone: onSuspendUserDone } = useMutation<
   { userId: string }
 >(SUSPEND_USER);
 
-const userLazyQuery = useLazyQuery<{ user: IUser }, { id: string }>(GET_USER);
+const { load: loadUserLazyQuery } = useLazyQuery<
+  { user: IUser },
+  { id: string }
+>(GET_USER);
 
 const suspendProfile = async (actorId: string): Promise<void> => {
   dialog?.confirm({
@@ -761,15 +804,13 @@ const cachedReportedUser = ref<IUser | undefined>();
 const suspendUser = async (user: IUser): Promise<void> => {
   try {
     if (!cachedReportedUser.value) {
-      userLazyQuery.load(GET_USER, { id: user.id });
-
-      const userLazyQueryResult = await waitApolloQuery<
-        { user: IUser },
-        { id: string }
-      >(userLazyQuery);
-      console.debug("data", userLazyQueryResult);
-
-      cachedReportedUser.value = userLazyQueryResult.data.user;
+      try {
+        const result = await loadUserLazyQuery(GET_USER, { id: user.id });
+        if (!result) return;
+        cachedReportedUser.value = result.user;
+      } catch (e) {
+        return;
+      }
     }
 
     dialog?.confirm({

@@ -2,9 +2,12 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @moduledoc """
   Handles the participation-related GraphQL calls.
   """
+  # alias Mobilizon.Conversations.ConversationParticipant
   alias Mobilizon.{Actors, Config, Crypto, Events}
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Conversations.{Conversation, ConversationView}
   alias Mobilizon.Events.{Event, Participant}
+  alias Mobilizon.GraphQL.API.Comments
   alias Mobilizon.GraphQL.API.Participations
   alias Mobilizon.Service.Export.Participants.{CSV, ODS, PDF}
   alias Mobilizon.Users.User
@@ -345,6 +348,60 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   end
 
   def export_event_participants(_, _, _), do: {:error, :unauthorized}
+
+  def send_private_messages_to_participants(
+        _parent,
+        %{roles: roles, event_id: event_id, actor_id: actor_id} =
+          args,
+        %{
+          context: %{
+            current_user: %User{locale: _locale},
+            current_actor: %Actor{id: current_actor_id}
+          }
+        }
+      ) do
+    participant_actors =
+      event_id
+      |> Events.list_all_participants_for_event(roles)
+      |> Enum.map(& &1.actor)
+
+    mentions =
+      participant_actors
+      |> Enum.map(& &1.id)
+      |> Enum.uniq()
+      |> Enum.map(&%{actor_id: &1, event_id: event_id})
+
+    args =
+      Map.merge(args, %{
+        mentions: mentions,
+        visibility: :private
+      })
+
+    with {:member, true} <-
+           {:member,
+            current_actor_id == actor_id or Actors.is_member?(current_actor_id, actor_id)},
+         {:ok, _activity, %Conversation{} = conversation} <- Comments.create_conversation(args) do
+      {:ok, conversation_to_view(conversation, Actors.get_actor(actor_id))}
+    else
+      {:member, false} ->
+        {:error, :unauthorized}
+
+      {:error, err} ->
+        {:error, err}
+    end
+  end
+
+  def send_private_messages_to_participants(_parent, _args, _resolution),
+    do: {:error, :unauthorized}
+
+  defp conversation_to_view(%Conversation{} = conversation, %Actor{} = actor) do
+    value =
+      conversation
+      |> Map.from_struct()
+      |> Map.put(:actor, actor)
+
+    struct(ConversationView, value)
+  end
 
   @spec valid_email?(String.t() | nil) :: boolean
   defp valid_email?(email) when is_nil(email), do: false

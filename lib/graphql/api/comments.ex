@@ -4,7 +4,8 @@ defmodule Mobilizon.GraphQL.API.Comments do
   """
 
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Discussions.Comment
+  alias Mobilizon.Conversations.Conversation
+  alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity}
   alias Mobilizon.GraphQL.API.Utils
 
@@ -48,6 +49,22 @@ defmodule Mobilizon.GraphQL.API.Comments do
 
     Actions.Create.create(
       :discussion,
+      args,
+      true
+    )
+  end
+
+  @doc """
+  Creates a conversation (or reply to a conversation)
+  """
+  @spec create_conversation(map()) ::
+          {:ok, Activity.t(), Conversation.t()}
+          | {:error, :entity_tombstoned | atom | Ecto.Changeset.t()}
+  def create_conversation(args) do
+    args = extract_pictures_from_comment_body(args)
+
+    Actions.Create.create(
+      :conversation,
       args,
       true
     )

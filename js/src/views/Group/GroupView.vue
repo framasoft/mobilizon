@@ -44,9 +44,9 @@
           <div class="flex flex-wrap justify-center flex-col md:flex-row">
             <div
               class="flex flex-col items-center flex-1 m-0"
-              v-if="isCurrentActorAGroupMember && !previewPublic"
+              v-if="isCurrentActorAGroupMember && !previewPublic && members"
             >
-              <div class="flex gap-1">
+              <div class="flex">
                 <figure
                   :title="
                     t(`{'@'}{username} ({role})`, {
@@ -54,11 +54,12 @@
                       role: member.role,
                     })
                   "
-                  v-for="member in members"
+                  v-for="member in members.elements"
                   :key="member.actor.id"
+                  class="-mr-3"
                 >
                   <img
-                    class="rounded-full"
+                    class="rounded-full h-8"
                     :src="member.actor.avatar.url"
                     v-if="member.actor.avatar"
                     alt=""
@@ -698,6 +699,7 @@ import Events from "@/components/Group/Sections/EventsSection.vue";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useGroupResourcesList } from "@/composition/apollo/resources";
+import { useGroupMembers } from "@/composition/apollo/members";
 
 const props = defineProps<{
   preferredUsername: string;
@@ -1050,18 +1052,18 @@ const isCurrentActorOnADifferentDomainThanGroup = computed((): boolean => {
   return group.value?.domain !== null;
 });
 
-const members = computed((): IMember[] => {
-  return (
-    (group.value?.members?.elements ?? []).filter(
-      (member: IMember) =>
-        ![
-          MemberRole.INVITED,
-          MemberRole.REJECTED,
-          MemberRole.NOT_APPROVED,
-        ].includes(member.role)
-    ) ?? []
-  );
-});
+// const members = computed((): IMember[] => {
+//   return (
+//     (group.value?.members?.elements ?? []).filter(
+//       (member: IMember) =>
+//         ![
+//           MemberRole.INVITED,
+//           MemberRole.REJECTED,
+//           MemberRole.NOT_APPROVED,
+//         ].includes(member.role)
+//     ) ?? []
+//   );
+// });
 
 const physicalAddress = computed((): Address | null => {
   if (!group.value?.physicalAddress) return null;
@@ -1178,6 +1180,10 @@ const hasCurrentActorThisRole = (givenRole: string | string[]): boolean => {
     roles.includes(personMemberships.value?.elements[0].role)
   );
 };
+
+const { members } = useGroupMembers(preferredUsername, {
+  enabled: computed(() => isCurrentActorAGroupMember.value),
+});
 
 watch(isCurrentActorAGroupMember, () => {
   refetchGroup();

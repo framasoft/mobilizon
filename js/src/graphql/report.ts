@@ -85,6 +85,12 @@ const REPORT_FRAGMENT = gql`
         uuid
         title
       }
+      conversation {
+        id
+        participants {
+          id
+        }
+      }
     }
     notes {
       id

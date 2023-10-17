@@ -1,6 +1,7 @@
 import { IPerson, Person } from "@/types/actor";
 import type { IEvent } from "@/types/event.model";
 import { EventModel } from "@/types/event.model";
+import { IConversation } from "./conversation";
 
 export interface IComment {
   id?: string;
@@ -20,6 +21,7 @@ export interface IComment {
   publishedAt?: string;
   isAnnouncement: boolean;
   language?: string;
+  conversation?: IConversation;
 }
 
 export class CommentModel implements IComment {

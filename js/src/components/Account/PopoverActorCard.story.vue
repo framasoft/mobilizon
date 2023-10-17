@@ -49,7 +49,7 @@ const group = {
   domain: "mobilizon.fr",
   avatar: {
     ...baseActorAvatar,
-    url: "https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/399/original/aa56a445efb72803.jpg",
+    url: "https://stockage.framapiaf.org/framapiaf/accounts/avatars/000/000/399/original/52b08a3e80b43d40.jpg",
   },
 };
 

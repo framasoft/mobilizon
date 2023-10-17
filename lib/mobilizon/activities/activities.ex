@@ -17,10 +17,24 @@ defmodule Mobilizon.Activities do
     very_high: 50
   )
 
-  @activity_types ["event", "post", "discussion", "resource", "group", "member", "comment"]
+  @activity_types [
+    "event",
+    "post",
+    "conversation",
+    "discussion",
+    "resource",
+    "group",
+    "member",
+    "comment"
+  ]
   @event_activity_subjects ["event_created", "event_updated", "event_deleted", "comment_posted"]
   @participant_activity_subjects ["event_new_participation"]
   @post_activity_subjects ["post_created", "post_updated", "post_deleted"]
+  @conversation_activity_subjects [
+    "conversation_created",
+    "conversation_replied",
+    "conversation_event_announcement"
+  ]
   @discussion_activity_subjects [
     "discussion_created",
     "discussion_replied",
@@ -49,6 +63,7 @@ defmodule Mobilizon.Activities do
   @settings_activity_subjects ["group_created", "group_updated"]
 
   @subjects @event_activity_subjects ++
+              @conversation_activity_subjects ++
               @participant_activity_subjects ++
               @post_activity_subjects ++
               @discussion_activity_subjects ++
@@ -61,6 +76,7 @@ defmodule Mobilizon.Activities do
     "actor",
     "post",
     "discussion",
+    "conversation",
     "resource",
     "member",
     "group",

@@ -122,8 +122,8 @@ const events = computed(
   () => eventsResult.value?.searchEvents ?? { elements: [], total: 0 }
 );
 
-onMounted(() => {
-  load();
+onMounted(async () => {
+  await load();
 });
 
 const loading = computed(() => props.doingGeoloc || loadingEvents.value);

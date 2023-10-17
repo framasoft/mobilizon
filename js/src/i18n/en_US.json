@@ -1610,5 +1610,20 @@
   "External registration": "External registration",
   "I want to manage the registration with an external provider": "I want to manage the registration with an external provider",
   "External provider URL": "External provider URL",
-  "Members will also access private sections like discussions, resources and restricted posts.": "Members will also access private sections like discussions, resources and restricted posts."
+  "Members will also access private sections like discussions, resources and restricted posts.": "Members will also access private sections like discussions, resources and restricted posts.",
+  "With unknown participants": "With unknown participants",
+  "With {participants}": "With {participants}",
+  "Conversations": "Conversations",
+  "New private message": "New private message",
+  "There's no conversations yet": "There's no conversations yet",
+  "Open conversations": "Open conversations",
+  "List of conversations": "List of conversations",
+  "Conversation with {participants}": "Conversation with {participants}",
+  "Delete this conversation": "Delete this conversation",
+  "Are you sure you want to delete this entire conversation?": "Are you sure you want to delete this entire conversation?",
+  "This is a announcement from the organizers of event {event}. You can't reply to it, but you can send a private message to event organizers.": "This is a announcement from the organizers of event {event}. You can't reply to it, but you can send a private message to event organizers.",
+  "You have access to this conversation as a member of the {group} group": "You have access to this conversation as a member of the {group} group",
+  "Comment from an event announcement": "Comment from an event announcement",
+  "Comment from a private conversation": "Comment from a private conversation",
+  "I've been mentionned in a conversation": "I've been mentionned in a conversation"
 }

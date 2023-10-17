@@ -64,6 +64,7 @@ defmodule Mobilizon.Service.Notifier.Push do
     "member_updated" => false,
     "user_email_password_updated" => false,
     "event_comment_mention" => true,
+    "conversation_mention" => true,
     "discussion_mention" => false,
     "event_new_comment" => false
   }

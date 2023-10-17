@@ -4,6 +4,7 @@ defmodule Mobilizon.Web.Cache do
   """
 
   alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.Event
   alias Mobilizon.Posts.Post
@@ -27,6 +28,10 @@ defmodule Mobilizon.Web.Cache do
   defdelegate get_todo_list_by_uuid_with_preload(uuid), to: ActivityPub
   @spec get_todo_by_uuid_with_preload(binary) :: {:commit, Todo.t()} | {:ignore, nil}
   defdelegate get_todo_by_uuid_with_preload(uuid), to: ActivityPub
+
+  @spec get_conversation_by_id_with_preload(binary) ::
+          {:commit, Conversation.t()} | {:ignore, nil}
+  defdelegate get_conversation_by_id_with_preload(uuid), to: ActivityPub
   @spec get_member_by_uuid_with_preload(binary) :: {:commit, Member.t()} | {:ignore, nil}
   defdelegate get_member_by_uuid_with_preload(uuid), to: ActivityPub
   @spec get_post_by_slug_with_preload(binary) :: {:commit, Post.t()} | {:ignore, nil}

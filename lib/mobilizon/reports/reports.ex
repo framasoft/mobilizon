@@ -21,7 +21,14 @@ defmodule Mobilizon.Reports do
   def get_report(id) do
     Report
     |> Repo.get(id)
-    |> Repo.preload([:reported, :reporter, :manager, :events, :comments, :notes])
+    |> Repo.preload([
+      :reported,
+      :reporter,
+      :manager,
+      :events,
+      :notes,
+      comments: [conversation: [:participants]]
+    ])
   end
 
   @doc """

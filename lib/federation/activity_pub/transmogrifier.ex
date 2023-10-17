@@ -68,23 +68,25 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   def handle_incoming(%{"type" => "Create", "object" => %{"type" => "Note"} = object}) do
     Logger.info("Handle incoming to create notes")
 
-    case Converter.Comment.as_to_model_data(object) do
-      %{visibility: visibility, event_id: event_id}
-      when visibility != :public and event_id != nil ->
-        Logger.info("Tried to reply to an event with a private comment - ignore")
-        :error
+    case Discussions.get_comment_from_url_with_preload(object["id"]) do
+      {:error, :comment_not_found} ->
+        case Converter.Comment.as_to_model_data(object) do
+          %{visibility: visibility} = object_data
+          when visibility === :private ->
+            Actions.Create.create(:conversation, object_data, false)
 
-      object_data when is_map(object_data) ->
-        case Discussions.get_comment_from_url_with_preload(object_data.url) do
-          {:error, :comment_not_found} ->
-            object_data
-            |> transform_object_data_for_discussion()
-            |> save_comment_or_discussion()
-
-          {:ok, %Comment{} = comment} ->
-            # Object already exists
-            {:ok, nil, comment}
+          object_data when is_map(object_data) ->
+            case Discussions.get_comment_from_url_with_preload(object_data.url) do
+              {:error, :comment_not_found} ->
+                object_data
+                |> transform_object_data_for_discussion()
+                |> save_comment_or_discussion()
+            end
         end
+
+      {:ok, %Comment{} = comment} ->
+        # Object already exists
+        {:ok, nil, comment}
 
       {:error, err} ->
         {:error, err}

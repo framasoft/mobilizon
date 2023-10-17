@@ -17,6 +17,7 @@ export const COMMENT_FIELDS_FRAGMENT = gql`
     insertedAt
     updatedAt
     deletedAt
+    publishedAt
     isAnnouncement
     language
   }

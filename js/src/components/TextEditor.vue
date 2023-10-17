@@ -273,7 +273,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 const props = withDefaults(
   defineProps<{
     modelValue: string;
-    mode?: string;
+    mode?: "description" | "comment" | "basic";
     maxSize?: number;
     ariaLabel?: string;
     currentActor: IPerson;
@@ -304,12 +304,6 @@ const isShortMode = computed((): boolean => {
 const isBasicMode = computed((): boolean => {
   return props.mode === "basic";
 });
-
-// const insertMention = (obj: { range: any; attrs: any }) => {
-//   console.debug("initialize Mention");
-// };
-
-// const observer = ref<MutationObserver | null>(null);
 
 const transformPastedHTML = (html: string): string => {
   // When using comment mode, limit to acceptable tags

@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1, dataloader: 2]
 
   alias Mobilizon.{Actors, Addresses, Discussions}
-  alias Mobilizon.GraphQL.Resolvers.{Event, Media, Tag}
+  alias Mobilizon.GraphQL.Resolvers.{Conversation, Event, Media, Tag}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.AddressType)
@@ -113,6 +113,18 @@ defmodule Mobilizon.GraphQL.Schema.EventType do
     field(:options, :event_options, description: "The event options")
     field(:metadata, list_of(:event_metadata), description: "A key-value list of metadata")
     field(:language, :string, description: "The event language")
+
+    field(:conversations, :paginated_conversation_list,
+      description: "The list of conversations started on this event"
+    ) do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the paginated conversation list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of conversations per page")
+      resolve(&Conversation.find_conversations_for_event/3)
+    end
   end
 
   @desc "The list of visibility options for an event"

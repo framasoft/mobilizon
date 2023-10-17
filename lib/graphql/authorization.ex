@@ -16,11 +16,13 @@ defmodule Mobilizon.GraphQL.Authorization do
   @impl true
   def has_user_access?(%User{}, _scope, _rule), do: true
 
+  @impl true
   def has_user_access?(%ApplicationToken{scope: scope} = _current_app_token, _struct, rule)
       when rule != :forbid_app_access do
     AppScope.has_app_access?(scope, rule)
   end
 
+  @impl true
   def has_user_access?(_current_user, _scoped_struct, _rule), do: false
 
   @impl true

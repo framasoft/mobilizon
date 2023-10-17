@@ -85,6 +85,12 @@ defmodule Mobilizon.Web.PageController do
     render_or_error(conn, &checks?/3, status, :todo, todo)
   end
 
+  @spec conversation(Plug.Conn.t(), map()) :: Plug.Conn.t() | {:error, :not_found}
+  def conversation(conn, %{"id" => slug}) do
+    {status, conversation} = Cache.get_conversation_by_id_with_preload(slug)
+    render_or_error(conn, &checks?/3, status, :conversation, conversation)
+  end
+
   @typep collections :: :resources | :posts | :discussions | :events | :todos
 
   @spec resources(Plug.Conn.t(), map()) :: Plug.Conn.t()

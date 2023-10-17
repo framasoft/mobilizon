@@ -2,28 +2,29 @@ import { SEARCH_PERSONS } from "@/graphql/search";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 import MentionList from "./MentionList.vue";
-import { apolloClient, waitApolloQuery } from "@/vue-apollo";
+import { apolloClient } from "@/vue-apollo";
 import { IPerson } from "@/types/actor";
 import pDebounce from "p-debounce";
 import { MentionOptions } from "@tiptap/extension-mention";
 import { Editor } from "@tiptap/core";
-import { provideApolloClient, useQuery } from "@vue/apollo-composable";
+import { provideApolloClient, useLazyQuery } from "@vue/apollo-composable";
 import { Paginate } from "@/types/paginate";
 
 const fetchItems = async (query: string): Promise<IPerson[]> => {
   try {
     if (query === "") return [];
-    const res = await waitApolloQuery(
-      provideApolloClient(apolloClient)(() => {
-        return useQuery<
-          { searchPersons: Paginate<IPerson> },
-          { searchText: string }
-        >(SEARCH_PERSONS, () => ({
-          searchText: query,
-        }));
-      })
-    );
-    return res.data.searchPersons.elements;
+    const res = await provideApolloClient(apolloClient)(async () => {
+      const { load: loadSearchPersonsQuery } = useLazyQuery<
+        { searchPersons: Paginate<IPerson> },
+        { searchText: string }
+      >(SEARCH_PERSONS);
+
+      return await loadSearchPersonsQuery(SEARCH_PERSONS, {
+        searchText: query,
+      });
+    });
+    if (!res) return [];
+    return res.searchPersons.elements;
   } catch (e) {
     console.error(e);
     return [];

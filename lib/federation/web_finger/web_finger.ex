@@ -242,12 +242,15 @@ defmodule Mobilizon.Federation.WebFinger do
   @spec domain_from_federated_actor(String.t()) :: {:ok, String.t()} | {:error, :host_not_found}
   defp domain_from_federated_actor(actor) do
     case String.split(actor, "@") do
+      [_name, ""] ->
+        {:error, :host_not_found}
+
       [_name, domain] ->
         {:ok, domain}
 
       _e ->
         host = URI.parse(actor).host
-        if is_nil(host), do: {:error, :host_not_found}, else: {:ok, host}
+        if is_nil(host) or host == "", do: {:error, :host_not_found}, else: {:ok, host}
     end
   end
 

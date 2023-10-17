@@ -13,7 +13,24 @@
       >
         <MobilizonLogo class="w-40" />
       </router-link>
-      <div class="flex items-center md:order-2 ml-auto" v-if="currentActor?.id">
+      <div
+        class="flex items-center md:order-2 ml-auto gap-2"
+        v-if="currentActor?.id"
+      >
+        <router-link
+          :to="{ name: RouteName.CONVERSATION_LIST }"
+          class="flex sm:mr-3 text-sm md:mr-0 relative"
+          id="conversations-menu-button"
+          aria-expanded="false"
+        >
+          <span class="sr-only">{{ t("Open conversations") }}</span>
+          <Inbox :size="32" />
+          <span
+            v-show="unreadConversationsCount > 0"
+            class="absolute bottom-0.5 -left-2 bg-primary rounded-full inline-block h-3 w-3 mx-2"
+          >
+          </span>
+        </router-link>
         <o-dropdown position="bottom-left">
           <template #trigger>
             <button
@@ -202,22 +219,28 @@
 import MobilizonLogo from "@/components/MobilizonLogo.vue";
 import { ICurrentUserRole } from "@/types/enums";
 import { logout } from "../utils/auth";
-import { displayName } from "../types/actor";
+import { IPerson, displayName } from "../types/actor";
 import RouteName from "../router/name";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import Inbox from "vue-material-design-icons/Inbox.vue";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import {
   useCurrentActorClient,
   useCurrentUserIdentities,
 } from "@/composition/apollo/actor";
-import { useMutation } from "@vue/apollo-composable";
+import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { UPDATE_DEFAULT_ACTOR } from "@/graphql/actor";
 import { changeIdentity } from "@/utils/identity";
 import { useRegistrationConfig } from "@/composition/apollo/config";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
+import {
+  UNREAD_ACTOR_CONVERSATIONS,
+  UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION,
+} from "@/graphql/user";
+import { ICurrentUser } from "@/types/current-user.model";
 
 const { currentUser } = useCurrentUserClient();
 const { currentActor } = useCurrentActorClient();
@@ -238,6 +261,61 @@ const canRegister = computed(() => {
 });
 
 const { t } = useI18n({ useScope: "global" });
+
+const unreadConversationsCount = computed(
+  () =>
+    unreadActorConversationsResult.value?.loggedUser.defaultActor
+      ?.unreadConversationsCount ?? 0
+);
+
+const {
+  result: unreadActorConversationsResult,
+  load: loadUnreadConversations,
+  subscribeToMore,
+} = useLazyQuery<{
+  loggedUser: Pick<ICurrentUser, "id" | "defaultActor">;
+}>(UNREAD_ACTOR_CONVERSATIONS);
+
+watch(currentActor, async (currentActorValue, previousActorValue) => {
+  if (
+    currentActorValue?.id &&
+    currentActorValue.preferredUsername !==
+      previousActorValue?.preferredUsername
+  ) {
+    await loadUnreadConversations();
+
+    subscribeToMore<
+      { personId: string },
+      { personUnreadConversationsCount: number }
+    >({
+      document: UNREAD_ACTOR_CONVERSATIONS_SUBSCRIPTION,
+      variables: {
+        personId: currentActor.value?.id as string,
+      },
+      updateQuery: (previousResult, { subscriptionData }) => {
+        console.debug(
+          "Updating actor unread conversations count query after subscribe to more update",
+          subscriptionData?.data?.personUnreadConversationsCount
+        );
+        return {
+          ...previousResult,
+          loggedUser: {
+            id: previousResult.loggedUser.id,
+            defaultActor: {
+              ...previousResult.loggedUser.defaultActor,
+              unreadConversationsCount:
+                subscriptionData?.data?.personUnreadConversationsCount ??
+                previousResult.loggedUser.defaultActor
+                  ?.unreadConversationsCount,
+            } as IPerson, // no idea why,
+          },
+        };
+      },
+    });
+  }
+});
+
+onMounted(() => {});
 
 watch(identities, () => {
   // If we don't have any identities, the user has validated their account,

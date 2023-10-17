@@ -7,6 +7,7 @@ import type { IParticipant } from "../participant.model";
 import type { IMember } from "./member.model";
 import type { IFeedToken } from "../feedtoken.model";
 import { IFollower } from "./follower.model";
+import { IConversation } from "../conversation";
 
 export interface IPerson extends IActor {
   feedTokens: IFeedToken[];
@@ -16,6 +17,8 @@ export interface IPerson extends IActor {
   follows?: Paginate<IFollower>;
   user?: ICurrentUser;
   organizedEvents?: Paginate<IEvent>;
+  conversations?: Paginate<IConversation>;
+  unreadConversationsCount?: number;
 }
 
 export class Person extends Actor implements IPerson {
@@ -28,6 +31,7 @@ export class Person extends Actor implements IPerson {
   memberships!: Paginate<IMember>;
 
   organizedEvents!: Paginate<IEvent>;
+  conversations!: Paginate<IConversation>;
 
   user!: ICurrentUser;
 

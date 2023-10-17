@@ -33,6 +33,10 @@ defmodule Mobilizon.Service.Notifier.Filter do
   defp map_activity_to_activity_setting(%Activity{subject: :event_comment_mention}),
     do: "event_comment_mention"
 
+  defp map_activity_to_activity_setting(%Activity{subject: subject})
+       when subject in [:conversation_mention, :conversation_created, :conversation_replied],
+       do: to_string(subject)
+
   defp map_activity_to_activity_setting(%Activity{subject: :discussion_mention}),
     do: "discussion_mention"
 

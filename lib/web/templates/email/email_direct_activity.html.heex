@@ -167,6 +167,10 @@
                                   <%= render("activity/_discussion_activity_item.html",
                                     activity: activity
                                   ) %>
+                                <% :conversation -> %>
+                                  <%= render("activity/_conversation_activity_item.html",
+                                    activity: activity
+                                  ) %>
                                 <% :event -> %>
                                   <%= render("activity/_event_activity_item.html",
                                     activity: activity

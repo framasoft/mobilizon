@@ -32,8 +32,8 @@ defmodule Mobilizon.Mention do
 
   @doc false
   @spec changeset(t | Ecto.Schema.t(), map) :: Ecto.Changeset.t()
-  def changeset(event, attrs) do
-    event
+  def changeset(mention, attrs) do
+    mention
     |> cast(attrs, @attrs)
     # TODO: Enforce having either event_id or comment_id
     |> validate_required(@required_attrs)

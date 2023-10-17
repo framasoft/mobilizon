@@ -11,6 +11,7 @@ import { EventOptions } from "./event-options.model";
 import type { IEventOptions } from "./event-options.model";
 import { EventJoinOptions, EventStatus, EventVisibility } from "./enums";
 import { IEventMetadata, IEventMetadataDescription } from "./event-metadata";
+import { IConversation } from "./conversation";
 
 export interface IEventCardOptions {
   hideDate?: boolean;
@@ -85,6 +86,7 @@ export interface IEvent {
 
   relatedEvents: IEvent[];
   comments: IComment[];
+  conversations: Paginate<IConversation>;
 
   onlineAddress?: string;
   phoneAddress?: string;
@@ -160,6 +162,8 @@ export class EventModel implements IEvent {
   relatedEvents: IEvent[] = [];
 
   comments: IComment[] = [];
+
+  conversations!: Paginate<IConversation>;
 
   attributedTo?: IGroup = new Group();
 

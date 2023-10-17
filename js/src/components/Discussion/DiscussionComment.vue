@@ -1,5 +1,7 @@
 <template>
-  <article class="flex gap-2 bg-white dark:bg-transparent">
+  <article
+    class="flex gap-2 bg-white dark:bg-transparent border rounded-md p-2 mt-2"
+  >
     <div class="">
       <figure class="" v-if="comment.actor && comment.actor.avatar">
         <img
@@ -29,12 +31,12 @@
           v-if="
             comment.actor &&
             !comment.deletedAt &&
-            comment.actor.id === currentActor?.id
+            (comment.actor.id === currentActor.id || canReport)
           "
         >
           <o-dropdown aria-role="list" position="bottom-left">
             <template #trigger>
-              <o-icon role="button" icon="dots-horizontal" />
+              <DotsHorizontal class="cursor-pointer" />
             </template>
 
             <o-dropdown-item
@@ -53,10 +55,14 @@
               <o-icon icon="delete"></o-icon>
               {{ t("Delete") }}
             </o-dropdown-item>
-            <!-- <o-dropdown-item aria-role="listitem" @click="isReportModalActive = true">
+            <o-dropdown-item
+              v-if="canReport"
+              aria-role="listitem"
+              @click="isReportModalActive = true"
+            >
               <o-icon icon="flag" />
               {{ t("Report") }}
-            </o-dropdown-item> -->
+            </o-dropdown-item>
           </o-dropdown>
         </span>
         <div class="self-center">
@@ -124,6 +130,20 @@
       </form>
     </div>
   </article>
+  <o-modal
+    v-model:active="isReportModalActive"
+    has-modal-card
+    ref="reportModal"
+    :close-button-aria-label="t('Close')"
+    :autoFocus="false"
+    :trapFocus="false"
+  >
+    <ReportModal
+      :on-confirm="reportComment"
+      :title="t('Report this comment')"
+      :outside-domain="comment.actor?.domain"
+    />
+  </o-modal>
 </template>
 <script lang="ts" setup>
 import { formatDistanceToNow } from "date-fns";
@@ -132,17 +152,26 @@ import { IPerson, usernameWithDomain } from "../../types/actor";
 import { computed, defineAsyncComponent, inject, ref } from "vue";
 import { formatDateTimeString } from "@/filters/datetime";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
+import DotsHorizontal from "vue-material-design-icons/DotsHorizontal.vue";
 import type { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
+import { useCreateReport } from "@/composition/apollo/report";
+import { Snackbar } from "@/plugins/snackbar";
+import { useProgrammatic } from "@oruga-ui/oruga-next";
+import ReportModal from "@/components/Report/ReportModal.vue";
 
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
 );
 
-const props = defineProps<{
-  modelValue: IComment;
-  currentActor: IPerson;
-}>();
+const props = withDefaults(
+  defineProps<{
+    modelValue: IComment;
+    currentActor: IPerson;
+    canReport: boolean;
+  }>(),
+  { canReport: false }
+);
 
 const emit = defineEmits(["update:modelValue", "deleteComment"]);
 
@@ -156,7 +185,7 @@ const updatedComment = ref("");
 
 const dateFnsLocale = inject<Locale>("dateFnsLocale");
 
-// isReportModalActive: boolean = false;
+const isReportModalActive = ref(false);
 
 const toggleEditMode = (): void => {
   updatedComment.value = comment.value.text;
@@ -170,6 +199,51 @@ const updateComment = (): void => {
   });
   toggleEditMode();
 };
+
+const {
+  mutate: createReportMutation,
+  onError: onCreateReportError,
+  onDone: oneCreateReportDone,
+} = useCreateReport();
+
+const reportComment = async (
+  content: string,
+  forward: boolean
+): Promise<void> => {
+  if (!props.modelValue.actor) return;
+  createReportMutation({
+    reportedId: props.modelValue.actor?.id ?? "",
+    commentsIds: [props.modelValue.id ?? ""],
+    content,
+    forward,
+  });
+};
+
+const snackbar = inject<Snackbar>("snackbar");
+const { oruga } = useProgrammatic();
+
+onCreateReportError((e) => {
+  isReportModalActive.value = false;
+  if (e.message) {
+    snackbar?.open({
+      message: e.message,
+      variant: "danger",
+      position: "bottom",
+    });
+  }
+});
+
+oneCreateReportDone(() => {
+  isReportModalActive.value = false;
+  oruga.notification.open({
+    message: t("Comment from {'@'}{username} reported", {
+      username: props.modelValue.actor?.preferredUsername,
+    }),
+    variant: "success",
+    position: "bottom-right",
+    duration: 5000,
+  });
+});
 </script>
 <style lang="scss" scoped>
 @use "@/styles/_mixins" as *;

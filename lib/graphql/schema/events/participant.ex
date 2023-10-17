@@ -159,5 +159,34 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
 
       resolve(&Participant.export_event_participants/3)
     end
+
+    @desc "Send private messages to participants"
+    field :send_event_private_message, :conversation do
+      arg(:event_id, non_null(:id),
+        description: "The ID from the event for which to export participants"
+      )
+
+      arg(:roles, list_of(:participant_role_enum),
+        default_value: [],
+        description: "The participant roles to include"
+      )
+
+      arg(:text, non_null(:string), description: "The private message body")
+
+      arg(:actor_id, non_null(:id),
+        description: "The profile ID to create the private message as"
+      )
+
+      arg(:language, :string, description: "The private message language", default_value: "und")
+
+      middleware(Rajska.QueryAuthorization,
+        permit: :user,
+        scope: Mobilizon.Events.Event,
+        rule: :"write:event:participants:private_message",
+        args: %{id: :event_id}
+      )
+
+      resolve(&Participant.send_private_messages_to_participants/3)
+    end
   end
 end

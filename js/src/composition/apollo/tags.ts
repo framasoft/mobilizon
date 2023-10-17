@@ -1,18 +1,22 @@
 import { FILTER_TAGS } from "@/graphql/tags";
 import { ITag } from "@/types/tag.model";
-import { apolloClient, waitApolloQuery } from "@/vue-apollo";
-import { provideApolloClient, useQuery } from "@vue/apollo-composable";
+import { apolloClient } from "@/vue-apollo";
+import { provideApolloClient, useLazyQuery } from "@vue/apollo-composable";
 
 export async function fetchTags(text: string): Promise<ITag[]> {
   try {
-    const res = await waitApolloQuery(
-      provideApolloClient(apolloClient)(() =>
-        useQuery<{ tags: ITag[] }, { filter: string }>(FILTER_TAGS, {
-          filter: text,
-        })
-      )
+    const { load: loadFetchTagsQuery } = useLazyQuery<
+      { tags: ITag[] },
+      { filter: string }
+    >(FILTER_TAGS);
+
+    const res = await provideApolloClient(apolloClient)(() =>
+      loadFetchTagsQuery(FILTER_TAGS, {
+        filter: text,
+      })
     );
-    return res.data.tags;
+    if (!res) return [];
+    return res.tags;
   } catch (e) {
     console.error(e);
     return [];

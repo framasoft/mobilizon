@@ -8,6 +8,7 @@ import { PictureInformation } from "./picture";
 import { IMember } from "./actor/member.model";
 import { IFeedToken } from "./feedtoken.model";
 import { IApplicationToken } from "./application.model";
+import { IConversation } from "./conversation";
 
 export interface ICurrentUser {
   id: string;
@@ -69,4 +70,5 @@ export interface IUser extends ICurrentUser {
   memberships: Paginate<IMember>;
   feedTokens: IFeedToken[];
   authAuthorizedApplications: IApplicationToken[];
+  conversations: Paginate<IConversation>;
 }

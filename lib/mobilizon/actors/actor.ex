@@ -10,6 +10,7 @@ defmodule Mobilizon.Actors.Actor do
   alias Mobilizon.{Actors, Addresses, Config, Crypto, Mention, Share}
   alias Mobilizon.Actors.{ActorOpenness, ActorType, ActorVisibility, Follower, Member}
   alias Mobilizon.Addresses.Address
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.{Event, FeedToken, Participant}
   alias Mobilizon.Medias.File
@@ -195,6 +196,11 @@ defmodule Mobilizon.Actors.Actor do
     has_many(:shares, Share, foreign_key: :actor_id)
     has_many(:owner_shares, Share, foreign_key: :owner_actor_id)
     many_to_many(:memberships, __MODULE__, join_through: Member)
+
+    many_to_many(:conversations, Conversation,
+      join_through: "conversation_participants",
+      join_keys: [conversation_id: :id, participant_id: :id]
+    )
 
     timestamps()
   end

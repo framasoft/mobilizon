@@ -318,17 +318,9 @@ const debounceDelay = computed(() =>
   geocodingAutocomplete.value === true ? 200 : 2000
 );
 
-const { onResult: onAddressSearchResult, load: searchAddress } = useLazyQuery<{
+const { load: searchAddress } = useLazyQuery<{
   searchAddress: IAddress[];
 }>(ADDRESS);
-
-onAddressSearchResult((result) => {
-  if (result.loading) return;
-  const { data } = result;
-  console.debug("onAddressSearchResult", data.searchAddress);
-  addressData.value = data.searchAddress;
-  isFetching.value = false;
-});
 
 const asyncData = async (query: string): Promise<void> => {
   console.debug("Finding addresses");
@@ -345,11 +337,21 @@ const asyncData = async (query: string): Promise<void> => {
 
   isFetching.value = true;
 
-  searchAddress(undefined, {
-    query,
-    locale: locale,
-    type: props.resultType,
-  });
+  try {
+    const result = await searchAddress(undefined, {
+      query,
+      locale: locale,
+      type: props.resultType,
+    });
+
+    if (!result) return;
+    console.debug("onAddressSearchResult", result.searchAddress);
+    addressData.value = result.searchAddress;
+    isFetching.value = false;
+  } catch (e) {
+    console.error(e);
+    return;
+  }
 };
 
 const selectedAddressText = computed(() => {
@@ -393,24 +395,9 @@ const locateMe = async (): Promise<void> => {
   gettingLocation.value = false;
 };
 
-const { onResult: onReverseGeocodeResult, load: loadReverseGeocode } =
-  useReverseGeocode();
+const { load: loadReverseGeocode } = useReverseGeocode();
 
-onReverseGeocodeResult((result) => {
-  if (result.loading !== false) return;
-  const { data } = result;
-  addressData.value = data.reverseGeocode;
-
-  if (addressData.value.length > 0) {
-    const foundAddress = addressData.value[0];
-    Object.assign(selected, foundAddress);
-    console.debug("reverse geocode succeded, setting new address");
-    queryTextWithDefault.value = addressFullName(foundAddress);
-    emit("update:modelValue", selected);
-  }
-});
-
-const reverseGeoCode = (e: LatLng, zoom: number) => {
+const reverseGeoCode = async (e: LatLng, zoom: number) => {
   console.debug("reverse geocode");
 
   // If the details is opened, just update coords, don't reverse geocode
@@ -423,12 +410,26 @@ const reverseGeoCode = (e: LatLng, zoom: number) => {
   // If the position has been updated through autocomplete selection, no need to geocode it!
   if (!e || checkCurrentPosition(e)) return;
 
-  loadReverseGeocode(undefined, {
-    latitude: e.lat,
-    longitude: e.lng,
-    zoom,
-    locale: locale as unknown as string,
-  });
+  try {
+    const result = await loadReverseGeocode(undefined, {
+      latitude: e.lat,
+      longitude: e.lng,
+      zoom,
+      locale: locale as unknown as string,
+    });
+    if (!result) return;
+    addressData.value = result.reverseGeocode;
+
+    if (addressData.value.length > 0) {
+      const foundAddress = addressData.value[0];
+      Object.assign(selected, foundAddress);
+      console.debug("reverse geocode succeded, setting new address");
+      queryTextWithDefault.value = addressFullName(foundAddress);
+      emit("update:modelValue", selected);
+    }
+  } catch (err) {
+    console.error("Failed to load reverse geocode", err);
+  }
 };
 
 // eslint-disable-next-line no-undef

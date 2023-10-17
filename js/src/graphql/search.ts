@@ -247,6 +247,34 @@ export const SEARCH_PERSONS = gql`
   ${ACTOR_FRAGMENT}
 `;
 
+export const SEARCH_PERSON_AND_GROUPS = gql`
+  query SearchPersonsAndGroups($searchText: String!, $page: Int, $limit: Int) {
+    searchPersons(term: $searchText, page: $page, limit: $limit) {
+      total
+      elements {
+        ...ActorFragment
+      }
+    }
+    searchGroups(term: $searchText, page: $page, limit: $limit) {
+      total
+      elements {
+        ...ActorFragment
+        banner {
+          id
+          url
+        }
+        membersCount
+        followersCount
+        physicalAddress {
+          ...AdressFragment
+        }
+      }
+    }
+  }
+  ${ADDRESS_FRAGMENT}
+  ${ACTOR_FRAGMENT}
+`;
+
 export const INTERACT = gql`
   query Interact($uri: String!) {
     interact(uri: $uri) {

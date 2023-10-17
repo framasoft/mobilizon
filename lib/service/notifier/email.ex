@@ -70,6 +70,9 @@ defmodule Mobilizon.Service.Notifier.Email do
   @always_direct_subjects [
     :participation_event_comment,
     :event_comment_mention,
+    :conversation_mention,
+    :conversation_created,
+    :conversation_replied,
     :discussion_mention,
     :event_new_comment
   ]
@@ -175,6 +178,9 @@ defmodule Mobilizon.Service.Notifier.Email do
     "member_updated" => false,
     "user_email_password_updated" => true,
     "event_comment_mention" => true,
+    "conversation_mention" => true,
+    "conversation_created" => true,
+    "conversation_replied" => true,
     "discussion_mention" => true,
     "event_new_comment" => true
   }

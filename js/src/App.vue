@@ -138,6 +138,7 @@ interval.value = window.setInterval(async () => {
 }, 60000) as unknown as number;
 
 onBeforeMount(async () => {
+  console.debug("Before mount App");
   if (initializeCurrentUser()) {
     try {
       await initializeCurrentActor();
@@ -150,6 +151,8 @@ onBeforeMount(async () => {
             userAlreadyActivated: "true",
           },
         });
+      } else {
+        throw err;
       }
     }
   }
@@ -202,20 +205,24 @@ onUnmounted(() => {
 const { mutate: updateCurrentUser } = useMutation(UPDATE_CURRENT_USER_CLIENT);
 
 const initializeCurrentUser = () => {
+  console.debug("Initializing current user");
   const userId = localStorage.getItem(AUTH_USER_ID);
   const userEmail = localStorage.getItem(AUTH_USER_EMAIL);
   const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
   const role = localStorage.getItem(AUTH_USER_ROLE);
 
   if (userId && userEmail && accessToken && role) {
-    updateCurrentUser({
+    const userData = {
       id: userId,
       email: userEmail,
       isLoggedIn: true,
       role,
-    });
+    };
+    updateCurrentUser(userData);
+    console.debug("Initialized current user", userData);
     return true;
   }
+  console.debug("Failed to initialize current user");
   return false;
 };
 
