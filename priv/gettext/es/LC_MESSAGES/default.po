@@ -3,8 +3,9 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-09-24 14:39+0000\n"
-"PO-Revision-Date: 2023-09-06 12:15+0000\n"
-"Last-Translator: Thomas Citharel <thomas.citharel@framasoft.org>\n"
+"PO-Revision-Date: 2023-10-22 18:27+0000\n"
+"Last-Translator: Jaime Marquínez Ferrándiz <jaime.marquinez."
+"ferrandiz@fastmail.net>\n"
 "Language-Team: Spanish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/es/>\n"
 "Language: es\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -2337,16 +2338,16 @@ msgstr ""
 "eliminado de forma irremediable."
 
 #: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "Evento"
+msgstr "Eventos"
 
 #: lib/web/templates/email/report.html.heex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flagged events"
-msgstr "Comentarios marcados"
+msgstr "Eventos marcados"
 
 #: lib/service/export/participants/common.ex:65
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Participant registration date"
-msgstr "Estado de participante"
+msgstr "Fecha de registro del participante"
