@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-10-22 08:00+0000\n"
+"PO-Revision-Date: 2023-10-22 23:11+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -1434,14 +1434,18 @@ msgid "You are already following this instance"
 msgstr "Obserwujesz już tę instancję"
 
 #: lib/graphql/resolvers/user.ex:310
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You requested again a confirmation email too soon. Please try again in a few minutes"
-msgstr "Zbyt wcześnie poprosiłeś(-aś) o nową wiadomość potwierdzającą"
+msgstr ""
+"Zbyt wcześnie poprosiłeś(-aś) o nową wiadomość potwierdzającą. Spróbuj "
+"ponownie za kilka minut"
 
 #: lib/graphql/resolvers/user.ex:341
 #, elixir-autogen, elixir-format
 msgid "You requested again a password reset email too soon. Please try again in a few minutes"
 msgstr ""
+"Zbyt wcześnie poprosiłeś(-aś) o zresetowanie hasła. Spróbuj ponownie za "
+"kilka minut"
 
 #: lib/graphql/resolvers/user.ex:368
 #, elixir-autogen, elixir-format
