@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-10-22 04:28+0000\n"
+"PO-Revision-Date: 2023-10-22 08:00+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -1421,17 +1421,17 @@ msgstr "Ta sama subskrypcja push została już zarejestrowana"
 #: lib/graphql/resolvers/admin.ex:536
 #, elixir-autogen, elixir-format
 msgid "This instance is pending follow approval"
-msgstr ""
+msgstr "Ta instancja oczekuje na zatwierdzenie obserwacji"
 
 #: lib/graphql/schema/custom/timezone.ex:23
 #, elixir-autogen, elixir-format
 msgid "Timezone ID %{timezone} is invalid"
-msgstr ""
+msgstr "Identyfikator strefy czasowej %{timezone} jest nieprawidłowy"
 
 #: lib/graphql/resolvers/admin.ex:539
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You are already following this instance"
-msgstr "Obserwujesz już tę grupę"
+msgstr "Obserwujesz już tę instancję"
 
 #: lib/graphql/resolvers/user.ex:310
 #, elixir-autogen, elixir-format, fuzzy
@@ -1447,3 +1447,5 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "The token you provided is invalid. Make sure that the URL is exactly the one provided inside the email you got."
 msgstr ""
+"Podany token jest nieprawidłowy. Upewnij się, że adres URL jest dokładnie "
+"taki sam, jak podany w otrzymanej wiadomości e-mail."
