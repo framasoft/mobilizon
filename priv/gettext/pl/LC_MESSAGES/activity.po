@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-08-08 17:29+0000\n"
+"PO-Revision-Date: 2023-10-22 04:28+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/pl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
@@ -496,9 +496,9 @@ msgstr "Profil %{profile} zatwierdził członka %{member}."
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:31
 #, elixir-autogen, elixir-format
 msgid "%{profile} joined your event %{event}."
-msgstr ""
+msgstr "Profil %{profile} dołączył do wydarzenia %{event}."
 
 #: lib/web/views/email_view.ex:45
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
-msgstr ""
+msgstr "Anonimowy profil"
