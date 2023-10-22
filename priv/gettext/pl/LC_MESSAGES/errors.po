@@ -8,7 +8,7 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2023-08-28 17:06+0000\n"
+"PO-Revision-Date: 2023-10-22 04:28+0000\n"
 "Last-Translator: Jakub Urbanowicz <tex@przeklad.pl>\n"
 "Language-Team: Polish <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/pl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.18.2\n"
+"X-Generator: Weblate 5.0.1\n"
 
 #: lib/mobilizon/discussions/discussion.ex:69
 #, elixir-autogen
@@ -1393,28 +1393,30 @@ msgstr ""
 #: lib/graphql/resolvers/user.ex:306
 #, elixir-autogen, elixir-format
 msgid "Couldn't send an email. Internal error."
-msgstr ""
+msgstr "Nie można wysłać wiadomości e-mail. Błąd wewnętrzny."
 
 #: lib/graphql/resolvers/participant.ex:286
 #, elixir-autogen, elixir-format
 msgid "Participation is already confirmed"
-msgstr ""
+msgstr "Udział jest już potwierdzony"
 
 #: lib/graphql/resolvers/participant.ex:283
 #, elixir-autogen, elixir-format
 msgid "Participation is confirmed but not approved yet by an organizer"
 msgstr ""
+"Udział jest potwierdzony, ale nie został jeszcze zatwierdzony przez "
+"organizatora"
 
 #: lib/graphql/resolvers/event.ex:287
 #: lib/graphql/resolvers/event.ex:376
 #, elixir-autogen, elixir-format
 msgid "Providing external registration is not allowed"
-msgstr ""
+msgstr "Zapewnienie zewnętrznej rejestracji nie jest dozwolone"
 
 #: lib/graphql/resolvers/push_subscription.ex:48
 #, elixir-autogen, elixir-format
 msgid "The same push subscription has already been registered"
-msgstr ""
+msgstr "Ta sama subskrypcja push została już zarejestrowana"
 
 #: lib/graphql/resolvers/admin.ex:536
 #, elixir-autogen, elixir-format
