@@ -25,7 +25,7 @@ import { IActor } from "@/types/actor";
 import { ActorType } from "@/types/enums";
 
 const avatarUrl = ref<string>(
-  "https://framapiaf.s3.framasoft.org/framapiaf/accounts/avatars/000/000/399/original/aa56a445efb72803.jpg"
+  "https://stockage.framapiaf.org/framapiaf/accounts/avatars/000/000/399/original/52b08a3e80b43d40.jpg"
 );
 
 const stateLocal = reactive<IActor>({
