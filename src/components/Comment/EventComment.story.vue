@@ -5,9 +5,9 @@
         :comment="comment"
         :event="event"
         :currentActor="baseActor"
-        @create-comment="hstEvent('Create comment', $event)"
-        @delete-comment="hstEvent('Delete comment', $event)"
-        @report-comment="hstEvent('Report comment', $event)"
+        @create-comment="logEvent('Create comment', $event)"
+        @delete-comment="logEvent('Delete comment', $event)"
+        @report-comment="logEvent('Report comment', $event)"
       />
     </Variant>
     <Variant title="Announcement">
@@ -15,9 +15,9 @@
         :comment="{ ...comment, isAnnouncement: true }"
         :event="event"
         :currentActor="baseActor"
-        @create-comment="hstEvent('Create comment', $event)"
-        @delete-comment="hstEvent('Delete comment', $event)"
-        @report-comment="hstEvent('Report comment', $event)"
+        @create-comment="logEvent('Create comment', $event)"
+        @delete-comment="logEvent('Delete comment', $event)"
+        @report-comment="logEvent('Report comment', $event)"
       />
     </Variant>
   </Story>
@@ -37,10 +37,23 @@ import { reactive } from "vue";
 import Comment from "./EventComment.vue";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
-import { hstEvent } from "histoire/client";
+import { logEvent } from "histoire/client";
+import { createMemoryHistory, createRouter } from "vue-router";
 
 function setupApp({ app }) {
   app.use(FloatingVue);
+  app.use(
+    createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        {
+          path: "/event/:uuid",
+          name: "Event",
+          component: { render: () => null },
+        },
+      ],
+    })
+  );
 }
 
 const baseActorAvatar = {
@@ -64,7 +77,7 @@ const baseActor: IPerson = {
 };
 
 const baseEvent: IEvent = {
-  uuid: "",
+  uuid: "an-uuid",
   title: "A very interesting event",
   description: "Things happen",
   beginsOn: new Date().toISOString(),

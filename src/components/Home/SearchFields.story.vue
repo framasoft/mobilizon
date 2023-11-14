@@ -4,8 +4,8 @@
       <SearchFields
         :search="''"
         :location="{}"
-        @update:location="hstEvent('update location', $event)"
-        @update:search="hstEvent('update search', $event)"
+        @update:location="logEvent('update location', $event)"
+        @update:search="logEvent('update search', $event)"
       />
     </Variant>
   </Story>
@@ -14,7 +14,7 @@
 import { apolloClient } from "@/vue-apollo";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import SearchFields from "./SearchFields.vue";
-import { hstEvent } from "histoire/client";
+import { logEvent } from "histoire/client";
 
 function setupApp({ app }) {
   app.provide(DefaultApolloClient, apolloClient);

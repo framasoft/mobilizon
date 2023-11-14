@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [HstVue()],
   setupFile: path.resolve(__dirname, "./src/histoire.setup.ts"),
   viteNodeInlineDeps: [/date-fns/],
+  // viteIgnorePlugins: ['vite-plugin-pwa', 'vite-plugin-pwa:build', 'vite-plugin-pwa:info'],
   tree: {
     groups: [
       {

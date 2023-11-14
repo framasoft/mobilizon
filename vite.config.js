@@ -15,9 +15,12 @@ export default defineConfig(({ command }) => {
     process.stdin.resume();
   }
 
-  return {
-    plugins: [
-      vue(),
+  const isStory = Boolean(process.env.HISTOIRE);
+
+  const plugins = [vue(), visualizer()];
+
+  if (!isStory) {
+    plugins.push(
       VitePWA({
         registerType: "autoUpdate",
         strategies: "injectManifest",
@@ -57,21 +60,29 @@ export default defineConfig(({ command }) => {
             },
           ],
         },
-      }),
-      visualizer(),
-    ],
-    build: {
-      manifest: true,
-      outDir: path.resolve(__dirname, "priv/static"),
-      emptyOutDir: true,
-      sourcemap: true,
-      rollupOptions: {
-        // overwrite default .html entry
-        input: {
-          main: "src/main.ts",
-        },
+      })
+    );
+  }
+
+  const build = {
+    manifest: true,
+    outDir: path.resolve(__dirname, "priv/static"),
+    emptyOutDir: true,
+    sourcemap: true,
+  };
+
+  if (!isStory) {
+    // overwrite default .html entry
+    build.rollupOptions = {
+      input: {
+        main: "src/main.ts",
       },
-    },
+    };
+  }
+
+  return {
+    plugins,
+    build,
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

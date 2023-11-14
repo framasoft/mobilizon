@@ -3,8 +3,8 @@
     <Variant>
       <OrganizerPickerWrapper
         v-model="actor"
-        @update:model-value="hstEvent('Value', $event)"
-        @update:contacts="hstEvent('Contacts', $event)"
+        @update:model-value="logEvent('Value', $event)"
+        @update:contacts="logEvent('Contacts', $event)"
       />
     </Variant>
   </Story>
@@ -19,7 +19,7 @@ import { PERSON_GROUP_MEMBERSHIPS } from "@/graphql/actor";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { IDENTITIES } from "@/graphql/actor";
 import { reactive } from "vue";
-import { hstEvent } from "histoire/client";
+import { logEvent } from "histoire/client";
 
 const actor = reactive({
   id: "5",

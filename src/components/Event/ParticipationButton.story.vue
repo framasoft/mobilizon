@@ -14,9 +14,9 @@
         :current-actor="currentActor"
         :participation="undefined"
         :identities="identities"
-        @join-event="hstEvent('Join event', $event)"
-        @join-modal="hstEvent('Join modal', $event)"
-        @confirm-leave="hstEvent('Confirm leave', $event)"
+        @join-event="logEvent('Join event', $event)"
+        @join-modal="logEvent('Join modal', $event)"
+        @confirm-leave="logEvent('Confirm leave', $event)"
       />
     </Variant>
     <Variant title="Basic with confirmation">
@@ -26,9 +26,9 @@
         :participation="undefined"
         :identities="identities"
         @join-event-with-confirmation="
-          hstEvent('Join Event with confirmation', $event)
+          logEvent('Join Event with confirmation', $event)
         "
-        @join-modal="hstEvent('Join modal', $event)"
+        @join-modal="logEvent('Join modal', $event)"
       />
     </Variant>
     <Variant title="Participating">
@@ -37,7 +37,7 @@
         :current-actor="currentActor"
         :participation="participation"
         :identities="identities"
-        @confirm-leave="hstEvent('Confirm leave', $event)"
+        @confirm-leave="logEvent('Confirm leave', $event)"
       />
     </Variant>
     <Variant title="Pending approval">
@@ -49,7 +49,7 @@
           role: ParticipantRole.NOT_APPROVED,
         }"
         :identities="identities"
-        @confirm-leave="hstEvent('Confirm leave', $event)"
+        @confirm-leave="logEvent('Confirm leave', $event)"
       />
     </Variant>
     <Variant title="Rejected">
@@ -61,7 +61,7 @@
           role: ParticipantRole.REJECTED,
         }"
         :identities="identities"
-        @confirm-leave="hstEvent('Confirm leave', $event)"
+        @confirm-leave="logEvent('Confirm leave', $event)"
       />
     </Variant>
   </Story>
@@ -72,7 +72,7 @@ import { IPerson } from "@/types/actor";
 import { EventJoinOptions, ParticipantRole } from "@/types/enums";
 import { IEvent } from "@/types/event.model";
 import ParticipationButton from "./ParticipationButton.vue";
-import { hstEvent } from "histoire/client";
+import { logEvent } from "histoire/client";
 import { IParticipant } from "@/types/participant.model";
 
 const emptyCurrentActor: IPerson = {};

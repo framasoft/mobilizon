@@ -7,8 +7,8 @@
         v-model:actor-filter="actorFilter"
         :groupMemberships="[]"
         :current-actor="currentActor"
-        @update:actor-filter="hstEvent('Actor Filter updated', $event)"
-        @update:model-value="hstEvent('Selected actor updated', $event)"
+        @update:actor-filter="logEvent('Actor Filter updated', $event)"
+        @update:model-value="logEvent('Selected actor updated', $event)"
       />
     </Variant>
   </Story>
@@ -18,7 +18,7 @@ import OrganizerPicker from "./OrganizerPicker.vue";
 import { createMemoryHistory, createRouter } from "vue-router";
 import { reactive, ref } from "vue";
 import { ActorType } from "@/types/enums";
-import { hstEvent } from "histoire/client";
+import { logEvent } from "histoire/client";
 
 const currentActor = reactive({
   id: "59",
