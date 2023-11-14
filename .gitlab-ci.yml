@@ -70,7 +70,7 @@ lint-elixir:
 
 
 lint-front:
-  image: node:16
+  image: node:20
   stage: check
   before_script:
     - export EXITVALUE=0
@@ -82,7 +82,7 @@ lint-front:
 
 build-frontend:
   stage: build-js
-  image: node:16
+  image: node:20
   before_script:
     - apt update
     - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
