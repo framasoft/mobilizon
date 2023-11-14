@@ -34,28 +34,29 @@
     jsonpointer "^5.0.0"
     leven "^3.1.0"
 
-"@apollo/client@3.5.10":
-  version "3.5.10"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.5.10.tgz#43463108a6e07ae602cca0afc420805a19339a71"
-  integrity sha512-tL3iSpFe9Oldq7gYikZK1dcYxp1c01nlSwtsMz75382HcI6fvQXyFXUCJTTK3wgO2/ckaBvRGw7VqjFREdVoRw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.0.0"
-    "@wry/context" "^0.6.0"
-    "@wry/equality" "^0.5.0"
-    "@wry/trie" "^0.3.0"
-    graphql-tag "^2.12.3"
-    hoist-non-react-statics "^3.3.2"
-    optimism "^0.16.1"
-    prop-types "^15.7.2"
-    symbol-observable "^4.0.0"
-    ts-invariant "^0.9.4"
-    tslib "^2.3.0"
-    zen-observable-ts "^1.2.0"
-
 "@apollo/client@^3.0.0", "@apollo/client@^3.3.16":
   version "3.8.5"
   resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.5.tgz#becd2101d6049afd03dd796693fb5804346df42f"
   integrity sha512-/ueWC3f1pFeH+tWbM1phz6pzUGGijyml6oQ+LKUcQzpXF6tVFPrb6oUIUQCbZpr6Xmv/dtNiFDohc39ra7Solg==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.1.1"
+    "@wry/context" "^0.7.3"
+    "@wry/equality" "^0.5.6"
+    "@wry/trie" "^0.4.3"
+    graphql-tag "^2.12.6"
+    hoist-non-react-statics "^3.3.2"
+    optimism "^0.17.5"
+    prop-types "^15.7.2"
+    response-iterator "^0.2.6"
+    symbol-observable "^4.0.0"
+    ts-invariant "^0.10.3"
+    tslib "^2.3.0"
+    zen-observable-ts "^1.2.5"
+
+"@apollo/client@^3.8.7":
+  version "3.8.7"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.8.7.tgz#090b1518f513503b9a6a690ee3eaec49529822e1"
+  integrity sha512-DnQtFkQrCyxHTSa9gR84YRLmU/al6HeXcLZazVe+VxKBmx/Hj4rV8xWtzfWYX5ijartsqDR7SJgV037MATEecA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.1"
     "@wry/context" "^0.7.3"
@@ -954,13 +955,6 @@
   resolved "https://registry.yarnpkg.com/@babel/regjsgen/-/regjsgen-0.8.0.tgz#f0ba69b075e1f05fb2825b7fad991e7adbb18310"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@7.17.9":
-  version "7.17.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
-  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
 "@babel/runtime@7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.2.0.tgz#b03e42eeddf5898e00646e4c840fa07ba8dcad7f"
@@ -972,6 +966,13 @@
   version "7.23.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.1.tgz#72741dc4d413338a91dcb044a86f3c0bc402646d"
   integrity sha512-hC2v6p8ZSI/W0HUzh3V8C5g+NwSKzKPtJwSpTjwl0o297GP9+ZLQSkdvHz46CM3LqyoXxq+5G9komY+eSqSO0g==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
+"@babel/runtime@^7.23.2":
+  version "7.23.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.2.tgz#062b0ac103261d68a966c4c7baf2ae3e62ec3885"
+  integrity sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==
   dependencies:
     regenerator-runtime "^0.14.0"
 
@@ -1238,7 +1239,32 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.1.6.tgz#22958c042e10b67463997bd6ea7115fe28cbcaf9"
   integrity sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==
 
-"@graphql-typed-document-node/core@^3.0.0", "@graphql-typed-document-node/core@^3.1.1":
+"@framasoft/socket-apollo-link@^1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@framasoft/socket-apollo-link/-/socket-apollo-link-1.0.1.tgz#a25285a041cd50154f6a955585b6432781719e4c"
+  integrity sha512-j2RHnVcPQx1iTWqBnRcjFPwY4lfED/X+/irKmsQahJUg3aMZUhiyX1+CwN14jTYc++oF8UVXbsn8knETCKkm8w==
+  dependencies:
+    "@apollo/client" "^3.8.7"
+    "@babel/runtime" "^7.23.2"
+    "@framasoft/socket" ">=1.0.0"
+    core-js "^3.33.2"
+    flow-static-land "^0.2.8"
+    graphql "^16.8.1"
+    zen-observable "^0.10.0"
+
+"@framasoft/socket@>=1.0.0", "@framasoft/socket@^1.0.0":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@framasoft/socket/-/socket-1.0.3.tgz#99184acbb9da7d5824f83139f9e01f27c2161d71"
+  integrity sha512-84vWRlHqEBSAawJWh5du/GxIQX3fuqedh9fAETqm8o1SJ8/2APzDBibpjHBA4q2hrqhwOBHdBxKykU/bEJ++EQ==
+  dependencies:
+    "@babel/runtime" "^7.23.2"
+    "@jumpn/utils-array" "0.3.4"
+    "@jumpn/utils-composite" "0.7.0"
+    "@jumpn/utils-graphql" "0.6.0"
+    core-js "^3.33.2"
+    zen-observable "^0.10.0"
+
+"@graphql-typed-document-node/core@^3.1.1":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
@@ -1497,31 +1523,6 @@
   integrity sha512-NqRp8XMwj3AK+zKLbZShl0r/9wKgzqI/527bkptKXomtuo+dOjU9NdMASQ8DNC9z9zLOMbG53T4eihYr3XR+BQ==
   dependencies:
     playwright "1.38.1"
-
-"@pluralsh/socket-apollo-link@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@pluralsh/socket-apollo-link/-/socket-apollo-link-1.0.0.tgz#cbdf76669f747cfdd82fc6a557b65cb485edc93f"
-  integrity sha512-CC1wFfaN+1cP6VQY64y2qh6U+Cn1PuVfX7sJCt1SHF+53aNTcowbVsVHvmqf5jKlNlbStZlAJ3ithl17qc4Egw==
-  dependencies:
-    "@apollo/client" "3.5.10"
-    "@babel/runtime" "7.17.9"
-    "@pluralsh/socket" ">=1.0.0"
-    core-js "2.6.0"
-    flow-static-land "0.2.8"
-    graphql "15.5.0"
-    zen-observable "0.8.11"
-
-"@pluralsh/socket@>=1.0.0", "@pluralsh/socket@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@pluralsh/socket/-/socket-1.0.0.tgz#a8bbe555ea666995556244fa8e247773b9ffba32"
-  integrity sha512-fbVp4VUosX5fA0WPencZ4ojWrkKyej5XIDDh6UxE6fCb33k2+jGPCXbLBkFaJ4TmqkjSzBTX+d14RR8LYcFo/Q==
-  dependencies:
-    "@babel/runtime" "7.2.0"
-    "@jumpn/utils-array" "0.3.4"
-    "@jumpn/utils-composite" "0.7.0"
-    "@jumpn/utils-graphql" "0.6.0"
-    core-js "2.6.0"
-    zen-observable "0.8.11"
 
 "@polka/url@^1.0.0-next.20":
   version "1.0.0-next.23"
@@ -2484,13 +2485,6 @@
   dependencies:
     vue-demi ">=0.14.6"
 
-"@wry/context@^0.6.0":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.6.1.tgz#c3c29c0ad622adb00f6a53303c4f965ee06ebeb2"
-  integrity sha512-LOmVnY1iTU2D8tv4Xf6MVMZZ+juIJ87Kt/plMijjN20NMAXGmH4u8bS1t0uT74cZ5gwpocYueV58YwyI8y+GKw==
-  dependencies:
-    tslib "^2.3.0"
-
 "@wry/context@^0.7.0", "@wry/context@^0.7.3":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@wry/context/-/context-0.7.3.tgz#240f6dfd4db5ef54f81f6597f6714e58d4f476a1"
@@ -2498,24 +2492,10 @@
   dependencies:
     tslib "^2.3.0"
 
-"@wry/equality@^0.5.0":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.5.7.tgz#72ec1a73760943d439d56b7b1e9985aec5d497bb"
-  integrity sha512-BRFORjsTuQv5gxcXsuDXx6oGRhuVsEGwZy6LOzRRfgu+eSfxbhUQ9L9YtSEIuIjY/o7g3iWFjrc5eSY1GXP2Dw==
-  dependencies:
-    tslib "^2.3.0"
-
 "@wry/equality@^0.5.6":
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.5.6.tgz#cd4a533c72c3752993ab8cbf682d3d20e3cb601e"
   integrity sha512-D46sfMTngaYlrH+OspKf8mIJETntFnf6Hsjb0V41jAXJ7Bx2kB8Rv8RCUujuVWYttFtHkUNp7g+FwxNQAr6mXA==
-  dependencies:
-    tslib "^2.3.0"
-
-"@wry/trie@^0.3.0":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@wry/trie/-/trie-0.3.2.tgz#a06f235dc184bd26396ba456711f69f8c35097e6"
-  integrity sha512-yRTyhWSls2OY/pYLfwff867r8ekooZ4UI+/gxot5Wj8EFwSf2rG+n+Mo/6LoLQm1TKA4GRj2+LCpbfS937dClQ==
   dependencies:
     tslib "^2.3.0"
 
@@ -3197,6 +3177,11 @@ core-js@^2.4.0, core-js@^2.5.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+
+core-js@^3.33.2:
+  version "3.33.2"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.33.2.tgz#312bbf6996a3a517c04c99b9909cdd27138d1ceb"
+  integrity sha512-XeBzWI6QL3nJQiHmdzbAOiMYqjrb7hwU7A39Qhvd/POSa/t9E1AeZyEZx3fNvp/vtM8zXwhoL0FsiS0hD0pruQ==
 
 crelt@^1.0.0, crelt@^1.0.5:
   version "1.0.6"
@@ -4008,7 +3993,7 @@ flow-static-land@0.2.7:
   resolved "https://registry.yarnpkg.com/flow-static-land/-/flow-static-land-0.2.7.tgz#937f9dcb2780889a609155e5d1a55a993bc2ffb3"
   integrity sha512-SmGgln4qcqLAysXM5BF8EQS+clj0TUf9+KlZUJgwuzNHvwbput+opz3CMyee9sDuLf4J/3sJbYGjdNsd2jSurA==
 
-flow-static-land@0.2.8:
+flow-static-land@0.2.8, flow-static-land@^0.2.8:
   version "0.2.8"
   resolved "https://registry.yarnpkg.com/flow-static-land/-/flow-static-land-0.2.8.tgz#49617e531396928bae6eb5d8ba32e7071637e5b9"
   integrity sha512-pOZFExu2rbscCgcEo7nL7FNhBubMi18dn1Un4lm8LOmQkYhgsHLsrBGMWmuJXRWcYMrOC7I/bPsiqqVjdD3K1g==
@@ -4244,7 +4229,7 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-graphql-tag@^2.10.3, graphql-tag@^2.12.3, graphql-tag@^2.12.6:
+graphql-tag@^2.10.3, graphql-tag@^2.12.6:
   version "2.12.6"
   resolved "https://registry.yarnpkg.com/graphql-tag/-/graphql-tag-2.12.6.tgz#d441a569c1d2537ef10ca3d1633b48725329b5f1"
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
@@ -4258,15 +4243,15 @@ graphql@14.0.2:
   dependencies:
     iterall "^1.2.2"
 
-graphql@15.5.0:
-  version "15.5.0"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.5.0.tgz#39d19494dbe69d1ea719915b578bf920344a69d5"
-  integrity sha512-OmaM7y0kaK31NKG31q4YbD2beNYa6jBBKtMFT6gLYJljHLJr42IqJ8KX08u3Li/0ifzTU5HjmoOOrwa5BRLeDA==
-
 graphql@^15.0.0, graphql@^15.8.0:
   version "15.8.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.8.0.tgz#33410e96b012fa3bdb1091cc99a94769db212b38"
   integrity sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==
+
+graphql@^16.8.1:
+  version "16.8.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.8.1.tgz#1930a965bef1170603702acdb68aedd3f3cf6f07"
+  integrity sha512-59LZHPdGZVh695Ud9lRzPBVTtlX9ZCV150Er2W43ro37wVof0ctenSaskPPjN7lVTIN8mSZt8PHUNKZuNQUuxw==
 
 gray-matter@^4.0.3:
   version "4.0.3"
@@ -5558,14 +5543,6 @@ open@^9.1.0:
     is-inside-container "^1.0.0"
     is-wsl "^2.2.0"
 
-optimism@^0.16.1:
-  version "0.16.2"
-  resolved "https://registry.yarnpkg.com/optimism/-/optimism-0.16.2.tgz#519b0c78b3b30954baed0defe5143de7776bf081"
-  integrity sha512-zWNbgWj+3vLEjZNIh/okkY2EUfX+vB9TJopzIZwT1xxaMqC5hRLLraePod4c5n4He08xuXNH+zhKFFCu390wiQ==
-  dependencies:
-    "@wry/context" "^0.7.0"
-    "@wry/trie" "^0.3.0"
-
 optimism@^0.17.5:
   version "0.17.5"
   resolved "https://registry.yarnpkg.com/optimism/-/optimism-0.17.5.tgz#a4c78b3ad12c58623abedbebb4f2f2c19b8e8816"
@@ -6144,11 +6121,6 @@ regenerator-runtime@^0.12.0:
   version "0.12.1"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.12.1.tgz#fa1a71544764c036f8c49b13a08b2594c9f8a0de"
   integrity sha512-odxIc1/vDlo4iZcfXqRYFj0vpXFNoGdKMAUieAlFYO6m/nl5e9KR/beGf41z4a1FI+aQgtjhuaSlDxQ0hmkrHg==
-
-regenerator-runtime@^0.13.4:
-  version "0.13.11"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
-  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
 
 regenerator-runtime@^0.14.0:
   version "0.14.0"
@@ -6949,13 +6921,6 @@ ts-invariant@^0.10.3:
   dependencies:
     tslib "^2.1.0"
 
-ts-invariant@^0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/ts-invariant/-/ts-invariant-0.9.4.tgz#42ac6c791aade267dd9dc65276549df5c5d71cac"
-  integrity sha512-63jtX/ZSwnUNi/WhXjnK8kz4cHHpYS60AnmA6ixz17l7E12a5puCWFlNpkne5Rl0J8TBPVHpGjsj4fxs8ObVLQ==
-  dependencies:
-    tslib "^2.1.0"
-
 tsconfig-paths@^3.14.2:
   version "3.14.2"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.14.2.tgz#6e32f1f79412decd261f92d633a9dc1cfa99f088"
@@ -7735,22 +7700,22 @@ yocto-queue@^1.0.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-1.0.0.tgz#7f816433fb2cbc511ec8bf7d263c3b58a1a3c251"
   integrity sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==
 
-zen-observable-ts@^1.2.0, zen-observable-ts@^1.2.5:
+zen-observable-ts@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/zen-observable-ts/-/zen-observable-ts-1.2.5.tgz#6c6d9ea3d3a842812c6e9519209365a122ba8b58"
   integrity sha512-QZWQekv6iB72Naeake9hS1KxHlotfRpe+WGNbNx5/ta+R3DNjVO2bswf63gXlWDcs+EMd7XY8HfVQyP1X6T4Zg==
   dependencies:
     zen-observable "0.8.15"
 
-zen-observable@0.8.11:
-  version "0.8.11"
-  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.11.tgz#d3415885eeeb42ee5abb9821c95bb518fcd6d199"
-  integrity sha512-N3xXQVr4L61rZvGMpWe8XoCGX8vhU35dPyQ4fm5CY/KDlG0F75un14hjbckPXTDuKUY6V0dqR2giT6xN8Y4GEQ==
-
 zen-observable@0.8.15:
   version "0.8.15"
   resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.8.15.tgz#96415c512d8e3ffd920afd3889604e30b9eaac15"
   integrity sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==
+
+zen-observable@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/zen-observable/-/zen-observable-0.10.0.tgz#ee10eba75272897dbee5f152ab26bb5e0107f0c8"
+  integrity sha512-iI3lT0iojZhKwT5DaFy2Ce42n3yFcLdFyOh01G7H0flMY60P8MJuVFEoJoNwXlmAyQ45GrjL6AcZmmlv8A5rbw==
 
 zhead@^2.1.1, zhead@^2.1.2:
   version "2.1.3"
