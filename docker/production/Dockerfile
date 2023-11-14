@@ -3,11 +3,10 @@ FROM node:18-alpine as assets
 
 RUN apk add --no-cache python3 build-base libwebp-tools bash imagemagick ncurses
 WORKDIR /build
-COPY js .
+COPY . .
 
 # Network timeout because it's slow when cross-compiling
-RUN yarn install --network-timeout 100000 \
-    && yarn run build
+RUN npm install && npm run build
 
 # Then, build the application binary
 FROM elixir:1.15-alpine AS builder

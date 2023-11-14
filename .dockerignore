@@ -15,5 +15,5 @@ Makefile
 README.md
 SECURITY.md
 ssh_match_hostname
-.js/package-lock.json
-js/node_modules
+package-lock.json
+node_modules

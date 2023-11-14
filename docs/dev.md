@@ -19,7 +19,7 @@ Mobilizon is an app that uses:
 
   * `config` backend compile-time and runtime configuration
   * `docker` 🐳
-  * `js/src` Front-end
+  * `src` Front-end
   * `lib/federation` Handling all the federation stuff (sending and receving activities, converting activities, signatures, helpers…)
   * `lib/graphql/schema` The schema declarations for the GraphQL API
   * `lib/graphql/resolvers` The logic behind the GraphQL API

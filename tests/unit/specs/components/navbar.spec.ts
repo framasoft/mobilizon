@@ -6,11 +6,7 @@ const useRouterMock = vi.fn(() => ({
 
 import { shallowMount, VueWrapper } from "@vue/test-utils";
 import NavBar from "@/components/NavBar.vue";
-import {
-  createMockClient,
-  MockApolloClient,
-  RequestHandler,
-} from "mock-apollo-client";
+import { createMockClient, MockApolloClient } from "mock-apollo-client";
 import buildCurrentUserResolver from "@/apollo/user";
 import { InMemoryCache } from "@apollo/client/cache";
 import { describe, it, vi, expect, afterEach } from "vitest";
@@ -24,7 +20,7 @@ describe("App component", () => {
   let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
 
-  const createComponent = (handlers = {}) => {
+  const createComponent = () => {
     const cache = new InMemoryCache({ addTypename: false });
 
     mockClient = createMockClient({

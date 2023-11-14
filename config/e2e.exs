@@ -16,7 +16,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   check_origin: false,
   # Somehow this can't be merged properly with the dev config so we got this…
   watchers: [
-    yarn: [cd: Path.expand("../js", __DIR__)]
+    npm: []
   ]
 
 config :vite_phx,

@@ -9,7 +9,7 @@
         <router-link :to="{ name: RouteName.EVENT_PARTICIPATE_WITH_ACCOUNT }">
           <figure class="flex justify-center my-2">
             <img
-              src="/img/undraw_profile.svg"
+              src="../../../public/img/undraw_profile.svg"
               alt="Profile illustration"
               width="128"
               height="128"
@@ -55,7 +55,7 @@
             <img
               width="128"
               height="128"
-              src="/img/undraw_mail_2.svg"
+              src="../../../public/img/undraw_mail_2.svg"
               alt="Privacy illustration"
             />
           </figure>
@@ -66,7 +66,7 @@
         <a :href="`${event.url}/participate/without-account`" v-else>
           <figure class="flex justify-center my-2">
             <img
-              src="/img/undraw_mail_2.svg"
+              src="../../../public/img/undraw_mail_2.svg"
               width="128"
               height="128"
               alt="Privacy illustration"

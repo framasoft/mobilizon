@@ -80,7 +80,7 @@
             <img
               class="w-12"
               v-if="instance.hasRelay"
-              src="/img/logo.svg"
+              src="../../../public/img/logo.svg"
               alt=""
             />
             <CloudQuestion v-else :size="36" />

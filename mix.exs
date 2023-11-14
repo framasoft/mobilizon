@@ -268,7 +268,7 @@ defmodule Mobilizon.Mixfile do
         "deps.get",
         "ecto.create --quiet",
         "ecto.migrate",
-        "cmd cd js && yarn install && cd ../",
+        "cmd npm ci",
         "phx.server"
       ]
     ]

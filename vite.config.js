@@ -62,7 +62,7 @@ export default defineConfig(({ command }) => {
     ],
     build: {
       manifest: true,
-      outDir: path.resolve(__dirname, "../priv/static"),
+      outDir: path.resolve(__dirname, "priv/static"),
       emptyOutDir: true,
       sourcemap: true,
       rollupOptions: {

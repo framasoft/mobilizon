@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "yarn run build:assets && yarn run build:pictures",
+    "build": "npm run build:assets && npm run build:pictures",
     "lint": "eslint --ext .ts,.vue --ignore-path .gitignore --fix src",
-    "format": "prettier .  --write",
+    "format": "prettier . --write",
     "build:assets": "vite build",
     "build:pictures": "bash ./scripts/build/pictures.sh",
     "story:dev": "histoire dev",
@@ -15,7 +15,8 @@
     "story:preview": "histoire preview",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "prepare": "cd ../ && husky install"
+    "prepare": "husky install",
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "**/*.{js,ts,vue}": [

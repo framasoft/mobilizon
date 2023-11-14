@@ -3,7 +3,6 @@ import ParticipationSection from "@/components/Participation/ParticipationSectio
 import { createRouter, createWebHistory, Router } from "vue-router";
 import { routes } from "@/router";
 import { CommentModeration, EventJoinOptions } from "@/types/enums";
-import { InMemoryCache } from "@apollo/client/cache";
 import { beforeEach, describe, expect, it } from "vitest";
 import Oruga from "@oruga-ui/oruga-next";
 import FloatingVue from "floating-vue";
