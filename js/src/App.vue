@@ -41,7 +41,8 @@ import {
 } from "@/constants";
 import { UPDATE_CURRENT_USER_CLIENT } from "@/graphql/user";
 import MobilizonFooter from "@/components/PageFooter.vue";
-import jwt_decode, { JwtPayload } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
+import type { JwtPayload } from "jwt-decode";
 import { refreshAccessToken } from "@/apollo/utils";
 import {
   reactive,
@@ -127,7 +128,7 @@ const notifier = inject<Notifier>("notifier");
 interval.value = window.setInterval(async () => {
   const accessToken = localStorage.getItem(AUTH_ACCESS_TOKEN);
   if (accessToken) {
-    const token = jwt_decode<JwtPayload>(accessToken);
+    const token = jwtDecode<JwtPayload>(accessToken);
     if (
       token?.exp !== undefined &&
       new Date(token.exp * 1000 - 60000) < new Date()

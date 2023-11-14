@@ -1,6 +1,6 @@
 import { Socket as PhoenixSocket } from "phoenix";
-import { create } from "@pluralsh/socket";
-import { createAbsintheSocketLink } from "@pluralsh/socket-apollo-link";
+import { create } from "@framasoft/socket";
+import { createAbsintheSocketLink } from "@framasoft/socket-apollo-link";
 import { AUTH_ACCESS_TOKEN } from "@/constants";
 import { GRAPHQL_API_ENDPOINT } from "@/api/_entrypoint";
 
