@@ -119,7 +119,7 @@ describe("CommentTree", () => {
     await flushPromises();
     expect(wrapper.find("p.text-center").exists()).toBe(false);
 
-    expect(wrapper.findAllComponents("comment-stub").length).toBe(2);
+    expect(wrapper.findAllComponents("event-comment-stub").length).toBe(2);
     expect(wrapper.html()).toMatchSnapshot();
   });
 
@@ -130,6 +130,9 @@ describe("CommentTree", () => {
         newComment: {
           text: newCommentForEventMock.text,
           isAnnouncement: false,
+          insertedAt: "2021-12-03T13:02:00Z",
+          updatedAt: "2021-12-03T13:02:00Z",
+          publishedAt: "2021-12-03T13:02:00Z",
         },
       }
     );
@@ -137,7 +140,7 @@ describe("CommentTree", () => {
     await flushPromises();
 
     expect(wrapper.find("form").isVisible()).toBe(true);
-    expect(wrapper.findAllComponents("comment-stub").length).toBe(2);
+    expect(wrapper.findAllComponents("event-comment-stub").length).toBe(2);
     wrapper.getComponent({ ref: "commenteditor" });
 
     wrapper.find("form").trigger("submit");

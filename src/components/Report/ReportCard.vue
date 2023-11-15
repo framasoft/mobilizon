@@ -36,7 +36,7 @@
     </div>
 
     <div class="p-2">
-      <div class="">
+      <div class="reported_by">
         <span v-if="report.reporter?.type === ActorType.APPLICATION">
           {{
             t("Reported by someone on {domain}", {

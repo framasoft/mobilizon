@@ -250,7 +250,7 @@ const props = withDefaults(
     event: IEvent;
     currentActor: IPerson;
     rootComment?: boolean;
-    readOnly: boolean;
+    readOnly?: boolean;
   }>(),
   { rootComment: true, readOnly: false }
 );

@@ -142,6 +142,7 @@ import RouteName from "@/router/name";
 import { LoginError, LoginErrorCode } from "@/types/enums";
 import { useCurrentUserClient } from "@/composition/apollo/user";
 import { useHead } from "@vueuse/head";
+import { enumTransformer, useRouteQuery } from "vue-use-route-query";
 
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();
@@ -174,9 +175,8 @@ const credentials = reactive({
     typeof route.query.password === "string" ? route.query.password : "",
 });
 
-const redirect = ref<string | undefined>("");
-
-const errorCode = ref<LoginErrorCode | null>(null);
+const redirect = useRouteQuery("redirect", "");
+const errorCode = useRouteQuery("code", null, enumTransformer(LoginErrorCode));
 
 const {
   onDone: onLoginMutationDone,
@@ -195,6 +195,7 @@ onLoginMutationDone(async (result) => {
   await setupClientUserAndActors(data.login);
 
   if (redirect.value) {
+    console.debug("We have a redirect", redirect.value);
     router.push(redirect.value);
     return;
   }
@@ -293,10 +294,6 @@ const currentProvider = computed(() => {
 });
 
 onMounted(() => {
-  const query = route?.query;
-  errorCode.value = query?.code as LoginErrorCode;
-  redirect.value = query?.redirect as string | undefined;
-
   // Already-logged-in and accessing /login
   if (currentUser.value?.isLoggedIn) {
     console.debug(

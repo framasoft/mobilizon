@@ -1,15 +1,3 @@
-const useRouterMock = vi.fn(() => ({
-  push: function () {
-    // do nothing
-  },
-  replace: function () {
-    // do nothing
-  },
-}));
-const useRouteMock = vi.fn(function () {
-  // do nothing
-});
-
 import { config, mount, VueWrapper } from "@vue/test-utils";
 import Login from "@/views/User/LoginView.vue";
 import {
@@ -26,22 +14,36 @@ import { CURRENT_USER_CLIENT } from "@/graphql/user";
 import { ICurrentUser } from "@/types/current-user.model";
 import flushPromises from "flush-promises";
 import RouteName from "@/router/name";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import Oruga from "@oruga-ui/oruga-next";
 import { cache } from "@/apollo/memory";
-
-vi.mock("vue-router/dist/vue-router.mjs", () => ({
-  useRouter: useRouterMock,
-  useRoute: useRouteMock,
-}));
+import {
+  VueRouterMock,
+  createRouterMock,
+  injectRouterMock,
+  getRouter,
+} from "vue-router-mock";
 
 config.global.plugins.push(Oruga);
+config.plugins.VueWrapper.install(VueRouterMock);
 
 describe("Render login form", () => {
   let wrapper: VueWrapper;
   let mockClient: MockApolloClient | null;
   let requestHandlers: Record<string, RequestHandler>;
+
+  const router = createRouterMock({
+    spy: {
+      create: (fn) => vi.fn(fn),
+      reset: (spy) => spy.mockReset(),
+    },
+  });
+  beforeEach(() => {
+    // inject it globally to ensure `useRoute()`, `$route`, etc work
+    // properly and give you access to test specific functions
+    injectRouterMock(router);
+  });
 
   const generateWrapper = (
     handlers: Record<string, unknown> = {},
@@ -90,6 +92,7 @@ describe("Render login form", () => {
     generateWrapper();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
@@ -103,15 +106,10 @@ describe("Render login form", () => {
   });
 
   it("renders and submits the login form", async () => {
-    const replace = vi.fn(); // needs to write this code before render()
-    const push = vi.fn();
-    useRouterMock.mockImplementationOnce(() => ({
-      replace,
-      push,
-    }));
     generateWrapper();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
@@ -133,16 +131,12 @@ describe("Render login form", () => {
     expect(currentUser?.email).toBe("some@email.tld");
     expect(currentUser?.id).toBe("1");
     await flushPromises();
-    expect(replace).toHaveBeenCalledWith({ name: RouteName.HOME });
+    expect(wrapper.router.replace).toHaveBeenCalledWith({
+      name: RouteName.HOME,
+    });
   });
 
   it("handles a login error", async () => {
-    const replace = vi.fn(); // needs to write this code before render()
-    const push = vi.fn();
-    useRouterMock.mockImplementationOnce(() => ({
-      push,
-      replace,
-    }));
     generateWrapper({
       loginMutationHandler: vi.fn().mockResolvedValue({
         errors: [
@@ -156,6 +150,7 @@ describe("Render login form", () => {
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     expect(wrapper.exists()).toBe(true);
     expect(requestHandlers.configQueryHandler).toHaveBeenCalled();
@@ -170,28 +165,21 @@ describe("Render login form", () => {
     expect(wrapper.find(".o-notification--danger").text()).toContain(
       "Impossible to authenticate, either your email or password are invalid."
     );
-    expect(push).not.toHaveBeenCalled();
+    expect(wrapper.router.push).not.toHaveBeenCalled();
   });
 
   it("handles redirection after login", async () => {
-    const replace = vi.fn(); // needs to write this code before render()
-    const push = vi.fn();
-    useRouterMock.mockImplementationOnce(() => ({
-      replace,
-      push,
-    }));
-    useRouteMock.mockImplementationOnce(() => ({
-      query: { redirect: "/about/instance" },
-    }));
     generateWrapper();
+    getRouter().setQuery({ redirect: "/about/instance" });
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
+    await flushPromises();
 
     wrapper.find('form input[type="email"]').setValue("some@email.tld");
     wrapper.find('form input[type="password"]').setValue("somepassword");
     wrapper.find("form").trigger("submit");
     await flushPromises();
-    expect(push).toHaveBeenCalledWith("/about/instance");
+    expect(wrapper.router.push).toHaveBeenCalledWith("/about/instance");
   });
 });

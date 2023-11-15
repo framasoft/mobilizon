@@ -15,7 +15,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   check_origin: false,
   watchers: [
     node: [
-      "node_modules/.bin/vite",
+      "node_modules/.bin/vite"
     ]
   ]
 

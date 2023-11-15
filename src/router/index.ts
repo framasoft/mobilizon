@@ -189,7 +189,7 @@ routes.push({
   redirect: { name: RouteName.PAGE_NOT_FOUND },
 });
 
-export const router = createRouter({
+const router = createRouter({
   scrollBehavior,
   history: createWebHistory("/"),
   routes,
@@ -216,3 +216,5 @@ router.onError((error, to) => {
     window.location.href = to.fullPath;
   }
 });
+
+export { router };

@@ -61,7 +61,11 @@
       <transition-group
         key="list"
         name="comment-list"
-        v-if="filteredOrderedComments.length && currentActor"
+        v-if="
+          filteredOrderedComments &&
+          filteredOrderedComments.length &&
+          currentActor
+        "
         class="comment-list"
         tag="ul"
       >
@@ -110,28 +114,29 @@ import { AbsintheGraphQLError } from "@/types/errors.model";
 import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
 
+const props = defineProps<{
+  event: IEvent;
+  newComment?: IComment;
+}>();
+
+const event = computed(() => props.event);
+const newCommentProps = computed(() => props.newComment);
+
 const { currentActor } = useCurrentActorClient();
 
 const { result: commentsResult, loading: commentsLoading } = useQuery<{
   event: Pick<IEvent, "id" | "uuid" | "comments">;
 }>(
   COMMENTS_THREADS_WITH_REPLIES,
-  () => ({ eventUUID: props.event?.uuid }),
-  () => ({ enabled: props.event?.uuid !== undefined })
+  () => ({ eventUUID: event.value?.uuid }),
+  () => ({ enabled: event.value?.uuid !== undefined })
 );
 
 const comments = computed(() => commentsResult.value?.event.comments ?? []);
 
-const props = defineProps<{
-  event: IEvent;
-  newComment?: IComment;
-}>();
-
 const Editor = defineAsyncComponent(
   () => import("@/components/TextEditor.vue")
 );
-
-const newCommentProps = computed(() => props.newComment);
 
 const newCommentValue = ref<IComment>(new CommentModel(newCommentProps.value));
 
@@ -170,18 +175,18 @@ const {
   ) => {
     if (data == null) return;
     // comments are attached to the event, so we can pass it to replies later
-    const newCommentLocal = { ...data.createComment, event: props.event };
+    const newCommentLocal = { ...data.createComment, event: event.value };
 
     // we load all existing threads
     const commentThreadsData = store.readQuery<{ event: IEvent }>({
       query: COMMENTS_THREADS_WITH_REPLIES,
       variables: {
-        eventUUID: props.event?.uuid,
+        eventUUID: event.value?.uuid,
       },
     });
     if (!commentThreadsData) return;
-    const { event } = commentThreadsData;
-    const oldComments = [...event.comments];
+    const { event: cachedEvent } = commentThreadsData;
+    const oldComments = [...cachedEvent.comments];
 
     // if it's no a root comment, we first need to find
     // existing replies and add the new reply to it
@@ -206,12 +211,12 @@ const {
       query: COMMENTS_THREADS_WITH_REPLIES,
       data: {
         event: {
-          ...event,
+          ...cachedEvent,
           comments: oldComments,
         },
       },
       variables: {
-        eventUUID: props.event?.uuid,
+        eventUUID: event.value?.uuid,
       },
     });
   },
@@ -239,10 +244,10 @@ const createCommentForEvent = (comment: IComment) => {
 
   if (emptyCommentError.value) return;
   if (!comment.actor) return;
-  if (!props.event?.id) return;
+  if (!event.value?.id) return;
 
   createCommentForEventMutation({
-    eventId: props.event?.id,
+    eventId: event.value?.id,
     text: comment.text,
     inReplyToCommentId: comment.inReplyToComment?.id,
     isAnnouncement: comment.isAnnouncement,
@@ -266,12 +271,12 @@ const { mutate: deleteComment, onError: deleteCommentMutationError } =
       const commentsData = store.readQuery<{ event: IEvent }>({
         query: COMMENTS_THREADS_WITH_REPLIES,
         variables: {
-          eventUUID: props.event?.uuid,
+          eventUUID: event.value?.uuid,
         },
       });
       if (!commentsData) return;
-      const { event } = commentsData;
-      let updatedComments: IComment[] = [...event.comments];
+      const { event: cachedEvent } = commentsData;
+      let updatedComments: IComment[] = [...cachedEvent.comments];
 
       if (variables?.originCommentId) {
         // we have deleted a reply to a thread
@@ -309,11 +314,11 @@ const { mutate: deleteComment, onError: deleteCommentMutationError } =
       store.writeQuery({
         query: COMMENTS_THREADS_WITH_REPLIES,
         variables: {
-          eventUUID: props.event?.uuid,
+          eventUUID: event.value?.uuid,
         },
         data: {
           event: {
-            ...event,
+            ...cachedEvent,
             comments: updatedComments,
           },
         },
@@ -359,14 +364,14 @@ const filteredOrderedComments = computed((): IComment[] => {
 
 const isEventOrganiser = computed((): boolean => {
   const organizerId =
-    props.event?.organizerActor?.id || props.event?.attributedTo?.id;
+    event.value?.organizerActor?.id || event.value?.attributedTo?.id;
   return organizerId !== undefined && currentActor.value?.id === organizerId;
 });
 
 const areCommentsClosed = computed((): boolean => {
   return (
     currentActor.value?.id !== undefined &&
-    props.event?.options.commentModeration !== CommentModeration.CLOSED
+    event.value?.options.commentModeration !== CommentModeration.CLOSED
   );
 });
 

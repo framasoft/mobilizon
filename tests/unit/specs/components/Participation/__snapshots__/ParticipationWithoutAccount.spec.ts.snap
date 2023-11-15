@@ -1,11 +1,11 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`ParticipationWithoutAccount > handles being already a participant 1`] = `
 "<section class=\\"container mx-auto\\">
   <div class=\\"\\">
     <form>
       <p>This Mobilizon instance and this event organizer allows anonymous participations, but requires validation through email confirmation.</p>
-      <transition-stub>
+      <transition-stub name=\\"fade\\" appear=\\"false\\" persisted=\\"true\\" css=\\"true\\">
         <article class=\\"o-notification o-notification--info\\">
           <!--v-if-->
           <!--v-if-->
@@ -15,7 +15,7 @@ exports[`ParticipationWithoutAccount > handles being already a participant 1`] =
           </div>
         </article>
       </transition-stub>
-      <transition-stub>
+      <transition-stub name=\\"fade\\" appear=\\"false\\" persisted=\\"true\\" css=\\"true\\">
         <article class=\\"o-notification o-notification--danger\\">
           <!--v-if-->
           <!--v-if-->

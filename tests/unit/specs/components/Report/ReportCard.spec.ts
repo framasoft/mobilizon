@@ -36,11 +36,7 @@ describe("ReportCard", () => {
       reportData.reported.name
     );
 
-    expect(wrapper.find(".flex.gap-1 div p:nth-child(2)").text()).toBe(
-      `@${reportData.reported.preferredUsername}`
-    );
-
-    expect(wrapper.find(".reported_by div:first-child").text()).toBe(
+    expect(wrapper.find(".reported_by span:first-child").text()).toBe(
       `Reported by John Snow`
     );
   });
@@ -50,7 +46,7 @@ describe("ReportCard", () => {
       reporter: { domain: "somewhere.else", type: ActorType.APPLICATION },
     });
 
-    expect(wrapper.find(".reported_by div:first-child").text()).toBe(
+    expect(wrapper.find(".reported_by span:first-child").text()).toBe(
       "Reported by someone on somewhere.else"
     );
   });

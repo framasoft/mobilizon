@@ -76,7 +76,7 @@ lint-front:
     - npm ci
   script:
     - npm run lint || export EXITVALUE=1
-    - npm run prettier -c . || export EXITVALUE=1
+    - npx prettier -c . || export EXITVALUE=1
     - exit $EXITVALUE
 
 build-frontend:

@@ -114,7 +114,7 @@ export default defineConfig(({ command }) => {
       coverage: {
         reporter: ["text", "json", "html"],
       },
-      setupFiles: path.resolve(__dirname, "./tests/unit/setup.ts"),
+      setupFiles: [path.resolve(__dirname, "./tests/unit/setup.ts")],
       include: [path.resolve(__dirname, "./tests/unit/specs/**/*.spec.ts")],
     },
   };

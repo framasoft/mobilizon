@@ -1,11 +1,12 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`PostListItem > renders post list item with basic informations 1`] = `
-"<a href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\" data-v-6ca7cc69=\\"\\">
+"<a data-v-6ca7cc69=\\"\\" href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\">
   <!--v-if-->
-  <div class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\" data-v-6ca7cc69=\\"\\">
-    <h3 class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\" data-v-6ca7cc69=\\"\\">My Blog Post</h3>
-    <p class=\\"flex gap-2\\" data-v-6ca7cc69=\\"\\"><span aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\" data-v-6ca7cc69=\\"\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span dir=\\"auto\\" class=\\"\\" data-v-6ca7cc69=\\"\\">Dec 2, 2020</span></p>
+  <div data-v-6ca7cc69=\\"\\" class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\">
+    <h3 data-v-6ca7cc69=\\"\\" class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\">My Blog Post</h3>
+    <p data-v-6ca7cc69=\\"\\" class=\\"flex gap-2\\"><span data-v-6ca7cc69=\\"\\" aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span data-v-6ca7cc69=\\"\\" dir=\\"auto\\" class=\\"\\">Dec 2, 2020</span></p>
+    <!--v-if-->
     <!--v-if-->
     <!--v-if-->
   </div>
@@ -13,24 +14,26 @@ exports[`PostListItem > renders post list item with basic informations 1`] = `
 `;
 
 exports[`PostListItem > renders post list item with publisher name 1`] = `
-"<a href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\" data-v-6ca7cc69=\\"\\">
+"<a data-v-6ca7cc69=\\"\\" href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\">
   <!--v-if-->
-  <div class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\" data-v-6ca7cc69=\\"\\">
-    <h3 class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\" data-v-6ca7cc69=\\"\\">My Blog Post</h3>
-    <p class=\\"flex gap-2\\" data-v-6ca7cc69=\\"\\"><span aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\" data-v-6ca7cc69=\\"\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span dir=\\"auto\\" class=\\"\\" data-v-6ca7cc69=\\"\\">Dec 2, 2020</span></p>
+  <div data-v-6ca7cc69=\\"\\" class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\">
+    <h3 data-v-6ca7cc69=\\"\\" class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\">My Blog Post</h3>
+    <p data-v-6ca7cc69=\\"\\" class=\\"flex gap-2\\"><span data-v-6ca7cc69=\\"\\" aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span data-v-6ca7cc69=\\"\\" dir=\\"auto\\" class=\\"\\">Dec 2, 2020</span></p>
     <!--v-if-->
-    <p class=\\"flex gap-1\\" data-v-6ca7cc69=\\"\\"><span aria-hidden=\\"true\\" class=\\"material-design-icon account-edit-icon\\" role=\\"img\\" data-v-6ca7cc69=\\"\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M21.7,13.35L20.7,14.35L18.65,12.3L19.65,11.3C19.86,11.09 20.21,11.09 20.42,11.3L21.7,12.58C21.91,12.79 21.91,13.14 21.7,13.35M12,18.94L18.06,12.88L20.11,14.93L14.06,21H12V18.94M12,14C7.58,14 4,15.79 4,18V20H10V18.11L14,14.11C13.34,14.03 12.67,14 12,14M12,4A4,4 0 0,0 8,8A4,4 0 0,0 12,12A4,4 0 0,0 16,8A4,4 0 0,0 12,4Z\\"><!--v-if--></path></svg></span>Published by <b class=\\"\\" data-v-6ca7cc69=\\"\\">An author</b></p>
+    <p data-v-6ca7cc69=\\"\\" class=\\"flex gap-1\\"><span data-v-6ca7cc69=\\"\\" aria-hidden=\\"true\\" class=\\"material-design-icon account-edit-icon\\" role=\\"img\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M21.7,13.35L20.7,14.35L18.65,12.3L19.65,11.3C19.86,11.09 20.21,11.09 20.42,11.3L21.7,12.58C21.91,12.79 21.91,13.14 21.7,13.35M12,18.94L18.06,12.88L20.11,14.93L14.06,21H12V18.94M12,14C7.58,14 4,15.79 4,18V20H10V18.11L14,14.11C13.34,14.03 12.67,14 12,14M12,4A4,4 0 0,0 8,8A4,4 0 0,0 12,12A4,4 0 0,0 16,8A4,4 0 0,0 12,4Z\\"><!--v-if--></path></svg></span>Published by <b data-v-6ca7cc69=\\"\\" class=\\"\\">An author</b></p>
+    <!--v-if-->
   </div>
 </a>"
 `;
 
 exports[`PostListItem > renders post list item with tags 1`] = `
-"<a href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\" data-v-6ca7cc69=\\"\\">
+"<a data-v-6ca7cc69=\\"\\" href=\\"/p/my-blog-post-some-uuid\\" class=\\"block md:flex bg-white dark:bg-violet-2 dark:text-white dark:hover:text-white rounded-lg shadow-md\\" dir=\\"auto\\">
   <!--v-if-->
-  <div class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\" data-v-6ca7cc69=\\"\\">
-    <h3 class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\" data-v-6ca7cc69=\\"\\">My Blog Post</h3>
-    <p class=\\"flex gap-2\\" data-v-6ca7cc69=\\"\\"><span aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\" data-v-6ca7cc69=\\"\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span dir=\\"auto\\" class=\\"\\" data-v-6ca7cc69=\\"\\">Dec 2, 2020</span></p>
-    <div class=\\"flex flex-wrap gap-y-0 gap-x-2\\" data-v-6ca7cc69=\\"\\"><span aria-hidden=\\"true\\" class=\\"material-design-icon tag-icon\\" role=\\"img\\" data-v-6ca7cc69=\\"\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z\\"><!--v-if--></path></svg></span><span class=\\"rounded-md truncate text-sm text-violet-title px-2 py-1 bg-purple-3 dark:text-violet-3\\" data-v-6955ca87=\\"\\" data-v-6ca7cc69=\\"\\">A tag</span></div>
+  <div data-v-6ca7cc69=\\"\\" class=\\"flex flex-col gap-1 bg-inherit p-2 rounded-lg flex-1\\">
+    <h3 data-v-6ca7cc69=\\"\\" class=\\"text-xl color-violet-3 line-clamp-3 mb-2 font-bold\\" lang=\\"en\\">My Blog Post</h3>
+    <p data-v-6ca7cc69=\\"\\" class=\\"flex gap-2\\"><span data-v-6ca7cc69=\\"\\" aria-hidden=\\"true\\" class=\\"material-design-icon clock-icon\\" role=\\"img\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z\\"><!--v-if--></path></svg></span><span data-v-6ca7cc69=\\"\\" dir=\\"auto\\" class=\\"\\">Dec 2, 2020</span></p>
+    <div data-v-6ca7cc69=\\"\\" class=\\"flex flex-wrap gap-y-0 gap-x-2\\"><span data-v-6ca7cc69=\\"\\" aria-hidden=\\"true\\" class=\\"material-design-icon tag-icon\\" role=\\"img\\"><svg fill=\\"currentColor\\" class=\\"material-design-icon__svg\\" width=\\"24\\" height=\\"24\\" viewBox=\\"0 0 24 24\\"><path d=\\"M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z\\"><!--v-if--></path></svg></span><span data-v-6955ca87=\\"\\" data-v-6ca7cc69=\\"\\" class=\\"rounded-md truncate text-sm text-violet-title px-2 py-1 bg-purple-3 dark:text-violet-3\\">A tag</span></div>
+    <!--v-if-->
     <!--v-if-->
   </div>
 </a>"

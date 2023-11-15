@@ -134,6 +134,7 @@ export const loginMock = {
       __typename: "Config",
       auth: {
         __typename: "Auth",
+        databaseLogin: true,
         oauthProviders: [],
       },
       registrationsOpen: true,
