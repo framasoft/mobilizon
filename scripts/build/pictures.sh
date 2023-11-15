@@ -2,7 +2,7 @@
 
 set -eu
 
-output_dir="../priv/static/img/pics"
+output_dir="priv/static/img/pics"
 resolutions=(
     480
     1024

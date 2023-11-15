@@ -72,7 +72,6 @@ defmodule Mobilizon.Web.Router do
 
   pipeline :browser do
     plug(:put_request_context)
-    plug(Plug.Static, at: "/", from: "priv/static")
 
     plug(Mobilizon.Web.Plugs.SetLocalePlug)
 
