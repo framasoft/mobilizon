@@ -83,7 +83,7 @@ build-frontend:
   image: node:20
   before_script:
     - apt update
-    - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
+    - apt install -y --no-install-recommends python3 build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
   script:
     - npm install --frozen-lockfile
     - npm run build
