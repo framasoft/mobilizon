@@ -67,7 +67,6 @@ lint-elixir:
     reports:
       codequality: codeclimate.json
 
-
 lint-front:
   image: node:20
   stage: check
@@ -182,7 +181,7 @@ e2e:
     - npx playwright test --project $BROWSER
   parallel:
     matrix:
-      - BROWSER: ['firefox', 'chromium']
+      - BROWSER: ["firefox", "chromium"]
   artifacts:
     expire_in: 2 days
     paths:
@@ -267,7 +266,6 @@ build-and-push-to-latest-docker-tag:
         ERL_FLAGS: ["ERL_FLAGS="]
       - ARCH: ["arm64"]
         ERL_FLAGS: ["ERL_FLAGS=+JMsingle true"]
-
 
 # Don't push to latest when building beta/rc tags
 build-and-push-docker-tag:
