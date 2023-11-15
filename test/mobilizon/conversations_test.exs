@@ -1,4 +1,4 @@
-defmodule Mobilizon.DiscussionsTest do
+defmodule Mobilizon.ConversationsTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory

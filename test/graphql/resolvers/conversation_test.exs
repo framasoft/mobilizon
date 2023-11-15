@@ -1,8 +1,6 @@
 defmodule Mobilizon.GraphQL.Resolvers.ConversationTest do
   use Mobilizon.Web.ConnCase
-  alias Mobilizon.Actors
-  alias Mobilizon.Actors.Actor
-
+  alias Mobilizon.Discussions
   alias Mobilizon.GraphQL.AbsintheHelpers
   import Mobilizon.Factory
 
@@ -47,7 +45,10 @@ defmodule Mobilizon.GraphQL.Resolvers.ConversationTest do
     test "for a given event", %{conn: conn, user: user, actor: actor} do
       event = insert(:event, organizer_actor: actor)
       conversation = insert(:conversation, event: event)
-      another_comment = build(:comment, origin_comment: conversation.origin_comment)
+      another_comment = insert(:comment, origin_comment: conversation.origin_comment)
+
+      Discussions.update_comment(conversation.origin_comment, %{conversation_id: conversation.id})
+      Discussions.update_comment(another_comment, %{conversation_id: conversation.id})
 
       conversation_participant =
         insert(:conversation_participant, actor: actor, conversation: conversation)
@@ -66,10 +67,18 @@ defmodule Mobilizon.GraphQL.Resolvers.ConversationTest do
       conversation_data = hd(res["data"]["event"]["conversations"]["elements"])
       assert conversation_data["id"] == to_string(conversation.id)
       assert conversation_data["lastComment"]["text"] == conversation.last_comment.text
-      assert conversation_data["comments"]["total"] == 2
 
-      assert conversation_data["comments"]["elements"]
-             |> Enum.any?(fn comment -> comment.text == conversation.origin_comment.text end)
+      assert conversation_data["comments"]["total"] == 2
+      comments = conversation_data["comments"]["elements"]
+
+      assert MapSet.new(Enum.map(comments, & &1["id"])) ==
+               [conversation.origin_comment.id, another_comment.id]
+               |> Enum.map(&to_string/1)
+               |> MapSet.new()
+
+      assert Enum.any?(comments, fn comment ->
+               comment["text"] == conversation.origin_comment.text
+             end)
 
       assert conversation_data["actor"]["preferredUsername"] ==
                conversation_participant.actor.preferred_username

@@ -6,6 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
   import ExUnit.CaptureLog
   alias Mobilizon.Actors
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
@@ -218,7 +219,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
              end) =~ "[warning] Parent object is something we don't handle"
     end
 
-    test "it ignores incoming private notes" do
+    test "it accepts incoming private notes" do
       actor_data = File.read!("test/fixtures/mastodon-actor.json") |> Jason.decode!()
 
       Mock
@@ -245,12 +246,28 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.CommentsTest do
       end)
 
       data = File.read!("test/fixtures/mastodon-post-activity-private.json") |> Jason.decode!()
-      event = insert(:event)
+      %Event{organizer_actor_id: organizer_actor_id} = event = insert(:event)
       object = data["object"]
       object = Map.put(object, "inReplyTo", event.url)
       data = Map.put(data, "object", object)
 
-      :error = Transmogrifier.handle_incoming(data)
+      {:ok, %Activity{data: _data, local: false}, %Conversation{} = conversation} =
+        Transmogrifier.handle_incoming(data)
+
+      {:ok, %Actor{id: actor_1_id}} = Actors.get_actor_by_url("https://framapiaf.org/users/tcit")
+      {:ok, %Actor{id: actor_2_id}} = Actors.get_actor_by_url("https://framapiaf.org/users/admin")
+
+      assert conversation.event_id == event.id
+      assert conversation.last_comment.visibility == :private
+      assert conversation.last_comment.actor_id == actor_2_id
+      assert conversation.last_comment_id == conversation.origin_comment_id
+      assert is_nil(conversation.last_comment.in_reply_to_comment_id)
+      assert is_nil(conversation.last_comment.origin_comment_id)
+
+      participants_id = Enum.map(conversation.participants, & &1.id)
+
+      assert MapSet.new(participants_id) ==
+               MapSet.new([organizer_actor_id, actor_1_id, actor_2_id])
     end
 
     test "it works for incoming notices" do

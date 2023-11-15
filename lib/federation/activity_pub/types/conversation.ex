@@ -23,37 +23,43 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Conversations do
   @impl Entity
   @spec create(map(), map()) ::
           {:ok, Conversation.t(), ActivityStream.t()}
-          | {:error, :conversation_not_found | :last_comment_not_found | Ecto.Changeset.t()}
+          | {:error,
+             :conversation_not_found
+             | :last_comment_not_found
+             | :empty_participants
+             | Ecto.Changeset.t()}
   def create(%{conversation_id: conversation_id} = args, additional)
       when not is_nil(conversation_id) do
     Logger.debug("Creating a reply to a conversation #{inspect(args, pretty: true)}")
     args = prepare_args(args)
     Logger.debug("Creating a reply to a conversation #{inspect(args, pretty: true)}")
 
-    case Conversations.get_conversation(conversation_id) do
-      %Conversation{} = conversation ->
-        case Conversations.reply_to_conversation(conversation, args) do
-          {:ok, %Conversation{last_comment_id: last_comment_id} = conversation} ->
-            ConversationActivity.insert_activity(conversation, subject: "conversation_replied")
-            maybe_publish_graphql_subscription(conversation)
+    with args when is_map(args) <- prepare_args(args) do
+      case Conversations.get_conversation(conversation_id) do
+        %Conversation{} = conversation ->
+          case Conversations.reply_to_conversation(conversation, args) do
+            {:ok, %Conversation{last_comment_id: last_comment_id} = conversation} ->
+              ConversationActivity.insert_activity(conversation, subject: "conversation_replied")
+              maybe_publish_graphql_subscription(conversation)
 
-            case Discussions.get_comment_with_preload(last_comment_id) do
-              %Comment{} = last_comment ->
-                comment_as_data = Convertible.model_to_as(last_comment)
-                audience = Audience.get_audience(conversation)
-                create_data = make_create_data(comment_as_data, Map.merge(audience, additional))
-                {:ok, conversation, create_data}
+              case Discussions.get_comment_with_preload(last_comment_id) do
+                %Comment{} = last_comment ->
+                  comment_as_data = Convertible.model_to_as(last_comment)
+                  audience = Audience.get_audience(conversation)
+                  create_data = make_create_data(comment_as_data, Map.merge(audience, additional))
+                  {:ok, conversation, create_data}
 
-              nil ->
-                {:error, :last_comment_not_found}
-            end
+                nil ->
+                  {:error, :last_comment_not_found}
+              end
 
-          {:error, _, %Ecto.Changeset{} = err, _} ->
-            {:error, err}
-        end
+            {:error, _, %Ecto.Changeset{} = err, _} ->
+              {:error, err}
+          end
 
-      nil ->
-        {:error, :discussion_not_found}
+        nil ->
+          {:error, :discussion_not_found}
+      end
     end
   end
 
