@@ -224,7 +224,7 @@ msgstr ""
 "Non si desidera ricevere notifiche di attività? È possibile modificare la "
 "frequenza o disabilitarle nelle impostazioni."
 
-#: lib/web/templates/email/email_direct_activity.html.heex:218
+#: lib/web/templates/email/email_direct_activity.html.heex:222
 #: lib/web/templates/email/email_direct_activity.text.eex:23
 #, elixir-format
 msgid "View one more activity"
@@ -250,8 +250,6 @@ msgstr "Attività su %{instance}"
 #: lib/service/activity/renderer/comment.ex:38
 #: lib/web/templates/email/activity/_comment_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_comment_activity_item.text.eex:7
-#: lib/web/templates/email/email_anonymous_activity.html.heex:48
-#: lib/web/templates/email/email_anonymous_activity.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{profile} has posted an announcement under event %{event}."
 msgstr "%{profile} ha inviato un annuncio sotto l'evento %{event}."
@@ -263,7 +261,7 @@ msgstr "%{profile} ha inviato un annuncio sotto l'evento %{event}."
 msgid "%{profile} mentionned you in a comment under event %{event}."
 msgstr "%{profile} ti ha menzionato in un commento sotto l'evento %{event}."
 
-#: lib/web/templates/email/email_direct_activity.html.heex:248
+#: lib/web/templates/email/email_direct_activity.html.heex:252
 #, elixir-autogen, elixir-format
 msgid "Don't want to receive activity notifications? You may change frequency or disable them in %{tag_start}your settings%{tag_end}."
 msgstr ""
@@ -276,13 +274,13 @@ msgstr ""
 msgid "Here's your weekly activity recap"
 msgstr "Ecco il riepilogo delle tue attività settimanali"
 
-#: lib/web/email/activity.ex:121
-#: lib/web/email/activity.ex:142
+#: lib/web/email/activity.ex:154
+#: lib/web/email/activity.ex:175
 #, elixir-autogen, elixir-format
 msgid "Activity notification for %{instance}"
 msgstr "Notifica attività per %{instance}"
 
-#: lib/web/email/activity.ex:128
+#: lib/web/email/activity.ex:161
 #, elixir-autogen, elixir-format
 msgid "Daily activity recap for %{instance}"
 msgstr "Riepilogo delle attività giornaliere per %{instance}"
@@ -293,7 +291,7 @@ msgstr "Riepilogo delle attività giornaliere per %{instance}"
 msgid "Here's your daily activity recap"
 msgstr "Ecco il riepilogo delle tue attività quotidiane"
 
-#: lib/web/email/activity.ex:135
+#: lib/web/email/activity.ex:168
 #, elixir-autogen, elixir-format
 msgid "Weekly activity recap for %{instance}"
 msgstr "Riepilogo attività settimanale per %{instance}"
@@ -314,7 +312,7 @@ msgid "%{profile} has posted a new reply under your event %{event}."
 msgstr ""
 "%{profile} ha pubblicato una nuova risposta sotto il tuo evento %{event}."
 
-#: lib/web/email/activity.ex:46
+#: lib/web/email/activity.ex:77
 #, elixir-autogen, elixir-format
 msgid "Announcement for your event %{event}"
 msgstr "Annuncio per il tuo evento %{event}"
@@ -494,7 +492,71 @@ msgstr "%{profile} ha aggiunto il membro %{member}."
 msgid "%{profile} joined your event %{event}."
 msgstr ""
 
-#: lib/web/views/email_view.ex:45
+#: lib/web/views/email_view.ex:61
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
+msgstr ""
+
+#: lib/web/templates/email/email_anonymous_activity.html.heex:107
+#: lib/web/templates/email/email_anonymous_activity.text.eex:14
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} has posted a private announcement about event %{event}."
+msgstr "%{profile} ha inviato un annuncio sotto l'evento %{event}."
+
+#: lib/web/templates/email/email_anonymous_activity.html.heex:50
+#: lib/web/templates/email/email_anonymous_activity.text.eex:6
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} has posted a public announcement under event %{event}."
+msgstr "%{profile} ha inviato un annuncio sotto l'evento %{event}."
+
+#: lib/web/templates/email/activity/_conversation_activity_item.html.heex:3
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} mentionned you in a %{conversation}."
+msgstr "%{profile} ti ha menzionato in un commento sotto l'evento %{event}."
+
+#: lib/web/templates/email/activity/_conversation_activity_item.text.eex:1
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} mentionned you in a conversation."
+msgstr "%{profile} ti ha menzionato in un commento sotto l'evento %{event}."
+
+#: lib/service/activity/renderer/conversation.ex:37
+#, elixir-autogen, elixir-format
+msgid "%{profile} replied to your message"
+msgstr ""
+
+#: lib/web/templates/email/activity/_conversation_activity_item.html.heex:12
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{profile} replied you in a %{conversation}."
+msgstr "%{profile} ha risposto alla discussione %{discussion}."
+
+#: lib/web/templates/email/activity/_conversation_activity_item.text.eex:6
+#, elixir-autogen, elixir-format
+msgid "%{profile} replied you in a conversation."
+msgstr ""
+
+#: lib/service/activity/renderer/conversation.ex:50
+#, elixir-autogen, elixir-format
+msgid "%{profile} sent a private message about event %{event}"
+msgstr ""
+
+#: lib/service/activity/renderer/conversation.ex:24
+#, elixir-autogen, elixir-format
+msgid "%{profile} sent you a message"
+msgstr ""
+
+#: lib/web/email/activity.ex:51
+#, elixir-autogen, elixir-format
+msgid "Informations about your event %{event}"
+msgstr ""
+
+#: lib/web/templates/email/email_anonymous_activity.html.heex:122
+#: lib/web/templates/email/email_anonymous_activity.text.eex:20
+#, elixir-autogen, elixir-format
+msgid "It might give details on how to join the event, so make sure to read it appropriately."
+msgstr ""
+
+#: lib/web/templates/email/email_anonymous_activity.html.heex:160
+#: lib/web/templates/email/email_anonymous_activity.text.eex:28
+#, elixir-autogen, elixir-format
+msgid "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution."
 msgstr ""

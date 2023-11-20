@@ -1153,7 +1153,8 @@ msgstr "Ver el informe"
 msgid "View report:"
 msgstr "Ver el informe:"
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/email_anonymous_activity.html.heex:85
+#: lib/web/templates/email/email_anonymous_activity.html.heex:184
 #: lib/web/templates/email/event_participation_approved.html.heex:81
 #: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format

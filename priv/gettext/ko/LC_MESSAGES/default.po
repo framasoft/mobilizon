@@ -1,18 +1,15 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-24 14:40+0000\n"
-"PO-Revision-Date: 2022-06-10 21:14+0000\n"
-"Last-Translator: DignifiedSilence <5Dd12Ck@protonmail.com>\n"
-"Language-Team: Japanese <https://weblate.framasoft.org/projects/mobilizon/"
-"backend/ja/>\n"
-"Language: ja\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.12\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -38,7 +35,7 @@ msgstr ""
 #: lib/web/templates/email/report.text.eex:17
 #, elixir-autogen, elixir-format
 msgid "Comments"
-msgstr "コメント"
+msgstr ""
 
 #: lib/web/email/user.ex:49
 #, elixir-autogen, elixir-format
@@ -48,12 +45,12 @@ msgstr ""
 #: lib/web/templates/email/report.text.eex:23
 #, elixir-autogen, elixir-format
 msgid "Reason"
-msgstr "理由"
+msgstr ""
 
 #: lib/web/templates/email/password_reset.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "Reset Password"
-msgstr "パスワードのリセット"
+msgstr ""
 
 #: lib/web/templates/email/password_reset.html.heex:53
 #, elixir-autogen, elixir-format
@@ -68,7 +65,7 @@ msgstr ""
 #: lib/web/email/admin.ex:22
 #, elixir-autogen, elixir-format
 msgid "New report on Mobilizon instance %{instance}"
-msgstr "Mobilizonインスタンス%{instance}での新しい通報"
+msgstr ""
 
 #: lib/web/templates/email/before_event_notification.html.heex:67
 #: lib/web/templates/email/before_event_notification.text.eex:4
@@ -90,7 +87,7 @@ msgstr ""
 #: lib/web/templates/email/password_reset.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Password reset"
-msgstr "パスワードのリセット"
+msgstr ""
 
 #: lib/web/templates/email/password_reset.text.eex:7
 #, elixir-autogen, elixir-format
@@ -115,12 +112,12 @@ msgstr ""
 #: lib/web/email/event.ex:44
 #, elixir-autogen, elixir-format
 msgid "Event %{title} has been updated"
-msgstr "イベント%{title}が更新されました"
+msgstr ""
 
 #: lib/web/templates/email/event_updated.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "New title: %{title}"
-msgstr "新しいタイトル: %{title}"
+msgstr ""
 
 #: lib/web/templates/email/password_reset.text.eex:5
 #, elixir-autogen, elixir-format
@@ -130,7 +127,7 @@ msgstr ""
 #: lib/web/templates/email/email.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Warning"
-msgstr "警告"
+msgstr ""
 
 #: lib/web/email/participation.ex:140
 #, elixir-autogen, elixir-format
@@ -159,7 +156,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Basic account information"
-msgstr "アカウントの基本情報"
+msgstr ""
 
 #: lib/web/templates/api/privacy.html.heex:32
 #, elixir-autogen, elixir-format
@@ -189,7 +186,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "IPs and other metadata"
-msgstr "IPアドレスとその他のメタデータ"
+msgstr ""
 
 #: lib/web/templates/api/privacy.html.heex:23
 #, elixir-autogen, elixir-format
@@ -279,7 +276,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Site usage by children"
-msgstr "子どもたちによる利用について"
+msgstr ""
 
 #: lib/web/templates/api/privacy.html.heex:68
 #, elixir-autogen, elixir-format
@@ -471,13 +468,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Feedback"
-msgstr "フィードバック"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:261
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Hyperlinks and Third Party Content"
-msgstr "ハイパーリンクとサードパーティによるコンテンツ"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:279
 #, elixir-autogen, elixir-format
@@ -501,13 +498,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Privacy Policy"
-msgstr "プライバシーポリシー"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:304
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Questions & Contact Information"
-msgstr "質問とお問い合わせに関する情報"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:277
 #, elixir-autogen, elixir-format
@@ -609,7 +606,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Source code"
-msgstr "ソースコード"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:296
 #, elixir-autogen, elixir-format
@@ -759,12 +756,12 @@ msgstr[0] ""
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
 msgid "%{instance} is powered by Mobilizon."
-msgstr "%{instance} is powered by Mobilizon."
+msgstr ""
 
 #: lib/web/templates/email/email.html.heex:187
 #, elixir-autogen, elixir-format
 msgid "<b>%{instance}</b> is powered by Mobilizon."
-msgstr "<b>%{instance}</b> is powered by Mobilizon."
+msgstr ""
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:18
 #: lib/web/templates/email/pending_participation_notification.text.eex:1
@@ -851,7 +848,7 @@ msgstr ""
 #: lib/web/templates/export/event_participants.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Location"
-msgstr "場所"
+msgstr ""
 
 #: lib/web/templates/email/event_updated.html.heex:133
 #, elixir-autogen, elixir-format
@@ -879,7 +876,7 @@ msgstr ""
 #: lib/web/templates/email/report.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Reasons for report"
-msgstr "通報理由"
+msgstr ""
 
 #: lib/web/templates/email/report.html.heex:48
 #, elixir-autogen, elixir-format
@@ -934,7 +931,7 @@ msgstr ""
 #: lib/web/templates/email/report.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "View report"
-msgstr "通報内容を見る"
+msgstr ""
 
 #: lib/web/templates/email/report.text.eex:26
 #, elixir-autogen, elixir-format
@@ -963,7 +960,7 @@ msgstr ""
 #: lib/web/templates/email/on_day_notification.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "What's up today?"
-msgstr "今日の調子はいかがですか？"
+msgstr ""
 
 #: lib/web/templates/email/event_participation_approved.html.heex:98
 #: lib/web/templates/email/event_participation_approved.text.eex:11
@@ -1012,7 +1009,7 @@ msgstr ""
 #: lib/web/email/member.ex:114
 #, elixir-autogen, elixir-format
 msgid "You have been removed from group %{group}"
-msgstr "あなたはグループ%{group}から除外されました"
+msgstr ""
 
 #: lib/web/templates/email/group_member_removal.text.eex:3
 #, elixir-autogen, elixir-format
@@ -1085,8 +1082,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "terms"
 msgid "Note: This information is stored in your localStorage and not your cookies."
-msgstr "ノート: この情報はあなたのブラウザーのCookieではなく、ローカルストレージに保"
-"存されます。"
+msgstr ""
 
 #: lib/web/templates/api/terms.html.heex:231
 #, elixir-autogen, elixir-format
@@ -1180,12 +1176,12 @@ msgstr ""
 #: lib/web/templates/email/report.html.heex:54
 #, elixir-autogen, elixir-format
 msgid "<b>%{reporter}</b> reported the following content."
-msgstr "<b>%{reporter}</b>が次のコンテンツについて通報しました。"
+msgstr ""
 
 #: lib/web/templates/email/report.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Group %{group} was reported"
-msgstr "グループ%{group}は通報されました"
+msgstr ""
 
 #: lib/web/templates/email/report.html.heex:71
 #, elixir-autogen, elixir-format
@@ -1195,7 +1191,7 @@ msgstr ""
 #: lib/web/templates/email/report.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Profile %{profile} was reported"
-msgstr "プロフィール%{profile}が通報されました"
+msgstr ""
 
 #: lib/web/templates/email/report.html.heex:81
 #, elixir-autogen, elixir-format
@@ -1210,17 +1206,17 @@ msgstr ""
 #: lib/mobilizon/posts/post.ex:99
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
-msgstr "投稿にはテキストが必須です"
+msgstr ""
 
 #: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
-msgstr "投稿にはタイトルが必須です"
+msgstr ""
 
 #: lib/web/email/follow.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{name} requests to follow your instance"
-msgstr "%{name}があなたのインスタンスへフォローリクエストを送りました"
+msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:53
 #: lib/web/templates/email/instance_follow.text.eex:6
@@ -1231,8 +1227,7 @@ msgstr ""
 #: lib/web/email/follow.ex:54
 #, elixir-autogen, elixir-format
 msgid "Instance %{name} (%{domain}) requests to follow your instance"
-msgstr "インスタンス%{name} "
-"(%{domain})が、あなたのインスタンスへフォローリクエストを送りました"
+msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:84
 #: lib/web/templates/email/instance_follow.text.eex:9
@@ -1259,7 +1254,7 @@ msgstr ""
 #: lib/web/templates/email/event_updated.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Event title"
-msgstr "イベントのタイトル"
+msgstr ""
 
 #: lib/web/templates/email/event_updated.html.heex:47
 #, elixir-autogen, elixir-format
@@ -1288,7 +1283,7 @@ msgstr ""
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
-msgstr "%{name}のフィード"
+msgstr ""
 
 #: lib/service/export/feed.ex:120
 #, elixir-autogen, elixir-format
@@ -1318,12 +1313,12 @@ msgstr ""
 #: lib/web/templates/error/500_page.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "Technical details"
-msgstr "技術的な詳細"
+msgstr ""
 
 #: lib/web/templates/error/500_page.html.heex:52
 #, elixir-autogen, elixir-format
 msgid "The Mobilizon server %{instance} seems to be temporarily down."
-msgstr "%{instance}のMobilizonサーバーは、一時的にダウンしているようです。"
+msgstr ""
 
 #: lib/service/export/feed.ex:72
 #, elixir-autogen, elixir-format
@@ -1363,12 +1358,12 @@ msgstr ""
 #: lib/service/export/participants/common.ex:66
 #, elixir-autogen, elixir-format
 msgid "Participant message"
-msgstr "参加者のメッセージ"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:63
 #, elixir-autogen, elixir-format
 msgid "Participant name"
-msgstr "参加者の名前"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:64
 #, elixir-autogen, elixir-format
@@ -1380,7 +1375,7 @@ msgstr ""
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Administrator"
-msgstr "管理者"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:56
 #, elixir-autogen, elixir-format
@@ -1392,7 +1387,7 @@ msgstr ""
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Moderator"
-msgstr "モデレーター"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:38
 #, elixir-autogen, elixir-format
@@ -1402,17 +1397,17 @@ msgstr ""
 #: lib/service/export/participants/common.ex:41
 #, elixir-autogen, elixir-format
 msgid "Not confirmed"
-msgstr "確認されていません"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:47
 #, elixir-autogen, elixir-format
 msgid "Participant"
-msgstr "参加者"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:44
 #, elixir-autogen, elixir-format
 msgid "Rejected"
-msgstr "却下"
+msgstr ""
 
 #: lib/web/templates/export/event_participants.html.heex:122
 #, elixir-autogen, elixir-format
@@ -1427,17 +1422,17 @@ msgstr ""
 #: lib/web/templates/export/event_participants.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Number of participants"
-msgstr "参加者の数"
+msgstr ""
 
 #: lib/web/templates/export/event_participants.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "Participants for %{event}"
-msgstr "%{event}への参加者"
+msgstr ""
 
 #: lib/service/export/participants/common.ex:95
 #, elixir-autogen, elixir-format
 msgid "Anonymous participant"
-msgstr "匿名の参加者"
+msgstr ""
 
 #: lib/web/templates/email/date/event_tz_date.html.heex:12
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:20
@@ -1467,7 +1462,7 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Details"
-msgstr "詳細"
+msgstr ""
 
 #: lib/web/templates/email/date/event_tz_date_range.html.heex:28
 #: lib/web/templates/email/date/event_tz_date_range.text.eex:1
@@ -1489,13 +1484,13 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:132
 #, elixir-autogen, elixir-format
 msgid "Read more"
-msgstr "もっと読む"
+msgstr ""
 
 #: lib/web/templates/email/participation/card/_metadata.html.heex:121
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
 #, elixir-autogen, elixir-format
 msgid "Online event"
-msgstr "オンラインイベント"
+msgstr ""
 
 #: lib/web/templates/email/event_group_follower_notification.html.heex:18
 #, elixir-autogen, elixir-format
@@ -1510,22 +1505,22 @@ msgstr ""
 #: lib/web/templates/email/participation/card/_metadata.text.eex:2
 #, elixir-autogen, elixir-format
 msgid "Address:"
-msgstr "住所:"
+msgstr ""
 
 #: lib/web/templates/email/participation/card/_metadata.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Date:"
-msgstr "日付:"
+msgstr ""
 
 #: lib/web/templates/email/participation/event_card.text.eex:7
 #, elixir-autogen, elixir-format
 msgid "Details:"
-msgstr "詳細:"
+msgstr ""
 
 #: lib/web/templates/email/email.html.heex:182
 #, elixir-autogen, elixir-format
 msgid "Manage your notification settings"
-msgstr "通知設定を管理する"
+msgstr ""
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
@@ -1541,17 +1536,17 @@ msgstr ""
 #: lib/web/templates/email/participation/event_card.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Participate"
-msgstr "参加する"
+msgstr ""
 
 #: lib/web/templates/email/participation/event_card.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Participate:"
-msgstr "参加する:"
+msgstr ""
 
 #: lib/web/templates/email/participation/card/_title.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "Title: %{title}"
-msgstr "タイトル: %{title}"
+msgstr ""
 
 #: lib/web/email/group.ex:47
 #, elixir-autogen, elixir-format
@@ -1582,7 +1577,7 @@ msgstr ""
 #: lib/web/templates/email/group_membership_approval.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "View the group"
-msgstr "グループを見る"
+msgstr ""
 
 #: lib/web/templates/email/group_membership_approval.html.heex:18
 #: lib/web/templates/email/group_membership_approval.text.eex:1
@@ -1631,7 +1626,7 @@ msgstr[0] ""
 #: lib/web/templates/email/admin_user_role_changed.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator changed your role"
-msgstr "管理者があなたの権限を変更しました"
+msgstr ""
 
 #: lib/web/email/admin.ex:122
 #, elixir-autogen, elixir-format
@@ -1644,15 +1639,13 @@ msgstr ""
 #: lib/web/templates/email/admin_user_email_changed_old.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account"
-msgstr "管理者が手動であなたのアカウントに紐づけられているメールアドレスを変更しまし"
-"た"
+msgstr ""
 
 #: lib/web/email/admin.ex:43
 #: lib/web/email/admin.ex:70
 #, elixir-autogen, elixir-format
 msgid "An administrator manually changed the email attached to your account on %{instance}"
-msgstr "管理者が手動で%{instance}のあなたのアカウントに紐づけられているメールアドレス"
-"を変更しました"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:18
 #: lib/web/templates/email/admin_user_confirmation.text.eex:1
@@ -1663,10 +1656,10 @@ msgstr ""
 #: lib/web/email/admin.ex:98
 #, elixir-autogen, elixir-format
 msgid "An administrator updated your role on %{instance}"
-msgstr "管理者が%{instance}でのあなたの権限を更新しました"
+msgstr ""
 
 #: lib/web/templates/email/email_changed_new.text.eex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! It seems like you wanted to change the email address linked to your account on %{instance}. If you still wish to do so, please click the button below to confirm the change. You will then be able to log in to %{instance} with this new email address."
 msgstr ""
 
@@ -1715,33 +1708,33 @@ msgstr ""
 #: lib/web/templates/email/admin_user_confirmation.html.heex:79
 #, elixir-autogen, elixir-format
 msgid "Login on %{instance}"
-msgstr "%{instance} にログイン"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "New role"
-msgstr "新しい権限"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "New role:"
-msgstr "新しい権限:"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Old role"
-msgstr "古い権限"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "Old role:"
-msgstr "古い権限:"
+msgstr ""
 
 #: lib/web/templates/email/admin/_role.html.heex:7
 #: lib/web/templates/email/admin/_role.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "User"
-msgstr "ユーザー"
+msgstr ""
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:62
 #, elixir-autogen, elixir-format
@@ -1754,36 +1747,34 @@ msgid "You may now login using your credentials on the service:"
 msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.text.eex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from %{instance} just changed your account role."
 msgstr ""
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:47
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just changed your account role."
 msgstr ""
 
 #: lib/web/templates/email/instance_follow.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "%{name} just requested to follow your instance."
-msgstr "%{name}がちょうど今、あなたのインスタンスへのフォローリクエストを送信しました"
-"。"
+msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "<b>%{name}</b> just requested to follow your instance."
-msgstr "<b>%{name}</b>がちょうど今、あなたのインスタンスへのフォローリクエストを送信"
-"しました。"
+msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:55
 #: lib/web/templates/email/instance_follow.text.eex:6
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "If you accept, this profile will receive all of your public events."
 msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:88
 #: lib/web/templates/email/instance_follow.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "To accept this invitation, head over to the profile's admin page."
 msgstr ""
 
@@ -1791,107 +1782,107 @@ msgstr ""
 #: lib/web/templates/email/instance_follow.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "View the details"
-msgstr "詳細を見る"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:32
 #, elixir-autogen, elixir-format
 msgid "Arts"
-msgstr "芸術"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto, boat and air"
-msgstr "自動車や船や飛行機"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:36
 #, elixir-autogen, elixir-format
 msgid "Book clubs"
-msgstr "読書会"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:40
 #, elixir-autogen, elixir-format
 msgid "Business"
-msgstr "ビジネス"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:44
 #, elixir-autogen, elixir-format
 msgid "Causes"
-msgstr "運動"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:48
 #, elixir-autogen, elixir-format
 msgid "Comedy"
-msgstr "コメディ"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:72
 #, elixir-autogen, elixir-format
 msgid "Community"
-msgstr "コミュニティ"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:52
 #, elixir-autogen, elixir-format
 msgid "Crafts"
-msgstr "手作り"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:76
 #, elixir-autogen, elixir-format
 msgid "Family & Education"
-msgstr "家族向けや教育関係"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:80
 #, elixir-autogen, elixir-format
 msgid "Fashion & Beauty"
-msgstr "ファッションや美容"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:84
 #, elixir-autogen, elixir-format
 msgid "Film & Media"
-msgstr "映画やメディア"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:56
 #, elixir-autogen, elixir-format
 msgid "Food & Drink"
-msgstr "食べ物や飲み物"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:88
 #, elixir-autogen, elixir-format
 msgid "Games"
-msgstr "ゲーム"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:60
 #, elixir-autogen, elixir-format
 msgid "Health"
-msgstr "健康"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:100
 #, elixir-autogen, elixir-format
 msgid "LGBTQ"
-msgstr "LGBTQ"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:92
 #, elixir-autogen, elixir-format
 msgid "Language & Culture"
-msgstr "言語と文化"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:96
 #, elixir-autogen, elixir-format
 msgid "Learning"
-msgstr "勉強会"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:149
 #, elixir-autogen, elixir-format
 msgid "Meeting"
-msgstr "会合"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:104
 #, elixir-autogen, elixir-format
 msgid "Movements and politics"
-msgstr "社会運動や政治"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:64
 #, elixir-autogen, elixir-format
 msgid "Music"
-msgstr "音楽"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:108
 #, elixir-autogen, elixir-format
@@ -1901,67 +1892,66 @@ msgstr ""
 #: lib/mobilizon/events/categories.ex:128
 #, elixir-autogen, elixir-format
 msgid "Outdoors & Adventure"
-msgstr "アウトドアと冒険"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:112
 #, elixir-autogen, elixir-format
 msgid "Party"
-msgstr "パーティー"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:116
 #, elixir-autogen, elixir-format
 msgid "Performing & Visual Arts"
-msgstr "舞台・視覚芸術"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:120
 #, elixir-autogen, elixir-format
 msgid "Pets"
-msgstr "ペット"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:124
 #, elixir-autogen, elixir-format
 msgid "Photography"
-msgstr "写真"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:136
 #, elixir-autogen, elixir-format
 msgid "Science & Tech"
-msgstr "科学や技術"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:132
 #, elixir-autogen, elixir-format
 msgid "Spirituality, Religion & Beliefs"
-msgstr "スピリチュアルや宗教や信仰"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:140
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr "スポーツ"
+msgstr ""
 
 #: lib/mobilizon/events/categories.ex:144
 #, elixir-autogen, elixir-format
 msgid "Theatre"
-msgstr "演劇"
+msgstr ""
 
 #: lib/web/templates/email/participation/event_card.text.eex:9
 #, elixir-autogen, elixir-format
 msgid "Read more: %{url}"
-msgstr "詳しく見る: %{url}"
+msgstr ""
 
 #: lib/web/templates/email/registration_confirmation.text.eex:9
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Activate my account:"
 msgstr ""
 
 #: lib/web/email/follow.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Instance %{domain} requests to follow your instance"
-msgstr "インスタンス%{name} "
-"(%{domain})が、あなたのインスタンスへフォローリクエストを送りました"
+msgstr ""
 
 #: lib/web/templates/email/instance_follow.html.heex:68
 #: lib/web/templates/email/instance_follow.text.eex:7
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Note: %{name} following you doesn't necessarily imply that you follow this instance, but you can ask to follow them too."
 msgstr ""
 
@@ -1973,21 +1963,21 @@ msgstr ""
 
 #: lib/web/templates/email/group_suspension.html.heex:67
 #: lib/web/templates/email/group_suspension.text.eex:5
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "As this group was located on this instance, all of its data has been irretrievably deleted."
 msgstr ""
 
 #: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "イベント"
+msgstr ""
 
 #: lib/web/templates/email/report.html.heex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Flagged events"
 msgstr ""
 
 #: lib/service/export/participants/common.ex:65
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Participant registration date"
 msgstr ""

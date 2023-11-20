@@ -313,6 +313,25 @@ msgstr ""
 msgid "Mobilizon on %{instance}: email changed"
 msgstr ""
 
+#: lib/web/email/notification.ex:52
+#, elixir-format
+msgid "One event planned today"
+msgid_plural "%{nb_events} events planned today"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: lib/web/templates/email/on_day_notification.html.heex:47
+#: lib/web/templates/email/on_day_notification.text.eex:3
+#, elixir-format
+msgid "You have one event today:"
+msgid_plural "You have %{total} events today:"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
 #: lib/web/templates/email/group_invite.text.eex:3
 #, elixir-autogen, elixir-format
 msgid "%{inviter} just invited you to join their group %{group}"
@@ -355,6 +374,34 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You have been invited by %{inviter} to join group %{group}"
 msgstr ""
+
+#: lib/web/email/notification.ex:81
+#, elixir-format, fuzzy
+msgid "One event planned this week"
+msgid_plural "%{nb_events} events planned this week"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: lib/web/email/notification.ex:107
+#, elixir-format
+msgid "One participation request for event %{title} to process"
+msgid_plural "%{number_participation_requests} participation requests for event %{title} to process"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
+#: lib/web/templates/email/notification_each_week.html.heex:47
+#: lib/web/templates/email/notification_each_week.text.eex:3
+#, elixir-format
+msgid "You have one event this week:"
+msgid_plural "You have %{total} events this week:"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: lib/service/metadata/utils.ex:53
 #, elixir-autogen, elixir-format
@@ -709,6 +756,22 @@ msgstr ""
 msgid "Please do not use it for real purposes."
 msgstr ""
 
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:88
+#: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6
+#: lib/web/templates/email/event_updated.html.heex:172
+#: lib/web/templates/email/event_updated.text.eex:14
+#: lib/web/templates/email/notification_each_week.html.heex:92
+#: lib/web/templates/email/notification_each_week.text.eex:11
+#: lib/web/templates/email/on_day_notification.html.heex:89
+#: lib/web/templates/email/on_day_notification.text.eex:11
+#, elixir-format, fuzzy
+msgid "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
+msgid_plural "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
 #: lib/web/templates/email/email.text.eex:11
 #, elixir-autogen, elixir-format
 msgid "%{instance} is powered by Mobilizon."
@@ -894,7 +957,8 @@ msgstr ""
 msgid "View report:"
 msgstr ""
 
-#: lib/web/templates/email/email_anonymous_activity.html.heex:82
+#: lib/web/templates/email/email_anonymous_activity.html.heex:85
+#: lib/web/templates/email/email_anonymous_activity.html.heex:184
 #: lib/web/templates/email/event_participation_approved.html.heex:81
 #: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
@@ -1569,6 +1633,16 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been approved."
 msgstr ""
+
+#: lib/web/templates/email/pending_participation_notification.html.heex:47
+#: lib/web/templates/email/pending_participation_notification.text.eex:4
+#, elixir-format
+msgid "You have one pending attendance request to process for the following event:"
+msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:18
 #: lib/web/templates/email/admin_user_role_changed.text.eex:1
