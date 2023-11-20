@@ -661,10 +661,7 @@ type Todo {
 "Root subscription"
 type RootSubscriptionType {
   "Notify when a person's participation's status changed for an event"
-  eventPersonParticipationChanged(
-    "The person's ID"
-    personId: ID!
-  ): Person
+  eventPersonParticipationChanged("The person's ID" personId: ID!): Person
 
   "Notify when a person's membership's status changed for a group"
   groupMembershipChanged(
@@ -676,10 +673,7 @@ type RootSubscriptionType {
   ): Person
 
   "Notify when a discussion changed"
-  discussionCommentChanged(
-    "The discussion's slug"
-    slug: String!
-  ): Discussion
+  discussionCommentChanged("The discussion's slug" slug: String!): Discussion
 }
 
 "Event categories list configuration"
@@ -1298,10 +1292,7 @@ type RootMutationType {
   ): Login
 
   "Refresh a token"
-  refreshToken(
-    "A refresh token"
-    refreshToken: String!
-  ): RefreshedToken
+  refreshToken("A refresh token" refreshToken: String!): RefreshedToken
 
   "Logout an user, deleting a refresh token"
   logout(refreshToken: String!): String
@@ -1373,10 +1364,7 @@ type RootMutationType {
   ): UserSettings
 
   "Update the user's locale"
-  updateLocale(
-    "The user's new locale"
-    locale: String
-  ): User
+  updateLocale("The user's new locale" locale: String): User
 
   "Create a new person for user"
   createPerson(
@@ -1415,10 +1403,7 @@ type RootMutationType {
   ): Person
 
   "Delete an identity"
-  deletePerson(
-    "The person's ID"
-    id: ID!
-  ): Person
+  deletePerson("The person's ID" id: ID!): Person
 
   "Register a first profile on registration"
   registerPerson(
@@ -1499,10 +1484,7 @@ type RootMutationType {
   ): Group
 
   "Delete a group"
-  deleteGroup(
-    "The group ID"
-    groupId: ID!
-  ): DeletedObject
+  deleteGroup("The group ID" groupId: ID!): DeletedObject
 
   "Follow a group"
   followGroup(
@@ -1523,10 +1505,7 @@ type RootMutationType {
   ): Follower
 
   "Unfollow a group"
-  unfollowGroup(
-    "The group ID"
-    groupId: ID!
-  ): Follower
+  unfollowGroup("The group ID" groupId: ID!): Follower
 
   "Create an event"
   createEvent(
@@ -1667,10 +1646,7 @@ type RootMutationType {
   ): Event
 
   "Delete an event"
-  deleteEvent(
-    "The event ID to delete"
-    eventId: ID!
-  ): DeletedObject
+  deleteEvent("The event ID to delete" eventId: ID!): DeletedObject
 
   "Create a comment"
   createComment(
@@ -1706,10 +1682,7 @@ type RootMutationType {
   ): Comment
 
   "Delete a single comment"
-  deleteComment(
-    "The comment ID"
-    commentId: ID!
-  ): Comment
+  deleteComment("The comment ID" commentId: ID!): Comment
 
   "Join an event"
   joinEvent(
@@ -1772,16 +1745,10 @@ type RootMutationType {
   ): String
 
   "Join a group"
-  joinGroup(
-    "The group ID"
-    groupId: ID!
-  ): Member
+  joinGroup("The group ID" groupId: ID!): Member
 
   "Leave a group"
-  leaveGroup(
-    "The group ID"
-    groupId: ID!
-  ): DeletedObject
+  leaveGroup("The group ID" groupId: ID!): DeletedObject
 
   "Invite an actor to join the group"
   inviteMember(
@@ -1793,28 +1760,16 @@ type RootMutationType {
   ): Member
 
   "Accept an invitation to a group"
-  acceptInvitation(
-    "The member ID"
-    id: ID!
-  ): Member
+  acceptInvitation("The member ID" id: ID!): Member
 
   "Reject an invitation to a group"
-  rejectInvitation(
-    "The member ID"
-    id: ID!
-  ): Member
+  rejectInvitation("The member ID" id: ID!): Member
 
   "Approve a membership request"
-  approveMember(
-    "The member ID"
-    memberId: ID!
-  ): Member
+  approveMember("The member ID" memberId: ID!): Member
 
   "Reject a membership request"
-  rejectMember(
-    "The member ID"
-    memberId: ID!
-  ): Member
+  rejectMember("The member ID" memberId: ID!): Member
 
   "Update a member's role"
   updateMember(
@@ -1835,16 +1790,10 @@ type RootMutationType {
   ): Member
 
   "Create a Feed Token"
-  createFeedToken(
-    "The actor ID for the feed token"
-    actorId: ID
-  ): FeedToken
+  createFeedToken("The actor ID for the feed token" actorId: ID): FeedToken
 
   "Delete a feed token"
-  deleteFeedToken(
-    "The token to delete"
-    token: String!
-  ): DeletedFeedToken
+  deleteFeedToken("The token to delete" token: String!): DeletedFeedToken
 
   "Upload a media"
   uploadMedia(
@@ -1859,10 +1808,7 @@ type RootMutationType {
   ): Media
 
   "Remove a media"
-  removeMedia(
-    "The media's ID"
-    id: ID!
-  ): DeletedObject
+  removeMedia("The media's ID" id: ID!): DeletedObject
 
   "Create a report"
   createReport(
@@ -1901,34 +1847,19 @@ type RootMutationType {
   ): ReportNote
 
   "Delete a note on a report"
-  deleteReportNote(
-    "The note's ID"
-    noteId: ID!
-  ): DeletedObject
+  deleteReportNote("The note's ID" noteId: ID!): DeletedObject
 
   "Add an instance subscription"
-  addInstance(
-    "The instance domain to add"
-    domain: String!
-  ): Instance
+  addInstance("The instance domain to add" domain: String!): Instance
 
   "Delete a relay subscription"
-  removeRelay(
-    "The relay hostname to delete"
-    address: String!
-  ): Follower
+  removeRelay("The relay hostname to delete" address: String!): Follower
 
   "Accept a relay subscription"
-  acceptRelay(
-    "The accepted relay hostname"
-    address: String!
-  ): Follower
+  acceptRelay("The accepted relay hostname" address: String!): Follower
 
   "Reject a relay subscription"
-  rejectRelay(
-    "The rejected relay hostname"
-    address: String!
-  ): Follower
+  rejectRelay("The rejected relay hostname" address: String!): Follower
 
   "Save admin settings"
   saveAdminSettings(
@@ -2072,10 +2003,7 @@ type RootMutationType {
   ): Discussion
 
   "Delete a discussion"
-  deleteDiscussion(
-    "The discussion's ID"
-    discussionId: ID!
-  ): Discussion
+  deleteDiscussion("The discussion's ID" discussionId: ID!): Discussion
 
   "Create a resource"
   createResource(
@@ -2117,10 +2045,7 @@ type RootMutationType {
   ): Resource
 
   "Delete a resource"
-  deleteResource(
-    "The resource ID"
-    id: ID!
-  ): DeletedObject
+  deleteResource("The resource ID" id: ID!): DeletedObject
 
   "Get a preview for a resource link"
   previewResourceLink(
@@ -2192,28 +2117,16 @@ type RootMutationType {
   ): Post
 
   "Delete a post"
-  deletePost(
-    "The post's ID"
-    id: ID!
-  ): DeletedObject
+  deletePost("The post's ID" id: ID!): DeletedObject
 
   "Suspend an actor"
-  suspendProfile(
-    "The remote profile ID to suspend"
-    id: ID!
-  ): DeletedObject
+  suspendProfile("The remote profile ID to suspend" id: ID!): DeletedObject
 
   "Unsuspend an actor"
-  unsuspendProfile(
-    "The remote profile ID to unsuspend"
-    id: ID!
-  ): Actor
+  unsuspendProfile("The remote profile ID to unsuspend" id: ID!): Actor
 
   "Refresh a profile"
-  refreshProfile(
-    "The remote profile ID to refresh"
-    id: ID!
-  ): Actor
+  refreshProfile("The remote profile ID to refresh" id: ID!): Actor
 
   "Update follower"
   updateFollower(
@@ -2228,7 +2141,11 @@ type RootMutationType {
 
   unregisterPush(endpoint: String!): String
 
-  updateActivitySetting(key: String!, method: String!, enabled: Boolean!): ActivitySetting
+  updateActivitySetting(
+    key: String!
+    method: String!
+    enabled: Boolean!
+  ): ActivitySetting
 }
 
 type ActivityParamItem {
@@ -2328,10 +2245,7 @@ type RootQueryType {
   ): Events
 
   "Interact with an URI"
-  interact(
-    "The URI for to interact with"
-    uri: String!
-  ): Interactable
+  interact("The URI for to interact with" uri: String!): Interactable
 
   "Get an user"
   user(id: ID!): User
@@ -2370,10 +2284,7 @@ type RootQueryType {
   ): Person
 
   "Get a person by its ID"
-  person(
-    "The person ID"
-    id: ID!
-  ): Person
+  person("The person ID" id: ID!): Person
 
   "Get the persons for an user"
   identities: [Person]
@@ -2427,10 +2338,7 @@ type RootQueryType {
   ): PaginatedGroupList
 
   "Get a group by its ID"
-  getGroup(
-    "The group ID"
-    id: ID!
-  ): Group
+  getGroup("The group ID" id: ID!): Group
 
   "Get a group by its preferred username"
   group(
@@ -2439,10 +2347,7 @@ type RootQueryType {
   ): Group
 
   "Get a group by its preferred username"
-  groupById(
-    "The group local ID"
-    id: ID!
-  ): Group
+  groupById("The group local ID" id: ID!): Group
 
   "Get all events"
   events(
@@ -2460,16 +2365,10 @@ type RootQueryType {
   ): PaginatedEventList
 
   "Get an event by uuid"
-  event(
-    "The event's UUID"
-    uuid: UUID!
-  ): Event
+  event("The event's UUID" uuid: UUID!): Event
 
   "Get replies for thread"
-  thread(
-    "The comment ID"
-    id: ID!
-  ): [Comment]
+  thread("The comment ID" id: ID!): [Comment]
 
   "Get the list of tags"
   tags(
@@ -2519,10 +2418,7 @@ type RootQueryType {
   config: Config
 
   "Get a media"
-  media(
-    "The media ID"
-    id: ID!
-  ): Media
+  media("The media ID" id: ID!): Media
 
   "Get all reports"
   reports(
@@ -2540,10 +2436,7 @@ type RootQueryType {
   ): PaginatedReportList
 
   "Get a report by id"
-  report(
-    "The report ID"
-    id: ID!
-  ): Report
+  report("The report ID" id: ID!): Report
 
   "Get the list of action logs"
   actionLogs(page: Int, limit: Int): PaginatedActionLogList
@@ -2609,22 +2502,13 @@ type RootQueryType {
   ): PaginatedInstanceList
 
   "Get an instance's details"
-  instance(
-    "The instance domain"
-    domain: ID!
-  ): Instance
+  instance("The instance domain" domain: ID!): Instance
 
   "Get a todo list"
-  todoList(
-    "The todo-list ID"
-    id: ID!
-  ): TodoList
+  todoList("The todo-list ID" id: ID!): TodoList
 
   "Get a todo"
-  todo(
-    "The todo ID"
-    id: ID!
-  ): Todo
+  todo("The todo ID" id: ID!): Todo
 
   "Get a discussion"
   discussion(
@@ -2645,10 +2529,7 @@ type RootQueryType {
   ): Resource
 
   "Get a post"
-  post(
-    "The post's slug"
-    slug: String!
-  ): Post
+  post("The post's slug" slug: String!): Post
 
   "Get the instance statistics"
   statistics: Statistics
@@ -3066,7 +2947,7 @@ input MediaInputObject {
 }
 
 """
-The `Point` scalar type represents Point geographic information compliant string data, 
+The `Point` scalar type represents Point geographic information compliant string data,
 represented as floats separated by a semi-colon. The geodetic system is WGS 84
 """
 scalar Point
@@ -3249,7 +3130,7 @@ type Follower {
   "Whether the follow has been approved by the target actor"
   approved: Boolean
 
-  "Whether the follower will be notified by the target actor's activity or not (applicable for profile\/group follows)"
+  "Whether the follower will be notified by the target actor's activity or not (applicable for profile/group follows)"
   notify: Boolean
 
   "When the follow was created"
@@ -3924,13 +3805,13 @@ type User implements ActionLogObject {
   "The user's default actor"
   defaultActor: Person
 
-  "The datetime when the user was confirmed\/activated"
+  "The datetime when the user was confirmed/activated"
   confirmedAt: DateTime
 
-  "The datetime the last activation\/confirmation token was sent"
+  "The datetime the last activation/confirmation token was sent"
   confirmationSentAt: DateTime
 
-  "The account activation\/confirmation token"
+  "The account activation/confirmation token"
   confirmationToken: String
 
   "The datetime last reset password email was sent"
@@ -4062,7 +3943,7 @@ type Group implements ActionLogObject & ActivityObject & Interactable & Actor {
   "Whether the actors manually approves followers"
   manuallyApprovesFollowers: Boolean
 
-  "Whether the group can be found and\/or promoted"
+  "Whether the group can be found and/or promoted"
   visibility: GroupVisibility
 
   "If the actor is suspended"

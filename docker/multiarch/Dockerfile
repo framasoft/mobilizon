@@ -18,9 +18,8 @@ ENV NODE_VERSION 18
 RUN apt-get update -yq && apt-get install -yq build-essential cmake postgresql-client git curl gnupg unzip exiftool webp imagemagick gifsicle
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# # Install Node & yarn
+# # Install Node
 # RUN curl -sL https://deb.nodesource.com/setup_16.x | bash && apt-get install nodejs -yq
-# RUN npm install -g yarn
 
 # Install build tools
 RUN source /root/.bashrc && \
@@ -32,8 +31,8 @@ COPY ./ /mobilizon
 WORKDIR /mobilizon
 
 # # Build front-end
-# RUN yarn --cwd "js" install --frozen-lockfile
-# RUN yarn --cwd "js" run build
+# RUN npm install
+# RUN npm run build
 
 # Elixir release
 RUN source /root/.bashrc && \

@@ -536,4 +536,20 @@ defmodule Mobilizon.Factory do
       application: build(:auth_application)
     }
   end
+
+  def conversation_factory do
+    %Mobilizon.Conversations.Conversation{
+      event: build(:event),
+      origin_comment: build(:comment),
+      last_comment: build(:comment)
+    }
+  end
+
+  def conversation_participant_factory do
+    %Mobilizon.Conversations.ConversationParticipant{
+      conversation: build(:conversation),
+      actor: build(:actor),
+      unread: true
+    }
+  end
 end

@@ -56,6 +56,8 @@ defmodule Mobilizon.GraphQL.Schema.Discussions.CommentType do
       description: "Whether this comment needs to be announced to participants"
     )
 
+    field(:conversation, :conversation, description: "The conversation this comment is part of")
+
     field(:language, :string, description: "The comment language")
   end
 

@@ -22,6 +22,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
 
   @actor_types ["Group", "Person", "Application"]
   @all_actor_types @actor_types ++ ["Organization", "Service"]
+  @ap_public_audience "https://www.w3.org/ns/activitystreams#Public"
 
   # Wraps an object into an activity
   @spec create_activity(map(), boolean()) :: {:ok, Activity.t()}
@@ -491,8 +492,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       if public do
         Logger.debug("Making announce data for a public object")
 
-        {[actor.followers_url, object_actor_url],
-         ["https://www.w3.org/ns/activitystreams#Public"]}
+        {[actor.followers_url, object_actor_url], [@ap_public_audience]}
       else
         Logger.debug("Making announce data for a private object")
 
@@ -539,7 +539,7 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
       "actor" => url,
       "object" => activity,
       "to" => [actor.followers_url, actor.url],
-      "cc" => ["https://www.w3.org/ns/activitystreams#Public"]
+      "cc" => [@ap_public_audience]
     }
 
     if activity_id, do: Map.put(data, "id", activity_id), else: data

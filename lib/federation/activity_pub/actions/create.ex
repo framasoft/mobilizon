@@ -14,7 +14,15 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Create do
     ]
 
   @type create_entities ::
-          :event | :comment | :discussion | :actor | :todo_list | :todo | :resource | :post
+          :event
+          | :comment
+          | :discussion
+          | :conversation
+          | :actor
+          | :todo_list
+          | :todo
+          | :resource
+          | :post
 
   @doc """
   Create an activity of type `Create`
@@ -50,18 +58,27 @@ defmodule Mobilizon.Federation.ActivityPub.Actions.Create do
     end
   end
 
+  @map_types %{
+    :event => Types.Events,
+    :comment => Types.Comments,
+    :discussion => Types.Discussions,
+    :conversation => Types.Conversations,
+    :actor => Types.Actors,
+    :todo_list => Types.TodoLists,
+    :todo => Types.Todos,
+    :resource => Types.Resources,
+    :post => Types.Posts
+  }
+
   @spec do_create(create_entities(), map(), map()) ::
           {:ok, Entity.t(), Activity.t()} | {:error, Ecto.Changeset.t() | atom()}
   defp do_create(type, args, additional) do
-    case type do
-      :event -> Types.Events.create(args, additional)
-      :comment -> Types.Comments.create(args, additional)
-      :discussion -> Types.Discussions.create(args, additional)
-      :actor -> Types.Actors.create(args, additional)
-      :todo_list -> Types.TodoLists.create(args, additional)
-      :todo -> Types.Todos.create(args, additional)
-      :resource -> Types.Resources.create(args, additional)
-      :post -> Types.Posts.create(args, additional)
+    mod = Map.get(@map_types, type)
+
+    if is_nil(mod) do
+      {:error, :type_not_supported}
+    else
+      mod.create(args, additional)
     end
   end
 

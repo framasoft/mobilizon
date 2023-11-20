@@ -7,6 +7,7 @@ defmodule Mobilizon.Web.EmailView do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Address
   alias Mobilizon.Service.DateTime, as: DateTimeRenderer
+  alias Mobilizon.Service.Formatter.{HTML, Text}
   alias Mobilizon.Web.Router.Helpers, as: Routes
   import Mobilizon.Web.Gettext
   import Mobilizon.Service.Metadata.Utils, only: [process_description: 1]
@@ -33,6 +34,21 @@ defmodule Mobilizon.Web.EmailView do
     string
     |> html_escape()
     |> safe_to_string()
+  end
+
+  @spec sanitize_to_basic_html(String.t()) :: String.t()
+  def sanitize_to_basic_html(html) do
+    case HTML.basic_html(html) do
+      {:ok, html} -> html
+      _ -> ""
+    end
+  end
+
+  defdelegate html_to_text(html), to: HTML
+
+  def mail_quote(text) do
+    # https://www.emailonacid.com/blog/article/email-development/line-length-in-html-email/
+    Text.quote_paragraph(text, 78)
   end
 
   def escaped_display_name_and_username(actor) do

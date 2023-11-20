@@ -10,6 +10,21 @@ defmodule Mobilizon.Web.Endpoint do
   use Phoenix.Endpoint, otp_app: :mobilizon
   use Absinthe.Phoenix.Endpoint
 
+  # Serve at "/" the static files from "priv/static" directory.
+  #
+  # You should set gzip to true if you are running phoenix.digest
+  # when deploying your static files in production.
+  plug(
+    Plug.Static,
+    at: "/",
+    from: {:mobilizon, "priv/static"},
+    gzip: false,
+    only: Mobilizon.Web.static_paths()
+    # only_matching: ["precache-manifest"]
+  )
+
+  plug(Mobilizon.Web.Plugs.UploadedMedia)
+
   plug(Mobilizon.Web.Plugs.DetectLocalePlug)
 
   if Application.compile_env(:mobilizon, :env) !== :dev do
@@ -35,21 +50,6 @@ defmodule Mobilizon.Web.Endpoint do
       {Mobilizon.Service.UnplugPredicates.AppConfigKeywordEquals,
        {:mobilizon, Mobilizon.Web.Endpoint, :has_reverse_proxy, false, true}},
     do: RemoteIp
-  )
-
-  plug(Mobilizon.Web.Plugs.UploadedMedia)
-
-  # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phoenix.digest
-  # when deploying your static files in production.
-  plug(
-    Plug.Static,
-    at: "/",
-    from: {:mobilizon, "priv/static"},
-    gzip: false,
-    only: Mobilizon.Web.static_paths(),
-    only_matching: ["precache-manifest"]
   )
 
   # Code reloading can be explicitly enabled under the

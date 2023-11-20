@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GroupSection > renders group section with basic informations 1`] = `
+"<section class=\\"flex flex-col mb-3 border-2 border-mbz-purple\\">
+  <div class=\\"flex items-stretch py-3 px-1 bg-yellow-1 text-violet-title\\">
+    <div class=\\"flex flex-1 gap-1\\"><span class=\\"o-icon\\"><i class=\\"mdi mdi-bullhorn 36\\"></i></span>
+      <h2 class=\\"text-2xl font-medium mt-0\\">My group section</h2>
+    </div><a href=\\"/@my_group@remotedomain.net/p\\" class=\\"self-center\\">View all</a>
+  </div>
+  <div class=\\"flex-1\\">
+    <div>A list of elements</div>
+  </div>
+  <div class=\\"flex justify-end p-2\\"><a href=\\"/@my_group@remotedomain.net/p/new\\" class=\\"btn-primary\\">+ Create a post</a></div>
+</section>"
+`;
+
+exports[`GroupSection > renders public group section 1`] = `
+"<section class=\\"flex flex-col mb-3 border-2 border-yellow-1\\">
+  <div class=\\"flex items-stretch py-3 px-1 bg-yellow-1 text-violet-title\\">
+    <div class=\\"flex flex-1 gap-1\\"><span class=\\"o-icon\\"><i class=\\"mdi mdi-bullhorn 36\\"></i></span>
+      <h2 class=\\"text-2xl font-medium mt-0\\">My group section</h2>
+    </div><a href=\\"/@my_group@remotedomain.net/p\\" class=\\"self-center\\">View all</a>
+  </div>
+  <div class=\\"flex-1\\">
+    <div>A list of elements</div>
+  </div>
+  <div class=\\"flex justify-end p-2\\"><a href=\\"/@my_group@remotedomain.net/p/new\\" class=\\"btn-primary\\">+ Create a post</a></div>
+</section>"
+`;

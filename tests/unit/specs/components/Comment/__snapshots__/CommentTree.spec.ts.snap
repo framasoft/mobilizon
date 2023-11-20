@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CommentTree > renders a comment tree with comments 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <form data-v-5d0380ab=\\"\\" class=\\"mt-2\\">
+    <!--v-if-->
+    <article data-v-5d0380ab=\\"\\" class=\\"flex flex-wrap items-start gap-2\\">
+      <figure data-v-5d0380ab=\\"\\" class=\\"\\">
+        <identity-picker-wrapper-stub data-v-5d0380ab=\\"\\" modelvalue=\\"[object Object]\\" inline=\\"false\\" masked=\\"false\\"></identity-picker-wrapper-stub>
+      </figure>
+      <div data-v-5d0380ab=\\"\\" class=\\"flex-1\\">
+        <div data-v-5d0380ab=\\"\\" class=\\"flex flex-col gap-2\\">
+          <div data-v-5d0380ab=\\"\\" class=\\"editor-wrapper\\">
+            <editor-stub data-v-5d0380ab=\\"\\" currentactor=\\"[object Object]\\" mode=\\"comment\\" modelvalue=\\"\\" aria-label=\\"Comment body\\" placeholder=\\"Write a new comment\\"></editor-stub>
+            <!--v-if-->
+          </div>
+          <!--v-if-->
+        </div>
+      </div>
+      <div data-v-5d0380ab=\\"\\" class=\\"\\">
+        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\"></o-button-stub>
+      </div>
+    </article>
+  </form>
+  <transition-group-stub data-v-5d0380ab=\\"\\" tag=\\"div\\" name=\\"comment-empty-list\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\" class=\\"mt-2\\">
+    <transition-group-stub data-v-5d0380ab=\\"\\" name=\\"comment-list\\" tag=\\"ul\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\" class=\\"comment-list\\">
+      <event-comment-stub data-v-5d0380ab=\\"\\" comment=\\"[object Object]\\" event=\\"[object Object]\\" currentactor=\\"[object Object]\\" rootcomment=\\"true\\" readonly=\\"false\\" class=\\"root-comment my-2\\"></event-comment-stub>
+      <event-comment-stub data-v-5d0380ab=\\"\\" comment=\\"[object Object]\\" event=\\"[object Object]\\" currentactor=\\"[object Object]\\" rootcomment=\\"true\\" readonly=\\"false\\" class=\\"root-comment my-2\\"></event-comment-stub>
+    </transition-group-stub>
+  </transition-group-stub>
+</div>"
+`;
+
+exports[`CommentTree > renders a loading comment tree 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <!--v-if-->
+  <p data-v-5d0380ab=\\"\\" class=\\"text-center\\">Loading comments…</p>
+</div>"
+`;
+
+exports[`CommentTree > renders an empty comment tree 1`] = `
+"<div data-v-5d0380ab=\\"\\">
+  <form data-v-5d0380ab=\\"\\" class=\\"mt-2\\">
+    <!--v-if-->
+    <article data-v-5d0380ab=\\"\\" class=\\"flex flex-wrap items-start gap-2\\">
+      <figure data-v-5d0380ab=\\"\\" class=\\"\\">
+        <identity-picker-wrapper-stub data-v-5d0380ab=\\"\\" modelvalue=\\"[object Object]\\" inline=\\"false\\" masked=\\"false\\"></identity-picker-wrapper-stub>
+      </figure>
+      <div data-v-5d0380ab=\\"\\" class=\\"flex-1\\">
+        <div data-v-5d0380ab=\\"\\" class=\\"flex flex-col gap-2\\">
+          <div data-v-5d0380ab=\\"\\" class=\\"editor-wrapper\\">
+            <editor-stub data-v-5d0380ab=\\"\\" currentactor=\\"[object Object]\\" mode=\\"comment\\" modelvalue=\\"\\" aria-label=\\"Comment body\\" placeholder=\\"Write a new comment\\"></editor-stub>
+            <!--v-if-->
+          </div>
+          <!--v-if-->
+        </div>
+      </div>
+      <div data-v-5d0380ab=\\"\\" class=\\"\\">
+        <o-button-stub data-v-5d0380ab=\\"\\" variant=\\"primary\\" iconleft=\\"send\\" rounded=\\"false\\" outlined=\\"false\\" loading=\\"false\\" expanded=\\"false\\" inverted=\\"false\\" nativetype=\\"submit\\" tag=\\"button\\" disabled=\\"false\\" iconboth=\\"false\\"></o-button-stub>
+      </div>
+    </article>
+  </form>
+  <transition-group-stub data-v-5d0380ab=\\"\\" tag=\\"div\\" name=\\"comment-empty-list\\" appear=\\"false\\" persisted=\\"false\\" css=\\"true\\" class=\\"mt-2\\">
+    <empty-content-stub data-v-5d0380ab=\\"\\" icon=\\"comment\\" descriptionclasses=\\"\\" inline=\\"true\\" center=\\"false\\"></empty-content-stub>
+  </transition-group-stub>
+</div>"
+`;

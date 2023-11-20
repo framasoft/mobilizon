@@ -13,7 +13,6 @@ stages:
 
 variables:
   MIX_ENV: "test"
-  YARN_CACHE_FOLDER: "js/.yarn"
   # DB Variables for Postgres / Postgis
   POSTGRES_DB: mobilizon_test
   POSTGRES_USER: postgres
@@ -38,8 +37,8 @@ cache:
   paths:
     - deps/
     - _build/
-    - js/node_modules
-    - js/.yarn
+    - node_modules
+    - .npm
 
 # Installed dependencies are cached across the pipeline
 # So there is no need to reinstall them all the time
@@ -47,7 +46,7 @@ cache:
 install:
   stage: install
   script:
-    - yarn --cwd "js" install --frozen-lockfile
+    - npm ci
     - mix deps.get
     - mix compile
 
@@ -68,27 +67,26 @@ lint-elixir:
     reports:
       codequality: codeclimate.json
 
-
 lint-front:
-  image: node:16
+  image: node:20
   stage: check
   before_script:
     - export EXITVALUE=0
-    - yarn --cwd "js" install --frozen-lockfile
+    - npm ci
   script:
-    - yarn --cwd "js" run lint || export EXITVALUE=1
-    - yarn --cwd "js" run prettier -c . || export EXITVALUE=1
+    - npm run lint || export EXITVALUE=1
+    - npx prettier -c . || export EXITVALUE=1
     - exit $EXITVALUE
 
 build-frontend:
   stage: build-js
-  image: node:16
+  image: node:20
   before_script:
     - apt update
-    - apt install -y --no-install-recommends python build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
+    - apt install -y --no-install-recommends python3 build-essential webp imagemagick gifsicle jpegoptim optipng pngquant
   script:
-    - yarn --cwd "js" install --frozen-lockfile
-    - yarn --cwd "js" run build
+    - npm install --frozen-lockfile
+    - npm run build
   artifacts:
     expire_in: 5 days
     paths:
@@ -118,7 +116,7 @@ deps:
   script:
     - export EXITVALUE=0
     - mix hex.outdated || export EXITVALUE=1
-    - yarn --cwd "js" outdated || export EXITVALUE=1
+    - npm outdated || export EXITVALUE=1
     - exit $EXITVALUE
   allow_failure: true
   needs:
@@ -151,16 +149,16 @@ vitest:
   needs:
     - lint-front
   before_script:
-    - yarn --cwd "js" install --frozen-lockfile
+    - npm install --frozen-lockfile
   script:
-    - yarn --cwd "js" run coverage --reporter=default --reporter=junit --outputFile.junit=./junit.xml
+    - npm run coverage --reporter=default --reporter=junit --outputFile.junit=./junit.xml
   artifacts:
     when: always
     paths:
-      - js/coverage
+      - coverage
     reports:
       junit:
-        - js/junit.xml
+        - junit.xml
     expire_in: 30 days
 
 e2e:
@@ -175,21 +173,20 @@ e2e:
     - mix ecto.create
     - mix ecto.migrate
     - mix run priv/repo/e2e.seed.exs
-    - cd js && yarn install && yarn run build && npx playwright install && cd ../
+    - npm install && npm run build && npx playwright install
     - mix phx.digest
   script:
     - mix phx.server &
-    - cd js
     - npx wait-on http://localhost:4000
     - npx playwright test --project $BROWSER
   parallel:
     matrix:
-      - BROWSER: ['firefox', 'chromium']
+      - BROWSER: ["firefox", "chromium"]
   artifacts:
     expire_in: 2 days
     paths:
-      - js/playwright-report/
-      - js/test-results/
+      - playwright-report/
+      - test-results/
 
 pages:
   stage: deploy
@@ -198,8 +195,8 @@ pages:
     - mix deps.get
     - mix docs
     - mv doc public/backend
-  #     #- yarn run --cwd "js" styleguide:build
-  #     #- mv js/styleguide public/frontend
+  #     #- npm run styleguide:build
+  #     #- mv styleguide public/frontend
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
   artifacts:
@@ -269,7 +266,6 @@ build-and-push-to-latest-docker-tag:
         ERL_FLAGS: ["ERL_FLAGS="]
       - ARCH: ["arm64"]
         ERL_FLAGS: ["ERL_FLAGS=+JMsingle true"]
-
 
 # Don't push to latest when building beta/rc tags
 build-and-push-docker-tag:

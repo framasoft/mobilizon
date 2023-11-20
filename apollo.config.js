@@ -7,6 +7,6 @@ module.exports = {
       localSchemaFile: "./schema.graphql",
     },
     // Files processed by the extension
-    includes: ["js/src/**/*.vue", "js/src/**/*.js"],
+    includes: ["src/**/*.vue", "src/**/*.js"],
   },
 };

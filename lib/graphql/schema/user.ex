@@ -8,7 +8,7 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
 
   alias Mobilizon.Events
   alias Mobilizon.GraphQL.Resolvers.Application, as: ApplicationResolver
-  alias Mobilizon.GraphQL.Resolvers.{Media, User}
+  alias Mobilizon.GraphQL.Resolvers.{Conversation, Media, User}
   alias Mobilizon.GraphQL.Resolvers.Users.ActivitySettings
   alias Mobilizon.GraphQL.Schema
 
@@ -190,6 +190,19 @@ defmodule Mobilizon.GraphQL.Schema.UserType do
       meta: [private: true, rule: :forbid_app_access]
     ) do
       resolve(&ApplicationResolver.get_user_applications/3)
+    end
+
+    @desc "The list of conversations this person has"
+    field(:conversations, :paginated_conversation_list,
+      meta: [private: true, rule: :"read:profile:conversations"]
+    ) do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the conversations list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of conversations per page")
+      resolve(&Conversation.list_conversations/3)
     end
   end
 

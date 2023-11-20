@@ -4,7 +4,7 @@ init:
 
 setup: stop
 	@bash docker/message.sh "Compiling everything"
-	docker-compose run --rm api bash -c 'mix deps.get; yarn --cwd "js"; yarn --cwd "js" build:pictures; mix ecto.create; mix ecto.migrate'
+	docker-compose run --rm api bash -c 'mix deps.get; npm ci; npm run build:pictures; mix ecto.create; mix ecto.migrate'
 migrate:
 	docker-compose run --rm api mix ecto.migrate
 logs:
@@ -19,6 +19,7 @@ stop:
 	@bash docker/message.sh "Mobilizon is stopped"
 test: stop
 	@bash docker/message.sh "Running tests"
+	docker-compose -f docker-compose.yml -f docker-compose.test.yml run api mix prepare_test
 	docker-compose -f docker-compose.yml -f docker-compose.test.yml run api mix test $(only)
 	@bash docker/message.sh "Done running tests"
 format: 

@@ -177,7 +177,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
         {:error, :content_not_json}
 
       {:ok, %Tesla.Env{} = res} ->
-        Logger.debug("Resource returned bad HTTP code #{inspect(res)}")
+        Logger.debug("Resource returned bad HTTP code (#{res.status}) #{inspect(res)}")
         {:error, :http_error}
 
       {:error, err} ->

@@ -8,6 +8,7 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Service.Notifier
+  require Logger
 
   use Mobilizon.Service.Workers.Helper, queue: "activity"
 
@@ -15,14 +16,22 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   def perform(%Job{args: args}) do
     {"legacy_notify", args} = Map.pop(args, "op")
     activity = build_activity(args)
+    Logger.debug("Handling activity #{activity.subject} to notify in LegacyNotifierBuilder")
 
     if args["subject"] == "participation_event_comment" do
       notify_anonymous_participants(get_in(args, ["subject_params", "event_id"]), activity)
     end
 
+    if args["subject"] == "conversation_created" do
+      notify_anonymous_participants(
+        get_in(args, ["subject_params", "conversation_event_id"]),
+        activity
+      )
+    end
+
     args
     |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
-    |> Enum.each(&Notifier.notify(&1, activity, single_activity: true))
+    |> Enum.each(&notify_user(&1, activity))
   end
 
   defp build_activity(args) do
@@ -46,6 +55,15 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
          options
        ) do
     users_from_actor_ids(mentionned_actor_ids, Keyword.fetch!(options, :author_id))
+  end
+
+  @spec users_to_notify(map(), Keyword.t()) :: list(Users.t())
+  defp users_to_notify(
+         %{"subject" => subject, "participant" => %{"actor_id" => actor_id}},
+         options
+       )
+       when subject in ["conversation_created", "conversation_replied"] do
+    users_from_actor_ids([actor_id], Keyword.fetch!(options, :author_id))
   end
 
   defp users_to_notify(
@@ -113,5 +131,10 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
         locale: Map.get(metadata, :locale, "en")
       )
     end)
+  end
+
+  defp notify_user(user, activity) do
+    Logger.debug("Notifying #{user.email} for activity #{activity.subject}")
+    Notifier.notify(user, activity, single_activity: true)
   end
 end

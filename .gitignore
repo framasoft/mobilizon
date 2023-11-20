@@ -46,7 +46,14 @@ release/
 .weblate
 docker/production/.env
 test-junit-report.xml
-js/junit.xml
+junit.xml
 .env
 demo/
 codeclimate.json
+
+node_modules
+stats.html
+/coverage
+/playwright-report/
+.histoire
+

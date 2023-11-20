@@ -1,0 +1,4 @@
+src/i18n/*.json
+coverage/
+**/*.md
+test/fixtures

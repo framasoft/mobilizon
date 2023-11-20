@@ -47,9 +47,6 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
 
     case maybe_fetch_actor_and_attributed_to_id(object) do
       {:ok, %Actor{id: actor_id, domain: actor_domain}, attributed_to} ->
-        Logger.debug("Inserting full comment")
-        Logger.debug(inspect(object))
-
         data = %{
           text: object["content"],
           url: object["id"],
@@ -70,14 +67,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
           is_announcement: Map.get(object, "isAnnouncement", false)
         }
 
-        Logger.debug("Converted object before fetching parents")
-        Logger.debug(inspect(data))
-
-        data = maybe_fetch_parent_object(object, data)
-
-        Logger.debug("Converted object after fetching parents")
-        Logger.debug(inspect(data))
-        data
+        maybe_fetch_parent_object(object, data)
 
       {:error, err} ->
         {:error, err}
@@ -147,17 +137,20 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
   end
 
   @spec determine_to(CommentModel.t()) :: [String.t()]
-  defp determine_to(%CommentModel{} = comment) do
-    cond do
-      not is_nil(comment.attributed_to) ->
-        [comment.attributed_to.url]
+  defp determine_to(%CommentModel{visibility: :private, mentions: mentions} = _comment) do
+    Enum.map(mentions, fn mention -> mention.actor.url end)
+  end
 
-      comment.visibility == :public ->
-        ["https://www.w3.org/ns/activitystreams#Public"]
-
-      true ->
-        [comment.actor.followers_url]
+  defp determine_to(%CommentModel{visibility: :public} = comment) do
+    if is_nil(comment.attributed_to) do
+      ["https://www.w3.org/ns/activitystreams#Public"]
+    else
+      [comment.attributed_to.url]
     end
+  end
+
+  defp determine_to(%CommentModel{} = comment) do
+    [comment.actor.followers_url]
   end
 
   defp maybe_fetch_parent_object(object, data) do
@@ -170,9 +163,12 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
 
       case ActivityPub.fetch_object_from_url(object["inReplyTo"]) do
         # Reply to an event (Event)
-        {:ok, %Event{id: id}} ->
+        {:ok, %Event{id: id} = event} ->
           Logger.debug("Parent object is an event")
-          data |> Map.put(:event_id, id)
+
+          data
+          |> Map.put(:event_id, id)
+          |> Map.put(:event, event)
 
         # Reply to a comment (Comment)
         {:ok, %CommentModel{id: id} = comment} ->
@@ -182,6 +178,7 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Comment do
           |> Map.put(:in_reply_to_comment_id, id)
           |> Map.put(:origin_comment_id, comment |> CommentModel.get_thread_id())
           |> Map.put(:event_id, comment.event_id)
+          |> Map.put(:conversation_id, comment.conversation_id)
 
         # Reply to a discucssion (Discussion)
         {:ok,

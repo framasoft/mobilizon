@@ -11,7 +11,7 @@ services:
       MIX_ENV: "test"
       MOBILIZON_DATABASE_DBNAME: mobilizon_test
       MOBILIZON_INSTANCE_HOST: mobilizon.test
-    command: "mix test"
+    command: "mix prepare_test && mix test"
 volumes:
   pgdata:
   .:

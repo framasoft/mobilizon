@@ -34,7 +34,17 @@ defmodule Mobilizon.Federation.ActivityPubTest do
           date: Signature.generate_date_header()
         })
 
-      assert signature =~ "headers=\"date host digest content-length (request-target)\""
+      headers =
+        signature
+        |> String.split(",")
+        |> Enum.find(&String.starts_with?(&1, "headers"))
+        |> String.replace_prefix("headers=\"", "")
+        |> String.replace_suffix("\"", "")
+        |> String.split(" ")
+        |> MapSet.new()
+
+      assert headers ==
+               MapSet.new(["date", "host", "digest", "content-length", "(request-target)"])
     end
   end
 

@@ -7,7 +7,7 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   alias Mobilizon.Events
-  alias Mobilizon.GraphQL.Resolvers.{Media, Person}
+  alias Mobilizon.GraphQL.Resolvers.{Conversation, Media, Person}
   alias Mobilizon.GraphQL.Schema
 
   import_types(Schema.Events.FeedTokenType)
@@ -135,6 +135,25 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
       arg(:limit, :integer, default_value: 10, description: "The limit of follows per page")
       resolve(&Person.person_follows/3)
+    end
+
+    @desc "The list of conversations this person has"
+    field(:conversations, :paginated_conversation_list,
+      meta: [private: true, rule: :"read:profile:conversations"]
+    ) do
+      arg(:page, :integer,
+        default_value: 1,
+        description: "The page in the conversations list"
+      )
+
+      arg(:limit, :integer, default_value: 10, description: "The limit of conversations per page")
+      resolve(&Conversation.list_conversations/3)
+    end
+
+    field(:unread_conversations_count, :integer,
+      meta: [private: true, rule: :"read:profile:conversations"]
+    ) do
+      resolve(&Conversation.unread_conversations_count/3)
     end
   end
 
@@ -351,6 +370,17 @@ defmodule Mobilizon.GraphQL.Schema.Actors.PersonType do
 
       config(fn args, _ ->
         {:ok, topic: [args.group, args.person_id]}
+      end)
+    end
+
+    @desc "Notify when a person unread conversations count changed"
+    field(:person_unread_conversations_count, :integer,
+      meta: [private: true, rule: :"read:profile:conversations"]
+    ) do
+      arg(:person_id, non_null(:id), description: "The person's ID")
+
+      config(fn args, _ ->
+        {:ok, topic: [args.person_id]}
       end)
     end
   end

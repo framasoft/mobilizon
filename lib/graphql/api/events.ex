@@ -4,8 +4,8 @@ defmodule Mobilizon.GraphQL.API.Events do
   """
 
   alias Mobilizon.Actors.Actor
+  alias Mobilizon.Discussions.Comment
   alias Mobilizon.Events.Event
-
   alias Mobilizon.Federation.ActivityPub.{Actions, Activity, Utils}
   alias Mobilizon.GraphQL.API.Utils, as: APIUtils
 
@@ -34,6 +34,12 @@ defmodule Mobilizon.GraphQL.API.Events do
   @spec delete_event(Event.t(), Actor.t()) :: {:ok, Activity.t(), Entity.t()} | any()
   def delete_event(%Event{} = event, %Actor{} = actor) do
     Actions.Delete.delete(event, actor, true)
+  end
+
+  @spec send_private_message_to_participants(map()) ::
+          {:ok, Activity.t(), Comment.t()} | {:error, atom() | Ecto.Changeset.t()}
+  def send_private_message_to_participants(args) do
+    Actions.Create.create(:comment, args, true)
   end
 
   @spec prepare_args(map) :: map

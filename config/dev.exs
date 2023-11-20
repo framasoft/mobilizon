@@ -15,8 +15,7 @@ config :mobilizon, Mobilizon.Web.Endpoint,
   check_origin: false,
   watchers: [
     node: [
-      "node_modules/.bin/vite",
-      cd: Path.expand("../js", __DIR__)
+      "node_modules/.bin/vite"
     ]
   ]
 

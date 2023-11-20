@@ -1,11 +1,30 @@
 <%= @subject %>
 
 ==
-
-<%= dgettext("activity", "%{profile} has posted an announcement under event %{event}.",
+<%= case @activity.type do %>
+<% :comment -> %>
+<%= dgettext("activity", "%{profile} has posted a public announcement under event %{event}.",
     %{
         profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
 <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %>
+<% :conversation -> %>
+<%= dgettext("activity", "%{profile} has posted a private announcement about event %{event}.",
+    %{
+        profile: Mobilizon.Actors.Actor.display_name_and_username(@activity.author),
+        event: @activity.subject_params["conversation_event_title"]
+    }
+) %>
+<%= dgettext("activity", "It might give details on how to join the event, so make sure to read it appropriately.") %>
+
+--
+
+<%= @extra["conversation"].last_comment.text |> html_to_text() |> mail_quote() %>
+
+--
+
+<%= dgettext("activity", "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution.") %>
+<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["conversation_event_uuid"]) |> URI.decode() %>
+<% end %>

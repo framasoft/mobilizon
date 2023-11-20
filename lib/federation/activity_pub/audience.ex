@@ -5,6 +5,7 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   alias Mobilizon.{Actors, Discussions, Events, Share}
   alias Mobilizon.Actors.{Actor, Member}
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.{Comment, Discussion}
   alias Mobilizon.Events.{Event, Participant}
   alias Mobilizon.Federation.ActivityPub.Types.Entity
@@ -36,6 +37,10 @@ defmodule Mobilizon.Federation.ActivityPub.Audience do
 
   def get_audience(%Discussion{actor: actor}) do
     %{"to" => maybe_add_group_members([], actor), "cc" => []}
+  end
+
+  def get_audience(%Conversation{participants: participants}) do
+    %{"to" => Enum.map(participants, & &1.url), "cc" => []}
   end
 
   # Deleted comments are just like tombstones

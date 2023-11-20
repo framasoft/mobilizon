@@ -13,6 +13,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.{Addresses, Events, Medias, Mention}
   alias Mobilizon.Addresses.Address
 
+  alias Mobilizon.Conversations.Conversation
   alias Mobilizon.Discussions.Comment
 
   alias Mobilizon.Events.{
@@ -126,6 +127,7 @@ defmodule Mobilizon.Events.Event do
     has_many(:sessions, Session)
     has_many(:mentions, Mention)
     has_many(:comments, Comment)
+    has_many(:conversations, Conversation)
     many_to_many(:contacts, Actor, join_through: "event_contacts", on_replace: :delete)
     many_to_many(:tags, Tag, join_through: "events_tags", on_replace: :delete)
     many_to_many(:participants, Actor, join_through: Participant)

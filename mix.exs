@@ -258,17 +258,19 @@ defmodule Mobilizon.Mixfile do
         "ecto.drop",
         "ecto.setup"
       ],
-      test: [
+      prepare_test: [
         "ecto.create",
         "ecto.migrate",
-        "tz_world.update",
+        "tz_world.update"
+      ],
+      test: [
         &run_test/1
       ],
       "phx.deps_migrate_serve": [
         "deps.get",
         "ecto.create --quiet",
         "ecto.migrate",
-        "cmd cd js && yarn install && cd ../",
+        "cmd npm ci",
         "phx.server"
       ]
     ]

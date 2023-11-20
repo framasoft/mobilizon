@@ -14,6 +14,8 @@ defmodule Mobilizon.Service.Formatter.HTML do
 
   def filter_tags(html), do: Sanitizer.scrub(html, DefaultScrubbler)
 
+  defdelegate basic_html(html), to: FastSanitize
+
   @spec strip_tags(String.t()) :: String.t() | no_return()
   def strip_tags(html) do
     case FastSanitize.strip_tags(html) do
@@ -38,6 +40,18 @@ defmodule Mobilizon.Service.Formatter.HTML do
   end
 
   def strip_tags_and_insert_spaces(html), do: html
+
+  @spec html_to_text(String.t()) :: String.t()
+  def html_to_text(html) do
+    html
+    |> String.replace(~r/<li>/, "\\g{1}- ", global: true)
+    |> String.replace(
+      ~r/<\/?\s?br>|<\/\s?p>|<\/\s?li>|<\/\s?div>|<\/\s?h.>/,
+      "\\g{1}\n\r",
+      global: true
+    )
+    |> strip_tags()
+  end
 
   def filter_tags_for_oembed(html), do: Sanitizer.scrub(html, OEmbed)
 end

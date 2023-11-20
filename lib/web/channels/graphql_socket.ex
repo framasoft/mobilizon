@@ -13,9 +13,7 @@ defmodule Mobilizon.Web.GraphQLSocket do
     with {:ok, authed_socket} <-
            Guardian.Phoenix.Socket.authenticate(socket, Mobilizon.Web.Auth.Guardian, token),
          resource <- Guardian.Phoenix.Socket.current_resource(authed_socket) do
-      set_context(authed_socket, resource)
-
-      {:ok, authed_socket}
+      {:ok, set_context(authed_socket, resource)}
     else
       {:error, _} ->
         :error
@@ -24,8 +22,17 @@ defmodule Mobilizon.Web.GraphQLSocket do
 
   def connect(_args, _socket), do: :error
 
-  @spec id(any) :: nil
-  def id(_socket), do: nil
+  @spec id(Phoenix.Socket.t()) :: String.t() | nil
+  def id(%Phoenix.Socket{assigns: assigns}) do
+    context = Keyword.get(assigns.absinthe.opts, :context)
+    current_user = Map.get(context, :current_user)
+
+    if current_user do
+      "user_socket:#{current_user.id}"
+    else
+      nil
+    end
+  end
 
   @spec set_context(Phoenix.Socket.t(), User.t() | ApplicationToken.t()) :: Phoenix.Socket.t()
   defp set_context(socket, %User{} = user) do
