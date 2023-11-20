@@ -225,6 +225,7 @@
             @click="acceptParticipants(checkedRows)"
             variant="success"
             :disabled="!canAcceptParticipants"
+            outlined
           >
             {{
               t(
@@ -238,6 +239,7 @@
             @click="refuseParticipants(checkedRows)"
             variant="danger"
             :disabled="!canRefuseParticipants"
+            outlined
           >
             {{
               t(

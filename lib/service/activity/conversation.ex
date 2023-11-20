@@ -79,11 +79,16 @@ defmodule Mobilizon.Service.Activity.Conversation do
   defp send_participant_notifications(_, _, _, _), do: {:ok, :skipped}
 
   defp event_subject_params(%Conversation{
-         event: %Event{id: conversation_event_id, title: conversation_event_title}
+         event: %Event{
+           id: conversation_event_id,
+           title: conversation_event_title,
+           uuid: conversation_event_uuid
+         }
        }),
        do: %{
          conversation_event_id: conversation_event_id,
-         conversation_event_title: conversation_event_title
+         conversation_event_title: conversation_event_title,
+         conversation_event_uuid: conversation_event_uuid
        }
 
   defp event_subject_params(_), do: %{}

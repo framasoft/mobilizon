@@ -42,13 +42,13 @@ body {
   @apply bg-transparent text-black dark:text-white font-semibold py-2 px-4 border border-mbz-bluegreen dark:border-violet-3;
 }
 .btn-outlined-success {
-  @apply border-mbz-success hover:bg-mbz-success;
+  @apply border-2 border-mbz-success bg-transparent text-mbz-success hover:bg-mbz-success;
 }
 .btn-outlined-warning {
   @apply bg-transparent border dark:text-white hover:dark:text-slate-900 hover:bg-mbz-warning border-mbz-warning;
 }
 .btn-outlined-danger {
-  @apply border-mbz-danger hover:bg-mbz-danger;
+  @apply border-2 bg-transparent border-mbz-danger text-mbz-danger hover:bg-mbz-danger;
 }
 .btn-outlined-text {
   @apply bg-transparent hover:text-slate-900;
@@ -161,15 +161,18 @@ body {
 }
 
 .dropdown-item-active {
-  @apply bg-white dark:bg-zinc-700 dark:text-zinc-100 text-black;
+  @apply bg-mbz-yellow-500 dark:bg-mbz-yellow-900 dark:text-zinc-100 text-black;
 }
 .dropdown-button {
   @apply inline-flex gap-1;
 }
 
 /* Checkbox */
-
 .checkbox {
+  margin-inline-end: 1rem;
+}
+
+.checkbox-check {
   @apply appearance-none bg-primary border-primary;
 }
 

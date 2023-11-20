@@ -1625,5 +1625,8 @@
   "You have access to this conversation as a member of the {group} group": "You have access to this conversation as a member of the {group} group",
   "Comment from an event announcement": "Comment from an event announcement",
   "Comment from a private conversation": "Comment from a private conversation",
-  "I've been mentionned in a conversation": "I've been mentionned in a conversation"
+  "I've been mentionned in a conversation": "I've been mentionned in a conversation",
+  "New announcement": "New announcement",
+  "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you.": "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you.",
+  "The following participants are groups, which means group members are able to reply to this conversation:": "The following participants are groups, which means group members are able to reply to this conversation:"
 }

@@ -749,7 +749,6 @@ import {
   useRouteQuery,
   enumTransformer,
   booleanTransformer,
-  RouteQueryTransformer,
 } from "vue-use-route-query";
 import Calendar from "vue-material-design-icons/Calendar.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
@@ -776,6 +775,7 @@ import lodashSortBy from "lodash/sortBy";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import SkeletonGroupResultList from "@/components/Group/SkeletonGroupResultList.vue";
 import SkeletonEventResultList from "@/components/Event/SkeletonEventResultList.vue";
+import { arrayTransformer } from "@/utils/route";
 
 const EventMarkerMap = defineAsyncComponent(
   () => import("@/components/Search/EventMarkerMap.vue")
@@ -839,15 +839,6 @@ enum SortValues {
   PARTICIPANT_COUNT_DESC = "PARTICIPANT_COUNT_DESC",
   MEMBER_COUNT_DESC = "MEMBER_COUNT_DESC",
 }
-
-const arrayTransformer: RouteQueryTransformer<string[]> = {
-  fromQuery(query: string) {
-    return query.split(",");
-  },
-  toQuery(value: string[]) {
-    return value.join(",");
-  },
-};
 
 const props = defineProps<{
   tag?: string;

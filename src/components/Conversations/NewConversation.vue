@@ -9,6 +9,15 @@
       :currentActor="currentActor"
       :placeholder="t('Write a new message')"
     />
+    <o-notification
+      class="my-2"
+      variant="danger"
+      :closable="false"
+      v-for="error in errors"
+      :key="error"
+    >
+      {{ error }}
+    </o-notification>
     <footer class="flex gap-2 py-3 mx-2 justify-end">
       <o-button :disabled="!canSend" nativeType="submit">{{
         t("Send")
@@ -18,13 +27,14 @@
 </template>
 
 <script lang="ts" setup>
-import { IActor, IPerson, usernameWithDomain } from "@/types/actor";
+import { IActor, IGroup, IPerson, usernameWithDomain } from "@/types/actor";
 import { computed, defineAsyncComponent, provide, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ActorAutoComplete from "../../components/Account/ActorAutoComplete.vue";
 import {
   DefaultApolloClient,
   provideApolloClient,
+  useLazyQuery,
   useMutation,
 } from "@vue/apollo-composable";
 import { apolloClient } from "@/vue-apollo";
@@ -34,12 +44,15 @@ import { IConversation } from "@/types/conversation";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { useRouter } from "vue-router";
 import RouteName from "@/router/name";
+import { FETCH_PERSON } from "@/graphql/actor";
+import { FETCH_GROUP_PUBLIC } from "@/graphql/group";
 
 const props = withDefaults(
   defineProps<{
-    mentions?: IActor[];
+    personMentions?: string[];
+    groupMentions?: string[];
   }>(),
-  { mentions: () => [] }
+  { personMentions: () => [], groupMentions: () => [] }
 );
 
 provide(DefaultApolloClient, apolloClient);
@@ -48,15 +61,36 @@ const router = useRouter();
 
 const emit = defineEmits(["close"]);
 
-const actorMentions = ref(props.mentions);
+const errors = ref<string[]>([]);
 
-const textMentions = computed(() =>
-  (props.mentions ?? []).map((actor) => usernameWithDomain(actor)).join(" ")
+const textPersonMentions = computed(() => props.personMentions);
+const textGroupMentions = computed(() => props.groupMentions);
+const actorMentions = ref<IActor[]>([]);
+
+const { load: fetchPerson } = provideApolloClient(apolloClient)(() =>
+  useLazyQuery<{ fetchPerson: IPerson }, { username: string }>(FETCH_PERSON)
 );
+const { load: fetchGroup } = provideApolloClient(apolloClient)(() =>
+  useLazyQuery<{ group: IGroup }, { name: string }>(FETCH_GROUP_PUBLIC)
+);
+textPersonMentions.value.forEach(async (textPersonMention) => {
+  const result = await fetchPerson(FETCH_PERSON, {
+    username: textPersonMention,
+  });
+  if (!result) return;
+  actorMentions.value.push(result.fetchPerson);
+});
+textGroupMentions.value.forEach(async (textGroupMention) => {
+  const result = await fetchGroup(FETCH_GROUP_PUBLIC, {
+    name: textGroupMention,
+  });
+  if (!result) return;
+  actorMentions.value.push(result.group);
+});
 
 const { t } = useI18n({ useScope: "global" });
 
-const text = ref(textMentions.value);
+const text = ref("");
 
 const Editor = defineAsyncComponent(
   () => import("../../components/TextEditor.vue")
@@ -70,8 +104,8 @@ const canSend = computed(() => {
   return actorMentions.value.length > 0 || /@.+/.test(text.value);
 });
 
-const { mutate: postPrivateMessageMutate } = provideApolloClient(apolloClient)(
-  () =>
+const { mutate: postPrivateMessageMutate, onError: onPrivateMessageError } =
+  provideApolloClient(apolloClient)(() =>
     useMutation<
       {
         postPrivateMessage: IConversation;
@@ -116,7 +150,13 @@ const { mutate: postPrivateMessageMutate } = provideApolloClient(apolloClient)(
         });
       },
     })
-);
+  );
+
+onPrivateMessageError((err) => {
+  err.graphQLErrors.forEach((error) => {
+    errors.value.push(error.message);
+  });
+});
 
 const sendForm = async (e: Event) => {
   e.preventDefault();

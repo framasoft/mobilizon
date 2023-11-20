@@ -24,15 +24,11 @@
         @{{ usernameWithDomain(actor) }}
       </p>
     </div>
-    <div class="flex pr-2 self-center">
-      <Email />
-    </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
-import Email from "vue-material-design-icons/Email.vue";
 
 defineProps<{
   actor: IActor;

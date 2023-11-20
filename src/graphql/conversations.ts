@@ -54,7 +54,6 @@ export const SEND_EVENT_PRIVATE_MESSAGE_MUTATION = gql`
     $actorId: ID!
     $eventId: ID!
     $roles: [ParticipantRoleEnum]
-    $attributedToId: ID
     $language: String
   ) {
     sendEventPrivateMessage(
@@ -62,7 +61,6 @@ export const SEND_EVENT_PRIVATE_MESSAGE_MUTATION = gql`
       actorId: $actorId
       eventId: $eventId
       roles: $roles
-      attributedToId: $attributedToId
       language: $language
     ) {
       ...ConversationQuery

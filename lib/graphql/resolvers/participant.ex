@@ -2,8 +2,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   @moduledoc """
   Handles the participation-related GraphQL calls.
   """
-  # alias Mobilizon.Conversations.ConversationParticipant
-  alias Mobilizon.{Actors, Config, Crypto, Events}
+  alias Mobilizon.{Actors, Config, Conversations, Crypto, Events}
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Conversations.{Conversation, ConversationView}
   alias Mobilizon.Events.{Event, Participant}
@@ -386,6 +385,13 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
       {:member, false} ->
         {:error, :unauthorized}
 
+      {:error, :empty_participants} ->
+        {:error,
+         dgettext(
+           "errors",
+           "There are no participants matching the audience you've selected."
+         )}
+
       {:error, err} ->
         {:error, err}
     end
@@ -394,11 +400,19 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
   def send_private_messages_to_participants(_parent, _args, _resolution),
     do: {:error, :unauthorized}
 
-  defp conversation_to_view(%Conversation{} = conversation, %Actor{} = actor) do
+  defp conversation_to_view(
+         %Conversation{id: conversation_id} = conversation,
+         %Actor{id: actor_id} = actor
+       ) do
     value =
       conversation
       |> Map.from_struct()
       |> Map.put(:actor, actor)
+      |> Map.put(:unread, false)
+      |> Map.put(
+        :conversation_participant_id,
+        Conversations.get_participant_by_conversation_and_actor(conversation_id, actor_id).id
+      )
 
     struct(ConversationView, value)
   end

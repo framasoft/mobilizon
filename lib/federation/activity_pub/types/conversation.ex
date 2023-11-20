@@ -147,6 +147,12 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Conversations do
       (args |> Map.get(:mentions, []) |> prepare_mentions()) ++
         ConverterUtils.fetch_mentions(mentions)
 
+    # Can't create a conversation with just ourselves
+    mentions =
+      Enum.filter(mentions, fn %{actor_id: actor_id} ->
+        to_string(actor_id) != to_string(args.actor_id)
+      end)
+
     if Enum.empty?(mentions) do
       {:error, :empty_participants}
     else

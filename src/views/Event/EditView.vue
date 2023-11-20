@@ -650,12 +650,6 @@ const FullAddressAutoComplete = defineAsyncComponent(
 
 const { t } = useI18n({ useScope: "global" });
 
-useHead({
-  title: computed(() =>
-    props.isUpdate ? t("Event edition") : t("Event creation")
-  ),
-});
-
 const props = withDefaults(
   defineProps<{
     eventId?: undefined | string;
@@ -666,6 +660,12 @@ const props = withDefaults(
 );
 
 const eventId = computed(() => props.eventId);
+
+useHead({
+  title: computed(() =>
+    props.isUpdate ? t("Event edition") : t("Event creation")
+  ),
+});
 
 const event = ref<IEditableEvent>(new EventModel());
 const unmodifiedEvent = ref<IEditableEvent>(new EventModel());

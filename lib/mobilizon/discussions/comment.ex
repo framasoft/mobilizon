@@ -77,7 +77,7 @@ defmodule Mobilizon.Discussions.Comment do
     belongs_to(:conversation, Conversation)
     has_many(:replies, Comment, foreign_key: :origin_comment_id)
     many_to_many(:tags, Tag, join_through: "comments_tags", on_replace: :delete)
-    has_many(:mentions, Mention)
+    has_many(:mentions, Mention, on_replace: :delete)
     many_to_many(:media, Media, join_through: "comments_medias", on_replace: :delete)
 
     timestamps(type: :utc_datetime)

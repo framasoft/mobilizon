@@ -268,6 +268,21 @@
               </o-button>
               <o-button
                 outlined
+                tag="router-link"
+                :to="{
+                  name: RouteName.CONVERSATION_LIST,
+                  query: {
+                    newMessage: 'true',
+                    groupMentions: usernameWithDomain(group),
+                  },
+                }"
+                icon-left="email"
+                v-if="!isCurrentActorAGroupMember || previewPublic"
+              >
+                {{ t("Contact") }}
+              </o-button>
+              <o-button
+                outlined
                 icon-left="share"
                 @click="triggerShare()"
                 @keyup.enter="triggerShare()"

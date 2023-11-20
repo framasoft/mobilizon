@@ -14,13 +14,13 @@
       ]"
     />
     <div
-      v-if="conversation.event"
-      class="bg-mbz-yellow p-6 mb-6 rounded flex gap-2 items-center"
+      v-if="conversation.event && !isCurrentActorAuthor"
+      class="bg-mbz-yellow p-6 mb-3 rounded flex gap-2 items-center"
     >
       <Calendar :size="36" />
       <i18n-t
         tag="p"
-        keypath="This is a announcement from the organizers of event {event}"
+        keypath="This is a announcement from the organizers of event {event}. You can't reply to it, but you can send a private message to event organizers."
       >
         <template #event>
           <b>
@@ -35,10 +35,7 @@
         </template>
       </i18n-t>
     </div>
-    <div
-      v-if="currentActor && currentActor.id !== conversation.actor?.id"
-      class="bg-mbz-info p-6 rounded flex gap-2 items-center my-3"
-    >
+    <o-notification v-if="isCurrentActorAuthor" variant="info" closable>
       <i18n-t
         keypath="You have access to this conversation as a member of the {group} group"
         tag="p"
@@ -55,7 +52,36 @@
           >
         </template>
       </i18n-t>
-    </div>
+    </o-notification>
+    <o-notification
+      v-else-if="groupParticipants.length > 0 && !conversation.event"
+      variant="info"
+      closable
+    >
+      <p>
+        {{
+          t(
+            "The following participants are groups, which means group members are able to reply to this conversation:"
+          )
+        }}
+      </p>
+      <ul class="list-disc">
+        <li
+          v-for="groupParticipant in groupParticipants"
+          :key="groupParticipant.id"
+        >
+          <router-link
+            :to="{
+              name: RouteName.GROUP,
+              params: {
+                preferredUsername: usernameWithDomain(groupParticipant),
+              },
+            }"
+            ><b>{{ displayName(groupParticipant) }}</b></router-link
+          >
+        </li>
+      </ul>
+    </o-notification>
     <o-notification v-if="error" variant="danger">
       {{ error }}
     </o-notification>
@@ -107,7 +133,7 @@
       </form>
       <div
         v-else-if="conversation.event"
-        class="bg-mbz-yellow p-6 rounded flex gap-2 items-center mt-6"
+        class="bg-mbz-yellow p-6 rounded flex gap-2 items-center mt-3"
       >
         <Calendar :size="36" />
         <i18n-t
@@ -239,6 +265,12 @@ const otherParticipants = computed(
     ) ?? []
 );
 
+const groupParticipants = computed(() => {
+  return otherParticipants.value.filter(
+    (participant) => participant.type === ActorType.GROUP
+  );
+});
+
 const Editor = defineAsyncComponent(
   () => import("../../components/TextEditor.vue")
 );
@@ -253,8 +285,15 @@ const title = computed(() =>
   })
 );
 
+const isCurrentActorAuthor = computed(
+  () =>
+    currentActor.value &&
+    conversation.value &&
+    currentActor.value.id !== conversation.value?.actor?.id
+);
+
 useHead({
-  title: title.value,
+  title: () => title.value,
 });
 
 const newComment = ref("");

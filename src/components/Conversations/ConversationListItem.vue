@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="flex gap-2 w-full items-center px-2 py-4 border-b-stone-200 border-b bg-white dark:bg-transparent"
+    class="flex gap-4 w-full items-center px-2 py-4 border-b-stone-200 border-b bg-white dark:bg-transparent"
     dir="auto"
     :to="{
       name: RouteName.CONVERSATION,

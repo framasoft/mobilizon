@@ -35,7 +35,8 @@ export const orugaConfig = {
     variantClass: "icon-",
   },
   checkbox: {
-    checkClass: "checkbox",
+    rootClass: "checkbox",
+    checkClass: "checkbox-check",
     checkCheckedClass: "checkbox-checked",
     labelClass: "checkbox-label",
   },

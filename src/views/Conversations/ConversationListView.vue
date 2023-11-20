@@ -44,18 +44,27 @@
 <script lang="ts" setup>
 import RouteName from "../../router/name";
 import { useQuery } from "@vue/apollo-composable";
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, defineAsyncComponent, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { integerTransformer, useRouteQuery } from "vue-use-route-query";
+import {
+  booleanTransformer,
+  integerTransformer,
+  useRouteQuery,
+} from "vue-use-route-query";
 import { PROFILE_CONVERSATIONS } from "@/graphql/event";
 import ConversationListItem from "../../components/Conversations/ConversationListItem.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { useHead } from "@vueuse/head";
 import { IPerson } from "@/types/actor";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
+import { arrayTransformer } from "@/utils/route";
 
 const page = useRouteQuery("page", 1, integerTransformer);
 const CONVERSATIONS_PER_PAGE = 10;
+
+const showModal = useRouteQuery("newMessage", false, booleanTransformer);
+const personMentions = useRouteQuery("personMentions", [], arrayTransformer);
+const groupMentions = useRouteQuery("groupMentions", [], arrayTransformer);
 
 const { t } = useI18n({ useScope: "global" });
 
@@ -69,6 +78,7 @@ const { result: conversationsResult } = useQuery<{
   loggedPerson: Pick<IPerson, "conversations">;
 }>(PROFILE_CONVERSATIONS, () => ({
   page: page.value,
+  limit: CONVERSATIONS_PER_PAGE,
 }));
 
 const conversations = computed(
@@ -88,7 +98,17 @@ const NewConversation = defineAsyncComponent(
 const openNewMessageModal = () => {
   oruga.modal.open({
     component: NewConversation,
+    props: {
+      personMentions: personMentions.value,
+      groupMentions: groupMentions.value,
+    },
     trapFocus: true,
   });
 };
+
+watchEffect(() => {
+  if (showModal.value) {
+    openNewMessageModal();
+  }
+});
 </script>

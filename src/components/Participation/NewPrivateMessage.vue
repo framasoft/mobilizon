@@ -1,5 +1,30 @@
 <template>
   <form @submit="sendForm">
+    <h2>{{ t("New announcement") }}</h2>
+    <p>
+      {{
+        t(
+          "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you."
+        )
+      }}
+    </p>
+    <o-field class="mt-2 mb-4">
+      <o-checkbox
+        v-model="selectedRoles"
+        :native-value="ParticipantRole.PARTICIPANT"
+        :label="t('Participant')"
+      />
+      <o-checkbox
+        v-model="selectedRoles"
+        :native-value="ParticipantRole.NOT_APPROVED"
+        :label="t('Not approved')"
+      />
+      <o-checkbox
+        v-model="selectedRoles"
+        :native-value="ParticipantRole.REJECTED"
+        :label="t('Rejected')"
+      />
+    </o-field>
     <Editor
       v-model="text"
       mode="basic"
@@ -8,6 +33,15 @@
       :currentActor="currentActor"
       :placeholder="t('Write a new message')"
     />
+    <o-notification
+      class="my-2"
+      variant="danger"
+      :closable="true"
+      v-for="error in errors"
+      :key="error"
+    >
+      {{ error }}
+    </o-notification>
     <o-button class="mt-3" nativeType="submit">{{ t("Send") }}</o-button>
   </form>
 </template>
@@ -32,9 +66,15 @@ const props = defineProps<{
 const event = computed(() => props.event);
 
 const text = ref("");
+
+const errors = ref<string[]>([]);
+
+const selectedRoles = ref<ParticipantRole[]>([ParticipantRole.PARTICIPANT]);
+
 const {
   mutate: eventPrivateMessageMutate,
   onDone: onEventPrivateMessageMutated,
+  onError: onEventPrivateMessageError,
 } = useMutation<
   {
     sendEventPrivateMessage: IConversation;
@@ -43,8 +83,7 @@ const {
     text: string;
     actorId: string;
     eventId: string;
-    roles?: string;
-    inReplyToActorId?: ParticipantRole[];
+    roles?: ParticipantRole[];
     language?: string;
   }
 >(SEND_EVENT_PRIVATE_MESSAGE_MUTATION, {
@@ -96,11 +135,18 @@ const sendForm = (e: Event) => {
       event.value.organizerActor?.id ??
       currentActor.value?.id,
     eventId: event.value.id,
+    roles: selectedRoles.value,
   });
 };
 
 onEventPrivateMessageMutated(() => {
   text.value = "";
+});
+
+onEventPrivateMessageError((err) => {
+  err.graphQLErrors.forEach((error) => {
+    errors.value.push(error.message);
+  });
 });
 
 const Editor = defineAsyncComponent(

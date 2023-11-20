@@ -11,8 +11,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
   alias Mobilizon.Storage.Page
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Endpoint
-  # alias Mobilizon.Users.User
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
+  require Logger
 
   @spec find_conversations_for_event(Event.t(), map(), Absinthe.Resolution.t()) ::
           {:ok, Page.t(ConversationView.t())} | {:error, :unauthenticated}
@@ -157,9 +157,17 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
           {:ok, conversation_to_view(conversation, conversation_participant_actor)}
 
         {:error, :empty_participants} ->
-          {:error, dgettext("errors", "Conversation needs to mention at least one participant")}
+          {:error,
+           dgettext(
+             "errors",
+             "Conversation needs to mention at least one participant that's not yourself"
+           )}
       end
     else
+      Logger.debug(
+        "Actor #{current_actor.id} is not authorized to reply to conversation #{inspect(Map.get(args, :conversation_id))}"
+      )
+
       {:error, :unauthorized}
     end
   end
@@ -259,7 +267,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
       %Conversation{participants: participants} ->
         participant_ids = Enum.map(participants, fn participant -> to_string(participant.id) end)
 
-        current_actor_id in participant_ids or
+        to_string(current_actor_id) in participant_ids or
           Enum.any?(participant_ids, fn participant_id ->
             Actors.is_member?(current_actor_id, participant_id) and
               attributed_to_id == participant_id

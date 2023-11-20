@@ -39,8 +39,18 @@
         v-html="actor.summary"
       />
     </div>
-    <div class="flex pr-2">
-      <Email />
+    <div class="flex pr-2" v-if="actor.type === ActorType.PERSON">
+      <router-link
+        :to="{
+          name: RouteName.CONVERSATION_LIST,
+          query: {
+            newMessage: 'true',
+            personMentions: usernameWithDomain(actor),
+          },
+        }"
+      >
+        <Email />
+      </router-link>
     </div>
   </div>
   <!-- <div
@@ -85,6 +95,8 @@
 import { displayName, IActor, usernameWithDomain } from "../../types/actor";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import Email from "vue-material-design-icons/Email.vue";
+import RouteName from "@/router/name";
+import { ActorType } from "@/types/enums";
 
 withDefaults(
   defineProps<{

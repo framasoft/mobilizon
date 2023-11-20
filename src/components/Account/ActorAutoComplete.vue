@@ -1,6 +1,6 @@
 <template>
   <o-inputitems
-    :modelValue="modelValue"
+    :modelValue="modelValueWithDisplayName"
     @update:modelValue="(val: IActor[]) => $emit('update:modelValue', val)"
     :data="availableActors"
     :allow-autocomplete="true"
@@ -21,16 +21,25 @@ import { SEARCH_PERSON_AND_GROUPS } from "@/graphql/search";
 import { IActor, IGroup, IPerson, displayName } from "@/types/actor";
 import { Paginate } from "@/types/paginate";
 import { useLazyQuery } from "@vue/apollo-composable";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ActorInline from "./ActorInline.vue";
 
-defineProps<{
+const props = defineProps<{
   modelValue: IActor[];
 }>();
 
 defineEmits<{
   "update:modelValue": [value: IActor[]];
 }>();
+
+const modelValue = computed(() => props.modelValue);
+
+const modelValueWithDisplayName = computed(() =>
+  modelValue.value.map((actor) => ({
+    ...actor,
+    displayName: displayName(actor),
+  }))
+);
 
 const {
   load: loadSearchPersonsAndGroupsQuery,

@@ -10,6 +10,7 @@ defmodule Mobilizon.Web.Email.Activity do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Config
   alias Mobilizon.Web.Email
+  require Logger
 
   @spec direct_activity(String.t(), list(), Keyword.t()) :: Swoosh.Email.t()
   def direct_activity(
@@ -39,6 +40,36 @@ defmodule Mobilizon.Web.Email.Activity do
   end
 
   @spec anonymous_activity(String.t(), Activity.t(), Keyword.t()) :: Swoosh.Email.t()
+  def anonymous_activity(
+        email,
+        %Activity{subject_params: subject_params, type: :conversation} = activity,
+        options
+      ) do
+    locale = Keyword.get(options, :locale, "en")
+
+    subject =
+      dgettext(
+        "activity",
+        "Informations about your event %{event}",
+        event: subject_params["conversation_event_title"]
+      )
+
+    conversation = Mobilizon.Conversations.get_conversation(activity.object_id)
+
+    Logger.debug("Going to send anonymous activity of type #{activity.type} to #{email}")
+
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:email_anonymous_activity, %{
+      subject: subject,
+      activity: activity,
+      locale: locale,
+      extra: %{
+        "conversation" => conversation
+      }
+    })
+  end
+
   def anonymous_activity(email, %Activity{subject_params: subject_params} = activity, options) do
     locale = Keyword.get(options, :locale, "en")
 
@@ -48,6 +79,8 @@ defmodule Mobilizon.Web.Email.Activity do
         "Announcement for your event %{event}",
         event: subject_params["event_title"]
       )
+
+    Logger.debug("Going to send anonymous activity of type #{activity.type} to #{email}")
 
     [to: email, subject: subject]
     |> Email.base_email()

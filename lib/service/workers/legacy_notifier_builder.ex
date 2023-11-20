@@ -22,6 +22,13 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
       notify_anonymous_participants(get_in(args, ["subject_params", "event_id"]), activity)
     end
 
+    if args["subject"] == "conversation_created" do
+      notify_anonymous_participants(
+        get_in(args, ["subject_params", "conversation_event_id"]),
+        activity
+      )
+    end
+
     args
     |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
     |> Enum.each(&notify_user(&1, activity))
