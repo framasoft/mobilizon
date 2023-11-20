@@ -191,6 +191,7 @@ e2e:
 pages:
   stage: deploy
   script:
+    - mv public public-mbz
     - mkdir public
     - mix deps.get
     - mix docs
