@@ -13,16 +13,15 @@ defmodule Mobilizon.Service.Formatter.Text do
   def paragraph(string, max_line_length, prefix \\ "") do
     string
     |> String.split("\n\n", trim: true)
-    |> Enum.map(&subparagraph(&1, max_line_length, prefix))
-    |> Enum.join("\n#{prefix}\n")
+    |> Enum.map_join("\n#{prefix}\n", &subparagraph(&1, max_line_length, prefix))
   end
 
   defp subparagraph(string, max_line_length, prefix) do
     [word | rest] = String.split(string, ~r/\s+/, trim: true)
 
-    lines_assemble(rest, max_line_length - String.length(prefix), String.length(word), word, [])
-    |> Enum.map(&"#{prefix}#{&1}")
-    |> Enum.join("\n")
+    rest
+    |> lines_assemble(max_line_length - String.length(prefix), String.length(word), word, [])
+    |> Enum.map_join("\n", &"#{prefix}#{&1}")
   end
 
   defp lines_assemble([], _, _, line, acc), do: [line | acc] |> Enum.reverse()

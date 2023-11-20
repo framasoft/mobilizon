@@ -1624,5 +1624,6 @@
   "I've been mentionned in a conversation": "J'ai été mentionnée dans une conversation",
   "New announcement": "Nouvelle annonce",
   "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you.": "Cette annonce sera envoyée à tous les participant·es ayant le statut sélectionné ci-dessous. Iels ne pourront pas répondre à votre annonce, mais iels peuvent créer une nouvelle conversation avec vous.",
-  "The following participants are groups, which means group members are able to reply to this conversation:": "Les participants suivants sont des groupes, ce qui signifie que les membres du groupes peuvent répondre dans cette conversation:"
+  "The following participants are groups, which means group members are able to reply to this conversation:": "Les participants suivants sont des groupes, ce qui signifie que les membres du groupes peuvent répondre dans cette conversation:",
+  "Sent to {count} participants": "Envoyé à aucun·e participant·e|Envoyé à une participant·e|Envoyé à {count} participant·es"
 }

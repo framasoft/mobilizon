@@ -29,7 +29,7 @@ defmodule Mobilizon.GraphQL.Resolvers.Conversation do
     if Actors.is_member?(actor_id, attributed_to_id) do
       {:ok,
        event_id
-       |> Conversations.find_conversations_for_event(actor_id, page, limit)
+       |> Conversations.find_conversations_for_event(attributed_to_id, page, limit)
        |> conversation_participant_to_view()}
     else
       {:ok, %Page{total: 0, elements: []}}

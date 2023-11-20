@@ -2,18 +2,10 @@
   <div class="container mx-auto section">
     <breadcrumbs-nav :links="[]" />
     <section>
-      <h1>{{ t("Conversations") }}</h1>
-      <!-- <o-button
-        tag="router-link"
-        :to="{
-          name: RouteName.CREATE_CONVERSATION,
-          params: { uuid: event.uuid },
-        }"
-        >{{ t("New private message") }}</o-button
-      > -->
+      <h1>{{ t("Announcements") }}</h1>
       <div v-if="conversations.elements.length > 0">
-        <conversation-list-item
-          :conversation="conversation"
+        <announcement-list-item
+          :announcement="conversation"
           v-for="conversation in conversations.elements"
           :key="conversation.id"
         />
@@ -30,15 +22,14 @@
         >
         </o-pagination>
       </div>
-      <empty-content v-else icon="chat">
-        {{ t("There's no conversations yet") }}
+      <empty-content v-else icon="bullhorn" inline>
+        {{ t("There's no announcements yet") }}
       </empty-content>
     </section>
   </div>
 </template>
 <script lang="ts" setup>
-import ConversationListItem from "../../components/Conversations/ConversationListItem.vue";
-// import RouteName from "../../router/name";
+import AnnouncementListItem from "../../components/Conversations/AnnouncementListItem.vue";
 import EmptyContent from "../../components/Utils/EmptyContent.vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQuery, integerTransformer } from "vue-use-route-query";

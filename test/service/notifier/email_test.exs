@@ -138,7 +138,8 @@ defmodule Mobilizon.Service.Notifier.EmailTest do
     @email "someone@somewhere.tld"
 
     test "send activity notification to anonymous user" do
-      %Activity{} = activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now())
+      %Activity{} =
+        activity = insert(:mobilizon_activity, inserted_at: DateTime.utc_now(), type: :comment)
 
       Email.send_anonymous_activity(@email, activity, locale: "en")
 
