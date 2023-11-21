@@ -231,7 +231,7 @@ import { useLoggedUser } from "@/composition/apollo/user";
 import { Notifier } from "@/plugins/notifier";
 import { IAuthProvider } from "@/types/enums";
 import { useMutation } from "@vue/apollo-composable";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { GraphQLError } from "graphql/error/GraphQLError";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";

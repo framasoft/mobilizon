@@ -206,7 +206,7 @@ import { DELETE_GROUP } from "@/graphql/group";
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { Dialog } from "@/plugins/dialog";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { Notifier } from "@/plugins/notifier";
 
 const Editor = defineAsyncComponent(

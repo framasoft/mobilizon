@@ -32,7 +32,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import RouteName from "@/router/name";
 import SettingMenuSection from "@/components/Settings/SettingMenuSection.vue";
 import SettingMenuItem from "@/components/Settings/SettingMenuItem.vue";

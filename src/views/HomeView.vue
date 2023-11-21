@@ -218,7 +218,7 @@ import Presentation from "@/components/Home/MobilizonPresentation.vue";
 import CategoriesPreview from "@/components/Home/CategoriesPreview.vue";
 import UnloggedIntroduction from "@/components/Home/UnloggedIntroduction.vue";
 import SearchFields from "@/components/Home/SearchFields.vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { geoHashToCoords } from "@/utils/location";
 import { useServerProvidedLocation } from "@/composition/apollo/config";
 import { ABOUT } from "@/graphql/config";

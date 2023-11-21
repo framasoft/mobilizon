@@ -250,7 +250,7 @@ import {
 } from "@/graphql/member";
 import { usernameWithDomain, displayName, IGroup } from "@/types/actor";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { computed, inject, ref } from "vue";

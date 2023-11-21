@@ -141,7 +141,7 @@ import AuthProviders from "@/components/User/AuthProviders.vue";
 import RouteName from "@/router/name";
 import { LoginError, LoginErrorCode } from "@/types/enums";
 import { useCurrentUserClient } from "@/composition/apollo/user";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { enumTransformer, useRouteQuery } from "vue-use-route-query";
 
 const { t } = useI18n({ useScope: "global" });

@@ -12,7 +12,7 @@ import { ICurrentUser, IUser } from "../../types/current-user.model";
 import { useRouter } from "vue-router";
 import { useLazyQuery, useMutation } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, onMounted } from "vue";
 import { getValueFromMeta } from "@/utils/html";
 

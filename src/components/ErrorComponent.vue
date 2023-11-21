@@ -105,7 +105,7 @@ import { IAnalyticsConfig } from "@/types/config.model";
 import { computed, defineAsyncComponent, ref } from "vue";
 import { useQueryLoading } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useAnalytics } from "@/composition/apollo/config";
 const SentryFeedback = defineAsyncComponent(
   () => import("./Feedback/SentryFeedback.vue")

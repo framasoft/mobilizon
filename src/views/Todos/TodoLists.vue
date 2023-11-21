@@ -70,7 +70,7 @@ import { ITodoList } from "@/types/todolist";
 import RouteName from "../../router/name";
 import { useGroup } from "@/composition/apollo/group";
 import { computed, reactive } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";
 

@@ -83,7 +83,7 @@ import MultiPostListItem from "../../components/Post/MultiPostListItem.vue";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
 import { useQuery } from "@vue/apollo-composable";
 import { computed } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { useI18n } from "vue-i18n";
 import { MemberRole } from "@/types/enums";

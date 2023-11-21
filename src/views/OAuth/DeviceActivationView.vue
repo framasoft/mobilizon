@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { DEVICE_ACTIVATION } from "@/graphql/application";
 import { useMutation } from "@vue/apollo-composable";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import AuthorizeApplication from "@/components/OAuth/AuthorizeApplication.vue";

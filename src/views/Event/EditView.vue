@@ -629,7 +629,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { fetchTags } from "@/composition/apollo/tags";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 import type { Locale } from "date-fns";
 import sortBy from "lodash/sortBy";

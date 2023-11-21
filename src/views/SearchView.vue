@@ -754,7 +754,7 @@ import Calendar from "vue-material-design-icons/Calendar.vue";
 import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
 import Magnify from "vue-material-design-icons/Magnify.vue";
 
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import type { Locale } from "date-fns";
 import FilterSection from "@/components/Search/filters/FilterSection.vue";
 import { listShortDisjunctionFormatter } from "@/utils/listFormat";

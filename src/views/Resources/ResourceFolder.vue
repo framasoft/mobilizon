@@ -225,7 +225,7 @@ import { computed, nextTick, reactive, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { useRouter } from "vue-router";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useResourceProviders } from "@/composition/apollo/config";
 import Folder from "vue-material-design-icons/Folder.vue";
 import Link from "vue-material-design-icons/Link.vue";
