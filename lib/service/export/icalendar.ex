@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.{Config, Events}
   alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Service.Export.{Cachable, Common}
-  alias Mobilizon.Service.Formatter.HTML
+  alias Mobilizon.Service.Formatter.{HTML, Text}
 
   @behaviour Cachable
 
@@ -124,7 +124,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
       dtstart: begins_on(event),
       dtstamp: event.publish_at || DateTime.utc_now(),
       dtend: ends_on(event),
-      description: HTML.strip_tags(event.description),
+      description: HTML.html_to_text(event.description),
       uid: event.uuid,
       url: event.url,
       status: event.status,
