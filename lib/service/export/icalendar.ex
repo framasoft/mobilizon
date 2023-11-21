@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.Export.ICalendar do
   alias Mobilizon.{Config, Events}
   alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Service.Export.{Cachable, Common}
-  alias Mobilizon.Service.Formatter.{HTML, Text}
+  alias Mobilizon.Service.Formatter.HTML
 
   @behaviour Cachable
 
