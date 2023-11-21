@@ -38,7 +38,7 @@ defmodule Mobilizon.Service.Activity.Conversation do
          %Conversation{
            id: conversation_id
          } = conversation,
-         %Comment{actor_id: actor_id},
+         %Comment{actor_id: actor_id, text: last_comment_text},
          _options
        )
        when subject in [
@@ -50,27 +50,33 @@ defmodule Mobilizon.Service.Activity.Conversation do
 
     conversation_id
     |> Conversations.list_conversation_participants_for_conversation()
-    |> Enum.each(fn %ConversationParticipant{id: conversation_participant_id} =
+    |> Enum.each(fn %ConversationParticipant{
+                      id: conversation_participant_id,
+                      actor_id: conversation_participant_actor_id
+                    } =
                       conversation_participant ->
-      LegacyNotifierBuilder.enqueue(
-        :legacy_notify,
-        %{
-          "subject" => subject,
-          "subject_params" =>
-            Map.merge(
-              %{
-                conversation_id: conversation_id,
-                conversation_participant_id: conversation_participant_id
-              },
-              event_subject_params(conversation)
-            ),
-          "type" => :conversation,
-          "object_type" => :conversation,
-          "author_id" => actor_id,
-          "object_id" => to_string(conversation_id),
-          "participant" => Map.take(conversation_participant, [:id, :actor_id])
-        }
-      )
+      if actor_id != conversation_participant_actor_id do
+        LegacyNotifierBuilder.enqueue(
+          :legacy_notify,
+          %{
+            "subject" => subject,
+            "subject_params" =>
+              Map.merge(
+                %{
+                  conversation_id: conversation_id,
+                  conversation_participant_id: conversation_participant_id,
+                  conversation_text: last_comment_text
+                },
+                event_subject_params(conversation)
+              ),
+            "type" => :conversation,
+            "object_type" => :conversation,
+            "author_id" => actor_id,
+            "object_id" => to_string(conversation_id),
+            "participant" => Map.take(conversation_participant, [:id, :actor_id])
+          }
+        )
+      end
     end)
 
     {:ok, :enqueued}

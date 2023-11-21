@@ -13,25 +13,35 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
   use Mobilizon.Service.Workers.Helper, queue: "activity"
 
   @impl Oban.Worker
-  def perform(%Job{args: args}) do
+  def perform(%Job{args: %{"op" => "legacy_notify"} = args}) do
     {"legacy_notify", args} = Map.pop(args, "op")
     activity = build_activity(args)
     Logger.debug("Handling activity #{activity.subject} to notify in LegacyNotifierBuilder")
 
-    if args["subject"] == "participation_event_comment" do
-      notify_anonymous_participants(get_in(args, ["subject_params", "event_id"]), activity)
+    if args["subject"] in ["participation_event_comment", "conversation_created"] do
+      special_handling(args["subject"], args, activity)
+      :ok
+    else
+      args
+      |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
+      |> Enum.each(&notify_user(&1, activity))
     end
+  end
 
-    if args["subject"] == "conversation_created" do
-      notify_anonymous_participants(
-        get_in(args, ["subject_params", "conversation_event_id"]),
-        activity
-      )
-    end
+  defp special_handling("participation_event_comment", args, activity) do
+    notify_participants(
+      get_in(args, ["subject_params", "event_id"]),
+      activity,
+      args["author_id"]
+    )
+  end
 
-    args
-    |> users_to_notify(author_id: args["author_id"], group_id: Map.get(args, "group_id"))
-    |> Enum.each(&notify_user(&1, activity))
+  defp special_handling("conversation_created", args, activity) do
+    notify_participants(
+      get_in(args, ["subject_params", "conversation_event_id"]),
+      activity,
+      args["author_id"]
+    )
   end
 
   defp build_activity(args) do
@@ -115,6 +125,22 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilder do
     |> Enum.filter(& &1)
     |> Enum.uniq()
     |> Enum.map(&Users.get_user_with_activity_settings!/1)
+  end
+
+  defp notify_participants(nil, _activity, _author_id), do: :ok
+
+  defp notify_participants(event_id, activity, author_id) do
+    event_id
+    |> Events.list_actors_participants_for_event()
+    |> Enum.map(& &1.id)
+    |> users_from_actor_ids(author_id)
+    |> Enum.each(fn user ->
+      Notifier.Email.send_anonymous_activity(user.email, activity,
+        locale: Map.get(user, :locale, "en")
+      )
+    end)
+
+    notify_anonymous_participants(event_id, activity)
   end
 
   defp notify_anonymous_participants(nil, _activity), do: :ok
