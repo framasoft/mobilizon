@@ -30,7 +30,7 @@ COPY config/config.exs config/prod.exs ./config/
 COPY config/docker.exs ./config/runtime.exs
 COPY rel ./rel
 COPY support ./support
-COPY --from=assets ./priv/static ./priv/static
+COPY --from=assets /build/priv/static ./priv/static
 
 RUN mix phx.digest.clean --all && mix phx.digest && mix release
 
