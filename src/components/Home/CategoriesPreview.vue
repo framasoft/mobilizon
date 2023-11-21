@@ -10,6 +10,7 @@
       :imageLazy="false"
     />
     <router-link
+      v-if="promotedCategories.length > 0"
       :to="{ name: RouteName.CATEGORIES }"
       class="flex items-end brightness-85 h-36 w-36 md:h-52 md:w-52 rounded-lg font-semibold text-lg md:text-xl p-4 text-white bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:text-slate-200"
     >
