@@ -1623,5 +1623,6 @@
   "{username} was invited to {group}": "{username} a été invité à {group}",
   "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
   "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée",
-  "© The OpenStreetMap Contributors": "© Les Contributeur·ices OpenStreetMap"
+  "© The OpenStreetMap Contributors": "© Les Contributeur·ices OpenStreetMap",
+  "There's no announcements yet": "Il n'y a encore aucune annonce"
 }
