@@ -378,7 +378,8 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
 
     with {:member, true} <-
            {:member,
-            current_actor_id == actor_id or Actors.is_member?(current_actor_id, actor_id)},
+            to_string(current_actor_id) == to_string(actor_id) or
+              Actors.is_member?(current_actor_id, actor_id)},
          {:ok, _activity, %Conversation{} = conversation} <- Comments.create_conversation(args) do
       {:ok, conversation_to_view(conversation, Actors.get_actor(actor_id))}
     else
