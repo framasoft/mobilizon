@@ -160,13 +160,12 @@ config :mobilizon, Mobilizon.Web.Auth.Guardian,
   }
 
 config :guardian, Guardian.DB,
+  adapter: Guardian.DB.EctoAdapter,
   repo: Mobilizon.Storage.Repo,
   # default
   schema_name: "guardian_tokens",
   # store all token types if not set
-  token_types: ["refresh"],
-  # default: 60 minutes
-  sweep_interval: 60
+  token_types: ["refresh"]
 
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
@@ -394,6 +393,12 @@ config :mobilizon, Mobilizon.Service.AntiSpam, service: Mobilizon.Service.AntiSp
 
 config :mobilizon, Mobilizon.Service.SiteMap,
   path: System.get_env("MOBILIZON_SITEMAP_PATH", "/var/lib/mobilizon/sitemap")
+
+config :sentry,
+  dsn: "",
+  environment_name: Mix.env(),
+  enable_source_code_context: true,
+  root_source_code_paths: [File.cwd!()]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
