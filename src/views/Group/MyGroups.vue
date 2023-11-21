@@ -92,7 +92,7 @@ import { useMutation, useQuery } from "@vue/apollo-composable";
 import { IUser } from "@/types/current-user.model";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
 import { computed, inject } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { Notifier } from "@/plugins/notifier";

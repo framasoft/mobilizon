@@ -99,7 +99,7 @@ import { useFetchEvent } from "@/composition/apollo/event";
 import { useAnonymousParticipationConfig } from "@/composition/apollo/config";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ uuid: string }>();

@@ -51,7 +51,7 @@ import RouteName from "../../router/name";
 import { ApolloCache, FetchResult, InMemoryCache } from "@apollo/client/core";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { useCurrentActorClient } from "@/composition/apollo/actor";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, ref } from "vue";
 
 const props = defineProps<{ id: string }>();

@@ -149,7 +149,7 @@ import { AddressSearchType } from "@/types/enums";
 import { Address, IAddress } from "@/types/address.model";
 import { useTimezones } from "@/composition/apollo/config";
 import { useUserSettings, updateLocale } from "@/composition/apollo/user";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMutation } from "@vue/apollo-composable";

@@ -103,7 +103,7 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
 import { computed } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import {
   useRouteQuery,
   booleanTransformer,

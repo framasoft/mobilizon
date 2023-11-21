@@ -110,10 +110,13 @@ defmodule Mobilizon.Posts do
   def update_post(%Post{} = post, attrs) do
     Cachable.clear_all_caches(post)
 
-    post
-    |> Repo.preload([:tags, :media])
-    |> Post.changeset(attrs)
-    |> Repo.update()
+    with {:ok, %Post{} = post} <-
+           post
+           |> Repo.preload(@post_preloads)
+           |> Post.changeset(attrs)
+           |> Repo.update() do
+      {:ok, Repo.preload(post, @post_preloads)}
+    end
   end
 
   @doc """

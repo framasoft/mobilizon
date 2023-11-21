@@ -1,6 +1,6 @@
 import "./specs/mocks/matchMedia";
 import { config } from "@vue/test-utils";
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import { i18n } from "@/utils/i18n";
 
 const head = createHead();

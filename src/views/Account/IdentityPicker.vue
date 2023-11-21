@@ -60,7 +60,7 @@ import { useCurrentUserIdentities } from "@/composition/apollo/actor";
 import { computed } from "vue";
 import AccountCircle from "vue-material-design-icons/AccountCircle.vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 
 const { identities } = useCurrentUserIdentities();
 

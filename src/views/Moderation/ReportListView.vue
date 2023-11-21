@@ -95,7 +95,7 @@ import { Paginate } from "@/types/paginate";
 import debounce from "lodash/debounce";
 import { useQuery } from "@vue/apollo-composable";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import {
   enumTransformer,

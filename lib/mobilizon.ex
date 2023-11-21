@@ -45,7 +45,7 @@ defmodule Mobilizon do
         {Absinthe.Subscription, Web.Endpoint},
         {Oban, Application.get_env(:mobilizon, Oban)},
         # workers
-        Guardian.DB.Token.SweeperServer,
+        Guardian.DB.Sweeper,
         ActivityPub.Federator,
         TzWorld.Backend.DetsWithIndexCache,
         cachex_spec(:feed, 2500, 60, 60, &Feed.create_cache/1),

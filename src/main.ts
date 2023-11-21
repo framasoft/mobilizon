@@ -22,7 +22,7 @@ import "@oruga-ui/oruga-next/dist/oruga.css";
 import "./assets/oruga-tailwindcss.css";
 import { orugaConfig } from "./oruga-config";
 import MaterialIcon from "./components/core/MaterialIcon.vue";
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import { CONFIG } from "./graphql/config";
 import { IConfig } from "./types/config.model";
 

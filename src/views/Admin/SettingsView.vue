@@ -385,7 +385,7 @@ import RouteName from "@/router/name";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { ref, computed, watch, inject } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import type { Notifier } from "@/plugins/notifier";
 
 const defaultAdminSettings: IAdminSettings = {

@@ -327,7 +327,7 @@ import { ADMIN_UPDATE_USER, LANGUAGES_CODES } from "@/graphql/admin";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { ILanguage } from "@/types/admin.model";
 import { computed, inject, reactive, ref, watch } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { formatDateTimeString } from "@/filters/datetime";
 import { useRouter } from "vue-router";

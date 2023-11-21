@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import RedirectWithAccount from "@/components/Utils/RedirectWithAccount.vue";
 import { useFetchEvent } from "@/composition/apollo/event";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 

@@ -77,7 +77,7 @@
 
 <script lang="ts" setup>
 import { useRouteQuery } from "vue-use-route-query";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuery } from "@vue/apollo-composable";

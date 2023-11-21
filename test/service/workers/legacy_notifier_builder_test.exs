@@ -187,17 +187,18 @@ defmodule Mobilizon.Service.Workers.LegacyNotifierBuilderTest do
           "object_id" => to_string(comment_id)
         })
 
-      NotifierMock
-      |> expect(:ready?, fn -> true end)
-      |> expect(:send, fn %User{},
-                          %Activity{
-                            type: :comment,
-                            subject: :participation_event_comment,
-                            object_type: :comment
-                          },
-                          [single_activity: true] ->
-        {:ok, :sent}
-      end)
+      # # Disabled as announcement is sent straight away
+      # NotifierMock
+      # |> expect(:ready?, fn -> true end)
+      # |> expect(:send, fn %User{},
+      #                     %Activity{
+      #                       type: :comment,
+      #                       subject: :participation_event_comment,
+      #                       object_type: :comment
+      #                     },
+      #                     [single_activity: true] ->
+      #   {:ok, :sent}
+      # end)
 
       assert :ok == LegacyNotifierBuilder.perform(%Oban.Job{args: args})
     end

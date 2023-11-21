@@ -119,7 +119,7 @@ import {
   useRouteQuery,
 } from "vue-use-route-query";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { Paginate } from "@/types/paginate";
 import { IGroup } from "@/types/actor";

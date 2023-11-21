@@ -286,7 +286,7 @@ import Incognito from "vue-material-design-icons/Incognito.vue";
 import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { Notifier } from "@/plugins/notifier";
 import Tag from "@/components/TagElement.vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import EventConversations from "../../components/Conversations/EventConversations.vue";
 import NewPrivateMessage from "../../components/Participation/NewPrivateMessage.vue";
 

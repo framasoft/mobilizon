@@ -82,7 +82,7 @@ import {
   REVOKED_AUTHORIZED_APPLICATION,
 } from "@/graphql/application";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import RouteName from "../../router/name";

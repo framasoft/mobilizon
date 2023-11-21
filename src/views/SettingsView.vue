@@ -13,7 +13,7 @@
 import SettingsMenu from "../components/Settings/SettingsMenu.vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 
 const { t } = useI18n({ useScope: "global" });
 

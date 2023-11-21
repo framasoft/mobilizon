@@ -137,7 +137,7 @@ import { useRouter } from "vue-router";
 import { registerAccount } from "@/composition/apollo/user";
 import { convertToUsername } from "@/utils/username";
 import { useI18n } from "vue-i18n";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { getValueFromMeta } from "@/utils/html";
 
 const props = withDefaults(

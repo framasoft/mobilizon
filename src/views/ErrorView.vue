@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import { ErrorCode } from "@/types/enums";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { useRouteQuery } from "vue-use-route-query";
 import { computed } from "vue";

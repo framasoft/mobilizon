@@ -46,7 +46,7 @@ import RouteName from "@/router/name";
 import { reactive, ref, computed } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{ token: string }>();

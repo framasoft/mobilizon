@@ -104,6 +104,7 @@ defmodule Mobilizon.Conversations do
     |> join(:inner, [_cp, _c, _e, _a, _lc, _oc, p], ap in Actor, on: p.actor_id == ap.id)
     |> where([_cp, c], c.event_id == ^event_id)
     |> where([cp], cp.actor_id == ^actor_id)
+    |> order_by([cp], desc: cp.unread, desc: cp.updated_at)
     |> preload([_cp, c, e, a, lc, oc, p, ap],
       actor: a,
       conversation:

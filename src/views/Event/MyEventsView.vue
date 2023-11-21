@@ -237,7 +237,7 @@ import {
 import { Locale } from "date-fns";
 import { useI18n } from "vue-i18n";
 import { useRestrictions } from "@/composition/apollo/config";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 
 const EventParticipationCard = defineAsyncComponent(
   () => import("@/components/Event/EventParticipationCard.vue")

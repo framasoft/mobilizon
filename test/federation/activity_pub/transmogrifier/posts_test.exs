@@ -2,15 +2,12 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier.PostsTest do
   use Mobilizon.DataCase
 
   import Mobilizon.Factory
-  import Mox
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Federation.ActivityPub.{Activity, Transmogrifier}
   alias Mobilizon.Federation.ActivityStream.Convertible
   alias Mobilizon.Posts.Post
 
   describe "handle incoming posts" do
-    setup :verify_on_exit!
-
     test "it ignores an incoming post if we already have it" do
       post = insert(:post)
       post = Repo.preload(post, [:author, :attributed_to, :picture, :media])

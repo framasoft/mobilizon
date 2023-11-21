@@ -54,6 +54,11 @@ config :mobilizon, :ldap,
   bind_uid: System.get_env("LDAP_BIND_UID"),
   bind_password: System.get_env("LDAP_BIND_PASSWORD")
 
+# Faster runs in test environment
+config :argon2_elixir,
+  t_cost: 1,
+  m_cost: 8
+
 config :mobilizon, Mobilizon.Web.Email.Mailer, adapter: Swoosh.Adapters.Test
 
 config :mobilizon, Mobilizon.Web.Upload, filters: [], link_name: false

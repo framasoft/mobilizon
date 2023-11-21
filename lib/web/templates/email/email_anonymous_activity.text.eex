@@ -21,7 +21,7 @@
 
 --
 
-<%= @extra["conversation"].last_comment.text |> html_to_text() |> mail_quote() %>
+<%= @activity.subject_params["conversation_text"] |> html_to_text() |> mail_quote() %>
 
 --
 

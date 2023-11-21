@@ -113,9 +113,7 @@
                         event:
                           "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
                           :event,
-                          @activity.subject_params["conversation_event_uuid"]) |> URI.decode()}\">
-                                #{escape_html(@activity.subject_params["conversation_event_title"])}
-                            </a>"
+                          @activity.subject_params["conversation_event_uuid"]) |> URI.decode()}\">#{escape_html(@activity.subject_params["conversation_event_title"])}</a>"
                       }
                     )
                     |> raw %>
@@ -137,7 +135,7 @@
                       <tr>
                         <td align="center">
                           <blockquote style="border-left-width: 0.25rem;border-left-color: #e2e8f0;border-left-style: solid;padding-left: 1em;margin: 0;text-align: start;color: #474467;font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400;line-height: 25px;">
-                            <%= @extra["conversation"].last_comment.text
+                            <%= @activity.subject_params["conversation_text"]
                             |> sanitize_to_basic_html()
                             |> raw() %>
                           </blockquote>

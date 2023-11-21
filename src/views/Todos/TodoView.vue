@@ -34,7 +34,7 @@ import FullTodo from "@/components/Todo/FullTodo.vue";
 import RouteName from "../../router/name";
 import { displayName, usernameWithDomain } from "@/types/actor";
 import { useQuery } from "@vue/apollo-composable";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 
 const props = defineProps<{ todoId: string }>();

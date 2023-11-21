@@ -126,7 +126,7 @@ import {
   useRouteQuery,
 } from "vue-use-route-query";
 import { computed, inject } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { useI18n } from "vue-i18n";
 import { usePersonStatusGroup } from "@/composition/apollo/actor";
 import { MemberRole } from "@/types/enums";

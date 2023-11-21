@@ -226,7 +226,7 @@ import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { ICurrentUser } from "@/types/current-user.model";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 
 const { t } = useI18n({ useScope: "global" });
 const router = useRouter();

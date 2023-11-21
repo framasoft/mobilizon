@@ -14,7 +14,7 @@
 import { RULES } from "@/graphql/config";
 import { IConfig } from "@/types/config.model";
 import { useQuery } from "@vue/apollo-composable";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 

@@ -319,7 +319,7 @@ import { MemberRole } from "@/types/enums";
 import cloneDeep from "lodash/cloneDeep";
 import { useMutation, useQuery } from "@vue/apollo-composable";
 import { integerTransformer, useRouteQuery } from "vue-use-route-query";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import {
