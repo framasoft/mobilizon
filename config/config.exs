@@ -394,12 +394,6 @@ config :mobilizon, Mobilizon.Service.AntiSpam, service: Mobilizon.Service.AntiSp
 config :mobilizon, Mobilizon.Service.SiteMap,
   path: System.get_env("MOBILIZON_SITEMAP_PATH", "/var/lib/mobilizon/sitemap")
 
-config :sentry,
-  dsn: "",
-  environment_name: Mix.env(),
-  enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()]
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
