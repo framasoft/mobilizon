@@ -612,17 +612,15 @@ const organizerDomain = computed((): string | undefined => {
   return organizer.value?.domain ?? undefined;
 });
 
-const filterNonPassedRelatedEvents = (relatedEvents: IEvent[] | undefined) => {
-  return relatedEvents?.filter((relatedEvent) => {
+const nonPassedRelatedEvents = computed((): IEvent[] | undefined => {
+  let relatedEvents = event.value?.relatedEvents;
+  
+  return relatedEvents?.filter((relatedEvent: IEvent) => {
     const endsOn = relatedEvent.endsOn
       ? new Date(relatedEvent.endsOn)
       : new Date(relatedEvent.beginsOn);
     return endsOn > new Date();
   });
-};
-
-const nonPassedRelatedEvents = computed((): IEvent[] | undefined => {
-  return filterNonPassedRelatedEvents(event.value?.relatedEvents);
 });
 
 useHead({
