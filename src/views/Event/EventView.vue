@@ -243,12 +243,12 @@
 
       <section
         class="bg-white dark:bg-zinc-700 px-3 pt-1 pb-3 rounded my-4"
-        v-if="(event?.relatedEvents ?? []).length > 0"
+        v-if="(nonPassedRelatedEvents ?? []).length > 0"
       >
         <h2 class="text-2xl mb-2">
           {{ t("These events may interest you") }}
         </h2>
-        <multi-card :events="event?.relatedEvents ?? []" />
+        <multi-card :events="nonPassedRelatedEvents ?? []" />
       </section>
       <o-modal
         v-model:active="showMap"
@@ -327,6 +327,7 @@ import { useI18n } from "vue-i18n";
 import { Notifier } from "@/plugins/notifier";
 import { AbsintheGraphQLErrors } from "@/types/errors.model";
 import { useHead } from "@unhead/vue";
+import { IEvent } from "@/types/event.model";
 
 const IntegrationTwitch = defineAsyncComponent(
   () => import("@/components/Event/Integrations/TwitchIntegration.vue")
@@ -609,6 +610,17 @@ const organizer = computed((): IActor | null => {
 
 const organizerDomain = computed((): string | undefined => {
   return organizer.value?.domain ?? undefined;
+});
+
+const nonPassedRelatedEvents = computed((): IEvent[] | undefined => {
+  let relatedEvents = event.value?.relatedEvents;
+  
+  return relatedEvents?.filter((relatedEvent: IEvent) => {
+    const endsOn = relatedEvent.endsOn
+      ? new Date(relatedEvent.endsOn)
+      : new Date(relatedEvent.beginsOn);
+    return endsOn > new Date();
+  });
 });
 
 useHead({

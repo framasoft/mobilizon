@@ -64,6 +64,7 @@ const FULL_EVENT_FRAGMENT = gql`
       uuid
       title
       beginsOn
+      endsOn
       status
       language
       picture {
