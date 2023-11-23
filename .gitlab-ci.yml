@@ -375,7 +375,7 @@ package-app-dev:
       - ${APP_ASSET}
 
 # Packaging app for multi-arch
-multi-arch-release:
+package-multi-arch-release:
   stage: build
   image: docker:24
   variables:
