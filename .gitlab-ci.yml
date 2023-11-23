@@ -6,8 +6,7 @@ stages:
   - build-js
   - sentry
   - test
-  - docker
-  - package
+  - build
   - upload
   - deploy
 
@@ -125,7 +124,7 @@ deps:
 exunit:
   stage: test
   services:
-    - name: postgis/postgis:14-3.2
+    - name: postgis/postgis:16-3.4
       alias: postgres
   variables:
     MIX_ENV: test
@@ -164,7 +163,7 @@ vitest:
 e2e:
   stage: test
   services:
-    - name: postgis/postgis:14-3.2
+    - name: postgis/postgis:16-3.4
       alias: postgres
   variables:
     MIX_ENV: "e2e"
@@ -206,7 +205,7 @@ pages:
       - public
 
 .docker: &docker
-  stage: docker
+  stage: build
   image: docker:24
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
@@ -214,6 +213,7 @@ pages:
     DOCKER_TLS_VERIFY: 1
     DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
     DOCKER_DRIVER: overlay2
+    DOCKER_CLI_EXPERIMENTAL: enabled
   services:
     - docker:24-dind
   cache: {}
@@ -229,6 +229,8 @@ pages:
     # Install qemu/binfmt
     - docker pull tonistiigi/binfmt:latest
     - docker run --rm --privileged tonistiigi/binfmt:latest --install all
+    # Install jq
+    - apk --no-cache add jq
     # Login to DockerHub
     - mkdir -p ~/.docker
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$CI_REGISTRY_AUTH\",\"email\":\"$CI_REGISTRY_EMAIL\"}}}" > ~/.docker/config.json
@@ -242,9 +244,9 @@ build-docker-main:
       when: never
     - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_TRIGGERED == "true"'
   script:
-    - docker buildx build --push --platform linux/amd64 -t framasoft/mobilizon:main -f docker/production/Dockerfile .
+    - docker buildx build --platform linux/amd64 -t framasoft/mobilizon:main -f docker/production/Dockerfile .
 
-build-and-push-to-latest-docker-tag:
+build-docker-tag:
   <<: *docker
   rules: &release-tag-rules
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
@@ -257,9 +259,9 @@ build-and-push-to-latest-docker-tag:
       docker buildx build
       --push
       --platform linux/${ARCH}
+      --provenance=false
       --build-arg="${ERL_FLAGS}"
-      -t framasoft/mobilizon:$CI_COMMIT_TAG
-      -t framasoft/mobilizon:latest
+      -t framasoft/mobilizon:${CI_COMMIT_TAG}-${ARCH}
       -f docker/production/Dockerfile .
   parallel:
     matrix:
@@ -280,15 +282,49 @@ build-and-push-docker-tag:
   script:
     - >
       docker buildx build
-      --push
       --platform linux/amd64
-      -t framasoft/mobilizon:$CI_COMMIT_TAG
+      --provenance=false
+      -t framasoft/mobilizon:$CI_COMMIT_TAG-amd64
       -f docker/production/Dockerfile .
+
+# Create manifest and push
+docker-manifest-push:
+  <<: *docker
+  needs: ["build-docker-tag"]
+  rules: &release-tag-rules
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: $CI_COMMIT_TAG != null
+      when: on_success
+  script:
+    - >
+      docker manifest create framasoft/mobilizon:${CI_COMMIT_TAG}
+      --amend framasoft/mobilizon:${CI_COMMIT_TAG}-amd64
+      --amend framasoft/mobilizon:${CI_COMMIT_TAG}-arm64
+    - docker manifest push --purge framasoft/mobilizon:${CI_COMMIT_TAG}
+
+###
+# Simply creating an alias to the tag doesn't work:
+# « xxx is a manifest list »
+# https://joonas.fi/2021/02/docker-multi-arch-image-tooling-buildx/
+###
+docker-latest:
+  <<: *docker
+  needs: ["docker-manifest-push"]
+  rules: &release-tag-rules
+    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
+      when: never
+    - if: $CI_COMMIT_TAG != null && $CI_COMMIT_TAG !~ /alpha|beta|rc/
+      when: on_success
+  script:
+    - echo docker manifest create framasoft/mobilizon:latest $(docker manifest inspect framasoft/mobilizon:$CI_COMMIT_TAG | jq '.manifests[] | .digest' | xargs -I {} echo framasoft/mobilizon@{})
+    - docker manifest create framasoft/mobilizon:latest $(docker manifest inspect framasoft/mobilizon:$CI_COMMIT_TAG | jq -r '.manifests[] | .digest' | xargs -I {} echo framasoft/mobilizon@{})
+    - docker manifest push --purge framasoft/mobilizon:latest
 
 # Packaging app for amd64
 package-app:
-  image: mobilizon/buildpack:1.15.5-erlang-26.0.2-debian-buster
-  stage: package
+  image: mobilizon/buildpack:1.15.7-erlang-26.1.2-${SYSTEM}
+  stage: build
   variables: &release-variables
     MIX_ENV: "prod"
     DEBIAN_FRONTEND: noninteractive
@@ -312,9 +348,23 @@ package-app:
     expire_in: 2 days
     paths:
       - ${APP_ASSET}
+  parallel:
+    matrix:
+      - SYSTEM:
+          [
+            "debian-bookworm",
+            "debian-bullseye",
+            "ubuntu-jammy",
+            "ubuntu-focal",
+            "ubuntu-bionic",
+            "alpine-3.17.5",
+            "alpine-3.18.4",
+            "fedora-38",
+            "fedora-39",
+          ]
 
 package-app-dev:
-  stage: package
+  stage: build
   variables: *release-variables
   script: *release-script
   except:
@@ -325,8 +375,8 @@ package-app-dev:
       - ${APP_ASSET}
 
 # Packaging app for multi-arch
-multi-arch-release:
-  stage: package
+package-multi-arch-release:
+  stage: build
   image: docker:24
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
@@ -366,6 +416,19 @@ multi-arch-release:
   parallel:
     matrix:
       - ARCH: ["arm64"]
+        ## Currently not used as the hexpm base images do not have support for other architectures than amd64
+        # SYSTEM:
+        #   [
+        #     "debian-bookworm",
+        #     "debian-bullseye",
+        #     "ubuntu-jammy",
+        #     "ubuntu-focal",
+        #     "ubuntu-bionic",
+        #     "alpine-3.17.5",
+        #     "alpine-3.18.4",
+        #     "fedora-38",
+        #     "fedora-39",
+        #   ]
   rules:
     - if: '$CI_COMMIT_TAG != null || $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_TRIGGERED == "true"'
   timeout: 3h

@@ -201,7 +201,7 @@ defmodule Mobilizon.Mixfile do
       {:remote_ip, "~> 1.1"},
       {:ex_cldr_languages, "~> 0.3.0"},
       {:slugger, "~> 0.3"},
-      {:sentry, "~> 9.0"},
+      {:sentry, "~> 8.1"},
       {:html_entities, "~> 0.5"},
       {:sweet_xml, "~> 0.7"},
       {:web_push_encryption, github: "danhper/elixir-web-push-encryption"},

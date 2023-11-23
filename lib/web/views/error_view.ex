@@ -53,6 +53,8 @@ defmodule Mobilizon.Web.ErrorView do
     locale =
       Mobilizon.Config.instance_config()
       |> Keyword.get(:default_language, "en")
+      # Just in case
+      |> Kernel.||("en")
 
     Gettext.put_locale(locale)
 

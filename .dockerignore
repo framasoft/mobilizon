@@ -1,6 +1,10 @@
 _build
 CONTRIBUTING.md
+coverage
+demo
 deps
+doc
+docs
 docker-compose.yml
 Dockerfile
 .elixir_ls
@@ -17,3 +21,6 @@ SECURITY.md
 ssh_match_hostname
 package-lock.json
 node_modules
+playwright-report
+test
+tests
