@@ -83,9 +83,6 @@ export default defineConfig(({ command }) => {
   return {
     plugins,
     build,
-    server: {
-      host: isDev ? "0.0.0.0" : "localhost",
-    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

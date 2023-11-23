@@ -36,6 +36,7 @@ services:
       MOBILIZON_DATABASE_DBNAME: ${POSTGRES_DB}
       MOBILIZON_DATABASE_HOST: postgres
       MOBILIZON_DATABASE_PORT: ${POSTGRES_PORT}
+      VITE_HOST: ${VITE_HOST:-localhost}
     command: sh -c "mix phx.server"
 volumes:
   pgdata:
