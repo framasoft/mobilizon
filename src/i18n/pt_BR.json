@@ -175,6 +175,7 @@
   "Closed": "Fechado",
   "Comment body": "",
   "Comment deleted": "Comentário apagado",
+  "Comment from {'@'}{username} reported": "Comentário de {'@'}{username} reportado",
   "Comment text can't be empty": "",
   "Comments": "Comentários",
   "Comments are closed for everybody else.": "Os comentários estão fechados para todos os demais.",
