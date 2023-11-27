@@ -318,9 +318,10 @@ const debounceDelay = computed(() =>
   geocodingAutocomplete.value === true ? 200 : 2000
 );
 
-const { load: searchAddress } = useLazyQuery<{
-  searchAddress: IAddress[];
-}>(ADDRESS);
+const { load: searchAddressLoad, refetch: searchAddressRefetch } =
+  useLazyQuery<{
+    searchAddress: IAddress[];
+  }>(ADDRESS);
 
 const asyncData = async (query: string): Promise<void> => {
   console.debug("Finding addresses");
@@ -338,13 +339,22 @@ const asyncData = async (query: string): Promise<void> => {
   isFetching.value = true;
 
   try {
-    const result = await searchAddress(undefined, {
+    const queryVars = {
       query,
       locale: locale,
       type: props.resultType,
-    });
+    };
 
-    if (!result) return;
+    const result =
+      (await searchAddressLoad(undefined, queryVars)) ||
+      (await searchAddressRefetch(queryVars)?.then((object) => {
+        return object.data;
+      }));
+
+    if (!result) {
+      isFetching.value = false;
+      return;
+    }
     console.debug("onAddressSearchResult", result.searchAddress);
     addressData.value = result.searchAddress;
     isFetching.value = false;
