@@ -251,7 +251,7 @@ build-docker-tag:
   rules: &release-tag-rules
     - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
       when: never
-    - if: $CI_COMMIT_TAG != null && $CI_COMMIT_TAG !~ /alpha|beta|rc/
+    - if: $CI_COMMIT_TAG != null
       when: on_success
   timeout: 3 hours
   script:
@@ -269,23 +269,6 @@ build-docker-tag:
         ERL_FLAGS: ["ERL_FLAGS="]
       - ARCH: ["arm64"]
         ERL_FLAGS: ["ERL_FLAGS=+JMsingle true"]
-
-# Don't push to latest when building beta/rc tags
-build-and-push-docker-tag:
-  <<: *docker
-  rules: &pre-release-tag-rules
-    - if: '$CI_PROJECT_NAMESPACE != "framasoft"'
-      when: never
-    - if: $CI_COMMIT_TAG =~ /alpha|beta|rc/
-      when: on_success
-  timeout: 3 hours
-  script:
-    - >
-      docker buildx build
-      --platform linux/amd64
-      --provenance=false
-      -t framasoft/mobilizon:$CI_COMMIT_TAG-amd64
-      -f docker/production/Dockerfile .
 
 # Create manifest and push
 docker-manifest-push:
