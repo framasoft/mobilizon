@@ -426,7 +426,7 @@ defmodule Mobilizon.Web.ApplicationController do
 
   defp valid_uri?(url) do
     uri = URI.parse(url)
-    uri.scheme != nil and uri.host =~ "."
+    uri.scheme != nil and (uri.host =~ "." or uri.host == "localhost")
   end
 
   @spec append_parameters(String.t(), Enum.t()) :: String.t()
