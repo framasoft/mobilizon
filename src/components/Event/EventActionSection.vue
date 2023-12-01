@@ -110,6 +110,38 @@
         <o-dropdown-item
           aria-role="listitem"
           has-link
+          v-if="canManageEvent || !event?.draft"
+        >
+          <router-link
+            class="flex gap-1"
+            :to="{
+              name: RouteName.PARTICIPATIONS,
+              params: { eventId: event?.uuid },
+            }"
+          >
+            <AccountMultiple />
+            {{ t("Participations") }}
+          </router-link>
+        </o-dropdown-item>
+        <o-dropdown-item
+          aria-role="listitem"
+          has-link
+          v-if="canManageEvent || !event?.draft"
+        >
+          <router-link
+            class="flex gap-1"
+            :to="{
+              name: RouteName.ANNOUNCEMENTS,
+              params: { eventId: event?.uuid },
+            }"
+          >
+            <Bullhorn />
+            {{ t("Announcements") }}
+          </router-link>
+        </o-dropdown-item>
+        <o-dropdown-item
+          aria-role="listitem"
+          has-link
           v-if="canManageEvent || event?.draft"
         >
           <router-link
@@ -359,6 +391,8 @@ import { useCreateReport } from "@/composition/apollo/report";
 import { useDeleteEvent } from "@/composition/apollo/event";
 import { useProgrammatic } from "@oruga-ui/oruga-next";
 import ExternalParticipationButton from "./ExternalParticipationButton.vue";
+import AccountMultiple from "vue-material-design-icons/AccountMultiple.vue";
+import Bullhorn from "vue-material-design-icons/Bullhorn.vue";
 
 const ShareEventModal = defineAsyncComponent(
   () => import("@/components/Event/ShareEventModal.vue")
