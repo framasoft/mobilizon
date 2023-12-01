@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.0-beta.2 (2023-12-01)
+
+* test: fix tests using verified routes ([5fcf3d5](https://framagit.org/framasoft/mobilizon/commits/5fcf3d5))
+* feat: add links to cancel anonymous participations in emails ([9e6b232](https://framagit.org/framasoft/mobilizon/commits/9e6b232))
+* feat(background): add a job to refresh participant stats ([11e42d6](https://framagit.org/framasoft/mobilizon/commits/11e42d6))
+* feat(front): add dedicated page and route for event announcements ([d831dff](https://framagit.org/framasoft/mobilizon/commits/d831dff))
+* chore(i18n): update backend translations ([6df16ef](https://framagit.org/framasoft/mobilizon/commits/6df16ef))
+* fix: fix creating participant stats ([3f2a88f](https://framagit.org/framasoft/mobilizon/commits/3f2a88f))
+* refactor: use Phoenix verified routes ([b315e1d](https://framagit.org/framasoft/mobilizon/commits/b315e1d))
+
 ## 4.0.0-beta.1 (2023-11-30)
 
 * fix: add a final fallback if we have default_language: nil in instance config ([cd53062](https://framagit.org/framasoft/mobilizon/commits/cd53062))
