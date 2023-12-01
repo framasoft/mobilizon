@@ -1105,7 +1105,7 @@ defmodule Mobilizon.Events do
   defp increase_participant_stats(participant_stats, nil), do: participant_stats
 
   defp increase_participant_stats(participant_stats, role),
-    do: Map.update(participant_stats, role, 0, &(&1 + 1))
+    do: Map.update(participant_stats, role, 1, &(&1 + 1))
 
   defp decrease_participant_stats(participant_stats, nil), do: participant_stats
 
