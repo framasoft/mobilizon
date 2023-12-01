@@ -6,8 +6,7 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
   alias Mobilizon.Federation.ActivityPub.Utils
   alias Mobilizon.Federation.ActivityStream.Converter
 
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   describe "make" do
     test "comment data from struct" do

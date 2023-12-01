@@ -84,13 +84,15 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
           rel: "alternate",
           type: "application/atom+xml",
           title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
-          href: url(~p"/@#{Actor.preferred_username_and_domain(group)}/feed/atom")
+          href:
+            ~p"/@#{Actor.preferred_username_and_domain(group)}/feed/atom" |> url() |> URI.decode()
         ),
         Tag.tag(:link,
           rel: "alternate",
           type: "text/calendar",
           title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
-          href: url(~p"/@#{Actor.preferred_username_and_domain(group)}/feed/ics")
+          href:
+            ~p"/@#{Actor.preferred_username_and_domain(group)}/feed/ics" |> url() |> URI.decode()
         ),
         Tag.tag(:link,
           rel: "alternate",
