@@ -4,13 +4,13 @@
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_updated -> %><%= dgettext("activity", "The event %{event} was updated by %{profile}.", 
+<%= url(~p"/events/#{@activity.subject_params["event_uuid"]}") |> URI.decode() %><% :event_updated -> %><%= dgettext("activity", "The event %{event} was updated by %{profile}.", 
     %{
         profile: display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% :event_deleted -> %><%= dgettext("activity", "The event %{event} was deleted by %{profile}.", 
+<%= url(~p"/events/#{@activity.subject_params["event_uuid"]}") |> URI.decode() %><% :event_deleted -> %><%= dgettext("activity", "The event %{event} was deleted by %{profile}.", 
     %{
         profile: display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
@@ -22,16 +22,16 @@
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} posted a comment on the event %{event}.", 
+<%= url(~p"/events/#{@activity.subject_params["event_uuid"]}") |> URI.decode() %><% else %><%= dgettext("activity", "%{profile} posted a comment on the event %{event}.", 
     %{
         profile: display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% end %><% :event_new_participation -> %><%= dgettext("activity", "%{profile} joined your event %{event}.",
+<%= url(~p"/events/#{@activity.subject_params["event_uuid"]}") |> URI.decode() %><% end %><% :event_new_participation -> %><%= dgettext("activity", "%{profile} joined your event %{event}.",
     %{
         profile: display_name_and_username(@activity.author),
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %><% end %>
+<%= url(~p"/events/#{@activity.subject_params["event_uuid"]}") |> URI.decode() %><% end %>

@@ -9,7 +9,7 @@ defmodule Mobilizon.Service.Metadata.Instance do
   alias Mobilizon.Config
   alias Mobilizon.Service.Metadata.Utils
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext
 
   @doc """
@@ -58,13 +58,13 @@ defmodule Mobilizon.Service.Metadata.Instance do
         rel: "alternate",
         type: "application/atom+xml",
         title: gettext("%{name}'s feed", name: Config.instance_name()) |> HTML.raw(),
-        href: Routes.feed_url(Endpoint, :instance, :atom)
+        href: url(~p"/feed/instance/atom")
       ),
       Tag.tag(:link,
         rel: "alternate",
         type: "text/calendar",
         title: gettext("%{name}'s feed", name: Config.instance_name()) |> HTML.raw(),
-        href: Routes.feed_url(Endpoint, :instance, :ics)
+        href: url(~p"/feed/instance/ics")
       )
     ]
   end

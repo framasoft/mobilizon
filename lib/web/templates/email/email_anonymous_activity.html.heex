@@ -54,9 +54,7 @@
                         profile:
                           "<b>#{escape_html(display_name_and_username(@activity.author))}</b>",
                         event:
-                          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-                          :event,
-                          @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+                          "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["event_title"])}
                             </a>"
                       }
@@ -77,8 +75,10 @@
                         <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
                           <a
                             href={
-                          "#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"])}"
-                        }
+                              ~p"/events/#{@activity.subject_params["event_uuid"]}"
+                              |> url()
+                              |> URI.decode()
+                            }
                             target="_blank"
                             style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
                           >
@@ -111,9 +111,7 @@
                         profile:
                           "<b>#{escape_html(display_name_and_username(@activity.author))}</b>",
                         event:
-                          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-                          :event,
-                          @activity.subject_params["conversation_event_uuid"]) |> URI.decode()}\">#{escape_html(@activity.subject_params["conversation_event_title"])}</a>"
+                          "<a href=\"#{~p"/events/#{@activity.subject_params["conversation_event_uuid"]}" |> url() |> URI.decode()}\">#{escape_html(@activity.subject_params["conversation_event_title"])}</a>"
                       }
                     )
                     |> raw %>
@@ -174,8 +172,10 @@
                         <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
                           <a
                             href={
-                          "#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["conversation_event_uuid"])}"
-                        }
+                              ~p"/events/#{@activity.subject_params["conversation_event_uuid"]}"
+                              |> url()
+                              |> URI.decode()
+                            }
                             target="_blank"
                             style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
                           >

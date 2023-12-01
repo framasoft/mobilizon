@@ -9,6 +9,6 @@
 <%= gettext "New end date:" %> <%= render("date/event_tz_date.text", event: @event, date: @event.ends_on, timezone: @timezone, locale: @locale) %><% end %><%= if MapSet.member?(@changes, :physical_address) do %>
 <%= gettext "New location:" %> <%= Mobilizon.Addresses.Address.representation(@event.physical_address) %><% end %>
 
-<%= gettext "Visit the updated event page: %{link}", link: Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) %>
+<%= gettext "Visit the updated event page: %{link}", link: url(~p"/events/#{@event.uuid}") %>
 
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", 1 %>

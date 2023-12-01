@@ -15,8 +15,7 @@ defmodule Mobilizon.Discussions.Comment do
   alias Mobilizon.Medias.Media
   alias Mobilizon.Mention
 
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @type t :: %__MODULE__{
           text: String.t(),
@@ -160,7 +159,7 @@ defmodule Mobilizon.Discussions.Comment do
   end
 
   @spec generate_url(String.t()) :: String.t()
-  defp generate_url(uuid), do: Routes.page_url(Endpoint, :comment, uuid)
+  defp generate_url(uuid), do: url(~p"/comments/#{uuid}")
 
   @spec put_tags(Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   defp put_tags(changeset, %{"tags" => tags}),

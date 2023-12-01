@@ -19,7 +19,7 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.0.1\n"
 
-#: lib/mobilizon/discussions/discussion.ex:69
+#: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
 msgid "can't be blank"
 msgstr "nie może być pusty"
@@ -171,7 +171,7 @@ msgstr "Nie znaleziono użytkownika(czki) o tym adresie e-mail"
 
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:34
-#: lib/graphql/resolvers/participant.ex:212
+#: lib/graphql/resolvers/participant.ex:217
 #: lib/graphql/resolvers/person.ex:247
 #: lib/graphql/resolvers/person.ex:378
 #: lib/graphql/resolvers/person.ex:414
@@ -412,7 +412,7 @@ msgstr "Nie znaleziono wydarzenia"
 #: lib/graphql/resolvers/participant.ex:89
 #: lib/graphql/resolvers/participant.ex:130
 #: lib/graphql/resolvers/participant.ex:157
-#: lib/graphql/resolvers/participant.ex:345
+#: lib/graphql/resolvers/participant.ex:350
 #, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "Wydarzenie o ID %{id} nie istnieje"
@@ -441,14 +441,14 @@ msgstr "Nie znaleziono profilu dla użytkownika(-czki)"
 msgid "No such feed token"
 msgstr "Nie ma takiego tokenu kanału"
 
-#: lib/graphql/resolvers/participant.ex:261
+#: lib/graphql/resolvers/participant.ex:266
 #, elixir-autogen, elixir-format
 msgid "Participant already has role %{role}"
 msgstr "Uczestnik(-czka) już ma rolę %{role}"
 
-#: lib/graphql/resolvers/participant.ex:189
-#: lib/graphql/resolvers/participant.ex:222
-#: lib/graphql/resolvers/participant.ex:265
+#: lib/graphql/resolvers/participant.ex:191
+#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:270
 #, elixir-autogen, elixir-format
 msgid "Participant not found"
 msgstr "Nie znaleziono uczestnika(-czki)"
@@ -525,7 +525,7 @@ msgstr "Zasób nie istnieje"
 msgid "The event has already reached its maximum capacity"
 msgstr "Wydarzenie już przekroczyło maksymalną zasobność"
 
-#: lib/graphql/resolvers/participant.ex:291
+#: lib/graphql/resolvers/participant.ex:296
 #, elixir-autogen, elixir-format
 msgid "This token is invalid"
 msgstr "Ten token jest nieprawidłowy"
@@ -606,8 +606,8 @@ msgstr "Nie możesz usunąć tokena kanału, jeśli nie jesteś połączony(-a)"
 msgid "You are not allowed to update a comment if not connected"
 msgstr "Nie możesz zaktualizować komentarza, jeśli nie jesteś połączony(-a)"
 
-#: lib/graphql/resolvers/participant.ex:183
-#: lib/graphql/resolvers/participant.ex:216
+#: lib/graphql/resolvers/participant.ex:185
+#: lib/graphql/resolvers/participant.ex:221
 #, elixir-autogen, elixir-format
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
@@ -737,7 +737,7 @@ msgstr "Musisz być zalogowany(-a), aby usunąć zasób"
 msgid "You need to be logged-in to join an event"
 msgstr "Musisz być zalogowany(-a), aby dołączyć do wydarzenia"
 
-#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:232
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave an event"
 msgstr "Musisz być zalogowany(-a), aby opuścić wydarzenie"
@@ -875,7 +875,7 @@ msgstr "Ten członek już został odrzucony."
 msgid "You don't have the right to remove this member."
 msgstr "Nie masz uprawnień do usunięcia tego członka."
 
-#: lib/mobilizon/actors/actor.ex:384
+#: lib/mobilizon/actors/actor.ex:385
 #, elixir-autogen, elixir-format
 msgid "This username is already taken."
 msgstr "Ta nazwa użytkownika(-czki) jest już zajęta."
@@ -921,8 +921,8 @@ msgid "Unable to fetch resource details from this URL."
 msgstr "Nie można pobrać szczegółów zasobu z tego adresu URL."
 
 #: lib/graphql/resolvers/event.ex:165
-#: lib/graphql/resolvers/participant.ex:255
-#: lib/graphql/resolvers/participant.ex:337
+#: lib/graphql/resolvers/participant.ex:260
+#: lib/graphql/resolvers/participant.ex:342
 #, elixir-autogen, elixir-format
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "Wskazany profil moderatora(-ki) nie ma uprawnień dla tego wydarzenia"
@@ -967,7 +967,7 @@ msgstr "Wystąpił błąd podczas aktualizacji ustawień regionalnych"
 msgid "Error while uploading pictures"
 msgstr "Wystąpił błąd podczas aktualizacji obrazów"
 
-#: lib/graphql/resolvers/participant.ex:192
+#: lib/graphql/resolvers/participant.ex:194
 #, elixir-autogen, elixir-format
 msgid "Failed to leave the event"
 msgstr "Nie udało się opuścić wydarzenia"
@@ -1008,17 +1008,17 @@ msgstr "Nie jesteś autorem(-ką) komentarza"
 msgid "You cannot change your password."
 msgstr "Nie można zmienić hasła."
 
-#: lib/graphql/resolvers/participant.ex:330
+#: lib/graphql/resolvers/participant.ex:335
 #, elixir-autogen, elixir-format
 msgid "Format not supported"
 msgstr "Format nie jest obsługiwany"
 
-#: lib/graphql/resolvers/participant.ex:314
+#: lib/graphql/resolvers/participant.ex:319
 #, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr "Zależność wymagana do eksportu do %{format} nie jest zainstalowana"
 
-#: lib/graphql/resolvers/participant.ex:322
+#: lib/graphql/resolvers/participant.ex:327
 #, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
 msgstr "Wystąpił błąd podczas zapisywania eksportu"
@@ -1140,7 +1140,7 @@ msgstr "Profil lub grupa o tej nazwie już istnieje"
 msgid "Unable to find an instance to follow at this address"
 msgstr "Nie można znaleźć instancji do obserwacji pod tym adresem"
 
-#: lib/mobilizon/actors/actor.ex:403
+#: lib/mobilizon/actors/actor.ex:404
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
@@ -1220,25 +1220,25 @@ msgstr "Błąd podczas unieważniania tokena"
 msgid "Impossible to create application."
 msgstr "Nie da się utworzyć aplikacji."
 
-#: lib/web/controllers/application_controller.ex:358
+#: lib/web/controllers/application_controller.ex:355
 #, elixir-autogen, elixir-format
 msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
 msgstr ""
 "Wysłano nieprawidłowe parametry. Należy podać co najmniej parametry "
 "grant_type i client_id, w zależności od używanego typu grantu."
 
-#: lib/web/controllers/application_controller.ex:331
+#: lib/web/controllers/application_controller.ex:328
 #, elixir-autogen, elixir-format
 msgid "Invalid client credentials provided"
 msgstr "Podano nieprawidłowe informacje uwierzytelniające klienta"
 
-#: lib/web/controllers/application_controller.ex:339
+#: lib/web/controllers/application_controller.ex:336
 #, elixir-autogen, elixir-format
 msgid "Invalid refresh token provided"
 msgstr "Podano nieprawidłowy token odświeżania"
 
-#: lib/web/controllers/application_controller.ex:172
-#: lib/web/controllers/application_controller.ex:403
+#: lib/web/controllers/application_controller.ex:169
+#: lib/web/controllers/application_controller.ex:400
 #, elixir-autogen, elixir-format
 msgid "No application was found with this client_id"
 msgstr "Nie znaleziono aplikacji o tym identyfikatorze client_id"
@@ -1264,17 +1264,17 @@ msgstr "Brak uprawnień dostępu do obiektu %{object}"
 msgid "Not authorized to access this %{object_type}"
 msgstr "Brak uprawnień dostępu do tego %{object_type}"
 
-#: lib/web/controllers/application_controller.ex:281
+#: lib/web/controllers/application_controller.ex:278
 #, elixir-autogen, elixir-format
 msgid "Please slow down the rate of your requests"
 msgstr "Prosimy o zwolnienie tempa wysyłania żądań"
 
-#: lib/web/controllers/application_controller.ex:269
+#: lib/web/controllers/application_controller.ex:266
 #, elixir-autogen, elixir-format
 msgid "The authorization request is still pending"
 msgstr "Żądanie autoryzacji jest nadal w toku"
 
-#: lib/web/controllers/application_controller.ex:251
+#: lib/web/controllers/application_controller.ex:248
 #, elixir-autogen, elixir-format
 msgid "The client_id provided or the device_code associated is invalid"
 msgstr "Nieprawidłowy identyfikator client_id lub powiązany kod device_code"
@@ -1284,7 +1284,7 @@ msgstr "Nieprawidłowy identyfikator client_id lub powiązany kod device_code"
 msgid "The device user code was not provided before approving the application"
 msgstr "Przed zatwierdzeniem aplikacji nie podano kodu użytkownika urządzenia"
 
-#: lib/web/controllers/application_controller.ex:306
+#: lib/web/controllers/application_controller.ex:303
 #, elixir-autogen, elixir-format
 msgid "The given device_code has expired"
 msgstr "Podany kod device_code wygasł"
@@ -1295,7 +1295,7 @@ msgid "The given redirect_uri is not in the list of allowed redirect URIs"
 msgstr ""
 "Podany redirect_uri nie znajduje się na liście dozwolonych URI przekierowania"
 
-#: lib/web/controllers/application_controller.ex:160
+#: lib/web/controllers/application_controller.ex:157
 #, elixir-autogen, elixir-format
 msgid "The given scope is not in the list of the app declared scopes"
 msgstr ""
@@ -1313,22 +1313,22 @@ msgstr "Podany kod użytkownika wygasł"
 msgid "The given user code is invalid"
 msgstr "Podany kod użytkownika jest nieprawidłowy"
 
-#: lib/web/controllers/application_controller.ex:413
+#: lib/web/controllers/application_controller.ex:410
 #, elixir-autogen, elixir-format
 msgid "The provided client_id does not match the provided code"
 msgstr "Identyfikator client_id nie pasuje do podanego kodu"
 
-#: lib/web/controllers/application_controller.ex:416
+#: lib/web/controllers/application_controller.ex:413
 #, elixir-autogen, elixir-format
 msgid "The provided client_secret is invalid"
 msgstr "Podany client_secret jest nieprawidłowy"
 
-#: lib/web/controllers/application_controller.ex:409
+#: lib/web/controllers/application_controller.ex:406
 #, elixir-autogen, elixir-format
 msgid "The provided code is invalid or expired"
 msgstr "Podany kod jest nieprawidłowy lub wygasł"
 
-#: lib/web/controllers/application_controller.ex:420
+#: lib/web/controllers/application_controller.ex:417
 #, elixir-autogen, elixir-format
 msgid "The provided scope is invalid or not included in the app declared scopes"
 msgstr ""
@@ -1341,17 +1341,17 @@ msgid "The scope parameter is not a space separated list of valid scopes"
 msgstr ""
 "Parametr scope nie jest rozdzieloną spacjami listą prawidłowych zakresów"
 
-#: lib/web/controllers/application_controller.ex:294
+#: lib/web/controllers/application_controller.ex:291
 #, elixir-autogen, elixir-format
 msgid "The user rejected the requested authorization"
 msgstr "Użytkownik odrzucił żądaną autoryzację"
 
-#: lib/web/controllers/application_controller.ex:406
+#: lib/web/controllers/application_controller.ex:403
 #, elixir-autogen, elixir-format
 msgid "This redirect URI is not allowed"
 msgstr "Ten URI przekierowania jest niedozwolony"
 
-#: lib/web/controllers/application_controller.ex:383
+#: lib/web/controllers/application_controller.ex:380
 #, elixir-autogen, elixir-format
 msgid "Token not found"
 msgstr "Nie znaleziono tokena"
@@ -1361,29 +1361,29 @@ msgstr "Nie znaleziono tokena"
 msgid "Too many requests"
 msgstr "Zbyt wiele żądań"
 
-#: lib/web/controllers/application_controller.ex:186
+#: lib/web/controllers/application_controller.ex:183
 #, elixir-autogen, elixir-format
 msgid "Unable to produce device code"
 msgstr "Nie można wygenerować kodu urządzenia"
 
-#: lib/web/controllers/application_controller.ex:375
+#: lib/web/controllers/application_controller.ex:372
 #, elixir-autogen, elixir-format
 msgid "Unable to revoke token"
 msgstr "Nie można unieważnić tokena"
 
-#: lib/web/controllers/application_controller.ex:200
+#: lib/web/controllers/application_controller.ex:197
 #, elixir-autogen, elixir-format
 msgid "You need to pass both client_id and scope as parameters to obtain a device code"
 msgstr ""
 "Aby uzyskać kod urządzenia, należy określić zarówno client_id, jak i scope "
 "jako parametry"
 
-#: lib/web/controllers/application_controller.ex:138
+#: lib/web/controllers/application_controller.ex:135
 #, elixir-autogen, elixir-format
 msgid "You need to provide a valid redirect_uri to autorize an application"
 msgstr "Aby autoryzować aplikację, należy podać prawidłowe redirect_uri"
 
-#: lib/web/controllers/application_controller.ex:128
+#: lib/web/controllers/application_controller.ex:125
 #, elixir-autogen, elixir-format
 msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr ""
@@ -1395,12 +1395,12 @@ msgstr ""
 msgid "Couldn't send an email. Internal error."
 msgstr "Nie można wysłać wiadomości e-mail. Błąd wewnętrzny."
 
-#: lib/graphql/resolvers/participant.ex:288
+#: lib/graphql/resolvers/participant.ex:293
 #, elixir-autogen, elixir-format
 msgid "Participation is already confirmed"
 msgstr "Udział jest już potwierdzony"
 
-#: lib/graphql/resolvers/participant.ex:285
+#: lib/graphql/resolvers/participant.ex:290
 #, elixir-autogen, elixir-format
 msgid "Participation is confirmed but not approved yet by an organizer"
 msgstr ""
@@ -1459,7 +1459,7 @@ msgstr ""
 msgid "Conversation needs to mention at least one participant that's not yourself"
 msgstr ""
 
-#: lib/graphql/resolvers/participant.ex:390
+#: lib/graphql/resolvers/participant.ex:396
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
 msgstr ""

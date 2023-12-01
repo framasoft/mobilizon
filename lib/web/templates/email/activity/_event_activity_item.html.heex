@@ -3,9 +3,7 @@
     <%= dgettext("activity", "The event %{event} was created by %{profile}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       event:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :event,
-        @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
     })
@@ -14,9 +12,7 @@
     <%= dgettext("activity", "The event %{event} was updated by %{profile}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       event:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :event,
-        @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
     })
@@ -32,9 +28,7 @@
       <%= dgettext("activity", "%{profile} replied to a comment on the event %{event}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         event:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :event,
-          @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
       })
@@ -43,9 +37,7 @@
       <%= dgettext("activity", "%{profile} posted a comment on the event %{event}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         event:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :event,
-          @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
       })
@@ -55,9 +47,7 @@
     <%= dgettext("activity", "%{profile} joined your event %{event}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       event:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :event,
-        @activity.subject_params["event_uuid"]) |> URI.decode()}\">#{escape_html(@activity.subject_params["event_title"])}</a>"
+        "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">#{escape_html(@activity.subject_params["event_title"])}</a>"
     })
     |> raw %>
 <% end %>

@@ -75,7 +75,7 @@ msgstr "Upute za potvrdu tvog Mobilizon računa na instanci %{instance}"
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Novi izvještaj na Mobilizon instanci %{instance}"
 
-#: lib/web/templates/email/before_event_notification.html.heex:67
+#: lib/web/templates/email/before_event_notification.html.heex:65
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "Go to event page"
@@ -741,7 +741,7 @@ msgctxt "terms"
 msgid "Your content is yours"
 msgstr "Tvoj sadržaj pripada tebi"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:71
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Confirm my e-mail address"
 msgstr "Potvrdi moju e-mail adresu"
@@ -793,7 +793,6 @@ msgstr "Zatražio/la si novu lozinku za tvoj račun na <b>%{instance}</b>."
 msgid "Please do not use it for real purposes."
 msgstr "Nemoj to koristiti u stvarne svrhe."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:88
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6
 #: lib/web/templates/email/event_updated.html.heex:172
 #: lib/web/templates/email/event_updated.text.eex:14
@@ -895,7 +894,7 @@ msgstr ""
 "Ako nisi pokrenuo/la promjenu, zanemari ovu poruku. Tvoja se lozinka neće "
 "promijeniti sve dok ne pritisneš gornju poveznicu."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:103
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:130
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
 #: lib/web/templates/email/registration_confirmation.html.heex:62
 #: lib/web/templates/email/registration_confirmation.text.eex:7
@@ -903,7 +902,7 @@ msgstr ""
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Ako nisi aktivirao/la ovu e-mail poruku, zanemari je."
 
-#: lib/web/templates/email/before_event_notification.html.heex:84
+#: lib/web/templates/email/before_event_notification.html.heex:82
 #: lib/web/templates/email/before_event_notification.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -999,7 +998,7 @@ msgstr ""
 msgid "Unfortunately, the organizers rejected your request."
 msgstr "Organizatori su nažalost odbili tvoj zahtjev."
 
-#: lib/web/templates/email/email_changed_new.html.heex:70
+#: lib/web/templates/email/email_changed_new.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Verify your email address"
 msgstr "Potvrdi tvoju e-mail adresu"
@@ -1015,7 +1014,7 @@ msgid "View report:"
 msgstr "Pogledaj izvještaj:"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:85
-#: lib/web/templates/email/email_anonymous_activity.html.heex:184
+#: lib/web/templates/email/email_anonymous_activity.html.heex:182
 #: lib/web/templates/email/event_participation_approved.html.heex:81
 #: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
@@ -1074,7 +1073,7 @@ msgstr "Nedavno si zatražio/la prisustvovati događaju %{title}."
 msgid "You're going!"
 msgstr ""
 
-#: lib/web/templates/email/email_changed_new.html.heex:87
+#: lib/web/templates/email/email_changed_new.html.heex:85
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
@@ -1304,12 +1303,12 @@ msgstr ""
 "Sada si potvrdio/la tvoje sudjelovanje. Aktualiziraj svoj kalendar jer se "
 "sada nalaziš na popisu gostiju!"
 
-#: lib/mobilizon/posts/post.ex:99
+#: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
 msgstr "Za objavu je potreban tekst"
 
-#: lib/mobilizon/posts/post.ex:98
+#: lib/mobilizon/posts/post.ex:97
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
 msgstr "Za objavu je potreban naslov"
@@ -1382,25 +1381,25 @@ msgstr "Žao nam je, ali se kod nas dogodila greška."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Ovo je demonstracijska stranica za isprobavanje Mobilizona."
 
-#: lib/service/metadata/actor.ex:93
-#: lib/service/metadata/actor.ex:100
+#: lib/service/metadata/actor.ex:86
+#: lib/service/metadata/actor.ex:92
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
 msgstr "%{name} feed"
 
-#: lib/service/export/feed.ex:120
+#: lib/service/export/feed.ex:117
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "Feed privatnih događaja aktera %{actor} na %{instance}"
 
-#: lib/service/export/feed.ex:115
+#: lib/service/export/feed.ex:112
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "Feed javnih događaja aktera %{actor} na %{instance}"
 
-#: lib/service/export/feed.ex:224
+#: lib/service/export/feed.ex:221
 #, elixir-autogen, elixir-format
 msgid "Feed for %{email} on %{instance}"
 msgstr "Feed za %{email} na %{instance}"
@@ -1689,7 +1688,7 @@ msgstr "Novi datum početka:"
 msgid "Sorry, not this time!"
 msgstr "Oprosti, ovaj put ne!"
 
-#: lib/web/templates/email/group_membership_approval.html.heex:74
+#: lib/web/templates/email/group_membership_approval.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "View the group"
 msgstr "Pogledaj grupu"
@@ -2119,3 +2118,13 @@ msgstr "Označeni komentari"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Participant registration date"
 msgstr "Stanje sudionika"
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Cancel my attendance"
+msgstr ""
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
+#, elixir-autogen, elixir-format
+msgid "If you wish to cancel your participation, simply click on the link below."
+msgstr ""

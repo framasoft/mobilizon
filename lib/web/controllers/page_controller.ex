@@ -26,6 +26,8 @@ defmodule Mobilizon.Web.PageController do
   defdelegate moderation_report(conn, params), to: PageController, as: :index
   @spec participation_email_confirmation(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate participation_email_confirmation(conn, params), to: PageController, as: :index
+  @spec participation_email_cancellation(Plug.Conn.t(), any) :: Plug.Conn.t()
+  defdelegate participation_email_cancellation(conn, params), to: PageController, as: :index
   @spec user_email_validation(Plug.Conn.t(), any) :: Plug.Conn.t()
   defdelegate user_email_validation(conn, params), to: PageController, as: :index
   @spec my_groups(Plug.Conn.t(), any) :: Plug.Conn.t()

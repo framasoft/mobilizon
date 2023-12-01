@@ -26,7 +26,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
+          |> ~p"/@#{actor.preferred_username}/feed/atom"
           |> URI.decode()
         )
 
@@ -63,7 +63,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
+          |> ~p"/@#{actor.preferred_username}/feed/atom"
           |> URI.decode()
         )
 
@@ -79,7 +79,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         |> put_req_header("accept", "application/atom+xml")
         |> get(
           Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "atom")
+          |> ~p"/@#{actor.preferred_username}/feed/atom"
           |> URI.decode()
         )
 
@@ -132,11 +132,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       conn =
         conn
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:actor, group.preferred_username, "ics")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/@#{group.preferred_username}/feed/ics"))
 
       assert res = response(conn, 200)
       assert res =~ "BEGIN:VCALENDAR"
@@ -163,11 +159,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       conn =
         conn
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/@#{actor.preferred_username}/feed/ics"))
 
       assert response(conn, 404)
     end
@@ -179,11 +171,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "text/calendar")
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:actor, actor.preferred_username, "ics")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/@#{actor.preferred_username}/feed/ics"))
 
       assert response(conn, 200) =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
@@ -209,7 +197,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:event, event1.uuid, "ics")
+          |> ~p"/events/#{event1.uuid}/export/ics"
           |> URI.decode()
         )
 
@@ -241,11 +229,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       conn =
         conn
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "atom")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "atom"))
 
       assert response(conn, 200) =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       assert response_content_type(conn, :xml) =~ "charset=utf-8"
@@ -279,11 +263,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/atom+xml")
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "atom")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "atom"))
 
       assert response(conn, 200) =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       assert response_content_type(conn, :xml) =~ "charset=utf-8"
@@ -301,11 +281,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
     test "it returns 404 for an not existing feed", %{conn: conn} do
       conn =
         conn
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:going, "not existing", "atom")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/events/going/not_existing/atom"))
 
       assert response(conn, 404)
     end
@@ -329,11 +305,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "text/calendar")
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "ics")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "ics"))
 
       assert response(conn, 200) =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
@@ -363,11 +335,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "text/calendar")
-        |> get(
-          Endpoint
-          |> Routes.feed_url(:going, ShortUUID.encode!(feed_token.token), "ics")
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "ics"))
 
       assert response(conn, 200) =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
@@ -383,7 +351,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> get(
           Endpoint
-          |> Routes.feed_url(:going, "not existing", "ics")
+          |> ~p"/events/going/not_existing/ics"
           |> URI.decode()
         )
 

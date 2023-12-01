@@ -9,7 +9,7 @@
         event: @activity.subject_params["event_title"]
     }
 ) %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["event_uuid"]) |> URI.decode() %>
+<%= ~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode() %>
 <% :conversation -> %>
 <%= dgettext("activity", "%{profile} has posted a private announcement about event %{event}.",
     %{
@@ -26,5 +26,5 @@
 --
 
 <%= dgettext("activity", "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution.") %>
-<%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @activity.subject_params["conversation_event_uuid"]) |> URI.decode() %>
+<%= ~p"/events/#{@activity.subject_params["conversation_event_uuid"]}" |> url() |> URI.decode() %>
 <% end %>

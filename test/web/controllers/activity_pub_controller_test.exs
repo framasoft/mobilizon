@@ -71,7 +71,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
 
       conn =
         conn
-        |> get(Routes.page_url(Endpoint, :event, event.uuid))
+        |> get(url(~p"/events/#{event.uuid}"))
 
       assert json_response(conn, 200) ==
                PageView.render("event.activity-json", %{conn: %{assigns: %{object: event}}})
@@ -83,7 +83,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.page_url(Endpoint, :event, event.uuid))
+        |> get(url(~p"/events/#{event.uuid}"))
 
       assert json_response(conn, 404)
     end
@@ -94,7 +94,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.page_url(Endpoint, :event, event.uuid))
+        |> get(url(~p"/events/#{event.uuid}"))
 
       assert redirected_to(conn) == "https://someremote.url/events/here"
     end
@@ -107,7 +107,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
+        |> get(url(~p"/comments/#{comment.uuid}"))
 
       assert json_response(conn, 200) ==
                PageView.render("comment.activity-json", %{conn: %{assigns: %{object: comment}}})
@@ -119,7 +119,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
+        |> get(url(~p"/comments/#{comment.uuid}"))
 
       assert redirected_to(conn) == "https://someremote.url/comments/here"
     end
@@ -130,7 +130,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.page_url(Endpoint, :comment, comment.uuid))
+        |> get(url(~p"/comments/#{comment.uuid}"))
 
       assert json_response(conn, 404)
     end
@@ -567,7 +567,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn
         |> assign(:actor, remote_actor_2)
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+        |> get(url(~p"/member/#{member.id}"))
 
       assert json_response(conn, 200) ==
                ActorView.render("member.json", %{member: member})
@@ -590,7 +590,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
         conn
         |> assign(:actor, remote_actor_2)
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+        |> get(url(~p"/member/#{member.id}"))
 
       assert redirected_to(conn) == "https://someremote.url/member/here"
     end
@@ -601,7 +601,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/activity+json")
-        |> get(Routes.activity_pub_url(Endpoint, :member, member.id))
+        |> get(url(~p"/member/#{member.id}"))
 
       assert json_response(conn, 404)
     end

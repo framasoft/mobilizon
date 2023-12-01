@@ -111,11 +111,8 @@ defmodule Mobilizon.Web.ApplicationController do
          is_binary(state) and is_binary(scope) do
       redirect(conn,
         to:
-          Routes.page_path(conn, :authorize,
-            client_id: client_id,
-            redirect_uri: redirect_uri,
-            scope: scope,
-            state: state
+          url(
+            ~p"/oauth/authorize?#{[client_id: client_id, redirect_uri: redirect_uri, scope: scope, state: state]}"
           )
       )
     else

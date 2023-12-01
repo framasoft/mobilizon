@@ -12,11 +12,11 @@ defmodule Mobilizon.Web.NodeInfoControllerTest do
     assert json_response(conn, 200) == %{
              "links" => [
                %{
-                 "href" => Routes.node_info_url(Endpoint, :nodeinfo, "2.0"),
+                 "href" => ~p"/.well-known/nodeinfo/2.0Ã",
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.0"
                },
                %{
-                 "href" => Routes.node_info_url(Endpoint, :nodeinfo, "2.1"),
+                 "href" => ~p"/.well-known/nodeinfo/2.1",
                  "rel" => "http://nodeinfo.diaspora.software/ns/schema/2.1"
                }
              ]

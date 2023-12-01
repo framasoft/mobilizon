@@ -74,7 +74,7 @@
                   <tr>
                     <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
                       <a
-                        href={"#{Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}"}
+                        href={"#{url(~p"/events/#{@event.uuid}")}"}
                         target="_blank"
                         style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
                       >
@@ -88,19 +88,62 @@
           </table>
         </td>
       </tr>
-      <tr>
-        <td
-          bgcolor="#ffffff"
-          align="left"
-          style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
-        >
-          <p style="margin: 0">
-            <%= gettext(
-              "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
-            ) %>
-          </p>
-        </td>
-      </tr>
+      <%= if @participant.metadata.cancellation_token do %>
+        <tr>
+          <td
+            bgcolor="#ffffff"
+            align="left"
+            style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+          >
+            <p style="margin: 0">
+              <%= gettext(
+                "If you wish to cancel your participation, simply click on the link below."
+              ) %>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="#ffffff" align="left">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                  <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td align="center" style="border-radius: 3px;">
+                        <a
+                          href={
+                            ~p"/participation/email/cancel/#{@event.uuid}/#{@participant.metadata.cancellation_token}"
+                            |> url()
+                            |> URI.decode()
+                          }
+                          target="_blank"
+                          style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #3C376E; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"
+                        >
+                          <%= gettext("Cancel my attendance") %>
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      <% else %>
+        <tr>
+          <td
+            bgcolor="#ffffff"
+            align="left"
+            style="padding: 20px 30px 40px 30px; color: #474467; font-family: 'Roboto', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;"
+          >
+            <p style="margin: 0">
+              <%= gettext(
+                "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
+              ) %>
+            </p>
+          </td>
+        </tr>
+      <% end %>
     </table>
     <!--[if (gte mso 9)|(IE)]>
     </td>

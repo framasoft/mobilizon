@@ -15,11 +15,13 @@ export enum EventRouteName {
   EDIT_EVENT = "EditEvent",
   DUPLICATE_EVENT = "DuplicateEvent",
   PARTICIPATIONS = "Participations",
+  ANNOUNCEMENTS = "ANNOUNCEMENTS",
   EVENT = "Event",
   EVENT_PARTICIPATE_WITH_ACCOUNT = "EVENT_PARTICIPATE_WITH_ACCOUNT",
   EVENT_PARTICIPATE_WITHOUT_ACCOUNT = "EVENT_PARTICIPATE_WITHOUT_ACCOUNT",
   EVENT_PARTICIPATE_LOGGED_OUT = "EVENT_PARTICIPATE_LOGGED_OUT",
   EVENT_PARTICIPATE_CONFIRM = "EVENT_PARTICIPATE_CONFIRM",
+  EVENT_PARTICIPATE_CANCEL = "EVENT_PARTICIPATE_CANCEL",
   TAG = "Tag",
 }
 
@@ -66,6 +68,13 @@ export const eventRoutes: RouteRecordRaw[] = [
     path: "/events/:eventId/participations",
     name: EventRouteName.PARTICIPATIONS,
     component: participations,
+    meta: { requiredAuth: true, announcer: { skip: true } },
+    props: true,
+  },
+  {
+    path: "/events/:eventId/announcements",
+    name: EventRouteName.ANNOUNCEMENTS,
+    component: () => import("../views/Event/AnnouncementView.vue"),
     meta: { requiredAuth: true, announcer: { skip: true } },
     props: true,
   },
@@ -120,6 +129,18 @@ export const eventRoutes: RouteRecordRaw[] = [
     meta: {
       announcer: {
         message: (): string => t("Confirm participation") as string,
+      },
+    },
+    props: true,
+  },
+  {
+    path: "/participation/email/cancel/:uuid/:token",
+    name: EventRouteName.EVENT_PARTICIPATE_CANCEL,
+    component: () =>
+      import("../components/Participation/CancelParticipation.vue"),
+    meta: {
+      announcer: {
+        message: (): string => t("Cancel participation") as string,
       },
     },
     props: true,

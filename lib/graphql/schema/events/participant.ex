@@ -90,8 +90,8 @@ defmodule Mobilizon.GraphQL.Schema.Events.ParticipantType do
   object :deleted_participant do
     meta(:authorize, :all)
     field(:id, :id, description: "The participant ID")
-    field(:event, :deleted_object, description: "The participant's event")
-    field(:actor, :deleted_object, description: "The participant's actor")
+    field(:event, :event, description: "The participant's event")
+    field(:actor, :actor, description: "The participant's actor")
   end
 
   object :participant_mutations do

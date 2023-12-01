@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Conversation do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -61,11 +60,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Conversation do
   end
 
   defp conversation_url(activity) do
-    Routes.page_url(
-      Endpoint,
-      :conversation,
-      activity.subject_params["conversation_id"]
-    )
+    url(~p"/conversations/#{activity.subject_params["conversation_id"]}")
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

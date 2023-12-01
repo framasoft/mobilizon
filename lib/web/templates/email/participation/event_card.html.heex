@@ -40,7 +40,7 @@
                       align="center"
                     >
                       <a
-                        href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}
+                        href={url(~p"/events/#{@event.uuid}")}
                         style="color: rgb(255,255,255); font-family: Helvetica,Arial,sans-serif; text-align: left; line-height: 14px; text-decoration: none; vertical-align: baseline; font-size: 20px; display: inline-block; border: 1px solid #3C376E; border-radius: 15px; white-space: nowrap; margin: 0; padding: 15px 25px; border: none;"
                         target="_blank"
                       >
@@ -84,7 +84,7 @@
                       align="center"
                     >
                       <a
-                        href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}
+                        href={url(~p"/events/#{@event.uuid}")}
                         style="color: rgb(255,255,255); font-family: Helvetica,Arial,sans-serif; text-align: left; line-height: 14px; text-decoration: none; vertical-align: baseline; font-size: 20px; display: inline-block; border: 1px solid #3C376E; border-radius: 15px; white-space: nowrap; margin: 0; padding: 15px 25px; border: none;"
                         target="_blank"
                       >
@@ -125,7 +125,7 @@
         align="left"
       >
         <a
-          href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}
+          href={url(~p"/events/#{@event.uuid}")}
           style="color: rgb(254,56,89); font-family: Helvetica,Arial,sans-serif; font-weight: 400; text-align: left; line-height: 1.5; text-decoration: none; vertical-align: baseline; font-size: 16px; margin: 0; padding: 0; border: 0;"
           target="_blank"
         >

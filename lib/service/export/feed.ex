@@ -15,7 +15,7 @@ defmodule Mobilizon.Service.Export.Feed do
   alias Mobilizon.Users.User
 
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   require Logger
 
@@ -104,10 +104,7 @@ defmodule Mobilizon.Service.Export.Feed do
   defp build_actor_feed(%Actor{} = actor, events, posts, public \\ true) do
     display_name = Actor.display_name(actor)
 
-    self_url =
-      Endpoint
-      |> Routes.feed_url(:actor, actor.preferred_username, "atom")
-      |> URI.decode()
+    self_url = ~p"/@#{actor.preferred_username}/feed/atom" |> url() |> URI.decode()
 
     title =
       if public,
@@ -215,7 +212,7 @@ defmodule Mobilizon.Service.Export.Feed do
   # Build an atom feed from actor and its public events
   @spec build_user_feed(list(Event.t()), User.t(), String.t()) :: String.t()
   defp build_user_feed(events, %User{email: email}, token) do
-    self_url = Endpoint |> Routes.feed_url(:going, token, "atom") |> URI.decode()
+    self_url = ~p"/events/going/#{token}/format" |> url() |> URI.decode()
 
     # Title uses default instance language
     self_url

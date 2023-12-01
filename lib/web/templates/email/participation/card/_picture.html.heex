@@ -7,7 +7,7 @@
         align="left"
       >
         <a
-          href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}
+          href={url(~p"/events/#{@event.uuid}")}
           style="color: rgb(87,100,108); font-family: Helvetica,Arial,sans-serif; font-weight: normal; text-align: left; line-height: 1.3; text-decoration: none; vertical-align: baseline; margin: 0; padding: 0; border: 0;"
           target="_blank"
         >

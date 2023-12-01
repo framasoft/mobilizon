@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Event do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -81,11 +80,8 @@ defmodule Mobilizon.Service.Activity.Renderer.Event do
   end
 
   defp event_url(activity) do
-    Endpoint
-    |> Routes.page_url(
-      :event,
-      activity.subject_params["event_uuid"]
-    )
+    ~p"/events/#{activity.subject_params["event_uuid"]}"
+    |> url()
     |> URI.decode()
   end
 

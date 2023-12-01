@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -113,12 +112,8 @@ defmodule Mobilizon.Service.Activity.Renderer.Discussion do
   end
 
   defp discussion_url(activity) do
-    Endpoint
-    |> Routes.page_url(
-      :discussion,
-      Actor.preferred_username_and_domain(activity.group),
-      activity.subject_params["discussion_slug"]
-    )
+    ~p"/@#{Actor.preferred_username_and_domain(activity.group)}/c/#{activity.subject_params["discussion_slug"]}"
+    |> url()
     |> URI.decode()
   end
 

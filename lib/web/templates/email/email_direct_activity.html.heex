@@ -94,7 +94,9 @@
                                     <td width="85">
                                       <a
                                         href={
-                                          "#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)) |> URI.decode()}"
+                                          ~p"/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)}"
+                                          |> url()
+                                          |> URI.decode()
                                         }
                                         target="_blank"
                                         style="text-decoration: none;"
@@ -123,7 +125,9 @@
                                         <td align="left">
                                           <a
                                             href={
-                                              "#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)) |> URI.decode()}"
+                                              ~p"/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)}"
+                                              |> url()
+                                              |> URI.decode()
                                             }
                                             target="_blank"
                                             style="text-decoration: none;color: #474467;font-family: 'Roboto', Helvetica, Arial, sans-serif;font-size: 18px;font-weight: bold;line-height: 25px;"
@@ -138,7 +142,9 @@
                                           <td align="left">
                                             <a
                                               href={
-                                                "#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)) |> URI.decode()}"
+                                                ~p"/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)}"
+                                                |> url()
+                                                |> URI.decode()
                                               }
                                               target="_blank"
                                               style="text-decoration: none;display: block;color: #7a7a7a;font-family: 'Roboto', Helvetica, Arial, sans-serif;font-size: 16px;font-weight: 400;line-height: 25px;"
@@ -214,7 +220,9 @@
                                   <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
                                     <a
                                       href={
-                                        "#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)) |> URI.decode()}/timeline"
+                                        ~p"/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(hd(group_activities).group)}/timeline"
+                                        |> url()
+                                        |> URI.decode()
                                       }
                                       target="_blank"
                                       style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"

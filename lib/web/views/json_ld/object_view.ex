@@ -7,7 +7,6 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
   alias Mobilizon.Posts.Post
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   import Mobilizon.Service.Metadata.Utils,
     only: [process_description: 3]
@@ -123,13 +122,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "author" => %{
         "@type" => "Organization",
         "name" => Actor.display_name(post.attributed_to),
-        "url" =>
-          Endpoint
-          |> Routes.page_url(
-            :actor,
-            Actor.preferred_username_and_domain(post.attributed_to)
-          )
-          |> URI.decode()
+        "url" => URI.decode(url(~p"/@#{Actor.preferred_username_and_domain(post.attributed_to)}"))
       },
       "datePublished" => post.publish_at,
       "dateModified" => post.updated_at,
@@ -156,7 +149,7 @@ defmodule Mobilizon.Web.JsonLD.ObjectView do
       "reservationFor" => render("event.json", %{event: participant.event}),
       "reservationStatus" => reservation_status(participant.role),
       "modifiedTime" => participant.updated_at,
-      "modifyReservationUrl" => Routes.page_url(Endpoint, :event, participant.event.uuid)
+      "modifyReservationUrl" => url(~p"/events/#{participant.event.uuid}")
     }
 
     if participant.code do

@@ -48,7 +48,7 @@
               "Your membership request for group %{link_start}<b>%{group}</b>%{link_end} has been rejected.",
               group: escape_html(display_name(@group)),
               link_start:
-                "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :actor, preferred_username_and_domain(@group)) |> URI.decode()}\">",
+                "<a href=\"#{~p"/@#{preferred_username_and_domain(@group)}" |> url() |> URI.decode()}\">",
               link_end: "</a>"
             )
             |> raw %>

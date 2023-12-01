@@ -7,7 +7,7 @@
         align="left"
       >
         <a
-          href={Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid)}
+          href={url(~p"/events/#{@event.uuid}")}
           style="color: rgb(66,81,90); font-family: Helvetica,Arial,sans-serif; font-weight: 700; text-align: left; line-height: 1.4; text-decoration: none; vertical-align: baseline; font-size: 22px; letter-spacing: 0.2px; margin: 0 0 30px; padding: 0; border: 0;"
           target="_blank"
         >
@@ -35,12 +35,11 @@
               <%= if @event.attributed_to do %>
                 <a
                   href={
-                    Routes.page_url(
-                      Mobilizon.Web.Endpoint,
-                      :actor,
-                      Mobilizon.Actors.Actor.preferred_username_and_domain(@event.attributed_to)
+                    URI.decode(
+                      url(
+                        ~p"/@#{Mobilizon.Actors.Actor.preferred_username_and_domain(@event.attributed_to)}"
+                      )
                     )
-                    |> URI.decode()
                   }
                   style="color: rgb(254,56,89); font-family: Helvetica,Arial,sans-serif; font-weight: normal; text-align: left; line-height: 1.3; text-decoration: none; vertical-align: baseline; margin: 0; padding: 0; border: 0;"
                   target="_blank"

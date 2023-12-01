@@ -13,8 +13,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
   alias Mobilizon.Posts.Post
   alias Mobilizon.Resources.Resource
   alias Mobilizon.Todos.{Todo, TodoList}
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @cache :activity_pub
 
@@ -73,7 +72,7 @@ defmodule Mobilizon.Web.Cache.ActivityPub do
           {:commit, event}
 
         nil ->
-          with url <- Routes.page_url(Endpoint, :event, uuid),
+          with url <- url(~p"/events/#{uuid}"),
                %Tombstone{} = tomstone <- Tombstone.find_tombstone(url) do
             tomstone
           else

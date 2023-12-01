@@ -14,7 +14,7 @@ defmodule Mobilizon.Federation.WebFinger do
   alias Mobilizon.Federation.WebFinger.XmlBuilder
   alias Mobilizon.Service.HTTP.{HostMetaClient, WebfingerClient}
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   require Jason
   require Logger
   import SweetXml
@@ -85,7 +85,7 @@ defmodule Mobilizon.Federation.WebFinger do
         %{"rel" => "self", "type" => "application/activity+json", "href" => actor.url},
         %{
           "rel" => "http://ostatus.org/schema/1.0/subscribe",
-          "template" => "#{Routes.page_url(Endpoint, :interact, uri: nil)}{uri}"
+          "template" => "#{url(~p"/interact?#{[uri: nil]}")}{uri}"
         }
       ]
       |> maybe_add_avatar(actor)

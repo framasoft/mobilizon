@@ -3,9 +3,7 @@
     <%= dgettext("activity", "The post %{post} was created by %{profile}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       post:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :post,
-        @activity.subject_params["post_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/p/#{@activity.subject_params["post_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["post_title"])}
                         </a>"
     })
@@ -14,9 +12,7 @@
     <%= dgettext("activity", "The post %{post} was updated by %{profile}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       post:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :post,
-        @activity.subject_params["post_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/p/#{@activity.subject_params["post_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["post_title"])}
                         </a>"
     })

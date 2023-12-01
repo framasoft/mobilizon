@@ -75,7 +75,7 @@ msgstr "Инструкции по подтверждению учётной за
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "Новый отчёт на Mobilizon узле %{instance}"
 
-#: lib/web/templates/email/before_event_notification.html.heex:67
+#: lib/web/templates/email/before_event_notification.html.heex:65
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "Go to event page"
@@ -875,7 +875,7 @@ msgctxt "terms"
 msgid "Your content is yours"
 msgstr "Ваши данные принадлежат вам"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:71
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Confirm my e-mail address"
 msgstr "Подтвердите мой адрес электронной почты"
@@ -930,7 +930,6 @@ msgstr ""
 msgid "Please do not use it for real purposes."
 msgstr "Пожалуйста, используйте это только для тестовых целей."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:88
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6
 #: lib/web/templates/email/event_updated.html.heex:172
 #: lib/web/templates/email/event_updated.text.eex:14
@@ -1038,7 +1037,7 @@ msgstr ""
 "Если вы не активировали это изменение самостоятельно, проигнорируйте это "
 "сообщение. Ваш пароль не будет изменен, пока вы не нажмете ссылку выше."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:103
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:130
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
 #: lib/web/templates/email/registration_confirmation.html.heex:62
 #: lib/web/templates/email/registration_confirmation.text.eex:7
@@ -1047,7 +1046,7 @@ msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr ""
 "Если вы не оставляли этот запрос, пожалуйста, проигнорируйте данное письмо."
 
-#: lib/web/templates/email/before_event_notification.html.heex:84
+#: lib/web/templates/email/before_event_notification.html.heex:82
 #: lib/web/templates/email/before_event_notification.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -1142,7 +1141,7 @@ msgstr ""
 msgid "Unfortunately, the organizers rejected your request."
 msgstr "К сожалению, организаторы отклонили ваше участие."
 
-#: lib/web/templates/email/email_changed_new.html.heex:70
+#: lib/web/templates/email/email_changed_new.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Verify your email address"
 msgstr "Проверьте свой адрес электронной почты"
@@ -1158,7 +1157,7 @@ msgid "View report:"
 msgstr "Смотреть отчёт:"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:85
-#: lib/web/templates/email/email_anonymous_activity.html.heex:184
+#: lib/web/templates/email/email_anonymous_activity.html.heex:182
 #: lib/web/templates/email/event_participation_approved.html.heex:81
 #: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
@@ -1219,7 +1218,7 @@ msgstr "Вы недавно подали заявку на присоедине�
 msgid "You're going!"
 msgstr "Вы примете участие!"
 
-#: lib/web/templates/email/email_changed_new.html.heex:87
+#: lib/web/templates/email/email_changed_new.html.heex:85
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
@@ -1522,12 +1521,12 @@ msgstr ""
 "Вы подтвердили свое участие. Обновите свой календарь, потому что теперь вы в "
 "списке гостей!"
 
-#: lib/mobilizon/posts/post.ex:99
+#: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
 msgstr "Для публикации требуется текст"
 
-#: lib/mobilizon/posts/post.ex:98
+#: lib/mobilizon/posts/post.ex:97
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
 msgstr "Для публикации требуется заголовок"
@@ -1603,25 +1602,25 @@ msgstr "Сожалеем, но с нашей стороны что-то пошл
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Это демонстрационная площадка для тестирования Mobilizon."
 
-#: lib/service/metadata/actor.ex:93
-#: lib/service/metadata/actor.ex:100
+#: lib/service/metadata/actor.ex:86
+#: lib/service/metadata/actor.ex:92
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
 msgstr "Лента %{name}"
 
-#: lib/service/export/feed.ex:120
+#: lib/service/export/feed.ex:117
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "Лента приватных мероприятий от %{actor} на %{instance}"
 
-#: lib/service/export/feed.ex:115
+#: lib/service/export/feed.ex:112
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "Лента публичных мероприятий от %{actor} на %{instance}"
 
-#: lib/service/export/feed.ex:224
+#: lib/service/export/feed.ex:221
 #, elixir-autogen, elixir-format
 msgid "Feed for %{email} on %{instance}"
 msgstr "Лента для %{email} на %{instance}"
@@ -1910,7 +1909,7 @@ msgstr "Новая дата начала:"
 msgid "Sorry, not this time!"
 msgstr "Извините, не в этот раз!"
 
-#: lib/web/templates/email/group_membership_approval.html.heex:74
+#: lib/web/templates/email/group_membership_approval.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "View the group"
 msgstr "Посмотреть группу"
@@ -2337,3 +2336,13 @@ msgstr "Помеченные комментарии"
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Participant registration date"
 msgstr "Статус участника"
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Cancel my attendance"
+msgstr ""
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
+#, elixir-autogen, elixir-format
+msgid "If you wish to cancel your participation, simply click on the link below."
+msgstr ""

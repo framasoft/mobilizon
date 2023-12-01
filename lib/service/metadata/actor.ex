@@ -2,9 +2,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
   alias Phoenix.HTML
   alias Phoenix.HTML.Tag
   alias Mobilizon.Actors.Actor
-  alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   import Mobilizon.Service.Metadata.Utils,
     only: [process_description: 2, default_description: 1, escape_text: 1]
@@ -25,13 +24,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
       Tag.tag(:meta, property: "og:title", content: actor_display_name_escaped(group)),
       Tag.tag(:meta,
         property: "og:url",
-        content:
-          Endpoint
-          |> Routes.page_url(
-            :actor,
-            Actor.preferred_username_and_domain(group)
-          )
-          |> URI.decode()
+        content: ~p"/@#{Actor.preferred_username_and_domain(group)}" |> url() |> URI.decode()
       ),
       Tag.tag(:meta, property: "og:description", content: group.summary),
       Tag.tag(:meta, property: "og:type", content: "profile"),
@@ -91,20 +84,13 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Actors.Actor do
           rel: "alternate",
           type: "application/atom+xml",
           title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
-          href:
-            Routes.feed_url(Endpoint, :actor, Actor.preferred_username_and_domain(group), :atom)
+          href: url(~p"/@#{Actor.preferred_username_and_domain(group)}/feed/atom")
         ),
         Tag.tag(:link,
           rel: "alternate",
           type: "text/calendar",
           title: gettext("%{name}'s feed", name: actor_display_name_escaped(group)) |> HTML.raw(),
-          href:
-            Routes.feed_url(
-              Endpoint,
-              :actor,
-              Actor.preferred_username_and_domain(group),
-              :ics
-            )
+          href: url(~p"/@#{Actor.preferred_username_and_domain(group)}/feed/ics")
         ),
         Tag.tag(:link,
           rel: "alternate",

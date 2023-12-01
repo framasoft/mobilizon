@@ -252,8 +252,6 @@
         </div>
       </template>
     </o-table>
-    <EventConversations :event="event" class="my-6" />
-    <NewPrivateMessage :event="event" />
   </section>
 </template>
 
@@ -287,8 +285,6 @@ import EmptyContent from "@/components/Utils/EmptyContent.vue";
 import { Notifier } from "@/plugins/notifier";
 import Tag from "@/components/TagElement.vue";
 import { useHead } from "@unhead/vue";
-import EventConversations from "../../components/Conversations/EventConversations.vue";
-import NewPrivateMessage from "../../components/Participation/NewPrivateMessage.vue";
 
 const PARTICIPANTS_PER_PAGE = 10;
 const MESSAGE_ELLIPSIS_LENGTH = 130;

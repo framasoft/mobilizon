@@ -195,6 +195,12 @@ defmodule Mobilizon.Web.Router do
 
     get("/participation/email/confirm/:token", PageController, :participation_email_confirmation)
 
+    get(
+      "/participation/email/cancel/:uuid/:token",
+      PageController,
+      :participation_email_cancellation
+    )
+
     get("/validate/email/:token", PageController, :user_email_validation)
 
     get("/groups/me", PageController, :my_groups)

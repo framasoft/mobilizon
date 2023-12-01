@@ -1630,5 +1630,11 @@
   "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you.": "This announcement will be send to all participants with the statuses selected below. They will not be allowed to reply to your announcement, but they can create a new conversation with you.",
   "The following participants are groups, which means group members are able to reply to this conversation:": "The following participants are groups, which means group members are able to reply to this conversation:",
   "Sent to {count} participants": "Sent to no participants|Sent to one participant|Sent to {count} participants",
-  "There's no announcements yet": "There's no announcements yet"
+  "There's no announcements yet": "There's no announcements yet",
+  "Your participation is being cancelled": "Your participation is being cancelled",
+  "Error while cancelling your participation": "Error while cancelling your participation",
+  "Either your participation has already been cancelled, either the validation token is incorrect.": "Either your participation has already been cancelled, either the validation token is incorrect.",
+  "Your participation has been cancelled": "Your participation has been cancelled",
+  "Return to the event page": "Return to the event page",
+  "Cancel participation": "Cancel participation"
 }

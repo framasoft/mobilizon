@@ -9,8 +9,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
   alias Mobilizon.Service.AntiSpam
   import Mix.Tasks.Mobilizon.Common
   alias Mobilizon.Federation.ActivityPub.Actions
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @shortdoc "Scan all profiles and events against spam detector and report them"
 
@@ -163,9 +162,7 @@ defmodule Mix.Tasks.Mobilizon.Maintenance.DetectSpam do
   end
 
   defp handle_spam_event(event_id, event_title, event_uuid, organizer_actor_id, options) do
-    shell_info(
-      "Detected event #{event_title} as spam: #{Routes.page_url(Endpoint, :event, event_uuid)}"
-    )
+    shell_info("Detected event #{event_title} as spam: #{url(~p"/events/#{event_uuid}")}")
 
     unless dry_run?(options) do
       report_spam_event(event_id, event_title, organizer_actor_id, options)
