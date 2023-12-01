@@ -176,7 +176,9 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
 
         case Participations.leave(event, actor, %{local: false, cancellation_token: token}) do
           {:ok, _activity, %Participant{id: participant_id} = _participant} ->
-            {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}, id: participant_id}}
+            {:ok, %Event{} = event} = Events.get_event_with_preload(event_id)
+            %Actor{} = actor = Actors.get_actor_with_preload!(actor_id)
+            {:ok, %{event: event, actor: actor, id: participant_id}}
 
           {:error, :is_only_organizer} ->
             {:error,
@@ -202,8 +204,11 @@ defmodule Mobilizon.GraphQL.Resolvers.Participant do
     with {:is_owned, %Actor{} = actor} <- User.owns_actor(user, actor_id),
          {:has_event, {:ok, %Event{} = event}} <-
            {:has_event, Events.get_event_with_preload(event_id)},
-         {:ok, _activity, _participant} <- Participations.leave(event, actor) do
-      {:ok, %{event: %{id: event_id}, actor: %{id: actor_id}}}
+         {:ok, _activity, %Participant{id: participant_id} = _participant} <-
+           Participations.leave(event, actor) do
+      {:ok, %Event{} = event} = Events.get_event_with_preload(event_id)
+      %Actor{} = actor = Actors.get_actor_with_preload!(actor_id)
+      {:ok, %{event: event, actor: actor, id: participant_id}}
     else
       {:has_event, _} ->
         {:error, "Event with this ID #{inspect(event_id)} doesn't exist"}

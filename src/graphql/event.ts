@@ -322,8 +322,13 @@ export const JOIN_EVENT = gql`
 export const LEAVE_EVENT = gql`
   mutation LeaveEvent($eventId: ID!, $actorId: ID!, $token: String) {
     leaveEvent(eventId: $eventId, actorId: $actorId, token: $token) {
+      id
       actor {
         id
+      }
+      event {
+        id
+        uuid
       }
     }
   }

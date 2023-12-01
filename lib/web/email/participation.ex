@@ -99,6 +99,7 @@ defmodule Mobilizon.Web.Email.Participation do
       locale: locale,
       event: event,
       jsonLDMetadata: json_ld(participant),
+      participant: participant,
       subject: subject
     })
   end
@@ -123,6 +124,7 @@ defmodule Mobilizon.Web.Email.Participation do
       locale: locale,
       event: event,
       jsonLDMetadata: json_ld(participant),
+      participant: participant,
       subject: subject
     })
   end

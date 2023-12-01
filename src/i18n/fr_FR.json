@@ -1624,5 +1624,11 @@
   "{user}'s follow request was accepted": "La demande de suivi de {user} a été acceptée",
   "{user}'s follow request was rejected": "La demande de suivi de {user} a été rejetée",
   "© The OpenStreetMap Contributors": "© Les Contributeur·ices OpenStreetMap",
-  "There's no announcements yet": "Il n'y a encore aucune annonce"
+  "There's no announcements yet": "Il n'y a encore aucune annonce",
+  "Your participation is being cancelled": "Votre participation est en cours d'annulation",
+  "Error while cancelling your participation": "Erreur lors de l'annulation de votre participation",
+  "Either your participation has already been cancelled, either the validation token is incorrect.": "Soit votre participation a déjà été annulée, soit le jeton de validation est incorrect.",
+  "Your participation has been cancelled": "Votre participation a été annulée",
+  "Return to the event page": "Retourner à la page de l'événement",
+  "Cancel participation": "Annuler la participation"
 }

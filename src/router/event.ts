@@ -20,6 +20,7 @@ export enum EventRouteName {
   EVENT_PARTICIPATE_WITHOUT_ACCOUNT = "EVENT_PARTICIPATE_WITHOUT_ACCOUNT",
   EVENT_PARTICIPATE_LOGGED_OUT = "EVENT_PARTICIPATE_LOGGED_OUT",
   EVENT_PARTICIPATE_CONFIRM = "EVENT_PARTICIPATE_CONFIRM",
+  EVENT_PARTICIPATE_CANCEL = "EVENT_PARTICIPATE_CANCEL",
   TAG = "Tag",
 }
 
@@ -120,6 +121,18 @@ export const eventRoutes: RouteRecordRaw[] = [
     meta: {
       announcer: {
         message: (): string => t("Confirm participation") as string,
+      },
+    },
+    props: true,
+  },
+  {
+    path: "/participation/email/cancel/:uuid/:token",
+    name: EventRouteName.EVENT_PARTICIPATE_CANCEL,
+    component: () =>
+      import("../components/Participation/CancelParticipation.vue"),
+    meta: {
+      announcer: {
+        message: (): string => t("Cancel participation") as string,
       },
     },
     props: true,
