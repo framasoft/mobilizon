@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.14.1\n"
 
-#: lib/mobilizon/discussions/discussion.ex:69
+#: lib/mobilizon/discussions/discussion.ex:68
 #, elixir-autogen
 msgid "can't be blank"
 msgstr "no puede estar vacíos"
@@ -162,7 +162,7 @@ msgstr "No se encontró ningún usuario con este correo electrónico"
 
 #: lib/graphql/resolvers/feed_token.ex:28
 #: lib/graphql/resolvers/participant.ex:34
-#: lib/graphql/resolvers/participant.ex:212
+#: lib/graphql/resolvers/participant.ex:217
 #: lib/graphql/resolvers/person.ex:247
 #: lib/graphql/resolvers/person.ex:378
 #: lib/graphql/resolvers/person.ex:414
@@ -402,7 +402,7 @@ msgstr "Evento no encontrado"
 #: lib/graphql/resolvers/participant.ex:89
 #: lib/graphql/resolvers/participant.ex:130
 #: lib/graphql/resolvers/participant.ex:157
-#: lib/graphql/resolvers/participant.ex:345
+#: lib/graphql/resolvers/participant.ex:350
 #, elixir-autogen, elixir-format
 msgid "Event with this ID %{id} doesn't exist"
 msgstr "El evento con el ID %{id} no existe"
@@ -431,14 +431,14 @@ msgstr "No se encontró perfil para el usuario"
 msgid "No such feed token"
 msgstr "No existe tal token de alimentación"
 
-#: lib/graphql/resolvers/participant.ex:261
+#: lib/graphql/resolvers/participant.ex:266
 #, elixir-autogen, elixir-format
 msgid "Participant already has role %{role}"
 msgstr "El participante ya tiene el rol %{role}"
 
-#: lib/graphql/resolvers/participant.ex:189
-#: lib/graphql/resolvers/participant.ex:222
-#: lib/graphql/resolvers/participant.ex:265
+#: lib/graphql/resolvers/participant.ex:191
+#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:270
 #, elixir-autogen, elixir-format
 msgid "Participant not found"
 msgstr "Participante no encontrado"
@@ -515,7 +515,7 @@ msgstr "El recurso no existe"
 msgid "The event has already reached its maximum capacity"
 msgstr "El evento ya alcanzó su capacidad máxima"
 
-#: lib/graphql/resolvers/participant.ex:291
+#: lib/graphql/resolvers/participant.ex:296
 #, elixir-autogen, elixir-format
 msgid "This token is invalid"
 msgstr "Este token no es válido"
@@ -596,8 +596,8 @@ msgstr "No puede eliminar un token de feed si no está conectado"
 msgid "You are not allowed to update a comment if not connected"
 msgstr "No se le permite actualizar un comentario si no está conectado"
 
-#: lib/graphql/resolvers/participant.ex:183
-#: lib/graphql/resolvers/participant.ex:216
+#: lib/graphql/resolvers/participant.ex:185
+#: lib/graphql/resolvers/participant.ex:221
 #, elixir-autogen, elixir-format
 msgid "You can't leave event because you're the only event creator participant"
 msgstr ""
@@ -723,7 +723,7 @@ msgstr "Debes iniciar sesión para eliminar recursos"
 msgid "You need to be logged-in to join an event"
 msgstr "Debes iniciar sesión para eliminar recursos"
 
-#: lib/graphql/resolvers/participant.ex:227
+#: lib/graphql/resolvers/participant.ex:232
 #, elixir-autogen, elixir-format
 msgid "You need to be logged-in to leave an event"
 msgstr "Debes iniciar sesión para salir de un evento"
@@ -861,7 +861,7 @@ msgstr "Este miembro ya ha sido rechazado."
 msgid "You don't have the right to remove this member."
 msgstr "No tiene derecho a eliminar este miembro."
 
-#: lib/mobilizon/actors/actor.ex:384
+#: lib/mobilizon/actors/actor.ex:385
 #, elixir-autogen, elixir-format
 msgid "This username is already taken."
 msgstr "Este nombre de usuario ya está en uso."
@@ -907,8 +907,8 @@ msgid "Unable to fetch resource details from this URL."
 msgstr "No se pueden recuperar los detalles del recurso de esta URL."
 
 #: lib/graphql/resolvers/event.ex:165
-#: lib/graphql/resolvers/participant.ex:255
-#: lib/graphql/resolvers/participant.ex:337
+#: lib/graphql/resolvers/participant.ex:260
+#: lib/graphql/resolvers/participant.ex:342
 #, elixir-autogen, elixir-format
 msgid "Provided profile doesn't have moderator permissions on this event"
 msgstr "El perfil de moderador proporcionado no tiene permiso para este evento"
@@ -954,7 +954,7 @@ msgstr "Error al actualizar el informe"
 msgid "Error while uploading pictures"
 msgstr "Error al actualizar el informe"
 
-#: lib/graphql/resolvers/participant.ex:192
+#: lib/graphql/resolvers/participant.ex:194
 #, elixir-autogen, elixir-format
 msgid "Failed to leave the event"
 msgstr "No se pudo salir del evento"
@@ -995,17 +995,17 @@ msgstr "No eres el creador de comentarios"
 msgid "You cannot change your password."
 msgstr "No puede cambiar su contraseña."
 
-#: lib/graphql/resolvers/participant.ex:330
+#: lib/graphql/resolvers/participant.ex:335
 #, elixir-autogen, elixir-format
 msgid "Format not supported"
 msgstr "Formato incompatible"
 
-#: lib/graphql/resolvers/participant.ex:314
+#: lib/graphql/resolvers/participant.ex:319
 #, elixir-autogen, elixir-format
 msgid "A dependency needed to export to %{format} is not installed"
 msgstr "Una dependencia necesaria para exportar a %{formato} no está instalada"
 
-#: lib/graphql/resolvers/participant.ex:322
+#: lib/graphql/resolvers/participant.ex:327
 #, elixir-autogen, elixir-format
 msgid "An error occured while saving export"
 msgstr "Ocurrió un error al guardar la exportación"
@@ -1128,7 +1128,7 @@ msgstr "Ya existe un perfil o grupo con ese nombre"
 msgid "Unable to find an instance to follow at this address"
 msgstr "No se puede encontrar una instancia para seguir en esta dirección"
 
-#: lib/mobilizon/actors/actor.ex:403
+#: lib/mobilizon/actors/actor.ex:404
 #, elixir-autogen, elixir-format
 msgid "Username must only contain alphanumeric lowercased characters and underscores."
 msgstr ""
@@ -1202,23 +1202,23 @@ msgstr "Error al guardar el informe"
 msgid "Impossible to create application."
 msgstr "Imposible crear una aplicación"
 
-#: lib/web/controllers/application_controller.ex:358
+#: lib/web/controllers/application_controller.ex:355
 #, elixir-autogen, elixir-format
 msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
 msgstr "Se enviaron parámetros incorrectos. Debes proporcionar al menos los parámetros grant_type y client_id, dependiendo del grant_type que se esté usando."
 
-#: lib/web/controllers/application_controller.ex:331
+#: lib/web/controllers/application_controller.ex:328
 #, elixir-autogen, elixir-format
 msgid "Invalid client credentials provided"
 msgstr "Se han provisto credenciales de cliente no válidas"
 
-#: lib/web/controllers/application_controller.ex:339
+#: lib/web/controllers/application_controller.ex:336
 #, elixir-autogen, elixir-format
 msgid "Invalid refresh token provided"
 msgstr "Se ha provisto un token de refrescado inválido"
 
-#: lib/web/controllers/application_controller.ex:172
-#: lib/web/controllers/application_controller.ex:403
+#: lib/web/controllers/application_controller.ex:169
+#: lib/web/controllers/application_controller.ex:400
 #, elixir-autogen, elixir-format
 msgid "No application was found with this client_id"
 msgstr "No se ha encontrado una aplicación con este client_id"
@@ -1244,17 +1244,17 @@ msgstr "No está autorizado a acceder al objeto %{object}"
 msgid "Not authorized to access this %{object_type}"
 msgstr "No está autorizado a acceder a este %{object_type}"
 
-#: lib/web/controllers/application_controller.ex:281
+#: lib/web/controllers/application_controller.ex:278
 #, elixir-autogen, elixir-format
 msgid "Please slow down the rate of your requests"
 msgstr "Por favor reduce la frecuencia de tus peticiones"
 
-#: lib/web/controllers/application_controller.ex:269
+#: lib/web/controllers/application_controller.ex:266
 #, elixir-autogen, elixir-format
 msgid "The authorization request is still pending"
 msgstr "La solicitud de autorización todavía está pendiente"
 
-#: lib/web/controllers/application_controller.ex:251
+#: lib/web/controllers/application_controller.ex:248
 #, elixir-autogen, elixir-format
 msgid "The client_id provided or the device_code associated is invalid"
 msgstr "El client_id provisto o el device_code asociado es inválido"
@@ -1264,7 +1264,7 @@ msgstr "El client_id provisto o el device_code asociado es inválido"
 msgid "The device user code was not provided before approving the application"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:306
+#: lib/web/controllers/application_controller.ex:303
 #, elixir-autogen, elixir-format
 msgid "The given device_code has expired"
 msgstr ""
@@ -1274,7 +1274,7 @@ msgstr ""
 msgid "The given redirect_uri is not in the list of allowed redirect URIs"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:160
+#: lib/web/controllers/application_controller.ex:157
 #, elixir-autogen, elixir-format
 msgid "The given scope is not in the list of the app declared scopes"
 msgstr ""
@@ -1291,22 +1291,22 @@ msgstr ""
 msgid "The given user code is invalid"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:413
+#: lib/web/controllers/application_controller.ex:410
 #, elixir-autogen, elixir-format
 msgid "The provided client_id does not match the provided code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:416
+#: lib/web/controllers/application_controller.ex:413
 #, elixir-autogen, elixir-format
 msgid "The provided client_secret is invalid"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:409
+#: lib/web/controllers/application_controller.ex:406
 #, elixir-autogen, elixir-format
 msgid "The provided code is invalid or expired"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:420
+#: lib/web/controllers/application_controller.ex:417
 #, elixir-autogen, elixir-format
 msgid "The provided scope is invalid or not included in the app declared scopes"
 msgstr ""
@@ -1316,17 +1316,17 @@ msgstr ""
 msgid "The scope parameter is not a space separated list of valid scopes"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:294
+#: lib/web/controllers/application_controller.ex:291
 #, elixir-autogen, elixir-format
 msgid "The user rejected the requested authorization"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:406
+#: lib/web/controllers/application_controller.ex:403
 #, elixir-autogen, elixir-format
 msgid "This redirect URI is not allowed"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:383
+#: lib/web/controllers/application_controller.ex:380
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Token not found"
 msgstr "Token no encontrado"
@@ -1336,27 +1336,27 @@ msgstr "Token no encontrado"
 msgid "Too many requests"
 msgstr "Demasiadas peticiones"
 
-#: lib/web/controllers/application_controller.ex:186
+#: lib/web/controllers/application_controller.ex:183
 #, elixir-autogen, elixir-format
 msgid "Unable to produce device code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:375
+#: lib/web/controllers/application_controller.ex:372
 #, elixir-autogen, elixir-format
 msgid "Unable to revoke token"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:200
+#: lib/web/controllers/application_controller.ex:197
 #, elixir-autogen, elixir-format
 msgid "You need to pass both client_id and scope as parameters to obtain a device code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:138
+#: lib/web/controllers/application_controller.ex:135
 #, elixir-autogen, elixir-format
 msgid "You need to provide a valid redirect_uri to autorize an application"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:128
+#: lib/web/controllers/application_controller.ex:125
 #, elixir-autogen, elixir-format
 msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr ""
@@ -1366,12 +1366,12 @@ msgstr ""
 msgid "Couldn't send an email. Internal error."
 msgstr ""
 
-#: lib/graphql/resolvers/participant.ex:288
+#: lib/graphql/resolvers/participant.ex:293
 #, elixir-autogen, elixir-format
 msgid "Participation is already confirmed"
 msgstr ""
 
-#: lib/graphql/resolvers/participant.ex:285
+#: lib/graphql/resolvers/participant.ex:290
 #, elixir-autogen, elixir-format
 msgid "Participation is confirmed but not approved yet by an organizer"
 msgstr ""
@@ -1423,7 +1423,7 @@ msgstr ""
 msgid "Conversation needs to mention at least one participant that's not yourself"
 msgstr ""
 
-#: lib/graphql/resolvers/participant.ex:390
+#: lib/graphql/resolvers/participant.ex:396
 #, elixir-autogen, elixir-format
 msgid "There are no participants matching the audience you've selected."
 msgstr ""

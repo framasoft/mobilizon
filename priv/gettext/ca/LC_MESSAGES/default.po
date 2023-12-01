@@ -74,7 +74,7 @@ msgstr "Instruccions per confirmar el teu compte de Mobilizon a %{instance}"
 msgid "New report on Mobilizon instance %{instance}"
 msgstr "S'ha denunciat una activitat al servidor de Mobilizon %{instance}"
 
-#: lib/web/templates/email/before_event_notification.html.heex:67
+#: lib/web/templates/email/before_event_notification.html.heex:65
 #: lib/web/templates/email/before_event_notification.text.eex:4
 #, elixir-autogen, elixir-format
 msgid "Go to event page"
@@ -867,7 +867,7 @@ msgctxt "terms"
 msgid "Your content is yours"
 msgstr "El teu contingut et pertany"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:71
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:73
 #, elixir-autogen, elixir-format
 msgid "Confirm my e-mail address"
 msgstr "Confirma la meva adreça de correu"
@@ -918,7 +918,6 @@ msgstr "Algú ha soŀlicitat a %{instance} una contrasenya nova."
 msgid "Please do not use it for real purposes."
 msgstr "No ho facis servir més que proves, sisplau"
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:88
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:6
 #: lib/web/templates/email/event_updated.html.heex:172
 #: lib/web/templates/email/event_updated.text.eex:14
@@ -1022,7 +1021,7 @@ msgstr ""
 "Si no has fet aquest canvi, pots ignorar aquest missatge. La teva "
 "contrasenya es mantindrà si no cliques l'enllaç de sobre."
 
-#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:103
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:130
 #: lib/web/templates/email/anonymous_participation_confirmation.text.eex:4
 #: lib/web/templates/email/registration_confirmation.html.heex:62
 #: lib/web/templates/email/registration_confirmation.text.eex:7
@@ -1030,7 +1029,7 @@ msgstr ""
 msgid "If you didn't trigger this email, you may safely ignore it."
 msgstr "Si no has demanat això, sisplau ignora aquest correu."
 
-#: lib/web/templates/email/before_event_notification.html.heex:84
+#: lib/web/templates/email/before_event_notification.html.heex:82
 #: lib/web/templates/email/before_event_notification.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "If you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button."
@@ -1125,7 +1124,7 @@ msgstr ""
 msgid "Unfortunately, the organizers rejected your request."
 msgstr "Malauradament, les organitzadores han rebutjat la teva participació."
 
-#: lib/web/templates/email/email_changed_new.html.heex:70
+#: lib/web/templates/email/email_changed_new.html.heex:68
 #, elixir-autogen, elixir-format
 msgid "Verify your email address"
 msgstr "Verifica l'adreça de correu"
@@ -1141,7 +1140,7 @@ msgid "View report:"
 msgstr "Mostra la denúncia"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:85
-#: lib/web/templates/email/email_anonymous_activity.html.heex:184
+#: lib/web/templates/email/email_anonymous_activity.html.heex:182
 #: lib/web/templates/email/event_participation_approved.html.heex:81
 #: lib/web/templates/email/event_participation_confirmed.html.heex:81
 #, elixir-autogen, elixir-format
@@ -1202,7 +1201,7 @@ msgstr "Has soŀlicitat participar a l'activitat %{title}."
 msgid "You're going!"
 msgstr "T'han acceptat!"
 
-#: lib/web/templates/email/email_changed_new.html.heex:87
+#: lib/web/templates/email/email_changed_new.html.heex:85
 #: lib/web/templates/email/email_changed_new.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "If you didn't trigger the change yourself, please ignore this message."
@@ -1454,12 +1453,12 @@ msgstr ""
 "Has confirmat la teva participació. Actualitza't l'agenda, perquè estàs a la "
 "llista de convidades!"
 
-#: lib/mobilizon/posts/post.ex:99
+#: lib/mobilizon/posts/post.ex:98
 #, elixir-autogen, elixir-format
 msgid "A text is required for the post"
 msgstr "Cal un text per la publicació"
 
-#: lib/mobilizon/posts/post.ex:98
+#: lib/mobilizon/posts/post.ex:97
 #, elixir-autogen, elixir-format
 msgid "A title is required for the post"
 msgstr "Cal un títol per la publicació"
@@ -1533,25 +1532,25 @@ msgstr "Ho sentim, s'ha produït un error al nostre costat."
 msgid "This is a demonstration site to test Mobilizon."
 msgstr "Aquesta és una web de proves per provar la beta de Mobilizon."
 
-#: lib/service/metadata/actor.ex:93
-#: lib/service/metadata/actor.ex:100
+#: lib/service/metadata/actor.ex:86
+#: lib/service/metadata/actor.ex:92
 #: lib/service/metadata/instance.ex:60
 #: lib/service/metadata/instance.ex:66
 #, elixir-autogen, elixir-format
 msgid "%{name}'s feed"
 msgstr "El flux de %{name}"
 
-#: lib/service/export/feed.ex:120
+#: lib/service/export/feed.ex:117
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s private events feed on %{instance}"
 msgstr "El flux d'activitats privades de %{actor} a %{instance}"
 
-#: lib/service/export/feed.ex:115
+#: lib/service/export/feed.ex:112
 #, elixir-autogen, elixir-format
 msgid "%{actor}'s public events feed on %{instance}"
 msgstr "El flux d'activitats públiques de %{actor} a %{instance}"
 
-#: lib/service/export/feed.ex:224
+#: lib/service/export/feed.ex:221
 #, elixir-autogen, elixir-format
 msgid "Feed for %{email} on %{instance}"
 msgstr "Flux de %{email} a %{instance}"
@@ -1834,7 +1833,7 @@ msgstr ""
 msgid "Sorry, not this time!"
 msgstr ""
 
-#: lib/web/templates/email/group_membership_approval.html.heex:74
+#: lib/web/templates/email/group_membership_approval.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "View the group"
 msgstr ""
@@ -2254,4 +2253,14 @@ msgstr "Comentaris denunciats"
 #: lib/service/export/participants/common.ex:65
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Participant registration date"
+msgstr ""
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Cancel my attendance"
+msgstr ""
+
+#: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
+#, elixir-autogen, elixir-format
+msgid "If you wish to cancel your participation, simply click on the link below."
 msgstr ""
