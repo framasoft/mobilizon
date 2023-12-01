@@ -1,7 +1,7 @@
 defmodule Mobilizon.Web.ApplicationControllerTest do
   use Mobilizon.Web.ConnCase
   alias Mobilizon.Service.Auth.Applications
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Factory
 
   describe "create application" do
@@ -74,7 +74,9 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
       conn =
         get(
           conn,
-          "/oauth/authorize?client_id=hello&redirect_uri=#{URI.encode("https://somewhere.org/callback")}"
+          url(
+            ~p"/oauth/authorize?client_id=hello&redirect_uri=#{URI.encode("https://somewhere.org/callback")}"
+          )
         )
 
       assert redirected_to(conn) =~
@@ -85,7 +87,9 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
       conn =
         get(
           conn,
-          "/oauth/authorize?client_id=hello&redirect_uri=#{URI.encode("https://somewhere.org/callback&state=something&scope=everything")}"
+          url(
+            ~p"/oauth/authorize?client_id=hello&scope=everything&state=something&redirect_uri=#{URI.encode("https://somewhere.org/callback")}"
+          )
         )
 
       assert redirected_to(conn) =~ "/oauth/autorize_approve"

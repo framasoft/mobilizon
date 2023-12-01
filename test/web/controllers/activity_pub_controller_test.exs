@@ -18,7 +18,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
   alias Mobilizon.Service.HTTP.ActivityPub.Mock
   alias Mobilizon.Web.ActivityPub.ActorView
   alias Mobilizon.Web.{Endpoint, PageView}
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   setup_all do
     Mobilizon.Config.put([:instance, :federating], true)
@@ -412,7 +412,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
     test "with the relay active, it returns the relay user", %{conn: conn} do
       res =
         conn
-        |> get(activity_pub_path(conn, :relay))
+        |> get(url(~p"/relay"))
         |> json_response(200)
 
       assert res["id"] =~ "/relay"
@@ -422,7 +422,7 @@ defmodule Mobilizon.Web.ActivityPubControllerTest do
       Config.put([:instance, :allow_relay], false)
 
       conn
-      |> get(activity_pub_path(conn, :relay))
+      |> get(url(~p"/relay"))
       |> json_response(404)
       |> assert
 

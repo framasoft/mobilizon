@@ -27,8 +27,6 @@ defmodule Mobilizon.Web.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
 
-      import Mobilizon.Web.Router.Helpers
-
       use Mobilizon.Web, :verified_routes
 
       # The default endpoint for testing

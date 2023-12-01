@@ -4,8 +4,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
   import Mobilizon.Factory
 
   alias Mobilizon.Config
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   describe "/@:preferred_username/feed/atom" do
     test "it returns an RSS representation of the actor's public events if the actor is publicly visible",
@@ -24,11 +23,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       conn =
         conn
-        |> get(
-          Endpoint
-          |> ~p"/@#{actor.preferred_username}/feed/atom"
-          |> URI.decode()
-        )
+        |> get(URI.decode(~p"/@#{actor.preferred_username}/feed/atom"))
 
       assert response(conn, 200) =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       assert response_content_type(conn, :xml) =~ "charset=utf-8"
@@ -62,8 +57,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> get(
-          Endpoint
-          |> ~p"/@#{actor.preferred_username}/feed/atom"
+          ~p"/@#{actor.preferred_username}/feed/atom"
           |> URI.decode()
         )
 
@@ -78,8 +72,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
         conn
         |> put_req_header("accept", "application/atom+xml")
         |> get(
-          Endpoint
-          |> ~p"/@#{actor.preferred_username}/feed/atom"
+          ~p"/@#{actor.preferred_username}/feed/atom"
           |> URI.decode()
         )
 
@@ -196,8 +189,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> get(
-          Endpoint
-          |> ~p"/events/#{event1.uuid}/export/ics"
+          ~p"/events/#{event1.uuid}/export/ics"
           |> URI.decode()
         )
 
@@ -229,7 +221,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
 
       conn =
         conn
-        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "atom"))
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}/atom"))
 
       assert response(conn, 200) =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       assert response_content_type(conn, :xml) =~ "charset=utf-8"
@@ -263,7 +255,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "application/atom+xml")
-        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "atom"))
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}/atom"))
 
       assert response(conn, 200) =~ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       assert response_content_type(conn, :xml) =~ "charset=utf-8"
@@ -305,7 +297,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "text/calendar")
-        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "ics"))
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}/ics"))
 
       assert response(conn, 200) =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
@@ -335,7 +327,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> put_req_header("accept", "text/calendar")
-        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}", "ics"))
+        |> get(URI.decode(~p"/events/going/#{ShortUUID.encode!(feed_token.token)}/ics"))
 
       assert response(conn, 200) =~ "BEGIN:VCALENDAR"
       assert response_content_type(conn, :calendar) =~ "charset=utf-8"
@@ -350,8 +342,7 @@ defmodule Mobilizon.Web.FeedControllerTest do
       conn =
         conn
         |> get(
-          Endpoint
-          |> ~p"/events/going/not_existing/ics"
+          ~p"/events/going/not_existing/ics"
           |> URI.decode()
         )
 

@@ -111,9 +111,7 @@ defmodule Mobilizon.Web.ApplicationController do
          is_binary(state) and is_binary(scope) do
       redirect(conn,
         to:
-          url(
-            ~p"/oauth/authorize?#{[client_id: client_id, redirect_uri: redirect_uri, scope: scope, state: state]}"
-          )
+          ~p"/oauth/autorize_approve?#{[client_id: client_id, redirect_uri: redirect_uri, scope: scope, state: state]}"
       )
     else
       if is_binary(redirect_uri) and valid_uri?(redirect_uri) do
