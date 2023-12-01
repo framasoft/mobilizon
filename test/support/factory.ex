@@ -9,7 +9,7 @@ defmodule Mobilizon.Factory do
   alias Mobilizon.Crypto
 
   alias Mobilizon.Web.{Endpoint, Upload}
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @spec user_factory :: Mobilizon.Users.User.t()
   def user_factory do
@@ -173,7 +173,7 @@ defmodule Mobilizon.Factory do
       origin_comment: nil,
       is_announcement: false,
       published_at: DateTime.utc_now(),
-      url: Routes.page_url(Endpoint, :comment, uuid)
+      url: url(~p"/comments/#{uuid}")
     }
   end
 
@@ -199,7 +199,7 @@ defmodule Mobilizon.Factory do
       metadata: build_list(2, :event_metadata),
       local: true,
       publish_at: DateTime.utc_now(),
-      url: Routes.page_url(Endpoint, :event, uuid),
+      url: url(~p"/events/#{uuid}"),
       picture: insert(:media),
       uuid: uuid,
       join_options: :free,
@@ -344,7 +344,7 @@ defmodule Mobilizon.Factory do
       title: sequence("todo list"),
       actor: build(:group),
       id: uuid,
-      url: Routes.page_url(Endpoint, :todo_list, uuid),
+      url: url(~p"/todo-list/#{uuid}"),
       published_at: DateTime.utc_now()
     }
   end
@@ -360,7 +360,7 @@ defmodule Mobilizon.Factory do
       status: false,
       due_date: Timex.shift(DateTime.utc_now(), hours: 2),
       assigned_to: build(:actor),
-      url: Routes.page_url(Endpoint, :todo, uuid),
+      url: url(~p"/todo/#{uuid}"),
       creator: build(:actor),
       published_at: DateTime.utc_now()
     }
@@ -379,7 +379,7 @@ defmodule Mobilizon.Factory do
       actor: build(:group),
       creator: build(:actor),
       parent: nil,
-      url: Routes.page_url(Endpoint, :resource, uuid),
+      url: url(~p"/resource/#{uuid}"),
       published_at: DateTime.utc_now(),
       path: "/#{title}"
     }
@@ -411,7 +411,7 @@ defmodule Mobilizon.Factory do
       publish_at: DateTime.utc_now(),
       picture: insert(:media),
       media: [],
-      url: Routes.page_url(Endpoint, :post, uuid)
+      url: url(~p"/p/#{uuid}")
     }
   end
 
@@ -440,7 +440,7 @@ defmodule Mobilizon.Factory do
       id: uuid,
       last_comment: nil,
       comments: [],
-      url: Routes.page_url(Endpoint, :discussion, group.preferred_username, slug)
+      url: ~p"/@#{group.preferred_username}/c/#{slug}"
     }
   end
 

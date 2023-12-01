@@ -29,7 +29,7 @@ defmodule Mobilizon.Federation.ActivityPub.UtilsTest do
                "content" => "My Comment",
                "actor" => reply.actor.url,
                "uuid" => reply.uuid,
-               "id" => Routes.page_url(Endpoint, :comment, reply.uuid),
+               "id" => url(~p"/comments/#{reply.uuid}"),
                "inReplyTo" => comment.url,
                "attributedTo" => reply.actor.url,
                "mediaType" => "text/html",

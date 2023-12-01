@@ -6,7 +6,7 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
   alias Mobilizon.Events.{Event, EventOptions}
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   import Mobilizon.Service.Metadata.Utils,
     only: [
@@ -56,11 +56,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Events.Event do
                 "position" => 1,
                 "name" => event.attributed_to |> Actor.display_name() |> escape_text(),
                 "item" =>
-                  Endpoint
-                  |> Routes.page_url(
-                    :actor,
-                    Actor.preferred_username_and_domain(event.attributed_to)
-                  )
+                  ~p"/@#{Actor.preferred_username_and_domain(event.attributed_to)}"
+                  |> url()
                   |> URI.decode()
               },
               %{

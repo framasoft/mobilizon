@@ -32,8 +32,7 @@ defmodule Mobilizon.Events.Event do
   alias Mobilizon.Medias.Media
   alias Mobilizon.Storage.Repo
 
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @type t :: %__MODULE__{
           id: integer(),
@@ -140,7 +139,7 @@ defmodule Mobilizon.Events.Event do
   @spec changeset(t | Ecto.Schema.t(), map) :: Changeset.t()
   def changeset(%__MODULE__{} = event, attrs) do
     attrs = Map.update(attrs, :uuid, Ecto.UUID.generate(), &(&1 || Ecto.UUID.generate()))
-    attrs = Map.update(attrs, :url, Routes.page_url(Endpoint, :event, attrs.uuid), & &1)
+    attrs = Map.update(attrs, :url, url(~p"/events/#{attrs.uuid}"), & &1)
 
     event
     |> cast(attrs, @attrs)

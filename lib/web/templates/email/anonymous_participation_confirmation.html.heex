@@ -63,7 +63,9 @@
                     <td align="center" style="border-radius: 3px;" bgcolor="#3C376E">
                       <a
                         href={
-                          "#{Routes.page_url(Mobilizon.Web.Endpoint, :participation_email_confirmation, @participant.metadata.confirmation_token)}"
+                          ~p"/participation/email/confirm/#{@participant.metadata.confirmation_token}"
+                          |> url()
+                          |> URI.decode()
                         }
                         target="_blank"
                         style="font-size: 20px; font-family: 'Roboto', Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #3C376E; display: inline-block;"

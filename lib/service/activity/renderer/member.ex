@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -81,12 +80,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Member do
 
   defp member_url(activity) do
     group_url =
-      Endpoint
-      |> Routes.page_url(
-        :actor,
-        Actor.preferred_username_and_domain(activity.group)
-      )
-      |> URI.decode()
+      ~p"/@#{Actor.preferred_username_and_domain(activity.group)}" |> url() |> URI.decode()
 
     "#{group_url}/settings/members"
   end

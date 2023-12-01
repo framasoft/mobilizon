@@ -4,9 +4,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Posts.Post do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Medias.{File, Media}
   alias Mobilizon.Posts.Post
-  alias Mobilizon.Web.Endpoint
+  use Mobilizon.Web, :verified_routes
   alias Mobilizon.Web.JsonLD.ObjectView
-  alias Mobilizon.Web.Router.Helpers, as: Routes
 
   import Mobilizon.Service.Metadata.Utils,
     only: [process_description: 2, strip_tags: 1, escape_text: 1]
@@ -35,11 +34,8 @@ defimpl Mobilizon.Service.Metadata, for: Mobilizon.Posts.Post do
           "position" => 1,
           "name" => post.attributed_to |> Actor.display_name() |> escape_text,
           "item" =>
-            Endpoint
-            |> Routes.page_url(
-              :actor,
-              Actor.preferred_username_and_domain(post.attributed_to)
-            )
+            ~p"/@#{Actor.preferred_username_and_domain(post.attributed_to)}"
+            |> url()
             |> URI.decode()
         },
         %{

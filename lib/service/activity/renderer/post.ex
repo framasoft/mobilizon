@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Post do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -52,12 +51,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Post do
   end
 
   defp post_url(activity) do
-    Endpoint
-    |> Routes.page_url(
-      :post,
-      activity.subject_params["post_slug"]
-    )
-    |> URI.decode()
+    URI.decode(~p"/p/#{activity.subject_params["post_slug"]}")
   end
 
   defp profile(activity), do: Actor.display_name_and_username(activity.author)

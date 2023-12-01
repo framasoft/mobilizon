@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Resource do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -73,8 +72,8 @@ defmodule Mobilizon.Service.Activity.Renderer.Resource do
   end
 
   defp resource_url(activity) do
-    Endpoint
-    |> Routes.page_url(:resource, activity.subject_params["resource_uuid"])
+    ~p"/resource/#{activity.subject_params["resource_uuid"]}"
+    |> url()
     |> URI.decode()
   end
 

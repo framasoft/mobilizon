@@ -5,8 +5,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
   alias Mobilizon.Activities.Activity
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Service.Activity.Renderer
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 3]
 
   @behaviour Renderer
@@ -78,11 +77,7 @@ defmodule Mobilizon.Service.Activity.Renderer.Comment do
   end
 
   defp event_url(activity) do
-    Routes.page_url(
-      Endpoint,
-      :event,
-      activity.subject_params["event_uuid"]
-    )
+    url(~p"/events/#{activity.subject_params["event_uuid"]}")
   end
 
   defp event_comment_url(activity) do

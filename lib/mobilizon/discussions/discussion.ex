@@ -27,8 +27,7 @@ defmodule Mobilizon.Discussions.Discussion do
   alias Mobilizon.Actors.Actor
   alias Mobilizon.Discussions.Comment
   alias Mobilizon.Discussions.Discussion.TitleSlug
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
 
   @type t :: %__MODULE__{
@@ -101,5 +100,5 @@ defmodule Mobilizon.Discussions.Discussion do
 
   @spec generate_url(String.t(), String.t()) :: String.t()
   defp generate_url(preferred_username, slug),
-    do: Routes.page_url(Endpoint, :discussion, preferred_username, slug)
+    do: url(~p"/@:#{preferred_username}/c/#{slug}")
 end

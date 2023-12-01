@@ -3,9 +3,9 @@
 <%= ngettext "You have one event this week:", "You have %{total} events this week:", @total, total: @total %>
 <%= if @total > 1 do %>
   <%= for participation <- @participations do %>
-    - <%= render("date/event_tz_date.text", event: participation.event, date: participation.event.begins_on, timezone: @timezone, locale: @locale) %> - <%= participation.event.title %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, participation.event.uuid) %>
+    - <%= render("date/event_tz_date.text", event: participation.event, date: participation.event.begins_on, timezone: @timezone, locale: @locale) %> - <%= participation.event.title %> <%= url(~p"/events/#{participation.event.uuid}") %>
   <% end %>
 <% else %>
-  <%= render("date/event_tz_date.text", event: @participation.event, date: @participation.event.begins_on, timezone: @timezone, locale: @locale) %> - <%= @participation.event.title %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @participation.event.uuid) %>
+  <%= render("date/event_tz_date.text", event: @participation.event, date: @participation.event.begins_on, timezone: @timezone, locale: @locale) %> - <%= @participation.event.title %> <%= url(~p"/events/#{@participation.event.uuid}") %>
 <% end %>
 <%= ngettext "Would you wish to cancel your attendance, visit the event page through the link above and click the « Attending » button.", "Would you wish to cancel your attendance to one or several events, visit the event pages through the links above and click the « Attending » button.", @total %>

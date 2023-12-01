@@ -23,4 +23,4 @@
   <%= gettext "Reason" %>
   <%= @report.content %>
 <% end %>
-<%= gettext "View report:" %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :moderation_report, @report.id) %>
+<%= gettext "View report:" %> <%= url(~p"/moderation/report/#{@report.id}") %>

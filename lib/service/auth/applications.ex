@@ -8,7 +8,7 @@ defmodule Mobilizon.Service.Auth.Applications do
   alias Mobilizon.Service.Auth.Authenticator
   alias Mobilizon.Users.User
   alias Mobilizon.Web.Auth.Guardian
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   require Logger
 
   @app_access_tokens_ttl {8, :hour}
@@ -260,8 +260,7 @@ defmodule Mobilizon.Service.Auth.Applications do
     with {:app, %Application{scope: app_scope} = application} <-
            {:app, Applications.get_application_by_client_id(client_id)},
          {device_code, user_code, verification_uri} <-
-           {string_of_length(40), string_of_length(8),
-            Routes.page_url(Mobilizon.Web.Endpoint, :auth_device)},
+           {string_of_length(40), string_of_length(8), url(~p"/login/device")},
          {:scope_included, true} <- {:scope_included, request_scope_valid?(app_scope, scope)},
          {:ok, %ApplicationDeviceActivation{} = application_device_activation} <-
            Applications.create_application_device_activation(%{

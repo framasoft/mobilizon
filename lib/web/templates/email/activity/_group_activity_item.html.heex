@@ -3,9 +3,7 @@
     <%= dgettext("activity", "%{profile} created the group %{group}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       group:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :actor,
-        @activity.subject_params["group_federated_username"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/@#{@activity.subject_params["group_federated_username"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["group_name"])}
                         </a>"
     })
@@ -14,9 +12,7 @@
     <%= dgettext("activity", "%{profile} updated the group %{group}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       group:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :actor,
-        @activity.subject_params["group_federated_username"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/@#{@activity.subject_params["group_federated_username"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["group_name"])}
                         </a>"
     })

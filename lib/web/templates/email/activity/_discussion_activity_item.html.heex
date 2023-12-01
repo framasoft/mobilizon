@@ -3,7 +3,7 @@
     <%= dgettext("activity", "%{profile} created the discussion %{discussion}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       discussion:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :discussion, Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/#{Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group)}/c/#{@activity.subject_params["discussion_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["discussion_title"])}</a>"
     })
     |> raw %>
@@ -11,7 +11,7 @@
     <%= dgettext("activity", "%{profile} replied to the discussion %{discussion}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       discussion:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :discussion, Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/#{Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group)}/c/#{@activity.subject_params["discussion_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["discussion_title"])}</a>"
     })
     |> raw %>
@@ -19,7 +19,7 @@
     <%= dgettext("activity", "%{profile} renamed the discussion %{discussion}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       discussion:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :discussion, Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/#{Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group)}/c/#{@activity.subject_params["discussion_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["discussion_title"])}</a>"
     })
     |> raw %>
@@ -27,7 +27,7 @@
     <%= dgettext("activity", "%{profile} archived the discussion %{discussion}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       discussion:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint, :discussion, Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group), @activity.subject_params["discussion_slug"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/#{Mobilizon.Actors.Actor.preferred_username_and_domain(@activity.group)}/c/#{@activity.subject_params["discussion_slug"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["discussion_title"])}</a>"
     })
     |> raw %>

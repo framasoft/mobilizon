@@ -8,7 +8,7 @@ defmodule Mobilizon.Web.EmailView do
   alias Mobilizon.Service.Address
   alias Mobilizon.Service.DateTime, as: DateTimeRenderer
   alias Mobilizon.Service.Formatter.{HTML, Text}
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext
   import Mobilizon.Service.Metadata.Utils, only: [process_description: 1]
   import Phoenix.HTML, only: [raw: 1, html_escape: 1, safe_to_string: 1]

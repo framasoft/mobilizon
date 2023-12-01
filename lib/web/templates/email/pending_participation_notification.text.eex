@@ -5,6 +5,6 @@
 
 <%= render("participation/event_card.text", event: @event, timezone: @timezone, locale: @locale, action: nil) %>
 
-<%= gettext "Manage pending requests" %> <%= Routes.page_url(Mobilizon.Web.Endpoint, :event, @event.uuid) <> "/participations" %>
+<%= gettext "Manage pending requests" %> <%= url(~p"/events/#{@event.uuid}") <> "/participations" %>
 
 <%= gettext "You are receiving this email because you chose to get notifications for pending attendance requests to your events. You can disable or change your notification settings in your user account settings under « Notifications »." %>s

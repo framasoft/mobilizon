@@ -134,7 +134,7 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
 
       res = json_response(conn, 200)
 
-      verification_uri = Routes.page_url(Mobilizon.Web.Endpoint, :auth_device)
+      verification_uri = url(~p"/login/device")
 
       assert %{
                "device_code" => _device_code,
@@ -158,7 +158,7 @@ defmodule Mobilizon.Web.ApplicationControllerTest do
 
       res = json_response(conn, 200)
 
-      verification_uri = Routes.page_url(Mobilizon.Web.Endpoint, :auth_device)
+      verification_uri = url(~p"/login/device")
 
       assert %{
                "device_code" => _device_code,

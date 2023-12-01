@@ -6,14 +6,14 @@ defmodule Mobilizon.Service.SiteMap do
   alias Mobilizon.{Actors, Events, Posts}
   alias Mobilizon.Storage.Repo
   alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
 
   @default_static_frequency :monthly
 
   @spec generate_sitemap :: {:ok, :ok}
   def generate_sitemap do
     static_routes = [
-      {Routes.page_url(Endpoint, :index, []), :daily},
+      {url(~p"/*path"), :daily},
       "#{Endpoint.url()}/search",
       "#{Endpoint.url()}/about/instance",
       "#{Endpoint.url()}/terms",

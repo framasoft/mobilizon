@@ -3,9 +3,7 @@
     <%= dgettext("activity", "%{profile} mentionned you in a comment under event %{event}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       event:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :event,
-        @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
     })
@@ -14,9 +12,7 @@
     <%= dgettext("activity", "%{profile} has posted an announcement under event %{event}.", %{
       profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
       event:
-        "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-        :event,
-        @activity.subject_params["event_uuid"]) |> URI.decode()}\">
+        "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}\">
                             #{escape_html(@activity.subject_params["event_title"])}
                         </a>"
     })
@@ -26,9 +22,7 @@
       <%= dgettext("activity", "%{profile} has posted a new reply under your event %{event}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         event:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :event,
-          @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_reply_to_uuid"]}-#{@activity.subject_params["comment_uuid"]}\">
+          "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}#comment-#{@activity.subject_params["comment_reply_to_uuid"]}-#{@activity.subject_params["comment_uuid"]}\">
                                 #{escape_html(@activity.subject_params["event_title"])}
                             </a>"
       })
@@ -40,9 +34,7 @@
         %{
           profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
           event:
-            "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-            :event,
-            @activity.subject_params["event_uuid"]) |> URI.decode()}#comment-#{@activity.subject_params["comment_uuid"]}\">
+            "<a href=\"#{~p"/events/#{@activity.subject_params["event_uuid"]}" |> url() |> URI.decode()}#comment-#{@activity.subject_params["comment_uuid"]}\">
                                 #{escape_html(@activity.subject_params["event_title"])}
                             </a>"
         }

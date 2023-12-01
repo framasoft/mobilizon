@@ -19,6 +19,7 @@ defmodule Mobilizon.Actors.Actor do
 
   alias Mobilizon.Web.Endpoint
   alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext, only: [dgettext: 2]
   import Mobilizon.Service.Guards, only: [is_valid_string: 1]
 
@@ -445,7 +446,7 @@ defmodule Mobilizon.Actors.Actor do
 
   # Relay has a special URI
   def build_url("relay", :page, _args),
-    do: Endpoint |> Routes.activity_pub_url(:relay) |> URI.decode()
+    do: ~p"/relay" |> url() |> URI.decode()
 
   def build_url(preferred_username, endpoint, args)
       when endpoint in [:page, :resources, :posts, :discussions, :events, :todos] do

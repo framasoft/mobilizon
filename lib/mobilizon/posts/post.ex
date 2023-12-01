@@ -27,8 +27,7 @@ defmodule Mobilizon.Posts.Post do
   alias Mobilizon.Medias.Media
   alias Mobilizon.Posts.Post.TitleSlug
   alias Mobilizon.Posts.PostVisibility
-  alias Mobilizon.Web.Endpoint
-  alias Mobilizon.Web.Router.Helpers, as: Routes
+  use Mobilizon.Web, :verified_routes
   import Mobilizon.Web.Gettext
 
   @type t :: %__MODULE__{
@@ -128,7 +127,7 @@ defmodule Mobilizon.Posts.Post do
 
   @spec generate_url(String.t()) :: String.t()
   defp generate_url(id_and_slug) when is_binary(id_and_slug),
-    do: Routes.page_url(Endpoint, :post, id_and_slug)
+    do: url(~p"/p/#{id_and_slug}")
 
   defp generate_url(_), do: nil
 

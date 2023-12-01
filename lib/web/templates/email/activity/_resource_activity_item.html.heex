@@ -4,9 +4,7 @@
       <%= dgettext("activity", "%{profile} created the folder %{resource}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
@@ -15,9 +13,7 @@
       <%= dgettext("activity", "%{profile} created the resource %{resource}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
@@ -31,9 +27,7 @@
         %{
           profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
           resource:
-            "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-            :resource,
-            @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+            "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>",
           old_resource_title:
@@ -48,9 +42,7 @@
         %{
           profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
           resource:
-            "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-            :resource,
-            @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+            "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>",
           old_resource_title:
@@ -64,9 +56,7 @@
       <%= dgettext("activity", "%{profile} moved the folder %{resource}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
@@ -75,9 +65,7 @@
       <%= dgettext("activity", "%{profile} moved the resource %{resource}.", %{
         profile: "<b>#{escaped_display_name_and_username(@activity.author)}</b>",
         resource:
-          "<a href=\"#{Routes.page_url(Mobilizon.Web.Endpoint,
-          :resource,
-          @activity.subject_params["resource_uuid"]) |> URI.decode()}\">
+          "<a href=\"#{~p"/resource/#{@activity.subject_params["resource_uuid"]}" |> url() |> URI.decode()}\">
                                 #{escape_html(@activity.subject_params["resource_title"])}
                             </a>"
       })
