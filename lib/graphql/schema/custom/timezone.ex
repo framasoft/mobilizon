@@ -17,6 +17,8 @@ defmodule Mobilizon.GraphQL.Schema.Custom.Timezone do
 
   @spec decode(Absinthe.Blueprint.Input.String.t()) :: {:ok, term} | :error
   @spec decode(Absinthe.Blueprint.Input.Null.t()) :: {:ok, nil}
+  defp decode(%Absinthe.Blueprint.Input.String{value: ""}), do: {:ok, nil}
+
   defp decode(%Absinthe.Blueprint.Input.String{value: value}) do
     if Tzdata.zone_exists?(value),
       do: {:ok, value},
