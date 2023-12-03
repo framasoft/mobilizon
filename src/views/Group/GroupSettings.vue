@@ -345,7 +345,7 @@ const currentAddress = computed({
     return editableGroup.value?.physicalAddress ?? null;
   },
   set(address: IAddress | null) {
-    if (editableGroup.value && address) {
+    if (editableGroup.value && address && (address.id || address.geom)) {
       editableGroup.value = {
         ...editableGroup.value,
         physicalAddress: address,

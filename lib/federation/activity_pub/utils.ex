@@ -126,6 +126,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
             "@type" => "sc:Boolean",
             "@id" => "mz:isOnline"
           },
+          "externalParticipationUrl" => %{
+            "@id" => "mz:externalParticipationUrl",
+            "@type" => "sc:URL"
+          },
           "PropertyValue" => "sc:PropertyValue",
           "value" => "sc:value",
           "propertyID" => "sc:propertyID",

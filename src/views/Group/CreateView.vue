@@ -287,11 +287,15 @@ const buildVariables = computed(() => {
     preferredUsername: group.value.preferredUsername,
     name: group.value.name,
     summary: group.value.summary,
-    physicalAddress: cloneGroup.physicalAddress,
     visibility: group.value.visibility,
     openness: group.value.openness,
     manuallyApprovesFollowers: group.value.manuallyApprovesFollowers,
   };
+
+  if (cloneGroup.physicalAddress?.id || cloneGroup.physicalAddress?.geom) {
+    // @ts-expect-error No type for this variable
+    groupBasic.physicalAddress = cloneGroup.physicalAddress;
+  }
 
   if (avatarFile.value) {
     avatarObj = {
