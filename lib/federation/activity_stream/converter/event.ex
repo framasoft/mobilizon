@@ -81,7 +81,11 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
           external_participation_url: object["externalParticipationUrl"],
           options: options,
           metadata: metadata,
-          status: object |> Map.get("ical:status", "CONFIRMED") |> String.downcase(),
+          # Remove fallback in MBZ 5.x
+          status:
+            object
+            |> Map.get("status", Map.get(object, "ical:status", "CONFIRMED"))
+            |> String.downcase(),
           online_address: object |> Map.get("attachment", []) |> get_online_address(),
           phone_address: object["phoneAddress"],
           draft: object["draft"] == true,
@@ -142,7 +146,9 @@ defmodule Mobilizon.Federation.ActivityStream.Converter.Event do
       "anonymousParticipationEnabled" => event.options.anonymous_participation,
       "attachment" => Enum.map(event.metadata, &EventMetadataConverter.metadata_to_as/1),
       "draft" => event.draft,
+      # Remove me in MBZ 5.x
       "ical:status" => event.status |> to_string |> String.upcase(),
+      "status" => event.status |> to_string |> String.upcase(),
       "id" => event.url,
       "url" => event.url,
       "inLanguage" => event.language,

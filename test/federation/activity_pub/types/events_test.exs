@@ -49,6 +49,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [@ap_public],
                    "type" => "Event"
@@ -96,6 +97,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [^followers_url],
                    "type" => "Event"
@@ -152,6 +154,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [@ap_public],
                    "type" => "Event"
@@ -200,6 +203,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_updated_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [@ap_public],
                    "type" => "Event"
@@ -260,6 +264,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_updated_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [@ap_public],
                    "type" => "Event"
@@ -320,6 +325,7 @@ defmodule Mobilizon.Federation.ActivityPub.Types.EventsTest do
                    "name" => @event_updated_title,
                    "repliesModerationOption" => nil,
                    "startTime" => @event_begins_on,
+                   "status" => "CONFIRMED",
                    "tag" => [],
                    "to" => [@ap_public],
                    "type" => "Event"
