@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:55+0000\n"
-"PO-Revision-Date: 2022-10-23 23:00+0000\n"
+"PO-Revision-Date: 2023-12-04 17:47+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/hr/>\n"
@@ -11,9 +11,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.14.1\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.2.1\n"
 
 ## This file is a PO Template file.
 ##
@@ -486,64 +486,64 @@ msgstr "%{profile} su odobrili člana %{member}."
 #: lib/web/templates/email/activity/_event_activity_item.text.eex:31
 #, elixir-autogen, elixir-format
 msgid "%{profile} joined your event %{event}."
-msgstr ""
+msgstr "%{profile} se pridružio/la tvom događaju %{event}."
 
 #: lib/web/views/email_view.ex:61
 #, elixir-autogen, elixir-format
 msgid "An anonymous profile"
-msgstr ""
+msgstr "Anonimni profil"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:107
 #: lib/web/templates/email/email_anonymous_activity.text.eex:14
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a private announcement about event %{event}."
-msgstr "%{profile} su objavili najavu za događaj %{event}."
+msgstr "%{profile} je objavio/la privatnu najavu za događaj %{event}."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:50
 #: lib/web/templates/email/email_anonymous_activity.text.eex:6
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} has posted a public announcement under event %{event}."
-msgstr "%{profile} su objavili najavu za događaj %{event}."
+msgstr "%{profile} je objavio/la javnu najavu za događaj %{event}."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:3
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a %{conversation}."
-msgstr "%{profile} su vas spomenuli u komentaru događaja %{event}."
+msgstr "%{profile} te je spomenuo/la u konverzaciji %{conversation}."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.text.eex:1
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} mentionned you in a conversation."
-msgstr "%{profile} su vas spomenuli u komentaru događaja %{event}."
+msgstr "%{profile} te je spomenuo/la u jednoj konverzaciji."
 
 #: lib/service/activity/renderer/conversation.ex:36
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied to your message"
-msgstr ""
+msgstr "%{profile} je odgovorio/la na tvoju poruku"
 
 #: lib/web/templates/email/activity/_conversation_activity_item.html.heex:10
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{profile} replied you in a %{conversation}."
-msgstr "%{profile} su odgovorili na razgovor %{discussion}."
+msgstr "%{profile} ti je odgovorio/la u jednoj %{conversation}."
 
 #: lib/web/templates/email/activity/_conversation_activity_item.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "%{profile} replied you in a conversation."
-msgstr ""
+msgstr "%{profile} ti je odgovorio/la u jednoj konverzaciji."
 
 #: lib/service/activity/renderer/conversation.ex:49
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent a private message about event %{event}"
-msgstr ""
+msgstr "%{profile} je poslao/la privatnu poruku o događaju %{event}"
 
 #: lib/service/activity/renderer/conversation.ex:23
 #, elixir-autogen, elixir-format
 msgid "%{profile} sent you a message"
-msgstr ""
+msgstr "%{profile} ti je poslao/la poruku"
 
 #: lib/web/email/activity.ex:52
 #, elixir-autogen, elixir-format
 msgid "Informations about your event %{event}"
-msgstr ""
+msgstr "Informacije o tvom događaju %{event}"
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:118
 #: lib/web/templates/email/email_anonymous_activity.text.eex:20
