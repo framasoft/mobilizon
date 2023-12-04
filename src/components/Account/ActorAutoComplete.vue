@@ -7,7 +7,7 @@
     :allow-new="false"
     :open-on-focus="false"
     field="displayName"
-    placeholder="Add a recipient"
+    :placeholder="t('Add a recipient')"
     @typing="getActors"
   >
     <template #default="props">
@@ -23,6 +23,7 @@ import { Paginate } from "@/types/paginate";
 import { useLazyQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import ActorInline from "./ActorInline.vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   modelValue: IActor[];
@@ -40,6 +41,8 @@ const modelValueWithDisplayName = computed(() =>
     displayName: displayName(actor),
   }))
 );
+
+const { t } = useI18n({ useScope: "global" });
 
 const {
   load: loadSearchPersonsAndGroupsQuery,

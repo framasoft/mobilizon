@@ -165,6 +165,10 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
           "todos" => %{
             "@id" => "mz:todos",
             "@type" => "@id"
+          },
+          "status" => %{
+            "@id" => "ical:status",
+            "@type" => "ical:status"
           }
         }
       ]
