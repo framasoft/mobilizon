@@ -20,7 +20,10 @@ defmodule Mobilizon.Service.Workers.Background do
       reserve_username when is_boolean(reserve_username) ->
         case Actors.get_actor(actor_id) do
           %Actor{} = actor ->
-            ActorSuspension.suspend_actor(actor, reserve_username: reserve_username)
+            ActorSuspension.suspend_actor(actor,
+              reserve_username: reserve_username,
+              suspension: Map.get(args, "suspension", false)
+            )
 
           nil ->
             {:error, :actor_not_found}
