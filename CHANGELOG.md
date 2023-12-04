@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.0-rc.1 (2023-12-04)
+
+* fix: prevent sending group physical address if it's empty and allow empty text for timezone ([32caebb](https://framagit.org/framasoft/mobilizon/commits/32caebb)), closes [#1357](https://framagit.org/framasoft/mobilizon/issues/1357)
+* fix(activitypub): add missing externalParticipationUrl context ([8795576](https://framagit.org/framasoft/mobilizon/commits/8795576)), closes [#1376](https://framagit.org/framasoft/mobilizon/issues/1376)
+* fix(backend): only send suspension notification emails when actor's suspended and not just deleted ([9e41bc1](https://framagit.org/framasoft/mobilizon/commits/9e41bc1))
+* docs(nginx): improve nginx configuration ([6c992ca](https://framagit.org/framasoft/mobilizon/commits/6c992ca))
+
 ## 4.0.0-beta.2 (2023-12-01)
 
 * test: fix tests using verified routes ([5fcf3d5](https://framagit.org/framasoft/mobilizon/commits/5fcf3d5))
