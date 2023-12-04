@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-04-11 18:20+0000\n"
+"PO-Revision-Date: 2023-12-04 18:30+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend-errors/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.16.4\n"
+"X-Generator: Weblate 5.2.1\n"
 
 ## This file is a PO Template file.
 ##
@@ -1427,7 +1427,7 @@ msgstr ""
 #: lib/graphql/resolvers/conversation.ex:161
 #, elixir-autogen, elixir-format
 msgid "Conversation needs to mention at least one participant that's not yourself"
-msgstr ""
+msgstr "Konverzacija treba spomenuti barem jednog sudionika koji nisi ti"
 
 #: lib/graphql/resolvers/participant.ex:396
 #, elixir-autogen, elixir-format
