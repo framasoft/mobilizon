@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:55+0000\n"
-"PO-Revision-Date: 2023-12-04 17:47+0000\n"
+"PO-Revision-Date: 2023-12-04 18:10+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "activity/hr/>\n"
@@ -550,9 +550,13 @@ msgstr "Informacije o tvom događaju %{event}"
 #, elixir-autogen, elixir-format
 msgid "It might give details on how to join the event, so make sure to read it appropriately."
 msgstr ""
+"Može sadržavati pojedinosti o tome kako se pridružiti događaju, stoga ga "
+"svakako pročitaj."
 
 #: lib/web/templates/email/email_anonymous_activity.html.heex:156
 #: lib/web/templates/email/email_anonymous_activity.text.eex:28
 #, elixir-autogen, elixir-format
 msgid "This information is sent privately to you as a person who registered for this event. Share the informations above with other people with caution."
 msgstr ""
+"Ove informacije se šalju privatno tebi kao osobi koja se prijavila za ovaj "
+"događaj. Dijeli gore navedene informacije s drugima s oprezom."
