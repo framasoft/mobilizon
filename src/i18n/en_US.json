@@ -1636,5 +1636,7 @@
   "Either your participation has already been cancelled, either the validation token is incorrect.": "Either your participation has already been cancelled, either the validation token is incorrect.",
   "Your participation has been cancelled": "Your participation has been cancelled",
   "Return to the event page": "Return to the event page",
-  "Cancel participation": "Cancel participation"
+  "Cancel participation": "Cancel participation",
+  "Add a recipient": "Add a recipient",
+  "Announcements for {eventTitle}": "Announcements for {eventTitle}"
 }
