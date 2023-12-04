@@ -35,13 +35,17 @@ defmodule Mobilizon.Service.ActorSuspension do
     delete_actor_options = Keyword.merge(@delete_actor_default_options, options)
     Logger.debug(inspect(delete_actor_options))
 
-    send_suspension_notification(actor)
+    # Only send suspension notifications if we actually are suspending the actor
+    if Keyword.get(delete_actor_options, :suspension, false) do
+      send_suspension_notification(actor)
 
-    Logger.debug(
-      "Sending suspension notifications to participants from events created by this actor"
-    )
+      Logger.debug(
+        "Sending suspension notifications to participants from events created by this actor"
+      )
 
-    notify_event_participants_from_suspension(actor)
+      notify_event_participants_from_suspension(actor)
+    end
+
     delete_participations(actor)
 
     multi =
