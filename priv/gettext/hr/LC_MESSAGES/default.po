@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-12-04 18:10+0000\n"
+"PO-Revision-Date: 2023-12-05 16:34+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -1044,6 +1044,9 @@ msgstr "Što je danas na redu?"
 #, elixir-autogen, elixir-format
 msgid "Would you wish to update or cancel your attendance, simply access the event page through the link above and click on the Attending button."
 msgstr ""
+"Ako želiš aktualizirati ili otkazati svoje prisustvovanje, jednostavno "
+"pristupi stranici događaja putem gornje poveznice i klikni na gumb "
+"„Prisustvovanje”."
 
 #: lib/web/templates/email/pending_participation_notification.html.heex:106
 #: lib/web/templates/email/pending_participation_notification.text.eex:10
@@ -1058,7 +1061,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.text.eex:5
 #, elixir-autogen, elixir-format
 msgid "You issued a request to attend %{title}."
-msgstr "Poslao/la si zahtjev za sudjelovanje događaju %{title}."
+msgstr "Poslao/la si zahtjev za prisustvovanje događaju %{title}."
 
 #: lib/web/templates/email/event_participation_approved.text.eex:5
 #: lib/web/templates/email/event_participation_confirmed.text.eex:3
@@ -1351,7 +1354,7 @@ msgstr ""
 #: lib/web/templates/email/event_participation_rejected.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "You issued a request to attend <b>%{title}</b>."
-msgstr "Poslao/la si zahtjev za sudjelovanje događaju <b>%{title}</b>."
+msgstr "Poslao/la si zahtjev za prisustvovanje događaju <b>%{title}</b>."
 
 #: lib/web/templates/email/event_updated.html.heex:83
 #, elixir-autogen, elixir-format
@@ -1738,9 +1741,13 @@ msgstr ""
 #, elixir-format
 msgid "You have one pending attendance request to process for the following event:"
 msgid_plural "You have %{number_participation_requests} attendance requests to process for the following event:"
-msgstr[0] ""
+msgstr[0] "Imaš jedan neriješen zahtjev za prisustvovanje za sljedeći događaj:"
 msgstr[1] ""
+"Imaš %{number_participation_requests} zahtjeva za prisustvovanje za sljedeći "
+"događaj:"
 msgstr[2] ""
+"Imaš %{number_participation_requests} zahtjeva za prisustvovanje za sljedeći "
+"događaj:"
 
 #: lib/web/templates/email/admin_user_role_changed.html.heex:18
 #: lib/web/templates/email/admin_user_role_changed.text.eex:1
@@ -1795,6 +1802,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from %{instance} just manually changed your account email from %{old_email} (this one) to %{new_email}."
 msgstr ""
+"Bok! Želimo te samo obavijestiti da je administrator instance %{instance} "
+"upravo ručno promijenio tvoj e-mail račun %{old_email} u %{new_email}."
 
 #: lib/web/templates/email/admin_user_confirmation.text.eex:3
 #, elixir-autogen, elixir-format
@@ -1807,11 +1816,17 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just manually changed your account email from <b>%{old_email}</b> (this one) to <b>%{new_email}</b>."
 msgstr ""
+"Bok! Želimo te samo obavijestiti da je administrator instance "
+"<b>%{instance}</b> upravo ručno promijenio tvoj e-mail račun "
+"<b>%{old_email}</b> u <b>%{new_email}</b>."
 
 #: lib/web/templates/email/admin_user_email_changed_new.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "Hi there! We just wanted to inform you that an administrator from <b>%{instance}</b> just manually changed your account email from <b>%{old_email}</b> to <b>%{new_email}</b> (this one)."
 msgstr ""
+"Bok! Želimo te samo obavijestiti da je administrator instance "
+"<b>%{instance}</b> upravo ručno promijenio tvoj e-mail račun "
+"<b>%{old_email}</b> u <b>%{new_email}</b>."
 
 #: lib/web/templates/email/admin_user_confirmation.html.heex:47
 #, elixir-autogen, elixir-format
@@ -2122,7 +2137,7 @@ msgstr "Stanje sudionika"
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "Cancel my attendance"
-msgstr ""
+msgstr "Otkaži moje prisustvovanje"
 
 #: lib/web/templates/email/anonymous_participation_confirmation.html.heex:90
 #, elixir-autogen, elixir-format
