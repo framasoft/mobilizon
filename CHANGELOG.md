@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.0 (2023-12-05)
+
+### Breaking changes
+
+#### Release (binary package) installations
+
+- We now produce packages for different distributions targets (Debian Bookworm, Debian Bullseye, Ubuntu Jammy, Ubuntu Focal, Ubuntu Bionic, Fedora 38 and Fedora 39). Be sure to pick the right one for your system, as there can be issues with OpenSSL versions differing from inside the Mobilizon package and on your system.
+- The `https://joinmobilizon.org/latest-package` URL now links to the latest package builded against Debian Bookworm. Make sure to follow the documentation if you're not using this.
+- There's also an `arm64` package build on Debian Bullseye for now.
+
+#### Source installations
+  - Elixir 15 is now required
+  - The content of the `js` directory is now at the root of the repository, so you don't need to `cd js` anymore
+  - No need for `yarn` anymore, simply use `npm` instead for `npm i` and `npm run build`
+
+### New features
+
+- Event organizers and groups can be contacted through private messages (including PMs from 3rd-party micro-blogging fediverse services)
+- Event organizers can send private announcements to event participants (approved or not)
+
+
+### Improvements
+- Anonymous participation e-mails now contain links to cancel your participation
+- ActivityPub improvements for compatibility with https://event-federation.eu
+- ICS export fixes for descriptions and adding event status
+
+### Changes since 4.0.0-rc.1
+
+* refactor: to lower cyclomatic complexity ([147096c](https://framagit.org/framasoft/mobilizon/commits/147096c))
+* fix(activitypub): compact ical:status in activitystream data ([5e8f9af](https://framagit.org/framasoft/mobilizon/commits/5e8f9af)), closes [#1378](https://framagit.org/framasoft/mobilizon/issues/1378)
+* fix(activitypub): fix receiving comments ([f1084c1](https://framagit.org/framasoft/mobilizon/commits/f1084c1))
+* fix(backend): handle ecto errors when fetching and create entities ([89d1ee4](https://framagit.org/framasoft/mobilizon/commits/89d1ee4))
+* fix(front): fix tag loading ([f81472e](https://framagit.org/framasoft/mobilizon/commits/f81472e))
+* fix(front): make recipient field placeholder translatable ([10ce812](https://framagit.org/framasoft/mobilizon/commits/10ce812))
+* fix(front): only show participants & announcements menu items to organizers ([c4d2ec6](https://framagit.org/framasoft/mobilizon/commits/c4d2ec6))
+* Translated using Weblate (Croatian) ([a26ff98](https://framagit.org/framasoft/mobilizon/commits/a26ff98))
+* Translated using Weblate (Croatian) ([1683f01](https://framagit.org/framasoft/mobilizon/commits/1683f01))
+* Translated using Weblate (Croatian) ([aa7f870](https://framagit.org/framasoft/mobilizon/commits/aa7f870))
+* Translated using Weblate (Croatian) ([1ce34ea](https://framagit.org/framasoft/mobilizon/commits/1ce34ea))
+* Translated using Weblate (Croatian) ([5e7edc0](https://framagit.org/framasoft/mobilizon/commits/5e7edc0))
+* Translated using Weblate (Croatian) ([d777d88](https://framagit.org/framasoft/mobilizon/commits/d777d88))
+* Translated using Weblate (Croatian) ([0118d97](https://framagit.org/framasoft/mobilizon/commits/0118d97))
+* Translated using Weblate (Croatian) ([805e931](https://framagit.org/framasoft/mobilizon/commits/805e931))
+
 ## 4.0.0-rc.1 (2023-12-04)
 
 * fix: prevent sending group physical address if it's empty and allow empty text for timezone ([32caebb](https://framagit.org/framasoft/mobilizon/commits/32caebb)), closes [#1357](https://framagit.org/framasoft/mobilizon/issues/1357)
