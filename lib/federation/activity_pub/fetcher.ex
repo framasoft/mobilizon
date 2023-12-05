@@ -42,7 +42,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
   end
 
   @spec fetch_and_create(String.t(), Keyword.t()) ::
-          {:ok, map(), struct()} | {:error, atom()} | :error
+          {:ok, map(), struct()} | {:error, atom()} | {:error, Ecto.Changeset.t()} | :error
   def fetch_and_create(url, options \\ []) do
     case fetch(url, options) do
       {:ok, data} when is_map(data) ->
@@ -60,6 +60,9 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
             {:error, error} when is_atom(error) ->
               {:error, error}
+
+            {:error, %Ecto.Changeset{} = err} ->
+              {:error, err}
 
             :error ->
               {:error, :transmogrifier_error}
