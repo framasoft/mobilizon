@@ -34,10 +34,11 @@ import { ITag } from "../../types/tag.model";
 import debounce from "lodash/debounce";
 import { computed, onBeforeMount, ref } from "vue";
 import HelpCircleOutline from "vue-material-design-icons/HelpCircleOutline.vue";
+import { useFetchTags } from "@/composition/apollo/tags";
+import { FILTER_TAGS } from "@/graphql/tags";
 
 const props = defineProps<{
   modelValue: ITag[];
-  fetchTags: (text: string) => Promise<ITag[]>;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -56,9 +57,14 @@ const id = computed((): string => {
   return `tag-input-${componentId}`;
 });
 
+const { load: fetchTags } = useFetchTags();
+
 const getFilteredTags = async (newText: string): Promise<void> => {
   text.value = newText;
-  tags.value = await props.fetchTags(newText);
+  const res = await fetchTags(FILTER_TAGS, { filter: newText });
+  if (res) {
+    tags.value = res.tags;
+  }
 };
 
 const debouncedGetFilteredTags = debounce(getFilteredTags, 200);

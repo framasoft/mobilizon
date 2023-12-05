@@ -32,7 +32,7 @@
           />
         </o-field>
 
-        <tag-input v-model="editablePost.tags" :fetch-tags="fetchTags" />
+        <tag-input v-model="editablePost.tags" />
 
         <o-field :label="t('Post')">
           <p v-if="errors.body" class="help is-danger">{{ errors.body }}</p>
@@ -158,7 +158,6 @@ import { useI18n } from "vue-i18n";
 import { computed, inject, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useMutation, useQuery } from "@vue/apollo-composable";
-import { fetchTags } from "@/composition/apollo/tags";
 import { Dialog } from "@/plugins/dialog";
 
 const props = withDefaults(
