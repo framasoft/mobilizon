@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-25 07:56+0000\n"
-"PO-Revision-Date: 2023-05-27 13:05+0000\n"
+"PO-Revision-Date: 2023-12-04 18:10+0000\n"
 "Last-Translator: Milo Ivir <mail@milotype.de>\n"
 "Language-Team: Croatian <https://weblate.framasoft.org/projects/mobilizon/"
 "backend/hr/>\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.2.1\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -1451,7 +1451,7 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Your instance's moderation team has decided to suspend <b>%{group_name}</b> (%{group_address}). You are no longer a member of this group."
 msgstr ""
-"Tim za moderiranje tvoje instance je odlučio suspendirati grupu "
+"Tim za moderiranje tvoje instance je odlučio suspendiratigrupu "
 "<b>%{group_name}</b> (%{group_address}). Više nisi član ove grupe."
 
 #: lib/web/templates/email/actor_suspension_participants.html.heex:18
@@ -2105,9 +2105,9 @@ msgid "As this group was located on this instance, all of its data has been irre
 msgstr ""
 
 #: lib/web/templates/email/report.text.eex:11
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Events"
-msgstr "Događaj"
+msgstr "Događaji"
 
 #: lib/web/templates/email/report.html.heex:115
 #, elixir-autogen, elixir-format, fuzzy
