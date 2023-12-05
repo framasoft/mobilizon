@@ -81,7 +81,14 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
                 object_data
                 |> transform_object_data_for_discussion()
                 |> save_comment_or_discussion()
+
+              {:ok, %Comment{} = comment} ->
+                # Object already exists
+                {:ok, nil, comment}
             end
+
+          {:error, err} ->
+            {:error, err}
         end
 
       {:ok, %Comment{} = comment} ->
