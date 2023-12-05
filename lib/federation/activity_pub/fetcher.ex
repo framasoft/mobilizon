@@ -47,26 +47,7 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
     case fetch(url, options) do
       {:ok, data} when is_map(data) ->
         if origin_check?(url, data) do
-          case Transmogrifier.handle_incoming(%{
-                 "type" => "Create",
-                 "to" => data["to"],
-                 "cc" => data["cc"],
-                 "actor" => data["actor"] || data["attributedTo"],
-                 "attributedTo" => data["attributedTo"] || data["actor"],
-                 "object" => data
-               }) do
-            {:ok, entity, structure} ->
-              {:ok, entity, structure}
-
-            {:error, error} when is_atom(error) ->
-              {:error, error}
-
-            {:error, %Ecto.Changeset{} = err} ->
-              {:error, err}
-
-            :error ->
-              {:error, :transmogrifier_error}
-          end
+          pass_to_transmogrifier(data)
         else
           Logger.warning("Object origin check failed")
           {:error, :object_origin_check_failed}
@@ -98,6 +79,34 @@ defmodule Mobilizon.Federation.ActivityPub.Fetcher do
 
       {:error, err} ->
         {:error, err}
+    end
+  end
+
+  @spec pass_to_transmogrifier(map()) ::
+          {:ok, map(), struct()}
+          | {:error, atom()}
+          | {:error, Ecto.Changeset.t()}
+          | {:error, :transmogrifier_error}
+  defp pass_to_transmogrifier(data) do
+    case Transmogrifier.handle_incoming(%{
+           "type" => "Create",
+           "to" => data["to"],
+           "cc" => data["cc"],
+           "actor" => data["actor"] || data["attributedTo"],
+           "attributedTo" => data["attributedTo"] || data["actor"],
+           "object" => data
+         }) do
+      {:ok, entity, structure} ->
+        {:ok, entity, structure}
+
+      {:error, error} when is_atom(error) ->
+        {:error, error}
+
+      {:error, %Ecto.Changeset{} = err} ->
+        {:error, err}
+
+      :error ->
+        {:error, :transmogrifier_error}
     end
   end
 

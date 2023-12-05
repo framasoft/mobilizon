@@ -76,16 +76,7 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
             Actions.Create.create(:conversation, object_data, false)
 
           object_data when is_map(object_data) ->
-            case Discussions.get_comment_from_url_with_preload(object_data.url) do
-              {:error, :comment_not_found} ->
-                object_data
-                |> transform_object_data_for_discussion()
-                |> save_comment_or_discussion()
-
-              {:ok, %Comment{} = comment} ->
-                # Object already exists
-                {:ok, nil, comment}
-            end
+            handle_comment_or_discussion(object_data)
 
           {:error, err} ->
             {:error, err}
@@ -1024,6 +1015,19 @@ defmodule Mobilizon.Federation.ActivityPub.Transmogrifier do
   defp is_data_a_discussion_initialization?(object_data) do
     not Map.has_key?(object_data, :title) or
       is_nil(object_data.title) or object_data.title == ""
+  end
+
+  defp handle_comment_or_discussion(object_data) do
+    case Discussions.get_comment_from_url_with_preload(object_data.url) do
+      {:error, :comment_not_found} ->
+        object_data
+        |> transform_object_data_for_discussion()
+        |> save_comment_or_discussion()
+
+      {:ok, %Comment{} = comment} ->
+        # Object already exists
+        {:ok, nil, comment}
+    end
   end
 
   # Comment and conversations have different attributes for actor and groups
