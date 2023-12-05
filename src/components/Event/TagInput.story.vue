@@ -1,7 +1,7 @@
 <template>
   <Story>
     <Variant title="new">
-      <TagInput v-model="tags" :fetch-tags="fetchTags" />
+      <TagInput v-model="tags" />
     </Variant>
     <!-- <Variant title="small">
       <TagInput v-model="tags" />
@@ -15,9 +15,4 @@ import { reactive } from "vue";
 import TagInput from "./TagInput.vue";
 
 const tags = reactive<ITag[]>([{ title: "Hello", slug: "hello" }]);
-
-const fetchTags = async () =>
-  new Promise<ITag[]>((resolve) => {
-    resolve([{ title: "Welcome", slug: "welcome" }]);
-  });
 </script>

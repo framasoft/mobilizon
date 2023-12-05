@@ -107,11 +107,7 @@
             {{ t("Actions") }}
           </o-button>
         </template>
-        <o-dropdown-item
-          aria-role="listitem"
-          has-link
-          v-if="canManageEvent || !event?.draft"
-        >
+        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
           <router-link
             class="flex gap-1"
             :to="{
@@ -123,11 +119,7 @@
             {{ t("Participations") }}
           </router-link>
         </o-dropdown-item>
-        <o-dropdown-item
-          aria-role="listitem"
-          has-link
-          v-if="canManageEvent || !event?.draft"
-        >
+        <o-dropdown-item aria-role="listitem" has-link v-if="canManageEvent">
           <router-link
             class="flex gap-1"
             :to="{

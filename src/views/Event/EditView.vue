@@ -56,11 +56,7 @@
             </option>
           </o-select>
         </o-field>
-        <tag-input
-          v-model="event.tags"
-          class="flex-1"
-          :fetch-tags="fetchTags"
-        />
+        <tag-input v-model="event.tags" class="flex-1" />
       </div>
 
       <o-field
@@ -626,7 +622,6 @@ import {
   useTimezones,
 } from "@/composition/apollo/config";
 import { useMutation } from "@vue/apollo-composable";
-import { fetchTags } from "@/composition/apollo/tags";
 import { Dialog } from "@/plugins/dialog";
 import { Notifier } from "@/plugins/notifier";
 import { useHead } from "@unhead/vue";
