@@ -132,4 +132,24 @@ defmodule Mobilizon.Web.Email.Admin do
       offer_unsupscription: false
     })
   end
+
+  @spec email_configuration_test(String.t(), Keyword.t()) :: Swoosh.Email.t()
+  def email_configuration_test(email, options) do
+    locale = Keyword.get(options, :locale, "en")
+    Gettext.put_locale(locale)
+
+    subject =
+      gettext(
+        "Email configuration test for %{instance}",
+        instance: Config.instance_name()
+      )
+
+    [to: email, subject: subject]
+    |> Email.base_email()
+    |> render_body(:email_configuration_test, %{
+      locale: locale,
+      subject: subject,
+      offer_unsupscription: false
+    })
+  end
 end

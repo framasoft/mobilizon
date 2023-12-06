@@ -1172,23 +1172,23 @@ msgstr ""
 msgid "Impossible to create application."
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:355
+#: lib/web/controllers/application_controller.ex:353
 #, elixir-autogen, elixir-format
 msgid "Incorrect parameters sent. You need to provide at least the grant_type and client_id parameters, depending on the grant type being used."
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:328
+#: lib/web/controllers/application_controller.ex:326
 #, elixir-autogen, elixir-format
 msgid "Invalid client credentials provided"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:336
+#: lib/web/controllers/application_controller.ex:334
 #, elixir-autogen, elixir-format
 msgid "Invalid refresh token provided"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:169
-#: lib/web/controllers/application_controller.ex:400
+#: lib/web/controllers/application_controller.ex:167
+#: lib/web/controllers/application_controller.ex:398
 #, elixir-autogen, elixir-format
 msgid "No application was found with this client_id"
 msgstr ""
@@ -1214,17 +1214,17 @@ msgstr ""
 msgid "Not authorized to access this %{object_type}"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:278
+#: lib/web/controllers/application_controller.ex:276
 #, elixir-autogen, elixir-format
 msgid "Please slow down the rate of your requests"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:266
+#: lib/web/controllers/application_controller.ex:264
 #, elixir-autogen, elixir-format
 msgid "The authorization request is still pending"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:248
+#: lib/web/controllers/application_controller.ex:246
 #, elixir-autogen, elixir-format
 msgid "The client_id provided or the device_code associated is invalid"
 msgstr ""
@@ -1234,7 +1234,7 @@ msgstr ""
 msgid "The device user code was not provided before approving the application"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:303
+#: lib/web/controllers/application_controller.ex:301
 #, elixir-autogen, elixir-format
 msgid "The given device_code has expired"
 msgstr ""
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "The given redirect_uri is not in the list of allowed redirect URIs"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:157
+#: lib/web/controllers/application_controller.ex:155
 #, elixir-autogen, elixir-format
 msgid "The given scope is not in the list of the app declared scopes"
 msgstr ""
@@ -1261,22 +1261,22 @@ msgstr ""
 msgid "The given user code is invalid"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:410
+#: lib/web/controllers/application_controller.ex:408
 #, elixir-autogen, elixir-format
 msgid "The provided client_id does not match the provided code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:413
+#: lib/web/controllers/application_controller.ex:411
 #, elixir-autogen, elixir-format
 msgid "The provided client_secret is invalid"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:406
+#: lib/web/controllers/application_controller.ex:404
 #, elixir-autogen, elixir-format
 msgid "The provided code is invalid or expired"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:417
+#: lib/web/controllers/application_controller.ex:415
 #, elixir-autogen, elixir-format
 msgid "The provided scope is invalid or not included in the app declared scopes"
 msgstr ""
@@ -1286,17 +1286,17 @@ msgstr ""
 msgid "The scope parameter is not a space separated list of valid scopes"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:291
+#: lib/web/controllers/application_controller.ex:289
 #, elixir-autogen, elixir-format
 msgid "The user rejected the requested authorization"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:403
+#: lib/web/controllers/application_controller.ex:401
 #, elixir-autogen, elixir-format
 msgid "This redirect URI is not allowed"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:380
+#: lib/web/controllers/application_controller.ex:378
 #, elixir-autogen, elixir-format
 msgid "Token not found"
 msgstr ""
@@ -1306,27 +1306,27 @@ msgstr ""
 msgid "Too many requests"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:183
+#: lib/web/controllers/application_controller.ex:181
 #, elixir-autogen, elixir-format
 msgid "Unable to produce device code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:372
+#: lib/web/controllers/application_controller.ex:370
 #, elixir-autogen, elixir-format
 msgid "Unable to revoke token"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:197
+#: lib/web/controllers/application_controller.ex:195
 #, elixir-autogen, elixir-format
 msgid "You need to pass both client_id and scope as parameters to obtain a device code"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:135
+#: lib/web/controllers/application_controller.ex:133
 #, elixir-autogen, elixir-format
 msgid "You need to provide a valid redirect_uri to autorize an application"
 msgstr ""
 
-#: lib/web/controllers/application_controller.ex:125
+#: lib/web/controllers/application_controller.ex:123
 #, elixir-autogen, elixir-format
 msgid "You need to specify client_id, redirect_uri, scope and state to autorize an application"
 msgstr ""
@@ -1362,7 +1362,7 @@ msgstr ""
 msgid "This instance is pending follow approval"
 msgstr ""
 
-#: lib/graphql/schema/custom/timezone.ex:23
+#: lib/graphql/schema/custom/timezone.ex:25
 #, elixir-autogen, elixir-format
 msgid "Timezone ID %{timezone} is invalid"
 msgstr ""
