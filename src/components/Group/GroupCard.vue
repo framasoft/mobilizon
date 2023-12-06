@@ -40,7 +40,7 @@
       <div
         class="mb-2 line-clamp-3"
         dir="auto"
-        v-html="saneSummary"
+        v-html="group.summary"
         v-if="showSummary"
       />
       <div>
@@ -91,7 +91,6 @@ import { addressFullName } from "@/types/address.model";
 import { useI18n } from "vue-i18n";
 import AccountGroup from "vue-material-design-icons/AccountGroup.vue";
 import Account from "vue-material-design-icons/Account.vue";
-import { htmlToText } from "@/utils/html";
 import { computed } from "vue";
 import LinkOrRouterLink from "../core/LinkOrRouterLink.vue";
 
@@ -107,8 +106,6 @@ const props = withDefaults(
 );
 
 const { t } = useI18n({ useScope: "global" });
-
-const saneSummary = computed(() => htmlToText(props.group.summary ?? ""));
 
 const isInternal = computed(() => {
   return props.isRemoteGroup && props.isLoggedIn === false;
