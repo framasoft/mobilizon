@@ -86,4 +86,4 @@ config :mobilizon, :exports,
 config :tz_world,
   data_dir: System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/timezones")
 
-config :tzdata, :data_dir, System.get_env("MOBILIZON_TIMEZONES_DIR", "/var/lib/mobilizon/tzdata")
+config :tzdata, :data_dir, System.get_env("MOBILIZON_TZDATA_DIR", "/var/lib/mobilizon/tzdata")
