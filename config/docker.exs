@@ -2,6 +2,26 @@
 
 import Config
 
+loglevels = [
+  :emergency,
+  :alert,
+  :critical,
+  :error,
+  :warning,
+  :notice,
+  :info,
+  :debug
+]
+
+loglevel_env = System.get_env("MOBILIZON_LOGLEVEL", "error")
+
+loglevel =
+  if loglevel_env in Enum.map(loglevels, &to_string/1) do
+    String.to_existing_atom(loglevel_env)
+  else
+    :error
+  end
+
 listen_ip = System.get_env("MOBILIZON_INSTANCE_LISTEN_IP", "0.0.0.0")
 
 listen_ip =
@@ -42,6 +62,8 @@ config :mobilizon, Mobilizon.Storage.Repo,
   port: System.get_env("MOBILIZON_DATABASE_PORT", "5432"),
   ssl: System.get_env("MOBILIZON_DATABASE_SSL", "false") == "true",
   pool_size: 10
+
+config :logger, level: loglevel
 
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Swoosh.Adapters.SMTP,

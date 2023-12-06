@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Mobilizon.Common do
     if mix_task?(), do: Mix.Task.run("app.config")
 
     unless System.get_env("DEBUG") || @env == :test do
-      Logger.configure(level: :error)
+      Logger.configure(level: loglevel())
     end
 
     Application.put_env(:phoenix, :serve_endpoints, false, persistent: true)
@@ -143,5 +143,26 @@ defmodule Mix.Tasks.Mobilizon.Common do
   @spec format_name(String.t()) :: String.t()
   defp format_name("Elixir.Mix.Tasks.Mobilizon." <> task_name) do
     String.downcase(task_name)
+  end
+
+  @loglevels [
+    :emergency,
+    :alert,
+    :critical,
+    :error,
+    :warning,
+    :notice,
+    :info,
+    :debug
+  ]
+
+  defp loglevel do
+    loglevel_env = System.get_env("MOBILIZON_LOGLEVEL", "error")
+
+    if loglevel_env in Enum.map(@loglevels, &to_string/1) do
+      String.to_existing_atom(loglevel_env)
+    else
+      :error
+    end
   end
 end
