@@ -8,44 +8,51 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-12-07 04:25+0000\n"
+"Last-Translator: \"josé m.\" <correoxm@disroot.org>\n"
+"Language-Team: Galician <https://weblate.framasoft.org/projects/mobilizon/"
+"activity/gl/>\n"
 "Language: gl\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.2.1\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:14
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:12
 #, elixir-autogen, elixir-format
 msgid "%{member} accepted the invitation to join the group."
-msgstr ""
+msgstr "%{member} aceptou o convite para unirse ao grupo."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:19
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:17
 #, elixir-autogen, elixir-format
 msgid "%{member} rejected the invitation to join the group."
-msgstr ""
+msgstr "%{member} rexeitou o convite para unirse ao grupo."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:1
 #, elixir-autogen, elixir-format
 msgid "%{member} requested to join the group."
-msgstr ""
+msgstr "%{member} solicitou unirse ao grupo."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:8
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:6
 #, elixir-autogen, elixir-format
 msgid "%{member} was invited by %{profile}."
-msgstr ""
+msgstr "%{profile} convidou a %{member}."
 
 #: lib/web/templates/email/activity/_member_activity_item.html.heex:30
 #: lib/web/templates/email/activity/_member_activity_item.text.eex:27
 #, elixir-autogen, elixir-format
 msgid "%{profile} added the member %{member}."
-msgstr ""
+msgstr "%{profile} engadiu a %{member}."
 
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:27
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:19
 #, elixir-autogen, elixir-format
 msgid "%{profile} archived the discussion %{discussion}."
-msgstr ""
+msgstr "%{profile} arquivou a conversa %{discussion}."
 
 #: lib/web/templates/email/activity/_discussion_activity_item.html.heex:3
 #: lib/web/templates/email/activity/_discussion_activity_item.text.eex:1
