@@ -22,7 +22,12 @@ defmodule Mobilizon.GraphQL.Schema.ResourceType do
     field(:inserted_at, :naive_datetime, description: "The resource's creation date")
     field(:updated_at, :naive_datetime, description: "The resource's last update date")
     field(:published_at, :naive_datetime, description: "The resource's publication date")
-    field(:type, :string, description: "The resource's type (if it's a folder)")
+
+    field(:type, :string,
+      default_value: "link",
+      description: "The resource's type (if it's a folder)"
+    )
+
     field(:path, :string, description: "The resource's path")
 
     field(:parent, :resource,

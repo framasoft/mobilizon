@@ -207,9 +207,9 @@ defmodule Mobilizon.Federation.ActivityPub.Types.Resources do
     {:ok, Resources.get_resource(old_parent_id), Resources.get_resource(new_parent_id)}
   end
 
-  defp prepare_args(%{type: type} = args) do
+  defp prepare_args(args) do
     args =
-      case type do
+      case Map.get(args, :type, :link) do
         :folder ->
           args
 
