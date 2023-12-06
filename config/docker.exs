@@ -58,7 +58,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
     server_name_indication: ~c"#{System.get_env("MOBILIZON_SMTP_SERVER", "localhost")}",
     depth: 99
   ],
-  ssl: System.get_env("MOBILIZON_SMTP_SSL", false),
+  ssl: System.get_env("MOBILIZON_SMTP_SSL", "false"),
   retries: 1,
   no_mx_lookups: false,
   auth: :if_available
