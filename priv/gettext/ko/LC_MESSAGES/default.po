@@ -8,8 +8,15 @@
 ### to merge POT files into PO files.
 msgid ""
 msgstr ""
+"PO-Revision-Date: 2023-12-06 09:49+0000\n"
+"Last-Translator: FoW <fow@netspheres.org>\n"
+"Language-Team: Korean <https://weblate.framasoft.org/projects/mobilizon/"
+"backend/ko/>\n"
 "Language: ko\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.2.1\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: lib/web/templates/email/password_reset.html.heex:66
 #, elixir-autogen, elixir-format
@@ -45,12 +52,12 @@ msgstr ""
 #: lib/web/templates/email/report.text.eex:23
 #, elixir-autogen, elixir-format
 msgid "Reason"
-msgstr ""
+msgstr "사유"
 
 #: lib/web/templates/email/password_reset.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "Reset Password"
-msgstr ""
+msgstr "암호 재설정"
 
 #: lib/web/templates/email/password_reset.html.heex:53
 #, elixir-autogen, elixir-format

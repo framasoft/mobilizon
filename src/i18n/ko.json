@@ -1,1 +1,21 @@
-{}
+{
+  "About": "소개",
+  "About this instance": "이 인스터스에 대하여",
+  "Accepted": "수락함",
+  "Account": "계정",
+  "Add": "추가하기",
+  "Add a note": "노트 남기기",
+  "Add an address": "주소 추가하기",
+  "Add an instance": "인스턴스 추가하기",
+  "Add some tags": "몇 가지 태그 추가하기",
+  "Add to my calendar": "내 달력에 추가하기",
+  "Additional comments": "추가 코멘트",
+  "Admin": "관리자",
+  "Admin settings successfully saved.": "관리자 설정을 저장했습니다.",
+  "Administration": "관리",
+  "Allow registrations": "가입 허용하기",
+  "Anonymous participant": "익명의 참가자",
+  "Are you sure you want to <b>delete</b> this comment? This action cannot be undone.": "이 코멘트를 <b>삭제</b>합니까? 이 행동으 되돌릴 수 없습니다.",
+  "Avatar": "아바타",
+  "Back to previous page": "이전 페이지로 돌아가기"
+}
