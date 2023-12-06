@@ -1,4 +1,3 @@
-import nl2br from "@/filters/utils";
 import {
   formatDateString,
   formatTimeString,
@@ -11,6 +10,5 @@ export default {
     vue.filter("formatDateString", formatDateString);
     vue.filter("formatTimeString", formatTimeString);
     vue.filter("formatDateTimeString", formatDateTimeString);
-    vue.filter("nl2br", nl2br);
   },
 };
