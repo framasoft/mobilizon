@@ -392,8 +392,7 @@ config :mobilizon, Mobilizon.Service.GlobalSearch.SearchMobilizon,
 
 config :mobilizon, Mobilizon.Service.AntiSpam, service: Mobilizon.Service.AntiSpam.Akismet
 
-config :mobilizon, Mobilizon.Service.SiteMap,
-  path: System.get_env("MOBILIZON_SITEMAP_PATH", "/var/lib/mobilizon/sitemap")
+config :mobilizon, Mobilizon.Service.SiteMap, path: "/var/lib/mobilizon/sitemap"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
