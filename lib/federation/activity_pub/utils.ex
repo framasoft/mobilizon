@@ -680,19 +680,22 @@ defmodule Mobilizon.Federation.ActivityPub.Utils do
   @doc """
   Converts PEM encoded keys to a public key representation
   """
-  @spec pem_to_public_key_pem(String.t()) :: String.t()
+  @spec pem_to_public_key_pem(String.t()) :: String.t() | {:error, :no_publickey_found}
   def pem_to_public_key_pem(pem) do
-    public_key = pem_to_public_key(pem)
-    public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
-    :public_key.pem_encode([public_key])
+    case :public_key.pem_decode(pem) do
+      [key_code] ->
+        public_key = pem_to_public_key(key_code)
+        public_key = :public_key.pem_entry_encode(:RSAPublicKey, public_key)
+        :public_key.pem_encode([public_key])
+
+      _ ->
+        {:error, :no_publickey_found}
+    end
   end
 
   @spec pem_to_public_key(String.t()) :: {:RSAPublicKey, any(), any()}
-  defp pem_to_public_key(pem) do
-    [key_code] = :public_key.pem_decode(pem)
-    key = :public_key.pem_entry_decode(key_code)
-
-    case key do
+  defp pem_to_public_key(key_code) do
+    case :public_key.pem_entry_decode(key_code) do
       {:RSAPrivateKey, _, modulus, exponent, _, _, _, _, _, _, _} ->
         {:RSAPublicKey, modulus, exponent}
 
