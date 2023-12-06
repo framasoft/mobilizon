@@ -347,7 +347,7 @@ const asyncData = async (query: string): Promise<void> => {
 
     const result =
       (await searchAddressLoad(undefined, queryVars)) ||
-      (await searchAddressRefetch(queryVars))?.data
+      (await searchAddressRefetch(queryVars))?.data;
 
     if (!result) {
       isFetching.value = false;

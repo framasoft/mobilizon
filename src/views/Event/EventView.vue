@@ -613,8 +613,8 @@ const organizerDomain = computed((): string | undefined => {
 });
 
 const nonPassedRelatedEvents = computed((): IEvent[] | undefined => {
-  let relatedEvents = event.value?.relatedEvents;
-  
+  const relatedEvents = event.value?.relatedEvents;
+
   return relatedEvents?.filter((relatedEvent: IEvent) => {
     const endsOn = relatedEvent.endsOn
       ? new Date(relatedEvent.endsOn)
