@@ -63,7 +63,9 @@
           {{ t("Reported by an unknown actor") }}
         </span>
       </div>
-      <div class="" v-if="report.content" v-html="report.content" />
+      <div class="line-clamp-1" v-if="report.content">
+        {{ report.content }}
+      </div>
     </div>
   </div>
 </template>

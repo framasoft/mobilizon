@@ -216,11 +216,9 @@
           </div>
           <p v-else>{{ t("Unknown actor") }}</p>
         </div>
-        <div
-          class="prose dark:prose-invert"
-          v-if="report.content"
-          v-html="nl2br(report.content)"
-        />
+        <div class="prose dark:prose-invert" v-if="report.content">
+          {{ report.content }}
+        </div>
         <p v-else>{{ t("No comment") }}</p>
       </div>
     </section>
@@ -407,7 +405,6 @@ import {
 } from "@/types/actor";
 import { DELETE_EVENT } from "@/graphql/event";
 import uniq from "lodash/uniq";
-import { nl2br } from "@/utils/html";
 import { DELETE_COMMENT } from "@/graphql/comment";
 import { IComment } from "@/types/comment.model";
 import { ActorType, AntiSpamFeedback, ReportStatusEnum } from "@/types/enums";
