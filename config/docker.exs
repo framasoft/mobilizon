@@ -49,7 +49,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   port: System.get_env("MOBILIZON_SMTP_PORT", "25"),
   username: System.get_env("MOBILIZON_SMTP_USERNAME", nil),
   password: System.get_env("MOBILIZON_SMTP_PASSWORD", nil),
-  tls: System.get_env("MOBILIZON_SMTP_TLS", :if_available),
+  tls: System.get_env("MOBILIZON_SMTP_TLS", "if_available"),
   allowed_tls_versions: [:"tlsv1.2", :"tlsv1.3"],
   tls_options: [
     verify: :verify_peer,
