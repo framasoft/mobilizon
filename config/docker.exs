@@ -2,6 +2,8 @@
 
 import Config
 
+{:ok, _} = Application.ensure_all_started(:tls_certificate_check)
+
 loglevels = [
   :emergency,
   :alert,
@@ -72,14 +74,8 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   username: System.get_env("MOBILIZON_SMTP_USERNAME", nil),
   password: System.get_env("MOBILIZON_SMTP_PASSWORD", nil),
   tls: System.get_env("MOBILIZON_SMTP_TLS", "if_available"),
-  allowed_tls_versions: [:"tlsv1.2", :"tlsv1.3"],
-  tls_options: [
-    verify: :verify_peer,
-    versions: [:"tlsv1.2", :"tlsv1.3"],
-    cacerts: :public_key.cacerts_get(),
-    server_name_indication: ~c"#{System.get_env("MOBILIZON_SMTP_SERVER", "localhost")}",
-    depth: 99
-  ],
+  tls_options:
+    :tls_certificate_check.options(System.get_env("MOBILIZON_SMTP_SERVER", "localhost")),
   ssl: System.get_env("MOBILIZON_SMTP_SSL", "false"),
   retries: 1,
   no_mx_lookups: false,
